@@ -98,7 +98,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BTooltip
             no-fade
             placement="top"
-            v-if="tooltipId.length"
+            v-if="tooltip.length"
             :target="`link-button-${tooltipId}`"
           >
             {{ tooltip }}
@@ -217,12 +217,16 @@ export default {
       attributes: false, childList: true, characterData: false, subtree: true,
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.onResize);
   },
 };
 </script>
 <style lang="scss" scoped>
+.card {
+  min-width: 300px;
+}
+
 .card-title {
   height: 55px;
 }

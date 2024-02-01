@@ -37,15 +37,13 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="col-sm-10">
             <BCard>
               <dl class="row m-0">
-                <template v-for="(detail, index) in taskDetailsList">
-                  <dt
-                    :key="`taskname-${index}-${uniqueId}`"
-                    class="col-6">
+                <template
+                  v-for="(detail, index) in taskDetailsList"
+                  :key="`taskname-${index}-${uniqueId}`">
+                  <dt class="col-6">
                     {{ detail.name }}
                   </dt>
-                  <dd
-                    :key="`taskvalue-${index}-${uniqueId}`"
-                    class="col-6">
+                  <dd class="col-6">
                     {{ detail.value || $t('pages.workflow.notAvailable') }}
                   </dd>
                 </template>
@@ -59,6 +57,16 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import {
+  BButton,
+  BCard,
+  BCardBody,
+  BCol,
+  BFormSelect,
+  BRow,
+} from 'bootstrap-vue';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { isEmpty } from 'lodash';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import axios from 'axios';
@@ -69,6 +77,14 @@ import axios from 'axios';
 * */
 export default {
   name: 'AssignTask',
+  components: {
+    BButton,
+    BCard,
+    BCardBody,
+    BCol,
+    BFormSelect,
+    BRow,
+  },
   props: {
     taskDefinition: {
       type: Object,
@@ -80,9 +96,11 @@ export default {
     },
   },
   data() {
+    const userStore = useUserStore();
+
     return {
       taskDetailsList: [],
-      selected: this.$store.state.UserStore.userName,
+      selected: userStore.userName,
       uniqueId: null,
     };
   },
@@ -90,8 +108,9 @@ export default {
     this.uniqueId = this._uid;
   },
   computed: {
+    ...mapState(useUserStore, ['userId', 'userName']),
     assigneeOptions() {
-      const loggedUserName = this.$store.state.UserStore.userName;
+      const loggedUserName = this.userName;
 
       if (!isEmpty(this.taskDefinition.task.usersToAssign)) {
         return this.taskDefinition.task.usersToAssign.map(({ username, displayableName }) => {
@@ -105,7 +124,7 @@ export default {
   },
   methods: {
     assignTask() {
-      this.$emit('assignTask', { id: this.taskDefinition.task._id, assignee: this.$store.state.UserStore.userId });
+      this.$emit('assignTask', { id: this.taskDefinition.task._id, assignee: this.userId });
     },
     generateDisplayDetails(formProperties, variables) {
       return formProperties.reduce((acc, property) => acc.concat({ _id: property._id, name: property.name, value: variables[property._id] }), []);

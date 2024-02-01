@@ -17,11 +17,13 @@ describe('SelectIdPCallback.vue', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(SelectIdPCallback, {
-      i18n,
-      stubs: {
-        'router-link': true,
+      global: {
+        plugins: [i18n],
+        stubs: {
+          'router-link': true,
+        },
       },
-      propsData: {
+      props: {
         callback: {
           getOutputByName,
         },

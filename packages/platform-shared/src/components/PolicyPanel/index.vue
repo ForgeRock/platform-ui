@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -161,7 +161,16 @@ export default {
      * @param {Object} policy object containing policy data needed for translation
      */
     getPolicyDescription(policy) {
-      return this.$t(`common.policyValidationMessages.${policy.policyRequirement}`, policy.params);
+      let formattedParams = policy.params;
+      if (typeof policy.params === 'object') {
+        formattedParams = Object.keys(policy.params).reduce((newParams, param) => {
+          // Remove hyphens in server generated policy params as these do not work as interpolations keys in vue-i18n 9.x
+          const formattedParam = param.replace(/-/g, '');
+          newParams[formattedParam] = policy.params[param];
+          return newParams;
+        }, {});
+      }
+      return this.$t(`common.policyValidationMessages.${policy.policyRequirement}`, formattedParams);
     },
   },
   watch: {
@@ -182,7 +191,7 @@ ul {
   }
 }
 
-::v-deep .material-icons-outlined {
+:deep(.material-icons-outlined) {
   line-height: 1.13rem;
 }
 </style>

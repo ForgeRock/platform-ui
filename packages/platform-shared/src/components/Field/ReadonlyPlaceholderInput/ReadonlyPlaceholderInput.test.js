@@ -6,8 +6,13 @@
  */
 
 import { mount } from '@vue/test-utils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import ReadonlyPlaceholderInput from './index';
 import i18n from '@/i18n';
+
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+});
 
 const defaultProps = {
   name: 'name',
@@ -19,13 +24,15 @@ const defaultProps = {
 describe('ReadonlyPlaceholderInput', () => {
   function setup(props, provide) {
     return mount(ReadonlyPlaceholderInput, {
-      i18n,
+      global: {
+        plugins: [i18n],
+        provide,
+      },
       attachTo: document.body,
-      propsData: {
+      props: {
         ...defaultProps,
         ...props,
       },
-      provide,
     });
   }
 
@@ -35,7 +42,7 @@ describe('ReadonlyPlaceholderInput', () => {
       await wrapper.vm.$nextTick();
 
       const input = wrapper.find('input');
-      expect(input.attributes('readonly')).toBeTruthy();
+      expect(input.attributes('readonly')).toBe('');
       expect(input.element.value).toBe('&{esv-test}');
     });
 
@@ -44,7 +51,7 @@ describe('ReadonlyPlaceholderInput', () => {
       await wrapper.vm.$nextTick();
 
       const input = wrapper.find('input');
-      expect(input.attributes('readonly')).toBeTruthy();
+      expect(input.attributes('readonly')).toBe('');
       expect(input.element.value).toBe('&{esv-fromobject}');
     });
 

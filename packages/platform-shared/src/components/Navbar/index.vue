@@ -43,26 +43,27 @@ of the MIT license. See the LICENSE file for details. -->
         </li>
         <li
           v-else
+          class="d-flex align-items-center"
           @click="$emit('clicked')">
           <RouterLink
             :aria-label="$t('common.breadcrumb')"
             active-class=""
-            class="fr-back-link overflow-hidden p-1 pl-4 pl-lg-0 mt-1"
+            class="fr-back-link overflow-hidden pl-4 pl-lg-0 mt-0"
             role="navigation"
-            v-show="getBreadcrumbRoute().length > 0"
-            :to="!checkChangesOnNavigate ? getBreadcrumbRoute() : ''">
-            <h1 class="text-truncate h4">
+            v-show="hasBreadcrumb"
+            :to="!checkChangesOnNavigate ? returnRoute : ''">
+            <h1 class="text-truncate h5 d-flex align-items-center font-weight-normal mb-0">
               <FrIcon
                 class="md-24 mr-3"
                 name="arrow_back"
               />
               <span class="align-middle">
-                {{ getBreadcrumbRouteText() }}
+                {{ returnRouteText }}
               </span>
             </h1>
           </RouterLink>
         </li>
-        <li>
+        <li class="d-flex align-items-center">
           <!-- Content displayed in center of navbar -->
           <slot name="center-content" />
         </li>
@@ -91,7 +92,6 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
             <div v-if="!hideDropdown">
               <FrDropdownMenu
-                :user-details="userDetails"
                 :dropdown-items="tenantMenuItems"
                 :show-profile-link="showProfileLink"
                 enable-logout
@@ -126,12 +126,10 @@ of the MIT license. See the LICENSE file for details. -->
                     vertical-align="center"
                     class="text-left">
                     <template #aside>
-                      <!-- alt text purposefully set to empty string as this is considered a 'decorative image' in WCAG standards -->
-                      <img
-                        alt=""
-                        height="34"
-                        width="34"
-                        :src="profileImage ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')">
+                      <BAvatar
+                        size="34"
+                        variant="light"
+                        :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
                     </template>
                     <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
                       <h5 class="my-0 text-truncate">
@@ -172,8 +170,9 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import {
+  BAvatar,
   BDropdownDivider,
   BDropdownHeader,
   BLink,
@@ -183,9 +182,12 @@ import {
   VBTooltip,
 } from 'bootstrap-vue';
 import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrTenantTierBadge from '@forgerock/platform-shared/src/components/TenantTierBadge';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import ToolbarNotification from '../ToolbarNotification';
 
 /**
@@ -194,13 +196,11 @@ import ToolbarNotification from '../ToolbarNotification';
  */
 export default {
   name: 'Navbar',
-  mixins: [
-    BreadcrumbMixin,
-  ],
   components: {
     FrNotification: ToolbarNotification,
     FrDropdownMenu: DropdownMenu,
     FrIcon,
+    BAvatar,
     BDropdownDivider,
     BDropdownHeader,
     BLink,
@@ -304,37 +304,27 @@ export default {
       type: Array,
       default: () => [],
     },
-    /**
-     * Details about the current user. Displayed with admin and profile links.
-     */
-    userDetails: {
-      type: Object,
-      default: () => ({
-        name: 'Fake Name',
-        company: '',
-        email: 'email@fake.com',
-        adminUser: false,
-        adminURL: 'wwwfakecom',
-      }),
-    },
+  },
+  setup() {
+    const { returnRoute, returnRouteText, hasBreadcrumb } = useBreadcrumb(false);
+    return {
+      returnRoute,
+      returnRouteText,
+      hasBreadcrumb,
+    };
   },
   computed: {
-    ...mapState({
-      userStore: (state) => state.UserStore,
-    }),
+    ...mapState(useUserStore, ['userDetails']),
+    ...mapState(useEnduserStore, ['profileImage']),
     ...mapGetters({
       hasTenantInfo: 'hasTenantInfo',
       tenantRegionInfo: 'tenantRegionInfo',
     }),
-    profileImage() {
-      const { profileImage } = this.userStore;
-      return profileImage && profileImage.length ? profileImage : null;
-    },
   },
   methods: {
     /**
      * From the navbar button toggling is possible with keyboard but not mouse or touch.
-     * */
+     */
     toggleMenu() {
       /**
        * Triggered when the toggle button is clicked

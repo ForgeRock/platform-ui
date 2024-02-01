@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,6 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
       id="dropdown"
       toggle-class="btn btn-link text-dark border-0 toggle-dropdown-button"
       :boundary="boundary"
+      :disabled="disabled"
       :text="totalRows > 0 ? $t('pagination.dropdown.text', { pageMin, pageMax, totalRows }) : $t('pagination.dropdown.textUnknownTotalRows', { pageMin, pageMax })"
     >
       <BDropdownItem
@@ -33,6 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
       id="pagination"
       tabindex="0"
       :aria-label="ariaLabel"
+      :disabled="disabled"
       :ellipsis-class="['d-flex align-items-center', ellipsisClass]"
       :first-class="datasetSize === DatasetSize.SMALL || datasetSize === DatasetSize.LARGE || hideGoToFirstPageButton ? 'd-none': firstClass"
       :hide-ellipsis="datasetSize === DatasetSize.LARGE || hidePageNumbers || hideEllipsis"
@@ -89,6 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { BDropdown, BDropdownItem, BPagination } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { Position, DatasetSize } from './types';
+import i18n from '@/i18n';
 
 /**
  * @description pagination component used to interact with data tables, it is composed by a dropdown menu with a list
@@ -166,7 +169,7 @@ export default {
     },
     ariaLabel: {
       type: String,
-      default: () => this?.$t('pagination.label'),
+      default: () => i18n.global.t('pagination.label'),
     },
     boundary: {
       type: String,
@@ -178,6 +181,10 @@ export default {
         return Object.values(DatasetSize).includes(value);
       },
       default: DatasetSize.LARGE,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     ellipsisClass: {
       type: String,
@@ -213,23 +220,23 @@ export default {
     },
     labelFirstPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoFirstPage'),
+      default: () => i18n.global.t('pagination.gotoFirstPage'),
     },
     labelLastPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoLastPage'),
+      default: () => i18n.global.t('pagination.gotoLastPage'),
     },
     labelNextPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoNextPage'),
+      default: () => i18n.global.t('pagination.gotoNextPage'),
     },
     labelPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoPage'),
+      default: () => i18n.global.t('pagination.gotoPage'),
     },
     labelPrevPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoPreviousPage'),
+      default: () => i18n.global.t('pagination.gotoPreviousPage'),
     },
     lastClass: {
       type: String,
@@ -325,7 +332,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.pagination-dropdown::v-deep {
+.pagination-dropdown:deep {
   .toggle-dropdown-button {
     background-color: transparent !important;
 
@@ -361,7 +368,7 @@ export default {
     outline: 2px solid $black;
   }
 
-  &::v-deep .page-item {
+  &:deep(.page-item) {
     &.active .page-link {
       background-color: $gray-100;
       pointer-events: none;

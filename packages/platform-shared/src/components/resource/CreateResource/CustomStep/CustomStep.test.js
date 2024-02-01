@@ -4,14 +4,10 @@
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
-
-import { BootstrapVue } from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount, flushPromises } from '@vue/test-utils';
+import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import * as SchemaApi from '@/api/SchemaApi';
 import CustomStep from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('CustomStep.vue', () => {
   let wrapper;
@@ -53,23 +49,22 @@ describe('CustomStep.vue', () => {
     },
   }));
   beforeEach(() => {
+    setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     wrapper = shallowMount(CustomStep, {
-      localVue,
-      mocks: {
-        $t: (key) => key,
-        $store: {
-          state: {
-            realm: 'test',
-            UserStore: {
-              adminUser: true,
-            },
-            SharedStore: {
-              workforceEnabled: false,
+      global: {
+        mocks: {
+          $t: (key) => key,
+          $store: {
+            state: {
+              realm: 'test',
+              SharedStore: {
+                workforceEnabled: false,
+              },
             },
           },
         },
       },
-      propsData: {
+      props: {
         property: {
           key: 'privileges',
           default: 'testDefault',
@@ -84,7 +79,7 @@ describe('CustomStep.vue', () => {
     });
   });
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('handles changes to query filter', async () => {
@@ -121,7 +116,7 @@ describe('CustomStep.vue', () => {
         ),
       }
     ));
-    wrapper.vm.$store.state.UserStore.adminUser = false;
+    setupTestPinia({ user: { idmRoles: [] } });
     await wrapper.vm.setPrivilegesStep();
     expect(wrapper.vm.schemaMap).toStrictEqual({
       testId: {
@@ -157,5 +152,14 @@ describe('CustomStep.vue', () => {
     wrapper.vm.toggleForm();
     expect(wrapper.vm.queryFilterField.value).toEqual('');
     expect(wrapper.emitted().input[0][1]).toEqual(null);
+  });
+
+  it('should display the error notification into setConditionOptions', async () => {
+    const conditionObject = [];
+    jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.reject());
+    const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+    await wrapper.vm.setConditionOptions(conditionObject);
+    await flushPromises();
+    expect(showErrorMessageSpy).toHaveBeenCalledWith('error', 'pages.access.invalidEdit');
   });
 });

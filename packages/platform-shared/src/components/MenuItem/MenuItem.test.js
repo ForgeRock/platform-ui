@@ -6,16 +6,19 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import MenuItem from './index';
 
 let wrapper;
 
-function mountComponent(propsData, mocks = { $route: { name: 'daniel' } }) {
+function mountComponent(props, mocks = { $route: { name: 'daniel' } }) {
   wrapper = shallowMount(MenuItem, {
-    propsData,
-    mocks: {
-      $t: () => {},
-      ...mocks,
+    props,
+    global: {
+      mocks: {
+        $t: () => {},
+        ...mocks,
+      },
     },
   });
 }
@@ -23,16 +26,17 @@ function mountComponent(propsData, mocks = { $route: { name: 'daniel' } }) {
 describe('MenuItem Component', () => {
   describe('showing items based on roles', () => {
     it('Determines not to show an item for a user with insufficient roles', () => {
+      setupTestPinia();
       mountComponent({
         displayName: 'bob',
         showForRoles: ['superAdmin'],
-        userRoles: ['plainOldAdmin'],
       });
 
       expect(wrapper.vm.showItemForUser).toBe(false);
     });
 
     it('Determines to show an item for a user with sufficient roles', () => {
+      setupTestPinia({ user: { idmRoles: ['plainOldAdmin'] } });
       mountComponent({
         displayName: 'bob',
         showForRoles: ['plainOldAdmin'],
@@ -45,25 +49,24 @@ describe('MenuItem Component', () => {
     it('Determines to show an item for a user if the item has no role restrictions', () => {
       mountComponent({
         displayName: 'bob',
-        userRoles: ['employee'],
       });
 
       expect(wrapper.vm.showItemForUser).toBe(true);
     });
 
     it('determines to show subItem for user if subitem has proper access called out', () => {
+      setupTestPinia({ user: { idmRoles: ['employee mate'] } });
       mountComponent({
         displayName: 'subBob',
-        userRoles: ['employee mate'],
       });
 
       expect(wrapper.vm.showSubItemForUser(['employee mate'])).toBe(true);
     });
 
     it('determines to not show subItem for user if subitem has proper access called out', () => {
+      setupTestPinia({ user: { idmRoles: ['employee mate'] } });
       mountComponent({
         displayName: 'subBob',
-        userRoles: ['employee mate'],
       });
 
       expect(wrapper.vm.showSubItemForUser(['employee boss'])).toBe(false);
@@ -75,7 +78,6 @@ describe('MenuItem Component', () => {
       mountComponent({
         displayName: 'bob',
         showForRoles: ['superAdmin'],
-        userRoles: ['plainOldAdmin'],
         showForStoreValues: ['isFraas', 'SharedStore.hasAmUrl'],
       },
       {
@@ -96,7 +98,6 @@ describe('MenuItem Component', () => {
       mountComponent({
         displayName: 'bob',
         showForRoles: ['superAdmin'],
-        userRoles: ['plainOldAdmin'],
         showForStoreValues: ['isFraas', 'SharedStore.hasAmUrl'],
       },
       {
@@ -114,19 +115,11 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to show any menu option that relies on a truthy value from the FederationAdmin privilege property in the user store', () => {
+      setupTestPinia({ user: { privileges: { FederationAdmin: true } } });
       mountComponent({
         showForPrivileges: ['FederationAdmin'],
       },
       {
-        $store: {
-          state: {
-            UserStore: {
-              privileges: {
-                FederationAdmin: true,
-              },
-            },
-          },
-        },
         $route: { name: 'little-ted' },
       });
 
@@ -134,20 +127,11 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to hide any menu option that relies on a falsy value from the FederationAdmin privilege property in the user store', () => {
+      setupTestPinia({ user: { privileges: { FederationAdmin: false } } });
       mountComponent({
         showForPrivileges: ['FederationAdmin'],
       },
       {
-        $store: {
-          state: {
-            UserStore: {
-              amAdmin: false,
-              privileges: {
-                FederationAdmin: false,
-              },
-            },
-          },
-        },
         $route: { name: 'little-ted-2' },
       });
 
@@ -170,7 +154,6 @@ describe('MenuItem Component', () => {
               routeTo: { name: 'little-bob-2' },
             },
           ],
-          userRoles: ['plainOldAdmin'],
         },
         {
           $route: { name: 'little-bob-2' },
@@ -190,7 +173,6 @@ describe('MenuItem Component', () => {
               routeTo: { name: 'little-bob' },
             },
           ],
-          userRoles: ['plainOldAdmin'],
         },
         {
           $route: { name: 'little-ben' },

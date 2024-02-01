@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,10 +7,13 @@
 
 import { merge, cloneDeep } from 'lodash';
 import {
-  isRoleBased,
-  isReconBased,
-  getGrantFlags,
   flags,
+  getGrantFlags,
+  isAcknowledgeType,
+  isReconBased,
+  isRequestBased,
+  isRoleBased,
+  isRuleBased,
 } from './flags';
 
 const roleBasedGrant = {
@@ -31,6 +34,18 @@ const reconBasedGrant = {
       grantTypes: [
         {
           grantType: 'recon',
+        },
+      ],
+    },
+  },
+};
+
+const requestBasedGrant = {
+  relationship: {
+    properties: {
+      grantTypes: [
+        {
+          grantType: 'request',
         },
       ],
     },
@@ -64,6 +79,47 @@ describe('flags', () => {
 
     it('determines when a grant is not role based', () => {
       expect(isRoleBased({})).toBeFalsy();
+    });
+  });
+
+  describe(('isRuleBased'), () => {
+    it('returns false if no grant relationship', () => {
+      expect(isRuleBased(roleBasedGrant)).toBeFalsy();
+    });
+
+    it('returns false if a grant with no condition', () => {
+      const grant = { relationship: { conditional: false } };
+      expect(isRuleBased(grant)).toBeFalsy();
+    });
+
+    it('returns true if a grant with a condition', () => {
+      const grant = { relationship: { conditional: true } };
+      expect(isRuleBased(grant)).toBeTruthy();
+    });
+  });
+
+  describe(('isRequestBased'), () => {
+    it('determines if a grant is request based', () => {
+      expect(isRequestBased(requestBasedGrant)).toBeTruthy();
+    });
+
+    it('determines when a grant is not request based', () => {
+      expect(isRequestBased({})).toBeFalsy();
+    });
+  });
+
+  describe(('isAcknowledgeType'), () => {
+    it('returns false if not role based and not rule based', () => {
+      expect(isAcknowledgeType({})).toBeFalsy();
+    });
+
+    it('returns true if a role bosed', () => {
+      expect(isAcknowledgeType(roleBasedGrant)).toBeTruthy();
+    });
+
+    it('returns true if a rule based', () => {
+      const roleGrant = { relationship: { conditional: true } };
+      expect(isAcknowledgeType(roleGrant)).toBeTruthy();
     });
   });
 

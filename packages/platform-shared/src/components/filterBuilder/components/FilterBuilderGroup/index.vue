@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrField
             v-model="defaultOperatorOptions.value"
             class="d-inline-flex"
-            name="defaultOperatorOptions"
+            :name="defaultOperatorOptionsName"
             type="select"
             :disabled="disabled"
             :options="defaultOperatorOptions.options"
@@ -46,7 +46,9 @@ of the MIT license. See the LICENSE file for details. -->
           @add-rule="addRuleHandler" />
       </template>
     </div>
-    <template v-for="(subfilter, i) in rules.subfilters">
+    <template
+      v-for="(subfilter, i) in rules.subfilters"
+      :key="subfilter.uniqueIndex">
       <FrFilterBuilderRow
         v-if="isRow(subfilter)"
         :condition-options="conditionOptions"
@@ -58,7 +60,6 @@ of the MIT license. See the LICENSE file for details. -->
         :hide-group="hideGroup"
         :index="i"
         :is-ldap="isLdap"
-        :key="subfilter.uniqueIndex"
         :max-depth="maxDepth"
         :path="`${path}`"
         :properties="properties"
@@ -66,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
         @remove-rule="removeRule"
         @rule-change="ruleChange">
         <template
-          v-for="(key, slotName) in $scopedSlots"
+          v-for="(key, slotName) in $slots"
           #[slotName]="slotData">
           <!-- @slot passthrough slot -->
           <slot
@@ -84,7 +85,6 @@ of the MIT license. See the LICENSE file for details. -->
         :has-siblings="rules.subfilters.length > 1"
         :index="i"
         :is-ldap="isLdap"
-        :key="subfilter.uniqueIndex"
         :max-depth="maxDepth"
         :operator-options="operatorOptions"
         :path="`${path}:${i}`"
@@ -94,7 +94,7 @@ of the MIT license. See the LICENSE file for details. -->
         @remove-rule="removeRule"
         @rule-change="ruleChange">
         <template
-          v-for="(key, slotName) in $scopedSlots"
+          v-for="(key, slotName) in $slots"
           #[slotName]="slotData">
           <!-- @slot passthrough slot -->
           <slot
@@ -121,6 +121,11 @@ export default {
     FrFilterBuilderAddButton,
     FrFilterBuilderRemoveButton,
     FrFilterBuilderRow,
+  },
+  data() {
+    return {
+      defaultOperatorOptionsName: `${this.resourceName}_defaultOperatorOptions_${this.rules.subfilters?.[0].uniqueIndex || this.index}`,
+    };
   },
   computed: {
     groupCardClass() {
@@ -180,6 +185,9 @@ export default {
       required: true,
       type: Number,
     },
+    /**
+     * Array index for adding/removing from group array
+     */
     index: {
       required: true,
       type: Number,

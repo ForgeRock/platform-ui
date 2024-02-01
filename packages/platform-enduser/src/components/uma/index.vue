@@ -72,12 +72,18 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  BBadge,
+  BCardBody,
+  BContainer,
+  BTab,
+  BTabs,
+} from 'bootstrap-vue';
+import {
   cloneDeep,
   find,
   has,
   map,
 } from 'lodash';
-import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
@@ -98,6 +104,11 @@ export default {
     NotificationMixin,
   ],
   components: {
+    BBadge,
+    BCardBody,
+    BContainer,
+    BTab,
+    BTabs,
     FrActivity,
     FrCenterCard,
     FrRequests,
@@ -120,9 +131,6 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userSearchAttribute,
-    }),
     umaHistory() {
       return map(this.activity, (res) => {
         const resource = find(this.resources, { _id: res.resourceSetId });
@@ -160,11 +168,7 @@ export default {
           this.resources = [];
           this.requestsLoaded = true;
 
-          if (error.response) {
-            this.displayNotification('error', error.response.data.message);
-          } else {
-            this.displayNotification('error', error.message);
-          }
+          this.showErrorMessage(error, error.message);
         });
     },
     getActivity() {
@@ -178,11 +182,7 @@ export default {
       })
         .catch((error) => {
           this.activity = [];
-          if (error.response) {
-            this.displayNotification('error', error.response.data.message);
-          } else {
-            this.displayNotification('error', error.message);
-          }
+          this.showErrorMessage(error, error.message);
         });
     },
     getRequests() {
@@ -212,25 +212,20 @@ export default {
       })
         .catch((error) => {
           this.requests = {};
-
-          if (error.response) {
-            this.displayNotification('error', error.response.data.message);
-          } else {
-            this.displayNotification('error', error.message);
-          }
+          this.showErrorMessage(error, error.message);
         });
     },
     renderShareModal(resource) {
       this.resource = resource;
       this.$nextTick(() => {
-        this.$root.$emit('bv::show::modal', 'shareModal');
+        this.$bvModal.show('shareModal');
       });
     },
     renderUnshareModal(resourceName, resourceId) {
       this.resourceName = resourceName;
       this.resourceId = resourceId;
       this.$nextTick(() => {
-        this.$root.$emit('bv::show::modal', 'unshareModal');
+        this.$bvModal.show('unshareModal');
       });
     },
     shareResource(payload, config = {}) {
@@ -247,7 +242,7 @@ export default {
         this.loadData();
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('user.sharing.shareError'));
         });
     },
     unshareResource(resourceId) {
@@ -261,7 +256,7 @@ export default {
         this.loadData();
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('user.sharing.unshareError'));
         });
     },
     modifyResource(resourceId, payload, config = {}) {
@@ -281,7 +276,7 @@ export default {
           this.loadData();
         })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, config.unshare ? this.$t('user.sharing.unshareError') : this.$t('user.sharing.modifyError'));
         });
     },
     finalizeResourceAccess(id, action, index, config = {}) {
@@ -301,7 +296,7 @@ export default {
         this.displayNotification('success', successMsg);
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, action === 'approve' ? this.$t('user.sharing.requestAllowedError') : this.$t('user.sharing.requestDeniedError'));
         });
     },
     testForReload() {

@@ -13,24 +13,30 @@ describe('CardRadioInput Component', () => {
 
   it('uses a card containing value text by default', () => {
     wrapper = shallowMount(CardRadioInput, {
-      propsData: {
+      global: {
+        renderStubDefaultSlot: true,
+      },
+      props: {
         radioValue: 'test',
       },
     });
-    expect(wrapper.find('bcard-stub').exists()).toBe(true);
-    expect(wrapper.find('bcard-stub').text()).toEqual('test');
+    expect(wrapper.find('b-card-stub').exists()).toBe(true);
+    expect(wrapper.find('b-card-stub').text()).toEqual('test');
   });
 
   it('default slot will allow for custom content within card', () => {
     wrapper = shallowMount(CardRadioInput, {
-      propsData: {
+      global: {
+        renderStubDefaultSlot: true,
+      },
+      props: {
         radioValue: 'test',
       },
       slots: {
         default: '<code></code>',
       },
     });
-    expect(wrapper.find('bcard-stub').exists()).toBe(true);
+    expect(wrapper.find('b-card-stub').exists()).toBe(true);
     expect(wrapper.text()).toEqual('');
     expect(wrapper.find('code').exists()).toBe(true);
   });

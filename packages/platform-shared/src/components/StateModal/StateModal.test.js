@@ -11,10 +11,12 @@ import StateModal from './index';
 describe('StateModal', () => {
   it('StateModal successfully loaded', () => {
     const wrapper = shallowMount(StateModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         translatedItemType: 'Something',
       },
     });

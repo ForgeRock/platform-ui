@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,26 +22,29 @@ of the MIT license. See the LICENSE file for details. -->
         cancel-variant="link"
         scrollable
         :title="modalTitle || $t('common.customizeObject', { object: $t('common.columns') })"
+        :static="isTesting"
         :ok-title="$t('common.apply')"
         @hidden="resetList"
         @ok="applyChanges">
         <BListGroup flush>
           <Draggable
             ghost-class="ghost-item"
-            :list="list">
-            <BListGroupItem
-              v-for="listItem in list"
-              :key="listItem.key">
-              <div class="d-flex justify-content-between">
-                <FrField
-                  v-model="listItem.enabled"
-                  type="checkbox"
-                  :label="listItem.label" />
-                <FrIcon
-                  class="ml-4"
-                  name="drag_indicator" />
-              </div>
-            </BListGroupItem>
+            :list="list"
+            item-key="key">
+            <template #item="{ element }">
+              <BListGroupItem
+                :key="element.key">
+                <div class="d-flex justify-content-between">
+                  <FrField
+                    v-model="element.enabled"
+                    type="checkbox"
+                    :label="element.label" />
+                  <FrIcon
+                    class="ml-4"
+                    name="drag_indicator" />
+                </div>
+              </BListGroupItem>
+            </template>
           </Draggable>
         </BListGroup>
       </BModal>
@@ -62,6 +65,8 @@ import {
 import Draggable from 'vuedraggable';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+
+Draggable.compatConfig = { MODE: 3 };
 
 /**
  * Button that opens a modal which allows enabling and reordering of items in a list.
@@ -92,6 +97,10 @@ export default {
       type: String,
       default: '',
     },
+    isTesting: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -119,11 +128,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .list-group-flush .list-group-item:first-child {
+:deep(.list-group-flush .list-group-item:first-child) {
   border-top-width: 0 !important;
 }
 
-::v-deep .list-group-flush:last-child .list-group-item:last-child {
+:deep(.list-group-flush:last-child .list-group-item:last-child) {
   border-bottom-width: 0 !important;
 }
 

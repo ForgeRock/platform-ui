@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -35,6 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
             :application-search-results="applicationSearchResults"
             :catalog-filter-schema="catalogFilterSchema"
             :catalog-items="catalogItems"
+            :glossary-schema="glossarySchema"
             :loading="loading"
             :total-count="totalCount"
             @add-item-to-cart="addItemToCart"
@@ -152,7 +153,7 @@ import {
   BModal,
   BTable,
 } from 'bootstrap-vue';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
@@ -162,6 +163,7 @@ import {
   // getUserGrants,
   getResource,
   getUserDetails,
+  getGlossarySchema,
 } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
@@ -203,10 +205,13 @@ export default {
     FrRequestCart,
   },
   mixins: [
-    BreadcrumbMixin,
     MediaMixin,
     NotificationMixin,
   ],
+  setup() {
+    const { setBreadcrumb } = useBreadcrumb();
+    return { setBreadcrumb };
+  },
   data() {
     return {
       applicationSearchResults: [],
@@ -216,11 +221,12 @@ export default {
       currentUserAccountsDetails: { result: [] },
       currentUserEntitlementsDetails: { result: [] },
       currentUserRolesDetails: { result: [] },
+      glossarySchema: {},
       isTesting: false,
       loading: true,
       requestCartExpanded: false,
       requestCartItems: [],
-      requestCartUsers: this.$route.params.requestingFor || [],
+      requestCartUsers: this.$store.state.requestCartUsers || [],
       requestErrorFields: [{ key: 'user' }, { key: 'error' }],
       requestErrors: [],
       saving: false,
@@ -235,6 +241,7 @@ export default {
           name: catalogItem.role.name,
           id: catalogItem.id,
           requested: this.isRequested(catalogItem.id),
+          glossary: catalogItem.glossary?.idx['/role'],
         }));
       }
       if (this.catalogResults[0]?.entitlement) {
@@ -246,6 +253,7 @@ export default {
           templateName: catalogItem.application.templateName,
           id: catalogItem.id,
           requested: this.isRequested(catalogItem.id),
+          glossary: catalogItem.glossary?.idx['/entitlement'],
         }));
       }
       if (this.catalogResults[0]?.application) {
@@ -257,6 +265,7 @@ export default {
           templateName: catalogItem.application.templateName,
           id: catalogItem.id,
           requested: this.isRequested(catalogItem.id),
+          glossary: catalogItem.glossary?.idx['/application'],
         }));
       }
       return this.catalogResults;
@@ -284,11 +293,21 @@ export default {
       }));
     },
   },
-  mounted() {
+  async mounted() {
     this.handleResize();
     // Add resize listener to determine whether side request cart should appear
     window.addEventListener('resize', this.handleResize);
     this.setBreadcrumb('/my-requests', this.$t('pageTitles.MyRequests'));
+    try {
+      const { data } = await getGlossarySchema();
+      this.glossarySchema = {
+        application: this.filterGlossarySchema(data['/openidm/managed/application']),
+        entitlement: this.filterGlossarySchema(data['/openidm/managed/assignment']),
+        role: this.filterGlossarySchema(data['/openidm/managed/role']),
+      };
+    } catch (error) {
+      this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
+    }
   },
   methods: {
     /**
@@ -317,6 +336,13 @@ export default {
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorValidatingAccessRequests'));
       }
+    },
+    /**
+     * Filter schema attribute to not include 'requestable' or 'description' fields
+     * @param {Array} schema glossary schema attributes
+     */
+    filterGlossarySchema(schema) {
+      return schema.filter(({ name }) => !(name === 'requestable' || name === 'description'));
     },
     /**
      * Retrieves list of fields that can be filtered on
@@ -353,9 +379,9 @@ export default {
       try {
         this.loading = true;
         const fieldsMap = {
-          accountGrant: 'application,id',
+          accountGrant: 'application,id,glossary',
           entitlementGrant: 'application,entitlement,id,descriptor,glossary',
-          roleMembership: 'role,id',
+          roleMembership: 'role,id,glossary',
         };
         const searchParams = {
           fields: fieldsMap[catalogType],
@@ -453,14 +479,14 @@ export default {
         .then(({ data }) => {
           const userData = get(data, 'result[0]', {});
           this.currentUser = pick(userData, userRequiredParams);
-          this.$root.$emit('bv::show::modal', 'GovernanceUserDetailsModal');
+          this.$bvModal.show('GovernanceUserDetailsModal');
         })
         .catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
         });
       // TODO: These calls have been temporarily disabled as it is not possible to access them for all users (see comment in ticket).
       // // get roles details
-      // getUserGrants(id, 'role')
+      // getUserGrants(id, { grantType: 'role' })
       //   .then(({ data }) => {
       //     this.currentUserRolesDetails = data;
       //   })
@@ -468,7 +494,7 @@ export default {
       //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
       //   });
       // // get accounts details
-      // getUserGrants(id, 'account')
+      // getUserGrants(id, { grantType: 'account' })
       //   .then(({ data }) => {
       //     this.currentUserAccountsDetails = data;
       //   })
@@ -476,7 +502,7 @@ export default {
       //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
       //   });
       // // get entitlements details
-      // getUserGrants(id, 'entitlement')
+      // getUserGrants(id, { grantType: 'entitlement' })
       //   .then(({ data }) => {
       //     this.currentUserEntitlementsDetails = data;
       //   })
@@ -529,7 +555,7 @@ export default {
       this.requestCartExpanded = !this.requestCartExpanded;
     },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.handleResize);
   },
 };

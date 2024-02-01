@@ -5,13 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import WorkflowControlWidget from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 WorkflowControlWidget.created = jest.fn();
 let wrapper;
@@ -20,14 +16,15 @@ describe('WorkflowControlWidget.vue', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     wrapper = shallowMount(WorkflowControlWidget, {
-      localVue,
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $t: (key) => (key),
+        },
+      },
+      props: {
         userDetails: {},
         widgetDetails: {},
-      },
-      mocks: {
-        $t: (key) => (key),
       },
     });
   });

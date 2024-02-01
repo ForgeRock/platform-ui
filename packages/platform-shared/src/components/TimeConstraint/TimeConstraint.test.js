@@ -1,33 +1,53 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import dayjs from 'dayjs';
 import TimeConstraint from './index';
+
+jest.mock('dayjs');
 
 describe('TimeConstraint Component', () => {
   let wrapper;
   beforeEach(() => {
-    wrapper = shallowMount(TimeConstraint, {
-      mocks: {
-        $t(val) { return val; },
+    wrapper = mount(TimeConstraint, {
+      global: {
+        mocks: {
+          $t(val) { return val; },
+        },
+        renderStubDefaultSlot: true,
       },
-      propsData: {
+      props: {
         value: '2020-01-02T12:00:00.000Z/2020-01-03T13:00:00.000Z',
       },
     });
   });
+  jest.useFakeTimers().setSystemTime(new Date('2077-01-01'));
+
+  dayjs.mockImplementation(() => ({
+    add: () => dayjs(),
+    subtract: () => dayjs(),
+    year: () => 2077,
+    month: () => 1,
+    date: () => 1,
+    hour: () => 0,
+    minute: () => 0,
+    isAfter: () => false,
+    toISOString: () => '',
+    utcOffset: () => 0,
+  }));
 
   it('contains two datepickers, two timepickers, and one offset selector', () => {
     const datepickers = wrapper.findAllComponents({ name: 'Datepicker' });
-    expect(datepickers.at(0).exists()).toBe(true);
-    expect(datepickers.at(1).exists()).toBe(true);
+    expect(datepickers[0].exists()).toBe(true);
+    expect(datepickers[1].exists()).toBe(true);
     const timepickers = wrapper.findAllComponents({ name: 'Timepicker' });
-    expect(timepickers.at(0).exists()).toBe(true);
-    expect(timepickers.at(1).exists()).toBe(true);
+    expect(timepickers[0].exists()).toBe(true);
+    expect(timepickers[1].exists()).toBe(true);
     expect(wrapper.findComponent({ name: 'TimezoneOffset' }).exists()).toBe(true);
   });
 

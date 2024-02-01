@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils';
-import BootstrapVue from 'bootstrap-vue';
+import { shallowMount } from '@vue/test-utils';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import generateIDMAPI from './__mocks__/generateIDMAPI';
 import ListResource from './index';
 
@@ -24,34 +24,32 @@ describe('ListResource Component', () => {
   };
 
   beforeEach(() => {
-    const localVue = createLocalVue();
-    localVue.use(BootstrapVue);
-
     wrapper = shallowMount(ListResource, {
-      localVue,
-      stubs: {
-        'router-link': true,
-      },
-      mocks: {
-        $route,
-        $t: (translation) => translation,
-        generateIDMAPI: () => {
-          const retv = {
-            data: {
-              pagedResultsCookie: {},
-            },
-            get: () => {
-              const retva = {
-                then: () => {},
-              };
-              return retva;
-            },
-          };
-          return retv;
+      global: {
+        stubs: {
+          'router-link': true,
         },
-        pluralizeFilter: () => {},
+        mocks: {
+          $route,
+          $t: (translation) => translation,
+          generateIDMAPI: () => {
+            const retv = {
+              data: {
+                pagedResultsCookie: {},
+              },
+              get: () => {
+                const retva = {
+                  then: () => {},
+                };
+                return retva;
+              },
+            };
+            return retv;
+          },
+          pluralizeValue: () => {},
+        },
       },
-      propsData: {
+      props: {
         routerParameters: {
           resourceName: 'resourceName',
           icon: 'testIcon',
@@ -213,8 +211,8 @@ describe('ListResource Component', () => {
   });
 
   it('Generated query filter for search', () => {
-    expect(wrapper.vm.generateSearch('test', ['test1', 'test2'])).toBe('test1 sw "test" OR test2 sw "test"');
-    expect(wrapper.vm.generateSearch('', ['test1', 'test2'])).toBe('true');
+    expect(generateSearchQuery('test', ['test1', 'test2'])).toBe('test1 sw "test" OR test2 sw "test"');
+    expect(generateSearchQuery('', ['test1', 'test2'])).toBe('true');
   });
 
   it('Clear search and sort', () => {

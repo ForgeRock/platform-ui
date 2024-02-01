@@ -33,24 +33,24 @@ export const requestTypes = {
     value: 'applicationGrant',
   },
   ACCOUNT_REVOKE: {
-    label: 'governance.accessRequest.requestTypes.applicationRevoke',
-    value: 'applicationRevoke',
+    label: 'governance.accessRequest.requestTypes.applicationRemove',
+    value: 'applicationRemove',
   },
   ENTITLEMENT_GRANT: {
     label: 'governance.accessRequest.requestTypes.entitlementGrant',
     value: 'entitlementGrant',
   },
   ENTITLEMENT_REVOKE: {
-    label: 'governance.accessRequest.requestTypes.entitlementRevoke',
-    value: 'entitlementRevoke',
+    label: 'governance.accessRequest.requestTypes.entitlementRemove',
+    value: 'entitlementRemove',
   },
   ROLE_GRANT: {
     label: 'governance.accessRequest.requestTypes.roleGrant',
     value: 'roleGrant',
   },
   ROLE_REVOKE: {
-    label: 'governance.accessRequest.requestTypes.roleRevoke',
-    value: 'roleRevoke',
+    label: 'governance.accessRequest.requestTypes.roleRemove',
+    value: 'roleRemove',
   },
 };
 
@@ -131,7 +131,7 @@ export function getRequestObjectType(requestType) {
  * @returns {String} text to display as the request type
  */
 export function getTypeString(requestType) {
-  return i18n.t(`governance.accessRequest.requestTypes.${requestType}`);
+  return i18n.global.t(`governance.accessRequest.requestTypes.${requestType}`);
 }
 
 /**
@@ -145,8 +145,8 @@ export function getFormattedRequest(request, objectType) {
     details: {
       id: request.id,
       type: getTypeString(request.requestType),
-      name: objectType === 'entitlement' ? request[objectType].displayName : request[objectType]?.name,
-      description: request[objectType]?.description,
+      name: objectType === 'entitlement' ? request.descriptor?.idx?.['/entitlement']?.displayName || request[objectType]?.displayName : request[objectType]?.name,
+      description: objectType === 'entitlement' ? request.glossary?.idx?.['/entitlement']?.description || request[objectType]?.description : request[objectType]?.description,
       priority: request.request?.common?.priority,
       date: request.decision?.startDate,
       requesteeInfo: request.user,
@@ -167,4 +167,8 @@ export function buildRequestDisplay(requests) {
     const objectType = getRequestObjectType(request.requestType);
     return objectTypeList.includes(objectType) ? getFormattedRequest(request, objectType) : null;
   });
+}
+
+export function isTypeRole(requestType) {
+  return getRequestObjectType(requestType) === 'role';
 }

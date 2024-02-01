@@ -26,32 +26,34 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </span>
       </template>
-      <BDropdownItem
-        v-for="(obj, key) in dropdownItems"
-        :active="obj.active"
-        :key="key"
-        class="dropdown-locale-item"
-        :class="{'is-editable': showEdit }"
-        @click.prevent="selectLocale(obj.locale)"
-      >
-        <div class="d-flex align-items-center justify-content-between w-100 pr-2">
-          <div class="text-truncate pl-3 pr-2 py-2 label">
-            {{ obj.locale }}
-            <div
-              v-if="obj.locale === defaultLocale"
-              class="ml-1 badge badge-white font-weight-normal border border-darkened">
-              {{ $t('common.default') }}
+      <div class="dropdown-locale-container">
+        <BDropdownItem
+          v-for="(obj, key) in dropdownItems"
+          :active="obj.active"
+          :key="key"
+          class="dropdown-locale-item"
+          :class="{'is-editable': showEdit }"
+          @click.prevent="selectLocale(obj.locale)"
+        >
+          <div class="d-flex align-items-center justify-content-between w-100 pr-2">
+            <div class="text-truncate pl-3 pr-2 py-2 label">
+              {{ obj.locale }}
+              <div
+                v-if="obj.locale === defaultLocale"
+                class="ml-1 badge badge-white font-weight-normal border border-darkened">
+                {{ $t('common.default') }}
+              </div>
             </div>
+            <BButton
+              type="button"
+              class="btn-sm btn-edit"
+              variant="primary"
+              @click.stop.prevent="editLocale(obj.locale)">
+              <FrIcon name="edit" />
+            </BButton>
           </div>
-          <BButton
-            type="button"
-            class="btn-sm btn-edit"
-            variant="primary"
-            @click.stop.prevent="editLocale(obj.locale)">
-            <FrIcon name="edit" />
-          </BButton>
-        </div>
-      </BDropdownItem>
+        </BDropdownItem>
+      </div>
       <template v-if="showAdd">
         <BDropdownDivider />
         <BDropdownItem
@@ -134,6 +136,11 @@ export default {
   display: none;
 }
 
+.dropdown-locale-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .dropdown-locale-item {
   width: 200px;
 
@@ -142,12 +149,12 @@ export default {
       display: block;
     }
 
-    ::v-deep .dropdown-item::after {
+    :deep(.dropdown-item::after) {
       display: none;
     }
   }
 
-  ::v-deep .dropdown-item {
+  :deep(.dropdown-item) {
     padding: 0;
   }
 }

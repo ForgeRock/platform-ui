@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,12 +6,17 @@ of the MIT license. See the LICENSE file for details. -->
   <div
     class="accordion"
     role="tablist">
-    <BCard no-body>
+    <BCard
+      no-body
+      :class="cardClasses"
+    >
       <header>
         <!-- @slot Accordion header -->
         <slot name="accordionHeader" />
       </header>
-      <template v-for="(data, key) in items">
+      <template
+        v-for="(data, key) in items"
+        :key="key">
         <!--
           triggered on click
           @event section-expanded
@@ -20,12 +25,11 @@ of the MIT license. See the LICENSE file for details. -->
         -->
         <div
           :class="`border-top ${data.accordionItemClass ? data.accordionItemClass : ''}`"
-          :key="key"
           data-testid="accordion-item-wrapper"
           no-body
           @click="$emit('section-expanded', {key, data})">
           <BCardHeader
-            class="pr-4 border-0 position-relative cursor-pointer"
+            :class="`pr-4 border-0 position-relative cursor-pointer ${headerClasses}`"
             role="tab"
             v-b-toggle="`accordion-${accordionGroup}-${key}`">
             <!-- @slot item header (shown while collapsed and expanded) -->
@@ -105,6 +109,14 @@ export default {
         }];
       },
       required: true,
+    },
+    headerClasses: {
+      type: String,
+      default: '',
+    },
+    cardClasses: {
+      type: String,
+      default: '',
     },
   },
   mounted() {

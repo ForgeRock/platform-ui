@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2023 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
 //
@@ -16,7 +23,6 @@
 module.exports = (on, config) => ({
   ...config,
   fixturesFolder: 'e2e/fixtures',
-  integrationFolder: 'e2e/tests',
   screenshotsFolder: 'e2e/screenshots',
   videosFolder: 'e2e/videos',
   supportFile: 'e2e/support/index.js',

@@ -12,8 +12,10 @@ import PushChallengeNumber from './index';
 describe('PushChallengeNumber', () => {
   it('renders push-challenge number', () => {
     const wrapper = mount(PushChallengeNumber, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         callback: {
           getOutputValue: () => 45,
         },
@@ -27,8 +29,10 @@ describe('PushChallengeNumber', () => {
     const defaultAmMessage = 'Tap the number [55] on the Push Notification to continue.';
     const defaultIDCloudMessage = 'Open your Authenticator app and tap the number shown to sign-in.';
     const wrapper = mount(PushChallengeNumber, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         callback: {
           getOutputValue: () => 45,
         },
@@ -40,8 +44,10 @@ describe('PushChallengeNumber', () => {
 
   it('renders push-challenge override message defined by admin', () => {
     const wrapper = mount(PushChallengeNumber, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         callback: {
           getOutputValue: () => 45,
         },

@@ -5,11 +5,14 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
+import { BModal } from 'bootstrap-vue';
+import { createStore } from 'vuex';
+import Notifications from '@kyvg/vue3-notification';
 import i18n from '@/i18n';
+import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import TrustedDevices from './index';
 
-const localVue = createLocalVue();
 const MapMixin = {
   computed: {
     googleMapsApiKey() {
@@ -143,30 +146,36 @@ describe('TrustedDevices.vue', () => {
     jest.spyOn(TrustedDevices, 'mounted')
       .mockImplementation(() => { });
 
+    const store = createStore({
+      state: {
+        SharedStore: { googleMapsApiKey: '' },
+      },
+    });
+
     wrapper = shallowMount(TrustedDevices, {
-      localVue,
-      mixins: [MapMixin],
-      mocks: {
-        $t: (match) => {
-          switch (match) {
-            case 'pages.profile.trustedDevices.editModalTitle':
-              return 'editTitle';
-            case 'pages.profile.trustedDevices.removeModalTitle':
-              return 'removeTitle';
-            case 'pages.profile.trustedDevices.remove':
-              return 'remove';
-            case 'common.save':
-              return 'save';
-            default:
-              return 'none';
-          }
+      global: {
+        mocks: {
+          $t: (match) => {
+            switch (match) {
+              case 'pages.profile.trustedDevices.editModalTitle':
+                return 'editTitle';
+              case 'pages.profile.trustedDevices.removeModalTitle':
+                return 'removeTitle';
+              case 'pages.profile.trustedDevices.remove':
+                return 'remove';
+              case 'common.save':
+                return 'save';
+              default:
+                return 'none';
+            }
+          },
         },
-        $store: () => {},
+        plugins: [store],
+        stubs: {
+          BModal: true,
+        },
       },
-      i18n,
-      stubs: {
-        BModal: true,
-      },
+      mixins: [MapMixin],
     });
   });
 
@@ -281,27 +290,37 @@ describe('TrustedDevices.vue', () => {
     expect(wrapper.vm.$data.editModal).toEqual(expectedClearModalData.editModalValue);
   });
 
-  it('handleModalPrimaryButton method calls the correct handler', () => {
+  it('handleModalPrimaryButton method calls the correct handler', async () => {
+    setupTestPinia({ user: { userSearchAttribute: '' } });
+    const store = createStore({
+      state: {
+        SharedStore: { googleMapsApiKey: '' },
+      },
+    });
     wrapper = shallowMount(TrustedDevices, {
-      localVue,
-      mixins: [MapMixin],
-      mocks: {
-        $t: () => {},
-        $store: {
-          state: {
-            UserStore: {
-              userSearchAttribute: '',
-            },
-          },
+      global: {
+        mocks: {
+          $t: () => {},
+          $set: () => {},
+        },
+        plugins: [i18n, store, Notifications],
+        stubs: {
+          BModal,
         },
       },
-      i18n,
+      data() {
+        return {
+          devices: deviceData,
+        };
+      },
     });
+
     const updateDeviceAliasSpy = jest.spyOn(wrapper.vm, 'updateDeviceAlias');
-    const getRequestServiceSpy = jest.spyOn(wrapper.vm, 'getRequestService').mockReturnValue({
-      put: () => Promise.resolve(),
+    const getRequestServiceSpy = jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({
+      put: () => Promise.resolve({ data: {} }),
       delete: () => Promise.resolve(),
-    });
+      get: () => Promise.resolve({ data: { result: [] } }),
+    }));
     const removeDeviceSpy = jest.spyOn(wrapper.vm, 'removeDevice');
     wrapper.vm.$data.modalDevice = { id: '111', index: '1' };
     wrapper.vm.$data.editModal = 'update';

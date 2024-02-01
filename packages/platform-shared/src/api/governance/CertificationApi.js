@@ -12,7 +12,15 @@ const governanceCertificationBaseUrl = `${governanceBaseUrl}/certification`;
 const governanceCertificationAdminBaseUrl = `${governanceBaseUrl}/admin/certification`;
 
 /**
- * @typedef {"entitlements" | "accounts" | "roles" } detailsType
+ *
+ * Certification Administration
+ *
+ */
+
+/**
+ * Gets all certification campaigns
+ * @param {Object} params query parameters
+ * @returns {Promise}
  */
 export function getAdminCertificationItems(params = {}) {
   const defaultParams = {
@@ -27,7 +35,9 @@ export function getAdminCertificationItems(params = {}) {
 }
 
 /**
- * Get certification items
+ * Get certifications for a user
+ * @param {Object} params query parameters
+ * @returns {Promise}
  */
 export function getCertificationItems(params = {}) {
   const defaultParams = {
@@ -38,35 +48,49 @@ export function getCertificationItems(params = {}) {
   return generateIgaApi().get('governance/certification/items', { params: { ...defaultParams, ...params } });
 }
 
+/**
+ * Launch a certification campaign
+ * @param {String} campaignId id of campaign
+ * @returns {Promise}
+ */
 export function activateCertification(campaignId) {
   return generateIgaApi().post(`/governance/certification/${campaignId}/activate`);
 }
 
+/**
+ * cancel a certification campaign
+ * @param {String} campaignId id of campaign
+ * @returns {Promise}
+ */
 export function cancelCertification(campaignId) {
   return generateIgaApi().post(`/governance/certification/${campaignId}/cancel`);
 }
 
-export function updateCertificationDeadline(campaignId, newDeadline) {
-  return generateIgaApi().post(`/governance/certification/${campaignId}/update-deadline`, { newDeadline });
-}
-
+/**
+ * delete a certification campaign
+ * @param {String} campaignId id of campaign
+ * @returns {Promise}
+ */
 export function deleteCertification(campaignId) {
   return generateIgaApi().delete(`/governance/certification/${campaignId}`);
 }
 
 /**
- * Take forward action on certifications
- * @param {String} userId ID of reviewer user
- * @param {String} certId ID of the certification campaign
- * @param {String} newActorId ID to delegate the item to
- * @param {String} comment Comment to leave on delegate
+ * update deadline of a certification campaign
+ * @param {String} campaignId id of campaign
+ * @param {String} newDeadline new deadline date
  * @returns {Promise}
  */
-export function forwardCertification(userId, certId, newActorId, comment) {
-  const url = `${governanceCertificationBaseUrl}/${certId}/items/forward?selectAllActorId=${userId}`;
-  return generateIgaApi().post(url, { newActorId, comment, ids: [] });
+export function updateCertificationDeadline(campaignId, newDeadline) {
+  return generateIgaApi().post(`/governance/certification/${campaignId}/update-deadline`, { newDeadline });
 }
 
+/**
+ * Search for templates with names containing a string
+ * @param {String} searchTerm search for templates that contain this string
+ * @param {Object} params additional query parameters
+ * @returns {Promise}
+ */
 export function searchCertificates(searchTerm, params) {
   const defaultParams = {
     pageSize: 10,
@@ -85,51 +109,50 @@ export function searchCertificates(searchTerm, params) {
   }, { params: { ...defaultParams, ...params } });
 }
 
+/**
+ * Get all template names up to a limit of 10,000
+ * This is used for template name uniqueness validation
+ * @returns {Promise}
+ */
 export function searchAllTemplateNames() {
   return generateIgaApi().get('/governance/certification/template?pageSize=10000&fields=name');
 }
 
 /**
-* Returns the list of certification tasks
-*
-* @param {object} params - Optional parameters to be plugged into query string
-* {
-*   queryFilter: String,
-*   sortBy: String,
-*   pageSize: String,
-* }
-* @returns {Promise}
-*/
-export function getCertificationTasksListByCampaign(urlParams, campaign, payload) {
+ * Get details of a single certification campaign
+ * @param {String} campaignId - id of the selected campaign
+ * @returns {Promise}
+ */
+export function getCertificationDetails(campaignId) {
+  const resourceUrl = `${governanceCertificationAdminBaseUrl}/${campaignId}`;
+  return generateIgaApi().get(resourceUrl);
+}
+
+/**
+ *
+ * General Certification Actions
+ *
+ */
+
+/**
+ * Returns the list of certification task items for a campaign
+ * @param {Object} params - Optional parameters to be appended as a query string
+ * @param {String} campaignId - id of the selected campaign
+ * @param {Object} payload - target filter for filtering items
+ * @returns {Promise}
+ */
+export function getCertificationTasksListByCampaign(urlParams, campaignId, payload) {
   const queryParams = new URLSearchParams(urlParams).toString();
-  const resourceUrl = `${governanceCertificationBaseUrl}/${campaign}/items/search?${queryParams}`;
+  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/search?${queryParams}`;
   return generateIgaApi().post(resourceUrl, payload);
 }
 
-export function getCertificationTaskAccountDetails(campaignId, itemId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/account`;
-  return generateIgaApi().get(resourceUrl);
-}
-
-export function getCertificationCountsByCampaign(campaign, actorId, isAdmin, taskStatus) {
-  const params = {
-    getCount: true,
-    isAdmin,
-    taskStatus,
-    ...(isAdmin ? { primaryReviewerId: actorId } : { actorId }),
-  };
-
-  const queryParams = new URLSearchParams(params).toString();
-  const resourceUrl = `${governanceCertificationBaseUrl}/${campaign}/items?${queryParams}`;
-  return generateIgaApi().get(resourceUrl);
-}
 /**
-* Returns in progress tasks
-*
-* @param {string} campaignId - id of the selected campaign
-* @param {boolean} isAdmin - determine if the user is admin
-* @returns {Promise}
-*/
+ * Returns in progress tasks
+ * @param {String} campaignId - id of the selected campaign
+ * @param {Boolean} isAdmin - is the user an admin
+ * @returns {Promise}
+ */
 export function getInProgressTasksByCampaign(campaignId, isAdmin = false, taskStatus) {
   const queryParams = {
     status: 'in-progress',
@@ -141,47 +164,33 @@ export function getInProgressTasksByCampaign(campaignId, isAdmin = false, taskSt
 }
 
 /**
-* Returns the certification details
-*
-* @param {object} params - Optional parameters to be plugged into query string
-* campaignId
-* @returns {Promise}
-*/
-export function getCertificationDetails(campaignId) {
-  const resourceUrl = `${governanceCertificationAdminBaseUrl}/${campaignId}`;
+ * Gets the total, undecided, and decided counts (certify, revoke, etc)
+ * of items in a campaign
+ * @param {String} campaignId - id of the selected campaign
+ * @param {String} actorId id of current actor
+ * @param {Boolean} isAdmin - is the user an admin
+ * @param {String} taskStatus - restrict counts to a specific task status
+ * @returns {Promise}
+ */
+export function getCertificationCounts(campaignId, actorId, isAdmin, taskStatus) {
+  const params = {
+    getCount: true,
+    isAdmin,
+    taskStatus,
+    ...(isAdmin ? { primaryReviewerId: actorId } : { actorId }),
+  };
+
+  const queryParams = new URLSearchParams(params).toString();
+  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items?${queryParams}`;
   return generateIgaApi().get(resourceUrl);
 }
 
 /**
-* Returns user info by certification line item
-* @param {String} campaignId Id of the current campaign
-* @param {String} lineItemId Id of line item
-* @returns {Promise}
-*/
-export function getCertificationLineItemUser(campaignId, lineItemId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${lineItemId}/user`;
-  return generateIgaApi().get(resourceUrl);
-}
-
-/**
-* forward all certification tasks
-*
-* @param {object} certId - id of the certification
-* campaignId
-* @returns {Promise}
-*/
-export function forwardCertificationTasks(certId, payload) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/forward`;
-  return generateIgaApi().post(resourceUrl, payload);
-}
-
-/**
-* sifgOff all certification tasks if they are all completed
-*
-* @param {object} certId - id of the certification
-* campaignId
-* @returns {Promise}
-*/
+ * sign off on all certification tasks that have decisions
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @returns {Promise}
+ */
 export function signOffCertificationTasks(certId, actorId) {
   const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/signoff`;
   return generateIgaApi().post(resourceUrl, {
@@ -191,181 +200,323 @@ export function signOffCertificationTasks(certId, actorId) {
 }
 
 /**
-* certify certification tasks
-*
-* @param {object} certId - id of the certification
-* campaignId
-* @returns {Promise}
-*/
-export function certifyCertificationTasks(certId, lineItemsIds) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/certify`;
-  return generateIgaApi().post(resourceUrl, lineItemsIds);
-}
-
-/**
-* revoke certification tasks
-*
-* @param {object} certId - id of the certification
-* campaignId
-* @returns {Promise}
-*/
-export function revokeCertificationTasks(certId, lineItemsIds) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/revoke`;
-  return generateIgaApi().post(resourceUrl, lineItemsIds);
-}
-
-/**
-* exception certification tasks
-*
-* @param {object} certId - id of the certification
-* campaignId
-* @returns {Promise}
-*/
-export function exceptionCertificationTasks(certId, lineItemsIds) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/exception`;
-  return generateIgaApi().post(resourceUrl, lineItemsIds);
-}
-
-/**
-* reassign certification tasks
-*
-* @param {object} certId - id of the certification
-* campaignId
-* @returns {Promise}
-*/
-export function reassignCertificationTasks(certId, lineItemsIds) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/reassign`;
-  return generateIgaApi().post(resourceUrl, lineItemsIds);
-}
-
-/**
-* delegate certification tasks
-*
-* @param {object} certId - id of the certification
-* campaignId
-* @returns {Promise}
-*/
-export function delegateCertificationTasks(certId, lineItemsIds) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/delegate`;
-  return generateIgaApi().post(resourceUrl, lineItemsIds);
-}
-
-/**
- * Returns single certification item by Id
- * @param {String} certId ID of the certification campaign
- * @param {String} lineItemId ID of the certification line item
+ * Forward all items in a certification for a single actor
+ * @param {String} actorId id of actor attempting to forward
+ * @param {String} certId certification id
+ * @param {String} newActorId id of actor to forwawrd to
+ * @param {String} comment comment to leave on forward
  * @returns {Promise}
  */
-export function getCertificationLineItem(certId, lineItemId) {
-  const url = `${governanceCertificationBaseUrl}/${certId}/items/${lineItemId}`;
-  return generateIgaApi().get(url);
+export function forwardCertification(actorId, certId, newActorId, comment) {
+  const url = `${governanceCertificationBaseUrl}/${certId}/items/forward?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(url, { newActorId, comment, ids: [] });
 }
 
 /**
- * Take certify action on items
- * @param {String} certId ID of the certification campaign
- * @param {String} lineItemId ID of the certification line item
+ * Get all users within a certification for an actor
+ * This is used to allow users to filter cert items based on user
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
  * @returns {Promise}
  */
-export function certifyLineItem(certId, lineItemId) {
-  const url = `${governanceCertificationBaseUrl}/${certId}/items/${lineItemId}/certify`;
-  return generateIgaApi().post(url);
+export function getCertificationUserFilter(certId, actorId) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/filter/user?actorId=${actorId}`;
+  return generateIgaApi().get(resourceUrl);
 }
 
-export function resetLineItem(certId, lineItemId) {
-  const url = `${governanceCertificationBaseUrl}/${certId}/items/${lineItemId}/reset`;
+/**
+ * Get all applications within a certification for an actor
+ * This is used to allow users to filter cert items based on application
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @returns {Promise}
+ */
+export function getCertificationApplicationFilter(certId, actorId) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/filter/application?actorId=${actorId}`;
+  return generateIgaApi().get(resourceUrl);
+}
+
+/**
+ *
+ * Single Certification Item Actions
+ *
+ */
+
+/**
+ * Certify a single item
+ * @param {String} certId certification id
+ * @param {String} itemId id of item to certify
+ * @returns {Promise}
+ */
+export function certifyItem(certId, itemId) {
+  const url = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/certify`;
   return generateIgaApi().post(url);
 }
 
 /**
- * Take revoke action on items
- * @param {String} certId ID of the certification campaign
- * @param {String} lineItemId ID of the certification line item
- * @param {String} comment Comment to leave on revoke
+ * Allow Exception for a single item
+ * @param {String} certId certification id
+ * @param {String} itemId id of item to allow exception for
+ * @param {String} comment comment to leave on exception
  * @returns {Promise}
  */
-export function revokeLineItem(certId, lineItemId, comment = '') {
-  const url = `${governanceCertificationBaseUrl}/${certId}/items/${lineItemId}/revoke`;
+export function exceptionItem(certId, itemId, comment = '') {
+  const url = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/exception`;
   return generateIgaApi().post(url, { comment });
 }
 
 /**
- * Take exception action on items
- * @param {String} certId ID of the certification campaign
- * @param {String} lineItemId ID of the certification line item
- * @param {String} comment Comment to leave on exception
+ * Forward a single item
+ * @param {String} certId certification id
+ * @param {String} itemId id of item to forward
+ * @param {String} comment comment to leave on forward
+ * @param {String} newActorId id of actor to forward to
  * @returns {Promise}
  */
-export function exceptionLineItem(certId, lineItemId, comment = '') {
-  const url = `${governanceCertificationBaseUrl}/${certId}/items/${lineItemId}/exception`;
-  return generateIgaApi().post(url, { comment });
+export function forwardItem(certId, itemId, comment = '', newActorId) {
+  const url = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/forward`;
+  return generateIgaApi().post(url, { comment, newActorId });
 }
 
 /**
- * Reassign items to another ID
- * @param {String} certId ID of the certification campaign
- * @param {String} lineItemId ID of the certification line item
- * @param {String} newActorId ID to reassign the item to
- * @param {object} permissions - object with the permissions for the actor
+ * Reassign a single item
+ * @param {String} certId certification id
+ * @param {String} itemId id of item to reassign
+ * @param {String} newActorId id of actor to reassign to
+ * @param {object} permissions - object with the permissions for the new actor
  * @returns {Promise}
  */
-export function reassignLineItem(certId, lineItemId, newActorId, permissions) {
-  const url = `${governanceCertificationBaseUrl}/${certId}/items/${lineItemId}/reassign`;
+export function reassignItem(certId, itemId, newActorId, permissions) {
+  const url = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/reassign`;
   return generateIgaApi().post(url, { newActorId, permissions });
 }
 
 /**
- * Take forward action on items
- * @param {String} certId ID of the certification campaign
- * @param {String} lineItemId ID of the certification line item
- * @param {String} comment Comment to leave on delegate
- * @param {String} newActorId ID to delegate the item to
+ * Reset decisions for a single item
+ * @param {String} certId certification id
+ * @param {String} itemId id of item to reset decisions on
  * @returns {Promise}
  */
-export function forwardLineItem(certId, lineItemId, comment = '', newActorId) {
-  const url = `${governanceCertificationBaseUrl}/${certId}/items/${lineItemId}/forward`;
-  return generateIgaApi().post(url, { comment, newActorId });
+export function resetItem(certId, itemId) {
+  const url = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/reset`;
+  return generateIgaApi().post(url);
 }
 
-export function saveComment(certId, lineItemId, comment) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/${lineItemId}/comment`;
+/**
+ * Revoke a single item
+ * @param {String} certId certification id
+ * @param {String} itemId id of item to revoke
+ * @param {String} comment comment to leave on revoke
+ * @returns {Promise}
+ */
+export function revokeItem(certId, itemId, comment = '') {
+  const url = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/revoke`;
+  return generateIgaApi().post(url, { comment });
+}
+
+/**
+ * Save a comment for a single item
+ * @param {String} certId certification id
+ * @param {String} itemId id of item to revoke
+ * @param {String} comment comment to add
+ * @returns {Promise}
+ */
+export function saveComment(certId, itemId, comment) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/comment`;
   return generateIgaApi().post(resourceUrl, { comment });
 }
 
-export function getCertificationUserFilter(certId, certifierId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/filter/user?actorId=${certifierId}`;
-  return generateIgaApi().get(resourceUrl);
-}
-
-export function getCertificationApplicationFilter(certId, certifierId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/filter/application?actorId=${certifierId}`;
-  return generateIgaApi().get(resourceUrl);
-}
-
-export function updateLineItemReviewers(itemId, actors) {
+/**
+ * Update actors for a single item
+ * @param {String} itemId id of item to update actors for
+ * @param {Object} actors updated actors list
+ * @returns {Promise}
+ */
+export function updateActors(itemId, actors) {
   const resourceUrl = `${governanceCertificationBaseUrl}/items/${itemId}/actors`;
   return generateIgaApi().put(resourceUrl, { actors });
 }
 
 /**
- * @description Obtains the entitlement details of a specific line item
- * @param {String} campaignId - ID of line item campaign
- * @param {String} itemId - ID of line item
+ *
+ * Bulk Certification Item Actions
+ *
+ */
+
+/**
+ * certify multiple items
+ * @param {object} certId certification id
+ * @param {String} itemIds ids of items to certify
  * @returns {Promise}
  */
-export function getCertificationEntitlementDetails(campaignId, itemId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/entitlement`;
+export function certifyItems(certId, itemIds) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/certify`;
+  return generateIgaApi().post(resourceUrl, itemIds);
+}
+
+/**
+ * reassign multiple items
+ * @param {String} certId certification id
+ * @param {Object} payload ids, newActorId, and permissions
+ * @returns {Promise}
+ */
+export function reassignCertificationTasks(certId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/reassign`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ * revoke multiple items
+ * @param {object} certId certification id
+ * @param {String} itemIds ids of items to revoke
+ * @returns {Promise}
+ */
+export function revokeItems(certId, itemIds) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/revoke`;
+  return generateIgaApi().post(resourceUrl, itemIds);
+}
+
+/**
+ * allow exception for multiple items
+ * @param {object} certId certification id
+ * @param {String} itemIds ids of items to allow exception for
+ * @returns {Promise}
+ */
+export function exceptionItems(certId, itemIds) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/exception`;
+  return generateIgaApi().post(resourceUrl, itemIds);
+}
+
+/**
+ * forward all certification tasks
+ * @param {object} certId certification id
+ * @returns {Promise}
+ */
+export function forwardItems(certId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/forward`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ *
+ * All items certification actions
+ *
+ */
+/**
+
+ * certify all items in a campaign
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @returns {Promise}
+ */
+export function certifyAllItems(certId, actorId) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/certify?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl);
+}
+/**
+ * reassign all certification items
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @param {Object} payload newActorId, and permissions
+ * @returns {Promise}
+ */
+export function reassignAllCertificationTasks(certId, actorId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/reassign?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ * revoke all certification items
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @param {Object} payload comments
+ * @returns {Promise}
+ */
+export function revokeAllItems(certId, actorId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/revoke?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ * allow exception for all certification items
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @param {Object} payload comments
+ * @returns {Promise}
+ */
+export function exceptionAllItems(certId, actorId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/exception?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ * forward all certification items
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @param {Object} payload newActorId and comments
+ * @returns {Promise}
+ */
+export function forwardAllItems(certId, actorId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/forward?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ * Reset decisions for all certification tasks
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @returns {Promise}
+ */
+export function resetAllItems(certId, actorId) {
+  const url = `${governanceCertificationBaseUrl}/${certId}/items/reset?selectAllActorId=${actorId}&_action=reset`;
+  return generateIgaApi().post(url);
+}
+
+/**
+ * Certification Item Details
+ */
+
+/**
+ * Obtains the entitlement details of a specific line item
+ * @param {String} certId certification id
+ * @param {String} itemId item id
+ * @returns {Promise}
+ */
+export function getAccountDetails(certId, itemId) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/account`;
   return generateIgaApi().get(resourceUrl);
 }
 
 /**
- * @description Obtains entitlements, accounts or roles details by user
- * @param {String} campaignId - ID of line item campaign
- * @param {String} itemId - ID of line item
- * @param {detailsType} detailsType
+ * Obtains the entitlement details of a specific line item
+ * @param {String} certId certification id
+ * @param {String} itemId item id
  * @returns {Promise}
  */
-export function getUserDetails(campaignId, itemId, detailsType) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/user/${detailsType}`;
+export function getEntitlementDetails(certId, itemId) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/entitlement`;
+  return generateIgaApi().get(resourceUrl);
+}
+
+/**
+ * Obtains the user details of a specific line item
+ * @param {String} certId certification id
+ * @param {String} itemId item id
+ * @returns {Promise}
+ */
+export function getUserDetails(certId, itemId) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/user`;
+  return generateIgaApi().get(resourceUrl);
+}
+
+/**
+ * Obtains entitlements, accounts or roles details by user
+ * @param {String} certId certification id
+ * @param {String} itemId item id
+ * @param {String} detailsType type of details to get
+ * @returns {Promise}
+ */
+export function getUserDetailsByType(certId, itemId, detailsType) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/user/${detailsType}`;
   return generateIgaApi().get(resourceUrl);
 }

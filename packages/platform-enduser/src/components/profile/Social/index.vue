@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -126,7 +126,9 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import {
   BButton,
   BCol,
@@ -167,10 +169,8 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      aliasList: (state) => state.UserStore.aliasList,
-      userId: (state) => state.UserStore.userId,
-    }),
+    ...mapState(useUserStore, ['userId']),
+    ...mapState(useEnduserStore, ['aliasList']),
   },
   mounted() {
     this.getSocialJourney().then(() => {
@@ -244,8 +244,8 @@ export default {
       // patch user object
       const patch = [{ operation: 'add', field: '/aliasList', value: newProviderList }];
       this.getRequestService().patch(`${conditionObject}/${this.userId}`, patch).then(() => {
-        // update store
-        store.commit('UserStore/setAliasList', newProviderList);
+        const enduserStore = useEnduserStore();
+        enduserStore.aliasList = newProviderList;
 
         const removed = this.socialProviders.find((element) => (element.provider === provider));
         this.$set(removed, 'connected', false);

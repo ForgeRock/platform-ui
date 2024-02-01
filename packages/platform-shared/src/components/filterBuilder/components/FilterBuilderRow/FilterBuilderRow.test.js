@@ -1,25 +1,27 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import FilterBuilderRow from './index';
 import { defaultConditionOptions } from '../../utils/QueryFilterDefaults';
+import * as CertFilterDefaults from '../../CertificationFilter/CertFilterDefaults';
 
 const mountProps = {
-  mocks: {
-    $t: () => {},
-    $store: {
-      state: {
-        userId: 'foo',
+  global: {
+    mocks: {
+      $t: () => {},
+      $store: {
+        state: {
+          userId: 'foo',
+        },
       },
     },
   },
-  propsData: {
+  props: {
     conditionOptions: defaultConditionOptions,
     depth: 0,
     index: 0,
@@ -81,11 +83,11 @@ describe('FilterBuilderRow', () => {
 
   it('should emit the rule-change and then clear the value input through the props', async () => {
     // set the input initial value
-    const inputFieldValue = wrapper.find('input[name="inputValue"]');
+    const inputFieldValue = wrapper.find('input[name="inputValue_user_2"]');
     inputFieldValue.setValue('Initial Value');
 
     // simulates the dropdown change
-    const propertySelector = wrapper.find('input[name="selectPropOptions"]');
+    const propertySelector = wrapper.find('input[name="selectPropOptions_user_2"]');
     propertySelector.setValue('Status');
     propertySelector.trigger('change');
 
@@ -135,6 +137,23 @@ describe('FilterBuilderRow', () => {
     );
   });
 
+  it('Returns the correct select options by type (Int)', async () => {
+    await wrapper.setProps({
+      conditionOptions: CertFilterDefaults.defaultConditionOptions,
+    });
+
+    const returnObject = wrapper.vm.conditionOptionsByType('int');
+    expect(returnObject).toEqual(
+      [
+        { text: 'is', value: 'EQUALS' },
+        { text: 'GTE (>=)', value: 'GTE' },
+        { text: 'GT (>)', value: 'GT' },
+        { text: 'LTE (<=)', value: 'LTE' },
+        { text: 'LT (<)', value: 'LT' },
+      ],
+    );
+  });
+
   it('Returns the correct select options by type (Boolean)', () => {
     const returnObject = wrapper.vm.conditionOptionsByType('boolean');
     expect(returnObject).toEqual(
@@ -149,8 +168,8 @@ describe('FilterBuilderRow', () => {
   it('Initial rule renders without a value', () => {
     const presentWrapper = mount(FilterBuilderRow, {
       ...mountProps,
-      propsData: {
-        ...mountProps.propsData,
+      props: {
+        ...mountProps.props,
         rule: {
           field: '/userName', operator: 'pr', uniqueIndex: 2, value: '',
         },

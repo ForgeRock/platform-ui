@@ -5,30 +5,26 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { BootstrapVue } from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import PrivilegeEditor from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('PrivilegeEditor.vue', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(PrivilegeEditor, {
-      localVue,
-      mocks: {
-        $t: (key) => key,
-        $store: {
-          state: {
-            realm: 'test',
-            UserStore: {
-              adminUser: true,
+      global: {
+        mocks: {
+          $t: (key) => key,
+          $store: {
+            state: {
+              realm: 'test',
             },
           },
         },
+        plugins: [Notifications],
       },
-      propsData: {
+      props: {
         privilege: {
           accessFlags: [],
           permissions: ['CREATE'],
@@ -61,7 +57,7 @@ describe('PrivilegeEditor.vue', () => {
     });
   });
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('checks for unique names', () => {

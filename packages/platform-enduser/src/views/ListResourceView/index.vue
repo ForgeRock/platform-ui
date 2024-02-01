@@ -54,10 +54,11 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
   </BContainer>
 </template>
-<script>
 
+<script>
 import axios from 'axios';
 import {
+  BButton,
   BCard,
   BContainer,
   VBModal,
@@ -96,6 +97,7 @@ export default {
     TranslationMixin,
   ],
   components: {
+    BButton,
     BCard,
     BContainer,
     FrCreateResource,
@@ -146,7 +148,7 @@ export default {
         this.setPrivileges(privilege, schema);
       });
     }), (error) => {
-      this.displayNotification('error', error.response.data.message);
+      this.showErrorMessage(error, this.$t('errors.retrievingObject', { object: this.$route.params.resourceName }));
     });
   },
   methods: {

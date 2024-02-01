@@ -20,10 +20,9 @@ of the MIT license. See the LICENSE file for details. -->
               class="card"
               v-if="authenticationDevicesArray.length">
               <template
-                v-for="device in authenticationDevicesArray">
-                <div
-                  :key="device.uuid"
-                  class="card-body border-bottom">
+                v-for="device in authenticationDevicesArray"
+                :key="device.uuid">
+                <div class="card-body border-bottom">
                   <BRow class="px-4">
                     <div class="w-100 media align-items-center">
                       <FrIcon
@@ -47,9 +46,9 @@ of the MIT license. See the LICENSE file for details. -->
                           />
                         </template>
                         <template
-                          v-for="(button, index) in device.dropdown">
-                          <div
-                            :key="button.text">
+                          v-for="(button, index) in device.dropdown"
+                          :key="button.text">
+                          <div>
                             <BDropdownDivider v-if="index > 0" />
                             <BDropdownItemButton @click="button.action">
                               <FrIcon
@@ -134,10 +133,11 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BCol, BDropdown, BDropdownDivider, BDropdownItemButton, BRow, BModal, BButton,
 } from 'bootstrap-vue';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -156,7 +156,6 @@ export default {
     RestMixin,
     NotificationMixin,
     TranslationMixin,
-    BreadcrumbMixin,
   ],
   components: {
     BButton,
@@ -178,6 +177,10 @@ export default {
       default: false,
     },
   },
+  setup() {
+    const { setBreadcrumb } = useBreadcrumb();
+    return { setBreadcrumb };
+  },
   data() {
     return {
       authenticationDevicesArray: [],
@@ -188,9 +191,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userSearchAttribute,
-    }),
+    ...mapState(useUserStore, ['userSearchAttribute']),
   },
   methods: {
     /**
@@ -225,7 +226,7 @@ export default {
      * @returns {String} 2FA url
      */
     get2faUrl(authType) {
-      return `/users/${this.userId}/devices/2fa/${authType}`;
+      return `/users/${this.userSearchAttribute}/devices/2fa/${authType}`;
     },
     /**
      * Get all authentication devices for all types for a user
@@ -272,7 +273,7 @@ export default {
           if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
             this.setModalData('errorDelete', {});
           } else {
-            this.displayNotification('error', error.response.data.message);
+            this.showErrorMessage(error, this.$t('pages.authenticationDevices.deleteError'));
           }
         });
     },
@@ -299,7 +300,7 @@ export default {
           if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
             this.setModalData('errorEdit', {});
           } else {
-            this.displayNotification('error', error.response.data.message);
+            this.showErrorMessage(error, this.$t('pages.authenticationDevices.editError'));
           }
         });
     },

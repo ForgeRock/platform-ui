@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,31 +14,30 @@ of the MIT license. See the LICENSE file for details. -->
             class="rule-property-col mb-2 mb-md-0">
             <FrField
               v-if="properties.length"
-              v-model="selectPropOptions.value"
-              name="selectPropOptions"
+              :value="selectPropOptions.value"
               type="select"
               :disabled="disabled"
+              :name="`selectPropOptions_${uniqueName}`"
               :options="selectPropOptions.options"
               :placeholder="propertyPlaceholder"
-              @input="ruleChange({ field: $event })" />
+              @input="selectPropOptions.value = $event; ruleChange({ field: $event })" />
             <FrField
               v-else
-              v-model="customPropValue"
-              name="Custom"
-              type="string"
-              @input="ruleChange({ field: $event })" />
+              :value="customPropValue"
+              :name="`Custom_${uniqueName}`"
+              @input="customPropValue = $event; ruleChange({ field: $event })" />
           </BCol>
           <BCol
             class="rule-condition-col mb-2 mb-md-0"
             :md="true">
             <FrField
-              v-model="selectConditionOptions.value"
-              name="selectConditionOptions"
+              :value="selectConditionOptions.value"
               type="select"
               :disabled="disabled"
+              :name="`selectConditionOptions_${uniqueName}`"
               :options="selectConditionOptions.options"
               :searchable="false"
-              @input="ruleChange({ operator: $event })" />
+              @input="selectConditionOptions.value = $event; ruleChange({ operator: $event })" />
           </BCol>
           <BCol
             class="rule-value-col mb-2 mb-md-0"
@@ -49,14 +48,15 @@ of the MIT license. See the LICENSE file for details. -->
               :input-value="inputValue"
               :selected-condition="selectConditionOptions.value"
               :selected-prop="selectPropOptions.value"
-              :rule-change="ruleChange">
+              :rule-change="ruleChange"
+              :unique-name="`inputValue_${uniqueName}`">
               <FrField
-                v-model="inputValue.value"
-                name="inputValue"
+                :value="inputValue.value"
                 :disabled="disabled"
+                :name="`inputValue_${uniqueName}`"
                 :options="inputValue.options"
                 :type="inputValue.type"
-                @input="ruleChange({ value: $event })" />
+                @input="inputValue.value = $event; ruleChange({ value: $event })" />
             </slot>
           </BCol>
         </BFormRow>
@@ -145,6 +145,7 @@ export default {
       inputValue: this.parseType(this.rule.field, this.rule.value),
       value: '',
       customPropValue: this.rule.field,
+      uniqueName: `${this.resourceName}_${this.rule.uniqueIndex}`,
     };
   },
   props: {
@@ -237,6 +238,7 @@ export default {
             type: 'select', value: value.toLowerCase() === 'false' || value === false ? 'False' : 'True', options: ['True', 'False'],
           };
         case 'number':
+        case 'int':
           return { type: 'integer', value: typeof value === 'number' ? value : '' };
         case 'managedObject':
           return { type: 'managedObject', value, resourcePath: value };

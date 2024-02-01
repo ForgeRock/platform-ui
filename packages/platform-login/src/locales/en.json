@@ -8,12 +8,16 @@
     "newHere": "New here?",
     "sessionTimeoutLink": "Start Over",
     "title": "Login",
+    "header": {
+      "skipToMainContent": "Skip to main content"
+    },
     "kba": {
       "description": "Select security question(s) below. These questions will help us verify your identity if you forget your password.",
       "selectQuestion": "Select a security question...",
       "custom": "Provide your own:",
       "question": "Question",
       "answer": "Answer",
+      "answerFor": "Answer for: {question}",
       "notUnique": "Custom questions cannot be duplicates"
     },
     "password": {
@@ -24,6 +28,7 @@
       "message": "Open your Authenticator app and tap the number shown to sign-in."
     },
     "social": {
+      "legend": "Social Sign-in",
       "or": "or",
       "signInWith": "Sign in with {buttonDisplayName}"
     },

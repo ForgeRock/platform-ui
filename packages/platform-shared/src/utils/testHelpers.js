@@ -23,6 +23,18 @@ export function findByTestId(wrapper, testId) {
   return wrapper.find(`[data-testid=${testId}]`);
 }
 
+export function findComponentByTestId(wrapper, testId) {
+  if (!wrapper) {
+    throw new Error('Please provide a wrapper');
+  }
+
+  if (typeof testId !== 'string') {
+    throw new Error('Please provide a valid data-testid');
+  }
+
+  return wrapper.findComponent(`[data-testid=${testId}]`);
+}
+
 /**
  * vue-test-utils helper function for getting all elements matching data-testid
  * @param {*} wrapper the component wrapper
@@ -44,7 +56,7 @@ export function findAllByTestId(wrapper, testId) {
 /**
  * vue-test-utils helper function for getting an element by role
  * @param {*} wrapper the component wrapper
- * @param {*} testId the role
+ * @param {*} role the role
  * @returns a wrapper containing the found element
  */
 export function findByRole(wrapper, role) {
@@ -57,6 +69,32 @@ export function findByRole(wrapper, role) {
   }
 
   return wrapper.find(`[role=${role}]`);
+}
+
+/**
+ * vue-test-utils helper function for getting all elements matching the passed text
+ * @param {*} wrapper the component wrapper
+ * @param {*} selector an selector (eg. element tag) to filter matches by
+ * @param {String} text the text to match against
+ * @returns a wrapper array containing the found elements
+ */
+export function findAllByText(wrapper, selector, text) {
+  if (!wrapper) throw new Error('Please provide a wrapper');
+  if (selector === null || selector === undefined) throw new Error('Please provide a valid selector');
+  if (typeof text !== 'string') throw new Error('Please provide a valid text value');
+
+  return wrapper.findAll(selector).filter((item) => item.text().includes(text));
+}
+
+/**
+ * vue-test-utils helper function for getting an element by text
+ * @param {*} wrapper the component wrapper
+ * @param {*} selector an selector (eg. element tag) to filter matches by
+ * @param {String} text the text to match against
+ * @returns a wrapper containing the found element
+ */
+export function findByText(wrapper, selector, text) {
+  return findAllByText(wrapper, selector, text)[0];
 }
 
 /**

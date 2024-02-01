@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2023 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 import { mount } from '@vue/test-utils';
 import i18n from '@forgerock/platform-shared/src/i18n';
 import ActionsCell from './index';
@@ -6,8 +13,10 @@ import { findByTestId } from '../../../utils/testHelpers';
 describe('Actions cell actions and renders', () => {
   it('renders "Delete" and "Edit" by default if no props are passed', () => {
     const wrapper = mount(ActionsCell, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         testId: '0',
       },
     });
@@ -24,8 +33,10 @@ describe('Actions cell actions and renders', () => {
 
   it('does not render any options when default options are set to false', () => {
     const wrapper = mount(ActionsCell, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         testId: '0',
         deleteOption: false,
         editOption: false,
@@ -47,8 +58,10 @@ describe('Actions cell actions and renders', () => {
 
   it('renders list items "Edit" and "Deactivate" when deleteOption is false and toggle properties are true', () => {
     const wrapper = mount(ActionsCell, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         testId: '0',
         deleteOption: false,
         showActiveToggle: true,
@@ -69,8 +82,10 @@ describe('Actions cell actions and renders', () => {
 
   it('renders "Activate" when toggleIsActive property is false', () => {
     const wrapper = mount(ActionsCell, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         testId: '0',
         showActiveToggle: true,
         toggleIsActive: false,
@@ -84,8 +99,10 @@ describe('Actions cell actions and renders', () => {
 
   it('emits delete-clicked event when Delete dropdown item is clicked', () => {
     const wrapper = mount(ActionsCell, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         testId: '0',
         deleteOption: true,
       },
@@ -102,8 +119,10 @@ describe('Actions cell actions and renders', () => {
 
   it('emits duplicate-clicked event when Duplicate dropdown item is clicked', () => {
     const wrapper = mount(ActionsCell, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         testId: '0',
         duplicateOption: true,
       },
@@ -119,8 +138,10 @@ describe('Actions cell actions and renders', () => {
 
   it('emits edit-clicked event when Edit dropdown item is clicked', () => {
     const wrapper = mount(ActionsCell, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         testId: '0',
         editOption: true,
       },
@@ -136,8 +157,10 @@ describe('Actions cell actions and renders', () => {
 
   it('emits toggle-clicked event when Deactivate dropdown toggle item is clicked', () => {
     const wrapper = mount(ActionsCell, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         testId: '0',
         showActiveToggle: true,
       },

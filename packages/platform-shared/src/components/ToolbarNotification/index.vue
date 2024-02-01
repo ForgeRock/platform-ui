@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ notification.message }}
               </h6>
               <small class="text-muted">
-                {{ notification.createDate | cleanDate }}
+                {{ cleanDate(notification.createDate) }}
               </small>
             </div>
             <BButton
@@ -86,12 +86,15 @@ import {
   sortBy,
 } from 'lodash';
 import {
+  BButton,
   BNavItemDropdown,
   BDropdownHeader,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -114,6 +117,7 @@ dayjs.extend(utc);
 export default {
   name: 'ToolbarNotification',
   components: {
+    BButton,
     BNavItemDropdown,
     BDropdownHeader,
     FrIcon,
@@ -131,19 +135,14 @@ export default {
   mounted() {
     this.loadData();
   },
-  filters: {
+  computed: {
+    ...mapState(useUserStore, ['userId', 'managedResource']),
+    ...mapState(useEnduserStore, ['isInternalUser']),
+  },
+  methods: {
     cleanDate(value) {
       return `${dayjs.utc(value).format('MMMM D, YYYY h:mm A')} UTC`;
     },
-  },
-  computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-      internalUser: (state) => state.UserStore.internalUser,
-      managedResource: (state) => state.UserStore.managedResource,
-    }),
-  },
-  methods: {
     resetPolling() {
       if (!isNull(this.timeoutId)) {
         clearTimeout(this.timeoutId);
@@ -162,7 +161,7 @@ export default {
 
       // If we start using notifications again, we need to look into whether the new static role naming convention
       // should be used here e.g. 'openidm-admin' instead of 'internal/user/openidm-admin'
-      const target = this.internalUser ? 'internal/user/openidm-admin' : `${this.managedResource}/${this.userId}`;
+      const target = this.isInternalUser ? 'internal/user/openidm-admin' : `${this.managedResource}/${this.userId}`;
 
       this.resetPolling();
 
@@ -176,7 +175,7 @@ export default {
           }
         })
         .catch(() => {
-          this.displayNotification('error', this.$t('pages.app.notifications.failedToClear'));
+          this.showErrorMessage('error', this.$t('pages.app.notifications.failedToClear'));
         });
     },
     clearOne(index) {
@@ -194,7 +193,7 @@ export default {
           }
         })
         .catch(() => {
-          this.displayNotification('error', this.$t('pages.app.notifications.failedToRemove'));
+          this.showErrorMessage('error', this.$t('pages.app.notifications.failedToRemove'));
         });
     },
     loadData() {

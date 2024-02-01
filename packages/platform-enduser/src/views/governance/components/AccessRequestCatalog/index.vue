@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,15 +10,16 @@ of the MIT license. See the LICENSE file for details. -->
         :subtitle="$t('governance.accessRequest.newRequest.catalogSubtitle')" />
     </div>
     <BTabs
-      v-model="selectedTab"
+      :value="selectedTab"
       class="my-4"
       content-class="mt-4"
       lazy
-      @input="tabChange()">
-      <template v-for="(catalogCategory, key) in catalogTabs">
+      @input="selectedTab = $event; tabChange()">
+      <template
+        v-for="(catalogCategory, key) in catalogTabs"
+        :key="key">
         <BTab
           class="p-0"
-          :key="key"
           :data-testid="`tab-${key}`"
           :title="catalogCategory.capitalizedTitle">
           <FrSpinner v-if="loading && firstQuery" />
@@ -52,7 +53,9 @@ of the MIT license. See the LICENSE file for details. -->
                         class="mr-2 align-self-center"
                         :src="option.icon" />
                       <BMediaBody class="pl-1">
-                        <div class="mb-1 text-dark">
+                        <div
+                          class="mb-1 text-dark"
+                          tabindex="0">
                           {{ option.title }}
                         </div>
                         <div class="text-muted">
@@ -60,9 +63,12 @@ of the MIT license. See the LICENSE file for details. -->
                         </div>
                       </BMediaBody>
                     </BMedia>
-                    <i
+                    <span
                       class="multiselect__tag-icon"
-                      @click="remove(option)" />
+                      tabindex="0"
+                      :aria-label="$t('common.remove')"
+                      @click.prevent="remove(option)"
+                      @keydown.enter="remove(option)" />
                   </span>
                 </template>
                 <template #option="{ option }">
@@ -131,20 +137,22 @@ of the MIT license. See the LICENSE file for details. -->
                 <BRow
                   v-else
                   :id="`${key}Grid`">
-                  <template v-for="(item, itemKey) in catalogItems">
+                  <template
+                    v-for="(item, itemKey) in catalogItems"
+                    :key="itemKey">
                     <BCol
                       cols="12"
                       lg="6"
                       xl="4"
-                      class="mb-4"
-                      :key="itemKey">
+                      class="mb-4">
                       <BCard
                         class="h-100 shadow-none cursor-pointer hover-blue-border"
                         no-body
                         role="button"
                         tabindex="0"
-                        @keydown.enter="toggleItemInCart(item)"
-                        @click="toggleItemInCart(item)">
+                        @keydown.enter="openItemDetails(item)"
+                        @click="openItemDetails(item)"
+                      >
                         <BCardBody class="d-flex">
                           <BMedia
                             body-class="overflow-hidden"
@@ -184,7 +192,9 @@ of the MIT license. See the LICENSE file for details. -->
                           </template>
                           <span
                             v-else
-                            class="hover-underline color-blue">
+                            class="hover-underline color-blue"
+                            @click="openItemDetails(item)"
+                          >
                             <FrIcon
                               class="mr-2"
                               name="add" />{{ $t('governance.accessRequest.newRequest.request') }}
@@ -196,10 +206,10 @@ of the MIT license. See the LICENSE file for details. -->
                 </BRow>
                 <FrPagination
                   v-if="totalCount > 10"
-                  v-model="page"
+                  :value="page"
                   :per-page="pageSize"
                   :total-rows="totalCount"
-                  @input="searchCatalog()"
+                  @input="searchCatalog({ page: $event })"
                   @on-page-size-change="searchCatalog({ pageSize: $event, page: 1 })" />
               </template>
             </div>
@@ -207,7 +217,9 @@ of the MIT license. See the LICENSE file for details. -->
         </BTab>
       </template>
     </BTabs>
-    <ValidationObserver v-slot="{ invalid }">
+    <VeeForm
+      v-slot="{ meta: { valid } }"
+      as="span">
       <BModal
         id="filterModal"
         no-close-on-backdrop
@@ -239,13 +251,21 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
           <BButton
             variant="primary"
-            :disabled="invalid"
+            :disabled="!valid"
             @click="ok">
             {{ $t('common.apply') }}
           </BButton>
         </template>
       </BModal>
-    </ValidationObserver>
+    </VeeForm>
+
+    <FrItemDetailsModal
+      :glossary-schema="currentGlossarySchema"
+      :item="selectedItem"
+      :item-type="tabType"
+      @modal-closed="selectedItem = {}"
+      @toggle-item="toggleItemInCart"
+    />
   </BContainer>
 </template>
 
@@ -268,7 +288,7 @@ import {
   BTab,
   BTabs,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrCertificationFilter from '@forgerock/platform-shared/src/components/filterBuilder/CertificationFilter';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -277,10 +297,11 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrSortDropdown from '@/components/governance/SortDropdown';
+import FrItemDetailsModal from './modals/ItemDetailsModal';
 
 /**
  * View housing access request catalog and request cart panel
@@ -303,16 +324,17 @@ export default {
     BRow,
     BTab,
     BTabs,
-    FrIcon,
+    FrCertificationFilter,
     FrField,
+    FrIcon,
+    FrItemDetailsModal,
     FrNoData,
     FrPageHeader,
     FrPagination,
-    FrCertificationFilter,
     FrSearchInput,
     FrSortDropdown,
     FrSpinner,
-    ValidationObserver,
+    VeeForm,
   },
   props: {
     applicationSearchResults: {
@@ -326,6 +348,10 @@ export default {
     catalogItems: {
       type: Array,
       default: () => [],
+    },
+    glossarySchema: {
+      type: Object,
+      default: () => ({}),
     },
     loading: {
       type: Boolean,
@@ -341,21 +367,21 @@ export default {
       applicationToFilterBy: '',
       catalogTabs: {
         application: {
-          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequest.newRequest.application'))),
+          capitalizedTitle: pluralizeValue(capitalize(this.$t('governance.accessRequest.newRequest.application'))),
           capitalizedSingularTitle: capitalize(this.$t('governance.accessRequest.newRequest.application')),
-          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequest.newRequest.application')),
+          lowercaseTitle: pluralizeValue(this.$t('governance.accessRequest.newRequest.application')),
           itemType: 'accountGrant',
         },
         entitlement: {
-          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequest.newRequest.entitlement'))),
+          capitalizedTitle: pluralizeValue(capitalize(this.$t('governance.accessRequest.newRequest.entitlement'))),
           capitalizedSingularTitle: capitalize(this.$t('governance.accessRequest.newRequest.entitlement')),
-          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequest.newRequest.entitlement')),
+          lowercaseTitle: pluralizeValue(this.$t('governance.accessRequest.newRequest.entitlement')),
           itemType: 'entitlementGrant',
         },
         role: {
-          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequest.newRequest.role'))),
+          capitalizedTitle: pluralizeValue(capitalize(this.$t('governance.accessRequest.newRequest.role'))),
           capitalizedSingularTitle: capitalize(this.$t('governance.accessRequest.newRequest.role')),
-          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequest.newRequest.role')),
+          lowercaseTitle: pluralizeValue(this.$t('governance.accessRequest.newRequest.role')),
           itemType: 'roleMembership',
         },
       },
@@ -366,6 +392,7 @@ export default {
       pageSize: 10,
       savedFilter: {},
       searchValue: '',
+      selectedItem: {},
       selectedTab: 0,
       sortDir: 'desc',
       sortKeys: 'application.name',
@@ -379,6 +406,9 @@ export default {
         subtitle: getApplicationDisplayName(application),
         icon: getApplicationLogo(application),
       }));
+    },
+    currentGlossarySchema() {
+      return this.glossarySchema[this.tabType];
     },
     filterOptions() {
       return this.catalogFilterSchema.map((option) => {
@@ -533,6 +563,14 @@ export default {
         };
         this.$emit('add-item-to-cart', emitItem);
       }
+    },
+    /**
+     * Open details for current item
+     * @param {Object} item metadata of item
+     */
+    openItemDetails(item) {
+      this.selectedItem = item;
+      this.$bvModal.show('accessRequestItemModal');
     },
   },
   watch: {

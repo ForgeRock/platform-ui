@@ -5,9 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import flushPromises from 'flush-promises';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import i18n from '@/i18n';
 import MyRequests from './index';
@@ -63,16 +63,18 @@ const accessRequests = [{
 
 describe('MyRequests', () => {
   const stubProps = {
-    i18n,
-    mocks: {
-      $store: { state: { UserStore: { userId: '80202' } } },
+    global: {
+      plugins: [i18n],
     },
   };
 
-  const setup = (props) => (mount(MyRequests, {
-    ...stubProps,
-    ...props,
-  }));
+  const setup = (props) => {
+    setupTestPinia({ user: { userId: '1234' } });
+    return mount(MyRequests, {
+      ...stubProps,
+      ...props,
+    });
+  };
 
   AccessRequestApi.getUserRequests = jest.fn().mockReturnValue(Promise.resolve({
     data: {
@@ -81,9 +83,9 @@ describe('MyRequests', () => {
   }));
 
   describe('@Component Tests', () => {
-    it('Executes the request details modal after clicking on "View Details"', async () => {
+    it('Navigates to request details page after clicking on "View Details"', async () => {
       const wrapper = setup();
-      const viewDetails = jest.spyOn(wrapper.vm, 'openModal').mockImplementation();
+      const viewDetails = jest.spyOn(wrapper.vm, 'viewDetails').mockImplementation();
       await flushPromises();
       const viewDetailsButton = findByTestId(wrapper, 'view-details-button');
       expect(viewDetailsButton.exists()).toBe(true);

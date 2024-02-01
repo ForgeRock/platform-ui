@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,27 +7,23 @@ of the MIT license. See the LICENSE file for details. -->
     <BCard class="text-center mb-4">
       <div
         class="d-flex justify-content-center">
-        <div class="fr-profile-image position-relative mb-3 p-0">
+        <div class="fr-profile-image position-relative mb-3 p-0 within-input-button">
           <BAvatar
-            @click="$root.$emit('bv::show::modal', 'frProfileImageModal')"
-            variant="link"
+            @click="$bvModal.show('frProfileImageModal')"
             :button="showImageUpload"
             size="112px"
-            :src="profileImage.length > 0 ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+            :src="profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
             :aria-label="showImageUpload ? $t('pages.profile.editProfile.profileImageModal.title') : $t('pages.profile.editProfile.profilePicture')" />
-          <BAvatar
+          <BButton
             v-if="showImageUpload"
-            button
-            @click="$root.$emit('bv::show::modal', 'frProfileImageModal')"
             class="fr-edit-icon"
-            size="2em"
             variant="dark"
-            :aria-label="$t('pages.profile.editProfile.profileImageModal.title')">
+            @click="$bvModal.show('frProfileImageModal')">
             <FrIcon
               class="md-18"
               name="camera_alt"
             />
-          </BAvatar>
+          </BButton>
         </div>
       </div>
       <h1 class="text-truncate h4">
@@ -143,13 +139,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
+:deep {
   .fr-profile-image {
     .fr-edit-icon {
       position: absolute;
-      cursor: pointer;
       bottom: 0;
       right: 0;
+      height: 2rem;
+      width: 2rem;
+      border-radius: 1rem;
     }
 
     .btn.b-avatar {

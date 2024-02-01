@@ -6,31 +6,31 @@
  */
 
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import flushPromises from 'flush-promises';
-import { mount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import { mount, flushPromises } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import DirectReportDetail from './index';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
 
 describe('DirectReportDetail', () => {
-  const setup = (grantType) => mount(DirectReportDetail, {
-    mocks: {
-      $t: (t) => t,
-      $route: {
-        name: 'DirectReportDetail',
-        params: {
-          grantType,
-          userId: 'reporteeId',
-        },
-      },
-      $store: {
-        state: {
-          UserStore: {
-            userId: 'testId',
+  const setup = (grantType) => {
+    setupTestPinia({ user: { userId: 'testId' } });
+    return mount(DirectReportDetail, {
+      global: {
+        plugins: [Notifications],
+        mocks: {
+          $t: (t) => t,
+          $route: {
+            name: 'DirectReportDetail',
+            params: {
+              grantType,
+              userId: 'reporteeId',
+            },
           },
         },
       },
-    },
-  });
+    });
+  };
 
   beforeAll(() => {
     jest.spyOn(DirectoryApi, 'getDirectReportUserInfo').mockReturnValue(Promise.resolve({

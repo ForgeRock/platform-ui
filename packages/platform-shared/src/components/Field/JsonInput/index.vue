@@ -1,20 +1,19 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
-    :id="id"
+    :id="internalId"
     :name="name"
     :description="description"
-    :errors="errors"
+    :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
-    :validation="validation"
-    :validation-immediate="validationImmediate"
     :data-testid="testid">
     <VuePrismEditor
       v-model="inputValue"
+      v-on="validationListeners"
       class="polyfill-placeholder"
       :aria-label="$t('editor.accessibilityHelp')"
       :disabled="disabled"
@@ -22,8 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
       language="json"
       :line-numbers="true"
       :highlight="highlighter"
-      @change="$emit('input', $event)"
-      @keydown="blurOnEscape" />
+      @change="$emit('input', $event)" />
   </FrInputLayout>
 </template>
 
@@ -35,6 +33,9 @@ import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
 import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
+import { useField } from 'vee-validate';
+import uuid from 'uuid/v4';
+import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -57,6 +58,20 @@ export default {
       default: '',
     },
   },
+  setup(props) {
+    const {
+      value: inputValue, errors: fieldErrors, handleBlur,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+
+    // validationListeners: Contains custom event listeners for validation.
+    // Since vee-validate +4 removes the interaction modes, this custom listener is added
+    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const validationListeners = {
+      blur: (evt) => handleBlur(evt, true),
+    };
+
+    return { inputValue, fieldErrors, validationListeners };
+  },
   methods: {
     blurOnEscape,
     /**
@@ -68,6 +83,17 @@ export default {
     highlighter(code) {
       return highlight(code, languages.json);
     },
+  },
+  computed: {
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
+    },
+  },
+  mounted() {
+    document.addEventListener('keydown', this.blurOnEscape);
+  },
+  unmounted() {
+    document.removeEventListener('keydown', this.blurOnEscape);
   },
 };
 </script>

@@ -13,8 +13,10 @@ import i18n from '@/i18n';
 describe('ValidationErrorList', () => {
   function setup(props) {
     return mount(ValidationError, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         fieldName: 'stub-name',
         ...props,
       },

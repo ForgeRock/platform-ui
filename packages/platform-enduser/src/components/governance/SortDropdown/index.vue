@@ -40,10 +40,9 @@ of the MIT license. See the LICENSE file for details. -->
         @input="$emit('sort-direction-change', $event)">
         <template
           v-for="slotName in ['singleLabel', 'option']"
+          :key="slotName"
           #[slotName]="{ option }">
-          <div
-            :key="slotName"
-            :class="{ 'mb-1': slotName === 'singleLabel' }">
+          <div :class="{ 'mb-1': slotName === 'singleLabel' }">
             <span class="mr-2">
               <FrIcon :name="option.value === 'asc' ? 'arrow_upward' : 'arrow_downward'" />
             </span>
@@ -133,7 +132,7 @@ export default {
   font-weight: 600;
 }
 
-::v-deep .multiselect .multiselect__option--selected:after {
+:deep(.multiselect .multiselect__option--selected:after) {
   content: 'check';
   font-family: 'Material Icons Outlined', Serif;
   font-size: 15px;
@@ -143,7 +142,7 @@ export default {
   padding-left: 10px;
 }
 
-::v-deep .btn-link:hover {
+:deep(.btn-link:hover) {
   text-decoration: none;
 
   div {

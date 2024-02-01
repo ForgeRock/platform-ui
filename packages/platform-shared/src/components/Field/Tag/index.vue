@@ -1,76 +1,76 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
     :description="description"
-    :id="`${id}___input__`"
+    :id="`${internalId}___input__`"
     :class="{ 'has-prepend-btn': hasPrependBtn }"
-    :errors="errors"
+    :errors="combinedErrors"
     :label="label"
     :name="name"
-    :validation="validation"
-    :validation-immediate="validationImmediate">
+    :is-html="isHtml">
     <BFormTags
-      @click.native="$refs.input.focus()"
       v-model="inputValue"
       v-on="$listeners"
       add-on-change
       :autofocus="autofocus"
       :class="{'polyfill-placeholder': floatLabels}"
       :disabled="disabled"
-      :id="id">
+      :id="internalId">
       <template #default="{ tags, inputAttrs, inputHandlers, removeTag }">
         <ul
           class="overflow-hidden pl-0 mb-0"
-          :id="`fr-tags-list_${id}`">
+          :id="`fr-tags-list_${internalId}`">
           <li>
             <Draggable
               v-model="inputValue"
               :disabled="disabled"
               class="d-flex flex-wrap w-100"
-              ghost-class="ghost-tag">
-              <div
-                v-b-tooltip="{ title: tag, delay: { show: 1500, hide: 0 } }"
-                v-for="tag in tags"
-                body-class="py-1 pr-2 text-nowrap"
-                class="fr-tag"
-                :key="tag"
-                :id="`fr-tags-tag_${tag.replace(/\s/g, '_')}`">
-                <span class="fr-tag-text">
-                  {{ tag }}
-                </span>
-                <span
-                  :data-testid="`remove-${tag.replace(/\s/g, '-')}-tag`"
-                  @click="removeTag(tag)"
-                  @keydown.enter="removeTag(tag)">
-                  <FrIcon
-                    tabindex="0"
-                    :aria-label="$t('common.close')"
-                    :aria-controls="`fr-tags-tag_${tag.replace(/\s/g, '_')}`"
-                    class="close-icon pl-2"
-                    style="font-size: 12px; font-weight: 900;"
-                    name="close"
-                  />
-                </span>
-              </div>
+              ghost-class="ghost-tag"
+              :item-key="((item) => inputValue.indexOf(item))">
+              <template #item="{ element }">
+                <div
+                  v-b-tooltip="{ title: element, delay: { show: 1500, hide: 0 } }"
+                  body-class="py-1 pr-2 text-nowrap"
+                  class="fr-tag"
+                  :key="element"
+                  :id="`fr-tags-tag_${element.toString().replace(/\s/g, '_')}`">
+                  <span class="fr-tag-text">
+                    {{ element }}
+                  </span>
+                  <span
+                    :data-testid="`remove-${element.toString().replace(/\s/g, '-')}-tag`"
+                    @click="removeTag(element)"
+                    @keydown.enter="removeTag(element)">
+                    <FrIcon
+                      tabindex="0"
+                      :aria-label="$t('common.close')"
+                      :aria-controls="`fr-tags-tag_${element.toString().replace(/\s/g, '_')}`"
+                      class="close-icon pl-2"
+                      style="font-size: 12px; font-weight: 900;"
+                      name="close"
+                    />
+                  </span>
+                </div>
+              </template>
             </Draggable>
           </li>
         </ul>
         <input
           v-bind="inputAttrs"
-          v-on="inputHandlers"
+          v-on="{...inputHandlers, ...validationListeners}"
           ref="input"
           :data-testid="`inp-${name}`"
           :class="[{'has-values': tags.length}, 'fr-tag-input']"
           :placeholder="label"
           @input="inputValueHandler(inputValue, $event.target.value)"
-          :aria-describedby="`fr-tags-list_${id}`">
+          :aria-describedby="`fr-tags-list_${internalId}`">
       </template>
     </BFormTags>
     <template
-      v-for="(key, slotName) in $scopedSlots"
+      v-for="(key, slotName) in $slots"
       #[slotName]="slotData">
       <slot
         :name="slotName"
@@ -82,10 +82,15 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { cloneDeep, isEqual } from 'lodash';
 import { BFormTags, VBTooltip } from 'bootstrap-vue';
+import { useField } from 'vee-validate';
+import uuid from 'uuid/v4';
 import Draggable from 'vuedraggable';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
+
+Draggable.compatConfig = { MODE: 3 };
 
 export default {
   name: 'Tag',
@@ -101,12 +106,30 @@ export default {
   directives: {
     'b-tooltip': VBTooltip,
   },
+  setup(props) {
+    const {
+      value: inputValue, errors: fieldErrors, handleBlur,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
+
+    // validationListeners: Contains custom event listeners for validation.
+    // Since vee-validate +4 removes the interaction modes, this custom listener is added
+    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const validationListeners = {
+      blur: (evt) => handleBlur(evt, true),
+    };
+
+    return { inputValue, fieldErrors, validationListeners };
+  },
   data() {
     return {
-      inputValue: [],
       oldValue: [],
-      hasPrependBtn: Object.keys(this.$scopedSlots).includes('prependButton'),
+      hasPrependBtn: Object.keys(this.$slots).includes('prependButton'),
     };
+  },
+  computed: {
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
+    },
   },
   methods: {
     inputValueHandler(inputValue, toggle) {

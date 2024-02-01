@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -29,10 +29,10 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="!readOnly"
           @valueChange="(value) => handleValueChange(feature.key, value)"
         >
-          <template v-slot:option="{ option }">
+          <template #option="{ option }">
             {{ option.text }}
           </template>
-          <template v-slot:singleLabel="{ option }">
+          <template #singleLabel="{ option }">
             {{ option.text }}
           </template>
         </FrField>
@@ -105,8 +105,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  ::v-deep
-  .create-mapping-modal-mapping {
+  :deep(.create-mapping-modal-mapping) {
     .list-group-item-action {
       display: block;
       width: 100%;

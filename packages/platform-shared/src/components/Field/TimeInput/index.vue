@@ -1,29 +1,28 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="position-relative">
     <FrInputLayout
-      :id="id"
+      :id="internalId"
       :name="name"
       :description="description"
-      :errors="errors"
+      :errors="combinedErrors"
       :is-html="isHtml"
-      :label="label"
-      :validation="validation"
-      :validation-immediate="validationImmediate">
+      :label="label">
       <input
-        v-model="inputValue"
+        :value="inputValue"
+        @input="inputValue = $event.target.value; debounceEmitValidTime(inputValue)"
+        v-on="validationListeners"
         ref="input"
         type="time"
         :class="[{'is-invalid': errorMessages && errorMessages.length, 'polyfill-placeholder': label }, 'form-control']"
         :data-vv-as="label"
         :disabled="disabled"
-        :id="id"
+        :id="internalId"
         :name="name"
-        :readonly="readonly"
-        @input="debounceEmitValidTime(inputValue)">
+        :readonly="readonly">
     </FrInputLayout>
     <BFormTimepicker
       v-model="inputValue"
@@ -32,12 +31,12 @@ of the MIT license. See the LICENSE file for details. -->
       label-help=""
       no-close-button
       ref="timePicker"
-      show-seconds
+      :show-seconds="showSeconds"
       :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control time-button position-absolute']"
       :disabled="disabled"
-      :id="id"
+      :id="internalId"
       :name="name"
-      :aria-label="getTranslation(label)"
+      :aria-label="labelTranslation"
       @context="debounceEmitValidTime" />
   </div>
 </template>
@@ -51,6 +50,9 @@ import {
 import dayjs from 'dayjs';
 import { BFormTimepicker } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { useField } from 'vee-validate';
+import uuid from 'uuid/v4';
+import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -72,7 +74,15 @@ export default {
     FrInputLayout,
   },
   props: {
+    adjustForTimezone: {
+      default: true,
+      type: Boolean,
+    },
     dropleft: {
+      default: true,
+      type: Boolean,
+    },
+    showSeconds: {
       default: true,
       type: Boolean,
     },
@@ -82,10 +92,24 @@ export default {
       debounceEmitValidTime: debounce(this.emitValidTime, 100),
     };
   },
+  setup(props) {
+    const {
+      value: inputValue, errors: fieldErrors, handleBlur,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+
+    // validationListeners: Contains custom event listeners for validation.
+    // Since vee-validate +4 removes the interaction modes, this custom listener is added
+    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const validationListeners = {
+      blur: (evt) => handleBlur(evt, true),
+    };
+
+    return { inputValue, fieldErrors, validationListeners };
+  },
   methods: {
     /**
      * Emits out a formatted time in the form of HH:mm:ss.SSSZ or an empty string if time is invalid
-     *
+     * if adjustForTimezone is false, the Z is omitted
      * @param {String} selectedTime - The current time value selected
      * @emits {String} The fully formatted time string
      */
@@ -110,7 +134,13 @@ export default {
         const seconds = selectedSecond || 0;
         const emitTime = new Date();
         emitTime.setHours(hours, minutes, seconds);
-        const emitTimeString = `${dayjs(emitTime).utc().format('HH:mm:ss')}Z`;
+        let emitTimeString;
+        if (this.adjustForTimezone) {
+          emitTimeString = `${dayjs(emitTime).utc().format('HH:mm:ss')}Z`;
+        } else {
+          emitTimeString = `${dayjs(emitTime).format('HH:mm:ss')}`;
+        }
+
         this.$emit('input', emitTimeString);
       } else {
         this.$emit('input', '');
@@ -151,6 +181,19 @@ export default {
       }
     },
   },
+  computed: {
+    labelTranslation() {
+      return this.getTranslation(this.label);
+    },
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
+    },
+  },
+  watch: {
+    inputValue(newVal) {
+      this.debounceEmitValidTime(newVal);
+    },
+  },
 };
 </script>
 
@@ -162,13 +205,13 @@ export default {
     top: 1px;
     height: calc(100% - 2px);
 
-    ::v-deep button {
+    :deep(button) {
       background-color: initial;
       color: $gray-500;
       padding: 0.85rem 0.5rem;
     }
 
-    ::v-deep &.show > .btn-secondary.dropdown-toggle {
+    :deep(&.show > .btn-secondary.dropdown-toggle) {
       background-color: initial;
       color: $gray-500;
     }

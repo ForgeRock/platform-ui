@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -118,6 +118,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-model="privilegeName"
             class="mb-4 flex-grow-1"
             :label="$t('pages.access.privilegeName')"
+            :name="`privilegeName_${index}`"
             :validation="privilegeNameValidation"
             @input="privilegeModel.name = $event" />
           <BCard
@@ -196,7 +197,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="mb-3"
               type="boolean"
               :disabled="disabled"
-              :label="$t('pages.access.applyFilter', { resource: $options.filters.PluralizeFilter(identityObjectSchema.title) })"
+              :label="$t('pages.access.applyFilter', { resource: pluralizeValue(identityObjectSchema.title) })"
               @input="toggleFilter" />
             <div
               v-if="filterOn"
@@ -234,7 +235,7 @@ import {
   BFormCheckbox,
   BTable,
 } from 'bootstrap-vue';
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/filterBuilder/QueryFilterBuilder';
@@ -253,9 +254,6 @@ export default {
     FrIcon,
     FrQueryFilterBuilder,
   },
-  filters: {
-    PluralizeFilter,
-  },
   mixins: [
     NotificationMixin,
   ],
@@ -270,26 +268,23 @@ export default {
     },
     privilege: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     identityObjectSchema: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     index: {
       type: Number,
       default: -1,
-      required: false,
     },
     showHeader: {
       type: Boolean,
       default: true,
-      required: false,
     },
     showDelete: {
       type: Boolean,
       default: false,
-      required: false,
     },
   },
   data() {
@@ -415,6 +410,7 @@ export default {
     },
   },
   methods: {
+    pluralizeValue,
     /**
     * shows/hides QueryFilterBuilder component and sets privilegeModel filter value to empty string when turned off
     *
@@ -548,7 +544,7 @@ export default {
   text-align: right;
 }
 
-::v-deep {
+:deep {
   #attributePermissionsContainer {
     max-height: 270px;
   }

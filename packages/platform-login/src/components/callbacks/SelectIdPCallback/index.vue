@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
     <button
       class="btn btn-light btn-block fr-btn-social"
       type="button"
+      ref="button"
       v-for="(provider, count) in filteredProviders"
       :key="count"
       :style="socialButtonStyles[count]"
@@ -34,13 +35,14 @@ of the MIT license. See the LICENSE file for details. -->
 
     <FrHorizontalRule
       v-if="!isOnlyCallback"
-      class="mt-3"
+      class="my-3"
       :insert="$t('login.social.or')" />
   </div>
 </template>
 
 <script>
 import {
+  delay,
   each,
   filter,
 } from 'lodash';
@@ -52,6 +54,10 @@ export default {
     FrHorizontalRule: HorizontalRule,
   },
   props: {
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
     callback: {
       type: Object,
       required: true,
@@ -74,6 +80,14 @@ export default {
     };
   },
   mounted() {
+    // Browser consistent focus (targets the first button of the IDP list)
+    if (this.autofocus) {
+      delay(() => {
+        if (this.$refs.button) {
+          this.$refs.button[0].focus({ focusVisible: true });
+        }
+      }, 600);
+    }
     // if a user does not click a social provider, the input value should be localAuthentication
     this.callback.setInputValue('localAuthentication');
     this.providers = this.callback.getOutputByName('providers');

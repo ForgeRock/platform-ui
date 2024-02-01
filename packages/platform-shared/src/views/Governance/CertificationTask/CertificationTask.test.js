@@ -1,14 +1,15 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
-import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import Notifications from '@kyvg/vue3-notification';
 import CertificationTask from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
@@ -16,26 +17,35 @@ jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 describe('CertificationTask', () => {
   let wrapper;
 
+  CertificationApi.getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getCertificationApplicationFilter.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: {} }));
+
   function mountComponent() {
+    setupTestPinia();
     return mount(CertificationTask, {
-      mocks: {
-        $t: (t) => t,
-        $route: {
-          params: {
-            campaignId: 'a96de99c-c638-4bdd-84cb-5fb559225152',
+      global: {
+        mocks: {
+          $t: (t) => t,
+          $route: {
+            params: {
+              campaignId: 'a96de99c-c638-4bdd-84cb-5fb559225152',
+            },
+            query: {
+              actorId: 'a96de99c-c638-4bdd-84cb-5fb559225153',
+              taskStatus: 'active',
+            },
           },
-          query: {
-            actorId: 'a96de99c-c638-4bdd-84cb-5fb559225153',
-            taskStatus: 'active',
-          },
+          $router: { push: jest.fn() },
         },
-        $router: { push: jest.fn() },
+        plugins: [Notifications],
+        stubs: [
+          'RouterLink',
+          'D3PieChart',
+          'FrCertificationTaskList',
+        ],
       },
-      stubs: [
-        'RouterLink',
-        'D3PieChart',
-        'FrCertificationTaskList',
-      ],
     });
   }
 
@@ -268,7 +278,7 @@ describe('CertificationTask', () => {
       const accountsTab = findByTestId(wrapper, 'cert-accounts-tab');
       expect(accountsTab.exists()).toBe(true);
 
-      const entitlementsTab = findByTestId(wrapper, 'cert-ents-tab');
+      const entitlementsTab = findByTestId(wrapper, 'cert-entitlements-tab');
       expect(entitlementsTab.exists()).toBe(true);
 
       const groupByAccountField = findByTestId(wrapper, 'certification-group-by-account');
@@ -293,7 +303,7 @@ describe('CertificationTask', () => {
       const accountsTab = findByTestId(wrapper, 'cert-accounts-tab');
       expect(accountsTab.exists()).toBe(true);
 
-      const entitlementsTab = findByTestId(wrapper, 'cert-ents-tab');
+      const entitlementsTab = findByTestId(wrapper, 'cert-entitlements-tab');
       expect(entitlementsTab.exists()).toBe(false);
 
       const groupByAccountField = findByTestId(wrapper, 'certification-group-by-account');
@@ -318,7 +328,7 @@ describe('CertificationTask', () => {
       const accountsTab = findByTestId(wrapper, 'cert-accounts-tab');
       expect(accountsTab.exists()).toBe(false);
 
-      const entitlementsTab = findByTestId(wrapper, 'cert-ents-tab');
+      const entitlementsTab = findByTestId(wrapper, 'cert-entitlements-tab');
       expect(entitlementsTab.exists()).toBe(true);
 
       const groupByAccountField = findByTestId(wrapper, 'certification-group-by-account');
@@ -326,22 +336,35 @@ describe('CertificationTask', () => {
     });
   });
 
-  it('signOff method, should redirect to breadcrumb url', async () => {
+  describe('signOff', () => {
     CertificationApi.signOffCertificationTasks.mockImplementation(() => Promise.resolve({}));
-    const goToBackUrlSpy = jest.spyOn(wrapper.vm, 'goToBackUrl');
-    wrapper.vm.totals = {
-      NONE: 1,
-    };
-    wrapper.vm.signOff();
-    await flushPromises();
-    expect(goToBackUrlSpy).not.toHaveBeenCalled();
-    expect(wrapper.vm.isComplete).toEqual(false);
-    wrapper.vm.totals = {
-      completed: 1,
-    };
-    expect(wrapper.vm.isComplete).toEqual(true);
-    wrapper.vm.signOff();
-    await flushPromises();
-    expect(goToBackUrlSpy).toHaveBeenCalled();
+
+    it('should not go to back URL when cert is not complete', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const goToBackUrlSpy = jest.spyOn(wrapper.vm, 'goToBackUrl');
+      wrapper.vm.totals = {
+        NONE: 1,
+      };
+
+      wrapper.vm.signOff();
+      await flushPromises();
+      expect(goToBackUrlSpy).not.toHaveBeenCalled();
+    });
+    it('should go to back URL when cert is complete', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const goToBackUrlSpy = jest.spyOn(wrapper.vm, 'goToBackUrl');
+      wrapper.vm.totals = {
+        completed: 1,
+      };
+
+      wrapper.vm.signOff();
+
+      await flushPromises();
+      expect(goToBackUrlSpy).toHaveBeenCalled();
+    });
   });
 });

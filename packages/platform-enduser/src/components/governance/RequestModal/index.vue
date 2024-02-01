@@ -3,14 +3,14 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
-    v-slot="{ invalid }"
-    ref="observer">
+  <VeeForm
+    v-slot="{ meta: { valid } }"
+    ref="observer"
+    as="span">
     <BModal
       ref="governance-request-modal"
       title-class="h5"
       title-tag="h2"
-      :body-class="modalType === REQUEST_MODAL_TYPES.DETAILS ? 'p-0' : ''"
       :hide-footer="loading"
       :id="modalId"
       :size="size"
@@ -31,93 +31,25 @@ of the MIT license. See the LICENSE file for details. -->
         v-else
         :is="component"
         :item="item"
-        :hide-actions="hideActions"
         @change-modal-type="modalType = REQUEST_MODAL_TYPES[$event]"
         @request-comment="updateComment"
         @request-update-actors="updateActors"
       />
       <template #modal-footer="{cancel}">
         <BCol
-          v-if="component === 'FrRequestDetailTabs'"
-          data-testid="details-footer">
-          <BRow class="justify-content-between">
-            <BCol class="pl-0">
-              <template v-if="!hideActions">
-                <template v-if="isApprovals">
-                  <BButton
-                    variant="outline-secondary"
-                    class="mx-1 mb-2 mb-lg-0"
-                    @click="modalType = REQUEST_MODAL_TYPES.APPROVE"
-                    data-testid="governance-request-modal-goto-approve-btn">
-                    <FrIcon
-                      class="text-success mr-2"
-                      name="check" />
-                    {{ $t('common.approve') }}
-                  </BButton>
-                  <BButton
-                    variant="outline-secondary"
-                    class="mx-1 mb-2 mb-lg-0"
-                    @click="modalType = REQUEST_MODAL_TYPES.REJECT"
-                    data-testid="governance-request-modal-goto-reject-btn">
-                    <FrIcon
-                      class="text-danger mr-2"
-                      name="block" />
-                    {{ $t('common.reject') }}
-                  </BButton>
-                  <BButton
-                    variant="outline-secondary"
-                    class="mx-1"
-                    @click="modalType = REQUEST_MODAL_TYPES.REASSIGN"
-                    data-testid="governance-request-modal-goto-forward-btn">
-                    <FrIcon
-                      class="mr-2"
-                      name="redo" />
-                    {{ $t('common.forward') }}
-                  </BButton>
-                </template>
-                <BButton
-                  v-if="isMyRequests"
-                  variant="outline-danger"
-                  @click="modalType = REQUEST_MODAL_TYPES.CANCEL"
-                  data-testid="governance-request-modal-goto-cancelrequest-btn">
-                  <FrIcon name="cancel" />
-                  {{ $t('governance.requestModal.cancelRequest') }}
-                </BButton>
-              </template>
-            </BCol>
-            <BButton
-              variant="outline-primary"
-              @click="cancel()"
-              data-testid="governance-request-modal-done-btn">
-              {{ $t('common.done') }}
-            </BButton>
-          </BRow>
-        </BCol>
-        <BCol
-          v-else-if="!hideActions"
           data-testid="others-footer">
-          <BRow class="justify-content-between">
-            <BCol class="pl-0">
-              <BButton
-                v-if="showRequestDetailsLink"
-                variant="link"
-                class="mx-1"
-                @click="modalType = REQUEST_MODAL_TYPES.DETAILS"
-                data-testid="governance-request-modal-goto-details-link">
-                {{ $t('governance.requestModal.requestDetailsLink') }}
-              </BButton>
-            </BCol>
+          <BRow class="justify-content-end">
             <BButton
+              @click="cancel"
               :class="['mr-2', modalType === REQUEST_MODAL_TYPES.CANCEL ? 'text-danger' : '']"
-              variant="link"
-              @click="close(cancel)"
-              data-testid="governance-request-modal-cancel-btn">
+              data-testid="governance-request-modal-cancel-btn"
+              variant="link">
               {{ $t('common.cancel') }}
             </BButton>
             <BButton
               :variant="modalType === REQUEST_MODAL_TYPES.CANCEL ? 'danger' : 'primary'"
               data-testid="governance-request-modal-confirm-btn"
-              :disabled="invalid"
+              :disabled="!valid"
               @click="modalAction(item, cancel)">
               {{ buttonName }}
             </BButton>
@@ -125,14 +57,14 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
       </template>
     </BModal>
-  </ValidationObserver>
+  </VeeForm>
 </template>
 
 <script>
 import {
   BButton, BModal, BRow, BCol,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -142,7 +74,6 @@ import FrApproveRequest from './ApproveRequest';
 import FrForwardRequest from './ForwardRequest';
 import FrRejectRequest from './RejectRequest';
 import FrCancelRequest from './CancelRequest';
-import FrRequestDetailTabs from './DetailTabs';
 
 /**
  * @typedef {string} REQUEST_MODAL_TYPE
@@ -155,7 +86,6 @@ export const REQUEST_MODAL_TYPES = {
   APPROVE: 'APPROVE',
   CANCEL: 'CANCEL',
   COMMENT: 'COMMENT',
-  DETAILS: 'DETAILS',
   REASSIGN: 'REASSIGN',
   REJECT: 'REJECT',
 };
@@ -173,18 +103,13 @@ export default {
     FrForwardRequest,
     FrIcon,
     FrRejectRequest,
-    FrRequestDetailTabs,
     FrSpinner,
-    ValidationObserver,
+    VeeForm,
   },
   props: {
     type: {
       type: String,
       default: null,
-    },
-    hideActions: {
-      type: Boolean,
-      default: false,
     },
     item: {
       type: Object,
@@ -223,7 +148,6 @@ export default {
       loading: false,
       modalId: 'request_modal',
       modalType: REQUEST_MODAL_TYPES[this.type],
-      previousModal: null,
     };
   },
   computed: {
@@ -254,7 +178,7 @@ export default {
         case REQUEST_MODAL_TYPES.REJECT:
           return 'FrRejectRequest';
         default:
-          return 'FrRequestDetailTabs';
+          return '';
       }
     },
     errorMessage() {
@@ -330,28 +254,21 @@ export default {
         case REQUEST_MODAL_TYPES.REJECT:
           return this.$t('governance.requestModal.titles.reject');
         default:
-          return this.$t('governance.requestModal.titles.details');
+          return '';
       }
     },
   },
   methods: {
     /**
     * @param {Function} cancel close modal function
-    * @param {Function} cancel close modal function
     */
     close(cancel) {
       if (this.modalType === REQUEST_MODAL_TYPES.COMMENT) {
         this.$emit('update-item', this.item.details.id);
-        if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS) {
-          this.modalType = REQUEST_MODAL_TYPES.DETAILS;
-        }
-      } else if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS
-        && this.modalType === REQUEST_MODAL_TYPES.CANCEL) {
-        this.modalType = REQUEST_MODAL_TYPES.DETAILS;
       } else {
         this.$emit('update-list');
-        cancel();
       }
+      cancel();
     },
 
     /**
@@ -362,7 +279,7 @@ export default {
     modalAction(item, cancel) {
       const action = this.modalType.toLowerCase();
       this.loading = true;
-      requestAction(item.details.id, action, item.rawData.decision.phases[0].name, this.comment, [this.actors]).then(() => {
+      requestAction(item.details.id, action, item.rawData?.phases?.[0]?.name, this.comment, [this.actors]).then(() => {
         this.displayNotification('success', this.message);
         this.$emit('modal-success');
       }).catch(() => {
@@ -388,9 +305,6 @@ export default {
   watch: {
     type(value) {
       this.modalType = REQUEST_MODAL_TYPES[value];
-    },
-    modalType(value, oldValue) {
-      this.previousModal = oldValue;
     },
   },
 };

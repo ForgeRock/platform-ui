@@ -11,7 +11,7 @@ import PageHeader from './index';
 describe('Navbar Component', () => {
   it('Includes a subtitle if given', () => {
     const wrapper = shallowMount(PageHeader, {
-      propsData: {
+      props: {
         subtitle: 'testSubtitle',
       },
     });
@@ -25,7 +25,7 @@ describe('Navbar Component', () => {
 
   it('Includes a top text if given', () => {
     const wrapper = shallowMount(PageHeader, {
-      propsData: {
+      props: {
         topText: 'topTextTest',
       },
     });

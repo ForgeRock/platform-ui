@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -23,7 +23,6 @@ of the MIT license. See the LICENSE file for details. -->
       :dropdown-items="realmMenuItems"
       :realm="realm"
       :realm-aliases="realmAliases"
-      :user-details="userDetails"
       v-show="!hideSideMenu" />
     <div class="content">
       <FrNavBar
@@ -34,19 +33,14 @@ of the MIT license. See the LICENSE file for details. -->
         :show-docs-link="!isFraas && !isEnduser"
         :show-profile-link="!isInternalUser"
         :tenant-menu-items="tenantMenuItems"
-        :user-details="userDetails"
         :docs-link="docsLink"
         help-url="https://backstage.forgerock.com/"
         v-show="!hideNavBar" />
       <div
         id="appContent"
         :class="{'show-navbar': !hideNavBar}">
-        <Transition
-          name="fade"
-          mode="out-in">
-          <!-- slot for router -->
-          <slot />
-        </Transition>
+        <!-- slot for router -->
+        <slot />
         <notifications
           class="ml-3"
           position="bottom left"
@@ -89,9 +83,19 @@ of the MIT license. See the LICENSE file for details. -->
             </a>
           </div>
           <div
-            v-if="buildNumber && buildDateTime"
-            class="mr-4 opacity-70">
-            {{ $t('common.buildNumber', {buildNumber, buildDateTime: $d(buildDateTime, 'buildDateTime')}) }}
+            v-if="releaseInfo"
+            class="mr-4 opacity-70"
+            data-testid="release-info">
+            <RouterLink
+              class="text-body"
+              :to="{
+                name: 'TenantSettings',
+                params: {
+                  resourceName: 'details',
+                }
+              }">
+              {{ $t('common.releaseInfo', { version: releaseInfo.currentVersion }) }}
+            </RouterLink>
           </div>
         </div>
       </footer>
@@ -183,25 +187,11 @@ export default {
       default: () => [],
     },
     /**
-     * Details about the current user
+     * Tenant Release info displayed in footer
      */
-    userDetails: {
+    releaseInfo: {
       type: Object,
-      default: () => {},
-    },
-    /**
-     * Build number displayed in footer
-     */
-    buildNumber: {
-      type: String,
-      default: '',
-    },
-    /**
-     * Build date and time displayed in footer
-     */
-    buildDateTime: {
-      type: Date,
-      default: () => new Date(0),
+      default: null,
     },
     systemNotification: {
       type: Object,
@@ -222,9 +212,12 @@ export default {
     };
   },
   watch: {
-    $route(to) {
-      this.hideNavBar = to.meta.hideNavBar;
-      this.hideSideMenu = to.meta.hideSideMenu;
+    $route: {
+      handler(to) {
+        this.hideNavBar = to.meta.hideNavBar;
+        this.hideSideMenu = to.meta.hideSideMenu;
+      },
+      immediate: true,
     },
   },
   computed: {
@@ -299,7 +292,7 @@ export default {
       this.menuExpanded = !this.menuExpanded;
     },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.determineMobileStyleMenu);
   },
 };

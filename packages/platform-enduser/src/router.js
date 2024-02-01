@@ -1,25 +1,22 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import Router from 'vue-router';
-import { every } from 'lodash';
-import Vue from 'vue';
+import { createRouter, createWebHashHistory } from 'vue-router';
+import checkIfRouteCanBeAccessed from '@forgerock/platform-shared/src/utils/routerGuard';
 import i18n from './i18n';
-
 import store from '@/store';
 
-Vue.use(Router);
-
-function checkIfRouteCanBeAccessed(next, requiredFlags = [], onFailRoute = { name: 'NotFound' }) {
-  if (!requiredFlags.length || every(requiredFlags, (flag) => flag)) {
-    next();
-  } else {
-    next(onFailRoute);
+function configureRouterHistory() {
+  // '&loggedin=true' parameter in the url causes Vue Router to calculate routes incorrectly, as it interprets the parameter as part of the hash.
+  // Removing this parameter helps in ensuring that Vue Router computes the routes correctly
+  if (window.location.hash.endsWith('&loggedin=true')) {
+    window.location.hash = window.location.hash.slice(0, -14);
   }
+  return createWebHashHistory();
 }
 
 /**
@@ -27,7 +24,8 @@ function checkIfRouteCanBeAccessed(next, requiredFlags = [], onFailRoute = { nam
  * hideSideMenu - Will hide left-hand navigation when route accessed
  * hideNavBar - Will hide top toolbar when route accessed
  */
-const router = new Router({
+const router = createRouter({
+  history: configureRouterHistory(),
   routes: [
     {
       path: '/',
@@ -78,6 +76,13 @@ const router = new Router({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
+      path: '/approvals/:requestId',
+      name: 'ApprovalDetails',
+      component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/Approvals/ApprovalDetails'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
+    },
+    {
       path: '/access-reviews',
       name: 'AccessReviews',
       component: () => import('@/views/governance/AccessReviews'),
@@ -92,11 +97,18 @@ const router = new Router({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
+      path: '/my-requests/details/:requestId',
+      name: 'MyRequestDetails',
+      component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequestDetails'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
+    },
+    {
       path: '/my-requests/new-request',
       name: 'AccessRequestNew',
       component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/accessRequest/NewRequest'),
       meta: { hideNavBar: true, hideSideMenu: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, to.params.requestingFor], { path: '/my-requests' }),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.requestCartUsers.length > 0], { path: '/my-requests' }),
     },
     {
       path: '/certification/certification-task/:campaignId',
@@ -110,6 +122,31 @@ const router = new Router({
       component: () => import('@/views/WorkforceApplications'),
       meta: { authenticate: true },
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.workforceEnabled]),
+    },
+    {
+      path: '/reports',
+      name: 'Reports',
+      component: () => import('@forgerock/platform-shared/src/views/Reports/Reports.vue'),
+      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
+    },
+    {
+      path: '/reports/:template',
+      name: 'ReportTemplate',
+      component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
+      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
+    },
+    {
+      path: '/reports/:template/history',
+      name: 'ReportTemplateHistory',
+      component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
+      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
+    },
+    {
+      path: '/reports/:template/:id',
+      name: 'ReportView',
+      component: () => import('@forgerock/platform-shared/src/views/Reports/ReportView.vue'),
+      meta: { hideNavBar: true, hideSideMenu: true },
+      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
     },
     {
       path: '/my-delegates',
@@ -202,7 +239,7 @@ const router = new Router({
       component: () => import(/* webpackChunkName: "forbidden" */ '@/components/forbidden'),
     },
     {
-      path: '*',
+      path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@forgerock/platform-shared/src/views/NotFound'),
     },
@@ -210,8 +247,8 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  const page = to.name ? i18n.t(`pageTitles.${to.name}`) : '';
-  document.title = i18n.t('pageTitles.pageTitle', { page });
+  const page = to.name ? i18n.global.t(`pageTitles.${to.name}`) : '';
+  document.title = i18n.global.t('pageTitles.pageTitle', { page });
   const url = new URL(window.location);
   const realm = url.searchParams.get('realm');
 

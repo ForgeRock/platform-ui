@@ -5,12 +5,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { mount, flushPromises } from '@vue/test-utils';
+import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import Notifications from '@kyvg/vue3-notification';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { nextTick } from 'vue';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
 import AddDelegateModal from './index';
+import i18n from '@/i18n';
+
+ValidationRules.extendRules({
+  is_before_date: ValidationRules.getRules(i18n).is_before_date,
+});
 
 jest.mock('@/api/governance/DirectoryApi');
 
@@ -26,18 +34,15 @@ describe('AddDelegateModal', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    setupTestPinia({ user: { userId: 'testId' } });
     wrapper = mount(AddDelegateModal, {
-      mocks: {
-        $t: (t) => t,
-        $store: {
-          state: {
-            UserStore: {
-              userId: 'testId',
-            },
-          },
+      global: {
+        mocks: {
+          $t: (t) => t,
         },
+        plugins: [Notifications],
       },
-      propsData: {
+      props: {
         isTesting: true,
       },
     });
@@ -46,6 +51,7 @@ describe('AddDelegateModal', () => {
   it('clicking save calls to add a task proxy', async () => {
     const addTaskProxy = jest.spyOn(DirectoryApi, 'addTaskProxy');
     const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+
     const saveButton = findByTestId(wrapper, 'save-button');
     await saveButton.trigger('click');
     await flushPromises();
@@ -72,15 +78,21 @@ describe('AddDelegateModal', () => {
 
     const enableTime = findByTestId(wrapper, 'enable-time-constraint');
     await enableTime.setChecked(true);
+    await flushPromises();
 
-    const startDate = findByTestId(wrapper, 'start-date');
+    const startDate = findComponentByTestId(wrapper, 'start-date');
     startDate.vm.$emit('input', '2023-02-01');
+    await nextTick();
+    await flushPromises();
 
-    const endDate = findByTestId(wrapper, 'end-date');
+    const endDate = findComponentByTestId(wrapper, 'end-date');
     endDate.vm.$emit('input', '2023-02-02');
+    await nextTick();
+    await flushPromises();
 
     const saveButton = findByTestId(wrapper, 'save-button');
     await saveButton.trigger('click');
+    await flushPromises();
 
     expect(addTaskProxy).toBeCalledWith(
       'testId',

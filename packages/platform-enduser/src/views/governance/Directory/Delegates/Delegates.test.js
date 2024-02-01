@@ -5,9 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, createWrapper } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { mount, flushPromises } from '@vue/test-utils';
+import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import Notifications from '@kyvg/vue3-notification';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
 import Delegates from './index';
 
@@ -30,16 +31,17 @@ describe('AccessReviews', () => {
       },
     }));
     DirectoryApi.deleteTaskProxy = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    setupTestPinia({ user: { userId: 'testId' } });
     wrapper = mount(Delegates, {
-      mocks: {
-        $t: (t) => t,
-        $store: {
-          state: {
-            UserStore: {
-              userId: 'testId',
-            },
+      global: {
+        mocks: {
+          $t: (t) => t,
+          $bvModal: {
+            show: jest.fn(),
+            hide: jest.fn(),
           },
         },
+        plugins: [Notifications],
       },
     });
   });
@@ -50,12 +52,11 @@ describe('AccessReviews', () => {
   });
 
   it('should have a button to add delegates', async () => {
-    const rootWrapper = createWrapper(wrapper.vm.$root);
     const addDelegate = findByTestId(wrapper, 'add-delegate');
     expect(addDelegate.exists()).toBeTruthy();
 
     await addDelegate.trigger('click');
-    expect(rootWrapper.emitted('bv::show::modal')[0]).toEqual(['add-delegate-modal']);
+    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('add-delegate-modal');
   });
 
   it('should have an input to search delegates', () => {
@@ -66,7 +67,7 @@ describe('AccessReviews', () => {
   it('clearing the search input resets the query params', async () => {
     const clearSpy = jest.spyOn(wrapper.vm, 'clear');
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-    const searchDelegate = findByTestId(wrapper, 'search-delegate');
+    const searchDelegate = findComponentByTestId(wrapper, 'search-delegate');
     await searchDelegate.vm.$emit('input', 'test');
     await searchDelegate.vm.$emit('clear');
 
@@ -77,7 +78,6 @@ describe('AccessReviews', () => {
   });
 
   it('clicking delete should open delete modal', async () => {
-    const rootWrapper = createWrapper(wrapper.vm.$root);
     wrapper.vm.items = [{
       user: 'testUser',
       start: 'today',
@@ -86,7 +86,7 @@ describe('AccessReviews', () => {
     const deleteButton = findByTestId(wrapper, 'remove-delegate');
 
     await deleteButton.trigger('click');
-    expect(rootWrapper.emitted('bv::show::modal')[0]).toEqual(['delegate-delete-modal']);
+    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('delegate-delete-modal');
   });
 
   it('can sort table by descending', () => {
@@ -213,6 +213,7 @@ describe('AccessReviews', () => {
 
       wrapper.vm.loadData();
       await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(errorSpy).toHaveBeenCalled();
     });
@@ -224,6 +225,7 @@ describe('AccessReviews', () => {
 
       wrapper.vm.loadData();
       await wrapper.vm.$nextTick();
+      await flushPromises();
 
       const noData = findByTestId(wrapper, 'delegates-no-data');
       expect(noData.exists()).toBeTruthy();

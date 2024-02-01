@@ -1,27 +1,35 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     id="frProfileImageModal"
-    ref="profileImageModal"
+    cancel-variant="link"
+    no-close-on-backdrop
+    no-close-on-esc
     size="lg"
     title-class="h5"
     title-tag="h2"
-    :title="$t('pages.profile.editProfile.profileImageModal.title')">
+    :ok-disabled="imageError"
+    :ok-title="$t('common.save')"
+    :title="$t('pages.profile.editProfile.profileImageModal.title')"
+    @ok="saveProfileImage">
     <div class="mb-3">
       <div class="d-flex align-items-center justify-content-center py-4 mb-4">
         <BAvatar
           size="180px"
           :variant="imageError ? 'light' : ''"
-          :src="imageURL.length > 0 ? imageURL : require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+          :src="imageURL || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
           @img-error="imageError = true">
-          <FrIcon
+          <template
             v-if="imageError"
-            class="md-72 opacity-30"
-            name="camera_alt"
-          />
+            #default>
+            <FrIcon
+              class="md-72 opacity-30"
+              name="camera_alt"
+            />
+          </template>
         </BAvatar>
       </div>
       <BFormGroup
@@ -32,7 +40,6 @@ of the MIT license. See the LICENSE file for details. -->
         <FrField
           v-model="imageURL"
           describedby-id="profile-image-tips"
-          debounce="300"
           name="profileImage"
           :label="$t('pages.profile.editProfile.profileImageModal.profileImageUrl')"
           @input="imageError = false" />
@@ -43,17 +50,16 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         id="profile-image-tips"
         class="p-4 mt-4 bg-light">
-        <h6>
+        <h2 class="h6">
           {{ $t('pages.profile.editProfile.profileImageModal.tips') }}
-        </h6>
+        </h2>
         <BRow>
           <BCol lg="6">
             <BMedia>
               <template #aside>
                 <FrIcon
                   class="md-24"
-                  name="fullscreen"
-                />
+                  name="fullscreen" />
               </template>
               <small class="form-text">
                 {{ $t('pages.profile.editProfile.profileImageModal.imageHelp') }}
@@ -65,8 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
               <template #aside>
                 <FrIcon
                   class="md-24"
-                  name="aspect_ratio"
-                />
+                  name="aspect_ratio" />
               </template>
               <small class="form-text">
                 {{ $t('pages.profile.editProfile.profileImageModal.aspectHelp') }}
@@ -76,28 +81,12 @@ of the MIT license. See the LICENSE file for details. -->
         </BRow>
       </div>
     </div>
-    <template #modal-footer="{ cancel }">
-      <BButton
-        size="md"
-        variant="link"
-        @click="cancel()">
-        {{ $t('common.cancel') }}
-      </BButton>
-      <BButton
-        size="md"
-        variant="primary"
-        :disabled="imageError"
-        @click="saveProfileImage">
-        {{ $t('common.save') }}
-      </BButton>
-    </template>
   </BModal>
 </template>
 
 <script>
 import {
   BAvatar,
-  BButton,
   BCol,
   BFormGroup,
   BMedia,
@@ -115,7 +104,6 @@ export default {
   name: 'ImageModal',
   components: {
     BAvatar,
-    BButton,
     BCol,
     BFormGroup,
     BMedia,
@@ -133,7 +121,6 @@ export default {
       default: '',
     },
   },
-  mixins: [],
   data() {
     return {
       imageURL: this.profileImage,
@@ -158,13 +145,7 @@ export default {
         }]);
       }
 
-      this.hideModal();
-    },
-    /**
-     * Hide profile image modal
-     */
-    hideModal() {
-      this.$refs.profileImageModal.hide();
+      this.$bvModal.hide('frProfileImageModal');
     },
   },
   watch: {
@@ -176,7 +157,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
+:deep {
   .b-avatar {
     img {
       height: 100%;

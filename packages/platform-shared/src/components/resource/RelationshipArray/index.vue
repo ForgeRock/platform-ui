@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
               @click="$refs[removeModalId].show()"
               :id="'delete_' + relationshipArrayProperty.key"
               block>
-              {{ removeRelationshipButtonText }}
+              {{ removeRelationshipButtonTextFallback }}
             </BButton>
           </div>
         </BCol>
@@ -40,11 +40,11 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-md-inline-block">
           <FrSearchInput
             v-if="showFilter && !disableSortAndSearch"
-            v-model="filter"
+            :value="filter"
             :placeholder="$t('common.search')"
             @clear="clear"
             @search="search"
-            @input="setHelpTextFromSearchLength"
+            @input="filterChange"
             @search-input-focus="setHelpTextFromSearchLength"
             @search-input-blur="removeHelpText"
             class="w-100"
@@ -143,35 +143,30 @@ of the MIT license. See the LICENSE file for details. -->
     </BTable>
     <FrPagination
       v-if="gridData.length && gridData.length === gridPageSize || currentPage > 0"
-      v-model="currentPage"
+      :value="currentPage"
       align="center"
       hide-page-size-selector
       :dataset-size="DatasetSize.CUSTOM"
       :last-page="lastPage"
-      @input="loadGrid(currentPage)"
+      @input="loadGrid($event)"
     />
 
-    <slot
-      name="relationship-form-modal"
-      :add-new-relationship="addNewRelationship"
-      :update-relationship="updateRelationship">
-      <BModal
-        cancel-variant="link"
-        :id="createModalId"
-        :ok-disabled="newRelationships.length === 0"
-        :ok-title="$t('common.save')"
-        :ref="createModalId"
-        :title="addRelationshipModalTitle"
-        size="lg"
-        @ok="saveNewRelationships">
-        <FrRelationshipEdit
-          :query-filter-extension="additionalQueryFilter"
-          :parent-resource="parentResource"
-          :relationship-property="relationshipArrayProperty"
-          :index="0"
-          @setValue="addNewRelationship" />
-      </BModal>
-    </slot>
+    <BModal
+      cancel-variant="link"
+      :id="createModalId"
+      :ok-disabled="newRelationships.length === 0"
+      :ok-title="$t('common.save')"
+      :ref="createModalId"
+      :title="addRelationshipModalTitle"
+      size="lg"
+      @ok="saveNewRelationships">
+      <FrRelationshipEdit
+        :query-filter-extension="additionalQueryFilter"
+        :parent-resource="parentResource"
+        :relationship-property="relationshipArrayProperty"
+        :index="0"
+        @setValue="addNewRelationship" />
+    </BModal>
 
     <BModal
       :id="removeModalId"
@@ -221,11 +216,13 @@ import {
   BFormCheckbox,
   BModal,
 } from 'bootstrap-vue';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 import dayjs from 'dayjs';
 import pluralize from 'pluralize';
 
+import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -303,9 +300,7 @@ export default {
     },
     removeRelationshipButtonText: {
       type: String,
-      default() {
-        return this.$t('common.remove');
-      },
+      default: '',
     },
     revision: {
       type: String,
@@ -321,6 +316,7 @@ export default {
     },
   },
   data() {
+    const userStore = useUserStore();
     return {
       addButtonText: this.addRelationshipButtonText || this.$t('common.addObject', { object: this.getTranslation(this.relationshipArrayProperty.title) }),
       gridPageSize: 10,
@@ -341,7 +337,7 @@ export default {
       newRelationships: [],
       relationshipToDelete: {},
       selected: [],
-      isOpenidmAdmin: this.$store.state.UserStore.adminUser,
+      isOpenidmAdmin: userStore.adminUser,
       showFilter: false,
       disableSortAndSearch: false,
       queryThreshold: null,
@@ -365,7 +361,16 @@ export default {
       this.setColumnSorting();
     },
   },
+  computed: {
+    removeRelationshipButtonTextFallback() {
+      return this.removeRelationshipButtonText || this.$t('common.remove');
+    },
+  },
   methods: {
+    filterChange(filter) {
+      this.filter = filter;
+      this.setHelpTextFromSearchLength();
+    },
     async loadGrid(page) {
       this.currentPage = page;
       const doLoad = (resourceCollectionSchema) => {
@@ -513,7 +518,7 @@ export default {
         ? this.parentResource
         : `${this.parentResource}/${this.parentId}/${this.relationshipArrayProperty.propName}`;
       const filter = this.filter
-        ? this.generateSearch(this.filter, currentResourceCollection.query.fields, resourceCollectionSchema.properties)
+        ? generateSearchQuery(this.filter, currentResourceCollection.query.fields, resourceCollectionSchema.properties)
         : '';
       let resourceUrl = `${resourcePath}?_pageSize=${this.gridPageSize}&_totalPagedResultsPolicy=ESTIMATE`;
 
@@ -753,7 +758,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    ::v-deep {
+    :deep {
       .fr-resource-paginator {
         a[role='menuitemradio'] {
           display: none !important;

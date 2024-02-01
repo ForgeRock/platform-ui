@@ -1,32 +1,28 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
-    slim
-    ref="basic-input"
-    v-slot="validationObserver">
+  <div>
     <FrInputLayout
-      :id="id"
+      :id="internalId"
       :name="name"
       :description="description"
-      :errors="errors"
+      :errors="combinedErrors"
       :floating-label="floatingLabel"
       :is-html="isHtml"
       :label="label"
-      :validation="validation"
-      :validation-immediate="validationImmediate"
       :class="{ 'has-prepend-btn': hasPrependBtn }">
       <template #default="{ labelHeight }">
         <!--
-        slot scoped variable labelHeight is used to change the height of the input as follows:
-        - the label height is calculated as labelHeight + 2px (border of label)
-        - padding top is calculated as labelHeight - 27px (size of label text with floating label)
-      -->
+          slot scoped variable labelHeight is used to change the height of the input as follows:
+          - the label height is calculated as labelHeight + 2px (border of label)
+          - padding top is calculated as labelHeight - 27px (size of label text with floating label)
+        -->
         <input
           v-if="fieldType === 'number'"
           :value="inputValue"
+          v-on="validationListeners"
           ref="input"
           type="text"
           inputmode="numeric"
@@ -34,34 +30,36 @@ of the MIT license. See the LICENSE file for details. -->
           :class="inputClasses"
           :data-vv-as="label"
           :disabled="disabled"
-          :id="id"
+          :id="internalId"
           :name="name"
           :min="$attrs.min"
-          :placeholder="floatingLabel ? getTranslation(label) : placeholder"
+          :placeholder="floatingLabel ? false : placeholder"
           :readonly="readonly"
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
           @input="event => inputValue = removeNonNumericChars(event)"
-          :aria-describedby="getAriaDescribedBy(validationObserver, errors)"
+          :aria-describedby="ariaDescribedBy"
           @animationstart="floatingLabel && animationStart"
-          @blur="$emit('blur', $event)"
+          @blur="onBlur($event)"
+          @focus="(floatingLabel && label) && (floatLabels = true)"
           :data-testid="`input-${testid}`">
         <input
           v-else
           v-model="inputValue"
+          v-on="validationListeners"
           ref="input"
           :class="inputClasses"
           :data-vv-as="label"
           :disabled="disabled"
-          :id="id"
+          :id="internalId"
           :name="name"
-          :placeholder="floatingLabel ? getTranslation(label) : placeholder"
+          :placeholder="floatingLabel ? false : placeholder"
           :readonly="readonly"
           :type="fieldType"
           :autocomplete="$attrs.autocomplete"
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
-          :aria-describedby="getAriaDescribedBy(validationObserver, errors)"
-          @blur="$emit('blur', $event)"
-          @input="evt=>inputValue=evt.target.value"
+          :aria-describedby="ariaDescribedBy"
+          @blur="onBlur($event);"
+          @focus="(floatingLabel && label) && (floatLabels = true)"
           @animationstart="floatingLabel && animationStart"
           :data-testid="`input-${testid}`">
       </template>
@@ -103,7 +101,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
 
       <template
-        v-for="(key, slotName) in $scopedSlots"
+        v-for="(key, slotName) in $slots"
         #[slotName]="slotData">
         <!-- @slot passthrough slot -->
         <slot
@@ -111,7 +109,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-bind="slotData" />
       </template>
     </FrInputLayout>
-  </ValidationObserver>
+  </div>
 </template>
 
 <script>
@@ -120,15 +118,18 @@ import {
   BInputGroupAppend,
   BTooltip,
 } from 'bootstrap-vue';
-import { delay, toNumber } from 'lodash';
+import { delay } from 'lodash';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { ValidationObserver } from 'vee-validate';
 import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
+import { useField } from 'vee-validate';
+import { toRef } from 'vue';
+import uuid from 'uuid/v4';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
+
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be seen on default login page).
  *
@@ -138,9 +139,9 @@ import InputMixin from '../Wrapper/InputMixin';
 export default {
   name: 'BasicInput',
   mixins: [
-    InputMixin,
     NotificationMixin,
     TranslationMixin,
+    InputMixin,
   ],
   components: {
     BButton,
@@ -148,7 +149,6 @@ export default {
     BTooltip,
     FrIcon,
     FrInputLayout,
-    ValidationObserver,
   },
   props: {
     /**
@@ -194,8 +194,24 @@ export default {
   data() {
     return {
       showPassword: false,
-      hasAppendSlot: Object.keys(this.$scopedSlots).includes('append'),
-      hasPrependBtn: Object.keys(this.$scopedSlots).includes('prependButton'),
+      hasAppendSlot: Object.keys(this.$slots).includes('append'),
+      hasPrependBtn: Object.keys(this.$slots).includes('prependButton'),
+    };
+  },
+  setup(props) {
+    const {
+      value: inputValue, errors: fieldErrors, meta: { valid }, handleBlur,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+
+    // validationListeners: Contains custom event listeners for validation.
+    // Since vee-validate +4 removes the interaction modes, this custom listener is added
+    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const validationListeners = {
+      blur: (evt) => handleBlur(evt, true),
+    };
+
+    return {
+      inputValue, fieldErrors, valid, validationListeners,
     };
   },
   mounted() {
@@ -236,6 +252,20 @@ export default {
         inputClasses.push('password-visible');
       }
       return inputClasses;
+    },
+    /**
+     * If the field is invalid, we return a string list of error ids which this field is described by
+     */
+    ariaDescribedBy() {
+      if ((this.valid && !this.errors.length) || !this.fieldErrors) return this.describedbyId || false;
+
+      const combinedErrors = this.errors.concat(this.fieldErrors);
+      if (!combinedErrors) return this.describedbyId || false;
+
+      return createAriaDescribedByList(this.name, combinedErrors);
+    },
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
     },
   },
   methods: {
@@ -282,32 +312,47 @@ export default {
       this.$emit('input', newVal);
     },
     /**
-     * Formats the number input by removing any characters that aren't 0-9.
+    * onBlur event handler
+    *
+    * @param {Object} event event object emitted by vue-multiselect during blur
+    */
+    onBlur(event) {
+      this.$emit('blur', event);
+      if (this.floatingLabel && this.label) {
+        this.floatLabels = this.inputValue.toString().length > 0;
+      }
+    },
+    /**
+     * Formats the number input by removing any characters that aren't 0-9, -, .
      * Note: This is due to accessibility concerns with input type="number".
      *       Accessibility changes implemented as part of this work:
      *       https://bugster.forgerock.org/jira/browse/IAM-3677
      */
     removeNonNumericChars({ target }) {
       const newVal = target?.value;
-      if (newVal && (typeof newVal === 'string')) {
-        const numericString = newVal.replace(/[^\d]/g, '');
-        return toNumber(numericString);
+      // Passing - or . to parseFloat returns NaN
+      // This allows negatives and decimals to be entered
+      const justHyphen = newVal.length === 1 && newVal.startsWith('-');
+      const justPeriod = newVal.length === 1 && newVal.startsWith('.');
+
+      if (newVal && (typeof newVal === 'string') && !justHyphen && !justPeriod) {
+        const numericString = newVal.replace(/[^0-9-.]/g, '');
+        const parsedVal = parseFloat(numericString);
+        let returnedVal = Number.isNaN(parsedVal) ? '' : parsedVal;
+        // If a number with just a period at the end is passed to parseFloat, it removes the period
+        // this allows decimals to be entered
+        if (numericString.endsWith('.') && !parsedVal.toString().endsWith('.')) {
+          returnedVal = numericString.length === 1 ? '.' : `${parsedVal}.`;
+        }
+        if (numericString === '-' && returnedVal === '') {
+          returnedVal = '-';
+        }
+        if (numericString === '-.') {
+          returnedVal = '.';
+        }
+        return returnedVal;
       }
       return newVal;
-    },
-    /**
-     * If the field is invalid, we return a string list of error ids which this field is described by
-     * @param {ValidationObserver} validationObserver errors from user input
-     * @param {Array} parentErrors the errors given to the component by its parent on load
-     */
-    getAriaDescribedBy({ errors: componentErrors, invalid }, parentErrors) {
-      if ((!invalid && !parentErrors.length) || !componentErrors) return this.describedbyId || false;
-
-      const fieldErrors = componentErrors[this.name] || [];
-      const combinedErrors = parentErrors.concat(fieldErrors);
-      if (!combinedErrors) return this.describedbyId || false;
-
-      return createAriaDescribedByList(this.name, combinedErrors);
     },
   },
 };
@@ -323,12 +368,12 @@ export default {
     padding-right: 0px;
   }
 
-  :deep(.prepend-button .btn) {
+  :deep(.prepend-button .within-input-button .btn) {
     margin-left: -1px;
     border-radius: 0 !important;
   }
 
-  :deep(.prepend-button:only-child .btn) {
+  :deep(.prepend-button:only-child .within-input-button .btn) {
     // Give button the correct padding inside the input field
     padding: 0.75rem 1.25rem !important;
     // Gives button a curved border on the right hand side

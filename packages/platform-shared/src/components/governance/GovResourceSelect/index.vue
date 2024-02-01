@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,20 +7,21 @@ of the MIT license. See the LICENSE file for details. -->
     v-if="initialSearch"
     style="height: 50px;">
     <FrField
-      :value="selectValue"
-      @input="handleInput"
-      @search-change="debouncedSearch"
-      @open="isOpen = true;"
       @close="isOpen = false; isSearching = false;"
+      @input="handleInput"
+      @open="isOpen = true;"
+      @search-change="debouncedSearch"
+      :name="name"
       open-direction="bottom"
       type="select"
-      :label="fieldLabel"
-      :validation="validation"
-      name="resourceSelect"
-      :placeholder="searchText"
+      :description="description"
+      :disabled="readOnly"
       :internal-search="false"
+      :label="fieldLabel"
       :options="selectOptions"
-      :description="description">
+      :placeholder="searchText"
+      :validation="validation"
+      :value="selectValue">
       <template #singleLabel="{ option }">
         {{ option.text }}
       </template>
@@ -79,6 +80,14 @@ export default {
       type: Object,
       default: () => {},
     },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -102,7 +111,7 @@ export default {
       await this.getResourceList(false);
       this.handleInput(this.savedData?.id, true);
     } else {
-      this.getResourceList(true);
+      await this.getResourceList(true);
     }
   },
   computed: {
@@ -182,23 +191,22 @@ export default {
      */
     handleInput(event, isInitial) {
       this.isSearching = false;
-      let path;
+
       if (this.resource === 'role' || compareRealmSpecificResourceName(this.resource, 'role')) {
-        path = `managed/${this.resource}`;
-        const selectedRole = this.options.find((role) => role.value === event);
+        const selectedRole = this.options.find((role) => role.value === event) || {};
+
         this.$emit('get-role-info', { name: selectedRole.text, id: selectedRole.value });
       } else if (this.resource === 'user' || compareRealmSpecificResourceName(this.resource, 'user')) {
-        path = `managed/${this.resource}`;
         let selectedUser = {};
 
         if (isInitial) selectedUser.userInfo = this.savedData;
-        else {
-          selectedUser = this.options
-            .find((user) => user.value === event) || {};
-        }
+        else selectedUser = this.options.find((user) => user.value === event) || {};
+
         this.$emit('get-user-info', selectedUser.userInfo);
       }
+
       this.selectValue = event;
+      const path = `managed/${this.resource}`;
       this.$emit('input', `${path}/${event}`);
     },
   },

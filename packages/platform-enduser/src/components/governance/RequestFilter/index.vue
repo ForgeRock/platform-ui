@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -15,7 +15,8 @@ of the MIT license. See the LICENSE file for details. -->
               :label="$t('governance.accessRequest.priorities.highPriority')"
               name="highPriority"
               testid="priority-high"
-              type="checkbox">
+              type="checkbox"
+              @input="formFields.highPriority = $event">
               <template #prepend>
                 <BImg
                   height="24"
@@ -31,7 +32,8 @@ of the MIT license. See the LICENSE file for details. -->
               :label="$t('governance.accessRequest.priorities.mediumPriority')"
               name="mediumPriority"
               testid="priority-medium"
-              type="checkbox">
+              type="checkbox"
+              @input="formFields.mediumPriority = $event">
               <template #prepend>
                 <BImg
                   height="24"
@@ -47,7 +49,8 @@ of the MIT license. See the LICENSE file for details. -->
               :label="$t('governance.accessRequest.priorities.lowPriority')"
               name="lowPriority"
               testid="priority-low"
-              type="checkbox">
+              type="checkbox"
+              @input="formFields.lowPriority = $event">
               <template #prepend>
                 <BImg
                   height="24"
@@ -69,6 +72,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BCol lg="6">
         <FrGovResourceSelect
           v-model="formFields.requestedFor"
+          name="requestedFor"
           class="mb-4"
           :first-option="allRequestersOption"
           :initial-data="{ id: 'all' }"
@@ -79,6 +83,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BCol lg="6">
         <FrGovResourceSelect
           v-model="formFields.requester"
+          name="requester"
           class="mb-4"
           :first-option="allRequestersOption"
           :initial-data="{ id: 'all' }"

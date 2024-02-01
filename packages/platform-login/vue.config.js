@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 const path = require('path');
+const dotenv = require('dotenv');
 
 function generateTheme() {
   let variableLoad = `
@@ -28,22 +29,47 @@ module.exports = {
   publicPath: SUBFOLDER,
   runtimeCompiler: true,
   devServer: {
-    before: (app) => {
+    setupMiddlewares: (middlewares, devServer) => {
       if (SUBFOLDER !== './') {
-        app.get(SUBFOLDER.replace(/\/$/, '$'), (req, res) => {
+        devServer.app.get(SUBFOLDER.replace(/\/$/, '$'), (req, res) => {
           res.redirect(SUBFOLDER);
         });
       } else {
-        app.all((req, res, next) => {
+        devServer.app.all((req, res, next) => {
           next();
         });
       }
+      return middlewares;
     },
-    disableHostCheck: true,
+    allowedHosts: 'all',
     host: process.env.HOST || '0.0.0.0',
     port: process.env.DEV_PORT || 8083,
+    client: {
+      webSocketURL: {
+        hostname: 'localhost',
+        pathname: 'ws',
+        port: process.env.DEV_PORT || 8083,
+      },
+    },
+    webSocketServer: process.env.NODE_ENV !== 'development' ? false : 'ws',
+    compress: false,
+    historyApiFallback: true,
   },
   chainWebpack: (config) => {
+    config.resolve.alias.set('vue', '@vue/compat');
+
+    config.module
+      .rule('vue')
+      .use('vue-loader')
+      .tap((options) => ({
+        ...options,
+        compilerOptions: {
+          compatConfig: {
+            MODE: 2,
+          },
+        },
+      }));
+
     config.module
       .rule('js')
       .use('babel-loader')
@@ -51,25 +77,71 @@ module.exports = {
         ...options,
         rootMode: 'upward',
       }));
+
+    /**
+     * Regenerates the environment variables using the define plugin of webpack in non-development environments
+     *   - before building load the environment variables from .env file using dotenv module
+     *   - format those variables to fit the string format required by define plugin
+     *   - overwrites the formated variables to the webpack definitions
+     * This is required due to an error replacing environment variables on the final bundle where they are replaced by empty values
+     */
+    if (process.env.NODE_ENV !== 'development') {
+      config
+        .plugin('define')
+        .tap((definitions) => {
+          const envs = dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+          const envsFormatted = Object.entries(envs.parsed).reduce((newEnvs, [key, value]) => {
+            newEnvs[key] = JSON.stringify(value);
+            return newEnvs;
+          }, {});
+          definitions[0]['process.env'] = {
+            ...definitions[0]['process.env'],
+            ...envsFormatted,
+          };
+          return definitions;
+        });
+    }
   },
-  configureWebpack: {
-    devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map',
-    output: {
-      devtoolModuleFilenameTemplate: (info) => {
-        const resPath = path.normalize(info.resourcePath);
-        const isVue = resPath.match(/\.vue$/);
-        const isGenerated = info.allLoaders;
+  configureWebpack: () => {
+    const config = {
+      devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map',
+      output: {
+        devtoolModuleFilenameTemplate: (info) => {
+          const resPath = path.normalize(info.resourcePath);
+          const isVue = resPath.match(/\.vue$/);
+          const isGenerated = info.allLoaders;
 
-        const generated = `webpack-generated:///${resPath}?${info.hash}`;
-        const vuesource = `vue-source:///${resPath}`;
+          const generated = `webpack-generated:///${resPath}?${info.hash}`;
+          const vuesource = `vue-source:///${resPath}`;
 
-        return isVue && isGenerated ? generated : vuesource;
+          return isVue && isGenerated ? generated : vuesource;
+        },
+        devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
       },
-      devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
-    },
+    };
+
+    // Disable the use of the 'exports' field in package.json for legacy builds.
+    // Reason: An issue arises with the 'nanoid' library when it's utilized by 'postcss' through 'sanitize-html'.
+    // The 'exports' field in 'nanoid' causes the library to not resolve correctly in older browsers like IE 11.
+    // Note: This adjustment can be removed in the future under these conditions:
+    // 1. When support for IE 11 is no longer needed.
+    // 2. Or, when 'vue-sanitize' is no longer a dependency (if it gets removed or replaced).
+    if (!process.env.VUE_CLI_MODERN_BUILD) {
+      config.resolve = {
+        exportsFields: [],
+      };
+    }
+
+    return config;
   },
   css: {
     loaderOptions: {
+      css: {
+        modules: {
+          auto: () => true,
+          mode: 'global',
+        },
+      },
       sass: {
         prependData: generateTheme(),
       },
@@ -88,5 +160,8 @@ module.exports = {
     'postcss',
     'nanoid',
     'sanitize-html',
+    'vue-multiselect',
+    'pinia',
+    'axios',
   ],
 };

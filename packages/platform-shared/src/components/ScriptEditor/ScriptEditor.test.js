@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount } from '@vue/test-utils';
+import { Form as VeeForm } from 'vee-validate';
 import ScriptEditor from './index';
 
 describe('ScriptEditor', () => {
@@ -13,35 +14,34 @@ describe('ScriptEditor', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(ScriptEditor, {
-      mocks: {
-        $t: () => {},
-        $store: {
-          state: {
-            isFraas: false,
+      global: {
+        mocks: {
+          $t: () => {},
+          $store: {
+            state: {
+              isFraas: false,
+            },
           },
         },
+        stubs: {
+          VeeForm,
+        },
       },
-      propsData: {
+      props: {
         closeModal: () => {},
       },
       mounted: () => {},
     });
-
-    wrapper.vm.$refs = {
-      validationObserver: {
-        validate: () => {},
-      },
-    };
   });
 
-  it('script editor sets values given as props into component', () => {
+  it('script editor sets values given as props into component', async () => {
     expect(wrapper.vm.scriptType.value).toEqual('text/javascript');
     expect(wrapper.vm.value.globals).toEqual({});
     expect(wrapper.vm.value.source).toEqual('');
     expect(wrapper.vm.code).toEqual('');
     expect(wrapper.vm.value.file).toEqual(undefined);
 
-    wrapper.setData({
+    await wrapper.setProps({
       value: {
         type: 'text/groovy',
         globals: {
@@ -83,10 +83,10 @@ describe('ScriptEditor', () => {
     expect(wrapper.vm.selectedVariables[0].name).toEqual('newName2');
   });
 
-  it('removes file and sets source and script type', () => {
+  it('removes file and sets source and script type', async () => {
     expect(wrapper.vm.value.file).toEqual(undefined);
 
-    wrapper.setData({
+    await wrapper.setProps({
       value: {
         type: 'text/groovy',
         globals: {

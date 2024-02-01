@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,43 +7,46 @@ of the MIT license. See the LICENSE file for details. -->
     <label
       v-if="label && isHtml"
       v-html="label"
-      :for="`${id}-date`"
+      :for="`${internalId}-date`"
       class="pe-none overflow-hidden text-nowrap" />
     <label
       v-else-if="label"
-      :for="`${id}-date`"
+      :for="`${internalId}-date`"
       class="pe-none overflow-hidden text-nowrap">
-      {{ getTranslation(label) }}
+      {{ labelTranslation }}
     </label>
     <BRow class="form-row">
       <BCol>
         <FrDateInput
-          v-model="dateValue"
+          :value="dateValue"
+          @input="dateValue = $event; emitDateTimeValue()"
           ref="dateInput"
-          :aria-label="getTranslation(label)"
+          :aria-label="labelTranslation"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
+          :disabled="disabled"
           :dropleft="dropleft"
-          :id="`${id}-date`"
+          :id="`${internalId}-date`"
           :description="description"
           :errors="errors"
           :is-html="isHtml"
-          :name="name"
+          :name="`${name}-date`"
           :validation="validation"
-          :validation-immediate="validationImmediate"
-          @input="emitDateTimeValue" />
+          :validation-immediate="validationImmediate" />
       </BCol>
       <BCol>
         <FrTimeInput
-          v-model="timeValue"
+          :value="timeValue"
+          @input="timeValue = $event; emitDateTimeValue()"
           ref="timeInput"
-          :aria-label="getTranslation(label)"
+          :adjust-for-timezone="adjustForTimezone"
+          :aria-label="labelTranslation"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :dropleft="dropleft"
           :disabled="disabled"
-          :id="`${id}-time`"
-          :name="name"
+          :id="`${internalId}-time`"
+          :name="`${name}-time`"
+          :show-seconds="showSeconds"
           :validation-immediate="validationImmediate"
-          @input="emitDateTimeValue"
           @utc-input="emitDateTimeValue" />
       </BCol>
     </BRow>
@@ -74,7 +77,19 @@ export default {
     FrTimeInput,
   },
   props: {
+    /**
+     * If a timezone component is used, ensure we don't
+     * adjust dates automatically for timezones
+     */
+    adjustForTimezone: {
+      default: true,
+      type: Boolean,
+    },
     dropleft: {
+      default: true,
+      type: Boolean,
+    },
+    showSeconds: {
       default: true,
       type: Boolean,
     },
@@ -93,22 +108,30 @@ export default {
      */
     emitDateTimeValue() {
       if (this.dateValue !== '' && this.dateValue !== null && this.timeValue !== '' && this.timeValue !== null) {
-        const emitTime = new Date(this.dateValue);
-        const timezoneOffset = emitTime.getTimezoneOffset();
-        const hours = dayjs(`${this.dateValue}T${this.timeValue}`).utc().hour();
-        const minutes = dayjs(`${this.dateValue}T${this.timeValue}`).utc().minute();
-        const totalMinutes = (hours * 60) + minutes;
+        if (this.adjustForTimezone) {
+          const emitTime = new Date(this.dateValue);
+          const timezoneOffset = emitTime.getTimezoneOffset();
+          const hours = dayjs(`${this.dateValue}T${this.timeValue}`).utc().hour();
+          const minutes = dayjs(`${this.dateValue}T${this.timeValue}`).utc().minute();
+          const totalMinutes = (hours * 60) + minutes;
 
-        if (timezoneOffset > totalMinutes) {
-          emitTime.setDate(emitTime.getDate() + 1);
-        } else if (timezoneOffset < 0 && (totalMinutes - timezoneOffset >= 1440)) {
-          emitTime.setDate(emitTime.getDate() - 1);
+          if (timezoneOffset > totalMinutes) {
+            emitTime.setDate(emitTime.getDate() + 1);
+          } else if (timezoneOffset < 0 && (totalMinutes - timezoneOffset >= 1440)) {
+            emitTime.setDate(emitTime.getDate() - 1);
+          }
+          this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DD')}T${this.timeValue}`);
+        } else {
+          this.$emit('input', `${dayjs(this.dateValue).format('YYYY-MM-DD')}T${this.timeValue}`);
         }
-        this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DD')}T${this.timeValue}`);
       } else if (this.dateValue !== '' && this.dateValue !== null) {
-        const emitTime = new Date(this.dateValue);
-        emitTime.setHours(24, 0, 0, 0);
-        this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DDTHH:mm:ss')}Z`);
+        if (this.adjustForTimezone) {
+          const emitTime = new Date(this.dateValue);
+          emitTime.setHours(24, 0, 0, 0);
+          this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DDTHH:mm:ss')}Z`);
+        } else {
+          this.$emit('input', `${dayjs(this.dateValue).format('YYYY-MM-DDTHH:mm:ss')}`);
+        }
       } else {
         this.$emit('input', '');
       }
@@ -127,6 +150,11 @@ export default {
           this.dateValue = dayjs(newVal).format('YYYY-MM-DD');
         }
       }
+    },
+  },
+  computed: {
+    labelTranslation() {
+      return this.getTranslation(this.label);
     },
   },
 };

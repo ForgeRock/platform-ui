@@ -5,15 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 import Shared from '@forgerock/platform-shared/src/store/modules/Shared';
 import AutoAccess from '@forgerock/platform-shared/src/store/modules/AutoAccess';
-import User from './modules/User';
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export default createStore({
   state: {
     // environment variables
     adminURL: null,
@@ -33,6 +29,7 @@ export default new Vuex.Store({
     // user
     approvalsCount: null,
     certificationCount: null,
+    requestCartUsers: [],
   },
   mutations: {
     setEnvironment(state, env) {
@@ -78,19 +75,18 @@ export default new Vuex.Store({
     setApprovalsCount(state, count) {
       state.approvalsCount = count;
     },
+
+    setRequestCartUsers(state, users) {
+      state.requestCartUsers = users;
+    },
   },
   modules: {
     ...AutoAccess,
-    UserStore: {
-      namespaced: true,
-      getters: User.getters,
-      state: User.state,
-      mutations: User.mutations,
-    },
     SharedStore: {
       namespaced: true,
       state: Shared.state,
       mutations: Shared.mutations,
+      getters: Shared.getters,
     },
   },
 });

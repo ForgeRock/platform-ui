@@ -121,18 +121,19 @@ of the MIT license. See the LICENSE file for details. -->
           :subtitle="$t('governance.certificationTask.noAccessReview', { type: statusSort.text })" />
         <BPagination
           v-if="totalRows > 10"
-          v-model="currentPage"
+          :value="currentPage"
           class="pt-3 justify-content-center pagination-material-buttons border-top"
           per-page="10"
           :total-rows="totalRows"
-          @input="()=> getList()" />
+          @input="paginationChange" />
       </BCard>
     </div>
   </BContainer>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BBadge,
   BCard,
@@ -216,14 +217,16 @@ export default {
     this.getList();
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-    }),
+    ...mapState(useUserStore, ['userId']),
     currentUserId() {
       return `managed/user/${this.userId}`;
     },
   },
   methods: {
+    paginationChange(pageNumber) {
+      this.currentPage = pageNumber;
+      this.getList();
+    },
     getItems(params) {
       const { queryString } = params;
       delete params.queryString;
@@ -273,14 +276,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-#dropdown-status::v-deep {
+#dropdown-status:deep {
   button {
     color: $black;
     padding-left: 0;
     padding-right: 0;
   }
 }
-::v-deep {
+:deep {
   .w-140px {
     width: 140px;
   }

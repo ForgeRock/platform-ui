@@ -34,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
                 no-body
                 class="align-items-center">
                 <BImg
-                  :src="userDetails.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                  :src="profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
                   alt="profile-picture"
                   class="mr-3 rounded-circle"
                   width="36" />
@@ -99,7 +99,9 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { isEmpty } from 'lodash';
 import {
   BCol,
@@ -145,18 +147,13 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      userDetails: (state) => state.UserStore,
-    }),
+    ...mapState(useUserStore, ['givenName', 'sn', 'userName', 'userId']),
+    ...mapState(useEnduserStore, ['profileImage']),
     userFullName() {
-      const { givenName, sn } = this.userDetails;
       return this.$t('common.userFullName', {
-        givenName,
-        sn,
+        givenName: this.givenName,
+        sn: this.sn,
       });
-    },
-    userName() {
-      return this.userDetails.userName;
     },
     otherUsersVisible() {
       return this.requestOption === 'others';
@@ -174,20 +171,17 @@ export default {
      */
     requestAccess() {
       const currentUser = {
-        id: this.userDetails.userId,
+        id: this.userId,
         name: this.userFullName,
-        profileImage: this.userDetails.profileImage,
+        profileImage: this.profileImage,
         userName: this.userName,
       };
       const usersToRequest = this.requestOption === 'self'
         ? [currentUser]
         : this.selectedUsers;
-      this.$router.push({
-        name: 'AccessRequestNew',
-        params: {
-          requestingFor: usersToRequest,
-        },
-      });
+
+      this.$store.commit('setRequestCartUsers', usersToRequest);
+      this.$router.push({ name: 'AccessRequestNew' });
     },
   },
 };

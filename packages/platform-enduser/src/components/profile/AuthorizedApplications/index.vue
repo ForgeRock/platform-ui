@@ -43,8 +43,10 @@ of the MIT license. See the LICENSE file for details. -->
                   }}
                 </small>
               </dt>
-              <template v-for="(scope, i) in slotData.scopes">
-                <dd :key="i">
+              <template
+                v-for="(scope, i) in slotData.scopes"
+                :key="i">
+                <dd>
                   <div class="media">
                     <FrIcon
                       class="mr-2 mt-1 text-success"
@@ -122,7 +124,9 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { BButton, BImg, BModal } from 'bootstrap-vue';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -133,6 +137,9 @@ export default {
   name: 'AuthorizedApplications',
   mixins: [RestMixin, NotificationMixin],
   components: {
+    BButton,
+    BImg,
+    BModal,
     FrAccordion,
     FrIcon,
   },
@@ -147,10 +154,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userSearchAttribute,
-      userName: (state) => state.UserStore.userName,
-    }),
+    ...mapState(useUserStore, ['userSearchAttribute']),
   },
   mounted() {
     this.loadData();
@@ -167,7 +171,7 @@ export default {
     },
     loadData() {
       const selfServiceInstance = this.getRequestService({ context: 'AM' });
-      const url = `/users/${this.userId}/oauth2/applications?_queryFilter=true`;
+      const url = `/users/${this.userSearchAttribute}/oauth2/applications?_queryFilter=true`;
 
       selfServiceInstance.get(url, { withCredentials: true }).then((res) => {
         // filter out end-user-ui and idm-admin-ui
@@ -184,7 +188,7 @@ export default {
     },
     removeApplication(clientId) {
       const selfServiceInstance = this.getRequestService({ context: 'AM' });
-      const url = `/users/${this.userId}/oauth2/applications/${clientId}`;
+      const url = `/users/${this.userSearchAttribute}/oauth2/applications/${clientId}`;
 
       selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
         this.$refs.fsModal.hide();

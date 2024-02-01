@@ -1,13 +1,14 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
-    v-slot="{ invalid }"
-    ref="observer">
+  <VeeForm
+    v-slot="{ meta: { valid } }"
+    ref="observer"
+    as="span">
     <BModal
-      :ok-disabled="invalid"
+      :ok-disabled="!valid"
       :ok-title="$t('common.forward')"
       :title="$t('governance.forwardReviewModal.title')"
       @ok="handleForward"
@@ -28,6 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
           />
           <FrGovResourceSelect
             v-model="forwardToResource"
+            name="forwardToResource"
             :resource-path="isUserSelected ? 'user' : 'role'"
             :label="$t('governance.certificationTask.actionsModal.forwardTo')"
             validation="required"
@@ -40,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
           :label="$t('common.comment')" />
       </div>
     </BModal>
-  </ValidationObserver>
+  </VeeForm>
 </template>
 
 <script>
@@ -48,7 +50,7 @@ import {
   BFormRadioGroup,
   BModal,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
@@ -60,7 +62,7 @@ export default {
     BModal,
     FrField,
     FrGovResourceSelect,
-    ValidationObserver,
+    VeeForm,
   },
   props: {
     certId: {

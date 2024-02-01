@@ -67,11 +67,13 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BButton, BModal } from 'bootstrap-vue';
 import {
   each,
   isNull,
 } from 'lodash';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import Accordion from '@forgerock/platform-shared/src/components/Accordion';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -86,6 +88,8 @@ export default {
     LoginMixin,
   ],
   components: {
+    BButton,
+    BModal,
     FrAccordion: Accordion,
     FrIcon,
   },
@@ -96,7 +100,7 @@ export default {
           name: 'download',
           header: this.$t('pages.profile.accountControls.downloadTitle'),
           description: this.$t('pages.profile.accountControls.downloadSubtitle'),
-          buttonText: this.$t('pages.profile.accountControls.downloadLink'),
+          buttonText: this.$t('common.download'),
           buttonIcon: 'download',
           buttonVariant: 'primary',
           buttonMethod: this.downloadAccount,
@@ -114,10 +118,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-      managedResource: (state) => state.UserStore.managedResource,
-    }),
+    ...mapState(useUserStore, ['userId', 'managedResource']),
   },
   methods: {
     downloadAccount() {

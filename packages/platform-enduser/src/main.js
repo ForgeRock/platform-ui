@@ -10,44 +10,34 @@ import 'core-js/stable';
 import {
   each,
   has,
-  isNull,
   debounce,
 } from 'lodash';
 import axios from 'axios';
-import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
-import Notifications from 'vue-notification';
+import Notifications from '@kyvg/vue3-notification';
 import PromisePoly from 'es6-promise';
-import {
-  setInteractionMode,
-  ValidationObserver,
-  ValidationProvider,
-} from 'vee-validate';
-import Vue from 'vue';
+import { createApp } from 'vue';
 import AppAuthHelper from 'appauthhelper-enduser/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck-enduser';
-import VueSanitize from 'vue-sanitize';
+import Vue3Sanitize from 'vue-3-sanitize';
+import { createPinia } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import { getSessionTimeoutInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import velocity from 'velocity-animate';
+import BootstrapVue from 'bootstrap-vue';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
 import App from './App';
 
-// Turn off production warning messages
-Vue.config.productionTip = false;
-
-// Register validation components for global use
-Vue.component('ValidationProvider', ValidationProvider);
-Vue.component('ValidationObserver', ValidationObserver);
-
-Vue.use(VueSanitize, baseSanitizerConfig);
-
-setInteractionMode('passive');
+const pinia = createPinia();
 
 PromisePoly.polyfill();
 
@@ -57,6 +47,8 @@ const idmContext = getFQDN(process.env.VUE_APP_IDM_URL);
 
 // Router guard to check authenticated routes
 router.beforeEach((to, from, next) => {
+  const userStore = useUserStore(pinia);
+  const enduserStore = useEnduserStore(pinia);
   document.body.className = '';
 
   if (has(to, 'meta.bodyClass')) {
@@ -64,7 +56,8 @@ router.beforeEach((to, from, next) => {
   }
 
   if (has(to, 'meta.authenticate')) {
-    if (isNull(store.state.UserStore.userId)) {
+    // Retrieve user data to check if the user can access this resource and for future role checks
+    if (userStore.userId === '') {
       const authInstance = axios.create({
         baseURL: idmContext,
         headers: store.state.authHeaders,
@@ -76,16 +69,15 @@ router.beforeEach((to, from, next) => {
           // so send them back to the admin to avoid problems.
           window.location.href = process.env.VUE_APP_ADMIN_URL;
         }
-        store.commit('UserStore/setUserId', userDetails.data.authorization.id);
-        store.commit('UserStore/setManagedResource', userDetails.data.authorization.component);
-        store.commit('UserStore/setRoles', userDetails.data.authorization.roles);
+        userStore.userId = userDetails.data.authorization.id;
+        userStore.managedResource = userDetails.data.authorization.component;
+        userStore.idmRoles = userDetails.data.authorization.roles;
+
         axios.all([
           authInstance.get(`${userDetails.data.authorization.component}/${userDetails.data.authorization.id}`),
-          authInstance.post('privilege?_action=listPrivileges'),
-          getSchema(userDetails.data.authorization.component, { baseURL: idmContext })]).then(axios.spread((profile, privilege, schema) => {
-          store.commit('UserStore/setProfile', profile.data);
-          store.commit('UserStore/setSchema', schema.data);
-          store.commit('UserStore/setAccess', privilege.data);
+          getSchema(userDetails.data.authorization.component, { baseURL: idmContext })]).then(axios.spread((profile, schema) => {
+          enduserStore.setProfile(profile.data);
+          enduserStore.managedResourceSchema = schema.data;
 
           next();
         }));
@@ -108,37 +100,16 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-// Globally load bootstrap vue components for use
-Vue.use(BootstrapVue);
-
-/*
-  Basic Notification Example:
-  this.$notify({
-      group: 'IDMMessages', // Currently the only group
-      type: 'success', // Available types success, failure, info, warning
-      title: this.$t('common.messages.saveSuccess'), //Translated string
-      text: this.$t('pages.resources.mappingSave') // Translated string (can also be html)
-  });
- */
-Vue.use(Notifications);
-
-// required to use PascalCase `RouterView` and `RouterLink` instead of `router-view` and `router-link`
-const RouterView = Vue.component('router-view');
-const RouterLink = Vue.component('router-link');
-
-Vue.component('RouterView', RouterView);
-Vue.component('RouterLink', RouterLink);
-
 const loadApp = () => {
-  /* eslint-disable no-new */
-  new Vue({
-    el: '#app',
-    router,
-    store,
-    i18n,
-    template: '<App/>',
-    components: { App },
-  });
+  const app = createApp(App);
+  app.use(BootstrapVue);
+  app.use(router);
+  app.use(store);
+  app.use(i18n);
+  app.use(pinia);
+  app.use(Notifications, { velocity });
+  app.use(Vue3Sanitize, baseSanitizerConfig);
+  router.isReady().then(() => app.mount('#appRoot'));
 };
 /*
     We will load the application regardless
@@ -208,6 +179,10 @@ const addAppAuth = (realm) => {
     resourceServers[store.state.SharedStore.autoAccessApiUrl] = 'fr:autoaccess:*';
   }
 
+  if (store.state.SharedStore.autoReportsEnabled) {
+    resourceServers[store.state.SharedStore.autoAccessReportsUrl] = 'fr:idc:analytics:*';
+  }
+
   AppAuthHelper.init({
     clientId: commonSettings.clientId,
     authorizationEndpoint: commonSettings.authorizationEndpoint,
@@ -218,7 +193,8 @@ const addAppAuth = (realm) => {
     resourceServers,
     tokensAvailableHandler(claims) {
       const sub = parseSub(claims);
-      store.commit('UserStore/setUserSearchAttribute', sub);
+      const userStore = useUserStore(pinia);
+      userStore.userSearchAttribute = sub;
       // if there is a post_logout_url claim set postLogoutUrlClaim here for use in window.logout()
       postLogoutUrlClaim = claims.post_logout_url;
       const sessionCheck = new SessionCheck({
@@ -249,6 +225,9 @@ const addAppAuth = (realm) => {
 
       const triggerSession = () => {
         sessionCheck.triggerSessionCheck();
+        getSessionTimeoutInfo().then(({ data }) => {
+          store.commit('SharedStore/setMaxIdleExpirationTime', data.maxIdleExpirationTime);
+        });
       };
       // check the validity of the session immediately
       triggerSession();

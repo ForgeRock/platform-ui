@@ -76,7 +76,7 @@ export default {
 
 <style lang="scss" scoped>
 .my-applications-list-item {
-  ::v-deep .list-group-item.noncollapse {
+  :deep(.list-group-item.noncollapse) {
     border: $border-width solid $gray-200;
     display: flex;
     flex-direction: column;

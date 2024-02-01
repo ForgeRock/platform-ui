@@ -7,35 +7,36 @@
 
 import 'whatwg-fetch';
 import 'core-js/stable';
+import '@forgerock/platform-shared/src/utils/domCollectionsForEach';
 import 'regenerator-runtime/runtime';
 
-import Vue from 'vue';
-import Notifications from 'vue-notification';
+import { createApp } from 'vue';
+import Notifications from '@kyvg/vue3-notification';
+import PromisePoly from 'es6-promise';
 import {
   Config,
   SessionManager,
 } from '@forgerock/javascript-sdk';
-import { setInteractionMode } from 'vee-validate';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import isWebStorageAvailable from '@forgerock/platform-shared/src/utils/webStorageTest';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
-import VueSanitize from 'vue-sanitize';
+import Vue3Sanitize from 'vue-3-sanitize';
 import uuid from 'uuid/v4';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { createPinia } from 'pinia';
 import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import velocity from 'velocity-animate';
 import store from '@/store';
 import i18n from './i18n';
 import router from './router';
 import App from './App';
+import VueReCaptcha from './plugins/vueReCaptcha';
 
-Vue.config.productionTip = false;
+PromisePoly.polyfill();
 
-Vue.use(Notifications);
-Vue.use(VueSanitize, baseSanitizerConfig);
-
-setInteractionMode('passive');
+const pinia = createPinia();
 
 store.commit('SharedStore/setBaseURLs', process.env);
 store.commit('SharedStore/setWebStorageAvailable', isWebStorageAvailable());
@@ -71,8 +72,9 @@ router.beforeEach((to, _from, next) => {
   if (to.name === 'logout') {
     const urlParams = new URLSearchParams(window.location.search);
     const goto = urlParams.get('goto') || '';
-    const logout = (validatedGoto) => {
-      SessionManager.logout().then(() => {
+    const logout = (realm, validatedGoto) => {
+      const logoutParams = { realmPath: realm || localStorage.getItem('originalLoginRealm') || 'root' };
+      SessionManager.logout(logoutParams).then(() => {
         if (validatedGoto) {
           window.location.href = validatedGoto;
         } else {
@@ -80,7 +82,11 @@ router.beforeEach((to, _from, next) => {
         }
       });
     };
-    let realm = urlParams.get('realm');
+    const routeUrlParams = new URLSearchParams(to.query);
+    let realm = routeUrlParams.get('realm');
+    if (!realm && urlParams.get('realm') !== 'undefined') {
+      realm = urlParams.get('realm');
+    }
 
     if (goto) {
       // validate the goto param before logging out
@@ -89,9 +95,9 @@ router.beforeEach((to, _from, next) => {
           apiVersion: 'protocol=2.1,resource=3.0',
           path: `realms/root/realms/${realm}`,
         }).post('users?_action=validateGoto', { goto: decodeURIComponent(goto) }, { withCredentials: true }).then((res) => {
-          logout(res.data.successURL);
+          logout(realm, res.data.successURL);
         }).catch(() => {
-          logout();
+          logout(realm);
         });
       };
 
@@ -108,7 +114,7 @@ router.beforeEach((to, _from, next) => {
         validateGotoAndLogout();
       }
     } else {
-      logout();
+      logout(realm);
     }
   } else {
     next();
@@ -116,12 +122,15 @@ router.beforeEach((to, _from, next) => {
 });
 
 const loadApp = () => {
-  new Vue({
-    router,
-    i18n,
-    store,
-    render: (h) => h(App),
-  }).$mount('#app');
+  const app = createApp(App);
+  app.use(Notifications, { velocity });
+  app.use(Vue3Sanitize, baseSanitizerConfig);
+  app.use(VueReCaptcha);
+  app.use(router);
+  app.use(i18n);
+  app.use(store);
+  app.use(pinia);
+  router.isReady().then(() => app.mount('#appRoot'));
 };
 
 /**

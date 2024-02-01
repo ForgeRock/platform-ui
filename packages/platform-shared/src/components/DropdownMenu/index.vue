@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,12 +14,11 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <!-- @slot Dropdown header -->
     <slot name="dropdown-header" />
-    <template v-for="(item, index) in dropdownItems">
+    <template
+      v-for="(item, index) in dropdownItems"
+      :key="`sideDropdownItems_${index}`">
       <template>
-        <FrMenuItem
-          :key="`sideDropdownItems_${index}`"
-          v-bind="item"
-          :user-roles="userDetails.roles" />
+        <FrMenuItem v-bind="item" />
       </template>
     </template>
     <template v-if="showProfileLink">
@@ -27,12 +26,10 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem @click="$router.push({ name: 'Profile' })">
         <BMedia class="text-left">
           <template #aside>
-            <!-- alt text purposefully set to empty string as this is considered a 'decorative image' in WCAG standards -->
-            <img
-              alt=""
-              height="34"
-              width="34"
-              :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')">
+            <BAvatar
+              size="34"
+              variant="light"
+              :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
           </template>
           <h5 class="my-0 text-truncate">
             {{ userDetails.name }}
@@ -64,6 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  BAvatar,
   BDropdown,
   BDropdownItem,
   BDropdownDivider,
@@ -72,13 +70,16 @@ import {
 import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 /**
  * Bootstrap dropdown menu used in navbar and sidemenu
  */
 export default {
   name: 'DropdownMenu',
   components: {
+    BAvatar,
     BDropdown,
     BDropdownDivider,
     BDropdownItem,
@@ -118,25 +119,16 @@ export default {
       type: Boolean,
       default: false,
     },
-    /**
-     * Details about the current user. Displayed with admin and profile links.
-     */
-    userDetails: {
-      type: Object,
-      default: () => ({
-        name: 'Fake Name',
-        company: '',
-        email: 'email@fake.com',
-        adminURL: 'wwwfakecom',
-        roles: [],
-      }),
-    },
+  },
+  computed: {
+    ...mapState(useUserStore, ['userDetails']),
+    ...mapState(useEnduserStore, ['profileImage']),
   },
 };
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
+:deep {
   .b-dropdown {
     width: 100%;
   }
@@ -166,6 +158,9 @@ export default {
     span:not(.material-icons-outlined) {
       font-size: 0.875rem;
     }
+    .media-body {
+      overflow: hidden;
+    }
   }
 
   .dropdown-toggle::after {
@@ -177,9 +172,5 @@ export default {
       right: 0;
     }
   }
-}
-
-.media-body {
-  overflow: hidden;
 }
 </style>

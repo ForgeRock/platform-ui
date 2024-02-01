@@ -5,58 +5,42 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
-import Vuex from 'vuex';
-import flushPromises from 'flush-promises';
-import i18n from '@/i18n';
+import { mount, flushPromises } from '@vue/test-utils';
+import { createStore } from 'vuex';
+import Notifications from '@kyvg/vue3-notification';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import DefaultDashboard from './index';
-import Workflow from '@/views/DashboardManager/dashboards/widgets/WorkflowControlWidget';
-
-const localVue = createLocalVue();
-localVue.use(Vuex);
-localVue.use(BootstrapVue);
+import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
 
 DefaultDashboard.mounted = jest.fn();
 
 let wrapper;
 
 describe('DefaultDashboard.vue', () => {
+  const store = createStore({
+    state: {
+      SharedStore: { workforceEnabled: false },
+    },
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
-    wrapper = shallowMount(DefaultDashboard, {
-      localVue,
-      i18n,
-      mocks: {
-        $t: (key) => (key),
-        $router: { push: jest.fn() },
-      },
-      store: new Vuex.Store({
-        state: {
-          SharedStore: { workforceEnabled: false },
-          UserStore: {
-            userId: null,
-            managedResource: null,
-            roles: null,
-            internalUser: false,
-            adminUser: false,
-            profile: {},
-            schema: {},
-            access: [],
-            givenName: '',
-            sn: '',
-            email: '',
-            userName: '',
-          },
+    setupTestPinia();
+    wrapper = mount(DefaultDashboard, {
+      global: {
+        plugins: [Notifications, store],
+        mocks: {
+          $t: (key) => (key),
+          $router: { push: jest.fn() },
         },
-      }),
+      },
     });
   });
 
   describe('loading dashboard data', () => {
     it('executes loadWidgets method', async () => {
       const loadWidgetsSpy = jest.spyOn(wrapper.vm, 'loadWidgets');
-      const widgetResponse = [{ type: 'Workflow' }];
+      const widgetResponse = [{ type: 'Welcome' }];
 
       jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({
         get: () => Promise.resolve({
@@ -72,13 +56,13 @@ describe('DefaultDashboard.vue', () => {
       await flushPromises();
 
       expect(loadWidgetsSpy).toHaveBeenCalled();
-      expect(wrapper.findComponent(Workflow).exists()).toBe(true);
+      expect(wrapper.findComponent(Welcome).exists()).toBe(true);
       expect(wrapper.find('.my-applications-tiles').exists()).toBe(false);
-      expect(wrapper.vm.widgets).toEqual([{ type: 'Workflow' }]);
+      expect(wrapper.vm.widgets).toEqual([{ type: 'Welcome' }]);
     });
 
     it('error notification when getRequestService is not successful inside of loadWidgets', async () => {
-      const notificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+      const notificationSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
       const error = { response: { data: { message: 'your widgets call failed' } } };
 
       jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({
@@ -87,7 +71,7 @@ describe('DefaultDashboard.vue', () => {
 
       wrapper.vm.loadWidgets();
       await flushPromises();
-      expect(notificationSpy).toHaveBeenCalledWith('error', 'your widgets call failed');
+      expect(notificationSpy).toHaveBeenCalledWith(error, 'pages.dashboard.errorGetApplications');
     });
 
     it('executes loadConsumerApplications method', async () => {
@@ -96,9 +80,9 @@ describe('DefaultDashboard.vue', () => {
       jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({
         get: () => Promise.resolve({
           data: [
-            { dashboardDisplayName: 'b' },
-            { dashboardDisplayName: 'c' },
-            { dashboardDisplayName: 'a' },
+            { dashboardDisplayName: 'b', dashboardLogin: ['test'], dashboardIcon: ['test'] },
+            { dashboardDisplayName: 'c', dashboardLogin: ['test'], dashboardIcon: ['test'] },
+            { dashboardDisplayName: 'a', dashboardLogin: ['test'], dashboardIcon: ['test'] },
           ],
         }),
       }));
@@ -106,13 +90,13 @@ describe('DefaultDashboard.vue', () => {
       wrapper.vm.loadConsumerApplications();
       await flushPromises();
       expect(loadApplicationsSpy).toHaveBeenCalled();
-      expect(wrapper.find('.my-applications-tiles').exists()).toBe(true);
+      expect(wrapper.find('.list-group').exists()).toBe(true);
 
       // sorted by method
       expect(wrapper.vm.myApplications).toStrictEqual([
-        { dashboardDisplayName: 'a' },
-        { dashboardDisplayName: 'b' },
-        { dashboardDisplayName: 'c' },
+        { dashboardDisplayName: 'a', dashboardLogin: ['test'], dashboardIcon: ['test'] },
+        { dashboardDisplayName: 'b', dashboardLogin: ['test'], dashboardIcon: ['test'] },
+        { dashboardDisplayName: 'c', dashboardLogin: ['test'], dashboardIcon: ['test'] },
       ]);
     });
 

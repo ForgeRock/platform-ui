@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     @hidden="$emit('hidden')"
   >
     <div
-      v-if="data"
+      v-if="eventData"
       class="d-flex flex-row">
       <div class="col-8 p-0">
         <div class="d-flex flex-row w-100 mb-5">
@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t("autoAccess.access.activity.eventId") }}
             </div>
             <div class="text-dark">
-              {{ data.eventId }}
+              {{ eventData.eventId }}
             </div>
           </div>
           <div class="w-50">
@@ -27,11 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t("autoAccess.access.activity.user") }}
             </div>
             <div class="text-dark">
-              <!-- TODO uncomment to link to user detail view -->
-              <!-- <RouterLink
-                                :to="`user-detail/${data.userId}`"
-                                > -->
-              <div class="d-flex flex-row">
+              <div class="d-flex flex-row mb-2">
                 <img
                   :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
                   class="align-self-center"
@@ -40,12 +36,18 @@ of the MIT license. See the LICENSE file for details. -->
                   height="34">
                 <div class="ml-3">
                   <div>
-                    {{ data.raw.username }}
+                    {{ eventData.raw.username }}
                   </div>
                 </div>
               </div>
-              <!-- TODO uncomment to link to user detail view -->
-              <!-- </RouterLink> -->
+              <BButton
+                size="sm"
+                variant="outline-primary"
+                @click="$router.push({name: 'AutoAccessUserBehavior', params: { username: eventData.raw.username}})"
+              >
+                <FrIcon name="insights" />
+                {{ $t("autoAccess.access.activity.viewRecentBehavior") }}
+              </BButton>
             </div>
           </div>
         </div>
@@ -56,10 +58,10 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
             <div class="text-dark">
               <div class="text-capitalize">
-                {{ data.weekday }} {{ data.dayparting }}
+                {{ eventData.weekday }} {{ eventData.dayparting }}
               </div>
               <div class="mt-1">
-                {{ formatTime(data.timestamp, data.timezone) }}
+                {{ formatTime(eventData.timestamp, eventData.timezone) }}
               </div>
             </div>
           </div>
@@ -69,13 +71,13 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
             <div
               class="text-dark text-capitalize"
-              v-if="data.geoData"
+              v-if="eventData.geoData"
             >
               <div>
-                {{ data.geoData.city }}
+                {{ eventData.geoData.city }}
               </div>
               <div class="mt-1">
-                {{ data.geoData.country }}
+                {{ eventData.geoData.country }}
               </div>
             </div>
             <div
@@ -93,10 +95,10 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
             <div class="text-dark">
               <div>
-                {{ data.deviceType }}
+                {{ eventData.deviceType }}
               </div>
               <div class="mt-1">
-                {{ data.device }}
+                {{ eventData.device }}
               </div>
             </div>
           </div>
@@ -106,10 +108,10 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
             <div class="text-dark">
               <div>
-                {{ data.os }} {{ data.osVersion }}
+                {{ eventData.os }} {{ eventData.osVersion }}
               </div>
               <div class="mt-1">
-                {{ data.userAgentType }}
+                {{ eventData.userAgentType }}
               </div>
             </div>
           </div>
@@ -120,7 +122,7 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t("autoAccess.access.activity.ipAddress") }}
             </div>
             <div class="mt-1 text-dark">
-              {{ data.ipAddress }}
+              {{ eventData.ipAddress }}
             </div>
           </div>
         </div>
@@ -132,11 +134,11 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t("autoAccess.access.activity.riskScore") }}
             </div>
             <RiskScore
-              :score="parseFloat(data.risk)"
+              :score="parseFloat(eventData.risk)"
             />
           </div>
 
-          <div v-if="data.riskScoreData.is_risky_event">
+          <div v-if="eventData.riskScoreData.is_risky_event">
             <Explainability
               :reasons="explainability"
             />
@@ -154,90 +156,92 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="text-dark font-weight-bold border-bottom py-2">
         {{ $t("autoAccess.access.activity.detailModal.previousAuthentications") }}
       </div>
-      <div
-        v-if="isLoading"
-        class="d-flex justify-content-center align-items-center">
-        <FrSpinner
-          class="py-5"
-          size="md"
-        />
-      </div>
-      <div
-        v-else-if="previousAuths.length > 0"
-        class="d-flex flex-row text-dark py-3"
-        v-for="(auth, i) in previousAuths"
-        :key="auth.eventId"
-        :class="{'border-bottom': i < previousAuths.length - 1}"
-      >
-        <div style="flex: 0 0 52px;">
-          <RiskScore
-            :small="true"
-            :score="parseFloat(auth.risk)"
+      <template v-if="isLoading">
+        <div
+
+          class="d-flex justify-content-center align-items-center">
+          <FrSpinner
+            class="py-5"
+            size="md"
           />
         </div>
+      </template>
+      <template v-else-if="previousAuths.length > 0">
         <div
-          style="flex: 0 0 190px; margin-top: -0.5rem;"
-          class="pr-3"
+          class="d-flex flex-row text-dark py-3"
+          v-for="(auth, i) in previousAuths"
+          :key="auth.eventId"
+          :class="{'border-bottom': i < previousAuths.length - 1}"
         >
-          <Explainability
-            :reasons="explainability"
-          />
-        </div>
-        <div
-          style="flexbasis: 200px;"
-          class="pr-3">
-          <div class="text-capitalize">
-            {{ auth.weekday }} {{ auth.dayparting }}
+          <div style="flex: 0 0 52px;">
+            <RiskScore
+              :small="true"
+              :score="parseFloat(auth.risk)"
+            />
           </div>
-          <div class="mt-1">
-            {{ formatTime(auth.timestamp, auth.timezone) }}
-          </div>
-        </div>
-        <div
-          style="flex: 1 1 20%;"
-          class="pr-3">
           <div
-            class="text-dark text-capitalize"
-            v-if="auth.geoData"
+            style="flex: 0 0 190px; margin-top: -0.5rem;"
+            class="pr-3"
           >
-            <div>
-              {{ auth.geoData.city }}
+            <Explainability
+              :reasons="explainability"
+            />
+          </div>
+          <div
+            style="flexbasis: 200px;"
+            class="pr-3">
+            <div class="text-capitalize">
+              {{ auth.weekday }} {{ auth.dayparting }}
             </div>
             <div class="mt-1">
-              {{ auth.geoData.country }}
+              {{ formatTime(auth.timestamp, auth.timezone) }}
             </div>
           </div>
           <div
-            class="text-dark text-capitalize"
-            v-else>
-            —
+            style="flex: 1 1 20%;"
+            class="pr-3">
+            <div
+              class="text-dark text-capitalize"
+              v-if="auth.geoData"
+            >
+              <div>
+                {{ auth.geoData.city }}
+              </div>
+              <div class="mt-1">
+                {{ auth.geoData.country }}
+              </div>
+            </div>
+            <div
+              class="text-dark text-capitalize"
+              v-else>
+              —
+            </div>
+          </div>
+          <div
+            style="flex: 1 1 12%;"
+            class="pr-3">
+            <div>
+              {{ auth.deviceType }}
+            </div>
+            <div class="mt-1">
+              {{ auth.device }}
+            </div>
+          </div>
+          <div style="flex: 1 1 15%;">
+            <div>
+              {{ auth.os }} {{ auth.osVersion }}
+            </div>
+            <div class="mt-1">
+              {{ auth.userAgentType }}
+            </div>
           </div>
         </div>
-        <div
-          style="flex: 1 1 12%;"
-          class="pr-3">
-          <div>
-            {{ auth.deviceType }}
-          </div>
-          <div class="mt-1">
-            {{ auth.device }}
-          </div>
+      </template>
+      <template v-else>
+        <div class="text-dark text-center py-4">
+          No previous authentications
         </div>
-        <div style="flex: 1 1 15%;">
-          <div>
-            {{ auth.os }} {{ auth.osVersion }}
-          </div>
-          <div class="mt-1">
-            {{ auth.userAgentType }}
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="text-dark text-center py-4"
-      >
-        No previous authentications
-      </div>
+      </template>
     </div>
     <template #modal-footer="{ ok }">
       <BButton
@@ -252,6 +256,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BModal, BButton } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import RiskScore from '../../Shared/RiskScore';
 import Explainability from '../../Explainability';
 import { getEventLogs, apiToInternalEvent } from '../api/ActivityAPI';
@@ -263,13 +268,14 @@ export default {
   components: {
     BModal,
     BButton,
+    FrIcon,
     FrSpinner,
     RiskScore,
     Explainability,
     MiniMap,
   },
   props: {
-    data: {
+    eventData: {
       default: () => ({}),
       type: Object,
     },
@@ -282,7 +288,7 @@ export default {
     };
   },
   watch: {
-    data(newValue) {
+    eventData(newValue) {
       this.show = newValue !== null;
       if (newValue) {
         this.fetchData();
@@ -291,14 +297,14 @@ export default {
   },
   computed: {
     explainability() {
-      if (!this.data) {
+      if (!this.eventData) {
         return [];
       }
-      const { heuristicReasons, clusteringReasons, uebaReasons } = this.data;
+      const { heuristicReasons, clusteringReasons, uebaReasons } = this.eventData;
       return [...heuristicReasons, ...clusteringReasons, ...uebaReasons];
     },
     miniMapAuths() {
-      return [this.data, ...this.previousAuths].filter((auth) => auth.geoData?.lat && auth.geoData?.longitude);
+      return [this.eventData, ...this.previousAuths].filter((auth) => auth.geoData?.lat && auth.geoData?.longitude);
     },
   },
   methods: {
@@ -308,7 +314,13 @@ export default {
       const param = {
         sort: [
           {
+            'predictionResult.risk_score_data.risk_score': {
+              order: 'desc',
+            },
             'predictionResult.features.timestamp': {
+              order: 'desc',
+            },
+            'predictionResult.features.userId.keyword': {
               order: 'desc',
             },
           },
@@ -320,14 +332,7 @@ export default {
             must: [
               {
                 term: {
-                  'predictionResult.features.userId.keyword': this.data.userId,
-                },
-              },
-              {
-                range: {
-                  'predictionResult.features.timestamp': {
-                    lte: this.data.timestamp,
-                  },
+                  'predictionResult.features.userId.keyword': this.eventData.userId,
                 },
               },
               {
@@ -335,11 +340,18 @@ export default {
                   'predictionResult.risk_score_data.is_risky_event': true,
                 },
               },
+              {
+                range: {
+                  'predictionResult.features.timestamp': {
+                    lte: this.eventData.timestamp,
+                  },
+                },
+              },
             ],
             must_not: [
               {
                 term: {
-                  'predictionResult.features.eventId.keyword': this.data.eventId,
+                  'predictionResult.features.eventId': this.eventData.eventId,
                 },
               },
             ],
@@ -348,7 +360,7 @@ export default {
       };
       getEventLogs(param)
         .then((response) => {
-          this.previousAuths = response.data.hits.hits.map((data) => apiToInternalEvent(data)).filter((ev) => this.data.id !== ev.id);
+          this.previousAuths = response.data.hits.hits.map((data) => apiToInternalEvent(data));
         })
         .finally(() => {
           this.isLoading = false;

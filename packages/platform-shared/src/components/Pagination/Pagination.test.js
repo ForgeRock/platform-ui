@@ -5,19 +5,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import Pagination from './index';
 import { DatasetSize } from './types';
 
 describe('Pagination Component', () => {
   function mountPagination(setup = {}, datasetSize) {
     return mount(Pagination, {
-      mocks: {
-        $t: (key) => key,
+      global: {
+        mocks: {
+          $t: (key) => key,
+        },
       },
       ...setup,
-      propsData: {
+      props: {
         ...setup.propsData,
         datasetSize,
       },
@@ -414,7 +415,7 @@ describe('Pagination Component', () => {
       expect(dropdownMenu.exists()).toBe(true);
       const items = dropdownMenu.findAll('li');
       expect(items.length).toBe(5);
-      items.wrappers.forEach((itemWrapper) => {
+      items.forEach((itemWrapper) => {
         const dropdownItem = itemWrapper.find('.dropdown-item');
         expect(dropdownItem.text()).toBe('pagination.dropdown.pageSize');
       });

@@ -1,19 +1,23 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="min-vh-100 d-flex flex-column fr-fullscreen-mobile">
     <header
-      v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
+      v-if="!journeyHeaderSkipLinkEnabled && journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
       v-html="sanitizedHeader"
       id="appHeader" />
+    <FrAccessibleHeader
+      v-if="journeyHeaderSkipLinkEnabled && journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
+      main-content-id="callbacksPanel"
+      :custom-html="sanitizedHeader" />
     <main
+      id="callbacksPanel"
       v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode"
       class="px-0 flex-grow-1 d-flex container">
       <BContainer class="flex-grow-1 d-flex">
-        <BRow
-          :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'align-items-center m-0 flex-grow-1']">
+        <BRow :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'align-items-center m-0 flex-grow-1']">
           <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
             <section>
               <FrCenterCard
@@ -34,7 +38,9 @@ of the MIT license. See the LICENSE file for details. -->
                       <p
                         v-if="description"
                         v-html="description" />
-                      <p class="sr-only">
+                      <p
+                        v-if="screenReaderMessageType !== 'ERROR'"
+                        class="sr-only">
                         {{ screenReaderMessage }}
                       </p>
                     </template>
@@ -43,6 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
 
                 <template #center-card-body>
                   <BCardBody
+                    tabindex="-1"
                     v-if="!loading && !themeLoading"
                     id="callbacksPanel"
                     data-testid="callbacks_panel">
@@ -53,8 +60,14 @@ of the MIT license. See the LICENSE file for details. -->
                       class="p-3 text-left">
                       {{ getTranslation(errorMessage) }}
                     </FrAlert>
-                    <div
-                      v-if="loginFailure && linkToTreeStart">
+                    <FrAlert
+                      :show="screenReaderMessageType === 'ERROR'"
+                      :dismissible="false"
+                      variant="error"
+                      class="p-3 text-left">
+                      {{ screenReaderMessage }}
+                    </FrAlert>
+                    <div v-if="loginFailure && linkToTreeStart">
                       <a :href="linkToTreeStart">
                         {{ $t('login.sessionTimeoutLink') }}
                       </a>
@@ -71,21 +84,44 @@ of the MIT license. See the LICENSE file for details. -->
                           </div>
                           <div id="callback_0" />
                         </template>
-                        <template v-for="(component) in componentList ">
-                          <Component
-                            class="callback-component"
-                            :callback="component.callback"
-                            :index="component.index"
-                            :is="component.type"
-                            :key="component.key"
-                            :step="step"
-                            v-bind="{...component.callbackSpecificProps, floatingLabel: journeyFloatingLabels}"
-                            v-on="{
-                              'next-step': (event, preventClear) => {
-                                nextStep(event, preventClear);
-                              },
-                              ...component.listeners}" />
+                        <!-- IDP logins are grouped within their own fieldset to logically separate them from the standard login flow. This is an accessibility change to more logically structure the page.  -->
+                        <template v-if="idpComponent">
+                          <fieldset>
+                            <legend
+                              class="legend-hidden"
+                              id="idp-legend">
+                              {{ $t('login.social.legend') }}
+                            </legend>
+                            <FrSelectIdPCallback
+                              class="callback-component"
+                              :callback="idpComponent.callback"
+                              :index="idpComponent.index"
+                              :key="idpComponent.key"
+                              :floating-label="journeyFloatingLabels"
+                              aria-describedby="idp-legend"
+                              v-bind="{...idpComponent.callbackSpecificProps}"
+                              v-on="{
+                                'next-step': (event, preventClear) => {
+                                  nextStep(event, preventClear);
+                                },
+                                ...idpComponent.listeners}" />
+                          </fieldset>
                         </template>
+                        <Component
+                          v-for="(component) in componentList"
+                          class="callback-component"
+                          :callback="component.callback"
+                          :index="component.index"
+                          :is="component.type"
+                          :key="component.key"
+                          :step="step"
+                          :floating-label="journeyFloatingLabels"
+                          v-bind="{...component.callbackSpecificProps}"
+                          v-on="{
+                            'next-step': (event, preventClear) => {
+                              nextStep(event, preventClear);
+                            },
+                            ...component.listeners}" />
                         <div
                           v-if="nextButtonVisible"
                           :class="['d-flex mt-3', journeySignInButtonPosition]"
@@ -111,13 +147,18 @@ of the MIT license. See the LICENSE file for details. -->
                     aria-live="polite"
                     v-else>
                     <div class="h-100 d-flex">
-                      <div
-                        class="fr-center-card"
-                      >
+                      <div class="fr-center-card">
                         <Spinner class="mb-4" />
                       </div>
                     </div>
                   </BCardBody>
+                  <div
+                    class="w-100 d-flex p-2 d-lg-none"
+                    v-if="journeyJustifiedContentEnabled && journeyJustifiedContentMobileViewEnabled">
+                    <div
+                      v-html="journeyJustifiedContent"
+                      class="d-flex h-100 w-100 justify-content-center align-self-center" />
+                  </div>
                   <BCardFooter
                     v-if="pageNodeFooterLocalized"
                     :footer-html="pageNodeFooterLocalized" />
@@ -139,6 +180,7 @@ of the MIT license. See the LICENSE file for details. -->
     <main
       v-else
       id="callbacksPanel"
+      tabindex="-1"
       :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100 flex-grow-1']">
       <div class="journey-card w-md-50 w-100 d-flex align-items-start flex-column">
         <div class="login-header w-100 d-flex flex-column flex-grow-1 justify-content-between">
@@ -153,10 +195,18 @@ of the MIT license. See the LICENSE file for details. -->
                 :style="{ height: `${logoHeight}px` }"
                 :src="logoPath">
               <div
-                v-if="journeyHeaderEnabled"
+                v-if="!journeyHeaderSkipLinkEnabled && journeyHeaderEnabled"
                 class="flex-grow-1"
                 id="appHeader">
                 <header v-html="sanitizedHeader" />
+              </div>
+              <div
+                v-if="journeyHeaderSkipLinkEnabled && journeyHeaderEnabled"
+                class="flex-grow-1"
+                id="appHeader">
+                <FrAccessibleHeader
+                  main-content-id="body-append-el"
+                  :custom-html="sanitizedHeader" />
               </div>
             </div>
           </div>
@@ -176,7 +226,9 @@ of the MIT license. See the LICENSE file for details. -->
                   v-html="description" />
               </BCol>
             </BRow>
-            <p class="sr-only">
+            <p
+              v-if="screenReaderMessageType !== 'ERROR'"
+              class="sr-only">
               {{ screenReaderMessage }}
             </p>
           </div>
@@ -193,6 +245,13 @@ of the MIT license. See the LICENSE file for details. -->
                   variant="error"
                   class="p-3 text-left">
                   {{ getTranslation(errorMessage) }}
+                </FrAlert>
+                <FrAlert
+                  :show="screenReaderMessageType === 'ERROR'"
+                  :dismissible="false"
+                  variant="error"
+                  class="p-3 text-left">
+                  {{ screenReaderMessage }}
                 </FrAlert>
                 <div v-if="loginFailure && linkToTreeStart">
                   <a :href="linkToTreeStart">
@@ -211,22 +270,45 @@ of the MIT license. See the LICENSE file for details. -->
                       </div>
                       <div id="callback_0" />
                     </template>
-                    <template v-for="(component) in componentList ">
-                      <Component
-                        class="callback-component"
-                        :callback="component.callback"
-                        :index="component.index"
-                        :is="component.type"
-                        :key="component.key"
-                        :step="step"
-                        v-bind="{...component.callbackSpecificProps, floatingLabel: journeyFloatingLabels}"
-                        v-on="{
-                          'next-step': (event, preventClear) => {
-                            nextStep(event, preventClear);
-                          },
-                          ...component.listeners}"
-                      />
+                    <!-- IDP logins are grouped within their own fieldset to logically separate them from the standard login flow. This is an accessibility change to more logically structure the page.  -->
+                    <template v-if="idpComponent">
+                      <fieldset>
+                        <legend
+                          class="legend-hidden"
+                          id="idp-legend">
+                          {{ $t('login.social.legend') }}
+                        </legend>
+                        <FrSelectIdPCallback
+                          class="callback-component"
+                          :callback="idpComponent.callback"
+                          :index="idpComponent.index"
+                          :key="idpComponent.key"
+                          :floating-label="journeyFloatingLabels"
+                          aria-describedby="idp-legend"
+                          v-bind="{...idpComponent.callbackSpecificProps}"
+                          v-on="{
+                            'next-step': (event, preventClear) => {
+                              nextStep(event, preventClear);
+                            },
+                            ...idpComponent.listeners}" />
+                      </fieldset>
                     </template>
+                    <Component
+                      v-for="(component) in componentList "
+                      class="callback-component"
+                      :callback="component.callback"
+                      :index="component.index"
+                      :is="component.type"
+                      :key="component.key"
+                      :step="step"
+                      :floating-label="journeyFloatingLabels"
+                      v-bind="{...component.callbackSpecificProps}"
+                      v-on="{
+                        'next-step': (event, preventClear) => {
+                          nextStep(event, preventClear);
+                        },
+                        ...component.listeners}"
+                    />
                     <div
                       v-if="nextButtonVisible"
                       :class="['d-flex mt-3', journeySignInButtonPosition]"
@@ -263,6 +345,13 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
             </BRow>
           </div>
+        </div>
+        <div
+          v-if="journeyJustifiedContentEnabled && journeyJustifiedContentMobileViewEnabled"
+          class="overflow-hidden w-100 d-md-none">
+          <div
+            v-html="journeyJustifiedContent"
+            class="d-flex h-100 w-100 justify-content-center align-self-center" />
         </div>
         <div
           v-if="journeyFooterEnabled && journeyFooter"
@@ -326,6 +415,7 @@ import {
 } from '../../utils/authResumptionUtil';
 import getAutocompleteValue from '../../utils/loginUtils';
 import { getCurrentQueryString, parseParameters, replaceUrlParams } from '../../utils/urlUtil';
+import doNewNodesContainRecaptchaV2 from '../../utils/recaptchaUtil';
 
 export default {
   name: 'Login',
@@ -347,6 +437,7 @@ export default {
     FrField: () => import('@forgerock/platform-shared/src/components/Field'),
     FrHiddenValueCallback: () => import('@/components/callbacks/HiddenValueCallback'),
     FrKbaCreateCallback: () => import('@/components/callbacks/KbaCreateCallback'),
+    FrAccessibleHeader: () => import('@/components/display/AccessibleHeader'),
     FrPasswordCallback: () => import('@/components/callbacks/PasswordCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
     FrPushChallengeNumber: () => import('@/components/display/PushChallengeNumber'),
@@ -368,6 +459,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    journeyFocusFirstFocusableItemEnabled: {
+      type: Boolean,
+      default: false,
+    },
     journeyFooter: {
       type: String,
       default: '',
@@ -384,6 +479,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    journeyHeaderSkipLinkEnabled: {
+      type: Boolean,
+      default: false,
+    },
     journeyTheaterMode: {
       type: Boolean,
       default: false,
@@ -393,6 +492,10 @@ export default {
       default: '',
     },
     journeyJustifiedContentEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    journeyJustifiedContentMobileViewEnabled: {
       type: Boolean,
       default: false,
     },
@@ -455,7 +558,9 @@ export default {
       treeResumptionParameters: undefined,
       treeId: undefined,
       svgShapesSanitizerConfig,
+      screenReaderMessageType: '',
       screenReaderMessage: '',
+      idpComponent: undefined,
     };
   },
   computed: {
@@ -521,6 +626,18 @@ export default {
         this.loading = false;
       });
   },
+  watch: {
+    themeLoading(themeLoading) {
+      const stepExists = this.step !== undefined && this.step.type === 'Step';
+      // IAM-5201 Unfortunately since the theme payload is async, the journey form props are set before the journey theme data is available.
+      // this makes it so that the form is rebuilt if themeLoading is false (and a step is available) so autofocus is set
+      if (!themeLoading && stepExists) {
+        this.loading = true;
+        this.buildTreeForm();
+        this.loading = false;
+      }
+    },
+  },
   methods: {
     /**
      * Decodes a JWT token
@@ -567,24 +684,14 @@ export default {
       this.nextButtonVisible = true;
       this.nextButtonDisabledArray = [false];
       this.screenReaderMessage = '';
+      this.screenReaderMessageType = '';
 
       this.checkNodeForThemeOverride(this.stage);
-
-      // Ensure that Social Buttons appear at top of Page Node
-      const pullToTop = this.FrCallbackType.SelectIdPCallback;
-      this.step.callbacks.sort((currentCallback, otherCallback) => {
-        if (currentCallback.payload.type === pullToTop) {
-          return -1;
-        }
-        if (otherCallback.payload.type === pullToTop) {
-          return 1;
-        }
-        return 0;
-      });
 
       // Some callbacks don't need to render anything so forEach is used instead of map
       const componentList = [];
       let keyFromDate = Date.now();
+      let enableAutofocus = this.journeyFocusFirstFocusableItemEnabled;
       this.step.callbacks.forEach((callback, i) => {
         // index 0 is reserved for callback_0 used in backend scripts
         const index = i + 1;
@@ -599,7 +706,7 @@ export default {
         }
 
         // Use SDK to handle backend scripts that SDK can parse
-        // Reasign type to use specific component
+        // Reassign type to use specific component
         if (type === this.FrCallbackType.TextOutputCallback || type === this.FrCallbackType.MetadataCallback) {
           const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
           const isRecoveryCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
@@ -616,13 +723,16 @@ export default {
           }
         }
 
-        // Check HiddenValueCallback input value is pushChallengeNumber for PushChallengeNumer display
+        // Check HiddenValueCallback input value is pushChallengeNumber for PushChallengeNumber display
         if (type === this.FrCallbackType.HiddenValueCallback && callback.getInputValue() === 'pushChallengeNumber') {
           type = this.FrCallbackType.PushChallengeNumber;
         }
 
+        // IAM-2936 MetadataCallback is not a callback that is displayed
+        if (type === this.FrCallbackType.MetadataCallback) return;
+
         // Only components that need extra props or events
-        const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, this.stage, this.step, this.realm);
+        const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, this.stage, this.step, this.realm, this.journeySignInButtonPosition);
         const component = {
           callback,
           callbackSpecificProps,
@@ -635,16 +745,22 @@ export default {
             : 'FrField',
         };
 
+        // IAM-5201 The autofocus is to be set only on the first focusable component.
+        // setAutoFocus returns a boolean to enable the autofocus for the component
+        // to prevent multiple components getting autofocus, when setAutoFocus returns true we set enabledAutofocus to false
+        const autofocus = this.setAutoFocus(component.type, enableAutofocus);
+        enableAutofocus = autofocus ? false : enableAutofocus;
+        component.callbackSpecificProps.autofocus = autofocus;
+
         if (component.type === 'FrField' || component.type === 'FrPasswordCallback') {
           const policyRequirements = callback.getOutputByName('policies')?.policyRequirements || [];
           const {
             fieldType, label, name, value,
           } = this.getField(callback, index);
           const fieldDataType = this.getAlternateFieldType(policyRequirements) || fieldType;
-
           const errors = this.getTranslatedPolicyFailures(callback);
           component.callbackSpecificProps = {
-            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label),
+            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label), autofocus,
           };
 
           component.listeners = this.getListeners({ callback, index }, ['input']);
@@ -662,7 +778,22 @@ export default {
 
         componentList.push(component);
       });
+
+      const idpComponentIndex = componentList.findIndex((component) => component.callback.getType() === this.FrCallbackType.SelectIdPCallback);
+      // Note: if there is an idp component in the componentList
+      if (idpComponentIndex !== -1) {
+        this.handleIdpComponent(componentList, idpComponentIndex);
+      } else {
+        this.idpComponent = undefined;
+      }
+
       this.componentList = componentList;
+    },
+    handleIdpComponent(componentList, idpComponentIndex) {
+      if (!Array.isArray(componentList)) return;
+
+      this.idpComponent = componentList[idpComponentIndex]; // Note: this is to be rendered in its own fieldset
+      componentList.splice(idpComponentIndex, 1); // Note: we first remove the idp from the component list so the rest of the login components can be rendered on their own
     },
     // needs to happen before other query params are processed
     checkNewSession() {
@@ -687,7 +818,7 @@ export default {
     /**
      * Reads query parameters to determine if a tree is being resumed from a suspend or redirect and acts appropriately.
      * Also sets the page title from the URL and clears up and transforms query parameters.
-     * The presense of the "suspendedId" query parameter indicates we're restarting a tree that has been suspended.
+     * The presence of the "suspendedId" query parameter indicates we're restarting a tree that has been suspended.
      * Presence of a reentry cookie (and some known query params) indicates we're resuming after a redirect.
      */
     evaluateUrlParams() {
@@ -788,10 +919,14 @@ export default {
           // listen on body.appendchild and append to #body-append-el instead
           this.mutationObserver = new MutationObserver((records) => {
             const nodeList = records[records.length - 1].addedNodes || [];
-            Array.prototype.forEach.call(nodeList, (node) => {
-              document.getElementById('body-append-el').appendChild(node);
-            });
-            this.mutationObserver.disconnect();
+
+            // Don't alter the position where any recaptcha nodes are added to the UI
+            if (!doNewNodesContainRecaptchaV2(nodeList)) {
+              Array.prototype.forEach.call(nodeList, (node) => {
+                document.getElementById('body-append-el').appendChild(node);
+              });
+              this.mutationObserver.disconnect();
+            }
           });
           this.mutationObserver.observe(document.body, { childList: true });
           // only hide next button if we know it should be hidden (webAuthn, deviceId)
@@ -814,7 +949,8 @@ export default {
         'update-auth-id': (authId) => {
           this.step.payload.authId = authId;
         },
-        'update-screen-reader-message': (message) => {
+        'update-screen-reader-message': (messageType, message) => {
+          this.screenReaderMessageType = messageType;
           this.screenReaderMessage = message;
         },
         // event emitted from FrField
@@ -922,12 +1058,13 @@ export default {
     /**
      * @description Returns boolean true if payload has session timeout error code
      * @param {Object} payload - step payload data
+     * @param {Boolean} suspendedIdWasSet - Whether suspendId was set upon navigation to this step
      * @returns {Boolean}
      */
-    isSessionTimedOut(payload) {
+    isSessionTimedOut(payload, suspendedIdWasSet) {
       return (
         (payload.detail && payload.detail.errorCode === '110')
-        || (this.suspendedId && payload.code.toString() === '401')
+        || (suspendedIdWasSet && payload.code.toString() === '401')
       );
     },
     /**
@@ -997,6 +1134,14 @@ export default {
             this.treeResumptionParameters = undefined;
           }
 
+          // At this point we have used suspendedId if it was set so we can remove it so it
+          // is not used in further auth steps, and we only need to remember that it WAS set.
+          let suspendedIdWasSet = false;
+          if (this.suspendedId) {
+            this.suspendedId = null;
+            suspendedIdWasSet = true;
+          }
+
           switch (step.type) {
             case 'LoginSuccess':
               this.checkAndNotifyPromotionParentOfLoginSuccess();
@@ -1028,11 +1173,11 @@ export default {
               break;
             case 'LoginFailure':
               this.loading = true;
-              if (this.retry && this.isSessionTimedOut(step.payload)) {
+              if (this.retry && this.isSessionTimedOut(step.payload, suspendedIdWasSet)) {
                 this.retry = false;
                 this.loginFailure = true;
                 this.retryWithNewAuthId(previousStep, stepParams);
-              } else if (this.suspendedId && this.isSessionTimedOut(step.payload)) {
+              } else if (suspendedIdWasSet && this.isSessionTimedOut(step.payload, suspendedIdWasSet)) {
                 this.errorMessage = step.payload.message || this.$t('login.loginFailure');
                 this.linkToTreeStart = this.getLinkToTreeStart(stepParams);
                 this.loading = false;
@@ -1112,7 +1257,7 @@ export default {
               }
             })
             .catch((error) => {
-              this.displayNotification('error', error.response.data.message);
+              this.showErrorMessage(error, this.$t('login.verifyUrlError'));
               resolve();
             });
         } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
@@ -1210,7 +1355,7 @@ export default {
       }
     },
     /**
-     * Gets an alternate field type based on policy requirments
+     * Gets an alternate field type based on policy requirements
      *
      * @param {Array} policyRequirements
      * @returns {String} - dataType string
@@ -1227,12 +1372,32 @@ export default {
       }
       return dataType;
     },
+    /**
+     * Returns a boolean that determines if the field should be auto focused
+     *
+     * @param {String} componentType component type as a string that matches imported components
+     * @param {Boolean} enableAutofocus should field be receive autofocus
+     * @returns {Boolean}
+     */
+    setAutoFocus(componentType, enableAutofocus) {
+      // Add FrChoiceCallback and FrKbaCreateCallback when multiselect is replaced
+      // Currently vue-multiselect expands on focus causing other fields to be obscured by the expanded options list
+      const componentTypesToAutofocus = [
+        // 'FrChoiceCallback',
+        'FrField',
+        // 'FrKbaCreateCallback',
+        'FrPasswordCallback',
+        'FrSelectIdPCallback',
+        'FrValidatedCreatePasswordCallback',
+      ];
+      return enableAutofocus && componentTypesToAutofocus.indexOf(componentType) > -1;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-#callbacksPanel ::v-deep {
+#callbacksPanel :deep {
   span.material-icons {
     line-height: 22px;
   }
@@ -1274,5 +1439,12 @@ export default {
       height: 100%;
     }
   }
+}
+
+// The NVDA screen reader struggles to read elements with the 'hidden' attribute. This behaves the same but allows the screen reader to read out the legend.
+.legend-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
 }
 </style>

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -30,46 +30,44 @@ of the MIT license. See the LICENSE file for details. -->
             class="d-flex pt-3 pb-2 px-0 border-top">
             <div class="flex-grow-1 pr-3 position-relative">
               <div class="form-row align-items-center">
-                <div
-                  v-for="(objValue, key) in obj"
-                  :key="key"
-                  class="col-lg-4 pb-2">
+                <template v-for="(objValue, key) in obj">
                   <div
-                    v-if="key !== 'listUniqueIndex'"
-                    class="position-relative">
+                    v-if="key !== 'listUniqueIndex' && !properties[key].hidden"
+                    :key="key"
+                    class="col-lg-4 pb-2">
                     <div v-if="properties[key].type === 'boolean'">
                       <BFormCheckbox
                         v-model="obj[key]"
-                        :disabled="disabled"
-                        :name="key+'_'+index"
+                        :disabled="disabled || properties[key].disabled"
+                        :name="`${key}_${index}_${_uid}`"
                         @change="emitInput(listValues)">
                         {{ properties[key].title || key }}
                       </BFormCheckbox>
                     </div>
                     <div v-else-if="properties[key].type === 'number'">
                       <FrField
-                        v-model.number="obj[key]"
-                        :disabled="disabled"
+                        :value="obj[key]"
+                        @input="obj[key] = $event; emitInput(listValues)"
+                        :disabled="disabled || properties[key].disabled"
                         type="number"
-                        validation="required|numeric"
+                        validation="required|isNumber"
                         :label="properties[key].title || key"
-                        :name="key+'_'+index"
-                        @input="emitInput(listValues)"
+                        :name="`${key}_${index}_${_uid}`"
                       />
                     </div>
                     <div v-else>
                       <FrField
-                        v-model="obj[key]"
-                        :disabled="disabled"
-                        :label="properties[key].title ? properties[key].title : key"
-                        :name="key+'_'+index"
+                        :value="obj[key]"
+                        @input="obj[key] = $event; emitInput(listValues)"
+                        :disabled="disabled || properties[key].disabled"
+                        :label="properties[key].title || key"
+                        :name="`${key}_${index}_${_uid}`"
                         :type="properties[key].type"
                         :validation="required && required.length && required.includes(properties[key].title) ? 'required' : ''"
-                        @input="emitInput(listValues)"
                       />
                     </div>
                   </div>
-                </div>
+                </template>
               </div>
             </div>
             <div>
@@ -81,9 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   :disabled="disabled"
                   @click.prevent="removeElementFromList(index)">
-                  <FrIcon
-                    name="remove"
-                  />
+                  <FrIcon name="remove" />
                 </button>
                 <button
                   v-if="multiValued || listValues.length === 0"
@@ -91,9 +87,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   :disabled="disabled"
                   @click.prevent="addObjectToList(index)">
-                  <FrIcon
-                    name="add"
-                  />
+                  <FrIcon name="add" />
                 </button>
               </div>
             </div>
@@ -110,32 +104,25 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </div>
     </div>
-    <ValidationProvider
-      v-slot="{ errors }"
-      mode="aggressive"
-      :bails="false"
-      :immediate="validationImmediate"
-      :name="label"
-      :ref="label"
-      :rules="validation"
-      :vid="label">
-      <FrValidationError
-        class="error-messages"
-        :validator-errors="[...errors]"
-        :field-name="label" />
-    </ValidationProvider>
+
+    <FrValidationError
+      class="error-messages"
+      :validator-errors="errors"
+      :field-name="label" />
   </div>
 </template>
 
 <script>
 import { cloneDeep } from 'lodash';
 import { BFormCheckbox } from 'bootstrap-vue';
-import { ValidationProvider } from 'vee-validate';
+import { useField } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrInlineJsonEditor from '@forgerock/platform-shared/src/components/InlineJsonEditor';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
+import { toRef } from 'vue';
+import uuid from 'uuid/v4';
 
 /**
  * @description Component that provides support for list of objects
@@ -151,7 +138,6 @@ export default {
     FrIcon,
     FrInlineJsonEditor,
     FrValidationError,
-    ValidationProvider,
   },
   mixins: [
     ListsMixin,
@@ -196,9 +182,16 @@ export default {
       default: '',
     },
   },
+  setup(props) {
+    const name = props.label || uuid();
+    const {
+      value: listValues, errors, setErrors,
+    } = useField(() => `${name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
+
+    return { listValues, errors, setErrors };
+  },
   data() {
     return {
-      listValues: [],
       listUniqueIndex: 0,
     };
   },
@@ -243,14 +236,16 @@ export default {
       this.emitInput(this.listValues);
     },
     emitInput(value) {
-      const emitValue = this.checkEmptyValues(value);
-      this.validateField();
+      this.$nextTick(() => {
+        const emitValue = this.checkEmptyValues(value);
+        this.validateField();
 
-      if (emitValue.length === 0) {
-        this.$emit('input', this.multiValued ? [] : {});
-      } else {
-        this.$emit('input', this.multiValued ? emitValue : emitValue[0]);
-      }
+        if (emitValue.length === 0) {
+          this.$emit('input', this.multiValued ? [] : {});
+        } else {
+          this.$emit('input', this.multiValued ? emitValue : emitValue[0]);
+        }
+      });
     },
     /**
      * Check if all the values in our object are empty or null
@@ -302,7 +297,7 @@ export default {
       this.emitInput(this.listValues);
     },
     validateField() {
-      this.$refs[this.label].setErrors(this.requiredAndEmpty ? [this.$t('common.policyValidationMessages.REQUIRED')] : '');
+      this.setErrors(this.requiredAndEmpty ? [this.$t('common.policyValidationMessages.REQUIRED')] : []);
     },
   },
 };

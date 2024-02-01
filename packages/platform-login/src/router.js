@@ -5,12 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import Vue from 'vue';
-import Router from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
-Vue.use(Router);
-
-export default new Router({
+export default createRouter({
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
@@ -33,7 +31,7 @@ export default new Router({
     },
     {
       // send any bad routes to default login
-      path: '*',
+      path: '/:pathMatch(.*)*',
       redirect: '/',
     },
   ],

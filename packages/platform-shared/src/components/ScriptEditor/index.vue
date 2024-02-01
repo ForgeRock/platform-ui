@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,16 +16,18 @@ of the MIT license. See the LICENSE file for details. -->
         </label>
         <FrField
           v-show="showScriptType"
-          v-model="scriptType.value"
+          :value="scriptType.value"
+          @input="scriptType.value = $event; emitScriptValue()"
           class="mt-2"
+          :disabled="disabled"
           name="scriptType"
           type="select"
           :options="scriptType.options"
-          :searchable="false"
-          @input="emitScriptValue" />
+          :searchable="false" />
         <FrField
           v-if="showFileUpload"
           v-model="uploadFileToggle"
+          :disabled="disabled"
           type="boolean"
           :label="$t('scriptEditor.uploadFile')"
           size="sm" />
@@ -35,17 +37,18 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="d-flex w-100 h-100 fr-script-editor-sidebar-nav position-relative">
         <VuePrismEditor
           v-if="uploadFileToggle === false"
-          v-model="code"
+          :code="code"
+          @change="code = $event; emitScriptValue()"
           :aria-label="$t('editor.accessibilityHelp')"
           :language="scriptType.value.split('/')[1]"
           :line-numbers="showLineNumbers"
           :readonly="readonly"
-          @input="emitScriptValue"
           @keydown="blurOnEscape" />
       </div>
     </div>
     <BFormFile
       v-show="uploadFileToggle === true"
+      :disabled="disabled"
       @change="onFileChange"
       accept=".js, .groovy"
       :placeholder="fieldPlaceholder">
@@ -53,6 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrField
           v-model="filePathModel"
           class="file-import-floating-label"
+          :disabled="disabled"
           :label="$t('scriptEditor.uploadFile')" />
       </template>
     </BFormFile>
@@ -63,6 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           v-if="selectedVariables.length === 0 && !jsonEditToggle"
           class="my-2 float-right"
+          :disabled="disabled"
           variant="link"
           size="sm"
           @click="addVariable('', '', 0)">
@@ -82,78 +87,80 @@ of the MIT license. See the LICENSE file for details. -->
             <FrField
               v-else
               v-model="jsonEditToggle"
+              :disabled="disabled"
               type="boolean"
               :label="$t('scriptEditor.json')"
               size="sm"
               @change="jsonEditorToggle($event)" />
           </div>
-          <template v-if="jsonEditToggle">
-            <VuePrismEditor
-              v-model="variablesJsonCode"
-              language="json"
-              :aria-label="$t('editor.accessibilityHelp')"
-              :line-numbers="true"
-              :readonly="readonly"
-              @input="checkIfCodeIsParsable($event.target.innerText)"
-              @keydown="blurOnEscape" />
-          </template>
+          <VuePrismEditor
+            v-if="jsonEditToggle"
+            :code="variablesJsonCode"
+            @change="variablesJsonCode = $event; checkIfCodeIsParsable($event)"
+            language="json"
+            :aria-label="$t('editor.accessibilityHelp')"
+            :line-numbers="true"
+            :readonly="readonly"
+            @keydown="blurOnEscape" />
           <template v-else>
-            <div
-              class="form-row pb-1"
+            <BFormRow
+              class="pb-1"
               style="padding-right: 90px;">
-              <div class="col-6">
+              <BCol cols="6">
                 <small>{{ $t('common.name') }}</small>
-              </div>
-              <div class="col-6">
+              </BCol>
+              <BCol cols="6">
                 <small>{{ $t('scriptEditor.value') }}</small>
-              </div>
-            </div>
-            <ValidationObserver ref="validationObserver">
+              </BCol>
+            </BFormRow>
+            <VeeForm
+              ref="observer"
+              as="span">
               <div
                 v-for="(selectedVariable, index) in selectedVariables"
                 :key="selectedVariable.index"
-                :class="[{'pt-2': index}, 'd-flex','form-group', 'mb-0', 'align-iterm-start']">
+                :class="[{'pt-2': index}, 'd-flex']">
                 <div class="flex-grow-1 pr-3">
-                  <div class="form-row align-items-start">
+                  <BFormRow class="align-items-start">
                     <FrField
-                      v-model="selectedVariable.name"
+                      :value="selectedVariable.name"
+                      @input="selectedVariable.name = $event; emitScriptValue()"
                       class="col-6"
+                      :disabled="disabled"
                       input-class="form-control-sm form-control-dark"
                       validation="required"
-                      :name="$t('common.name')"
-                      @input="emitScriptValue" />
+                      :name="`${$t('common.name')}-${selectedVariable.index}`" />
                     <FrField
-                      v-model="selectedVariable.value.value"
+                      :value="selectedVariable.value.value"
+                      @input="selectedVariable.value.value = $event; emitScriptValue()"
                       class="col-6"
+                      :disabled="disabled"
                       input-class="form-control-sm form-control-dark"
                       validation="required"
-                      :name="$t('common.value')"
-                      :type="selectedVariable.type"
-                      @input="emitScriptValue" />
-                  </div>
+                      :name="`${$t('common.value')}-${selectedVariable.index}`"
+                      :type="selectedVariable.type" />
+                  </BFormRow>
                 </div>
                 <div class="d-flex">
                   <BButton
-                    variant="link mr-1"
-                    class="max-height-50"
+                    variant="link"
+                    class="max-height-50 mr-1"
+                    :disabled="disabled"
                     size="sm"
                     @click="removeVariable(index)">
-                    <FrIcon
-                      name="remove"
-                    />
+                    <FrIcon name="remove" />
                   </BButton>
                   <BButton
-                    variant="link mr-1"
-                    class="max-height-50"
+                    variant="link"
+                    class="max-height-50 mr-1"
+                    :disabled="disabled"
                     size="sm"
                     @click="addVariable('', '', index + 1)">
-                    <FrIcon
-                      name="add"
-                    />
+                    <FrIcon name="add" />
                   </BButton>
                 </div>
               </div>
-            </ValidationObserver>
+            </VeeForm>
           </template>
         </template>
       </div>
@@ -164,10 +171,12 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   BButton,
+  BCol,
   BFormFile,
+  BFormRow,
 } from 'bootstrap-vue';
 import { debounce } from 'lodash';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
@@ -186,11 +195,13 @@ export default {
   name: 'ScriptEditor',
   components: {
     BButton,
+    BCol,
     BFormFile,
+    BFormRow,
     VuePrismEditor,
     FrField,
     FrIcon,
-    ValidationObserver,
+    VeeForm,
   },
   props: {
     /**
@@ -203,6 +214,10 @@ export default {
         globals: {},
         source: '',
       }),
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     showFileUpload: {
       type: Boolean,
@@ -317,8 +332,8 @@ export default {
      * Checks if variables are filled in properly and calls emit if so
      */
     emitScriptValue() {
-      if (this.$refs.validationObserver) {
-        this.$refs.validationObserver.validate().then((isValid) => {
+      if (this.$refs.observer) {
+        this.$refs.observer.validate().then((isValid) => {
           if (isValid) {
             const globals = {};
             this.selectedVariables.forEach((variable) => {
@@ -478,7 +493,7 @@ export default {
   max-height: 50px;
 }
 
-::v-deep {
+:deep {
   .file-import-floating-label {
     margin: -13px;
   }

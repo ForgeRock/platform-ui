@@ -297,12 +297,24 @@ legend {
   background-color: $light-blue;
 }
 
+.bg-lightindigo {
+  background-color: $light-indigo;
+}
+
+.bg-lightorange {
+  background-color: $light-orange;
+}
+
 .bg-lightyellow {
   background-color: $light-yellow;
 }
 
 .bg-lightgreen {
   background-color: $light-green;
+}
+
+.bg-lightred {
+  background-color: $light-red;
 }
 
 /* opacity */
@@ -399,6 +411,14 @@ a.card {
   th.col-actions {
     width: 120px;
   }
+}
+
+.w-100px {
+  width: 100px;
+}
+
+.w-150px {
+  width: 150px;
 }
 
 @media (min-width: 992px) {

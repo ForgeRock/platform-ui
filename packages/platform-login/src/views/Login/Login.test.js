@@ -1,17 +1,19 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, shallowMount } from '@vue/test-utils';
+import { mount, shallowMount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import flushPromises from 'flush-promises';
+import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { URLSearchParams } from 'url';
+import {
+  FRStep,
+} from '@forgerock/javascript-sdk';
 import * as urlUtil from '../../utils/urlUtil';
 import * as authResumptionUtil from '../../utils/authResumptionUtil';
-import i18n from '@/i18n';
 import Login from './index';
 
 const LoginMixin = {
@@ -30,31 +32,29 @@ describe('Login.vue', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(Login, {
-      i18n,
-      stubs: {
-        'router-link': true,
-      },
-      mocks: {
-        $route,
-        $t: () => {},
-        $store: {
-          state: {
-            SharedStore: {
-              webStorageAvailable: true,
+      global: {
+        stubs: {
+          'router-link': true,
+        },
+        mocks: {
+          $route,
+          $sanitize: (message, config) => sanitize(message, config),
+          $t: () => {},
+          $store: {
+            state: {
+              SharedStore: {
+                webStorageAvailable: true,
+              },
             },
           },
         },
+        mixins: [LoginMixin],
       },
-      mixins: [LoginMixin],
     });
   });
 
   afterAll(() => {
-    jest.resetAllMocks();
-  });
-
-  it('Load login component', () => {
-    expect(wrapper.vm.$options.name).toEqual('Login');
+    jest.restoreAllMocks();
   });
 
   it('Removes undefined and "undefined" tree from stepParams', () => {
@@ -205,9 +205,171 @@ describe('Login.vue', () => {
     expect(wrapper.vm.getAlternateFieldType(['VALID_DATE_FORMAT'])).toEqual('date');
     expect(wrapper.vm.getAlternateFieldType(['VALID_TIME_FORMAT'])).toEqual('time');
   });
+
+  describe('buildTreeForm', () => {
+    it('metadata callbacks are not added to the component list', () => {
+      jest.spyOn(wrapper.vm, 'isCallbackRequired').mockReturnValue(false);
+
+      const data = {
+        loading: true,
+        step: new FRStep({
+          callbacks: [
+            {
+              type: 'MetadataCallback',
+              output: [
+                {
+                  name: 'data',
+                  value: {
+                    realm: '/alpha',
+                  },
+                },
+              ],
+              _id: 1,
+            },
+          ],
+        }),
+      };
+
+      wrapper.setData(data);
+      wrapper.vm.buildTreeForm();
+
+      expect(wrapper.vm.componentList.length).toBe(0);
+    });
+  });
+
+  describe('handleIdpComponent', () => {
+    describe('given idp component ', () => {
+      it('should remove idp component from componentsList to the `idpComponent` field', () => {
+        const idpComponent = {
+          callback: {
+            getOutputByName: jest.fn(),
+            payload: {
+              type: 'SelectIdPCallback',
+            },
+            setInputValue: jest.fn(),
+          },
+        };
+        const componentList = [
+          {
+            callback: {
+              payload: {
+                type: 'NameCallback',
+              },
+            },
+          },
+          idpComponent,
+          {
+            callback: {
+              payload: {
+                type: 'PasswordCallback',
+              },
+            },
+          },
+        ];
+
+        expect(componentList.length).toBe(3);
+        expect(wrapper.vm.idpComponent).toBeUndefined();
+
+        wrapper.vm.handleIdpComponent(componentList, 1);
+        expect(componentList.length).toBe(2);
+        expect(wrapper.vm.idpComponent).toStrictEqual(idpComponent);
+      });
+    });
+
+    describe('given non array', () => {
+      it('should do nothing', () => {
+        wrapper.vm.handleIdpComponent({}, 1);
+
+        expect(wrapper.vm.idpComponent).toBeUndefined();
+      });
+    });
+  });
 });
 
 describe('Component Test', () => {
+  const stepPayload = {
+    authId: 'eyxQ',
+    callbacks: [
+      {
+        type: 'NameCallback',
+        output: [
+          {
+            name: 'prompt',
+            value: 'User Name',
+          },
+        ],
+        input: [
+          {
+            name: 'IDToken1',
+            value: '',
+          },
+        ],
+        _id: 0,
+      },
+      {
+        type: 'PasswordCallback',
+        output: [
+          {
+            name: 'prompt',
+            value: 'Password',
+          },
+        ],
+        input: [
+          {
+            name: 'IDToken2',
+            value: '',
+          },
+        ],
+        _id: 1,
+      },
+    ],
+    header: 'Sign In',
+    description: 'New here? <a href="#/service/Registration">Create an account</a><br><a href="#/service/ForgottenUsername">Forgot username?</a><a href="#/service/ResetPassword"> Forgot password?</a>',
+  };
+  const errorPayload = {
+    payload: {
+      code: 401,
+      reason: 'Unauthorized',
+      message: 'Unable to resume session. It may have expired.',
+      status: 401,
+      ok: false,
+    },
+    type: 'LoginFailure',
+  };
+
+  const mountLogin = async (overrideData = {}) => {
+    const wrapper = mount(Login, {
+      global: {
+        stubs: {
+          'router-link': true,
+          FrField: true,
+          FrPasswordCallback: true,
+        },
+        mocks: {
+          $route: {
+            params: {
+              tree: undefined,
+            },
+          },
+          $t: (t) => t,
+          $store: {
+            state: {
+              SharedStore: {
+                webStorageAvailable: true,
+              },
+            },
+          },
+          $sanitize: (message, config) => sanitize(message, config),
+        },
+        mixins: [LoginMixin],
+      },
+    });
+    await flushPromises();
+
+    await wrapper.setData(overrideData);
+    return wrapper;
+  };
+
   describe('Loads login callback components with extra query parameters in the URL', () => {
     const originalWindow = window;
     global.URLSearchParams = URLSearchParams;
@@ -216,29 +378,6 @@ describe('Component Test', () => {
       delete window.location;
       window.location = new URL(url);
     };
-
-    const mountLogin = () => mount(Login, {
-      i18n,
-      stubs: {
-        'router-link': true,
-      },
-      mocks: {
-        $route: {
-          params: {
-            tree: undefined,
-          },
-        },
-        $t: () => {},
-        $store: {
-          state: {
-            SharedStore: {
-              webStorageAvailable: true,
-            },
-          },
-        },
-      },
-      mixins: [LoginMixin],
-    });
 
     let replaceState;
 
@@ -272,7 +411,6 @@ describe('Component Test', () => {
       const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear').mockReturnValue({ urlAtRedirect: 'blah', step: { payload: {} } });
 
       const wrapper = await mountLogin();
-      await flushPromises();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/');
       expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
@@ -281,19 +419,98 @@ describe('Component Test', () => {
       getStepSpy.mockRestore();
     });
 
-    it('Leaves tree resumption query paramters in place when not returning from a redirect', async () => {
+    it('Leaves tree resumption query parameters in place when not returning from a redirect', async () => {
       setUrl('https://forgerock.io/login/?realm=/&code=aCode&notRemoved=here');
 
       // indicate that the tree is being resumed following a redirect
       const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(false);
 
       const wrapper = await mountLogin();
-      await flushPromises();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/&code=aCode&notRemoved=here');
       expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
 
       resumingSpy.mockRestore();
+    });
+
+    it('focuses on the first input if journeyFocusFirstFocusableItemEnabled is true', async () => {
+      const data = {
+        loading: true,
+        step: new FRStep(stepPayload),
+      };
+
+      const wrapper = await mountLogin(data);
+
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeFalsy();
+      expect(wrapper.vm.componentList[1].callbackSpecificProps.autofocus).toBeFalsy();
+
+      await wrapper.setData(data);
+      await flushPromises();
+
+      wrapper.vm.step = new FRStep(stepPayload);
+      await wrapper.setProps({ journeyFocusFirstFocusableItemEnabled: true, themeLoading: true });
+      await flushPromises();
+      await wrapper.setProps({ themeLoading: false });
+      await flushPromises();
+
+      expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeTruthy();
+      expect(wrapper.vm.componentList[1].callbackSpecificProps.autofocus).toBeFalsy();
+    });
+
+    it('calls buildTreeForm properly when themeLoading changes and when step exists or does not exist', async () => {
+      // Load with a valid step
+      let data = {
+        loading: true,
+        step: new FRStep(stepPayload),
+      };
+
+      let wrapper = await mountLogin(data);
+
+      let buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
+
+      await wrapper.setProps({ themeLoading: true });
+      await flushPromises();
+      await wrapper.setProps({ themeLoading: false });
+      await flushPromises();
+
+      expect(buildTreeFormSpy).toHaveBeenCalled();
+
+      // Load with an undefined step
+      data = {
+        loading: true,
+        step: undefined,
+      };
+
+      wrapper = await mountLogin(data);
+
+      buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
+
+      await wrapper.setProps({ themeLoading: true });
+      await flushPromises();
+      await wrapper.setProps({ themeLoading: false });
+      await flushPromises();
+
+      expect(buildTreeFormSpy).not.toHaveBeenCalled();
+
+      // Load with a login failure
+      data = {
+        loading: true,
+        step: errorPayload,
+      };
+
+      wrapper = await mountLogin(data);
+
+      buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
+
+      await wrapper.setProps({ themeLoading: true });
+      await flushPromises();
+      await wrapper.setProps({ themeLoading: false });
+      await flushPromises();
+
+      expect(buildTreeFormSpy).not.toHaveBeenCalled();
     });
   });
 });

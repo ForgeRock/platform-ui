@@ -5,10 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 import { map } from 'lodash';
-import flushPromises from 'flush-promises';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import * as schemaApi from '@/api/SchemaApi';
 import RelationshipEdit from './index';
 
@@ -32,32 +32,35 @@ describe('RelationshipEdit', () => {
   let wrapper;
 
   beforeEach(() => {
+    setupTestPinia();
     wrapper = shallowMount(RelationshipEdit, {
-      mocks: {
-        $t: () => { },
-        $store: {
-          state: {
-            SharedStore: {
-              uiConfig: {
-                configuration: {
-                  platformSettings: {
-                    managedObjectsSettings: {
-                      user: {
-                        minimumUIFilterLength: 2,
+      global: {
+        mocks: {
+          $t: () => { },
+          $store: {
+            state: {
+              SharedStore: {
+                uiConfig: {
+                  configuration: {
+                    platformSettings: {
+                      managedObjectsSettings: {
+                        user: {
+                          minimumUIFilterLength: 2,
+                        },
                       },
                     },
                   },
                 },
-              },
-              managedObjectMinimumUIFilterLength: {
-                user: 2,
+                managedObjectMinimumUIFilterLength: {
+                  user: 2,
+                },
               },
             },
+            commit: () => {},
           },
-          commit: () => {},
         },
       },
-      propsData: {
+      props: {
         value: {
           _id: 'testy',
           userName: 'testy.testerton',
@@ -103,6 +106,9 @@ describe('RelationshipEdit', () => {
       },
     });
   });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('should setupEditor properly', async () => {
     const queryFilterExtension = '!(/effectiveApplications[_id eq \'1234\'])';
@@ -133,10 +139,23 @@ describe('RelationshipEdit', () => {
     expect(getManagedResourceList).toHaveBeenCalledWith(managedObjectName, params);
   });
 
+  it('should refresh getManagedResourceList when input length is 0 even if there is threshold', async () => {
+    const queryFilterExtension = '!(/effectiveApplications[_id eq \'1234\'])';
+    const getManagedResourceList = jest.spyOn(ManagedResourceApi, 'getManagedResourceList').mockReturnValue(Promise.resolve(optionsQueryResult));
+    schemaApi.getSchema = jest.fn().mockReturnValue(Promise.resolve(resourceSchema));
+    await wrapper.setProps({ queryFilterExtension });
+    wrapper.vm.setupEditor();
+
+    await wrapper.vm.setOptions('a');
+    expect(getManagedResourceList).not.toHaveBeenCalled();
+    await wrapper.vm.setOptions('');
+    expect(getManagedResourceList).toHaveBeenCalled();
+  });
+
   it('should emitSelected properly without temporalConstraint', () => {
     wrapper.vm.emitSelected();
     expect(wrapper.vm.relationshipField.value).toEqual(null);
-    expect(wrapper.emitted().setValue[0]).toEqual([null]);
+    expect(wrapper.emitted().setValue[0]).toEqual(['']);
     wrapper.vm.emitSelected(['test', 'test']);
     expect(wrapper.emitted().setValue[1]).toEqual([[{ _ref: 'test', _refProperties: {} }]]);
     wrapper.vm.emitSelected('test');
@@ -170,5 +189,16 @@ describe('RelationshipEdit', () => {
     wrapper.vm.temporalConstraintEnabled = false;
     await flushPromises();
     expect(wrapper.emitted().setValue[2]).toEqual([[{ _ref: 'test', _refProperties: null }]]);
+  });
+
+  it('should emit the complete resource selection array when selection is an Array and selection has changed', async () => {
+    const resource = { givenName: 'Jon', sn: 'Doe', userName: 'jDoe' };
+    wrapper.vm.relationshipField.options = [{
+      value: 'managed/alpha_user/7809aeb2',
+      resource,
+    }];
+    wrapper.vm.emitSelected(['managed/alpha_user/7809aeb2']);
+    await flushPromises();
+    expect(wrapper.emitted('resource-selections')[0]).toEqual([[resource]]);
   });
 });

@@ -1,10 +1,11 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
-    v-slot="{ invalid }">
+  <VeeForm
+    v-slot="{ meta: { valid } }"
+    as="span">
     <BModal
       @hidden="resetModal"
       cancel-variant="link"
@@ -18,24 +19,31 @@ of the MIT license. See the LICENSE file for details. -->
       <p>{{ $t('governance.delegates.addModalTitle') }}</p>
       <FrGovResourceSelect
         v-model="delegates"
+        name="delegates"
         class="mb-3"
         resource-path="user" />
       <FrField
+        name="enableTimeConstraint"
         testid="enable-time-constraint"
-        v-model="enableTimeConstraint"
         class="mb-4"
         :label="$t('governance.delegates.timeConstraintLabel')"
-        type="checkbox" />
-      <BCollapse :visible="enableTimeConstraint">
+        type="checkbox"
+        :value="enableTimeConstraint"
+        @input="enableTimeConstraint = $event" />
+      <BCollapse
+        v-if="enableTimeConstraint"
+        :visible="enableTimeConstraint">
         <BRow>
           <BCol>
             <FrDatepicker
+              name="startDate"
               data-testid="start-date"
               v-model="startDate"
               :placeholder="$t('governance.delegates.startDate')" />
           </BCol>
           <BCol>
             <FrDatepicker
+              name="endDate"
               data-testid="end-date"
               :validation="{ is_before_date: { date: startDate, message: $t('governance.delegates.errorEndDate') }}"
               v-model="endDate"
@@ -46,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template #modal-footer="{ cancel, ok }">
         <div class="d-flex flex-row-reverse">
           <BButton
-            :disabled="invalid"
+            :disabled="!valid"
             data-testid="save-button"
             variant="primary"
             @click="okHandler(ok)">
@@ -60,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
     </BModal>
-  </ValidationObserver>
+  </VeeForm>
 </template>
 
 <script>
@@ -71,12 +79,14 @@ import {
   BModal,
   BRow,
 } from 'bootstrap-vue';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import dayjs from 'dayjs';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import { addTaskProxy } from '@/api/governance/DirectoryApi';
 
 export default {
@@ -90,7 +100,7 @@ export default {
     FrDatepicker,
     FrField,
     FrGovResourceSelect,
-    ValidationObserver,
+    VeeForm,
   },
   mixins: [NotificationMixin],
   data() {
@@ -106,6 +116,9 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  computed: {
+    ...mapState(useUserStore, ['userId']),
   },
   methods: {
     resetModal() {
@@ -127,7 +140,7 @@ export default {
           : null;
       }
 
-      addTaskProxy(this.$store.state.UserStore.userId, [this.delegates], startDate, endDate).then(() => {
+      addTaskProxy(this.userId, [this.delegates], startDate, endDate).then(() => {
         this.$emit('delegate-added');
         this.displayNotification('success', this.$t('governance.delegates.delegateAdded'));
         ok();

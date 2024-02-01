@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -103,6 +103,7 @@ export function generateFraasLogApiKeyApi(requestOverride = {}) {
 
   return axios.create(requestDetails);
 }
+
 /**
  * Generates an Iga API Axios instance
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
@@ -113,6 +114,23 @@ export function generateFraasLogApiKeyApi(requestOverride = {}) {
 export function generateIgaApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.igaApiUrl,
+    headers: {},
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
+
+/**
+ * Generates an IGA Workflow API Axios instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generateIgaOrchestrationApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: store.state.SharedStore.igaOrchestrationApiUrl,
     headers: {},
     ...requestOverride,
   };
@@ -183,6 +201,27 @@ export function generateAutoAccessApi(requestOverride = {}) {
     baseURL: store.state.SharedStore.autoAccessApiUrl,
     headers: {
       'X-TENANT-ID': tenantId,
+    },
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
+
+/**
+ * Generates an Analytics Reports API Axios instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generateAutoAccessReports(requestOverride = {}) {
+  const tenantId = process.env.VUE_APP_AUTO_ACCESS_TENANT_ID;
+  const requestDetails = {
+    baseURL: store.state.SharedStore.autoAccessReportsUrl,
+    headers: {
+      'X-TENANT-ID': tenantId,
+      'Accept-API-Version': 'resource=1.0',
     },
     ...requestOverride,
   };

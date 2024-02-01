@@ -1,13 +1,15 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
+  <FrSpinner
+    v-if="isLoading"
+    class="py-5" />
   <BContainer
-    v-if="!isLoading"
+    v-else
     class="my-5">
-    <div
-      class="mb-4 media">
+    <div class="mb-4 media">
       <BImg
         v-if="resourceIsUser"
         class="mr-4"
@@ -21,9 +23,9 @@ of the MIT license. See the LICENSE file for details. -->
         :name="setIcon"
       />
       <div class="media-body align-self-center">
-        <h5 class="text-muted">
+        <h2 class="h5 text-muted">
           {{ getTranslation(resourceTitle) }}
-        </h5>
+        </h2>
         <h1>{{ displayName }}</h1>
         <span
           v-if="displaySecondaryTitleField === 'description'"
@@ -43,8 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrIcon
         class="mr-md-2 text-nowrap"
         name="cached"
-      />
-      {{ $t('pages.access.resetPassword') }}
+      />{{ $t('pages.access.resetPassword') }}
     </BButton>
     <BButton
       v-if="canClearSessions && hasActiveSessions"
@@ -54,10 +55,10 @@ of the MIT license. See the LICENSE file for details. -->
       <FrIcon
         class="mr-md-2 text-nowrap"
         name="clear_all"
-      />
-      {{ $t('common.endSessions') }}
+      />{{ $t('common.endSessions') }}
     </BButton>
     <slot
+      name="edit-content"
       :relationship-properties="relationshipProperties"
       :display-properties="displayProperties"
       :revision="revision"
@@ -88,8 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
           flex-sm-row
           vertical
           pills>
-          <BTab
-            :title="$t('pages.access.details')">
+          <BTab :title="$t('pages.access.details')">
             <template v-if="propertiesAvailable">
               <FrObjectTypeEditor
                 v-if="displayProperties.length"
@@ -103,7 +103,7 @@ of the MIT license. See the LICENSE file for details. -->
                 @disable-save-button="disableSaveButton = $event"
                 @refresh-data="$emit('save-clicked', refreshData)">
                 <template
-                  v-for="(key, slotName) in $scopedSlots"
+                  v-for="(key, slotName) in $slots"
                   #[slotName]="slotData">
                   <slot
                     :name="slotName"
@@ -116,10 +116,10 @@ of the MIT license. See the LICENSE file for details. -->
             </span>
           </BTab>
           <!-- Add a tab for each viewable/editable object type property -->
-          <template v-for="(objectTypeProperty) in objectTypeProperties">
-            <BTab
-              :title="getTranslation(objectTypeProperty.title)"
-              :key="`${objectTypeProperty.propName}_tab`">
+          <template
+            v-for="(objectTypeProperty) in objectTypeProperties"
+            :key="`${objectTypeProperty.propName}_tab`">
+            <BTab :title="getTranslation(objectTypeProperty.title)">
               <FrObjectTypeEditor
                 @refresh-data="refreshData"
                 :revision="revision"
@@ -141,10 +141,10 @@ of the MIT license. See the LICENSE file for details. -->
             :revision="revision"
             @refresh-data="refreshData" />
           <!-- Add a tab for each viewable/editable relationship array property -->
-          <template v-for="(relationshipProperty) in viewableRelationshipArrayProperties">
-            <BTab
-              :title="getTranslation(relationshipProperty.title)"
-              :key="`${relationshipProperty.propName}_tab`">
+          <template
+            v-for="(relationshipProperty) in viewableRelationshipArrayProperties"
+            :key="`${relationshipProperty.propName}_tab`">
+            <BTab :title="getTranslation(relationshipProperty.title)">
               <FrRelationshipArray
                 :additional-query-filter="relationshipProperty.key === 'assignments' ? assignmentsQueryFilter : ''"
                 :parent-resource="relationshipProperty.key === 'assignments' ? assignmentsParentResource : `${resourceType}/${resourceName}`"
@@ -163,22 +163,23 @@ of the MIT license. See the LICENSE file for details. -->
             :resource-path="`${resourceType}/${resourceName}/${id}`"
             :revision="revision"
             @refresh-data="refreshData" />
-          <BTab
-            v-if="workforceEnabled && isOpenidmAdmin && (resourceIsUser || resourceIsRole)"
-            :title="$t('pages.access.applications')">
-            <slot
-              name="wfApplications"
-              :resource-details="resourceDetails"
-              :relationship-properties="relationshipProperties"
-              :revision="revision"
-              :id="id" />
-          </BTab>
-          <LinkedApplicationsTab
-            v-if="isOpenidmAdmin"
-            :linked-applications="linkedApplications" />
-          <FrJsonTab
-            v-if="isOpenidmAdmin && jsonString"
-            :json-string="jsonString" />
+          <slot name="additional-tabs" />
+          <template v-if="isOpenidmAdmin">
+            <BTab
+              v-if="workforceEnabled && (resourceIsUser || resourceIsRole)"
+              :title="$t('pages.access.applications')">
+              <slot
+                name="wfApplications"
+                :resource-details="resourceDetails"
+                :relationship-properties="relationshipProperties"
+                :revision="revision"
+                :id="id" />
+            </BTab>
+            <FrLinkedApplicationsTab :linked-applications="linkedApplications" />
+            <FrJsonTab
+              v-if="jsonString"
+              :json-string="jsonString" />
+          </template>
         </BTabs>
       </BCard>
     </slot>
@@ -228,20 +229,23 @@ import {
   VBModal,
 } from 'bootstrap-vue';
 import axios from 'axios';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrResetPasswordModal from '@forgerock/platform-shared/src/components/resource/EditResource/ResetPasswordModal';
 import FrRelationshipArray from '@forgerock/platform-shared/src/components/resource/RelationshipArray';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
-import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrDeletePanel from '@forgerock/platform-shared/src/components/DeletePanel';
 import { compareRealmSpecificResourceName } from '@forgerock/platform-shared/src/utils/realm';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import { getResourceTypePrivilege } from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import { deleteInternalResource, getInternalResource } from '@forgerock/platform-shared/src/api/InternalResourceApi';
 import { clearSessions, getSessionInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
-import ClearResourceSessions from '@forgerock/platform-shared/src/components/resource/ClearResourceSessions';
+import FrClearResourceSessions from '@forgerock/platform-shared/src/components/resource/ClearResourceSessions';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { getLinkedApplications } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import LinkedApplicationsTab from '@forgerock/platform-shared/src/components/resource/EditResource/CustomTabs/LinkedApplicationsTab';
+import { deleteManagedResource, getLinkedApplications, getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import FrLinkedApplicationsTab from '@forgerock/platform-shared/src/components/resource/EditResource/CustomTabs/LinkedApplicationsTab';
 import FrObjectTypeEditor from './ObjectTypeEditor';
 import FrSettingsTab from './CustomTabs/SettingsTab';
 import FrPrivilegesTab from './CustomTabs/PrivilegesTab';
@@ -260,28 +264,28 @@ import FrJsonTab from './CustomTabs/JsonTab';
 export default {
   name: 'EditResource',
   components: {
+    FrClearResourceSessions,
     FrDeletePanel,
+    FrIcon,
+    FrJsonTab,
+    FrLinkedApplicationsTab,
     FrObjectTypeEditor,
+    FrPrivilegesTab,
     FrResetPasswordModal,
     FrRelationshipArray,
     FrSettingsTab,
-    FrPrivilegesTab,
-    FrJsonTab,
-    FrIcon,
+    FrSpinner,
     BButton,
-    BImg,
-    BContainer,
-    BTabs,
-    BTab,
     BCard,
+    BContainer,
     BDropdown,
     BDropdownItem,
-    FrClearResourceSessions: ClearResourceSessions,
-    LinkedApplicationsTab,
+    BImg,
+    BTab,
+    BTabs,
   },
   mixins: [
     ResourceMixin,
-    RestMixin,
     NotificationMixin,
     TranslationMixin,
   ],
@@ -295,6 +299,7 @@ export default {
     },
   },
   data() {
+    const userStore = useUserStore();
     return {
       assignmentsQueryFilter: this.$store.state.SharedStore.workforceEnabled ? '!(/type eq "__ENTITLEMENT__") and !(/type eq "__RESOURCE__") and !(/type eq "__OVERRIDE__")' : 'true',
       resourceTitle: '',
@@ -314,7 +319,7 @@ export default {
       displayNameField: '',
       displaySecondaryTitleField: '',
       formFields: {},
-      isOpenidmAdmin: this.$store.state.UserStore.adminUser,
+      isOpenidmAdmin: userStore.adminUser,
       objectTypeProperties: {},
       relationshipProperties: {},
       settingsProperties: {},
@@ -347,10 +352,9 @@ export default {
   },
   methods: {
     loadData() {
-      const idmInstance = this.getRequestService();
       axios.all([
         getSchema(`${this.resourceType}/${this.resourceName}`),
-        idmInstance.get(`privilege/${this.resourceType}/${this.resourceName}/${this.id}`),
+        getResourceTypePrivilege(`${this.resourceType}/${this.resourceName}/${this.id}`),
       ]).then(axios.spread((schema, privilege) => {
         this.resourceTitle = schema.data.title;
         this.resourceSchema = schema.data;
@@ -361,7 +365,7 @@ export default {
         this.objectTypeProperties = this.getObjectTypeProperties(schema.data, privilege.data);
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
 
-        idmInstance.get(this.buildResourceUrl()).then((resourceDetails) => {
+        this.getResource().then((resourceDetails) => {
           this.revision = resourceDetails.data._rev;
           this.resourceDetails = resourceDetails.data;
 
@@ -373,20 +377,20 @@ export default {
               this.generateDisplay();
               this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
             }).catch((error) => {
-              this.displayNotification('error', error.response.data.message);
+              this.showErrorMessage(error, this.$t('pages.access.getSessionInfoError'));
             });
           } else {
             this.generateDisplay();
             this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
           }
         }).catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('errors.errorRetrievingResource'));
         });
 
         this.loadLinkedApplicationsData();
       }))
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('pages.access.getSchemaError'));
         });
     },
     loadLinkedApplicationsData() {
@@ -457,15 +461,16 @@ export default {
     getLinkedAppImg(connectorType) {
       return this.linkedAppImgMap[connectorType] ? this.linkedAppImgMap[connectorType] : this.linkedAppImgMap.default;
     },
-    buildResourceUrl() {
-      let url = `${this.resourceType}/${this.resourceName}/${this.id}?_fields=*`;
+    getResource() {
+      const getFunction = this.resourceType === 'managed' ? getManagedResource : getInternalResource;
+      const params = { fields: '*' };
       const singletons = filter(this.relationshipProperties, { type: 'relationship' });
 
       if (singletons.length) {
-        url += `,${map(singletons, (prop) => `${prop.propName}/*`).join(',')}`;
+        params.fields += `,${map(singletons, (prop) => `${prop.propName}/*`).join(',')}`;
       }
 
-      return url;
+      return getFunction(this.resourceName, this.id, params);
     },
     getObjectTypeProperties(schema, privilege) {
       return pickBy(schema.properties, (property, key) => {
@@ -609,7 +614,7 @@ export default {
             }
           }
           tempProp.value = this.formFields[createPriv.attribute];
-          if ((createPriv.readOnly && !this.isOpenidmAdmin) || tempProp.isVirtual || tempProp.userEditable === false) {
+          if ((createPriv.readOnly && !this.isOpenidmAdmin) || tempProp.isVirtual) {
             tempProp.disabled = true;
           } else {
             tempProp.disabled = false;
@@ -626,9 +631,9 @@ export default {
     },
     deleteResource() {
       this.isDeleting = true;
-      const idmInstance = this.getRequestService();
+      const deleteFunction = this.resourceType === 'managed' ? deleteManagedResource : deleteInternalResource;
 
-      idmInstance.delete(`${this.resourceType}/${this.resourceName}/${this.id}`)
+      deleteFunction(this.resourceName, this.id)
         .then(() => {
           this.displayNotification('success', this.$t('pages.access.deleteResource', { resource: this.resourceName }));
 
@@ -636,7 +641,7 @@ export default {
             path: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`,
           });
         }).catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('errors.deleteObject', { object: this.resourceName }));
         }).finally(() => {
           this.isDeleting = false;
           this.$root.$emit('bv::hide::modal', 'deleteModal');
@@ -786,7 +791,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .card-tabs-vertical {
+:deep(.card-tabs-vertical) {
   .card-body {
     padding: 0;
   }
@@ -796,7 +801,7 @@ export default {
   }
 }
 
-::v-deep .fr-tag {
+:deep(.fr-tag) {
   max-width: 230px;
 }
 
@@ -806,7 +811,7 @@ export default {
   z-index: 1020;
 }
 
-::v-deep .dropdown-item.active {
+:deep(.dropdown-item.active) {
   position: relative;
 
   &::after {

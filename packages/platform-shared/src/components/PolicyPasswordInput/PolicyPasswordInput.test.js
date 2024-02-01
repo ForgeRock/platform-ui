@@ -5,24 +5,23 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import PolicyPasswordInput from './index';
 
-const localVue = createLocalVue();
-
+PolicyPasswordInput.mounted = jest.fn();
 describe('PasswordPolicyInput.vue', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(PolicyPasswordInput, {
-      localVue,
-      sync: false,
-      mocks: {
-        $t: () => {},
-        $store: {
-          state: {},
+      global: {
+        mocks: {
+          $t: () => {},
+          $store: {
+            state: {},
+          },
         },
       },
-      propsData: {
+      props: {
         resourceType: 'managed',
         resourceName: 'user',
       },

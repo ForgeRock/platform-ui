@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -33,8 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="$emit('edit-clicked')">
         <FrIcon
           class="mr-2"
-          name="edit" />
-        {{ $t('common.edit') }}
+          name="edit" />{{ $t('common.edit') }}
       </BDropdownItem>
       <!--
         Triggered on click, indicates user would like to duplicate this row's item
@@ -46,8 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="$emit('duplicate-clicked')">
         <FrIcon
           class="mr-2"
-          name="control_point_duplicate" />
-        {{ $t('common.duplicate') }}
+          name="control_point_duplicate" />{{ $t('common.duplicate') }}
       </BDropdownItem>
       <!--
         Triggered on click, indicates user would like to toggle this row's item active or inactive
@@ -59,8 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="$emit('toggle-clicked')">
         <FrIcon
           class="mr-2"
-          name="power_settings_new" />
-        {{ toggleIsActive ? $t('common.deactivate') : $t('common.activate') }}
+          name="power_settings_new" />{{ toggleIsActive ? $t('common.deactivate') : $t('common.activate') }}
       </BDropdownItem>
       <!--
         Slot for any custom actions not covered by common use cases
@@ -77,8 +74,7 @@ of the MIT license. See the LICENSE file for details. -->
         :data-testid="`dropdown-delete-${testId}`">
         <FrIcon
           class="mr-2"
-          name="delete" />
-        {{ $t('common.delete') }}
+          name="delete" />{{ $t('common.delete') }}
       </Bdropdownitem>
     </BDropdown>
   </div>

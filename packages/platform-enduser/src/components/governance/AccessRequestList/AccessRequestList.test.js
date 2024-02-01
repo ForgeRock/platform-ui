@@ -43,10 +43,9 @@ const entitlement = {
   },
   requestType: 'entitlementGrant',
   application: {},
-  entitlement: {
-    displayName: 'test entitlement',
-    description: 'test description',
-  },
+  entitlement: {},
+  descriptor: { idx: { '/entitlement': { displayName: 'test entitlement' } } },
+  glossary: { idx: { '/entitlement': { description: 'test description' } } },
   user: {
     givenName: 'test givenName',
     sn: 'test sn',
@@ -78,15 +77,17 @@ describe('AccessReviews', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(AccessRequestList, {
-      mocks: {
-        $t: (text, params) => {
-          if (text === 'governance.accessRequest.idLabel') {
-            return text + params.id;
-          }
-          return text;
+      global: {
+        mocks: {
+          $t: (text, params) => {
+            if (text === 'governance.accessRequest.idLabel') {
+              return text + params.id;
+            }
+            return text;
+          },
         },
       },
-      propsData: {
+      props: {
         requests: [
           application,
         ],
@@ -106,7 +107,7 @@ describe('AccessReviews', () => {
       let requestType = findByTestId(wrapper, 'request-type');
       expect(requestType.text()).toBe('Grant Application');
 
-      app.requestType = 'applicationRevoke';
+      app.requestType = 'applicationRemove';
 
       await wrapper.setProps({
         requests: [
@@ -153,7 +154,7 @@ describe('AccessReviews', () => {
       let requestType = findByTestId(wrapper, 'request-type');
       expect(requestType.text()).toBe('Grant Entitlement');
 
-      ent.requestType = 'entitlementRevoke';
+      ent.requestType = 'entitlementRemove';
 
       await wrapper.setProps({
         requests: [
@@ -200,7 +201,7 @@ describe('AccessReviews', () => {
       let requestType = findByTestId(wrapper, 'request-type');
       expect(requestType.text()).toBe('Grant Role');
 
-      myRole.requestType = 'roleRevoke';
+      myRole.requestType = 'roleRemove';
 
       await wrapper.setProps({
         requests: [

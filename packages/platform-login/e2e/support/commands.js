@@ -26,13 +26,13 @@ Cypress.Commands.add('login', () => {
   cy.clearSessionStorage();
 
   cy.visit(loginUrl);
-  cy.findByPlaceholderText(/User Name/i).type(adminUserName);
-  cy.findByPlaceholderText(/Password/i).type(adminPassword, { force: true });
+  cy.findByLabelText(/User Name/i, { timeout: 20000 }).type(adminUserName);
+  cy.findAllByLabelText(/Password/i).first().type(adminPassword, { force: true });
   cy.findByRole('button', { name: /Next/i }).click();
   if (Cypress.env('IS_FRAAS')) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(900);
-    cy.findByRole('button', { name: /Skip for now/i }).click();
+    cy.wait(1200);
+    cy.findByRole('button', { name: /Skip for now/i, timeout: 5000 }).click();
   }
   cy.findAllByTestId('dashboard-welcome-title', { timeout: 20000 });
 });
@@ -55,17 +55,17 @@ Cypress.Commands.add('importTrees', (fixtureArray) => {
   cy.visit(treeListUrl);
 
   fixtureArray.forEach((fixtureName) => {
-    cy.findByRole('button', { name: 'Import' }).click();
+    cy.findByRole('button', { name: 'Import', timeout: 20000 }).click();
     cy.findByRole('dialog', { name: 'Import Journeys' }).within(() => {
       cy.findByRole('button', { name: 'Skip Backup', timeout: 25000 }).should('be.enabled').click();
-      cy.findByRole('button', { name: 'Skip Backup' }).click();
-
-      // Use the test fixture as upload data
-      cy.get('[type="file"]').attachFile(fixtureName);
-      cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
-      cy.findByRole('button', { name: 'Start Import' }).should('be.enabled').click();
-      cy.contains('Import Complete').should('be.visible');
-      cy.findByRole('button', { name: 'Done' }).click();
     });
+    cy.findByRole('button', { name: 'Skip Backup' }).click();
+
+    // Use the test fixture as upload data
+    cy.get('[type="file"]').attachFile(fixtureName);
+    cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
+    cy.findByRole('button', { name: 'Start Import' }).should('be.enabled').click();
+    cy.contains('Import Complete').should('be.visible');
+    cy.findByRole('button', { name: 'Done' }).click();
   });
 });

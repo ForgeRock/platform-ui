@@ -5,28 +5,34 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { mount, flushPromises } from '@vue/test-utils';
+import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { clone } from 'lodash';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
-import Approvals from './index';
 import i18n from '@/i18n';
+import router from '@/router';
+import Approvals from './index';
 
-const mountComponent = () => mount(Approvals, {
-  i18n,
-  mocks: {
-    $store: {
-      state: { UserStore: {} },
-      commit: jest.fn(),
+const mountComponent = () => {
+  setupTestPinia({ user: { userId: '1234' } });
+  return mount(Approvals, {
+    global: {
+      plugins: [i18n, router],
+      mocks: {
+        $store: {
+          commit: jest.fn(),
+          state: { SharedStore: { governanceEnabled: true } },
+        },
+      },
     },
-  },
-});
+  });
+};
 
 const mockRequest = {
   id: 3,
-  requestType: 'applicationRevoke',
+  requestType: 'applicationRemove',
   request: {
     common: {
       priority: 'high',
@@ -138,7 +144,7 @@ const openModalMock = {
         priority: 'high',
       },
     },
-    requestType: 'applicationRevoke',
+    requestType: 'applicationRemove',
     requester: {
       givenName: 'Mike',
       id: '1234-456-1',
@@ -208,11 +214,11 @@ describe('Approvals', () => {
     await flushPromises();
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const pagination = findByTestId(wrapper, 'approvals-pagination');
+    const pagination = findComponentByTestId(wrapper, 'approvals-pagination');
     pagination.vm.$emit('on-page-size-change', 2);
     expect(wrapper.vm.pageSize).toBe(2);
     expect(getApprovalsSpy).toHaveBeenCalledWith(
-      undefined,
+      '1234',
       {
         _pagedResultsOffset: 0,
         _pageSize: 2,
@@ -243,11 +249,11 @@ describe('Approvals', () => {
 
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const pagination = findByTestId(wrapper, 'approvals-pagination');
+    const pagination = findComponentByTestId(wrapper, 'approvals-pagination');
     pagination.vm.$emit('input', 2);
     expect(wrapper.vm.currentPage).toBe(2);
     expect(getApprovalsSpy).toHaveBeenCalledWith(
-      undefined,
+      '1234',
       {
         _pagedResultsOffset: 10,
         _pageSize: 10,
@@ -278,10 +284,10 @@ describe('Approvals', () => {
 
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const toolbar = findByTestId(wrapper, 'approvals-toolbar');
+    const toolbar = findComponentByTestId(wrapper, 'approvals-toolbar');
     toolbar.vm.$emit('status-change', 'complete');
     expect(getApprovalsSpy).toHaveBeenCalledWith(
-      undefined,
+      '1234',
       {
         _pagedResultsOffset: 0,
         _pageSize: 10,
@@ -312,7 +318,7 @@ describe('Approvals', () => {
 
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const toolbar = findByTestId(wrapper, 'approvals-toolbar');
+    const toolbar = findComponentByTestId(wrapper, 'approvals-toolbar');
     toolbar.vm.$emit('filter-change', {
       requestId: 'testId',
     });
@@ -320,7 +326,7 @@ describe('Approvals', () => {
     await flushPromises();
 
     expect(getApprovalsSpy).toHaveBeenCalledWith(
-      undefined,
+      '1234',
       {
         _pagedResultsOffset: 0,
         _pageSize: 10,
@@ -387,27 +393,6 @@ describe('Approvals', () => {
     await wrapper.vm.$nextTick();
     expect(showModalSpy).toHaveBeenCalledWith(openModalMock, 'REJECT');
   });
-  it('test open modal with comment', async () => {
-    AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
-      Promise.resolve({
-        data: {
-          result: [mockRequest],
-          totalCount: 1,
-        },
-      }),
-    );
-
-    wrapper = mountComponent();
-    const showModalSpy = jest
-      .spyOn(wrapper.vm, 'openModal')
-      .mockImplementation();
-    await flushPromises();
-
-    findByTestId(wrapper, 'dropdown-actions').trigger('click');
-    findByTestId(wrapper, 'dropdown-action-comment').trigger('click');
-    await wrapper.vm.$nextTick();
-    expect(showModalSpy).toHaveBeenCalledWith(openModalMock, 'COMMENT');
-  });
   it('test open modal with reassign', async () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
@@ -422,6 +407,7 @@ describe('Approvals', () => {
     const showModalSpy = jest
       .spyOn(wrapper.vm, 'openModal')
       .mockImplementation();
+    jest.spyOn(wrapper.vm, 'viewDetails').mockImplementation();
     await flushPromises();
 
     findByTestId(wrapper, 'dropdown-actions').trigger('click');

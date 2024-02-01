@@ -5,54 +5,41 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
-import Vuex from 'vuex';
+import { shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import Profile from '@/components/profile';
-
-const localVue = createLocalVue();
-localVue.use(Vuex);
-localVue.use(BootstrapVue);
 
 Profile.components['fr-consent'] = jest.fn();
 Profile.components['fr-account-controls'] = jest.fn();
 Profile.components['fr-account-security'] = jest.fn();
 Profile.components['fr-edit-profile'] = jest.fn();
 
+const RestMixin = {
+  methods: {
+    getRequestService: jest.fn().mockImplementation(() => ({ get: () => Promise.resolve({ data: {} }) })),
+  },
+};
+
 describe('Profile.vue', () => {
   let wrapper;
   beforeEach(() => {
-    const store = new Vuex.Store({
-      state: {
-        UserStore: {
-          userId: '0123456789',
-          managedResource: null,
-          roles: null,
-          internalUser: false,
-          adminUser: false,
-          profile: {},
-          schema: {},
-          access: [],
-          givenName: '',
-          sn: '',
-          email: '',
-          userName: '',
-        },
+    setupTestPinia({
+      user: {
+        userId: '0123456789',
+        managedResource: 'people',
       },
     });
 
     wrapper = shallowMount(Profile, {
-      localVue,
-      i18n,
-      store,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         theme: {},
       },
+      mixins: [RestMixin],
     });
-    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({
-      get: () => Promise.resolve(),
-    }));
   });
 
   it('Sets fullName properly', () => {

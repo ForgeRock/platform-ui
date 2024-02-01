@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
           :src="avatarSource" />
       </template>
       <h1 class="text-capatilize">
-        {{ $t(`pages.dashboard.widgets.welcome.greeting${timeOfDay}`, { name: userDetails.givenName }) }}
+        {{ $t(`pages.dashboard.widgets.welcome.greeting${timeOfDay}`, { name: givenName }) }}
       </h1>
       <p>{{ $t('pages.dashboard.widgets.welcome.welcomeMessageCompact') }}</p>
     </BMedia>
@@ -29,10 +29,10 @@ of the MIT license. See the LICENSE file for details. -->
         <BAvatar
           variant="link"
           size="112px"
-          :src="$store.state.UserStore.profileImage.length > 0 ? $store.state.UserStore.profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+          :src="avatarSource" />
         <div data-testid="dashboard-welcome-greeting">
           {{ $t('pages.dashboard.widgets.welcome.greeting') }}, <span class="text-capitalize">
-            {{ fullName }}
+            {{ name }}
           </span>
         </div>
       </template>
@@ -52,17 +52,22 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import {
+  BAvatar,
+  BButton,
+  BJumbotron,
+  BMedia,
+} from 'bootstrap-vue';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
+
 /**
  * @description Widget that provides a welcome message for the managed resource, also provides a button to directly access editing the resources profile.
- *
- * */
+ */
 export default {
   name: 'WelcomeWidget',
   props: {
-    userDetails: {
-      type: Object,
-      default: () => {},
-    },
     widgetDetails: {
       type: Object,
       default: () => {},
@@ -71,6 +76,12 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  components: {
+    BAvatar,
+    BButton,
+    BJumbotron,
+    BMedia,
   },
   data() {
     return {
@@ -95,18 +106,10 @@ export default {
     },
   },
   computed: {
-    fullName() {
-      let fullName = '';
-
-      if (this.userDetails.givenName.length > 0 || this.userDetails.sn.length > 0) {
-        fullName = `${this.userDetails.givenName} ${this.userDetails.sn}`;
-      } else {
-        fullName = this.userDetails.userId;
-      }
-      return fullName;
-    },
+    ...mapState(useUserStore, ['name', 'givenName']),
+    ...mapState(useEnduserStore, ['profileImage']),
     avatarSource() {
-      return this.$store.state.UserStore.profileImage.length > 0 ? this.$store.state.UserStore.profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png'); // eslint-disable-line global-require
+      return this.profileImage.length > 0 ? this.profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png'); // eslint-disable-line global-require
     },
   },
 };

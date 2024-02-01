@@ -37,6 +37,10 @@ describe('Reason Filter', () => {
   let wrapper;
   const expectedOptions = [
     {
+      text: 'Advanced Bot Detection',
+      value: ['is_advanced_bot_detection'],
+    },
+    {
       text: 'Automated User Agent',
       value: ['is_automated_user_agent'],
     },
@@ -104,7 +108,9 @@ describe('Reason Filter', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(ReasonFilter, {
-      i18n,
+      global: {
+        plugins: [i18n],
+      },
     });
   });
   it('Component should render', () => {

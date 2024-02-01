@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrAccessRequestList
           :is-loading="isLoading"
           :requests="accessRequests"
-          @open-detail="openModal($event, 'DETAILS')">
+          @open-detail="viewDetails">
           <template #header>
             <FrRequestToolbar
               data-testid="approvals-toolbar"
@@ -110,7 +110,7 @@ of the MIT license. See the LICENSE file for details. -->
                     </template>
                     <BDropdownItem
                       data-testid="dropdown-action-details"
-                      @click="openModal(item, 'DETAILS')">
+                      @click="viewDetails(item)">
                       <FrIcon
                         name="list_alt"
                         class="mr-2"
@@ -136,7 +136,6 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <FrRequestModal
       :type="modalType"
-      :hide-actions="status !== 'pending'"
       :item="modalItem"
       :is-approvals="true"
       @modal-closed="modalType = null; modalItem = null"
@@ -154,6 +153,8 @@ import {
   BCard,
   BContainer,
 } from 'bootstrap-vue';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
@@ -218,6 +219,9 @@ export default {
       totalCount: 0,
     };
   },
+  computed: {
+    ...mapState(useUserStore, ['userId']),
+  },
   mounted() {
     this.loadRequestAndUpdateBadge();
   },
@@ -233,7 +237,7 @@ export default {
         actorStatus: 'active',
       };
       try {
-        const { data } = await getUserApprovals(this.$store.state.UserStore.userId, queryParams);
+        const { data } = await getUserApprovals(this.userId, queryParams);
         this.$store.commit('setApprovalsCount', data.totalCount);
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.approval.errorGettingPendingApprovals'));
@@ -277,7 +281,7 @@ export default {
       if (this.sortKeys === 'date') params._sortType = 'date';
 
       try {
-        const { data } = await getUserApprovals(this.$store.state.UserStore.userId, params, payload);
+        const { data } = await getUserApprovals(this.userId, params, payload);
         this.accessRequests = data.result;
         this.totalCount = data.totalCount;
       } catch (error) {
@@ -301,10 +305,13 @@ export default {
      * @param {Object} item request item that was clicked
      * @param {String} type string that tells the modal what view to show
      */
-    openModal(item, type = 'DETAILS') {
+    openModal(item, type) {
       this.modalItem = item;
       this.modalType = REQUEST_MODAL_TYPES[type];
       this.$bvModal.show('request_modal');
+    },
+    viewDetails(item) {
+      this.$router.push({ name: 'ApprovalDetails', params: { requestId: item.details.id } });
     },
     /**
      * Handles filtering requests as well as updates to pagination

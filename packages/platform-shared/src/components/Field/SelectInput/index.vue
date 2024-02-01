@@ -1,30 +1,29 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
-    :id="id"
+    :id="internalId"
     :name="name"
     :description="description"
-    :errors="errors"
+    :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
     :floating-label="floatingLabel"
-    :validation="validation"
-    :validation-immediate="validationImmediate"
     :readonly-label="disabled">
     <VueMultiSelect
-      :id="id"
+      :id="internalId"
       ref="vms"
-      v-model="inputValue"
+      :value="inputValue"
+      @input="inputValue = $event; $emit('input', inputValue ? inputValue.value : '')"
       v-bind="$attrs"
       class="text-nowrap"
       label="text"
       track-by="value"
       role="combobox"
       :aria-expanded="isExpanded ? 'true': 'false'"
-      :aria-labelledby="id + '-label'"
+      :aria-labelledby="internalId + '-label'"
       :name="name"
       :disabled="disabled"
       :options="selectOptions"
@@ -33,19 +32,18 @@ of the MIT license. See the LICENSE file for details. -->
       :show-labels="false"
       :allow-empty="allowEmpty"
       :class="[{'polyfill-placeholder': floatLabels, 'h-100': floatingLabel, 'has-prepend-button': hasPrependBtn}, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
-      :placeholder="placeholder"
+      :placeholder="internalPlaceholder"
       :data-testid="testid"
       @search-change="$emit('search-change', $event)"
       @open="openHandler"
       @select="$emit('select', $event)"
       @close="floatingLabel && closeDropDown(inputValue)"
-      @input="$emit('input', inputValue ? inputValue.value : '')"
       @tag="$emit('tag', $event)">
       <template #noResult>
         {{ $t('common.noResult') }}
       </template>
       <template
-        v-for="(key, slotName) in $scopedSlots"
+        v-for="(key, slotName) in $slots"
         #[slotName]="slotData">
         <!-- @slot passthrough slot -->
         <slot
@@ -54,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </VueMultiSelect>
     <template
-      v-for="(key, slotName) in $scopedSlots"
+      v-for="(key, slotName) in $slots"
       #[slotName]="slotData">
       <!-- @slot passthrough slot -->
       <slot
@@ -69,16 +67,19 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  toRef,
 } from 'vue';
 import {
   find,
 } from 'lodash';
 import vueMultiSelectOverrides from '@forgerock/platform-shared/src/composables/vueMultiSelectOverrides';
+
+import { useField } from 'vee-validate';
+import uuid from 'uuid/v4';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
 import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
-
 /**
  *  Single select input. Allows selection of one element in a dropdown
  *
@@ -99,9 +100,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default() {
-        return this.$t('common.typeToSearch');
-      },
+      default: '',
     },
     searchable: {
       type: Boolean,
@@ -149,31 +148,13 @@ export default {
     },
   },
   setup(props, context) {
+    const {
+      value: inputValue, errors: fieldErrors,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+
     const hasPrependBtn = ref(Object.keys(context.slots).includes('prependButton'));
     const isExpanded = ref(false);
     const vms = ref(null);
-    const floatLabels = ref(false);
-
-    /**
-     * Focus the Vue Multi Select component (vms) and floats the label
-     * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
-     */
-    function openHandler() {
-      isExpanded.value = true;
-      context.emit('open');
-
-      if (props.searchable && vms.value?.$el) {
-        vms.value.$el.querySelector('input').focus();
-      }
-      floatLabels.value = props.floatingLabel;
-
-      // Scroll the select list to show the selected option
-      if (props.showSelectedOptionOnOpen && props.value && vms.value?.$el) {
-        setTimeout(() => {
-          vms.value.$el.querySelector('.multiselect__option--selected').scrollIntoView({ block: 'center' });
-        }, 20);
-      }
-    }
 
     function arrowKeyEvent(event, addPointerElementOverride) {
       if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -184,10 +165,6 @@ export default {
     onMounted(() => {
       if (props.searchable) {
         vms.value.$refs.search.setAttribute('autocomplete', 'off');
-      }
-
-      if (props.autofocus) {
-        openHandler();
       }
 
       if (vms.value?.$el) {
@@ -208,25 +185,24 @@ export default {
     });
 
     return {
-      floatLabels,
       hasPrependBtn,
       isExpanded,
-      openHandler,
       vms,
+      inputValue,
+      fieldErrors,
     };
   },
   mounted() {
+    if (this.autofocus) {
+      this.openHandler();
+    }
+
     this.setInputValue(this.value);
+
+    this.addAriaLabelForLegend();
   },
   updated() {
-    // Note: in certain browsers, screen readers are unable to associate a <legend> with the select component
-    // this fix tells the input what it's labelledby, which is the id of that <legend> element
-    if (this.inputLabelledby) {
-      const multiselectInput = this.$el.querySelector('.multiselect__input');
-      if (multiselectInput) {
-        multiselectInput.setAttribute('aria-labelledby', this.inputLabelledby);
-      }
-    }
+    this.addAriaLabelForLegend();
   },
   computed: {
     selectOptions() {
@@ -249,8 +225,26 @@ export default {
       }
       return formattedOptions;
     },
+    internalPlaceholder() {
+      return this.placeholder || this.$t('common.typeToSearch');
+    },
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
+    },
   },
   methods: {
+    /**
+     * In certain browsers, screen readers are unable to associate a <legend> with the select component
+     * this method updates the select html to refer to the correct <legend> element
+     */
+    addAriaLabelForLegend() {
+      if (this.inputLabelledby) {
+        const multiselectInput = this.$el.querySelector?.('.multiselect__input');
+        if (multiselectInput) {
+          multiselectInput.setAttribute('aria-labelledby', this.inputLabelledby);
+        }
+      }
+    },
     closeDropDown(newVal) {
       this.isExpanded = false;
       if (newVal === null) {
@@ -262,12 +256,36 @@ export default {
 
       this.$emit('close');
     },
-    inputValueHandler(inputValue) {
-      this.floatLabels = this.floatingLabel && inputValue && inputValue.value !== null && inputValue.value.toString().length > 0 && !!this.label;
+    inputValueHandler(newVal) {
+      const value = typeof newVal === 'object' && Object.hasOwnProperty.call(newVal, 'value') ? newVal.value : newVal;
+      this.floatLabels = this.floatingLabel && value !== null && value.toString().length > 0 && !!this.label;
     },
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
-        this.inputValue = find(this.selectOptions, { value: newVal });
+        const optionBeingSet = find(this.selectOptions, { value: newVal });
+        if (optionBeingSet || this.valueIsDifferent(newVal)) {
+          this.inputValue = optionBeingSet;
+        }
+      }
+    },
+    /**
+     * @description focus the Vue Multi Select component (vms) and floats the label
+     * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
+     */
+    openHandler() {
+      this.isExpanded = true;
+      this.$emit('open');
+
+      if (this.searchable) {
+        this.$refs.vms.$el.querySelector('input').focus();
+      }
+      this.floatLabels = this.floatingLabel && this.label;
+
+      // Scroll the select list to show the selected option
+      if (this.showSelectedOptionOnOpen && this.value) {
+        setTimeout(() => {
+          this.$refs.vms.$el.querySelector('.multiselect__option--selected').scrollIntoView({ block: 'center' });
+        }, 20);
       }
     },
   },

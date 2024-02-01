@@ -5,13 +5,13 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils';
-import Vuex from 'vuex';
+import { shallowMount } from '@vue/test-utils';
+import { createStore } from 'vuex';
+import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import i18n from '@/i18n';
 import App from '@/App';
 
-const localVue = createLocalVue();
-localVue.use(Vuex);
+jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 
 let store;
 let wrapper;
@@ -22,45 +22,41 @@ function shallowMountComponent(storeMock) {
     meta: { hideSideMenu: true },
   };
 
+  const storePlugin = createStore(storeMock);
+
   wrapper = shallowMount(App, {
-    localVue,
-    store: storeMock,
-    i18n,
-    mocks: {
-      $route,
-    },
-    stubs: {
-      RouterLink: true,
-      RouterView: true,
-      Notifications: true,
+    global: {
+      plugins: [i18n, storePlugin],
+      stubs: ['RouterLink', 'RouterView'],
+      mocks: {
+        $route,
+      },
     },
   });
 }
 
 describe('App.vue', () => {
   beforeEach(async () => {
-    store = new Vuex.Store({
+    getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
+    store = {
       state: {
         SharedStore: { workforceEnabled: false },
-        UserStore: { userDetails: {} },
         menusFile: 'menus.platform',
       },
       getters: {
-        'UserStore/userDetails': (state) => state.UserStore.userDetails,
-        UserStore: (state) => state.UserStore,
         menusFile: (state) => state.menusFile,
       },
-    });
+    };
   });
 
   afterAll(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('Loaded Menus File should load default items', async () => {
     shallowMountComponent(store);
     await wrapper.vm.$nextTick();
-    expect(wrapper.vm.menuItems.length).toEqual(8);
+    expect(wrapper.vm.menuItems.length).toEqual(9);
   });
 
   it('Loaded Menus File with governance', async () => {
@@ -69,7 +65,7 @@ describe('App.vue', () => {
     await wrapper.vm.$nextTick();
     const inbox = wrapper.vm.menuItems.find((item) => item.displayName === 'sideMenu.inbox');
     const approvals = inbox.subItems.find((item) => item.displayName === 'sideMenu.approvals');
-    expect(wrapper.vm.menuItems.length).toEqual(8);
+    expect(wrapper.vm.menuItems.length).toEqual(9);
     expect(inbox).toBeTruthy();
     expect(approvals).toBeTruthy();
   });
@@ -78,7 +74,7 @@ describe('App.vue', () => {
     store.state.SharedStore.logoutScreen = false;
     shallowMountComponent(store);
     await wrapper.vm.$nextTick();
-    const logoutText = wrapper.find('frlayout-stub');
+    const logoutText = wrapper.find('fr-layout-stub');
     expect(logoutText.exists()).toBeTruthy();
   });
 });

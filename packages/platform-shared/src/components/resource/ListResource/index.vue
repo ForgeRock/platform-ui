@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,12 +12,12 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="showDivider"
         class="toolbar-divider mx-lg-3 d-none d-lg-block" />
       <FrSearchInput
-        v-model="filter"
+        :value="filter"
         v-if="searchEnabled"
         :placeholder="$t('common.search')"
         @clear="clear"
         @search="search"
-        @input="setHelpTextFromSearchLength"
+        @input="filterChange"
         @search-input-focus="setHelpTextFromSearchLength"
         @search-input-blur="removeHelpText"
         class="w-50"
@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="loading-resources-spinner">
       <FrSpinner class="py-5" />
       <div class="text-center pb-4">
-        {{ $t('listResource.loadingResource', { resourceName: this.resourceTitle || resourceName | pluralizeFilter }) }}
+        {{ $t('listResource.loadingResource', { resourceName: pluralizeValue(this.resourceTitle || resourceName) }) }}
       </div>
     </div>
     <div
@@ -100,7 +100,7 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </template>
       <template
-        v-for="(key, slotName) in $scopedSlots"
+        v-for="(key, slotName) in $slots"
         #[slotName]="slotData">
         <!-- @slot Custom cell slot -->
         <slot
@@ -111,7 +111,7 @@ of the MIT license. See the LICENSE file for details. -->
 
     <FrPagination
       v-if="tableData && tableData.length > 0 && !isLoading"
-      v-model="paginationPage"
+      :value="paginationPage"
       aria-controls="list-resource-table"
       :per-page="paginationPageSize"
       :last-page="lastPage"
@@ -156,11 +156,12 @@ import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
 import FrClearResourceSessions from '../ClearResourceSessions';
 
@@ -315,9 +316,6 @@ export default {
       return pluralize(capitalize(this.resourceTitle || this.resourceName));
     },
   },
-  filters: {
-    PluralizeFilter,
-  },
   mounted() {
     this.resourceName = this.getResourceName(this.routerParameters.resourceName);
     if (this.propColumns.length) {
@@ -360,12 +358,17 @@ export default {
         this.displayFields = newVal.map((obj) => obj.key);
         this.columns = newVal;
         if (oldVal.length) {
-          this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage);
+          this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
         }
       }
     },
   },
   methods: {
+    pluralizeValue,
+    filterChange(filter) {
+      this.filter = filter;
+      this.setHelpTextFromSearchLength();
+    },
     getResourceName(resourceName) {
       if (isUndefined(resourceName)) {
         return this.$route?.params?.resourceName;
@@ -458,13 +461,14 @@ export default {
     pageSizeChange(pageSize) {
       this.paginationPage = 1;
       this.paginationPageSize = pageSize;
-      this.paginationChange();
+      this.paginationChange(1);
     },
     /**
      * Repulls data based on new table page
      */
-    paginationChange() {
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
+    paginationChange(page) {
+      this.paginationPage = page;
+      this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
     },
     cancelDelete() {
       this.resourceToDeleteId = '';
@@ -488,10 +492,9 @@ export default {
         return;
       }
       this.paginationPage = 1;
-
       if (this.filter.length >= this.queryThreshold) {
         this.submitBeforeLengthValid = false;
-        this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
+        this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
       } else {
         this.submitBeforeLengthValid = true;
       }
@@ -506,7 +509,7 @@ export default {
       const sortUrl = this.calculateSort(sort.sortDesc, sort.sortBy);
       this.$emit('sort', sortUrl);
 
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, sortUrl, this.paginationPage, this.paginationPageSize);
+      this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, sortUrl, this.paginationPage, this.paginationPageSize);
     },
     hasClearSessionAccess(item) {
       return this.canClearSessions && item.hasActiveSessions === true;
@@ -536,13 +539,13 @@ export default {
     clearSessionsAndCloseModal() {
       this.$emit('clear-resource-sessions', this.resourceToClearSessionsForId);
       this.closeClearSessionsModal();
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
+      this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
     },
   },
 };
 </script>
 <style lang="scss" scoped>
-  ::v-deep .table tr:not(.b-table-empty-row) td {
+  :deep(.table tr:not(.b-table-empty-row) td) {
     cursor: pointer;
   }
 

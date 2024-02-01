@@ -6,19 +6,15 @@
  */
 
 import { keys, map } from 'lodash';
-import BootstrapVue from 'bootstrap-vue';
-import flushPromises from 'flush-promises';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 import * as InternalResourceApi from '@forgerock/platform-shared/src/api/InternalResourceApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import i18n from '@/i18n';
 import ListResource from './index';
 
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 ListResource.mounted = jest.fn();
-function flush() {
-  flushPromises();
+async function flush() {
+  await flushPromises();
   jest.runAllTimers();
 }
 
@@ -37,13 +33,14 @@ describe('ListResource.vue', () => {
     };
 
     wrapper = shallowMount(ListResource, {
-      localVue,
-      i18n,
-      stubs: {
-        'router-link': true,
-      },
-      mocks: {
-        $route,
+      global: {
+        plugins: [i18n],
+        stubs: {
+          'router-link': true,
+        },
+        mocks: {
+          $route,
+        },
       },
     });
 
@@ -90,6 +87,7 @@ describe('ListResource.vue', () => {
   });
 
   it('Gets Table Data', async () => {
+    jest.spyOn(ManagedResourceApi, 'getManagedResourceList').mockImplementation(() => Promise.resolve({ data: { result: [], totalPagedResults: 0 } }));
     expect(wrapper.vm.tableData).toStrictEqual([]);
     wrapper.vm.getTableData({
       fields: ['name', 'description'],

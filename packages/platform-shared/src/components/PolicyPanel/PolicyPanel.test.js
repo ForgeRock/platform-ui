@@ -1,33 +1,31 @@
 /**
- * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 let wrapper;
 
 describe('PolicyPanel.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(PolicyPanel, {
-      localVue,
-      propsData: {
+      props: {
         policies: [
           { policyRequirement: 'test', params: { args: 'test args' } },
           { policyRequirement: 'test2', params: { args: 'test args' } },
-          { policyRequirement: 'test3', params: { args: 'test args' } },
+          { policyRequirement: 'test3', params: { 'argu-ments': 'test args' } },
         ],
         policyFailures: ['test'],
       },
-      mocks: {
-        $t: (path) => path,
+      global: {
+        mocks: {
+          $t: jest.fn().mockImplementation((path) => path),
+        },
+        renderStubDefaultSlot: true,
       },
     });
   });
@@ -82,6 +80,16 @@ describe('PolicyPanel.vue', () => {
       expect(columns[0].length).toBe(2);
       expect(columns[1].length).toBe(1);
       expect(columns[2].length).toBe(1);
+    });
+  });
+
+  describe('formatting policy params for vue-i18n 9.x onwards', () => {
+    it('removes hyphens from policy parameters so that they can be interpolated correctly', () => {
+      expect(wrapper.vm.$t.mock.calls).toEqual([
+        ['common.policyValidationMessages.test', { args: 'test args' }],
+        ['common.policyValidationMessages.test2', { args: 'test args' }],
+        ['common.policyValidationMessages.test3', { arguments: 'test args' }],
+      ]);
     });
   });
 });

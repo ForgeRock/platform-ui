@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,7 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     id="shareModal"
     cancel-variant="outline-secondary"
     ref="fsModal"
-    @keydown.enter.native.prevent="validateResource"
     @hide="resetModal">
     <template #modal-header>
       <div class="d-flex w-100 h-100">
@@ -51,7 +50,9 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </template>
 
-    <div class="form-group">
+    <div
+      class="form-group"
+      @keydown.enter="validateResource">
       <BInputGroup>
         <BFormInput
           :placeholder="$t('pages.uma.resources.shareWith')"
@@ -188,6 +189,15 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  BButton,
+  BDropdown,
+  BDropdownDivider,
+  BDropdownItem,
+  BImg,
+  BInputGroup,
+  BModal,
+} from 'bootstrap-vue';
+import {
   cloneDeep, filter, findIndex, each, keys, map, pickBy,
 } from 'lodash';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -204,6 +214,13 @@ export default {
     NotificationMixin,
   ],
   components: {
+    BButton,
+    BDropdown,
+    BDropdownDivider,
+    BDropdownItem,
+    BImg,
+    BInputGroup,
+    BModal,
     FrFallbackImage: FallbackImage,
     FrIcon,
   },
@@ -269,11 +286,11 @@ export default {
           if (this.newShare) {
             this.shareResource();
           } else {
-            this.displayNotification('error', this.$t('pages.uma.resources.noRequestingParty'));
+            this.showErrorMessage('error', this.$t('pages.uma.resources.noRequestingParty'));
           }
           // attempting to share with user who already has access to resource
         } else {
-          this.displayNotification('error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
+          this.showErrorMessage('error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
           this.resetModal();
         }
         // shared for first time

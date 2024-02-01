@@ -7,28 +7,29 @@
 
 import { shallowMount } from '@vue/test-utils';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import ResourceMixin from './index';
 
 let wrapper;
 
 describe('ResourceMixin', () => {
   beforeEach(() => {
+    setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     wrapper = shallowMount({}, {
       render() {},
-      mixins: [ResourceMixin],
-      mocks: {
-        $t: (id) => id,
-        $store: {
-          commit: jest.fn(),
-          state: {
-            SharedStore: {
-              uiConfig: {
+      global: {
+        mixins: [ResourceMixin],
+        mocks: {
+          $t: (id) => id,
+          $store: {
+            commit: jest.fn(),
+            state: {
+              SharedStore: {
+                uiConfig: {
 
+                },
+                managedObjectMinimumUIFilterLength: {},
               },
-              managedObjectMinimumUIFilterLength: {},
-            },
-            UserStore: {
-              adminUser: true,
             },
           },
         },
@@ -102,30 +103,6 @@ describe('ResourceMixin', () => {
       expect(parsedErrorTitle).toStrictEqual(finalErrorTitle);
 
       expect(normalizeSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('Generating Search URLs', () => {
-    const schemaProps = {
-      isAdmin: { type: 'boolean' },
-      sn: { type: 'string' },
-      userName: { type: 'string' },
-      age: { type: 'number' },
-    };
-
-    it('Generates a filter url for a string', () => {
-      const filterUrl = wrapper.vm.generateSearch('a', ['userName', 'sn'], schemaProps);
-      expect(filterUrl).toStrictEqual('userName sw "a" OR sn sw "a"');
-    });
-
-    it('Generates a filter url for a number', () => {
-      const filterUrl = wrapper.vm.generateSearch('1', ['age'], schemaProps);
-      expect(filterUrl).toStrictEqual('age eq 1');
-    });
-
-    it('Generates a filter url for a boolean', () => {
-      const filterUrl = wrapper.vm.generateSearch('true', ['isAdmin'], schemaProps);
-      expect(filterUrl).toStrictEqual('isAdmin eq true');
     });
   });
 

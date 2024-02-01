@@ -41,11 +41,11 @@ describe('EsvDropdown', () => {
               esvInput: inputStoreData,
             },
           }),
+          i18n,
         ],
       },
-      i18n,
       attachTo: document.body,
-      propsData: {
+      props: {
         ...defaultProps,
         ...props,
       },

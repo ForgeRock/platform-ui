@@ -5,32 +5,29 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import Navbar from './index';
 
 describe('Navbar Component', () => {
   let wrapper = null;
 
   beforeEach(() => {
-    const localVue = createLocalVue();
+    setupTestPinia();
     wrapper = shallowMount(Navbar, {
-      localVue,
-      mocks: {
-        $t: () => {},
-        $store: {
-          state: {
-            userId: 'foo',
-            UserStore: {
-              adminUser: false,
-            },
+      global: {
+        mocks: {
+          $t: () => {},
+          $store: {
+            state: {},
           },
         },
+        stubs: ['RouterLink'],
       },
-      stubs: ['RouterLink'],
     });
   });
 
   it('Component successfully loaded', () => {
-    expect(wrapper.vm.profileImage).toEqual(null);
+    expect(wrapper.vm.profileImage).toEqual('');
   });
 });

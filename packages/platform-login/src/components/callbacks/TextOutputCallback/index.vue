@@ -8,27 +8,24 @@ of the MIT license. See the LICENSE file for details. -->
     ref="textOutputPanel">
     <div
       v-if="messageType === 'INFORMATION'"
-      class="text-center text-muted w-100">
+      class="text-center text-muted w-100"
+      :aria-hidden="isFirstRenderedCallback">
       {{ getTranslation(message) }}
     </div>
-    <BAlert
+    <div
       v-if="messageType === 'WARNING'"
-      variant="warning"
-      class="w-100"
-      show>
+      class="alert w-100 alert-warning"
+      :aria-hidden="isFirstRenderedCallback">
       {{ getTranslation(message) }}
-    </BAlert>
-    <BAlert
-      v-if="messageType === 'ERROR'"
-      variant="danger"
-      class="w-100"
-      show>
+    </div>
+    <div
+      v-if="!isFirstRenderedCallback && messageType === 'ERROR'"
+      class="alert w-100 alert-danger">
       {{ getTranslation(message) }}
-    </BAlert>
+    </div>
     <div
       v-if="messageType === 'SCRIPT'"
-      class="w-100"
-    >
+      class="w-100">
       <div v-if="qrCodeHtml">
         <div
           v-html="qrCodeHtml" />
@@ -44,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { BAlert, BButton } from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
 import QRCodeGenerator from 'qrcode-generator';
 import addAttributesToDomNodeString from '@forgerock/platform-shared/src/utils/stringDomNodeUtils';
 import { CallbackType } from '@forgerock/javascript-sdk';
@@ -53,7 +50,6 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 export default {
   name: 'TextOutputCallback',
   components: {
-    BAlert,
     BButton,
   },
   mixins: [
@@ -101,9 +97,9 @@ export default {
       this.$emit('has-scripts', this.invokeScriptWithHelpers);
     }
 
-    // Populate screenReaderMessage with callback text only if the message callback is the first TextOutputCallback rendered and is not a script
-    if (this.isFirstRenderedCallback && this.messageType === 'INFORMATION') {
-      this.$emit('update-screen-reader-message', this.callback.getMessage());
+    // Populate screenReaderMessage with callback text only if the message callback is the first TextOutputCallback rendered and is not a script.
+    if (this.isFirstRenderedCallback && (this.messageType === 'INFORMATION' || this.messageType === 'ERROR' || this.messageType === 'WARNING')) {
+      this.$emit('update-screen-reader-message', this.messageType, this.callback.getMessage());
     }
   },
   methods: {

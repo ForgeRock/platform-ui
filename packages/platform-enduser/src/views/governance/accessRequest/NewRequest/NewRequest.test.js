@@ -5,9 +5,12 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, createWrapper } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import Notifications from '@kyvg/vue3-notification';
+import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import * as CatalogApi from '@/api/governance/CatalogApi';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
@@ -36,42 +39,38 @@ CatalogApi.searchCatalog = jest.fn().mockReturnValue({
 });
 
 describe('NewRequest', () => {
-  const requestCartItems = [
-    {
-      description: 'ServiceNow',
-      icon: '',
-      id: '111',
-      itemType: 'applications',
-      name: 'My Service Now App',
-      templateName: 'servicenow',
-    },
-  ];
   const RestMixin = {
     methods: {
       getRequestService: jest.fn().mockImplementation({ post: () => Promise.resolve() }),
     },
   };
   window.matchMedia = jest.fn((param) => param);
-  function mountComponent(overrideParams = {}, overrideData = {}) {
+  async function mountComponent(overrideParams = {}, overrideData = {}) {
+    setupTestPinia();
     const wrapper = mount(NewRequest, {
-      i18n,
-      mixins: [RestMixin],
-      mocks: {
-        $router: { push: jest.fn() },
-        $route: {
-          params: {
-            requestingFor: [{
-              name: 'Barbara Jensen',
-              userName: 'bjensen',
-              id: '123',
-            }],
+      global: {
+        stubs: ['RouterLink'],
+        plugins: [i18n, Notifications],
+        mocks: {
+          $router: { push: jest.fn() },
+          $store: {
+            state: {
+              requestCartUsers: [{
+                name: 'Barbara Jensen',
+                userName: 'bjensen',
+                id: '123',
+              }],
+            },
+            ...overrideParams,
           },
-          ...overrideParams,
+          $bvModal: {
+            show: jest.fn(),
+          },
         },
+        mixins: [RestMixin, MediaMixin, NotificationMixin],
       },
-      stubs: ['RouterLink'],
     });
-    wrapper.setData(overrideData);
+    await wrapper.setData(overrideData);
     return wrapper;
   }
 
@@ -89,15 +88,16 @@ describe('NewRequest', () => {
   });
 
   it('should render with top navigation bar including breadcrumb', async () => {
-    const wrapper = mountComponent();
+    const wrapper = await mountComponent();
     await flushPromises();
-    const breadcrumb = wrapper.find('h1[class="text-truncate h4"]');
+
+    const breadcrumb = wrapper.find('router-link-stub');
     expect(breadcrumb.exists()).toBe(true);
-    expect(breadcrumb.find('span[class="align-middle"]').text()).toBe('My Requests');
+    expect(breadcrumb.attributes().to).toBe('/my-requests');
   });
 
   it('should expand side panel when cart is clicked', async () => {
-    const wrapper = mountComponent();
+    const wrapper = await mountComponent();
     await flushPromises();
 
     let shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 overflow-auto"]');
@@ -109,35 +109,6 @@ describe('NewRequest', () => {
 
     shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 overflow-auto"]');
     expect(shoppingCartSidePanel.exists()).toBe(false);
-  });
-
-  it('should add item to cart', async () => {
-    const wrapper = mountComponent({}, { loading: false });
-    await flushPromises();
-
-    // Find first application button and click Add request
-    expect(wrapper.vm.requestCartItems).toStrictEqual([]);
-    const catalogItemRequestButton = wrapper.findAll('span[class="hover-underline color-blue"]').at(0);
-    expect(catalogItemRequestButton.exists()).toBe(true);
-    catalogItemRequestButton.trigger('click');
-    await flushPromises();
-
-    expect(wrapper.vm.requestCartItems.length).toBe(1);
-    expect(wrapper.vm.requestCartItems[0].itemType).toBe('application');
-    expect(wrapper.vm.requestCartItems[0].templateName).toBe('servicenow');
-  });
-
-  it('should remove item from cart', async () => {
-    const wrapper = mountComponent({}, { requestCartItems, loading: false });
-    await flushPromises();
-
-    // Find first application button and click Remove request
-    expect(wrapper.vm.requestCartItems).toBe(requestCartItems);
-    const accessRequestCatalog = wrapper.find('span[class="mr-2 text-success material-icons-outlined"]');
-    accessRequestCatalog.trigger('click');
-    await flushPromises();
-
-    expect(wrapper.vm.requestCartItems).toStrictEqual([]);
   });
 
   it('should open error modal when user already has access', async () => {
@@ -152,15 +123,15 @@ describe('NewRequest', () => {
       },
     });
 
-    const wrapper = mountComponent();
+    const wrapper = await mountComponent();
     await flushPromises();
 
     let modalTitle = wrapper.find('h1.h5.modal-title');
     expect(modalTitle.exists()).toBe(false);
     expect(wrapper.vm.requestCartItems).toStrictEqual([]);
 
-    wrapper.setData({ isTesting: true });
-    const catalogItemRequestButton = wrapper.findAll('span[class="hover-underline color-blue"]').at(0);
+    await wrapper.setData({ isTesting: true });
+    const catalogItemRequestButton = wrapper.findAll('span[class="hover-underline color-blue"]')[0];
     expect(catalogItemRequestButton.exists()).toBe(true);
     catalogItemRequestButton.trigger('click');
     await flushPromises();
@@ -171,8 +142,7 @@ describe('NewRequest', () => {
   });
 
   it('openUserModal called saves currentUserSelectedModal data and shows GovernanceUserDetailsModal', async () => {
-    const wrapper = mountComponent();
-    const rootWrapper = createWrapper(wrapper.vm.$root);
+    const wrapper = await mountComponent();
     const id = 'id-test';
     const user = {
       givenName: 'Test',
@@ -188,8 +158,6 @@ describe('NewRequest', () => {
     await flushPromises();
 
     expect(wrapper.vm.currentUser).toEqual(user);
-    expect(rootWrapper.emitted('bv::show::modal')).toBeTruthy();
-    expect(rootWrapper.emitted('bv::show::modal').length).toBe(1);
-    expect(rootWrapper.emitted('bv::show::modal')[0][0]).toEqual('GovernanceUserDetailsModal');
+    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('GovernanceUserDetailsModal');
   });
 });

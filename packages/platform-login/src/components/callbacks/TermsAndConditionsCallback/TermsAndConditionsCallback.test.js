@@ -14,14 +14,16 @@ describe('TermsAndConditionsCallback.vue', () => {
 
   beforeEach(() => {
     wrapper = mount(TermsAndConditionsCallback, {
-      i18n,
-      mocks: {
-        $sanitize: (arg) => arg,
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $sanitize: (arg) => arg,
+        },
+        stubs: {
+          'router-link': true,
+        },
       },
-      stubs: {
-        'router-link': true,
-      },
-      propsData: {
+      props: {
         callback: {
           getTerms: () => 'terms',
           setInputValue: jest.fn(),

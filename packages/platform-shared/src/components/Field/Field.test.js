@@ -5,50 +5,44 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
-import flushPromises from 'flush-promises';
-import { extend, ValidationObserver, ValidationProvider } from 'vee-validate';
-import { required, email } from 'vee-validate/dist/rules.umd';
+import { Form as VeeForm, Field } from 'vee-validate';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import uuid from 'uuid/v4';
 import i18n from '@/i18n';
 import FrField from './index';
 
-const stubs = {
-  ValidationObserver,
-  ValidationProvider,
-};
+jest.mock('uuid/v4');
 
-let localVue;
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+  email: ValidationRules.getRules(i18n).email,
+});
+
+const stubs = {
+  Field,
+  VeeForm,
+};
 
 describe('Field Component', () => {
   let wrapper;
-  beforeEach(() => {
-    localVue = createLocalVue();
-    localVue.use(BootstrapVue);
-    extend('required', {
-      ...required,
-    });
-    // Note: not testing the validation rules, just that validation happens
-    extend('email', {
-      ...email,
-    });
-  });
 
   it('uses string floating label input for string type', async () => {
     wrapper = mount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        stubs,
       },
-      propsData: {
+      props: {
         name: 'testField',
         value: '',
       },
-      stubs,
     });
     await flushPromises();
-    const input = wrapper.find('#testField input').find('input');
+    const input = wrapper.find('#testField input');
     input.setValue('test');
     await flushPromises();
     expect(input.element.value).toBe('test');
@@ -56,19 +50,20 @@ describe('Field Component', () => {
 
   it('uses number floating label input for integer type', async () => {
     wrapper = mount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        stubs,
       },
-      propsData: {
+      props: {
         type: 'number',
         name: 'testField',
         value: '',
       },
-      stubs,
     });
     await flushPromises();
-    const input = wrapper.find('#testField input').find('input');
+    const input = wrapper.find('#testField input');
     input.setValue(5);
     await flushPromises();
     expect(input.element.value).not.toBe('3');
@@ -79,19 +74,20 @@ describe('Field Component', () => {
 
   it('uses password floating label input for password type', async () => {
     wrapper = mount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        stubs,
       },
       propsData: {
         type: 'password',
         name: 'testField',
         value: '',
       },
-      stubs,
     });
     await flushPromises();
-    const input = wrapper.find('#testField input').find('input');
+    const input = wrapper.find('#testField input');
     const passwordButton = wrapper.find('.input-group-append');
     expect(passwordButton.exists()).toBe(true);
     input.setValue('pass');
@@ -101,67 +97,84 @@ describe('Field Component', () => {
 
   it('uses select floating label input for select type', async () => {
     wrapper = mount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        stubs,
       },
-      propsData: {
+      props: {
         type: 'select',
         name: 'testField',
         options: [{ value: 'enum1', text: 'option1' }, { value: 'enum2', text: 'option2' }],
       },
-      stubs,
     });
+    await flushPromises();
     // Ensure we get a failure when trying to select a value that is not in options
-    wrapper.vm.$attrs.value = ['option3'];
+    await wrapper.setProps({
+      value: ['option3'],
+    });
     await flushPromises();
     expect(wrapper.vm.$attrs.value).not.toBe(['option3']);
     // Ensure we get a success when trying to select a value that is in options
-    wrapper.vm.$attrs.value = 'option2';
+    await wrapper.setProps({
+      value: 'option2',
+    });
     await flushPromises();
     expect(wrapper.vm.$attrs.value).toBe('option2');
   });
 
   it('uses multiselect floating label input for multiselect type', async () => {
     wrapper = mount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         type: 'multiselect',
         name: 'testField',
         options: [{ value: 'enum1', text: 'option1' }, { value: 'enum2', text: 'option2' }],
+        value: [],
       },
-      stubs,
     });
-    // Ensure we get a failure when trying to select a value that is not in options
-    wrapper.vm.$attrs.value = ['option3'];
     await flushPromises();
-    expect(wrapper.vm.$attrs.value).not.toBe(['option3']);
+
+    const multiselect = wrapper.findComponent('.multiselect');
+
     // Ensure we get a success when trying to select a value that is in options
-    wrapper.vm.$attrs.value = ['option2'];
+    await wrapper.setProps({
+      value: ['enum2'],
+    });
     await flushPromises();
-    expect(wrapper.vm.$attrs.value).toStrictEqual(['option2']);
+
+    expect(multiselect.vm.value).toEqual([{ multiselectId: 1, text: 'option2', value: 'enum2' }]);
+    expect(wrapper.vm.$attrs.value).toStrictEqual(['enum2']);
+
     // Ensure we get a success when trying to select two values that are in options
+    await wrapper.setProps({
+      value: ['enum1', 'enum2'],
+    });
     await flushPromises();
-    wrapper.vm.$attrs.value = ['option1', 'option2'];
-    expect(wrapper.vm.$attrs.value).toStrictEqual(['option1', 'option2']);
+
+    expect(multiselect.vm.value).toEqual([{ multiselectId: 0, text: 'option1', value: 'enum1' }, { multiselectId: 1, text: 'option2', value: 'enum2' }]);
+    expect(wrapper.vm.$attrs.value).toStrictEqual(['enum1', 'enum2']);
   });
 
   it('uses bootstrap form tags component for tag type', async () => {
     wrapper = mount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        stubs,
       },
-      propsData: {
+      props: {
         type: 'array',
         name: 'testField',
         value: [],
         options: ['option1', 'option2'],
       },
-      stubs,
     });
     await flushPromises();
     expect(wrapper.vm.$attrs.value).toStrictEqual([]);
@@ -173,16 +186,17 @@ describe('Field Component', () => {
 
   it('uses key value list component for object type', async () => {
     wrapper = mount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        stubs,
       },
-      propsData: {
+      props: {
         type: 'object',
         name: 'testField',
         value: {},
       },
-      stubs,
     });
     await flushPromises();
     expect(wrapper.vm.$attrs.value).toStrictEqual({});
@@ -191,16 +205,17 @@ describe('Field Component', () => {
 
   it('uses toggle button component for boolean type', async () => {
     wrapper = mount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        stubs,
       },
-      propsData: {
+      props: {
         type: 'boolean',
         name: 'testField',
         value: true,
       },
-      stubs,
     });
     await flushPromises();
     expect(wrapper.find('.fr-toggle-primary').isVisible()).toBeTruthy();
@@ -224,13 +239,32 @@ describe('Field Component', () => {
     expect(wrapper.find('.b-form-spinbutton')).toBeTruthy();
   });
 
+  it('generates a name using uuid when the name and label properties are empty', async () => {
+    const uuidValue = 'b0e688a4-9345-4ace-9864-4a8276794e83';
+    uuid.mockImplementation(() => uuidValue);
+
+    wrapper = mount(FrField, {
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+      },
+    });
+    await flushPromises();
+    const input = wrapper.find('input');
+
+    expect(input.attributes('name')).toBe(uuidValue);
+  });
+
   describe('Showing a readonly string input when the field value is a placeholder', () => {
     const defaultProps = {
-      i18n,
-      mocks: {
-        $t: (key) => key,
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $t: (key) => key,
+        },
       },
-      propsData: {
+      props: {
         name: 'test',
         id: 'test',
         options: [],
@@ -251,7 +285,7 @@ describe('Field Component', () => {
 
       expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
       const input = wrapper.find('input');
-      expect(input.attributes('readonly')).toBeTruthy();
+      expect(input.attributes('readonly')).toBe('');
     });
 
     it('shows the ReadonlyPlaceholderInput instead of the normal input type when the initial value is a placeholder object', async () => {
@@ -261,12 +295,12 @@ describe('Field Component', () => {
 
       expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
       const input = wrapper.find('input');
-      expect(input.attributes('readonly')).toBeTruthy();
+      expect(input.attributes('readonly')).toBe('');
     });
 
     it('switches to the ReadonlyPlaceholderInput instead of the normal input type when the value is changed to a placeholder string and placeholder entry is allowed', async () => {
       wrapper = setup({
-        propsData: {
+        props: {
           name: 'bob',
           value: 'bill',
           type: 'string',
@@ -286,7 +320,7 @@ describe('Field Component', () => {
 
     it('does not switch to the ReadonlyPlaceholderInput instead of the normal input type when the value is changed to a placeholder string and placeholder entry is not allowed', async () => {
       wrapper = setup({
-        propsData: {
+        props: {
           name: 'bob',
           value: 'bill',
           type: 'string',
@@ -328,13 +362,13 @@ describe('Field Component', () => {
               esvInput: { secrets: [], variables: [] },
             },
           }),
+          i18n,
         ],
+        mocks: {
+          $t: (key) => key,
+        },
       },
-      i18n,
-      mocks: {
-        $t: (key) => key,
-      },
-      propsData: {
+      props: {
         name: 'test',
         id: 'test',
         canEnterPlaceholders: true,
@@ -350,7 +384,7 @@ describe('Field Component', () => {
 
     it('Has the input wrapper as the top level component when placeholder entry is enabled and supported for the field type', () => {
       wrapper = setup({
-        propsData: {
+        props: {
           name: 'bob',
           value: 'bill',
           type: 'checkbox',
@@ -363,7 +397,7 @@ describe('Field Component', () => {
 
     it('Has the field type component as the top level component when placeholder entry is disabled but supported for the field type', () => {
       wrapper = setup({
-        propsData: {
+        props: {
           name: 'bob',
           value: 'bill',
           type: 'checkbox',
@@ -376,7 +410,7 @@ describe('Field Component', () => {
 
     it('Has the field type component as the top level component when placeholder entry is enabled but not supported for the field type', () => {
       wrapper = setup({
-        propsData: {
+        props: {
           name: 'bob',
           value: 'bill',
           type: 'json',
@@ -389,7 +423,7 @@ describe('Field Component', () => {
 
     it('Has the field type component as the top level component when placeholder entry is disabled and not supported for the field type', () => {
       wrapper = setup({
-        propsData: {
+        props: {
           name: 'bob',
           value: 'bill',
           type: 'json',

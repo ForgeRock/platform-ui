@@ -9,6 +9,7 @@ import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { FRRecoveryCodes } from '@forgerock/javascript-sdk';
 import * as clipboard from 'clipboard-polyfill/text';
+import Notifications from '@kyvg/vue3-notification';
 import i18n from '@/i18n';
 import RecoveryCodes from './index';
 
@@ -32,8 +33,10 @@ describe('RecoveryCodes', () => {
 
   function setup(props) {
     return mount(RecoveryCodes, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n, Notifications],
+      },
+      props: {
         step: {},
         ...props,
       },
@@ -67,7 +70,7 @@ describe('RecoveryCodes', () => {
       const wrapper = setup();
       await wrapper.vm.$nextTick();
       const notificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
-      const clipboardSpy = jest.spyOn(clipboard, 'writeText');
+      const clipboardSpy = jest.spyOn(clipboard, 'writeText').mockImplementation(() => Promise.resolve());
 
       const copyCodesButton = findByTestId(wrapper, 'btn-copy-recovery-codes');
       expect(copyCodesButton.attributes('aria-label')).toBe(`Copy ${stubRecoveryCodes.length} recovery codes to clipboard`);

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
                     </div>
                   </div>
                   <small class="text-muted">
-                    {{ request.when | formatTime }}
+                    {{ formatTime(request.when) }}
                   </small>
                 </div>
                 <div
@@ -83,6 +83,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BCard, BListGroup, BListGroupItem } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin/';
@@ -97,6 +98,9 @@ dayjs.extend(LocalizedFormat);
 export default {
   name: 'Requests',
   components: {
+    BCard,
+    BListGroup,
+    BListGroupItem,
     FrFallbackImage,
     FrIcon,
   },
@@ -109,17 +113,14 @@ export default {
       default: () => [],
     },
   },
-  filters: {
-    formatTime(dateString) {
-      const eventDate = dayjs(dateString);
-
+  methods: {
+    formatTime(value) {
+      const eventDate = dayjs(value);
       if (eventDate.isSame(dayjs(), 'day')) {
         return this.timeAgo(eventDate);
       }
       return eventDate.format('LT');
     },
-  },
-  methods: {
     finalizeAccess(request, index, action) {
       this.$emit('finalize-resource-access', request._id, action, index, { scopes: request.permissions });
     },

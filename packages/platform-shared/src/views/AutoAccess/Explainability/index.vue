@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="d-flex flex-wrap">
     <div
-      class="mr-2"
+      class="mr-2 mb-2"
       v-for="(reason, index) in reasons"
       :key="`reason-${reason}-${index}`"
     >

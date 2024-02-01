@@ -35,8 +35,10 @@ describe('RequestCart', () => {
   }];
 
   const stubProps = {
-    i18n,
-    propsData: {
+    global: {
+      plugins: [i18n],
+    },
+    props: {
       requestCartUsers: [{
         name: 'Barbara Jensen',
         username: 'bjensen',
@@ -63,7 +65,7 @@ describe('RequestCart', () => {
 
     it('emits "remove-requested-user" event when form is submitted with the expected payload', async () => {
       const wrapper = setup({
-        propsData: {
+        props: {
           requestCartUsers: requestCartUsersStub,
           requestCartItems: requestCartItemsStub,
         },

@@ -1,6 +1,7 @@
 {
   "routeNames": {
-    "AccessRequestNew": "New Access Request"
+    "AccessRequestNew": "New Access Request",
+    "Reports": "Reports"
   },
   "user": {
     "profile": {
@@ -10,9 +11,14 @@
       "updateSuccess": "Updated your profile."
     },
     "sharing": {
+      "shareError": "There was an error sharing resource.",
       "shareSuccess": "Shared your resource.",
       "unshareSuccess": "Unshared your resource.",
+      "unshareError": "There was an error unsharing resource.",
+      "modifyError": "There was an error modifying resource.",
       "modifySuccess": "Modified resource permissions",
+      "requestAllowedError": "There was an error approving access request.",
+      "requestDeniedError": "There was an error denying access request.",
       "requestAllowedSuccess": "Access granted",
       "requestDeniedSuccess": "Access denied"
     },
@@ -73,6 +79,7 @@
       "errorRetrievingAccesReviews": "There was an error retrieving access reviews",
       "errorRetrievingPendingApprovals": "There was an error retrieving pending approvals",
       "errorRetrievingPendingRequests": "There was an error retrieving pending requests",
+      "loadingWidgetError": "There was an error loading dashboard widgets.",
       "noWidget": "No Widgets Available",
       "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>.",
       "widgets": {
@@ -97,33 +104,16 @@
     },
     "myAccess": {
       "accountName": "Account Name",
-      "assignment": "Assignment",
       "timeConstraint": "Time Constraint",
       "account": {
-        "errorGettingData": "Error getting Accounts.",
-        "loadingData": "Loading accounts.",
-        "noRecordFound": "No accounts found.",
-        "noResultsHelp": "Try a new search in the seach box above.",
-        "noResultsUser": "No Accounts for this user.",
         "subtitle": "View all your application accounts.",
         "title": "My Accounts"
       },
       "entitlement": {
-        "errorGettingData": "Error getting Entitlements.",
-        "loadingData": "Loading entitlements.",
-        "noRecordFound": "No entitlements found.",
-        "noResultsHelp": "Try a new search in the seach box above.",
-        "noResultsUser": "No Entitlements for this user.",
         "subtitle": "View all your application entitlements.",
-        "tabTitle": "Entitlements",
         "title": "My Entitlements"
       },
       "role": {
-        "errorGettingData": "Error getting Roles.",
-        "loadingData": "Loading roles.",
-        "noRecordFound": "No roles found.",
-        "noResultsHelp": "Try a new search in the seach box above.",
-        "noResultsUser": "No Roles for this user.",
         "subtitle": "View all your application roles.",
         "tabTitle": "Roles",
         "title": "My Roles"
@@ -191,6 +181,8 @@
       "taskSuccessfullyCompleted": "Task successfully completed",
       "taskSuccessfullyRequeued": "{taskName} successfully requeued",
       "taskNoLongerAvailable": "{taskName} task deleted by admin",
+      "fetchDefinitionError": "There was an error retrieving process definition.",
+      "taskLoadError": "There was an error retrieving tasks.",
       "unassignedTasks": "Unassigned Tasks",
       "cancel": "Cancel",
       "edit": "Edit",
@@ -211,6 +203,7 @@
     "inbox": "Inbox",
     "myAccess": "My Access",
     "profile": "Profile",
+    "reports": "Reports",
     "requests": "My Requests",
     "roles": "Roles"
   },
@@ -218,6 +211,7 @@
     "AccessReviews": "Access Reviews",
     "Accounts": "Accounts",
     "Applications": "Applications",
+    "ApprovalDetails": "Approval Details",
     "Approvals": "Approvals",
     "AutoAccessDataSources": "Data Sources",
     "AutoAccessPipelines": "Pipelines",
@@ -233,11 +227,13 @@
     "AccessRequestNew": "New Request",
     "Forbidden": "Forbidden",
     "ListResource": "List Resource",
+    "MyRequestDetails": "Request Details",
     "MyRequests": "My Requests",
     "NotFound": "Not Found",
     "Roles": "Roles",
     "pageTitle": "Platform Enduser - {page}",
     "Profile": "Profile",
+    "Reports": "Reports",
     "Sharing": "Sharing"
   },
   "governance": {
@@ -245,11 +241,11 @@
       "requestTypes": {
         "all": "All request types",
         "applicationGrant": "Grant Application",
-        "applicationRevoke": "Remove Application",
+        "applicationRemove": "Remove Application",
         "entitlementGrant": "Grant Entitlement",
-        "entitlementRevoke": "Remove Entitlement",
+        "entitlementRemove": "Remove Entitlement",
         "roleGrant": "Grant Role",
-        "roleRevoke": "Remove Role"
+        "roleRemove": "Remove Role"
       },
       "priorities": {
         "lowPriority": "Low Priority",
@@ -267,6 +263,7 @@
         "addAccessFor": "Add access for",
         "added": "Added",
         "addItems": "Add items to complete request",
+        "addToRequest": "Add to Request",
         "application": "application",
         "applyExpirationDate": "Apply Expiration Date (optional)",
         "catalogSubtitle": "Browse available applications, roles, and entitlements for selected users.",
@@ -302,6 +299,7 @@
           "med": "Medium",
           "high": "High"
         },
+        "removeFromRequest": "Remove from Request",
         "request": "Request",
         "requestAdded": "Request added",
         "requestAddError": "The following users either already have the requested item assigned or in a pending request. Choose another item to request for the selected user.",
@@ -311,6 +309,7 @@
         "requestErrorTitle": "Request Error",
         "requestingFor": "Requesting for",
         "requestSuccess": "Request successfully submitted",
+        "requestTypeAccess": "Request {type} Access",
         "results": "{totalCount} Result | {totalCount} Results",
         "role": "role",
         "showIf": "Show if",
@@ -366,7 +365,6 @@
     "requestModal": {
       "detailsTab": {
         "awaitingApproval": "Awaiting Approval",
-        "decision": "Decision", 
         "justification": "Justification",
         "priority": "Priority",
         "provisioning": "Provisioning",
@@ -376,13 +374,13 @@
         "requestedFor": "Requested For",
         "requestId": "Request ID", 
         "requestSubmitted": "Request Submitted",
-        "requestType": "Request Type"
+        "requestType": "Request Type",
+        "status": "Status"
       },
       "titles": {
         "addComment": "Add a Comment",
         "approve": "Approve Request",
         "cancel": "Cancel Request",
-        "details": "Request Details",
         "forward": "Forward Request",
         "reject": "Reject Request",
         "tracking": "Tracking"
@@ -413,7 +411,8 @@
       },
       "addComment": "Add Comment",
       "cancelRequest": "Cancel Request",
-      "noComments": "No comments yet",
+      "noComments": "No comments",
+      "noCommentsSubtitle": "There are no comments for this request.",
       "requestDetailsLink": "Request Details",
       "subtitle": "Are you sure you want to {modal} this request?",
       "workflow": "Workflow"

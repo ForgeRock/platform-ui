@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,8 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     id="unshareModal"
     ref="fsModal"
-    cancel-variant="outline-secondary"
-    @keydown.enter.native.prevent="unshare">
+    cancel-variant="outline-secondary">
     <template #modal-header>
       <div class="d-flex w-100 h-100">
         <h2 class="my-0 h6">
@@ -41,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BButton, BModal } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 /**
  * @description Dialog for warning a user and confirming they want to stop sharing a resource
@@ -49,6 +49,8 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 export default {
   name: 'Unshare',
   components: {
+    BButton,
+    BModal,
     FrIcon,
   },
   data() {

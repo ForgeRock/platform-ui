@@ -9,36 +9,41 @@ of the MIT license. See the LICENSE file for details. -->
       :is-enduser="true"
       :is-fraas="$store.state.isFraas"
       :menu-items="menuItems"
-      :user-details="userDetails"
       :version="version"
       :class="{invisible: theme === null}">
-      <RouterView
-        :key="$route.fullPath"
-        :theme="theme" />
+      <RouterView v-slot="{ Component }">
+        <Transition
+          name="fade"
+          mode="out-in">
+          <Component
+            :is="Component"
+            :key="$route.fullPath"
+            :theme="theme" />
+        </Transition>
+      </RouterView>
     </FrLayout>
     <ThemeInjector
       :theme="theme"
       :is-enduser="true"
       v-if="theme !== null" />
+    <FrSessionTimeoutWarning />
   </div>
 </template>
 
 <script>
 import {
   capitalize,
-  cloneDeep,
 } from 'lodash';
-import {
-  mapGetters,
-  mapState,
-} from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import createScriptTags from '@forgerock/platform-shared/src/utils/externalScriptUtils';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
+import FrSessionTimeoutWarning from '@forgerock/platform-shared/src/components/SessionTimeoutWarning/SessionTimeoutWarning';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
 import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
@@ -55,6 +60,7 @@ export default {
   ],
   components: {
     FrLayout,
+    FrSessionTimeoutWarning,
     ThemeInjector,
   },
   computed: {
@@ -64,12 +70,6 @@ export default {
       }
       return '';
     },
-    ...mapState({
-      accessObj: (state) => state.UserStore.access,
-    }),
-    ...mapGetters({
-      userDetails: 'UserStore/userDetails',
-    }),
   },
   data() {
     return {
@@ -79,9 +79,16 @@ export default {
           displayName: 'sideMenu.dashboard',
           icon: 'dashboard',
         },
+        (this.$store.state.SharedStore.autoReportsEnabled === true
+          ? {
+            routeTo: { name: 'Reports' },
+            displayName: 'sideMenu.reports',
+            icon: 'analytics',
+            showForStoreValues: ['SharedStore.autoReportsEnabled'],
+          }
+          : {}),
         (this.$store.state.SharedStore.governanceEnabled === true
           ? {
-            menuGroup: true,
             displayName: 'sideMenu.inbox',
             icon: 'inbox',
             subItems: [
@@ -136,7 +143,6 @@ export default {
           : {}),
         (this.$store.state.SharedStore.governanceEnabled === true
           ? {
-            menuGroup: true,
             displayName: 'sideMenu.directory',
             icon: 'people',
             subItems: [
@@ -180,6 +186,10 @@ export default {
     }).catch((error) => {
       this.showErrorMessage(error, this.$t('errors.themeSetError'));
     });
+
+    getUserPrivileges().then(({ data }) => {
+      this.setupDelegatedAdminMenuItems(data);
+    });
   },
   mounted() {
     getIdmServerInfo().then((results) => {
@@ -196,12 +206,31 @@ export default {
   },
   watch: {
     /**
-     * when we receive user-saved data of managed resources,
-     * add them to iterated selectable menu items (Mainly used for Delegated Admin)
+     * Adds the given script tags to the script container
      */
-    accessObj() {
-      const accessObj = cloneDeep(this.accessObj);
-      accessObj.sort((a, b) => {
+    accountFooterScriptTag(scriptStr) {
+      if (!this.accountFooterScriptTagEnabled || !scriptStr) return;
+      const scriptContainer = document.getElementById('user-theme-script-container');
+
+      try {
+        // Note: if the user provides invalid html that is unable to be parsed, this could cause an error which we need to catch
+        const scripts = createScriptTags(scriptStr);
+
+        scripts.forEach((scriptTag) => {
+          scriptContainer.appendChild(scriptTag);
+        });
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('errors.userScriptError'));
+      }
+    },
+  },
+  methods: {
+    /**
+     * Uses the passed privileges to extend the menu items (Mainly used for Delegated Admin)
+     * @param {Array} privileges - the privileges that dictate the additional mentu items to be shown
+     */
+    setupDelegatedAdminMenuItems(privileges) {
+      privileges.sort((a, b) => {
         if (a.title > b.title) {
           return 1;
         }
@@ -210,11 +239,11 @@ export default {
         }
         return 0;
       });
-      accessObj.forEach((obj) => {
+      privileges.forEach((obj) => {
         const splitObj = obj.privilegePath.split('/');
         this.menuItems.push({
           displayName: this.getTranslation(capitalize(obj.title)),
-          icon: this.accessIcon(obj),
+          icon: this.getMenuItemIcon(obj),
           routeTo: {
             name: 'ListResource',
             params: { resourceName: splitObj[1], resourceType: splitObj[0] },
@@ -222,9 +251,7 @@ export default {
         });
       });
     },
-  },
-  methods: {
-    accessIcon(accessObject) {
+    getMenuItemIcon(accessObject) {
       let matIcon = 'check_box_outline_blank';
       if (accessObject['mat-icon'] && accessObject['mat-icon'].length && accessObject['mat-icon'].substring(0, 3) !== 'fa-') {
         matIcon = accessObject['mat-icon'];
@@ -248,7 +275,6 @@ export default {
     showRiskAdministration() {
       const autoAccessAdminMenu = [
         {
-          menuGroup: true,
           displayName: 'sideMenu.riskAdministration',
           icon: 'settings',
           subItems: [

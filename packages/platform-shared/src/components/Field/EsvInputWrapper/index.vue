@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         :type="type"
         :is="innerComponent">
         <template
-          v-for="(key, slotName) in $scopedSlots"
+          v-for="(key, slotName) in $slots"
           #[slotName]="slotData">
           <slot
             :name="slotName"
@@ -34,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
           :type="type"
           :is="innerComponent">
           <template
-            v-for="(key, slotName) in $scopedSlots"
+            v-for="(key, slotName) in $slots"
             #[slotName]="slotData">
             <slot
               :name="slotName"
@@ -195,13 +195,27 @@ export default {
   height: 23px;
 }
 
+:deep(.field-type-selectWithActions) {
+  top: 14px;
+}
+
+:deep(.field-type-select) {
+  top: 12px;
+}
+
+:deep(.field-type-selectWithActions .btn),
+:deep(.field-type-select .btn) {
+  padding: 0 0.25rem !important;
+  margin-right: 0.75rem;
+}
+
 .form-label-group:focus-within {
-   .input-buttons:not(:focus-within) .within-input-button :deep(.btn) {
+   .input-buttons:not(:focus-within) .within-input-button:not(.field-type-selectWithActions):not(.field-type-select):not(.field-type-array) :deep(.btn) {
         border-color: $primary !important;
         clip-path: inset(-1px -1px -1px 0px) !important;
         box-shadow: 0 0 0 0.0625rem $primary !important;
    }
-   &.fr-field-error .input-buttons:not(:focus-within) .within-input-button :deep(.btn) {
+   &.fr-field-error .input-buttons:not(:focus-within) .within-input-button:not(.field-type-selectWithActions):not(.field-type-select):not(.field-type-array) :deep(.btn) {
         border-color: $danger !important;
         clip-path: inset(-1px -1px -1px 0px) !important;
         box-shadow: 0 0 0 0.0625rem $danger !important;

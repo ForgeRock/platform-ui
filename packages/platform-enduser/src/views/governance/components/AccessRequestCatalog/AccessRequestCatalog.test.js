@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import i18n from '@/i18n';
 import AccessRequestCatalog from './index';
 
@@ -34,10 +33,17 @@ const mockCatalogItems = [
 describe('AccessRequestCatalog Component', () => {
   function mountComponent(propsData, overrideData = { selectedTab: 2 }) {
     const wrapper = mount(AccessRequestCatalog, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         loading: false,
         ...propsData,
+      },
+      mocks: {
+        $bvModal: {
+          show: jest.fn(),
+        },
       },
     });
     wrapper.setData(overrideData);
@@ -110,40 +116,30 @@ describe('AccessRequestCatalog Component', () => {
     );
     await flushPromises();
     const catalogCards = wrapper.findAll('div.card');
-    expect(catalogCards.at(0).find('.card-footer').text()).toBe('check\nAdded');
-    expect(catalogCards.at(1).find('.card-footer').text()).toBe('add\nRequest');
+    expect(catalogCards[0].find('.card-footer').text()).toBe('checkAdded');
+    expect(catalogCards[1].find('.card-footer').text()).toBe('addRequest');
   });
 
-  it('emits out event to add request when un-requested item is clicked', async () => {
+  it('emits out event to open details modal when item is clicked', async () => {
     const wrapper = mountComponent(
       {
         catalogItems: mockCatalogItems,
       },
     );
+    const openItemDetailsSpy = jest.spyOn(wrapper.vm, 'openItemDetails').mockImplementation();
     await flushPromises();
     wrapper.vm.selectedTab = 2;
     const catalogCards = wrapper.findAll('div.card');
-    catalogCards.at(1).trigger('click');
+    catalogCards[1].trigger('click');
     await flushPromises();
-    expect(wrapper.emitted()['add-item-to-cart'][0][0]).toEqual({
-      itemType: 'role',
-      description: 'role',
-      templateName: 'template2',
+    expect(openItemDetailsSpy).toHaveBeenCalledWith({
+      appType: 'role',
+      description: 'A perfect role',
       icon: '',
-      name: 'role 2',
       id: 2,
+      name: 'role 2',
+      requested: false,
+      templateName: 'template2',
     });
-  });
-
-  it('emits out event to remove request when requested item is clicked', async () => {
-    const wrapper = mountComponent(
-      {
-        catalogItems: mockCatalogItems,
-      },
-    );
-    await flushPromises();
-    const catalogCards = wrapper.findAll('div.card');
-    catalogCards.at(0).trigger('click');
-    expect(wrapper.emitted()['remove-item-from-cart'][0][0]).toEqual(1);
   });
 });

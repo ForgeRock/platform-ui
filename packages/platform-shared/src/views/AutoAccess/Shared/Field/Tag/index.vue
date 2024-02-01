@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       :autofocus="autofocus"
       :disabled="disabled"
       :class="[{'fr-error': errors.length > 0}, 'fr-tags']">
-      <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+      <template #default="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
         <div
           class="overflow-hidden"
           @click="$refs.input.focus()">
@@ -21,23 +21,25 @@ of the MIT license. See the LICENSE file for details. -->
           <Draggable
             v-model="inputValue"
             class="d-flex flex-wrap w-100"
-            ghost-class="ghost-tag">
-            <div
-              class="mt-1 mr-1 fr-tag"
-              v-for="tag in tags"
-              :key="tag"
-              body-class="py-1 pr-2 text-nowrap">
-              <span class="fr-tag-text">
-                {{ tag }}
-              </span>
-              <span @click="removeTag(tag)">
-                <i
-                  class="material-icons-outlined pl-2"
-                  style="font-size: 10px; font-weight: 900;">
-                  close
-                </i>
-              </span>
-            </div>
+            ghost-class="ghost-tag"
+            :item-key="((item) => inputValue.indexOf(item))">
+              <template #item="{ element }">
+                <div
+                  class="mt-1 mr-1 fr-tag"
+                  :key="element"
+                  body-class="py-1 pr-2 text-nowrap">
+                  <span class="fr-tag-text">
+                    {{ element }}
+                  </span>
+                  <span @click="removeTag(element)">
+                    <i
+                      class="material-icons-outlined pl-2"
+                      style="font-size: 10px; font-weight: 900;">
+                      close
+                    </i>
+                  </span>
+                </div>
+            </template>
           </Draggable>
         </div>
         <input
@@ -63,6 +65,8 @@ import {
 } from 'bootstrap-vue';
 import Draggable from 'vuedraggable';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
+
+Draggable.compatConfig = { MODE: 3 };
 
 export default {
   name: 'FrTag',

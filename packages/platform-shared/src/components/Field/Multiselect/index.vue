@@ -1,28 +1,27 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
     :description="description"
-    :id="id"
-    :errors="errors"
+    :id="internalId"
+    :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
-    :name="name"
-    :validation="validation"
-    :validation-immediate="validationImmediate">
+    :name="name">
     <VueMultiSelect
-      :id="id"
+      :id="internalId"
       v-bind="$attrs"
       v-if="selectOptions"
-      v-model="inputValue"
+      :value="inputValue"
+      @input="inputValue = $event; $emit('input', map(inputValue, 'value'))"
       label="text"
       ref="vms"
       track-by="multiselectId"
       role="combobox"
       :aria-expanded="isExpanded ? 'true': 'false'"
-      :aria-labelledby="id + '-label'"
+      :aria-labelledby="internalId + '-label'"
       :data-testid="testid"
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
       :close-on-select="closeOnSelect"
@@ -38,7 +37,6 @@ of the MIT license. See the LICENSE file for details. -->
       :tag-placeholder="$t('common.placeholders.addOption')"
       :taggable="taggable"
       @close="close"
-      @input="$emit('input', map(inputValue, 'value'))"
       @open="openHandler"
       @search-change="searchChange"
       @tag="addTag">
@@ -56,14 +54,14 @@ of the MIT license. See the LICENSE file for details. -->
           <span
             class="multiselect__tag-icon"
             tabindex="0"
+            :aria-label="$t('common.remove')"
             :data-testid="`multi-select-tag-close-icon-${testid}`"
             @click.prevent="remove(option)"
-            @keydown.enter="remove(option)"
-            aria-hidden="true" />
+            @keydown.enter="remove(option)" />
         </span>
       </template>
       <template
-        v-for="(key, slotName) in $scopedSlots"
+        v-for="(key, slotName) in $slots"
         #[slotName]="slotData">
         <!-- @slot pass-through slot -->
         <slot
@@ -72,7 +70,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </VueMultiSelect>
     <template
-      v-for="(key, slotName) in $scopedSlots"
+      v-for="(key, slotName) in $slots"
       #[slotName]="slotData">
       <!-- @slot pass-through slot -->
       <slot
@@ -89,7 +87,10 @@ import {
   isEqual,
   map,
 } from 'lodash';
+import { useField } from 'vee-validate';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import { toRef } from 'vue';
+import uuid from 'uuid/v4';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
@@ -164,6 +165,12 @@ export default {
       default: '',
     },
   },
+  setup(props) {
+    const {
+      value: inputValue, errors: fieldErrors,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
+    return { inputValue, fieldErrors };
+  },
   data() {
     return {
       searchValue: '',
@@ -207,6 +214,9 @@ export default {
     },
     defaultPlaceholder() {
       return this.placeholder || this.$t('common.typeToSearch');
+    },
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
     },
   },
   methods: {
@@ -303,7 +313,7 @@ export default {
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
 
-.multiselect .multiselect__tag {
+:deep(.multiselect .multiselect__tag) {
   .multiselect__tag-icon {
     &:focus-visible {
       outline: solid 2px $primary;
@@ -323,7 +333,7 @@ export default {
   }
 }
 
-::v-deep .form-label-group {
+:deep(.form-label-group) {
   .form-label-group-input {
     .multiselect--active {
       outline-offset: 2px;

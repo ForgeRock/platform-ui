@@ -11,9 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
  * @description Selfservice stage for multiple selfservice flows, displays a google captcha
  *
  * */
-import Vue from 'vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import { VueReCaptcha } from 'vue-recaptcha-v3';
 
 export default {
   name: 'ReCaptchaV3',
@@ -26,11 +24,9 @@ export default {
       required: true,
     },
   },
-  created() {
+  async created() {
     const recaptchaSiteKey = this.callback.getSiteKey();
-    Vue.use(VueReCaptcha, {
-      siteKey: recaptchaSiteKey,
-    });
+    this.$loadVueRecaptcha(recaptchaSiteKey);
     this.$emit('next-step-callback', this.runRecaptcha);
   },
   methods: {
@@ -45,7 +41,7 @@ export default {
         });
     },
     handleCaptchaError() {
-      this.displayNotification('error', this.$t('pages.selfservice.captchaError'));
+      this.showErrorMessage('error', this.$t('pages.selfservice.captchaError'));
     },
   },
 };

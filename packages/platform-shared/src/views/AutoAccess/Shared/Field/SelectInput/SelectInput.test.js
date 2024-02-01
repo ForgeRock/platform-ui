@@ -5,12 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import SelectInput from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const defaultMixinProps = {
   id: '',
@@ -29,11 +25,12 @@ const defaultProps = {
 describe('SelectInput', () => {
   it('SelectInput component process selectOptions prop from array', () => {
     const wrapper = mount(SelectInput, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         selectOptions: ['a', 'b', 'c'],
@@ -57,11 +54,12 @@ describe('SelectInput', () => {
     ];
 
     const wrapper = mount(SelectInput, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         selectOptions,
@@ -73,11 +71,12 @@ describe('SelectInput', () => {
 
   it('SelectInput component renders the options', () => {
     const wrapper = mount(SelectInput, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         selectOptions: ['a', 'b', 'c'],
@@ -93,11 +92,12 @@ describe('SelectInput', () => {
 
   it('SelectInput component allows single selections', () => {
     const wrapper = mount(SelectInput, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         selectOptions: ['a', 'b', 'c'],
@@ -118,11 +118,12 @@ describe('SelectInput', () => {
 
   it('SelectInput passes through component slots', () => {
     const wrapper = mount(SelectInput, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
       },
@@ -138,11 +139,12 @@ describe('SelectInput', () => {
 
   it('SelectInput is not autofocused on absence of prop "autofocus"', () => {
     const wrapper = mount(SelectInput, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         autofocus: false,
@@ -154,7 +156,7 @@ describe('SelectInput', () => {
     });
     expect(document.activeElement).toEqual(document.body);
     document.activeElement.blur();
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   // TODO: to make this test work, follow guide to upgrade vue-test-utils https://vue-test-utils.vuejs.org/upgrading-to-v1/

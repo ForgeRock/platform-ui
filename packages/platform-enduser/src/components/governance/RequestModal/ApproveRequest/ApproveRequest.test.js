@@ -14,8 +14,10 @@ describe('ApproveRequest', () => {
 
   beforeEach(() => {
     wrapper = mount(ApproveRequest, {
-      mocks: {
-        $t: (text, prop) => i18n.t(text, prop),
+      global: {
+        mocks: {
+          $t: (text, prop) => i18n.global.t(text, prop),
+        },
       },
     });
   });

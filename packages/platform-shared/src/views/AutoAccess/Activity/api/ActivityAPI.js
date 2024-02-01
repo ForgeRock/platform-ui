@@ -18,25 +18,26 @@ export const MODELS = {
 };
 
 export const causeMap = {
-  userId: 'User ID',
-  referer: 'referer',
-  goto: 'Goto',
-  origin: 'Origin',
+  browser: 'Browser',
   city: 'City',
+  component: 'Component',
   country: 'Country',
   day_of_week: 'Day of Week',
-  weekday: 'Day of Week',
   dayparting: 'Time of Day',
   device: 'Device',
-  model: 'Device',
-  os: 'OS',
-  os_version: 'OS Version',
-  user_agent: 'Browser Family',
-  component: 'Component',
-  browser: 'Browser',
-  osWithVersion: 'OS Version',
-  userAgentType: 'Browser Family',
   deviceType: 'Device Type',
+  goto: 'Goto',
+  model: 'Device',
+  origin: 'Origin',
+  os: 'OS',
+  osWithVersion: 'OS Version',
+  os_version: 'OS Version',
+  referer: 'referer',
+  time_of_day: 'Time of Day',
+  userAgentType: 'Browser Family',
+  userId: 'User ID',
+  user_agent: 'Browser Family',
+  weekday: 'Day of Week',
 };
 
 /**
@@ -50,7 +51,7 @@ export const apiToInternalEvent = (data) => {
   const {
     ipAddress, userId, eventId, timestamp, geoData, dayparting, weekday, browserData,
   } = predictionResult.features;
-  const { raw_event_data: rawEventData, risk_score_data: riskScoreData } = predictionResult;
+  const { botD, raw_event_data: rawEventData, risk_score_data: riskScoreData } = predictionResult;
   const { heuristic_agg_result: heuristics } = riskScoreData;
   const {
     device, deviceType, os, osVersion, userAgentType,
@@ -62,17 +63,24 @@ export const apiToInternalEvent = (data) => {
   })
     .map((result) => Object.keys(result).find((propName) => propName.indexOf('is_') === 0)) || [];
 
+  // Is IP Blocked Heuristic
   const isIpBlocked = heuristics?.block_rule_result?.is_blocked || false;
   if (isIpBlocked) {
     heuristicReasons.push('is_ip_blocked');
   }
 
+  // Is Advanced Bot Detection Heuristic
+  const isBot = botD?.isBot || false;
+  if (isBot) {
+    heuristicReasons.push('is_advanced_bot_detection');
+  }
+
   let clusteringReasons = [];
   const uebaReasons = [];
-  if (riskScoreData.risk_score_threshhold < riskScoreData.clustering_model_risk_score) {
+  if (riskScoreData.risk_score_threshold < riskScoreData.clustering_model_risk_score) {
     clusteringReasons = riskScoreData.clustering_result?.top_cluster_explainability;
   }
-  if (riskScoreData.risk_score_threshhold < riskScoreData.ueba_avg_risk_score) {
+  if (riskScoreData.risk_score_threshold < riskScoreData.ueba_avg_risk_score) {
     if (predictionResult.ueba_signal.explainability
         && predictionResult.ueba_signal.explainability?.response !== 'failed'
         && predictionResult.ueba_signal.explainability?.response !== 'unknown') {

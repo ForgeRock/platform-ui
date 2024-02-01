@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,8 +7,9 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { putConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
+import { convertBase64ToString, convertStringToBase64 } from '@forgerock/platform-shared/src/utils/encodeUtils';
 import uuid from 'uuid/v4';
-import { sortBy } from 'lodash';
+import { sortBy, cloneDeep } from 'lodash';
 import store from '@forgerock/platform-shared/src/store';
 import i18n from '@/i18n';
 
@@ -38,6 +39,8 @@ export default {
         accountCardTextColor: '#5e6d82',
         accountFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
         accountFooterEnabled: false,
+        accountFooterScriptTag: '',
+        accountFooterScriptTagEnabled: false,
         accountNavigationBackgroundColor: '#ffffff',
         accountNavigationTextColor: '#455469',
         accountNavigationToggleBorderColor: '#e7eef4',
@@ -55,10 +58,14 @@ export default {
         journeyCardTextColor: '#5e6d82',
         journeyCardTitleColor: '#23282e',
         journeyFloatingLabels: true,
+        journeyFocusFirstFocusableItemEnabled: false,
         journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
         journeyFooterEnabled: false,
+        journeyFooterScriptTag: '',
+        journeyFooterScriptTagEnabled: false,
         journeyHeader: '<div class="d-flex justify-content-center py-4 flex-grow-1">Header Content</div>',
         journeyHeaderEnabled: false,
+        journeyHeaderSkipLinkEnabled: false,
         journeyInputBackgroundColor: '#ffffff',
         journeyInputBorderColor: '#c0c9d5',
         journeyInputLabelColor: '#5e6d82',
@@ -68,6 +75,7 @@ export default {
         journeyTheaterMode: false,
         journeyJustifiedContent: '',
         journeyJustifiedContentEnabled: false,
+        journeyJustifiedContentMobileViewEnabled: false,
         journeyLayout: 'card',
         journeySignInButtonPosition: 'flex-column',
         linkActiveColor: '#004067',
@@ -97,14 +105,21 @@ export default {
         topBarTextColor: '#69788b',
       },
       favicon: '',
+      accountFooterScriptTag: '',
+      accountFooterScriptTagEnabled: false,
       journeyFloatingLabels: true,
+      journeyFocusFirstFocusableItemEnabled: false,
       journeyFooter: '',
       journeyFooterEnabled: false,
+      journeyFooterScriptTag: '',
+      journeyFooterScriptTagEnabled: false,
       journeyHeader: '',
       journeyHeaderEnabled: false,
+      journeyHeaderSkipLinkEnabled: false,
       journeyTheaterMode: false,
       journeyJustifiedContent: '',
       journeyJustifiedContentEnabled: false,
+      journeyJustifiedContentMobileViewEnabled: false,
       journeyLayout: 'card',
       journeySignInButtonPosition: 'flex-column',
       logoHeight: '40',
@@ -187,13 +202,20 @@ export default {
           this.theme = theme;
           this.favicon = theme.favicon;
           this.journeyFloatingLabels = theme.journeyFloatingLabels;
+          this.journeyFocusFirstFocusableItemEnabled = theme.journeyFocusFirstFocusableItemEnabled;
           this.journeyFooter = theme.journeyFooter;
           this.journeyFooterEnabled = theme.journeyFooterEnabled;
+          this.accountFooterScriptTag = theme.accountFooterScriptTag;
+          this.accountFooterScriptTagEnabled = theme.accountFooterScriptTagEnabled;
+          this.journeyFooterScriptTag = theme.journeyFooterScriptTag;
+          this.journeyFooterScriptTagEnabled = theme.journeyFooterScriptTagEnabled;
           this.journeyHeader = theme.journeyHeader;
           this.journeyHeaderEnabled = theme.journeyHeaderEnabled;
+          this.journeyHeaderSkipLinkEnabled = theme.journeyHeaderSkipLinkEnabled;
           this.journeyTheaterMode = theme.journeyTheaterMode;
           this.journeyJustifiedContent = theme.journeyJustifiedContent;
           this.journeyJustifiedContentEnabled = theme.journeyJustifiedContentEnabled;
+          this.journeyJustifiedContentMobileViewEnabled = theme.journeyJustifiedContentMobileViewEnabled;
           this.journeyLayout = theme.journeyLayout;
           this.journeySignInButtonPosition = theme.journeySignInButtonPosition;
           this.logo = theme.logo || placeholderImage;
@@ -258,14 +280,60 @@ export default {
       });
     },
     /**
+     * Base64 encode any script content in the passed themes to transmit over the API
+     * @param {Object} themesConfig - config metadata of themes
+     * @returns {Object} the theme config with all scripts base64 encoded
+     */
+    encodeThemeScripts(themesConfig) {
+      const encodedThemes = cloneDeep(themesConfig);
+      Object.keys(encodedThemes.realm).forEach((key) => {
+        if (Array.isArray(encodedThemes.realm[key])) {
+          encodedThemes.realm[key].forEach((theme) => {
+            if (typeof theme.journeyFooterScriptTag === 'string' && theme.journeyFooterScriptTag !== '') {
+              theme.journeyFooterScriptTag = convertStringToBase64(theme.journeyFooterScriptTag);
+            }
+
+            if (typeof theme.accountFooterScriptTag === 'string' && theme.accountFooterScriptTag !== '') {
+              theme.accountFooterScriptTag = convertStringToBase64(theme.accountFooterScriptTag);
+            }
+          });
+        }
+      });
+      return encodedThemes;
+    },
+    /**
+     * Base64 decode any script content in the passed themes
+     * @param {Object} themesConfig - config metadata of themes
+     * @returns {Object} the theme config with all scripts decoded from base64
+     */
+    decodeThemeScripts(themesConfig) {
+      const decodedThemes = cloneDeep(themesConfig);
+      Object.keys(decodedThemes.realm).forEach((key) => {
+        if (Array.isArray(decodedThemes.realm[key])) {
+          decodedThemes.realm[key].forEach((theme) => {
+            if (typeof theme.journeyFooterScriptTag === 'string' && theme.journeyFooterScriptTag !== '') {
+              theme.journeyFooterScriptTag = convertBase64ToString(theme.journeyFooterScriptTag);
+            }
+
+            if (typeof theme.accountFooterScriptTag === 'string' && theme.accountFooterScriptTag !== '') {
+              theme.accountFooterScriptTag = convertBase64ToString(theme.accountFooterScriptTag);
+            }
+          });
+        }
+      });
+      return decodedThemes;
+    },
+    /**
      * Save a theme if it doesn't exist or update an existing theme
      * @param {Object} themesConfig - config metadata of themes
      * @param {Boolean} suppressSuccessMessage - suppress the success messeage
      */
     saveTheme(themesConfig, suppressSuccessMessage) {
       themesConfig.realm[this.realm] = sortBy(themesConfig.realm[this.realm], 'name');
-      return putConfig('ui/themerealm', themesConfig).then(({ data }) => {
-        this.setThemeData(data, this.realm);
+      const encodedThemes = this.encodeThemeScripts(themesConfig);
+      return putConfig('ui/themerealm', encodedThemes).then(({ data }) => {
+        const decodedThemes = this.decodeThemeScripts(data);
+        this.setThemeData(decodedThemes, this.realm);
         if (!suppressSuccessMessage) {
           this.displayNotification('success', this.$t('hostedPages.theme.successSave'));
         }

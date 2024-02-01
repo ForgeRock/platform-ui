@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,6 +13,9 @@ const defaultState = {
   autoAccessEnabled: false,
   autoAccessJasUrl: null,
   autoAccessApiUrl: null,
+  autoAccessReportsUrl: null,
+  autoAccessTenantId: null,
+  autoReportsEnabled: false,
   idmBaseURL: '',
   currentPackage: '',
   fraasEnvironmentUrl: null,
@@ -27,16 +30,15 @@ const defaultState = {
   governanceEnabled: false,
   governanceEnabledV4: false,
   igaApiUrl: null,
-  returnRoute: '',
-  returnRouteText: '',
+  igaOrchestrationApiUrl: null,
   uiConfig: null,
   hasAmUrl: false,
-  scriptingV2Enabled: false,
   showEsvUi: false,
   showServiceAccountUi: false,
   webStorageAvailable: true,
   workforceEnabled: false,
   managedObjectMinimumUIFilterLength: {},
+  maxIdleExpirationTime: null,
 };
 
 const mutations = {
@@ -72,10 +74,16 @@ const mutations = {
         if (env.VUE_APP_AUTO_ACCESS_JAS_URL) {
           state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
         }
+        if (env.VUE_APP_AUTO_ACCESS_TENANT_ID) {
+          state.autoAccessTenantId = env.VUE_APP_AUTO_ACCESS_TENANT_ID;
+        }
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_V4 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V4 === true) {
+      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
         if (env.VUE_APP_IGA_API_URL) {
-          state.igaApiUrl = env.VUE_APP_IGA_API_URL;
+          state.igaApiUrl = getFQDN(env.VUE_APP_IGA_API_URL);
+        }
+        if (env.VUE_APP_IGA_ORCHESTRATION_API_URL) {
+          state.igaOrchestrationApiUrl = getFQDN(env.VUE_APP_IGA_ORCHESTRATION_API_URL);
         }
       }
       if (env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL) {
@@ -101,16 +109,6 @@ const mutations = {
     }
   },
 
-  setReturnRoute(state, newValue) {
-    if (newValue.returnRoute || newValue.returnRoute === '') {
-      state.returnRoute = newValue.returnRoute;
-    }
-
-    if (newValue.returnRouteText || newValue.returnRouteText === '') {
-      state.returnRouteText = newValue.returnRouteText;
-    }
-  },
-
   setUiConfig(state, newValue) {
     state.uiConfig = newValue;
   },
@@ -130,18 +128,21 @@ const mutations = {
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true) {
         state.governanceEnabled = true;
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE_V4 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V4 === true) {
+      if (env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
         state.governanceEnabled = true;
-        state.governanceEnabledV4 = true;
+        state.governanceDevEnabled = true;
       }
-    }
-
-    if (env.VUE_APP_ENABLE_SCRIPTING_V2) {
-      state.scriptingV2Enabled = env.VUE_APP_ENABLE_SCRIPTING_V2 === 'true' || env.VUE_APP_ENABLE_SCRIPTING_V2 === true;
     }
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
       state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
+    }
+
+    if (env.VUE_APP_ENABLE_ANALYTICS_REPORTING) {
+      state.autoReportsEnabled = env.VUE_APP_ENABLE_ANALYTICS_REPORTING === 'true' || env.VUE_APP_ENABLE_ANALYTICS_REPORTING === true;
+    }
+    if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
+      state.autoAccessReportsUrl = env.VUE_APP_AUTO_ACCESS_REPORTS_URL;
     }
   },
   setWebStorageAvailable(state, val) {
@@ -150,9 +151,17 @@ const mutations = {
   setManagedObjectMinimumUIFilterLength(state, { managedObjectName, val }) {
     state.managedObjectMinimumUIFilterLength[managedObjectName] = val;
   },
+  setMaxIdleExpirationTime(state, val) {
+    state.maxIdleExpirationTime = val;
+  },
+};
+
+const getters = {
+  maxIdleExpirationTime: (state) => state.maxIdleExpirationTime,
 };
 
 export default {
   state: defaultState,
   mutations,
+  getters,
 };

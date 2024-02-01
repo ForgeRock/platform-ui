@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ descriptionText }}
       </div>
       <FrField
-        v-model="showForm"
+        :value="showForm"
         type="boolean"
         :label="property.description"
         @input="toggleForm" />
@@ -43,6 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
   isEmpty,
 } from 'lodash';
 import axios from 'axios';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -128,7 +129,8 @@ export default {
     /**
     * Opens/Closes either the QueryFilterBuilder or the TimeConstraint compoent
     */
-    toggleForm() {
+    toggleForm(showForm) {
+      this.showForm = showForm;
       // If the toggle is off set the property value to null
       if (!this.showForm) {
         this.queryFilterField.value = '';
@@ -153,9 +155,11 @@ export default {
         queryFilter: 'resourceCollection eq "internal/role" or (resourceCollection sw "managed")',
         fields: '*',
       };
+
+      const userStore = useUserStore();
       // get schema for all internal/role and all managed objects that are not
       // managed/assignment or that end in application
-      if (this.$store.state.UserStore.adminUser) {
+      if (userStore.adminUser) {
         getSchema(encodeQueryString(urlParams)).then(
           (response) => {
             const schemas = response.data.result.filter((result) => {
@@ -182,7 +186,7 @@ export default {
             this.loading = false;
           },
           () => {
-            this.displayNotification('error', this.$t('pages.access.errorGettingSchema'));
+            this.showErrorMessage('error', this.$t('pages.access.errorGettingSchema'));
           },
         );
       } else {
@@ -198,14 +202,11 @@ export default {
               });
 
               this.loading = false;
-            }), () => {
-              this.displayNotification('error', this.$t('pages.access.errorGettingSchema'));
-            });
+            }));
           },
-          () => {
-            this.displayNotification('error', this.$t('pages.access.errorGettingSchema'));
-          },
-        );
+        ).catch(() => {
+          this.showErrorMessage('error', this.$t('pages.access.errorGettingSchema'));
+        });
       }
     },
     /**
@@ -251,7 +252,7 @@ export default {
         });
       },
       () => {
-        this.displayNotification('error', this.$t('pages.access.invalidEdit'));
+        this.showErrorMessage('error', this.$t('pages.access.invalidEdit'));
       });
     },
   },

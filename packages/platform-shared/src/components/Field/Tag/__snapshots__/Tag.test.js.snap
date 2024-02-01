@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tag @actions should remove tag with click: console-error-snapshot 1`] = `
+[
+  [
+    "^ The above deprecation's compat behavior is disabled and will likely lead to runtime errors.",
+  ],
+  [
+    "^ The above deprecation's compat behavior is disabled and will likely lead to runtime errors.",
+  ],
+  [
+    "^ The above deprecation's compat behavior is disabled and will likely lead to runtime errors.",
+  ],
+]
+`;

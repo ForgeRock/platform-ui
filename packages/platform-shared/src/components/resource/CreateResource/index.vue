@@ -1,17 +1,19 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
+  <VeeForm
     ref="observer"
-    v-slot="{ invalid }">
+    v-slot="{ meta: { valid } }"
+    as="span">
     <slot>
       <BModal
         id="createResourceModal"
         size="lg"
         cancel-variant="outline-secondary"
-        :no-close-on-esc="true"
+        no-close-on-backdrop
+        no-close-on-esc
         @hide="hideModal"
         @hidden="stepIndex = -1"
         @show="initialiseData"
@@ -25,22 +27,20 @@ of the MIT license. See the LICENSE file for details. -->
               @submit.prevent
               class="mb-3"
               name="edit-personal-form">
-              <template v-for="(field, index) in clonedCreateProperties">
-                <BFormGroup
-                  :key="'createResource' + index"
-                  v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined">
+              <template
+                v-for="(field, index) in clonedCreateProperties"
+                :key="`createResource${index}`">
+                <BFormGroup v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined">
                   <FrField
                     v-model="field.value"
                     :autofocus="index === 0"
                     :label="field.title"
                     :name="field.key"
                     :options="field.options"
-                    :type="field.format ? field.format : field.type"
+                    :type="field.format || field.type"
                     :validation="field.validation" />
                 </BFormGroup>
-                <BFormGroup
-                  v-else-if="field.type === 'password' && field.encryption === undefined"
-                  :key="'createResource' + index">
+                <BFormGroup v-else-if="field.type === 'password' && field.encryption === undefined">
                   <FrPolicyPasswordInput
                     v-model="passwordValue"
                     @is-valid="passwordValid=$event"
@@ -50,9 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :validation="field.validation" />
                 </BFormGroup>
                 <!-- for relationship values -->
-                <BFormGroup
-                  v-else-if="field.type === 'relationship' || (field.type === 'array' && field.items.type === 'relationship')"
-                  :key="'createResource' + index">
+                <BFormGroup v-else-if="field.type === 'relationship' || (field.type === 'array' && field.items.type === 'relationship')">
                   <FrRelationshipEdit
                     :close-on-select="isCloseOnSelect(field)"
                     :parent-resource="`${resourceType}/${resourceName}`"
@@ -61,9 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :new-resource="true"
                     @setValue="setRelationshipValue($event, field.key)" />
                 </BFormGroup>
-                <BFormGroup
-                  :key="'createResource' + index"
-                  v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.isTemporalConstraint">
+                <BFormGroup v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.isTemporalConstraint">
                   <FrListField
                     v-model="field.value"
                     :description="field.description"
@@ -82,16 +78,18 @@ of the MIT license. See the LICENSE file for details. -->
               </h1>
             </template>
           </BCol>
-          <BCol
-            v-else
-            v-for="(step, index) in steps"
-            :key="index"
-            v-show="stepIndex === index">
-            <FrCustomStep
-              :property="step"
-              :resource-name="resourceName"
-              @input="updateStepPropertyValue" />
-          </BCol>
+
+          <template v-else>
+            <BCol
+              v-for="(step, index) in steps"
+              :key="index"
+              v-show="stepIndex === index">
+              <FrCustomStep
+                :property="step"
+                :resource-name="resourceName"
+                @input="updateStepPropertyValue" />
+            </BCol>
+          </template>
         </BRow>
 
         <template #modal-footer>
@@ -112,20 +110,20 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="!isLastStep"
             @click="loadNextStep"
             variant="primary"
-            :disabled="invalid">
+            :disabled="!valid">
             {{ $t('common.next') }}
           </BButton>
           <FrButtonWithSpinner
             v-if="isLastStep || !steps.length"
             :button-text="$t('common.save')"
-            :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid) || isSaving"
+            :disabled="formFields.length === 0 || !valid || (passwordValue !== '' && !passwordValid) || isSaving"
             :show-spinner="isSaving"
             :spinner-text="$t('common.saving')"
             @click="saveForm" />
         </template>
       </BModal>
     </slot>
-  </ValidationObserver>
+  </VeeForm>
 </template>
 
 <script>
@@ -149,7 +147,7 @@ import {
   BCol,
   BModal,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
@@ -161,6 +159,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
+import { setFieldError } from '@forgerock/platform-shared/src/utils/veeValidateUtils';
 import CustomStep from './CustomStep/index';
 
 /**
@@ -188,7 +187,7 @@ export default {
     BRow,
     BCol,
     BModal,
-    ValidationObserver,
+    VeeForm,
     FrListField,
     FrPolicyPasswordInput,
   },
@@ -286,8 +285,8 @@ export default {
       const idmInstance = this.getRequestService();
       const validateSave = this.$refs.observer.validate();
 
-      validateSave.then((isValid) => {
-        if (isValid) {
+      validateSave.then(({ valid }) => {
+        if (valid) {
           this.clonedCreateProperties.forEach((field) => {
             this.formFields[field.key] = field.value;
 
@@ -311,7 +310,7 @@ export default {
           });
         } else {
           this.isSaving = false;
-          this.displayNotification('error', this.$t('pages.access.invalidCreate'));
+          this.showErrorMessage('error', this.$t('pages.access.invalidCreate'));
         }
       })
         .catch(() => { this.isSaving = false; });
@@ -319,14 +318,11 @@ export default {
     setErrors(error) {
       const generatedErrors = this.findPolicyError(error, this.clonedCreateProperties);
       const passwordErrors = [];
-      this.$refs.observer.reset();
 
       if (generatedErrors.length > 0) {
         each(generatedErrors, (generatedError) => {
           if (generatedError.exists) {
-            this.$refs.observer.setErrors({
-              [generatedError.field]: [generatedError.msg],
-            });
+            setFieldError(generatedError.field, generatedError.msg, this.$refs.observer);
             if (generatedError.field === 'password') {
               passwordErrors.push(generatedError.msg);
             }
@@ -356,17 +352,17 @@ export default {
       if (this.stepIndex === -1) {
         const validateForm = this.$refs.observer.validate();
 
-        validateForm.then((isValid) => {
-          if (isValid) {
-            this.stepIndex = this.stepIndex + 1;
+        validateForm.then(({ valid }) => {
+          if (valid) {
+            this.stepIndex += 1;
           }
         });
       } else {
-        this.stepIndex = this.stepIndex + 1;
+        this.stepIndex += 1;
       }
     },
     loadPreviousStep() {
-      this.stepIndex = this.stepIndex - 1;
+      this.stepIndex -= 1;
     },
     updateStepPropertyValue(property, val) {
       const createProperty = find(this.clonedCreateProperties, { key: property });
@@ -425,10 +421,6 @@ export default {
       this.passwordFailures = [];
       this.clonedCreateProperties = cloneDeep(this.createProperties);
       this.setFormFields();
-
-      if (this.$refs.observer) {
-        this.$refs.observer.reset();
-      }
     },
     /**
      * change field value for valid fields

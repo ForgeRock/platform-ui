@@ -73,7 +73,7 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
 
   // This aligns the goto parameter order to match what was used in AM and what is documented in the Docs
   const alignGotoPrecedence = process.env.VUE_APP_ALIGN_GOTO_PRECEDENCE;
-  if (alignGotoPrecedence === 'true') {
+  if (alignGotoPrecedence === 'true' || alignGotoPrecedence === true) {
     gotoUrl = !isGotoOnFail
       ? JSON.stringify({ goto: url })
       : JSON.stringify({ goto: urlParams.get('gotoOnFail') });
@@ -105,16 +105,17 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
   })
     .post('/users?_action=validateGoto', gotoUrl, { withCredentials: true })
     .then((res) => {
-      if (!isDefaultPath(res.data.successURL) && res.data.successURL !== 'undefined' && res.data.successURL !== null) {
-        return res.data.successURL;
+      const { successURL } = res.data;
+      if (!isDefaultPath(successURL) && successURL !== 'undefined' && successURL !== null && successURL !== 'null') {
+        return successURL;
       }
-      if (isDefaultPath(res.data.successURL) && isGotoOnFail) {
+      if (isDefaultPath(successURL) && isGotoOnFail) {
         return false;
       }
-      if (isDefaultPath(res.data.successURL) && !isDefaultPath(url)) {
+      if (isDefaultPath(successURL) && !isDefaultPath(url)) {
         return url;
       }
-      if (isDefaultPath(res.data.successURL) && isSamlURL(JSON.parse(gotoUrl).goto)) {
+      if (isDefaultPath(successURL) && isSamlURL(JSON.parse(gotoUrl).goto)) {
         return JSON.parse(gotoUrl).goto;
       }
       return redirectUserBasedOnType();
@@ -231,8 +232,9 @@ export function createWebAuthnCallbackPromise(type, step) {
  * @param {Object} currentStage the stage property for the current SDK step
  * @param {Object} currentStep the current SDK step
  * @param {String} realm the realm to validate password requirements against
+ * @param {String} positionButton the position of the button in the journey
  */
-export function getComponentPropsAndEvents(componentType, callBackIndex, componentList, currentStage, currentStep, realm) {
+export function getComponentPropsAndEvents(componentType, callBackIndex, componentList, currentStage, currentStep, realm, positionButton) {
   const existsInComponentList = (type) => componentList.find((component) => component.type === `Fr${type}`);
   const componentPropsAndEvents = {
     ChoiceCallback: () => {
@@ -249,6 +251,7 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
       const showButtonsAsLinks = stage?.showButtonsAsLinks;
       const callbackSpecificProps = {
         stage,
+        positionButton,
         variant: existsInComponentList(FrCallbackType.WebAuthnComponent) || authStepIsShowingPushChallenge || showButtonsAsLinks ? 'link' : 'primary',
       };
       return {

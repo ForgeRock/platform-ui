@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -38,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="mr-1"
               aria-hidden="true"
               :name="tabItems[tabIndex].icon" />
-            {{ tabItems[tabIndex].displayName | pluralizeFilter }}
+            {{ pluralizeValue(tabItems[tabIndex].displayName) }}
           </template>
           <BDropdownItem
             v-for="(tab, index) in tabItems"
@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="mr-3"
               aria-hidden="true"
               :name="tab.icon" />
-            {{ tab.displayName | pluralizeFilter }}
+            {{ pluralizeValue(tab.displayName) }}
           </BDropdownItem>
         </BDropdown>
         <BTabs
@@ -79,7 +79,6 @@ of the MIT license. See the LICENSE file for details. -->
               :default-sort="getDefaultSort(tab.grantType)"
               :fields="getTableFields(tab.grantType)"
               :grant-type="tab.grantType"
-              resource-name="directReportDetail"
               :user-id="directReportUserInfo.userId"
               @revoke-request="showRevokeRequestModal" />
           </BTab>
@@ -107,12 +106,14 @@ import {
   BTab,
 } from 'bootstrap-vue';
 import { get } from 'lodash';
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import FrMyAccessReviewTable from '../../MyAccessReview/MyAccessReviewTable';
+import FrMyAccessReviewTable from '@forgerock/platform-shared/src/components/governance/MyAccessReviewTable';
 import FrRevokeRequestModal from './RevokeRequestModal';
 import { saveNewRequest } from '@/api/governance/AccessRequestApi';
 import { getDirectReportUserInfo } from '@/api/governance/DirectoryApi';
@@ -140,14 +141,11 @@ export default {
     FrRevokeRequestModal,
   },
   mixins: [
-    BreadcrumbMixin,
     NotificationMixin,
   ],
-  filters: {
-    PluralizeFilter,
-  },
-  async created() {
-    await this.getUserProfile();
+  setup() {
+    const { setBreadcrumb } = useBreadcrumb();
+    return { setBreadcrumb };
   },
   data() {
     return {
@@ -162,7 +160,7 @@ export default {
           grantType: 'account',
         },
         {
-          displayName: this.$t('pages.myAccess.entitlement.tabTitle'),
+          displayName: this.$t('common.entitlements'),
           icon: 'assignment_turned_in',
           routeName: 'Entitlement',
           grantType: 'entitlement',
@@ -177,6 +175,9 @@ export default {
       tabIndex: 0,
     };
   },
+  async created() {
+    await this.getUserProfile();
+  },
   mounted() {
     this.setBreadcrumb('/my-reports', this.$t('governance.directReports.title'));
     this.tabItems.find((item, index) => {
@@ -189,6 +190,7 @@ export default {
     });
   },
   computed: {
+    ...mapState(useUserStore, ['userId']),
     revokeRequestCatalog() {
       if (Object.keys(this.requestToRevoke).length) {
         const { item, catalog } = this.requestToRevoke;
@@ -207,6 +209,7 @@ export default {
     },
   },
   methods: {
+    pluralizeValue,
     getDefaultSort(grantType) {
       switch (grantType) {
         case 'account':
@@ -221,7 +224,7 @@ export default {
       const sharedFields = [
         {
           key: 'assignment',
-          label: this.$t('pages.myAccess.assignment'),
+          label: this.$t('common.assignment'),
           sortable: false,
           thClass: 'w-150px',
         },
@@ -285,7 +288,7 @@ export default {
       }
     },
     async getUserProfile() {
-      await getDirectReportUserInfo(this.$store.state.UserStore.userId, this.$route.params.userId).then(({ data }) => {
+      await getDirectReportUserInfo(this.userId, this.$route.params.userId).then(({ data }) => {
         this.directReportUserInfo = {
           name: `${data.givenName} ${data.sn}`,
           userName: data.userName,

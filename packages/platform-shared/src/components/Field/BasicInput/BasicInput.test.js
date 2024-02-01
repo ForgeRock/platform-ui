@@ -5,15 +5,18 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import * as clipboard from 'clipboard-polyfill/text';
-import flushPromises from 'flush-promises';
-import { extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
 import * as AccessibilityUtils from '@forgerock/platform-shared/src/utils/accessibilityUtils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import Notifications from '@kyvg/vue3-notification';
 import BasicInput from './index';
 import i18n from '@/i18n';
 import { findByTestId } from '../../../utils/testHelpers';
+
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+});
 
 const defaultProps = {
   name: 'stub-name',
@@ -23,13 +26,13 @@ const defaultProps = {
 };
 
 describe('BasicInput', () => {
-  extend('required', required);
-
   function setup(props) {
     return mount(BasicInput, {
-      i18n,
+      global: {
+        plugins: [i18n, Notifications],
+      },
       attachTo: document.body,
-      propsData: {
+      props: {
         ...defaultProps,
         ...props,
       },
@@ -75,7 +78,10 @@ describe('BasicInput', () => {
           await wrapper.vm.$nextTick();
 
           const input = findByTestId(wrapper, 'input-stub-testid');
-          expect(input.attributes('placeholder')).toBe('stub-label');
+          expect(input.attributes('placeholder')).toBeUndefined();
+
+          const label = wrapper.find(`#floatingLabelInput${wrapper.vm._uid}-label`);
+          expect(label.text()).toBe('stub-label');
         });
       });
 
@@ -95,7 +101,7 @@ describe('BasicInput', () => {
         const wrapper = setup({ type: 'number', disabled: true });
 
         const input = findByTestId(wrapper, 'input-stub-testid');
-        expect(input.attributes('disabled')).toBeTruthy();
+        expect(input.attributes('disabled')).toBeDefined();
       });
     });
 
@@ -129,8 +135,7 @@ describe('BasicInput', () => {
         jest.useRealTimers();
 
         // has is-invalid class when error
-        wrapper.setData({ errorMessages: 'Failed' });
-        await flushPromises();
+        await wrapper.setData({ errorMessages: 'Failed' });
         expect(input.classes()).toContain('is-invalid');
       });
 
@@ -159,6 +164,17 @@ describe('BasicInput', () => {
 
           const input = findByTestId(wrapper, 'input-stub-testid');
           expect(input.attributes('placeholder')).toBe('stub-placeholder');
+
+          input.trigger('blur');
+
+          expect(wrapper.emitted().blur[0]).toBeTruthy();
+          expect(wrapper.vm.floatLabels).toBeFalsy();
+
+          input.setValue('test');
+
+          input.trigger('blur');
+          expect(wrapper.emitted().blur[1]).toBeTruthy();
+          expect(wrapper.vm.floatLabels).toBeFalsy();
         });
 
         it('when floatLabel', async () => {
@@ -166,7 +182,21 @@ describe('BasicInput', () => {
           await wrapper.vm.$nextTick();
 
           const input = findByTestId(wrapper, 'input-stub-testid');
-          expect(input.attributes('placeholder')).toBe('stub-label');
+          expect(input.attributes('placeholder')).toBeUndefined();
+
+          const label = wrapper.find(`#floatingLabelInput${wrapper.vm._uid}-label`);
+          expect(label.text()).toBe('stub-label');
+
+          await input.trigger('blur');
+
+          expect(wrapper.emitted().blur[0]).toBeTruthy();
+          expect(wrapper.vm.floatLabels).toBeFalsy();
+
+          await input.setValue('test');
+
+          await input.trigger('blur');
+          expect(wrapper.emitted().blur[1]).toBeTruthy();
+          expect(wrapper.vm.floatLabels).toBeTruthy();
         });
       });
 
@@ -180,7 +210,7 @@ describe('BasicInput', () => {
         const wrapper = setup({ disabled: true });
 
         const input = findByTestId(wrapper, 'input-stub-testid');
-        expect(input.attributes('disabled')).toBeTruthy();
+        expect(input.attributes('disabled')).toBeDefined();
       });
 
       describe('when validation errors', () => {
@@ -200,7 +230,7 @@ describe('BasicInput', () => {
 
           const input = findByTestId(wrapper, 'input-stub-testid');
 
-          // Note: this is due to how often the ValidationObserver is computed, see: https://vee-validate.logaretm.com/v3/advanced/testing.html#testing-validationobserver-debounced-state
+          // Note: this is due to how often the Field is computed, see: https://vee-validate.logaretm.com/v3/advanced/testing.html#testing-Field-debounced-state
           await flushPromises();
           jest.runAllTimers();
           expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['stub-name is not valid.']);
@@ -216,7 +246,7 @@ describe('BasicInput', () => {
           const createAriaDescribedByListSpy = jest.spyOn(AccessibilityUtils, 'createAriaDescribedByList');
           const wrapper = setup({ validation: 'required', errors: ['parent error.'] });
 
-          // Note: this is due to how often the ValidationObserver is computed, see: https://vee-validate.logaretm.com/v3/advanced/testing.html#testing-validationobserver-debounced-state
+          // Note: this is due to how often the Field is computed, see: https://vee-validate.logaretm.com/v3/advanced/testing.html#testing-Field-debounced-state
           await flushPromises();
           expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['parent error.']);
 
@@ -234,18 +264,21 @@ describe('BasicInput', () => {
           await flushPromises();
 
           const input = findByTestId(wrapper, 'input-stub-testid');
-          await input.setValue('');
 
-          await flushPromises();
           expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['parent error.']);
-
           expect(input.attributes('aria-describedby')).toBe('stub-name0-error');
+
+          await input.setValue('');
+          await flushPromises();
+
+          expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['parent error.', 'Please provide a value']);
+          expect(input.attributes('aria-describedby')).toBe('stub-name0-error stub-name1-error');
 
           const firstError = findByTestId(wrapper, 'stub-name-validation-error-0');
           expect(firstError.text()).toBe('parent error.');
 
           const secondError = findByTestId(wrapper, 'stub-name-validation-error-1');
-          expect(secondError.text()).toBe('stub-name is not valid.');
+          expect(secondError.text()).toBe('Please provide a value');
         });
       });
     });
@@ -261,15 +294,17 @@ describe('BasicInput', () => {
         const wrapper = setup({ type: 'password', disabled: true });
 
         const input = findByTestId(wrapper, 'input-stub-testid');
-        expect(input.attributes('disabled')).toBeTruthy();
+        expect(input.attributes('disabled')).toBeDefined();
       });
     });
 
     describe('passing through slots for the InputLayout component to render', () => {
       it('renders the prepend slot', () => {
         const wrapper = mount(BasicInput, {
-          i18n,
-          propsData: {
+          global: {
+            plugins: [i18n],
+          },
+          props: {
             ...defaultProps,
           },
           slots: {
@@ -286,8 +321,10 @@ describe('BasicInput', () => {
 
       it('prepend & append slots', () => {
         const wrapper = mount(BasicInput, {
-          i18n,
-          propsData: {
+          global: {
+            plugins: [i18n],
+          },
+          props: {
             ...defaultProps,
           },
           slots: {
@@ -305,8 +342,10 @@ describe('BasicInput', () => {
 
     it('as custom class', () => {
       const wrapper = mount(BasicInput, {
-        i18n,
-        propsData: {
+        global: {
+          plugins: [i18n],
+        },
+        props: {
           ...defaultProps,
           inputClass: 'custom-class',
         },
@@ -378,13 +417,22 @@ describe('BasicInput', () => {
     describe('when number field', () => {
       const testCases = [
         ['should allow input given numeric value', '583', '583'],
-        ['should prevent input given non-numeric value', 'text', '0'],
+        ['should prevent input given non-numeric value', 'text', ''],
+        ['should prevent input given non-numeric value after .', '.text', '.'],
+        ['should allow negative numbers', '-1', '-1'],
+        ['should allow decimals', '1.1', '1.1'],
+        ['should allow decimals with no leading number', '.1', '0.1'],
+        ['should leave trailing decimal', '1.', '1.'],
+        ['should leave hyphen to allow negative number', '-', '-'],
+        ['should adjust -. to a valid state', '-.', '.'],
       ];
       it.each(testCases)('%s', async (name, value, expectedValue) => {
         const wrapper = setup({ type: 'number' });
 
         const input = findByTestId(wrapper, 'input-stub-testid');
         await input.setValue(value);
+
+        await flushPromises();
 
         expect(input.element.value).toBe(expectedValue);
       });
@@ -394,13 +442,10 @@ describe('BasicInput', () => {
   describe('@unit tests', () => {
     it('starts animation', async () => {
       const wrapper = setup({ label: 'test' });
+      await flushPromises();
 
-      wrapper.vm.$refs = {
-        input: {
-          matches: {
-            call: () => true,
-          },
-        },
+      wrapper.vm.$refs.input.matches = {
+        call: () => true,
       };
       const input = findByTestId(wrapper, 'input-stub-testid');
 
@@ -415,8 +460,10 @@ describe('BasicInput', () => {
 
     it('given floatingLabel false, should not start animation', async () => {
       const wrapper = mount(BasicInput, {
-        i18n,
-        propsData: {
+        global: {
+          plugins: [i18n],
+        },
+        props: {
           ...defaultProps,
           floatingLabel: false,
           testid: 'stub-testid',
@@ -427,6 +474,33 @@ describe('BasicInput', () => {
       expect(wrapper.vm.floatLabels).toBe(false);
       findByTestId(wrapper, 'input-stub-testid').trigger('animationstart');
       expect(animationStartSpy).not.toHaveBeenCalled();
+      expect(wrapper.vm.floatLabels).toBe(false);
+    });
+
+    it('should set floatLabels to false when inputValue is string', async () => {
+      const wrapper = setup({ type: 'number', placeholder: 'stub-placeholder', label: 'stub-label' });
+      await wrapper.vm.$nextTick();
+      const input = findByTestId(wrapper, 'input-stub-testid');
+      input.setValue('test');
+      input.trigger('blur');
+      expect(wrapper.vm.floatLabels).toBe(false);
+    });
+
+    it('should set floatLabels to true when inputValue is number', async () => {
+      const wrapper = setup({ type: 'number', placeholder: 'stub-placeholder', label: 'stub-label' });
+      await wrapper.vm.$nextTick();
+      const input = findByTestId(wrapper, 'input-stub-testid');
+      input.setValue(1);
+      input.trigger('blur');
+      expect(wrapper.vm.floatLabels).toBe(true);
+    });
+
+    it('should seet floatLabels to false when inputValue is empty string', async () => {
+      const wrapper = setup({ type: 'number', placeholder: 'stub-placeholder', label: 'stub-label' });
+      await wrapper.vm.$nextTick();
+      const input = findByTestId(wrapper, 'input-stub-testid');
+      input.setValue('');
+      input.trigger('blur');
       expect(wrapper.vm.floatLabels).toBe(false);
     });
   });
