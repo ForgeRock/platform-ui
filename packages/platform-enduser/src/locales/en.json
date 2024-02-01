@@ -275,7 +275,6 @@
         "entitlement": "entitlement",
         "errorGettingAccessRequests": "There was an error getting current users' access requests",
         "errorGettingCatalogFilterSchema": "There was an error getting catalog filter schema",
-        "errorSearchingCatalog": "There was an error searching the catalog",
         "errorValidatingAccessRequests": "There was an error validating this request",
         "EXISTING_ACCESS": "Access Already Granted",
         "expiryDate": "Expiry Date",
@@ -314,6 +313,7 @@
         "role": "role",
         "showIf": "Show if",
         "title": "New Request",
+        "userImageAltText": "Profile Picture - {userName}",
         "yourRequest": "Your Request"
       },
       "noRequests": "No {status} Access Requests",

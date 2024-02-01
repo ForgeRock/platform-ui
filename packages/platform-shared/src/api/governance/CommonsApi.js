@@ -9,20 +9,15 @@ import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
 /**
- * @typedef {"role" | "account" | "entitlement" } grantType
+ * Retieves resource list from IGA backend using provided query parameters
+ * @param {String} resource Type of resource to query
+ * @param {Object} queryParams query parameters to search for resource list
+ * @returns {Promise} IGA resources
  */
-
-export function getResource(resource, queryString = '', pageSize = '') {
-  return generateIgaApi().get(`commons/search/${resource}?queryString=${queryString}&pageSize=${pageSize}`);
-}
-
-/**
- * get user details by ID
- * @param {String} userId ID of selected User
- * @returns {Promise} User details
- */
-export function getUserDetails(userId = '') {
-  return generateIgaApi().get(`commons/search/user?queryString=${userId}`);
+export function getResource(resource, queryParams = {}) {
+  queryParams.queryString = queryParams.queryString ?? '';
+  const encodedQueryParams = encodeQueryString(queryParams, false);
+  return generateIgaApi().get(`commons/search/${resource}${encodedQueryParams}`);
 }
 
 /**

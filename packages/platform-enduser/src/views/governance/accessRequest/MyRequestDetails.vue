@@ -89,8 +89,8 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { useRoute, useRouter } from 'vue-router';
-import { getRequest } from '@/api/governance/AccessRequestApi';
 import { getFormattedRequest, getRequestObjectType, isTypeRole } from '@/components/utils/governance/AccessRequestUtils';
 import FrRequestDetails from '@/components/governance/RequestDetails';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';

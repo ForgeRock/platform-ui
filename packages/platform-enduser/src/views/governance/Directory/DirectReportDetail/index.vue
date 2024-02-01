@@ -74,12 +74,12 @@ of the MIT license. See the LICENSE file for details. -->
                 :name="tab.icon" />
               {{ tab.displayName }}
             </template>
-            <FrMyAccessReviewTable
+            <FrGovResourceTable
               v-if="directReportUserInfo.userId"
               :default-sort="getDefaultSort(tab.grantType)"
               :fields="getTableFields(tab.grantType)"
               :grant-type="tab.grantType"
-              :user-id="directReportUserInfo.userId"
+              :id="directReportUserInfo.userId"
               @revoke-request="showRevokeRequestModal" />
           </BTab>
         </BTabs>
@@ -113,9 +113,9 @@ import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import FrMyAccessReviewTable from '@forgerock/platform-shared/src/components/governance/MyAccessReviewTable';
+import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
+import { saveNewRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrRevokeRequestModal from './RevokeRequestModal';
-import { saveNewRequest } from '@/api/governance/AccessRequestApi';
 import { getDirectReportUserInfo } from '@/api/governance/DirectoryApi';
 
 /**
@@ -137,7 +137,7 @@ export default {
     BTab,
     FrHeader,
     FrIcon,
-    FrMyAccessReviewTable,
+    FrGovResourceTable,
     FrRevokeRequestModal,
   },
   mixins: [

@@ -220,7 +220,7 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 import dayjs from 'dayjs';
-import pluralize from 'pluralize';
+import { pluralizeSingular } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 
 import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
@@ -405,6 +405,7 @@ export default {
         doLoad();
       }
     },
+    pluralizeSingular,
     async setDisableSortAndSearchOrQueryThreshold(resourceName) {
       const { uiConfig } = this.$store.state.SharedStore;
       const configDisableRelationshipSortAndSearch = has(uiConfig, `configuration.platformSettings.managedObjectsSettings.${resourceName}.disableRelationshipSortAndSearch`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[resourceName].disableRelationshipSortAndSearch : false;
@@ -426,7 +427,7 @@ export default {
         this.relationshipArrayProperty.items.resourceCollection[0].query.fields.forEach((fieldName) => {
           this.columns.push({
             key: fieldName,
-            label: this.getTranslation(resourceCollectionSchema.properties[fieldName].title || pluralize.singular(fieldName)),
+            label: this.getTranslation(resourceCollectionSchema.properties[fieldName].title || pluralizeSingular(fieldName)),
             sortable: true,
             sortDirection: 'desc',
           });
@@ -434,7 +435,7 @@ export default {
       } else {
         this.columns.push({
           key: '_relationshipDetails',
-          label: pluralize.singular(this.relationshipArrayProperty.title),
+          label: pluralizeSingular(this.relationshipArrayProperty.title),
         });
       }
 

@@ -90,16 +90,13 @@ of the MIT license. See the LICENSE file for details. -->
                 :label="$t('common.users')"
                 :resource-path="`${$store.state.realm}_user`"
                 type="multiselect">
-                <template
-                  v-for="(slotName, index) in ['singleLabel', 'option']"
-                  :key="index"
-                  #[slotName]="{ option }">
+                <template #option="{ option }">
                   <BMedia
                     no-body
                     class="py-1">
                     <BImg
                       :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                      :alt="`profile-picture_${option.value.userName}`"
+                      :alt="$t('governance.accessRequest.newRequest.userImageAltText', { userName: option.value.userName })"
                       class="mr-2 align-self-center rounded rounded-circle"
                       width="24" />
                     <BMediaBody>
@@ -119,7 +116,7 @@ of the MIT license. See the LICENSE file for details. -->
                       class="py-1">
                       <BImg
                         :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                        :alt="`profile-picture_${option.value.userName}`"
+                        :alt="$t('governance.accessRequest.newRequest.userImageAltText', { userName: option.value.userName })"
                         class="mr-2 align-self-center rounded rounded-circle"
                         width="24" />
                       <BMediaBody>

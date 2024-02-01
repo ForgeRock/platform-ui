@@ -10,7 +10,7 @@ import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { clone } from 'lodash';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import i18n from '@/i18n';
 import router from '@/router';
 import Approvals from './index';

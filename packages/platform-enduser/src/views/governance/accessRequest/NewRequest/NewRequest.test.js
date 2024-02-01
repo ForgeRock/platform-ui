@@ -11,9 +11,9 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import Notifications from '@kyvg/vue3-notification';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/CatalogApi';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
-import * as CatalogApi from '@/api/governance/CatalogApi';
-import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import NewRequest from './index';
 import i18n from '@/i18n';
 
@@ -149,7 +149,7 @@ describe('NewRequest', () => {
       sn: 'Test',
     };
 
-    CommonsApi.getUserDetails.mockImplementation(() => Promise.resolve({
+    CommonsApi.getResource.mockImplementation(() => Promise.resolve({
       data: {
         result: [user],
       },

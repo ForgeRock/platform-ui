@@ -7,13 +7,13 @@
 
 import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import Notifications from '@kyvg/vue3-notification';
 import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
-import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import GovernanceDashboard from './index';
 
 jest.mock('@/api/governance/AccessReviewApi');
-jest.mock('@/api/governance/AccessRequestApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
 
 describe('GovernanceDashboard', () => {
   let wrapper;

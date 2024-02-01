@@ -109,9 +109,9 @@ export default {
       this.getResourceList(query);
       this.isSearching = true;
     },
-    getResourceList(query) {
+    getResourceList(queryString) {
       const pageSize = this.selectValue.length + 10;
-      getResource('user', query, pageSize)
+      getResource('user', { queryString, pageSize })
         .then(({ data }) => {
           const parsedOptions = data.result.map((element) => ({
             value: {
