@@ -54,10 +54,10 @@ import { get } from 'lodash';
 
 import FrCountCard from '@forgerock/platform-shared/src/components/CountCard';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import { getUserRequests, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 import { getRequestFilter } from '@/components/utils/governance/AccessRequestUtils';
-import { getUserRequests, getUserApprovals } from '@/api/governance/AccessRequestApi';
 
 /**
  * @description Controlling component for the governance dashboard

@@ -11,11 +11,11 @@ import { mount, flushPromises } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
 import * as CommonsApi from '@/api/governance/CommonsApi';
 import i18n from '@/i18n';
-import MyAccessReviewTable from './index';
+import GovResourceTable from './index';
 
 jest.mock('@/api/governance/CommonsApi');
 
-describe('MyAccessReviewTable', () => {
+describe('GovResourceTable', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('MyAccessReviewTable', () => {
       },
     }));
     setupTestPinia({ user: { userId: 'testId' } });
-    wrapper = mount(MyAccessReviewTable, {
+    wrapper = mount(GovResourceTable, {
       global: {
         plugins: [Notifications],
         mocks: {
@@ -89,12 +89,12 @@ describe('MyAccessReviewTable', () => {
       isLoading: false,
     });
     await flushPromises();
-    const myAccessTable = findByTestId(wrapper, 'my-access-review-table');
+    const myAccessTable = findByTestId(wrapper, 'gov-resource-table');
     expect(myAccessTable.exists()).toBeTruthy();
   });
 
   it('should have an input to search my access review table', () => {
-    const searchMyAccessReviewTable = findByTestId(wrapper, 'search-my-access-review-table');
+    const searchMyAccessReviewTable = findByTestId(wrapper, 'search-gov-resource-table');
     expect(searchMyAccessReviewTable.exists()).toBeTruthy();
   });
 
@@ -215,7 +215,7 @@ describe('MyAccessReviewTable', () => {
   it('clearing the search input resets the query params', async () => {
     const clearSpy = jest.spyOn(wrapper.vm, 'clear');
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-    const searchMyAccessReviewTable = findComponentByTestId(wrapper, 'search-my-access-review-table');
+    const searchMyAccessReviewTable = findComponentByTestId(wrapper, 'search-gov-resource-table');
     await searchMyAccessReviewTable.vm.$emit('input', 'test');
     await searchMyAccessReviewTable.vm.$emit('clear');
 
@@ -369,7 +369,7 @@ describe('MyAccessReviewTable', () => {
       wrapper.vm.loadData(true);
       await flushPromises();
       expect(wrapper.vm.isNoResultsFirstLoad).toBe(true);
-      const noData = findByTestId(wrapper, 'my-access-review-table-no-results-first-load');
+      const noData = findByTestId(wrapper, 'gov-resource-table-no-results-first-load');
       expect(noData.exists()).toBeTruthy();
     });
   });

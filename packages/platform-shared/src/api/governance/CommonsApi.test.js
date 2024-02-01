@@ -17,6 +17,17 @@ get.mockReturnValue(Promise.resolve(data));
 const userId = 'testid';
 
 describe('Commons API', () => {
+  it('should call getResource with correct payload and url with grantType account', async () => {
+    const resource = 'user';
+    const queryParams = {
+      pageNumber: 0, pageSize: 10, queryString: 'test',
+    };
+    const res = await CommonsApi.getResource(resource, queryParams);
+    expect(get).toBeCalledWith('commons/search/user?pageNumber=0&pageSize=10&queryString=test');
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
   it('should call My Access Endpoint with correct payload and url with grantType account', async () => {
     const params = {
       pageNumber: 0, pageSize: 10, grantType: 'account',

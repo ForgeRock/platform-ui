@@ -22,11 +22,15 @@ of the MIT license. See the LICENSE file for details. -->
       :placeholder="searchText"
       :validation="validation"
       :value="selectValue">
-      <template #singleLabel="{ option }">
-        {{ option.text }}
-      </template>
-      <template #option="{ option }">
-        {{ option.text }}
+      <template
+        v-for="(slotName, index) in ['singleLabel', 'option']"
+        :key="index"
+        #[slotName]="{ option }">
+        <slot
+          :name="slotName"
+          :option="option">
+          {{ option.text }}
+        </slot>
       </template>
       <template #noResult>
         <slot name="noResult">
@@ -88,6 +92,10 @@ export default {
       type: String,
       required: true,
     },
+    queryParams: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -104,7 +112,7 @@ export default {
   async mounted() {
     this.savedData = this.initialData;
     if (isEmpty(this.initialData) && !isEmpty(this.value)) {
-      const { data } = await getResource(this.resource, this.value?.split('/').pop());
+      const { data } = await getResource(this.resource, { queryString: this.value?.split('/').pop(), ...this.queryParams });
       this.savedData = data?.result?.[0];
     }
     if (!isEmpty(this.savedData)) {
@@ -158,12 +166,12 @@ export default {
     /**
      * Get resource list used for selecting a resource
      * @param {Boolean} setValue Whether handle input should be called
-     * @param {String} query Query for resource select field
+     * @param {String} queryString Query for resource select field
      */
-    getResourceList(setValue, query) {
-      if (this.showingInitialOptions && !query) return Promise.resolve();
+    getResourceList(setValue, queryString) {
+      if (this.showingInitialOptions && !queryString) return Promise.resolve();
 
-      return getResource(this.resource, query).then(({ data }) => {
+      return getResource(this.resource, { queryString, ...this.queryParams }).then(({ data }) => {
         this.options = data.result.map((element) => {
           if (this.resource === 'user' || compareRealmSpecificResourceName(this.resource, 'user')) {
             return {
@@ -173,12 +181,13 @@ export default {
             };
           }
           return {
+            ...element,
             text: element.name,
             value: element.id,
           };
         });
 
-        this.showingInitialOptions = !query;
+        this.showingInitialOptions = !queryString;
         const selectedValue = this.savedData?.id || this.options[0].value;
         if (setValue) this.handleInput(selectedValue);
       }).catch(() => {}).finally(() => { this.initialSearch = true; });
@@ -191,23 +200,20 @@ export default {
      */
     handleInput(event, isInitial) {
       this.isSearching = false;
+      const selectedOption = this.options.find((option) => option.value === event) || {};
 
       if (this.resource === 'role' || compareRealmSpecificResourceName(this.resource, 'role')) {
-        const selectedRole = this.options.find((role) => role.value === event) || {};
-
-        this.$emit('get-role-info', { name: selectedRole.text, id: selectedRole.value });
+        this.$emit('get-role-info', { name: selectedOption.text, id: selectedOption.value });
       } else if (this.resource === 'user' || compareRealmSpecificResourceName(this.resource, 'user')) {
-        let selectedUser = {};
+        if (isInitial) selectedOption.userInfo = this.savedData;
 
-        if (isInitial) selectedUser.userInfo = this.savedData;
-        else selectedUser = this.options.find((user) => user.value === event) || {};
-
-        this.$emit('get-user-info', selectedUser.userInfo);
+        this.$emit('get-user-info', selectedOption.userInfo);
       }
 
       this.selectValue = event;
       const path = `managed/${this.resource}`;
       this.$emit('input', `${path}/${event}`);
+      this.$emit('selected:option', selectedOption);
     },
   },
   watch: {

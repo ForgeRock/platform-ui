@@ -8,11 +8,11 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import Notifications from '@kyvg/vue3-notification';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 import RequestModal, { REQUEST_MODAL_TYPES } from './index';
-import * as AccessRequestApi from '../../../api/governance/AccessRequestApi';
 
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,
