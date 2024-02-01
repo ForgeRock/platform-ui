@@ -109,10 +109,10 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { getRequest, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { useRoute, useRouter } from 'vue-router';
 import FrRequestDetails from '@/components/governance/RequestDetails';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
-import { getRequest, getUserApprovals } from '@/api/governance/AccessRequestApi';
 import { getFormattedRequest, getRequestObjectType, isTypeRole } from '@/components/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 

@@ -1513,6 +1513,22 @@
       "ROLEBASED": "Role-based",
       "NEW_ACCESS": "New Access",
       "TEMPORAL": "Temporal Constraints"
+    },
+    "resource": {
+      "assignResourceModal": {
+        "appLogoAltText": "Application Logo - {appName}",
+        "grantResource": "Grant {resource}",
+        "resourceToGrant": "{resource} to Grant",
+        "stepOneDescription": "Choose the application for which to grant {resource} to this {managedResource}.",
+        "stepTwoDescription": "Choose {appName} {resource} to grant to {managedResource}.",
+        "title": "Grant {resourceType}",
+        "titleSecondStep": "Choose {resourceType}"
+      },
+      "errors": {
+        "errorCreatingAccessRequest": "There was an error creating an access request",
+        "errorSearchingCatalog": "There was an error searching the catalog"
+      },
+      "successfullyAdded": "{resource} request successfully submitted"
     }
   },
   "reports": {

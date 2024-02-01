@@ -160,6 +160,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import { getUserApprovals, getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrAccessRequestList from '@/components/governance/AccessRequestList';
 import FrRequestToolbar from '@/components/governance/RequestToolbar';
 import {
@@ -169,7 +170,6 @@ import {
   getRequestObjectType,
   getFormattedRequest,
 } from '@/components/utils/governance/AccessRequestUtils';
-import { getUserApprovals, getRequest } from '@/api/governance/AccessRequestApi';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 
 /**
