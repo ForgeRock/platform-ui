@@ -10,36 +10,47 @@ of the MIT license. See the LICENSE file for details. -->
     @click="setValue(0)"
     :aria-label="firstOption"
     :data-testid="`btn-${firstOption.toLowerCase().replace(/\s/g, '')}`">
-    {{ firstOption }}
+    {{ getTranslation(firstOption) }}
   </BButton>
-  <div
-    v-else
-    :class="[{ 'd-flex': variant === 'link' }]">
-    <BButton
+  <div v-else>
+    <div
       v-for="(option, index) in options"
       :key="index"
-      class="btn-block mt-3"
-      :variant="variant"
-      @click="setValue(index)"
-      :aria-label="option"
-      :data-testid="`btn-${option.toLowerCase().replace(/\s/g, '')}`">
-      {{ option }}
-    </BButton>
+      :class="['d-flex',positionButton]"
+      :data-testid="`option-${option.toLowerCase().replace(/\s/g, '')}`"
+    >
+      <BButton
+        class="mt-1"
+        :variant="variant"
+        @click="setValue(index)"
+        :aria-label="option"
+        :data-testid="`btn-${option.toLowerCase().replace(/\s/g, '')}`">
+        {{ getTranslation(option) }}
+      </BButton>
+    </div>
   </div>
 </template>
 
 <script>
 import { BButton } from 'bootstrap-vue';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 export default {
   name: 'ConfirmationCallback',
   components: {
     BButton,
   },
+  mixins: [
+    TranslationMixin,
+  ],
   props: {
     callback: {
       type: Object,
       required: true,
+    },
+    positionButton: {
+      type: String,
+      default: '',
     },
     /**
      * Stage info
