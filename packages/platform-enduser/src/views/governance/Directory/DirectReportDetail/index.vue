@@ -76,20 +76,17 @@ of the MIT license. See the LICENSE file for details. -->
             </template>
             <FrGovResourceTable
               v-if="directReportUserInfo.userId && tab.active"
+              :admin-access="false"
               :fields="getTableFields(tab.grantType)"
               :grant-type="tab.grantType"
               :items="resourceItems"
               :total-count="resourceTotalCount"
               @load-data="queryResource"
-              @revoke-request="showRevokeRequestModal" />
+              :modal-id="`${tab.displayName}-modal`" />
           </BTab>
         </BTabs>
       </BCard>
     </BContainer>
-    <FrRevokeRequestModal
-      :show-spinner="isSubmittingRevokeRequest"
-      @hidden="resetRevokeRequestModal"
-      @submission="submitRevokeRequest" />
   </div>
 </template>
 
@@ -106,7 +103,6 @@ import {
   BTabs,
   BTab,
 } from 'bootstrap-vue';
-import { get } from 'lodash';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
@@ -115,9 +111,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
-import { saveNewRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getGovernanceGrants } from '@forgerock/platform-shared/src/utils/governance/resource';
-import FrRevokeRequestModal from './RevokeRequestModal';
 import { getDirectReportUserInfo } from '@/api/governance/DirectoryApi';
 
 /**
@@ -140,7 +134,6 @@ export default {
     FrHeader,
     FrIcon,
     FrGovResourceTable,
-    FrRevokeRequestModal,
   },
   mixins: [
     NotificationMixin,
@@ -154,8 +147,6 @@ export default {
       directReportUserInfo: {},
       resourceItems: [],
       resourceTotalCount: 0,
-      isSubmittingRevokeRequest: false,
-      requestToRevoke: {},
       tabItems: [
         {
           displayName: this.$t('common.accounts'),
@@ -196,22 +187,6 @@ export default {
   },
   computed: {
     ...mapState(useUserStore, ['userId']),
-    revokeRequestCatalog() {
-      if (Object.keys(this.requestToRevoke).length) {
-        const { item, catalog } = this.requestToRevoke;
-        const id = get(catalog, 'id', '');
-        if (item.type === 'entitlementGrant') {
-          return [{ type: 'entitlement', id }];
-        }
-        if (item.type === 'accountGrant') {
-          return [{ type: 'application', id }];
-        }
-        if (item.type === 'roleMembership') {
-          return [{ type: 'role', id }];
-        }
-      }
-      return [];
-    },
   },
   methods: {
     pluralizeValue,
@@ -302,28 +277,6 @@ export default {
       const response = await getGovernanceGrants(params.grantType, this.userId, params);
       this.resourceItems = response.items;
       this.resourceTotalCount = response.totalCount;
-    },
-    resetRevokeRequestModal() {
-      this.isSubmittingRevokeRequest = false;
-      this.requestToRevoke = {};
-    },
-    showRevokeRequestModal(request) {
-      this.requestToRevoke = request;
-      this.$root.$emit('bv::show::modal', 'revoke-request-modal');
-    },
-    async submitRevokeRequest(payload) {
-      this.isSubmittingRevokeRequest = true;
-      try {
-        payload.accessModifier = 'remove';
-        payload.catalogs = this.revokeRequestCatalog;
-        payload.users = [this.directReportUserInfo.userId];
-        await saveNewRequest(payload);
-        this.displayNotification('success', this.$t('governance.accessRequest.newRequest.requestSuccess'));
-      } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.requestErrorTitle'));
-      } finally {
-        this.$root.$emit('bv::hide::modal', 'revoke-request-modal');
-      }
     },
     tabActivated(tabIndex, prevTabIndex) {
       if (tabIndex > -1) {

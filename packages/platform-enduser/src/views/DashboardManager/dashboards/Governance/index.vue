@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -55,9 +55,9 @@ import { get } from 'lodash';
 import FrCountCard from '@forgerock/platform-shared/src/components/CountCard';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getUserRequests, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getRequestFilter } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
-import { getRequestFilter } from '@/components/utils/governance/AccessRequestUtils';
 
 /**
  * @description Controlling component for the governance dashboard

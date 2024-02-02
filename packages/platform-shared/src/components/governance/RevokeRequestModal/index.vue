@@ -1,24 +1,26 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    id="revoke-request-modal"
+    :id="modalId"
+    no-close-on-backdrop
+    no-close-on-esc
     size="lg"
     title-class="h5"
     title-tag="h2"
     :static="isTesting"
-    :title="$t('governance.directReports.revokeRequest')"
-    @hidden="$emit('hidden')">
+    :title="$t('governance.request.revokeRequest')"
+    @hidden="resetModal(); $emit('hidden')">
     <!-- Justification textarea -->
     <BFormGroup>
       <FrField
         v-model="justificationText"
         data-testid="justification-field"
         type="textarea"
-        :label="$t('governance.directReports.justification')"
-        :description="$t('governance.directReports.revokeJustification')"
+        :label="$t('governance.request.justification')"
+        :description="$t('governance.request.revokeJustification')"
         :max-rows="10"
         :rows="5" />
     </BFormGroup>
@@ -53,13 +55,13 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Expiration Datepicker -->
     <BFormGroup>
       <div class="mb-2 text-muted">
-        {{ $t('governance.accessRequest.newRequest.applyExpirationDate') }}
+        {{ $t('governance.request.requestExpiration') }}
       </div>
       <FrDatepicker
         name="expirationDate"
         v-model="expirationDate"
         :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
-        :placeholder="$t('governance.accessRequest.newRequest.expiryDate')" />
+        :placeholder="$t('governance.request.expiryDate')" />
     </BFormGroup>
     <template #modal-footer="{ cancel }">
       <div class="w-100 d-flex justify-content-end">
@@ -72,7 +74,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrButtonWithSpinner
           data-testid="revoke-request-submit-button"
           variant="primary"
-          :button-text="$t('governance.directReports.submitRequest')"
+          :button-text="$t('governance.request.submitRequest')"
           :spinner-text="$t('common.submitting')"
           :show-spinner="showSpinner"
           @click="submission" />
@@ -91,7 +93,7 @@ import {
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
+import getPriorityImageSrc from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 
 /**
  * Provides the ability to revoke grants for direct reports.
@@ -108,6 +110,10 @@ export default {
     FrField,
   },
   props: {
+    modalId: {
+      type: String,
+      default: 'revoke-request-modal',
+    },
     isTesting: {
       type: Boolean,
       default: false,
@@ -124,17 +130,17 @@ export default {
       priorityOptions: [
         {
           imgSrc: getPriorityImageSrc('low'),
-          text: this.$t('governance.accessRequest.newRequest.priority.low'),
+          text: this.$t('governance.request.priority.low'),
           value: 'low',
         },
         {
           imgSrc: getPriorityImageSrc('medium'),
-          text: this.$t('governance.accessRequest.newRequest.priority.med'),
+          text: this.$t('governance.request.priority.med'),
           value: 'medium',
         },
         {
           imgSrc: getPriorityImageSrc('high'),
-          text: this.$t('governance.accessRequest.newRequest.priority.high'),
+          text: this.$t('governance.request.priority.high'),
           value: 'high',
         },
       ],
@@ -151,6 +157,11 @@ export default {
         payload.justification = this.justificationText;
       }
       this.$emit('submission', payload);
+    },
+    resetModal() {
+      this.expirationDate = '';
+      this.justificationText = '';
+      this.selectedPriority = 'low';
     },
   },
 };

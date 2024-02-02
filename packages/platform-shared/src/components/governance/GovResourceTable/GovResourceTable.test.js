@@ -9,11 +9,11 @@ import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mount, flushPromises } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
-import * as CommonsApi from '@/api/governance/CommonsApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
 import GovResourceTable from './index';
 
-jest.mock('@/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
 const mockItems = [
   {
@@ -200,14 +200,16 @@ describe('GovResourceTable', () => {
     expect(badge.text()).toBe(wrapper.vm.roleBasedAssignment);
   });
 
-  it('should emit "revoke-request" if a grantType is attempted to be revoked', async () => {
+  it('should open revoke modal when revoke is clicked', async () => {
     const wrapper = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
+    const revoke = jest.spyOn(wrapper.vm, 'showRevokeRequestModal');
     await wrapper.setProps({ items: mockItems });
 
     const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     await actionOptionsMenu.trigger('click');
     await actionOptionsMenu.find('li:nth-of-type(2) > a').trigger('click'); // Revoke menu item
-    expect(wrapper.emitted('revoke-request')).toEqual([[wrapper.vm.itemsWithAssignment[0]]]);
+
+    expect(revoke).toHaveBeenCalled();
   });
 
   it('clearing the search input resets the query params', async () => {
