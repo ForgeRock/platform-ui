@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -25,6 +25,7 @@ module.exports = defineConfig({
       accessibility: 0.75,
       'best-practices': 0.75,
     },
+    hars_folders: 'e2e/hars',
   },
 
   fixturesFolder: 'e2e/fixtures',
@@ -32,9 +33,8 @@ module.exports = defineConfig({
   videosFolder: 'e2e/videos',
 
   e2e: {
-    // eslint-disable-next-line no-unused-vars
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      return require('./e2e/plugins/index.js')(on, config); // eslint-disable-line global-require
     },
     excludeSpecPattern: ['lighthouse.suite.cy.js'],
     specPattern: 'e2e/tests/**/*.js',
