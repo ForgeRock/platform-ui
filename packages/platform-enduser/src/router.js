@@ -261,7 +261,11 @@ router.beforeEach((to, from, next) => {
   const page = to.name ? i18n.global.t(`pageTitles.${to.name}`) : '';
   document.title = i18n.global.t('pageTitles.pageTitle', { page });
   const url = new URL(window.location);
-  const realm = url.searchParams.get('realm');
+  let realm = url.searchParams.get('realm');
+
+  if (realm && realm !== '/' && realm.startsWith('/')) {
+    realm = realm.substring(1);
+  }
 
   if (store.state.hostedPages === false && to.name !== 'Forbidden') {
     next({ name: 'Forbidden' });
