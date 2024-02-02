@@ -161,15 +161,15 @@ import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { getUserApprovals, getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import FrAccessRequestList from '@/components/governance/AccessRequestList';
-import FrRequestToolbar from '@/components/governance/RequestToolbar';
 import {
   getRequestFilter,
   getStatusText,
   sortKeysMap,
   getRequestObjectType,
   getFormattedRequest,
-} from '@/components/utils/governance/AccessRequestUtils';
+} from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import FrAccessRequestList from '@/components/governance/AccessRequestList';
+import FrRequestToolbar from '@/components/governance/RequestToolbar';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 
 /**

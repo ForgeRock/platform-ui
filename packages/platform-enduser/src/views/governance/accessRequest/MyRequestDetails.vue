@@ -91,7 +91,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { useRoute, useRouter } from 'vue-router';
-import { getFormattedRequest, getRequestObjectType, isTypeRole } from '@/components/utils/governance/AccessRequestUtils';
+import { getFormattedRequest, getRequestObjectType, isTypeRole } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import FrRequestDetails from '@/components/governance/RequestDetails';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 import i18n from '@/i18n';

@@ -538,7 +538,7 @@ export default {
         payload.users = users;
         payload.catalogs = [...applications, ...entitlements, ...roles];
         await saveNewRequest(payload);
-        this.displayNotification('success', this.$t('governance.accessRequest.newRequest.requestSuccess'));
+        this.displayNotification('success', this.$t('governance.request.requestSuccess'));
         this.$router.push({
           name: 'MyRequests',
         });

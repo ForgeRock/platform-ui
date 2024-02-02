@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -123,10 +123,10 @@ import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import { getRequestFilter, getStatusText, sortKeysMap } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { getUserRequests } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrAccessRequestList from '@/components/governance/AccessRequestList';
 import FrRequestToolbar from '@/components/governance/RequestToolbar';
-import { getRequestFilter, getStatusText, sortKeysMap } from '@/components/utils/governance/AccessRequestUtils';
 import FrNewRequestModal from '@/components/governance/NewRequestModal';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 /**

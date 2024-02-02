@@ -110,7 +110,7 @@ import {
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
-import getPriorityImageSrc, { requestTypes } from '@/components/utils/governance/AccessRequestUtils';
+import getPriorityImageSrc, { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 /**
  * Component used to filter access requests
  */

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,11 +7,11 @@
 
 import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
+import getPriorityImageSrc from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 import RequestCart from './index';
 
-jest.mock('@/components/utils/governance/AccessRequestUtils');
+jest.mock('@forgerock/platform-shared/src/utils/governance/AccessRequestUtils');
 
 describe('RequestCart', () => {
   const requestCartUsersStub = [

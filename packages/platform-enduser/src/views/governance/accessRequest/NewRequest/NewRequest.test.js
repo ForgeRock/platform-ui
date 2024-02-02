@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,11 +13,11 @@ import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
+import getPriorityImageSrc from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import NewRequest from './index';
 import i18n from '@/i18n';
 
-jest.mock('@/components/utils/governance/AccessRequestUtils');
+jest.mock('@forgerock/platform-shared/src/utils/governance/AccessRequestUtils');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
 CatalogApi.searchCatalog = jest.fn().mockReturnValue({

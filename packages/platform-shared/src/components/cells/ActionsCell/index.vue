@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     align="right"
     :class="wrapperClass ? wrapperClass : 'pr-3'">
     <BDropdown
-      boundary="window"
+      :boundary="boundary"
       class="p-0"
       no-caret
       right
@@ -101,6 +101,10 @@ export default {
     BDropdownItem,
   },
   props: {
+    boundary: {
+      default: 'window',
+      type: String,
+    },
     /**
      * Enables a dropdown option to delete the current row
      */
