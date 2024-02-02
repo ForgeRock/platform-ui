@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -20,10 +20,17 @@
 
 // `on` is used to hook into various events Cypress emits
 // `config` is the resolved Cypress config
-module.exports = (on, config) => ({
-  ...config,
-  fixturesFolder: 'e2e/fixtures',
-  screenshotsFolder: 'e2e/screenshots',
-  videosFolder: 'e2e/videos',
-  supportFile: 'e2e/support/index.js',
-});
+const { install } = require('@neuralegion/cypress-har-generator');
+
+module.exports = (on, config) => {
+  install(on);
+
+  return {
+    ...config,
+    fixturesFolder: 'e2e/fixtures',
+    screenshotsFolder: 'e2e/screenshots',
+    videosFolder: 'e2e/videos',
+    supportFile: 'e2e/support/index.js',
+    hars_folders: 'e2e/hars',
+  };
+};
