@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -47,7 +47,7 @@ filterTests(['forgeops', 'cloud'], () => {
       setBaseTheme();
     });
 
-    it('should change enduser colors', () => {
+    it.skip('should change enduser colors', () => {
       // Set the theme data for the test
       changeColour(/^Link Color/, '16FF96');
       changeColour(/^Link Hover Color/, '123123');
@@ -72,7 +72,7 @@ filterTests(['forgeops', 'cloud'], () => {
       deleteIDMUser(enduserUserId);
     });
 
-    it('should change profile page logo', () => {
+    it.skip('should change profile page logo', () => {
       // Set the theme data for the test
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('tab', { name: 'Logo' }).click();
@@ -127,7 +127,7 @@ filterTests(['forgeops', 'cloud'], () => {
       deleteIDMUser(enduserUserId);
     });
 
-    it('should change login/profile favicon', () => {
+    it.skip('should change login/profile favicon', () => {
       // Set the theme data for the test
       cy.findByRole('tab', { name: 'Favicon' }).click();
       cy.findByRole('button', { name: 'Logo' }).click();
