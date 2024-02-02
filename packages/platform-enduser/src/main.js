@@ -32,6 +32,7 @@ import { sanitizeUrl } from '@braintree/sanitize-url';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import velocity from 'velocity-animate';
 import BootstrapVue from 'bootstrap-vue';
+import createRealmPath from '@forgerock/platform-shared/src/utils/createRealmPath';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
@@ -146,19 +147,14 @@ const startApp = () => {
 const addAppAuth = (realm) => {
   const AM_URL = store.state.SharedStore.amBaseURL;
   let postLogoutUrlClaim;
-
   let clickSession;
   let keypressSession;
   let pageFocus;
   let realmPath = '';
+
   if (realm !== '/' && realm !== 'root') {
     store.commit('setRealm', realm);
-
-    if (realm.startsWith('/')) {
-      realmPath = `realms/root/realms/${realm.substring(1)}/`;
-    } else {
-      realmPath = `realms/root/realms/${realm}/`;
-    }
+    realmPath = `${createRealmPath(realm)}/`;
   }
 
   const commonSettings = {
