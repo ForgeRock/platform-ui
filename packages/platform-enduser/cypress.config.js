@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -22,6 +22,7 @@ module.exports = defineConfig({
       accessibility: 0.75,
       'best-practices': 0.75,
     },
+    hars_folders: 'e2e/hars',
   },
   fixturesFolder: 'e2e/fixtures',
   screenshotsFolder: 'e2e/screenshots',

@@ -62,4 +62,7 @@ else
   export CYPRESS_TAGS="cloud"
 fi
 
+# Allow cypress-har-generator to run in electron browser
+export ELECTRON_EXTRA_LAUNCH_ARGS=--remote-debugging-port=9222
+
 $@

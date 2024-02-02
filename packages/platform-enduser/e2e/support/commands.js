@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import '@testing-library/cypress/add-commands';
+import '@neuralegion/cypress-har-generator/commands';
 
 Cypress.Commands.add(
   'loginAsEnduser',
