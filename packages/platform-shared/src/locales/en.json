@@ -1514,6 +1514,21 @@
       "NEW_ACCESS": "New Access",
       "TEMPORAL": "Temporal Constraints"
     },
+    "request": {
+      "expiryDate": "Expiry Date",
+      "justification": "Justification",
+      "priority": {
+        "low": "Low",
+        "med": "Medium",
+        "high": "High"
+      },
+      "requestError": "Error submitting request",
+      "requestExpiration": "Request Expiration (optional)",
+      "requestSuccess": "Request successfully submitted",
+      "revokeJustification": "Provide a justification for revoking access.",
+      "revokeRequest": "Revoke Request",
+      "submitRequest": "Submit Request"
+    },
     "resource": {
       "assignResourceModal": {
         "appLogoAltText": "Application Logo - {appName}",

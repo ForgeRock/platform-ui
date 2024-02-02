@@ -307,7 +307,6 @@
         "requestErrorBody": "The following user(s) either already have the requested item assigned or in a pending request. Choose another item to request for the selected user(s).",
         "requestErrorTitle": "Request Error",
         "requestingFor": "Requesting for",
-        "requestSuccess": "Request successfully submitted",
         "requestTypeAccess": "Request {type} Access",
         "results": "{totalCount} Result | {totalCount} Results",
         "role": "role",
@@ -349,14 +348,10 @@
     "directReports": {
       "errorGettingDirectReports": "Error getting direct reports.",
       "errorGettingDirectReportUserInfo": "Error getting direct report user information.",
-      "justification": "Justification",
       "noDirectReportsFound": "No direct reports found.",
       "noResultsHelp": "Try a new search in the seach box above.",
       "noResultsUser": "No direct reports for this user.",
       "requestSubmitted": "Request Submitted",
-      "revokeJustification": "Provide a justification for revoking access.",
-      "revokeRequest": "Revoke Request",
-      "submitRequest": "Submit Request",
       "subtitle": "View your direct reports.",
       "title": "My Direct Reports"
     },

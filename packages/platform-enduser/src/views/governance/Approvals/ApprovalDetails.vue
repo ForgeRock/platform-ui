@@ -110,10 +110,10 @@ import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getRequest, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getFormattedRequest, getRequestObjectType, isTypeRole } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { useRoute, useRouter } from 'vue-router';
 import FrRequestDetails from '@/components/governance/RequestDetails';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
-import { getFormattedRequest, getRequestObjectType, isTypeRole } from '@/components/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 
 // Composables
