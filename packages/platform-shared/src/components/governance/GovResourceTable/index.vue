@@ -156,6 +156,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrActionsCell
             v-if="item.assignment === directAssignment || item.assignment === staticAssignment || showViewDetails"
             test-id="relationship-menu"
+            boundary="scrollParent"
             :delete-option="false"
             :divider="false"
             :edit-option="false">
@@ -168,8 +169,8 @@ of the MIT license. See the LICENSE file for details. -->
                   name="list_alt" />{{ $t('common.viewDetails') }}
               </BDropdownItem>
               <BDropdownItem
-                v-if="(item.assignment === directAssignment || item.assignment === staticAssignment) && adminAccess"
-                @click="$emit('revoke-request', item);">
+                v-if="(item.assignment === directAssignment || item.assignment === staticAssignment)"
+                @click="showRevokeRequestModal(item)">
                 <FrIcon
                   class="mr-2"
                   name="delete" />{{ $t('common.revoke') }}
@@ -198,13 +199,19 @@ of the MIT license. See the LICENSE file for details. -->
       :resource-type="pluralizeValue(grantType)"
       @assign-resources="assignResources"
       @get-entitlements="getEntitlements" />
+    <FrRevokeRequestModal
+      :modal-id="revokeModalId"
+      :show-spinner="isSubmittingRevokeRequest"
+      @hidden="resetRevokeRequestModal"
+      @submission="submitRevokeRequest" />
   </div>
 </template>
 
 <script>
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
 import {
   BBadge,
+  BButton,
   BButtonToolbar,
   BCard,
   BCardHeader,
@@ -232,11 +239,13 @@ import { searchCatalog } from '@forgerock/platform-shared/src/api/governance/Cat
 // import { patchManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { saveNewRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrGovAssignResourceModal from '../GovAssignResourceModal';
+import FrRevokeRequestModal from '../RevokeRequestModal';
 
 export default {
   name: 'GovResourceTable',
   components: {
     BBadge,
+    BButton,
     BButtonToolbar,
     BCard,
     BCardHeader,
@@ -249,10 +258,11 @@ export default {
     FrActionsCell,
     FrGovAssignResourceModal,
     FrIcon,
+    FrNoData,
     FrPagination,
+    FrRevokeRequestModal,
     FrSearchInput,
     FrSpinner,
-    FrNoData,
     FrUserEntitlementModal,
   },
   mixins: [
@@ -283,6 +293,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    modalId: {
+      type: String,
+      default: 'gov-resource',
+    },
     parentResourceName: {
       type: String,
       default: '',
@@ -306,8 +320,10 @@ export default {
       grantDetails: {},
       isLoading: true,
       isNoResultsFirstLoad: null,
+      isSubmittingRevokeRequest: false,
       paginationPage: 1,
       paginationPageSize: 10,
+      requestToRevoke: '',
       roleBasedAssignment: this.$t('pages.assignment.roleBased'),
       ruleBasedAssignment: this.$t('pages.assignment.ruleBased'),
       searchQuery: '',
@@ -339,6 +355,25 @@ export default {
     },
     resourceIsRole() {
       return this.parentResourceName.endsWith('role');
+    },
+    revokeModalId() {
+      return `${this.modalId}-revoke`;
+    },
+    revokeRequestCatalog() {
+      if (Object.keys(this.requestToRevoke).length) {
+        const { item, catalog } = this.requestToRevoke;
+        const id = get(catalog, 'id', '');
+        if (item.type === 'entitlementGrant') {
+          return [{ type: 'entitlement', id }];
+        }
+        if (item.type === 'accountGrant') {
+          return [{ type: 'application', id }];
+        }
+        if (item.type === 'roleMembership') {
+          return [{ type: 'role', id }];
+        }
+      }
+      return [];
     },
     resourceIsUser() {
       return this.parentResourceName.endsWith('user');
@@ -516,15 +551,41 @@ export default {
       this.$emit('load-data', params);
     },
     pluralizeValue,
+    resetRevokeRequestModal() {
+      this.isSubmittingRevokeRequest = false;
+      this.requestToRevoke = {};
+    },
     /**
      * Opens modal to add grant type
      */
     showAddModal() {
       this.$bvModal.show('govCreateResourceModal');
     },
+    showRevokeRequestModal(request) {
+      this.requestToRevoke = request;
+      this.$bvModal.show(this.revokeModalId);
+    },
     sortChanged(event) {
       const { sortBy, sortDesc } = event;
       this.loadData({ sortBy, sortDesc, paginationPage: 1 });
+    },
+    async submitRevokeRequest(payload) {
+      this.isSubmittingRevokeRequest = true;
+      try {
+        payload.accessModifier = 'remove';
+        payload.catalogs = this.revokeRequestCatalog;
+        payload.users = [this.id];
+        if (this.adminAccess) payload.context = { type: 'admin' };
+
+        const { data } = await saveNewRequest(payload);
+
+        if (data.errors?.length) this.showErrorMessage(null, data.errors[0].message);
+        else this.displayNotification('success', this.$t('governance.request.requestSuccess'));
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.request.requestError'));
+      } finally {
+        this.$bvModal.hide(this.revokeModalId);
+      }
     },
   },
   watch: {

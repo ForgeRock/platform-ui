@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -101,8 +101,8 @@ import {
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import getPriorityImageSrc from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import FrRequestItemsGroup from './RequestItemsGroup';
-import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 
 /**
  * A form that displays fields for requesting access to applications, entitlements and roles for one or multiple users
