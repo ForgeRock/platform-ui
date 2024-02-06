@@ -16,6 +16,7 @@
     "addAObject": "Add a {object}",
     "admin": "Admin",
     "advancedOptions": "advanced options",
+    "agents": "agents",
     "aggregate": "Aggregate",
     "aggregates": "Aggregates",
     "agree": "I Agree",
@@ -175,6 +176,7 @@
     "parameter": "Parameter",
     "parameters": "Parameters",
     "password": "Password",
+    "passwordLower": "password",
     "path": "Path",
     "pending": "Pending",
     "preview": "Preview",
@@ -420,6 +422,7 @@
       "lowerCaseAlphaNumericUnderscoreHyphenOnlyWithHtml": "Can only contain lowercase <code>a-z</code>, <code>0-9</code>, <code>underscores</code> and <code>hyphens</code>",
       "maxLength": "{length} characters maximum",
       "singleSpaces": "Multiple spaces prohibited",
+      "secretLabelIdentifier": "Can only contain characters a-z, 0-9, and periods. Cannot start or end with a period",
       "url_with_fragment": "URLs cannot contain #",
       "whitespace": "Space characters prohibited"
     },
