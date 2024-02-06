@@ -955,7 +955,13 @@
     }
   },
   "components": {
-    "noData": "No group data provided"
+    "noData": "No group data provided",
+    "secretLabelIdentifierField": {
+      "useSecretStore": "Use Secret Store for { passwordType }",
+      "useSecretStoreDesc": "Use a configured secret store for the { appType } { passwordType }. When active the { appType } will first check configured secret stores for a value before using the manually entered { passwordType }.",
+      "secretIdentifier": "Secret Label Identifier",
+      "secretIdentifierDesc": "Secret Label Identifier is used to construct references to secrets in a configured secret store.<br/>eg. <code>am.applications.{ appTypeShort }.&lt;identifier&gt;.secret</code> <a href='{ docsLink }' target='_blank'>View docs</a>"
+    }
   },
   "pages": {
     "app": {
@@ -1930,18 +1936,25 @@
     "nativeEdit": "Edit advanced settings in the Access Management Native Console",
     "usePolicyAuthorizationName": "Use Policy Authorization",
     "usePolicyAuthorizationHelp": "Use policy to perform fine-grained user authorization. If not enabled the agent will only manage basic user authentication. (Deactivating policy authorization activates SSO_Only).",
+    "passwordSecretIdentifier": "Password Secret Identifier",
+    "setPassword": "Set Password",
+    "setPasswordSuccess": "Password set",
+    "setPasswordFail": "Unable to set password",
     "policySetName": "Policy Set",
     "policySetHelp": "Choose a set of policies for this agent to use to protect your application endpoints.",
     "gateway": {
       "name": "Identity Gateway Profile",
+      "type": "Identity Gateway",
       "redirectUrlName": "Redirect URLs",
       "redirectUrlHelp": "Redirect URLs for cross domain single sign-on (CDSSO) eg. http://openig.ext.com:8080/home/cdsso/redirect"
     },
     "java-agent": {
-      "name": "Java Agent Profile"
+      "name": "Java Agent Profile",
+      "type": "Java Agent"
     },
     "web-agent": {
-      "name": "Web Agent Profile"
+      "name": "Web Agent Profile",
+      "type": "Web Agent"
     },
     "createModal": {
       "selectType": {
