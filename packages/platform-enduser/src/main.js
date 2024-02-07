@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -266,6 +266,10 @@ const addAppAuth = (realm) => {
       }
       localStorage.removeItem('originalLoginRealm');
     }
+
+    // stop the router from watching hash changes so no ugly redirects happen whilst logging out
+    router.listening = false;
+
     // clear hash so user is not directed to previous hash on subsequent logins
     if (clearHash) window.location.hash = '';
 
