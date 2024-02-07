@@ -9,8 +9,10 @@ import * as BaseApi from '@forgerock/platform-shared/src/api/BaseApi';
 import * as CommonsApi from './CommonsApi';
 
 const get = jest.fn();
+const post = jest.fn();
 BaseApi.generateIgaApi = jest.fn(() => ({
   get,
+  post,
 }));
 const data = { result: [], totalCount: 0 };
 get.mockReturnValue(Promise.resolve(data));
@@ -56,5 +58,46 @@ describe('Commons API', () => {
     expect(get).toBeCalledWith('/governance/user/testid/grants?pageNumber=0&pageSize=10&grantType=role');
     expect(BaseApi.generateIgaApi).toBeCalled();
     expect(res).toEqual(data);
+  });
+
+  describe('searchGovernanceResource', () => {
+    afterEach(() => {
+      post.mockClear();
+    });
+    it('should make a call with defaults', async () => {
+      await CommonsApi.searchGovernanceResource({
+        id: '',
+        pageNumber: 1,
+        pageSize: 10,
+        sortBy: 'application.name',
+      });
+
+      expect(post).toBeCalledWith(
+        '/governance/resource/search',
+        {
+          id: '',
+          pageNumber: 1,
+          pageSize: 10,
+          sortBy: 'application.name',
+        },
+      );
+    });
+
+    it('should make a call with the search query', async () => {
+      await CommonsApi.searchGovernanceResource({
+        id: '',
+        pageNumber: 1,
+        pageSize: 10,
+        sortBy: 'application.name',
+      });
+
+      expect(post).toBeCalledWith('/governance/resource/search',
+        {
+          id: '',
+          pageNumber: 1,
+          pageSize: 10,
+          sortBy: 'application.name',
+        });
+    });
   });
 });

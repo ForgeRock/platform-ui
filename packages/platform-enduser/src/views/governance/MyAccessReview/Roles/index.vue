@@ -9,14 +9,18 @@ of the MIT license. See the LICENSE file for details. -->
       :subtitle="$t('pages.myAccess.role.subtitle')"
       :title="$t('pages.myAccess.role.title')" />
     <FrGovResourceTable
-      default-sort="role.name"
       :fields="fields"
-      grant-type="role" />
+      grant-type="role"
+      :items="resourceItems"
+      :total-count="resourceTotalCount"
+      @load-data="queryResource" />
   </BContainer>
 </template>
 
 <script>
 import { BContainer } from 'bootstrap-vue';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { getGovernanceGrants } from '@forgerock/platform-shared/src/utils/governance/resource';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 
@@ -40,7 +44,21 @@ export default {
           label: this.$t('pages.myAccess.timeConstraint'),
         },
       ],
+      resourceItems: [],
+      resourceTotalCount: 0,
+      userId: useUserStore().userId,
     };
+  },
+  methods: {
+    /**
+     * Request grants for governance resource
+     * @param {Object} params query parameters to pass to request
+     */
+    async queryResource(params) {
+      const response = await getGovernanceGrants('role', this.userId, params);
+      this.resourceItems = response.items;
+      this.resourceTotalCount = response.totalCount;
+    },
   },
 };
 </script>
