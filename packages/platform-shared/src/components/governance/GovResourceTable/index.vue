@@ -320,7 +320,7 @@ export default {
     if (this.showViewDetails) {
       try {
         const { data } = await getGlossarySchema();
-        this.glossarySchema = [data['/openidm/managed/assignment']];
+        this.glossarySchema = data['/openidm/managed/assignment'];
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
       }
