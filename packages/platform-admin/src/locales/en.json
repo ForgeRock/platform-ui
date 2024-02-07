@@ -2766,6 +2766,7 @@
       "IGNORE": "Do not change the link or target object state",
       "LINK": "Link the correlated target object",
       "NOREPORT": "Do not perform any action or generate any report",
+      "ONBOARD": "Onboard the account and link the correlated target object",
       "REPORT": "Do not perform any action but report what would happen if the default action were performed",
       "UNLINK": "Unlink the linked target object",
       "UPDATE": "Link and update a target object"
@@ -2778,6 +2779,7 @@
       "IGNORE": "Ignore",
       "LINK": "Link",
       "NOREPORT": "No Report",
+      "ONBOARD": "Onboard",
       "REPORT": "Report",
       "Script": "Script",
       "UNLINK": "Unlink",
