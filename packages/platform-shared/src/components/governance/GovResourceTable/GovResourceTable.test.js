@@ -15,53 +15,58 @@ import GovResourceTable from './index';
 
 jest.mock('@/api/governance/CommonsApi');
 
-describe('GovResourceTable', () => {
-  let wrapper;
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    CommonsApi.getUserGrants = jest.fn().mockReturnValue(Promise.resolve({
-      data: {
-        result: [
-          {
-            item: {
-              type: 'accountGrant',
-            },
-            user: {
-              accountStatus: 'active',
-            },
-            account: {
-              userPrincipalName: 'test1@forgerock.com',
-            },
-            application: {
-              name: 'test',
-              templateName: 'test',
-            },
-            relationship: {
-              id: '1234',
-              properties: {
-                grantTypes: [{
-                  grantType: 'recon',
-                  id: '1234',
-                }],
-              },
-            },
-          },
-        ],
-        totalCount: 1,
+const mockItems = [
+  {
+    item: {
+      type: 'entitlementGrant',
+    },
+    user: {
+      accountStatus: 'active',
+    },
+    account: {
+      userPrincipalName: 'test1@forgerock.com',
+    },
+    application: {
+      name: 'test',
+      templateName: 'test',
+    },
+    relationship: {
+      id: '1234',
+      properties: {
+        grantTypes: [{
+          grantType: 'recon',
+          id: '1234',
+        }],
       },
-    }));
+    },
+  },
+];
+
+describe('GovResourceTable', () => {
+  CommonsApi.getGlossarySchema = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  CommonsApi.getUserGrants = jest.fn().mockReturnValue(Promise.resolve({
+    data: {
+      result: mockItems,
+      totalCount: 1,
+    },
+  }));
+  async function mountComponent(overrideProps) {
+    jest.clearAllMocks();
     setupTestPinia({ user: { userId: 'testId' } });
-    wrapper = mount(GovResourceTable, {
+    const wrapper = mount(GovResourceTable, {
       global: {
-        plugins: [Notifications],
+        plugins: [i18n, Notifications],
         mocks: {
-          $t: (text, prop) => i18n.global.t(text, prop),
+          $bvModal: {
+            show: jest.fn(),
+            hide: jest.fn(),
+          },
         },
       },
       props: {
-        grantType: 'account',
         defaultSort: 'application.name',
+        grantType: 'account',
+        resourceName: 'directReportDetail',
         fields: [
           {
             key: 'appName',
@@ -75,30 +80,40 @@ describe('GovResourceTable', () => {
             key: 'accountName',
             label: '',
           },
+          {
+            key: 'assignment',
+            label: '',
+          },
+          {
+            key: 'actions',
+            label: '',
+          },
         ],
+        ...overrideProps,
       },
     });
-  });
+    await flushPromises();
+    return wrapper;
+  }
 
   it('should have a loading spinner then have a table', async () => {
-    wrapper.setData({ isLoading: true });
-    await flushPromises();
+    const wrapper = await mountComponent();
     const myAccessSpinner = wrapper.find('[role="status"]');
     expect(myAccessSpinner.exists()).toBeTruthy();
-    wrapper.setData({
-      isLoading: false,
-    });
+    wrapper.setProps({ items: mockItems });
     await flushPromises();
     const myAccessTable = findByTestId(wrapper, 'gov-resource-table');
     expect(myAccessTable.exists()).toBeTruthy();
   });
 
-  it('should have an input to search my access review table', () => {
+  it('should have an input to search my access review table', async () => {
+    const wrapper = await mountComponent();
     const searchMyAccessReviewTable = findByTestId(wrapper, 'search-gov-resource-table');
     expect(searchMyAccessReviewTable.exists()).toBeTruthy();
   });
 
   it('shows the actions menu if passed in and account assignment is direct', async () => {
+    const wrapper = await mountComponent();
     let actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     expect(actionOptionsMenu.exists()).toBeFalsy();
     let badge = findByTestId(wrapper, 'status-badge');
@@ -106,43 +121,52 @@ describe('GovResourceTable', () => {
 
     // We set the resourceName to 'directReportDetails' to test that the actions
     // menu should be showing and the badge should be set to 'Direct'.
-    await wrapper.setProps({
-      resourceName: 'directReportDetail',
-      grantType: 'account',
-      defaultSort: 'application.name',
-      fields: [
-        {
-          key: 'appName',
-          label: '',
-        },
-        {
-          key: 'entitlementName',
-          label: '',
-        },
-        {
-          key: 'accountName',
-          label: '',
-        },
-        {
-          key: 'assignment',
-          label: '',
-        },
-        {
-          key: 'actions',
-          label: '',
-        },
-      ],
-    });
+    await wrapper.setProps({ items: mockItems });
     actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     expect(actionOptionsMenu.exists()).toBeTruthy();
     badge = findByTestId(wrapper, 'status-badge');
     expect(badge.exists()).toBe(true);
     expect(badge.text()).toBe(wrapper.vm.directAssignment);
+  });
 
-    // We make the relationship's grantType: 'role' to test that the actions
+  it('shows the actions menu if showViewDetails is true', async () => {
+    const wrapper = await mountComponent({ showViewDetails: true, parentResourceName: 'role' });
+    wrapper.setProps({
+      grantType: 'entitlement',
+      items: [
+        {
+          item: {
+            type: '',
+          },
+          user: {
+            accountStatus: 'active',
+          },
+          account: {
+            userPrincipalName: 'test1@forgerock.com',
+          },
+          application: {
+            name: 'test',
+            templateName: 'test',
+          },
+        },
+      ],
+    });
+    await flushPromises();
+    const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    expect(actionOptionsMenu.exists()).toBeTruthy();
+  });
+
+  it('does not have the actions menu if account assignment is not direct', async () => {
+    const wrapper = await mountComponent();
+    let actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    expect(actionOptionsMenu.exists()).toBeFalsy();
+    let badge = findByTestId(wrapper, 'status-badge');
+    expect(badge.exists()).toBeFalsy();
+
+    // We set the relationship's grantType: 'role' to test that the actions
     // menu should now be hidden since it should only show if set to 'recon'
     // and the badge assignment set to 'Role-based'.
-    await wrapper.setData({
+    await wrapper.setProps({
       items: [
         {
           item: {
@@ -170,7 +194,6 @@ describe('GovResourceTable', () => {
         },
       ],
     });
-
     actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     expect(actionOptionsMenu.exists()).toBeFalsy();
     badge = findByTestId(wrapper, 'status-badge');
@@ -178,195 +201,145 @@ describe('GovResourceTable', () => {
   });
 
   it('should emit "revoke-request" if a grantType is attempted to be revoked', async () => {
-    await wrapper.setProps({
-      resourceName: 'directReportDetail',
-      grantType: 'account',
-      defaultSort: 'application.name',
-      fields: [
-        {
-          key: 'appName',
-          label: '',
-        },
-        {
-          key: 'entitlementName',
-          label: '',
-        },
-        {
-          key: 'accountName',
-          label: '',
-        },
-        {
-          key: 'assignment',
-          label: '',
-        },
-        {
-          key: 'actions',
-          label: '',
-        },
-      ],
-    });
+    const wrapper = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
+    await wrapper.setProps({ items: mockItems });
 
     const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     await actionOptionsMenu.trigger('click');
-    await actionOptionsMenu.find('li:nth-of-type(1) > a').trigger('click'); // Revoke menu item
+    await actionOptionsMenu.find('li:nth-of-type(2) > a').trigger('click'); // Revoke menu item
     expect(wrapper.emitted('revoke-request')).toEqual([[wrapper.vm.itemsWithAssignment[0]]]);
   });
 
   it('clearing the search input resets the query params', async () => {
-    const clearSpy = jest.spyOn(wrapper.vm, 'clear');
+    const wrapper = await mountComponent();
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     const searchMyAccessReviewTable = findComponentByTestId(wrapper, 'search-gov-resource-table');
     await searchMyAccessReviewTable.vm.$emit('input', 'test');
     await searchMyAccessReviewTable.vm.$emit('clear');
 
-    expect(clearSpy).toHaveBeenCalled();
     expect(wrapper.vm.searchQuery).toBe('');
     expect(wrapper.vm.paginationPage).toBe(1);
     expect(loadSpy).toHaveBeenCalled();
   });
 
-  it('can sort table by descending', () => {
+  it('can sort table by descending', async () => {
+    const wrapper = await mountComponent();
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     wrapper.vm.sortChanged({ sortBy: 'appName', sortDesc: true });
     expect(wrapper.vm.sortDesc).toBe(true);
     expect(loadSpy).toBeCalled();
-    expect(CommonsApi.getUserGrants).toBeCalledWith('testId', {
+    expect(wrapper.emitted()['load-data'][1][0]).toStrictEqual({
       pageNumber: 0, pageSize: 10, sortBy: 'application.name', sortDir: 'desc', grantType: 'account',
     });
   });
 
-  it('can sort table by ascending', () => {
-    const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
+  it('can sort table by ascending', async () => {
+    const wrapper = await mountComponent();
     wrapper.vm.sortChanged({ sortBy: 'appName', sortDesc: false });
-    expect(loadSpy).toBeCalled();
-    expect(CommonsApi.getUserGrants).toBeCalledWith('testId', {
+    expect(wrapper.emitted()['load-data'][1][0]).toStrictEqual({
       pageNumber: 0, pageSize: 10, sortBy: 'application.name', sortDir: 'asc', grantType: 'account',
     });
     wrapper.vm.sortChanged({ sortBy: 'accountName', sortDesc: false });
-    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
+    expect(wrapper.emitted()['load-data'][2][0]).toStrictEqual({
       pageNumber: 0, pageSize: 10, sortBy: 'descriptor.idx./account.displayName', sortDir: 'asc', grantType: 'account',
     });
     wrapper.vm.sortChanged({ sortBy: 'entitlementName', sortDesc: false });
-    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
+    expect(wrapper.emitted()['load-data'][3][0]).toStrictEqual({
       pageNumber: 0, pageSize: 10, sortBy: 'descriptor.idx./entitlement.displayName', sortDir: 'asc', grantType: 'account',
     });
     wrapper.vm.sortChanged({ sortBy: 'roleName', sortDesc: false });
-    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
+    expect(wrapper.emitted()['load-data'][4][0]).toStrictEqual({
       pageNumber: 0, pageSize: 10, sortBy: 'role.name', sortDir: 'asc', grantType: 'account',
     });
     wrapper.vm.sortChanged({ sortBy: 'status', sortDesc: false });
-    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
+    expect(wrapper.emitted()['load-data'][5][0]).toStrictEqual({
       pageNumber: 0, pageSize: 10, sortBy: '', sortDir: 'asc', grantType: 'account',
     });
     wrapper.vm.sortChanged({ sortBy: 'other', sortDesc: false });
-    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
-      pageNumber: 0, pageSize: 10, sortBy: '', sortDir: 'asc', grantType: 'account',
+    expect(wrapper.emitted()['load-data'][6][0]).toStrictEqual({
+      pageNumber: 0, pageSize: 10, sortBy: null, sortDir: 'asc', grantType: 'account',
     });
   });
 
-  it('can set page size', () => {
-    const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-    wrapper.vm.pageSizeChange(20);
-
-    expect(wrapper.vm.paginationPageSize).toBe(20);
-    expect(loadSpy).toBeCalled();
+  it('emits sortBy of \'name\' when parent resource is role', async () => {
+    const wrapper = await mountComponent();
+    wrapper.setProps({ parentResourceName: 'alpha_role' });
+    await flushPromises();
+    wrapper.vm.loadData();
+    expect(wrapper.emitted()['load-data'][1][0]).toStrictEqual({
+      pageNumber: 0, pageSize: 10, sortBy: 'name', sortDir: 'asc', grantType: 'account',
+    });
   });
 
-  it('can set page', () => {
-    const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-    wrapper.vm.pageChange(2);
+  it('displays row cell name when parent resource is role', async () => {
+    const wrapper = await mountComponent();
+    await wrapper.setProps({ items: mockItems });
+    await flushPromises();
+    const roleAccountNameCell = wrapper.findAll('h3').filter((item) => item.text().includes('test'));
+    expect(roleAccountNameCell[0].exists()).toBe(true);
+  });
+
+  it('can set page size', async () => {
+    const wrapper = await mountComponent();
+    wrapper.vm.loadData({ paginationPageSize: 20 });
+
+    expect(wrapper.vm.paginationPageSize).toBe(20);
+    expect(wrapper.emitted()['load-data']).toBeTruthy();
+  });
+
+  it('can set page', async () => {
+    const wrapper = await mountComponent();
+    wrapper.vm.loadData({ paginationPage: 2 });
 
     expect(wrapper.vm.paginationPage).toBe(2);
-    expect(loadSpy).toBeCalled();
+    expect(wrapper.emitted()['load-data']).toBeTruthy();
   });
 
   describe('loadData()', () => {
-    it('gets my access based on page size', async () => {
-      const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants');
-      wrapper.vm.paginationPageSize = 20;
-      wrapper.vm.loadData();
-      expect(getMyAccess).toBeCalledWith('testId', {
-        pageNumber: 0, pageSize: 20, sortBy: 'application.name', sortDir: 'asc', grantType: 'account',
-      });
-    });
-
-    it('gets my access based on page number', () => {
-      const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants');
-      wrapper.vm.paginationPage = 2;
-      wrapper.vm.loadData();
-      expect(getMyAccess).toBeCalledWith('testId', {
-        pageNumber: 1, pageSize: 10, sortBy: 'application.name', sortDir: 'asc', grantType: 'account',
-      });
-    });
-
-    it('gets my access that match a query string', async () => {
-      const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants');
-      wrapper.vm.searchQuery = 'test';
-      await wrapper.vm.loadData();
-      await wrapper.vm.$nextTick();
-      expect(getMyAccess).toBeCalledWith('testId', {
-        pageNumber: 0, pageSize: 10, sortBy: 'application.name', sortDir: 'asc', grantType: 'account', queryString: 'test',
-      });
-    });
-
     it('sets table items when data is successfully loaded', async () => {
-      const accounts = [
-        {
-          item: {
-            type: 'roleMembership',
+      const wrapper = await mountComponent();
+      wrapper.setProps({
+        items: [
+          {
+            item: {
+              type: 'roleMembership',
+            },
+            user: {
+              accountStatus: 'active',
+            },
+            account: {
+              userPrincipalName: 'test1@forgerock.com',
+            },
+            application: {
+              name: 'test1',
+              templateName: 'test1',
+            },
           },
-          user: {
-            accountStatus: 'active',
+          {
+            item: {
+              type: 'roleMembership',
+            },
+            user: {
+              accountStatus: 'active',
+            },
+            account: {
+              userPrincipalName: 'test2@forgerock.com',
+            },
+            application: {
+              name: 'test2',
+              templateName: 'test2',
+            },
           },
-          account: {
-            userPrincipalName: 'test1@forgerock.com',
-          },
-          application: {
-            name: 'test1',
-            templateName: 'test1',
-          },
-        },
-        {
-          item: {
-            type: 'roleMembership',
-          },
-          user: {
-            accountStatus: 'active',
-          },
-          account: {
-            userPrincipalName: 'test2@forgerock.com',
-          },
-          application: {
-            name: 'test2',
-            templateName: 'test2',
-          },
-        },
-      ];
-      jest.spyOn(CommonsApi, 'getUserGrants').mockResolvedValue({
-        data: { result: accounts },
+        ],
       });
-
-      wrapper.vm.loadData();
       await wrapper.vm.$nextTick();
       expect(wrapper.vm.items[0].account.userPrincipalName).toBe('test1@forgerock.com');
       expect(wrapper.vm.items[1].account.userPrincipalName).toBe('test2@forgerock.com');
     });
 
-    it('displays an error notifcation if API fails', async () => {
-      jest.spyOn(CommonsApi, 'getUserGrants').mockRejectedValue('test');
-      const errorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
-
-      wrapper.vm.loadData();
-      await flushPromises();
-
-      expect(errorSpy).toHaveBeenCalled();
-    });
-
     it('displays noData component when no my access are found', async () => {
-      jest.spyOn(CommonsApi, 'getUserGrants').mockResolvedValue({
-        data: { result: [] },
-      });
-      wrapper.vm.loadData(true);
+      const wrapper = await mountComponent();
+      wrapper.setProps({ items: [] });
       await flushPromises();
       expect(wrapper.vm.isNoResultsFirstLoad).toBe(true);
       const noData = findByTestId(wrapper, 'gov-resource-table-no-results-first-load');
@@ -375,7 +348,8 @@ describe('GovResourceTable', () => {
   });
 
   describe('method getResourceDisplayName should return correct displayName', () => {
-    it('item with descriptor should return property displayName value', () => {
+    it('item with descriptor should return property displayName value', async () => {
+      const wrapper = await mountComponent();
       const item = {
         descriptor: {
           idx: {
@@ -385,13 +359,13 @@ describe('GovResourceTable', () => {
           },
         },
       };
-
       const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
 
       expect(resourceDisplayName).toBe('Account name');
     });
 
-    it('item without displayName property should return undefined', () => {
+    it('item without displayName property should return undefined', async () => {
+      const wrapper = await mountComponent();
       const item = {
         descriptor: {
           idx: {
@@ -399,13 +373,13 @@ describe('GovResourceTable', () => {
           },
         },
       };
-
       const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
 
       expect(resourceDisplayName).toBeUndefined();
     });
 
-    it('item without resource property should return undefined', () => {
+    it('item without resource property should return undefined', async () => {
+      const wrapper = await mountComponent();
       const item = {
         descriptor: {
           idx: {
@@ -415,25 +389,22 @@ describe('GovResourceTable', () => {
           },
         },
       };
-
       const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/entitlement');
 
       expect(resourceDisplayName).toBeUndefined();
     });
 
-    it('item without idx property should return undefined', () => {
-      const item = {
-        descriptor: {},
-      };
-
+    it('item without idx property should return undefined', async () => {
+      const wrapper = await mountComponent();
+      const item = { descriptor: {} };
       const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
 
       expect(resourceDisplayName).toBeUndefined();
     });
 
-    it('item without descriptor property should return undefined', () => {
+    it('item without descriptor property should return undefined', async () => {
+      const wrapper = await mountComponent();
       const item = {};
-
       const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
 
       expect(resourceDisplayName).toBeUndefined();

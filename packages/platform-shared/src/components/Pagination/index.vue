@@ -50,6 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
       :prev-class="prevClass"
       :total-rows="totalRows > 0 ? totalRows : totalRowsOnDemand"
       :value="value"
+      @change="$emit('change', $event)"
       @input="$emit('input', $event)"
     >
       <template #first-text>
