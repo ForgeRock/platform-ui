@@ -46,3 +46,18 @@ export function getGlossarySchema() {
 export function getFilterSchema() {
   return generateIgaApi().post('/governance/certification/get-filter-schema', {});
 }
+
+/**
+ * Get List of Glossary attributes based on filter payload and query parameters
+ * @param {Object} payload request body payload to include in request
+ * @param {Object} params Query parameters to pass to request
+ *                 pageNumber - current page to request
+ *                 pageSize - results in page
+ *                 sortBy - field to sort results by
+ *                 sortDir - (asc/desc) direction to sort results by
+ * @returns The response is a promise that resolves to the data returned by the API.
+ */
+export function searchGovernanceResource(payload, params) {
+  const queryParams = encodeQueryString(params, false);
+  return generateIgaApi().post(`/governance/resource/search${queryParams}`, payload);
+}
