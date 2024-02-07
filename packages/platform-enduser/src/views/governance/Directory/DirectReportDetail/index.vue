@@ -75,11 +75,12 @@ of the MIT license. See the LICENSE file for details. -->
               {{ tab.displayName }}
             </template>
             <FrGovResourceTable
-              v-if="directReportUserInfo.userId"
-              :default-sort="getDefaultSort(tab.grantType)"
+              v-if="directReportUserInfo.userId && tab.active"
               :fields="getTableFields(tab.grantType)"
               :grant-type="tab.grantType"
-              :id="directReportUserInfo.userId"
+              :items="resourceItems"
+              :total-count="resourceTotalCount"
+              @load-data="queryResource"
               @revoke-request="showRevokeRequestModal" />
           </BTab>
         </BTabs>
@@ -115,6 +116,7 @@ import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import { saveNewRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getGovernanceGrants } from '@forgerock/platform-shared/src/utils/governance/resource';
 import FrRevokeRequestModal from './RevokeRequestModal';
 import { getDirectReportUserInfo } from '@/api/governance/DirectoryApi';
 
@@ -150,6 +152,8 @@ export default {
   data() {
     return {
       directReportUserInfo: {},
+      resourceItems: [],
+      resourceTotalCount: 0,
       isSubmittingRevokeRequest: false,
       requestToRevoke: {},
       tabItems: [
@@ -173,6 +177,7 @@ export default {
         },
       ],
       tabIndex: 0,
+      userId: this.$route.params.resourceId || useUserStore().userId,
     };
   },
   async created() {
@@ -210,16 +215,6 @@ export default {
   },
   methods: {
     pluralizeValue,
-    getDefaultSort(grantType) {
-      switch (grantType) {
-        case 'account':
-        case 'entitlement':
-        default:
-          return 'application.name';
-        case 'role':
-          return 'role.name';
-      }
-    },
     getTableFields(grantType) {
       const sharedFields = [
         {
@@ -299,6 +294,15 @@ export default {
         this.showErrorMessage(err, this.$t('governance.directReports.errorGettingDirectReportUserInfo'));
       });
     },
+    /**
+     * Request grants for governance resource
+     * @param {Object} params query parameters to pass to request
+     */
+    async queryResource(params) {
+      const response = await getGovernanceGrants(params.grantType, this.userId, params);
+      this.resourceItems = response.items;
+      this.resourceTotalCount = response.totalCount;
+    },
     resetRevokeRequestModal() {
       this.isSubmittingRevokeRequest = false;
       this.requestToRevoke = {};
@@ -321,9 +325,11 @@ export default {
         this.$root.$emit('bv::hide::modal', 'revoke-request-modal');
       }
     },
-    tabActivated(tabIndex) {
+    tabActivated(tabIndex, prevTabIndex) {
       if (tabIndex > -1) {
         this.$route.params.grantType = this.tabItems[tabIndex].grantType;
+        this.tabItems[prevTabIndex].active = false;
+        this.tabItems[tabIndex].active = true;
         const { grantType, userId } = this.$route.params;
         window.history.pushState(window.history.state, '', `#/my-reports/${userId}/${grantType}`);
       }

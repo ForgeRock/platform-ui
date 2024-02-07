@@ -24,8 +24,8 @@ of the MIT license. See the LICENSE file for details. -->
             class="col-12 col-lg-auto p-0"
             data-testid="search-gov-resource-table"
             :placeholder="$t('common.search')"
-            @clear="clear"
-            @search="loadData()" />
+            @clear="loadData({ paginationPage: 1, searchQuery: '' })"
+            @search="loadData({ paginationPage: 1 })" />
         </BButtonToolbar>
       </BCardHeader>
       <div v-if="isLoading">
@@ -184,8 +184,8 @@ of the MIT license. See the LICENSE file for details. -->
         aria-controls="gov-resource-table"
         :per-page="paginationPageSize"
         :total-rows="totalCount"
-        @input="pageChange"
-        @on-page-size-change="pageSizeChange" />
+        @change="loadData({ paginationPage: $event })"
+        @on-page-size-change="loadData({ paginationPageSize: $event, paginationPage: 1 })" />
       <FrUserEntitlementModal
         :grant="grantDetails"
         :glossary-schema="glossarySchema"
@@ -215,11 +215,10 @@ import {
   BMediaBody,
   BTable,
 } from 'bootstrap-vue';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { getUserGrants, getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrUserEntitlementModal from '@forgerock/platform-shared/src/components/governance/UserEntitlementModal';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -268,21 +267,21 @@ export default {
       type: Boolean,
       default: false,
     },
-    defaultSort: {
-      type: String,
+    fields: {
+      type: Array,
       required: true,
     },
     grantType: {
       type: String,
       required: true,
     },
-    fields: {
-      type: Array,
-      required: true,
-    },
     id: {
       type: String,
       default: '',
+    },
+    items: {
+      type: Array,
+      default: () => [],
     },
     parentResourceName: {
       type: String,
@@ -291,6 +290,10 @@ export default {
     showViewDetails: {
       type: Boolean,
       default: false,
+    },
+    totalCount: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
@@ -302,8 +305,7 @@ export default {
       glossarySchema: [],
       grantDetails: {},
       isLoading: true,
-      isNoResultsFirstLoad: false,
-      items: [],
+      isNoResultsFirstLoad: null,
       paginationPage: 1,
       paginationPageSize: 10,
       roleBasedAssignment: this.$t('pages.assignment.roleBased'),
@@ -312,11 +314,10 @@ export default {
       sortDesc: null,
       sortBy: null,
       staticAssignment: this.$t('common.static'),
-      totalCount: 0,
     };
   },
   async mounted() {
-    this.setup();
+    this.loadData({ sortBy: this.fields[0].key });
     if (this.showViewDetails) {
       try {
         const { data } = await getGlossarySchema();
@@ -336,6 +337,9 @@ export default {
         assignment: this.assignmentHandler(item),
       }));
     },
+    resourceIsRole() {
+      return this.parentResourceName.endsWith('role');
+    },
     resourceIsUser() {
       return this.parentResourceName.endsWith('user');
     },
@@ -343,7 +347,7 @@ export default {
   methods: {
     formatConstraintDate,
     assignmentHandler(membership) {
-      switch (membership.item.type) {
+      switch (membership.item?.type) {
         case 'accountGrant':
           return this.grantTypeLabel(membership);
         case 'entitlementGrant':
@@ -379,7 +383,7 @@ export default {
         } catch (error) {
           this.showErrorMessage(error, this.$t('governance.resource.errors.errorCreatingAccessRequest'));
         }
-      } else {
+      } else if (this.resourceIsRole) {
         // TODO: Logic for assign-to-role flow in related ticket within same epic
         // const saveData = [];
         // resourceIds.forEach((resourceId) => {
@@ -400,10 +404,16 @@ export default {
       }
       this.assigningResource = false;
     },
-    clear() {
-      this.paginationPage = 1;
-      this.searchQuery = '';
-      this.loadData();
+    convertFieldNameToSortKey(fieldName) {
+      const sortByUser = {
+        accountName: 'descriptor.idx./account.displayName',
+        appName: 'application.name',
+        entitlementName: 'descriptor.idx./entitlement.displayName',
+        entitlementNameAppName: 'descriptor.idx./entitlement.displayName',
+        roleName: 'role.name',
+        status: '',
+      };
+      return this.resourceIsRole ? 'name' : sortByUser[fieldName] ?? null;
     },
     getApplicationLogo,
     /**
@@ -461,33 +471,13 @@ export default {
       return getApplicationDisplayName(item.application);
     },
     getResourceDisplayName(item, resource) {
+      if (this.resourceIsRole) {
+        return item.name;
+      }
       return item.descriptor?.idx?.[resource]?.displayName;
     },
     /**
-     * Loads a list for MyAccess (accounts/entitlements/roles) based on the current path
-     * @param {object} params - Parameters to be plugged into query string
-     * @param {Boolean} isInit - Parameter check whether the component is inital rendering, passed from loadData()
-     */
-    getMyAccess(params, isInit = false) {
-      const userStore = useUserStore();
-      params.grantType = this.grantType;
-      const resourceId = this.id || userStore.userId;
-      getUserGrants(resourceId, params).then(({ data }) => {
-        this.items = data.result;
-        this.totalCount = data.totalCount;
-        if (isInit && !this.totalCount) {
-          this.isNoResultsFirstLoad = true;
-        } else {
-          this.isNoResultsFirstLoad = false;
-        }
-      }).catch((err) => {
-        this.showErrorMessage(err, this.$t('governance.access.errorGettingData', { grantType: pluralizeValue(this.grantType) }));
-      }).finally(() => {
-        this.isLoading = false;
-      });
-    },
-    /**
-     * Determines the assignment label for accounts and ententitlements
+     * Determines the assignment label for accounts and entitlements
      * @param {Object} membership - table membership item object
      */
     grantTypeLabel(membership) {
@@ -505,36 +495,27 @@ export default {
       }
     },
     /**
-     * Loads a list for MyAccess
-     * @param {Boolean} isInit - Optional parameter check whether the component is inital rendering, default is false
+     * Obtains a list of resources to display
+     * @param {Object} updatedParams - Optional (default {}) any params that need to be updated for new query
      */
-    loadData(isInit = false) {
+    loadData(updatedParams = {}) {
+      Object.keys(updatedParams).forEach((key) => {
+        this[key] = updatedParams[key];
+      });
       this.isLoading = true;
       const params = {
         pageSize: this.paginationPageSize,
         pageNumber: this.paginationPage - 1,
+        sortDir: this.sortDesc ? 'desc' : 'asc',
+        sortBy: this.convertFieldNameToSortKey(this.sortBy),
+        grantType: this.grantType,
       };
-      if (this.searchQuery !== '') {
+      if (this.searchQuery) {
         params.queryString = this.searchQuery;
       }
-      params.sortDir = this.sortDesc ? 'desc' : 'asc';
-      params.sortBy = this.sortBy;
       this.$emit('load-data', params);
-      this.getMyAccess(params, isInit);
-    },
-    pageChange(page) {
-      this.paginationPage = page;
-      this.loadData();
-    },
-    pageSizeChange(pageSize) {
-      this.paginationPageSize = pageSize;
-      this.loadData();
     },
     pluralizeValue,
-    setup() {
-      this.sortBy = this.defaultSort;
-      this.loadData(true);
-    },
     /**
      * Opens modal to add grant type
      */
@@ -543,29 +524,13 @@ export default {
     },
     sortChanged(event) {
       const { sortBy, sortDesc } = event;
-      switch (sortBy) {
-        case 'accountName':
-          this.sortBy = 'descriptor.idx./account.displayName';
-          break;
-        case 'appName':
-          this.sortBy = 'application.name';
-          break;
-        case 'entitlementName':
-        case 'entitlementNameAppName':
-          this.sortBy = 'descriptor.idx./entitlement.displayName';
-          break;
-        case 'roleName':
-          this.sortBy = 'role.name';
-          break;
-        case 'status':
-          this.sortBy = '';
-          break;
-        default:
-          this.sortBy = null;
-          return;
-      }
-      this.sortDesc = sortDesc;
-      this.loadData();
+      this.loadData({ sortBy, sortDesc, paginationPage: 1 });
+    },
+  },
+  watch: {
+    items(items) {
+      this.isNoResultsFirstLoad = !items.length && this.isNoResultsFirstLoad === null;
+      this.isLoading = false;
     },
   },
 };
