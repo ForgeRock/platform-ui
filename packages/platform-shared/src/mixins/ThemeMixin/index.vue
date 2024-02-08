@@ -165,6 +165,7 @@ export default {
         }
 
         let theme = themeResults[cleanRealm];
+
         if (theme && !theme.backgroundColor) {
           if (themeOptions.nodeThemeId) {
             // Prioritize node themes over tree themes
