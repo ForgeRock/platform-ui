@@ -381,7 +381,10 @@
         "cancel": "Cancel Request",
         "forward": "Forward Request",
         "reject": "Reject Request",
-        "tracking": "Tracking"
+        "taskDetails": "Task Details",
+        "taskName": "Task Name",
+        "tracking": "Tracking",
+        "workFlowId": "Workflow ID"
       },
       "messages": {
         "approve": "Approved Request",
