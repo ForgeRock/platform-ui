@@ -101,7 +101,8 @@ export default {
     },
     selectOptions() {
       const match = this.options.find((option) => isEqual(option, this.value));
-      if (match || this.isSearching || this.type === 'multiselect') return this.options;
+      if (match || this.isSearching) return this.options;
+      if (this.type === 'multiselect') return [...this.value, ...this.options];
       return [this.value, ...this.options];
     },
   },
