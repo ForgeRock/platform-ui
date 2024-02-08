@@ -76,6 +76,7 @@
     "Forbidden": "Forbidden",
     "GatewaysAndAgents": "Gateways And Agents",
     "Glossary": "Glossary",
+    "GovernanceEventEdit": "Governance Event",
     "GovernanceEvents": "Governance Events",
     "HostedPages": "Hosted Pages",
     "HostedPagesEdit": "Edit Hosted Pages",
@@ -3025,6 +3026,28 @@
         "userAction": "User {action}",
         "userTrigger": "Trigger an action when a user is {userAction}.",
         "workflow": "Workflow"
+      },
+      "types": {
+        "userCreate": "User Created",
+        "userUpdate": "User Updated"
+      },
+      "edit": {
+        "allUsers": "All users",
+        "editWorkflowEvent": "Edit Workflow Event",
+        "eventDescription": "Event Description",
+        "eventDetails": "Event Details",
+        "eventName": "Event Name",
+        "eventOwners": "Event Owners",
+        "newWorkflowEvent": "New Workflow Event",
+        "saveError": "Error Saving Event",
+        "saveSuccess": "Event Saved Successfully",
+        "subsetUsers": "A subset of users",
+        "triggerFor": "Trigger for",
+        "workflowHelp": "Workflow to run when event is triggered.",
+        "workflowDescription": "Define the workflow to run when the event is triggered.",
+        "workflowDetails": "Workflow Details",
+        "workflowVariables": "Workflow Variables",
+        "workflowVariablesDescription": "Optionally, specify variables to pass to the workflow."
       }
     },
     "glossary": {
