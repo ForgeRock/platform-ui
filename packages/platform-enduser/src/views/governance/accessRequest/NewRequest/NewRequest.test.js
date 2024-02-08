@@ -160,4 +160,17 @@ describe('NewRequest', () => {
     expect(wrapper.vm.currentUser).toEqual(user);
     expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('GovernanceUserDetailsModal');
   });
+
+  it('searchApplications should call the get resources to filter the non authorative applications', async () => {
+    const wrapper = await mountComponent();
+    CommonsApi.getResource.mockImplementation(() => Promise.resolve({
+      data: {
+        result: [],
+      },
+    }));
+    wrapper.vm.searchApplications('name');
+    await flushPromises();
+
+    expect(CommonsApi.getResource).toHaveBeenCalledWith('application', { queryString: 'name', authoritative: false });
+  });
 });
