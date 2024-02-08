@@ -150,7 +150,7 @@ export default {
           };
         case 'cancelled':
           return {
-            name: this.$t('governance.decisions.cancelled'),
+            name: this.$t('governance.decisions.canceled'),
             variant: 'light',
           };
         case 'rejected':
