@@ -4,19 +4,23 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="pt-2">
-    <div :class="{ 'border-bottom': isValidJSONString(listValues) && isValidField()}">
-      <div class="d-flex justify-content-between align-items-center">
+    <div :class="{ 'border-bottom': isValidJSONString(listValues) && isValidField() && showBorders}">
+      <div
+        v-if="showTitle"
+        class="d-flex justify-content-between align-items-center">
         <label>{{ fieldTitle }}</label>
       </div>
       <div>
         <div
           v-if="!listValues || !listValues.length"
-          class="d-flex pt-3 pb-3 px-0 border-top align-items-center">
+          :class="{ 'border-top': showBorders }"
+          class="d-flex pt-3 pb-3 px-0 align-items-center">
           <div class="text-muted text-left flex-grow-1">
             ({{ $t('common.none') }})
           </div>
           <button
-            class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
+            :class="buttonClass"
+            class="btn mr-1 mb-2 mb-lg-0"
             data-testid="list-objects-none-add"
             :disabled="disabled"
             @click.prevent="addObjectToList(-1)">
@@ -27,14 +31,16 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             v-for="(obj, index) in listValues"
             :key="obj.listUniqueIndex"
-            class="d-flex pt-3 pb-2 px-0 border-top">
+            :class="{ 'border-top': showBorders }"
+            class="d-flex pt-3 pb-2 px-0">
             <div class="flex-grow-1 pr-3 position-relative">
               <div class="form-row align-items-center">
                 <template v-for="(objValue, key) in obj">
                   <div
                     v-if="key !== 'listUniqueIndex' && !properties[key].hidden"
                     :key="key"
-                    class="col-lg-4 pb-2">
+                    :class="fill ? 'col-lg-6' : 'col-lg-4'"
+                    class="pb-2">
                     <div v-if="properties[key].type === 'boolean'">
                       <BFormCheckbox
                         v-model="obj[key]"
@@ -76,7 +82,8 @@ of the MIT license. See the LICENSE file for details. -->
                 style="width: 128px;">
                 <button
                   :data-testid="`list-objects-remove-${index}`"
-                  class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
+                  :class="buttonClass"
+                  class="btn mr-1 mb-2 mb-lg-0"
                   :disabled="disabled"
                   @click.prevent="removeElementFromList(index)">
                   <FrIcon name="remove" />
@@ -84,7 +91,8 @@ of the MIT license. See the LICENSE file for details. -->
                 <button
                   v-if="multiValued || listValues.length === 0"
                   :data-testid="`list-objects-add-${index}`"
-                  class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
+                  :class="buttonClass"
+                  class="btn mr-1 mb-2 mb-lg-0"
                   :disabled="disabled"
                   @click.prevent="addObjectToList(index)">
                   <FrIcon name="add" />
@@ -143,7 +151,15 @@ export default {
     ListsMixin,
   ],
   props: {
+    buttonClass: {
+      type: String,
+      default: 'btn-outline-secondary',
+    },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    fill: {
       type: Boolean,
       default: false,
     },
@@ -162,6 +178,14 @@ export default {
     required: {
       type: Array,
       default: () => [],
+    },
+    showBorders: {
+      type: Boolean,
+      default: true,
+    },
+    showTitle: {
+      type: Boolean,
+      default: true,
     },
     value: {
       type: [Array, Object],
