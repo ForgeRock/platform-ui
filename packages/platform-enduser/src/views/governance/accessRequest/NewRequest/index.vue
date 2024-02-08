@@ -160,7 +160,6 @@ import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import {
-  // getUserGrants,
   getResource,
   getGlossarySchema,
 } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
@@ -452,7 +451,7 @@ export default {
      */
     async searchApplications(queryString) {
       try {
-        const { data } = await getResource(`${this.$store.state.realm}_application`, { queryString });
+        const { data } = await getResource('application', { queryString, authoritative: false });
         this.applicationSearchResults = data?.result || [];
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.resource.errors.errorSearchingCatalog'));
