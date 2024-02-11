@@ -233,7 +233,10 @@
     "Roles": "Roles",
     "pageTitle": "Platform Enduser - {page}",
     "Profile": "Profile",
+    "ReportHistory": "Run History",
+    "ReportRun": "Run Report",
     "Reports": "Reports",
+    "ReportView": "View Report",
     "Sharing": "Sharing"
   },
   "governance": {

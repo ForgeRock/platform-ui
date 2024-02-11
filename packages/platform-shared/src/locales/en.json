@@ -62,6 +62,7 @@
     "create": "Create",
     "created": "Created",
     "customizeObject": "Customize {object}",
+    "data": "Data",
     "date": "Date",
     "deactivate": "Deactivate",
     "deactivated": "Deactivated",
@@ -86,6 +87,7 @@
     "docs": "Docs",
     "done": "Done",
     "download": "Download",
+    "draft": "Draft",
     "dropFilesHere": "Drop files here",
     "duplicate": "Duplicate",
     "dynamic": "Dynamic",
@@ -1685,6 +1687,17 @@
           "errorDownload": "Error downloading report"
         }
       }
+    },
+    "template": {
+      "addData": "Add Data",
+      "addADataSource": "Add a Data Source",
+      "addDataSourceToGetStarted": "To get started add a data source to report on.",
+      "chooseAnEntityAsDataSource": "Choose an entity to use as a data source in this report.",
+      "dataSetAdded": "Data set added",
+      "dataSource": "Data Source",
+      "newReportTemplate": "New Report Template",
+      "noColumnsAdded": "No columns added",
+      "selectColumnsFromDataSets": "Select columns from data sets to appear in the report."
     },
     "title": "Reports",
     "viewReport": "View Report"
