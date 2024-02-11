@@ -140,22 +140,21 @@ const router = createRouter({
         },
         {
           path: ':template',
-          name: 'ReportTemplate',
-          component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
+          name: 'ReportRun',
+          component: () => import('@forgerock/platform-shared/src/views/Reports/Report.vue'),
         },
         {
           path: ':template/history',
-          name: 'ReportTemplateHistory',
-          component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
+          name: 'ReportHistory',
+          component: () => import('@forgerock/platform-shared/src/views/Reports/Report.vue'),
+        },
+        {
+          path: ':template/:id',
+          name: 'ReportView',
+          component: () => import('@forgerock/platform-shared/src/views/Reports/ReportView.vue'),
+          meta: { hideNavBar: true, hideSideMenu: true },
         },
       ],
-    },
-    {
-      path: '/reports/:template/:id',
-      name: 'ReportView',
-      component: () => import('@forgerock/platform-shared/src/views/Reports/ReportView.vue'),
-      meta: { hideNavBar: true, hideSideMenu: true },
-      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
     },
     {
       path: '/my-delegates',
