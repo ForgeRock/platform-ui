@@ -1,145 +1,71 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright 2023-2024 ForgeRock AS. All Rights Reserved
 
-This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details. -->
+Use of this code requires a commercial software license with ForgeRock AS
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
+
 <template>
-  <BContainer>
-    <FrHeader
-      class="mt-5 mb-4 text-capitalize"
-      :title="reportConfigData ? prettyTemplateName : $t('pageTitles.Reports')"
-      :top-text="reportConfigData ? $t('reports.heading') : $t('common.loadingEtc')" />
-    <BTabs
-      content-class="mt-3"
-      nav-class="fr-tabs mb-4"
-      v-model="tabIndex">
-      <BTab
-        v-for="(tab, index) in tabItems"
-        :active="tabIndex === index"
-        :key="tab.displayName"
-        :title="tab.displayName">
-        <Component
-          v-if="tabIndex === index"
-          :is="tab.component"
-          :new-report-job-id="newReportJobId"
-          :report-config="reportConfigData"
-          :template-name="templateName"
-          @update-tab="updateTab"
-          @table-data-ready="newReportJobId = null" />
-      </BTab>
-    </BTabs>
-  </BContainer>
+  <div class="h-100 overflow-hidden">
+    <FrReportTemplateHeader
+      :disable-save="disableSave"
+      :report-state="reportState"
+      :saving="isSaving"
+      :template-name="templateName"
+      @delete="deleteTemplate"
+      @duplicate="duplicateTemplate"
+      @save="saveTemplate" />
+    <main
+      class="d-flex h-100 w-100"
+      role="main">
+      <template v-if="templateHasAtLeastOneDataSource">
+        <FrReportDataSourceTable />
+        <FrReportTemplateSettings />
+      </template>
+      <FrReportAddDataSourceCard
+        v-else
+        @open-data-source-modal="$bvModal.show('reports-data-source-modal')" />
+    </main>
+    <FrReportDataSourceModal @add-data-source="dataSourceHandler" />
+  </div>
 </template>
 
 <script setup>
 /**
- * @description Displays the report template tabs for running reports and viewing reports history.
+ * @description
+ * Main component that gives an admin the ability to create custom platform analytics reports.
  */
-import {
-  ref,
-  watch,
-} from 'vue';
-import { BContainer, BTabs, BTab } from 'bootstrap-vue';
-import { getReportTemplates } from '@forgerock/platform-shared/src/api/AutoApi';
+import { computed, ref } from 'vue';
 import { displayNotification } from '@forgerock/platform-shared/src/utils/notification';
-import { useRoute, useRouter } from 'vue-router';
-import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
-import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
-import FrRunReport from './RunReport';
-import FrRunHistory from './RunHistory';
+import FrReportTemplateHeader from './ReportTemplate/ReportTemplateHeader';
+import FrReportAddDataSourceCard from './ReportTemplate/ReportAddDataSourceCard';
+import FrReportDataSourceTable from './ReportTemplate/ReportDataSourceTable';
+import FrReportTemplateSettings from './ReportTemplate/ReportTemplateSettings';
+import FrReportDataSourceModal from './modals/ReportDataSourceModal';
 import i18n from '@/i18n';
 
-/**
- * LOCALS
- */
-useBreadcrumb().setBreadcrumb('/reports', i18n.global.t('routeNames.Reports'));
-
-// Composables
-const router = useRouter();
-const route = useRoute();
-
-/**
- * GLOBALS
- */
-const reportConfigData = ref(null);
-const newReportJobId = ref(null);
-const routerMap = ['ReportTemplate', 'ReportTemplateHistory'];
-const templateName = route.params.template;
-const prettyTemplateName = templateName.toLowerCase().replace(/-/g, ' ');
-const tabIndex = ref(routerMap.indexOf(route.name));
-const tabItems = [
-  {
-    id: 'run-report',
-    displayName: i18n.global.t('reports.tabs.runReport.title'),
-    component: FrRunReport,
-  },
-  {
-    id: 'report-history',
-    displayName: i18n.global.t('reports.tabs.runHistory.title'),
-    component: FrRunHistory,
-  },
-];
-
-/**
- * ACTIONS
- * @description
- * .Updates tab
- * .Request to get all report templates
- */
-
-/**
- * Tab update event
- * @param {String} tabName name of tab
- * @param {String} jobId id of most recently created job
- */
-function updateTab(tabName, jobId) {
-  tabIndex.value = tabItems.findIndex((tab) => tab.id === tabName);
-  newReportJobId.value = jobId || null;
-}
-
-/**
- * Gets and validates report template from url. If template is not found,
- * user gets redirected back to the main report templates grid view.
- * @returns {Object} report template
- */
-async function getReportTemplate() {
-  try {
-    const { result } = await getReportTemplates({ queryFilter: `name eq ${templateName.toUpperCase()}` });
-    const [reportTemplate] = result;
-
-    if (!reportTemplate) {
-      throw new Error(404);
-    }
-    return reportTemplate;
-  } catch (error) {
-    const errorData = error.message === '404'
-      ? { type: 'warning', message: i18n.global.t('reports.tabs.runReport.errors.templateDoesNotExist') }
-      : { type: 'danger', message: i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate') };
-
-    displayNotification(errorData.type, errorData.message);
-    router.push({ name: 'Reports' });
-    return {};
-  }
-}
-
-/**
- * WATCHERS
- */
-watch(tabIndex, (index) => {
-  const routeUrl = index === 0 ? '' : 'history';
-  window.history.pushState(window.history.state, '', `#/reports/${templateName}/${routeUrl}`);
+// Globals
+const disableSave = ref(true);
+const isSaving = ref(false);
+const reportState = ref('draft');
+const templateName = ref(i18n.global.t('reports.template.newReportTemplate'));
+const payload = ref({
+  dataSource: '',
 });
+const templateHasAtLeastOneDataSource = computed(() => payload.value.dataSource);
 
-/**
- *      |>>>
- *      |
- * [ * START * ]
- *  |;|_|;|_|;|
- */
-(async () => {
-  const { reportConfig } = await getReportTemplate();
+function deleteTemplate() {
+}
 
-  if (reportConfig) {
-    reportConfigData.value = JSON.parse(reportConfig);
+function dataSourceHandler(dataSource) {
+  payload.value.dataSource = dataSource;
+  if (dataSource) {
+    displayNotification('success', i18n.global.t('reports.template.dataSetAdded'));
   }
-})();
+}
+
+function duplicateTemplate() {
+}
+
+function saveTemplate() {
+}
 </script>

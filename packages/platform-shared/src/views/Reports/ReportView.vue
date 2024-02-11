@@ -281,7 +281,7 @@ function pageSizeChange(pageSize) {
  * Routes to the Report History page.
  */
 function returnToTemplate() {
-  router.push({ name: 'ReportTemplateHistory', params: { template } });
+  router.push({ name: 'ReportHistory', params: { template } });
 }
 
 /**
