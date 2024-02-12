@@ -80,13 +80,13 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template v-else>
         <FrField
+          v-model="selectedEntitlements"
           :internal-search="false"
           :label="$t('governance.resource.assignResourceModal.resourceToGrant', { resource: capitalizedResourceType })"
           name="entitlementSelect"
           :options="entitlementOptions"
           type="multiselect"
           validation="required"
-          v-model="selectedEntitlements"
           @search-change="debouncedSearch" />
       </template>
       <template #modal-footer="{ cancel }">
@@ -204,8 +204,8 @@ const stepDescription = computed(() => {
 });
 
 function getEntitlements(searchValue) {
-  const applicationId = selectedApplication.value.split('/');
-  emit('get-entitlements', { searchValue, selectedApplication: applicationId[applicationId.length - 1] });
+  const applicationPath = selectedApplication.value.split('/');
+  emit('get-entitlements', { searchValue, selectedApplicationId: applicationPath[applicationPath.length - 1] });
 }
 
 function initializeData() {
