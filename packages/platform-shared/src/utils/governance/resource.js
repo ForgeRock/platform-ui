@@ -6,16 +6,137 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-import { getManagedRelationshipList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { getManagedRelationshipList, patchManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { searchCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
+import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getUserGrants, searchGovernanceResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { saveNewRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import i18n from '@/i18n';
 
 /**
+ * Assigns resources to IDM backend
+ * @param {String} parentResourceName IDM parent managed resource name
+ * @param {String} parentResourceId id of parent IDM resource
+ * @param {Array} resourceIds list of resources to create relationship to IDM resource
+ * @param {String} managedResourceRev revision id of IDM resource
+ * @returns {String} saving status
+ */
+export async function assignResourcestoIDM(parentResourceName, parentResourceId, resourceIds, managedResourceRev) {
+  const saveData = [];
+  resourceIds.forEach((resourceId) => {
+    saveData.push({
+      operation: 'add',
+      field: '/assignments/-',
+      value: { _ref: resourceId },
+    });
+  });
+
+  try {
+    const requestOverride = { headers: { 'if-match': managedResourceRev } };
+    const { data } = await patchManagedResource(parentResourceName, parentResourceId, saveData, requestOverride);
+    return { status: 'success', revision: data._rev };
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.resource.errors.errorCreatingAccessRequest'));
+    return { status: 'error' };
+  }
+}
+
+/**
+ * Assigns resources to IGA backend
+ * @param {String} parentResourceId id of parent IDM resource
+ * @param {Array} resourceIds list of resources to create relationship to IDM resource
+ * @param {String} grantType IGA grant type to attribute new resources to
+ * @returns {String} saving status
+ */
+export async function assignResourcestoIGA(parentResourceId, resourceIds, grantType) {
+  const entitlements = resourceIds.map((resourceId) => ({ type: 'entitlement', id: resourceId }));
+
+  const payload = {
+    accessModifier: 'add',
+    catalogs: entitlements,
+    context: { type: 'admin' },
+    users: [parentResourceId],
+  };
+  try {
+    const { data } = await saveNewRequest(payload);
+    if (data?.errors?.length) {
+      data.errors.forEach((error) => {
+        showErrorMessage(error, error.message);
+      });
+    }
+    if (!data?.errors?.length || data.errors.length < resourceIds.length) {
+      displayNotification('success', i18n.global.t('governance.resource.successfullyAdded', { resource: grantType }));
+      return 'success';
+    }
+    return 'error';
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.resource.errors.errorCreatingAccessRequest'));
+    return 'error';
+  }
+}
+
+/**
+ * Search the request catalog for entitlements using the provided search value
+ * @param {Boolean} resourceIsUser whether parent resource is user
+ * @param {String} searchValue search value to find entitlements by
+ * @param {String} selectedApplication Application to query entitlements by
+ * @param {String} managedResourcePath managed/<realm>_resourceName path to map return values with
+ */
+export async function getEntitlements(resourceIsUser, searchValue, selectedApplication, managedResourcePath) {
+  try {
+    const queryParams = {
+      pageSize: 10,
+    };
+    const payload = {
+      targetFilter: {
+        operator: 'AND',
+        operand: [
+          {
+            operator: 'EQUALS',
+            operand: {
+              targetName: 'item.type',
+              targetValue: 'entitlementGrant',
+            },
+          },
+          {
+            operator: 'EQUALS',
+            operand: {
+              targetName: 'application.id',
+              targetValue: selectedApplication,
+            },
+          },
+          {
+            operator: 'CONTAINS',
+            operand: {
+              targetName: 'assignment.name',
+              targetValue: searchValue,
+            },
+          },
+        ],
+      },
+    };
+
+    if (resourceIsUser) {
+      queryParams.fields = 'application,entitlement,id,descriptor,glossary';
+      queryParams.sortKeys = 'assignment.name';
+      const { data } = await searchCatalog(queryParams, payload);
+      return data?.result.map((result) => ({ value: result.id, text: result.entitlement.displayName })) || [];
+    }
+    queryParams.sortBy = 'descriptor.idx./entitlement.displayName';
+    const { data } = await searchGovernanceResource(payload, queryParams);
+    return data?.result.map((result) => ({ value: `${managedResourcePath}/${result.id}`, text: result.entitlement.displayName })) || [];
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.resource.errors.errorSearchingCatalog'));
+    return [];
+  }
+}
+
+/**
  * Loads a list goverance grants (accounts/entitlements/roles) based on the current path
+ * @param {String} grantType - specific grant type queried, used in error message
+ * @param {String} resourceId - Id of resource to get grants related to
  * @param {object} params - Parameters to be plugged into query string
- * @param {Boolean} isInit - Parameter check whether the component is inital rendering, passed from loadData()
  */
 export async function getGovernanceGrants(grantType, resourceId, params) {
   try {
