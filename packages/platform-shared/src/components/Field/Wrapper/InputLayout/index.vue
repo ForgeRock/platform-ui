@@ -227,6 +227,7 @@ export default {
     button:not(.btn-sm),
     .multiselect,
     .b-form-tags {
+      border-color: $danger !important;
       border: 1px solid $danger;
     }
 
