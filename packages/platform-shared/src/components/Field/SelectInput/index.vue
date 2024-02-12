@@ -326,6 +326,20 @@ export default {
       outline-offset: 2px;
       outline: 2px solid;
     }
+
+    .multiselect.form-control:focus-within .multiselect__tags {
+      box-shadow: none !important;
+    }
+  }
+}
+
+.form-label-group:not(.fr-field-error) {
+  .form-label-group-input {
+    .multiselect--active,
+    .multiselect__content-wrapper {
+      border: none !important;
+      outline: none !important;
+    }
   }
 }
 
