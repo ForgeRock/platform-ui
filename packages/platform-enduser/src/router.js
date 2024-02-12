@@ -70,17 +70,20 @@ const router = createRouter({
     },
     {
       path: '/approvals',
-      name: 'Approvals',
-      component: () => import('@/views/governance/Approvals'),
-      meta: { authenticate: true },
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
-    },
-    {
-      path: '/approvals/:requestId',
-      name: 'ApprovalDetails',
-      component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/Approvals/ApprovalDetails'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
+      children: [
+        {
+          path: '',
+          name: 'Approvals',
+          component: () => import('@/views/governance/Approvals'),
+        },
+        {
+          path: ':requestId',
+          name: 'ApprovalDetails',
+          component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/Approvals/ApprovalDetails'),
+        },
+      ],
     },
     {
       path: '/access-reviews',
@@ -91,17 +94,20 @@ const router = createRouter({
     },
     {
       path: '/my-requests',
-      name: 'MyRequests',
-      component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequests'),
-      meta: { authenticate: true },
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
-    },
-    {
-      path: '/my-requests/details/:requestId',
-      name: 'MyRequestDetails',
-      component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequestDetails'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
+      children: [
+        {
+          path: '',
+          name: 'MyRequests',
+          component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequests'),
+        },
+        {
+          path: 'details/:requestId',
+          name: 'MyRequestDetails',
+          component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequestDetails'),
+        },
+      ],
     },
     {
       path: '/my-requests/new-request',
@@ -125,21 +131,24 @@ const router = createRouter({
     },
     {
       path: '/reports',
-      name: 'Reports',
-      component: () => import('@forgerock/platform-shared/src/views/Reports/Reports.vue'),
       beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
-    },
-    {
-      path: '/reports/:template',
-      name: 'ReportTemplate',
-      component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
-      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
-    },
-    {
-      path: '/reports/:template/history',
-      name: 'ReportTemplateHistory',
-      component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
-      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
+      children: [
+        {
+          path: '',
+          name: 'Reports',
+          component: () => import('@forgerock/platform-shared/src/views/Reports/Reports.vue'),
+        },
+        {
+          path: ':template',
+          name: 'ReportTemplate',
+          component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
+        },
+        {
+          path: ':template/history',
+          name: 'ReportTemplateHistory',
+          component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
+        },
+      ],
     },
     {
       path: '/reports/:template/:id',
@@ -157,17 +166,20 @@ const router = createRouter({
     },
     {
       path: '/my-reports',
-      name: 'DirectReports',
-      component: () => import('@/views/governance/Directory/DirectReports'),
-      meta: { authenticate: true },
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
-    },
-    {
-      path: '/my-reports/:userId/:grantType',
-      name: 'DirectReportDetail',
-      component: () => import('@/views/governance/Directory/DirectReportDetail'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
+      children: [
+        {
+          path: '',
+          name: 'DirectReports',
+          component: () => import('@/views/governance/Directory/DirectReports'),
+        },
+        {
+          path: ':userId/:grantType',
+          name: 'DirectReportDetail',
+          component: () => import('@/views/governance/Directory/DirectReportDetail'),
+        },
+      ],
     },
     {
       path: '/list/:resourceType/:resourceName',
