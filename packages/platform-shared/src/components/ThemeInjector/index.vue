@@ -150,6 +150,23 @@ of the MIT license. See the LICENSE file for details. -->
       box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.journeyCardShadow !== undefined ? theme.journeyCardShadow : 3 }}px;
       }
 
+      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:not(.fr-field-error) .form-control:focus,
+      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:not(.fr-field-error) .button:focus-visible,
+      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:focus-within .input-buttons:not(:focus-within) .within-input-button .btn {
+        border-color: {{ theme.journeyInputBorderColor }} !important;
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
+        box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags {
+        border-color: {{ theme.journeyInputBorderColor }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:not(.fr-field-error) .form-label-group-input .multiselect--active {
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
+        box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
+      }
+
       .login-header {
       background-color: {{ theme.journeyCardHeaderBackgroundColor || '#ffffff' }} !important;
       }
