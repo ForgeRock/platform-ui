@@ -61,7 +61,6 @@ of the MIT license. See the LICENSE file for details. -->
       name="edit-content"
       :relationship-properties="relationshipProperties"
       :display-properties="displayProperties"
-      :revision="revision"
       :refresh-data="refreshData"
       :resource-details="resourceDetails">
       <BCard class="card-tabs-vertical mb-5">
@@ -172,7 +171,6 @@ of the MIT license. See the LICENSE file for details. -->
                 name="wfApplications"
                 :resource-details="resourceDetails"
                 :relationship-properties="relationshipProperties"
-                :revision="revision"
                 :id="id" />
             </BTab>
             <FrLinkedApplicationsTab :linked-applications="linkedApplications" />
@@ -367,6 +365,7 @@ export default {
 
         this.getResource().then((resourceDetails) => {
           this.revision = resourceDetails.data._rev;
+          this.$emit('set-revision', this.revision);
           this.resourceDetails = resourceDetails.data;
 
           if (this.canClearSessions && this.$store.state.SharedStore.hasAmUrl) {

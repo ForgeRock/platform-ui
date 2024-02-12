@@ -197,8 +197,8 @@ of the MIT license. See the LICENSE file for details. -->
       :is-saving="assigningResource"
       :parent-resource-name="parentResourceName"
       :resource-type="pluralizeValue(grantType)"
-      @assign-resources="assignResources"
-      @get-entitlements="getEntitlements" />
+      @assign-resources="$emit('assign-resources', $event)"
+      @get-entitlements="$emit('get-entitlements', $event)" />
     <FrRevokeRequestModal
       :modal-id="revokeModalId"
       :show-spinner="isSubmittingRevokeRequest"
@@ -235,8 +235,6 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import formatConstraintDate from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
-import { searchCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
-// import { patchManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { saveNewRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrGovAssignResourceModal from '../GovAssignResourceModal';
 import FrRevokeRequestModal from '../RevokeRequestModal';
@@ -277,6 +275,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    awaitingApi: {
+      type: Boolean,
+      default: false,
+    },
+    entitlementOptions: {
+      type: Array,
+      default: () => [],
+    },
     fields: {
       type: Array,
       required: true,
@@ -284,10 +290,6 @@ export default {
     grantType: {
       type: String,
       required: true,
-    },
-    id: {
-      type: String,
-      default: '',
     },
     items: {
       type: Array,
@@ -298,6 +300,10 @@ export default {
       default: 'gov-resource',
     },
     parentResourceName: {
+      type: String,
+      default: '',
+    },
+    savingStatus: {
       type: String,
       default: '',
     },
@@ -312,10 +318,8 @@ export default {
   },
   data() {
     return {
-      assigningResource: false,
       blankValueIndicator,
       directAssignment: this.$t('common.direct'),
-      entitlementOptions: [],
       glossarySchema: [],
       grantDetails: {},
       isLoading: true,
@@ -344,6 +348,9 @@ export default {
     }
   },
   computed: {
+    assigningResource() {
+      return this.savingStatus === 'saving';
+    },
     capitalizedPluralGrantType() {
       return capitalize(pluralizeValue(this.grantType));
     },
@@ -393,52 +400,6 @@ export default {
           return '';
       }
     },
-    async assignResources(resourceIds) {
-      this.assigningResource = true;
-      if (this.resourceIsUser) {
-        const entitlements = resourceIds.map((resourceId) => ({ type: 'entitlement', id: resourceId }));
-
-        const payload = {
-          accessModifier: 'add',
-          catalogs: entitlements,
-          context: { type: 'admin' },
-          users: [this.id],
-        };
-        try {
-          const { data } = await saveNewRequest(payload);
-          if (data?.errors.length) {
-            data.errors.forEach((error) => {
-              this.showErrorMessage(error, error.message);
-            });
-          }
-          if (!data?.errors?.length || data.errors.length < resourceIds.length) {
-            this.displayNotification('success', this.$t('governance.resource.successfullyAdded', { resource: capitalize(this.grantType) }));
-            this.$bvModal.hide('govCreateResourceModal');
-          }
-        } catch (error) {
-          this.showErrorMessage(error, this.$t('governance.resource.errors.errorCreatingAccessRequest'));
-        }
-      } else if (this.resourceIsRole) {
-        // TODO: Logic for assign-to-role flow in related ticket within same epic
-        // const saveData = [];
-        // resourceIds.forEach((resourceId) => {
-        //   saveData.push({
-        //     operation: 'add',
-        //     field: '/assignments/-',
-        //     value: resourceId,
-        //   });
-        // });
-
-        // const requestOverride = { headers: { 'if-match': managedResource._rev } };
-        // try {
-        //   await patchManagedResource(this.resourceName, this.id, saveData, requestOverride);
-        //   this.$bvModal.hide('govCreateResourceModal');
-        // } catch (error) {
-        //   this.showErrorMessage(error, this.$t('governance.resource.errors.errorCreatingAccessRequest'));
-        // }
-      }
-      this.assigningResource = false;
-    },
     convertFieldNameToSortKey(fieldName) {
       const sortByUser = {
         accountName: 'descriptor.idx./account.displayName',
@@ -451,54 +412,6 @@ export default {
       return this.resourceIsRole ? 'name' : sortByUser[fieldName] ?? null;
     },
     getApplicationLogo,
-    /**
-     * Search the request catalog for entitlements using the provided search value
-     * @param {Object} $event Contains search value and selected application
-     * @param {String} searchValue search value to find entitlements by
-     * @param {String} selectedApplication Application to query entitlements by
-     */
-    async getEntitlements({ searchValue = '', selectedApplication }) {
-      try {
-        const searchParams = {
-          fields: 'application,entitlement,id,descriptor,glossary',
-          pageSize: 10,
-          sortKeys: 'assignment.name',
-        };
-        const payload = {
-          targetFilter: {
-            operator: 'AND',
-            operand: [
-              {
-                operator: 'EQUALS',
-                operand: {
-                  targetName: 'item.type',
-                  targetValue: 'entitlementGrant',
-                },
-              },
-              {
-                operator: 'EQUALS',
-                operand: {
-                  targetName: 'application.id',
-                  targetValue: selectedApplication,
-                },
-              },
-              {
-                operator: 'CONTAINS',
-                operand: {
-                  targetName: 'assignment.name',
-                  targetValue: searchValue,
-                },
-              },
-            ],
-          },
-        };
-
-        const { data } = await searchCatalog(searchParams, payload);
-        this.entitlementOptions = data?.result.map((result) => ({ value: this.resourceIsUser ? result.id : result.entitlement._id, text: result.entitlement.displayName })) || [];
-      } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.resource.errors.errorSearchingCatalog'));
-      }
-    },
     getDisplayName(item) {
       if (this.grantType === 'account') {
         return this.getResourceDisplayName(item, '/account');
@@ -589,6 +502,12 @@ export default {
     },
   },
   watch: {
+    savingStatus(status) {
+      if (status === 'success') {
+        this.$bvModal.hide('govCreateResourceModal');
+        this.loadData();
+      }
+    },
     items(items) {
       this.isNoResultsFirstLoad = !items.length && this.isNoResultsFirstLoad === null;
       this.isLoading = false;
