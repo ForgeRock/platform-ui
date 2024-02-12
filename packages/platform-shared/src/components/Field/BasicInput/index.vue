@@ -425,13 +425,12 @@ export default {
   .form-label-group:not(.fr-field-error) {
     .form-control {
       &:focus {
-        border-color: $primary !important;
-        -webkit-box-shadow: 0 0 0 0.0625rem $primary !important;
-        box-shadow: 0 0 0 0.0625rem $primary !important;
+        border-color: $primary;
+        -webkit-box-shadow: 0 0 0 0.0625rem $primary;
+        box-shadow: 0 0 0 0.0625rem $primary;
       }
     }
   }
-
   .form-label-group.fr-field-error {
     .form-control {
       &:focus {
@@ -444,9 +443,9 @@ export default {
 
   .form-label-group:focus-within {
        .input-buttons:not(:focus-within) .within-input-button .btn {
-            border-color: $primary !important;
+            border-color: $primary;
             clip-path: inset(-1px -1px -1px 0px) !important;
-            box-shadow: 0 0 0 0.0625rem $primary !important;
+            box-shadow: 0 0 0 0.0625rem $primary;
        }
        &.fr-field-error .input-buttons:not(:focus-within) .within-input-button .btn {
             border-color: $danger !important;
