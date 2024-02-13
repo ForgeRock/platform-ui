@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -60,6 +60,7 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import resolveImage from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getDefinedDashboards } from '@forgerock/platform-shared/src/api/DashboardApi';
 import { getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { getUserSamlApplications } from '@/api/ProfileApi';
 
 export default {
   name: 'WorkforceApplications',
@@ -74,6 +75,7 @@ export default {
       applications: {},
       searchString: '',
       userData: {},
+      userSamlApplications: [],
     };
   },
   mixins: [
@@ -85,12 +87,12 @@ export default {
       if (!this.userData.effectiveApplications) {
         return [];
       }
-      const visibleApplications = this.userData.effectiveApplications.filter((application) => {
+      const BookmarkApps = this.userData.effectiveApplications.filter((application) => {
         const lowerCaseAppName = application.name.toLowerCase();
         return Object.values(this.applications).find((app) => app.dashboardDisplayName[0].toLowerCase() === lowerCaseAppName) && lowerCaseAppName.includes(this.searchString.toLowerCase());
       });
 
-      return visibleApplications.map((application) => {
+      const filteredApps = BookmarkApps.map((application) => {
         const app = Object.values(this.applications).find((a) => a.dashboardDisplayName[0].toLowerCase() === application.name.toLowerCase());
         return {
           name: app.dashboardDisplayName[0],
@@ -98,6 +100,16 @@ export default {
           url: app.dashboardLogin[0],
         };
       });
+
+      this.userSamlApplications.forEach((samlApp) => {
+        filteredApps.push({
+          name: samlApp.name,
+          icon: samlApp.icon || 'saml.svg',
+          url: samlApp.ssoEntities.idpLoginUrl,
+        });
+      });
+
+      return filteredApps;
     },
   },
   mounted() {
@@ -109,8 +121,12 @@ export default {
   methods: {
     getUserProfile() {
       const userManagedObject = this.$store.state.isFraas ? `${this.$store.state.realm}_user` : 'user';
-      getManagedResource(userManagedObject, this.userId).then(({ data }) => {
-        this.userData = data;
+      Promise.all([
+        getManagedResource(userManagedObject, this.userId),
+        getUserSamlApplications(userManagedObject, this.userId),
+      ]).then(([userResult, userSamlApplicationsResult]) => {
+        this.userData = userResult.data;
+        this.userSamlApplications = userSamlApplicationsResult.data.result;
       }).catch((error) => {
         this.showErrorMessage(error, this.$t('pages.profile.failedGettingProfile'));
       });
