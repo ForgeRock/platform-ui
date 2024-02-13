@@ -164,5 +164,13 @@ module.exports = {
     'pinia',
     'axios',
     '@kyvg/vue3-notification',
+    '@vee-validate/rules',
+    '@vue',
+    'vee-validate',
+    'vue-3-sanitize',
+    'vue-loader',
+    '@intlify',
+    'vue-i18n',
+    'vue-router',
   ],
 };
