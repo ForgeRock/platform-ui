@@ -16,8 +16,8 @@ const defaultState = {
   autoAccessReportsUrl: null,
   autoAccessTenantId: null,
   autoReportsEnabled: false,
-  idmBaseURL: '',
   currentPackage: '',
+  extendedSamlConfigEnabled: false,
   fraasEnvironmentUrl: null,
   fraasFederationUrl: null,
   fraasLoggingKeyURL: null,
@@ -29,18 +29,19 @@ const defaultState = {
   googleMapsApiKey: '',
   governanceEnabled: false,
   governanceEnabledV4: false,
+  hasAmUrl: false,
+  idmBaseURL: '',
   igaApiUrl: null,
   igaOrchestrationApiUrl: null,
-  uiConfig: null,
-  hasAmUrl: false,
-  showEsvUi: false,
-  showServiceAccountUi: false,
-  webStorageAvailable: true,
-  workforceEnabled: false,
   managedObjectMinimumUIFilterLength: {},
   maxIdleExpirationTime: null,
   newMultiselectEnabled: false,
   promoteAppsViaApi: false,
+  showEsvUi: false,
+  showServiceAccountUi: false,
+  uiConfig: null,
+  webStorageAvailable: true,
+  workforceEnabled: false,
 };
 
 const mutations = {
@@ -79,6 +80,9 @@ const mutations = {
         if (env.VUE_APP_AUTO_ACCESS_TENANT_ID) {
           state.autoAccessTenantId = env.VUE_APP_AUTO_ACCESS_TENANT_ID;
         }
+      }
+      if (env.VUE_APP_ENABLE_EXTENDED_SAML_CONFIG === 'true' || env.VUE_APP_ENABLE_EXTENDED_SAML_CONFIG === true) {
+        state.extendedSamlConfigEnabled = env.VUE_APP_ENABLE_EXTENDED_SAML_CONFIG;
       }
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
         if (env.VUE_APP_IGA_API_URL) {
