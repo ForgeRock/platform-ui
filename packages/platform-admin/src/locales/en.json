@@ -3000,7 +3000,17 @@
         "orchestration": "Workflow",
         "subtitle": "Trigger workflows or certifications based on user events.",
         "title": "Governance Events",
-        "update": "updated"
+        "update": "updated",
+        "actions": {
+          "activateEventError": "There was an error activating this event",
+          "activateEventSuccessfully": "Event successfully activated",
+          "deactivateEventConfirm": "Are you sure you want to deactivate this event?",
+          "deactivateEventSuccessfully": "Event successfully deactivated",
+          "deactivateEvent": "Deactivate Event?",
+          "deactivateEventError": "There was an error deactivating this event",
+          "deleteEventError": "There was an error deleting this event",
+          "deleteEventSuccessfully": "Event successfully deleted"
+        }
       },
       "newEventModal": {
         "certification": "Certification",
