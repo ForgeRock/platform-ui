@@ -54,9 +54,9 @@ export default function useRunReport(
   /**
    * Schema that handles data to fetch and model.
    * NOTE: If a fetch request is conditional, then a property titled 'viewable'
-   * can be added to the config oject which will prevent the fetch from executing
-   * when the condition is false. The UI will then display a field that
-   * corresponds with the given parameter type.
+   * can be added to the config oject which will prevent the fetch from
+   * executing when the condition is false. The UI will then display
+   * an empty field that corresponds with the given parameter type.
    */
   const _REPORT_FIELDS_CONTROLLER = {
     accountStatus: {
@@ -69,6 +69,7 @@ export default function useRunReport(
         managedObject: 'application',
         model: applicationOptions,
         fields: 'name',
+        viewable: store.state.SharedStore.currentPackage === 'admin',
       },
       payload: applicationsModel,
       fetch: managedResourcePropertyRequest,
@@ -106,6 +107,7 @@ export default function useRunReport(
         managedObject: 'organization',
         model: orgOptions,
         fields: 'name',
+        viewable: store.state.SharedStore.currentPackage === 'admin',
       },
       payload: organizationsModel,
       fetch: managedResourcePropertyRequest,
@@ -119,6 +121,7 @@ export default function useRunReport(
         managedObject: 'role',
         model: rolesOptions,
         fields: 'name',
+        viewable: store.state.SharedStore.currentPackage === 'admin',
       },
       payload: rolesModel,
       fetch: managedResourcePropertyRequest,
@@ -142,6 +145,7 @@ export default function useRunReport(
         managedObject: 'user',
         model: usersOptions,
         fields: 'userName',
+        viewable: store.state.SharedStore.currentPackage === 'admin',
       },
       payload: usersModel,
       fetch: managedResourcePropertyRequest,
