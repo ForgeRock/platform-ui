@@ -20,10 +20,9 @@ import store from '@/store';
  * Gets the supplied managed object from the config
  *
  * @param {String} managedObjectName managed object name that comes from the _FIELD_MAP config
- * @param {String} errorMessage the error message to show if call fails
  * @returns {Object} managed object
  */
-async function getManagedObject(managedObjectName, errorMessage) {
+async function getManagedObject(managedObjectName) {
   function findManagedObject(objects, name) {
     return objects.find((object) => (!store.state.isFraas || object.name.startsWith(store.state.realm)) && object.name.endsWith(name));
   }
@@ -31,10 +30,9 @@ async function getManagedObject(managedObjectName, errorMessage) {
   try {
     const { data: managedConfig } = await getConfig('managed');
     const { objects } = managedConfig;
-    return findManagedObject(objects, managedObjectName);
+    return findManagedObject(objects, managedObjectName) || {};
   } catch (error) {
-    showErrorMessage(error, errorMessage);
-    return error;
+    return {};
   }
 }
 
@@ -42,17 +40,15 @@ async function getManagedObject(managedObjectName, errorMessage) {
  * Gets the managed schema
  *
  * @param {String} resourceName managed object name
- * @param {String} errorMessage the error message to show if call fails
  * @returns {Object} managed schema
  */
-async function getManagedSchema(resourceName, errorMessage) {
+async function getManagedSchema(resourceName) {
   const schemaUrl = `managed/${resourceName}`;
   try {
     const { data: schema } = await getSchema(schemaUrl);
     return schema;
   } catch (error) {
-    showErrorMessage(error, errorMessage);
-    return error;
+    return {};
   }
 }
 
@@ -65,12 +61,15 @@ async function getManagedSchema(resourceName, errorMessage) {
 async function getManagedResourceProperties(managedObjectName, queryFilter = true, pageSize = -1, fields = '') {
   const { name: resourceName } = await getManagedObject(managedObjectName);
 
+  if (!resourceName) {
+    throw new Error(`Cannot find managed object: ${managedObjectName}`);
+  }
+
   try {
     const { data } = await getManagedResourceList(resourceName, { queryFilter, pageSize, fields });
-    const managedResourceProperties = data.result;
-    return managedResourceProperties;
+    return data.result || [];
   } catch (error) {
-    return error;
+    return [];
   }
 }
 
@@ -79,11 +78,16 @@ async function getManagedResourceProperties(managedObjectName, queryFilter = tru
  * @param {Undefined} _ Unused first parameter
  * @param {String} queryFilter api parameter for filtering results
  * @param {String} pageSize api parameter for returning a determined amount of results
+ * @returns {Array}
  */
 export async function getOauth2Clients(_, queryFilter = true, pageSize = 10) {
   const queryFilterForGatewaysOrAgents = queryFilter === true ? '' : queryFilter.split('"')[1];
-  const response = await getGatewaysOrAgents('oauth2', { queryFilter: queryFilterForGatewaysOrAgents }, pageSize);
-  return response.data.result;
+  try {
+    const response = await getGatewaysOrAgents('oauth2', { queryFilter: queryFilterForGatewaysOrAgents }, pageSize);
+    return response.data.result || [];
+  } catch (error) {
+    return [];
+  }
 }
 
 /**
@@ -119,7 +123,7 @@ export async function requestExport(runId, action, template, format) {
 export async function requestReportRuns(params) {
   try {
     const { result: reportRunsData } = await getReportRuns(params);
-    return reportRunsData?.length ? reportRunsData : [];
+    return reportRunsData || [];
   } catch (error) {
     showErrorMessage(error, i18n.global.t('reports.tabs.runHistory.errors.errorRetrievingHistory'));
     return [];
@@ -133,9 +137,18 @@ export async function requestReportRuns(params) {
  */
 export async function relationshipPropertyRequest(config) {
   const { managedObject, schemaProperty } = config;
-  const { name: resourceName } = await getManagedObject(managedObject, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
-  const { properties } = await getManagedSchema(resourceName, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
-  return properties[schemaProperty];
+  const { name: resourceName } = await getManagedObject(managedObject);
+
+  if (!resourceName) {
+    throw new Error(`Cannot find managed object: ${managedObject}`);
+  }
+
+  try {
+    const { properties } = await getManagedSchema(resourceName);
+    return properties[schemaProperty] || {};
+  } catch (error) {
+    return {};
+  }
 }
 
 /**
@@ -160,10 +173,9 @@ export function managedResourcePropertyRequest(config, queryFilter, pageSize) {
 export async function requestTrees(config, queryFilter, pageSize) {
   try {
     const { data } = await actionGetAllTrees(config.fields, queryFilter, pageSize);
-    const trees = data.result;
-    return trees;
+    return data.result || [];
   } catch (error) {
-    return error;
+    return [];
   }
 }
 
@@ -174,9 +186,8 @@ export async function requestTrees(config, queryFilter, pageSize) {
 export async function getCertificationsForReports() {
   try {
     const { data } = await getAdminCertificationItems({ pageSize: 0 });
-    const certifications = data.result;
-    return certifications;
-  } catch (error) {
-    return error;
+    return data.result || [];
+  } catch {
+    return [];
   }
 }
