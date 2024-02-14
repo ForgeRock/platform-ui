@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -20,13 +20,13 @@ describe('main.js', () => {
   configApi.getUiConfig = jest.fn().mockReturnValue(Promise.resolve({ data: { configuration: { lang: 'en' } } }));
   overrideTranslations.getTranslationOverridesForLocale = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
 
+  document.body.innerHTML = '<div id="appRoot"></div>';
+  require('./main');
+
   describe('/logout url flow', () => {
     const sdkSpy = jest.spyOn(sdk.SessionManager, 'logout').mockImplementation(() => Promise.resolve());
 
     it('does not call sdk logout if route is not logout', async () => {
-      document.body.innerHTML = '<div id="app"></div>';
-      require('./main');
-
       router.push('/login');
 
       await flushPromises();
@@ -36,9 +36,6 @@ describe('main.js', () => {
     });
 
     it('logs out of root when root was logged into', async () => {
-      document.body.innerHTML = '<div id="app"></div>';
-      require('./main');
-
       router.push('/logout');
 
       await flushPromises();
@@ -48,9 +45,6 @@ describe('main.js', () => {
     });
 
     it('logs out of bravo when bravo is specified in logout url query params', async () => {
-      document.body.innerHTML = '<div id="app"></div>';
-      require('./main');
-
       router.push('/logout?realm=bravo');
 
       await flushPromises();
@@ -59,9 +53,7 @@ describe('main.js', () => {
     });
 
     it('logs out of delta when delta was logged into', async () => {
-      document.body.innerHTML = '<div id="app"></div>';
       localStorage.setItem('originalLoginRealm', 'delta');
-      require('./main');
 
       router.push('/logout');
 
