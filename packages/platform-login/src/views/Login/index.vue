@@ -594,7 +594,7 @@ export default {
     buttonTextLocalized() {
       let submitButtonTextOverride = null;
       try {
-        submitButtonTextOverride = this.getLocalizedString(this.stage.submitButtonText, i18n.locale, i18n.fallbackLocale);
+        submitButtonTextOverride = this.getLocalizedString(this.stage.submitButtonText, i18n.global.locale, i18n.global.fallbackLocale);
       } catch (e) {
         return this.buttonText || this.$t('login.next');
       }
@@ -1005,7 +1005,7 @@ export default {
     },
     getPageNodeFooter() {
       try {
-        return this.stage && this.$sanitize(this.getLocalizedString(this.stage.pageFooter, i18n.locale, i18n.fallbackLocale));
+        return this.stage && this.$sanitize(this.getLocalizedString(this.stage.pageFooter, i18n.global.locale, i18n.global.fallbackLocale));
       } catch (e) {
         return null;
       }

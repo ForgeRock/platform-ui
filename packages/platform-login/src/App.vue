@@ -125,11 +125,11 @@ export default {
       deep: true,
       handler() {
         this.hideAppOnTransition = false;
-        this.localizedFooter = this.getLocalizedString(this.journeyFooter, i18n.locale, i18n.fallbackLocale);
-        this.localizedHeader = this.getLocalizedString(this.journeyHeader, i18n.locale, i18n.fallbackLocale);
-        this.localizedJustifiedContent = this.getLocalizedString(this.journeyJustifiedContent, i18n.locale, i18n.fallbackLocale);
-        this.localizedLogo = this.getLocalizedString(this.logo, i18n.locale, i18n.fallbackLocale);
-        this.localizedLogoAltText = this.getLocalizedString(this.logoAltText, i18n.locale, i18n.fallbackLocale);
+        this.localizedFooter = this.getLocalizedString(this.journeyFooter, i18n.global.locale, i18n.global.fallbackLocale);
+        this.localizedHeader = this.getLocalizedString(this.journeyHeader, i18n.global.locale, i18n.global.fallbackLocale);
+        this.localizedJustifiedContent = this.getLocalizedString(this.journeyJustifiedContent, i18n.global.locale, i18n.global.fallbackLocale);
+        this.localizedLogo = this.getLocalizedString(this.logo, i18n.global.locale, i18n.global.fallbackLocale);
+        this.localizedLogoAltText = this.getLocalizedString(this.logoAltText, i18n.global.locale, i18n.global.fallbackLocale);
       },
     },
     /**
