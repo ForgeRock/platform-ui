@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     :internal-search="props.internalSearch"
     :label="props.label"
     :options="filteredOptions"
-    :placeholder="!props.options.length ? $t('reports.tabs.runReport.pressEnterToCreateATag') : props.placeholder"
+    :placeholder="taggable ? $t('reports.tabs.runReport.pressEnterToCreateATag') : props.placeholder"
     :show-no-options="true"
     :show-no-results="true"
     :taggable="taggable"

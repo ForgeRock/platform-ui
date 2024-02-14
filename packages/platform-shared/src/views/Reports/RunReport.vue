@@ -33,8 +33,9 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-applications"
             :options="applicationOptionsFiltered"
+            :taggable="fieldIsTaggable('applications')"
             @input="applicationsModel = $event"
-            @search="searchDebounce($event, _REPORT_FIELDS_CONTROLLER.applications)" />
+            @search="searchDebounce($event, 'applications')" />
         </BCol>
       </BRow>
       <BRow v-if="showOAuthApplications">
@@ -46,9 +47,9 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-oauth-applications"
             :options="oAuthApplicationOptionsFiltered"
-            :taggable="!oAuthApplicationOptionsFiltered.length"
+            :taggable="fieldIsTaggable('oauth2_applications')"
             @input="oAuthApplicationsModel = $event"
-            @search="handleOAuthApplicationsSearch" />
+            @search="searchDebounce($event, 'oauth2_applications')" />
         </BCol>
       </BRow>
       <BRow v-if="showOutcome">
@@ -76,6 +77,7 @@ of the MIT license. See the LICENSE file for details. -->
             name="show-campaign-status"
             :internal-search="true"
             :options="campaignNameOptionsFiltered"
+            :label="!campaignNameOptionsFiltered.length ? _REPORT_FIELDS_CONTROLLER.campaign_name.label : null"
             :placeholder="_REPORT_FIELDS_CONTROLLER.campaign_name.label"
             :searchable="campaignNameOptionsFiltered.length"
             :type="campaignNameOptionsFiltered.length ? 'select' : 'string'" />
@@ -106,8 +108,9 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-users"
             :options="usersOptionsFiltered"
+            :taggable="fieldIsTaggable('user_names')"
             @input="usersModel = $event"
-            @search="searchDebounce($event, _REPORT_FIELDS_CONTROLLER.user_names)" />
+            @search="searchDebounce($event, 'user_names')" />
         </BCol>
       </BRow>
       <BRow v-if="showStatus">
@@ -134,7 +137,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="fr-field-journeys"
             :internal-search="true"
             :options="journeyOptionsFiltered"
-            :taggable="!journeyOptionsFiltered.length"
+            :taggable="fieldIsTaggable('journeyName')"
             @input="journeysModel = $event" />
         </BCol>
       </BRow>
@@ -147,8 +150,9 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-organizations"
             :options="orgOptionsFiltered"
+            :taggable="fieldIsTaggable('org_names')"
             @input="organizationsModel = $event"
-            @search="searchDebounce($event, _REPORT_FIELDS_CONTROLLER.org_names)" />
+            @search="searchDebounce($event, 'org_names')" />
         </BCol>
       </BRow>
       <BRow v-if="showRoles">
@@ -160,8 +164,9 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-roles"
             :options="rolesOptionsFiltered"
+            :taggable="fieldIsTaggable('roles')"
             @input="rolesModel = $event"
-            @search="searchDebounce($event, _REPORT_FIELDS_CONTROLLER.roles)" />
+            @search="searchDebounce($event, 'roles')" />
         </BCol>
       </BRow>
       <template v-if="unmappedParameters.length">
@@ -495,27 +500,30 @@ const disableSubmit = computed(() => doesNotContainAtLeastOneValidParameter.valu
   || unmappedFieldsDisableSubmit.value);
 
 /**
+ * Determines if a field should allow user input tags
+ * @param {String} field field controller name
+ */
+function fieldIsTaggable(field) {
+  const { config } = _REPORT_FIELDS_CONTROLLER[field];
+  return config.viewable === false;
+}
+
+/**
  * Handles async search queries
  * @param {String} term search term
- * @param {Object} field field controller
+ * @param {String} field field controller name
  * @param {Array} payload field value
  */
 async function handleSearch(term, field) {
-  const { config, fetch } = field;
+  const { config, fetch } = _REPORT_FIELDS_CONTROLLER[field];
+  const isSearchable = config.viewable !== false;
   const queryFilter = `${config.fields} sw "${term}"`;
-  config.model.value = await fetch(config, queryFilter, 10);
-}
-const searchDebounce = debounce(handleSearch, 500);
 
-async function handleOAuthApplicationsSearch(term) {
-  const field = _REPORT_FIELDS_CONTROLLER.oauth2_applications;
-  const isSearchable = field.config.viewable;
-  const hasOptions = oAuthApplicationOptions.value.length;
-
-  if (isSearchable && hasOptions) {
-    searchDebounce(term, field);
+  if (isSearchable) {
+    config.model.value = await fetch(config, queryFilter, 10);
   }
 }
+const searchDebounce = debounce(handleSearch, 500);
 
 /**
  * Submit a run report request
@@ -583,9 +591,11 @@ async function setReportFields(reportConfig) {
 
   if (fetchList.length) {
     const fetchedData = await Promise.allSettled(fetchList);
+
     fetchModelList.forEach((dataModel, index) => {
-      if (fetchedData[index].value) {
-        dataModel.value = fetchedData[index].value;
+      const { status, value } = fetchedData[index];
+      if (status === 'fulfilled') {
+        dataModel.value = value;
       }
     });
   }
