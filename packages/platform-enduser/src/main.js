@@ -30,7 +30,6 @@ import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
-import velocity from 'velocity-animate';
 import BootstrapVue from 'bootstrap-vue';
 import createRealmPath from '@forgerock/platform-shared/src/utils/createRealmPath';
 import store from '@/store';
@@ -108,7 +107,7 @@ const loadApp = () => {
   app.use(store);
   app.use(i18n);
   app.use(pinia);
-  app.use(Notifications, { velocity });
+  app.use(Notifications);
   app.use(Vue3Sanitize, baseSanitizerConfig);
   router.isReady().then(() => app.mount('#appRoot'));
 };

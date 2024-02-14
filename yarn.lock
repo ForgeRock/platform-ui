@@ -2235,7 +2235,6 @@ __metadata:
     url: 0.11.0
     uuid: 3.3.3
     vee-validate: 4.11.8
-    velocity-animate: 1.5.2
     vue: 3.3.4
     vue-3-sanitize: 0.1.4
     vue-cli-plugin-i18n: 2.3.2
@@ -2300,7 +2299,6 @@ __metadata:
     sass-loader: 8.0.2
     style-resources-loader: 1.2.1
     vee-validate: 4.11.8
-    velocity-animate: 1.5.2
     vue: 3.3.4
     vue-3-sanitize: 0.1.4
     vue-cli-plugin-i18n: 2.3.2
@@ -2354,7 +2352,6 @@ __metadata:
     style-resources-loader: 1.2.1
     uuid: 3.3.3
     vee-validate: 4.11.8
-    velocity-animate: 1.5.2
     vue: 3.3.4
     vue-3-sanitize: 0.1.4
     vue-cli-plugin-i18n: 2.3.2
@@ -2452,7 +2449,6 @@ __metadata:
     util: 0.12.5
     uuid: 3.3.3
     vee-validate: 4.11.8
-    velocity-animate: 1.5.1
     vkbeautify: 0.99.3
     vue: 3.3.4
     vue-clipboard2: 0.3.1
@@ -20371,20 +20367,6 @@ __metadata:
   peerDependencies:
     vue: ^3.3.4
   checksum: 12ebbb003bce2fe2d7718cf4b05f642f61d42fe17e9ed7917c72e6c3b1cb845603986a04c208dd0ee2fb0309708eed94edc79e560b9c5ff916b590b2b101a934
-  languageName: node
-  linkType: hard
-
-"velocity-animate@npm:1.5.1":
-  version: 1.5.1
-  resolution: "velocity-animate@npm:1.5.1"
-  checksum: 00ff2e2d8c8f28638e8e2d42d90208a3d00f64e0607c7e922ba5b6e8813e01b280d7bf4be584b437299e1cffc8b488ca3a53a9632b0e5c33bfda1835cf305994
-  languageName: node
-  linkType: hard
-
-"velocity-animate@npm:1.5.2":
-  version: 1.5.2
-  resolution: "velocity-animate@npm:1.5.2"
-  checksum: 9860da93170252478a31dc8814602e28f47183a4852c3e55c27d49ceadf0f16428b1593d50e766791982735db8c3c009d4813353e5ec52b262b37bbe912d7d86
   languageName: node
   linkType: hard
 
