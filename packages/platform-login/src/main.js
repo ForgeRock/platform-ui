@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -27,7 +27,6 @@ import { createPinia } from 'pinia';
 import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
-import velocity from 'velocity-animate';
 import store from '@/store';
 import i18n from './i18n';
 import router from './router';
@@ -123,7 +122,7 @@ router.beforeEach((to, _from, next) => {
 
 const loadApp = () => {
   const app = createApp(App);
-  app.use(Notifications, { velocity });
+  app.use(Notifications);
   app.use(Vue3Sanitize, baseSanitizerConfig);
   app.use(VueReCaptcha);
   app.use(router);
