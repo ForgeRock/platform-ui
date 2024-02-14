@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,10 +7,15 @@
 
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import { findByText, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import { mount, flushPromises } from '@vue/test-utils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import i18n from '@/i18n';
 import Reports from './Reports';
+
+ValidationRules.extendRules({
+  alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
+});
 
 jest.mock('vue-router', () => ({
   useRouter: jest.fn(() => ({ push: jest.fn() })),

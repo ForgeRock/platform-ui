@@ -10,7 +10,7 @@
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#custom_method_that_gets_a_more_specific_type
  *
  * @param name - Parameter description.
- * @returns Type and description of the returned object.
+ * @returns Type and description of the returned parameter.
  */
 
 /* eslint-disable import/prefer-default-export */

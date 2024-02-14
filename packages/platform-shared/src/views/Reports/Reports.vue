@@ -9,7 +9,16 @@ of the MIT license. See the LICENSE file for details. -->
       :title="$t('pageTitles.Reports')"
       :subtitle="$t('reports.subtitle')"
     />
-    <BButtonToolbar class="justify-content-lg-end mb-4 p-0 border-0">
+    <BButtonToolbar class="justify-content-lg-between mb-4 p-0 border-0">
+      <BButton
+        class="mb-3 mb-md-0 d-none"
+        variant="primary"
+        @click="handleNewReportClick">
+        <FrIcon
+          icon-class="mr-2"
+          name="add" />
+        {{ $t('reports.newReport') }}
+      </BButton>
       <FrSearchInput
         :value="searchValue"
         class="fr-search"
@@ -75,6 +84,10 @@ of the MIT license. See the LICENSE file for details. -->
       :is-testing="isTesting"
       :translated-item-type="$t('common.report')"
       @delete-item="deleteTemplate(templateToDelete.name, templateToDelete.status)" />
+    <FrNewReportModal
+      :report-is-saving="saveReportPending"
+      :is-testing="isTesting"
+      @new-report-save="handleNewReportSave" />
   </BContainer>
 </template>
 
@@ -82,8 +95,9 @@ of the MIT license. See the LICENSE file for details. -->
 /**
 * @description Shows and filter the list of the report templates.
 */
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import {
+  BButton,
   BButtonToolbar,
   BCol,
   BContainer,
@@ -99,11 +113,14 @@ import {
 } from '@forgerock/platform-shared/src/api/AutoApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import FrNewReportModal from './modals/NewReportModal';
+import useSaveReportTemplate from './composables/SaveReport';
 import FrReportCard from './ReportCard';
 import i18n from '@/i18n';
 
@@ -117,6 +134,9 @@ defineProps({
 // Composables
 const router = useRouter();
 const { bvModal } = useBvModal();
+const {
+  templateData, saveReportError, saveReportPending, saveReport, saveReportReady,
+} = useSaveReportTemplate();
 
 // Globals
 const currentPage = ref(1);
@@ -252,6 +272,22 @@ function editTemplate(id) {
 }
 
 /**
+ * Opens the New Report modal
+ */
+function handleNewReportClick() {
+  bvModal.value.show('new-report-modal');
+}
+
+/**
+ * Handles calling the API to create a new Report Template
+ *
+ * @param {Object} payload - Name, description, and viewers values from New Report modal
+ */
+function handleNewReportSave(payload) {
+  saveReport(payload);
+}
+
+/**
  * Publishes a report template
  * @param {String} id template name
  */
@@ -267,8 +303,18 @@ async function publishTemplate(id) {
   reportBeingProcessed.value = '';
 }
 
-retrieveReportTemplates();
+watch(saveReportError, (newVal) => {
+  showErrorMessage(newVal, i18n.global.t('reports.saveError'));
+});
 
+watch(saveReportReady, (newVal) => {
+  if (newVal) {
+    bvModal.value.hide('new-report-modal');
+    router.push({ name: 'EditReportTemplate', params: { id: templateData.value.data.name } });
+  }
+});
+
+retrieveReportTemplates();
 </script>
 <style lang="scss" scoped>
 .fr-search {
