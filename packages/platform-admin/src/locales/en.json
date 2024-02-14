@@ -2440,6 +2440,33 @@
     "referencedObjectField": "Object Type Property",
     "referencedObjectFieldDescription": "Object type property to use to populate enumerated values.",
     "returnedByDefault": "Returned by default",
+    "rules": {
+      "action": "Action",
+      "asyncLabel": "Do nothing",
+      "editModalDescription": "Action to perform in {appType} when application is {action} in {application}.",
+      "editModalTitle": "Edit Provisioning Rule",
+      "result": "Result",
+      "saved": "Provisioning rule saved",
+      "scriptDescription": "For more information on script actions, see <a href=\"https://backstage.forgerock.com/docs/idcloud/latest/idm-synchronization/sync-actions.html#script-actions\" target=\"_blank\">Launch a script as an action</a>",
+      "scriptLabel": "Execute a script",
+      "title": "Rules",
+      "assigned": {
+        "actionDescription": "{appType} application is assigned",
+        "resultDescription": "Create account in {appType}"
+      },
+      "updated": {
+        "actionDescription": "{appType} account is updated",
+        "resultDescription": "Update account in {appType}"
+      },
+      "revoked": {
+        "actionDescription": "{appType} account is revoked",
+        "resultDescription": "Delete account in {appType}"
+      },
+      "deleted": {
+        "actionDescription": "Identity is deleted",
+        "resultDescription": "Delete account in {appType}"
+      }
+    },
     "selectNonAccountObject": "Select Object Type",
     "selectNonAccountObjectDescription": "Object type from which to populate enumerated values for this property",
     "sourceOfValues": "Source of Values",
