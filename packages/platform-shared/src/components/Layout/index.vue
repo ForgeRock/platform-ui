@@ -45,8 +45,6 @@ of the MIT license. See the LICENSE file for details. -->
           class="ml-3"
           position="bottom left"
           width="320"
-          animation-type="velocity"
-          :animation="animation"
           :duration="4000">
           <template #body="props">
             <FrAlert
@@ -226,28 +224,6 @@ export default {
         return 'https://backstage.forgerock.com/docs/idcloud/latest/index.html';
       }
       return 'https://backstage.forgerock.com/docs/index.html';
-    },
-    animation() {
-      return {
-        enter(element) {
-          /*
-          *  "element" - is a notification element
-          *    (before animation, meaning that you can take it's initial height, width, color, etc)
-          */
-          const height = element.clientHeight;
-
-          return {
-            // Animates from 0px to "height"
-            height: [height, 0],
-            // Animates from 0 to 1
-            opacity: [1, 0],
-          };
-        },
-        leave: {
-          height: 0,
-          opacity: 0,
-        },
-      };
     },
     showFooter() {
       return !this.hideNavBar && (!this.isEnduser || (this.isEnduser && this.footer));
