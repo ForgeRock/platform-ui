@@ -64,6 +64,7 @@ describe('GovResourceTable', () => {
         },
       },
       props: {
+        allowSelect: true,
         defaultSort: 'application.name',
         grantType: 'account',
         resourceName: 'directReportDetail',
@@ -202,12 +203,24 @@ describe('GovResourceTable', () => {
 
   it('should open revoke modal when revoke is clicked', async () => {
     const wrapper = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
-    const revoke = jest.spyOn(wrapper.vm, 'showRevokeRequestModal');
+    const revoke = jest.spyOn(wrapper.vm, 'showRevokeModal');
     await wrapper.setProps({ items: mockItems });
 
     const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     await actionOptionsMenu.trigger('click');
     await actionOptionsMenu.find('li:nth-of-type(2) > a').trigger('click'); // Revoke menu item
+
+    expect(revoke).toHaveBeenCalled();
+  });
+
+  it('should show floating bar when row is selected, and show revoke modal when revoke button is clicked', async () => {
+    const wrapper = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
+    const revoke = jest.spyOn(wrapper.vm, 'showRevokeModal');
+    await wrapper.setProps({ items: mockItems });
+    wrapper.findAll('[role="row"]')[1].trigger('click');
+    wrapper.findAll('[role="cell"]')[0].find('[type="checkbox"]').trigger('click');
+    await flushPromises();
+    wrapper.find('.floating-action-bar').findAll('[type="button"]')[1].trigger('click');
 
     expect(revoke).toHaveBeenCalled();
   });

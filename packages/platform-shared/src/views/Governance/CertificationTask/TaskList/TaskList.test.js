@@ -24,7 +24,7 @@ const resourceDataMock = {
   },
 };
 
-function shallowMountComponent(options = {}, data = {}, propsData = {}) {
+function shallowMountComponent(data = {}, propsData = {}) {
   wrapper = shallowMount(TaskList, {
     global: {
       mocks: {
@@ -33,7 +33,6 @@ function shallowMountComponent(options = {}, data = {}, propsData = {}) {
           show: jest.fn(),
           hide: jest.fn(),
         },
-        ...options,
       },
       plugins: [Notifications],
     },
@@ -50,7 +49,7 @@ function shallowMountComponent(options = {}, data = {}, propsData = {}) {
   });
 }
 
-function mountComponent(propsData = {}) {
+function mountComponent(propOverrides = {}) {
   createTooltipContainer(['btnCertify-test-id-0', 'btnRevoke-test-id-0', 'btnAllowException-test-id-0']);
   setupTestPinia({ user: { userId: 'testId' } });
   wrapper = mount(TaskList, {
@@ -58,6 +57,10 @@ function mountComponent(propsData = {}) {
       attachTo: document.body,
       mocks: {
         $t: (t) => t,
+        $bvModal: {
+          show: jest.fn(),
+          hide: jest.fn(),
+        },
       },
       plugins: [Notifications],
       stubs: ['BTooltip'],
@@ -65,7 +68,7 @@ function mountComponent(propsData = {}) {
     },
     props: {
       campaignDetails: {},
-      ...propsData,
+      ...propOverrides,
     },
   });
 }
@@ -201,7 +204,7 @@ describe('TaskList', () => {
       expect(wrapper.vm.items).toEqual(expectedValue);
     });
     it('should add flags to item', () => {
-      shallowMountComponent({}, {});
+      shallowMountComponent({});
       const resource = {
         data: {
           result: [{}],
@@ -241,7 +244,7 @@ describe('TaskList', () => {
     let buildUrlParamsSpy;
 
     beforeEach(() => {
-      shallowMountComponent({}, {
+      shallowMountComponent({
         currentPage: 2,
         sortBy: 'name',
         sortDir: 'asc',
@@ -557,7 +560,7 @@ describe('TaskList', () => {
 
   describe('bulk certify', () => {
     beforeEach(() => {
-      shallowMountComponent({}, {}, { campaignId: 'test-id' });
+      shallowMountComponent({}, { campaignId: 'test-id' });
       CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
@@ -575,7 +578,7 @@ describe('TaskList', () => {
   });
   describe('bulk revoke', () => {
     beforeEach(() => {
-      shallowMountComponent({}, {}, { campaignId: 'test-id' });
+      shallowMountComponent({}, { campaignId: 'test-id' });
       CertificationApi.revokeItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
@@ -593,7 +596,7 @@ describe('TaskList', () => {
   });
   describe('bulk exception', () => {
     beforeEach(() => {
-      shallowMountComponent({}, {}, { campaignId: 'test-id' });
+      shallowMountComponent({}, { campaignId: 'test-id' });
       CertificationApi.exceptionItem.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
@@ -607,12 +610,6 @@ describe('TaskList', () => {
 
       await flushPromises();
       expect(updateItemListSpy).toHaveBeenCalledWith('allowExceptionSuccess');
-    });
-  });
-  describe('show reassign modal', () => {
-    it('should emit the event to show reassign modal', () => {
-      wrapper.vm.bulkAction('reassign');
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-reassign');
     });
   });
   describe('open confirm action modal', () => {
@@ -1302,7 +1299,7 @@ describe('TaskList', () => {
   describe('Open edit reviewer modal', () => {
     describe('Admin view', () => {
       beforeEach(() => {
-        shallowMountComponent({}, {}, { isAdmin: true });
+        shallowMountComponent({}, { isAdmin: true });
       });
 
       it('openEditReviewerModal should set reviewer data and open edit reviewer modal', async () => {
@@ -1367,7 +1364,7 @@ describe('TaskList', () => {
 
     describe('EndUser view', () => {
       beforeEach(() => {
-        shallowMountComponent({}, {}, { actorId: '/managed/user/12345' });
+        shallowMountComponent({}, { actorId: '/managed/user/12345' });
       });
 
       it('openEditReviewerModal should set reviewer data and open edit reviewer modal', async () => {
@@ -1438,7 +1435,7 @@ describe('TaskList', () => {
       wrapper.vm.currentPage = 2;
       wrapper.vm.sortBy = 'name';
       wrapper.vm.sortDir = 'asc';
-      shallowMountComponent({}, {}, {
+      shallowMountComponent({}, {
         certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
       });
       loadItemsListSpy = jest.spyOn(wrapper.vm, 'loadItemsList');
@@ -1675,8 +1672,12 @@ describe('TaskList', () => {
       wrapper.vm.openSortModal();
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-sort');
     });
-    it('should emit the bv::show::modal to show the certification reasign modal', () => {
-      wrapper.vm.bulkAction('reassign');
+    it('should emit the bv::show::modal to show the certification reasign modal', async () => {
+      mountComponent({ modalPrefix: 'entitlement' });
+      wrapper.vm.selectedItems = [{ id: '123' }];
+      await flushPromises();
+      const floatingActionBar = wrapper.findComponent('[name="slide-fade"]');
+      floatingActionBar.vm.$emit('reassign');
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-reassign');
     });
     it('should emit the bv::show::modal to show the certification reasign modal', () => {
@@ -1687,7 +1688,7 @@ describe('TaskList', () => {
 
   describe('Scenarios For Accounts Tab when group by is true', () => {
     beforeEach(() => {
-      shallowMountComponent({}, {}, {
+      shallowMountComponent({}, {
         certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
       });
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
@@ -1807,7 +1808,7 @@ describe('TaskList', () => {
   describe('Scenarios For Entitlements Tab when group by is true', () => {
     let getCertificationTasksListByCampaignSpy;
     beforeEach(() => {
-      shallowMountComponent({}, {}, {
+      shallowMountComponent({}, {
         certificationGrantType: 'entitlements',
         showGroupBy: true,
         entitlementUserId: '66f3b405-60db-42a6-8a7a-59f6470348f6',

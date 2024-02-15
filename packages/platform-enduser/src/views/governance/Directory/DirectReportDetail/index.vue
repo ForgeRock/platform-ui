@@ -76,13 +76,13 @@ of the MIT license. See the LICENSE file for details. -->
             </template>
             <FrGovResourceTable
               v-if="directReportUserInfo.userId && tab.active"
-              :admin-access="false"
               :fields="getTableFields(tab.grantType)"
               :grant-type="tab.grantType"
               :items="resourceItems"
               :total-count="resourceTotalCount"
+              :modal-id="`${tab.displayName}-modal`"
               @load-data="queryResource"
-              :modal-id="`${tab.displayName}-modal`" />
+              @revoke-items="revokeResourcesFromIGA($event, userId, false)" />
           </BTab>
         </BTabs>
       </BCard>
@@ -111,7 +111,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
-import { getGovernanceGrants } from '@forgerock/platform-shared/src/utils/governance/resource';
+import { getGovernanceGrants, revokeResourcesFromIGA } from '@forgerock/platform-shared/src/utils/governance/resource';
 import { getDirectReportUserInfo } from '@/api/governance/DirectoryApi';
 
 /**
@@ -278,6 +278,7 @@ export default {
       this.resourceItems = response.items;
       this.resourceTotalCount = response.totalCount;
     },
+    revokeResourcesFromIGA,
     tabActivated(tabIndex, prevTabIndex) {
       if (tabIndex > -1) {
         this.$route.params.grantType = this.tabItems[tabIndex].grantType;
