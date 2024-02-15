@@ -72,6 +72,7 @@
     "debug": "Debug",
     "default": "Default",
     "delete": "Delete",
+    "deleteSuccess": "Successfully deleted {object}",
     "deleting": "Deleting...",
     "deleteObject": "Delete {object}",
     "descending": "Descending",
@@ -1263,9 +1264,12 @@
     "entitlementDetails": "Entitlement Details",
     "access": {
       "accountName": "Account Name",
+      "confirmRevokeEntitlement": "Are you sure you want to revoke this entitlement from this role? | Are you sure you want to revoke these entitlements from this role?",
       "errorGettingData": "Error getting {grantType}.",
       "noRecordFound": "No {grantType} found.",
-      "noResultsUser": "No {grantType} for this user."
+      "noResultsUser": "No {grantType} for this user.",
+      "revokeEntitlement": "Revoke Entitlement? | Revoke Entitlements?",
+      "revoking": "Revoking"
     },
     "status": {
       "active": "Active",
@@ -1328,7 +1332,6 @@
         "certify": "Certify",
         "forward": "Forward",
         "reassign": "Reassign",
-        "revoke": "Revoke",
         "reset": "Clear decisions",
         "viewActivity": "View Activity",
         "viewReviewers": "View Reviewers"
