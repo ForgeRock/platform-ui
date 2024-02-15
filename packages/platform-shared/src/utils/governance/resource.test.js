@@ -11,11 +11,13 @@ import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/Catal
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { flushPromises } from '@vue/test-utils';
 import {
-  assignResourcestoIDM,
-  assignResourcestoIGA,
+  assignResourcesToIDM,
+  assignResourcesToIGA,
   getEntitlements,
   getGovernanceGrants,
   getManagedResourceWithIGADetails,
+  revokeResourcesFromIDM,
+  revokeResourcesFromIGA,
 } from './resource';
 import * as CommonsApi from '@/api/governance/CommonsApi';
 
@@ -27,7 +29,7 @@ describe('getGovernanceGrants', () => {
   it('assigns resources as relationships to IDM-resource', async () => {
     jest.spyOn(ManagedResourceApi, 'patchManagedResource').mockReturnValue({ data: { errors: [] } });
 
-    const response = await assignResourcestoIDM('parentResourceName', 'parentResourceId', ['resourceIds'], 'managedResourceRev');
+    const response = await assignResourcesToIDM('parentResourceName', 'parentResourceId', ['resourceIds'], 'managedResourceRev');
 
     expect(response.status).toEqual('success');
   });
@@ -36,7 +38,7 @@ describe('getGovernanceGrants', () => {
     jest.spyOn(ManagedResourceApi, 'patchManagedResource').mockRejectedValue('test');
     const errorSpy = jest.spyOn(notification, 'showErrorMessage');
 
-    await assignResourcestoIDM('parentResourceName', 'parentResourceId', ['resourceIds'], 'managedResourceRev');
+    await assignResourcesToIDM('parentResourceName', 'parentResourceId', ['resourceIds'], 'managedResourceRev');
 
     expect(errorSpy).toHaveBeenCalled();
   });
@@ -45,7 +47,7 @@ describe('getGovernanceGrants', () => {
     jest.spyOn(AccessRequestApi, 'saveNewRequest').mockReturnValue({ data: { errors: [] } });
     const errorSpy = jest.spyOn(notification, 'showErrorMessage');
 
-    const response = await assignResourcestoIGA('parentResourceId', ['resourceIds'], 'grantType');
+    const response = await assignResourcesToIGA('parentResourceId', ['resourceIds'], 'grantType');
 
     expect(response).toEqual('success');
     expect(errorSpy).not.toHaveBeenCalled();
@@ -55,7 +57,7 @@ describe('getGovernanceGrants', () => {
     jest.spyOn(AccessRequestApi, 'saveNewRequest').mockReturnValue({ data: { errors: [{ message: 'errorMessage' }] } });
     const errorSpy = jest.spyOn(notification, 'showErrorMessage');
 
-    const response = await assignResourcestoIGA('parentResourceId', ['resourceIds'], 'grantType');
+    const response = await assignResourcesToIGA('parentResourceId', ['resourceIds'], 'grantType');
 
     expect(response).toEqual('error');
     expect(errorSpy).toHaveBeenCalled();
@@ -65,17 +67,17 @@ describe('getGovernanceGrants', () => {
     jest.spyOn(AccessRequestApi, 'saveNewRequest').mockRejectedValue('test');
     const errorSpy = jest.spyOn(notification, 'showErrorMessage');
 
-    await assignResourcestoIGA('parentResourceId', ['resourceIds'], 'grantType');
+    await assignResourcesToIGA('parentResourceId', ['resourceIds'], 'grantType');
 
     expect(errorSpy).toHaveBeenCalled();
   });
 
   it('Builds and sends request to get user-related entitlements', async () => {
-    jest.spyOn(CatalogApi, 'searchCatalog').mockReturnValue({ data: { result: [{ id: 'testId', entitlement: { displayName: 'displayName' } }] } });
+    jest.spyOn(CatalogApi, 'searchCatalog').mockReturnValue({ data: { result: [{ id: 'testId', descriptor: { idx: { '/entitlement': { displayName: 'descriptorDisplayName' } } }, entitlement: { displayName: 'displayName' } }] } });
 
     const response = await getEntitlements(true);
 
-    expect(response).toStrictEqual([{ value: 'testId', text: 'displayName' }]);
+    expect(response).toStrictEqual([{ value: 'testId', text: 'descriptorDisplayName' }]);
   });
 
   it('Displays error if API fails', async () => {
@@ -88,12 +90,12 @@ describe('getGovernanceGrants', () => {
   });
 
   it('Builds and sends request to get non-user-related entitlements', async () => {
-    jest.spyOn(CommonsApi, 'searchGovernanceResource').mockReturnValue({ data: { result: [{ id: 'testId', entitlement: { displayName: 'displayName' } }] } });
+    jest.spyOn(CommonsApi, 'searchGovernanceResource').mockReturnValue({ data: { result: [{ id: 'testId', descriptor: { idx: { '/entitlement': { displayName: 'descriptorDisplayName' } } }, entitlement: { displayName: 'displayName' } }] } });
 
     const response = await getEntitlements(false, 'searchValue', 'selectedApplication', 'managedResource/path');
     await flushPromises();
 
-    expect(response).toStrictEqual([{ value: 'managedResource/path/testId', text: 'displayName' }]);
+    expect(response).toStrictEqual([{ value: 'managedResource/path/testId', text: 'descriptorDisplayName' }]);
   });
 
   it('displays an error notifcation if API fails', async () => {
@@ -160,6 +162,63 @@ describe('getGovernanceGrants', () => {
       pageSize: 10,
       queryFilter: '(/type eq "__ENTITLEMENT__")',
       totalPagedResultsPolicy: 'ESTIMATE',
+    });
+  });
+
+  it('revokes relationships to IDM-resource', async () => {
+    jest.spyOn(ManagedResourceApi, 'patchManagedResource').mockReturnValue({ data: { errors: [] } });
+
+    const response = await revokeResourcesFromIDM('parentResourceName', 'parentResourceId', ['resourceToRevoke'], 'managedResourceRev');
+
+    expect(response.status).toEqual('resourcesRevoked');
+  });
+
+  it('Displays error in revokeResourcesFromIDM if patchManagedResource fails', async () => {
+    jest.spyOn(ManagedResourceApi, 'patchManagedResource').mockRejectedValue('test');
+    const errorSpy = jest.spyOn(notification, 'showErrorMessage');
+
+    await revokeResourcesFromIDM('parentResourceName', 'parentResourceId', ['resourceToRevoke'], 'managedResourceRev');
+
+    expect(errorSpy).toHaveBeenCalled();
+  });
+
+  describe('revoke actions', () => {
+    const revokePayload = {
+      expiryDate: '',
+      justification: '',
+      priority: 'low',
+      itemsToRevoke: [{
+        item: {
+          type: 'blue',
+        },
+        catalog: {
+          id: '234234234',
+        },
+      }],
+    };
+    it('revokes relationships to IGA-resource', async () => {
+      jest.spyOn(AccessRequestApi, 'saveNewRequest').mockReturnValue({ data: { errors: [] } });
+
+      const response = await revokeResourcesFromIGA(revokePayload, 'parentResourceId', 'adminAccess');
+
+      expect(response.status).toEqual('requestsRevoked');
+    });
+
+    it('revokes relationships to IGA-resource, and returns error if any requests have error', async () => {
+      jest.spyOn(AccessRequestApi, 'saveNewRequest').mockReturnValue({ data: { errors: [{ message: 'errorMessage' }] } });
+
+      const response = await revokeResourcesFromIGA(revokePayload, 'parentResourceId', 'adminAccess');
+
+      expect(response.status).toEqual('error');
+    });
+
+    it('Displays error in revokeResourcesFromIDM if patchManagedResource fails', async () => {
+      jest.spyOn(ManagedResourceApi, 'patchManagedResource').mockRejectedValue('test');
+      const errorSpy = jest.spyOn(notification, 'showErrorMessage');
+
+      await revokeResourcesFromIGA(revokePayload, 'parentResourceId', 'adminAccess');
+
+      expect(errorSpy).toHaveBeenCalled();
     });
   });
 });

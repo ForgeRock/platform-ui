@@ -8,13 +8,11 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="d-flex justify-content-start">
         <FrTaskMultiSelect
           v-if="campaignDetails.allowBulkCertify && !isStaged"
-          @bulk-action="bulkAction"
           @select-tasks="selectTasks($event)"
           @select-all-tasks="selectAllTasks"
           :campaign-details="campaignDetails"
           :cert-grant-type="certificationGrantType"
-          :selected-tasks="selectedItems"
-        />
+          :selected-tasks="selectedItems" />
       </div>
       <div>
         <BButton
@@ -250,12 +248,16 @@ of the MIT license. See the LICENSE file for details. -->
       :total-rows="totalRows"
       @input="paginationChange" />
     <FrFloatingActionBar
+      :buttons="actionBarButtons"
       :count="selectedCount"
-      @deselect="() => { selectTasks(false) }"
-      @certify="() => { bulkAction('certify') }"
-      @revoke="() => { bulkAction('revoke') }"
-      @action="bulkAction"
-    />
+      :menu-items="actionBarMenuItems"
+      @deselect="selectTasks(false)"
+      @certify="openActionConfirmModal(bulkCertifyModalProps)"
+      @revoke="openActionConfirmModal(bulkRevokeModalProps)"
+      @exception="openActionConfirmModal(bulkExceptionModalProps)"
+      @reassign="$bvModal.show(getModalId('reassign'))"
+      @forward="openForwardModal(null, true, true)"
+      @clearDecisions="bulkReset()" />
     <!-- Modals -->
     <FrSortModal
       @update-columns="updateColumns"
@@ -538,6 +540,41 @@ export default {
     };
 
     return {
+      actionBarButtons: [{
+        event: 'certify',
+        icon: 'check',
+        iconClass: 'text-success',
+        label: this.$t('governance.certificationTask.actions.certify'),
+      },
+      {
+        event: 'revoke',
+        icon: 'close',
+        iconClass: 'text-danger',
+        label: this.$t('common.revoke'),
+      }],
+      actionBarMenuItems: [{
+        event: 'exception',
+        icon: 'schedule',
+        label: this.$t('governance.certificationTask.actions.allowException'),
+      },
+      {
+        event: 'reassign',
+        icon: 'people',
+        label: this.$t('governance.certificationTask.actions.reassign'),
+      },
+      {
+        event: 'forward',
+        icon: 'redo',
+        label: this.$t('governance.certificationTask.actions.forward'),
+      },
+      {
+        divider: true,
+      },
+      {
+        event: 'clearDecisions',
+        icon: 'close',
+        label: this.$t('governance.certificationTask.actions.reset'),
+      }],
       allSelected: false,
       bulkCertifyModalProps,
       availableColumns: [],
@@ -1324,34 +1361,6 @@ export default {
       const signOffReviewers = this.currentReviewersSelectedModal.filter((reviewer) => reviewer.permissions.signoff);
       if (signOffReviewers.length > 1) return false;
       return signOffReviewers[0].id === this.currentReviewerSelectedModal.id;
-    },
-    /**
-     * Handles actions events from multiple items
-     * @param {String} type action type
-     */
-    bulkAction(type) {
-      switch (type) {
-        case 'certify':
-          this.openActionConfirmModal(this.bulkCertifyModalProps);
-          break;
-        case 'revoke':
-          this.openActionConfirmModal(this.bulkRevokeModalProps);
-          break;
-        case 'exception':
-          this.openActionConfirmModal(this.bulkExceptionModalProps);
-          break;
-        case 'reassign':
-          this.$bvModal.show(this.getModalId('reassign'));
-          break;
-        case 'forward':
-          this.openForwardModal(null, true, true);
-          break;
-        case 'clearDecisions':
-          this.bulkReset();
-          break;
-        default:
-          break;
-      }
     },
     bulkCertify() {
       this.toggleSaving();

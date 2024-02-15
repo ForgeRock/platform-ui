@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,25 +6,22 @@ of the MIT license. See the LICENSE file for details. -->
   <Transition
     name="slide-fade"
     duration="1000">
-    <BRow
+    <div
       v-if="count > 0"
       class="floating-action-bar bg-dark rounded position-fixed px-4 py-2">
-      <BCol>
-        <BRow
-          class="justify-content-between"
-          align-v="center">
+      <div class="w-100">
+        <div class="d-flex justify-content-between align-items-center">
           <div class="mr-3 d-flex">
             <div class="text-light mr-2 my-auto">
               {{ $t('common.selectedColon') }}
-              <span
-                class="font-weight-bold">
+              <span class="font-weight-bold">
                 {{ count }}
               </span>
             </div>
             <BButton
               variant="link"
               class="px-1"
-              @click="$emit('deselect', $event)">
+              @click="$emit('deselect')">
               {{ $t('common.deselect') }}
             </BButton>
           </div>
@@ -33,16 +30,17 @@ of the MIT license. See the LICENSE file for details. -->
               v-for="button in buttons"
               :key="button.event">
               <BButton
-                class="ml-1"
+                class="d-none d-md-inline-block"
                 variant="dark"
                 @click="$emit(button.event, $event)">
                 <FrIcon
                   :name="button.icon"
-                  :class="`${button.iconClass}`"
-                /> {{ button.label }}
+                  :class="`mr-2 ${button.iconClass}`"
+                />{{ button.label }}
               </BButton>
             </template>
             <BDropdown
+              v-if="menuItems.length"
               class="ml-1"
               no-caret
               right
@@ -56,105 +54,89 @@ of the MIT license. See the LICENSE file for details. -->
               <template
                 v-for="(item, index) in menuItems"
                 :key="index">
-                <div>
-                  <BDropdownDivider
-                    v-if="item.divider" />
-                  <BDropdownItem
-                    v-else
-                    @click="$emit('action', item.event, item)">
-                    <FrIcon
-                      class="mr-2"
-                      :name="item.icon"
-                    /> {{ item.label }}
-                  </BDropdownItem>
-                </div>
+                <BDropdownDivider v-if="item.divider" />
+                <BDropdownItem
+                  v-else
+                  @click="$emit(item.event, item)">
+                  <FrIcon
+                    class="mr-2"
+                    :name="item.icon"
+                  />{{ item.label }}
+                </BDropdownItem>
+              </template>
+              <template
+                v-for="button in buttons"
+                :key="button.event">
+                <BDropdownItem
+                  class="d-md-none d-block"
+                  @click="$emit(button.event, $event)">
+                  <FrIcon
+                    :name="button.icon"
+                    :class="`mr-2 ${button.iconClass}`"
+                  />{{ button.label }}
+                </BDropdownItem>
               </template>
             </BDropdown>
           </div>
-        </BRow>
-      </BCol>
-    </BRow>
+        </div>
+      </div>
+    </div>
   </Transition>
 </template>
 
 <script setup>
-
+/**
+ * Shared component that appears when prop count is greater than 0, and offers
+ * supplied actions to perform on selected items.
+ */
 import {
-  BButton, BCol, BDropdown, BDropdownDivider, BDropdownItem, BRow,
+  BButton,
+  BDropdown,
+  BDropdownDivider,
+  BDropdownItem,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import i18n from '@/i18n';
 
 defineProps({
   count: {
     type: Number,
-    default: 0,
+    required: true,
   },
   buttons: {
     type: Array,
-    default() {
-      return [{
-        event: 'certify',
-        icon: 'check',
-        iconClass: 'text-success',
-        label: i18n.global.t('governance.certificationTask.actions.certify'),
-      },
-      {
-        event: 'revoke',
-        icon: 'close',
-        iconClass: 'text-danger',
-        label: i18n.global.t('governance.certificationTask.actions.revoke'),
-      }];
-    },
+    default: () => [],
   },
   menuItems: {
     type: Array,
-    default() {
-      return [{
-        event: 'exception',
-        icon: 'schedule',
-        label: i18n.global.t('governance.certificationTask.actions.allowException'),
-      },
-      {
-        event: 'reassign',
-        icon: 'people',
-        label: i18n.global.t('governance.certificationTask.actions.reassign'),
-      },
-      {
-        event: 'forward',
-        icon: 'redo',
-        label: i18n.global.t('governance.certificationTask.actions.forward'),
-      },
-      {
-        divider: true,
-      },
-      {
-        event: 'clearDecisions',
-        icon: 'close',
-        label: i18n.global.t('governance.certificationTask.actions.reset'),
-      }];
-    },
+    default: () => [],
   },
 });
 </script>
 
 <style lang="scss" scoped>
-  .floating-action-bar {
-      width: 700px;
-      bottom: 1.5rem;
-      left: 50%;
-      margin-left: -350px;
-      z-index: 501;
+.floating-action-bar {
+  width: 700px;
+  bottom: 1.5rem;
+  left: 50%;
+  margin-left: -350px;
+  z-index: 501;
 
-    &.slide-fade-enter-active {
-      transition: all .2s ease;
-    }
-    &.slide-fade-leave-active {
-      transition: all .2s ease;
-    }
-    &.slide-fade-enter, &.slide-fade-leave-to {
-      transform: translateY(20px);
-      opacity: 0;
-    }
+  &.slide-fade-enter-active,
+  &.slide-fade-leave-active {
+    transition: all .2s ease;
   }
+
+  &.slide-fade-enter,
+  &.slide-fade-leave-to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .floating-action-bar {
+    width: 400px;
+    margin-left: -200px;
+  }
+}
 </style>
