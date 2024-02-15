@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
+  <div id="gov-resource-table-component">
     <BCard
       class="border-0 shadow-none"
       no-body>
@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BButton
             v-if="allowAdd"
             variant="primary"
-            @click="showAddModal">
+            @click="$bvModal.show('govCreateResourceModal')">
             <FrIcon
               class="mr-2"
               name="add" />{{ $t('common.addObject', { object: capitalizedPluralGrantType }) }}
@@ -40,12 +40,12 @@ of the MIT license. See the LICENSE file for details. -->
         icon="people"
         body-class="mb-5"
         data-testid="gov-resource-table-no-results-first-load"
-        :title="$t('governance.access.noRecordFound', { grantType: pluralizeValue(grantType) })"
-        :subtitle="isNoResultsFirstLoad ? $t('governance.access.noResultsUser', { grantType: pluralizeValue(grantType) }) : $t('common.noResultsHelp')">
+        :title="$t('governance.access.noRecordFound', { grantType: pluralizedGrantType })"
+        :subtitle="isNoResultsFirstLoad ? $t('governance.access.noResultsUser', { grantType: pluralizedGrantType }) : $t('common.noResultsHelp')">
         <BButton
           v-if="allowAdd"
           variant="primary"
-          @click="showAddModal">
+          @click="$bvModal.show('govCreateResourceModal')">
           <FrIcon
             class="mr-2"
             name="add" />{{ $t('common.addObject', { object: capitalizedPluralGrantType }) }}
@@ -59,15 +59,43 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-0"
         :class="{ 'cursor-pointer': showViewDetails }"
         data-testid="gov-resource-table"
-        :fields="fields"
+        :fields="fieldsWithSelected"
         :hover="showViewDetails"
         id="gov-resource-table"
         :items="itemsWithAssignment"
         no-local-sorting
         no-sort-reset
+        ref="gov-resource-table"
         responsive
-        @row-clicked="handleRowClick"
+        selectable
+        @row-selected="onRowSelected"
         @sort-changed="sortChanged">
+        <template #head(selected)>
+          <div
+            class="cursor-pointer"
+            @click="onToggleSelectAll">
+            <BFormCheckbox
+              class="pl-3"
+              disabled
+              v-model="allRowsSelected">
+              <span class="sr-only">
+                {{ $t('common.select') }}
+              </span>
+            </BFormCheckbox>
+          </div>
+        </template>
+        <template #cell(selected)="data">
+          <BFormCheckbox
+            v-if="!data.item.assignment || data.item.assignment === directAssignment"
+            class="pl-3"
+            :id="`rowSelectCheckbox_${grantType}_${data.index}`"
+            @change="onCheckboxClicked(data)"
+            v-model="data.rowSelected">
+            <span class="sr-only">
+              {{ $t('common.selectSelection', { selection: data.item.name || '' }) }}
+            </span>
+          </BFormCheckbox>
+        </template>
         <template #cell(accountName)="{ item }">
           <p class="mb-0 text-truncate text-dark">
             {{ getResourceDisplayName(item, '/account') }}
@@ -169,8 +197,8 @@ of the MIT license. See the LICENSE file for details. -->
                   name="list_alt" />{{ $t('common.viewDetails') }}
               </BDropdownItem>
               <BDropdownItem
-                v-if="(item.assignment === directAssignment || item.assignment === staticAssignment)"
-                @click="showRevokeRequestModal(item)">
+                v-if="item.assignment === directAssignment || item.assignment === staticAssignment || resourceIsRole"
+                @click="showRevokeModal([item])">
                 <FrIcon
                   class="mr-2"
                   name="delete" />{{ $t('common.revoke') }}
@@ -196,19 +224,46 @@ of the MIT license. See the LICENSE file for details. -->
       :entitlement-options="entitlementOptions"
       :is-saving="assigningResource"
       :parent-resource-name="parentResourceName"
-      :resource-type="pluralizeValue(grantType)"
+      :resource-type="pluralizedGrantType"
       @assign-resources="$emit('assign-resources', $event)"
       @get-entitlements="$emit('get-entitlements', $event)" />
     <FrRevokeRequestModal
       :modal-id="revokeModalId"
-      :show-spinner="isSubmittingRevokeRequest"
-      @hidden="resetRevokeRequestModal"
-      @submission="submitRevokeRequest" />
+      :show-spinner="assigningResource"
+      @submission="$emit('revoke-items', { ...$event, itemsToRevoke })" />
+    <BModal
+      id="revoke-from-role-modal"
+      no-close-on-backdrop
+      no-close-on-esc
+      :static="isTesting"
+      :title="$tc('governance.access.revokeEntitlement', itemsToRevoke.length)">
+      {{ $tc('governance.access.confirmRevokeEntitlement', itemsToRevoke.length) }}
+      <template #modal-footer="{ cancel }">
+        <BButton
+          variant="link"
+          class="text-danger"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <FrButtonWithSpinner
+          :button-text="$t('common.revoke')"
+          :disabled="assigningResource"
+          :show-spinner="assigningResource"
+          :spinner-text="$t('governance.access.revoking')"
+          variant="danger"
+          @click="$emit('revoke-items', itemsToRevoke)" />
+      </template>
+    </BModal>
+    <FrFloatingActionBar
+      :buttons="actionBarButtons"
+      :count="selectedItems.length"
+      @deselect="onToggleSelectAll(false)"
+      @revoke="showRevokeModal(selectedItems)" />
   </div>
 </template>
 
 <script>
-import { capitalize, get } from 'lodash';
+import { capitalize, countBy } from 'lodash';
 import {
   BBadge,
   BButton,
@@ -216,6 +271,7 @@ import {
   BCard,
   BCardHeader,
   BDropdownItem,
+  BFormCheckbox,
   BImg,
   BMedia,
   BMediaAside,
@@ -227,6 +283,8 @@ import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platfo
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
+import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
 import FrUserEntitlementModal from '@forgerock/platform-shared/src/components/governance/UserEntitlementModal';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
@@ -235,9 +293,9 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import formatConstraintDate from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
-import { saveNewRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrGovAssignResourceModal from '../GovAssignResourceModal';
 import FrRevokeRequestModal from '../RevokeRequestModal';
+import i18n from '@/i18n';
 
 export default {
   name: 'GovResourceTable',
@@ -248,12 +306,15 @@ export default {
     BCard,
     BCardHeader,
     BDropdownItem,
+    BFormCheckbox,
     BImg,
     BMedia,
     BMediaAside,
     BMediaBody,
     BTable,
     FrActionsCell,
+    FrButtonWithSpinner,
+    FrFloatingActionBar,
     FrGovAssignResourceModal,
     FrIcon,
     FrNoData,
@@ -267,11 +328,11 @@ export default {
     NotificationMixin,
   ],
   props: {
-    adminAccess: {
-      type: Boolean,
-      default: true,
-    },
     allowAdd: {
+      type: Boolean,
+      default: false,
+    },
+    allowSelect: {
       type: Boolean,
       default: false,
     },
@@ -318,19 +379,26 @@ export default {
   },
   data() {
     return {
+      actionBarButtons: [{
+        event: 'revoke',
+        icon: 'close',
+        iconClass: 'text-danger',
+        label: i18n.global.t('common.revoke'),
+      }],
+      allRowsSelected: false,
       blankValueIndicator,
       directAssignment: this.$t('common.direct'),
       glossarySchema: [],
       grantDetails: {},
       isLoading: true,
       isNoResultsFirstLoad: null,
-      isSubmittingRevokeRequest: false,
       paginationPage: 1,
       paginationPageSize: 10,
-      requestToRevoke: '',
+      itemsToRevoke: [],
       roleBasedAssignment: this.$t('pages.assignment.roleBased'),
       ruleBasedAssignment: this.$t('pages.assignment.ruleBased'),
       searchQuery: '',
+      selectedItems: [],
       sortDesc: null,
       sortBy: null,
       staticAssignment: this.$t('common.static'),
@@ -352,7 +420,20 @@ export default {
       return this.savingStatus === 'saving';
     },
     capitalizedPluralGrantType() {
-      return capitalize(pluralizeValue(this.grantType));
+      return capitalize(this.pluralizedGrantType);
+    },
+    fieldsWithSelected() {
+      if (this.allowSelect) {
+        return [
+          {
+            key: 'selected',
+            label: '',
+            class: 'checkbox-column',
+          },
+          ...this.fields,
+        ];
+      }
+      return this.fields;
     },
     itemsWithAssignment() {
       return this.items.map((item) => ({
@@ -360,34 +441,17 @@ export default {
         assignment: this.assignmentHandler(item),
       }));
     },
+    pluralizedGrantType() {
+      return pluralizeValue(this.grantType);
+    },
     resourceIsRole() {
       return this.parentResourceName.endsWith('role');
     },
     revokeModalId() {
       return `${this.modalId}-revoke`;
     },
-    revokeRequestCatalog() {
-      if (Object.keys(this.requestToRevoke).length) {
-        const { item, catalog } = this.requestToRevoke;
-        const id = get(catalog, 'id', '');
-        if (item.type === 'entitlementGrant') {
-          return [{ type: 'entitlement', id }];
-        }
-        if (item.type === 'accountGrant') {
-          return [{ type: 'application', id }];
-        }
-        if (item.type === 'roleMembership') {
-          return [{ type: 'role', id }];
-        }
-      }
-      return [];
-    },
-    resourceIsUser() {
-      return this.parentResourceName.endsWith('user');
-    },
   },
   methods: {
-    formatConstraintDate,
     assignmentHandler(membership) {
       switch (membership.item?.type) {
         case 'accountGrant':
@@ -411,6 +475,7 @@ export default {
       };
       return this.resourceIsRole ? 'name' : sortByUser[fieldName] ?? null;
     },
+    formatConstraintDate,
     getApplicationLogo,
     getDisplayName(item) {
       if (this.grantType === 'account') {
@@ -463,48 +528,76 @@ export default {
       }
       this.$emit('load-data', params);
     },
-    pluralizeValue,
-    resetRevokeRequestModal() {
-      this.isSubmittingRevokeRequest = false;
-      this.requestToRevoke = {};
+    /**
+     * Selects or unselects  specific table row
+     * @param {Object} row details of table row
+     */
+    onCheckboxClicked(row) {
+      if (row.rowSelected) {
+        this.$refs['gov-resource-table'].selectRow(row.index);
+      } else {
+        this.$refs['gov-resource-table'].unselectRow(row.index);
+      }
     },
     /**
-     * Opens modal to add grant type
+     * Verifies selected row is a row that should be able to be revoked, and adds to selected array if so
+     * @param {Array} selectedItems Currently selected table rows
      */
-    showAddModal() {
-      this.$bvModal.show('govCreateResourceModal');
+    onRowSelected(selectedItems) {
+      this.selectedItems = [];
+      selectedItems.forEach((item) => {
+        if (item.assignment === this.roleBasedAssignment) {
+          const index = this.itemsWithAssignment.findIndex((itemWithAssignment) => itemWithAssignment.compositeId === item.compositeId);
+          this.$refs['gov-resource-table'].unselectRow(index);
+        } else {
+          this.selectedItems.push(item);
+        }
+      });
+      const selectableItemsOnPage = countBy(this.itemsWithAssignment, (itemWithAssignment) => !itemWithAssignment.assignment || itemWithAssignment.assignment === this.directAssignment).true;
+      this.allRowsSelected = selectedItems.length === selectableItemsOnPage;
     },
-    showRevokeRequestModal(request) {
-      this.requestToRevoke = request;
-      this.$bvModal.show(this.revokeModalId);
+    /**
+     * Toggles all checkboxes on or off
+     * @param {Boolean} toggleAll Whether all checkboxes should be checked or not
+     */
+    onToggleSelectAll(toggleAll = true) {
+      const grid = this.$refs['gov-resource-table'];
+
+      if (!this.allRowsSelected && toggleAll) {
+        grid.selectAllRows();
+      } else {
+        grid.clearSelected();
+      }
+    },
+    /**
+     * Shows one of two revoke modals
+     * @param {Array} itemsToRevoke list of items that are being revoked
+     */
+    showRevokeModal(itemsToRevoke) {
+      this.itemsToRevoke = itemsToRevoke;
+      if (this.parentResourceName.endsWith('user')) {
+        this.$bvModal.show(this.revokeModalId);
+      } else {
+        this.$bvModal.show('revoke-from-role-modal');
+      }
     },
     sortChanged(event) {
       const { sortBy, sortDesc } = event;
       this.loadData({ sortBy, sortDesc, paginationPage: 1 });
     },
-    async submitRevokeRequest(payload) {
-      this.isSubmittingRevokeRequest = true;
-      try {
-        payload.accessModifier = 'remove';
-        payload.catalogs = this.revokeRequestCatalog;
-        payload.users = [this.id];
-        if (this.adminAccess) payload.context = { type: 'admin' };
-
-        const { data } = await saveNewRequest(payload);
-
-        if (data.errors?.length) this.showErrorMessage(null, data.errors[0].message);
-        else this.displayNotification('success', this.$t('governance.request.requestSuccess'));
-      } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.request.requestError'));
-      } finally {
-        this.$bvModal.hide(this.revokeModalId);
-      }
-    },
   },
   watch: {
     savingStatus(status) {
       if (status === 'success') {
+        this.onToggleSelectAll(false);
         this.$bvModal.hide('govCreateResourceModal');
+        this.loadData();
+      } else if (status === 'requestsRevoked') {
+        this.onToggleSelectAll(false);
+        this.$bvModal.hide(this.revokeModalId);
+      } else if (status === 'resourcesRevoked') {
+        this.onToggleSelectAll(false);
+        this.$bvModal.hide('revoke-from-role-modal');
         this.loadData();
       }
     },
@@ -520,5 +613,11 @@ export default {
 .icon {
   height: 34px;
   width: 34px;
+}
+
+:deep(.checkbox-column) {
+  width: 15px;
+  padding-right: 0;
+  vertical-align: middle;
 }
 </style>

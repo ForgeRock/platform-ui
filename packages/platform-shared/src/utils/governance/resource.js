@@ -1,11 +1,11 @@
 /**
- * Copyright 2024 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2024 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
+import { get } from 'lodash';
 import { getManagedRelationshipList, patchManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { searchCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
@@ -22,7 +22,7 @@ import i18n from '@/i18n';
  * @param {String} managedResourceRev revision id of IDM resource
  * @returns {String} saving status
  */
-export async function assignResourcestoIDM(parentResourceName, parentResourceId, resourceIds, managedResourceRev) {
+export async function assignResourcesToIDM(parentResourceName, parentResourceId, resourceIds, managedResourceRev) {
   const saveData = [];
   resourceIds.forEach((resourceId) => {
     saveData.push({
@@ -49,7 +49,7 @@ export async function assignResourcestoIDM(parentResourceName, parentResourceId,
  * @param {String} grantType IGA grant type to attribute new resources to
  * @returns {String} saving status
  */
-export async function assignResourcestoIGA(parentResourceId, resourceIds, grantType) {
+export async function assignResourcesToIGA(parentResourceId, resourceIds, grantType) {
   const entitlements = resourceIds.map((resourceId) => ({ type: 'entitlement', id: resourceId }));
 
   const payload = {
@@ -121,11 +121,11 @@ export async function getEntitlements(resourceIsUser, searchValue, selectedAppli
       queryParams.fields = 'application,entitlement,id,descriptor,glossary';
       queryParams.sortKeys = 'assignment.name';
       const { data } = await searchCatalog(queryParams, payload);
-      return data?.result.map((result) => ({ value: result.id, text: result.entitlement.displayName })) || [];
+      return data?.result.map((result) => ({ value: result.id, text: get(result, 'descriptor.idx./entitlement.displayName') })) || [];
     }
     queryParams.sortBy = 'descriptor.idx./entitlement.displayName';
     const { data } = await searchGovernanceResource(payload, queryParams);
-    return data?.result.map((result) => ({ value: `${managedResourcePath}/${result.id}`, text: result.entitlement.displayName })) || [];
+    return data?.result.map((result) => ({ value: `${managedResourcePath}/${result.id}`, text: get(result, 'descriptor.idx./entitlement.displayName') })) || [];
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.resource.errors.errorSearchingCatalog'));
     return [];
@@ -206,9 +206,83 @@ export async function getManagedResourceWithIGADetails(resourceName, resourceId,
       }),
       totalCount: managedAssignmentData.totalPagedResults,
       pagedResultsCookie: managedAssignmentData.pagedResultsCookie,
+      assignments: managedAssignmentData.result,
     };
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.access.errorGettingData', { grantType: i18n.global.t('common.entitlements') }));
-    return { items: [], totalCount: 0 };
+    return { items: [], totalCount: 0, assignments: [] };
+  }
+}
+
+/**
+ * Revokes IDM resource from parent IDM resource
+ * @param {String} parentResourceName IDM parent managed resource name
+ * @param {String} parentResourceId id of parent IDM resource
+ * @param {Array} resourcesToRevoke list of resources to create relationship to IDM resource
+ * @param {String} managedResourceRev revision id of IDM resource
+ * @returns {String} saving status
+ */
+export async function revokeResourcesFromIDM(parentResourceName, parentResourceId, resourcesToRevoke, managedResourceRev) {
+  const saveData = [];
+  resourcesToRevoke.forEach((resource) => {
+    saveData.push({
+      operation: 'remove',
+      field: '/assignments',
+      value: {
+        _ref: resource._ref,
+        _refProperties: resource._refProperties,
+        _refResourceCollection: resource._refResourceCollection,
+        _refResourceId: resource._refResourceId,
+      },
+    });
+  });
+
+  try {
+    const requestOverride = { headers: { 'if-match': managedResourceRev } };
+    const { data } = await patchManagedResource(parentResourceName, parentResourceId, saveData, requestOverride);
+    return { status: 'resourcesRevoked', revision: data._rev };
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.resource.errors.errorCreatingAccessRequest'));
+    return { status: 'error' };
+  }
+}
+
+/**
+ * Revokes IDM resource from parent IDM resource
+ * @param {Object} revokePayload Contains request access metatdata for save request, as well as items to revoke
+ * @param {String} parentResourceId id of parent IDM resource
+ * @param {Boolean} adminAccess Whether context should be saved as admin or not
+ * @returns {String} saving status
+ */
+export async function revokeResourcesFromIGA(revokePayload, parentResourceId, adminAccess) {
+  try {
+    const payload = {
+      expiryDate: revokePayload.expiryDate,
+      justification: revokePayload.justification,
+      priority: revokePayload.priority,
+    };
+    payload.accessModifier = 'remove';
+    payload.catalogs = revokePayload.itemsToRevoke.map((request) => {
+      const typeMap = {
+        entitlementGrant: 'entitlement',
+        accountGrant: 'application',
+        roleMembership: 'role',
+      };
+      return { type: typeMap[request.item.type], id: get(request.catalog, 'id', '') };
+    });
+    payload.users = [parentResourceId];
+    if (adminAccess) payload.context = { type: 'admin' };
+
+    const { data } = await saveNewRequest(payload);
+
+    if (data.errors?.length) {
+      showErrorMessage(null, data.errors[0].message);
+      return { status: 'error' };
+    }
+    displayNotification('success', i18n.global.t('governance.request.requestSuccess'));
+    return { status: 'requestsRevoked' };
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.request.requestError'));
+    return { status: 'error' };
   }
 }
