@@ -3062,6 +3062,7 @@
         "taskPopoverCompletedText": "{percentage}% Complete",
         "taskPopoverItemsCompletedText": "{completed}/{total} items completed"
       },
+      "noApplications":"No Applications",
       "accessReviewsTabTitle": "Access Reviews",
       "activateCampaignModal": {
         "text": "Are you sure you want to activate this campaign?",
