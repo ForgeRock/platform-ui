@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
           size="180px"
           :variant="imageError ? 'light' : ''"
           :src="imageURL || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-          @img-error="imageError = true">
+          @img-error="updateImageError(true)">
           <template
             v-if="imageError"
             #default>
@@ -34,14 +34,14 @@ of the MIT license. See the LICENSE file for details. -->
       <BFormGroup
         class="mb-0"
         :label-for="`floatingLabelInput${_uid}`"
-        :invalid-feedback="$t('pages.profile.editProfile.profileImageModal.validUrl')"
         :state="!imageError">
         <FrField
           v-model="imageURL"
-          describedby-id="profile-image-tips"
           name="profileImage"
           :label="$t('pages.profile.editProfile.profileImageModal.profileImageUrl')"
-          @input="imageError = false" />
+          @input="updateImageError(false)"
+          :errors="errors"
+        />
       </BFormGroup>
       <small class="text-muted">
         {{ $t('pages.profile.editProfile.profileImageModal.formHelp') }}
@@ -122,6 +122,7 @@ export default {
   },
   data() {
     return {
+      errors: [],
       imageURL: this.profileImage,
       imageError: false,
     };
@@ -145,6 +146,13 @@ export default {
       }
 
       this.$bvModal.hide('frProfileImageModal');
+    },
+    updateImageError(currentValue) {
+      this.imageError = currentValue;
+      this.errors = [];
+      if (this.imageError) {
+        this.errors = [this.$t('pages.profile.editProfile.profileImageModal.validUrl')];
+      }
     },
   },
   watch: {
