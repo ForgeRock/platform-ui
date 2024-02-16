@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -88,6 +88,11 @@ of the MIT license. See the LICENSE file for details. -->
           :glossary-schema="filteredGlossarySchema"
           :glossary-values="glossaryValues" />
       </BTab>
+      <BTab
+        :title="$t('common.applications')">
+        <FrApplicationsTab
+          :applications="roleApplications" />
+      </BTab>
     </BTabs>
   </BModal>
 </template>
@@ -100,6 +105,7 @@ import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/govern
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { computed } from 'vue';
+import FrApplicationsTab from './ApplicationTab/ApplicationTab';
 
 const props = defineProps({
   glossarySchema: {
@@ -123,5 +129,6 @@ const props = defineProps({
 const filteredGlossarySchema = computed(() => props?.glossarySchema?.filter((glossaryProp) => (glossaryProp.name !== 'roleOwner')));
 const glossaryValues = computed(() => props?.role?.glossary?.idx?.['/role'] || {});
 const roleOwner = computed(() => props?.role?.roleOwner?.[0] || null);
+const roleApplications = computed(() => props?.role?.applications || []);
 
 </script>

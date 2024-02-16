@@ -403,7 +403,7 @@ import FrEditReviewerModal from './modals/EditReviewerModal';
 import FrEntitlmentModal from './modals/EntitlementModal';
 import FrReviewersModal from './modals/ReviewersModal';
 import FrReassignModal from './modals/ReassignModal';
-import FrRoleModal from './modals/RoleModal';
+import FrRoleModal from './modals/RoleModal/RoleModal';
 import FrSortModal from './modals/SortModal/SortModal';
 import FrTaskActionsCell from './TaskActionsCell';
 import FrTaskFilters from './TaskFilters';
