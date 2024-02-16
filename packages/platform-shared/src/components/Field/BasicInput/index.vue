@@ -206,9 +206,8 @@ export default {
   },
   setup(props) {
     const {
-      value: inputValue, errors: fieldErrors, meta: { valid }, handleBlur,
+      value: inputValue, errors: fieldErrors, meta, handleBlur,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
-
     // validationListeners: Contains custom event listeners for validation.
     // Since vee-validate +4 removes the interaction modes, this custom listener is added
     // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
@@ -217,7 +216,7 @@ export default {
     };
 
     return {
-      inputValue, fieldErrors, valid, validationListeners,
+      inputValue, fieldErrors, meta, validationListeners,
     };
   },
   mounted() {
@@ -263,10 +262,10 @@ export default {
      * If the field is invalid, we return a string list of error ids which this field is described by
      */
     ariaDescribedBy() {
-      if ((this.valid && !this.errors.length) || !this.fieldErrors) return this.describedbyId || false;
+      if ((this.meta.valid && !this.errors.length) || !this.fieldErrors) return this.describedbyId || undefined;
 
       const combinedErrors = this.errors.concat(this.fieldErrors);
-      if (!combinedErrors) return this.describedbyId || false;
+      if (!combinedErrors) return this.describedbyId || undefined;
 
       return createAriaDescribedByList(this.name, combinedErrors);
     },
