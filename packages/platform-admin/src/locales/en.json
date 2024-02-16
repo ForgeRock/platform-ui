@@ -3173,7 +3173,6 @@
     "editTemplate": {
       "closeActions": {
         "certify": "certify",
-        "abstain": "abstain from",
         "allowException": "allow exception to"
       },
       "types": {
