@@ -420,7 +420,6 @@ const userRequiredParams = [
   'city',
   'country',
   'description',
-  'lastSync',
   'manager',
   'postalAddress',
   'postalCode',
