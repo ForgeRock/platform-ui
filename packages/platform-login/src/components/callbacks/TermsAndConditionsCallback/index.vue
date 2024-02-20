@@ -56,7 +56,7 @@ export default {
     this.terms = this.$sanitize(terms, {
       allowedTags: false,
       allowedAttributes: {
-        '*': ['id'],
+        '*': ['id', 'class'],
         a: ['href'],
       },
     });
