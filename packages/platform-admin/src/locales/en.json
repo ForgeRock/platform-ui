@@ -1601,6 +1601,8 @@
       "socketTimeout": "Socket Timeout (ms)",
       "useStartTLS": "Use STARTTLS",
       "useSSL": "Use SSL",
+      "allowUtf8": "Allow UTF-8",
+      "allowUtf8Desc": "Turn this on if your email provider supports UTF-8 addresses",
       "showAdvanced": "Show advanced settings",
       "sendTestEmail": "Send Test Email",
       "errorDeletingProvider": "There was an issue deleting the email provider",
