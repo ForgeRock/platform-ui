@@ -86,7 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
               <FrResourceSelect
                 v-model="selectedUsers"
                 :description="$t('governance.accessRequest.newRequest.maximumUsers')"
-                :fields="['givenName', 'sn', 'userName', 'profileImage']"
+                :fields="['givenName', 'sn', 'userName']"
                 :label="$t('common.users')"
                 :resource-path="`${$store.state.realm}_user`"
                 type="multiselect">
