@@ -1,37 +1,39 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount } from '@vue/test-utils';
-import { has, get } from 'lodash';
+import { createI18n } from 'vue-i18n';
 import TranslationMixin from './index';
+import * as i18n from '@/i18n';
 
 let wrapper;
-const translations = {
-  overrides: {
-    testkey: 'test value',
-    testkey2: 'test value 2',
-    testkey3: 'test value 3',
-  },
-};
 
 describe('TranslationMixin', () => {
   beforeEach(() => {
+    i18n.default = createI18n({
+      locale: 'en',
+      messages: {
+        en: {
+          overrides: {
+            testkey: 'test value',
+            testkey2: 'test value 2',
+            testkey3: 'test value 3',
+          },
+        },
+      },
+      silentFallbackWarn: true,
+      silentTranslationWarn: true,
+    });
+
     wrapper = shallowMount({}, {
       render() {},
       global: {
         mixins: [TranslationMixin],
-        mocks: {
-          $t: (id) => {
-            if (has(translations, id)) {
-              return get(translations, id);
-            }
-            return id;
-          },
-        },
+        plugins: [i18n],
       },
     });
   });
