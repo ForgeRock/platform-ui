@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,27 +13,26 @@ of the MIT license. See the LICENSE file for details. -->
       :collapsible="mapping.consented"
       :panel-shown="false">
       <template #list-item-header>
-        <span class="overflow-hidden">
-          <FrFallbackImage
-            :src="mapping.icon"
-            class="mr-3"
-            width="24"
-            height="24"
-            :alt="mapping.displayName"
-            fallback="settings_applications" />
-          <div
-            class="media-body"
-            style="width: 100%;">
-            <div class="d-block">
-              <h6 class="my-0">
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <BMedia vertical-align="center">
+            <template #aside>
+              <FrFallbackImage
+                :src="mapping.icon"
+                class="mr-3"
+                width="24"
+                height="24"
+                :alt="mapping.displayName"
+                fallback="settings_applications" />
+            </template>
+            <div>
+              <h3 class="h5 m-0">
                 {{ mapping.displayName }}
-              </h6>
-              <small class="text-muted">
-                {{ mapping.subTitle }}
-              </small>
+              </h3>
             </div>
-          </div>
-
+            <small class="text-muted">
+              {{ mapping.subTitle }}
+            </small>
+          </BMedia>
           <div class="d-flex align-self-right">
             <BButton
               variant="link"
@@ -53,8 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
               />
             </div>
           </div>
-        </span>
-
+        </div>
         <BModal
           :id="mapping.name"
           :ref="mapping.name"
@@ -77,7 +75,6 @@ of the MIT license. See the LICENSE file for details. -->
               </button>
             </div>
           </template>
-
           <BContainer>
             <p
               v-if="mapping.consented"
@@ -115,6 +112,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BButton,
   BContainer,
+  BMedia,
   BModal,
 } from 'bootstrap-vue';
 import {
@@ -151,6 +149,7 @@ export default {
   components: {
     BButton,
     BContainer,
+    BMedia,
     BModal,
     FrListGroup: ListGroup,
     FrListItem: ListItem,
@@ -173,7 +172,7 @@ export default {
     ...mapState(useUserStore, ['managedResource']),
     mappings() {
       return this.consentableMappings.map((mapping) => {
-        const consentedMapping = this.consentedMappings.find((singleMapping) => singleMapping.name === mapping.name);
+        const consentedMapping = this.consentedMappings.find((singleMapping) => singleMapping.mapping === mapping.name);
         const mappingCopy = cloneDeep(mapping);
 
         let modalHeaderPath = 'pages.profile.consent.';
@@ -244,3 +243,11 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+:deep {
+  .card-body, .list-group-item {
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+}
+</style>

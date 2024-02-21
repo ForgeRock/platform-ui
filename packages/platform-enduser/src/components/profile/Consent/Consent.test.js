@@ -32,7 +32,7 @@ describe('Profile Consent Component', () => {
       },
       props: {
         consentedMappings: [
-          consentableMappings[0],
+          { mapping: 'test', consentDate: date },
         ],
       },
     });

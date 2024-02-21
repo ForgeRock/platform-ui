@@ -1,10 +1,12 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer>
-    <BRow class="my-5">
+    <BRow
+      v-if="theme"
+      class="my-5">
       <BCol
         v-if="!theme.accountPageSections || theme.accountPageSections.personalInformation.enabled"
         class="profileCol mb-4"
