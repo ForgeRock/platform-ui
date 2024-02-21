@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,6 +8,7 @@
 import { shallowMount } from '@vue/test-utils';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import PasswordPolicyMixin from './index';
+import i18n from '@/i18n';
 
 let wrapper;
 const minDictionaryChar = {
@@ -47,9 +48,8 @@ describe('PasswordPolicyMixin', () => {
       global: {
         mixins: [PasswordPolicyMixin],
         mocks: {
-          $t: (id) => id,
-          translationExists: jest.fn(),
         },
+        plugins: [i18n],
       },
     });
   });
@@ -59,7 +59,7 @@ describe('PasswordPolicyMixin', () => {
       const expectedPolicy = {
         policyRequirement: 'CHARACTER_SET',
         params: {
-          sets: 'Common.policyValidationMessages.sets.lowercase, common.policyValidationMessages.sets.uppercase',
+          sets: 'One lowercase character, one uppercase character',
         },
       };
       // the preceding 1/0 is the on/off switch- in this example, both lower and
@@ -76,7 +76,7 @@ describe('PasswordPolicyMixin', () => {
       const expectedPolicy = {
         policyRequirement: 'CHARACTER_SET',
         params: {
-          sets: 'Common.policyValidationMessages.sets.number, common.policyValidationMessages.sets.symbol',
+          sets: 'One number, one special character',
         },
       };
       // num and special characters are required, upper alpha are not
@@ -165,7 +165,7 @@ describe('PasswordPolicyMixin', () => {
       ];
       const policiesAfter = [
         { policyRequirement: 'REQUIRED' },
-        { policyRequirement: 'ATTRIBUTE_VALUE', params: { disallowedFields: 'sn, cn' } },
+        { policyRequirement: 'ATTRIBUTE_VALUE', params: { disallowedFields: 'Last Name, cn' } },
         { policyRequirement: 'CHARACTER_SET', params: { sets: 'foo, bar' } },
         { policyRequirement: 'MIN_LENGTH', params: { minLength: 6 } },
       ];
