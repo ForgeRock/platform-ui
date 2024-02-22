@@ -527,10 +527,10 @@ export default {
       return '';
     },
     logoProfile() {
-      return this.getLocalizedString(this.theme.logoProfile, i18n.locale, i18n.fallbackLocale);
+      return this.getLocalizedString(this.theme.logoProfile, i18n.global.locale, i18n.global.fallbackLocale);
     },
     logoProfileCollapsed() {
-      return this.getLocalizedString(this.theme.logoProfileCollapsed, i18n.locale, i18n.fallbackLocale);
+      return this.getLocalizedString(this.theme.logoProfileCollapsed, i18n.global.locale, i18n.global.fallbackLocale);
     },
     fontUrl() {
       const apiUrl = [];

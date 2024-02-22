@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -191,7 +191,7 @@ export default {
       if (!this.count) {
         return 0;
       }
-      return parseInt(this.count, 10).toLocaleString(i18n.locale);
+      return parseInt(this.count, 10).toLocaleString(i18n.global.locale);
     },
     /**
       * Returns cleaned up title string
