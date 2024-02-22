@@ -6,11 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
-import {
-  findByText,
-  findByTestId,
-  findByRole,
-} from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByText, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import ReportTemplateHeader from './ReportTemplateHeader';
@@ -64,20 +60,23 @@ describe('Report Template Header component', () => {
     });
 
     it('does not show the report badge if the "reportState" prop has no value', () => {
-      const badgeElement = findByTestId(wrapper, 'report-badge');
-      expect(badgeElement.exists()).toBe(false);
+      const headerNavElement = wrapper.find('header > nav');
+      const badgeElement = findByText(headerNavElement, 'h1 + span', 'Draft');
+      expect(badgeElement).toBe(undefined);
     });
 
     it('sets the report badge to "Draft" if the "reportState" prop has a value of "draft"', () => {
       wrapper = setup({ reportState: 'draft' });
-      const badgeElement = findByTestId(wrapper, 'report-badge');
-      expect(badgeElement.text()).toBe('Draft');
+      const headerNavElement = wrapper.find('header > nav');
+      const badgeElement = findByText(headerNavElement, 'h1 + span', 'Draft');
+      expect(badgeElement.exists()).toBe(true);
     });
 
     it('sets the report badge to "Published" if the "reportState" prop has a value of "published"', () => {
       wrapper = setup({ reportState: 'published' });
-      const badgeElement = findByTestId(wrapper, 'report-badge');
-      expect(badgeElement.text()).toBe('Published');
+      const headerNavElement = wrapper.find('header > nav');
+      const badgeElement = findByText(headerNavElement, 'h1 + span', 'Published');
+      expect(badgeElement.exists()).toBe(true);
     });
   });
 });

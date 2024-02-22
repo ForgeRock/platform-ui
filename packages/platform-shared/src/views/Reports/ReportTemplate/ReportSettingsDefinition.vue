@@ -1,0 +1,173 @@
+<!-- Copyright 2024 ForgeRock AS. All Rights Reserved
+
+Use of this code requires a commercial software license with ForgeRock AS
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
+
+<template>
+  <BCard
+    no-body
+    class="shadow-none p-0">
+    <BCardBody class="d-flex p-3 text-left">
+      <BRow
+        no-gutters
+        class="w-100">
+        <BCol
+          class="d-flex align-items-center"
+          cols="10">
+          <template v-if="settingId === 'parameters'">
+            <BCardTitle
+              class="h5 mb-0"
+              title-tag="h4">
+              {{ definition.name }}
+              <small class="d-block text-muted">
+                {{ definition.parameterType }}
+              </small>
+            </BCardTitle>
+          </template>
+          <template v-else-if="settingId === 'filters'">
+            <BListGroup>
+              <BListGroupItem class="border-0 p-0">
+                <BCardText>
+                  <FrIcon
+                    class="text-success mr-2"
+                    name="check" />
+                  {{ $t('reports.template.filterActive') }}
+                </BCardText>
+              </BListGroupItem>
+            </BListGroup>
+          </template>
+          <template v-else-if="settingId === 'aggregates'">
+            <BFormGroup
+              class="m-0"
+              :label-for="definition.name">
+              <BFormCheckbox
+                v-model="aggregateModel"
+                :id="definition.name">
+                {{ definition.name }}
+              </BFormCheckbox>
+            </BFormGroup>
+          </template>
+          <template v-else-if="settingId === 'sorting'">
+            <BListGroup>
+              <BListGroupItem class="border-0 p-0">
+                <BCardText>
+                  <FrIcon
+                    class="mr-2"
+                    :name="definition.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'" />
+                  {{ $t('common.sortByLabel', {label: definition.sortBy}) }}
+                </BCardText>
+              </BListGroupItem>
+            </BListGroup>
+          </template>
+        </BCol>
+        <BCol
+          class="d-flex align-items-center justify-content-end"
+          cols="2">
+          <FrActionsCell
+            :edit-option="false"
+            @delete-clicked.stop="$emit('delete-definition')"
+            wrapper-class="'pr-2'">
+            <template #custom-top-actions>
+              <BDropdownItem @click.stop="$emit('edit-definition')">
+                <FrIcon
+                  class="mr-1"
+                  name="edit" />{{ editOptionLabel }}
+              </BDropdownItem>
+            </template>
+          </FrActionsCell>
+        </BCol>
+      </BRow>
+    </BCardBody>
+  </BCard>
+</template>
+
+<script setup>
+/**
+ * @description
+ * Report settings definition component for parameters, filters, aggregates and sorting.
+ */
+import { computed } from 'vue';
+import {
+  BCard,
+  BCardBody,
+  BCardText,
+  BCardTitle,
+  BCol,
+  BDropdownItem,
+  BFormCheckbox,
+  BFormGroup,
+  BListGroup,
+  BListGroupItem,
+  BRow,
+} from 'bootstrap-vue';
+import { pluralizeSingular } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import i18n from '@/i18n';
+
+const emit = defineEmits([
+  'delete-definition',
+  'edit-definition',
+  'set-aggregate',
+]);
+const props = defineProps({
+  definition: {
+    type: Object,
+    default: () => ({}),
+  },
+  settingId: {
+    type: String,
+    default: '',
+    validator(value) {
+      return [
+        'parameters',
+        'filters',
+        'aggregates',
+        'sorting',
+      ].includes(value);
+    },
+  },
+  settingTitle: {
+    type: String,
+    default: '',
+  },
+});
+
+const editOptionLabel = computed(() => i18n.global.t('common.editObject', { object: pluralizeSingular(props.settingTitle) }));
+const aggregateModel = computed({
+  get() {
+    // Boolean
+    return props.definition.checked;
+  },
+  /**
+   * Aggregate checkbox selection
+   * @param {Boolean} checked selection
+   */
+  set(checked) {
+    emit('set-aggregate', checked);
+  },
+});
+</script>
+
+<style lang="scss" scoped>
+:deep(.card-body) {
+  min-height: 68px;
+}
+
+:deep(.list-group-item) {
+  cursor: default;
+}
+
+:deep(.custom-checkbox) {
+  width: 100%;
+
+  .custom-control-label {
+    width: 100%;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+</style>
