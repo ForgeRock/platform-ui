@@ -17,6 +17,7 @@ describe('Report Data Source Modal component', () => {
         plugins: [i18n],
       },
       props: {
+        dataSources: ['my data source'],
         isTesting: true,
         ...props,
       },
@@ -34,12 +35,39 @@ describe('Report Data Source Modal component', () => {
       const footer = wrapper.find('footer');
       let saveButton = findByText(footer, 'button', 'Save');
       expect(saveButton.attributes('disabled')).toBeDefined();
-
       const dataSourceOption = findByRole(wrapper, 'option').find('span');
       await dataSourceOption.trigger('click');
 
       saveButton = findByText(footer, 'button', 'Save');
       expect(saveButton.attributes('disabled')).toBeUndefined();
+    });
+
+    it('disables the cancel and save buttons if the "isSaving" prop is true', async () => {
+      const footer = wrapper.find('footer');
+      const dataSourceOption = findByRole(wrapper, 'option').find('span');
+      let saveButton = findByText(footer, 'button', 'Save');
+      let cancelButton = findByText(footer, 'button', 'Cancel');
+
+      await dataSourceOption.trigger('click');
+      saveButton = findByText(footer, 'button', 'Save');
+      expect(saveButton.attributes('disabled')).toBeUndefined();
+      expect(cancelButton.attributes('disabled')).toBeUndefined();
+
+      await wrapper.setProps({ isSaving: true });
+      saveButton = findByText(footer, 'button', 'Saving...');
+      cancelButton = findByText(footer, 'button', 'Cancel');
+      expect(saveButton.attributes('disabled')).toBeDefined();
+      expect(cancelButton.attributes('disabled')).toBeDefined();
+    });
+
+    it('emits "add-data-source" with the selected value when the save button is clicked', async () => {
+      const footer = wrapper.find('footer');
+      const dataSourceOption = findByRole(wrapper, 'option').find('span');
+      await dataSourceOption.trigger('click');
+
+      const saveButton = findByText(footer, 'button', 'Save');
+      await saveButton.trigger('click');
+      expect(wrapper.emitted()['add-data-source'][0]).toEqual(['my data source']);
     });
   });
 });

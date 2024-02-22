@@ -5,56 +5,53 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 
 <template>
-  <FrNavbar
-    hide-dropdown
-    hide-toggle
-    :show-docs-link="false"
-    :show-help-link="false"
-    :show-profile-link="false">
-    <template #center-content>
-      <h1 class="h4 mb-0 mr-2 d-inline-block">
-        {{ templateName }}
-      </h1>
-      <BBadge
-        v-if="reportState === 'draft'"
-        class="ml-1"
-        data-testid="report-badge"
-        variant="light">
-        {{ $t('common.draft') }}
-      </BBadge>
-      <BBadge
-        v-else-if="reportState === 'published'"
-        class="ml-1"
-        data-testid="report-badge"
-        variant="success">
-        {{ $t('common.published') }}
-      </BBadge>
-    </template>
-  </FrNavbar>
-  <BButtonToolbar class="fr-actions-menu shadow-sm border-0 justify-content-end align-items-center px-4 py-3 bg-white">
-    <FrActionsCell
-      class="fr-actions-menu"
-      :edit-option="false"
-      @delete-clicked="$emit('delete')">
-      <template #custom-top-actions>
-        <BDropdownGroup>
-          <BDropdownItem @click="$emit('duplicate')">
-            <FrIcon
-              class="mr-3"
-              name="control_point_duplicate" />
-            <span>
-              {{ $t('common.duplicate') }}
-            </span>
-          </BDropdownItem>
-        </BDropdownGroup>
+  <div class="sticky-top">
+    <FrNavbar
+      hide-dropdown
+      hide-toggle
+      :show-docs-link="false"
+      :show-help-link="false"
+      :show-profile-link="false">
+      <template #center-content>
+        <h1 class="h4 mb-0 mr-2 d-inline-block">
+          {{ templateName }}
+        </h1>
+        <BBadge
+          v-if="reportState === 'draft'"
+          class="ml-1"
+          variant="light">
+          {{ $t('common.draft') }}
+        </BBadge>
+        <BBadge
+          v-else-if="reportState === 'published'"
+          class="ml-1"
+          variant="success">
+          {{ $t('common.published') }}
+        </BBadge>
       </template>
-    </FrActionsCell>
-    <FrButtonWithSpinner
-      :spinner-text="$t('common.saving')"
-      :disabled="disableSave"
-      :show-spinner="saving"
-      @click="$emit('save')" />
-  </BButtonToolbar>
+    </FrNavbar>
+    <BButtonToolbar class="fr-actions-menu shadow-sm border-0 justify-content-end align-items-center px-4 py-3 bg-white">
+      <FrActionsCell
+        class="fr-actions-menu"
+        :edit-option="false"
+        @delete-clicked="$emit('delete')">
+        <template #custom-top-actions>
+          <BDropdownGroup>
+            <BDropdownItem @click="$emit('duplicate')">
+              <FrIcon
+                class="mr-2"
+                name="control_point_duplicate" />{{ $t('common.duplicate') }}
+            </BDropdownItem>
+          </BDropdownGroup>
+        </template>
+      </FrActionsCell>
+      <FrButtonWithSpinner
+        :spinner-text="$t('common.saving')"
+        :disabled="disableSave"
+        :show-spinner="isSaving"
+        @click="$emit('save')" />
+    </BButtonToolbar>
+  </div>
 </template>
 
 <script setup>
@@ -63,6 +60,7 @@ to such license between the licensee and ForgeRock AS. -->
  * Create report heading panel with a menu that allows an admin to duplicate, save and delete a report template.
  */
 import {
+  BBadge,
   BButtonToolbar,
   BDropdownGroup,
   BDropdownItem,
@@ -89,7 +87,7 @@ defineProps({
     type: String,
     default: '',
   },
-  saving: {
+  isSaving: {
     type: Boolean,
     default: false,
   },

@@ -5,7 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 
 <template>
-  <BContainer class="my-5">
+  <BContainer class="mt-5">
     <BCard class="text-center py-2">
       <BCardTitle
         class="h4 mb-2"

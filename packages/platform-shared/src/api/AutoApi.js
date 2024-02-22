@@ -9,6 +9,8 @@ import { generateAutoAccessReports } from '@forgerock/platform-shared/src/api/Ba
 import encodeQueryString from '../utils/encodeQueryString';
 import store from '@/store';
 
+const versionedPayload = { version: 'v2' };
+
 /**
   * Returns a list of report templates
   * @param {Object} params Additional query parameters to be encoded
@@ -56,6 +58,27 @@ export async function runAnalyticsTemplate(template, payload) {
     parameters: JSON.stringify(payload),
   });
   return res;
+}
+
+/**
+ * Gets a list of report entities
+ *
+ * @returns {Object}
+ */
+export function getReportEntities() {
+  return generateAutoAccessReports().get('entities');
+}
+
+/**
+ * Gets a list of entity field options from an existing report entity
+ *
+ * @param {Object} payload entities and fields
+ * @returns {Object}
+ */
+export function getReportEntityFieldOptions(payload) {
+  return generateAutoAccessReports().post('fieldoptions', {
+    query: JSON.stringify({ ...versionedPayload, ...payload }),
+  });
 }
 
 /**
