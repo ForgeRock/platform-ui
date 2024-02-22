@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -66,7 +66,7 @@ export default {
   computed: {
     accountFooter() {
       if (this.theme && this.theme.accountFooterEnabled) {
-        return this.$sanitize(this.getLocalizedString(this.theme.accountFooter, i18n.locale, i18n.fallbackLocale));
+        return this.$sanitize(this.getLocalizedString(this.theme.accountFooter, i18n.global.locale, i18n.global.fallbackLocale));
       }
       return '';
     },

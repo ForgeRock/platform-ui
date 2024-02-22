@@ -138,7 +138,7 @@ export default {
   },
   computed: {
     localizedFavicon() {
-      return this.getLocalizedString(this.favicon, i18n.locale, i18n.fallbackLocale);
+      return this.getLocalizedString(this.favicon, i18n.global.locale, i18n.global.fallbackLocale);
     },
   },
   methods: {
