@@ -92,7 +92,7 @@ export default function useViewReportTable() {
       return arrangeTable(tableItems);
     } catch (error) {
       isExpired.value = true;
-      expiredMessage.value = i18n.t('reports.notAvailable');
+      expiredMessage.value = i18n.global.t('reports.notAvailable');
       return [];
     } finally {
       tableLoading.value = false;
