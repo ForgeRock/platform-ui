@@ -393,6 +393,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  cloneDeep,
   each,
   find,
   has,
@@ -725,6 +726,9 @@ export default {
       const componentList = [];
       let keyFromDate = Date.now();
       let enableAutofocus = this.journeyFocusFirstFocusableItemEnabled;
+      // IAM-5893 this.stage needs to be cloned here because it was being passed in by ref to this.getComponentPropsAndEvents() (from login mixin)
+      // which caused ValidatedCreatePasswordCallback, ChoiceCallback, and ConfirmationCallback to function improperly
+      const clonedStage = cloneDeep(this.stage);
       this.step.callbacks.forEach((callback, i) => {
         // index 0 is reserved for callback_0 used in backend scripts
         const index = i + 1;
@@ -765,7 +769,7 @@ export default {
         if (type === this.FrCallbackType.MetadataCallback) return;
 
         // Only components that need extra props or events
-        const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, this.stage, this.step, this.realm, this.journeySignInButtonPosition);
+        const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, clonedStage, this.step, this.realm, this.journeySignInButtonPosition);
         const component = {
           callback,
           callbackSpecificProps,
