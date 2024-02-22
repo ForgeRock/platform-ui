@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,7 +17,7 @@ const overridePrefix = 'overrides';
  * @returns {Boolean} if the key exists
  */
 export function translationExists(path) {
-  return i18n.global.$t(path) !== path;
+  return i18n.global.t(path) !== path;
 }
 /**
  * Remove non alphanumeric characters from string
@@ -93,7 +93,7 @@ export function getTranslation(text) {
     // append the translationPrefix because overrides are not stored at the root level
     const key = `${overridePrefix}.${toTranslationKey(text)}`;
     if (translationExists(key)) {
-      return i18n.$t(key);
+      return i18n.global.t(key);
     }
     // return the unaltered text parameter if no translation is found
     return text;
