@@ -6,19 +6,14 @@ to such license between the licensee and ForgeRock AS. -->
 
 <template>
   <BModal
-    id="reports-data-source-modal"
-    cancel-variant="link"
+    id="report-data-sources-modal"
     no-close-on-backdrop
     no-close-on-esc
     size="lg"
     title-class="h5"
     title-tag="h2"
-    :ok-disabled="!dataSourceValue"
-    :ok-title="$t('common.save')"
     :static="isTesting"
     :title="$t('reports.template.addADataSource')"
-    @hidden="hiddenHandler"
-    @ok="okButtonClicked = true"
     @show="dataSourceValue = ''">
     <p class="text-secondary">
       {{ $t('reports.template.chooseAnEntityAsDataSource') }}
@@ -28,36 +23,60 @@ to such license between the licensee and ForgeRock AS. -->
       class="mb-5"
       name="data-source-field"
       type="select"
+      :disabled="isSaving"
       :internal-search="true"
-      :options="['Data Source Option']"
-      :label="$t('reports.template.dataSource')" />
+      :label="dataSources.length ? $t('reports.template.dataSource') : $t('reports.template.noDataSourcesFound')"
+      :options="dataSources" />
+    <template #modal-footer="{ cancel }">
+      <div class="d-flex flex-row-reverse">
+        <FrButtonWithSpinner
+          :disabled="disableSave"
+          :show-spinner="isSaving"
+          variant="primary"
+          @click="$emit('add-data-source', dataSourceValue);" />
+        <BButton
+          variant="link"
+          :disabled="isSaving"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+      </div>
+    </template>
   </BModal>
 </template>
 
 <script setup>
 /**
  * @description
- * Modal for adding a data source to a custom report analytics template.
+ * Modal for adding a data source to a custom analytics report template.
  */
-import { ref } from 'vue';
-import { BModal } from 'bootstrap-vue';
+import { computed, ref } from 'vue';
+import { BModal, BButton } from 'bootstrap-vue';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import i18n from '@/i18n';
 
-defineProps({
+// Definitions
+defineEmits(['add-data-source']);
+const props = defineProps({
+  dataSources: {
+    type: Array,
+    default: () => [],
+  },
+  isSaving: {
+    type: Boolean,
+    default: false,
+  },
   isTesting: {
     type: Boolean,
     default: false,
   },
 });
-const emit = defineEmits(['add-data-source']);
 
+// Globals
 const dataSourceValue = ref('');
-let okButtonClicked = false;
 
-function hiddenHandler() {
-  if (okButtonClicked) {
-    emit('add-data-source', dataSourceValue);
-  }
-  okButtonClicked = false;
-}
+// Computed
+const invalidDataSource = computed(() => !dataSourceValue.value.length || dataSourceValue.value === i18n.global.t('common.loadingEtc'));
+const disableSave = computed(() => invalidDataSource.value || props.isSaving);
 </script>
