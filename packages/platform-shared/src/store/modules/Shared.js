@@ -39,6 +39,7 @@ const defaultState = {
   workforceEnabled: false,
   managedObjectMinimumUIFilterLength: {},
   maxIdleExpirationTime: null,
+  newMultiselectEnabled: false,
   promoteAppsViaApi: false,
 };
 
@@ -148,6 +149,13 @@ const mutations = {
     if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
       state.autoAccessReportsUrl = env.VUE_APP_AUTO_ACCESS_REPORTS_URL;
     }
+    if (env.VUE_APP_ENABLE_NEW_MULTISELECT) {
+      state.newMultiselectEnabled = env.VUE_APP_ENABLE_NEW_MULTISELECT === 'true' || env.VUE_APP_ENABLE_NEW_MULTISELECT === true;
+    }
+  },
+  // Needed for Login since setFeatureFlags isn't called there
+  setNewMultiselectEnabled(state, env) {
+    state.newMultiselectEnabled = env.VUE_APP_ENABLE_NEW_MULTISELECT === 'true' || env.VUE_APP_ENABLE_NEW_MULTISELECT === true;
   },
   setWebStorageAvailable(state, val) {
     state.webStorageAvailable = val;
