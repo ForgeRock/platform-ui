@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-model="currentStep"
         @activate-tab="activateTabHandler"
         active-nav-item-class="fr-active-nav-item"
+        content-class="fr-wizard-content"
         nav-wrapper-class="fr-wizard"
         pills
         vertical>
@@ -66,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
               <BButton
                 data-testid="nextButton"
                 @click="changeStep(1)"
-                :disabled="!valid"
+                :disabled="!valid || !validForm"
                 variant="primary">
                 {{ currentStep === tabs.length - 1 ? $t('common.save') : $t('common.next') }}
               </BButton>
@@ -124,6 +125,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  validForm: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 // Data
@@ -157,6 +162,10 @@ function activateTabHandler(newIndex, oldIndex, event) {
     .nav-item a {
       padding: 0.75rem 1.25rem 0.75rem 3rem !important;
     }
+  }
+
+  .fr-wizard-content {
+    width: calc(100% - 220px);
   }
 
   .fr-step-bridge {

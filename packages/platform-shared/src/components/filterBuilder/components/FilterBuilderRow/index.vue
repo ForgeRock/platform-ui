@@ -6,48 +6,58 @@ of the MIT license. See the LICENSE file for details. -->
   <BCard
     :class="[`depth-${depth+1}`, 'card-container-properties card-queryfilter-builder queryfilter-row shadow-none mt-3']"
     body-class="p-3">
-    <div class="d-flex flex-sm-wrap flex-md-nowrap">
-      <div class="flex-grow-1 pr-md-3">
+    <div class="position-relative filter-builder-row">
+      <div class="pr-lg-3">
         <BFormRow>
+          <slot
+            name="property-field"
+            :rule-property="ruleProperty"
+            :property-placeholder="propertyPlaceholder"
+            :rule="rule"
+            :rule-change="ruleChange"
+            :unique-name="`selectPropOptions_${uniqueName}`">
+            <BCol
+              class="rule-property-col mb-2"
+              :class="{ 'mb-lg-0': !fieldWidth }"
+              :md="fieldWidth || 5">
+              <FrField
+                v-if="properties.length"
+                :value="ruleProperty.value"
+                type="select"
+                :disabled="disabled"
+                :name="`selectPropOptions_${uniqueName}`"
+                :options="ruleProperty.options"
+                :placeholder="propertyPlaceholder"
+                @input="ruleProperty.value = $event; ruleChange({ field: $event })" />
+              <FrField
+                v-else
+                :value="customPropValue"
+                :name="`Custom_${uniqueName}`"
+                @input="customPropValue = $event; ruleChange({ field: $event })" />
+            </BCol>
+          </slot>
           <BCol
-            md="5"
-            class="rule-property-col mb-2 mb-md-0">
+            class="rule-condition-col mb-2"
+            :class="{ 'mb-lg-0': !fieldWidth }"
+            :md="fieldWidth || true">
             <FrField
-              v-if="properties.length"
-              :value="selectPropOptions.value"
+              :value="ruleOperator"
               type="select"
               :disabled="disabled"
-              :name="`selectPropOptions_${uniqueName}`"
-              :options="selectPropOptions.options"
-              :placeholder="propertyPlaceholder"
-              @input="selectPropOptions.value = $event; ruleChange({ field: $event })" />
-            <FrField
-              v-else
-              :value="customPropValue"
-              :name="`Custom_${uniqueName}`"
-              @input="customPropValue = $event; ruleChange({ field: $event })" />
-          </BCol>
-          <BCol
-            class="rule-condition-col mb-2 mb-md-0"
-            :md="true">
-            <FrField
-              :value="selectConditionOptions.value"
-              type="select"
-              :disabled="disabled"
-              :name="`selectConditionOptions_${uniqueName}`"
-              :options="selectConditionOptions.options"
+              :name="`ruleCondition_${uniqueName}`"
+              :options="operatorSelectOptions"
               :searchable="false"
-              @input="selectConditionOptions.value = $event; ruleChange({ operator: $event })" />
+              @input="ruleOperator = $event; ruleChange({ operator: $event })" />
           </BCol>
           <BCol
-            class="rule-value-col mb-2 mb-md-0"
             v-if="!conditionIsPresent"
-            :md="true">
+            class="rule-value-col mb-2 mb-lg-0"
+            :md="fieldWidth || true">
             <slot
               name="valueField"
               :input-value="inputValue"
-              :selected-condition="selectConditionOptions.value"
-              :selected-prop="selectPropOptions.value"
+              :selected-condition="ruleOperator"
+              :selected-prop="ruleProperty.value"
               :rule-change="ruleChange"
               :unique-name="`inputValue_${uniqueName}`">
               <FrField
@@ -61,16 +71,18 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
         </BFormRow>
       </div>
-      <FrFilterBuilderRemoveButton
-        v-if="hasSiblings"
-        class="mr-1"
-        :disabled="disabled"
-        @click="removeRule" />
-      <FrFilterBuilderAddButton
-        class="add-button"
-        :disabled="disabled"
-        :hide-group="groupIsHidden"
-        @add-rule="addRule" />
+      <div class="position-absolute filter-builder-row-buttons">
+        <FrFilterBuilderRemoveButton
+          v-if="hasSiblings"
+          class="mr-1"
+          :disabled="disabled"
+          @click="removeRule" />
+        <FrFilterBuilderAddButton
+          class="add-button"
+          :disabled="disabled"
+          :hide-group="groupIsHidden"
+          @add-rule="addRule" />
+      </div>
     </div>
   </BCard>
 </template>
@@ -96,30 +108,14 @@ export default {
     FrFilterBuilderRemoveButton,
   },
   computed: {
-    selectConditionOptions() {
-      let options;
-
+    operatorSelectOptions() {
       if (this.isLdap) {
-        options = Object.values(this.conditionOptions).map(
+        return Object.values(this.operatorOptions).map(
           (prop) => ({ text: prop.label, value: prop.value }),
         );
-        return {
-          options,
-          value: options.filter((option) => option.value === this.rule.operator).length > 0
-            ? this.rule.operator
-            : options.shift().value,
-        };
       }
-
-      const propType = getTypeFromValue(this.rule.field, this.properties);
-      options = this.conditionOptionsByType(propType);
-      const value = options.filter((option) => option.value === this.rule.operator).length > 0
-        ? this.rule.operator
-        : options.shift().value;
-      return {
-        options,
-        value,
-      };
+      const propType = getTypeFromValue(this.ruleProperty.value, this.properties);
+      return this.conditionOptionsByType(propType);
     },
     groupIsHidden() {
       return this.isMaxDepth || this.hideGroup;
@@ -128,10 +124,10 @@ export default {
       return this.depth === this.maxDepth - 1;
     },
     conditionIsPresent() {
-      if (!this.conditionOptions.IsPresent) return false;
-      return this.rule.operator === this.conditionOptions.IsPresent.value || this.rule.operator === this.conditionOptions.IsNotPresent.value;
+      if (!this.operatorOptions.IsPresent) return false;
+      return this.rule.operator === this.operatorOptions.IsPresent.value || this.rule.operator === this.operatorOptions.IsNotPresent.value;
     },
-    selectPropOptions() {
+    ruleProperty() {
       return {
         options: this.properties.map((prop) => (
           { text: prop.label, value: prop.value })),
@@ -143,6 +139,9 @@ export default {
     return {
       propertyPlaceholder: this.$t('queryFilterBuilder.properties', { propertyName: capitalize(this.resourceName) }),
       inputValue: this.parseType(this.rule.field, this.rule.value),
+      ruleOperator: Object.values(this.operatorOptions).findIndex((option) => option.value === this.rule.operator) > -1
+        ? this.rule.operator
+        : this.operatorOptions[0].value,
       value: '',
       customPropValue: this.rule.field,
       uniqueName: `${this.resourceName}_${this.rule.uniqueIndex}`,
@@ -193,18 +192,28 @@ export default {
       required: true,
       type: Object,
     },
-    conditionOptions: {
+    operatorOptions: {
       type: Object,
       required: true,
     },
   },
+  inject: {
+    fieldWidth: {
+      default: null,
+      type: Number,
+    },
+  },
   watch: {
+    operatorSelectOptions(options) {
+      if (options.findIndex((option) => option.value === this.rule.operator) === -1) {
+        this.ruleOperator = options[0].value;
+        this.ruleChange({ operator: this.ruleOperator });
+      }
+    },
     rule(rule, prevRule) {
       if (rule.field !== prevRule.field) {
         const updateValueFromField = this.parseType(rule.field, '');
-        this.$set(this.$data, 'inputValue', {
-          ...updateValueFromField,
-        });
+        this.inputValue = { ...updateValueFromField };
       }
     },
     properties() {
@@ -218,13 +227,12 @@ export default {
       });
     },
     conditionOptionsByType(type) {
-      const defaultConditions = Object.values(this.conditionOptions)
+      const defaultConditions = Object.values(this.operatorOptions)
         .map((option) => ({ text: option.label, value: option.value }));
 
-      const conditions = Object.values(this.conditionOptions)
+      const conditions = Object.values(this.operatorOptions)
         .filter((option) => option.type.includes(type))
-        .map((option) => ({ text: option.label, value: option.value }
-        ));
+        .map((option) => ({ text: option.label, value: option.value }));
 
       return conditions.length === 0 ? defaultConditions : conditions;
     },
@@ -247,8 +255,8 @@ export default {
       }
     },
     ruleChange(value) {
-      const ruleChangeKeys = Object.keys(value);
-      const shouldUpdate = ruleChangeKeys.some((key) => this.rule[key] !== value[key]);
+      const ruleChangeKey = Object.keys(value)[0];
+      const shouldUpdate = this.rule[ruleChangeKey] !== value[ruleChangeKey];
       if (shouldUpdate) {
         this.$emit('rule-change', {
           depth: this.depth, index: this.index, path: this.path, value,
@@ -263,3 +271,14 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.filter-builder-row {
+  padding-right: 142px;
+
+  .filter-builder-row-buttons {
+    right: 0px;
+    top: 0px;
+  }
+}
+</style>

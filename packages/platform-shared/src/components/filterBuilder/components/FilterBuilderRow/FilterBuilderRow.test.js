@@ -22,7 +22,7 @@ const mountProps = {
     },
   },
   props: {
-    conditionOptions: defaultConditionOptions,
+    operatorOptions: defaultConditionOptions,
     depth: 0,
     index: 0,
     hasSiblings: false,
@@ -111,7 +111,7 @@ describe('FilterBuilderRow', () => {
       [
         { text: 'contains', value: 'co' },
         { text: 'does not contain', value: '!co' },
-        { text: 'is ', value: 'eq' },
+        { text: 'is', value: 'eq' },
         { text: 'is not', value: '!eq' },
         { text: 'is present', value: 'pr' },
         { text: 'is not present', value: '!pr' },
@@ -125,7 +125,7 @@ describe('FilterBuilderRow', () => {
     const returnObject = wrapper.vm.conditionOptionsByType('number');
     expect(returnObject).toEqual(
       [
-        { text: 'is ', value: 'eq' },
+        { text: 'is', value: 'eq' },
         { text: 'is not', value: '!eq' },
         { text: 'is present', value: 'pr' },
         { text: 'is not present', value: '!pr' },
@@ -139,7 +139,7 @@ describe('FilterBuilderRow', () => {
 
   it('Returns the correct select options by type (Int)', async () => {
     await wrapper.setProps({
-      conditionOptions: CertFilterDefaults.defaultConditionOptions,
+      operatorOptions: CertFilterDefaults.defaultConditionOptions,
     });
 
     const returnObject = wrapper.vm.conditionOptionsByType('int');
@@ -158,7 +158,7 @@ describe('FilterBuilderRow', () => {
     const returnObject = wrapper.vm.conditionOptionsByType('boolean');
     expect(returnObject).toEqual(
       [
-        { text: 'is ', value: 'eq' },
+        { text: 'is', value: 'eq' },
         { text: 'is present', value: 'pr' },
         { text: 'is not present', value: '!pr' },
       ],

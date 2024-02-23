@@ -2996,6 +2996,7 @@
       }
     },
     "events": {
+      "temporalValueField": "Current value of",
       "event": "Event",
       "listView": {
         "action": "Action",
@@ -3044,6 +3045,7 @@
         "eventDetails": "Event Details",
         "eventName": "Event Name",
         "eventOwners": "Event Owners",
+        "filterTriggerPrefix": "Trigger workflow if",
         "newWorkflowEvent": "New Workflow Event",
         "saveError": "Error Saving Event",
         "saveSuccess": "Event Saved Successfully",
@@ -3054,6 +3056,11 @@
         "workflowDetails": "Workflow Details",
         "workflowVariables": "Workflow Variables",
         "workflowVariablesDescription": "Optionally, specify variables to pass to the workflow."
+      },
+      "errors": {
+        "getEventError": "There was an error retrieving event",
+        "getPropertiesError": "There was an error retrieving properties",
+        "filterError": "Filter must contain minimum of one before and after condition for each property at same level."
       }
     },
     "glossary": {

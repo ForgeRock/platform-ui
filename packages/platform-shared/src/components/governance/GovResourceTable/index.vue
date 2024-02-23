@@ -563,10 +563,12 @@ export default {
     onToggleSelectAll(toggleAll = true) {
       const grid = this.$refs['gov-resource-table'];
 
-      if (!this.allRowsSelected && toggleAll) {
-        grid.selectAllRows();
-      } else {
-        grid.clearSelected();
+      if (grid) {
+        if (!this.allRowsSelected && toggleAll) {
+          grid.selectAllRows();
+        } else {
+          grid.clearSelected();
+        }
       }
     },
     /**
