@@ -515,17 +515,28 @@
     "modalTitle": "Filter"
   },
   "filters": {
+    "all": "All",
+    "any": "Any",
     "contains": "contains",
-    "is": "is",
-    "include": "include",
+    "currentValueOf": "Current value of",
+    "doesNotContain": "does not contain",
+    "doesNotStartWith": "does not start with",
     "dontInclude": "don't include",
-    "startsWith": "starts with",
     "endsWith": "ends with",
     "exists": "exists",
-    "greaterThanEqual": "GTE (>=)",
     "greaterThan": "GT (>)",
+    "greaterThanEqual": "GTE (>=)",
+    "hasChanged": "has changed",
+    "hasNotChanged": "has not changed",
+    "include": "include",
+    "is": "is",
+    "isNot": "is not",
+    "isNotPresent": "is not present",
+    "isPresent": "is present",
+    "lessThan": "LT (<)",
     "lessThanEqual": "LTE (<=)",
-    "lessThan": "LT (<)"
+    "previousValueOf": "Previous value of",
+    "startsWith": "starts with"
   },
   "locale": {
     "addLocale": "Add Locale",
