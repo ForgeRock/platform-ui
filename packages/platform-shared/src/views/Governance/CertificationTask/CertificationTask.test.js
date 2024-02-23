@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import Notifications from '@kyvg/vue3-notification';
 import CertificationTask from './index';
@@ -17,10 +18,85 @@ jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 describe('CertificationTask', () => {
   let wrapper;
 
+  CommonsApi.getGlossarySchema = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
+  CommonsApi.getFilterSchema = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
   CertificationApi.getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.certifyItem.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.certifyAllItems.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.exceptionItem.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.exceptionItems.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.exceptionAllItems.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.forwardItem.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.forwardItems.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.forwardAllItems.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getEntitlementDetails.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getUserDetails.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getUserDetailsByType.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.reassignItem.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.resetItem.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.resetAllItems.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.revokeItems.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.revokeAllItems.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.revokeItem.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.saveComment.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.updateActors.mockImplementation(() => Promise.resolve({ data: {} }));
   CertificationApi.getCertificationApplicationFilter.mockImplementation(() => Promise.resolve({ data: {} }));
   CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: {} }));
   CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.signOffCertificationTasks.mockImplementation(() => Promise.resolve({}));
+  CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getInProgressTasksByCampaign.mockImplementation(() => Promise.resolve({
+    data: {
+      result: [
+        {
+          id: 'a96de99c-c638-4bdd-84cb-5fb559225154',
+          decision: {
+            certification: {
+              actors: [
+                {
+                  id: 'a96de99c-c638-4bdd-84cb-5fb559225153',
+                  permissions: {
+                    signoff: true,
+                  },
+                },
+              ],
+            },
+          },
+        },
+        {
+          id: 'a96de99c-c638-4bdd-84cb-5fb559225155',
+          decision: {
+            certification: {
+              actors: [
+                {
+                  id: 'a96de99c-c638-4bdd-84cb-5fb559225153',
+                  permissions: {
+                    signoff: true,
+                  },
+                },
+              ],
+            },
+          },
+        },
+        {
+          id: 'a96de99c-c638-4bdd-84cb-5fb559225156',
+          decision: {
+            certification: {
+              actors: [
+                {
+                  id: 'a96de99c-c638-4bdd-84cb-5fb559225157',
+                  permissions: {
+                    signoff: true,
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ],
+    },
+  }));
 
   function mountComponent() {
     setupTestPinia();
@@ -51,7 +127,6 @@ describe('CertificationTask', () => {
 
   describe('tests without data', () => {
     beforeEach(async () => {
-      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({ data: {} }));
       wrapper = mountComponent();
 
       await flushPromises();
@@ -71,58 +146,6 @@ describe('CertificationTask', () => {
       });
 
       it('checkInProgress method, two line items with signoff permission should show sign-off button', async () => {
-        CertificationApi.getInProgressTasksByCampaign.mockImplementation(() => Promise.resolve({
-          data: {
-            result: [
-              {
-                id: 'a96de99c-c638-4bdd-84cb-5fb559225154',
-                decision: {
-                  certification: {
-                    actors: [
-                      {
-                        id: 'a96de99c-c638-4bdd-84cb-5fb559225153',
-                        permissions: {
-                          signoff: true,
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-              {
-                id: 'a96de99c-c638-4bdd-84cb-5fb559225155',
-                decision: {
-                  certification: {
-                    actors: [
-                      {
-                        id: 'a96de99c-c638-4bdd-84cb-5fb559225153',
-                        permissions: {
-                          signoff: true,
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-              {
-                id: 'a96de99c-c638-4bdd-84cb-5fb559225156',
-                decision: {
-                  certification: {
-                    actors: [
-                      {
-                        id: 'a96de99c-c638-4bdd-84cb-5fb559225157',
-                        permissions: {
-                          signoff: true,
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          },
-        }));
-
         wrapper.vm.checkInProgress();
 
         await flushPromises();
@@ -337,8 +360,6 @@ describe('CertificationTask', () => {
   });
 
   describe('signOff', () => {
-    CertificationApi.signOffCertificationTasks.mockImplementation(() => Promise.resolve({}));
-
     it('should not go to back URL when cert is not complete', async () => {
       wrapper = mountComponent();
       await flushPromises();
