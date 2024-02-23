@@ -1,29 +1,47 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
+import i18n from '@/i18n';
+
 export const operatorOptions = {
-  All: { label: 'All', delimeter: 'and' },
-  Any: { label: 'Any', delimeter: 'or' },
+  All: { label: i18n.global.t('filters.all'), delimeter: 'and' },
+  Any: { label: i18n.global.t('filters.any'), delimeter: 'or' },
 };
 
 export const defaultConditionOptions = {
-  Contains: { label: 'contains', value: 'co', type: ['string'] },
-  DoesNotContain: { label: 'does not contain', value: '!co', type: ['string'] },
-  Is: { label: 'is ', value: 'eq', type: ['string', 'number', 'boolean'] },
-  IsNot: { label: 'is not', value: '!eq', type: ['string', 'number'] },
-  IsPresent: { label: 'is present', value: 'pr', type: ['string', 'number', 'boolean'] },
-  IsNotPresent: { label: 'is not present', value: '!pr', type: ['string', 'number', 'boolean'] },
-  StartsWith: { label: 'starts with', value: 'sw', type: ['string'] },
-  DoesNotStartsWith: { label: 'does not start with', value: '!sw', type: ['string'] },
-  Gte: { label: 'GTE (>=)', value: 'ge', type: ['number'] },
-  Gt: { label: 'GT (>)', value: 'gt', type: ['number'] },
-  Lte: { label: 'LTE (<=)', value: 'le', type: ['number'] },
-  Lt: { label: 'LT (<)', value: 'lt', type: ['number'] },
+  Contains: { label: i18n.global.t('filters.contains'), value: 'co', type: ['string'] },
+  DoesNotContain: { label: i18n.global.t('filters.doesNotContain'), value: '!co', type: ['string'] },
+  Is: { label: i18n.global.t('filters.is'), value: 'eq', type: ['string', 'number', 'boolean'] },
+  IsNot: { label: i18n.global.t('filters.isNot'), value: '!eq', type: ['string', 'number'] },
+  IsPresent: { label: i18n.global.t('filters.isPresent'), value: 'pr', type: ['string', 'number', 'boolean'] },
+  IsNotPresent: { label: i18n.global.t('filters.isNotPresent'), value: '!pr', type: ['string', 'number', 'boolean'] },
+  StartsWith: { label: i18n.global.t('filters.startsWith'), value: 'sw', type: ['string'] },
+  DoesNotStartsWith: { label: i18n.global.t('filters.doesNotStartWith'), value: '!sw', type: ['string'] },
+  Gte: { label: i18n.global.t('filters.greaterThanEqual'), value: 'ge', type: ['number'] },
+  Gt: { label: i18n.global.t('filters.greaterThan'), value: 'gt', type: ['number'] },
+  Lte: { label: i18n.global.t('filters.lessThanEqual'), value: 'le', type: ['number'] },
+  Lt: { label: i18n.global.t('filters.lessThan'), value: 'lt', type: ['number'] },
 };
+
+export const governanceConditionOptions = {
+  Contains: { label: i18n.global.t('filters.contains'), value: 'contains', type: ['string'] },
+  DoesNotContain: { label: i18n.global.t('filters.doesNotContain'), value: 'not_contains', type: ['string'] },
+  Is: { label: i18n.global.t('filters.is'), value: 'equals', type: ['string', 'reference'] },
+  IsNot: { label: i18n.global.t('filters.isNot'), value: 'not_equals', type: ['string', 'reference'] },
+  StartsWith: { label: i18n.global.t('filters.startsWith'), value: 'starts_with', type: ['string'] },
+  DoesNotStartsWith: { label: i18n.global.t('filters.endsWith'), value: 'ends_with', type: ['string'] },
+  HasChanged: { label: i18n.global.t('filters.hasChanged'), value: 'has_changed', type: ['reference'] },
+  HasNotChanged: { label: i18n.global.t('filters.hasNotChanged'), value: 'has_not_changed', type: ['reference'] },
+};
+
+export const temporalValueOptions = [
+  { text: i18n.global.t('filters.previousValueOf'), value: 'before' },
+  { text: i18n.global.t('filters.currentValueOf'), value: 'after' },
+];
 
 export function getTypeFromValue(value, properties) {
   if (!value) return 'string';

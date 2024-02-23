@@ -51,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
       :key="subfilter.uniqueIndex">
       <FrFilterBuilderRow
         v-if="isRow(subfilter)"
-        :condition-options="conditionOptions"
+        :operator-options="conditionOptions"
         :disabled="disabled"
         :rule="subfilter"
         :resource-name="resourceName"
@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
         :index="i"
         :is-ldap="isLdap"
         :max-depth="maxDepth"
-        :path="`${path}`"
+        :path="path"
         :properties="properties"
         @add-rule="addRule"
         @remove-rule="removeRule"

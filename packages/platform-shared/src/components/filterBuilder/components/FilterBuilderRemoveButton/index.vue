@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
     :disabled="disabled"
     @click="$emit('click')">
     <FrIcon
-      class="text-dark"
+      class="text-dark md-24"
       :outline="true"
       name="remove"
     />
