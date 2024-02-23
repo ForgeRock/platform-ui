@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import i18n from '@/i18n';
 
@@ -38,6 +39,9 @@ describe('TextOutputCallback.vue', () => {
       wrapper = mount(TextOutputCallback, {
         global: {
           plugins: [i18n],
+          mocks: {
+            $sanitize: () => sanitize(message),
+          },
         },
         props,
       });
