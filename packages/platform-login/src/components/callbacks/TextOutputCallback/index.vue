@@ -4,27 +4,24 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
-    :class="[{'hide-polling-spinner': hideSpinner }, 'row', 'mb-2']"
+    :class="[{'hide-polling-spinner': hideSpinner }, 'row', 'mb-2 mx-0']"
     ref="textOutputPanel">
     <div
       v-if="messageType === 'INFORMATION'"
-      class="text-center text-muted w-100"
-      :aria-hidden="isFirstRenderedCallback">
-      {{ getTranslation(message) }}
-    </div>
+      class="text-muted w-100"
+      :aria-hidden="isFirstRenderedCallback"
+      v-html="sanitizedMessage" />
     <div
-      v-if="messageType === 'WARNING'"
+      v-else-if="messageType === 'WARNING'"
       class="alert w-100 alert-warning"
-      :aria-hidden="isFirstRenderedCallback">
-      {{ getTranslation(message) }}
-    </div>
+      :aria-hidden="isFirstRenderedCallback"
+      v-html="sanitizedMessage" />
     <div
-      v-if="!isFirstRenderedCallback && messageType === 'ERROR'"
-      class="alert w-100 alert-danger">
-      {{ getTranslation(message) }}
-    </div>
+      v-else-if="!isFirstRenderedCallback && messageType === 'ERROR'"
+      class="alert w-100 alert-danger"
+      v-html="sanitizedMessage" />
     <div
-      v-if="messageType === 'SCRIPT'"
+      v-else-if="messageType === 'SCRIPT'"
       class="w-100">
       <div v-if="qrCodeHtml">
         <div
@@ -46,6 +43,7 @@ import QRCodeGenerator from 'qrcode-generator';
 import addAttributesToDomNodeString from '@forgerock/platform-shared/src/utils/stringDomNodeUtils';
 import { CallbackType } from '@forgerock/javascript-sdk';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 
 export default {
   name: 'TextOutputCallback',
@@ -77,6 +75,11 @@ export default {
       qrCodeMobileLink: '',
       hideSpinner: false,
     };
+  },
+  computed: {
+    sanitizedMessage() {
+      return this.$sanitize(this.getTranslation(this.message), baseSanitizerConfig);
+    },
   },
   mounted() {
     switch (this.callback.getMessageType()) {
