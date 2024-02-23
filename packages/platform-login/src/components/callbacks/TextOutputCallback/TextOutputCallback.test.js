@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -119,6 +119,7 @@ describe('TextOutputCallback.vue', () => {
       };`;
     mountComponent({ messageType: '4', message: messageScript });
     const setHiddenCallbackSpy = jest.spyOn(wrapper.vm, 'setHiddenCallback');
+    const getTranslationSpy = jest.spyOn(wrapper.vm, 'getTranslation');
 
     const emittedFunction = wrapper.emitted()['has-scripts'].pop()[0];
     emittedFunction();
@@ -145,6 +146,10 @@ describe('TextOutputCallback.vue', () => {
     expect(window.APIs.loginHelpers.setHiddenCallback).toBeDefined();
     expect(window.APIs.loginHelpers.setHiddenCallback('callbackName', 'callbackValue')).toBeUndefined();
     expect(setHiddenCallbackSpy).toHaveBeenCalledWith('callbackName', 'callbackValue');
+
+    expect(window.APIs.loginHelpers.getTranslation).toBeDefined();
+    expect(window.APIs.loginHelpers.getTranslation('anyOldText')).toEqual('anyOldText');
+    expect(getTranslationSpy).toHaveBeenCalledWith('anyOldText');
   });
 
   it('Mounts QRCodeReader on window', () => {
