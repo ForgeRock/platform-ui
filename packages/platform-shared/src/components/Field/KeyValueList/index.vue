@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :style="{ cursor: currentKey ? 'default' : 'pointer' }"
                   variant="none"
                   class="py-0"
+                  data-testid="delete-button-node"
                   @click.stop="deleteItem(key)">
                   <FrIcon name="delete" />
                 </BButton>
@@ -47,6 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :style="{ cursor: currentKey ? 'default' : 'pointer' }"
                   variant="none"
                   class="py-0"
+                  data-testid="edit-button-node"
                   @click.stop="editItem(key)">
                   <FrIcon name="edit" />
                 </BButton>
