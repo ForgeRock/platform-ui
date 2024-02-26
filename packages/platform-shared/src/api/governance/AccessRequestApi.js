@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,11 +8,31 @@
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
+/**
+ * Gets all requests made by the user to display them in enduser
+ * @param {String} userId id of the user making the query
+ * @param {Object} params query parameters
+ * @param {Object} filter filters applied to the query
+ * @returns {Promise}
+ */
 export function getUserRequests(userId, params, filter) {
   params.action = 'search';
   const queryString = encodeQueryString(params, true);
   return generateIgaApi().post(`/governance/user/${userId}/requests${queryString}`, { targetFilter: filter });
 }
+
+/**
+ * Gets all requests to display in admin
+ * @param {Object} params query parameters
+ * @param {Object} filter filters applied to the query
+ * @returns {Promise}
+ */
+export function getRequests(params, filter) {
+  params.action = 'search';
+  const queryString = encodeQueryString(params, true);
+  return generateIgaApi().post(`/governance/requests${queryString}`, { targetFilter: filter });
+}
+
 export function getRequest(requestId) {
   return generateIgaApi().get(`/governance/requests/${requestId}`);
 }

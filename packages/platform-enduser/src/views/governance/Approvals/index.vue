@@ -168,9 +168,10 @@ import {
   getRequestObjectType,
   getFormattedRequest,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
-import FrAccessRequestList from '@/components/governance/AccessRequestList';
-import FrRequestToolbar from '@/components/governance/RequestToolbar';
-import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
+import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
+import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
+import FrAccessRequestList from '@forgerock/platform-shared/src/components/governance/AccessRequestList';
+import FrRequestToolbar from '@forgerock/platform-shared/src/components/governance/RequestToolbar';
 
 /**
  * @description Landing page for User Approvals
