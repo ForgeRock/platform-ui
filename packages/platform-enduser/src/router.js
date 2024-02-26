@@ -100,12 +100,12 @@ const router = createRouter({
         {
           path: '',
           name: 'MyRequests',
-          component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequests'),
+          component: () => import(/* webpackChunkName: "MyRequests" */ '@forgerock/platform-shared/src/views/Governance/AccessRequest/MyRequest'),
         },
         {
           path: 'details/:requestId',
           name: 'MyRequestDetails',
-          component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequestDetails'),
+          component: () => import(/* webpackChunkName: "MyRequests" */ '@forgerock/platform-shared/src/views/Governance/AccessRequest/MyRequestDetails'),
         },
       ],
     },

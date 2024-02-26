@@ -4,10 +4,10 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer class="my-5">
-    <template v-if="!isEmpty(item)">
+    <template v-if="!isLoading">
       <!-- Header -->
       <BMedia
-        data-testId="approval-detail-header"
+        data-testId="request-detail-header"
         class="mb-4 align-items-center">
         <template #aside>
           <div class="d-flex align-items-center justify-content-center p-3 mr-2 rounded border border-darkened app-logo">
@@ -36,27 +36,9 @@ of the MIT license. See the LICENSE file for details. -->
 
       <!-- Actions -->
       <div
-        data-testId="approval-detail-actions"
-        v-if="isActive"
+        data-testId="request-detail-actions"
+        v-if="isActive && adminUser"
         class="mb-4">
-        <BButton
-          @click="openModal('APPROVE')"
-          class="mr-1"
-          variant="outline-secondary">
-          <FrIcon
-            class="text-success mr-2"
-            name="check" />
-          {{ $t('common.approve') }}
-        </BButton>
-        <BButton
-          @click="openModal('REJECT')"
-          class="mr-1"
-          variant="outline-secondary">
-          <FrIcon
-            class="text-danger mr-2"
-            name="block" />
-          {{ $t('common.reject') }}
-        </BButton>
         <BButton
           @click="openModal('REASSIGN')"
           class="mr-1"
@@ -70,12 +52,30 @@ of the MIT license. See the LICENSE file for details. -->
 
       <!-- Request details -->
       <BCard
-        data-testId="approval-detail"
+        data-testId="request-detail"
         class="mb-3"
         no-body>
         <FrRequestDetails
           @add-comment="openModal('COMMENT')"
           :item="item" />
+      </BCard>
+
+      <!-- Cancel panel -->
+      <BCard
+        data-testId="request-detail-cancel"
+        v-if="isActive"
+        class="mb-5">
+        <h3 class="h5 card-title">
+          {{ $t('governance.requestModal.cancelRequest') }}
+        </h3>
+        <p class="text-danger">
+          {{ $t('common.cannotBeUndone') }}
+        </p>
+        <BButton
+          variant="danger"
+          @click="openModal('CANCEL')">
+          {{ $t('governance.requestModal.cancelRequest') }}
+        </BButton>
       </BCard>
     </template>
     <FrRequestModal
@@ -90,33 +90,31 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
+  computed,
   onMounted,
   ref,
-  computed,
 } from 'vue';
 import {
   BButton,
   BCard,
   BContainer,
+  BImg,
   BMedia,
   BMediaBody,
-  BImg,
 } from 'bootstrap-vue';
-import { isEmpty } from 'lodash';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import { getRequest, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { useRoute, useRouter } from 'vue-router';
 import {
   getFormattedRequest,
   getRequestObjectType,
   isTypeRole,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { useRoute, useRouter } from 'vue-router';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestDetails';
 import i18n from '@/i18n';
@@ -126,54 +124,44 @@ const router = useRouter();
 const route = useRoute();
 const { bvModal } = useBvModal();
 const { setBreadcrumb } = useBreadcrumb();
+const { adminUser } = useUserStore();
 
 // Data
 const { requestId } = route.params;
-const isActive = ref(false);
 const item = ref({});
+const isLoading = ref(true);
 const modalType = ref('');
 
-const userId = computed(() => useUserStore().userId);
+const isActive = computed(() => item.value.rawData?.decision?.status === 'in-progress');
+const routerVariables = computed(() => {
+  if (adminUser) {
+    return {
+      breadcrumbRoute: '/requests',
+      breadcrumbText: 'sideMenu.governanceRequests',
+      listViewRouteName: 'GovernanceRequests',
+    };
+  }
+  return {
+    breadcrumbRoute: '/my-requests',
+    breadcrumbText: 'sideMenu.requests',
+    listViewRouteName: 'MyRequests',
+  };
+});
 
-async function getBaseRequest() {
+async function getRequestData() {
+  isLoading.value = true;
   try {
     const { data } = await getRequest(requestId);
     item.value = getFormattedRequest(data, getRequestObjectType(data.requestType));
-    isActive.value = false;
   } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.approval.errorGettingApprovals'));
+    showErrorMessage(error, i18n.global.t('governance.accessRequest.myRequests.errorGettingRequests'));
+  } finally {
+    isLoading.value = false;
   }
-}
-
-async function getApproval() {
-  try {
-    const params = {
-      actorStatus: 'active',
-      _action: 'search',
-    };
-    const filter = getBasicFilter('EQUALS', 'id', requestId);
-    const { data } = await getUserApprovals(userId.value, params, filter);
-    if (data?.result?.length) {
-      const request = data.result[0];
-      item.value = getFormattedRequest(request, getRequestObjectType(request.requestType));
-      isActive.value = true;
-    }
-  } catch (error) {
-    showErrorMessage('error', i18n.global.t('governance.approval.errorGettingApprovals'));
-  }
-}
-
-// active approvals are returned by the first api call
-// completed approvals are returned by the second api call
-async function getRequestData() {
-  item.value = {};
-
-  await getApproval();
-  if (isEmpty(item.value)) await getBaseRequest();
 }
 
 onMounted(async () => {
-  setBreadcrumb('/approvals', i18n.global.t('sideMenu.approvals'));
+  setBreadcrumb(routerVariables.value.breadcrumbRoute, i18n.global.t(routerVariables.value.breadcrumbText));
 
   await getRequestData();
 });
@@ -184,6 +172,6 @@ function openModal(type) {
 }
 
 function toListView() {
-  router.push({ name: 'Approvals' });
+  router.push({ name: routerVariables.value.listViewRouteName });
 }
 </script>

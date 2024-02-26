@@ -227,7 +227,6 @@
     "AccessRequestNew": "New Request",
     "Forbidden": "Forbidden",
     "ListResource": "List Resource",
-    "MyRequestDetails": "Request Details",
     "MyRequests": "My Requests",
     "NotFound": "Not Found",
     "Roles": "Roles",
@@ -360,64 +359,6 @@
     },
     "hideFilters": "Hide Filters",
     "showFilters": "Show Filters",
-    "requestModal": {
-      "detailsTab": {
-        "awaitingApproval": "Awaiting Approval",
-        "justification": "Justification",
-        "priority": "Priority",
-        "provisioning": "Provisioning",
-        "requestComplete": "Request Complete",
-        "requestDate": "Request Date", 
-        "requested": "Requested", 
-        "requestedFor": "Requested For",
-        "requestId": "Request ID", 
-        "requestSubmitted": "Request Submitted",
-        "requestType": "Request Type",
-        "status": "Status"
-      },
-      "titles": {
-        "addComment": "Add a Comment",
-        "approve": "Approve Request",
-        "cancel": "Cancel Request",
-        "forward": "Forward Request",
-        "reject": "Reject Request",
-        "taskDetails": "Task Details",
-        "taskName": "Task Name",
-        "tracking": "Tracking",
-        "workFlowId": "Workflow ID"
-      },
-      "messages": {
-        "approve": "Approved Request",
-        "cancel": "Request successfully canceled",
-        "comment": "Comment Added",        
-        "errorApprove":"Error Approving Request",
-        "errorCancel": "There was an error canceling the request",
-        "errorComment":"Error Adding Comment",
-        "errorReject":"Error Rejecting Request",
-        "errorForward":"Error Forwarding Request",
-        "forward": "Request Forwarded",
-        "loadingApprove":"Approving Request...",
-        "loadingCancel":"Cancelling Request...",
-        "loadingComment":"Adding Comment...",
-        "loadingReject":"Rejecting Request...",
-        "loadingForward":"Forwarding Request...",
-        "reject": "Rejected Request"
-      },
-      "reject": {
-        "footer": "Provide a justification for why this request is rejected.",
-        "justification": "Justification"
-      },
-      "forward": {
-        "description":"Forward this request to"
-      },
-      "addComment": "Add Comment",
-      "cancelRequest": "Cancel Request",
-      "noComments": "No comments",
-      "noCommentsSubtitle": "There are no comments for this request.",
-      "requestDetailsLink": "Request Details",
-      "subtitle": "Are you sure you want to {modal} this request?",
-      "workflow": "Workflow"
-    },
     "sortBy": "Sort by"
   }
 }
