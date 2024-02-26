@@ -78,6 +78,7 @@
     "Glossary": "Glossary",
     "GovernanceEventEdit": "Governance Event",
     "GovernanceEvents": "Governance Events",
+    "GovernanceRequests": "Requests",
     "HostedPages": "Hosted Pages",
     "HostedPagesEdit": "Edit Hosted Pages",
     "hostedPagesSettings": "Hosted Pages Settings",
@@ -88,6 +89,7 @@
     "LogApiKeys": "Log API Keys",
     "ManagedIdentities": "Managed Identities",
     "ManagedObjectSettings": "Managed Object Settings",
+    "MyRequests": "Requests",
     "NormalView": "Normal View",
     "NotFound": "Not Found",
     "OAuthClients": "OAuth2 Clients",
@@ -131,6 +133,7 @@
     "glossary": "Glossary",
     "governance": "Governance",
     "governanceEvents": "Events",
+    "governanceRequests": "Requests",
     "hostedPages": "Hosted Pages",
     "identities": "Identities",
     "identityManagement": "Identity Management",
@@ -969,6 +972,9 @@
         "body": "Are you sure you want to delete this {resource}?",
         "primaryButton": "Delete {resource}"
       }
+    },
+    "myRequests": {
+      "subTitle": "View and take action on all pending access requests."
     }
   },
   "passwordPolicy": {
