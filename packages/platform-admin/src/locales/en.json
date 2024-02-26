@@ -3323,6 +3323,8 @@
       "reassignTo": "Reassign to {givenName} {sn}",
       "reassignToCertify": "Reassign to",
       "reassignToUser": "Reassign to user",
+      "requireJustificationOnRevoke": "Require Justification on revoke",
+      "requireJustificationOnException": "Require Justification on exception",
       "role": "Role",
       "roleOwner": "Role Owner",
       "runEvery": "Run every",
