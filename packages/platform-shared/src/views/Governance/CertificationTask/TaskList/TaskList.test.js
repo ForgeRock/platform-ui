@@ -621,6 +621,7 @@ describe('TaskList', () => {
         initialStep: 'DETAILS',
         description: 'description',
         placeHolder: 'placeHolder',
+        requireJustification: false,
         okLabel: 'okLabel',
         okFunction: () => {},
       };

@@ -526,6 +526,7 @@ export default {
       okLabel: 'revokeTitle',
       okFunction: this.bulkRevoke,
       initialStep: STEPS.DETAILS,
+      requireJustification: this.campaignDetails.requireJustification?.revoke,
     };
     const bulkExceptionModalProps = {
       title: 'exceptionTitle',
@@ -536,6 +537,7 @@ export default {
       okLabel: 'exceptionTitle',
       okFunction: this.bulkException,
       initialStep: STEPS.DETAILS,
+      requireJustification: this.campaignDetails.requireJustification?.exceptionAllowed,
     };
 
     return {
@@ -1482,6 +1484,7 @@ export default {
       initialStep,
       confirmDescription,
       confirmTitle,
+      requireJustification,
     }, currentItemId = null) {
       this.currentItemId = currentItemId;
       this.confirmActionModalProps = {
@@ -1493,6 +1496,7 @@ export default {
         okLabel,
         okFunction,
         initialStep: initialStep || STEPS.DETAILS,
+        requireJustification,
       };
       this.$bvModal.show(this.getModalId('confirm-action'));
     },
