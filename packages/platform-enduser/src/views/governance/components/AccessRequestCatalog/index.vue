@@ -300,7 +300,7 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import FrSortDropdown from '@/components/governance/SortDropdown';
+import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
 import FrItemDetailsModal from './modals/ItemDetailsModal';
 
 /**

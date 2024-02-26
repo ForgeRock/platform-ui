@@ -20,3 +20,19 @@ export const ADMIN_REVIEWER_PERMISSIONS = {
   revoke: true,
   signoff: true,
 };
+
+/**
+ * @typedef {string} REQUEST_MODAL_TYPE
+ * */
+
+/**
+ * @enum {REQUEST_MODAL_TYPE}
+ */
+export const REQUEST_MODAL_TYPES = {
+  APPROVE: 'APPROVE',
+  CANCEL: 'CANCEL',
+  COMMENT: 'COMMENT',
+  DETAILS: 'DETAILS',
+  REASSIGN: 'REASSIGN',
+  REJECT: 'REJECT',
+};

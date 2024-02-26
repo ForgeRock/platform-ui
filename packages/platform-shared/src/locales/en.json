@@ -861,6 +861,9 @@
       "errorLoadingPage": "We couldn't load the information."
     }
   },
+  "pageTitles": {
+    "MyRequestDetails": "Request Details"
+  },
   "pagination": {
     "dropdown": {
       "text": "{pageMin}-{pageMax} of {totalRows}",
@@ -1265,8 +1268,6 @@
     }
   },
   "governance": {
-    "accountDetails": "Account Details",
-    "entitlementDetails": "Entitlement Details",
     "access": {
       "accountName": "Account Name",
       "confirmRevokeEntitlement": "Are you sure you want to revoke this entitlement from this role? | Are you sure you want to revoke these entitlements from this role?",
@@ -1276,26 +1277,94 @@
       "revokeEntitlement": "Revoke Entitlement? | Revoke Entitlements?",
       "revoking": "Revoking"
     },
-    "status": {
-      "active": "Active",
-      "canceled": "Canceled",
-      "closed": "Completed",
-      "complete": "Completed",
-      "completing": "Completing",
-      "creating": "Creating...",
-      "expired": "Expired",
-      "expiring": "Expiring",
-      "in-progress": "In-Progress",
-      "pending": "Pending",
-      "overdue": "Overdue",
-      "staging": "Staged"
+    "accessRequest": {
+      "requestTypes": {
+        "all": "All request types",
+        "applicationGrant": "Grant Application",
+        "applicationRemove": "Remove Application",
+        "entitlementGrant": "Grant Entitlement",
+        "entitlementRemove": "Remove Entitlement",
+        "roleGrant": "Grant Role",
+        "roleRemove": "Remove Role"
+      },
+      "priorities": {
+        "lowPriority": "Low Priority",
+        "mediumPriority": "Medium Priority",
+        "highPriority": "High Priority"
+      },
+      "allRequesters": "All Requesters",
+      "idLabel": "ID: {id}",
+      "myRequests": {
+        "cancelRequest": "Cancel Request",
+        "errorGettingRequests": "There was an error retrieving your requests",
+        "subtitle": "View and take action on your pending access requests."
+      },
+      "newRequest": {
+        "addAccessFor": "Add access for",
+        "added": "Added",
+        "addItems": "Add items to complete request",
+        "addToRequest": "Add to Request",
+        "application": "application",
+        "applyExpirationDate": "Apply Expiration Date (optional)",
+        "catalogSubtitle": "Browse available applications, roles, and entitlements for selected users.",
+        "catalogTitle": "Access Catalog",
+        "chooseUsers": "Choose Users",
+        "clearAll": "Clear all",
+        "completeRequest": "Complete Request",
+        "DUPLICATE": "Request Already Exists",
+        "entitlement": "entitlement",
+        "errorGettingAccessRequests": "There was an error getting current users' access requests",
+        "errorGettingCatalogFilterSchema": "There was an error getting catalog filter schema",
+        "errorValidatingAccessRequests": "There was an error validating this request",
+        "EXISTING_ACCESS": "Access Already Granted",
+        "expiryDate": "Expiry Date",
+        "filterByApplications": "Filter by applications",
+        "filters": "Filters",
+        "itemName": "{item} Name",
+        "itemOwner": "{item} Owner",
+        "itemRemoved": "Requested item removed",
+        "justification": "Justification",
+        "justificationDescription": "Provide a justification for granting this request.",
+        "maximumUsers": "Add a maximum of 10 users.",
+        "newRequest": "New Request",
+        "noFilterResults": "No results found",
+        "noFilterResultsSubTitle": "Try adjusting applied filters or search keywords",
+        "noRequestedItemsYet": "No requested items yet",
+        "noResults": "No {item} available",
+        "noResultsSubTitle": "No {item} are available for request for the selected user(s).",
+        "otherUsers": "Other Users",
+        "priority": {
+          "low": "Low",
+          "med": "Medium",
+          "high": "High"
+        },
+        "removeFromRequest": "Remove from Request",
+        "request": "Request",
+        "requestAdded": "Request added",
+        "requestAddError": "The following users either already have the requested item assigned or in a pending request. Choose another item to request for the selected user.",
+        "requestedAccess": "Requested Access",
+        "requesteeRemoved": "Requestee removed",
+        "requestErrorBody": "The following user(s) either already have the requested item assigned or in a pending request. Choose another item to request for the selected user(s).",
+        "requestErrorTitle": "Request Error",
+        "requestingFor": "Requesting for",
+        "requestSuccess": "Request successfully submitted",
+        "requestTypeAccess": "Request {type} Access",
+        "results": "{totalCount} Result | {totalCount} Results",
+        "role": "role",
+        "showIf": "Show if",
+        "title": "New Request",
+        "userImageAltText": "Profile Picture - {userName}",
+        "yourRequest": "Your Request"
+      },
+      "noRequests": "No {status} Access Requests",
+      "requestedFor": "Requested For",
+      "requester": "Requester",
+      "requestDate": "Request Date",
+      "requestedBy": "Requested By",
+      "requestId": "Request ID",
+      "requestType": "Request Type"
     },
-    "decisions": {
-      "approved": "Approved",
-      "canceled": "Canceled",
-      "pending": "Pending",
-      "rejected": "Rejected"
-    },
+    "accountDetails": "Account Details",
     "certificationTask": {
       "hideTechnicalDetails": "Hide technical details",
       "showTechnicalDetails": "Show technical details",
@@ -1513,8 +1582,22 @@
         "resetSuccess": "The decisions have been cleared successfully"
       }
     },
+    "decisions": {
+      "approved": "Approved",
+      "cancelled": "Cancelled",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    },
+    "entitlementDetails": "Entitlement Details",
     "errors": {
       "getUsers": "Users cannot be obtained at the moment"
+    },
+    "flags": {
+      "RECON": "Recon",
+      "REQUEST": "Request-based",
+      "ROLEBASED": "Role-based",
+      "NEW_ACCESS": "New Access",
+      "TEMPORAL": "Temporal Constraints"
     },
     "forwardReviewModal": {
       "chooseRole": "Choose a role",
@@ -1523,13 +1606,6 @@
       "toRole": "Users with assigned role",
       "toUser": "Another user",
       "title": " Forward Access Review"
-    },
-    "flags": {
-      "RECON": "Recon",
-      "REQUEST": "Request-based",
-      "ROLEBASED": "Role-based",
-      "NEW_ACCESS": "New Access",
-      "TEMPORAL": "Temporal Constraints"
     },
     "request": {
       "expiryDate": "Expiry Date",
@@ -1546,6 +1622,64 @@
       "revokeRequest": "Revoke Request",
       "submitRequest": "Submit Request"
     },
+    "requestModal": {
+      "detailsTab": {
+        "awaitingApproval": "Awaiting Approval",
+        "justification": "Justification",
+        "priority": "Priority",
+        "provisioning": "Provisioning",
+        "requestComplete": "Request Complete",
+        "requestDate": "Request Date", 
+        "requested": "Requested", 
+        "requestedFor": "Requested For",
+        "requestId": "Request ID", 
+        "requestSubmitted": "Request Submitted",
+        "requestType": "Request Type",
+        "status": "Status"
+      },
+      "titles": {
+        "addComment": "Add a Comment",
+        "approve": "Approve Request",
+        "cancel": "Cancel Request",
+        "forward": "Forward Request",
+        "reject": "Reject Request",
+        "taskDetails": "Task Details",
+        "taskName": "Task Name",
+        "tracking": "Tracking",
+        "workFlowId": "Workflow ID"
+      },
+      "messages": {
+        "approve": "Approved Request",
+        "cancel": "Request successfully canceled",
+        "comment": "Comment Added",        
+        "errorApprove":"Error Approving Request",
+        "errorCancel": "There was an error canceling the request",
+        "errorComment":"Error Adding Comment",
+        "errorReject":"Error Rejecting Request",
+        "errorForward":"Error Forwarding Request",
+        "forward": "Request Forwarded",
+        "loadingApprove":"Approving Request...",
+        "loadingCancel":"Cancelling Request...",
+        "loadingComment":"Adding Comment...",
+        "loadingReject":"Rejecting Request...",
+        "loadingForward":"Forwarding Request...",
+        "reject": "Rejected Request"
+      },
+      "reject": {
+        "footer": "Provide a justification for why this request is rejected.",
+        "justification": "Justification"
+      },
+      "forward": {
+        "description":"Forward this request to"
+      },
+      "addComment": "Add Comment",
+      "cancelRequest": "Cancel Request",
+      "noComments": "No comments",
+      "noCommentsSubtitle": "There are no comments for this request.",
+      "requestDetailsLink": "Request Details",
+      "subtitle": "Are you sure you want to {modal} this request?",
+      "workflow": "Workflow"
+    },
     "resource": {
       "assignResourceModal": {
         "appLogoAltText": "Application Logo - {appName}",
@@ -1561,6 +1695,23 @@
         "errorSearchingCatalog": "There was an error searching the catalog"
       },
       "successfullyAdded": "{resource} request successfully submitted"
+    },
+    "hideFilters": "Hide Filters",
+    "showFilters": "Show Filters",
+    "sortBy": "Sort by",
+    "status": {
+      "active": "Active",
+      "canceled": "Canceled",
+      "closed": "Completed",
+      "complete": "Completed",
+      "completing": "Completing",
+      "creating": "Creating...",
+      "expired": "Expired",
+      "expiring": "Expiring",
+      "in-progress": "In-Progress",
+      "pending": "Pending",
+      "overdue": "Overdue",
+      "staging": "Staged"
     }
   },
   "reports": {
