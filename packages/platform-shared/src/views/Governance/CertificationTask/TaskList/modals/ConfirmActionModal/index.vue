@@ -1,63 +1,69 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BModal
-    :id="modalId"
-    size="lg"
-    ok-variant="primary"
-    cancel-variant="link"
-    :title="$t(`governance.certificationTask.actionsModal.${step === STEPS.DETAILS ? modalOptions.title : modalOptions.confirmTitle}`)"
-    :static="isTesting"
-    @hidden="reset">
-    <template v-if="step === STEPS.DETAILS">
-      <div class="modal-container">
-        <span>{{ $t(`governance.certificationTask.actionsModal.${modalOptions.description}`) }}</span>
-        <FrField
-          v-model="confirmMessage"
-          class="mb-4 mt-4"
-          type="textarea"
-          :label=" $t(`governance.certificationTask.actionsModal.${modalOptions.placeHolder}`)"
-          :rows="4"
-          :max-rows="4"
-        />
-      </div>
-    </template>
-    <template v-if="step === STEPS.CONFIRM">
-      <div class="modal-container">
-        <p>{{ $t(`governance.certificationTask.actionsModal.${modalOptions.confirmDescription}`) }}</p>
-        <div class="alert fr-alert alert-warning">
-          <FrIcon
-            class="mr-2"
-            name="error_outline"
-          /><span>{{ $t('governance.certificationTask.actionsModal.warningDataMayBeInaccurate') }}</span>
+  <VeeForm
+    v-slot="{ meta: { valid } }"
+    ref="observer"
+    as="span">
+    <BModal
+      :id="modalId"
+      size="lg"
+      ok-variant="primary"
+      cancel-variant="link"
+      :title="$t(`governance.certificationTask.actionsModal.${step === STEPS.DETAILS ? modalOptions.title : modalOptions.confirmTitle}`)"
+      :static="isTesting"
+      @hidden="reset">
+      <template v-if="step === STEPS.DETAILS">
+        <div class="modal-container">
+          <span>{{ $t(`governance.certificationTask.actionsModal.${modalOptions.description}`) }}</span>
+          <FrField
+            v-model="confirmMessage"
+            class="mb-4 mt-4"
+            type="textarea"
+            :label=" $t(`governance.certificationTask.actionsModal.${modalOptions.placeHolder}`)"
+            :rows="4"
+            :max-rows="4"
+            :validation="{ required: modalOptions.requireJustification }"
+          />
         </div>
-      </div>
-    </template>
-    <template #modal-footer="{ cancel, ok }">
-      <div
-        v-if="step === STEPS.CONFIRM && modalOptions.initialStep === STEPS.DETAILS"
-        class="flex-grow-1">
+      </template>
+      <template v-if="step === STEPS.CONFIRM">
+        <div class="modal-container">
+          <p>{{ $t(`governance.certificationTask.actionsModal.${modalOptions.confirmDescription}`) }}</p>
+          <div class="alert fr-alert alert-warning">
+            <FrIcon
+              class="mr-2"
+              name="error_outline"
+            /><span>{{ $t('governance.certificationTask.actionsModal.warningDataMayBeInaccurate') }}</span>
+          </div>
+        </div>
+      </template>
+      <template #modal-footer="{ cancel, ok }">
+        <div
+          v-if="step === STEPS.CONFIRM && modalOptions.initialStep === STEPS.DETAILS"
+          class="flex-grow-1">
+          <BButton
+            variant="link"
+            @click="prevStep">
+            {{ $t('common.previous') }}
+          </BButton>
+        </div>
         <BButton
           variant="link"
-          @click="prevStep">
-          {{ $t('common.previous') }}
+          @click="cancel()">
+          {{ $t('common.cancel') }}
         </BButton>
-      </div>
-      <BButton
-        variant="link"
-        @click="cancel()">
-        {{ $t('common.cancel') }}
-      </BButton>
-      <BButton
-        variant="primary"
-        data-testid="btn-adv-step"
-        @click="okHandler(ok)">
-        {{ step === STEPS.DETAILS ? $t('common.next') : $t(`governance.certificationTask.actionsModal.${modalOptions.okLabel}`) }}
-      </BButton>
-    </template>
-  </BModal>
+        <BButton
+          variant="primary"
+          :disabled="!valid"
+          @click="okHandler(ok)">
+          {{ step === STEPS.DETAILS ? $t('common.next') : $t(`governance.certificationTask.actionsModal.${modalOptions.okLabel}`) }}
+        </BButton>
+      </template>
+    </BModal>
+  </VeeForm>
 </template>
 
 <script>
@@ -67,6 +73,7 @@ import {
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { Form as VeeForm } from 'vee-validate';
 
 export const STEPS = {
   DETAILS: 'DETAILS',
@@ -78,6 +85,7 @@ export default {
   components: {
     BButton,
     BModal,
+    VeeForm,
     FrField,
     FrIcon,
   },
