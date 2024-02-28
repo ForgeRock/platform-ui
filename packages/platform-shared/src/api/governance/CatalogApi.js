@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,9 +13,13 @@ import {
   getUsersRolesMock,
 } from './CatalogApiMock';
 
-export function searchCatalog(params = {}, payload) {
+export function searchCatalog(params = {}, payload, ignoreRequestable = false) {
   params.action = 'search';
-  const url = `/governance/catalog${encodeQueryString(params)}`;
+
+  let queryString = encodeQueryString(params);
+  if (ignoreRequestable) queryString = `${queryString}&ignoreRequestable=true`;
+
+  const url = `/governance/catalog${queryString}`;
   return generateIgaApi().post(url, payload);
 }
 
