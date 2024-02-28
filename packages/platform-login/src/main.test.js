@@ -8,17 +8,25 @@
 /* eslint-disable global-require */
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as overrideTranslations from '@forgerock/platform-shared/src/utils/overrideTranslations';
-import * as axios from 'axios';
 import * as sdk from '@forgerock/javascript-sdk';
 import { flushPromises } from '@vue/test-utils';
 import router from '@/router';
 
 describe('main.js', () => {
-  axios.create.mockImplementation(() => ({
-    get: jest.fn().mockImplementation(() => Promise.resolve({ data: {} })),
-  }));
   configApi.getUiConfig = jest.fn().mockReturnValue(Promise.resolve({ data: { configuration: { lang: 'en' } } }));
-  overrideTranslations.getTranslationOverridesForLocale = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  overrideTranslations.setLocales = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  overrideTranslations.overrideTranslations = jest.fn().mockReturnValue(Promise.resolve());
+
+  jest.mock('vue', () => {
+    const originalVue = jest.requireActual('vue');
+    return {
+      ...originalVue,
+      createApp: () => ({
+        use: jest.fn(),
+        mount: jest.fn(),
+      }),
+    };
+  });
 
   document.body.innerHTML = '<div id="appRoot"></div>';
   require('./main');
