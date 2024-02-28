@@ -19,7 +19,7 @@ import {
 } from '@forgerock/javascript-sdk';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import isWebStorageAvailable from '@forgerock/platform-shared/src/utils/webStorageTest';
-import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
+import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import Vue3Sanitize from 'vue-3-sanitize';
 import uuid from 'uuid/v4';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
