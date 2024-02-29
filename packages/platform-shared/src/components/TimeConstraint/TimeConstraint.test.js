@@ -56,11 +56,11 @@ describe('TimeConstraint Component', () => {
 
   // it('takes an iso range as value and properly sets child component values', () => {
   //   const datepickers = wrapper.findAll({ name: 'Datepicker' });
-  //   expect(datepickers.at(0).attributes('value')).toBe('2020-1-2');
-  //   expect(datepickers.at(1).attributes('value')).toBe('2020-1-3');
+  //   expect(datepickers[0].attributes('value')).toBe('2020-1-2');
+  //   expect(datepickers[1].attributes('value')).toBe('2020-1-3');
   //   const timepickers = wrapper.findAll({ name: 'Timepicker' });
-  //   expect(timepickers.at(0).attributes('value')).toBe('4:0:00');
-  //   expect(timepickers.at(1).attributes('value')).toBe('5:0:00');
+  //   expect(timepickers[0].attributes('value')).toBe('4:0:00');
+  //   expect(timepickers[1].attributes('value')).toBe('5:0:00');
   // });
 
   // it('moving start past end will adjust end to be equal to start', () => {

@@ -522,17 +522,13 @@ describe('Glossary', () => {
       const wrapper = setup();
       await flushPromises();
       expect(wrapper.find('#CertificationAccountsTaskList').find('table').find('tbody').find('tr')
-        .findAll('td')
-        .at(1)
-        .text()).toContain('Perkin.Reek@autoidzoran.onmicrosoft.com');
+        .findAll('td')[1].text()).toContain('Perkin.Reek@autoidzoran.onmicrosoft.com');
     });
     it('renders entitlement details with correct data', async () => {
       const wrapper = setup();
       await flushPromises();
       expect(wrapper.find('#CertificationEntitlementsTaskList').find('table').find('tbody').find('tr')
-        .findAll('td')
-        .at(1)
-        .text()).toContain('entitlement name');
+        .findAll('td')[1].text()).toContain('entitlement name');
     });
     it('renders chevron_right with correct data', async () => {
       const wrapper = setup();
@@ -580,7 +576,7 @@ describe('Glossary', () => {
     it('should open add comments for entitlement table', async () => {
       const wrapper = setup();
       await flushPromises();
-      wrapper.findAll('[data-testid="add-comment-button-01fec9de-a9e7-435b-8d16-2b2367714278"]').at(1).trigger('click');
+      wrapper.findAll('[data-testid="add-comment-button-01fec9de-a9e7-435b-8d16-2b2367714278"]')[1].trigger('click');
       await wrapper.vm.$nextTick();
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-add-comment');
     });
@@ -594,7 +590,7 @@ describe('Glossary', () => {
     it('should open comments modal on entitlements table', async () => {
       const wrapper = setup();
       await flushPromises();
-      wrapper.findAll('[data-testid="cert-comments-button"]').at(1).trigger('click');
+      wrapper.findAll('[data-testid="cert-comments-button"]')[1].trigger('click');
       await wrapper.vm.$nextTick();
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-comments');
     });

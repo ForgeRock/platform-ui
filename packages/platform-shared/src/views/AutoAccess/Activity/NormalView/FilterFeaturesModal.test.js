@@ -54,8 +54,8 @@ describe('FilterFeaturesModal', () => {
       expect(filters).toHaveLength(defaultProps.filters.length);
 
       defaultProps.filters.forEach(async (filter, index) => {
-        const tagText = filters.at(index).find('.fr-tag-text');
-        const checkbox = filters.at(index).find('input[role="checkbox"]');
+        const tagText = filters[index].find('.fr-tag-text');
+        const checkbox = filters[index].find('input[role="checkbox"]');
 
         // Correct title matches prop
         expect(tagText.text()).toEqual(filter.title);

@@ -6,7 +6,6 @@
  */
 
 import * as BaseApi from '@forgerock/platform-shared/src/api/BaseApi';
-import * as axios from 'axios';
 import * as AgentsApi from './AgentsApi';
 
 jest.mock('@forgerock/platform-shared/src/store', () => {
@@ -83,11 +82,6 @@ describe('getGatewaysOrAgents', () => {
     },
   ];
 
-  afterEach(() => {
-    axios.get.mockClear();
-    axios.create.mockClear();
-  });
-
   cases.forEach(({
     name,
     agentType,
@@ -95,9 +89,10 @@ describe('getGatewaysOrAgents', () => {
     url,
   }) => {
     test(name, async () => {
-      const generateAmApiSpy = jest.spyOn(BaseApi, 'generateAmApi');
-      const createSpy = jest.spyOn(axios, 'create');
-      const getSpy = jest.spyOn(axios, 'get');
+      const getSpy = jest.fn();
+      const generateAmApiSpy = jest.spyOn(BaseApi, 'generateAmApi').mockImplementation(() => ({
+        get: getSpy,
+      }));
       const path = 'realms/root/realm-config/agents';
 
       await AgentsApi.getGatewaysOrAgents(agentType, params);
@@ -106,9 +101,6 @@ describe('getGatewaysOrAgents', () => {
         apiVersion: 'protocol=2.1,resource=1.0',
         path,
       });
-      expect(createSpy).toHaveBeenCalledWith(expect.objectContaining({
-        baseURL: expect.stringContaining(path),
-      }));
       expect(getSpy).toHaveBeenCalledWith(expect.stringContaining(url), { withCredentials: true });
     });
   });
