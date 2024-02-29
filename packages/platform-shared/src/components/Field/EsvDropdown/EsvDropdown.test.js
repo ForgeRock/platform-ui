@@ -61,10 +61,10 @@ describe('EsvDropdown', () => {
     expect(wrapper.findAll('li').length).toBe(4);
     const items = wrapper.findAll('li');
 
-    expect(items.at(0).text()).toBe('Variables');
-    expect(items.at(1).text()).toBe('search');
-    expect(items.at(2).text()).toBe('&{esv.myBool}');
-    expect(items.at(3).text()).toBe('&{esv.yourBool}');
+    expect(items[0].text()).toBe('Variables');
+    expect(items[1].text()).toBe('search');
+    expect(items[2].text()).toBe('&{esv.myBool}');
+    expect(items[3].text()).toBe('&{esv.yourBool}');
   });
 
   it('Filters ESVs based on the query', async () => {
@@ -74,11 +74,11 @@ describe('EsvDropdown', () => {
     dropdownButton.trigger('click');
 
     const items = wrapper.findAll('li');
-    const searchInput = items.at(1).find('input');
+    const searchInput = items[1].find('input');
     await searchInput.setValue('your');
 
     expect(wrapper.findAll('li').length).toBe(3);
-    expect(wrapper.findAll('li').at(2).text()).toBe('&{esv.yourBool}');
+    expect(wrapper.findAll('li')[2].text()).toBe('&{esv.yourBool}');
   });
 
   it('Shows no variables when a query with no matches is entered', async () => {
@@ -88,11 +88,11 @@ describe('EsvDropdown', () => {
     dropdownButton.trigger('click');
 
     const items = wrapper.findAll('li');
-    const searchInput = items.at(1).find('input');
+    const searchInput = items[1].find('input');
     await searchInput.setValue('zzz');
 
     expect(wrapper.findAll('li').length).toBe(3);
-    expect(wrapper.findAll('li').at(2).text()).toBe('No variables found');
+    expect(wrapper.findAll('li')[2].text()).toBe('No variables found');
   });
 
   it('emits esv-selected when an item is clicked', async () => {
@@ -104,7 +104,7 @@ describe('EsvDropdown', () => {
     dropdownButton.trigger('click');
 
     const items = wrapper.findAll('li');
-    await items.at(2).find('a').trigger('click');
+    await items[2].find('a').trigger('click');
 
     await wrapper.vm.$nextTick();
 

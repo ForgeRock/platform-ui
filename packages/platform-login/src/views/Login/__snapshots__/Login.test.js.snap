@@ -1,0 +1,222 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component Test Loads login callback components with extra query parameters in the URL Leaves tree resumption query parameters in place when not returning from a redirect: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Component Test Loads login callback components with extra query parameters in the URL Removes tree resumption query parameters when returning from a redirect: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Component Test Loads login callback components with extra query parameters in the URL calls buildTreeForm properly when themeLoading changes and when step exists or does not exist: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Component Test Loads login callback components with extra query parameters in the URL focuses on the first input if journeyFocusFirstFocusableItemEnabled is true: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Component Test Theming @actions Removes username to localstorage if rememberMe is disabled: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Component Test Theming @actions Saves username to localstorage if rememberMe is enabled: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Component Test Theming @renders Displays remember my login checkbox if its enabled in the theme: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue Detects /am/console as the default path: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue Detects /auth/console as the default path: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue Detects SAML urls: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue Redirects SAML goto urls: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue Removes undefined and "undefined" tree from stepParams: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue Sets page title if url hash includes "service" or authIndexType && authIndexValue params: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue Sets the correct field data type based on policyRequirements: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue buildTreeForm metadata callbacks are not added to the component list: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue handleIdpComponent given idp component  should remove idp component from componentsList to the \`idpComponent\` field: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue handleIdpComponent given non array should do nothing: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue keeps params like noSession when is a link from an Email URL: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Login.vue keeps params like noSession when is a redirect from a callback : console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;

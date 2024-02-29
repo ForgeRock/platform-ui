@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DefaultDashboard.vue loading dashboard data executes loadConsumerApplications method: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;

@@ -68,7 +68,7 @@ describe('Run History component', () => {
       it('displays a "vanity" loading state on the first table entry for a newly created report request', () => {
         const table = findByTestId(wrapper, 'run-history-table');
         const tableRows = table.find('tbody').findAll('tr[role="row"]');
-        const firstTableRow = tableRows.at(0);
+        const firstTableRow = tableRows[0];
         const firstTableRowStatus = firstTableRow.find('[role="status"]');
         expect(firstTableRowStatus.text()).toBe('Loading...');
       });
@@ -76,10 +76,10 @@ describe('Run History component', () => {
       it('ensures that on load, table items are sorted by most recently created', () => {
         const table = findByTestId(wrapper, 'run-history-table');
         const tableRows = table.find('tbody').findAll('tr[role="row"]');
-        const firstTableRowDate = tableRows.at(0).find('.fr-report-history-status');
-        const secondTableRowDate = tableRows.at(1).find('.fr-report-history-status');
-        const thirdTableRowDate = tableRows.at(2).find('.fr-report-history-status');
-        const fourthTableRowDate = tableRows.at(3).find('.fr-report-history-status');
+        const firstTableRowDate = tableRows[0].find('.fr-report-history-status');
+        const secondTableRowDate = tableRows[1].find('.fr-report-history-status');
+        const thirdTableRowDate = tableRows[2].find('.fr-report-history-status');
+        const fourthTableRowDate = tableRows[3].find('.fr-report-history-status');
         expect(firstTableRowDate.text()).toMatch(/(Loading...)/i);
         expect(secondTableRowDate.text()).toBe('Error');
         expect(thirdTableRowDate.text()).toBe('Expired');
@@ -89,7 +89,7 @@ describe('Run History component', () => {
       it('hides the view details, action and ellipse dropdown buttons when a report is processing or loading (running)', () => {
         const table = findByTestId(wrapper, 'run-history-table');
         const tableRows = table.find('tbody').findAll('tr[role="row"]');
-        const tableRowProcessing = tableRows.at(0);
+        const tableRowProcessing = tableRows[0];
         const viewReportButton = findByTestId(tableRowProcessing, 'view-report-button');
         const actionsDropdown = findByTestId(tableRowProcessing, 'actions-dropdown');
         const ellipseMenu = findByTestId(tableRowProcessing, 'actions-ellipse-menu');
@@ -102,7 +102,7 @@ describe('Run History component', () => {
       it('hides the view details, action and ellipse dropdown buttons when a report is in an error state', () => {
         const table = findByTestId(wrapper, 'run-history-table');
         const tableRows = table.find('tbody').findAll('tr[role="row"]');
-        const tableRowError = tableRows.at(1);
+        const tableRowError = tableRows[1];
         const viewReportButton = findByTestId(tableRowError, 'view-report-button');
         const actionsDropdown = findByTestId(tableRowError, 'actions-dropdown');
         const ellipseMenu = findByTestId(tableRowError, 'actions-ellipse-menu');
@@ -115,7 +115,7 @@ describe('Run History component', () => {
       it('hides the view details and export buttons for a report that is in an expired state', () => {
         const table = findByTestId(wrapper, 'run-history-table');
         const tableRows = table.find('tbody').findAll('tr[role="row"]');
-        const tableRowExpired = tableRows.at(2);
+        const tableRowExpired = tableRows[2];
         const viewReportButton = findByTestId(tableRowExpired, 'view-report-button');
 
         expect(viewReportButton.exists()).toBe(false);
@@ -124,7 +124,7 @@ describe('Run History component', () => {
       it('shows available download buttons for a report that is in an expired state', () => {
         const table = findByTestId(wrapper, 'run-history-table');
         const tableRows = table.find('tbody').findAll('tr[role="row"]');
-        const tableRowExpired = tableRows.at(2);
+        const tableRowExpired = tableRows[2];
 
         const CSVDownloadtButton = findByTestId(tableRowExpired, 'CSV-download-button');
         expect(CSVDownloadtButton.exists()).toBe(true);
@@ -140,7 +140,7 @@ describe('Run History component', () => {
         await nextTick();
         const table = findByTestId(wrapper, 'run-history-table');
         const tableRows = table.find('tbody').findAll('tr[role="row"]');
-        const firstTableRow = tableRows.at(0);
+        const firstTableRow = tableRows[0];
         const tableStatus = firstTableRow.find('.fr-report-history-status');
         expect(tableStatus.text()).toBe('Complete');
       });
@@ -159,7 +159,7 @@ describe('Run History component', () => {
     it('changes the route to the "full report view" when the "View Report" button is clicked', async () => {
       const table = findByTestId(wrapper, 'run-history-table');
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
-      const tableRowComplete = tableRows.at(3);
+      const tableRowComplete = tableRows[3];
       const tableRowViewReportButton = tableRowComplete.find('.fr-view-report').find('button');
 
       expect(tableRowViewReportButton.exists()).toBe(true);
@@ -168,7 +168,7 @@ describe('Run History component', () => {
     it('makes an export request network call when an export button is clicked and ensures that the button state updates from loading to download upon resolution', async () => {
       const table = findByTestId(wrapper, 'run-history-table');
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
-      const job0123 = tableRows.at(0);
+      const job0123 = tableRows[0];
       const JSONExportButton = findByTestId(job0123, 'JSON-export-button');
       const requestReportResponseStub = [HistoryStubs[0]].map((stub) => ({
         ...stub,
@@ -195,7 +195,7 @@ describe('Run History component', () => {
     it('should only allow one export request at a time for the same report', async () => {
       const table = findByTestId(wrapper, 'run-history-table');
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
-      const thirdTableRow = tableRows.at(3);
+      const thirdTableRow = tableRows[3];
       const JSONExportButton = findByTestId(thirdTableRow, 'JSON-export-button');
       const CSVExportButton = findByTestId(thirdTableRow, 'CSV-export-button');
       const requestReportResponseStub = [HistoryStubs[1]].map((stub) => ({
@@ -224,7 +224,7 @@ describe('Run History component', () => {
 
       const table = findByTestId(wrapper, 'run-history-table');
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
-      const job0123 = tableRows.at(0);
+      const job0123 = tableRows[0];
       const CSVDownloadButton = findByTestId(job0123, 'CSV-download-button');
 
       const downloadIcon = CSVDownloadButton.find('.material-icons-outlined');
@@ -247,7 +247,7 @@ describe('Run History component', () => {
 
       const table = findByTestId(wrapper, 'run-history-table');
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
-      const job0123 = tableRows.at(0);
+      const job0123 = tableRows[0];
       const CSVDownloadButton = findByTestId(job0123, 'CSV-download-button');
 
       const downloadIcon = CSVDownloadButton.find('.material-icons-outlined');
@@ -261,7 +261,7 @@ describe('Run History component', () => {
     it('shows the report summary modal when the "Run Details" option is selected in the ellipses menu', async () => {
       const table = findByTestId(wrapper, 'run-history-table');
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
-      const firstTableRow = tableRows.at(0);
+      const firstTableRow = tableRows[0];
       const RunDetailsDropdownOption = firstTableRow.find('[data-testid="view-run-option"]');
 
       await RunDetailsDropdownOption.trigger('click');
