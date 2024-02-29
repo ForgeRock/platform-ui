@@ -45,7 +45,7 @@ describe('Schema state button', () => {
   it('Shows dropdown options consisting only of the options not currently selected', () => {
     const options = wrapper.findAll('li');
     expect(options.length).toEqual(2);
-    expect(options.at(0).text()).toBe('off');
-    expect(options.at(1).text()).toBe('standby');
+    expect(options[0].text()).toBe('off');
+    expect(options[1].text()).toBe('standby');
   });
 });

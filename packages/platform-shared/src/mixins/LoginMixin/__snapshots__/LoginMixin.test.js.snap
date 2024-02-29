@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LoginMixin validateGoto endpoint envocation variations environment variable, VUE_APP_ALIGN_GOTO_PRECEDENCE, is set to false sets the validateGoto payload with the goto url param if the isGotoOnFail function param is false: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`LoginMixin validateGoto endpoint envocation variations environment variable, VUE_APP_ALIGN_GOTO_PRECEDENCE, is set to false sets the validateGoto payload with the gotoOnFail url param if the isGotoOnFail function param is true: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`LoginMixin validateGoto endpoint envocation variations environment variable, VUE_APP_ALIGN_GOTO_PRECEDENCE, is set to false sets the validateGoto payload with the url function param if the isGotoOnFail function param is false and the goto url param does not exist: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`LoginMixin validateGoto endpoint envocation variations environment variable, VUE_APP_ALIGN_GOTO_PRECEDENCE, is set to true sets the validateGoto payload with the gotoOnFail url param if the isGotoOnFail function param is true: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`LoginMixin validateGoto endpoint envocation variations environment variable, VUE_APP_ALIGN_GOTO_PRECEDENCE, is set to true sets the validateGoto payload with the url function param if the isGotoOnFail function param is false: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+]
+`;

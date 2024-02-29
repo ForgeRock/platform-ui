@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RequestToolbar clicking the button to show filters will expand the filter section: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`RequestToolbar emits a new sort direction value when the handleSortDirectionChange method is executed: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`RequestToolbar emits a new sort value when the handleSortChange method is executed: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`RequestToolbar the badge is hidden when no filters are applied: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`RequestToolbar the badge reflects the number of filters applied: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`RequestToolbar when the filter changes emit filter-change event with new filter: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;

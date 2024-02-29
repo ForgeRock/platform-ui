@@ -31,15 +31,15 @@ describe('Pagination Component', () => {
     expect(pagination.exists()).toBe(true);
     expect(pagination.attributes('aria-label')).toBe('Pagination');
     const buttons = pagination.findAll('.page-item');
-    const goToFirstButton = buttons.at(0).find('.page-link');
+    const goToFirstButton = buttons[0].find('.page-link');
     expect(goToFirstButton.attributes('aria-label')).toBe('Go to first page');
-    const prevButton = buttons.at(1).find('.page-link');
+    const prevButton = buttons[1].find('.page-link');
     expect(prevButton.attributes('aria-label')).toBe('Go to previous page');
-    const gotoPageButton = buttons.at(2).find('.page-link');
+    const gotoPageButton = buttons[2].find('.page-link');
     expect(gotoPageButton.attributes('aria-label')).toBe('Go to page 1');
-    const nextButton = buttons.at(3).find('.page-link');
+    const nextButton = buttons[3].find('.page-link');
     expect(nextButton.attributes('aria-label')).toBe('Go to next page');
-    const goToLastButton = buttons.at(4).find('.page-link');
+    const goToLastButton = buttons[4].find('.page-link');
     expect(goToLastButton.attributes('aria-label')).toBe('Go to last page');
   });
 
@@ -48,7 +48,7 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    expect(buttons.at(4).classes('d-none')).toBe(true);
+    expect(buttons[4].classes('d-none')).toBe(true);
   });
 
   it('buttons disabled when totaRows equals 0', () => {
@@ -56,10 +56,10 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    expect(buttons.at(0).classes('disabled')).toBe(true);
-    expect(buttons.at(1).classes('disabled')).toBe(true);
-    expect(buttons.at(3).classes('disabled')).toBe(true);
-    expect(buttons.at(4).classes('disabled')).toBe(true);
+    expect(buttons[0].classes('disabled')).toBe(true);
+    expect(buttons[1].classes('disabled')).toBe(true);
+    expect(buttons[3].classes('disabled')).toBe(true);
+    expect(buttons[4].classes('disabled')).toBe(true);
   });
 
   it('First and prev button disabled and last and next button enabled when totalRows greater than page size', () => {
@@ -71,10 +71,10 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    expect(buttons.at(0).classes('disabled')).toBe(true);
-    expect(buttons.at(1).classes('disabled')).toBe(true);
-    expect(buttons.at(4).classes('disabled')).toBe(false);
-    expect(buttons.at(5).classes('disabled')).toBe(false);
+    expect(buttons[0].classes('disabled')).toBe(true);
+    expect(buttons[1].classes('disabled')).toBe(true);
+    expect(buttons[4].classes('disabled')).toBe(false);
+    expect(buttons[5].classes('disabled')).toBe(false);
   });
 
   it('First, prev, next and last buttons enabled when totalRows greater than page size and current page greater than 1', () => {
@@ -87,10 +87,10 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    expect(buttons.at(0).classes('disabled')).toBe(false);
-    expect(buttons.at(1).classes('disabled')).toBe(false);
-    expect(buttons.at(5).classes('disabled')).toBe(false);
-    expect(buttons.at(2).classes('disabled')).toBe(false);
+    expect(buttons[0].classes('disabled')).toBe(false);
+    expect(buttons[1].classes('disabled')).toBe(false);
+    expect(buttons[5].classes('disabled')).toBe(false);
+    expect(buttons[2].classes('disabled')).toBe(false);
   });
 
   it('Should have right alignment by default', () => {
@@ -109,7 +109,7 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    const nextButton = buttons.at(4).find('.page-link');
+    const nextButton = buttons[4].find('.page-link');
     nextButton.trigger('click');
     await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
@@ -127,7 +127,7 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    const prevButton = buttons.at(1).find('.page-link');
+    const prevButton = buttons[1].find('.page-link');
     prevButton.trigger('click');
     await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
@@ -144,7 +144,7 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    const nextButton = buttons.at(5).find('.page-link');
+    const nextButton = buttons[5].find('.page-link');
     nextButton.trigger('click');
     await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
@@ -162,7 +162,7 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    const prevButton = buttons.at(0).find('.page-link');
+    const prevButton = buttons[0].find('.page-link');
     prevButton.trigger('click');
     await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
@@ -179,7 +179,7 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    const prevButton = buttons.at(3).find('.page-link');
+    const prevButton = buttons[3].find('.page-link');
     prevButton.trigger('click');
     await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
@@ -197,7 +197,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(2).classes('d-none')).toBe(false);
+      expect(buttons[2].classes('d-none')).toBe(false);
     });
 
     it('Pagination does not display first page button', () => {
@@ -205,7 +205,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(0).classes('d-none')).toBe(true);
+      expect(buttons[0].classes('d-none')).toBe(true);
     });
 
     it('Pagination does not display last page button when total rows greater than 0', () => {
@@ -217,7 +217,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(4).classes('d-none')).toBe(true);
+      expect(buttons[4].classes('d-none')).toBe(true);
     });
 
     it('Pagination does not display page sizes dropdown', () => {
@@ -233,7 +233,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(2).classes('d-none')).toBe(true);
+      expect(buttons[2].classes('d-none')).toBe(true);
     });
 
     it('Pagination does not display first page button', () => {
@@ -241,7 +241,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(0).classes('d-none')).toBe(true);
+      expect(buttons[0].classes('d-none')).toBe(true);
     });
 
     it('Pagination does not display last page button when total rows greater than 0', () => {
@@ -253,7 +253,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(4).classes('d-none')).toBe(true);
+      expect(buttons[4].classes('d-none')).toBe(true);
     });
 
     it('Pagination displays page sizes dropdown', () => {
@@ -280,7 +280,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(2).classes('d-none')).toBe(false);
+      expect(buttons[2].classes('d-none')).toBe(false);
     });
 
     it('Pagination does not display page links when hidePageNumbers property is true', () => {
@@ -292,7 +292,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(2).classes('d-none')).toBe(true);
+      expect(buttons[2].classes('d-none')).toBe(true);
     });
 
     it('Pagination displays first page button', () => {
@@ -304,7 +304,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(0).classes('d-none')).toBe(false);
+      expect(buttons[0].classes('d-none')).toBe(false);
     });
 
     it('Pagination does not display first page buton when hideGoToFirstPageButton is true', () => {
@@ -316,7 +316,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(0).classes('d-none')).toBe(true);
+      expect(buttons[0].classes('d-none')).toBe(true);
     });
 
     it('Pagination displays last page button when total rows greater than 0', () => {
@@ -329,7 +329,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(4).classes('d-none')).toBe(false);
+      expect(buttons[4].classes('d-none')).toBe(false);
     });
 
     it('Pagination does not display last page buton when hideGoToLastPageButton is true', () => {
@@ -341,7 +341,7 @@ describe('Pagination Component', () => {
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(4).classes('d-none')).toBe(true);
+      expect(buttons[4].classes('d-none')).toBe(true);
     });
 
     it('Pagination displays page sizes dropdown', () => {
@@ -435,7 +435,7 @@ describe('Pagination Component', () => {
       const dropdownMenu = wrapper.find('#dropdown').find('.dropdown-menu');
       expect(dropdownMenu.exists()).toBe(true);
       const items = dropdownMenu.findAll('li');
-      const secondItem = items.at(1).find('.dropdown-item');
+      const secondItem = items[1].find('.dropdown-item');
       secondItem.trigger('click');
       expect(wrapper.emitted('on-page-size-change')).toBeTruthy();
       expect(wrapper.emitted('on-page-size-change').length).toBe(1);

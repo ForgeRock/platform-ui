@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserBehavior @renders should render the component: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
