@@ -57,8 +57,8 @@ describe('DonutChart', () => {
       const values = wrapper.findAll('tbody[role="rowgroup"] tr[role="row"] td:last-child');
       expect(labels).toHaveLength(defaultProps.chartData.length);
       defaultProps.chartData.forEach((data, i) => {
-        expect(labels.at(i).text()).toBe(data.label);
-        expect(values.at(i).text()).toBe(data.valueFormatted);
+        expect(labels[i].text()).toBe(data.label);
+        expect(values[i].text()).toBe(data.valueFormatted);
       });
     });
 
