@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -68,6 +68,13 @@ const uiSchema = [
       model: 'core.testDate',
     },
   ],
+  [
+    {
+      label: 'TextAreaLabel',
+      type: 'textarea',
+      model: 'core.testTextArea',
+    },
+  ],
 ];
 
 const schema = {
@@ -108,6 +115,11 @@ const schema = {
       title: 'testDateTile',
       description: 'testDateDescription',
     },
+    testTextArea: {
+      type: 'textarea',
+      title: 'testTextAreaTitle',
+      description: 'testTextAreaDescription',
+    },
   },
 };
 
@@ -134,6 +146,9 @@ const model = {
     },
     testDate: {
       value: '2023-04-12T00:00:00+00:00',
+    },
+    testTextArea: {
+      value: 'text area initial value',
     },
   },
 };
@@ -166,6 +181,7 @@ describe('Form Generator', () => {
     expect(wrapper.find('fr-radio-display-stub').exists()).toBe(true);
     expect(wrapper.find('fr-password-display-stub').exists()).toBe(true);
     expect(wrapper.find('fr-date-display-stub').exists()).toBe(true);
+    expect(wrapper.find('fr-text-area-display-stub').exists()).toBe(true);
   });
 
   describe('safeCompare method', () => {
@@ -291,6 +307,12 @@ describe('Form Generator', () => {
         value: '',
       };
       expect(wrapper.vm.getPropertyComponent(dateTest)).toEqual('FrDateDisplay');
+
+      const textAreaTest = {
+        type: 'textarea',
+        value: '',
+      };
+      expect(wrapper.vm.getPropertyComponent(textAreaTest)).toEqual('FrTextAreaDisplay');
 
       const nullTest = {
         value: '',

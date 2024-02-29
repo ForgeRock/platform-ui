@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -66,6 +66,7 @@ import FrNumberDisplay from './renderers/NumberDisplay';
 import FrPasswordDisplay from './renderers/PasswordDisplay';
 import FrRadioDisplay from './renderers/RadioDisplay';
 import FrStringDisplay from './renderers/StringDisplay';
+import FrTextAreaDisplay from './renderers/TextAreaDisplay';
 import FrDateDisplay from './renderers/DateDisplay';
 
 export default {
@@ -80,6 +81,7 @@ export default {
     FrPasswordDisplay,
     FrRadioDisplay,
     FrStringDisplay,
+    FrTextAreaDisplay,
     FrDateDisplay,
   },
   props: {
@@ -160,6 +162,7 @@ export default {
           }
           return valueIsString || valueIsNumber;
         case 'string':
+        case 'textarea':
           return valueIsString;
         case 'multiselect':
           return valueIsArray;
@@ -201,6 +204,7 @@ export default {
       if (this.safeCompare(property) && this.showField(property)) {
         const componentNames = {
           string: 'FrStringDisplay',
+          textarea: 'FrTextAreaDisplay',
           array: 'FrArrayDisplay',
           multiselect: 'FrArrayDisplay',
           select: 'FrArrayDisplay',

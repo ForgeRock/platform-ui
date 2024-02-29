@@ -32,6 +32,12 @@ export function getRules(i18n) {
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.alphaNumericLowerCaseOnly');
   };
 
+  // Allows alphanumeric, underscores and commas
+  const alpha_num_under_comma = (value) => {
+    const regex = /^([A-Z]|[0-9]|,|_)+$/ig;
+    return regex.test(value) || i18n.global.t('common.policyValidationMessages.ALPHA_NUM_UNDER_COMMA');
+  };
+
   // Date rule
   // added for workflow
   const date_format = (value) => value.match(/^\d{2}[.//]\d{2}[.//]\d{4}$/) || i18n.global.t('common.policyValidationMessages.dateFormat');
@@ -183,6 +189,7 @@ export function getRules(i18n) {
     alpha_dash_spaces,
     alpha_num,
     alpha_num_lower,
+    alpha_num_under_comma,
     date_format,
     email,
     email_from,
