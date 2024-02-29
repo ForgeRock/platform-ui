@@ -1,0 +1,290 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Glossary @actions should emit progress event on load: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @actions should open account modal on account name click: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @actions should open add comments for account table: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @actions should open add comments for entitlement table: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @actions should open application modal on application name click: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @actions should open comments modal on accounts table: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @actions should open comments modal on entitlements table: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @actions should open entitlement modal from account table: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @actions should open reviewers modal on accounts table: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @actions should open reviewers modal on entitlements table: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @renders renders account details with correct data: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @renders renders both account and entitlement tables should have one row each: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @renders renders both account and entitlement tables: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @renders renders chevron_right with correct data: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @renders renders entitlement details with correct data: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @units should emit refresh-complete event: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`Glossary @units should emit sign-off event: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;

@@ -108,11 +108,11 @@ describe('SelectInput', () => {
     const elements = () => select.findAll('.multiselect__option');
 
     select.trigger('click');
-    elements().at(1).trigger('click');
+    elements()[1].trigger('click');
     expect(wrapper.vm.inputValue).toEqual({ text: 'b', value: 'b' });
 
     select.trigger('click');
-    elements().at(0).trigger('click');
+    elements()[0].trigger('click');
     expect(wrapper.vm.inputValue).toEqual({ text: 'a', value: 'a' });
   });
 
