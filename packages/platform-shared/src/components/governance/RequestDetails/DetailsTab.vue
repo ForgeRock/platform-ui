@@ -138,6 +138,15 @@ function setDecisionValue(type) {
   }
 }
 
+/**
+ * Returns request status
+ * @param {Object} decision Request decision object
+ * @returns {String} Request status
+ */
+function getStatus(decision) {
+  return decision.decision || decision.status;
+}
+
 onMounted(() => {
   details.value = {
     requested: {
@@ -151,7 +160,7 @@ onMounted(() => {
     requestId: props.item.details.id,
     requestDate: dayjs(props.item.details.date).format('MMM D, YYYY h:mm A'),
     requestType: props.item.details.type,
-    status: setDecisionValue(props.item.rawData.decision.decision),
+    status: setDecisionValue(getStatus(props.item.rawData.decision)),
     priority: props.item.details.priority,
     justification: props.item.rawData.request.common.justification,
   };
