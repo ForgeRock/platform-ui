@@ -76,6 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
         name="expirationDate"
         v-model="expirationDate"
         :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
+        :min="minExpirationDate"
         :placeholder="$t('governance.accessRequest.newRequest.expiryDate')" />
     </BFormGroup>
     <!-- Submit new request button -->
@@ -154,6 +155,12 @@ export default {
       ],
       selectedPriority: 'low',
     };
+  },
+  computed: {
+    minExpirationDate() {
+      const currentDate = new Date();
+      return new Date(currentDate.setDate(currentDate.getDate() + 1));
+    },
   },
   methods: {
     /**
