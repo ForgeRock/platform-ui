@@ -93,6 +93,7 @@ const prop = defineProps({
   },
 });
 
+const requestOutcome = ref(null);
 const tableData = ref(null);
 const taskDetails = ref({});
 
@@ -103,9 +104,11 @@ watch(
     const {
       decision: {
         actors = {},
+        outcome = null,
         phases = [],
       },
     } = rawData;
+    requestOutcome.value = outcome;
     const allActors = [
       ...actors.active,
       ...actors.inactive,
@@ -161,7 +164,10 @@ function setDecisionValue(type) {
  * @return {String} Item variant value
  */
 function getBadgeVariant(type) {
-  return setDecisionValue(type).variant;
+  const parsedType = type === 'complete' && requestOutcome.value
+    ? requestOutcome.value
+    : type;
+  return setDecisionValue(parsedType).variant;
 }
 
 /**
@@ -170,7 +176,10 @@ function getBadgeVariant(type) {
  * @return {String} Item name value
  */
 function getStatus(type) {
-  return setDecisionValue(type).name;
+  const parsedType = type === 'complete' && requestOutcome.value
+    ? requestOutcome.value
+    : type;
+  return setDecisionValue(parsedType).name;
 }
 
 /**
