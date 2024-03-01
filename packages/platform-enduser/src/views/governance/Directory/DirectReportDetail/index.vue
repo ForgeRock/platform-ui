@@ -79,6 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
               :fields="getTableFields(tab.grantType)"
               :grant-type="tab.grantType"
               :items="resourceItems"
+              :require-request-justification="requireRequestJustification"
               :total-count="resourceTotalCount"
               :modal-id="`${tab.displayName}-modal`"
               @load-data="queryResource"
@@ -110,6 +111,7 @@ import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import { getGovernanceGrants, revokeResourcesFromIGA } from '@forgerock/platform-shared/src/utils/governance/resource';
 import { getDirectReportUserInfo } from '@/api/governance/DirectoryApi';
@@ -145,6 +147,7 @@ export default {
   data() {
     return {
       directReportUserInfo: {},
+      requireRequestJustification: false,
       resourceItems: [],
       resourceTotalCount: 0,
       tabItems: [
@@ -174,7 +177,7 @@ export default {
   async created() {
     await this.getUserProfile();
   },
-  mounted() {
+  async mounted() {
     this.setBreadcrumb('/my-reports', this.$t('governance.directReports.title'));
     this.tabItems.find((item, index) => {
       if (item.grantType === this.$route.params.grantType) {
@@ -184,6 +187,12 @@ export default {
       }
       return false;
     });
+    try {
+      const { data } = await getIgaAccessRequest();
+      this.requireRequestJustification = data.requireRequestJustification;
+    } catch {
+      // We don't need to show an error here
+    }
   },
   computed: {
     ...mapState(useUserStore, ['userId']),

@@ -67,6 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
               <FrRequestCart
                 :request-cart-items="requestCartItems"
                 :request-cart-users="requestedUsers"
+                :require-request-justification="requireRequestJustification"
                 :show-spinner="saving"
                 @remove-requested-item="removeRequestedItem"
                 @requested-item-click="openRequestedItemModal"
@@ -159,10 +160,7 @@ import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import {
-  getResource,
-  getGlossarySchema,
-} from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getResource, getGlossarySchema, getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import { getCatalogFilterSchema, searchCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import { saveNewRequest, validateRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
@@ -227,6 +225,7 @@ export default {
       requestCartUsers: this.$store.state.requestCartUsers || [],
       requestErrorFields: [{ key: 'user' }, { key: 'error' }],
       requestErrors: [],
+      requireRequestJustification: false,
       saving: false,
       totalCount: 0,
     };
@@ -305,6 +304,12 @@ export default {
       };
     } catch (error) {
       this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
+    }
+    try {
+      const { data } = await getIgaAccessRequest();
+      this.requireRequestJustification = data.requireRequestJustification;
+    } catch {
+      // We don't need to show an error here
     }
   },
   methods: {

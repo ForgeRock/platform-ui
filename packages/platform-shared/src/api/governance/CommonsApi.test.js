@@ -30,6 +30,13 @@ describe('Commons API', () => {
     expect(res).toEqual(data);
   });
 
+  it('should call getIgaAccessRequest', async () => {
+    const res = await CommonsApi.getIgaAccessRequest();
+    expect(get).toBeCalledWith('commons/config/iga_access_request');
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
   it('should call My Access Endpoint with correct payload and url with grantType account', async () => {
     const params = {
       pageNumber: 0, pageSize: 10, grantType: 'account',

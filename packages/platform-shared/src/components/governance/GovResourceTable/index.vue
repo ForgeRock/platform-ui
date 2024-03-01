@@ -215,10 +215,6 @@ of the MIT license. See the LICENSE file for details. -->
         :total-rows="totalCount"
         @change="loadData({ paginationPage: $event })"
         @on-page-size-change="loadData({ paginationPageSize: $event, paginationPage: 1 })" />
-      <FrUserEntitlementModal
-        :grant="grantDetails"
-        :glossary-schema="glossarySchema"
-        modal-id="userEntitlementModal" />
     </BCard>
     <FrGovAssignResourceModal
       :entitlement-options="entitlementOptions"
@@ -228,6 +224,7 @@ of the MIT license. See the LICENSE file for details. -->
       @assign-resources="$emit('assign-resources', $event)"
       @get-entitlements="$emit('get-entitlements', $event)" />
     <FrRevokeRequestModal
+      :require-request-justification="!parentResourceName && requireRequestJustification"
       :modal-id="revokeModalId"
       :show-spinner="assigningResource"
       @submission="$emit('revoke-items', { ...$event, itemsToRevoke })" />
@@ -254,6 +251,10 @@ of the MIT license. See the LICENSE file for details. -->
           @click="$emit('revoke-items', itemsToRevoke)" />
       </template>
     </BModal>
+    <FrUserEntitlementModal
+      :grant="grantDetails"
+      :glossary-schema="glossarySchema"
+      modal-id="userEntitlementModal" />
     <FrFloatingActionBar
       :buttons="actionBarButtons"
       :count="selectedItems.length"
@@ -363,6 +364,10 @@ export default {
     parentResourceName: {
       type: String,
       default: '',
+    },
+    requireRequestJustification: {
+      type: Boolean,
+      default: false,
     },
     savingStatus: {
       type: String,
@@ -577,10 +582,10 @@ export default {
      */
     showRevokeModal(itemsToRevoke) {
       this.itemsToRevoke = itemsToRevoke;
-      if (this.parentResourceName.endsWith('user')) {
-        this.$bvModal.show(this.revokeModalId);
-      } else {
+      if (this.resourceIsRole) {
         this.$bvModal.show('revoke-from-role-modal');
+      } else {
+        this.$bvModal.show(this.revokeModalId);
       }
     },
     sortChanged(event) {
