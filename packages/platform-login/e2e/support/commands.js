@@ -20,6 +20,7 @@ Cypress.Commands.add('clearAppAuthDatabase', () => {
 });
 
 Cypress.Commands.add('login', () => {
+  cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
   const loginUrl = `${Cypress.config().baseUrl}/platform/`;
   const adminUserName = Cypress.env('AM_USERNAME');
   const adminPassword = Cypress.env('AM_PASSWORD');
@@ -35,6 +36,12 @@ Cypress.Commands.add('login', () => {
     cy.wait(1200);
     cy.findByRole('button', { name: /Skip for now/i, timeout: 5000 }).click();
   }
+  cy.wait('@getAccessToken').then(({ response }) => {
+    // Use the access token from the admin login as the API access token for this test
+    // Note that for code to use this access token it needs to be queued to execute
+    // afterwards by Cypress with a then block or similar
+    Cypress.env('ACCESS_TOKEN', response.body);
+  });
   cy.findAllByTestId('dashboard-welcome-title', { timeout: 20000 });
 });
 
@@ -66,7 +73,7 @@ Cypress.Commands.add('importTrees', (fixtureArray) => {
     cy.get('[type="file"]').attachFile(fixtureName);
     cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
     cy.findByRole('button', { name: 'Start Import' }).should('be.enabled').click();
-    cy.contains('Import Complete').should('be.visible');
+    cy.contains('Import Complete', { timeout: 10000 }).should('be.visible');
     cy.findByRole('button', { name: 'Done' }).click();
   });
 });
