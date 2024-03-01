@@ -60,6 +60,11 @@ export function requestAction(requestId, action, phaseName, comment, updatedActo
   return generateIgaApi().post(url, requestBody);
 }
 
+/**
+ * Saves new access request
+ * @param {Object} payload request details to save
+ * @returns {Promise} Contains data about created request
+ */
 export function saveNewRequest(payload) {
   return generateIgaApi().post('governance/requests?_action=create', payload);
 }

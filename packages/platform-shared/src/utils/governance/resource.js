@@ -57,6 +57,7 @@ export async function assignResourcesToIGA(parentResourceId, resourceIds, grantT
     catalogs: entitlements,
     context: { type: 'admin' },
     users: [parentResourceId],
+    justification: 'Admin submitted', // Not translated as this is filler text for auto-approved requests
   };
   try {
     const { data } = await saveNewRequest(payload);
@@ -258,7 +259,7 @@ export async function revokeResourcesFromIGA(revokePayload, parentResourceId, ad
   try {
     const payload = {
       expiryDate: revokePayload.expiryDate,
-      justification: revokePayload.justification,
+      justification: revokePayload.justification || 'Admin submitted', // Not translated as this is filler text for auto-approved requests
       priority: revokePayload.priority,
     };
     payload.accessModifier = 'remove';

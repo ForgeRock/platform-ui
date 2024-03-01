@@ -29,6 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <Component
         v-else
+        v-bind="componentComputed.props"
         :is="componentComputed.component"
         :item="item"
         @change-modal-type="modalType = REQUEST_MODAL_TYPES[$event]"
@@ -108,6 +109,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  requireApproveJustification: {
+    default: false,
+    type: Boolean,
+  },
+  requireRejectJustification: {
+    default: false,
+    type: Boolean,
+  },
 });
 
 const actors = ref({
@@ -127,17 +136,6 @@ const modalType = ref(REQUEST_MODAL_TYPES[props.type]);
 
 const componentComputed = computed(() => {
   switch (modalType.value) {
-    case REQUEST_MODAL_TYPES.APPROVE:
-      return {
-        buttonName: i18n.global.t('common.approve'),
-        component: FrApproveRequest,
-        errorMessage: i18n.global.t('governance.requestModal.messages.errorApprove'),
-        loadingText: i18n.global.t('governance.requestModal.messages.loadingApprove'),
-        message: i18n.global.t('governance.requestModal.messages.approve'),
-        size: 'lg',
-        showRequestDetailsLink: true,
-        title: i18n.global.t('governance.requestModal.titles.approve'),
-      };
     case REQUEST_MODAL_TYPES.CANCEL:
       return {
         buttonName: i18n.global.t('governance.requestModal.cancelRequest'),
@@ -178,20 +176,27 @@ const componentComputed = computed(() => {
         errorMessage: i18n.global.t('governance.requestModal.messages.errorReject'),
         loadingText: i18n.global.t('governance.requestModal.messages.loadingReject'),
         message: i18n.global.t('governance.requestModal.messages.reject'),
+        props: {
+          requireJustification: props.requireRejectJustification,
+        },
         size: 'lg',
         showRequestDetailsLink: true,
         title: i18n.global.t('governance.requestModal.titles.reject'),
       };
+    case REQUEST_MODAL_TYPES.APPROVE:
     default:
       return {
         buttonName: i18n.global.t('common.approve'),
-        component: '',
+        component: FrApproveRequest,
         errorMessage: i18n.global.t('governance.requestModal.messages.errorApprove'),
         loadingText: i18n.global.t('governance.requestModal.messages.loadingApprove'),
         message: i18n.global.t('governance.requestModal.messages.approve'),
+        props: {
+          requireJustification: props.requireApproveJustification,
+        },
         size: 'lg',
         showRequestDetailsLink: true,
-        title: '',
+        title: i18n.global.t('governance.requestModal.titles.approve'),
       };
   }
 });

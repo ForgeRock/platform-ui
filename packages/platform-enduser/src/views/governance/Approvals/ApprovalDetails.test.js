@@ -10,12 +10,23 @@ import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
 import router from '@/router';
 import ApprovalDetails from './ApprovalDetails';
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
+
+CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.resolve({
+  data: {
+    requireRequestJustification: false,
+    requireRejectJustification: false,
+    requireApproveJustification: false,
+    defaultApprover: '',
+    allowSelfApproval: false,
+  },
+}));
 
 const accessRequest = {
   application: {
