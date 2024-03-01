@@ -5,7 +5,6 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <VeeForm
     v-slot="{ meta: { valid } }"
-    ref="observer"
     as="span">
     <BModal
       :id="modalId"
@@ -15,8 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
       :title="$t(`governance.certificationTask.actionsModal.${step === STEPS.DETAILS ? modalOptions.title : modalOptions.confirmTitle}`)"
       :static="isTesting"
       @hidden="reset">
-      <template v-if="step === STEPS.DETAILS">
-        <div class="modal-container">
+      <div class="modal-container">
+        <template v-if="step === STEPS.DETAILS">
           <span>{{ $t(`governance.certificationTask.actionsModal.${modalOptions.description}`) }}</span>
           <FrField
             v-model="confirmMessage"
@@ -27,19 +26,17 @@ of the MIT license. See the LICENSE file for details. -->
             :max-rows="4"
             :validation="{ required: modalOptions.requireJustification }"
           />
-        </div>
-      </template>
-      <template v-if="step === STEPS.CONFIRM">
-        <div class="modal-container">
+        </template>
+        <template v-else-if="step === STEPS.CONFIRM">
           <p>{{ $t(`governance.certificationTask.actionsModal.${modalOptions.confirmDescription}`) }}</p>
-          <div class="alert fr-alert alert-warning">
+          <div class="alert d-flex fr-alert alert-warning">
             <FrIcon
               class="mr-2"
               name="error_outline"
             /><span>{{ $t('governance.certificationTask.actionsModal.warningDataMayBeInaccurate') }}</span>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
       <template #modal-footer="{ cancel, ok }">
         <div
           v-if="step === STEPS.CONFIRM && modalOptions.initialStep === STEPS.DETAILS"
@@ -139,8 +136,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .fr-alert {
-    display: flex;
-    line-height: 1.25;
+  line-height: 1.25;
 
   &.alert-warning {
     border-left: 5px solid $warning;

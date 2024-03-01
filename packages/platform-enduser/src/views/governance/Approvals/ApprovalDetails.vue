@@ -82,6 +82,8 @@ of the MIT license. See the LICENSE file for details. -->
       :type="modalType"
       :item="item"
       is-approvals
+      :require-approve-justification="requireApproveJustification"
+      :require-reject-justification="requireRejectJustification"
       @modal-closed="modalType = null"
       @update-item="getRequestData"
       @update-list="toListView" />
@@ -110,6 +112,7 @@ import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getRequest, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import {
   getFormattedRequest,
   getRequestObjectType,
@@ -132,6 +135,8 @@ const { requestId } = route.params;
 const isActive = ref(false);
 const item = ref({});
 const modalType = ref('');
+let requireApproveJustification = false;
+let requireRejectJustification = false;
 
 const userId = computed(() => useUserStore().userId);
 
@@ -176,6 +181,13 @@ onMounted(async () => {
   setBreadcrumb('/approvals', i18n.global.t('sideMenu.approvals'));
 
   await getRequestData();
+  try {
+    const { data } = await getIgaAccessRequest();
+    requireApproveJustification = !data.requireApproveJustification;
+    requireRejectJustification = !data.requireRejectJustification;
+  } catch {
+    // We don't need to show an error here
+  }
 });
 
 function openModal(type) {

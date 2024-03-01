@@ -138,6 +138,8 @@ of the MIT license. See the LICENSE file for details. -->
       :type="modalType"
       :item="modalItem"
       :is-approvals="true"
+      :require-approve-justification="requireApproveJustification"
+      :require-reject-justification="requireRejectJustification"
       @modal-closed="modalType = null; modalItem = null"
       @update-item="loadItem($event)"
       @update-list="loadRequestAndUpdateBadge" />
@@ -161,6 +163,7 @@ import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { getUserApprovals, getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import {
   getRequestFilter,
   getStatusText,
@@ -204,6 +207,8 @@ export default {
       modalItem: null,
       modalType: REQUEST_MODAL_TYPES.DETAILS,
       pageSize: 10,
+      requireApproveJustification: false,
+      requireRejectJustification: false,
       sortDir: 'desc',
       sortKeys: 'date',
       status: 'pending',
@@ -223,8 +228,15 @@ export default {
   computed: {
     ...mapState(useUserStore, ['userId']),
   },
-  mounted() {
+  async mounted() {
     this.loadRequestAndUpdateBadge();
+    try {
+      const { data } = await getIgaAccessRequest();
+      this.requireApproveJustification = data.requireApproveJustification;
+      this.requireRejectJustification = data.requireRejectJustification;
+    } catch {
+      // We don't need to show an error here
+    }
   },
   methods: {
     getStatusText,

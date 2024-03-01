@@ -37,6 +37,15 @@ CatalogApi.searchCatalog = jest.fn().mockReturnValue({
     ],
   },
 });
+CommonsApi.getIgaAccessRequest.mockImplementation(() => Promise.resolve({
+  data: {
+    requireRequestJustification: false,
+    requireRejectJustification: false,
+    requireApproveJustification: false,
+    defaultApprover: '',
+    allowSelfApproval: false,
+  },
+}));
 
 describe('NewRequest', () => {
   const RestMixin = {
