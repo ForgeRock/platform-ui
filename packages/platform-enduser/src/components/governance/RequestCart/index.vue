@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
+  <VeeForm
+    v-slot="{ meta: { valid } }"
+    as="span">
     <!-- Requesting for list of users -->
     <div class="mb-5">
       <h3 class="mb-2 text-muted font-weight-normal h5">
@@ -38,7 +40,8 @@ of the MIT license. See the LICENSE file for details. -->
         :label="$t('governance.accessRequest.newRequest.justification')"
         :description="$t('governance.accessRequest.newRequest.justificationDescription')"
         :max-rows="10"
-        :rows="5" />
+        :rows="5"
+        :validation="{ required: requireRequestJustification }" />
     </BFormGroup>
     <!-- Priority dropdown select -->
     <BFormGroup>
@@ -86,12 +89,12 @@ of the MIT license. See the LICENSE file for details. -->
         data-testid="submit-request-button"
         variant="primary"
         :button-text="$t('governance.accessRequest.newRequest.completeRequest')"
-        :disabled="!requestCartItems.length || showSpinner"
+        :disabled="!requestCartItems.length || showSpinner || !valid"
         :spinner-text="$t('governance.status.completing')"
         :show-spinner="showSpinner"
         @click="submitRequest" />
     </div>
-  </div>
+  </VeeForm>
 </template>
 
 <script>
@@ -99,6 +102,7 @@ import {
   BImg,
   BFormGroup,
 } from 'bootstrap-vue';
+import { Form as VeeForm } from 'vee-validate';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -117,6 +121,7 @@ export default {
     FrDatepicker,
     FrField,
     FrRequestItemsGroup,
+    VeeForm,
   },
   props: {
     requestCartUsers: {
@@ -126,6 +131,10 @@ export default {
     requestCartItems: {
       type: Array,
       default: () => [],
+    },
+    requireRequestJustification: {
+      type: Boolean,
+      default: false,
     },
     showSpinner: {
       type: Boolean,

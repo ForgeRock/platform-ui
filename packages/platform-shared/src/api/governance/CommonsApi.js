@@ -21,6 +21,21 @@ export function getResource(resource, queryParams = {}) {
 }
 
 /**
+ * Retieves config for approval requests including
+ * {
+ *  "requireRequestJustification": Boolean,
+ *  "requireRejectJustification": Boolean,
+ *  "requireApproveJustification": Boolean,
+ *  "defaultApprover": String,
+ *  "allowSelfApproval": Boolean
+ * }
+ * @returns {Promise} Contains IGA approval request config
+ */
+export function getIgaAccessRequest() {
+  return generateIgaApi().get('commons/config/iga_access_request');
+}
+
+/**
  * get user information by grandType and ID
  * @param {String} userId ID of selected User
  * @param {Object} params - parameters to filter the list
