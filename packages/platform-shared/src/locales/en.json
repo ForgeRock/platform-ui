@@ -1654,16 +1654,19 @@
       "submitRequest": "Submit Request"
     },
     "requestModal": {
+      "approve": {
+        "justificationDescription": "Provide a justification for why this request is approved."
+      },
       "detailsTab": {
         "awaitingApproval": "Awaiting Approval",
         "justification": "Justification",
         "priority": "Priority",
         "provisioning": "Provisioning",
         "requestComplete": "Request Complete",
-        "requestDate": "Request Date", 
-        "requested": "Requested", 
+        "requestDate": "Request Date",
+        "requested": "Requested",
         "requestedFor": "Requested For",
-        "requestId": "Request ID", 
+        "requestId": "Request ID",
         "requestSubmitted": "Request Submitted",
         "requestType": "Request Type",
         "status": "Status"
@@ -1682,29 +1685,29 @@
       "messages": {
         "approve": "Approved Request",
         "cancel": "Request successfully canceled",
-        "comment": "Comment Added",        
-        "errorApprove":"Error Approving Request",
+        "comment": "Comment Added",
+        "errorApprove": "Error Approving Request",
         "errorCancel": "There was an error canceling the request",
-        "errorComment":"Error Adding Comment",
-        "errorReject":"Error Rejecting Request",
-        "errorForward":"Error Forwarding Request",
+        "errorComment": "Error Adding Comment",
+        "errorReject": "Error Rejecting Request",
+        "errorForward": "Error Forwarding Request",
         "forward": "Request Forwarded",
-        "loadingApprove":"Approving Request...",
-        "loadingCancel":"Cancelling Request...",
-        "loadingComment":"Adding Comment...",
-        "loadingReject":"Rejecting Request...",
-        "loadingForward":"Forwarding Request...",
+        "loadingApprove": "Approving Request...",
+        "loadingCancel": "Cancelling Request...",
+        "loadingComment": "Adding Comment...",
+        "loadingReject": "Rejecting Request...",
+        "loadingForward": "Forwarding Request...",
         "reject": "Rejected Request"
       },
       "reject": {
-        "footer": "Provide a justification for why this request is rejected.",
-        "justification": "Justification"
+        "justificationDescription": "Provide a justification for why this request is rejected."
       },
       "forward": {
-        "description":"Forward this request to"
+        "description": "Forward this request to"
       },
       "addComment": "Add Comment",
       "cancelRequest": "Cancel Request",
+      "justification": "Justification",
       "noComments": "No comments",
       "noCommentsSubtitle": "There are no comments for this request.",
       "requestDetailsLink": "Request Details",

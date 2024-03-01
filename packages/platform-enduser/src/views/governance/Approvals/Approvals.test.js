@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -14,6 +14,16 @@ import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance
 import i18n from '@/i18n';
 import router from '@/router';
 import Approvals from './index';
+
+CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.resolve({
+  data: {
+    requireRequestJustification: false,
+    requireRejectJustification: false,
+    requireApproveJustification: false,
+    defaultApprover: '',
+    allowSelfApproval: false,
+  },
+}));
 
 const mountComponent = () => {
   setupTestPinia({ user: { userId: '1234' } });
