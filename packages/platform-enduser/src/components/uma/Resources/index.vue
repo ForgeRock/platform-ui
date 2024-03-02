@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,9 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="input-group-prepend">
             <div class="input-group-text">
               <FrIcon
-                class="md-24"
-                name="search"
-              />
+                icon-class="md-24"
+                name="search" />
             </div>
           </div>
           <input
@@ -34,9 +33,8 @@ of the MIT license. See the LICENSE file for details. -->
             <template #button-content>
               <span class="text-muted">
                 <FrIcon
-                  class="md-24 mb-1"
-                  :name="!this.viewgrid ? 'format_list_bulleted' : 'apps'"
-                />
+                  icon-class="md-24 mb-1"
+                  :name="!this.viewgrid ? 'format_list_bulleted' : 'apps'" />
               </span>
             </template>
             <BDropdownHeader>{{ $t('pages.uma.resources.viewAs') }}</BDropdownHeader>
@@ -48,8 +46,8 @@ of the MIT license. See the LICENSE file for details. -->
                   class="d-flex align-self-center text-center"
                   style="min-width: 1.5rem;">
                   <FrIcon
-                    class="md-16 font-weight-bolder text-success"
                     v-if="!this.viewgrid"
+                    icon-class="md-16 font-weight-bolder text-success"
                     name="check" />
                 </div>
                 <div class="media-body">
@@ -57,9 +55,8 @@ of the MIT license. See the LICENSE file for details. -->
                 </div>
                 <div class="d-flex ml-3 align-self-center text-muted">
                   <FrIcon
-                    class="md-24"
-                    name="format_list_bulleted"
-                  />
+                    icon-class="md-24"
+                    name="format_list_bulleted" />
                 </div>
               </div>
             </BDropdownItem>
@@ -71,19 +68,17 @@ of the MIT license. See the LICENSE file for details. -->
                   class="d-flex align-self-center text-center"
                   style="min-width: 1.5rem;">
                   <FrIcon
-                    class="md-16 font-weight-bolder text-success"
                     v-if="this.viewgrid"
-                    name="check"
-                  />
+                    icon-class="md-16 font-weight-bolder text-success"
+                    name="check" />
                 </div>
                 <div class="media-body">
                   {{ $t('pages.uma.resources.grid') }}
                 </div>
                 <div class="d-flex ml-3 align-self-center text-muted">
                   <FrIcon
-                    class="md-24"
-                    name="apps"
-                  />
+                    icon-class="md-24"
+                    name="apps" />
                 </div>
               </div>
             </BDropdownItem>
@@ -187,9 +182,8 @@ of the MIT license. See the LICENSE file for details. -->
                   <template #button-content>
                     <span class="text-muted">
                       <FrIcon
-                        class="md-24"
-                        name="more_horiz"
-                      />
+                        icon-class="md-24"
+                        name="more_horiz" />
                     </span>
                   </template>
                   <BDropdownItem

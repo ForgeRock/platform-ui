@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -26,12 +26,15 @@ of the MIT license. See the LICENSE file for details. -->
               <FrIcon
                 v-if="item.iconType === 'OFF'"
                 name="remove_circle"
-                class="mr-2" />
+                icon-class="mr-2">
+                {{ item.text }}
+              </FrIcon>
               <FrIcon
                 v-else-if="item.iconType === 'ON'"
                 name="check_circle"
-                class="mr-2 text-success" />
-              {{ item.text }}
+                icon-class="mr-2 text-success">
+                {{ item.text }}
+              </FrIcon>
             </BCol>
             <BCol
               class="text-right text-nowrap"

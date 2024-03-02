@@ -18,8 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
     <template #modal-header="{ close }">
       <div class="w-100 d-flex align-items-start">
         <div>
-          <small
-            class="mb-0">
+          <small class="mb-0">
             {{ $t('governance.requestModal.titles.taskDetails') }}
           </small>
           <h1 class="h5 modal-title text-capitalize">
@@ -32,8 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
           @click="close">
           <FrIcon
             name="close"
-            class="text-muted md-24"
-          />
+            icon-class="text-muted md-24" />
         </BButtonClose>
       </div>
     </template>
@@ -45,9 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.approvers') }}
       </BCol>
       <BCol lg="8">
-        <FrUserGroupList
-          :users-list="taskDetails.approvers"
-        />
+        <FrUserGroupList :users-list="taskDetails.approvers" />
       </BCol>
       <!-- Status -->
       <BCol

@@ -21,9 +21,8 @@ of the MIT license. See the LICENSE file for details. -->
             class="py-2 d-flex"
             @click="showAdvanced = !showAdvanced">
             <FrIcon
-              :class="[{ 'color-red': error}, ' mr-3 align-self-center cursor-pointer']"
-              :name="error ? 'info' : identityObjectSchema['mat-icon'] || 'settings_system_daydream'"
-            />
+              :icon-class="[{ 'color-red': error}, ' mr-3 align-self-center cursor-pointer']"
+              :name="error ? 'info' : identityObjectSchema['mat-icon'] || 'settings_system_daydream'" />
             <span class="mw-100">
               <div class="text-truncate">
                 {{ privilegeModel.name }}
@@ -104,9 +103,8 @@ of the MIT license. See the LICENSE file for details. -->
                 class="p-0"
                 @click="$emit('remove-privilege', index)">
                 <FrIcon
-                  class="text-muted"
-                  name="delete"
-                />
+                  icon-class="text-muted"
+                  name="delete" />
               </BButton>
             </small>
           </div>

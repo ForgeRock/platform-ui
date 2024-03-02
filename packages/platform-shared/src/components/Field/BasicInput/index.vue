@@ -76,9 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
             :aria-label="showPassword ? hideText : showText"
             @keyup.enter="$emit('enter')"
             :data-testid="`btn-show-password-${testid}`">
-            <FrIcon
-              :name="showPassword ? 'visibility_off' : 'visibility'"
-            />
+            <FrIcon :name="showPassword ? 'visibility_off' : 'visibility'" />
           </BButton>
         </BInputGroupAppend>
         <BInputGroupAppend v-if="copy">
@@ -88,9 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="btn btn-outline-secondary"
             name="copyButton"
             @click.prevent="copyValueToClipboard(value)">
-            <FrIcon
-              name="copy"
-            />
+            <FrIcon name="copy" />
           </button>
           <BTooltip
             :target="`copyButton-${value}`"

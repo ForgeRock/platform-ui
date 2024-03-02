@@ -1,14 +1,12 @@
-<!-- Copyright 2023-2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer class="d-flex justify-content-center align-self-start">
     <BCard class="fr-add-data-source-card text-center my-5 py-4">
       <FrIcon
-        class="opacity-20 md-96 mb-3"
+        icon-class="opacity-20 md-96 mb-3"
         name="source" />
       <BCardTitle
         class="h4 mb-2"
@@ -22,9 +20,10 @@ to such license between the licensee and ForgeRock AS. -->
         variant="primary"
         @click="$emit('open-data-source-modal')">
         <FrIcon
-          class="mr-2"
-          name="add" />
-        {{ $t('reports.template.dataSource') }}
+          icon-class="mr-2"
+          name="add">
+          {{ $t('reports.template.dataSource') }}
+        </FrIcon>
       </BButton>
     </BCard>
   </BContainer>

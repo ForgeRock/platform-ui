@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
     data-testid="esv-dropdown">
     <template #button-content>
       <FrIcon
-        class="placeholder-dropdown"
+        icon-class="placeholder-dropdown"
         name="token" />
       <span class="sr-only">
         {{ $t('esvInput.title') }}

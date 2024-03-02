@@ -14,10 +14,10 @@ of the MIT license. See the LICENSE file for details. -->
           v-for="field in fields"
           :key="field.name">
           <FrIcon
-            class="md-16 text-success font-weight-bolder mr-2"
-            name="check"
-          />
-          {{ field.title }}
+            icon-class="md-16 text-success font-weight-bolder mr-2"
+            name="check">
+            {{ field.title }}
+          </FrIcon>
         </li>
       </ul>
     </dd>

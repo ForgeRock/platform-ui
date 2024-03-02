@@ -29,9 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
           size="sm"
           variant="light"
           data-testid="labelEditItemButton">
-          <FrIcon
-            outlined
-            name="edit" />
+          <FrIcon name="edit" />
         </BButton>
       </div>
     </template>
@@ -53,9 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
           size="sm"
           variant="light"
           data-testid="beforeListAddButton">
-          <FrIcon
-            outlined
-            name="add" />
+          <FrIcon name="add" />
         </BButton>
       </div>
     </template>
@@ -81,9 +77,7 @@ of the MIT license. See the LICENSE file for details. -->
           size="sm"
           variant="light"
           data-testid="editItemButton">
-          <FrIcon
-            outlined
-            name="edit" />
+          <FrIcon name="edit" />
         </BButton>
       </div>
     </template>

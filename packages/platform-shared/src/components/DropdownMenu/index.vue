@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -51,10 +51,10 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-2"
       @click="logoutUser()">
       <FrIcon
-        class="mr-2"
-        name="exit_to_app"
-      />
-      {{ $t('common.signOut') }}
+        icon-class="mr-2"
+        name="exit_to_app">
+        {{ $t('common.signOut') }}
+      </FrIcon>
     </BDropdownItem>
   </BDropdown>
 </template>

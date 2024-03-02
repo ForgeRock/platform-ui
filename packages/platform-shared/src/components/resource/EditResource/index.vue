@@ -19,9 +19,8 @@ of the MIT license. See the LICENSE file for details. -->
         :alt="$t('common.avatar')" />
       <FrIcon
         v-else
-        class="mr-4 md-48"
-        :name="setIcon"
-      />
+        icon-class="mr-4 md-48"
+        :name="setIcon" />
       <div class="media-body align-self-center">
         <h2 class="h5 text-muted">
           {{ getTranslation(resourceTitle) }}
@@ -43,9 +42,10 @@ of the MIT license. See the LICENSE file for details. -->
       variant="outline-secondary"
       v-b-modal.resetModal>
       <FrIcon
-        class="mr-md-2 text-nowrap"
-        name="cached"
-      />{{ $t('pages.access.resetPassword') }}
+        icon-class="mr-2 text-nowrap"
+        name="cached">
+        {{ $t('pages.access.resetPassword') }}
+      </FrIcon>
     </BButton>
     <BButton
       v-if="canClearSessions && hasActiveSessions"
@@ -53,9 +53,10 @@ of the MIT license. See the LICENSE file for details. -->
       variant="outline-secondary"
       @click="showClearSessionsModal = true">
       <FrIcon
-        class="mr-md-2 text-nowrap"
-        name="clear_all"
-      />{{ $t('common.endSessions') }}
+        icon-class="mr-2 text-nowrap"
+        name="clear_all">
+        {{ $t('common.endSessions') }}
+      </FrIcon>
     </BButton>
     <slot
       name="edit-content"

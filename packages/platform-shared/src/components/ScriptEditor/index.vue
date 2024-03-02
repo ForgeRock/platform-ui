@@ -71,8 +71,11 @@ of the MIT license. See the LICENSE file for details. -->
           variant="link"
           size="sm"
           @click="addVariable('', '', 0)">
-          <FrIcon name="add" />
-          {{ $t('common.variables') }}
+          <FrIcon
+            icon-class="mr-2"
+            name="add">
+            {{ $t('common.variables') }}
+          </FrIcon>
         </BButton>
         <template v-else>
           <div class="d-flex align-items-center">

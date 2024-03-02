@@ -26,9 +26,8 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="imageError"
             #default>
             <FrIcon
-              class="md-72 opacity-30"
-              name="camera_alt"
-            />
+              icon-class="md-72 opacity-30"
+              name="camera_alt" />
           </template>
         </BAvatar>
       </div>
@@ -58,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BMedia>
               <template #aside>
                 <FrIcon
-                  class="md-24"
+                  icon-class="md-24"
                   name="fullscreen" />
               </template>
               <small class="form-text">
@@ -70,7 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BMedia>
               <template #aside>
                 <FrIcon
-                  class="md-24"
+                  icon-class="md-24"
                   name="aspect_ratio" />
               </template>
               <small class="form-text">

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -65,9 +65,10 @@ of the MIT license. See the LICENSE file for details. -->
           <h5>{{ $t('common.deadline') }}</h5>
           <div class="mt-2">
             <FrIcon
-              class="d-inline"
-              name="event" />
-            <span>{{ formatDate(campaignDetails.deadline) }}</span>
+              icon-class="d-inline"
+              name="event">
+              {{ formatDate(campaignDetails.deadline) }}
+            </FrIcon>
           </div>
           <BButton
             class="my-4 p-0"
@@ -98,9 +99,8 @@ of the MIT license. See the LICENSE file for details. -->
         <FrIcon
           v-else
           data-testid="certifier-image-role"
-          class="mr-1 md-28 rounded-circle"
-          name="assignment_ind"
-        />
+          icon-class="mr-1 md-28 rounded-circle"
+          name="assignment_ind" />
         <div class="media-body">
           <span
             test-id="certifier-name"

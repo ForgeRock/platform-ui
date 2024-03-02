@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,9 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
       v-else
       class="icon-holder p-2 d-flex bg-light border rounded">
       <FrIcon
-        :class="['md-24 text-dark mt-auto', inputClass]"
-        :name="fallback"
-      />
+        :icon-class="['md-24 text-dark mt-auto', inputClass]"
+        :name="fallback" />
     </span>
   </div>
 </template>

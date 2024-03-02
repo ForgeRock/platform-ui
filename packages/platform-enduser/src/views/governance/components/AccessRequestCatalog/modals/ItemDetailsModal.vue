@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -53,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="close">
         <FrIcon
           name="close"
-          class="md-24" />
+          icon-class="md-24" />
       </BButtonClose>
     </template>
 
@@ -100,11 +100,10 @@ of the MIT license. See the LICENSE file for details. -->
           :variant="modalProps.okVariant"
           @click="ok()">
           <FrIcon
-            v-if="modalProps.isRequested"
-            class="mr-2"
-            :outlined="true"
-            name="remove" />
-          {{ modalProps.okTitle }}
+            :icon-class="modalProps.isRequested ? 'mr-2' : ''"
+            :name="modalProps.isRequested ? 'remove' : ''">
+            {{ modalProps.okTitle }}
+          </FrIcon>
         </BButton>
         <BButton
           :variant="modalProps.cancelVariant"

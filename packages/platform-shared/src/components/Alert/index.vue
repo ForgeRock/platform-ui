@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,16 +10,15 @@ of the MIT license. See the LICENSE file for details. -->
     aria-live="assertive">
     <template #dismiss>
       <FrIcon
-        class="fr-alert-dismiss"
+        icon-class="fr-alert-dismiss"
         :aria-label="$t('common.close')"
         :outlined="false"
         name="close" />
     </template>
     <FrIcon
       v-if="showIcon"
-      class="mr-2"
-      :name="alertIcon"
-    />
+      icon-class="mr-2"
+      :name="alertIcon" />
     <!-- @slot Text that the alert will contain -->
     <slot />
   </BAlert>

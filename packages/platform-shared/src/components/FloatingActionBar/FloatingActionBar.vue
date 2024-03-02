@@ -35,8 +35,9 @@ of the MIT license. See the LICENSE file for details. -->
                 @click="$emit(button.event, $event)">
                 <FrIcon
                   :name="button.icon"
-                  :class="`mr-2 ${button.iconClass}`"
-                />{{ button.label }}
+                  :icon-class="`mr-2 ${button.iconClass}`">
+                  {{ button.label }}
+                </FrIcon>
               </BButton>
             </template>
             <BDropdown
@@ -48,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
               variant="dark">
               <template #button-content>
                 <FrIcon
-                  class="md-24"
+                  icon-class="md-24"
                   name="more_horiz" />
               </template>
               <template
@@ -59,9 +60,10 @@ of the MIT license. See the LICENSE file for details. -->
                   v-else
                   @click="$emit(item.event, item)">
                   <FrIcon
-                    class="mr-2"
-                    :name="item.icon"
-                  />{{ item.label }}
+                    icon-class="mr-2"
+                    :name="item.icon">
+                    {{ item.label }}
+                  </FrIcon>
                 </BDropdownItem>
               </template>
               <template
@@ -72,8 +74,9 @@ of the MIT license. See the LICENSE file for details. -->
                   @click="$emit(button.event, $event)">
                   <FrIcon
                     :name="button.icon"
-                    :class="`mr-2 ${button.iconClass}`"
-                  />{{ button.label }}
+                    :icon-class="`mr-2 ${button.iconClass}`">
+                    {{ button.label }}
+                  </FrIcon>
                 </BDropdownItem>
               </template>
             </BDropdown>

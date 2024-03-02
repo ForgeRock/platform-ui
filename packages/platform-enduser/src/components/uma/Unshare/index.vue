@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="close"
           @click="hideModal">
           <FrIcon
-            class="font-weight-bolder md-24 mb-1"
+            icon-class="font-weight-bolder md-24 mb-1"
             name="close" />
         </button>
       </div>

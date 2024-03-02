@@ -14,9 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
     </span>
     <template #button-content>
       <FrIcon
-        class="text-dark md-24"
-        name="add"
-      />
+        icon-class="text-dark md-24"
+        name="add" />
     </template>
     <BDropdownItem @click="$emit('add-rule', 'row')">
       {{ $t('queryFilterBuilder.addRuleButton') }}

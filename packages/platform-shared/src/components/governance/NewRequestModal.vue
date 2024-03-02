@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="align-items-center">
                 <FrIcon
                   name="group_add"
-                  class="rounded rounded-circle bg-lightblue mr-3 w-40 p-2 text-primary" />
+                  icon-class="rounded-circle bg-lightblue mr-3 w-40 p-2 text-primary" />
                 <h2
                   class="mb-0 h5"
                   :aria-label="$t('governance.accessRequest.newRequest.otherUsers')">

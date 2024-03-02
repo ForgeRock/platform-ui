@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <dd>
                   <div class="media">
                     <FrIcon
-                      class="mr-2 mt-1 text-success"
+                      icon-class="mr-2 mt-1 text-success"
                       name="check"
                     />
                     <div class="media-body">
@@ -70,9 +70,8 @@ of the MIT license. See the LICENSE file for details. -->
               <dd>
                 <div class="media">
                   <FrIcon
-                    class="mr-2 mt-1 text-muted"
-                    name="access_time"
-                  />
+                    icon-class="mr-2 mt-1 text-muted"
+                    name="access_time" />
                   <div class="media-body">
                     <div class="media-item">
                       {{ formateExpiryDate(slotData.expiryDateTime) }}
@@ -88,13 +87,12 @@ of the MIT license. See the LICENSE file for details. -->
             class="w-100"
             @click="showConfirmationModal(slotData)"
             type="button"
-            variant="outline-danger"
-          >
+            variant="outline-danger">
             <FrIcon
-              class="mr-2"
-              name="block"
-            />
-            {{ $t('pages.profile.oauthApplications.revokeAccess') }}
+              icon-class="mr-2"
+              name="block">
+              {{ $t('pages.profile.oauthApplications.revokeAccess') }}
+            </FrIcon>
           </BButton>
         </div>
       </template>

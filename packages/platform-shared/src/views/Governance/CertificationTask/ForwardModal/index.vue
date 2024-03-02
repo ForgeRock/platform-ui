@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -27,9 +27,10 @@ of the MIT license. See the LICENSE file for details. -->
           <p>{{ $t(`governance.certificationTask.actionsModal.forwardItemConfirmDescription`) }}</p>
           <div class="alert fr-alert alert-warning">
             <FrIcon
-              class="mr-2"
-              name="error_outline"
-            /><span>{{ $t('governance.certificationTask.actionsModal.warningDataMayBeInaccurate') }}</span>
+              icon-class="mr-2"
+              name="error_outline">
+              {{ $t('governance.certificationTask.actionsModal.warningDataMayBeInaccurate') }}
+            </FrIcon>
           </div>
         </div>
       </template>

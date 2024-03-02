@@ -27,23 +27,20 @@ of the MIT license. See the LICENSE file for details. -->
             <!-- > -->
             <div
               :class="[{'mb-4': !count}, 'position-relative']"
-              ref="cardTitle"
-            >
+              ref="cardTitle">
               <div
                 class="d-flex align-items-center justify-content-start"
-                v-if="title.length"
-              >
+                v-if="title.length">
                 <h5 class="mb-0">
                   {{ title }}
                 </h5>
                 <div
+                  v-if="tooltip.length"
                   :id="`link-button-${tooltipId}`"
                   class="tooltip-button"
-                  tabindex="0"
-                  v-if="tooltip.length"
-                >
+                  tabindex="0">
                   <FrIcon
-                    class="ml-1 mt-1"
+                    icon-class="ml-1 mt-1"
                     name="info" />
                 </div>
               </div>
@@ -86,7 +83,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="d-flex flex-grow-1 align-items-center text-center">
                 <div class="flex-grow-1">
                   <FrIcon
-                    class="error-icon text-danger"
+                    icon-class="error-icon text-danger"
                     name="error_outline" />
                   <div class="mt-3">
                     Failed to load data
@@ -99,8 +96,7 @@ of the MIT license. See the LICENSE file for details. -->
             no-fade
             placement="top"
             v-if="tooltip.length"
-            :target="`link-button-${tooltipId}`"
-          >
+            :target="`link-button-${tooltipId}`">
             {{ tooltip }}
           </BTooltip>
         </template>
@@ -248,4 +244,3 @@ export default {
   top: 0;
 }
 </style>
->

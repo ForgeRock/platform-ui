@@ -32,7 +32,7 @@ describe('Report Add Data Source card component', () => {
     it('emits "open-data-source-modal" when the save button is clicked', async () => {
       wrapper = setup({ disableSave: false });
 
-      const addDataSourceButton = findByText(wrapper, 'button', 'add Data Source');
+      const addDataSourceButton = findByText(wrapper, 'button', 'addData Source');
       await addDataSourceButton.trigger('click');
       expect(wrapper.emitted()['open-data-source-modal'][0]).toBeTruthy();
     });

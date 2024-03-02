@@ -35,10 +35,10 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-md-none border-bottom mobile-dropdown-menu">
           <template #button-content>
             <FrIcon
-              class="mr-1"
-              aria-hidden="true"
-              :name="tabItems[tabIndex].icon" />
-            {{ pluralizeValue(tabItems[tabIndex].displayName) }}
+              icon-class="mr-2"
+              :name="tabItems[tabIndex].icon">
+              {{ pluralizeValue(tabItems[tabIndex].displayName) }}
+            </FrIcon>
           </template>
           <BDropdownItem
             v-for="(tab, index) in tabItems"
@@ -46,10 +46,10 @@ of the MIT license. See the LICENSE file for details. -->
             :active="index === tabIndex"
             @click="tabIndex = index">
             <FrIcon
-              class="mr-3"
-              aria-hidden="true"
-              :name="tab.icon" />
-            {{ pluralizeValue(tab.displayName) }}
+              icon-class="mr-3"
+              :name="tab.icon">
+              {{ pluralizeValue(tab.displayName) }}
+            </FrIcon>
           </BDropdownItem>
         </BDropdown>
         <BTabs
@@ -70,9 +70,10 @@ of the MIT license. See the LICENSE file for details. -->
             :title-link-attributes="{'data-testid':`access-tab-${tab.grantType}`}">
             <template #title>
               <FrIcon
-                class="mr-3"
-                :name="tab.icon" />
-              {{ tab.displayName }}
+                icon-class="mr-3"
+                :name="tab.icon">
+                {{ tab.displayName }}
+              </FrIcon>
             </template>
             <FrGovResourceTable
               v-if="directReportUserInfo.userId && tab.active"

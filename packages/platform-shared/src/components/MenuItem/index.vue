@@ -16,12 +16,12 @@ of the MIT license. See the LICENSE file for details. -->
         :role="isNav ? '' : 'menuitem'"
         @click="$root.$emit('bv::show::modal', modal)">
         <FrIcon
-          v-if="icon"
-          class="mr-3"
-          :name="icon" />
-        <span class="menu-item-text">
-          {{ $t(displayName) }}
-        </span>
+          :icon-class="icon ? 'mr-2' : ''"
+          :name="icon || ''">
+          <span class="menu-item-text">
+            {{ $t(displayName) }}
+          </span>
+        </FrIcon>
       </BButton>
     </li>
     <!-- Item will change route or open a new tab -->
@@ -37,12 +37,12 @@ of the MIT license. See the LICENSE file for details. -->
       :to="routeTo">
       <div class="d-flex justify-content-between align-items-center pr-4">
         <FrIcon
-          v-if="icon"
-          class="mr-3"
-          :name="icon" />
-        <span class="menu-item-text">
-          {{ $t(displayName) }}
-        </span>
+          :icon-class="isNav && icon ? 'mr-3' : 'mr-2'"
+          :name="icon || ''">
+          <span class="menu-item-text">
+            {{ $t(displayName) }}
+          </span>
+        </FrIcon>
         <BBadge
           v-if="showBadgeWithContentFromStore && badgeContent(showBadgeWithContentFromStore)"
           class="ml-1"
@@ -60,12 +60,12 @@ of the MIT license. See the LICENSE file for details. -->
       @click="$emit('item-click', event)"
       :link-class="'d-flex align-items-center'">
       <FrIcon
-        v-if="icon"
-        class="mr-3"
-        :name="icon" />
-      <span class="menu-item-text">
-        {{ $t(displayName) }}
-      </span>
+        :icon-class="icon ? 'mr-3' : ''"
+        :name="icon || ''">
+        <span class="menu-item-text">
+          {{ $t(displayName) }}
+        </span>
+      </FrIcon>
     </Component>
     <!-- Item is an expandable menu with a submenu -->
     <li
@@ -79,12 +79,12 @@ of the MIT license. See the LICENSE file for details. -->
         :aria-label="$t(displayName)"
         :role="isNav ? '' : 'menuitem'">
         <FrIcon
-          v-if="icon"
-          class="mr-3"
-          :name="icon" />
-        <span class="menu-item-text">
-          {{ $t(displayName) }}
-        </span>
+          :icon-class="icon ? 'mr-3' : ''"
+          :name="icon || ''">
+          <span class="menu-item-text">
+            {{ $t(displayName) }}
+          </span>
+        </FrIcon>
       </BButton>
       <BCollapse
         :id="`collapse-${displayName.split(' ').join('-')}`"
@@ -99,12 +99,12 @@ of the MIT license. See the LICENSE file for details. -->
             :is="bootstrapComponent"
             @click="$emit('item-click', subItem.event)">
             <FrIcon
-              v-if="subItem.icon"
-              class="mr-3"
-              :name="subItem.icon" />
-            <span class="menu-item-text">
-              {{ $t(subItem.displayName) }}
-            </span>
+              :icon-class="subItem.icon ? 'mr-3' : ''"
+              :name="subItem.icon || ''">
+              <span class="menu-item-text">
+                {{ $t(subItem.displayName) }}
+              </span>
+            </FrIcon>
           </Component>
           <Component
             v-else-if="showSubItemForUser(subItem.showForRoles) && showSubItemForStoreValues(subItem.showForStoreValues)"
@@ -115,12 +115,12 @@ of the MIT license. See the LICENSE file for details. -->
             :to="subItem.routeTo">
             <div class="d-flex justify-content-between align-items-center pr-4">
               <FrIcon
-                v-if="subItem.icon"
-                class="mr-3"
-                :name="subItem.icon" />
-              <span class="menu-item-text">
-                {{ $t(subItem.displayName) }}
-              </span>
+                :icon-class="subItem.icon ? 'mr-3' : ''"
+                :name="subItem.icon || ''">
+                <span class="menu-item-text">
+                  {{ $t(subItem.displayName) }}
+                </span>
+              </FrIcon>
               <BBadge
                 v-if="badgeContent(subItem.showBadgeWithContentFromStore)"
                 class="ml-1"
