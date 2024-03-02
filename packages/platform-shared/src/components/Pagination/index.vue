@@ -56,34 +56,26 @@ of the MIT license. See the LICENSE file for details. -->
       <template #first-text>
         <FrIcon
           data-testid="first_page-button"
-          class="md-24"
-          name="first_page"
-          outlined
-        />
+          icon-class="md-24"
+          name="first_page" />
       </template>
       <template #prev-text>
         <FrIcon
           data-testid="prev_page-button"
-          class="md-24"
-          name="chevron_left"
-          outlined
-        />
+          icon-class="md-24"
+          name="chevron_left" />
       </template>
       <template #next-text>
         <FrIcon
           data-testid="next_page-button"
-          class="md-24"
-          name="chevron_right"
-          outlined
-        />
+          icon-class="md-24"
+          name="chevron_right" />
       </template>
       <template #last-text>
         <FrIcon
           data-testid="last_page-button"
-          class="md-24"
-          name="last_page"
-          outlined
-        />
+          icon-class="md-24"
+          name="last_page" />
       </template>
     </BPagination>
   </div>

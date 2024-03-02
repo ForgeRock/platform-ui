@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,11 +22,12 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="!isSaving && !firstLoad"
           class="d-flex m-2">
           <FrIcon
-            class="mr-2 color-green"
-            name="check" />
-          <span class="text-muted">
-            {{ $t('governance.certificationTask.allChangesSaved') }}
-          </span>
+            icon-class="mr-2 color-green"
+            name="check">
+            <span class="text-muted">
+              {{ $t('governance.certificationTask.allChangesSaved') }}
+            </span>
+          </FrIcon>
         </div>
         <FrSpinner
           v-if="isSaving"
@@ -55,16 +56,17 @@ of the MIT license. See the LICENSE file for details. -->
           :disabled="isSaving">
           <template #button-content>
             <FrIcon
-              class="text-dark md-24"
+              icon-class="text-dark md-24"
               name="more_horiz" />
           </template>
           <BDropdownItem
             data-testid="forward-review-button"
             @click="$bvModal.show('task-header-forward');">
             <FrIcon
-              class="mr-2"
-              name="redo" />
-            {{ $t('governance.certificationTask.actions.forward') }}
+              icon-class="mr-2"
+              name="redo">
+              {{ $t('governance.certificationTask.actions.forward') }}
+            </FrIcon>
           </BDropdownItem>
         </BDropdown>
         <FrForwardModal

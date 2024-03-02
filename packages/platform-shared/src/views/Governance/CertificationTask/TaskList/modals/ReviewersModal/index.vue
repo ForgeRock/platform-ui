@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="close">
         <FrIcon
           name="close"
-          class="md-24" />
+          icon-class="md-24" />
       </BButtonClose>
     </template>
     <div>
@@ -59,11 +59,10 @@ of the MIT license. See the LICENSE file for details. -->
             v-else
             no-body>
             <BMediaAside vertical-align="center">
-              <div
-                class="rounded-circle d-flex align-items-center justify-content-center bg-lightblue text-primary wh-36px">
+              <div class="rounded-circle d-flex align-items-center justify-content-center bg-lightblue text-primary wh-36px">
                 <FrIcon
                   name="assignment_ind"
-                  class="md-15" />
+                  icon-class="md-15" />
               </div>
             </BMediaAside>
             <BMediaBody class="text-truncate">
@@ -92,24 +91,24 @@ of the MIT license. See the LICENSE file for details. -->
             variant="link">
             <template #button-content>
               <FrIcon
-                class="text-dark md-24"
+                icon-class="text-dark md-24"
                 name="more_horiz" />
             </template>
-            <BDropdownItem
-              @click="editReviewer(item)">
+            <BDropdownItem @click="editReviewer(item)">
               <FrIcon
-                class="mr-2"
-                name="edit" />
-              {{ $t('common.edit') }}
+                icon-class="mr-2"
+                name="edit">
+                {{ $t('common.edit') }}
+              </FrIcon>
             </BDropdownItem>
             <template v-if="reviewers.length > 1">
               <BDropdownDivider />
-              <BDropdownItem
-                @click="deleteReviewer(item.id)">
+              <BDropdownItem @click="deleteReviewer(item.id)">
                 <FrIcon
-                  class="mr-2"
-                  name="delete" />
-                {{ $t('common.remove') }}
+                  icon-class="mr-2"
+                  name="delete">
+                  {{ $t('common.remove') }}
+                </FrIcon>
               </BDropdownItem>
             </template>
           </BDropdown>
@@ -123,8 +122,9 @@ of the MIT license. See the LICENSE file for details. -->
         @click="openAddReviewerModal()">
         <FrIcon
           name="add"
-          class="md-15" />
-        {{ $t('governance.certificationTask.lineItemReviewersModal.addReviewerButtonText') }}
+          icon-class="md-15">
+          {{ $t('governance.certificationTask.lineItemReviewersModal.addReviewerButtonText') }}
+        </FrIcon>
       </BButton>
       <BButton
         variant="outline-primary"

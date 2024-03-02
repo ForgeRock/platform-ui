@@ -77,7 +77,7 @@ of the MIT license. See the LICENSE file for details. -->
       variant="link">
       <template #button-content>
         <FrIcon
-          class="text-dark md-24"
+          icon-class="text-dark md-24"
           name="more_horiz" />
       </template>
 
@@ -88,9 +88,10 @@ of the MIT license. See the LICENSE file for details. -->
         :data-testid="`forward-button-${item.id}`"
         :disabled="isStaged">
         <FrIcon
-          class="mr-2"
-          name="redo" />
-        {{ $t('governance.certificationTask.actions.forward') }}
+          icon-class="mr-2"
+          name="redo">
+          {{ $t('governance.certificationTask.actions.forward') }}
+        </FrIcon>
       </BDropdownItem>
 
       <!-- View Reviewers -->
@@ -99,9 +100,10 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="isStaged"
         :data-testid="`cert-reviewers-button-${certGrantType}`">
         <FrIcon
-          class="mr-2"
-          name="group" />
-        {{ $t('governance.certificationTask.actions.viewReviewers') }}
+          icon-class="mr-2"
+          name="group">
+          {{ $t('governance.certificationTask.actions.viewReviewers') }}
+        </FrIcon>
       </BDropdownItem>
 
       <!-- Comment -->
@@ -111,17 +113,19 @@ of the MIT license. See the LICENSE file for details. -->
         :data-testid="`add-comment-button-${item.id}`"
         :disabled="isStaged">
         <FrIcon
-          class="mr-2"
-          name="mode_comment" />
-        {{ $t('governance.certificationTask.actions.addComment') }}
+          icon-class="mr-2"
+          name="mode_comment">
+          {{ $t('governance.certificationTask.actions.addComment') }}
+        </FrIcon>
       </BDropdownItem>
 
       <!-- View Activity -->
       <BDropdownItem @click="$emit('action', 'activity', item)">
         <FrIcon
-          class="mr-2"
-          name="article" />
-        {{ $t('governance.certificationTask.actions.viewActivity') }}
+          icon-class="mr-2"
+          name="article">
+          {{ $t('governance.certificationTask.actions.viewActivity') }}
+        </FrIcon>
       </BDropdownItem>
     </BDropdown>
   </div>

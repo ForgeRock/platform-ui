@@ -103,9 +103,10 @@ of the MIT license. See the LICENSE file for details. -->
                 variant="outline-primary"
                 @click="showFilterModal">
                 <FrIcon
-                  class="mr-2"
-                  name="filter_list" />
-                {{ $t('governance.accessRequest.newRequest.filters') }}
+                  icon-class="mr-2"
+                  name="filter_list">
+                  {{ $t('governance.accessRequest.newRequest.filters') }}
+                </FrIcon>
                 <BBadge
                   v-if="quantityFilters"
                   class="ml-1"
@@ -187,17 +188,20 @@ of the MIT license. See the LICENSE file for details. -->
                         <BCardFooter class="border-0 pt-0 d-flex justify-content-end">
                           <template v-if="item.requested">
                             <FrIcon
-                              class="mr-2 text-success"
-                              name="check" />{{ $t('governance.accessRequest.newRequest.added') }}
+                              icon-class="mr-2 text-success"
+                              name="check">
+                              {{ $t('governance.accessRequest.newRequest.added') }}
+                            </FrIcon>
                           </template>
                           <span
                             v-else
                             class="hover-underline color-blue"
-                            @click="openItemDetails(item)"
-                          >
+                            @click="openItemDetails(item)">
                             <FrIcon
-                              class="mr-2"
-                              name="add" />{{ $t('governance.accessRequest.newRequest.request') }}
+                              icon-class="mr-2"
+                              name="add">
+                              {{ $t('governance.accessRequest.newRequest.request') }}
+                            </FrIcon>
                           </span>
                         </BCardFooter>
                       </BCard>

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,19 +41,19 @@ of the MIT license. See the LICENSE file for details. -->
                 <span>
                   <template v-if="slotData.connected">
                     <FrIcon
-                      class="mr-2 text-success"
+                      icon-class="mr-2 text-success"
                       :outlined="false"
-                      name="check_circle"
-                    />
-                    {{ $t("common.connected") }}
+                      name="check_circle">
+                      {{ $t("common.connected") }}
+                    </FrIcon>
                   </template>
                   <template v-else>
                     <FrIcon
-                      class="mr-2 text-muted"
+                      icon-class="mr-2 text-muted"
                       :outlined="false"
-                      name="remove_circle"
-                    />
-                    {{ $t('pages.profile.social.notConnected') }}
+                      name="remove_circle">
+                      {{ $t('pages.profile.social.notConnected') }}
+                    </FrIcon>
                   </template>
                 </span>
               </BCol>
@@ -73,12 +73,12 @@ of the MIT license. See the LICENSE file for details. -->
                 :key="slotData.provider + scope"
                 class="mt-2">
                 <FrIcon
-                  class="mr-2 text-success"
-                  name="check"
-                />
-                <span class="text-dark">
-                  {{ scope }}
-                </span>
+                  icon-class="mr-2 text-success"
+                  name="check">
+                  <span class="text-dark">
+                    {{ scope }}
+                  </span>
+                </FrIcon>
               </div>
             </div>
           </template>
@@ -87,10 +87,10 @@ of the MIT license. See the LICENSE file for details. -->
             variant="outline-danger"
             block>
             <FrIcon
-              class="mr-2"
-              name="block"
-            />
-            {{ $t('pages.profile.social.disconnect') }}
+              icon-class="mr-2"
+              name="block">
+              {{ $t('pages.profile.social.disconnect') }}
+            </FrIcon>
           </BButton>
         </template>
         <BButton

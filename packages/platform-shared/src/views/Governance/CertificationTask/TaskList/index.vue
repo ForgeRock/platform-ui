@@ -27,9 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
           variant="link-dark"
           class="mr-2"
           @click="openSortModal()">
-          <FrIcon
-            outlined
-            name="view_column" />
+          <FrIcon name="view_column" />
         </BButton>
       </div>
     </div>
@@ -156,7 +154,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="cursor-pointer">
             <FrIcon
               :id="`flags-${item.id}-${index}`"
-              class="md-24 mr-3"
+              icon-class="md-24 mr-3"
               :name="flagIcons[flag]" />
             <BTooltip
               :target="`flags-${item.id}-${index}`"
@@ -177,7 +175,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="cert-comments-button"
             variant="link">
             <FrIcon
-              class="md-24"
+              icon-class="md-24"
               name="chat_bubble_outline" />
             <BBadge
               class="mr-1 position-absolute comments-counter"
@@ -227,7 +225,7 @@ of the MIT license. See the LICENSE file for details. -->
             @click="onRowSelected(item)">
             <FrIcon
               data-testid="group-by-icon"
-              class="md-24"
+              icon-class="md-24"
               name="chevron_right" />
           </BButton>
         </div>

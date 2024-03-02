@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -43,10 +43,12 @@ of the MIT license. See the LICENSE file for details. -->
               <BButton
                 size="sm"
                 variant="outline-primary"
-                @click="$router.push({name: 'AutoAccessUserBehavior', params: { username: eventData.raw.username}})"
-              >
-                <FrIcon name="insights" />
-                {{ $t("autoAccess.access.activity.viewRecentBehavior") }}
+                @click="$router.push({name: 'AutoAccessUserBehavior', params: { username: eventData.raw.username}})">
+                <FrIcon
+                  icon-class="mr-2"
+                  name="insights">
+                  {{ $t("autoAccess.access.activity.viewRecentBehavior") }}
+                </FrIcon>
               </BButton>
             </div>
           </div>

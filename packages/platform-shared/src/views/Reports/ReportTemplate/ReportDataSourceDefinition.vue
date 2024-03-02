@@ -1,9 +1,7 @@
-<!-- Copyright 2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
     body-class="p-0"
@@ -28,7 +26,7 @@ to such license between the licensee and ForgeRock AS. -->
         :edit-option="false"
         @delete-clicked.stop="$emit('delete-data-source')" />
       <FrIcon
-        class="pl-2"
+        icon-class="pl-2"
         :name="showAccordion ? 'expand_less' : 'expand_more'" />
     </BButton>
     <BCollapse
@@ -86,18 +84,20 @@ to such license between the licensee and ForgeRock AS. -->
               variant="link">
               <template #button-content>
                 <FrIcon
-                  class="text-dark md-18"
+                  icon-class="text-dark md-18"
                   name="add" />
               </template>
               <BDropdownItem @click="addRelatedEntity(entity)">
                 <FrIcon
-                  class="mr-2"
-                  name="add" />{{ $t('reports.template.addAsDataSource') }}
+                  icon-class="mr-2"
+                  name="add">
+                  {{ $t('reports.template.addAsDataSource') }}
+                </FrIcon>
               </BDropdownItem>
             </BDropdown>
             <FrIcon
               v-else
-              class="text-success md-18 ml-auto"
+              icon-class="text-success md-18 ml-auto"
               name="check" />
           </BListGroupItem>
         </BListGroup>

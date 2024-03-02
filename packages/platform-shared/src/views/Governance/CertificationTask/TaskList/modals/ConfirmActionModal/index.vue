@@ -31,9 +31,10 @@ of the MIT license. See the LICENSE file for details. -->
           <p>{{ $t(`governance.certificationTask.actionsModal.${modalOptions.confirmDescription}`) }}</p>
           <div class="alert d-flex fr-alert alert-warning">
             <FrIcon
-              class="mr-2"
-              name="error_outline"
-            /><span>{{ $t('governance.certificationTask.actionsModal.warningDataMayBeInaccurate') }}</span>
+              icon-class="mr-2"
+              name="error_outline">
+              {{ $t('governance.certificationTask.actionsModal.warningDataMayBeInaccurate') }}
+            </FrIcon>
           </div>
         </template>
       </div>

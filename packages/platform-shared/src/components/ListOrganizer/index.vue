@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         variant="outline-secondary"
         @click="showModal = true">
         <FrIcon
-          class="md-24"
+          icon-class="md-24"
           name="view_column" />
       </BButton>
     </slot>
@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
                     type="checkbox"
                     :label="element.label" />
                   <FrIcon
-                    class="ml-4"
+                    icon-class="ml-4"
                     name="drag_indicator" />
                 </div>
               </BListGroupItem>

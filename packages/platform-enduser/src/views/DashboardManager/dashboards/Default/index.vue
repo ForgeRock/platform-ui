@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -24,9 +24,8 @@ of the MIT license. See the LICENSE file for details. -->
         class="mt-4 text-center">
         <div class="d-flex justify-content-center mt-3">
           <FrIcon
-            class="mr-4 md-64"
-            name="donut_large"
-          />
+            icon-class="mr-4 md-64"
+            name="donut_large" />
           <div class="flex-fow-1">
             <h1 class="h2">
               {{ $t('pages.dashboard.noWidget') }}

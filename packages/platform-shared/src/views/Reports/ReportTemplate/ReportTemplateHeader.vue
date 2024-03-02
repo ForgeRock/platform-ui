@@ -1,9 +1,7 @@
-<!-- Copyright 2023-2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="sticky-top">
     <FrNavbar
@@ -39,8 +37,10 @@ to such license between the licensee and ForgeRock AS. -->
           <BDropdownGroup>
             <BDropdownItem @click="$emit('duplicate')">
               <FrIcon
-                class="mr-2"
-                name="control_point_duplicate" />{{ $t('common.duplicate') }}
+                icon-class="mr-2"
+                name="control_point_duplicate">
+                {{ $t('common.duplicate') }}
+              </FrIcon>
             </BDropdownItem>
           </BDropdownGroup>
         </template>
