@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -26,9 +26,8 @@ of the MIT license. See the LICENSE file for details. -->
                   <BRow class="px-4">
                     <div class="w-100 media align-items-center">
                       <FrIcon
-                        class="md-24 mr-3"
-                        name="stay_primary_portrait"
-                      />
+                        icon-class="md-24 mr-3"
+                        name="stay_primary_portrait" />
                       <div class="media-body">
                         <h5 class="m-0">
                           {{ getTranslation(device.deviceName) }}
@@ -41,9 +40,8 @@ of the MIT license. See the LICENSE file for details. -->
                         toggle-class="pr-0 text-decoration-none">
                         <template #button-content>
                           <FrIcon
-                            class="text-muted"
-                            name="more_horiz"
-                          />
+                            icon-class="text-muted"
+                            name="more_horiz" />
                         </template>
                         <template
                           v-for="(button, index) in device.dropdown"
@@ -52,10 +50,10 @@ of the MIT license. See the LICENSE file for details. -->
                             <BDropdownDivider v-if="index > 0" />
                             <BDropdownItemButton @click="button.action">
                               <FrIcon
-                                class="text-muted mr-2"
-                                :name="button.icon"
-                              />
-                              {{ button.text }}
+                                icon-class="text-muted mr-2"
+                                :name="button.icon">
+                                {{ button.text }}
+                              </FrIcon>
                             </BDropdownItemButton>
                           </div>
                         </template>
@@ -85,9 +83,8 @@ of the MIT license. See the LICENSE file for details. -->
               class="close"
               @click="close()">
               <FrIcon
-                class="font-weight-bolder md-24 mb-1"
-                name="close"
-              />
+                icon-class="font-weight-bolder md-24 mb-1"
+                name="close" />
             </button>
           </div>
         </template>

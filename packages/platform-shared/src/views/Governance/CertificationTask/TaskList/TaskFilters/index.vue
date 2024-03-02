@@ -14,11 +14,10 @@ of the MIT license. See the LICENSE file for details. -->
             name="certifiedColumnSelected"
             type="checkbox" />
           <FrIcon
-            name="check"
-            class="color-green mr-2" />
-          <span>
+            icon-class="color-green mr-2"
+            name="check">
             {{ $t('governance.certificationTask.certified') }}
-          </span>
+          </FrIcon>
         </div>
         <div class="d-flex justify-content-start mr-4">
           <FrField
@@ -27,11 +26,10 @@ of the MIT license. See the LICENSE file for details. -->
             name="revokedColumnSelected"
             type="checkbox" />
           <FrIcon
-            name="block"
-            class="color-red mr-2" />
-          <span>
+            icon-class="color-red mr-2"
+            name="block">
             {{ $t('governance.certificationTask.revoked') }}
-          </span>
+          </FrIcon>
         </div>
         <div class="d-flex justify-content-start mr-4">
           <FrField
@@ -40,11 +38,10 @@ of the MIT license. See the LICENSE file for details. -->
             name="exceptionAllowedColumnSelected"
             type="checkbox" />
           <FrIcon
-            name="schedule"
-            class="color-gray mr-2" />
-          <span>
+            icon-class="color-gray mr-2"
+            name="schedule">
             {{ $t('governance.certificationTask.exceptionAllowed') }}
-          </span>
+          </FrIcon>
         </div>
         <div class="d-flex justify-content-start">
           <FrField

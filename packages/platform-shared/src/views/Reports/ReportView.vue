@@ -14,11 +14,12 @@ of the MIT license. See the LICENSE file for details. -->
           variant="dark"
           @click="returnToTemplate()">
           <FrIcon
-            class="mr-3 md-24"
-            name="arrow_back" />
-          <span class="d-none d-lg-inline-block">
-            {{ reportName }}
-          </span>
+            icon-class="mr-3 md-24"
+            name="arrow_back">
+            <span class="d-none d-lg-inline-block">
+              {{ reportName }}
+            </span>
+          </FrIcon>
         </BLink>
       </BCol>
       <BCol class="col-7 col-md-6 col-lg-4 d-flex justify-content-center align-items-center">
@@ -46,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
               size="sm" />
             <FrIcon
               v-else
-              class="mr-md-2"
+              icon-class="mr-md-2"
               name="file_download" />
             <span class="d-none d-md-block">
               {{ $t('reports.export') }}
@@ -64,17 +65,17 @@ of the MIT license. See the LICENSE file for details. -->
             </template>
             <template v-else-if="jsonStatus">
               <FrIcon
-                class="mr-2"
-                name="file_download"
-              />
-              {{ $t('reports.downloadFile', { fileType: 'JSON' }) }}
+                icon-class="mr-2"
+                name="file_download">
+                {{ $t('reports.downloadFile', { fileType: 'JSON' }) }}
+              </FrIcon>
             </template>
             <template v-else>
               <FrIcon
-                class="mr-2"
-                name="sync"
-              />
-              {{ $t('reports.exportFile', { fileType: 'JSON' }) }}
+                icon-class="mr-2"
+                name="sync">
+                {{ $t('reports.exportFile', { fileType: 'JSON' }) }}
+              </FrIcon>
             </template>
           </BDropdownItemButton>
           <BDropdownItemButton
@@ -89,17 +90,17 @@ of the MIT license. See the LICENSE file for details. -->
             </template>
             <template v-else-if="csvStatus">
               <FrIcon
-                class="mr-2"
-                name="file_download"
-              />
-              {{ $t('reports.downloadFile', { fileType: 'CSV' }) }}
+                icon-class="mr-2"
+                name="file_download">
+                {{ $t('reports.downloadFile', { fileType: 'CSV' }) }}
+              </FrIcon>
             </template>
             <template v-else>
               <FrIcon
-                class="mr-2"
-                name="sync"
-              />
-              {{ $t('reports.exportFile', { fileType: 'CSV' }) }}
+                icon-class="mr-2"
+                name="sync">
+                {{ $t('reports.exportFile', { fileType: 'CSV' }) }}
+              </FrIcon>
             </template>
           </BDropdownItemButton>
         </BDropdown>

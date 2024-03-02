@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="mb-4 mt-3 opacity-20">
         <FrIcon
           name="chat_bubble_outline"
-          class="md-48" />
+          icon-class="md-48" />
       </div>
       <h2 class="h5">
         {{ $t('governance.requestModal.noComments') }}
@@ -24,8 +24,10 @@ of the MIT license. See the LICENSE file for details. -->
         variant="primary"
         @click="$emit('add-comment')">
         <FrIcon
-          class="mr-2"
-          name="add" />{{ $t('governance.requestModal.addComment') }}
+          icon-class="mr-2"
+          name="add">
+          {{ $t('governance.requestModal.addComment') }}
+        </FrIcon>
       </BButton>
     </div>
     <div v-else>
@@ -37,8 +39,10 @@ of the MIT license. See the LICENSE file for details. -->
           variant="primary"
           @click="$emit('add-comment')">
           <FrIcon
-            class="mr-2"
-            name="add" />{{ $t('governance.requestModal.addComment') }}
+            icon-class="mr-2"
+            name="add">
+            {{ $t('governance.requestModal.addComment') }}
+          </FrIcon>
         </BButton>
       </div>
       <ul

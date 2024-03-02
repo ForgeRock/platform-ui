@@ -48,12 +48,10 @@ of the MIT license. See the LICENSE file for details. -->
       v-else-if="!tableData.length & !(queryThreshold > 0 && !noData && !tableData.length)"
       class="col-lg-8 offset-lg-2"
       data-testid="no-resources-found">
-      <div
-        class="text-center mt-2 mb-5 py-5">
+      <div class="text-center mt-2 mb-5 py-5">
         <FrIcon
-          class="fr-no-data-icon md-48 text-secondary opacity-20 mt-4 mb-2"
-          :name="managedIcon"
-        />
+          icon-class="fr-no-data-icon md-48 text-secondary opacity-20 mt-4 mb-2"
+          :name="managedIcon" />
         <h5>{{ $t('listResource.noManaged', { capitalizedResourceName: getTranslation(capitalizedResourceName) }) }}</h5>
         <p class="mb-4">
           {{ $t('listResource.noResultsHelp') }}
@@ -90,10 +88,10 @@ of the MIT license. See the LICENSE file for details. -->
               #custom-top-actions>
               <BDropdownItem @click="setResourceToClearSessionsFor(item)">
                 <FrIcon
-                  class="mr-3"
-                  name="clear_all"
-                />
-                {{ $t('common.endSessions') }}
+                  icon-class="mr-3"
+                  name="clear_all">
+                  {{ $t('common.endSessions') }}
+                </FrIcon>
               </BDropdownItem>
             </template>
           </FrActionsCell>

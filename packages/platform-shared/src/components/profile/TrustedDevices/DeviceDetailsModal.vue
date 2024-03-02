@@ -27,11 +27,10 @@ of the MIT license. See the LICENSE file for details. -->
       <BButtonClose
         variant="link"
         class="ml-auto"
-        @click="bvModal.hide('device-modal')"
-      >
+        @click="bvModal.hide('device-modal')">
         <FrIcon
           name="close"
-          class="text-light text-muted md-24" />
+          icon-class="text-muted md-24" />
       </BButtonClose>
     </template>
     <FrDeviceDetails
@@ -42,16 +41,16 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           data-testid="remove-device"
           variant="outline-danger"
-          @click="handleDeleteButtonClick"
-        >
+          @click="handleDeleteButtonClick">
           <FrIcon
-            class="material-icons-outlined mr-2"
-            name="delete" />{{ $t('pages.profile.trustedDevices.remove') }}
+            icon-class="mr-2"
+            name="delete">
+            {{ $t('pages.profile.trustedDevices.remove') }}
+          </FrIcon>
         </BButton>
         <BButton
           variant="outline-primary"
-          @click="bvModal.hide('device-modal')"
-        >
+          @click="bvModal.hide('device-modal')">
           {{ $t('common.done') }}
         </BButton>
       </div>

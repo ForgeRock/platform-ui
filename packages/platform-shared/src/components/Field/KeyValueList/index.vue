@@ -80,9 +80,10 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="disabled"
         @click="showAdd()">
         <FrIcon
-          class="mr-2"
-          name="add" />
-        {{ addLabel || $t('common.add') }}
+          icon-class="mr-2"
+          name="add">
+          {{ addLabel || $t('common.add') }}
+        </FrIcon>
       </BButton>
     </div>
     <FrValidationError

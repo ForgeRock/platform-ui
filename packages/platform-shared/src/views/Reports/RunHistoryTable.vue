@@ -20,15 +20,10 @@ of the MIT license. See the LICENSE file for details. -->
       <template #head()="{ label, field: { key, sortable }}">
         {{ label }}
         <template v-if="sortable && sortBy === key">
-          <!-- Custom sort icons -->
+          <!-- Custom sort icon -->
           <FrIcon
-            v-if="!sortDesc"
-            class="text-muted"
-            name="arrow_upward" />
-          <FrIcon
-            v-else
-            class="text-muted"
-            name="arrow_downward" />
+            icon-class="text-muted"
+            :name="sortDesc ? 'arrow_downward' : 'arrow_upward'" />
         </template>
       </template>
       <template #cell(date)="{ item }">
@@ -77,8 +72,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :label="$t('common.loadingEtc')" />
                 <FrIcon
                   v-else
-                  class="md-24"
-                  :class="item.hasAnyErrors() ? 'text-danger' : 'text-dark'"
+                  :icon-class="`${item.hasAnyErrors() ? 'text-danger' : 'text-dark'} md-24`"
                   :name="item.hasAnyErrors() ? 'error_outline' : 'file_download'" />
               </div>
             </template>
@@ -116,19 +110,19 @@ of the MIT license. See the LICENSE file for details. -->
                 class="d-lg-none"
                 @click="emit('view-report', item.runId)">
                 <FrIcon
-                  class="mr-3"
-                  name="description" />
-                <span data-testid="view-report-option">
+                  data-testid="view-report-option"
+                  icon-class="mr-3"
+                  name="description">
                   {{ $t('reports.tabs.runHistory.table.viewReport') }}
-                </span>
+                </FrIcon>
               </BDropdownItem>
               <BDropdownItem @click="emit('view-run-details', item)">
                 <FrIcon
-                  class="mr-3"
-                  name="list_alt" />
-                <span data-testid="view-run-option">
+                  data-testid="view-run-option"
+                  icon-class="mr-3"
+                  name="list_alt">
                   {{ $t('reports.tabs.runHistory.table.runDetails') }}
-                </span>
+                </FrIcon>
               </BDropdownItem>
             </BDropdownGroup>
           </template>
