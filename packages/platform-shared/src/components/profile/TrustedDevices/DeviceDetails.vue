@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
           :src="device.map">
         <div class="media">
           <FrIcon
-            class="mr-2 mt-1 text-muted"
+            icon-class="mr-2 mt-1 text-muted"
             name="place" />
           <div class="media-body">
             <div

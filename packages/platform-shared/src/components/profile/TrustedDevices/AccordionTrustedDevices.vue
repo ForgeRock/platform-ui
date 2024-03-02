@@ -51,10 +51,11 @@ of the MIT license. See the LICENSE file for details. -->
                 v-if="slotData.isCurrent"
                 data-testid="current-item">
                 <FrIcon
-                  class="mr-2 text-success"
+                  icon-class="mr-2 text-success"
                   :outlined="false"
-                  name="check_circle"
-                />{{ i18n.global.t('pages.profile.trustedDevices.currentDevice') }}
+                  name="check_circle">
+                  {{ i18n.global.t('pages.profile.trustedDevices.currentDevice') }}
+                </FrIcon>
               </span>
               <span
                 v-else
@@ -76,9 +77,10 @@ of the MIT license. See the LICENSE file for details. -->
           class="w-100"
           @click="handleDeleteButtonClick">
           <FrIcon
-            class="mr-2"
-            name="block"
-          />{{ i18n.global.t('pages.profile.trustedDevices.remove') }}
+            icon-class="mr-2"
+            name="block">
+            {{ i18n.global.t('pages.profile.trustedDevices.remove') }}
+          </FrIcon>
         </BButton>
       </div>
     </template>

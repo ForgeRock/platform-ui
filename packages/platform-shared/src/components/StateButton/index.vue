@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,11 +9,10 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="active"
       #button-content>
       <FrIcon
-        class="mr-md-2 text-success"
-        name="check_circle"
-      />
-
-      <span>{{ $t('common.active') }}</span>
+        icon-class="mr-2 text-success"
+        name="check_circle">
+        {{ $t('common.active') }}
+      </FrIcon>
     </template>
     <template
       v-else
@@ -24,25 +23,22 @@ of the MIT license. See the LICENSE file for details. -->
     <template
       v-if="active">
       <BDropdownItem
-        @click="changeState(false)"
-      >
+        @click="changeState(false)">
         <FrIcon
-          class="mr-md-2"
-          name="power_settings_new"
-        />
-        <span>{{ $t('common.deactivate') }}</span>
+          icon-class="mr-2"
+          name="power_settings_new">
+          {{ $t('common.deactivate') }}
+        </FrIcon>
       </BDropdownItem>
     </template>
     <template
       v-else>
-      <BDropdownItem
-        @click="changeState(true)"
-      >
+      <BDropdownItem @click="changeState(true)">
         <FrIcon
-          class="mr-md-2 text-success"
-          name="check_circle"
-        />
-        <span>{{ $t('common.activate') }}</span>
+          icon-class="mr-2 text-success"
+          name="check_circle">
+          {{ $t('common.activate') }}
+        </FrIcon>
       </BDropdownItem>
     </template>
   </BDropdown>

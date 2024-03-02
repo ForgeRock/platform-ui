@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
             :aria-label="$t('governance.accessRequest.newRequest.expandRequestCart')"
             @click="toggleRequestCartPanel">
             <FrIcon
-              class="md-24"
+              icon-class="md-24"
               name="shopping_cart" />
           </BButton>
         </template>
@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
                   @click="toggleRequestCartPanel">
                   <FrIcon
                     name="close"
-                    class="text-light text-muted md-24" />
+                    icon-class="text-light text-muted md-24" />
                 </BButtonClose>
               </div>
               <FrRequestCart
@@ -89,7 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template #modal-title>
         <div class="d-flex align-items-center">
           <FrIcon
-            class="md-24 mr-3 text-danger"
+            icon-class="md-24 mr-3 text-danger"
             name="error_outline" />
           <h1 class="h5 modal-title">
             {{ $t('governance.accessRequest.newRequest.requestErrorTitle') }}

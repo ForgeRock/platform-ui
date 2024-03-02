@@ -43,13 +43,11 @@ of the MIT license. See the LICENSE file for details. -->
               class="caret ml-2 my-auto list-group-item-action"
               v-if="mapping.consented">
               <FrIcon
-                class="font-weight-bolder md-24 mb-1 pr-0 caret-down align-self-center"
-                name="keyboard_arrow_down"
-              />
+                icon-class="font-weight-bolder md-24 mb-1 pr-0 caret-down align-self-center"
+                name="keyboard_arrow_down" />
               <FrIcon
-                class="font-weight-bolder md-24 mb-1 pr-0 caret-up align-self-center"
-                name="keyboard_arrow_up"
-              />
+                icon-class="font-weight-bolder md-24 mb-1 pr-0 caret-up align-self-center"
+                name="keyboard_arrow_up" />
             </div>
           </div>
         </div>
@@ -69,9 +67,8 @@ of the MIT license. See the LICENSE file for details. -->
                 class="close"
                 @click.stop.prevent="hideModal(mapping.name)">
                 <FrIcon
-                  class="font-weight-bolder md-24 mb-1"
-                  name="close"
-                />
+                  icon-class="font-weight-bolder md-24 mb-1"
+                  name="close" />
               </button>
             </div>
           </template>

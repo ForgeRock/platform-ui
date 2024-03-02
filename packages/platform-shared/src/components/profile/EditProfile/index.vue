@@ -20,9 +20,8 @@ of the MIT license. See the LICENSE file for details. -->
             variant="dark"
             @click="$bvModal.show('frProfileImageModal')">
             <FrIcon
-              class="md-18"
-              name="camera_alt"
-            />
+              icon-class="md-18"
+              name="camera_alt" />
           </BButton>
         </div>
       </div>

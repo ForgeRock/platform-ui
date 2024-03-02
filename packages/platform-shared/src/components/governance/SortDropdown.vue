@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     variant="link">
     <template #button-content>
       <FrIcon
-        class="mr-2 pt-02"
+        icon-class="mr-2"
         name="sort" />
       <div :class="{ 'd-none d-lg-block': hideLabelsOnMobile }">
         <span class="font-weight-bold mr-1">
@@ -43,12 +43,11 @@ of the MIT license. See the LICENSE file for details. -->
           :key="slotName"
           #[slotName]="{ option }">
           <div :class="{ 'mb-1': slotName === 'singleLabel' }">
-            <span class="mr-2">
-              <FrIcon :name="option.value === 'asc' ? 'arrow_upward' : 'arrow_downward'" />
-            </span>
-            <span>
+            <FrIcon
+              icon-class="mr-2"
+              :name="option.value === 'asc' ? 'arrow_upward' : 'arrow_downward'">
               {{ option.text }}
-            </span>
+            </FrIcon>
           </div>
         </template>
       </FrField>
@@ -111,10 +110,6 @@ watch(() => props.selectedItem, (newValue) => {
 </script>
 
 <style lang="scss" scoped>
-.pt-02 {
-  padding-top: 0.2rem;
-}
-
 .h5 {
   font-weight: 600;
 }

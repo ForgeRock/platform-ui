@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="close">
         <FrIcon
           name="close"
-          class="md-24" />
+          icon-class="md-24" />
       </BButtonClose>
     </template>
 
@@ -49,8 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="rounded-circle bg-light d-flex align-items-center justify-content-center py-2">
               <FrIcon
                 name="chat_bubble_outline"
-                class="md-18"
-              />
+                icon-class="md-18" />
             </div>
             <div class="thread-line flex-grow-1 my-2" />
           </div>
@@ -109,8 +108,9 @@ of the MIT license. See the LICENSE file for details. -->
         @click="openAddCommentModal()">
         <FrIcon
           name="add"
-          class="md-15" />
-        {{ $t('governance.certificationTask.actions.addComment') }}
+          icon-class="md-15">
+          {{ $t('governance.certificationTask.actions.addComment') }}
+        </FrIcon>
       </BButton>
       <BButton
         variant="outline-primary"

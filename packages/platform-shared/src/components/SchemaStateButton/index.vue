@@ -1,18 +1,15 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BDropdown
-    variant="outline-secondary">
-    <template
-      #button-content>
+  <BDropdown variant="outline-secondary">
+    <template #button-content>
       <FrIcon
-        v-if="value === $t('common.active')"
-        class="mr-md-2 text-success"
-        name="check_circle"
-      />
-      <span>{{ value }}</span>
+        :icon-class="`${value === $t('common.active') ? 'mr-2' : ''} text-success`"
+        :name="value === $t('common.active') ? 'check_circle' : ''">
+        {{ value }}
+      </FrIcon>
     </template>
 
     <BDropdownItem
@@ -20,11 +17,10 @@ of the MIT license. See the LICENSE file for details. -->
       @click="changeState(item.value)"
       :key="item.value">
       <FrIcon
-        v-if="item.icon"
-        :class="`mr-md-2 ${item.textClass}`"
-        :name="item.icon"
-      />
-      <span>{{ item.text }}</span>
+        :icon-class="`${item.icon ? 'mr-2' : ''} ${item.textClass}`"
+        :name="item.icon || ''">
+        {{ item.text }}
+      </FrIcon>
     </BDropdownItem>
   </BDropdown>
 </template>

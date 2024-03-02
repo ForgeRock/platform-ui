@@ -11,9 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         <hr>
       </div>
       <div class="col-auto pt-1">
-        <FrIcon
-          name="lock"
-        />
+        <FrIcon name="lock" />
       </div>
       <div class="col pl-0">
         <hr>

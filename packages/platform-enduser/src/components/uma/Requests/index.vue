@@ -58,19 +58,19 @@ of the MIT license. See the LICENSE file for details. -->
                     class="allow text-success"
                     v-if="request.allowed">
                     <FrIcon
-                      class="font-weight-bolder md-16 mb-1"
-                      name="check"
-                    />
-                    {{ $t('pages.uma.requests.allowed') }}
+                      icon-class="font-weight-bolder md-16 mb-1 mr-2"
+                      name="check">
+                      {{ $t('pages.uma.requests.allowed') }}
+                    </FrIcon>
                   </div>
                   <div
                     class="deny text-danger"
                     v-if="!request.allowed">
                     <FrIcon
-                      class="font-weight-bolder md-16 mb-1"
-                      name="block"
-                    />
-                    {{ $t('pages.uma.requests.denied') }}
+                      icon-class="font-weight-bolder md-16 mb-1 mr-2"
+                      name="block">
+                      {{ $t('pages.uma.requests.denied') }}
+                    </FrIcon>
                   </div>
                 </div>
               </div>

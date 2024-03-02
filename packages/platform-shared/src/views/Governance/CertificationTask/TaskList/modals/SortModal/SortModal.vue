@@ -76,12 +76,12 @@ of the MIT license. See the LICENSE file for details. -->
                 <div
                   class="d-flex align-items-center p-2">
                   <FrIcon
-                    class="mr-4"
-                    name="drag_indicator"
-                  />
-                  <span class="fr-tag-text">
-                    {{ element.label }}
-                  </span>
+                    icon-class="mr-4"
+                    name="drag_indicator">
+                    <span class="fr-tag-text">
+                      {{ element.label }}
+                    </span>
+                  </FrIcon>
                 </div>
                 <BButton
                   variant="link"

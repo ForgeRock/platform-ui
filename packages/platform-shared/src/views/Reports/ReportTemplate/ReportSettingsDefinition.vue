@@ -1,9 +1,7 @@
-<!-- Copyright 2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
     no-body
@@ -30,9 +28,10 @@ to such license between the licensee and ForgeRock AS. -->
               <BListGroupItem class="border-0 p-0">
                 <BCardText>
                   <FrIcon
-                    class="text-success mr-2"
-                    name="check" />
-                  {{ $t('reports.template.filterActive') }}
+                    icon-class="text-success mr-2"
+                    name="check">
+                    {{ $t('reports.template.filterActive') }}
+                  </FrIcon>
                 </BCardText>
               </BListGroupItem>
             </BListGroup>
@@ -53,9 +52,10 @@ to such license between the licensee and ForgeRock AS. -->
               <BListGroupItem class="border-0 p-0">
                 <BCardText>
                   <FrIcon
-                    class="mr-2"
-                    :name="definition.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'" />
-                  {{ $t('common.sortByLabel', {label: definition.sortBy}) }}
+                    icon-class="mr-2"
+                    :name="definition.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'">
+                    {{ $t('common.sortByLabel', {label: definition.sortBy}) }}
+                  </FrIcon>
                 </BCardText>
               </BListGroupItem>
             </BListGroup>
@@ -67,12 +67,14 @@ to such license between the licensee and ForgeRock AS. -->
           <FrActionsCell
             :edit-option="false"
             @delete-clicked.stop="$emit('delete-definition')"
-            wrapper-class="'pr-2'">
+            wrapper-class="pr-2">
             <template #custom-top-actions>
               <BDropdownItem @click.stop="$emit('edit-definition')">
                 <FrIcon
-                  class="mr-1"
-                  name="edit" />{{ editOptionLabel }}
+                  icon-class="mr-2"
+                  name="edit">
+                  {{ editOptionLabel }}
+                </FrIcon>
               </BDropdownItem>
             </template>
           </FrActionsCell>

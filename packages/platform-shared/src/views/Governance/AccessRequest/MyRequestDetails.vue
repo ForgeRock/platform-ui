@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="d-flex align-items-center justify-content-center p-3 mr-2 rounded border border-darkened app-logo">
             <FrIcon
               v-if="isTypeRole(item.rawData.requestType)"
-              class="mr-1 md-28 rounded-circle"
+              icon-class="mr-1 md-28 rounded-circle"
               :name="item.details.icon" />
             <BImg
               v-else
@@ -44,9 +44,10 @@ of the MIT license. See the LICENSE file for details. -->
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
-            class="mr-2"
-            name="redo" />
-          {{ $t('common.forward') }}
+            icon-class="mr-2"
+            name="redo">
+            {{ $t('common.forward') }}
+          </FrIcon>
         </BButton>
       </div>
 
