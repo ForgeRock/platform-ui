@@ -9,9 +9,8 @@ of the MIT license. See the LICENSE file for details. -->
     right>
     <template #button-content>
       <FrIcon
-        class="mr-2 md-24"
-        name="notifications"
-      />
+        icon-class="mr-2 md-24"
+        name="notifications" />
       <span
         v-if="notifications.length > 0"
         class="badge badge-pill badge-danger">
@@ -57,9 +56,8 @@ of the MIT license. See the LICENSE file for details. -->
               variant="sm"
               class="btn btn-link my-auto">
               <FrIcon
-                class="text-muted md-24"
-                name="delete"
-              />
+                icon-class="text-muted md-24"
+                name="delete" />
             </BButton>
           </div>
         </div>

@@ -67,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
               data-testid="remove-requested-item-button"
               @click.stop="$emit('remove-requested-item', context, item.id)">
               <FrIcon
-                class="mr-2"
+                icon-class="mr-2"
                 name="delete" />
             </BButton>
           </BMedia>
@@ -80,7 +80,7 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="empty-request-items-container">
       <slot>
         <FrIcon
-          class="opacity-30 mb-3 md-48 pt-4"
+          icon-class="opacity-30 mb-3 md-48 pt-4"
           name="add" />
         <h3 class="h5">
           {{ $t('governance.accessRequest.newRequest.noRequestedItemsYet') }}

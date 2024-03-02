@@ -16,8 +16,10 @@ of the MIT license. See the LICENSE file for details. -->
             variant="primary"
             @click="$bvModal.show('govCreateResourceModal')">
             <FrIcon
-              class="mr-2"
-              name="add" />{{ $t('common.addObject', { object: capitalizedPluralGrantType }) }}
+              icon-class="mr-2"
+              name="add">
+              {{ $t('common.addObject', { object: capitalizedPluralGrantType }) }}
+            </FrIcon>
           </BButton>
           <FrSearchInput
             v-model="searchQuery"
@@ -47,8 +49,10 @@ of the MIT license. See the LICENSE file for details. -->
           variant="primary"
           @click="$bvModal.show('govCreateResourceModal')">
           <FrIcon
-            class="mr-2"
-            name="add" />{{ $t('common.addObject', { object: capitalizedPluralGrantType }) }}
+            icon-class="mr-2"
+            name="add">
+            {{ $t('common.addObject', { object: capitalizedPluralGrantType }) }}
+          </FrIcon>
         </BButton>
       </FrNoData>
       <BTable
@@ -193,15 +197,19 @@ of the MIT license. See the LICENSE file for details. -->
                 v-if="showViewDetails"
                 @click="handleRowClick(item)">
                 <FrIcon
-                  class="mr-2"
-                  name="list_alt" />{{ $t('common.viewDetails') }}
+                  icon-class="mr-2"
+                  name="list_alt">
+                  {{ $t('common.viewDetails') }}
+                </FrIcon>
               </BDropdownItem>
               <BDropdownItem
                 v-if="item.assignment === directAssignment || item.assignment === staticAssignment || resourceIsRole"
                 @click="showRevokeModal([item])">
                 <FrIcon
-                  class="mr-2"
-                  name="delete" />{{ $t('common.revoke') }}
+                  icon-class="mr-2"
+                  name="delete">
+                  {{ $t('common.revoke') }}
+                </FrIcon>
               </BDropdownItem>
             </template>
           </FrActionsCell>

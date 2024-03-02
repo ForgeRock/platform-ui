@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
           @click="close">
           <FrIcon
             name="close"
-            class="md-24" />
+            icon-class="md-24" />
         </BButtonClose>
       </template>
       <p class="mb-3">

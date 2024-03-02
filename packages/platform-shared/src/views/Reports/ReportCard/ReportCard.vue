@@ -11,8 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         data-testid="report-card"
         footer-class="py-3 d-flex justify-content-between"
         tag="a"
-        @click="emitRouterToTemplate(props.report?.name)"
-      >
+        @click="emitRouterToTemplate(props.report?.name)">
         <h2 class="h5">
           {{ startCase(props.report?.name.toLowerCase()) }}
         </h2>
@@ -22,33 +21,30 @@ of the MIT license. See the LICENSE file for details. -->
         <template #footer>
           <BButton
             class="px-0 py-1"
-            variant="link"
-          >
+            variant="link">
             <FrIcon
-              class="mr-2"
-              name="play_arrow"
-            />
-            {{ $t('reports.run') }}
+              icon-class="mr-2"
+              name="play_arrow">
+              {{ $t('reports.run') }}
+            </FrIcon>
           </BButton>
           <BDropdown
             no-caret
             right
             size="sm"
             split-class="p-0"
-            variant="link"
-          >
+            variant="link">
             <template #button-content>
               <FrIcon
-                class="text-dark md-24"
-                name="more_horiz"
-              />
+                icon-class="text-dark md-24"
+                name="more_horiz" />
             </template>
             <BDropdownItem @click.stop="emitRouterToTemplate(props.report?.name, true)">
               <FrIcon
-                class="mr-2"
-                name="list_alt"
-              />
-              {{ $t('reports.menu.runHistory') }}
+                icon-class="mr-2"
+                name="list_alt">
+                {{ $t('reports.menu.runHistory') }}
+              </FrIcon>
             </BDropdownItem>
           </BDropdown>
         </template>

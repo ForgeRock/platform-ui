@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,9 +16,10 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="add-delegate"
             variant="primary">
             <FrIcon
-              class="mr-1"
-              name="add" />
-            {{ $t('governance.delegates.addDelegates') }}
+              icon-class="mr-2"
+              name="add">
+              {{ $t('governance.delegates.addDelegates') }}
+            </FrIcon>
           </BButton>
           <FrSearchInput
             v-model="searchQuery"
@@ -68,9 +69,10 @@ of the MIT license. See the LICENSE file for details. -->
                 data-testid="remove-delegate"
                 @click="showRemoveDelegateModal(item)">
                 <FrIcon
-                  class="mr-2"
-                  name="delete" />
-                {{ $t('common.remove') }}
+                  icon-class="mr-2"
+                  name="delete">
+                  {{ $t('common.remove') }}
+                </FrIcon>
               </BDropdownItem>
             </template>
           </FrActionsCell>

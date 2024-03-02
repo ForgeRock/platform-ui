@@ -42,9 +42,10 @@ of the MIT license. See the LICENSE file for details. -->
                     data-testid="action-approve"
                     @click="openModal(item, 'APPROVE')">
                     <FrIcon
-                      class="mr-2 text-success"
-                      name="check"
-                    />{{ $t('common.approve') }}
+                      icon-class="mr-2 text-success"
+                      name="check">
+                      {{ $t('common.approve') }}
+                    </FrIcon>
                   </BButton>
                   <BButton
                     v-if="getPermission(item, 'reject')"
@@ -54,9 +55,10 @@ of the MIT license. See the LICENSE file for details. -->
                     data-testid="action-reject"
                     @click="openModal(item, 'REJECT')">
                     <FrIcon
-                      class="mr-2 text-danger"
-                      name="block"
-                    />{{ $t('common.reject') }}
+                      icon-class="mr-2 text-danger"
+                      name="block">
+                      {{ $t('common.reject') }}
+                    </FrIcon>
                   </BButton>
                 </template>
                 <div class="text-right dropdown-padding">
@@ -69,9 +71,8 @@ of the MIT license. See the LICENSE file for details. -->
                     data-testid="dropdown-actions">
                     <template #button-content>
                       <FrIcon
-                        class="text-muted md-24"
-                        name="more_horiz"
-                      />
+                        icon-class="text-muted md-24"
+                        name="more_horiz" />
                     </template>
                     <template v-if="status === 'pending'">
                       <BDropdownItem
@@ -80,9 +81,10 @@ of the MIT license. See the LICENSE file for details. -->
                         @click="openModal(item, 'APPROVE')"
                         data-testid="dropdown-action-approve">
                         <FrIcon
-                          class="mr-2 text-success"
-                          name="check"
-                        />{{ $t('common.approve') }}
+                          icon-class="mr-2 text-success"
+                          name="check">
+                          {{ $t('common.approve') }}
+                        </FrIcon>
                       </BDropdownItem>
                       <BDropdownItem
                         v-if="getPermission(item, 'reject')"
@@ -90,9 +92,10 @@ of the MIT license. See the LICENSE file for details. -->
                         data-testid="dropdown-action-reject"
                         @click="openModal(item, 'REJECT')">
                         <FrIcon
-                          class="mr-2 text-danger"
-                          name="block"
-                        />{{ $t('common.reject') }}
+                          icon-class="mr-2 text-danger"
+                          name="block">
+                          {{ $t('common.reject') }}
+                        </FrIcon>
                       </BDropdownItem>
                       <BDropdownDivider class="d-block d-lg-none" />
                       <BDropdownItem
@@ -100,27 +103,30 @@ of the MIT license. See the LICENSE file for details. -->
                         data-testid="dropdown-action-reassign"
                         @click="openModal(item, 'REASSIGN')">
                         <FrIcon
-                          name="redo"
-                          class="mr-2"
-                        />{{ $t('common.forward') }}
+                          icon-class="mr-2"
+                          name="redo">
+                          {{ $t('common.forward') }}
+                        </FrIcon>
                       </BDropdownItem>
                       <BDropdownItem
                         v-if="getPermission(item, 'comment')"
                         data-testid="dropdown-action-comment"
                         @click="openModal(item, 'COMMENT')">
                         <FrIcon
-                          name="chat_bubble_outline"
-                          class="mr-2"
-                        />{{ $t('governance.requestModal.addComment') }}
+                          icon-class="mr-2"
+                          name="chat_bubble_outline">
+                          {{ $t('governance.requestModal.addComment') }}
+                        </FrIcon>
                       </BDropdownItem>
                     </template>
                     <BDropdownItem
                       data-testid="dropdown-action-details"
                       @click="viewDetails(item)">
                       <FrIcon
-                        name="list_alt"
-                        class="mr-2"
-                      />{{ $t('common.viewDetails') }}
+                        icon-class="mr-2"
+                        name="list_alt">
+                        {{ $t('common.viewDetails') }}
+                      </FrIcon>
                     </BDropdownItem>
                   </BDropdown>
                 </div>

@@ -46,12 +46,12 @@ describe('Report Settings Definition component', () => {
     });
 
     it('displays the "Filter Active" state definition', () => {
-      let filterDefinition = findByText(wrapper, 'p', 'check Filter active');
+      let filterDefinition = findByText(wrapper, 'p', 'checkFilter active');
       expect(filterDefinition).toBeFalsy();
 
       wrapper = setup({ settingId: 'filters' });
 
-      filterDefinition = findByText(wrapper, 'p', 'check Filter active');
+      filterDefinition = findByText(wrapper, 'p', 'checkFilter active');
       expect(filterDefinition.exists()).toBe(true);
     });
 
@@ -115,12 +115,12 @@ describe('Report Settings Definition component', () => {
         },
       });
 
-      sortingDescDefinition = findByText(wrapper, 'p', 'arrow_downward Sort by: First Name');
+      sortingDescDefinition = findByText(wrapper, 'p', 'arrow_downwardSort by: First Name');
       expect(sortingDescDefinition.exists()).toBe(true);
     });
 
     it('displays the sorting ascending definition card elements', () => {
-      let sortingAscDefinition = findByText(wrapper, 'p', 'arrow_upward Sort by: Last Name');
+      let sortingAscDefinition = findByText(wrapper, 'p', 'arrow_upwardSort by: Last Name');
       expect(sortingAscDefinition).toBeFalsy();
 
       wrapper = setup({
@@ -131,7 +131,7 @@ describe('Report Settings Definition component', () => {
         },
       });
 
-      sortingAscDefinition = findByText(wrapper, 'p', 'arrow_upward Sort by: Last Name');
+      sortingAscDefinition = findByText(wrapper, 'p', 'arrow_upwardSort by: Last Name');
       expect(sortingAscDefinition.exists()).toBe(true);
     });
 

@@ -19,15 +19,10 @@ of the MIT license. See the LICENSE file for details. -->
       <template #head()="{ label, field: { key, sortable }}">
         {{ label }}
         <template v-if="sortable && sortBy === key">
-          <!-- Custom sort icons -->
+          <!-- Custom sort icon -->
           <FrIcon
-            v-if="!sortDesc"
-            class="text-muted"
-            name="arrow_upward" />
-          <FrIcon
-            v-else
-            class="text-muted"
-            name="arrow_downward" />
+            icon-class="text-muted"
+            :name="sortDesc ? 'arrow_downward' : 'arrow_upward'" />
         </template>
       </template>
       <template #cell(name)="{ item }">

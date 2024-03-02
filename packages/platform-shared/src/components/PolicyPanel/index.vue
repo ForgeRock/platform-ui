@@ -17,11 +17,11 @@ of the MIT license. See the LICENSE file for details. -->
             <template v-if="policyDisplayCheckmark">
               <FrIcon
                 v-if="isPolicyMet(policy)"
-                class="text-success"
+                icon-class="text-success"
                 name="check" />
               <FrIcon
                 v-else
-                :class="{ 'text-danger': displayDangerStyle }"
+                :icon-class="{ 'text-danger': displayDangerStyle }"
                 name="close" />
             </template>
             {{ getPolicyDescription(policy) }}

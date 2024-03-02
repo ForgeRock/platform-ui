@@ -48,8 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
                       tabindex="0"
                       :aria-label="$t('common.close')"
                       :aria-controls="`fr-tags-tag_${element.toString().replace(/\s/g, '_')}`"
-                      class="close-icon pl-2"
-                      style="font-size: 12px; font-weight: 900;"
+                      icon-class="close-icon pl-2"
                       name="close"
                     />
                   </span>
@@ -189,8 +188,10 @@ export default {
     white-space: nowrap;
     overflow: hidden;
 
-    .close-icon {
+    :deep(.close-icon) {
       cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
     }
   }
 

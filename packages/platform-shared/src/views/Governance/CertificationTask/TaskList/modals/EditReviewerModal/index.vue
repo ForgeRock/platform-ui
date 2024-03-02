@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="p-0 pt-1"
         @click="closeModal">
         <FrIcon
-          class="md-24 mr-3 text-muted"
+          icon-class="md-24 mr-3 text-muted"
           name="arrow_back" />
       </BButton>
       <h5 class="modal-title">
@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="close">
         <FrIcon
           name="close"
-          class="md-24" />
+          icon-class="md-24" />
       </BButtonClose>
     </template>
     <div class="p-4">
@@ -68,11 +68,10 @@ of the MIT license. See the LICENSE file for details. -->
               v-else
               no-body>
               <BMediaAside vertical-align="center">
-                <div
-                  class="rounded-circle d-flex align-items-center justify-content-center bg-lightblue text-primary wh-36px">
+                <div class="rounded-circle d-flex align-items-center justify-content-center bg-lightblue text-primary wh-36px">
                   <FrIcon
                     name="assignment_ind"
-                    class="md-15" />
+                    icon-class="md-15" />
                 </div>
               </BMediaAside>
               <BMediaBody class="text-truncate">

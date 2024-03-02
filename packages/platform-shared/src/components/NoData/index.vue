@@ -1,8 +1,7 @@
-<!-- Copyright 2020-2023 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
     v-if="card"
@@ -11,7 +10,7 @@ to such license between the licensee and ForgeRock AS. -->
       class="fr-no-data text-center"
       :data-testid="testid">
       <FrIcon
-        :class="`fr-no-data-icon md-72 text-center text-secondary opacity-20 my-4 ${iconClasses}`"
+        :icon-class="`fr-no-data-icon md-72 text-center text-secondary opacity-20 my-4 ${iconClasses}`"
         :name="this.icon" />
       <h1 class="h4">
         {{ this.title }}
@@ -27,7 +26,7 @@ to such license between the licensee and ForgeRock AS. -->
     class="fr-no-data text-center"
     :data-testid="testid">
     <FrIcon
-      :class="`fr-no-data-icon text-center md-96 text-secondary opacity-20 my-4 ${iconClasses}`"
+      :icon-class="`fr-no-data-icon text-center md-96 text-secondary opacity-20 my-4 ${iconClasses}`"
       :name="this.icon" />
     <h1 class="h2">
       {{ this.title }}

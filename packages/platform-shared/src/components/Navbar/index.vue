@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
         :aria-expanded="(menuIsExpanded).toString()"
         :aria-label="$t('sideMenu.toggleSidebar')">
         <FrIcon
-          class="md-24 m-0"
+          icon-class="md-24 m-0"
           name="menu"
         />
       </button>
@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="tenantLockedMode"
           class="d-flex align-items-center px-3">
           <FrIcon
-            class="locked-icon md-24 mr-2"
+            icon-class="locked-icon md-24 mr-2"
             name="locked" />
           <p class="mb-0">
             {{ $t('promotions.tenantLocked') }}
@@ -54,12 +54,12 @@ of the MIT license. See the LICENSE file for details. -->
             :to="!checkChangesOnNavigate ? returnRoute : ''">
             <h1 class="text-truncate h5 d-flex align-items-center font-weight-normal mb-0">
               <FrIcon
-                class="md-24 mr-3"
-                name="arrow_back"
-              />
-              <span class="align-middle">
-                {{ returnRouteText }}
-              </span>
+                icon-class="md-24 mr-3"
+                name="arrow_back">
+                <span class="align-middle">
+                  {{ returnRouteText }}
+                </span>
+              </FrIcon>
             </h1>
           </RouterLink>
         </li>
@@ -357,7 +357,7 @@ export default {
     }
   }
 
-  .locked-icon {
+  :deep(.locked-icon) {
     max-width: 24px;
     width: 100%
   }

@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       :data-testid="`actions-${testId}`">
       <template #button-content>
         <FrIcon
-          class="text-dark md-24"
+          icon-class="text-dark md-24"
           name="more_horiz" />
       </template>
       <!--
@@ -32,8 +32,10 @@ of the MIT license. See the LICENSE file for details. -->
         :data-testid="`dropdown-edit-${testId}`"
         @click="$emit('edit-clicked')">
         <FrIcon
-          class="mr-2"
-          name="edit" />{{ $t('common.edit') }}
+          icon-class="mr-2"
+          name="edit">
+          {{ $t('common.edit') }}
+        </FrIcon>
       </BDropdownItem>
       <!--
         Triggered on click, indicates user would like to duplicate this row's item
@@ -44,8 +46,10 @@ of the MIT license. See the LICENSE file for details. -->
         :data-testid="`dropdown-duplicate-${testId}`"
         @click="$emit('duplicate-clicked')">
         <FrIcon
-          class="mr-2"
-          name="control_point_duplicate" />{{ $t('common.duplicate') }}
+          icon-class="mr-2"
+          name="control_point_duplicate">
+          {{ $t('common.duplicate') }}
+        </FrIcon>
       </BDropdownItem>
       <!--
         Triggered on click, indicates user would like to toggle this row's item active or inactive
@@ -56,8 +60,10 @@ of the MIT license. See the LICENSE file for details. -->
         :data-testid="`dropdown-active-toggle-${testId}`"
         @click="$emit('toggle-clicked')">
         <FrIcon
-          class="mr-2"
-          name="power_settings_new" />{{ toggleIsActive ? $t('common.deactivate') : $t('common.activate') }}
+          icon-class="mr-2"
+          name="power_settings_new">
+          {{ toggleIsActive ? $t('common.deactivate') : $t('common.activate') }}
+        </FrIcon>
       </BDropdownItem>
       <!--
         Slot for any custom actions not covered by common use cases
@@ -73,8 +79,10 @@ of the MIT license. See the LICENSE file for details. -->
         @click="$emit('delete-clicked', $event)"
         :data-testid="`dropdown-delete-${testId}`">
         <FrIcon
-          class="mr-2"
-          name="delete" />{{ $t('common.delete') }}
+          icon-class="mr-2"
+          name="delete">
+          {{ $t('common.delete') }}
+        </FrIcon>
       </Bdropdownitem>
     </BDropdown>
   </div>

@@ -19,9 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         data-testid="role-icon"
         class="rounded-circle d-flex align-items-center justify-content-center bg-lightblue color-blue font-weight-bold"
         style="width: 36px; height: 36px;">
-        <FrIcon
-          name="assignment_ind"
-        />
+        <FrIcon name="assignment_ind" />
       </div>
     </template>
     <BMediaBody>

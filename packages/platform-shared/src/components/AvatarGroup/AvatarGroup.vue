@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrIcon
           v-else
           :id="`user-${user.id}`"
-          class="d-flex align-items-center justify-content-center"
+          icon-class="d-flex align-items-center justify-content-center"
           name="assignment_ind"
           style="width: 28px; height: 28px;" />
       </div>

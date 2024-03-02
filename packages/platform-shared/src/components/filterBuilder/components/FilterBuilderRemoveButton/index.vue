@@ -11,10 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
     :disabled="disabled"
     @click="$emit('click')">
     <FrIcon
-      class="text-dark md-24"
-      :outline="true"
-      name="remove"
-    />
+      icon-class="text-dark md-24"
+      name="remove" />
   </BButton>
 </template>
 

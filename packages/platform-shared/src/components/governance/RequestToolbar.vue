@@ -47,11 +47,12 @@ of the MIT license. See the LICENSE file for details. -->
           data-testid="filter-toggle"
           variant="link">
           <FrIcon
-            class="mr-lg-2"
-            name="filter_list" />
-          <span class="d-none d-lg-inline">
-            {{ showFilters ? $t('governance.hideFilters') : $t('governance.showFilters') }}
-          </span>
+            icon-class="mr-lg-2"
+            name="filter_list">
+            <span class="d-none d-lg-inline">
+              {{ showFilters ? $t('governance.hideFilters') : $t('governance.showFilters') }}
+            </span>
+          </FrIcon>
           <BBadge
             v-if="numFilters > 0"
             pill

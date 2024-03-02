@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import FallbackImage from '@/components/utils/FallbackImage';
 
@@ -15,7 +15,7 @@ describe('utils/FallbackImage.vue', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = shallowMount(FallbackImage, {
+    wrapper = mount(FallbackImage, {
       global: {
         stubs: { BImg: true },
       },

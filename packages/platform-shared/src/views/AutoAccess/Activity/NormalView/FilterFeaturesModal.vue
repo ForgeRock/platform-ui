@@ -25,8 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
               :class="element !== '' ? 'd-flex' : 'd-none'"
               :key="element.text"
               :id="`fr-columns-task-${element.text}`">
-              <div
-                class="d-flex align-items-center p-2">
+              <div class="d-flex align-items-center p-2">
                 <FrField
                   v-model="element.show"
                   name="filter"
@@ -36,9 +35,8 @@ of the MIT license. See the LICENSE file for details. -->
                 </span>
               </div>
               <FrIcon
-                class="pl-2"
-                name="drag_indicator"
-              />
+                icon-class="pl-2"
+                name="drag_indicator" />
             </BListGroupItem>
         </template>
       </Draggable>

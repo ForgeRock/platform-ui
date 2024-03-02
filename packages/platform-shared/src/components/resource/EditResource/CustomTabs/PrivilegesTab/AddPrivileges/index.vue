@@ -27,25 +27,18 @@ of the MIT license. See the LICENSE file for details. -->
             type="select"
             :label="$t('pages.access.chooseIdentityObject')"
             :options="identityObjectField.options">
-            <template #option="{ option }">
+            <template
+              v-for="(slotName, index) in ['singleLabel', 'option']"
+              :key="index"
+              #[slotName]="{ option }">
               <FrIcon
-                class="mr-3"
-                :name="option.icon || 'settings_system_daydream'"
-              />
-              {{ pluralizeValue(option.text ? (option.text) : '') }}
-              <small class="text-monospace text-muted ml-1">
-                {{ option.value }}
-              </small>
-            </template>
-            <template #singleLabel="{ option }">
-              <FrIcon
-                class="mr-3"
-                :name="option.icon || 'settings_system_daydream'"
-              />
-              {{ pluralizeValue(option.text ? (option.text) : '') }}
-              <small class="text-monospace text-muted ml-1">
-                {{ option.value }}
-              </small>
+                icon-class="mr-3"
+                :name="option.icon || 'settings_system_daydream'">
+                {{ pluralizeValue(option.text ? (option.text) : '') }}
+                <small class="text-monospace text-muted ml-1">
+                  {{ option.value }}
+                </small>
+              </FrIcon>
             </template>
           </FrField>
         </div>
@@ -55,10 +48,10 @@ of the MIT license. See the LICENSE file for details. -->
           @click="addNewPrivilege"
           id="add_new_privilege">
           <FrIcon
-            class="mr-2"
-            name="add"
-          />
-          {{ $t("common.add") }}
+            icon-class="mr-2"
+            name="add">
+            {{ $t("common.add") }}
+          </FrIcon>
         </BButton>
       </div>
     </div>

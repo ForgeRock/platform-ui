@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="d-flex align-items-center justify-content-center p-3 mr-2 rounded border border-darkened app-logo">
             <FrIcon
               v-if="isTypeRole(item.rawData.requestType)"
-              class="mr-1 md-28 rounded-circle"
+              icon-class="mr-1 md-28 rounded-circle"
               :name="item.details.icon" />
             <BImg
               v-else
@@ -44,27 +44,30 @@ of the MIT license. See the LICENSE file for details. -->
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
-            class="text-success mr-2"
-            name="check" />
-          {{ $t('common.approve') }}
+            icon-class="text-success mr-2"
+            name="check">
+            {{ $t('common.approve') }}
+          </FrIcon>
         </BButton>
         <BButton
           @click="openModal('REJECT')"
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
-            class="text-danger mr-2"
-            name="block" />
-          {{ $t('common.reject') }}
+            icon-class="text-danger mr-2"
+            name="block">
+            {{ $t('common.reject') }}
+          </FrIcon>
         </BButton>
         <BButton
           @click="openModal('REASSIGN')"
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
-            class="mr-2"
-            name="redo" />
-          {{ $t('common.forward') }}
+            icon-class="mr-2"
+            name="redo">
+            {{ $t('common.forward') }}
+          </FrIcon>
         </BButton>
       </div>
 

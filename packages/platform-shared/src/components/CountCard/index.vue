@@ -12,12 +12,10 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="tooltip"
         :id="`link-button-${tooltipId}`"
         class="tooltip-button"
-        tabindex="0"
-      >
+        tabindex="0">
         <FrIcon
-          class="ml-1 mt-1"
-          name="info"
-        />
+          icon-class="ml-1 mt-1"
+          name="info" />
       </div>
     </div>
     <FrSpinner

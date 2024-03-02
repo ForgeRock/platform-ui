@@ -21,8 +21,10 @@ of the MIT license. See the LICENSE file for details. -->
               :aria-label="$t('governance.accessRequest.newRequest.newRequest')"
               @click="newRequest">
               <FrIcon
-                class="mr-2"
-                name="add" />{{ $t('governance.accessRequest.newRequest.newRequest') }}
+                icon-class="mr-2"
+                name="add">
+                {{ $t('governance.accessRequest.newRequest.newRequest') }}
+              </FrIcon>
             </BButton>
           </div>
         </BCol>
@@ -71,8 +73,10 @@ of the MIT license. See the LICENSE file for details. -->
                         data-testid="view-details-button"
                         @click="viewDetails(item)">
                         <FrIcon
-                          class="mr-2"
-                          name="list_alt" />{{ $t('common.viewDetails') }}
+                          icon-class="mr-2"
+                          name="list_alt">
+                          {{ $t('common.viewDetails') }}
+                        </FrIcon>
                       </BDropdownItem>
                       <template v-if="status === 'in-progress'">
                         <BDropdownDivider />
@@ -80,13 +84,17 @@ of the MIT license. See the LICENSE file for details. -->
                           v-if="userStore.adminUser"
                           @click="openModal(item, 'REASSIGN')">
                           <FrIcon
-                            class="mr-2"
-                            name="redo" />{{ $t('common.forward') }}
+                            icon-class="mr-2"
+                            name="redo">
+                            {{ $t('common.forward') }}
+                          </FrIcon>
                         </Bdropdownitem>
                         <BDropdownItem @click="openModal(item, 'CANCEL')">
                           <FrIcon
-                            class="mr-2"
-                            name="cancel" />{{ $t('governance.accessRequest.myRequests.cancelRequest') }}
+                            icon-class="mr-2"
+                            name="cancel">
+                            {{ $t('governance.accessRequest.myRequests.cancelRequest') }}
+                          </FrIcon>
                         </Bdropdownitem>
                       </template>
                     </template>

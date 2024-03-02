@@ -28,14 +28,11 @@ of the MIT license. See the LICENSE file for details. -->
         thead-class="d-none">
         <!-- Icon -->
         <template #cell(icon)="{ item }">
-          <div
-            class="d-flex flex-column mr-4 position-absolute h-100 activity-icon">
-            <div
-              class="rounded-circle bg-light d-flex align-items-center justify-content-center py-2">
+          <div class="d-flex flex-column mr-4 position-absolute h-100 activity-icon">
+            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center py-2">
               <FrIcon
                 :name="getIcon(item.action)"
-                class="md-18"
-              />
+                icon-class="md-18" />
             </div>
             <div class="thread-line flex-grow-1 my-2" />
           </div>
