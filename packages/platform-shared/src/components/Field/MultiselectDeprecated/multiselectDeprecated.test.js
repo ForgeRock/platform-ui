@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -32,30 +32,38 @@ describe('Multiselect', () => {
     it('default', () => {
       const wrapper = setup();
 
-      const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
-      expect(multiselectInput.attributes('aria-expanded')).toBe('false');
-      expect(multiselectInput.attributes('aria-labelledby')).toBe('floatingLabelInput1-label');
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+      expect(multiselect.attributes('aria-expanded')).toBe('false');
+      expect(multiselect.attributes('aria-labelledby')).toBe('floatingLabelInput1-label');
     });
   });
 
   describe('@actions', () => {
     it('when open, should have aria-expanded attribute', async () => {
       const wrapper = setup();
-      const multiselect = findByTestId(wrapper, 'stub-testid');
-      const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
 
-      await multiselect.trigger('click');
-      expect(multiselectInput.attributes('aria-expanded')).toBe('true');
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+      // Note: not ideal to be calling directly but the triggering the `open` event doesn't seem to work
+      await wrapper.vm.openHandler();
+      expect(multiselect.attributes('aria-expanded')).toBe('true');
     });
   });
 
   it('MultiSelect input adds tags', () => {
     const wrapper = setup({ taggable: true });
 
+    expect(wrapper.vm.tagOptions).toStrictEqual([]);
     expect(wrapper.vm.inputValue).toStrictEqual([]);
-    wrapper.vm.searchChange('test');
+    wrapper.vm.searchValue = 'test';
 
     wrapper.vm.addTag();
+    expect(wrapper.vm.tagOptions).toStrictEqual([
+      {
+        multiselectId: 0,
+        text: 'test',
+        value: 'test',
+      },
+    ]);
     expect(wrapper.vm.inputValue).toStrictEqual([
       {
         multiselectId: 1,
@@ -199,7 +207,7 @@ describe('Multiselect', () => {
   });
 
   it('Multiselect is autofocused on prop "autofocus"', async () => {
-    const wrapper = await mount(MultiSelect, {
+    const wrapper = mount(MultiSelect, {
       global: {
         plugins: [i18n],
       },
@@ -214,7 +222,30 @@ describe('Multiselect', () => {
       },
     });
 
-    const multiselect = findByTestId(wrapper, 'stub-testid');
-    expect(multiselect.attributes('autofocus')).toBe('true');
+    try {
+      await wrapper.vm.$nextTick();
+      expect(document.activeElement).toEqual(wrapper.element.querySelector('input'));
+    } finally {
+      wrapper.unmount();
+    }
+  });
+
+  it('MultiSelect input sets inputValue properly', () => {
+    const selectOption = {
+      value: 'selectOption',
+      multiselectId: 0,
+      text: 'selectOption',
+    };
+    const existingValue = { value: 'existingValue' };
+    const wrapper = setup({
+      options: [selectOption],
+    });
+    wrapper.vm.inputValue = [existingValue];
+    wrapper.vm.setInputValue(['selectOption']);
+    expect(wrapper.vm.inputValue).toEqual([selectOption]);
+    wrapper.vm.inputValue = [existingValue];
+    wrapper.vm.setInputValue(['existingValue', 'selectOption']);
+    expect(wrapper.vm.inputValue.length).toEqual(2);
+    expect(wrapper.vm.inputValue).toEqual([existingValue, selectOption]);
   });
 });

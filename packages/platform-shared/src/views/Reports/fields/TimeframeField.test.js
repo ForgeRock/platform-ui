@@ -48,7 +48,7 @@ describe('Timeframe field for running reports', () => {
       const timeFrameField = wrapper.find('[placeholder="Last 7 days"]');
       await timeFrameField.trigger('click');
 
-      const customTimeframeOption = timeFrameField.findAll('li').at(4).find('span');
+      const customTimeframeOption = timeFrameField.findAll('li')[4].find('span');
       expect(customTimeframeOption.text()).toBe('Custom');
 
       await customTimeframeOption.trigger('click');

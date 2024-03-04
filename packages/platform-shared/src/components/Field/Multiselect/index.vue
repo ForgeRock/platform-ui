@@ -4,26 +4,24 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
-    :description="description"
     :id="internalId"
+    :name="name"
+    :description="description"
     :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
-    :name="name">
-    <VueMultiSelect
-      :id="internalId"
-      v-bind="$attrs"
+    :floating-label="floatingLabel"
+    :readonly-label="disabled">
+    <FrMultiselectBase
       v-if="selectOptions"
-      :value="inputValue"
-      @input="inputValue = $event; $emit('input', map(inputValue, 'value'))"
-      label="text"
-      ref="vms"
       track-by="multiselectId"
-      role="combobox"
-      :aria-expanded="isExpanded ? 'true': 'false'"
-      :aria-labelledby="internalId + '-label'"
       :data-testid="testid"
-      :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
+      :testid="testid"
+      ref="vms"
+      :id="internalId"
+      :model-value="inputValue"
+      @update:modelValue="inputHandler"
+      :class="classes"
       :close-on-select="closeOnSelect"
       :disabled="disabled"
       :hide-selected="true"
@@ -33,32 +31,19 @@ of the MIT license. See the LICENSE file for details. -->
       :options="selectOptions"
       :placeholder="defaultPlaceholder"
       :searchable="defaultSearchable"
+      :internal-search="internalSearch"
       :show-labels="false"
       :tag-placeholder="$t('common.placeholders.addOption')"
       :taggable="taggable"
-      @close="close"
+      :autofocus="autofocus"
+      label="text"
+      :combobox-labelledby="inputLabelledby"
+      @close="closeHandler"
       @open="openHandler"
       @search-change="searchChange"
       @tag="addTag">
       <template #noResult>
         {{ $t('common.noResult') }}
-      </template>
-      <template #tag="{option, remove}">
-        <span :class="['multiselect__tag', valueClass]">
-          <span
-            class="multiselect__tag-contents"
-            tabindex="0"
-            :data-testid="`multi-select-tag-contents-${testid}`">
-            {{ option && option.text }}
-          </span>
-          <span
-            class="multiselect__tag-icon"
-            tabindex="0"
-            :aria-label="$t('common.remove')"
-            :data-testid="`multi-select-tag-close-icon-${testid}`"
-            @click.prevent="remove(option)"
-            @keydown.enter="remove(option)" />
-        </span>
       </template>
       <template
         v-for="(key, slotName) in $slots"
@@ -68,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
           :name="slotName"
           v-bind="slotData" />
       </template>
-    </VueMultiSelect>
+    </FrMultiselectBase>
     <template
       v-for="(key, slotName) in $slots"
       #[slotName]="slotData">
@@ -84,32 +69,35 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   find,
   has,
-  isEqual,
   map,
+  isEqual,
 } from 'lodash';
 import { useField } from 'vee-validate';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
-import { toRef } from 'vue';
+import {
+  toRef, ref, computed, watch,
+} from 'vue';
 import uuid from 'uuid/v4';
+import i18n from '@/i18n';
+import FrMultiselectBase from '../../MultiselectBase/MultiselectBase';
 import FrInputLayout from '../Wrapper/InputLayout';
-import InputMixin from '../Wrapper/InputMixin';
-// import vue-multiselect from src because dist min/uglified package gets removed in build
-import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
+import { useGetId } from '../Wrapper/InputComposable';
 
-/**
- *  Multi select input. Allows selection of multiple elements in a dropdown
- *
- *  @Mixes InputMixin - default props and methods for inputs
- *  @param {Array} value default []
- */
 export default {
   name: 'MultiSelect',
-  mixins: [InputMixin, NotificationMixin],
+  mixins: [NotificationMixin],
   components: {
     FrInputLayout,
-    VueMultiSelect,
+    FrMultiselectBase,
   },
   props: {
+    /**
+     * Autofocus field when rendered.
+     */
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
     /**
      * Enable/disable closing after selecting an option
      */
@@ -118,12 +106,70 @@ export default {
       default: false,
     },
     /**
-     * Placeholder text
+     * Related text that displays underneath field.
      */
-    placeholder: {
+    description: {
       type: String,
       default: '',
     },
+    /**
+     * if field should be disabled.
+     */
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * List of errors related to input value (mostly used for callback components)
+     */
+    errors: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * Boolean to show a floating label or above label on controls
+     */
+    floatingLabel: {
+      type: Boolean,
+      default: true,
+    },
+    /**
+     * Unique ID
+     */
+    id: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Search through existing options
+     */
+    internalSearch: {
+      type: Boolean,
+      default: true,
+    },
+    /**
+     * Boolean to render label and help text as html.
+     */
+    isHtml: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Label value that is show as placeholder value on floating labels or static label above control in other case.
+     */
+    label: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Input name.
+     */
+    name: {
+      type: String,
+      required: true,
+      default: () => uuid(),
+    },
+
     /**
      * Height of the individual option items. Important to
      * set accurately so the options menu aligns correctly.
@@ -140,6 +186,20 @@ export default {
       default: () => [],
     },
     /**
+     * Placeholder text
+     */
+    placeholder: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Boolean to show the input as readonly.
+     */
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Allow searching
      */
     searchable: {
@@ -153,6 +213,31 @@ export default {
       type: Boolean,
       default: false,
     },
+    testid: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Vee-validate validation types to check against.
+     */
+    validation: {
+      type: [String, Object],
+      default: '',
+    },
+    /**
+     * Whether error validation should happen when this component renders.
+     */
+    validationImmediate: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * v-model value
+     */
+    value: {
+      type: [Array, Object, Number, String, Boolean],
+      default: '',
+    },
     /**
      * CSS class for selected values
      */
@@ -160,185 +245,177 @@ export default {
       type: String,
       default: '',
     },
-    testid: {
-      type: String,
-      default: '',
-    },
   },
-  setup(props) {
-    const {
-      value: inputValue, errors: fieldErrors,
-    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
-    return { inputValue, fieldErrors };
-  },
-  data() {
-    return {
-      searchValue: '',
-      nextIdTag: 0,
-      tagOptions: [],
-      isExpanded: false,
-    };
-  },
-  mounted() {
-    if (this.defaultSearchable) {
-      this.$refs.vms.$refs.search.setAttribute('autocomplete', 'off');
-    }
+  setup(props, context) {
+    const internalId = useGetId(props);
 
-    if (this.autofocus) {
-      this.openHandler();
-    }
-  },
-  computed: {
-    selectOptions() {
-      let mapOptions = [];
-      if (this.options.length) {
-        if (has(this.options[0], 'value')) {
-          mapOptions = map(this.options, (option) => ({
-            text: option.text,
-            value: option.value,
-            multiselectId: option.multiselectId !== undefined ? option.multiselectId : this.generateTagId(),
-            ...option,
-          }));
-        } else {
-          mapOptions = map(this.options, (option) => ({
-            text: option,
-            value: option,
-            multiselectId: this.generateTagId(),
-          }));
-        }
-      }
-      return [...mapOptions, ...this.tagOptions];
-    },
-    defaultSearchable() {
-      return this.searchable || this.selectOptions.length > 9;
-    },
-    defaultPlaceholder() {
-      return this.placeholder || this.$t('common.typeToSearch');
-    },
-    combinedErrors() {
-      return this.errors.concat(this.fieldErrors);
-    },
-  },
-  methods: {
-    /**
-     * Handler for when a tag is being added to the value
-     */
-    addTag() {
-      if (this.taggable && this.searchValue.length > 0) {
-        this.searchValue.split(',').forEach((untrimmedVal) => {
-          const newVal = untrimmedVal.trim();
-          const existsInCurrentValues = find(this.inputValue, { value: newVal });
-          if (!existsInCurrentValues) {
-            this.tagOptions.push({
-              multiselectId: this.generateTagId(), text: newVal, value: newVal,
-            });
-            this.inputValue.push({
-              multiselectId: this.generateTagId(), text: newVal, value: newVal,
-            });
-            this.$emit('input', map(this.inputValue, 'value'));
-          }
-        });
-      }
-    },
-    /**
-     * Handler for when the multiselect dropdown is closed.
-     */
-    close() {
-      this.isExpanded = false;
-      this.addTag();
-      this.inputValueHandler(this.inputValue);
-    },
-    inputValueHandler(inputValue) {
-      this.floatLabels = (inputValue.length || document.activeElement === this.$refs.vms.$el.querySelector('input')) > 0 && this.label;
-    },
+    const nextIdTag = ref(0);
+    const tagOptions = ref([]);
+
     /**
      * Generate a unique id for a tag
      *
      * @returns tag id
      */
-    generateTagId() {
-      const { nextIdTag } = this;
-      this.nextIdTag += 1;
-      return nextIdTag;
-    },
-    map,
+    function generateTagId() {
+      const popIdTag = nextIdTag.value;
+      nextIdTag.value += 1;
+      return popIdTag;
+    }
+
+    function setFloatLabels(isOpen, value) {
+      if (props.floatingLabel) {
+        if (props.searchable && isOpen) {
+          return true;
+        }
+        return value.length > 0 && !!props.label;
+      }
+      return false;
+    }
+
+    const selectOptions = computed(() => {
+      let mapOptions = [];
+      if (props.options.length) {
+        if (has(props.options[0], 'value')) {
+          mapOptions = map(props.options, (option) => ({
+            text: option.text,
+            value: option.value,
+            multiselectId: option.multiselectId !== undefined ? option.multiselectId : generateTagId(),
+            ...option,
+          }));
+        } else {
+          mapOptions = map(props.options, (option) => ({
+            text: option,
+            value: option,
+            multiselectId: generateTagId(),
+          }));
+        }
+      }
+      return [...mapOptions, ...tagOptions.value];
+    });
+    /**
+     * Process value prop to match with existing values
+     * Checks for the option in the select options and to see if new value is actually new
+     *
+     * @param {Object} newVal new input value
+     * @returns {Object} input value
+     */
+    function processValue(value) {
+      let newInputValue = [...value];
+      if (!has(newInputValue[0], 'value')) {
+        newInputValue = map(value, (val) => find(selectOptions.value, { value: val }));
+      }
+      return newInputValue;
+    }
+
+    const {
+      value: inputValue, errors: fieldErrors,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
+      validateOnMount: props.validationImmediate,
+      initialValue: processValue(props.value),
+      bails: false,
+    });
+    const combinedErrors = computed(() => [...props.errors, ...fieldErrors.value]);
+    const floatLabels = ref(setFloatLabels(false, inputValue.value));
+    const searchValue = ref('');
+
+    const classes = computed(() => [
+      { 'polyfill-placeholder': floatLabels.value },
+      { 'h-100': props.floatingLabel },
+      { 'no-multiselect-label': !props.label },
+      'white-label-background',
+      'form-control',
+      'p-0',
+    ]);
+
+    const defaultSearchable = computed(() => props.searchable || props.selectOptions.length > 9);
+
+    const defaultPlaceholder = computed(() => props.placeholder || i18n.global.t('common.typeToSearch'));
+
+    const isOpen = ref(false);
     /**
      * @description focus the Vue Multi Select component (vms) and floats the label
+     * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
      */
-    openHandler() {
-      this.isExpanded = true;
-      this.$refs.vms.$el.querySelector('input').focus();
-      this.floatLabels = true;
-      this.$emit('open');
-    },
+    function openHandler() {
+      context.emit('open');
+      isOpen.value = true;
+      floatLabels.value = setFloatLabels(isOpen.value, inputValue.value);
+    }
+
+    function closeHandler() {
+      context.emit('closed');
+      isOpen.value = false;
+      floatLabels.value = setFloatLabels(isOpen.value, inputValue.value);
+    }
+
+    function inputHandler(e) {
+      inputValue.value = e;
+    }
     /**
      * Handler for when the user types in the search input.
      * Track the value and bubble the event up.
      *
      * @param {String} value search text
      */
-    searchChange(value) {
-      this.searchValue = value;
-      this.$emit('search-change', value);
-    },
-    /**
-     * Handler for when input value is updated
-     * Checks for the option in the select options and to see if new value is actually new
-     *
-     * @param {Object} newVal new input value
-     * @returns {Object} input value
-     */
-    setInputValue(newVal) {
-      let newInputValue = newVal;
-      if (!has(newInputValue[0], 'value')) {
-        newInputValue = map(newVal, (val) => {
-          const existingValue = find(this.inputValue, { value: val });
-          const selectOption = find(this.selectOptions, { value: val });
-          if (selectOption) {
-            return selectOption;
-          }
+    function searchChange(value) {
+      searchValue.value = value;
+      context.emit('search-change', value);
+    }
 
-          return existingValue;
+    function addTag() {
+      if (props.taggable && searchValue.value.length > 0) {
+        searchValue.value.split(',').forEach((untrimmedVal) => {
+          const newVal = untrimmedVal.trim();
+          const existsInCurrentValues = find(inputValue.value, { value: newVal });
+          if (!existsInCurrentValues) {
+            tagOptions.value.push({
+              multiselectId: generateTagId(), text: newVal, value: newVal,
+            });
+            inputValue.value.push({
+              multiselectId: generateTagId(), text: newVal, value: newVal,
+            });
+            context.emit('input', map(inputValue.value, 'value'));
+          }
         });
       }
+    }
 
-      if (!isEqual(this.inputValue, newInputValue)) {
-        this.inputValue = newInputValue;
+    watch(() => inputValue.value, (value) => {
+      floatLabels.value = setFloatLabels(isOpen.value, inputValue.value);
+      context.emit('input', map(value, 'value'));
+    });
+
+    watch(() => props.value, (value) => {
+      const newValues = processValue(value);
+      if (!isEqual(inputValue.value, newValues)) {
+        inputValue.value = newValues;
       }
-    },
+    });
+
+    return {
+      addTag,
+      classes,
+      closeHandler,
+      combinedErrors,
+      defaultPlaceholder,
+      defaultSearchable,
+      fieldErrors,
+      inputHandler,
+      inputValue,
+      internalId,
+      openHandler,
+      searchChange,
+      selectOptions,
+    };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-@import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
-
-:deep(.multiselect .multiselect__tag) {
-  .multiselect__tag-icon {
-    &:focus-visible {
-      outline: solid 2px $primary;
-      outline-offset: -2px;
-      -webkit-transition: none;
-      transition: none;
+:deep .polyfill-placeholder {
+  .multiselect__tags {
+    padding: 1.1rem 50px 0.1rem 0.75rem;
     }
-  }
-
-  .multiselect__tag-contents {
-    &:focus-visible {
-      outline: solid 2px $primary;
-      outline-offset: -1px;
-      -webkit-transition: none;
-      transition: none;
-    }
-  }
-}
-
-:deep(.form-label-group) {
-  .form-label-group-input {
-    .multiselect--active {
-      outline-offset: 2px;
-      outline: 2px solid;
-    }
-  }
 }
 </style>
