@@ -23,6 +23,18 @@ export function findByTestId(wrapper, testId) {
   return wrapper.find(`[data-testid="${testId}"]`);
 }
 
+export function findByName(wrapper, name) {
+  if (!wrapper) {
+    throw new Error('Please provide a wrapper');
+  }
+
+  if (typeof name !== 'string') {
+    throw new Error('Please provide a valid name');
+  }
+
+  return wrapper.find(`[name="${name}"]`);
+}
+
 export function findComponentByTestId(wrapper, testId) {
   if (!wrapper) {
     throw new Error('Please provide a wrapper');

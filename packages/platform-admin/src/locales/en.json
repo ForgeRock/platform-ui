@@ -1184,6 +1184,8 @@
         "nameIdFormatDescription": "Identifies the SAML processing rules and constraints for the assertion's subject statement. Use the default value of <code>Unspecified</code> unless the application explicitly requires a specific format.",
         "applicationUsername": "Application Username",
         "applicationUsernameDescription": "Determines the default value for a user's application username. The application username will be used for the assertion's subject statement.",
+        "nameIdScript": "NameID Script",
+        "nameIdScriptDescription": "The NameID script to evaluate for application username.",
         "response": "Response",
         "responseDescription": "Determines whether the SAML authentication response message is digitally signed or not. A signature certificate is required if signed to validate the generated response message.",
         "assertionSignature": "Assertion Signature",
@@ -1227,7 +1229,7 @@
           "uniqueEntityId": "Metadata must contain a unique entityID",
           "generic": "There has been an error uploading your file. Please try again",
           "reupload": "Metadata reupload failed. Please try again"
-        },
+          },
         "attributeStatementsSection": {
           "title": "Attribute Statements (optional)",
           "description": "Insert statements into the SAML assertions shared with your application.",
@@ -2245,6 +2247,10 @@
       "OAUTH2_VALIDATE_SCOPE": {
         "name": "OAuth2 Validate Scope",
         "description": "Script used for validating OAuth2 scopes."
+      },
+      "SAML2_NAMEID_MAPPER": {
+        "name": "SAML2 NameID Mapper",
+        "description": "Script to customize or generate the SAML Name ID mapping for a given SP when ForgeRock is the Identity Provider."
       }
     },
     "languages": {
@@ -2308,6 +2314,7 @@
       "defaultTableTab": "All Endpoints"
     },
     "getListDataFail": "Unable to retrieve endpoint script data",
+    "getCurrentScriptFail": "Unable to retrieve Script with ID { scriptId }",
     "deleteFail": "Unable to delete endpoint script",
     "editorModal": {
       "selectTypeTitle": "New Script",

@@ -167,6 +167,11 @@ beforeEach(() => {
         BCol: false,
       },
     },
+    data() {
+      return {
+        sectionExpanded: {},
+      };
+    },
   });
 });
 
@@ -239,6 +244,69 @@ describe('Form Generator', () => {
         show: 'core.testBoolean',
       };
       expect(wrapper.vm.showField(test)).toBe(false);
+    });
+
+    it('sets sectionExpanded value if show model value is Array and showFieldForValue is matched', async () => {
+      const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
+      const test = {
+        label: 'StringLabel',
+        type: 'string',
+        value: '',
+        show: 'core.testArray',
+        showFieldForValue: 'one',
+      };
+      expect(wrapper.vm.showField(test)).toBe(true);
+      expect(wrapper.vm.$data.sectionExpanded.StringLabel).toBe(true);
+    });
+
+    it('sets sectionExpanded value if show model value is Array and showFieldForValue is incorrect', async () => {
+      const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
+      const test = {
+        label: 'StringLabel',
+        type: 'string',
+        value: '',
+        show: 'core.testArray',
+        showFieldForValue: 'two',
+      };
+      expect(wrapper.vm.showField(test)).toBe(false);
+      expect(wrapper.vm.$data.sectionExpanded.StringLabel).toBe(false);
+    });
+
+    it('returns true and sets sectionExpanded value if showFieldForValue is matched', async () => {
+      const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
+      const test = {
+        label: 'StringLabel',
+        type: 'string',
+        value: '',
+        show: 'core.testBoolean',
+        showFieldForValue: false,
+      };
+      expect(wrapper.vm.showField(test)).toBe(true);
+      expect(wrapper.vm.$data.sectionExpanded.StringLabel).toBe(true);
+    });
+
+    it('returns false and sets sectionExpanded value if showFieldForValue is incorrect', async () => {
+      const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
+      const test = {
+        label: 'StringLabel',
+        type: 'string',
+        value: '',
+        show: 'core.testBoolean',
+        showFieldForValue: true,
+      };
+      expect(wrapper.vm.showField(test)).toBe(false);
+      expect(wrapper.vm.$data.sectionExpanded.StringLabel).toBe(false);
+    });
+
+    it('does not attempt to set sectionExpanded if schema is null', async () => {
+      await wrapper.setProps({ schema: null, model });
+      const indexCollapsibleFieldsSpy = jest.spyOn(wrapper.vm, 'indexCollapsibleFields').mockReturnValue({});
+      expect(wrapper.vm.$data.sectionExpanded).toStrictEqual({});
+      expect(indexCollapsibleFieldsSpy).not.toHaveBeenCalled();
     });
   });
 
