@@ -215,6 +215,7 @@
     "search": "Search",
     "searchPlaceholder": "Search {searchItem}",
     "select": "Select",
+    "selected": "Selected",
     "selectedColon": "Selected:",
     "selectSelection": "Select {selection}",
     "secret": "Secret",
@@ -584,6 +585,18 @@
       "copyRecoveryCodesToClipboard": "Copy {recoveryCodesLength} recovery codes to clipboard",
       "printRecoveryCodes": "Print {recoveryCodesLength} recovery codes"
     }
+  },
+  "multiselectBase": {
+    "deselectGroup": "Press enter to deselect group",
+    "deselectLabel": "Press enter to remove",
+    "limitText": "and {count} more",
+    "maxElements": "Maximum of { max } options selected. First remove a selected option to select another.",
+    "noOptions": "List is empty.",
+    "noResults": "No elements found. Consider changing the search query.",
+    "selectGroupLabel": "Press enter to select group",
+    "selectLabel": "Press enter to select",
+    "selectOption": "Select option",
+    "tagPlaceholder": "Press enter to create a tag"
   },
   "navbar": {
     "helpSupport": "Help & Support",
