@@ -101,13 +101,16 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       textarea:focus,
-      <template v-if="mock">.fr-theme-preview</template> input:focus,
-      <template v-if="mock">.fr-theme-preview</template> input[type]:focus,
+      <template v-if="mock">.fr-theme-preview</template> input:focus:not(.multiselect__input),
+      <template v-if="mock">.fr-theme-preview</template> input[type]:focus:not(.multiselect__input),
       .uneditable-input:focus,
-      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags {
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
+      <template v-if="mock">.fr-theme-preview</template> .form-control multiselect:focus .multiselect__tags {
       border-color: {{ theme.primaryColor }} !important;
-      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
-      box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
+      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;;
+      box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;;
       outline: 0 none;
       }
 
@@ -323,7 +326,6 @@ of the MIT license. See the LICENSE file for details. -->
       #app .card input,
       #app .card .form-label-group .form-label-group-input input,
       #app .card .form-label-group .form-label-group-input .form-control,
-      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__tags,
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__element,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content input,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .form-control,

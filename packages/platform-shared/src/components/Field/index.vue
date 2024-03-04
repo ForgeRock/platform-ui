@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,7 +41,9 @@ import FrDurationInput from '@forgerock/platform-shared/src/components/Field/Dur
 import FrJsonInput from '@forgerock/platform-shared/src/components/Field/JsonInput';
 import FrKeyValueList from '@forgerock/platform-shared/src/components/Field/KeyValueList';
 import FrMultiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
+import FrMultiselectDeprecated from '@forgerock/platform-shared/src/components/Field/MultiselectDeprecated';
 import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
+import FrSelectInputDeprecated from '@forgerock/platform-shared/src/components/Field/SelectInputDeprecated';
 import FrSelectWithActions from '@forgerock/platform-shared/src/components/Field/SelectWithActions';
 import FrSpinButton from '@forgerock/platform-shared/src/components/Field/SpinButton';
 import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
@@ -55,6 +57,7 @@ import {
   isFieldTypeSupportedForPlaceholderEntry,
 } from '@forgerock/platform-shared/src/utils/esvUtils';
 import uuid from 'uuid/v4';
+import store from '@/store';
 
 export default {
   name: 'FrField',
@@ -67,7 +70,9 @@ export default {
     FrJsonInput,
     FrKeyValueList,
     FrMultiselect,
+    FrMultiselectDeprecated,
     FrSelectInput,
+    FrSelectInputDeprecated,
     FrSelectWithActions,
     FrSpinButton,
     FrSwitch,
@@ -200,11 +205,11 @@ export default {
         datetime: 'FrDateTimeInput',
         duration: 'FrDurationInput',
         json: 'FrJsonInput',
-        multiselect: 'FrMultiselect',
+        multiselect: 'FrMultiselectDeprecated',
         number: 'FrBasicInput',
         object: 'FrKeyValueList',
         password: 'FrBasicInput',
-        select: 'FrSelectInput',
+        select: 'FrSelectInputDeprecated',
         selectWithActions: 'FrSelectWithActions',
         spinbutton: 'FrSpinButton',
         string: 'FrBasicInput',
@@ -212,6 +217,13 @@ export default {
         textarea: 'FrTextArea',
         time: 'FrTimeInput',
       };
+      // eslint-disable-next-line prefer-destructuring
+      const newMultiselectEnabled = store.state?.SharedStore?.newMultiselectEnabled;
+      if (newMultiselectEnabled) {
+        componentMap.select = 'FrSelectInput';
+        componentMap.multiselect = 'FrMultiselect';
+      }
+
       return componentMap[this.fieldType];
     },
   },
