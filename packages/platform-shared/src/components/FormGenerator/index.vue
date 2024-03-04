@@ -16,28 +16,35 @@ of the MIT license. See the LICENSE file for details. -->
           :class="[{'pl-lg-0': columnIndex === 0, 'pr-lg-0': columnIndex === row.length - 1}, property.columnClass]"
           :key="`${property.model}_${columnIndex}`"
           :lg="property.columns">
-          <template v-if="property.type === 'managedObject'">
+          <Component
+            :is="getVisibilityComponent(property.collapsible)"
+            v-model="sectionExpanded[property.label]">
+            <template v-if="property.type === 'managedObject'">
+              <slot
+                name="relationshipField"
+                :index="index"
+                :property="property" />
+            </template>
+            <template v-else-if="!property.customSlot">
+              <Component
+                v-if="getPropertyComponent(property)"
+                @update:model="$emit('update:model', $event, property.saveFormat)"
+                :class="{'mb-4': property.type === 'multiselect'}"
+                :is="getPropertyComponent(property)"
+                :label="property.label"
+                :options="property.options"
+                :type="property.type"
+                :ui-schema="property"
+                :path="property.model"
+              />
+            </template>
             <slot
-              name="relationshipField"
-              :index="index"
-              :property="property" />
-          </template>
-          <template v-else-if="!property.customSlot">
-            <Component
-              v-if="getPropertyComponent(property)"
-              @update:model="$emit('update:model', $event, property.saveFormat)"
-              :class="{'mb-4': property.type === 'multiselect'}"
-              :is="getPropertyComponent(property)"
-              :label="property.label"
-              :options="property.options"
-              :type="property.type"
-              :ui-schema="property"
-              :path="property.model" />
-          </template>
-          <slot
-            v-else
-            :property="property"
-            :name="property.customSlot" />
+              v-else
+              :property="property"
+              :name="property.customSlot"
+              :visibility="showField(property)"
+            />
+          </Component>
         </BCol>
       </BRow>
     </form>
@@ -98,6 +105,27 @@ export default {
     schema: {
       type: Array,
       default: () => [],
+    },
+  },
+  data() {
+    return {
+      /**
+       * State object indexed in the component for the BCollapse component to show/hide html elements on the
+       * page. The label field is mandatory for the collapsible functionality to work as intended.
+       */
+      sectionExpanded: {},
+    };
+  },
+  mounted() {
+    if (this.schema) {
+      this.sectionExpanded = this.indexCollapsibleFields(this.schema);
+    }
+  },
+  watch: {
+    schema(newSchema) {
+      if (newSchema) {
+        this.sectionExpanded = this.indexCollapsibleFields(newSchema);
+      }
     },
   },
   computed: {
@@ -196,9 +224,25 @@ export default {
         if (modelProp !== undefined) {
           currentVal = Object.prototype.hasOwnProperty.call(modelProp, 'value') ? modelProp.value : modelProp;
         }
+        /**
+        * When showFieldForValue is present on a field, check if it matches the value of the show field. If it does,
+        * toggle visibility using the sectionExpanded object.
+        */
+        if (property?.showFieldForValue !== undefined) {
+          currentVal = Array.isArray(currentVal) ? currentVal[0] : currentVal;
+          if (currentVal === property.showFieldForValue) {
+            this.sectionExpanded[property.label] = true;
+            return true;
+          }
+          this.sectionExpanded[property.label] = false;
+          return false;
+        }
         return currentVal || false;
       }
       return true;
+    },
+    getVisibilityComponent(collapsible) {
+      return collapsible ? 'BCollapse' : 'span';
     },
     getPropertyComponent(property) {
       if (this.safeCompare(property) && this.showField(property)) {
@@ -238,6 +282,17 @@ export default {
         return propertyValue[0] || '';
       }
       return isBoolean(propertyValue) ? propertyValue : propertyValue || '';
+    },
+    /**
+     * Collects the set of 'collapsible' fields from a passed static json template and returns an object keyed by
+     * the field label.
+     */
+    indexCollapsibleFields(schema) {
+      return schema.filter((field) => field[0].collapsible)
+        .reduce((currentCollapsibleFieldState, nextField) => ({
+          ...currentCollapsibleFieldState,
+          [nextField[0].label]: false,
+        }), {});
     },
   },
 };
