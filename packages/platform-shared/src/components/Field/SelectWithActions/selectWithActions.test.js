@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -42,7 +42,7 @@ describe('SelectWithActions input', () => {
     expect(wrapper.emitted()['add-item-clicked']).toBeTruthy();
     expect(wrapper.emitted()['add-item-clicked'].length).toBe(1);
 
-    wrapper.findAll('button[aria-label="editButton?"').at(1).trigger('click');
+    wrapper.findAll('button[aria-label="editButton?"')[1].trigger('click');
 
     expect(wrapper.emitted()['edit-item-clicked']).toBeTruthy();
     expect(wrapper.emitted()['edit-item-clicked'].length).toBe(1);
