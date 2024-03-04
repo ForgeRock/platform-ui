@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -127,7 +127,7 @@ describe('MultiSelect input', () => {
     const elements = () => multiselect.findAll('.multiselect__option');
 
     multiselect.trigger('click');
-    elements().at(1).trigger('click');
+    elements()[1].trigger('click');
     await flushPromises();
     expect(wrapper.vm.inputValue).toEqual([{
       copySelect: false,
@@ -138,7 +138,7 @@ describe('MultiSelect input', () => {
     expect(wrapper.emitted().input[0]).toEqual([['b']]);
 
     multiselect.trigger('click');
-    elements().at(0).trigger('click');
+    elements()[0].trigger('click');
     await flushPromises();
     expect(wrapper.vm.inputValue).toEqual([{
       copySelect: false,

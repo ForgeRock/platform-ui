@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,9 +10,11 @@ of the MIT license. See the LICENSE file for details. -->
       :label="$t('common.placeholders.relationshipLabel', {relationshipTitle: relationshipProperty.title})"
       :label-for="'editResourceType' + index"
       horizontal>
-      <VueMultiSelect
+      <Component
+        :is="multiselectComponent"
         open-direction="below"
         label="label"
+        options-label-key="label"
         track-by="label"
         :disabled="disabled"
         :value="resourceCollection"
@@ -22,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
         <template #option="{ option }">
           {{ option.text }}
         </template>
-      </VueMultiSelect>
+      </Component>
     </BFormGroup>
 
     <FrField
@@ -52,7 +54,9 @@ of the MIT license. See the LICENSE file for details. -->
       @open="setOptions"
       @search-change="debouncedSetOptions">
       <template #singleLabel="{ option }">
-        <div class="media">
+        <div
+          v-if="option"
+          class="media">
           <div class="media-body">
             <span
               v-for="(displayField, idx) in option.displayFields"
@@ -68,7 +72,9 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
       <template #tag="{ option, remove }">
-        <div class="multiselect__tag">
+        <div
+          v-if="option"
+          class="multiselect__tag">
           <div>
             <span tabindex="0">
               <span
@@ -90,7 +96,9 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
       <template #option="{ option }">
-        <div class="media">
+        <div
+          v-if="option"
+          class="media">
           <div class="media-body">
             <div class="text-bold">
               {{ option.resource[option.displayFields[0]] }}
@@ -140,13 +148,16 @@ import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstr
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
+import FrMultiselectBase from '@forgerock/platform-shared/src/components/MultiselectBase/MultiselectBase';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
 import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
+import store from '@/store';
 
 export default {
   name: 'RelationshipEdit',
   components: {
     VueMultiSelect,
+    FrMultiselectBase,
     BFormGroup,
     FrField,
     FrTimeConstraint: TimeConstraint,
@@ -205,6 +216,7 @@ export default {
     },
   },
   data() {
+    const multiselectComponent = store.state?.SharedStore?.newMultiselectEnabled ? FrMultiselectBase : VueMultiSelect;
     return {
       fieldDescription: this.relationshipProperty.description !== this.relationshipProperty.title
         ? this.relationshipProperty.description
@@ -229,6 +241,7 @@ export default {
       },
       debouncedSetOptions: debounce(this.setOptions, 1000),
       searchPlaceholder: '',
+      multiselectComponent,
     };
   },
   mounted() {

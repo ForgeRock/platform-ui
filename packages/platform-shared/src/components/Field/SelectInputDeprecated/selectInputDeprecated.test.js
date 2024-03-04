@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,7 +17,7 @@ describe('SelectInput', () => {
     options: [],
   };
 
-  function setup(props, data) {
+  function setup(props) {
     return mount(SelectInput, {
       global: {
         plugins: [i18n],
@@ -26,20 +26,40 @@ describe('SelectInput', () => {
         ...defaultProps,
         ...props,
       },
-      data() {
-        return data;
-      },
     });
   }
 
-  async function clickOnOptionNumber(number, wrapper) {
-    const select = wrapper.find('.multiselect');
-    const elements = () => select.findAll('.multiselect__option');
+  describe('@renders', () => {
+    it('default', () => {
+      const wrapper = setup({ _uid: 'test' });
 
-    select.trigger('click');
-    elements()[number].trigger('click');
-    await flushPromises();
-  }
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+      expect(wrapper.vm.floatLabels).toBe(false);
+      expect(multiselect.attributes('aria-expanded')).toBe('false');
+      expect(multiselect.attributes('aria-labelledby')).toBe('floatingLabelInput1-label');
+
+      const multiSelectInput = multiselect.find(`[id=floatingLabelInput${wrapper.vm._uid}]`);
+      expect(multiSelectInput.attributes('aria-labelledby')).not.toBeDefined();
+    });
+
+    it('given inputLabelledby', async () => {
+      const wrapper = setup({ inputLabelledby: 'stub-input-labelledby' });
+      await flushPromises();
+
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+      const multiSelectInput = multiselect.find(`[id=floatingLabelInput${wrapper.vm._uid}]`);
+      expect(multiSelectInput.attributes('aria-labelledby')).toBe('stub-input-labelledby');
+    });
+  });
+
+  describe('@actions', () => {
+    xit('when open, should have aria-expanded attribute', async () => {
+      const wrapper = setup();
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+      await multiselect.trigger('focus');
+      expect(multiselect.attributes('aria-expanded')).toBe('true');
+    });
+  });
 
   it('SelectInput component process options prop from array', () => {
     const wrapper = setup({ options: ['a', 'b', 'c'] });
@@ -77,19 +97,22 @@ describe('SelectInput', () => {
 
   it('SelectInput component Closes Dropdown', () => {
     const wrapper = setup({ options: ['a', 'b', 'c'], label: 'testLabel' });
-    const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
 
-    multiselectInput.trigger('click');
+    wrapper.vm.floatLabels = true;
     expect(wrapper.vm.floatLabels).toBe(true);
-    multiselectInput.trigger('keydown.esc');
+    wrapper.vm.closeDropDown();
     expect(wrapper.vm.floatLabels).toBe(false);
+    wrapper.vm.closeDropDown('test');
+    expect(wrapper.vm.floatLabels).toBe(true);
   });
 
   it('SelectInput component Closes Dropdown without floating label', async () => {
+    const closeDropDownSpy = jest.spyOn(SelectInput.methods, 'closeDropDown');
     const wrapper = setup({ options: ['a', 'b', 'c'], label: 'testLabel', floatingLabel: false });
 
     expect(wrapper.vm.floatLabels).toBe(false);
     await wrapper.vm.$refs.vms.$emit('close');
+    expect(closeDropDownSpy).not.toHaveBeenCalled();
     expect(wrapper.vm.floatLabels).toBe(false);
   });
 
@@ -133,16 +156,9 @@ describe('SelectInput', () => {
         { text: 'bee', value: 'b' },
         { text: 'cee', value: 'c' },
       ],
-      closeOnSelect: true,
-      value: 'b',
     });
 
-    const select = wrapper.find('.multiselect');
-    const elements = () => select.findAll('.multiselect__option');
-
-    select.trigger('click');
-    elements()[1].trigger('click');
-    await flushPromises();
+    await wrapper.setProps({ value: 'b' });
 
     // Check that the SelectInput shows the correct initial text
     expect(wrapper.find('.multiselect__single').text()).toBe('bee');
@@ -164,14 +180,13 @@ describe('SelectInput', () => {
         { text: 'ayy', value: 'a' },
         { text: 'bee', value: 'b' },
       ],
-      allowEmpty: true,
-      label: 'test label',
     });
 
-    await clickOnOptionNumber(0, wrapper);
-    expect(wrapper.vm.floatLabels).toBe(true);
+    wrapper.vm.floatLabels = true;
 
-    await clickOnOptionNumber(0, wrapper);
+    await wrapper.setProps({ value: 'sdf' });
+    expect(wrapper.vm.floatLabels).toBe(true);
+    await wrapper.setProps({ value: '', options: [] });
     expect(wrapper.vm.floatLabels).toBe(false);
   });
 
@@ -199,11 +214,14 @@ describe('SelectInput', () => {
         ...defaultProps,
         autofocus: false,
       },
-      attachTo: document.body,
+      slots: {
+        prepend: '<span class="test_prepend">prepend</span>',
+        append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
+      },
     });
 
     const multiselect = findByTestId(wrapper, 'stub-testid');
-    expect(multiselect.attributes('autofocus')).toBe(undefined);
+    expect(multiselect.attributes('aria-expanded')).toBe('false');
   });
 
   it('SelectInput is autofocused on prop "autofocus"', async () => {
@@ -211,16 +229,21 @@ describe('SelectInput', () => {
       global: {
         plugins: [i18n],
       },
+      attachTo: document.body,
       props: {
         ...defaultProps,
         autofocus: true,
+        searchable: true,
       },
-      attachTo: document.body,
+      slots: {
+        prepend: '<span class="test_prepend">prepend</span>',
+        append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
+      },
     });
     await flushPromises();
 
     const multiselect = findByTestId(wrapper, 'stub-testid');
-    expect(multiselect.attributes('autofocus')).toBe('true');
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
   });
 
   it('Maintains focus on the multiselect component after selecting an option', async () => {
@@ -231,7 +254,6 @@ describe('SelectInput', () => {
     // when it was focused, but we are able to deduce that the menu is still focused by being
     // able to immediately trigger it using a keyboard event after making a selection.
     const multiselect = findByTestId(wrapper, 'stub-testid');
-    const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
     const options = wrapper.findAll('.multiselect__option');
 
     // Menu is opened initially
@@ -239,29 +261,34 @@ describe('SelectInput', () => {
 
     // Option selected, menu closes, menu expected to remain focused
     options[0].trigger('click');
-    expect(multiselectInput.attributes('aria-expanded')).toBe('false');
+    expect(multiselect.attributes('aria-expanded')).toBe('false');
 
     // We can deduce that the menu is still focused because we can
     // immediately trigger it again using the down arrow.
     multiselect.trigger('keydown', { key: 'ArrowDown' });
     await wrapper.vm.$nextTick();
-    expect(multiselectInput.attributes('aria-expanded')).toBe('true');
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+  });
+
+  it('Displays the multiselect menu options if the "up arrow" is clicked', async () => {
+    const wrapper = setup({ options: ['a', 'b', 'c'] });
+
+    const multiselect = findByTestId(wrapper, 'stub-testid');
+    await multiselect.trigger('keydown', { key: 'ArrowUp' });
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
   });
 
   it('Displays the multiselect menu options if the "down arrow" is clicked', async () => {
     const wrapper = setup({ options: ['a', 'b', 'c'] });
 
     const multiselect = findByTestId(wrapper, 'stub-testid');
-    const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
-
     await multiselect.trigger('keydown', { key: 'ArrowDown' });
-    expect(multiselectInput.attributes('aria-expanded')).toBe('true');
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
   });
 
   it('Keeps the previously selected option highlighted after revealing the menu using the "up arrow" or "down arrow"', async () => {
     const wrapper = setup({ options: ['a', 'b', 'c'] });
     const multiselect = findByTestId(wrapper, 'stub-testid');
-    const multiselectInput = findByTestId(wrapper, 'multi-select-input-stub-testid');
     const options = wrapper.findAll('.multiselect__option');
 
     // When the menu is initially opened, we expect the first option to always be highlighted
@@ -270,23 +297,23 @@ describe('SelectInput', () => {
 
     // The second option selected, menu closes, menu remains focused
     await options[1].trigger('click');
-    expect(multiselectInput.attributes('aria-expanded')).toBe('false');
+    expect(multiselect.attributes('aria-expanded')).toBe('false');
 
     // We trigger the menu to show again by clicking on the "down arrow" and the second option should now be highlighted
     await multiselect.trigger('keydown', { key: 'ArrowDown' });
-    expect(multiselectInput.attributes('aria-expanded')).toBe('true');
-    expect(options[0].classes('multiselect__option--highlight')).toBe(true);
-    expect(options[1].classes('multiselect__option--selected')).toBe(true);
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+    expect(options[0].classes('multiselect__option--highlight')).toBe(false);
+    expect(options[1].classes('multiselect__option--highlight')).toBe(true);
 
     // The third option selected, menu closes, menu remains focused
     await options[2].trigger('click');
-    expect(multiselectInput.attributes('aria-expanded')).toBe('false');
+    expect(multiselect.attributes('aria-expanded')).toBe('false');
 
     // We trigger the menu once more by clicking on the "up arrow" this time and the third option should remain highlighted
-    await multiselect.trigger('keydown', { key: 'ArrowDown' });
-    expect(multiselectInput.attributes('aria-expanded')).toBe('true');
-    expect(options[0].classes('multiselect__option--highlight')).toBe(true);
+    await multiselect.trigger('keydown', { key: 'ArrowUp' });
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+    expect(options[0].classes('multiselect__option--highlight')).toBe(false);
     expect(options[1].classes('multiselect__option--highlight')).toBe(false);
-    expect(options[2].classes('multiselect__option--selected')).toBe(true);
+    expect(options[2].classes('multiselect__option--highlight')).toBe(true);
   });
 });

@@ -58,7 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrField
           :value="answerModel"
           @input="answerModel = $event; validateAnswer()"
-          class="mb-3"
+          class="mb-3 question-answer"
           type="password"
           validation="required"
           :label="answerLabel"
@@ -220,3 +220,11 @@ export default {
   },
 };
 </script>
+<style scoped>
+.question-answer :deep(label) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100% !important;
+}
+</style>

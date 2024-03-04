@@ -70,21 +70,19 @@ export default {
       default: null,
     },
   },
-  mounted() {
+  data() {
     const choices = this.getTranslation(this.callback.getChoices());
-    this.selected.options = choices.map((item, itemIndex) => ({
+    const options = choices.map((item, itemIndex) => ({
       text: item,
       value: itemIndex,
     }));
-  },
-  data() {
     return {
       displayType: this.stage?.displayType ? this.stage.displayType : 'select',
       selected: {
         name: `callback_${this.index}`,
         label: this.callback.getPrompt(),
         value: this.callback.getDefaultChoice(),
-        options: [],
+        options,
       },
     };
   },
