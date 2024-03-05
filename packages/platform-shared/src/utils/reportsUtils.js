@@ -22,7 +22,7 @@ import store from '@/store';
  * @param {String} managedObjectName managed object name that comes from the _FIELD_MAP config
  * @returns {Object} managed object
  */
-async function getManagedObject(managedObjectName) {
+export async function getManagedObject(managedObjectName) {
   function findManagedObject(objects, name) {
     return objects.find((object) => (!store.state.isFraas || object.name.startsWith(store.state.realm)) && object.name.endsWith(name));
   }

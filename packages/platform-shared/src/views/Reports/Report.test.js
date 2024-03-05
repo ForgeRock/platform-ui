@@ -78,6 +78,10 @@ describe('Report component that contains the run and history tabs', () => {
     it('updates the history.pushState when tabs are clicked', async () => {
       ReportsUtils.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
       onMountFetchMocks({ applications: {} });
+      autoApi.getReportRuns = jest.fn().mockReturnValue(Promise.resolve({
+        result: [{ name: 'my-report', runId: 'job_123', status: 'COMPLETED_SUCCESS' }],
+      }));
+
       wrapper = setup();
       await flushPromises();
 

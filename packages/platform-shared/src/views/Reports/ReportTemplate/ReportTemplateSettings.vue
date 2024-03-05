@@ -25,7 +25,7 @@ to such license between the licensee and ForgeRock AS. -->
           <div
             v-for="(setting, settingIndex) in reportSettings"
             class="mb-4 pb-4"
-            :data-testid="`${setting.id}-settings-container`"
+            :data-testid="`${setting._id}-settings-container`"
             :class="{'border-bottom': reportSettings.length - 1 !== settingIndex}"
             :key="settingIndex">
             <div
@@ -38,7 +38,7 @@ to such license between the licensee and ForgeRock AS. -->
                 v-if="!setting.hideAddDefinitionButton || setting.hideAddDefinitionButton() !== true"
                 class="text-body px-2 py-0"
                 variant="link"
-                @click="openSettingsModal(setting.modal)">
+                @click="updateDefinitions(setting.modal, {})">
                 <FrIcon name="add" />
               </BButton>
             </div>
@@ -47,7 +47,7 @@ to such license between the licensee and ForgeRock AS. -->
             </p>
             <template v-if="setting.definitions.length">
               <div
-                v-if="setting.id === 'dataSources'"
+                v-if="setting._id === 'entities'"
                 class="mt-4"
                 data-testid="definition-body">
                 <FrReportDataSourceDefinition
@@ -59,8 +59,8 @@ to such license between the licensee and ForgeRock AS. -->
                   :selected-columns="definition.selectedColumns"
                   :selected-related-entities="definition.selectedRelatedEntities"
                   @delete-data-source="$emit('delete-data-source', defIndex)"
-                  @set-column-selections="$emit('set-selected-data-source-columns', defIndex, $event)"
-                  @set-related-entity-selection="$emit('set-selected-related-entity', defIndex, $event)" />
+                  @set-column-selections="$emit('set-data-source-columns', defIndex, $event)"
+                  @set-related-entity="$emit('set-related-entity', defIndex, $event)" />
               </div>
               <div
                 v-else
@@ -70,12 +70,14 @@ to such license between the licensee and ForgeRock AS. -->
                   v-for="(definition, defIndex) in setting.definitions"
                   :class="definitionCardStyles(defIndex, setting.definitions.length)"
                   :definition="definition"
+                  :definition-being-updated="definitionBeingUpdated"
+                  :is-saving="isSaving"
                   :key="defIndex"
                   :name="definition.name"
-                  :setting-id="setting.id"
+                  :setting-id="setting._id"
                   :setting-title="setting.title"
-                  @delete-definition="$emit('delete-definition', setting.id, defIndex)"
-                  @edit-definition="openSettingsModal(setting.modal, definition)"
+                  @delete-definition="deleteDefinition(setting._id, definition._id)"
+                  @edit-definition="updateDefinitions(setting.modal, definition)"
                   @set-aggregate="$emit('set-aggregate', definition.name, $event)" />
               </div>
             </template>
@@ -110,12 +112,16 @@ import i18n from '@/i18n';
 const emit = defineEmits([
   'delete-data-source',
   'delete-definition',
-  'open-settings-modal',
+  'update-definitions',
   'set-aggregate',
-  'set-selected-data-source-columns',
-  'set-selected-related-entities',
+  'set-data-source-columns',
+  'set-related-entity',
 ]);
 defineProps({
+  isSaving: {
+    type: Boolean,
+    default: false,
+  },
   reportSettings: {
     type: Array,
     required: true,
@@ -123,6 +129,7 @@ defineProps({
 });
 
 // Globals
+const definitionBeingUpdated = ref('');
 const tabIndex = ref(0);
 
 const tabItems = [
@@ -139,12 +146,18 @@ const tabItems = [
 // Functions
 
 /**
- * Opens the definition editor modal
+ * Updates definitions -- creates a new definition or updates an existing
  * @param {String} modalId definition id name
  * @param {Object} definition definition object
  */
-function openSettingsModal(modalId, definition) {
-  emit('open-settings-modal', modalId, definition);
+function updateDefinitions(modalId, definition) {
+  definitionBeingUpdated.value = definition._id;
+  emit('update-definitions', modalId, definition);
+}
+
+function deleteDefinition(settingId, definitionId) {
+  definitionBeingUpdated.value = definitionId;
+  emit('delete-definition', settingId, definitionId);
 }
 
 /**

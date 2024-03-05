@@ -17,13 +17,13 @@ of the MIT license. See the LICENSE file for details. -->
             <BCardTitle
               class="h5 mb-0"
               title-tag="h4">
-              {{ definition.name }}
+              {{ definition.parameterName }}
               <small class="d-block text-muted">
                 {{ definition.parameterType }}
               </small>
             </BCardTitle>
           </template>
-          <template v-else-if="settingId === 'filters'">
+          <template v-else-if="settingId === 'filter'">
             <BListGroup>
               <BListGroupItem class="border-0 p-0">
                 <BCardText>
@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
               </BListGroupItem>
             </BListGroup>
           </template>
-          <template v-else-if="settingId === 'aggregates'">
+          <template v-else-if="settingId === 'aggregate'">
             <BFormGroup
               class="m-0"
               :label-for="definition.name">
@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
               </BFormCheckbox>
             </BFormGroup>
           </template>
-          <template v-else-if="settingId === 'sorting'">
+          <template v-else-if="settingId === 'sort'">
             <BListGroup>
               <BListGroupItem class="border-0 p-0">
                 <BCardText>
@@ -64,7 +64,12 @@ of the MIT license. See the LICENSE file for details. -->
         <BCol
           class="d-flex align-items-center justify-content-end"
           cols="2">
+          <FrSpinner
+            v-if="isSaving && definitionBeingUpdated === definition._id"
+            class="opacity-50 mr-2"
+            size="sm" />
           <FrActionsCell
+            v-else
             :edit-option="false"
             @delete-clicked.stop="$emit('delete-definition')"
             wrapper-class="pr-2">
@@ -106,6 +111,7 @@ import {
 import { pluralizeSingular } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from '@/i18n';
 
 const emit = defineEmits([
@@ -118,15 +124,24 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  definitionBeingUpdated: {
+    type: String,
+    default: '',
+  },
+  isSaving: {
+    type: Boolean,
+    default: false,
+  },
   settingId: {
     type: String,
     default: '',
     validator(value) {
       return [
+        'entities',
         'parameters',
-        'filters',
-        'aggregates',
-        'sorting',
+        'filter',
+        'aggregate',
+        'sort',
       ].includes(value);
     },
   },
