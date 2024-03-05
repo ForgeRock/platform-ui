@@ -36,7 +36,7 @@ describe('Report Settings Definition component', () => {
       wrapper = setup({
         settingId: 'parameters',
         definition: {
-          name: 'Parameter Definition Name',
+          parameterName: 'Parameter Definition Name',
           parameterType: 'User Provided',
         },
       });
@@ -49,7 +49,7 @@ describe('Report Settings Definition component', () => {
       let filterDefinition = findByText(wrapper, 'p', 'checkFilter active');
       expect(filterDefinition).toBeFalsy();
 
-      wrapper = setup({ settingId: 'filters' });
+      wrapper = setup({ settingId: 'filter' });
 
       filterDefinition = findByText(wrapper, 'p', 'checkFilter active');
       expect(filterDefinition.exists()).toBe(true);
@@ -60,7 +60,7 @@ describe('Report Settings Definition component', () => {
       expect(aggregateCheckboxLabel.exists()).toBe(false);
 
       wrapper = setup({
-        settingId: 'aggregates',
+        settingId: 'aggregate',
         definition: { name: 'My aggregate' },
       });
 
@@ -70,7 +70,7 @@ describe('Report Settings Definition component', () => {
 
     it('emits the aggregate checkbox selection', async () => {
       wrapper = setup({
-        settingId: 'aggregates',
+        settingId: 'aggregate',
         definition: { name: 'My aggregate' },
       });
 
@@ -81,7 +81,7 @@ describe('Report Settings Definition component', () => {
 
     it('pre-selects an aggregate checkbox if the definition prop contains a checked property set to true', async () => {
       wrapper = setup({
-        settingId: 'aggregates',
+        settingId: 'aggregate',
         definition: {
           name: 'My aggregate',
           checked: false,
@@ -92,7 +92,7 @@ describe('Report Settings Definition component', () => {
       expect(aggregateCheckbox.wrapperElement).not.toBeChecked();
 
       await wrapper.setProps({
-        settingId: 'aggregates',
+        settingId: 'aggregate',
         definition: {
           name: 'My aggregate',
           checked: true,
@@ -108,7 +108,7 @@ describe('Report Settings Definition component', () => {
       expect(sortingDescDefinition).toBeFalsy();
 
       wrapper = setup({
-        settingId: 'sorting',
+        settingId: 'sort',
         definition: {
           sortBy: 'First Name',
           direction: 'desc',
@@ -124,7 +124,7 @@ describe('Report Settings Definition component', () => {
       expect(sortingAscDefinition).toBeFalsy();
 
       wrapper = setup({
-        settingId: 'sorting',
+        settingId: 'sort',
         definition: {
           sortBy: 'Last Name',
           direction: 'asc',

@@ -17,8 +17,8 @@ const versionedPayload = { version: 'v2' };
   *
   * @returns {Promise}
   */
-export async function getReportTemplates(params) {
-  const { data } = await generateAutoAccessReports().get(`templates${encodeQueryString(params)}`);
+export async function getReportTemplates(params, underscores = true) {
+  const { data } = await generateAutoAccessReports().get(`templates${encodeQueryString(params, underscores)}`);
   return data;
 }
 
@@ -79,6 +79,15 @@ export function getReportEntityFieldOptions(payload) {
   return generateAutoAccessReports().post('fieldoptions', {
     query: JSON.stringify({ ...versionedPayload, ...payload }),
   });
+}
+
+/**
+ * Gets a list of report parameter types
+ *
+ * @returns {Array}
+ */
+export function getReportParameterTypes() {
+  return generateAutoAccessReports().get('parameters/types');
 }
 
 /**
@@ -190,4 +199,43 @@ export async function getAutoAccessReportResult(userName, dateRange, template, n
   }
   const { data: res } = await generateAutoAccessReports().post(`runs/${id}?_action=view&name=${template}`);
   return res;
+}
+
+/**
+ * Create a report template
+ *
+ * @param {Object} payload report template attributes
+ * @returns {Object}
+ */
+export function saveAnalyticsReport(name, payload, viewers, description = '') {
+  return generateAutoAccessReports().post('templates?_action=create', {
+    reportTemplate: {
+      name,
+      description,
+      viewers,
+      reportConfig: JSON.stringify({ ...versionedPayload, ...payload }),
+    },
+  });
+}
+
+/**
+ * Publish report template
+ *
+ * @param {Object} id template name
+ * @param {String} templateType template state (draft, published)
+ * @returns {Object}
+ */
+export function publishAnalyticsReport(id, templateType) {
+  return generateAutoAccessReports().post(`templates/${id}?_action=publish&templateType=${templateType}`);
+}
+
+/**
+ * Delete report template
+ *
+ * @param {Object} id template name
+ * @param {String} templateType template state (draft, published)
+ * @returns {Object}
+ */
+export function deleteAnalyticsReport(id, templateType) {
+  return generateAutoAccessReports().post(`templates/${id}?_action=delete&templateType=${templateType}`);
 }

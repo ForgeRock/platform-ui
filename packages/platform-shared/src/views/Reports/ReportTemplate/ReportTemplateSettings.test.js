@@ -82,7 +82,7 @@ describe('Report Template Settings component', () => {
     });
 
     it('ensures that the Data Source settings block does NOT show the "add" plus button if there are any definitions', () => {
-      const dataSourcesSettingsContainer = findByTestId(wrapper, 'dataSources-settings-container');
+      const dataSourcesSettingsContainer = findByTestId(wrapper, 'entities-settings-container');
       const dataSourceHeadingContainer = findByTestId(dataSourcesSettingsContainer, 'setting-heading');
       const addButton = dataSourceHeadingContainer.find('button');
 
@@ -91,16 +91,16 @@ describe('Report Template Settings component', () => {
 
     it('ensures that the Data Source settings block DOES show the "add" plus button if there are NO definitions', () => {
       const dataSourcesWithoutAnyDefinitions = [{
-        id: 'dataSources',
+        _id: 'entities',
         title: 'Data Sources',
         description: 'Data sources description',
-        hideAddDefinitionButton: () => !!dataSourcesWithoutAnyDefinitions.find((obj) => obj.id === 'dataSources').definitions.length,
+        hideAddDefinitionButton: () => !!dataSourcesWithoutAnyDefinitions.find((obj) => obj._id === 'entities').definitions.length,
         modal: 'report-data-sources-modal',
         definitions: [],
       }];
 
       wrapper = setup({ reportSettings: dataSourcesWithoutAnyDefinitions });
-      const dataSourcesSettingsContainer = findByTestId(wrapper, 'dataSources-settings-container');
+      const dataSourcesSettingsContainer = findByTestId(wrapper, 'entities-settings-container');
       const dataSourceHeadingContainer = findByTestId(dataSourcesSettingsContainer, 'setting-heading');
       const addButton = dataSourceHeadingContainer.find('button');
 
@@ -116,7 +116,7 @@ describe('Report Template Settings component', () => {
     });
 
     it('ensures that the Filters settings block does NOT show the "add" plus button if there are any definitions', () => {
-      const filtersSettingsContainer = findByTestId(wrapper, 'filters-settings-container');
+      const filtersSettingsContainer = findByTestId(wrapper, 'filter-settings-container');
       const filtersHeadingContainer = findByTestId(filtersSettingsContainer, 'setting-heading');
       const addButton = filtersHeadingContainer.find('button');
 
@@ -125,16 +125,16 @@ describe('Report Template Settings component', () => {
 
     it('ensures that the Filters settings block DOES show the "add" plus button if there are NO definitions', () => {
       const filtersWithoutAnyDefinitions = [{
-        id: 'filters',
+        _id: 'filter',
         title: 'Filters',
         description: 'Filters description',
-        hideAddDefinitionButton: () => !!filtersWithoutAnyDefinitions.find((obj) => obj.id === 'filters').definitions.length,
+        hideAddDefinitionButton: () => !!filtersWithoutAnyDefinitions.find((obj) => obj._id === 'filter').definitions.length,
         modal: 'report-filters-modal',
         definitions: [],
       }];
 
       wrapper = setup({ reportSettings: filtersWithoutAnyDefinitions });
-      const filtersSettingsContainer = findByTestId(wrapper, 'filters-settings-container');
+      const filtersSettingsContainer = findByTestId(wrapper, 'filter-settings-container');
       const filtersHeadingContainer = findByTestId(filtersSettingsContainer, 'setting-heading');
       const addButton = filtersHeadingContainer.find('button');
 
@@ -142,7 +142,7 @@ describe('Report Template Settings component', () => {
     });
 
     it('ensures that the Aggregate settings block always shows the "add" plus button', () => {
-      const aggregatesSettingsContainer = findByTestId(wrapper, 'aggregates-settings-container');
+      const aggregatesSettingsContainer = findByTestId(wrapper, 'aggregate-settings-container');
       const aggregatesHeadingContainer = findByTestId(aggregatesSettingsContainer, 'setting-heading');
       const addButton = aggregatesHeadingContainer.find('button');
 
@@ -150,7 +150,7 @@ describe('Report Template Settings component', () => {
     });
 
     it('ensures that the Sorting settings block always shows the "add" plus button', () => {
-      const sortingSettingsContainer = findByTestId(wrapper, 'sorting-settings-container');
+      const sortingSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
       const sortingHeadingContainer = findByTestId(sortingSettingsContainer, 'setting-heading');
       const addButton = sortingHeadingContainer.find('button');
 
@@ -158,16 +158,16 @@ describe('Report Template Settings component', () => {
     });
 
     it('ensures that the dataSources definitions only show if the definitions property has items', () => {
-      const dataSourcesWithoutDefinitions = [{ id: 'dataSources', definitions: [] }];
+      const dataSourcesWithoutDefinitions = [{ _id: 'entities', definitions: [] }];
       wrapper = setup({ reportSettings: dataSourcesWithoutDefinitions });
 
-      const dataSourcesSettingsContainer = findByTestId(wrapper, 'dataSources-settings-container');
+      const dataSourcesSettingsContainer = findByTestId(wrapper, 'entities-settings-container');
       const definitionBody = findByTestId(dataSourcesSettingsContainer, 'definition-body');
       expect(definitionBody.exists()).toBe(false);
     });
 
     it('ensures that the Parameters definitions only show if the definitions property has items', () => {
-      const parametersWithoutDefinitions = [{ id: 'parameters', definitions: [] }];
+      const parametersWithoutDefinitions = [{ _id: 'parameters', definitions: [] }];
       wrapper = setup({ reportSettings: parametersWithoutDefinitions });
 
       const parametersSettingsContainer = findByTestId(wrapper, 'parameters-settings-container');
@@ -176,28 +176,28 @@ describe('Report Template Settings component', () => {
     });
 
     it('ensures that the Filters definitions only show if the definitions property has items', () => {
-      const filtersWithoutDefinitions = [{ id: 'filters', definitions: [] }];
+      const filtersWithoutDefinitions = [{ _id: 'filter', definitions: [] }];
       wrapper = setup({ reportSettings: filtersWithoutDefinitions });
 
-      const filtersSettingsContainer = findByTestId(wrapper, 'filters-settings-container');
+      const filtersSettingsContainer = findByTestId(wrapper, 'filter-settings-container');
       const definitionBody = findByTestId(filtersSettingsContainer, 'definition-body');
       expect(definitionBody.exists()).toBe(false);
     });
 
     it('ensures that the Aggregates definitions only show if the definitions property has items', () => {
-      const aggregatesWithoutDefinitions = [{ id: 'aggregates', definitions: [] }];
+      const aggregatesWithoutDefinitions = [{ _id: 'aggregate', definitions: [] }];
       wrapper = setup({ reportSettings: aggregatesWithoutDefinitions });
 
-      const aggregatesSettingsContainer = findByTestId(wrapper, 'aggregates-settings-container');
+      const aggregatesSettingsContainer = findByTestId(wrapper, 'aggregate-settings-container');
       const definitionBody = findByTestId(aggregatesSettingsContainer, 'definition-body');
       expect(definitionBody.exists()).toBe(false);
     });
 
     it('ensures that the Sorting definitions only show if the definitions property has items', () => {
-      const sortingWithoutDefinitions = [{ id: 'sorting', definitions: [] }];
+      const sortingWithoutDefinitions = [{ _id: 'sort', definitions: [] }];
       wrapper = setup({ reportSettings: sortingWithoutDefinitions });
 
-      const sortingSettingsContainer = findByTestId(wrapper, 'sorting-settings-container');
+      const sortingSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
       const definitionBody = findByTestId(sortingSettingsContainer, 'definition-body');
       expect(definitionBody.exists()).toBe(false);
     });

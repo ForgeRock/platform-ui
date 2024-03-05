@@ -7,10 +7,10 @@
  */
 
 const reportSettingsStub = [{
-  id: 'dataSources',
+  _id: 'entities',
   title: 'Data Sources',
   description: 'Data sources description',
-  hideAddDefinitionButton: () => !!reportSettingsStub.find((obj) => obj.id === 'dataSources').definitions.length,
+  hideAddDefinitionButton: () => !!reportSettingsStub.find((obj) => obj._id === 'entities').definitions.length,
   modal: 'report-data-sources-modal',
   definitions: [{
     name: 'applications',
@@ -21,7 +21,7 @@ const reportSettingsStub = [{
   }],
 },
 {
-  id: 'parameters',
+  _id: 'parameters',
   title: 'Parameters',
   description: 'Parameters description',
   modal: 'report-parameters-modal',
@@ -37,15 +37,15 @@ const reportSettingsStub = [{
   ],
 },
 {
-  id: 'filters',
+  _id: 'filter',
   title: 'Filters',
   description: 'Filters description',
-  hideAddDefinitionButton: () => !!reportSettingsStub.find((obj) => obj.id === 'filters').definitions.length,
+  hideAddDefinitionButton: () => !!reportSettingsStub.find((obj) => obj._id === 'filter').definitions.length,
   modal: 'report-filters-modal',
   definitions: [{}],
 },
 {
-  id: 'aggregates',
+  _id: 'aggregate',
   title: 'Aggregates',
   description: 'Aggregates description',
   modal: 'report-aggregates-modal',
@@ -63,7 +63,7 @@ const reportSettingsStub = [{
   ],
 },
 {
-  id: 'sorting',
+  _id: 'sort',
   title: 'Sorting',
   description: 'Sorting description',
   modal: 'report-aggregates-modal',

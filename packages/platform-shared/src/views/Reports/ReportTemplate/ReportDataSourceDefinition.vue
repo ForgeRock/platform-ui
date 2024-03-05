@@ -66,15 +66,14 @@ of the MIT license. See the LICENSE file for details. -->
         <BListGroup :aria-describedby="ariaDescribedby">
           <BListGroupItem
             v-for="(entity, index) in relatedEntities"
-            class="d-flex align-items-center mb-2 py-2 px-3 border-0 rounded"
+            class="d-flex align-items-center mb-2 py-2 px-3 border-0 rounded justify-content-between"
             :class="selectedRelatedEntities.includes(entity) ? 'bg-lightblue' : 'bg-light'"
             :key="index">
             {{ entity }}
-            <BSpinner
+            <FrSpinner
               v-if="currentEntityBeingFetched === entity && !selectedRelatedEntities.includes(entity)"
               class="ml-auto opacity-50"
-              small
-              :label="$t('common.loadingEtc')" />
+              size="sm" />
             <BDropdown
               v-else-if="!selectedRelatedEntities.includes(entity)"
               class="p-0 ml-auto"
@@ -124,16 +123,16 @@ import {
   BFormCheckboxGroup,
   BListGroup,
   BListGroupItem,
-  BSpinner,
 } from 'bootstrap-vue';
 import { ref, computed, watch } from 'vue';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 const emit = defineEmits([
   'delete-data-source',
   'set-column-selections',
-  'set-related-entity-selection',
+  'set-related-entity',
 ]);
 const props = defineProps({
   dataSourceColumns: {
@@ -173,7 +172,7 @@ const showAccordion = ref(false);
 // Functions
 function addRelatedEntity(entity) {
   currentEntityBeingFetched.value = entity;
-  emit('set-related-entity-selection', entity);
+  emit('set-related-entity', entity);
 }
 
 // Computed
