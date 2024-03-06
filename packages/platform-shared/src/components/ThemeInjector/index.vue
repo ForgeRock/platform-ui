@@ -109,8 +109,8 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
       <template v-if="mock">.fr-theme-preview</template> .form-control multiselect:focus .multiselect__tags {
       border-color: {{ theme.primaryColor }} !important;
-      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;;
-      box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;;
+      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;
+      box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;
       outline: 0 none;
       }
 
@@ -190,6 +190,17 @@ of the MIT license. See the LICENSE file for details. -->
       border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
+
+      <template v-if="newMultiselectEnabled">
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
+      <template v-if="mock">.fr-theme-preview</template> .form-control multiselect:focus .multiselect__tags {
+      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
+      box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
+      outline: 0 none;
+      }
+      </template>
 
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__element {
       background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
@@ -417,6 +428,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import i18n from '@/i18n';
+import store from '@/store';
 /**
 Theme properties examples:
 
@@ -505,8 +517,10 @@ export default {
     },
   },
   data() {
+    const newMultiselectEnabled = store.state?.SharedStore?.newMultiselectEnabled;
     return {
       ignoredFonts: ['Arial', 'Helvetica'],
+      newMultiselectEnabled,
     };
   },
   computed: {

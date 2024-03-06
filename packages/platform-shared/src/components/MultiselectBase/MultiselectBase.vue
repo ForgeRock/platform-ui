@@ -161,7 +161,7 @@ of the MIT license. See the LICENSE file for details. -->
                 v-if="!(option && option.$isLabel)"
                 :class="optionHighlight(index, option)"
                 @click.stop="select(option)"
-                @mouseenter.self="pointerSet(index)"
+                @mousemove.self="debouncePointerSet(index)"
                 :data-select="option && option.isTag ? tagPlaceholder : selectLabelText"
                 :data-selected="selectedLabelText"
                 :data-deselect="deselectLabelText"
@@ -179,7 +179,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :data-select="groupSelect && selectGroupLabelText"
                 :data-deselect="groupSelect && deselectGroupLabelText"
                 :class="groupHighlight(index, option)"
-                @mouseenter.self="groupSelect && pointerSet(index)"
+                @mousemove.self="groupSelect && debouncePointerSet(index)"
                 @mousedown.prevent="selectGroup(option)"
                 class="multiselect__option">
                 <slot
@@ -219,7 +219,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   defineProps, defineEmits, ref, computed,
 } from 'vue';
-import { isNull, isUndefined } from 'lodash';
+import { debounce, isNull, isUndefined } from 'lodash';
 import useMultiselect from './multiselectComposable';
 import usePointer from './pointerComposable';
 import i18n from '@/i18n';
@@ -557,7 +557,7 @@ const {
   // eslint-disable-next-line no-unused-vars
   pointerReset,
   pointerSet,
-} = usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement, optimizedHeight);
+} = usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement);
 
 const hasOptionGroup = computed(() => props.groupValues && props.groupLabel && props.groupSelect);
 const visibleValues = computed(() => (props.multiple ? internalValue.value.slice(0, props.limit) : []));
@@ -597,7 +597,7 @@ const inputIsCombobox = computed(() => props.searchable
         || props.taggable);
 const wrapperIsCombobox = computed(() => !inputIsCombobox.value);
 const hasFilteredOptions = computed(() => !(filteredOptions.length === 0));
-
+const debouncePointerSet = debounce(pointerSet, 15);
 </script>
 
 <style lang="scss" scoped src="./multiselectBase.scss"></style>
