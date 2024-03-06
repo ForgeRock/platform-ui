@@ -7,11 +7,9 @@
 
 import { ref, computed, watch } from 'vue';
 
-export default function usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement, optimizedHeight) {
+export default function usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement) {
   const pointer = ref(0);
-
-  const pointerPosition = computed(() => pointer.value * props.optionHeight);
-  const visibleElements = computed(() => optimizedHeight.value / (props.optionHeight + 30));
+  const currentEl = computed(() => listRef?.value?.querySelector(`#${props.id}-${pointer.value}`));
 
   function optionHighlight(index, option) {
     const selected = isSelected(option);
@@ -64,11 +62,9 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
     if (!isOpen.value) {
       // NOTE: added to open on down arrow, else statement only happens after open
       activate();
-    } else if (pointer.value < filteredOptions.value.length - 1) {
+    } else if (pointer.value < filteredOptions.value.length - 1 && currentEl?.value) {
       pointer.value += 1;
-      if (listRef.value.scrollTop <= pointerPosition.value - (visibleElements.value - 1) * props.optionHeight) {
-        listRef.value.scrollTop = pointerPosition.value - (visibleElements.value - 1) * props.optionHeight;
-      }
+      listRef.value.scrollTop = currentEl.value.offsetTop - (listRef.value.offsetHeight / 2);
       if (filteredOptions.value[pointer.value]
           && filteredOptions.value[pointer.value].$isLabel
           && !props.groupSelect) {
@@ -77,11 +73,9 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
     }
   }
   function pointerBackward() {
-    if (pointer.value > 0) {
+    if (pointer.value > 0 && currentEl?.value) {
       pointer.value -= 1;
-      if (listRef.value.scrollTop >= pointerPosition.value) {
-        listRef.value.scrollTop = pointerPosition.value;
-      }
+      listRef.value.scrollTop = currentEl.value.offsetTop - (listRef.value.offsetHeight / 2);
       if (filteredOptions.value[pointer.value]
           && filteredOptions.value[pointer.value].$isLabel
           && !props.groupSelect
@@ -176,8 +170,6 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
 
   return {
     pointer,
-    pointerPosition,
-    visibleElements,
     optionHighlight,
     groupHighlight,
     addPointerElement,
