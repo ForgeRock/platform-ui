@@ -352,8 +352,8 @@ fieldset[disabled] {
   &:active {
     border-width: 1px !important;
     border-style: solid !important;
-    border-color: $primary !important;
-    box-shadow: 0 0 0 0.0625rem $primary !important;
+    border-color: $primary;
+    box-shadow: 0 0 0 0.0625rem $primary;
   }
 }
 .multiselect__tag-icon {
