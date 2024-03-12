@@ -472,7 +472,7 @@ export default {
         case 'entitlementGrant':
           return this.grantTypeLabel(membership);
         case 'roleMembership':
-          return membership?.role?.condition ? this.ruleBasedAssignment : this.directAssignment;
+          return membership?.relationship?.conditional ? this.ruleBasedAssignment : this.directAssignment;
         default:
           return '';
       }

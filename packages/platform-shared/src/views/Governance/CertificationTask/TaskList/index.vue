@@ -151,7 +151,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             v-for="(flag, index) in item.flags"
             :key="`flags-${item.id}-${index}`"
-            class="cursor-pointer">
+            class="cursor-default">
             <FrIcon
               :id="`flags-${item.id}-${index}`"
               icon-class="md-24 mr-3"

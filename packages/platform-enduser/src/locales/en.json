@@ -114,6 +114,7 @@
         "title": "My Entitlements"
       },
       "role": {
+        "grantType": "Grant Type",
         "subtitle": "View all your application roles.",
         "tabTitle": "Roles",
         "title": "My Roles"

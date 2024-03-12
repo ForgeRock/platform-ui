@@ -46,6 +46,10 @@ export default {
           key: 'timeConstraint',
           label: this.$t('pages.myAccess.timeConstraint'),
         },
+        {
+          key: 'assignment',
+          label: this.$t('common.assignment'),
+        },
       ],
       resourceItems: [],
       resourceTotalCount: 0,
