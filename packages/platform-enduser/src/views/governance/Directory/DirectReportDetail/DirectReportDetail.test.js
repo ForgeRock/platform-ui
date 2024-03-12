@@ -7,6 +7,7 @@
 
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { mount, flushPromises } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
@@ -22,6 +23,8 @@ CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.reso
     allowSelfApproval: false,
   },
 }));
+AccessRequestApi.saveNewRequest = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
+CommonsApi.getUserGrants = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
 
 describe('DirectReportDetail', () => {
   const setup = (grantType) => {
