@@ -22,7 +22,6 @@ function proceedToNextJourneyPage() {
 
 filterTests(['forgeops', 'cloud'], () => {
   xdescribe('Check Remember Me theme feature functionality', () => {
-    const loginUrl = `${Cypress.config().baseUrl}/platform/`;
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Remember%20Me#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
     const userPassword = 'Pass1234!';
@@ -41,6 +40,7 @@ filterTests(['forgeops', 'cloud'], () => {
           userId = result.body._id;
         });
       });
+      cy.logout();
     });
 
     retryableBeforeEach(() => {
@@ -51,9 +51,8 @@ filterTests(['forgeops', 'cloud'], () => {
     });
 
     after(() => {
-      // Remove created IDM user
-      cy.visit(loginUrl);
-      cy.findAllByTestId('dashboard-welcome-title', { timeout: 20000 }).then(() => {
+      // Login as admin, delete prepared Journey with Remember Me Themes & delete testing IDM enduser
+      cy.deleteTreesViaAPI(['Remember_me_journey.json'], true).then(() => {
         deleteIDMUser(userId);
       });
     });
