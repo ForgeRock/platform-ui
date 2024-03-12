@@ -1,25 +1,25 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="certification-task-container">
+    <FrCertificationToolbar
+      :actor-id="actorId"
+      :campaign-details="campaignDetails"
+      :hide-sign-off="hideSignOff"
+      :is-complete="isComplete"
+      :is-saving="isSaving"
+      :task-status="taskStatus"
+      @change-saving="setSaving"
+      @review-forwarded="goToBackUrl"
+      @sign-off="signOff" />
     <p
       v-if="loadFailed"
       class="lead text-center m-5">
       {{ $t("pages.loadPage.errorLoadingPage") }}
     </p>
     <template v-else>
-      <FrCertificationToolbar
-        :actor-id="actorId"
-        :campaign-details="campaignDetails"
-        :hide-sign-off="hideSignOff"
-        :is-complete="isComplete"
-        :is-saving="isSaving"
-        :task-status="taskStatus"
-        @change-saving="setSaving"
-        @review-forwarded="goToBackUrl"
-        @sign-off="signOff" />
       <FrCertificationDetails
         :totals="totals"
         :campaign-details="campaignDetails"
@@ -96,6 +96,7 @@ import {
   getInProgressTasksByCampaign,
   signOffCertificationTasks,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrCertificationDetails from './TaskHeader/CertificationDetails';
 import FrCertificationToolbar from './TaskHeader/CertificationToolbar';
@@ -104,6 +105,9 @@ import FrTaskListGroupBy from './TaskListGroupBy';
 
 export default {
   name: 'CertificationTask',
+  mixins: [
+    NotificationMixin,
+  ],
   components: {
     BTab,
     BTabs,
