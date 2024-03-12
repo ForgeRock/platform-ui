@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -14,8 +14,14 @@ filterTests(['forgeops', 'cloud'], () => {
     const testTreeUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${realm}&authIndexType=service&authIndexValue=IAM-4384`;
 
     before(() => {
-      // Login as admin to add the test tree and scripts
+      // Login as admin and import test Journey with scripts
       cy.importTrees(['IAM-4384.json']);
+      cy.logout();
+    });
+
+    after(() => {
+      // Login as admin and delete test Journey with scripts
+      cy.deleteTreesViaAPI(['IAM-4384.json'], true);
     });
 
     it('IAM-4383 should resume trees using custom redirect flows correctly following a custom redirect where the tracking cookie is present', () => {
