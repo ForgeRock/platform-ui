@@ -40,6 +40,23 @@ const mountComponent = () => {
   });
 };
 
+const actors = {
+  active: [
+    {
+      id: 'managed/user/1234',
+      permissions: {
+        approve: true,
+        cancel: true,
+        comment: true,
+        fulfill: true,
+        modify: true,
+        reassign: true,
+        reject: true,
+      },
+    },
+  ],
+};
+
 const mockRequest = {
   id: 3,
   requestType: 'applicationRemove',
@@ -69,6 +86,7 @@ const mockRequest = {
     completionDate: null,
     deadline: null,
     comments: [],
+    actors,
     phases: [
       {
         name: 'userApprove',
@@ -127,6 +145,7 @@ const openModalMock = {
     },
     decision: {
       comments: [],
+      actors,
       completionDate: null,
       deadline: null,
       outcome: null,
@@ -441,6 +460,12 @@ describe('Approvals', () => {
     expect(wrapper.vm.$store.commit).toHaveBeenCalledWith('setApprovalsCount', 1);
   });
 
+  it('should return the user id', () => {
+    wrapper = mountComponent();
+    const result = wrapper.vm.currentUserId();
+    expect(result).toBe('managed/user/1234');
+  });
+
   it('Loaditem function updates the list item correctly', async () => {
     const newMockRequest = clone(mockRequest);
     newMockRequest.decision.comments = [{ comment: 'test' }];
@@ -462,5 +487,21 @@ describe('Approvals', () => {
     wrapper.vm.loadItem(1);
     await flushPromises();
     expect(wrapper.vm.modalItem).toMatchObject(newOpenModalMock);
+  });
+
+  it('should return the permission value depending on the type', () => {
+    const mockRequestPermissions = {
+      rawData: {
+        decision: {
+          actors,
+        },
+      },
+    };
+
+    wrapper = mountComponent();
+    expect(wrapper.vm.getPermission(mockRequestPermissions, 'approve')).toBe(true);
+    expect(wrapper.vm.getPermission(mockRequestPermissions, 'comment')).toBe(true);
+    expect(wrapper.vm.getPermission(mockRequestPermissions, 'reassign')).toBe(true);
+    expect(wrapper.vm.getPermission(mockRequestPermissions, 'reject')).toBe(true);
   });
 });
