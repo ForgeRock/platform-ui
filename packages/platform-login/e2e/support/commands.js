@@ -8,6 +8,13 @@
 import '@testing-library/cypress/add-commands';
 import 'cypress-file-upload';
 import '@neuralegion/cypress-har-generator/commands';
+import {
+  deleteAMJourney,
+  deleteIDMTheme,
+  deleteIDMEmailTemplate,
+  deleteAMSocialProviderNode,
+  deleteAMScript,
+} from '../api/journeyApi.e2e';
 
 Cypress.Commands.add('clearSessionStorage', () => {
   cy.window().then((win) => {
@@ -75,5 +82,49 @@ Cypress.Commands.add('importTrees', (fixtureArray) => {
     cy.findByRole('button', { name: 'Start Import' }).should('be.enabled').click();
     cy.contains('Import Complete', { timeout: 10000 }).should('be.visible');
     cy.findByRole('button', { name: 'Done' }).click();
+  });
+});
+
+/**
+ * !!! BEWARE !!! Use this ONLY on fixtures that do not replace any base values, scripts, Journeys, etc
+ * This function deletes EVERY imported Journey including ALL dependencies using the API parsing fixtures in the passed array
+ * @param {Array} fixtureArray an array containing the name of test fixture files to parse and remove all dependencies
+ * @param {Boolean} login a boolean to tell if tests should authenticate (in case admin is not already logged in)
+ */
+Cypress.Commands.add('deleteTreesViaAPI', (fixtureArray, login = false) => {
+  if (login) {
+    cy.login();
+  }
+
+  fixtureArray.forEach((fixtureName) => {
+    const fixture = `e2e/fixtures/${fixtureName}`;
+    // Read Fixture file
+    cy.readFile(fixture).then((fixtureData) => {
+      // Delete Journey itself first
+      const journeyName = Object.keys(fixtureData.trees)[0].replace(' ', '%20');
+      deleteAMJourney([journeyName]);
+
+      // Then delete everything else in correct order
+      // Delete all Themes
+      const fixtureObj = Object.values(fixtureData.trees)[0];
+      fixtureObj.themes.forEach((theme) => {
+        deleteIDMTheme(theme.name);
+      });
+
+      // Delete all Email Templates
+      Object.keys(fixtureObj.emailTemplates).forEach((emailTemplate) => {
+        deleteIDMEmailTemplate(emailTemplate);
+      });
+
+      // Delete all Social Identity Providers
+      Object.keys(fixtureObj.socialIdentityProviders).forEach((socialIdentityProvider) => {
+        deleteAMSocialProviderNode(socialIdentityProvider);
+      });
+
+      // Delete all Scripts
+      Object.keys(fixtureObj.scripts).forEach((script) => {
+        deleteAMScript(script);
+      });
+    });
   });
 });

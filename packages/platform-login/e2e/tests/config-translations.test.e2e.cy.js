@@ -406,12 +406,12 @@ filterTests(['forgeops', 'cloud'], () => {
   });
 
   describe('Checks correct behavior of translated Theme/Journey with pages and nodes', () => {
+    const journeyTemplate = 'Registration_translated_journey_template.json';
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated#/`;
     const defaultLocale = 'en';
 
     before(() => {
       // Prepare Journey template with correct Realm redirects
-      const journeyTemplate = 'Registration - Translated Journey template.json';
       const journeyTemplatePath = `e2e/fixtures/${journeyTemplate}`;
 
       // Read template file
@@ -424,11 +424,17 @@ filterTests(['forgeops', 'cloud'], () => {
 
       // Login as admin and import translated Journey with translated Theme
       cy.importTrees([journeyTemplate]);
+      cy.logout();
     });
 
     retryableBeforeEach(() => {
       // Visit base page of our translated Journey
       cy.visit(locationUrl);
+    });
+
+    after(() => {
+      // Login as admin and delete translated Journey with translated Theme
+      cy.deleteTreesViaAPI([journeyTemplate], true);
     });
 
     it('Check default Theme/Journey translations (EN), create user and verify email message', () => {
