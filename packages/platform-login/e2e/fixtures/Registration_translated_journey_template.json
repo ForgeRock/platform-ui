@@ -198,7 +198,7 @@
             "en": "An email has been sent to the address you entered. Click the link in that email to proceed.",
             "es": "Se ha enviado un correo electrónico a la dirección que ingresó. Haga clic en el enlace de ese correo electrónico para continuar."
           },
-          "emailTemplateName": "registration",
+          "emailTemplateName": "registrationTranslated",
           "identityAttribute": "userName",
           "emailAttribute": "mail",
           "objectLookup": false,
@@ -368,8 +368,8 @@
       },
       "scripts": {},
       "emailTemplates": {
-        "registration": {
-          "_id": "emailTemplate/registration",
+        "registrationTranslated": {
+          "_id": "emailTemplate/registrationTranslated",
           "defaultLocale": "en",
           "enabled": true,
           "from": "",
