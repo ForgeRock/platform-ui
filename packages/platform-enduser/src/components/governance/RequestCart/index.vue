@@ -167,8 +167,7 @@ export default {
   },
   computed: {
     minExpirationDate() {
-      const currentDate = new Date();
-      return new Date(currentDate.setDate(currentDate.getDate() + 1));
+      return new Date();
     },
   },
   methods: {
