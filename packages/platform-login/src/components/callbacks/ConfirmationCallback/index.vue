@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="setValue(0)"
         :aria-label="firstOption"
         :data-testid="`btn-${firstOption.toLowerCase().replace(/\s/g, '')}`">
-        {{ firstOption }}
+        {{ getTranslation(firstOption) }}
       </BButton>
     </div>
   </div>
@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="setValue(index)"
         :aria-label="option"
         :data-testid="`btn-${option.toLowerCase().replace(/\s/g, '')}`">
-        {{ option }}
+        {{ getTranslation(option) }}
       </BButton>
     </div>
   </div>
@@ -39,12 +39,16 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { BButton } from 'bootstrap-vue';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 export default {
   name: 'ConfirmationCallback',
   components: {
     BButton,
   },
+  mixins: [
+    TranslationMixin,
+  ],
   props: {
     callback: {
       type: Object,
