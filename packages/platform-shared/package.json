@@ -32,7 +32,7 @@
     "pluralize": "8.0.0",
     "pretty-data": "0.40.0",
     "prismjs": "1.27.0",
-    "sanitize-html": "2.7.3",
+    "sanitize-html": "2.12.1",
     "showdown": "1.9.1",
     "ua-parser-js": "1.0.33",
     "util": "0.12.5",
