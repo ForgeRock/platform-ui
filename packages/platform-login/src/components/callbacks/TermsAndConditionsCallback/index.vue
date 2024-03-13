@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
           href="#"
           @click.prevent="$refs['terms-modal'].show()">
           {{ $t('login.termsAndConditions') }}
-        </a>.
+        </a>
       </small>
 
       <BModal
