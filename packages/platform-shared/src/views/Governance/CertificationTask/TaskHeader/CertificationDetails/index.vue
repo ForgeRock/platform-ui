@@ -46,6 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
               id="decisions-chart"
               hide-tooltip
               legend-class="decisions-legend"
+              show-legend-count
               :data="chartDecisions"
               :no-data-label="noDataLabel"
               :height="72"
