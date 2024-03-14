@@ -16,20 +16,25 @@ import { geocodeTypeGetter, reverseGeocode, staticMap } from '@forgerock/platfor
 /* eslint-disable import/prefer-default-export */
 export async function parseLocationData(location) {
   const { latitude, longitude } = location;
-  const { results: geocodeResults } = await reverseGeocode({ lat: latitude, lng: longitude });
-  const geocodeType = geocodeTypeGetter(geocodeResults);
-  const formattedAddress = geocodeType.getFormattedAddress('locality');
-  const locality = geocodeType.getAddressComponent('locality');
-  const map = staticMap({
-    size: { width: 300, height: 200 },
-    center: `${latitude},${longitude}`,
-    markers: `${latitude},${longitude}`,
-    zoom: 10,
-  });
+  try {
+    const { results: geocodeResults } = await reverseGeocode({ lat: latitude, lng: longitude });
+    const geocodeType = geocodeTypeGetter(geocodeResults);
+    const formattedAddress = geocodeType.getFormattedAddress('locality');
+    const locality = geocodeType.getAddressComponent('locality');
+    const map = staticMap({
+      size: { width: 300, height: 200 },
+      center: `${latitude},${longitude}`,
+      markers: `${latitude},${longitude}`,
+      zoom: 10,
+    });
 
-  return {
-    formattedAddress,
-    locality: locality?.long_name,
-    map,
-  };
+    return {
+      formattedAddress,
+      locality: locality?.long_name,
+      map,
+    };
+  } catch (error) {
+    // Do nothing since they don't have a Google Maps API Key
+  }
+  return {};
 }
