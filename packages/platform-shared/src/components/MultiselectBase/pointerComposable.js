@@ -38,7 +38,9 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
 
   function pointerReset() {
     if (!props.closeOnSelect) return;
-    if (!props.modelValue) {
+    // Check if is array since the default value for the modelValue prop is and empty array
+    const hasModelValue = Array.isArray(props.modelValue) ? props.modelValue.length !== 0 : !!props.modelValue;
+    if (!hasModelValue) {
       pointer.value = 0;
       if (listRef.value) {
         listRef.value.scrollTop = 0;

@@ -72,6 +72,70 @@ describe('MultiSelectBase', () => {
       expect(multiselectInput.exists()).toBe(false);
     });
   });
+  describe('keyboard functionality', () => {
+    test('should set pointer to 0 when opening combobox by pressing ENTER', async () => {
+      const wrapper = mount(FrMultiselectBase, {
+        global,
+        propsData: {
+          label: 'id',
+          testid: 'multiselectBaseTestid',
+          id: 'multiselectBaseId',
+          'model-value': [],
+          options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+          trackBy: 'id',
+          multiple: false,
+          closeOnSelect: false,
+        },
+      });
+      const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+      multiselectInput.trigger('keypress.enter');
+      await wrapper.vm.$nextTick();
+      expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
+      expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
+      multiselectInput.trigger('keydown.down');
+      await wrapper.vm.$nextTick();
+      expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-1');
+      expect((wrapper.find('#multiselectBaseId-1 > span')).classes()).toContain('multiselect__option--highlight');
+      expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).not.toContain('multiselect__option--highlight');
+      multiselectInput.trigger('keydown.up');
+      await wrapper.vm.$nextTick();
+      expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
+      expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
+      expect((wrapper.find('#multiselectBaseId-1 > span')).classes()).not.toContain('multiselect__option--highlight');
+    });
+  });
+
+  test('should set pointer to 0 when opening combobox by pressing DOWN arrow key', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        label: 'id',
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': [],
+        options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+        trackBy: 'id',
+        multiple: false,
+        closeOnSelect: false,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    multiselectInput.trigger('keydown.down');
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
+    expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
+    await wrapper.vm.$nextTick();
+    multiselectInput.trigger('keydown.down');
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-1');
+    expect((wrapper.find('#multiselectBaseId-1 > span')).classes()).toContain('multiselect__option--highlight');
+    expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).not.toContain('multiselect__option--highlight');
+    multiselectInput.trigger('keydown.up');
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
+    expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
+    expect((wrapper.find('#multiselectBaseId-1 > span')).classes()).not.toContain('multiselect__option--highlight');
+  });
 });
 
 describe('Multiselect.vue', () => {
