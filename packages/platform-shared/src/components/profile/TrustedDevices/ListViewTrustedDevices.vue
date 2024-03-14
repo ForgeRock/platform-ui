@@ -28,7 +28,13 @@ of the MIT license. See the LICENSE file for details. -->
         tbody-tr-class="cursor-pointer"
         :fields="fields"
         :items="devices"
+        show-empty
         @row-clicked="handleRowClicked">
+        <template #empty>
+          <div class="text-center my-2">
+            {{ i18n.global.t('common.noRecordsToShow') }}
+          </div>
+        </template>
         <template #cell(selected)="data">
           <BFormCheckbox
             class="pl-3"
