@@ -174,7 +174,9 @@ of the MIT license. See the LICENSE file for details. -->
                 :id="id" />
             </BTab>
             <FrLinkedApplicationsTab :linked-applications="linkedApplications" />
-            <FrUserDevicesTab :user-id="id" />
+            <FrUserDevicesTab
+              v-if="resourceIsUser"
+              :user-id="id" />
             <FrJsonTab
               v-if="jsonString"
               :json-string="jsonString" />
