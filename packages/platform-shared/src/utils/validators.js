@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -110,6 +110,12 @@ export function validEmail(value) {
     return valid;
   }
   return email(value);
+}
+
+export function validEmailNonAscii(value) {
+  // eslint-disable-next-line no-useless-escape
+  const regex = /^([^\s@&='\-+,´`<>"[\]{}|;\/?#]+[^\s@&=_´`'\-+,<>"[\]{}|;\/?#]*)[@＠]([^\s@&=_'\-+,<>"[\]{}|;\/?#]+\.[^\s@&=_´`'\-+,<>"[\]{}|;\/?#]{1,})+$/gm;
+  return regex.test(value);
 }
 
 export function minimumItems(value, { minItems }) {
