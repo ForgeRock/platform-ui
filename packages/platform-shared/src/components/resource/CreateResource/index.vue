@@ -397,7 +397,7 @@ export default {
           tempFormFields[prop.key] = false;
         }
         if (prop.policies && prop.policies[0] && prop.policies[0].policyId.includes('email')) {
-          prop.validation = 'required|email';
+          prop.validation = 'required|email_and_email_with_non_ascii';
         } else if (prop.isOptional) {
           noop();
         } else if (prop.type === 'array' && prop.items.type === 'relationship') {

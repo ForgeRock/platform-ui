@@ -54,6 +54,21 @@ export function getRules(i18n) {
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.VALID_EMAIL_FROM_FORMAT');
   };
 
+  // Email from field non-ascii characters in email domain
+  // errors if input value contains non-ascii characters in email domain
+  const email_and_email_with_non_ascii = (value) => {
+    if (!value) {
+      return true; // Skip validation if the value is empty
+    }
+    if (Array.isArray(value) && value.length === 0) return true;
+    if (Array.isArray(value) && value.length > 0) {
+      const valid = value.flatMap((obj) => obj.value).every((val) => customValidators.validEmailNonAscii(val));
+
+      return !valid ? i18n.global.t('common.policyValidationMessages.VALID_EMAIL_ADDRESS_FORMAT') : true;
+    }
+    return customValidators.validEmailNonAscii(value) || i18n.global.t('common.policyValidationMessages.VALID_EMAIL_ADDRESS_FORMAT');
+  };
+
   // Excluded rule
   // errors if input value matches the array of excluded strings
   const excluded = (value, list) => rules.not_one_of(value, list) || i18n.global.t('common.policyValidationMessages.excluded');
@@ -197,6 +212,7 @@ export function getRules(i18n) {
     date_format,
     email,
     email_from,
+    email_and_email_with_non_ascii,
     errorIfMatch,
     excluded,
     google_cloud_platform_certificate_validation,
