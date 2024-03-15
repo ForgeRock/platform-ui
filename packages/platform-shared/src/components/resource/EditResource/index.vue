@@ -782,10 +782,18 @@ export default {
      * of governance, not of a certain type of property
      */
     viewableRelationshipArrayProperties() {
-      const noGovernanceProperties = ['assignments', 'ownerOfApp', 'taskPrincipals', 'taskProxies'];
+      const noGovernancePropertiesForUser = ['assignments', 'ownerOfApp', 'taskPrincipals', 'taskProxies'];
+      const noGovernancePropertiesForRole = ['assignments'];
+      const isGovernanceEnabledUser = this.$store.state.SharedStore.governanceEnabled
+        && compareRealmSpecificResourceName(this.resourceName, 'user');
+      const isGovernanceEnabledRole = this.$store.state.SharedStore.governanceEnabled
+        && compareRealmSpecificResourceName(this.resourceName, 'role');
       return pickBy(this.relationshipProperties, (property, key) => {
-        // If is a governance environment, remove Assigments, Applications I Own, Task Principals, and Task Proxies tabs
-        if (this.$store.state.SharedStore.governanceEnabled && noGovernanceProperties.includes(key) && compareRealmSpecificResourceName(this.resourceName, 'user')) {
+        // If is a governance environment, remove no governance properties
+        if (
+          (isGovernanceEnabledUser && noGovernancePropertiesForUser.includes(key))
+          || (isGovernanceEnabledRole && noGovernancePropertiesForRole.includes(key))
+        ) {
           return false;
         }
         return property.type === 'array' && property.viewable !== false;
