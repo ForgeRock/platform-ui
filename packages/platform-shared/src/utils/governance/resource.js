@@ -203,6 +203,8 @@ export async function getManagedResourceWithIGADetails(resourceName, resourceId,
         return {
           ...managedApplication,
           application: govResource.application,
+          entitlementOwner: govResource.entitlementOwner || {},
+          glossary: { idx: { '/entitlement': govResource.objGlossary } } || {},
         };
       }),
       totalCount: managedAssignmentData.totalPagedResults,
