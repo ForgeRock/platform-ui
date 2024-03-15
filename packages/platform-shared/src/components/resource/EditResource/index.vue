@@ -592,9 +592,9 @@ export default {
           }
           if (tempProp.policies && tempProp.policies[0] && tempProp.policies[0].policyId === 'valid-email-address-format') {
             if (tempProp.validation && tempProp.validation.length) {
-              tempProp.validation += '|email';
+              tempProp.validation += '|email_and_email_with_non_ascii';
             } else {
-              tempProp.validation = 'email';
+              tempProp.validation = 'email_and_email_with_non_ascii';
             }
           }
 
