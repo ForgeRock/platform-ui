@@ -1,18 +1,18 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import HiddenValueCallback from '@/components/callbacks/HiddenValueCallback';
 import i18n from '@/i18n';
 
 describe('HiddenValueCallback', () => {
   let wrapper;
   beforeEach(() => {
-    wrapper = shallowMount(HiddenValueCallback, {
+    wrapper = mount(HiddenValueCallback, {
       global: {
         plugins: [i18n],
       },
@@ -37,7 +37,8 @@ describe('HiddenValueCallback', () => {
   });
 
   it('Sets value value for callback', async () => {
-    wrapper.vm.onChange('element value change');
+    await wrapper.setData({ value: 'element value change' });
+    wrapper.find('input').trigger('input');
 
     expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenCalledTimes(1);
     expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenCalledWith('element value change');
