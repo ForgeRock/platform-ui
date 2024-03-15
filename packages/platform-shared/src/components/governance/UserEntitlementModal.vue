@@ -136,9 +136,10 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </BTab>
       <BTab
+        v-if="showAccountTab && grant.account"
+        data-testid="entitlement-account-tab"
         :title="$t('governance.accountDetails')">
-        <FrContentDetailsTab
-          :content="grant.account" />
+        <FrContentDetailsTab :content="grant.account" />
       </BTab>
     </BTabs>
   </BModal>
@@ -179,6 +180,10 @@ const props = defineProps({
     type: String,
     default: 'userEntitlementModal',
   },
+  showAccountTab: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 // Computed
@@ -188,11 +193,11 @@ const logo = computed(() => {
   return '';
 });
 const ownerInfo = computed(() => {
-  if (!props.grant?.entitlementOwner || !props.grant?.entitlementOwner?.length) return null;
+  if (!props.grant?.entitlementOwner || !props.grant.entitlementOwner[0]) return null;
   return props.grant.entitlementOwner[0];
 });
-const filteredGlossarySchema = computed(() => props?.glossarySchema?.filter((glossaryProp) => (glossaryProp.name !== 'entitlementOwner')));
-const glossaryValues = computed(() => props?.grant?.glossary?.idx?.['/entitlement'] || {});
+const filteredGlossarySchema = computed(() => props.glossarySchema?.filter((glossaryProp) => (glossaryProp.name !== 'entitlementOwner')));
+const glossaryValues = computed(() => props.grant?.glossary?.idx?.['/entitlement'] || {});
 </script>
 
 <style lang="scss" scoped>
