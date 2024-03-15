@@ -1104,7 +1104,9 @@
         "updateFail": "Application update failed",
         "deleteFail": "Unable to delete application",
         "resetSecretSuccess": "Client secret reset",
-        "resetSecretFail": "Unable to reset client secret"
+        "resetSecretFail": "Unable to reset client secret",
+        "setSecretFail": "Unable to set client secret",
+        "setSecretSuccess": "Client secret set"
       },
       "listApps": {
         "deleteAppFail": "Unable to delete application",
@@ -1338,7 +1340,8 @@
         "discoveryURIDescription": "Use to retrieve the OpenID Provider information for this realm from within the application.",
         "domain": "Domain:",
         "clientIDLabel": "Client ID",
-        "userpasswordLabel": "Client Secret"
+        "clientSecretLabel": "Client Secret",
+        "setSecret": "Set secret"
       },
       "applicationDetails": {
         "applicationOwnerLabel": "Application Owners",
@@ -1375,8 +1378,17 @@
         "postLogoutRedirectUriHelp": "Whitelist for sign-out redirect URLs. eg. http://www.example.com/signout",
         "grantTypesLabel": "Grant Types",
         "grantTypesHelp": "Authorization Code is required for SPA/Native apps.",
+        "oauth2Client": "oauth2.client",
         "scopesLabel": "Scopes",
-        "scopesHelp": "Scopes are strings that are presented to the user for approval and included in tokens so that the protected resource may make decisions about what to give access to."
+        "scopesHelp": "Scopes are strings that are presented to the user for approval and included in tokens so that the protected resource may make decisions about what to give access to.",
+        "showSecrets": "Show secrets",
+        "secretsModal": {
+          "desc": "The application will first check configured secret stores for these values before using any manually entered secrets.",
+          "clientSecret": "Client Secret Identifier",
+          "clientJwt": "Client JWT Bearer Public Key Identifier",
+          "clientIdToken": "Client ID Token Public Encryption Key Identifier",
+          "mtls": "mTLS Self-signed Certificate Identifier"
+        }
       }
     },
     "promotion": {
