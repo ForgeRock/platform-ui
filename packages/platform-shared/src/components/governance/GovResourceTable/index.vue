@@ -260,6 +260,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </BModal>
     <FrUserEntitlementModal
+      :show-account-tab="!resourceIsRole"
       :grant="grantDetails"
       :glossary-schema="glossarySchema"
       modal-id="userEntitlementModal" />

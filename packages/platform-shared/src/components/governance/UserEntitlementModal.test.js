@@ -13,10 +13,8 @@ import UserEntitlementModal from './UserEntitlementModal';
 jest.mock('@/api/governance/CommonsApi');
 
 describe('UserEntitlementModal', () => {
-  let wrapper;
-
   function mountComponent(props = {}) {
-    wrapper = mount(UserEntitlementModal, {
+    const wrapper = mount(UserEntitlementModal, {
       global: {
         mocks: {
           $t: (text, prop) => i18n.global.t(text, prop),
@@ -25,14 +23,15 @@ describe('UserEntitlementModal', () => {
       props: {
         ...props,
         isTest: true,
+        showAccountTab: true,
       },
     });
+
+    return wrapper;
   }
 
   const grant = {
-    application: {
-
-    },
+    application: {},
     entitlement: {
       someData: 'someValue',
     },
@@ -65,25 +64,35 @@ describe('UserEntitlementModal', () => {
   ];
 
   it('has a tab for entitlement details and a tab for account details', () => {
-    mountComponent();
+    const wrapper = mountComponent({ grant: { account: true } });
 
     const entitlementTab = findByTestId(wrapper, 'entitlement-details-tab');
     expect(entitlementTab.exists()).toBeTruthy();
 
-    const accountTab = findByTestId(wrapper, 'entitlement-details-tab');
+    const accountTab = findByTestId(wrapper, 'entitlement-account-tab');
     expect(accountTab.exists()).toBeTruthy();
+  });
+
+  it('only has a tab for entitlement details if showAccountTab is false', () => {
+    const wrapper = mountComponent({ showAccountTab: false });
+
+    const entitlementTab = findByTestId(wrapper, 'entitlement-details-tab');
+    expect(entitlementTab.exists()).toBeTruthy();
+
+    const accountTab = findByTestId(wrapper, 'entitlement-account-tab');
+    expect(accountTab.exists()).toBeFalsy();
   });
 
   describe('entitlement details tab', () => {
     it('shows owner info', () => {
-      mountComponent({ grant });
+      const wrapper = mountComponent({ grant });
 
       const ownerInfo = findByTestId(wrapper, 'owner');
       expect(ownerInfo.text()).toEqual('first lasttest user');
     });
 
     it('shows glossary values', () => {
-      mountComponent({ grant, glossarySchema });
+      const wrapper = mountComponent({ grant, glossarySchema });
       const glossaryInfo = findByTestId(wrapper, 'glossary');
 
       expect(glossaryInfo.text()).toMatch('test 1');
@@ -93,7 +102,7 @@ describe('UserEntitlementModal', () => {
     });
 
     it('shows raw entitlement properties', () => {
-      mountComponent({ grant });
+      const wrapper = mountComponent({ grant });
       const entitlementInfo = findByTestId(wrapper, 'entitlement');
 
       expect(entitlementInfo.text()).toMatch('someData');
