@@ -10,6 +10,8 @@
 
 /home/app/variable_replacement.sh /home/app/packages/$1/.env
 
+export VUE_APP_BUILD_NUMBER=local
+
 cd /home/app/packages/$1
 
 if [[ -v SUBFOLDER ]]; then
