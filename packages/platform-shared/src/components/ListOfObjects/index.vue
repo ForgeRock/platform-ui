@@ -256,7 +256,8 @@ export default {
      */
     addObjectToList(valueIndex) {
       const emptyObjectWithKeys = this.createObject(this.properties);
-      this.listValues.splice(valueIndex + 1, 0, { ...emptyObjectWithKeys, listUniqueIndex: this.getUniqueIndex() });
+      this.listValues.splice(valueIndex + 1, 0, { ...emptyObjectWithKeys });
+      this.updateListKey();
       this.emitInput(this.listValues);
     },
     emitInput(value) {
@@ -269,6 +270,11 @@ export default {
         } else {
           this.$emit('input', this.multiValued ? emitValue : emitValue[0]);
         }
+      });
+    },
+    updateListKey() {
+      return this.listValues.forEach((val) => {
+        val.listUniqueIndex = this.getUniqueIndex();
       });
     },
     /**
@@ -318,6 +324,7 @@ export default {
      */
     removeElementFromList(index) {
       this.listValues.splice(index, 1);
+      this.updateListKey();
       this.emitInput(this.listValues);
     },
     validateField() {
