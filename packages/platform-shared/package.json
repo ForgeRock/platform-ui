@@ -24,7 +24,7 @@
     "d3": "6.7.0",
     "d3-interpolate-path": "2.2.3",
     "dayjs": "1.11.7",
-    "jose": "4.14.4",
+    "jose": "4.15.5",
     "ldap-filter": "0.3.3",
     "lodash": "4.17.21",
     "material-icons": "1.10.4",
