@@ -19,6 +19,7 @@
     "Entitlements": "Entitlements",
     "ESV": "Environment Secrets & Variables",
     "Glossary": "Glossary",
+    "Compliance": "Governance Compliance",
     "GovernanceEvents": "Governance Events",
     "HostedPages": "Hosted Pages",
     "Jobs": "Jobs",
@@ -50,6 +51,7 @@
     "Certification": "Certification",
     "CertificationTemplate": "Certification Template",
     "Cookie": "Cookie",
+    "Compliance": "Governance Compliance",
     "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
     "Csp": "Content Security Policy",
@@ -124,6 +126,7 @@
     "authScripts": "Auth Scripts",
     "bulkImport": "Import",
     "certification": "Certification",
+    "compliance": "Compliance",
     "configureManaged": "Configure",
     "connect": "Connect",
     "customEndpoints": "Custom Endpoints",
@@ -2999,6 +3002,14 @@
         "updateCampaignDeadline": "Update Campaign Deadline",
         "chooseNewDeadline": "Choose a new deadline for this campaign"
       }
+    },
+    "compliance": {
+      "exceptions": "Exceptions",
+      "policies": "Policies",
+      "policyRules": "Policy Rules",
+      "subtitle": "TODO: Compliance description goes here",
+      "title": "Compliance",
+      "violations": "Violations"
     },
     "entitlements": {
       "subtitle": "Manage and configure user entitlements across all your configured applications.",
