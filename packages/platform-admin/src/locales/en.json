@@ -3069,12 +3069,25 @@
       }
     },
     "compliance": {
-      "exceptions": "Exceptions",
-      "policies": "Policies",
-      "policyRules": "Policy Rules",
+      "exceptions": {
+        "tabTitle": "Exceptions"
+      },
+      "policies": {
+        "tabTitle": "Policies"
+      },
+      "policyRules": {
+        "editPolicy": "Edit Policy",
+        "errorGetData": "There was an error retrieving policy rules",
+        "newRule": "New Rule",
+        "policyRule": "Policy Rule",
+        "searchRules": "Search rules",
+        "tabTitle": "Policy Rules"
+      },
       "subtitle": "TODO: Compliance description goes here",
       "title": "Compliance",
-      "violations": "Violations"
+      "violations": {
+        "tabTitle": "Violations"
+      }
     },
     "entitlements": {
       "subtitle": "Manage and configure user entitlements across all your configured applications.",
