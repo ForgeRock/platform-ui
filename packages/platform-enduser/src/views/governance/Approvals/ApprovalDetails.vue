@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="isActive"
         class="mb-4">
         <BButton
+          v-if="actionPermissions.approve"
           @click="openModal('APPROVE')"
           class="mr-1"
           variant="outline-secondary">
@@ -50,6 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
           </FrIcon>
         </BButton>
         <BButton
+          v-if="actionPermissions.reject"
           @click="openModal('REJECT')"
           class="mr-1"
           variant="outline-secondary">
@@ -60,6 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
           </FrIcon>
         </BButton>
         <BButton
+          v-if="actionPermissions.reassign"
           @click="openModal('REASSIGN')"
           class="mr-1"
           variant="outline-secondary">
@@ -78,6 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
         no-body>
         <FrRequestDetails
           @add-comment="openModal('COMMENT')"
+          :hide-actions="{ comment: !actionPermissions.comment }"
           :item="item" />
       </BCard>
     </template>
@@ -138,8 +142,15 @@ const { requestId } = route.params;
 const isActive = ref(false);
 const item = ref({});
 const modalType = ref('');
+const actionPermissions = ref({
+  approve: false,
+  reject: false,
+  reassign: false,
+  comment: false,
+});
 let requireApproveJustification = false;
 let requireRejectJustification = false;
+let allowSelfApproval = false;
 
 const userId = computed(() => useUserStore().userId);
 
@@ -151,6 +162,19 @@ async function getBaseRequest() {
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.approval.errorGettingApprovals'));
   }
+}
+
+function currentUserId() {
+  return `managed/user/${userId.value}`;
+}
+
+function updateActionsPermissions() {
+  const actorInfo = item.value?.rawData?.decision.actors.active.find((actor) => actor.id === currentUserId());
+  const isSelfApprover = userId.value === item.value?.rawData.user.id;
+  actionPermissions.value = {
+    ...actorInfo?.permissions,
+    approve: allowSelfApproval ? actorInfo?.permissions.approve : !isSelfApprover && actorInfo?.permissions.approve,
+  };
 }
 
 async function getApproval() {
@@ -165,6 +189,7 @@ async function getApproval() {
       const request = data.result[0];
       item.value = getFormattedRequest(request, getRequestObjectType(request.requestType));
       isActive.value = true;
+      updateActionsPermissions();
     }
   } catch (error) {
     showErrorMessage('error', i18n.global.t('governance.approval.errorGettingApprovals'));
@@ -188,6 +213,7 @@ onMounted(async () => {
     const { data } = await getIgaAccessRequest();
     requireApproveJustification = !data.requireApproveJustification;
     requireRejectJustification = !data.requireRejectJustification;
+    allowSelfApproval = !data.allowSelfApproval;
   } catch {
     // We don't need to show an error here
   }
