@@ -116,6 +116,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :key="component.key"
                           :step="step"
                           :floating-label="journeyFloatingLabels"
+                          :is-required-aria="component.isRequired"
                           v-bind="{...component.callbackSpecificProps}"
                           v-on="{
                             'next-step': (event, preventClear) => {
@@ -311,6 +312,7 @@ of the MIT license. See the LICENSE file for details. -->
                       :key="component.key"
                       :step="step"
                       :floating-label="journeyFloatingLabels"
+                      :is-required-aria="component.isRequired"
                       v-bind="{...component.callbackSpecificProps}"
                       v-on="{
                         'next-step': (event, preventClear) => {
@@ -732,7 +734,8 @@ export default {
       this.step.callbacks.forEach((callback, i) => {
         // index 0 is reserved for callback_0 used in backend scripts
         const index = i + 1;
-        this.nextButtonDisabledArray.push(this.isCallbackRequired(callback));
+        const isRequired = this.isCallbackRequired(callback);
+        this.nextButtonDisabledArray.push(isRequired);
         const existsInComponentList = (type) => find(componentList, (component) => component.type === `Fr${type}`);
         let type = callback.getType();
 
@@ -774,6 +777,7 @@ export default {
           callback,
           callbackSpecificProps,
           index,
+          isRequired,
           // if the app isn't loading update existing component props
           key: this.loading ? keyFromDate += 1 : this.componentList[i].key,
           listeners: this.getListeners({ callback, index }, listeners),

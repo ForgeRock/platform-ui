@@ -33,7 +33,6 @@ of the MIT license. See the LICENSE file for details. -->
           @input="selected = $event; handleQuestionChoiceChange()"
           class="mb-2 kbaQuestionSelect"
           type="select"
-          input-labelledby="legend-kba-create-callback-description"
           :searchable="true"
           :label="callback.getPrompt()"
           :name="questionModel.key + '_question_selector'"
@@ -42,6 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
           :options="options"
           :validation="questionSelectValidation"
           :floating-label="floatingLabel"
+          :is-required-aria="true"
           @open="setOptions()" />
         <FrField
           v-if="showCustom"
@@ -52,7 +52,8 @@ of the MIT license. See the LICENSE file for details. -->
           :name="questionModel.key"
           :validation="questionTextInputValidation"
           :validation-immediate="true"
-          :floating-label="floatingLabel" />
+          :floating-label="floatingLabel"
+          :is-required-aria="true" />
         <FrField
           :value="answerModel"
           @input="answerModel = $event; validateAnswer()"
@@ -62,7 +63,8 @@ of the MIT license. See the LICENSE file for details. -->
           :label="answerLabel"
           :name="`callback_${index}_answer_field`"
           :disabled="selected === null"
-          :floating-label="floatingLabel" />
+          :floating-label="floatingLabel"
+          :is-required-aria="true" />
       </fieldset>
     </VeeForm>
     <hr>
