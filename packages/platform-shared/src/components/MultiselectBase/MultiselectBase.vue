@@ -23,7 +23,8 @@ of the MIT license. See the LICENSE file for details. -->
     :aria-activedescendant="wrapperIsCombobox && isOpen ? `${id}-${pointer}`: null"
     :aria-expanded="wrapperIsCombobox ? isOpen.toString() : null"
     :aria-controls="wrapperIsCombobox ? `listbox-${id}` : null"
-    :aria-labelledby="wrapperIsCombobox ? comboboxLabelledby || `${id}-label` : null">
+    :aria-labelledby="wrapperIsCombobox ? comboboxLabelledby || `${id}-label` : null"
+    :aria-required="wrapperIsCombobox ? isRequiredAria: null">
     <slot
       name="caret"
       :toggle="toggle">
@@ -113,7 +114,8 @@ of the MIT license. See the LICENSE file for details. -->
         :aria-activedescendant="inputIsCombobox && isOpen ? `${id}-${pointer}`: null"
         :aria-expanded="inputIsCombobox? isOpen.toString() : null"
         :aria-controls="inputIsCombobox ? `listbox-${id}` : null"
-        :aria-labelledby="inputIsCombobox ? comboboxLabelledby || `${id}-label` : null">
+        :aria-labelledby="inputIsCombobox ? comboboxLabelledby || `${id}-label` : null"
+        :aria-required="inputIsCombobox ? isRequiredAria: null">
       <span
         v-if="isSingleLabelVisible"
         class="multiselect__single"
@@ -311,6 +313,13 @@ const props = defineProps({
   internalSearch: {
     type: Boolean,
     default: true,
+  },
+  /**
+   * Sets aria-required as the value provided
+   */
+  isRequiredAria: {
+    type: Boolean,
+    default: false,
   },
   label: {
     type: String,

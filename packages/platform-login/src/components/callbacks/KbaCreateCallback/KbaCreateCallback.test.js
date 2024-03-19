@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,7 @@ import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHe
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import i18n from '@/i18n';
+import store from '../../../store';
 
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,
@@ -27,6 +28,7 @@ describe('KbaCreateCallback.vue (shallowMount)', () => {
   const customQuestionOption = { value: 'custom', text: 'Provide your own:' };
 
   function setup(overrideProps = {}, piniaState = {}) {
+    store.state.SharedStore.newMultiselectEnabled = true;
     setupTestPinia(piniaState, false);
     wrapper = shallowMount(KbaCreateCallback, {
       global: {
@@ -143,6 +145,7 @@ describe('KbaCreateCallback.vue (mount)', () => {
   };
 
   beforeEach(() => {
+    store.state.SharedStore.newMultiselectEnabled = true;
     setupTestPinia({}, false);
     wrapper = mount(KbaCreateCallback, {
       global: {
@@ -160,5 +163,11 @@ describe('KbaCreateCallback.vue (mount)', () => {
     const label = wrapper.find('label');
     expect(label.text()).toBe('Prompt label');
     expect(wrapper.html()).toEqual(expect.stringContaining('placeholder="Type to search"'));
+  });
+
+  it('has aria required set', () => {
+    const inputs = wrapper.findAll('input');
+    expect(inputs[0].html()).toEqual(expect.stringContaining('aria-required="true"'));
+    expect(inputs[1].html()).toEqual(expect.stringContaining('aria-required="true"'));
   });
 });

@@ -38,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
           @input="event => inputValue = removeNonNumericChars(event)"
           :aria-describedby="ariaDescribedBy"
+          :aria-required="isRequiredAria"
           @animationstart="floatingLabel && animationStart"
           @blur="onBlur($event)"
           @focus="(floatingLabel && label) && (floatLabels = true)"
@@ -58,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
           :autocomplete="$attrs.autocomplete"
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
           :aria-describedby="ariaDescribedBy"
+          :aria-required="isRequiredAria"
           @blur="onBlur($event);"
           @focus="(floatingLabel && label) && (floatLabels = true)"
           @animationstart="floatingLabel && animationStart"
@@ -171,6 +173,13 @@ export default {
     describedbyId: {
       type: String,
       default: '',
+    },
+    /**
+     * Sets aria-required as the value provided
+     */
+    isRequiredAria: {
+      type: Boolean,
+      default: false,
     },
     /**
      * When true will show the value of a password as text instead of it being hidden

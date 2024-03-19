@@ -21,6 +21,7 @@ describe('MultiSelectBase', () => {
     testid: 'multiselectBaseTestid',
     id: 'multiselectBaseId',
     options: [],
+    isRequiredAria: true,
   };
 
   function setup(props) {
@@ -44,6 +45,7 @@ describe('MultiSelectBase', () => {
       expect(multiselectInput.attributes('aria-controls')).toBe('listbox-multiselectBaseId');
       expect(multiselectInput.attributes('aria-expanded')).toBe('false');
       expect(multiselectInput.attributes('aria-labelledby')).toBe('multiselectBaseId-label');
+      expect(multiselectInput.attributes('aria-required')).toBe('true');
       expect(multiselectInput.attributes('role')).toBe('combobox');
 
       const multiselectContainer = findByTestId(wrapper, 'multi-select-container-multiselectBaseTestid');
@@ -52,6 +54,7 @@ describe('MultiSelectBase', () => {
       expect(multiselectContainer.attributes('aria-controls')).toBe(undefined);
       expect(multiselectContainer.attributes('aria-expanded')).toBe(undefined);
       expect(multiselectContainer.attributes('aria-labelledby')).toBe(undefined);
+      expect(multiselectContainer.attributes('aria-required')).toBe(undefined);
       expect(multiselectContainer.attributes('role')).toBe(undefined);
     });
 
@@ -65,6 +68,7 @@ describe('MultiSelectBase', () => {
       expect(multiselectContainer.attributes('aria-controls')).toBe('listbox-multiselectBaseId');
       expect(multiselectContainer.attributes('aria-expanded')).toBe('false');
       expect(multiselectContainer.attributes('aria-labelledby')).toBe('multiselectBaseId-label');
+      expect(multiselectContainer.attributes('aria-required')).toBe('true');
       expect(multiselectContainer.attributes('role')).toBe('combobox');
 
       const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
