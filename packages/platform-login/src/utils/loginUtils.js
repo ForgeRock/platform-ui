@@ -22,6 +22,7 @@ const autocompleteFieldLookup = {
   'email address': 'email',
   'street address': 'street-address',
   // Phone
+  'telephone number': 'tel',
   'phone number': 'tel',
   'country code': 'tel-country-code',
   'area code': 'tel-area-code',
