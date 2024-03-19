@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -23,6 +23,7 @@ const defaultProps = {
   testid: 'stub-testid',
   autofocus: false,
   type: 'test',
+  isRequiredAria: true,
 };
 
 describe('BasicInput', () => {
@@ -56,6 +57,7 @@ describe('BasicInput', () => {
         expect(input.attributes('type')).toBe('text');
         expect(input.attributes('inputmode')).toBe('numeric');
         expect(input.attributes('pattern')).toBe('[0-9]*');
+        expect(input.attributes('aria-required')).toBe('true');
 
         const showPasswordButton = findByTestId(wrapper, 'btn-show-password-stub-testid');
         expect(showPasswordButton.exists()).toBeFalsy();
@@ -126,6 +128,7 @@ describe('BasicInput', () => {
         expect(input.attributes('disabled')).toBeFalsy();
         expect(input.attributes('readonly')).toBeFalsy();
         expect(input.attributes('type')).toBe('text');
+        expect(input.attributes('aria-required')).toBe('true');
 
         const showPasswordButton = findByTestId(wrapper, 'btn-show-password-stub-testid');
         expect(showPasswordButton.exists()).toBeFalsy();
