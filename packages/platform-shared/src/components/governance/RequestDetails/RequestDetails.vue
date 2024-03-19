@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
         <Component
           :is="tab.component"
           :item="item"
-          :hide-actions="hideActions"
+          :hide-actions="tab.hideActions"
           v-on="$listeners"
         />
       </BTab>
@@ -61,8 +61,8 @@ const props = defineProps({
     required: true,
   },
   hideActions: {
-    type: Boolean,
-    default: false,
+    type: Object,
+    default: () => ({ comment: false }),
   },
 });
 
@@ -78,6 +78,7 @@ const tabs = ref([
   {
     component: FrComments,
     title: i18n.global.t('common.comments'),
+    hideActions: props.hideActions.comment,
   },
   {
     component: FrTasks,

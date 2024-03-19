@@ -24,9 +24,43 @@ CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.reso
     requireRejectJustification: false,
     requireApproveJustification: false,
     defaultApprover: '',
-    allowSelfApproval: false,
+    allowSelfApproval: true,
   },
 }));
+
+const decision = {
+  actors: {
+    active: [
+      {
+        givenName: 'Manuel',
+        id: 'managed/user/1234',
+        mail: 'manuel.escobar@test.com',
+        sn: 'Escobar',
+        userName: 'manuel.escobar@test.com',
+        phase: 'phase-name',
+        permissions: {
+          approve: true,
+          cancel: true,
+          comment: true,
+          reassign: true,
+          reject: true,
+        },
+      },
+    ],
+    inactive: [],
+  },
+  comments: [],
+  completionDate: null,
+  deadline: null,
+  outcome: null,
+  phases: [
+    {
+      name: 'phase-name',
+    },
+  ],
+  startDate: '2023-06-22T19:23:26+00:00',
+  status: 'in-progress',
+};
 
 const accessRequest = {
   application: {
@@ -37,32 +71,10 @@ const accessRequest = {
     templateName: 'azure.ad',
     templateVersion: '2.0',
   },
-  decision: {
-    actors: {
-      active: [
-        {
-          givenName: 'Manuel',
-          id: '1234-456-3',
-          mail: 'manuel.escobar@test.com',
-          sn: 'Escobar',
-          userName: 'manuel.escobar@test.com',
-          phase: 'phase-name',
-        },
-      ],
-      inactive: [],
-    },
-    comments: [],
-    completionDate: null,
-    deadline: null,
-    outcome: null,
-    phases: [
-      {
-        name: 'phase-name',
-      },
-    ],
-    startDate: '2023-06-22T19:23:26+00:00',
-    status: 'in-progress',
+  rawData: {
+    decision,
   },
+  decision,
   id: 1,
   request: {
     common: {
@@ -146,17 +158,26 @@ describe('ApprovalDetails', () => {
         beforeEach(() => {
           wrapper = setup();
         });
-        it('shows approve action', () => {
+        it('shows approve action if the Approve permission is true', () => {
           const actions = findByTestId(wrapper, 'approval-detail-actions');
           expect(actions.text()).toContain('Approve');
         });
-        it('shows reject action', () => {
+        it('shows reject action if the Reject permission is true', () => {
           const actions = findByTestId(wrapper, 'approval-detail-actions');
           expect(actions.text()).toContain('Reject');
         });
-        it('shows forward action', () => {
+        it('shows forward action if the Forward permission is true', () => {
           const actions = findByTestId(wrapper, 'approval-detail-actions');
           expect(actions.text()).toContain('Forward');
+        });
+        it('should set the permissions with the api permissions result', () => {
+          expect(wrapper.vm.actionPermissions).toEqual({
+            approve: true,
+            cancel: true,
+            reject: true,
+            comment: true,
+            reassign: true,
+          });
         });
       });
       it('hides actions for inactive approval', async () => {

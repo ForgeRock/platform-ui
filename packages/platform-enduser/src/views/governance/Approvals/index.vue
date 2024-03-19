@@ -222,6 +222,7 @@ export default {
       pageSize: 10,
       requireApproveJustification: false,
       requireRejectJustification: false,
+      allowSelfApproval: false,
       sortDir: 'desc',
       sortKeys: 'date',
       status: 'pending',
@@ -247,6 +248,7 @@ export default {
       const { data } = await getIgaAccessRequest();
       this.requireApproveJustification = data.requireApproveJustification;
       this.requireRejectJustification = data.requireRejectJustification;
+      this.allowSelfApproval = data.allowSelfApproval;
     } catch {
       // We don't need to show an error here
     }
@@ -258,7 +260,12 @@ export default {
     },
     getPermission(item, type) {
       const actorInfo = item?.rawData?.decision.actors.active.find((actor) => actor.id === this.currentUserId());
-      return actorInfo ? actorInfo.permissions[type] : false;
+      const actionTypePermissionAllowed = actorInfo?.permissions[type] ?? false;
+      if (type === 'approve') {
+        const isSelfApprover = this.userId === item.rawData.user.id;
+        return this.allowSelfApproval ? actionTypePermissionAllowed : !isSelfApprover && actionTypePermissionAllowed;
+      }
+      return actionTypePermissionAllowed;
     },
     loadRequestAndUpdateBadge() {
       this.loadRequests();
