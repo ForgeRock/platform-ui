@@ -201,6 +201,7 @@ const statusOptions = ref([
 const totalRows = ref(0);
 
 const componentRefs = new Map([
+  ['currentPage', currentPage],
   ['filter', filter],
   ['pageSize', pageSize],
   ['sortDir', sortDir],
