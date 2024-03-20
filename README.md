@@ -34,8 +34,8 @@
 <a name="quick-start"></a>
 ## Development Quick start
 
-- [Download and install the latest node](https://nodejs.org/en/download/) or verify your node version `node -v`
-- Make sure you have [yarn installed](https://yarnpkg.com/getting-started/install)
+- [Download and install node](https://nodejs.org/en/download/) version 14 or higher, or verify your node version `node -v` in your terminal. Your Node.js version should be >=14.
+- This project uses a specific version of Yarn (3.6.1) that is bundled with the project in `.yarn/releases`. It's not required to install Yarn globally for this project, but if you are interested in how Yarn works or if you plan to use your own Yarn version, you can learn more about installing Yarn [here](https://yarnpkg.com/getting-started/install). You can verify the yarn version running `yarn -v` in your terminal.
 - Clone or download the repo
 - Navigate to newly cloned `platform-ui` directory, and install dependencies with yarn command: `yarn install`. Since this project uses [Yarn workspaces](https://yarnpkg.com/features/workspaces), this will install package requirements in all project folders under `packages`
 - To start the development server, navigate to target project by changing directory to specific package inside the `platform-ui/packages` directory, and enter the command: `yarn dev`
