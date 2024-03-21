@@ -219,5 +219,31 @@ describe('GovernanceFilterBuilder', () => {
       wrapper.findComponent('.form-group').vm.$emit('input', { source: '{"filterString":"stringValue"}' });
       expect(wrapper.emitted('filter-update')[0]).toEqual([{ filterString: 'stringValue' }]);
     });
+
+    it('Should validate for before/after properties if showTemporalValueField is true', async () => {
+      const filterBeforeProps = { filterValue: { or: [{ starts_with: { prefix: { literal: 'name' }, value: 'user.before.sn' } }] } };
+      const wrapper = mountComponent(filterBeforeProps);
+      const ruleChange = {
+        depth: 0, index: 0, path: '0', value: { operator: 'not_equals' },
+      };
+
+      const filterBuilderGroup = wrapper.findComponent('.pb-3.background-none');
+      filterBuilderGroup.vm.$emit('rule-change', ruleChange);
+      await flushPromises();
+      expect(wrapper.find('[role="alert"] .iga-error').exists()).toBe(true);
+    });
+
+    it('Should not validate for before/after properties if showTemporalValueField is false', async () => {
+      const filterBeforeProps = { filterValue: { or: [{ starts_with: { prefix: { literal: 'name' }, value: 'user.before.sn' } }] }, showTemporalValueField: false };
+      const wrapper = mountComponent(filterBeforeProps);
+      const ruleChange = {
+        depth: 0, index: 0, path: '0', value: { operator: 'not_equals' },
+      };
+
+      const filterBuilderGroup = wrapper.findComponent('.pb-3.background-none');
+      filterBuilderGroup.vm.$emit('rule-change', ruleChange);
+      await flushPromises();
+      expect(wrapper.find('[role="alert"] .iga-error').exists()).toBe(false);
+    });
   });
 });
