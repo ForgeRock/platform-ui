@@ -26,6 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
         @activate-tab="activateTabHandler"
         active-nav-item-class="fr-active-nav-item"
         content-class="fr-wizard-content"
+        :lazy="lazy"
         nav-wrapper-class="fr-wizard"
         pills
         vertical>
@@ -122,6 +123,10 @@ const props = defineProps({
     default: () => [],
   },
   edit: {
+    type: Boolean,
+    default: false,
+  },
+  lazy: {
     type: Boolean,
     default: false,
   },
