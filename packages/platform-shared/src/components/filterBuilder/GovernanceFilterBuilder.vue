@@ -69,9 +69,10 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </FrFilterBuilderGroup>
       <div
+        v-if="builderError"
         class="fr-validation-requirements text-left error-messages"
         role="alert">
-        <p class="text-danger mb-0 error-message">
+        <p class="text-danger mb-0 error-message iga-error">
           {{ builderError }}
         </p>
       </div>
@@ -263,7 +264,9 @@ function updateFilter(eventName, data) {
       break;
   }
   igaFilter = convertToIGAFilter(queryFilter.value, props.resourceName, props.properties);
-  if (checkIGAFilterMeetsRequirements(igaFilter)) {
+  // check filter for before/after property matching if the event trigger is user updated (as
+  // the user created trigger will only ever have non-temporal properties)
+  if (checkIGAFilterMeetsRequirements(igaFilter) || !props.showTemporalValueField) {
     emit('filter-update', igaFilter);
     // clear error
     emit('toggle-valid', true);
