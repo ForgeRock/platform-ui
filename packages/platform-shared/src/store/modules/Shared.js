@@ -33,7 +33,7 @@ const defaultState = {
   idmBaseURL: '',
   igaApiUrl: null,
   igaOrchestrationApiUrl: null,
-  secretsEnablementEnabled: false,
+  secretsEnablementEnabled: true,
   managedObjectMinimumUIFilterLength: {},
   maxIdleExpirationTime: null,
   newMultiselectEnabled: false,
@@ -107,9 +107,6 @@ const mutations = {
       }
       if (env.VUE_APP_PROMOTE_APPS_VIA_API === true || env.VUE_APP_PROMOTE_APPS_VIA_API === 'true') {
         state.promoteAppsViaApi = env.VUE_APP_PROMOTE_APPS_VIA_API;
-      }
-      if (env.VUE_APP_ENABLE_SECRETS_ENABLEMENT === true || env.VUE_APP_ENABLE_SECRETS_ENABLEMENT === 'true') {
-        state.secretsEnablementEnabled = env.VUE_APP_ENABLE_SECRETS_ENABLEMENT;
       }
     }
 
