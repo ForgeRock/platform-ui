@@ -1745,6 +1745,7 @@
     "status": {
       "active": "Active",
       "canceled": "Canceled",
+      "cancelled": "Canceled",
       "closed": "Completed",
       "complete": "Completed",
       "completing": "Completing",
