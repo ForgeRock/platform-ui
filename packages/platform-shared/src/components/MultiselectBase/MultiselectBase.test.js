@@ -20,7 +20,7 @@ describe('MultiSelectBase', () => {
     name: 'stub-name',
     testid: 'multiselectBaseTestid',
     id: 'multiselectBaseId',
-    options: [],
+    options: [1, 2, 3],
     isRequiredAria: true,
   };
 
@@ -34,7 +34,7 @@ describe('MultiSelectBase', () => {
     });
   }
 
-  describe('renders accessibility tags', () => {
+  describe('renders accessibly', () => {
     it('default searchable with correct aria labels', async () => {
       const wrapper = setup({ _uid: 'test' });
       await flushPromises();
@@ -139,6 +139,52 @@ describe('MultiSelectBase', () => {
     expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
     expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
     expect((wrapper.find('#multiselectBaseId-1 > span')).classes()).not.toContain('multiselect__option--highlight');
+  });
+
+  it('multiselect has a value if the model-value prop is not empty', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': 1,
+        options: [1, 2, 3],
+        searchable: true,
+        multiple: false,
+        closeOnSelect: true,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.element.value).toBe('1');
+  });
+
+  it('multiselect has a value set on closing multiselect', async () => {
+    const wrapper = mount(FrMultiselectBase, {
+      global,
+      propsData: {
+        testid: 'multiselectBaseTestid',
+        id: 'multiselectBaseId',
+        'model-value': [],
+        options: [1, 2, 3],
+        searchable: true,
+        multiple: false,
+        closeOnSelect: true,
+      },
+    });
+    const multiselectInput = findByTestId(wrapper, 'multi-select-input-multiselectBaseTestid');
+    expect(multiselectInput.element.value).toBe('');
+    multiselectInput.trigger('click');
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
+    expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
+    const optionOne = wrapper.find('#multiselectBaseId-0 > span');
+    optionOne.trigger('click', { force: true });
+    const emitted = wrapper.emitted()['update:modelValue'][0][0];
+    expect(emitted).toEqual(1);
+    wrapper.setProps({ 'model-value': 1 });
+    await wrapper.vm.$nextTick();
+    expect(multiselectInput.element.value).toBe('1');
   });
 });
 
