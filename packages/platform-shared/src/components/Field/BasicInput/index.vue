@@ -37,6 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
           :readonly="readonly"
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
           @input="event => inputValue = removeNonNumericChars(event)"
+          :autocomplete="$attrs.autocomplete"
           :aria-describedby="ariaDescribedBy"
           :aria-required="isRequiredAria"
           @animationstart="floatingLabel && animationStart"
