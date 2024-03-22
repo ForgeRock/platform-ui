@@ -325,7 +325,7 @@ export default {
     onBlur(event) {
       this.$emit('blur', event);
       if (this.floatingLabel && this.label) {
-        this.floatLabels = this.inputValue.toString().length > 0;
+        this.floatLabels = this.inputValue?.toString().length > 0;
       }
     },
     /**

@@ -43,6 +43,7 @@ const defaultState = {
   uiConfig: null,
   webStorageAvailable: true,
   workforceEnabled: false,
+  templateBuilderEnabled: false,
 };
 
 const mutations = {
@@ -149,6 +150,11 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
       state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
+    }
+
+    if (env.VUE_APP_ENABLE_TEMPLATE_BUILDER === 'true' || env.VUE_APP_ENABLE_TEMPLATE_BUILDER === true) {
+      state.workforceEnabled = true;
+      state.templateBuilderEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_ANALYTICS_REPORTING) {
