@@ -39,6 +39,7 @@
   },
   "pageTitles": {
     "Applications": "Applications",
+    "ApplicationTemplates": "Application Templates",
     "AutoAccessRisk": "Risk",
     "AutoAccessPipelines": "Pipelines",
     "AutoAccessRiskConfig": "RiskConfig",
@@ -158,6 +159,7 @@
     "securityQuestions": "Security Questions",
     "settings": "Settings",
     "templates": "Templates",
+    "templateBuilder": "Template Builder",
     "workflows": "Workflows"
   },
   "connect": {
@@ -1411,6 +1413,67 @@
       "dontUpdateDescription": "Do not update dynamic application data in this tenant.",
       "dontUpdateApplicationData": "Don't Update Application Data?",
       "dontUpdateConfirm": "Are you sure you don't want to update promoted dynamic application data?"
+    },
+    "templateBuilder": {
+      "listView": {
+        "name": "Name",
+        "version": "Version",
+        "addTemplate": "Add a Template",
+        "subTitle": "Build your template applications.",
+        "noTemplates": "No templates",
+        "noTemplatesSubtitle": "Any application template will appear here.",
+        "noSearchResults": "No templates found"
+      },
+      "messages": {
+        "getError": "There was an error retrieving the list of templates",
+        "saveError": "There was an error saving the template",
+        "saveSuccess": "Template saved successfully"
+      },
+      "templateModal": {
+        "addProperty": "Add Property",
+        "addRule": "Add Rule",
+        "correlationQuery": "Correlation Query",
+        "createTemplate": "Create Template",
+        "mappingRules": "Mapping Rules",
+        "nonAccountProperties": "Non Account Properties",
+        "nonAccountPropertiesSubtitle": "Target should always be <code>assignments</code>, source is the account attribute, and referenced object type is the ID of the Non Account Object.",
+        "nonAccountObject": "Non Account Object",
+        "nonAccountObjectDescription": "Must match a non account object type ID",
+        "objectTypeId": "Object Type ID",
+        "objectTypeInboundMapping": "Inbound Mapping Details",
+        "objectTypeManagedResource": "Object Type Managed Resource",
+        "objectTypeMetadata": "Object Type Details",
+        "objectTypeName": "Object Type Name",
+        "objectTypeOutboundMapping": "Outbound Mapping Details",
+        "objectTypeProperties": "Object Type Properties",
+        "objectTypePropertiesDescription": "Ensure these details match what is provided by the connector, otherwise the connection will fail.",
+        "propertyEditPanelTitle": "Property Details",
+        "propertyIsDisplay": "Is Display",
+        "propertyIsDisplayDescription": "Target system attribute used to populate a human-readable name for this object type.",
+        "propertyIsMail": "Is Mail Attribute",
+        "propertyIsUsername": "Is Username Attribute",
+        "propertyName": "Property Name",
+        "propertyNameDescription": "Unique name of property on connector",
+        "propertyNotCreatable": "Not Creatable",
+        "propertyNotReadable": "Not Readable",
+        "propertyNotReturnedByDefault": "Not Returned by Default",
+        "propertyNotUpdateable": "Not Updateable",
+        "propertyType": "Property Type",
+        "propertyUserSpecific": "User Specific",
+        "rule": "Rule",
+        "settings": "Settings",
+        "stageOneTitle": "Template Details",
+        "stageThreeTitle": "Non-Account Object Type Details",
+        "stageTwoTitle": "Account Object Type Details",
+        "typeBoolean": "Boolean",
+        "typeInteger": "Integer",
+        "typeObject": "Object",
+        "typePassword": "Password",
+        "typeString": "String"
+      },
+      "templateModalDetails": {
+        "title": "Application Template Details"
+      }
     }
   },
   "realm": {
@@ -3146,7 +3209,7 @@
         "taskPopoverCompletedText": "{percentage}% Complete",
         "taskPopoverItemsCompletedText": "{completed}/{total} items completed"
       },
-      "noApplications":"No Applications",
+      "noApplications": "No Applications",
       "accessReviewsTabTitle": "Access Reviews",
       "activateCampaignModal": {
         "text": "Are you sure you want to activate this campaign?",
