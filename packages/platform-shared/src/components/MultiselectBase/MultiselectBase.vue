@@ -99,7 +99,7 @@ of the MIT license. See the LICENSE file for details. -->
         :spellcheck="false"
         :placeholder="placeholder"
         :style="inputStyle"
-        :value="search"
+        :value="isOpen ? search : getOptionLabel(singleValue)"
         :disabled="disabled"
         :tabindex="inputIsCombobox ? 0 : -1"
         :data-testid="testid ? `multi-select-input-${testid}` : null "
