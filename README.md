@@ -14,10 +14,6 @@
   </p>
 </p>
 
-> `Note:` The ForgeRock UI projects have now been migrated to Vue 3. This has required a change in many installed packages and across the codebase which will require rework to any cusom UIs based upon this repo. Additionally, there are still several open issues regarding behaviour of the Vue 3 applications which the team is working to resolve in Q1 2024, so there may be some defects and instability in the applications for a short while.
-> 
->If you are using the `master` branch for development purposes it is recommended that you consider switching to use our [stable Vue 2 version](https://github.com/ForgeRock/platform-ui/tree/vue2) until the Vue 3 apps are stable and you are ready to switch.
-
 ## Table of contents
 
 - [Quick start](#quick-start)
