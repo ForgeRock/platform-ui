@@ -59,7 +59,7 @@ export function getGlossarySchema() {
  * @returns The schema for the filter form.
  */
 export function getFilterSchema() {
-  return generateIgaApi().post('/governance/certification/get-filter-schema', {});
+  return generateIgaApi().post('/governance/certification/get-filter-schema');
 }
 
 /**
