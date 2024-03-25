@@ -11,11 +11,16 @@ of the MIT license. See the LICENSE file for details. -->
       :show-help-link="false"
       :show-profile-link="false">
       <template #center-content>
-        <h1
-          class="h5 font-weight-bold m-0"
-          data-testid="wizard-title">
-          {{ title }}
-        </h1>
+        <slot name="center-content">
+          <h1
+            class="h5 font-weight-bold m-0"
+            data-testid="wizard-title">
+            {{ title }}
+          </h1>
+        </slot>
+      </template>
+      <template #right-content>
+        <slot name="right-content" />
       </template>
     </FrNavbar>
     <BCard
@@ -30,7 +35,11 @@ of the MIT license. See the LICENSE file for details. -->
         nav-wrapper-class="fr-wizard"
         pills
         vertical>
+        <FrSpinner
+          v-if="isLoading"
+          class="py-5" />
         <VeeForm
+          v-else
           v-slot="{ meta: { valid }}"
           as="span">
           <BTab
@@ -94,6 +103,7 @@ import {
 } from 'bootstrap-vue';
 import { Form as VeeForm } from 'vee-validate';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar/';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 
 // Composables
@@ -117,6 +127,10 @@ const props = defineProps({
   breadcrumbPath: {
     type: String,
     default: '',
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
   },
   tabs: {
     type: Array,

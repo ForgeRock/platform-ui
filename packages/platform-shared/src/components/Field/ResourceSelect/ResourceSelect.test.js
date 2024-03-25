@@ -73,9 +73,17 @@ describe('ResourceSelect', () => {
     });
   });
 
-  it('ResourceSelect input adds tags', async () => {
+  it('ResourceSelect does not emit input if value is provided at init', async () => {
     managedResourceApi.getManagedResourceList = jest.fn().mockReturnValue(mockReturnValue);
     const wrapper = mountComponent({ value: { name: 'test' } });
+    await flushPromises();
+
+    expect(wrapper.emitted().input).toBeUndefined();
+  });
+
+  it('ResourceSelect emits input if value is not provided at init', async () => {
+    managedResourceApi.getManagedResourceList = jest.fn().mockReturnValue(mockReturnValue);
+    const wrapper = mountComponent();
     await flushPromises();
 
     expect(wrapper.emitted().input[0]).toEqual([{
@@ -86,6 +94,7 @@ describe('ResourceSelect', () => {
   });
 
   it('searches when input is entered', async () => {
+    jest.useFakeTimers();
     const wrapper = mountComponent();
     await flushPromises();
 
@@ -93,7 +102,7 @@ describe('ResourceSelect', () => {
 
     const multiselect = wrapper.findComponent('[role="combobox"]');
     multiselect.vm.$emit('search-change', 'testFilter');
-    await new Promise((r) => setTimeout(r, 500));
+    jest.runAllTimers();
 
     expect(getListSpy).toHaveBeenCalledWith('alpha_user', {
       fields: 'givenName,sn,userName',
@@ -101,5 +110,6 @@ describe('ResourceSelect', () => {
       queryFilter: '/givenName sw "testFilter" or /sn sw "testFilter" or /userName sw "testFilter"',
       sortKeys: 'givenName',
     });
+    jest.useRealTimers();
   });
 });

@@ -90,7 +90,7 @@ export default {
   created() {
     this.getMinimumUIFilterLength(this.resourcePath).then((queryThreshold) => {
       this.queryThreshold = queryThreshold;
-      this.getResourceList(this.type === 'select');
+      this.getResourceList(this.type === 'select' && Object.keys(this.value).length === 0);
     });
   },
   computed: {
