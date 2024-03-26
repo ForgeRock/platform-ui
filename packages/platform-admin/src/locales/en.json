@@ -3492,8 +3492,23 @@
     },
     "scopes": {
       "listView": {
-        "subTitle": "Create and manage rules to control access available to users."
-      }
+        "actions": {
+          "activateScopeError": "There was an error activating this scope",
+          "activateScopeSuccessfully": "Scope successfully activated",
+          "deactivateScopeConfirm": "Are you sure you want to deactivate this scope?",
+          "deactivateScopeSuccessfully": "Scope successfully deactivated",
+          "deactivateScope": "Deactivate Scope?",
+          "deactivateScopeError": "There was an error deactivating this scope",
+          "deleteScopeError": "There was an error deleting this scope",
+          "deleteScopeSuccessfully": "Scope successfully deleted"
+        },
+        "errorGetData": "There was an error retrieving scopes",
+        "noScopes": "There are no scopes to show",
+        "subtitle": "Create and manage rules to control access available to users.",
+        "searchScopes": "Search scopes",
+        "title": "Scopes"
+      },
+      "scope": "Scope"
     },
     "workflows": {
       "builder": {
