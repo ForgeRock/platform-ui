@@ -1727,12 +1727,6 @@ export default {
         this.$emit('refresh-complete');
       }
     },
-    campaignDetails: {
-      deep: true,
-      handler() {
-        this.updateColumns({});
-      },
-    },
     entitlementUserId() {
       this.getItems(1);
     },
