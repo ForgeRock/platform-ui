@@ -349,6 +349,7 @@ import {
   filter,
   get,
   isEmpty,
+  isNil,
   pick,
   sortBy as lodashSortBy,
   startCase,
@@ -1716,8 +1717,17 @@ export default {
         },
         item,
       } = data;
-      const columnData = get(item, `${category}.${key}`, '');
-      return columnData || blankValueIndicator;
+      const isGlossaryAttribute = key.includes('glossary');
+      const sanitizedKey = isGlossaryAttribute
+        ? key.split('.')[1]
+        : key;
+      // if it is a glossary attribute the correct path is used
+      const attributePath = isGlossaryAttribute
+        ? `glossary.idx./${category}.${sanitizedKey}`
+        : `${category}.${sanitizedKey}`;
+      const columnData = get(item, attributePath);
+      // only returns blank value indicator if the column data is null or undefined
+      return isNil(columnData) ? blankValueIndicator : columnData;
     },
   },
   watch: {
