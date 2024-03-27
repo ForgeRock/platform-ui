@@ -218,9 +218,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
-import {
-  defineProps, defineEmits, ref, computed,
-} from 'vue';
+import { ref, computed } from 'vue';
 import { debounce, isNull, isUndefined } from 'lodash';
 import useMultiselect from './multiselectComposable';
 import usePointer from './pointerComposable';

@@ -838,3 +838,9 @@ dd {
 .lh-sm {
   line-height: 1.25rem !important;
 }
+
+.fr-search-focus {
+  box-shadow: 0 0 0 1pt $blue;
+  outline: 0;
+  border-radius: 5px;
+}

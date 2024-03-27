@@ -3074,6 +3074,9 @@
         "tabTitle": "Exceptions"
       },
       "policies": {
+        "newPolicy":"New Policy",
+        "itemType": "Policy",
+        "searchPolicies": "Search policies",
         "tabTitle": "Policies"
       },
       "policyRules": {
@@ -3081,7 +3084,7 @@
         "errorDelete": "Error deleting policy rule",
         "errorGetData": "There was an error retrieving policy rules",
         "newRule": "New Rule",
-        "policyRule": "Policy Rule",
+        "itemType": "Policy Rule",
         "searchRules": "Search rules",
         "successDelete": "Policy rule deleted successfully",
         "tabTitle": "Policy Rules",

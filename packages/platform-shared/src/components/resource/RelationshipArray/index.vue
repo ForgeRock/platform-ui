@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
             @search-input-focus="setHelpTextFromSearchLength"
             @search-input-blur="removeHelpText"
             class="w-100"
-            :class="{'fr-managed-search-focus': hasFocus}">
+            :class="{'fr-search-focus': hasFocus}">
             <template #append>
               <BInputGroupText>
                 <small
@@ -789,10 +789,7 @@ export default {
         border: none;
       }
 
-      .fr-managed-search-focus {
-        box-shadow: 0 0 0 1pt $blue;
-        outline: 0;
-        border-radius: 5px;
+      .fr-search-focus {
         height: 50px;
       }
 
