@@ -253,7 +253,7 @@ export default {
         value: 'text/javascript',
         options: [
           { text: 'Javascript', value: 'text/javascript' },
-          { text: 'Groovy', value: 'text/groovy' },
+          { text: 'Groovy', value: 'groovy' },
         ],
       },
       selectedVariables: [],
@@ -399,7 +399,7 @@ export default {
       if (fileComponents[fileComponents.length - 1] === 'js') {
         this.scriptType.value = 'text/javascript';
       } else if (fileComponents[fileComponents.length - 1] === 'text/groovy') {
-        this.scriptType.value = 'text/groovy';
+        this.scriptType.value = 'groovy';
       }
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -446,8 +446,8 @@ export default {
     setPropValues(newValue) {
       this.selectedVariables.length = 0;
       if (newValue.type) {
-        // If the script type is not 'text/javascript' or 'text/groovy' prepend it with 'text/'
-        this.scriptType.value = !newValue.type.startsWith('text/') ? `text/${newValue.type}` : newValue.type;
+        // If the script type is javascript and doesn't start with 'text/', prepend it with 'text/'
+        this.scriptType.value = (newValue.type.includes('javascript') && !newValue.type.startsWith('text/')) ? `text/${newValue.type}` : newValue.type;
       }
       Object.keys(newValue.globals || {}).forEach((name, index) => {
         const globalValue = newValue.globals[name];
