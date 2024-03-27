@@ -223,7 +223,19 @@ function modalAction(item, ok) {
     ? item.rawData?.decision?.phases?.[0]?.name
     : item.rawData?.phases?.[0]?.name;
   loading.value = true;
-  requestAction(item.details.id, action, phaseName, comment.value, [actors.value]).then(() => {
+  const requestPayload = {};
+  switch (action) {
+    case 'reassign':
+      requestPayload.updatedActors = [actors.value];
+      requestPayload.comment = comment.value;
+      break;
+    case 'reject':
+      requestPayload.justification = comment.value;
+      break;
+    default:
+      requestPayload.comment = comment.value;
+  }
+  requestAction(item.details.id, action, phaseName, requestPayload).then(() => {
     displayNotification('success', componentComputed.value.message);
     emit('modal-success');
   }).catch(() => {

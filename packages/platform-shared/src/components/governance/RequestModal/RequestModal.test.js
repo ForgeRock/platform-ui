@@ -8,11 +8,14 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import Notifications from '@kyvg/vue3-notification';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import i18n from '@/i18n';
 import RequestModal from './RequestModal';
+
+const requestActionSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockReturnValue(Promise.resolve({ data: {} }));
 
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,
@@ -236,5 +239,16 @@ describe('RequestModal', () => {
     await flushPromises();
     expect(wrapper.emitted()['update-list']).toBeTruthy();
     expect(cancel).toHaveBeenCalled();
+  });
+  it('calls requestAction with justification from reject modal', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REJECT });
+    await flushPromises();
+
+    const justificationField = wrapper.find('textarea');
+    justificationField.setValue('test justification');
+    const rejectButton = wrapper.findAllComponents('[type="button"]').filter((x) => x.text().includes('Reject'))[0];
+    rejectButton.trigger('click');
+
+    expect(requestActionSpy).toHaveBeenCalledWith(1, 'reject', 'phaseTest', { justification: 'test justification' });
   });
 });
