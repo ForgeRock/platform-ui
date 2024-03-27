@@ -43,7 +43,7 @@ describe('ScriptEditor', () => {
 
     await wrapper.setProps({
       value: {
-        type: 'text/groovy',
+        type: 'groovy',
         globals: {
           string_test: 'test',
           array_test: ['array1', { second: ['array2'], third: 'array3' }],
@@ -56,7 +56,7 @@ describe('ScriptEditor', () => {
     });
 
     wrapper.vm.setPropValues(wrapper.vm.value);
-    expect(wrapper.vm.scriptType.value).toEqual('text/groovy');
+    expect(wrapper.vm.scriptType.value).toEqual('groovy');
     expect(wrapper.vm.selectedVariables[0].name).toEqual('string_test');
     expect(wrapper.vm.selectedVariables[0].value.value).toEqual('test');
     expect(wrapper.vm.selectedVariables[2].value.value).toEqual({ second: ['object1', 'object2'], third: 'object3' });
@@ -88,7 +88,7 @@ describe('ScriptEditor', () => {
 
     await wrapper.setProps({
       value: {
-        type: 'text/groovy',
+        type: 'groovy',
         globals: {
           string_test: 'test',
           array_test: ['array1', { second: ['array2'], third: 'array3' }],
@@ -100,7 +100,7 @@ describe('ScriptEditor', () => {
       },
     });
     wrapper.vm.setPropValues(wrapper.vm.value);
-    expect(wrapper.vm.scriptType.value).toEqual('text/groovy');
+    expect(wrapper.vm.scriptType.value).toEqual('groovy');
     expect(wrapper.vm.value.file).toEqual('/file/path.js');
     const file = new File(['text'], 'test.js');
     expect(wrapper.vm.fileChanged).toEqual(false);
