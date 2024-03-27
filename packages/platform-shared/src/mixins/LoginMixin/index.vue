@@ -152,10 +152,7 @@ export function getTranslatedPolicyFailures(callback) {
   const failedPolicies = callback.getFailedPolicies
     ? callback.getFailedPolicies()
     : [];
-  return failedPolicies.map((policy) => {
-    const parsedPolicy = JSON.parse(policy);
-    return this.$t(`common.policyValidationMessages.${parsedPolicy.policyRequirement}`, parsedPolicy.params);
-  });
+  return failedPolicies.map((policy) => this.$t(`common.policyValidationMessages.${policy.policyRequirement}`, policy.params));
 }
 
 /**

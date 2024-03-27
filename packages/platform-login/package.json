@@ -15,7 +15,8 @@
     "test:cb": "jest --config=../../jest.config.crossbrowser.js"
   },
   "dependencies": {
-    "@forgerock/javascript-sdk": "3.0.0",
+    "@forgerock/javascript-sdk": "4.4.2",
+    "@forgerock/ping-protect": "4.4.2",
     "@forgerock/platform-shared": "1.0.0",
     "@hcaptcha/vue-hcaptcha": "0.3.2",
     "@kyvg/vue3-notification": "3.0.2",
