@@ -48,16 +48,14 @@ export function getUserApprovals(userId, params, filter) {
  * @param {String} requestId ID of request
  * @param {String} phaseName Phase name in which the request is
  * @param {String} action action being realized to the request
- * @param {String} comment Comment to leave on request
- * @param {Array} updatedActors Actor who the request will be forwarded to
+ * @param {Object} requestPayload request payload details
  * @returns {Promise}
  */
-export function requestAction(requestId, action, phaseName, comment, updatedActors) {
+export function requestAction(requestId, action, phaseName, requestPayload) {
   let url = `/governance/requests/${requestId}?_action=${action}`;
   if (phaseName) url = `${url}&phaseName=${phaseName}`;
 
-  const requestBody = action === 'reassign' ? { comment, updatedActors } : { comment };
-  return generateIgaApi().post(url, requestBody);
+  return generateIgaApi().post(url, requestPayload);
 }
 
 /**
