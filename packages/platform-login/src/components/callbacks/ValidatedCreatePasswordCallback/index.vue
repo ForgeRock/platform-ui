@@ -143,7 +143,7 @@ export default {
       this.setPoliciesFromFailures(this.step);
     } else {
       this.setPolicies(this.callback.getPolicies().policies);
-      const failingPolicies = this.callback.getFailedPolicies().map((x) => JSON.parse(x));
+      const failingPolicies = this.callback.getFailedPolicies();
       this.setFailingPolicies(failingPolicies);
     }
   },
@@ -185,7 +185,7 @@ export default {
         this.testInputValue(step1, testString2).then((step2) => {
           const failures2 = step2.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
 
-          let failures = [...failures1.map((pol) => (JSON.parse(pol))), ...failures2.map((pol) => (JSON.parse(pol)))];
+          let failures = [...failures1, ...failures2];
           failures = uniqWith(failures, isEqual);
           this.policies = this.normalizePolicies(failures);
           this.setFailingPolicies(failures);
@@ -270,7 +270,7 @@ export default {
         FRAuth.next(this.step, { realmPath: this.realm })
           .then((step) => {
             const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
-            const policies = callback.getFailedPolicies().map((x) => JSON.parse(x));
+            const policies = callback.getFailedPolicies();
             this.setFailingPolicies(policies);
 
             // update auth id in the event of authentication tree whitelisting

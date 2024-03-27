@@ -62,7 +62,7 @@ Config.set({
       authRequestNumber += 1;
 
       // Set a transaction ID that should identify this request of this auth session of this tree in logs
-      req.init.headers['x-forgerock-transactionid'] = `${rootTransactionId}-request-${authRequestNumber}`;
+      req.init.headers.append('x-forgerock-transactionid', `${rootTransactionId}-request-${authRequestNumber}`);
       next();
     },
   ],
@@ -152,7 +152,7 @@ const startApp = () => {
 
       // set request header for requests made by sdk
       const languageMiddleware = (req, action, next) => {
-        req.init.headers['accept-language'] = localeString;
+        req.init.headers.append('accept-language', localeString);
         next();
       };
 

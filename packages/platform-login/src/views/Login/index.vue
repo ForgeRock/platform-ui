@@ -472,6 +472,7 @@ export default {
     FrAccessibleHeader: () => import('@/components/display/AccessibleHeader'),
     FrPasswordCallback: () => import('@/components/callbacks/PasswordCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
+    FrPingOneProtectCallback: () => import('@/components/callbacks/PingOneProtectCallback/PingOneProtectCallback'),
     FrPushChallengeNumber: () => import('@/components/display/PushChallengeNumber'),
     FrReCaptchaCallback: () => import('@/components/callbacks/ReCaptchaCallback'),
     FrRecoveryCodesComponent: () => import('@/components/display/RecoveryCodes'),
@@ -741,6 +742,10 @@ export default {
         const existsInComponentList = (type) => find(componentList, (component) => component.type === `Fr${type}`);
         let type = callback.getType();
 
+        if (type === this.FrCallbackType.PingOneProtectInitializeCallback || type === this.FrCallbackType.PingOneProtectEvaluationCallback) {
+          type = 'PingOneProtectCallback';
+        }
+
         if (type === this.FrCallbackType.RedirectCallback) {
           this.nextButtonVisible = false;
           this.handleRedirectCallback(callback);
@@ -815,6 +820,7 @@ export default {
           this.FrCallbackType.ConfirmationCallback,
           this.FrCallbackType.DeviceProfileCallback,
           this.FrCallbackType.PollingWaitCallback,
+          'PingOneProtectCallback',
           this.FrCallbackType.RecoveryCodesComponent,
           this.FrCallbackType.SuspendedTextOutputCallback,
           this.FrCallbackType.WebAuthnComponent,
