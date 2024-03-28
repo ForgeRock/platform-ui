@@ -3074,12 +3074,24 @@
         "tabTitle": "Exceptions"
       },
       "policies": {
-        "newPolicy":"New Policy",
+        "description": "description TODO",
+        "errorCreate": "Error creating policy",
+        "errorDelete": "Error deleting policy",
         "itemType": "Policy",
+        "newPolicy":"New Policy",
+        "newPolicyModal": {
+          "policyOwnerDescription": "Owner for this policy.",
+          "rules": "Rules",
+          "stepTwoDescription": "Choose rules to add to this policy.",
+          "title": "New Policy"
+        },
         "searchPolicies": "Search policies",
+        "successCreate": "Successfully created policy",
+        "successDelete": "Policy deleted successfully",
         "tabTitle": "Policies"
       },
       "policyRules": {
+        "description": "description TODO",
         "editPolicy": "Edit Policy",
         "errorDelete": "Error deleting policy rule",
         "errorGetData": "There was an error retrieving policy rules",
