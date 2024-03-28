@@ -102,7 +102,7 @@ export default {
 
     // Populate screenReaderMessage with callback text only if the message callback is the first TextOutputCallback rendered and is not a script.
     if (this.isFirstRenderedCallback && (this.messageType === 'INFORMATION' || this.messageType === 'ERROR' || this.messageType === 'WARNING')) {
-      this.$emit('update-screen-reader-message', this.messageType, this.callback.getMessage());
+      this.$emit('update-screen-reader-message', this.messageType, this.sanitizedMessage);
     }
   },
   methods: {

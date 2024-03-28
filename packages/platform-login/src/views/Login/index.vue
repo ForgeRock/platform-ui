@@ -40,9 +40,8 @@ of the MIT license. See the LICENSE file for details. -->
                         v-html="description" />
                       <p
                         v-if="screenReaderMessageType !== 'ERROR'"
-                        class="sr-only">
-                        {{ screenReaderMessage }}
-                      </p>
+                        class="sr-only"
+                        v-html="screenReaderMessage" />
                     </template>
                   </div>
                 </template>
@@ -65,7 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
                       :dismissible="false"
                       variant="error"
                       class="p-3 text-left">
-                      {{ screenReaderMessage }}
+                      <div v-html="screenReaderMessage" />
                     </FrAlert>
                     <div v-if="loginFailure && linkToTreeStart">
                       <a :href="linkToTreeStart">
@@ -238,9 +237,8 @@ of the MIT license. See the LICENSE file for details. -->
             </BRow>
             <p
               v-if="screenReaderMessageType !== 'ERROR'"
-              class="sr-only">
-              {{ screenReaderMessage }}
-            </p>
+              class="sr-only"
+              v-html="screenReaderMessage" />
           </div>
         </div>
         <div class="mt-1 px-4 px-md-5 d-flex w-100 flex-grow-1">
@@ -261,7 +259,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :dismissible="false"
                   variant="error"
                   class="p-3 text-left">
-                  {{ screenReaderMessage }}
+                  <div v-html="screenReaderMessage" />
                 </FrAlert>
                 <div v-if="loginFailure && linkToTreeStart">
                   <a :href="linkToTreeStart">
