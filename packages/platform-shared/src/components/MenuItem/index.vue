@@ -78,13 +78,22 @@ of the MIT license. See the LICENSE file for details. -->
         :aria-expanded="isExpanded"
         :aria-label="$t(displayName)"
         :role="isNav ? '' : 'menuitem'">
-        <FrIcon
-          :icon-class="icon ? 'mr-3' : ''"
-          :name="icon || ''">
-          <span class="menu-item-text">
-            {{ $t(displayName) }}
-          </span>
-        </FrIcon>
+        <div class="w-100 d-flex justify-content-between align-items-center pr-3">
+          <FrIcon
+            :icon-class="icon ? 'mr-3' : ''"
+            :name="icon || ''">
+            <span class="menu-item-text">
+              {{ $t(displayName) }}
+            </span>
+          </FrIcon>
+          <BBadge
+            v-if="showBadgeWithContentFromStore && !isExpanded"
+            class="ml-1"
+            variant="light"
+            pill>
+            {{ badgeContent(showBadgeWithContentFromStore) }}
+          </BBadge>
+        </div>
       </BButton>
       <BCollapse
         :id="`collapse-${displayName.split(' ').join('-')}`"

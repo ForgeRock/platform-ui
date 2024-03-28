@@ -47,6 +47,10 @@ import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeA
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
 import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
+import { getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { mapState } from 'pinia';
+import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 import i18n from '@/i18n';
 import './scss/main.scss';
 
@@ -70,6 +74,7 @@ export default {
       }
       return '';
     },
+    ...mapState(useUserStore, ['userId']),
   },
   data() {
     return {
@@ -91,6 +96,7 @@ export default {
           ? {
             displayName: 'sideMenu.inbox',
             icon: 'inbox',
+            showBadgeWithContentFromStore: 'inboxTotalCount',
             subItems: [
               {
                 showBadgeWithContentFromStore: 'approvalsCount',
@@ -203,6 +209,11 @@ export default {
     if (this.$store.state.SharedStore && this.$store.state.SharedStore.autoAccessEnabled) {
       this.checkAutoAccess();
     }
+
+    if (this.$store.state.SharedStore.governanceEnabled === true) {
+      this.getAccessReviewsCount();
+      this.getPendingApprovalsCount();
+    }
   },
   watch: {
     /**
@@ -304,6 +315,41 @@ export default {
         },
       ];
       this.menuItems.splice(1, 0, autoAccessDashboardMenu);
+    },
+    /**
+     * Retrieves the count of active access reviews and commits the count to the Vuex store.
+     * The value stored here is used in the side bar panel and in the Governance dashboard
+     *
+     * @returns {void} Does not return a value. The result of the operation is a side-effect (Vuex store update or error message display).
+     */
+    getAccessReviewsCount() {
+      let count = 0;
+      getCertificationItems({ status: 'active' }).then((resourceData) => {
+        count = resourceData?.data?.totalCount || 0;
+      }).catch((error) => {
+        this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingAccesReviews'));
+      }).finally(() => {
+        this.$store.commit('setCertificationCount', count);
+      });
+    },
+    /**
+     * Retrieves the count of pending approvals and commits the count to the Vuex store.
+     * The value stored here is used in the side bar panel and in the Governance dashboard
+     *
+     * @returns {void} Does not return a value. The result of the operation is a side-effect (Vuex store update or error message display).
+     */
+    getPendingApprovalsCount() {
+      let count = 0;
+      getUserApprovals(this.userId, {
+        pageSize: 0,
+        actorStatus: 'active',
+      }).then((resourceData) => {
+        count = resourceData?.data?.totalCount || 0;
+      }).catch((error) => {
+        this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingPendingApprovals'));
+      }).finally(() => {
+        this.$store.commit('setApprovalsCount', count);
+      });
     },
   },
 };

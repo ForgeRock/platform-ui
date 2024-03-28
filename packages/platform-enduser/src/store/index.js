@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -29,6 +29,7 @@ export default createStore({
     // user
     approvalsCount: null,
     certificationCount: null,
+    inboxTotalCount: null,
     requestCartUsers: [],
   },
   mutations: {
@@ -70,10 +71,12 @@ export default createStore({
 
     setCertificationCount(state, count) {
       state.certificationCount = count;
+      state.inboxTotalCount = state.approvalsCount + state.certificationCount;
     },
 
     setApprovalsCount(state, count) {
       state.approvalsCount = count;
+      state.inboxTotalCount = state.approvalsCount + state.certificationCount;
     },
 
     setRequestCartUsers(state, users) {

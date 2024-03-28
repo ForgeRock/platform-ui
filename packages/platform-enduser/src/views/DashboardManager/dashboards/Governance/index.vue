@@ -19,9 +19,9 @@ of the MIT license. See the LICENSE file for details. -->
           <FrCountCard
             class="mb-4"
             link-path="access-reviews"
-            :count="accessReviewsCount"
+            :count="$store.state.certificationCount"
             :link-text="$t('pages.dashboard.cardCount.viewAccessReviews')"
-            :loading="loadingAccessReviews"
+            :loading="$store.state.certificationCount === null"
             :title="$t('pages.dashboard.cardCount.accessReviews')" />
         </BCol>
         <BCol lg="4">
@@ -37,9 +37,9 @@ of the MIT license. See the LICENSE file for details. -->
           <FrCountCard
             class="mb-4"
             link-path="approvals"
-            :count="pendingApprovalsCount"
+            :count="$store.state.approvalsCount"
             :link-text="$t('pages.dashboard.cardCount.viewPendingApprovals')"
-            :loading="loadingPendingApprovals"
+            :loading="$store.state.approvalsCount === null"
             :title="$t('pages.dashboard.cardCount.pendingApprovals')" />
         </BCol>
       </BRow>
@@ -54,10 +54,9 @@ import { get } from 'lodash';
 
 import FrCountCard from '@forgerock/platform-shared/src/components/CountCard';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import { getUserRequests, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getUserRequests } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getRequestFilter } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
-import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 
 /**
  * @description Controlling component for the governance dashboard
@@ -72,11 +71,7 @@ export default {
   mixins: [NotificationMixin],
   data() {
     return {
-      accessReviewsCount: 0,
-      loadingAccessReviews: false,
-      loadingPendingApprovals: false,
       loadingPendingRequests: false,
-      pendingApprovalsCount: 0,
       pendingRequestsCount: 0,
       queryParams: {
         pageSize: 0,
@@ -88,29 +83,9 @@ export default {
     ...mapState(useUserStore, ['userId']),
   },
   mounted() {
-    this.getAccessReviewsCount();
     this.getPendingRequestsCount();
-    this.getPendingApprovalsCount();
   },
   methods: {
-    /**
-     * Performs API call to get total access reviews
-     * @returns {Void}
-     * */
-    getAccessReviewsCount() {
-      this.loadingAccessReviews = true;
-      getCertificationItems({ status: 'active' })
-        .then((resourceData) => {
-          this.accessReviewsCount = get(resourceData, 'data.totalCount', 0);
-          this.$store.commit('setCertificationCount', this.accessReviewsCount);
-        })
-        .catch((error) => {
-          this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingAccesReviews'));
-        })
-        .finally(() => {
-          this.loadingAccessReviews = false;
-        });
-    },
     getPendingRequestsCount() {
       this.loadingPendingRequests = true;
 
@@ -125,26 +100,6 @@ export default {
         })
         .finally(() => {
           this.loadingPendingRequests = false;
-        });
-    },
-    getPendingApprovalsCount() {
-      this.loadingPendingApprovals = true;
-
-      const params = {
-        pageSize: 0,
-        actorStatus: 'active',
-      };
-
-      getUserApprovals(this.userId, params)
-        .then((resourceData) => {
-          this.pendingApprovalsCount = get(resourceData, 'data.totalCount', 0) || 0;
-          this.$store.commit('setApprovalsCount', this.pendingApprovalsCount);
-        })
-        .catch((error) => {
-          this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingPendingApprovals'));
-        })
-        .finally(() => {
-          this.loadingPendingApprovals = false;
         });
     },
   },
