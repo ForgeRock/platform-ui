@@ -1,17 +1,18 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount } from '@vue/test-utils';
+import { BButton, BBadge } from 'bootstrap-vue';
 import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import MenuItem from './index';
 
 let wrapper;
 
-function mountComponent(props, mocks = { $route: { name: 'daniel' } }) {
+function mountComponent(props, mocks = { $route: { name: 'daniel' } }, stubs = {}) {
   wrapper = shallowMount(MenuItem, {
     props,
     global: {
@@ -19,6 +20,7 @@ function mountComponent(props, mocks = { $route: { name: 'daniel' } }) {
         $t: () => {},
         ...mocks,
       },
+      stubs,
     },
   });
 }
@@ -181,5 +183,97 @@ describe('MenuItem Component', () => {
 
       expect(wrapper.vm.isExpanded).toBe(false);
     });
+  });
+
+  it('Budget on dropdown parent not shown', () => {
+    mountComponent(
+      {
+        displayName: 'inbox',
+        subItems: [
+          {
+            displayName: 'Approvals',
+            routeTo: { name: 'approvals' },
+          },
+        ],
+      },
+      {
+        $store: {
+          state: {
+            inboxTotalCount: 2,
+          },
+        },
+        $route: { name: 'test' },
+      },
+      {
+        BButton,
+        BBadge,
+      },
+    );
+
+    const badge = wrapper.findComponent('.badge');
+    expect(badge.exists()).toBe(false);
+  });
+
+  it('Budget on dropdown parent shown if is not expanded', () => {
+    mountComponent(
+      {
+        displayName: 'inbox',
+        showBadgeWithContentFromStore: 'inboxTotalCount',
+        subItems: [
+          {
+            displayName: 'Approvals',
+            routeTo: { name: 'approvals' },
+          },
+        ],
+      },
+      {
+        $store: {
+          state: {
+            inboxTotalCount: 2,
+          },
+        },
+        $route: { name: 'test' },
+      },
+      {
+        BButton,
+        BBadge,
+      },
+    );
+
+    const badge = wrapper.find('.badge');
+    expect(badge.exists()).toBe(true);
+    expect(badge.text()).toBe('2');
+    expect(wrapper.vm.isExpanded).toBe(false);
+  });
+
+  it('Budget on dropdown parent not shown if is expanded', () => {
+    mountComponent(
+      {
+        displayName: 'inbox',
+        showBadgeWithContentFromStore: 'inboxTotalCount',
+        subItems: [
+          {
+            displayName: 'Approvals',
+            routeTo: { name: 'approvals' },
+          },
+        ],
+      },
+      {
+        $store: {
+          state: {
+            inboxTotalCount: 2,
+          },
+        },
+        $route: { name: 'approvals' },
+      },
+      {
+        BButton,
+        BBadge,
+      },
+    );
+
+    const badge = wrapper.find('.badge');
+    expect(badge.exists()).toBe(false);
+    expect(wrapper.vm.isExpanded).toBe(true);
   });
 });

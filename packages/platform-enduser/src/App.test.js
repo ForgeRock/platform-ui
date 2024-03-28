@@ -1,13 +1,17 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { flushPromises, shallowMount } from '@vue/test-utils';
 import { createStore } from 'vuex';
 import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
 import i18n from '@/i18n';
 import App from '@/App';
 
@@ -31,26 +35,41 @@ function shallowMountComponent(storeMock) {
       mocks: {
         $route,
       },
+      mixins: [NotificationMixin],
     },
   });
 }
 
 describe('App.vue', () => {
   beforeEach(async () => {
+    setupTestPinia({ user: { userId: '123' } });
+    AccessReviewApi.getCertificationItems = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
+    AccessRequestApi.getUserApprovals = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
     store = {
       state: {
         SharedStore: { workforceEnabled: false },
         menusFile: 'menus.platform',
+        certificationCount: null,
+        approvalsCount: null,
       },
       getters: {
         menusFile: (state) => state.menusFile,
+      },
+      mutations: {
+        setCertificationCount(state, count) {
+          state.certificationCount = count;
+        },
+        setApprovalsCount(state, count) {
+          state.approvalsCount = count;
+        },
       },
     };
   });
 
   afterAll(() => {
     wrapper.unmount();
+    jest.clearAllMocks();
   });
 
   it('Loaded Menus File should load default items', async () => {
@@ -76,5 +95,51 @@ describe('App.vue', () => {
     await wrapper.vm.$nextTick();
     const logoutText = wrapper.find('fr-layout-stub');
     expect(logoutText.exists()).toBeTruthy();
+  });
+
+  describe('with wrapper mounted', () => {
+    beforeEach(async () => {
+      shallowMountComponent(store);
+      await flushPromises();
+    });
+
+    it('should get access reviews count and save it in the store on call getAccessReviewsCount', async () => {
+      const getCertificationItemsSpy = jest.spyOn(AccessReviewApi, 'getCertificationItems');
+      wrapper.vm.getAccessReviewsCount();
+      await flushPromises();
+      expect(getCertificationItemsSpy).toHaveBeenCalledWith({ status: 'active' });
+      expect(wrapper.vm.$store.state.certificationCount).toBe(1);
+    });
+
+    it('should set a 0 to access reviews count and save it in the store on call getAccessReviewsCount when the call to API fails', async () => {
+      const error = new Error('ERROR');
+      AccessReviewApi.getCertificationItems = jest.fn().mockImplementation(() => Promise.reject(error));
+      const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+      wrapper.vm.getAccessReviewsCount();
+      await flushPromises();
+      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error retrieving access reviews');
+      expect(wrapper.vm.$store.state.certificationCount).toBe(0);
+    });
+
+    it('should get pending approvals count and save it in the store on call getPendingApprovalsCount', async () => {
+      const getUserApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
+      wrapper.vm.getPendingApprovalsCount();
+      await flushPromises();
+      expect(getUserApprovalsSpy).toHaveBeenCalledWith('123', {
+        pageSize: 0,
+        actorStatus: 'active',
+      });
+      expect(wrapper.vm.$store.state.approvalsCount).toBe(1);
+    });
+
+    it('should set a 0 to pending approvals count and save it in the store on call getPendingApprovalsCount when the call to API fails', async () => {
+      const error = new Error('ERROR');
+      AccessRequestApi.getUserApprovals = jest.fn().mockImplementation(() => Promise.reject(error));
+      const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+      wrapper.vm.getPendingApprovalsCount();
+      await flushPromises();
+      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error retrieving pending approvals');
+      expect(wrapper.vm.$store.state.approvalsCount).toBe(0);
+    });
   });
 });
