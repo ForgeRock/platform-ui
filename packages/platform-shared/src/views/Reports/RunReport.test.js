@@ -45,6 +45,7 @@ describe('Run Report component', () => {
   }
 
   function fieldDataMocks() {
+    CertificationApi.searchAllTemplateNames = jest.fn().mockReturnValue(Promise.resolve({}));
     configApi.getConfig = jest.fn().mockReturnValue(Promise.resolve(getConfigStub));
     schemaApi.getSchema = jest.fn().mockReturnValue(Promise.resolve(getSchemaStub));
     managedResourceApi.getManagedResourceList = jest.fn().mockReturnValue(Promise.resolve(getManagedResourceListStub));
@@ -63,19 +64,6 @@ describe('Run Report component', () => {
   });
 
   describe('@mounts', () => {
-    it('skips modeling any data for fields if a corresponding api call fails on load', async () => {
-      fieldDataMocks();
-      const mockError = new Error();
-      const campaignNameSpyReject = jest.spyOn(CertificationApi, 'getAdminCertificationItems').mockRejectedValue(mockError);
-
-      wrapper = setup({ reportConfig: { parameters: { campaign_name: {} } } });
-      await flushPromises();
-
-      const campaignNameField = wrapper.find('[name="show-campaign-status"]');
-      expect(campaignNameSpyReject).toHaveBeenCalled();
-      expect(campaignNameField.attributes('type')).toBe('text');
-    });
-
     const allKnownFields = [
       ['only displays the applications field when "applications" parameter received', 'fr-field-applications', 'applications'],
       ['only displays the applications field when "oauth2_applications" parameter received', 'fr-field-oauth-applications', 'oauth2_applications'],

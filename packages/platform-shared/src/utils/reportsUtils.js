@@ -12,7 +12,7 @@ import { getManagedResourceList } from '@forgerock/platform-shared/src/api/Manag
 import { getReportRuns, reportExportRequest } from '@forgerock/platform-shared/src/api/AutoApi';
 import { actionGetAllTrees } from '@forgerock/platform-shared/src/api/TreeApi';
 import { getGatewaysOrAgents } from '@forgerock/platform-shared/src/api/AgentsApi';
-import { getAdminCertificationItems } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import { searchAllTemplateNames } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import i18n from '@forgerock/platform-shared/src/i18n';
 import store from '@/store';
 
@@ -185,7 +185,7 @@ export async function requestTrees(config, queryFilter, pageSize) {
  */
 export async function getCertificationsForReports() {
   try {
-    const { data } = await getAdminCertificationItems({ pageSize: 0 });
+    const { data } = await searchAllTemplateNames();
     return data.result || [];
   } catch {
     return [];

@@ -11,6 +11,12 @@ import { mount, flushPromises } from '@vue/test-utils';
 import i18n from '@/i18n';
 import Reports from './Reports';
 
+jest.mock('vue-router', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+  })),
+}));
+
 describe('Reports', () => {
   function setup() {
     return mount(Reports, {

@@ -71,16 +71,15 @@ of the MIT license. See the LICENSE file for details. -->
           {{ _REPORT_FIELDS_CONTROLLER.campaign_name.label }}
         </BCol>
         <BCol md="9">
-          <FrField
-            v-model="campaignNameModel"
+          <FrReportsMultiSelect
             class="mb-3"
-            name="show-campaign-status"
+            data-testid="show-campaign-status"
             :internal-search="true"
             :options="campaignNameOptionsFiltered"
-            :label="!campaignNameOptionsFiltered.length ? _REPORT_FIELDS_CONTROLLER.campaign_name.label : null"
             :placeholder="_REPORT_FIELDS_CONTROLLER.campaign_name.label"
-            :searchable="campaignNameOptionsFiltered.length"
-            :type="campaignNameOptionsFiltered.length ? 'select' : 'string'" />
+            :single-selection="true"
+            :taggable="true"
+            @input="campaignNameModel = $event[0]" />
         </BCol>
       </BRow>
       <BRow v-if="showCampaignStatus">
