@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrFilterBuilderGroup
         path="0"
         class="pb-3 background-none"
-        :condition-options="governanceConditionOptions"
+        :condition-options="computedConditionOptions"
         :disabled="disabled"
         :rules="queryFilter"
         :resource-name="resourceName"
@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrGovResourceSelect
               v-if="getResourcePath(selectedProp)"
               v-model="inputValue.value"
-              @input="ruleChange({ value: $event })"
+              @input="ruleChange({ value: $event.split('/').pop() })"
               :resource-path="getResourcePath(selectedProp)" />
             <FrField
               v-else
@@ -109,12 +109,13 @@ of the MIT license. See the LICENSE file for details. -->
  * properties are provided.
  */
 import {
+  computed,
   onMounted,
   provide,
   ref,
 } from 'vue';
 import { BButton, BCard, BCol } from 'bootstrap-vue';
-import { cloneDeep, find } from 'lodash';
+import { cloneDeep, find, omit } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import FrScriptEditor from '@forgerock/platform-shared/src/components/ScriptEditor';
@@ -172,6 +173,14 @@ const queryFilter = ref({});
 const scriptEditorValue = ref('');
 let uniqueIndex = 0;
 
+const computedConditionOptions = computed(() => {
+  // HasChanged HasNotChanged options should only be available when temporalValue field is present
+  if (props.showTemporalValueField) {
+    return governanceConditionOptions;
+  }
+  return omit(governanceConditionOptions, ['HasChanged', 'HasNotChanged']);
+});
+
 // Provide fieldWidth for filterBuilderRow to use
 provide('fieldWidth', 12);
 
@@ -194,7 +203,7 @@ function getUniqueIndex() {
  *
  * @returns {Object} Newly generated rule with given values or default values
  */
-function getDefaultRule(temporalValue = 'before', field = '', operator = 'contains', value = '') {
+function getDefaultRule(temporalValue = 'after', field = '', operator = 'contains', value = '') {
   return {
     temporalValue,
     field,
