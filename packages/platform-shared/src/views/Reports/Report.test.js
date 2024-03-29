@@ -8,11 +8,12 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import { findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { createTooltipContainer, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
+import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
 import i18n from '@/i18n';
 import Report from './Report';
 import {
@@ -20,6 +21,7 @@ import {
   getConfigStub,
   getManagedResourceListStub,
 } from './RunReportStubs';
+import HistoryStubs from './ReportHistoryStubs';
 
 jest.mock('vue-router', () => ({
   useRoute: jest.fn(() => ({ params: { template: 'template-name' } })),
@@ -32,6 +34,7 @@ describe('Report component that contains the run and history tabs', () => {
   function setup(props) {
     setupTestPinia();
     return mount(Report, {
+      attachTo: createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']),
       global: {
         plugins: [i18n],
       },
@@ -73,6 +76,7 @@ describe('Report component that contains the run and history tabs', () => {
 
   describe('@components', () => {
     it('updates the history.pushState when tabs are clicked', async () => {
+      ReportsUtils.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
       onMountFetchMocks({ applications: {} });
       wrapper = setup();
       await flushPromises();
