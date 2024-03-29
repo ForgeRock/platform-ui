@@ -10,7 +10,7 @@ import GovernanceFilterBuilder from './GovernanceFilterBuilder';
 import i18n from '@/i18n';
 
 const subFilters1 = {
-  operator: 'contains', field: '', value: '', uniqueIndex: 2, temporalValue: 'before',
+  operator: 'contains', field: '', value: '', uniqueIndex: 2, temporalValue: 'after',
 };
 const subFilters2 = {
   operator: 'equals', field: 'sn', value: 'name', uniqueIndex: 3, temporalValue: 'after',
@@ -22,7 +22,7 @@ const subFilterStartsWith = {
   operator: 'starts_with', field: 'sn', value: 'name', uniqueIndex: 1, temporalValue: 'before',
 };
 const subFilters3 = {
-  operator: 'equals', field: 'sn', value: 'name', uniqueIndex: 1, temporalValue: 'before',
+  operator: 'equals', field: 'sn', value: 'name', uniqueIndex: 1, temporalValue: 'after',
 };
 const subFilters3Not = {
   operator: 'not_equals', field: 'sn', value: 'name', uniqueIndex: 1, temporalValue: 'before',
@@ -88,7 +88,7 @@ describe('GovernanceFilterBuilder', () => {
 
   describe('Component tests', () => {
     it('Updates filter with new group', async () => {
-      const filterBefore = { filterValue: { or: [{ equals: { right: { literal: 'name' }, left: 'user.before.sn' } }] } };
+      const filterBefore = { filterValue: { or: [{ equals: { right: { literal: 'name' }, left: 'user.after.sn' } }] } };
       const wrapper = mountComponent(filterBefore);
       await flushPromises();
       const addRule = {
@@ -106,7 +106,7 @@ describe('GovernanceFilterBuilder', () => {
     });
 
     it('Updates filter with new rule', async () => {
-      const filterBefore = { filterValue: { or: [{ equals: { right: { literal: 'name' }, left: 'user.before.sn' } }] } };
+      const filterBefore = { filterValue: { or: [{ equals: { right: { literal: 'name' }, left: 'user.after.sn' } }] } };
       const wrapper = mountComponent(filterBefore);
       await flushPromises();
       const addRule = {

@@ -106,7 +106,7 @@ export function convertToIGAFilter(filter, resourceName = 'user', properties) {
  */
 export function convertFromIGAFilter(filter, currentUniqueIndex = 0) {
   let uniqueIndex = currentUniqueIndex;
-  const igaFilter = Object.keys(filter).length ? filter : { or: [{ starts_with: { prefix: { literal: '' }, value: 'user.before.' } }] };
+  const igaFilter = Object.keys(filter).length ? filter : { or: [{ starts_with: { prefix: { literal: '' }, value: 'user.after.' } }] };
   const filterEntry = Object.entries(igaFilter)[0];
   const convertedFilter = {
     operator: filterEntry[0],
