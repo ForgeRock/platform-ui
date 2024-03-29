@@ -135,6 +135,7 @@ export default {
       const match = this.options.find((option) => option.value === selectedOption);
       const initialOption = {
         text: this.$t('common.userFullName', { givenName: match?.userInfo?.givenName || this.savedData.givenName, sn: match?.userInfo?.sn || this.savedData.sn }),
+        userInfo: this.savedData,
         value: selectedOption,
       };
 
