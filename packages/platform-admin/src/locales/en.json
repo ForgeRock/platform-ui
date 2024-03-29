@@ -53,7 +53,8 @@
     "CertificationTemplate": "Certification Template",
     "Cookie": "Cookie",
     "Compliance": "Governance Compliance",
-    "ComplianceRuleEdit": "Edit Governance Compliance Rules",
+    "ComplianceRuleEdit": "Edit Governance Compliance Policy Rules",
+    "CompliancePolicyEdit": "Edit Governance Compliance Policy",
     "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
     "Cors": "CORS",
@@ -3077,8 +3078,12 @@
       },
       "policies": {
         "description": "description TODO",
+        "edit": {
+          "title": "Compliance Policy"
+        },
         "errorCreate": "Error creating policy",
         "errorDelete": "Error deleting policy",
+        "errorUpdate": "Error updating policy",
         "itemType": "Policy",
         "newPolicy":"New Policy",
         "newPolicyModal": {
@@ -3087,9 +3092,11 @@
           "stepTwoDescription": "Choose rules to add to this policy.",
           "title": "New Policy"
         },
+        "policyOwner": "Policy Owner",
         "searchPolicies": "Search policies",
         "successCreate": "Successfully created policy",
-        "successDelete": "Policy deleted successfully",
+        "successDelete": "Successfully deleted policy",
+        "successUpdate": "Successfully updated policy",
         "tabTitle": "Policies"
       },
       "policyRules": {

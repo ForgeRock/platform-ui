@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrDeleteModal
       :custom-message="customModalMessage"
       :is-deleting="isDeleting"
+      :is-testing="isTesting"
       :translated-item-type="translatedItemType"
       @delete-item="deleteItem" />
   </div>
@@ -57,6 +58,13 @@ export default {
      * Variable to determine when to show spinner in button in modal
      */
     isDeleting: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Variable to determine when to show modal for component testing
+     */
+    isTesting: {
       type: Boolean,
       default: false,
     },
