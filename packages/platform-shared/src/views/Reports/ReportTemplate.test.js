@@ -19,6 +19,9 @@ import ReportTemplate from './ReportTemplate';
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('vue-router', () => ({
   useRoute: jest.fn(() => ({ params: { id: 'template-name' } })),
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+  })),
 }));
 
 describe('Component for creating custom analytics reports', () => {
@@ -116,7 +119,7 @@ describe('Component for creating custom analytics reports', () => {
     it('ensures that the "Add Data" empty state loads on mount', () => {
       wrapper = setup();
       const mainHeading = wrapper.find('h2');
-      expect(mainHeading.text()).toBe('Add Data');
+      expect(mainHeading.text()).toBe('Add a Data Source');
     });
 
     it('populates the data sources dropdown on load for the "Add a Data Source" modal', async () => {
@@ -170,7 +173,7 @@ describe('Component for creating custom analytics reports', () => {
   });
 
   describe('@actions', () => {
-    it('deletes a data source', async () => {
+    async function addDataSource() {
       AutoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
       jest.useFakeTimers();
       wrapper = setup();
@@ -187,6 +190,10 @@ describe('Component for creating custom analytics reports', () => {
       await flushPromises();
       jest.runAllTimers();
       await nextTick();
+    }
+
+    it('deletes a data source', async () => {
+      await addDataSource();
 
       const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
       const dataSourceDeleteButton = findByText(dataSourceContainer, 'a', 'deleteDelete');
@@ -195,6 +202,44 @@ describe('Component for creating custom analytics reports', () => {
       // Should take user to initial view asking to add a Data Source
       const mainHeading = wrapper.find('h2');
       expect(mainHeading.text()).toBe('Add Data');
+    });
+
+    it('deletes a report template', async () => {
+      AutoApi.saveAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
+      await addDataSource();
+
+      // selects entity so save button can be enabled
+      const dataSourcesSettingsContainer = findByTestId(wrapper, 'entities-settings-container');
+      const definitionBody = findByTestId(dataSourcesSettingsContainer, 'definition-body');
+      const [_idCheckbox] = definitionBody.findAll('input[type="checkbox"]');
+      await _idCheckbox.setValue(true);
+
+      // saves the template
+      const saveAnalyticsReportSpy = jest.spyOn(AutoApi, 'saveAnalyticsReport');
+      const headerToolbar = findByRole(wrapper, 'toolbar');
+      const saveButton = findByText(headerToolbar, 'button', 'Save');
+      await saveButton.trigger('click');
+      expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
+        entities: [{ entity: 'applications' }],
+        fields: [{ label: '_id', value: 'applications._id' }],
+        parameters: {
+          myParamName: {
+            description: 'param description', label: 'param label', source: 'user_provided', type: 'string',
+          },
+        },
+      }, ['reportadmin'], '');
+    });
+
+    it('duplicates a template', async () => {
+      AutoApi.duplicateAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
+      await addDataSource();
+
+      // duplicates the template
+      const duplicateAnalyticsReportSpy = jest.spyOn(AutoApi, 'duplicateAnalyticsReport');
+      const headerToolbar = findByRole(wrapper, 'toolbar');
+      const duplicateButton = findByText(headerToolbar, 'a', 'control_point_duplicateDuplicate');
+      await duplicateButton.trigger('click');
+      expect(duplicateAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft');
     });
   });
 });

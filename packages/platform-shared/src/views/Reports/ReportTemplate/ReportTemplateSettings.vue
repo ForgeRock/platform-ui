@@ -59,8 +59,8 @@ to such license between the licensee and ForgeRock AS. -->
                   :selected-columns="definition.selectedColumns"
                   :selected-related-entities="definition.selectedRelatedEntities"
                   @delete-data-source="$emit('delete-data-source', defIndex)"
-                  @set-column-selections="$emit('set-data-source-columns', defIndex, $event)"
-                  @set-related-entity="$emit('set-related-entity', defIndex, $event)" />
+                  @set-column-selections="$emit('set-column-selections', defIndex, $event)"
+                  @set-related-entity-selections="$emit('set-related-entity-selections', defIndex, $event)" />
               </div>
               <div
                 v-else
@@ -114,8 +114,8 @@ const emit = defineEmits([
   'delete-definition',
   'update-definitions',
   'set-aggregate',
-  'set-data-source-columns',
-  'set-related-entity',
+  'set-column-selections',
+  'set-related-entity-selections',
 ]);
 defineProps({
   isSaving: {

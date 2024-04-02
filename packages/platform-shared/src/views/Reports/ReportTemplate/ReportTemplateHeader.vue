@@ -29,7 +29,12 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </FrNavbar>
     <BButtonToolbar class="fr-actions-menu shadow-sm border-0 justify-content-end align-items-center px-4 py-3 bg-white">
+      <FrSpinner
+        v-if="isDuplicating"
+        class="mr-4 pr-3 opacity-50"
+        size="sm" />
       <FrActionsCell
+        v-else
         class="fr-actions-menu"
         :edit-option="false"
         @delete-clicked="$emit('delete')">
@@ -47,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
       </FrActionsCell>
       <FrButtonWithSpinner
         :spinner-text="$t('common.saving')"
-        :disabled="disableSave"
+        :disabled="disableSave || isSaving"
         :show-spinner="isSaving"
         @click="$emit('save')" />
     </BButtonToolbar>
@@ -70,6 +75,7 @@ import FrNavbar from '@forgerock/platform-shared/src/components/Navbar/';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from '@/i18n';
 
 // Locals
@@ -86,6 +92,10 @@ defineProps({
   reportState: {
     type: String,
     default: '',
+  },
+  isDuplicating: {
+    type: Boolean,
+    default: false,
   },
   isSaving: {
     type: Boolean,

@@ -119,7 +119,7 @@ export default function useReportSettings(
   function generateNewSettings(settingsId, updatedDefinitions, settings = reportSettings.value) {
     const filteredSettings = settings.filter((settingObj) => settingObj._id !== settingsId);
     const [currentSetting] = settings.filter((settingObj) => settingObj._id === settingsId);
-    const updatedSetting = { ...currentSetting, ...{ definitions: updatedDefinitions } };
+    const updatedSetting = { ...currentSetting, definitions: updatedDefinitions };
     return [updatedSetting, ...filteredSettings];
   }
 

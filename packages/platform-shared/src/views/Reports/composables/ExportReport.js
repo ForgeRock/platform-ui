@@ -36,7 +36,7 @@ export default function useExportReport() {
       jsonStatus.value = fetchReport.exportJsonStatus === 'EXPORT_SUCCESS';
       csvStatus.value = fetchReport.exportCsvStatus === 'EXPORT_SUCCESS';
     } catch (err) {
-      showErrorMessage(err, i18n.global.t('reports.error'));
+      showErrorMessage(err, i18n.global.t('common.error'));
     }
   };
 
@@ -94,7 +94,7 @@ export default function useExportReport() {
       }
     } catch (err) {
       status.value = 'error';
-      showErrorMessage(err, i18n.global.t('reports.error'));
+      showErrorMessage(err, i18n.global.t('common.error'));
     } finally {
       loadingExport.value = false;
       format === 'csv' ? loadingCsv.value = false : loadingJson.value = false;
