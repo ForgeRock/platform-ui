@@ -45,10 +45,10 @@ of the MIT license. See the LICENSE file for details. -->
             <BListGroupItem
               v-for="(option, index) in dataSourceColumns"
               class="mb-2 py-2 px-3 border-0 rounded"
-              :class="selectedColumns.includes(option) ? 'bg-lightblue' : 'bg-light'"
+              :class="selectedColumns.find((obj) => obj.value === option.value) ? 'bg-lightblue' : 'bg-light'"
               :key="index">
               <BFormCheckbox :value="option">
-                {{ option }}
+                {{ option.label }}
               </BFormCheckbox>
             </BListGroupItem>
           </BListGroup>
@@ -132,7 +132,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 const emit = defineEmits([
   'delete-data-source',
   'set-column-selections',
-  'set-related-entity',
+  'set-related-entity-selections',
 ]);
 const props = defineProps({
   dataSourceColumns: {
@@ -172,7 +172,7 @@ const showAccordion = ref(false);
 // Functions
 function addRelatedEntity(entity) {
   currentEntityBeingFetched.value = entity;
-  emit('set-related-entity', entity);
+  emit('set-related-entity-selections', entity);
 }
 
 // Computed

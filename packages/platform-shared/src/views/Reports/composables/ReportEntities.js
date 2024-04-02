@@ -38,7 +38,10 @@ export default function useReportEntities() {
       const processedColumnNames = Object.keys(columns).map((key) => {
         const keyArr = key.split('.');
         keyArr.shift();
-        return keyArr.join('.');
+        return {
+          label: keyArr.join('.'),
+          value: key,
+        };
       });
       return Promise.resolve(processedColumnNames);
     }
@@ -48,9 +51,10 @@ export default function useReportEntities() {
   /**
    * Creates a list of definitions for a given entity list.
    * @param {Array} entities list entity names
-   * @returns {Object}
+   * @param {Array} fields entity columns
+   * @returns {Array}
    */
-  function entityDefinitions(entities) {
+  function entityDefinitions(entities, fields) {
     if (entities?.length) {
       return Promise.all(entities.map(async (obj) => {
         const entityName = obj.entity;
@@ -60,11 +64,11 @@ export default function useReportEntities() {
         // const { relatedEntities = [] } = allEntities.value.find((entity) => entity.name === entityName) || {};
         const dataSourceColumns = await getDataSourceColumns(entityName);
         return {
-          _id: obj.entity,
-          name: obj.entity,
+          _id: entityName,
+          name: entityName,
           dataSourceColumns,
           relatedEntities: [],
-          selectedColumns: [],
+          selectedColumns: fields ? fields.filter((field) => field.value.startsWith(entityName)) : [],
           selectedRelatedEntities: [],
         };
       }));
@@ -72,18 +76,28 @@ export default function useReportEntities() {
     return [];
   }
 
+  /**
+   * Creates an API friendly payload for entities / fields
+   * @param {Array} definitions entity definitions list
+   * @returns {Object}
+   */
   function entitiesPayload(definitions) {
     if (definitions.length) {
-      return {
-        // Purposefully commented out as structure
-        // will be hooked up in future story:
-        // entitities: {},
-        // fields: {},
-      };
+      const entities = [];
+      const fields = [];
+      definitions.forEach((definition) => {
+        const { _id, selectedColumns } = definition;
+        entities.push({ entity: _id });
+        fields.push(...selectedColumns);
+      });
+      return { entities, fields };
     }
     return {};
   }
 
+  /**
+   * Gets all report entities
+   */
   async function fetchReportEntities() {
     const { data: { result: responseEntities } } = await getReportEntities();
     if (responseEntities.length) {

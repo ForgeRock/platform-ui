@@ -253,7 +253,7 @@ async function getRunInfo() {
     const reportResults = await fetchViewReport(template, id, perPage.value, pagedResultOffset, pageToken.value);
     reportResults.forEach((item) => tableItems.value.push(item));
   } catch (err) {
-    showErrorMessage(err, i18n.global.t('reports.error'));
+    showErrorMessage(err, i18n.global.t('common.error'));
   }
 }
 

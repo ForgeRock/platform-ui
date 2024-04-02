@@ -107,7 +107,7 @@ describe('Report Data Source Definition component', () => {
       const addUsersRelatedDataSourceButton = findByRole(usersRelatedDataSourceElement, 'menuitem');
 
       await addUsersRelatedDataSourceButton.trigger('click');
-      expect(wrapper.emitted()['set-related-entity'][0]).toEqual(['users']);
+      expect(wrapper.emitted()['set-related-entity-selections'][0]).toEqual(['users']);
     });
 
     it('emits "delete-data-source" when a data source definition card is deleted', async () => {

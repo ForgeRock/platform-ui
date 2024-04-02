@@ -8,23 +8,28 @@ of the MIT license. See the LICENSE file for details. -->
       <FrIcon
         icon-class="opacity-20 md-96 mb-3"
         name="source" />
-      <BCardTitle
-        class="h4 mb-2"
-        title-tag="h2">
-        {{ $t('reports.template.addData') }}
-      </BCardTitle>
-      <BCardText class="mb-4">
-        {{ $t('reports.template.addDataSourceToGetStarted') }}
-      </BCardText>
-      <BButton
-        variant="primary"
-        @click="$emit('open-data-source-modal')">
-        <FrIcon
-          icon-class="mr-2"
-          name="add">
-          {{ $t('reports.template.dataSource') }}
-        </FrIcon>
-      </BButton>
+      <FrSpinner
+        v-if="isLoading"
+        class="py-2" />
+      <template v-else>
+        <BCardTitle
+          class="h4 mb-2"
+          title-tag="h2">
+          {{ $t('reports.template.addData') }}
+        </BCardTitle>
+        <BCardText class="mb-4">
+          {{ $t('reports.template.addDataSourceToGetStarted') }}
+        </BCardText>
+        <BButton
+          variant="primary"
+          @click="$emit('open-data-source-modal')">
+          <FrIcon
+            icon-class="mr-2"
+            name="add">
+            {{ $t('reports.template.dataSource') }}
+          </FrIcon>
+        </BButton>
+      </template>
     </BCard>
   </BContainer>
 </template>
@@ -41,9 +46,16 @@ import {
   BCardText,
   BContainer,
 } from 'bootstrap-vue';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 defineEmits(['open-data-source-modal']);
+defineProps({
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+});
 </script>
 
 <style lang="scss" scoped>

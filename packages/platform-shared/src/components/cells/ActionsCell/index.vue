@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem
         v-if="editOption"
         :data-testid="`dropdown-edit-${testId}`"
-        @click="$emit('edit-clicked')">
+        @click="$emit('edit-clicked', $event)">
         <FrIcon
           icon-class="mr-2"
           name="edit">

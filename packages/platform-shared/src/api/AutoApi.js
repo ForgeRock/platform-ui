@@ -225,8 +225,8 @@ export function saveAnalyticsReport(name, payload, viewers, description = '') {
  * @param {String} templateType template state (draft, published)
  * @returns {Object}
  */
-export function publishAnalyticsReport(id, templateType) {
-  return generateAutoAccessReports().post(`templates/${id}?_action=publish&templateType=${templateType}`);
+export function publishAnalyticsReport(id) {
+  return generateAutoAccessReports().post(`templates/${id}?_action=publish`);
 }
 
 /**
@@ -238,4 +238,15 @@ export function publishAnalyticsReport(id, templateType) {
  */
 export function deleteAnalyticsReport(id, templateType) {
   return generateAutoAccessReports().post(`templates/${id}?_action=delete&templateType=${templateType}`);
+}
+
+/**
+ * Duplicate report template
+ *
+ * @param {Object} id template name
+ * @param {String} templateType template status type (draft, published)
+ * @returns {Object}
+ */
+export function duplicateAnalyticsReport(id, templateType) {
+  return generateAutoAccessReports().post(`templates/${id}?_action=duplicate&templateType=${templateType}`);
 }

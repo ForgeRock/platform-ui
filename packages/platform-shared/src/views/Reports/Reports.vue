@@ -24,17 +24,15 @@ of the MIT license. See the LICENSE file for details. -->
     <BRow
       v-if="displayedReports.length > 0 || loading"
       data-testid="report-templates-grid"
-      id="reportTemplatesGrid"
-    >
+      id="reportTemplatesGrid">
       <template v-if="loading">
         <!-- Skeleton Loader -->
         <BCol
           v-for="index in 6"
           class="mb-4"
           lg="4"
-          :key="index"
-        >
-          <ReportCard />
+          :key="index">
+          <FrReportCard />
         </BCol>
       </template>
       <template v-else>
@@ -42,13 +40,18 @@ of the MIT license. See the LICENSE file for details. -->
           v-for="report in displayedReports"
           class="mb-4"
           lg="4"
-          :key="report.name"
-        >
-          <ReportCard
+          :key="report.name">
+          <FrReportCard
+            :report-name-currently-processing="reportBeingProcessed"
             :loading="loading"
             :report="report"
+            :show-delete="false"
+            :show-edit="false"
             @to-template="toTemplate"
-          />
+            @delete-template="confirmDeleteTemplate"
+            @duplicate-template="duplicateTemplate"
+            @edit-template="editTemplate"
+            @publish-template="publishTemplate" />
         </BCol>
       </template>
     </BRow>
@@ -57,8 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
       icon="web_asset"
       testid="no-data"
       :card="false"
-      :subtitle="$t('reports.noData')"
-    />
+      :subtitle="$t('reports.noData')" />
     <FrPagination
       v-if="displayedReports.length > 0"
       :value="currentPage"
@@ -67,8 +69,12 @@ of the MIT license. See the LICENSE file for details. -->
       class="border-0"
       :per-page="perPage"
       :total-rows="reports.length"
-      @on-page-size-change="pageSizeChange"
-    />
+      @on-page-size-change="pageSizeChange" />
+    <FrDeleteModal
+      :is-deleting="!!reportBeingProcessed"
+      :is-testing="isTesting"
+      :translated-item-type="$t('common.report')"
+      @delete-item="deleteTemplate(templateToDelete.name, templateToDelete.status)" />
   </BContainer>
 </template>
 
@@ -76,6 +82,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
 * @description Shows and filter the list of the report templates.
 */
+import { ref } from 'vue';
 import {
   BButtonToolbar,
   BCol,
@@ -84,27 +91,54 @@ import {
 } from 'bootstrap-vue';
 import { debounce } from 'lodash';
 import { useRouter } from 'vue-router';
+import {
+  deleteAnalyticsReport,
+  duplicateAnalyticsReport,
+  getReportTemplates,
+  publishAnalyticsReport,
+} from '@forgerock/platform-shared/src/api/AutoApi';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
-import { getReportTemplates } from '@forgerock/platform-shared/src/api/AutoApi';
-import { ref } from 'vue';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
+import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import FrReportCard from './ReportCard';
 import i18n from '@/i18n';
-import ReportCard from './ReportCard/ReportCard';
+
+defineProps({
+  isTesting: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 // Composables
 const router = useRouter();
+const { bvModal } = useBvModal();
 
 // Globals
 const currentPage = ref(1);
 const displayedReports = ref([]);
 const hasFocus = ref(false);
-const loading = ref(false);
+const loading = ref(true);
 const perPage = ref(6);
 const reports = ref([]);
+const reportBeingProcessed = ref('');
 const searchValue = ref('');
+const templateToDelete = ref({});
+
+// Functions
+/**
+ * Opens the delete template confirm modal
+ * @param {String} name template name id
+ * @param {String} status template status type (published, draft)
+ */
+function confirmDeleteTemplate(name, status) {
+  bvModal.value.show('deleteModal');
+  templateToDelete.value = { name, status };
+}
 
 /**
  * Updates the reports that should be displayed depending on the page that is being focused.
@@ -172,6 +206,65 @@ function pageSizeChange(pageSize) {
 function toTemplate({ name, toHistory }) {
   const path = toHistory ? `/reports/${name.toLowerCase()}/history` : `/reports/${name.toLowerCase()}`;
   router.push({ path });
+}
+
+/**
+ * Deletes a report template
+ * @param {String} id template name
+ * @param {String} status template status type (draft, published)
+ */
+async function deleteTemplate(id, status) {
+  reportBeingProcessed.value = id;
+  try {
+    await deleteAnalyticsReport(id, status);
+    displayNotification('success', i18n.global.t('common.deleteSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
+  } catch (err) {
+    showErrorMessage(err, i18n.global.t('reports.errorDeleting'));
+  }
+  retrieveReportTemplates();
+  bvModal.value.hide('deleteModal');
+  reportBeingProcessed.value = '';
+}
+
+/**
+ * Duplicates a report template
+ * @param {String} id template name
+ * @param {String} status template status type (draft, published)
+ */
+async function duplicateTemplate(id, status) {
+  reportBeingProcessed.value = id;
+  try {
+    await duplicateAnalyticsReport(id, status);
+    displayNotification('success', i18n.global.t('common.duplicateSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
+  } catch (err) {
+    showErrorMessage(err, i18n.global.t('reports.errorDuplicating'));
+  }
+  retrieveReportTemplates();
+  reportBeingProcessed.value = '';
+}
+
+/**
+ * Routes to the report edit view
+ * @param {String} id template name
+ */
+function editTemplate(id) {
+  router.push({ name: 'EditReportTemplate', params: { id } });
+}
+
+/**
+ * Publishes a report template
+ * @param {String} id template name
+ */
+async function publishTemplate(id) {
+  reportBeingProcessed.value = id;
+  try {
+    await publishAnalyticsReport(id);
+    displayNotification('success', i18n.global.t('common.publishSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
+  } catch (err) {
+    showErrorMessage(err, i18n.global.t('reports.errorPublishing'));
+  }
+  retrieveReportTemplates();
+  reportBeingProcessed.value = '';
 }
 
 retrieveReportTemplates();

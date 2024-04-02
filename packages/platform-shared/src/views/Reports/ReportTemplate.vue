@@ -7,13 +7,14 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <div class="h-100 d-flex flex-column">
     <FrReportTemplateHeader
-      :disable-save="disableSave"
+      :disable-save="disableTemplateSave"
       :report-state="reportState"
+      :is-duplicating="isDuplicating"
       :is-saving="isSavingTemplate"
       :template-name="templateName"
-      @delete="deleteTemplate"
-      @duplicate="duplicateTemplate"
-      @save="saveTemplate" />
+      @delete="bvModal.show('deleteModal')"
+      @duplicate="duplicateTemplate(templateId, reportState)"
+      @save="saveTemplateFromHeader" />
     <main
       class="d-flex w-100 h-100 overflow-auto"
       role="main">
@@ -24,19 +25,19 @@ to such license between the licensee and ForgeRock AS. -->
           :report-settings="reportSettings"
           @delete-data-source="deleteDataSource"
           @delete-definition="updateSettings"
-          @delete-related-entity="deleteRelatedEntity"
           @update-definitions="openSettingsModal"
           @set-aggregate="setAggregate"
-          @set-data-source-columns="setSelectedDataSourceColumns"
-          @set-related-entity="setSelectedRelatedEntity" />
+          @set-column-selections="setDataSourceColumnSelections"
+          @set-related-entity-selections="setRelatedEntitySelections" />
       </template>
       <FrReportAddDataSourceCard
         v-else
-        @open-data-source-modal="$bvModal.show('report-data-sources-modal')" />
+        :is-loading="isFetchingTemplate"
+        @open-data-source-modal="bvModal.show('report-data-sources-modal')" />
     </main>
     <FrReportDataSourceModal
       :entities="entityOptions"
-      :is-saving="isSavingDefinition"
+      :is-saving="isFetchingEntityColumns"
       :is-testing="isTesting"
       @add-entity="addEntity" />
     <FrReportParametersModal
@@ -46,6 +47,10 @@ to such license between the licensee and ForgeRock AS. -->
       :parameter="currentDefinitionBeingEdited"
       :profile-attributes="profileAttributeNames"
       @update-parameter="updateSettings" />
+    <FrDeleteModal
+      :is-deleting="isDeletingTemplate"
+      :translated-item-type="$t('common.report')"
+      @delete-item="deleteTemplate" />
   </div>
 </template>
 
@@ -55,13 +60,15 @@ to such license between the licensee and ForgeRock AS. -->
  * Main component that gives an admin the ability to create custom platform analytics reports.
  */
 import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import {
-  saveAnalyticsReport,
   deleteAnalyticsReport,
+  duplicateAnalyticsReport,
   getReportTemplates,
+  saveAnalyticsReport,
 } from '@forgerock/platform-shared/src/api/AutoApi';
+import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import useReportSettings from './composables/ReportSettings';
 import useReportParameters from './composables/ReportParameters';
@@ -86,6 +93,7 @@ defineProps({
 
 // Composables
 const { bvModal } = useBvModal();
+const router = useRouter();
 const route = useRoute();
 const {
   getParametersData,
@@ -119,21 +127,27 @@ const {
 
 // Globals
 const currentDefinitionBeingEdited = ref({});
-const disableSave = ref(true);
+const disableTemplateSave = ref(true);
+const isDeletingTemplate = ref(false);
+const isDuplicating = ref(false);
+const isFetchingEntityColumns = ref(false);
+const isFetchingTemplate = ref(true);
 const isSavingDefinition = ref(false);
 const isSavingTemplate = ref(false);
 const reportDescription = ref('');
 const reportState = ref('draft');
 const reportViewers = ref([]);
-const templateId = route.params.id;
-const templateName = templateId || ref(i18n.global.t('reports.template.newReportTemplate'));
+const templateId = route.params.id.toUpperCase();
+const templateName = route.params.id.replace(/-/g, ' ');
 
 // Functions
 /**
  * Saves the report template
- * @param {Object} payload complete template payload
+ * @param {Object} settings complete settings template payload
+ * @return {Promise} empty promise :(
  */
-function saveTemplate(payload) {
+function saveTemplate(settings = reportSettings.value) {
+  const payload = reportPayload(settings);
   return saveAnalyticsReport(templateId, payload, reportViewers.value, reportDescription.value);
 }
 
@@ -143,7 +157,7 @@ function saveTemplate(payload) {
  */
 async function addEntity(dataSourceName) {
   if (dataSourceName) {
-    isSavingDefinition.value = true;
+    isFetchingEntityColumns.value = true;
     const entityDefinitionsList = await entityDefinitions([{ entity: dataSourceName }]);
     displayNotification('success', i18n.global.t('reports.template.dataSetAdded'));
     // Purposeful sequential visual delay to first allow the
@@ -151,32 +165,31 @@ async function addEntity(dataSourceName) {
     setTimeout(() => {
       findSettingsObject('entities').definitions.push(...entityDefinitionsList);
       bvModal.value.hide('report-data-sources-modal');
-      isSavingDefinition.value = false;
+      isFetchingEntityColumns.value = false;
     }, 1001);
   }
   return Promise.resolve();
 }
 
 /**
- * Updates a report setting by creating a new payload and saving the template.
+ * Updates a report setting by creating a new payload and saving the template,
+ * thereafter updating the local settings definition with the current data.
  * @param {String} settingsId Setting id for reference in the main reportSettings composable
  * @param {Object | String} definition definition object or definition ID used for deletion
  */
 async function updateSettings(settingsId, definition) {
-  isSavingDefinition.value = true;
   const { definitions, modal } = findSettingsObject(settingsId);
   const updatedDefinitions = generateNewDefinitions(definitions, definition);
   const updatedSettings = generateNewSettings(settingsId, updatedDefinitions);
-  const payload = reportPayload(updatedSettings);
 
-  await saveTemplate(payload);
+  isSavingDefinition.value = true;
+  await saveTemplate(updatedSettings);
+  isSavingDefinition.value = false;
   definitions.splice(0);
   definitions.push(...updatedDefinitions);
 
   displayNotification('success', i18n.global.t('reports.template.reportUpdated'));
-
   bvModal.value.hide(modal);
-  isSavingDefinition.value = false;
 }
 
 /**
@@ -184,10 +197,11 @@ async function updateSettings(settingsId, definition) {
  * @param {Number} defIndex Definition index position
  * @param {Array} columns Selected entity columns
  */
-function setSelectedDataSourceColumns(defIndex, columns) {
+function setDataSourceColumnSelections(defIndex, columns) {
   const { selectedColumns } = findSettingsObject('entities').definitions[defIndex];
   selectedColumns.splice(0);
   selectedColumns.push(...columns);
+  disableTemplateSave.value = false;
 }
 
 /**
@@ -195,7 +209,7 @@ function setSelectedDataSourceColumns(defIndex, columns) {
  * @param {Number} defIndex Definition index position
  * @param {String} relatedEntityName Related entity name
  */
-async function setSelectedRelatedEntity(defIndex, relatedEntityName) {
+async function setRelatedEntitySelections(defIndex, relatedEntityName) {
   const currentDefinition = findSettingsObject('entities').definitions[defIndex];
   const relatedDataSourceName = [currentDefinition.name, relatedEntityName].join('.');
   await addEntity(relatedDataSourceName);
@@ -204,8 +218,15 @@ async function setSelectedRelatedEntity(defIndex, relatedEntityName) {
 
 /**
  * Duplicates the current report template
+ * @param {String} id template name
+ * @param {String} status template status type (draft, published)
  */
-function duplicateTemplate() {
+async function duplicateTemplate(id, status) {
+  isDuplicating.value = true;
+  await duplicateAnalyticsReport(id, status);
+  displayNotification('success', i18n.global.t('common.duplicateSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
+  isDuplicating.value = false;
+  router.push({ name: 'Reports' });
 }
 
 /**
@@ -241,8 +262,12 @@ function deleteDataSource(defIndex) {
 /**
  * Deletes the current report template
  */
-function deleteTemplate() {
-  deleteAnalyticsReport(templateId, reportState.value);
+async function deleteTemplate() {
+  isDeletingTemplate.value = true;
+  await deleteAnalyticsReport(templateId, reportState.value);
+  isDeletingTemplate.value = false;
+  displayNotification('success', i18n.global.t('common.deleteSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
+  router.push({ name: 'Reports' });
 }
 
 /**
@@ -253,6 +278,17 @@ function deleteTemplate() {
 function openSettingsModal(modalId, definition = {}) {
   currentDefinitionBeingEdited.value = definition;
   bvModal.value.show(modalId);
+}
+
+/**
+ * Saves template from header
+ */
+async function saveTemplateFromHeader() {
+  isSavingTemplate.value = true;
+  await saveTemplate();
+  displayNotification('success', i18n.global.t('reports.template.reportUpdated'));
+  disableTemplateSave.value = true;
+  isSavingTemplate.value = false;
 }
 
 /**
@@ -271,38 +307,38 @@ const templateHasAtLeastOneDataSource = computed(() => findSettingsObject('entit
 // Start
 (async () => {
   fetchReportEntities();
-  if (templateId) {
-    const { result } = await getReportTemplates({ _queryFilter: `name eq ${templateId.toUpperCase()}` });
+  getParametersData();
+  const { result } = await getReportTemplates({ _queryFilter: `name eq ${templateId}` });
 
-    if (result.length) {
-      const [existingTemplate] = result;
-      const {
-        reportConfig,
-        type,
-        viewers,
-        description,
-      } = existingTemplate;
-      const {
-        entities,
-        fields,
-        parameters,
-        filter,
-        aggregate,
-        sort,
-      } = JSON.parse(reportConfig);
+  if (result?.length) {
+    const [existingTemplate] = result;
+    const {
+      reportConfig,
+      type,
+      viewers,
+      description,
+    } = existingTemplate;
+    const {
+      entities,
+      fields,
+      parameters,
+      filter,
+      aggregate,
+      sort,
+    } = JSON.parse(reportConfig);
 
-      reportState.value = type;
-      reportViewers.value = viewers;
-      reportDescription.value = description;
-      await getParametersData();
-      findSettingsObject('entities').definitions.push(...await entityDefinitions(entities, fields));
-      findSettingsObject('parameters').definitions.push(...parameterDefinitions(parameters));
-      findSettingsObject('filter').definitions.push(...filterDefinitions(filter));
-      findSettingsObject('aggregate').definitions.push(...aggregateDefinitions(aggregate));
-      findSettingsObject('sort').definitions.push(...sortingDefinitions(sort));
-    }
+    reportState.value = type;
+    reportViewers.value = viewers;
+    reportDescription.value = description;
+    findSettingsObject('entities').definitions.push(...await entityDefinitions(entities, fields));
+    findSettingsObject('parameters').definitions.push(...parameterDefinitions(parameters));
+    findSettingsObject('filter').definitions.push(...filterDefinitions(filter));
+    findSettingsObject('aggregate').definitions.push(...aggregateDefinitions(aggregate));
+    findSettingsObject('sort').definitions.push(...sortingDefinitions(sort));
+    isFetchingTemplate.value = false;
   } else {
-    await getParametersData();
+    displayNotification('warning', i18n.global.t('reports.tabs.runReport.errors.templateDoesNotExist'));
+    router.push({ name: 'Reports' });
   }
 })();
 </script>
