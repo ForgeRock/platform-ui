@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,6 +9,7 @@ import {
   getThemeId,
   parseStage,
   setStageValue,
+  isJSON,
 } from './stage';
 
 it('parses stage', () => {
@@ -82,4 +83,15 @@ it('sets stage value', () => {
   value = '';
   setStageValue(pageNode, id, key, value);
   expect(pageNode.template.stage).toEqual('');
+});
+
+it('checks if string is a valid JSON', () => {
+  const objectString = '{"themeId":"testThemeId"}';
+  const object = { themeId: 'testThemeId' };
+  const string = 'themeId=testThemeId';
+
+  expect(isJSON(null)).toEqual(false);
+  expect(isJSON(objectString)).toEqual(true);
+  expect(isJSON(object)).toEqual(false);
+  expect(isJSON(string)).toEqual(false);
 });

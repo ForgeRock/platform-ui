@@ -1428,6 +1428,7 @@
         "noSearchResults": "No templates found"
       },
       "messages": {
+        "connectorTemplateValidation": "Please provide a valid JSON template.",
         "getError": "There was an error retrieving the list of templates",
         "saveError": "There was an error saving the template",
         "saveSuccess": "Template saved successfully"
@@ -1438,10 +1439,10 @@
         "correlationQuery": "Correlation Query",
         "createTemplate": "Create Template",
         "mappingRules": "Mapping Rules",
-        "nonAccountProperties": "Non Account Properties",
-        "nonAccountPropertiesSubtitle": "Target should always be <code>assignments</code>, source is the account attribute, and referenced object type is the ID of the Non Account Object.",
         "nonAccountObject": "Non Account Object",
         "nonAccountObjectDescription": "Must match a non account object type ID",
+        "nonAccountProperties": "Non Account Properties",
+        "nonAccountPropertiesSubtitle": "Target should always be <code>assignments</code>, source is the account attribute, and referenced object type is the ID of the Non Account Object.",
         "objectTypeId": "Object Type ID",
         "objectTypeInboundMapping": "Inbound Mapping Details",
         "objectTypeManagedResource": "Object Type Managed Resource",
@@ -1465,6 +1466,7 @@
         "propertyUserSpecific": "User Specific",
         "rule": "Rule",
         "settings": "Settings",
+        "stageFourTitle": "Connector Configuration",
         "stageOneTitle": "Template Details",
         "stageThreeTitle": "Non-Account Object Type Details",
         "stageTwoTitle": "Account Object Type Details",
