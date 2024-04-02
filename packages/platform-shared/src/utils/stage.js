@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -113,5 +113,16 @@ export function setStageValue(pageNode, id, key, value) {
     pageNode.template.stage = '';
   } else {
     pageNode.template.stage = JSON.stringify(stage);
+  }
+}
+
+/**
+ * Check if a string is a valid JSON
+ */
+export function isJSON(str) {
+  try {
+    return !!JSON.parse(str);
+  } catch (e) {
+    return false;
   }
 }
