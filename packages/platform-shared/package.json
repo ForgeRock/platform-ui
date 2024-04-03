@@ -37,6 +37,7 @@
     "ua-parser-js": "1.0.33",
     "util": "0.12.5",
     "uuid": "3.3.3",
+    "validator": "13.11.0",
     "vee-validate": "4.11.8",
     "vkbeautify": "0.99.3",
     "vue": "3.3.4",
