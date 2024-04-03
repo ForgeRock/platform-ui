@@ -229,6 +229,7 @@ function modalAction(item, ok) {
       requestPayload.updatedActors = [actors.value];
       requestPayload.comment = comment.value;
       break;
+    case 'approve':
     case 'reject':
       requestPayload.justification = comment.value;
       break;
