@@ -6,7 +6,7 @@
  */
 
 import { has, isArray } from 'lodash';
-import { email } from '@vee-validate/rules';
+import isEmail from 'validator/lib/isEmail';
 
 const urlHasPath = (url) => url.pathname && url.pathname !== '/';
 
@@ -97,19 +97,31 @@ export function testUniqueness(value, { otherValues }) {
   return returnValue;
 }
 
+/**
+ * Validates email addresses
+ *
+ * @param {String | String[] | Object} value - String or Array of strings to be validated
+ * @returns {Boolean} True if valid or empty, false if invalid
+ */
 export function validEmail(value) {
   if (Array.isArray(value)) {
     let valid = true;
     value.forEach((arrayValue) => {
+      // Checks if value is a Vue Ref
       if (has(arrayValue, 'value')) {
-        valid = valid && email(arrayValue.value);
+        valid = valid && (!arrayValue.value || isEmail(arrayValue.value));
       } else {
-        valid = valid && email(arrayValue);
+        valid = valid && (!arrayValue || isEmail(arrayValue));
       }
     });
     return valid;
   }
-  return email(value);
+  // Checks if value is a Vue Ref
+  if (has(value, 'value')) {
+    return !value.value || isEmail(value.value);
+  }
+
+  return !value || isEmail(value);
 }
 
 export function minimumItems(value, { minItems }) {
