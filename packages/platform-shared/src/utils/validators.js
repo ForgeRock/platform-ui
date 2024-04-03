@@ -112,12 +112,6 @@ export function validEmail(value) {
   return email(value);
 }
 
-export function validEmailNonAscii(value) {
-  // eslint-disable-next-line no-useless-escape
-  const regex = /^([^\s@&='\-+,´`<>"[\]{}|;\/?#]+[^\s@&=_´`'\-+,<>"[\]{}|;\/?#]*)[@＠]([^\s@&=_'\-+,<>"[\]{}|;\/?#]+\.[^\s@&=_´`'\-+,<>"[\]{}|;\/?#]{1,})+$/gm;
-  return regex.test(value);
-}
-
 export function minimumItems(value, { minItems }) {
   if (Array.isArray(value)) {
     if (value.length < minItems) {
