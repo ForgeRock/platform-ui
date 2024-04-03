@@ -3515,6 +3515,7 @@
       "onCampaignExpirationFinal": "of {closeActionDuration} days",
       "openItems": "open items",
       "options": "Options",
+      "organizationAdmin": "Organization Admin",
       "owner": "Owner",
       "ownersAdministrators": "Owners and administrators",
       "processRemediation": "Process remediation",
