@@ -12,6 +12,7 @@ import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHe
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
+import * as ViolationsApi from '@/api/governance/ViolationsApi';
 import i18n from '@/i18n';
 import App from '@/App';
 
@@ -45,6 +46,7 @@ describe('App.vue', () => {
     setupTestPinia({ user: { userId: '123' } });
     AccessReviewApi.getCertificationItems = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     AccessRequestApi.getUserApprovals = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
+    ViolationsApi.getViolations = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
     store = {
       state: {
@@ -52,6 +54,7 @@ describe('App.vue', () => {
         menusFile: 'menus.platform',
         certificationCount: null,
         approvalsCount: null,
+        violationsCount: null,
       },
       getters: {
         menusFile: (state) => state.menusFile,
@@ -62,6 +65,9 @@ describe('App.vue', () => {
         },
         setApprovalsCount(state, count) {
           state.approvalsCount = count;
+        },
+        setViolationsCount(state, count) {
+          state.violationsCount = count;
         },
       },
     };
@@ -140,6 +146,24 @@ describe('App.vue', () => {
       await flushPromises();
       expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error retrieving pending approvals');
       expect(wrapper.vm.$store.state.approvalsCount).toBe(0);
+    });
+
+    it('should get pending violations count and save it in the store on call getViolationsCount', async () => {
+      const getViolationsSpy = jest.spyOn(ViolationsApi, 'getViolations');
+      wrapper.vm.getViolationsCount();
+      await flushPromises();
+      expect(getViolationsSpy).toHaveBeenCalled();
+      expect(wrapper.vm.$store.state.violationsCount).toBe(1);
+    });
+
+    it('should set a 0 to pending violations count and save it in the store on call getViolationsCount when the call to API fails', async () => {
+      const error = new Error('ERROR');
+      ViolationsApi.getViolations = jest.fn().mockImplementation(() => Promise.reject(error));
+      const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+      wrapper.vm.getViolationsCount();
+      await flushPromises();
+      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error retrieving pending violations');
+      expect(wrapper.vm.$store.state.violationsCount).toBe(0);
     });
   });
 });

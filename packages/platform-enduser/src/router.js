@@ -93,6 +93,13 @@ const router = createRouter({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
+      path: '/violations',
+      name: 'Violations',
+      component: () => import('@/views/governance/Violations'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
+    },
+    {
       path: '/my-requests',
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
       meta: { authenticate: true },

@@ -79,6 +79,7 @@
       "errorRetrievingAccesReviews": "There was an error retrieving access reviews",
       "errorRetrievingPendingApprovals": "There was an error retrieving pending approvals",
       "errorRetrievingPendingRequests": "There was an error retrieving pending requests",
+      "errorRetrievingPendingViolations": "There was an error retrieving pending violations",
       "loadingWidgetError": "There was an error loading dashboard widgets.",
       "noWidget": "No Widgets Available",
       "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>.",
@@ -206,7 +207,8 @@
     "profile": "Profile",
     "reports": "Reports",
     "requests": "My Requests",
-    "roles": "Roles"
+    "roles": "Roles",
+    "violations": "Violations"
   },
   "pageTitles": {
     "AccessReviews": "Access Reviews",
@@ -237,7 +239,8 @@
     "ReportRun": "Run Report",
     "Reports": "Reports",
     "ReportView": "View Report",
-    "Sharing": "Sharing"
+    "Sharing": "Sharing",
+    "Violations": "Violations"
   },
   "governance": {
     "accessRequest": {
