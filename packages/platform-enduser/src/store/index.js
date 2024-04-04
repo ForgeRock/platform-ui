@@ -20,7 +20,6 @@ export default createStore({
     // realm info
     realm: 'root',
     realms: [],
-    realmAliases: [],
 
     // FRaaS specific
     isFraas: false,
@@ -54,11 +53,6 @@ export default createStore({
     setRealm(state, realm) {
       const realmName = (realm.startsWith('/')) ? realm.substring(1) : realm;
       state.realm = realmName;
-
-      if (state.realms.length) {
-        const newRealm = state.realms.find((r) => r.name === realmName);
-        state.realmAliases = (newRealm) ? newRealm.aliases : [];
-      }
     },
 
     setWorkflowState(state, enabled) {

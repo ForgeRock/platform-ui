@@ -1484,6 +1484,7 @@
   },
   "realm": {
     "title": "Realm",
+    "aliasString": "never shown | {firstAlias} | {firstAlias}, {remainingAliases} more",
     "saveRealm": "Save Realm",
     "topLevelRealm": "Top Level Realm",
     "switchLink": "Switch",
