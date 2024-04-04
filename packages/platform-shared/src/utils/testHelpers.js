@@ -50,7 +50,7 @@ export function findAllByTestId(wrapper, testId) {
     throw new Error('Please provide a valid data-testid');
   }
 
-  return wrapper.findAll(`[data-testid=${testId}]`);
+  return wrapper.findAll(`[data-testid="${testId}"]`);
 }
 
 /**
