@@ -49,8 +49,10 @@ import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAcce
 import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
 import { getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { mapState } from 'pinia';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
+import { getViolations } from '@/api/governance/ViolationsApi';
 import i18n from '@/i18n';
 import './scss/main.scss';
 
@@ -77,6 +79,37 @@ export default {
     ...mapState(useUserStore, ['userId']),
   },
   data() {
+    const governanceInbox = {
+      displayName: 'sideMenu.inbox',
+      icon: 'inbox',
+      showBadgeWithContentFromStore: 'inboxTotalCount',
+      subItems: [
+        {
+          showBadgeWithContentFromStore: 'approvalsCount',
+          displayName: 'sideMenu.approvals',
+          routeTo: {
+            name: 'Approvals',
+          },
+        },
+        {
+          showBadgeWithContentFromStore: 'certificationCount',
+          displayName: 'sideMenu.accessReviews',
+          routeTo: {
+            name: 'AccessReviews',
+          },
+        },
+      ],
+    };
+    if (this.$store.state.SharedStore.governanceDevEnabled === true) {
+      governanceInbox.subItems.push({
+        showBadgeWithContentFromStore: 'violationsCount',
+        displayName: 'sideMenu.violations',
+        routeTo: {
+          name: 'Violations',
+        },
+      });
+    }
+
     return {
       menuItems: [
         {
@@ -93,27 +126,7 @@ export default {
           }
           : {}),
         (this.$store.state.SharedStore.governanceEnabled === true
-          ? {
-            displayName: 'sideMenu.inbox',
-            icon: 'inbox',
-            showBadgeWithContentFromStore: 'inboxTotalCount',
-            subItems: [
-              {
-                showBadgeWithContentFromStore: 'approvalsCount',
-                displayName: 'sideMenu.approvals',
-                routeTo: {
-                  name: 'Approvals',
-                },
-              },
-              {
-                showBadgeWithContentFromStore: 'certificationCount',
-                displayName: 'sideMenu.accessReviews',
-                routeTo: {
-                  name: 'AccessReviews',
-                },
-              },
-            ],
-          }
+          ? governanceInbox
           : {}),
         (this.$store.state.SharedStore.workforceEnabled === true
           ? {
@@ -213,6 +226,10 @@ export default {
     if (this.$store.state.SharedStore.governanceEnabled === true) {
       this.getAccessReviewsCount();
       this.getPendingApprovalsCount();
+
+      if (this.$store.state.SharedStore.governanceDevEnabled === true) {
+        this.getViolationsCount();
+      }
     }
   },
   watch: {
@@ -349,6 +366,26 @@ export default {
         this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingPendingApprovals'));
       }).finally(() => {
         this.$store.commit('setApprovalsCount', count);
+      });
+    },
+    /**
+     * Retrieves the count of pending violations and commits the count to the Vuex store.
+     * The value stored here is used in the side bar panel and in the Governance dashboard
+     *
+     * @returns {void} Does not return a value. The result of the operation is a side-effect (Vuex store update or error message display).
+     */
+    getViolationsCount() {
+      let count = 0;
+
+      const targetFilter = getBasicFilter('AND', 'decision.violation.status', 'in-progress');
+      const params = { fields: 'id' };
+
+      getViolations(targetFilter, params).then((resourceData) => {
+        count = resourceData?.data?.totalCount || 0;
+      }).catch((error) => {
+        this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingPendingViolations'));
+      }).finally(() => {
+        this.$store.commit('setViolationsCount', count);
       });
     },
   },

@@ -85,6 +85,23 @@ exports[`App.vue with wrapper mounted should get pending approvals count and sav
 ]
 `;
 
+exports[`App.vue with wrapper mounted should get pending violations count and save it in the store on call getViolationsCount: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
 exports[`App.vue with wrapper mounted should set a 0 to access reviews count and save it in the store on call getAccessReviewsCount when the call to API fails: console-error-snapshot 1`] = `
 [
   [
@@ -103,6 +120,23 @@ exports[`App.vue with wrapper mounted should set a 0 to access reviews count and
 `;
 
 exports[`App.vue with wrapper mounted should set a 0 to pending approvals count and save it in the store on call getPendingApprovalsCount when the call to API fails: console-error-snapshot 1`] = `
+[
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked call made to Axios create. All API calls should be mocked",
+  ],
+  [
+    "Un-mocked API call made with Axios. All API calls should be mocked",
+  ],
+]
+`;
+
+exports[`App.vue with wrapper mounted should set a 0 to pending violations count and save it in the store on call getViolationsCount when the call to API fails: console-error-snapshot 1`] = `
 [
   [
     "Un-mocked call made to Axios create. All API calls should be mocked",

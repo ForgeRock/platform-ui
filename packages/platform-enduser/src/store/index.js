@@ -28,6 +28,7 @@ export default createStore({
     // user
     approvalsCount: null,
     certificationCount: null,
+    violationsCount: null,
     inboxTotalCount: null,
     requestCartUsers: [],
   },
@@ -65,12 +66,17 @@ export default createStore({
 
     setCertificationCount(state, count) {
       state.certificationCount = count;
-      state.inboxTotalCount = state.approvalsCount + state.certificationCount;
+      state.inboxTotalCount = state.approvalsCount + state.certificationCount + state.violationsCount;
     },
 
     setApprovalsCount(state, count) {
       state.approvalsCount = count;
-      state.inboxTotalCount = state.approvalsCount + state.certificationCount;
+      state.inboxTotalCount = state.approvalsCount + state.certificationCount + state.violationsCount;
+    },
+
+    setViolationsCount(state, count) {
+      state.violationsCount = count;
+      state.inboxTotalCount = state.approvalsCount + state.certificationCount + state.violationsCount;
     },
 
     setRequestCartUsers(state, users) {
