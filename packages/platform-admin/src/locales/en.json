@@ -3079,10 +3079,17 @@
       "policies": {
         "description": "description TODO",
         "edit": {
+          "addRules": "Add Rules",
+          "addRulesModalDescription": "Choose rules to add to this policy.",
+          "removeRule": "Remove Rule?",
+          "removeRuleDescription": "Are you sure you want to remove this rule from the policy?",
+          "rules": "Rules",
           "title": "Compliance Policy"
         },
         "errorCreate": "Error creating policy",
         "errorDelete": "Error deleting policy",
+        "errorGetPolcyRulesOnPolicy": "Error getting policy rules on policy",
+        "errorGetPolicyRuleOptions": "Error getting policy rules",
         "errorUpdate": "Error updating policy",
         "itemType": "Policy",
         "newPolicy":"New Policy",
