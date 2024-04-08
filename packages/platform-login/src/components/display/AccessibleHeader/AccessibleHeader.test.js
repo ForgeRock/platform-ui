@@ -15,6 +15,7 @@ global.document = jest.fn();
 describe('AccessibleHeader', () => {
   function setup(props) {
     return mount(AccessibleHeader, {
+      attachTo: document.body,
       global: {
         plugins: [i18n],
       },
@@ -32,18 +33,9 @@ describe('AccessibleHeader', () => {
   });
 
   describe('renders correct skip link', () => {
-    it('by default', () => {
-      const wrapper = setup();
-
-      const skipLink = findByTestId(wrapper, 'link-skip-to-main-content');
-      expect(skipLink.attributes('href')).toBe('#content');
-    });
-
-    it('given mainContentId that starts with #', () => {
-      const wrapper = setup({ mainContentId: '#content' });
-
-      const skipLink = findByTestId(wrapper, 'link-skip-to-main-content');
-      expect(skipLink.attributes('href')).toBe('#content');
+    it('by default', async () => {
+      const wrapper = setup({ mainContentId: 'header-skip-link' });
+      expect(wrapper.vm.skipContentDestination).toBe(document.getElementById(wrapper.vm.mainContentId));
     });
   });
 

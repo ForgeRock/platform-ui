@@ -3,7 +3,10 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="min-vh-100 d-flex flex-column fr-fullscreen-mobile">
+  <div
+    class="min-vh-100 d-flex flex-column fr-fullscreen-mobile"
+    ref="container"
+    tabindex="-1">
     <header
       v-if="!journeyHeaderSkipLinkEnabled && journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
       v-html="sanitizedHeader"
@@ -13,7 +16,9 @@ of the MIT license. See the LICENSE file for details. -->
       main-content-id="callbacksPanel"
       :custom-html="sanitizedHeader" />
     <main
+      ref="main"
       id="callbacksPanel"
+      tabindex="-1"
       v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode"
       class="px-0 flex-grow-1 d-flex container">
       <BContainer class="flex-grow-1 d-flex">
@@ -121,7 +126,6 @@ of the MIT license. See the LICENSE file for details. -->
                           :step="step"
                           :floating-label="journeyFloatingLabels"
                           :is-required-aria="component.isRequired"
-                          :autofocus="journeyFocusFirstFocusableItemEnabled && component.autofocus"
                           :position-button="journeySignInButtonPosition"
                           v-bind="{...component.callbackSpecificProps}"
                           v-on="{
@@ -203,7 +207,9 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             class="pb-4 px-4 px-md-5 w-100"
             data-testid="in-situ-logo-preview">
-            <div class="d-flex">
+            <div
+              class="d-flex"
+              ref="callbackAppHeaderContainer">
               <img
                 v-if="logoEnabled"
                 class="ping-logo mt-4"
@@ -229,7 +235,8 @@ of the MIT license. See the LICENSE file for details. -->
 
           <div
             class="px-4 px-md-5"
-            aria-live="polite">
+            aria-live="polite"
+            ref="callbackMain">
             <BRow class="m-0">
               <BCol xl="9">
                 <h1
@@ -254,7 +261,8 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </div>
         <div class="mt-1 px-4 px-md-5 d-flex w-100 flex-grow-1">
-          <div class="w-100 max-width-600">
+          <div
+            class="w-100 max-width-600">
             <BRow
               v-if="!loading && !themeLoading"
               class="m-0">
@@ -323,7 +331,6 @@ of the MIT license. See the LICENSE file for details. -->
                       :step="step"
                       :floating-label="journeyFloatingLabels"
                       :is-required-aria="component.isRequired"
-                      :autofocus="journeyFocusFirstFocusableItemEnabled && component.autofocus"
                       :position-button="journeySignInButtonPosition"
                       v-bind="{...component.callbackSpecificProps}"
                       v-on="{
@@ -492,6 +499,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    journeyFocusElement: {
+      type: String,
+      default: 'header',
+    },
     journeyFocusFirstFocusableItemEnabled: {
       type: Boolean,
       default: false,
@@ -581,6 +592,7 @@ export default {
       description: '',
       errorMessage: '',
       header: '',
+      isFirstStep: true,
       hiddenValueCallbacksRefs: [],
       linkToTreeStart: '',
       loading: true,
@@ -678,6 +690,26 @@ export default {
     journeyRememberMeEnabled() {
       this.setRememberedUsername();
     },
+    /*
+    * Set timeout to focus on a tag according to the selected theme of the current Step (journey node)
+    * Time out is set to focus after the set-theme was called and established to avoid slow rendering or vue reloads
+    */
+    journeyFocusElement() {
+      setTimeout(() => {
+        // refresh accessibility between steps by focusing on the body before the next focus to avoid the aplication from keeping the same activeElement
+        this.$refs.container.focus();
+        if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
+          /*
+          * This should focus on the card inside either of the main tags
+          * which  after tab would focus on the first focusable item (a description link or form input)
+          */
+          this.$refs.callbackMain ? this.$refs.callbackMain.focus() : this.$refs.main.focus();
+        } else {
+          // This will always focus on header if it exists or components container
+          this.$refs.callbackAppHeaderContainer ? this.$refs.callbackAppHeaderContainer.focus() : this.$refs.container.focus();
+        }
+      }, 600);
+    },
   },
   methods: {
     /**
@@ -730,7 +762,6 @@ export default {
       // Some callbacks don't need to render anything so forEach is used instead of map
       const componentList = [];
       let keyFromDate = Date.now();
-      let isFirstFocusableElement = false;
       // IAM-5893 this.stage needs to be cloned here because it was being passed in by ref to this.getComponentPropsAndEvents() (from login mixin)
       // which caused ValidatedCreatePasswordCallback, ChoiceCallback, and ConfirmationCallback to function improperly
       const clonedStage = cloneDeep(this.stage);
@@ -792,14 +823,6 @@ export default {
             ? `Fr${type}`
             : 'FrField',
         };
-
-        // IAM-5201 The autofocus is to be set only on the first focusable component.
-        // isComponentFocusable returns a boolean to enable the autofocus for the component
-        // to prevent multiple components getting autofocus, when isComponentFocusable returns true we set isFirstFocusableElement to true
-        if (!isFirstFocusableElement) {
-          component.autofocus = this.isComponentFocusable(component.type);
-          isFirstFocusableElement = component.autofocus;
-        }
 
         if (component.type === 'FrField' || component.type === 'FrPasswordCallback') {
           const policyRequirements = callback.getOutputByName('policies')?.policyRequirements || [];
@@ -1182,6 +1205,7 @@ export default {
             }
           }
           const previousStep = this.step;
+          this.isFirstStep = !!previousStep;
           this.step = step;
 
           // Tree resumption parameters should generally only be supplied once, so we remove them from memory after we've sent them to the SDK (see IAM-492)
@@ -1426,26 +1450,6 @@ export default {
         dataType = 'time';
       }
       return dataType;
-    },
-    /**
-     * Returns a boolean that determines if the field should be auto focused
-     *
-     * @param {String} componentType component type as a string that matches imported components
-     * @param {Boolean} enableAutofocus should field be receive autofocus
-     * @returns {Boolean}
-     */
-    isComponentFocusable(componentType) {
-      // Add FrChoiceCallback and FrKbaCreateCallback when multiselect is replaced
-      // Currently vue-multiselect expands on focus causing other fields to be obscured by the expanded options list
-      const componentTypesToAutofocus = [
-        // 'FrChoiceCallback',
-        'FrField',
-        // 'FrKbaCreateCallback',
-        'FrPasswordCallback',
-        'FrSelectIdPCallback',
-        'FrValidatedCreatePasswordCallback',
-      ];
-      return componentTypesToAutofocus.indexOf(componentType) > -1;
     },
     /**
      * Decides whether to save the value of a username field to localStorage
