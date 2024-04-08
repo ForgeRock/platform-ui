@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,6 +8,7 @@
 import { ref } from 'vue';
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
+import { useEsvInputStore } from '@forgerock/platform-shared/src/stores/esvInput';
 import useFilteredEsvs from './filteredEsvs';
 
 const sampleVariables = [
@@ -34,10 +35,16 @@ const sampleSecrets = [
 ];
 
 describe('filterEsv composable', () => {
-  function setupTestStore(variables, secrets) {
+  function setupTestStore(variables, secrets, loading = false, listInUse = false, supportedTypes = '') {
     const testPinia = createTestingPinia({
       initialState: {
-        esvInput: { variables, secrets },
+        esvInput: {
+          variables,
+          secrets,
+          loading,
+          listInUse,
+          supportedTypes,
+        },
       },
     });
     setActivePinia(testPinia);
@@ -75,6 +82,18 @@ describe('filterEsv composable', () => {
         },
       ]);
     });
+  });
+
+  it('Returns the loading state of the store', () => {
+    setupTestStore(sampleVariables, sampleSecrets, true);
+    const { isLoading } = useFilteredEsvs(ref(''), 'string');
+    expect(isLoading.value).toBe(true);
+  });
+
+  it('Returns whether secrets are to be displayed for the field type', () => {
+    setupTestStore(sampleVariables, sampleSecrets);
+    const { secretsVisible } = useFilteredEsvs(ref(''), 'checkbox');
+    expect(secretsVisible).toBe(false);
   });
 
   it('Filters the relevant ESVs reactively based on the passed query', () => {
@@ -157,5 +176,31 @@ describe('filterEsv composable', () => {
         placeholder: '&{esv.myBool}',
       },
     ]);
+  });
+
+  describe('Toggling the list in use', () => {
+    it('Returns the list in use from the store', () => {
+      setupTestStore(sampleVariables, sampleSecrets, false, true);
+      const { esvListInUse } = useFilteredEsvs(ref(''), 'string');
+      expect(esvListInUse.value).toBe(true);
+    });
+
+    it('Sets the list in use in the store', () => {
+      setupTestStore(sampleVariables, sampleSecrets, false, false);
+      const { esvListInUse } = useFilteredEsvs(ref(''), 'string');
+      expect(useEsvInputStore().listInUse).toBe(false);
+      esvListInUse.value = true;
+
+      expect(useEsvInputStore().listInUse).toBe(true);
+    });
+
+    it('Sets the supported types in the store when the list is in use', () => {
+      setupTestStore(sampleVariables, sampleSecrets, false, false);
+      const { esvListInUse } = useFilteredEsvs(ref(''), 'string');
+      expect(useEsvInputStore().supportedTypes).toBe('');
+      esvListInUse.value = true;
+
+      expect(useEsvInputStore().supportedTypes).toBe('string');
+    });
   });
 });
