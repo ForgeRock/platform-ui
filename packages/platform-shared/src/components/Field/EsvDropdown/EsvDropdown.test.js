@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -32,13 +32,16 @@ const inputStoreData = {
 };
 
 describe('EsvDropdown', () => {
-  function setup(props) {
+  function setup(storeData = { loading: false }) {
     return mount(EsvDropdown, {
       global: {
         plugins: [
           createTestingPinia({
             initialState: {
-              esvInput: inputStoreData,
+              esvInput: {
+                ...inputStoreData,
+                ...storeData,
+              },
             },
           }),
           i18n,
@@ -47,10 +50,19 @@ describe('EsvDropdown', () => {
       attachTo: document.body,
       props: {
         ...defaultProps,
-        ...props,
       },
     });
   }
+
+  it('shows a spinner when esvs are loading', async () => {
+    const wrapper = setup({ loading: true });
+
+    const dropdownButton = wrapper.find('button');
+    await dropdownButton.trigger('click');
+
+    expect(wrapper.findAll('li').length).toBe(1);
+    expect(wrapper.html()).toContain('Loading...');
+  });
 
   it('displays a heading, search bar and relevant ESVs in the dropdown list', async () => {
     const wrapper = setup();
@@ -58,6 +70,7 @@ describe('EsvDropdown', () => {
     const dropdownButton = wrapper.find('button');
     dropdownButton.trigger('click');
 
+    expect(wrapper.html()).not.toContain('Loading...');
     expect(wrapper.findAll('li').length).toBe(4);
     const items = wrapper.findAll('li');
 

@@ -4,6 +4,8 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BDropdown
+    @show="onDropdownShown"
+    @hidden="onDropdownHidden"
     right
     no-caret
     variant="link"
@@ -25,24 +27,28 @@ of the MIT license. See the LICENSE file for details. -->
         {{ secretsVisible ? $t('esvInput.secretsAndVariables') : $t('common.variables') }}
       </h5>
     </BDropdownText>
-    <BDropdownForm
-      @submit.stop.prevent
-      @click.stop.prevent>
-      <FrSearchInput
-        v-model="query"
-        :placeholder="secretsVisible ? $t('esvInput.searchSecretsAndVariables') : $t('esvInput.searchVariables')"
-        class="border-bottom border-top"
-      />
-    </BDropdownForm>
-    <BDropdownItem
-      v-for="item in filteredEsvs"
-      :key="item._id"
-      class="text-monospace"
-      @click="esvClicked(item)">
-      {{ item.placeholder }}
-    </BDropdownItem>
-    <template v-if="!filteredEsvs.length">
-      <BDropdownText>
+    <FrSpinner
+      v-if="isLoading"
+      size="sm"
+      class="py-2" />
+    <template v-else>
+      <BDropdownForm
+        @submit.stop.prevent
+        @click.stop.prevent>
+        <FrSearchInput
+          v-model="query"
+          :placeholder="secretsVisible ? $t('esvInput.searchSecretsAndVariables') : $t('esvInput.searchVariables')"
+          class="border-bottom border-top"
+        />
+      </BDropdownForm>
+      <BDropdownItem
+        v-for="item in filteredEsvs"
+        :key="item._id"
+        class="text-monospace"
+        @click="esvClicked(item)">
+        {{ item.placeholder }}
+      </BDropdownItem>
+      <BDropdownText v-if="!filteredEsvs.length">
         <span
           class="text-muted">
           {{ secretsVisible ? $t('esvInput.noSecretsOrVariables') : $t('esvInput.noVariables') }}
@@ -53,6 +59,10 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+/**
+ * EsvDropdown component, presents a dropdown list of ESV secrets and variables for users to choose from
+ * for the current field.
+ */
 import {
   BDropdown,
   BDropdownForm,
@@ -61,9 +71,9 @@ import {
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { ref } from 'vue';
 import useFilteredEsvs from '@forgerock/platform-shared/src/composables/filteredEsvs';
-import { showEsvSecretsForField } from '@forgerock/platform-shared/src/utils/esvUtils';
 
 export default {
   name: 'EsvDropdown',
@@ -74,6 +84,7 @@ export default {
     BDropdownItem,
     FrIcon,
     FrSearchInput,
+    FrSpinner,
   },
   props: {
     fieldType: {
@@ -87,18 +98,29 @@ export default {
   },
   setup(props, context) {
     const query = ref('');
-    const { filteredEsvs } = useFilteredEsvs(query, props.fieldType);
-    const secretsVisible = showEsvSecretsForField(props.fieldType);
+
+    const filteredEsvData = useFilteredEsvs(query, props.fieldType);
 
     function esvClicked(esvItem) {
       context.emit('esv-selected', esvItem.placeholder);
     }
 
+    function onDropdownShown() {
+      filteredEsvData.esvListInUse.value = true;
+    }
+
+    function onDropdownHidden() {
+      filteredEsvData.esvListInUse.value = false;
+    }
+
     return {
       query,
-      secretsVisible,
       esvClicked,
-      filteredEsvs,
+      onDropdownShown,
+      onDropdownHidden,
+      secretsVisible: filteredEsvData.secretsVisible,
+      filteredEsvs: filteredEsvData.filteredEsvs,
+      isLoading: filteredEsvData.isLoading,
     };
   },
 };
