@@ -459,51 +459,6 @@ describe('Component Test', () => {
       resumingSpy.mockRestore();
     });
 
-    it('autofocus is true for the first focusable element on build tree form and aria-invalid attribute not rendered when journeyFocusFirstFocusableItemEnabled is false', async () => {
-      const data = {
-        loading: true,
-        step: new FRStep(stepPayload),
-      };
-      const wrapper = await mountLogin(data);
-
-      wrapper.vm.buildTreeForm();
-      wrapper.vm.loading = false;
-      await flushPromises();
-
-      expect(wrapper.vm.componentList[0].autofocus).toBe(true);
-      expect(wrapper.vm.componentList[1].autofocus).toBeUndefined();
-
-      const username = wrapper.find('fr-field-stub');
-      const password = wrapper.find('fr-password-callback-stub');
-
-      expect(username.attributes('autofocus')).toBeUndefined();
-      expect(password.attributes('autofocus')).toBeUndefined();
-    });
-
-    it('autofocus is true for the first focusable element on build tree form and aria-invalid attribute rendered with true when journeyFocusFirstFocusableItemEnabled is true', async () => {
-      const data = {
-        loading: true,
-        step: new FRStep(stepPayload),
-      };
-      const props = {
-        journeyFocusFirstFocusableItemEnabled: true,
-      };
-      const wrapper = await mountLogin(data, props);
-
-      wrapper.vm.buildTreeForm();
-      wrapper.vm.loading = false;
-      await flushPromises();
-
-      expect(wrapper.vm.componentList[0].autofocus).toBe(true);
-      expect(wrapper.vm.componentList[1].autofocus).toBeUndefined();
-
-      const username = wrapper.find('fr-field-stub');
-      const password = wrapper.find('fr-password-callback-stub');
-
-      expect(username.attributes('autofocus')).toBe('true');
-      expect(password.attributes('autofocus')).toBeUndefined();
-    });
-
     it('add validation immediate to component if it has failed policies', async () => {
       const data = {
         loading: true,

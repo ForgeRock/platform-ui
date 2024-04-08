@@ -58,7 +58,7 @@ export default {
         journeyCardTextColor: '#5e6d82',
         journeyCardTitleColor: '#23282e',
         journeyFloatingLabels: true,
-        journeyFocusFirstFocusableItemEnabled: false,
+        journeyFocusElement: 'header',
         journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
         journeyFooterEnabled: false,
         journeyFooterScriptTag: '',
@@ -110,7 +110,7 @@ export default {
       accountFooterScriptTag: '',
       accountFooterScriptTagEnabled: false,
       journeyFloatingLabels: true,
-      journeyFocusFirstFocusableItemEnabled: false,
+      journeyFocusElement: 'header',
       journeyFooter: '',
       journeyFooterEnabled: false,
       journeyFooterScriptTag: '',
@@ -195,6 +195,10 @@ export default {
           if (themeOptions.themeId) {
             // themeId can come from node, journey, or a saved localStorage value. Find by _id or name and use it here.
             theme = theme.find((realmTheme) => realmTheme._id === themeOptions.themeId || realmTheme.name === themeOptions.themeId);
+            if (!theme) {
+              const defaultTheme = themeResults[cleanRealm].find((realmTheme) => realmTheme.isDefault === true);
+              this.journeyFocusElement = defaultTheme.journeyFocusElement;
+            }
           } else {
             // Use the default theme
             theme = theme.find((realmTheme) => realmTheme.isDefault);
@@ -207,7 +211,7 @@ export default {
           this.theme = theme;
           this.favicon = theme.favicon;
           this.journeyFloatingLabels = theme.journeyFloatingLabels;
-          this.journeyFocusFirstFocusableItemEnabled = theme.journeyFocusFirstFocusableItemEnabled;
+          this.journeyFocusElement = theme.journeyFocusElement;
           this.journeyFooter = theme.journeyFooter;
           this.journeyFooterEnabled = theme.journeyFooterEnabled;
           this.accountFooterScriptTag = theme.accountFooterScriptTag;

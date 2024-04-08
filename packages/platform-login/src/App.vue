@@ -20,6 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
             :is="Component"
             :journey-floating-labels="journeyFloatingLabels"
             :journey-focus-first-focusable-item-enabled="journeyFocusFirstFocusableItemEnabled"
+            :journey-focus-element="journeyFocusElement"
             :journey-footer="localizedFooter"
             :journey-footer-enabled="journeyFooterEnabled"
             :journey-header="localizedHeader"
@@ -86,6 +87,7 @@ export default {
   data() {
     return {
       hideAppOnTransition: false,
+      journeyFocusElement: undefined,
       localizedFooter: '',
       localizedHeader: '',
       localizedJustifiedContent: '',
@@ -100,6 +102,7 @@ export default {
   },
   methods: {
     setupTheme(realm, treeId, nodeThemeId) {
+      this.journeyFocusElement = undefined;
       // Check if web storage exists before trying to use it. This allows
       // theming to gracefully fail in the case it doesn't exist - see
       // IAM-1873
