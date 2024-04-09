@@ -16,7 +16,6 @@ of the MIT license. See the LICENSE file for details. -->
       :static="isTesting"
       :title="$t('governance.request.revokeRequest')"
       @hidden="resetModal(); $emit('hidden')">
-      revoke request modal
       <!-- Justification textarea -->
       <BFormGroup>
         <FrField
