@@ -3049,6 +3049,7 @@
       "activeCampaignsTooltip": "Total active certification campaigns",
       "activeReviews": "Active Reviews",
       "activeReviewsTooltip": "Total access reviews currently in-progress",
+      "allOrganizations": "All Organizations",
       "campaignsByStatus": "Campaigns By Status",
       "campaignsByStatusLabels": {
         "in-progress": "Active",
@@ -3057,11 +3058,13 @@
       },
       "campaignsByType": "Campaigns By Type",
       "certificationType": "{type} Certification",
+      "certifyUserType": "Certify User {type}",
       "errors": {
         "errorDeadline": "Deadline must be a future date"
       },
       "expiringCampaigns": "Expiring Campaigns",
       "expiringCampaignsTooltip": "Total campaigns expiring within the next 2 weeks",
+      "includeChildOrganizations": "Include Child Organizations",
       "title": "Certification",
       "subtitle": "Create certification campaigns to certify identities.",
       "overview": "Overview",
