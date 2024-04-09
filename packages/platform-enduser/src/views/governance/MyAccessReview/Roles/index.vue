@@ -14,7 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
         grant-type="role"
         :items="resourceItems"
         :total-count="resourceTotalCount"
-        @load-data="queryResource" />
+        @load-data="queryResource"
+        @revoke-items="createRevokeRequest($event, userId, 'gov-resource-revoke')" />
     </BCard>
   </BContainer>
 </template>
@@ -22,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BCard, BContainer } from 'bootstrap-vue';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import { getGovernanceGrants } from '@forgerock/platform-shared/src/utils/governance/resource';
+import { getGovernanceGrants, revokeResourcesFromIGA } from '@forgerock/platform-shared/src/utils/governance/resource';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 
@@ -50,6 +51,13 @@ export default {
           key: 'assignment',
           label: this.$t('common.assignment'),
         },
+        {
+          key: 'actions',
+          label: '',
+          class: 'p-3',
+          sortable: false,
+          thClass: 'w-100px',
+        },
       ],
       resourceItems: [],
       resourceTotalCount: 0,
@@ -65,6 +73,14 @@ export default {
       const response = await getGovernanceGrants('role', this.userId, params);
       this.resourceItems = response.items;
       this.resourceTotalCount = response.totalCount;
+    },
+    async createRevokeRequest(requestPayload, userId, modalId) {
+      try {
+        await revokeResourcesFromIGA(requestPayload, userId, false);
+        this.$bvModal.hide(modalId);
+      } catch {
+        // no catch statement needed
+      }
     },
   },
 };

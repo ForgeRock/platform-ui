@@ -71,7 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
         no-sort-reset
         ref="gov-resource-table"
         responsive
-        selectable
+        :selectable="allowSelect"
         @row-selected="onRowSelected"
         @sort-changed="sortChanged">
         <template #head(selected)>

@@ -84,7 +84,7 @@ of the MIT license. See the LICENSE file for details. -->
               :total-count="resourceTotalCount"
               :modal-id="`${tab.displayName}-modal`"
               @load-data="queryResource"
-              @revoke-items="revokeResourcesFromIGA($event, userId, false)" />
+              @revoke-items="revokeResourcesAndCloseModal($event, directReportUserInfo.userId, `${tab.displayName}-modal-revoke`)" />
           </BTab>
         </BTabs>
       </BCard>
@@ -284,11 +284,18 @@ export default {
      * @param {Object} params query parameters to pass to request
      */
     async queryResource(params) {
-      const response = await getGovernanceGrants(params.grantType, this.userId, params);
+      const response = await getGovernanceGrants(params.grantType, this.directReportUserInfo.userId, params);
       this.resourceItems = response.items;
       this.resourceTotalCount = response.totalCount;
     },
-    revokeResourcesFromIGA,
+    async revokeResourcesAndCloseModal(requestPayload, resourceId, modalId) {
+      try {
+        await revokeResourcesFromIGA(requestPayload, resourceId, false);
+        this.$bvModal.hide(modalId);
+      } catch {
+        // no catch statement needed
+      }
+    },
     tabActivated(tabIndex, prevTabIndex) {
       if (tabIndex > -1) {
         this.$route.params.grantType = this.tabItems[tabIndex].grantType;
