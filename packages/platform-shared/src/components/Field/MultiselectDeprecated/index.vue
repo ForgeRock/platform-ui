@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
       :aria-expanded="isExpanded ? 'true': 'false'"
       :aria-labelledby="internalId + '-label'"
       :data-testid="testid"
-      :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
+      :class="[{'polyfill-placeholder': floatLabels }, 'form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
       :close-on-select="closeOnSelect"
       :disabled="disabled"
       :hide-selected="true"

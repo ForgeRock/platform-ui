@@ -172,5 +172,6 @@ module.exports = {
     '@intlify',
     'vue-i18n',
     'vue-router',
+    '@vueuse',
   ],
 };
