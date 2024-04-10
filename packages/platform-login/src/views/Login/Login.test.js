@@ -12,6 +12,8 @@ import { URLSearchParams } from 'url';
 import {
   FRStep,
   FRAuth,
+  FRWebAuthn,
+  WebAuthnStepType,
 } from '@forgerock/javascript-sdk';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -465,7 +467,7 @@ describe('Component Test', () => {
     });
 
     it('calls buildTreeForm properly when themeLoading changes and when step exists or does not exist', async () => {
-      // Load with a valid step
+      // Load with a valid step and not webAuthN
       let data = {
         loading: true,
         step: new FRStep(stepPayload),
@@ -474,6 +476,8 @@ describe('Component Test', () => {
       let wrapper = await mountLogin(data);
 
       let buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
+
+      jest.spyOn(FRWebAuthn, 'getWebAuthnStepType').mockImplementation(() => WebAuthnStepType.None);
 
       await wrapper.setProps({ themeLoading: true });
       await flushPromises();

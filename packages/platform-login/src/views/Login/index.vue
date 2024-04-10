@@ -660,9 +660,10 @@ export default {
   watch: {
     themeLoading(themeLoading) {
       const stepExists = this.step !== undefined && this.step.type === 'Step';
+      const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
       // IAM-5201 Unfortunately since the theme payload is async, the journey form props are set before the journey theme data is available.
-      // this makes it so that the form is rebuilt if themeLoading is false (and a step is available) so autofocus is set
-      if (!themeLoading && stepExists) {
+      // this makes it so that the form is rebuilt if themeLoading is false (and a step is available and the step is not a WebAuthN step) so autofocus is set
+      if (!themeLoading && stepExists && !isWebAuthnStep) {
         this.loading = true;
         this.buildTreeForm();
         this.loading = false;
