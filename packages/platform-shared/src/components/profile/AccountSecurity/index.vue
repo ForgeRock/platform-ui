@@ -35,6 +35,9 @@ of the MIT license. See the LICENSE file for details. -->
                 icon-class="mr-2 text-success">
                 {{ item.text }}
               </FrIcon>
+              <span v-else>
+                {{ item.text }}
+              </span>
             </BCol>
             <BCol
               class="text-right text-nowrap"
