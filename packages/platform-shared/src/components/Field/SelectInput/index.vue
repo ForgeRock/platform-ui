@@ -308,7 +308,7 @@ export default {
       { 'h-100': props.floatingLabel },
       { 'has-prepend-button': hasPrependBtn.value },
       { 'no-multiselect-label': !props.label },
-      'white-label-background', 'form-control', 'p-0', 'text-nowrap',
+      'form-control', 'p-0', 'text-nowrap',
     ]);
 
     function openHandler() {

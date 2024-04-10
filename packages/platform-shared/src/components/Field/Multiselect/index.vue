@@ -323,7 +323,6 @@ export default {
       { 'polyfill-placeholder': floatLabels.value },
       { 'h-100': props.floatingLabel },
       { 'no-multiselect-label': !props.label },
-      'white-label-background',
       'form-control',
       'p-0',
     ]);

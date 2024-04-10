@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
       :searchable="searchable"
       :show-labels="false"
       :allow-empty="allowEmpty"
-      :class="[{'polyfill-placeholder': floatLabels, 'h-100': floatingLabel, 'has-prepend-button': hasPrependBtn}, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
+      :class="[{'polyfill-placeholder': floatLabels, 'h-100': floatingLabel, 'has-prepend-button': hasPrependBtn}, 'form-control p-0', {'no-multiselect-label': !this.label }]"
       :placeholder="internalPlaceholder"
       :data-testid="testid"
       @search-change="$emit('search-change', $event)"

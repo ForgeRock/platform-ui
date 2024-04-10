@@ -5,8 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="w-100">
     <div
-      :class="[{'fr-field-error': errors.length, 'floating-label': floatingLabel}, 'form-label-group']"
-      ref="floatingLabelGroup">
+      :class="[{'fr-field-error': errors.length, 'floating-label': floatingLabel}, 'form-label-group']">
       <!-- @slot Prepend buttons or elements to the input. -->
       <slot name="prepend" />
       <div
@@ -19,13 +18,13 @@ of the MIT license. See the LICENSE file for details. -->
           ref="inputLabel"
           :id="labelId"
           :for="id"
-          :class="['pe-none full-width', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]" />
+          :class="['pe-none full-width', {'overflow-hidden text-nowrap': !labelHeight, 'readonly-label': readonlyLabel}]" />
         <label
           v-else-if="label"
           ref="inputLabel"
           :id="labelId"
           :for="id"
-          :class="['pe-none', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]">
+          :class="['pe-none', {'overflow-hidden text-nowrap': !labelHeight, 'readonly-label': readonlyLabel}]">
           {{ labelTranslation }}
         </label>
       </div>
@@ -96,6 +95,9 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+// eslint-disable-next-line import/extensions
+import { useElementSize } from '@vueuse/core';
+import { ref } from 'vue';
 
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
@@ -187,8 +189,18 @@ export default {
   data() {
     return {
       labelId: `${this.id}-label`, // stores the label id
-      labelHeight: 0, // stores the label height
-      labelTextOverflowHidden: false, // verifies if the label text is overflow hidden
+    };
+  },
+  setup() {
+    // The "useElementSize" composable establishes an observer on the "inputLabel" element to monitor its size changes, specifically we are interested on the height.
+    // The observed height information is then forwarded as a "slot prop" to components that are utilizing this layout component, particularly those with floating labels.
+    // For example, within the "BasicInput" component, this height is used for calculate the height of the input field element.
+    const inputLabel = ref(null);
+    const { height: labelHeight } = useElementSize(inputLabel, { height: 0 }, { box: 'border-box' });
+
+    return {
+      inputLabel,
+      labelHeight,
     };
   },
   computed: {
@@ -198,16 +210,6 @@ export default {
     descriptionTranslation() {
       return this.isHtml ? undefined : this.getTranslation(this.description);
     },
-  },
-  mounted() {
-    // get the input label height and update data
-    const label = this.$refs.floatingLabelGroup;
-
-    // timeout needed for fields placed into transitions
-    setTimeout(() => {
-      this.labelHeight = label && this.label ? label.clientHeight : 0;
-      this.labelTextOverflowHidden = !this.labelHeight;
-    }, 1);
   },
 };
 </script>
@@ -247,8 +249,11 @@ export default {
       border: 1px solid transparent;
       border-radius: 0.25rem;
       pointer-events: none;
-      transition: all 0.1s ease-in-out;
-      width: calc(100% - 40px);
+      transform-origin: 0 0;
+      transition: transform .1s ease-in-out;
+      width: unset;
+      max-height: none;
+      display: inline-block;
 
       .pe-none {
         pointer-events: none;
@@ -256,8 +261,9 @@ export default {
     }
 
     textarea::placeholder,
-    input::placeholder {
-      color: transparent;
+    input::placeholder,
+    .multiselect__placeholder {
+      color: transparent !important;
     }
   }
   .form-label-group-input {
@@ -280,9 +286,7 @@ export default {
         padding-bottom: calc($input-btn-padding-y / 3);
 
         ~ label {
-          padding-top: calc($input-btn-padding-y / 3);
-          padding-bottom: 0;
-          font-size: 12px;
+          transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
         }
       }
     }
