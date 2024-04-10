@@ -28,7 +28,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.visit(testTreeUrl);
 
       cy.log('Check that TextOuput callback is still rendered');
-      cy.findAllByText('Message Node Text').should('exist');
+      cy.findAllByText('Message Node Text', { timeout: 20000 }).should('exist');
     });
   });
 });

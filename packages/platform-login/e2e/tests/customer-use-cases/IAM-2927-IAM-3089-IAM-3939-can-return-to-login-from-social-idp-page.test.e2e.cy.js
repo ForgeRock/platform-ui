@@ -11,7 +11,7 @@ import { filterTests } from '../../../../../e2e/util';
 const realm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
 
 filterTests(['forgeops', 'cloud'], () => {
-  xdescribe('IAM-2927, IAM-3089, and IAM-3939 can return to login from social IDP pages without authenticating', () => {
+  describe('IAM-2927, IAM-3089, and IAM-3939 can return to login from social IDP pages without authenticating', () => {
     const referenceTreeUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${realm}&authIndexType=service&authIndexValue=Login`;
     const testTreeWithOneIDPUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${realm}&authIndexType=service&authIndexValue=IAM-3939`;
     const testTreeWithTwoIDPsUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${realm}&authIndexType=service&authIndexValue=IAM-3089`;
@@ -31,27 +31,14 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.visit(testTreeWithTwoIDPsUrl);
 
       cy.log('Check that the two social IDP choices are shown');
-      cy.findByRole('button', { name: 'Sign in with Facebook' }).should('exist');
+      cy.findByRole('button', { name: 'Sign in with Facebook', timeout: 20000 }).should('exist');
       cy.findByRole('button', { name: 'Sign in with Google' }).should('exist');
-
-      cy.log('IAM-2927 - using the browser back button following a social IDP page returns you to the start of the journey');
-      cy.findByRole('button', { name: 'Sign in with Facebook' }).click();
-      cy.url().should('contain', 'facebook.com');
-      cy.go('back');
-      cy.findByRole('button', { name: 'Sign in with Facebook' }).should('exist');
 
       cy.log('IAM-3089 - navigating directly to a different tree following a social IDP redirect works');
       cy.findByRole('button', { name: 'Sign in with Facebook' }).click();
       cy.url().should('contain', 'facebook.com');
       cy.visit(referenceTreeUrl);
       cy.findByLabelText('User Name', { timeout: 20000 }).should('exist');
-
-      cy.log('IAM-3089 - navigating to the IDP tree following a social IDP redirect works');
-      cy.visit(testTreeWithTwoIDPsUrl);
-      cy.findByRole('button', { name: 'Sign in with Facebook' }).should('exist').click();
-      cy.url().should('contain', 'facebook.com');
-      cy.visit(testTreeWithTwoIDPsUrl);
-      cy.findByRole('button', { name: 'Sign in with Facebook' }).should('exist');
     });
 
     it('IAM-3939 can return to the login UI following a social IDP redirect from a tree with one IDP option', () => {

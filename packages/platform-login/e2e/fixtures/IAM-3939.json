@@ -134,6 +134,7 @@
         "misconfiguredFB - IAM-3939": {
           "clientId": "CHANGE ME",
           "pkceMethod": "S256",
+          "wellKnownEndpoint": "https://facebook.com/dialog/oauth/",
           "jwtEncryptionMethod": "NONE",
           "jwtEncryptionAlgorithm": "NONE",
           "authorizationEndpoint": "https://www.facebook.com/dialog/oauth",
@@ -145,10 +146,11 @@
             "email",
             "user_birthday"
           ],
+          "issuer": "https://www.facebook.com",
           "introspectEndpoint": "https://graph.facebook.com/debug_token",
           "userInfoResponseType": "JSON",
           "acrValues": [],
-          "enabled": false,
+          "enabled": true,
           "jwtRequestParameterOption": "NONE",
           "authenticationIdKey": "id",
           "uiConfig": {

@@ -164,7 +164,7 @@
           "userInfoResponseType": "JSON",
           "acrValues": [],
           "encryptedIdTokens": false,
-          "enabled": false,
+          "enabled": true,
           "jwtRequestParameterOption": "NONE",
           "authenticationIdKey": "sub",
           "uiConfig": {
@@ -199,6 +199,7 @@
         "misconfiguredFB - IAM-3089": {
           "clientId": "CHANGE ME",
           "pkceMethod": "S256",
+          "wellKnownEndpoint": "https://facebook.com/dialog/oauth/",
           "jwtEncryptionMethod": "NONE",
           "jwtEncryptionAlgorithm": "NONE",
           "authorizationEndpoint": "https://www.facebook.com/dialog/oauth",
@@ -208,8 +209,9 @@
             "email",
             "user_birthday"
           ],
+          "issuer": "https://www.facebook.com",
           "introspectEndpoint": "https://graph.facebook.com/debug_token",
-          "enabled": false,
+          "enabled": true,
           "authenticationIdKey": "id",
           "uiConfig": {
             "buttonCustomStyle": "background-color: #3b5998;border-color: #3b5998; color: white;",
