@@ -35,7 +35,6 @@ of the MIT license. See the LICENSE file for details. -->
               <div class="d-flex">
                 <template v-if="status === 'pending'">
                   <BButton
-                    v-if="getPermission(item, 'approve')"
                     variant="outline-secondary"
                     size="sm"
                     class="d-none d-lg-block mx-lg-1"
@@ -48,7 +47,6 @@ of the MIT license. See the LICENSE file for details. -->
                     </FrIcon>
                   </BButton>
                   <BButton
-                    v-if="getPermission(item, 'reject')"
                     variant="outline-secondary"
                     size="sm"
                     class="d-none d-lg-block mx-lg-1"
@@ -76,7 +74,6 @@ of the MIT license. See the LICENSE file for details. -->
                     </template>
                     <template v-if="status === 'pending'">
                       <BDropdownItem
-                        v-if="getPermission(item, 'approve')"
                         class="d-block d-lg-none"
                         @click="openModal(item, 'APPROVE')"
                         data-testid="dropdown-action-approve">
@@ -87,7 +84,6 @@ of the MIT license. See the LICENSE file for details. -->
                         </FrIcon>
                       </BDropdownItem>
                       <BDropdownItem
-                        v-if="getPermission(item, 'reject')"
                         class="d-block d-lg-none"
                         data-testid="dropdown-action-reject"
                         @click="openModal(item, 'REJECT')">
@@ -99,7 +95,6 @@ of the MIT license. See the LICENSE file for details. -->
                       </BDropdownItem>
                       <BDropdownDivider class="d-block d-lg-none" />
                       <BDropdownItem
-                        v-if="getPermission(item, 'reassign')"
                         data-testid="dropdown-action-reassign"
                         @click="openModal(item, 'REASSIGN')">
                         <FrIcon
@@ -109,7 +104,6 @@ of the MIT license. See the LICENSE file for details. -->
                         </FrIcon>
                       </BDropdownItem>
                       <BDropdownItem
-                        v-if="getPermission(item, 'comment')"
                         data-testid="dropdown-action-comment"
                         @click="openModal(item, 'COMMENT')">
                         <FrIcon
@@ -167,7 +161,6 @@ import {
   BCard,
   BContainer,
 } from 'bootstrap-vue';
-
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
@@ -255,18 +248,6 @@ export default {
   },
   methods: {
     getStatusText,
-    currentUserId() {
-      return `managed/user/${this.userId}`;
-    },
-    getPermission(item, type) {
-      const actorInfo = item?.rawData?.decision.actors.active.find((actor) => actor.id === this.currentUserId());
-      const actionTypePermissionAllowed = actorInfo?.permissions[type] ?? false;
-      if (type === 'approve') {
-        const isSelfApprover = this.userId === item.rawData.user.id;
-        return this.allowSelfApproval ? actionTypePermissionAllowed : !isSelfApprover && actionTypePermissionAllowed;
-      }
-      return actionTypePermissionAllowed;
-    },
     loadRequestAndUpdateBadge() {
       this.loadRequests();
       this.updateBadge();

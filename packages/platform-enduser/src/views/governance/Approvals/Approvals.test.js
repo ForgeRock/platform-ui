@@ -460,12 +460,6 @@ describe('Approvals', () => {
     expect(wrapper.vm.$store.commit).toHaveBeenCalledWith('setApprovalsCount', 1);
   });
 
-  it('should return the user id', () => {
-    wrapper = mountComponent();
-    const result = wrapper.vm.currentUserId();
-    expect(result).toBe('managed/user/1234');
-  });
-
   it('Loaditem function updates the list item correctly', async () => {
     const newMockRequest = clone(mockRequest);
     newMockRequest.decision.comments = [{ comment: 'test' }];
@@ -487,64 +481,5 @@ describe('Approvals', () => {
     wrapper.vm.loadItem(1);
     await flushPromises();
     expect(wrapper.vm.modalItem).toMatchObject(newOpenModalMock);
-  });
-
-  it('should return the permission value depending on the type', () => {
-    const mockRequestPermissions = {
-      rawData: {
-        decision: {
-          actors,
-        },
-        user: {
-          id: '000',
-        },
-      },
-    };
-
-    wrapper = mountComponent();
-    expect(wrapper.vm.getPermission(mockRequestPermissions, 'approve')).toBe(true);
-    expect(wrapper.vm.getPermission(mockRequestPermissions, 'comment')).toBe(true);
-    expect(wrapper.vm.getPermission(mockRequestPermissions, 'reassign')).toBe(true);
-    expect(wrapper.vm.getPermission(mockRequestPermissions, 'reject')).toBe(true);
-  });
-  it('should return true if allowSelfApproval is true and the logged user is different than the requester', () => {
-    CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.resolve({
-      data: {
-        allowSelfApproval: true,
-      },
-    }));
-    const mockRequestPermissions = {
-      rawData: {
-        decision: {
-          actors,
-        },
-        user: {
-          id: '000',
-        },
-      },
-    };
-
-    wrapper = mountComponent();
-    expect(wrapper.vm.getPermission(mockRequestPermissions, 'approve')).toBe(true);
-  });
-  it('should return false if allowSelfApproval is false and the logged user is the same as the requester', () => {
-    CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.resolve({
-      data: {
-        allowSelfApproval: false,
-      },
-    }));
-    const mockRequestPermissions = {
-      rawData: {
-        decision: {
-          actors,
-        },
-        user: {
-          id: '1234',
-        },
-      },
-    };
-
-    wrapper = mountComponent();
-    expect(wrapper.vm.getPermission(mockRequestPermissions, 'approve')).toBe(false);
   });
 });
