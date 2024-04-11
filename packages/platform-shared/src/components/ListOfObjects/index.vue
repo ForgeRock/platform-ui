@@ -63,11 +63,12 @@ of the MIT license. See the LICENSE file for details. -->
                     </div>
                     <div v-else>
                       <FrField
-                        :value="obj[key]"
+                        :value="obj[key] || properties[key].value"
                         @input="obj[key] = $event; emitInput(listValues)"
                         :disabled="disabled || properties[key].disabled"
                         :label="properties[key].title || key"
                         :name="`${key}_${index}_${_uid}`"
+                        :options="properties[key].options"
                         :type="properties[key].type"
                         :validation="required && required.length && required.includes(properties[key].title) ? 'required' : ''"
                       />
