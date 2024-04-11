@@ -1433,6 +1433,9 @@
       },
       "messages": {
         "connectorTemplateValidation": "Please provide a valid JSON template.",
+        "fileImproperlyFormatted": "Selected file is not properly formatted",
+        "importValidationError": "The JSON provided is not properly formatted",
+        "attributeValidationError": "Failed to load {attribute} attribute",
         "getError": "There was an error retrieving the list of templates",
         "saveError": "There was an error saving the template",
         "saveSuccess": "Template saved successfully"
@@ -1484,6 +1487,16 @@
       },
       "templateModalDetails": {
         "title": "Application Template Details"
+      },
+      "templateModalImport": {
+        "configureManuallyOption": "Configure Manually",
+        "importDescription": "Provides a valid JSON containing the application template configurations to import.",
+        "importingTemplate": "Importing Template",
+        "importTemplate": "Import Template",
+        "jsonFile": "JSON File",
+        "templateFileDescription": "Upload the application template configuration.",
+        "title": "Import Application Templates",
+        "uploadTemplateOption": "Upload Template"
       }
     }
   },
