@@ -32,7 +32,8 @@ of the MIT license. See the LICENSE file for details. -->
         :autofocus="autofocus"
         :name="keyLabel"
         :label="keyLabel"
-        :validation="validationRules" />
+        :validation="validationRules"
+        :value="inputValue.value" />
     </BFormGroup>
     <BFormGroup class="mb-3">
       <FrTextArea
