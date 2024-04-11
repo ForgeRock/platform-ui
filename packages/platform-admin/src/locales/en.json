@@ -1479,7 +1479,8 @@
         "typeInteger": "Integer",
         "typeObject": "Object",
         "typePassword": "Password",
-        "typeString": "String"
+        "typeString": "String",
+        "updateTemplate": "Update Template"
       },
       "templateModalDetails": {
         "title": "Application Template Details"
