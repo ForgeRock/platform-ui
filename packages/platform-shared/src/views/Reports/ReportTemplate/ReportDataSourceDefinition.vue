@@ -43,12 +43,12 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-describedby="ariaDescribedby">
           <BListGroup>
             <BListGroupItem
-              v-for="(option, index) in dataSourceColumns"
+              v-for="(option, index) in dataSourceColumnsWithVanityValue"
               class="mb-2 py-2 px-3 border-0 rounded"
-              :class="selectedColumns.find((obj) => obj.value === option.value) ? 'bg-lightblue' : 'bg-light'"
+              :class="selectedColumns.find((value) => value === option.value) ? 'bg-lightblue' : 'bg-light'"
               :key="index">
-              <BFormCheckbox :value="option">
-                {{ option.label }}
+              <BFormCheckbox :value="option.value">
+                {{ option.vanityValue }}
               </BFormCheckbox>
             </BListGroupItem>
           </BListGroup>
@@ -60,22 +60,22 @@ of the MIT license. See the LICENSE file for details. -->
         </BCardText>
       </BFormGroup>
       <BFormGroup
-        v-if="relatedEntities.length"
+        v-if="relatedDataSources.length"
         v-slot="{ ariaDescribedby }"
         :label="$t('reports.template.relatedDataSources')">
         <BListGroup :aria-describedby="ariaDescribedby">
           <BListGroupItem
-            v-for="(entity, index) in relatedEntities"
+            v-for="(entity, index) in relatedDataSources"
             class="d-flex align-items-center mb-2 py-2 px-3 border-0 rounded justify-content-between"
-            :class="selectedRelatedEntities.includes(entity) ? 'bg-lightblue' : 'bg-light'"
+            :class="selectedRelatedDataSources.includes(entity) ? 'bg-lightblue' : 'bg-light'"
             :key="index">
             {{ entity }}
             <FrSpinner
-              v-if="currentEntityBeingFetched === entity && !selectedRelatedEntities.includes(entity)"
+              v-if="currentEntityBeingFetched === entity && !selectedRelatedDataSources.includes(entity)"
               class="ml-auto opacity-50"
               size="sm" />
             <BDropdown
-              v-else-if="!selectedRelatedEntities.includes(entity)"
+              v-else-if="!selectedRelatedDataSources.includes(entity)"
               class="p-0 ml-auto"
               no-caret
               right
@@ -132,7 +132,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 const emit = defineEmits([
   'delete-data-source',
   'set-column-selections',
-  'set-related-entity-selections',
+  'set-related-data-sources',
 ]);
 const props = defineProps({
   dataSourceColumns: {
@@ -143,7 +143,7 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  relatedEntities: {
+  relatedDataSources: {
     type: Array,
     default: () => [],
   },
@@ -151,7 +151,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  selectedRelatedEntities: {
+  selectedRelatedDataSources: {
     type: Array,
     default: () => [],
   },
@@ -172,7 +172,7 @@ const showAccordion = ref(false);
 // Functions
 function addRelatedEntity(entity) {
   currentEntityBeingFetched.value = entity;
-  emit('set-related-entity-selections', entity);
+  emit('set-related-data-sources', entity);
 }
 
 // Computed
@@ -183,15 +183,30 @@ const columnsModel = computed({
   },
   /**
    * complete data source field option column selections
-   * @param {Array} value list of all column selections
+   * @param {Array} values list of all column selections
    */
-  set(value) {
-    emit('set-column-selections', value);
+  set(values) {
+    emit('set-column-selections', values);
   },
+});
+const dataSourceColumnsWithVanityValue = computed(() => {
+  if (props.dataSourceColumns.length) {
+    return props.dataSourceColumns.map((column) => {
+      const valueArr = column.value.split('.');
+      // Removes the first word within string by period
+      // delimeter since it matches entity name.
+      valueArr.shift();
+      return {
+        ...column,
+        vanityValue: valueArr.join('.'),
+      };
+    });
+  }
+  return [];
 });
 
 // Watchers
-watch(() => props.selectedRelatedEntities, (entities) => {
+watch(() => props.selectedRelatedDataSources, (entities) => {
   if (entities.includes(currentEntityBeingFetched.value)) {
     currentEntityBeingFetched.value = '';
   }

@@ -48,6 +48,10 @@ export default function useReportSettings(
       _id: 'filter',
       title: i18n.global.t('common.filters'),
       description: i18n.global.t('reports.template.filtersSettingDescription'),
+      disableAddDefinitionButton: () => {
+        const [entity] = reportSettings.value.find((setting) => setting._id === 'entities').definitions;
+        return !entity?.selectedColumns?.length;
+      },
       hideAddDefinitionButton: () => !!reportSettings.value.find((setting) => setting._id === 'filter').definitions.length,
       modal: 'report-filters-modal',
       definitions: [],
@@ -93,6 +97,9 @@ export default function useReportSettings(
    * @returns {Array}
    */
   function generateNewDefinitions(existingDefinitions, newDefinition) {
+    if (typeof newDefintion === 'object' && newDefinition._id === undefined) {
+      throw new Error('Definition object requires a unique _id property');
+    }
     const incomingDefinitionId = newDefinition._id || newDefinition;
     const definitionIndex = existingDefinitions.findIndex((obj) => obj._id === newDefinition._id);
     const filteredDefinitions = existingDefinitions.filter((obj) => obj._id !== incomingDefinitionId);
@@ -128,11 +135,12 @@ export default function useReportSettings(
    * Relies on external setting composables that generate their respective
    * payload independently since each setting has unique requirements.
    * @param {Array} settings all report settings
+   * @param {Array} params optional data for the payload function
    * @returns {Object}
    */
-  function reportPayload(settings) {
+  function reportPayload(settings, params) {
     return settings
-      .map((setting) => setting.payload(setting.definitions))
+      .map((setting) => setting.payload(setting.definitions, params))
       .reduce((a, c) => ({ ...a, ...c }), {});
   }
 

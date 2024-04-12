@@ -18,7 +18,8 @@ of the MIT license. See the LICENSE file for details. -->
         v-for="(tab, index) in tabItems"
         :active="tabIndex === index"
         :key="index"
-        :title="tab.tabLabel">
+        :title="tab.tabLabel"
+        class="pb-4">
         <template v-if="tabItems[index].id === 'dataTab'">
           <div
             v-for="(setting, settingIndex) in reportSettings"
@@ -34,9 +35,10 @@ of the MIT license. See the LICENSE file for details. -->
               </h3>
               <BButton
                 v-if="!setting.hideAddDefinitionButton || setting.hideAddDefinitionButton() !== true"
+                :disabled="setting.disableAddDefinitionButton !== undefined && setting.disableAddDefinitionButton() === true"
+                @click="updateDefinitions(setting._id, {})"
                 class="text-body px-2 py-0"
-                variant="link"
-                @click="updateDefinitions(setting.modal, {})">
+                variant="link">
                 <FrIcon name="add" />
               </BButton>
             </div>
@@ -53,12 +55,12 @@ of the MIT license. See the LICENSE file for details. -->
                   :data-source-columns="definition.dataSourceColumns"
                   :key="defIndex"
                   :name="definition.name"
-                  :related-entities="definition.relatedEntities"
+                  :related-data-sources="definition.relatedDataSources"
                   :selected-columns="definition.selectedColumns"
-                  :selected-related-entities="definition.selectedRelatedEntities"
+                  :selected-related-data-sources="definition.selectedRelatedDataSources"
                   @delete-data-source="$emit('delete-data-source', defIndex)"
                   @set-column-selections="$emit('set-column-selections', defIndex, $event)"
-                  @set-related-entity-selections="$emit('set-related-entity-selections', defIndex, $event)" />
+                  @set-related-data-sources="$emit('set-related-data-sources', defIndex, $event)" />
               </div>
               <div
                 v-else
@@ -75,7 +77,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :setting-id="setting._id"
                   :setting-title="setting.title"
                   @delete-definition="deleteDefinition(setting._id, definition._id)"
-                  @edit-definition="updateDefinitions(setting.modal, definition)"
+                  @edit-definition="updateDefinitions(setting._id, definition)"
                   @set-aggregate="$emit('set-aggregate', definition.name, $event)" />
               </div>
             </template>
@@ -119,7 +121,7 @@ const emit = defineEmits([
   'update-details',
   'set-aggregate',
   'set-column-selections',
-  'set-related-entity-selections',
+  'set-related-data-sources',
 ]);
 
 defineProps({
@@ -156,14 +158,19 @@ const tabItems = [
 
 /**
  * Updates definitions -- creates a new definition or updates an existing
- * @param {String} modalId definition id name
+ * @param {String} settingId Setting ID
  * @param {Object} definition definition object
  */
-function updateDefinitions(modalId, definition) {
+function updateDefinitions(settingId, definition) {
   definitionBeingUpdated.value = definition._id;
-  emit('update-definitions', modalId, definition);
+  emit('update-definitions', settingId, definition);
 }
 
+/**
+ * Deletes a settings definition
+ * @param {String} settingId Setting ID
+ * @param {String} definitionId Definition ID
+ */
 function deleteDefinition(settingId, definitionId) {
   definitionBeingUpdated.value = definitionId;
   emit('delete-definition', settingId, definitionId);

@@ -22,7 +22,7 @@ ValidationRules.extendRules({
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('vue-router', () => ({
-  useRoute: jest.fn(() => ({ params: { id: 'template-name' } })),
+  useRoute: jest.fn(() => ({ params: { template: 'template-name', state: 'published' } })),
   useRouter: jest.fn(() => ({
     push: jest.fn(),
   })),
@@ -56,7 +56,7 @@ describe('Component for creating custom analytics reports', () => {
         result: [
           {
             name: 'applications',
-            relatedEntities: ['roles', 'assignments'],
+            relatedDataSources: ['roles', 'assignments'],
           },
           {
             name: 'Users',
@@ -87,6 +87,25 @@ describe('Component for creating custom analytics reports', () => {
         type: 'draft',
       }],
     }));
+
+    AutoApi.getReportOperators = jest.fn().mockReturnValue(Promise.resolve([{
+      displayName: 'contains',
+      name: 'contains',
+      schema: [
+        {
+          left: { value: 'search_string' },
+          right: { value: 'in_string_array' },
+        },
+        {
+          left: { value: 'search_integer' },
+          right: { value: 'in_integer_array' },
+        },
+        {
+          left: { value: 'search_string' },
+          right: { value: 'in_string' },
+        },
+      ],
+    }]));
 
     AutoApi.getReportParameterTypes = jest.fn().mockReturnValue(Promise.resolve({
       data: [{
@@ -167,12 +186,11 @@ describe('Component for creating custom analytics reports', () => {
       expect(name.text()).toBe('name');
     });
 
-    it('ensures that the report badge is set to "draft" as the initial state', () => {
+    it('ensures that the report badge does show the expected report state on load', async () => {
       wrapper = setup();
-
       const headerNavElement = wrapper.find('header > nav');
-      const badgeElement = findByText(headerNavElement, 'h1 + span', 'Draft');
-      expect(badgeElement.exists()).toBe(true);
+      const badgeElement = headerNavElement.find('h1 + span');
+      expect(badgeElement.text()).toBe('Published');
     });
   });
 
@@ -224,13 +242,8 @@ describe('Component for creating custom analytics reports', () => {
       const saveButton = findByText(headerToolbar, 'button', 'Save');
       await saveButton.trigger('click');
       expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
-        entities: [{ entity: 'applications' }],
+        entities: [{ entity: 'applications', name: 'applications' }],
         fields: [{ label: '_id', value: 'applications._id' }],
-        parameters: {
-          myParamName: {
-            description: 'param description', label: 'param label', source: 'user_provided', type: 'string',
-          },
-        },
       }, ['reportadmin'], '');
     });
 
@@ -243,7 +256,7 @@ describe('Component for creating custom analytics reports', () => {
       const headerToolbar = findByRole(wrapper, 'toolbar');
       const duplicateButton = findByText(headerToolbar, 'a', 'control_point_duplicateDuplicate');
       await duplicateButton.trigger('click');
-      expect(duplicateAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft');
+      expect(duplicateAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'published');
     });
   });
 });

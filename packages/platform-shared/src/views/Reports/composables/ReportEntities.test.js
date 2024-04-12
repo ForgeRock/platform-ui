@@ -5,23 +5,23 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
+import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import useReportEntities from './ReportEntities';
 
 describe('@useReportEntities', () => {
   const {
     entityDefinitions,
-    entityOptions,
+    dataSourceColumnCheckboxNames,
     entitiesPayload,
     fetchReportEntities,
   } = useReportEntities();
 
-  autoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
+  AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
     data: {
       result: [
         {
           name: 'applications',
-          relatedEntities: ['Application_Users', 'assignments', 'roles'],
+          relatedDataSources: ['roles', 'assignments'],
         },
         {
           name: 'Users',
@@ -30,33 +30,52 @@ describe('@useReportEntities', () => {
     },
   }));
 
-  const entitiesStub = [{ entity: 'applications' }];
-  const fieldsStub = [{
-    label: 'name',
-    value: 'applications.name',
-  }];
+  AutoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+    data: {
+      'applications.name': {
+        class: 'json',
+        type: 'string',
+      },
+      'applications._id': {
+        class: 'json',
+        type: 'string',
+      },
+    },
+  }));
+
+  const entitiesStub = [{ entity: 'applications', name: 'applications' }];
   const definitionsUIDataStructureStub = [
     {
       _id: entitiesStub[0].entity,
       dataSourceColumns: [
-        ...fieldsStub,
-        { label: '_id', value: 'applications._id' },
+        {
+          label: 'name',
+          value: 'applications.name',
+          format: 'json',
+          type: 'string',
+        },
+        {
+          label: '_id',
+          value: 'applications._id',
+          format: 'json',
+          type: 'string',
+        },
       ],
       name: entitiesStub[0].entity,
-      relatedEntities: [],
-      selectedColumns: fieldsStub,
-      selectedRelatedEntities: [],
+      relatedDataSources: [],
+      selectedColumns: ['applications.name'],
+      selectedRelatedDataSources: [],
     },
   ];
 
   describe('@unit', () => {
     it('gets the expected list of report entities', async () => {
       await fetchReportEntities();
-      expect(entityOptions.value).toEqual(['applications', 'Users']);
+      expect(dataSourceColumnCheckboxNames.value).toEqual(['applications', 'Users']);
     });
 
     it('constructs a list of entity definitions from an entity name and corresponding API data', async () => {
-      autoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+      AutoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
         data: {
           'applications.name': {
             class: 'json',
@@ -69,9 +88,9 @@ describe('@useReportEntities', () => {
         },
       }));
 
-      const getReportEntityFieldOptionsSpy = jest.spyOn(autoApi, 'getReportEntityFieldOptions');
+      const getReportEntityFieldOptionsSpy = jest.spyOn(AutoApi, 'getReportEntityFieldOptions');
 
-      const definitions = await entityDefinitions(entitiesStub, fieldsStub);
+      const definitions = await entityDefinitions(entitiesStub, [{ label: 'name', value: 'applications.name' }]);
       expect(getReportEntityFieldOptionsSpy).toHaveBeenCalledWith({
         entities: [{
           name: entitiesStub[0].entity,
@@ -91,7 +110,10 @@ describe('@useReportEntities', () => {
       const payload = entitiesPayload(definitionsUIDataStructureStub);
       expect(payload).toEqual({
         entities: entitiesStub,
-        fields: definitionsUIDataStructureStub[0].selectedColumns,
+        fields: [{
+          label: 'name',
+          value: 'applications.name',
+        }],
       });
     });
   });

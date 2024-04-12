@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :value="ruleProperty.value"
                 type="select"
                 :disabled="disabled"
+                :label="propertySelectLabel"
                 :name="`selectPropOptions_${uniqueName}`"
                 :options="ruleProperty.options"
                 :placeholder="propertyPlaceholder"
@@ -58,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
               :input-value="inputValue"
               :selected-condition="ruleOperator"
               :selected-prop="ruleProperty.value"
+              :rule="rule"
               :rule-change="ruleChange"
               :unique-name="`inputValue_${uniqueName}`">
               <FrField
@@ -187,6 +189,10 @@ export default {
     properties: {
       default: () => [],
       type: Array,
+    },
+    propertySelectLabel: {
+      default: '',
+      type: String,
     },
     rule: {
       required: true,

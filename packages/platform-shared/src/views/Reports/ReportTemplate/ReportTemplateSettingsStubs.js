@@ -13,11 +13,22 @@ const reportSettingsStub = [{
   hideAddDefinitionButton: () => !!reportSettingsStub.find((obj) => obj._id === 'entities').definitions.length,
   modal: 'report-data-sources-modal',
   definitions: [{
-    name: 'applications',
-    dataSourceColumns: ['name', '_id'],
-    relatedEntities: ['assignments', 'roles'],
+    _id: 'applications',
+    dataSourceColumns: [{
+      format: 'json',
+      label: '_id',
+      type: 'string',
+      value: 'applications._id',
+    },
+    {
+      format: 'json',
+      label: 'name',
+      type: 'string',
+      value: 'applications.name',
+    }],
+    relatedDataSources: ['assignments', 'roles'],
     selectedColumns: [],
-    selectedRelatedEntities: [],
+    selectedRelatedDataSources: [],
   }],
 },
 {

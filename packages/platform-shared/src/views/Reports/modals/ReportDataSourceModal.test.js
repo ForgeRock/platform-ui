@@ -17,7 +17,7 @@ describe('Report Data Source Modal component', () => {
         plugins: [i18n],
       },
       props: {
-        entities: ['entityOne', 'entityTwo'],
+        columnCheckboxNames: ['entityOne', 'entityTwo'],
         isTesting: true,
         ...props,
       },
@@ -67,7 +67,7 @@ describe('Report Data Source Modal component', () => {
 
       const nextButton = findByText(footer, 'button', 'Next');
       await nextButton.trigger('click');
-      expect(wrapper.emitted()['add-entity'][0]).toEqual(['entityOne']);
+      expect(wrapper.emitted()['add-data-source'][0]).toEqual(['entityOne']);
     });
   });
 });

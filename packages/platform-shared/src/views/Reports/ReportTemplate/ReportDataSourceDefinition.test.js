@@ -26,8 +26,19 @@ describe('Report Data Source Definition component', () => {
     });
   }
 
-  const dataSourceColumns = ['firstName', 'lastName'];
-  const relatedEntities = ['users', 'assignments'];
+  const dataSourceColumns = [{
+    format: 'json',
+    label: 'firstName',
+    type: 'string',
+    value: 'applications.firstName',
+  },
+  {
+    format: 'json',
+    label: 'lastName',
+    type: 'string',
+    value: 'applications.lastName',
+  }];
+  const relatedDataSources = ['users', 'assignments'];
 
   let wrapper;
 
@@ -54,18 +65,18 @@ describe('Report Data Source Definition component', () => {
 
       const allDataSourceColumnCheckboxes = findByRole(wrapper, 'group').findAll('input[type="checkbox"]');
       expect(allDataSourceColumnCheckboxes.length).toBe(2);
-      expect(allDataSourceColumnCheckboxes[0].attributes('value')).toBe('firstName');
-      expect(allDataSourceColumnCheckboxes[1].attributes('value')).toBe('lastName');
+      expect(allDataSourceColumnCheckboxes[0].attributes('value')).toBe('applications.firstName');
+      expect(allDataSourceColumnCheckboxes[1].attributes('value')).toBe('applications.lastName');
     });
 
-    it('renders the related data sources" buttons when the "relatedEntities" prop has items', () => {
+    it('renders the related data sources" buttons when the "relatedDataSources" prop has items', () => {
       let allFieldSets = wrapper.findAll('fieldset');
       const firstFieldsetLabel = allFieldSets[0].find('legend');
 
       expect(allFieldSets.length).toBe(1);
       expect(firstFieldsetLabel.text()).toBe('Available Columns');
 
-      wrapper = setup({ relatedEntities });
+      wrapper = setup({ relatedDataSources });
 
       allFieldSets = wrapper.findAll('fieldset');
       expect(allFieldSets.length).toBe(2);
@@ -89,13 +100,13 @@ describe('Report Data Source Definition component', () => {
 
       const [firstNameCheckbox, lastNameCheckbox] = findByRole(wrapper, 'group').findAll('input[type="checkbox"]');
       await firstNameCheckbox.setValue();
-      expect(wrapper.emitted()['set-column-selections'][0][0]).toEqual(['firstName']);
+      expect(wrapper.emitted()['set-column-selections'][0][0]).toEqual(['applications.firstName']);
       await lastNameCheckbox.setValue();
-      expect(wrapper.emitted()['set-column-selections'][1][0]).toEqual(['firstName', 'lastName']);
+      expect(wrapper.emitted()['set-column-selections'][1][0]).toEqual(['applications.firstName', 'applications.lastName']);
     });
 
     it('emits the related entity value when a related data source is selected', async () => {
-      wrapper = setup({ relatedEntities });
+      wrapper = setup({ relatedDataSources });
 
       const allFieldSets = wrapper.findAll('fieldset');
 
@@ -107,7 +118,7 @@ describe('Report Data Source Definition component', () => {
       const addUsersRelatedDataSourceButton = findByRole(usersRelatedDataSourceElement, 'menuitem');
 
       await addUsersRelatedDataSourceButton.trigger('click');
-      expect(wrapper.emitted()['set-related-entity-selections'][0]).toEqual(['users']);
+      expect(wrapper.emitted()['set-related-data-sources'][0]).toEqual(['users']);
     });
 
     it('emits "delete-data-source" when a data source definition card is deleted', async () => {

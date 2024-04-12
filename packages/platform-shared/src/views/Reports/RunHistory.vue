@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else
       :export-in-progress="exportInProgress"
       :report-runs="reportRuns"
+      :template-state="props.templateState"
       :updated-row="updateSingleTableRow"
       @download-report="downloadReport($event)"
       @export-report="exportReport($event)"
@@ -41,7 +42,7 @@ import { displayNotification, showErrorMessage } from '@forgerock/platform-share
 import { requestExport, requestReportRuns } from '@forgerock/platform-shared/src/utils/reportsUtils';
 import { downloadFile, getFileNameFromContentDisposition } from '@forgerock/platform-shared/src/utils/downloadFile';
 import { fetchDownload } from '@forgerock/platform-shared/src/api/AutoApi';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrRunHistoryTable from './RunHistoryTable';
@@ -53,6 +54,7 @@ import i18n from '@/i18n';
 
 // Composables
 const router = useRouter();
+const route = useRoute();
 const { bvModal } = useBvModal();
 
 defineEmits(['table-data-ready']);
@@ -66,6 +68,10 @@ const props = defineProps({
     default: null,
   },
   templateName: {
+    type: String,
+    default: '',
+  },
+  templateState: {
     type: String,
     default: '',
   },
@@ -113,7 +119,14 @@ const {
  * @param {String} runId Report job run ID
  */
 function viewReport(runId) {
-  router.push({ name: 'ReportView', params: { template: props.templateName, id: runId } });
+  router.push({
+    name: 'ReportView',
+    params: {
+      state: route.params.state,
+      template: props.templateName,
+      id: runId,
+    },
+  });
 }
 
 /**
@@ -272,7 +285,12 @@ async function exportReport({ fileType, item, exportStatus }) {
     if (exportResponse !== 'Error') {
       // We want to fetch the current report, which should have an updated
       // export status so we can update the export buttons with the latest state.
-      const fetchReport = await requestReportRuns({ runId, name: templateName, realm: store.state.realm });
+      const fetchReport = await requestReportRuns({
+        runId,
+        name: templateName,
+        realm: store.state.realm,
+        templateType: props.templateState,
+      });
       const [newTableItemReport] = reportHistoryTableDataGenerator(fetchReport);
       const newExportStatus = newTableItemReport.export[fileType];
       const newItemWithFetchedStatus = handleExportQueue(newTableItemReport, fileType, newExportStatus);
@@ -322,7 +340,12 @@ async function setVanityRunningStateForNewReport(reportRunsData, templateName, l
       const { status, runId } = newReportFromList;
       let report = [newReportFromList];
       if (status !== 'COMPLETED_SUCCESS') {
-        report = await requestReportRuns({ runId, name: templateName, realm: store.state.realm });
+        report = await requestReportRuns({
+          runId,
+          name: templateName,
+          realm: store.state.realm,
+          templateType: props.templateState,
+        });
       }
       updateSingleTableRow.value = reportHistoryTableDataGenerator(report);
     }, 1500);
@@ -343,7 +366,11 @@ async function setVanityRunningStateForNewReport(reportRunsData, templateName, l
  */
 async function initialize() {
   const templateName = props.templateName.toUpperCase();
-  const allReportRuns = await requestReportRuns({ name: templateName, realm: store.state.realm });
+  const allReportRuns = await requestReportRuns({
+    name: templateName,
+    realm: store.state.realm,
+    templateType: props.templateState,
+  });
 
   if (props.newReportJobId) {
     setVanityRunningStateForNewReport(allReportRuns, templateName, props.newReportJobId);

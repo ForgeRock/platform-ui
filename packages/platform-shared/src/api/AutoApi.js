@@ -35,6 +35,16 @@ export async function getReportRuns(params, appendUnderscores = false) {
 }
 
 /**
+  * Returns a list report filter operators
+  *
+  * @returns {Promise}
+  */
+export async function getReportOperators() {
+  const { data } = await generateAutoAccessReports().get('operators');
+  return data;
+}
+
+/**
   * Triggers an export / download request
   * @param {String} runId Report ID
   * @param {Object} params Additional query parameters to be encoded
@@ -50,11 +60,12 @@ export function reportExportRequest(runId, params, appendUnderscores = false) {
  * Posts a run report request
  *
  * @param {String} template Name of the template
+ * @param {String} state State of the template being ran (draft or published)
  * @param {Object} payload run report payload
  * @returns {Object} Contains job id, status, and status message
  */
-export async function runAnalyticsTemplate(template, payload) {
-  const { data: res } = await generateAutoAccessReports().post(`templates/${template}?_action=run`, {
+export async function runAnalyticsTemplate(template, state, payload) {
+  const { data: res } = await generateAutoAccessReports().post(`templates/${template}?_action=run&templateType=${state}`, {
     parameters: JSON.stringify(payload),
   });
   return res;
@@ -94,14 +105,18 @@ export function getReportParameterTypes() {
   * Gets the result of a Report Run.
   * @param {String} id Job ID of the report run.
   * @param {String} template Name of the report template.
+  * @param {String} state State of the report (draft or published)
+  * @param {Number} pageSize How many results to show per page
+  * @param {Number} pageResultsOffset How many results to offset by.
   * @returns {Object} Contains count of results and array of results.
   */
-export async function getReportResult(id, template, pageSize = 20, pagedResultsOffset = 0) {
+export async function getReportResult(id, template, state, pageSize = 20, pagedResultsOffset = 0) {
   const params = {
     _action: 'view',
     _pageSize: pageSize,
     _pagedResultsOffset: pagedResultsOffset,
     name: template,
+    templateType: state,
   };
   const { data } = await generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`);
   return data;
@@ -208,7 +223,7 @@ export async function getAutoAccessReportResult(userName, dateRange, template, n
  * @returns {Object}
  */
 export function saveAnalyticsReport(name, payload, viewers, description = '') {
-  return generateAutoAccessReports().post('templates?_action=create', {
+  return generateAutoAccessReports().post('templates?_action=create&templateType=draft', {
     reportTemplate: {
       name,
       description,

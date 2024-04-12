@@ -44,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem
         v-if="duplicateOption"
         :data-testid="`dropdown-duplicate-${testId}`"
-        @click="$emit('duplicate-clicked')">
+        @click="$emit('duplicate-clicked', $event)">
         <FrIcon
           icon-class="mr-2"
           name="control_point_duplicate">
@@ -58,7 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem
         v-if="showActiveToggle"
         :data-testid="`dropdown-active-toggle-${testId}`"
-        @click="$emit('toggle-clicked')">
+        @click="$emit('toggle-clicked', $event)">
         <FrIcon
           icon-class="mr-2"
           name="power_settings_new">

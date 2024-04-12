@@ -11,7 +11,10 @@ import ValidationRules from '@forgerock/platform-shared/src/utils/validationRule
 import { mount, flushPromises } from '@vue/test-utils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import i18n from '@/i18n';
-import Reports from './Reports';
+import ReportsGrid from './ReportsGrid';
+import store from '../../store';
+
+store.state.SharedStore.currentPackage = 'admin';
 
 ValidationRules.extendRules({
   alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
@@ -23,11 +26,11 @@ jest.mock('vue-router', () => ({
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 
-describe('Reports', () => {
+describe('ReportsGrid', () => {
   function setup(props) {
     const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
     useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
-    return mount(Reports, {
+    return mount(ReportsGrid, {
       global: {
         plugins: [i18n],
       },
@@ -45,7 +48,7 @@ describe('Reports', () => {
         version: 0,
         reportConfig: {},
         owner: null,
-        isOotb: false,
+        ootb: false,
         type: 'draft',
         createDate: '2010-10-10T10:10:10.123456789Z',
         updateDate: '2010-10-10T10:10:10.123456789Z',
@@ -112,6 +115,9 @@ describe('Reports', () => {
     const routerPushSpy = jest.spyOn(wrapper.vm.router, 'push');
     const editButton = findByText(wrapper, 'span', 'Edit');
     await editButton.trigger('click');
-    expect(routerPushSpy).toHaveBeenCalledWith({ name: 'EditReportTemplate', params: { id: 'TEMPLATE-NAME' } });
+    expect(routerPushSpy).toHaveBeenCalledWith({
+      name: 'EditReportTemplate',
+      params: { state: 'draft', template: 'template-name' },
+    });
   });
 });

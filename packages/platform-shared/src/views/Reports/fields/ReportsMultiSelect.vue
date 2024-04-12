@@ -6,9 +6,8 @@ of the MIT license. See the LICENSE file for details. -->
   <FrField
     v-model="selectValue"
     :internal-search="props.internalSearch"
-    :label="props.label"
+    :label="taggable && !selectValue.length ? $t('reports.tabs.runReport.pressEnterToCreateATag') : props.label"
     :options="filteredOptions"
-    :placeholder="taggable ? $t('reports.tabs.runReport.pressEnterToCreateATag') : props.placeholder"
     :show-no-options="true"
     :show-no-results="true"
     :taggable="taggable"
@@ -81,10 +80,6 @@ const props = defineProps({
   options: {
     type: Array,
     default: () => [],
-  },
-  placeholder: {
-    type: String,
-    default: '',
   },
   singleSelection: {
     type: Boolean,

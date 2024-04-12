@@ -23,11 +23,28 @@ export default function useReportParameters() {
   }
 
   /**
-   * We interpret the API data into a UI friendly data set.
+   * Gets the required parameters data: parameter types
+   * and the "user" managed object schema properties.
+   */
+  async function fetchParametersData() {
+    const [paramTypes, userSchema] = await Promise.all([
+      getReportParameterTypes(),
+      getManagedObject('user'),
+    ]);
+    parameterTypes.value = paramTypes.data || [];
+    managedUserSchema.value = userSchema?.schema?.properties || {};
+  }
+
+  /**
+   * Interprets the API data into a UI friendly data set.
    * @param {Object} definitions list of parameter definitions as they come in from the API
    * @returns {Array}
    */
-  function parameterDefinitions(definitions) {
+  async function parameterDefinitions(definitions) {
+    if (!parameterTypes.value.length) {
+      await fetchParametersData();
+    }
+
     if (definitions && Object.keys(definitions).length) {
       return Object.entries(definitions).map(([key, val]) => {
         let inputType = inputTypeLabel(val.type);
@@ -133,24 +150,10 @@ export default function useReportParameters() {
     return {};
   }
 
-  /**
-   * Gets the required parameters data: parameter types
-   * and the "user" managed object schema properties.
-   */
-  async function getParametersData() {
-    const [paramTypes, userSchema] = await Promise.all([
-      getReportParameterTypes(),
-      getManagedObject('user'),
-    ]);
-    parameterTypes.value = paramTypes.data || [];
-    managedUserSchema.value = userSchema?.schema?.properties || {};
-  }
-
   const parameterTypeLabels = computed(() => parameterTypes.value.map(({ label }) => label));
   const profileAttributeNames = computed(() => Object.keys(managedUserSchema.value).map((key) => key));
 
   return {
-    getParametersData,
     parameterDefinitions,
     parameterTypeLabels,
     parametersPayload,

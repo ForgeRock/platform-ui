@@ -153,20 +153,20 @@ const router = createRouter({
         {
           path: '',
           name: 'Reports',
-          component: () => import('@forgerock/platform-shared/src/views/Reports/Reports.vue'),
+          component: () => import('@forgerock/platform-shared/src/views/Reports/ReportsGrid.vue'),
         },
         {
-          path: ':template',
+          path: 'run/:state/:template',
           name: 'ReportRun',
           component: () => import('@forgerock/platform-shared/src/views/Reports/Report.vue'),
         },
         {
-          path: ':template/history',
+          path: 'history/:state/:template',
           name: 'ReportHistory',
           component: () => import('@forgerock/platform-shared/src/views/Reports/Report.vue'),
         },
         {
-          path: ':template/:id',
+          path: 'view/:state/:template/:id',
           name: 'ReportView',
           component: () => import('@forgerock/platform-shared/src/views/Reports/ReportView.vue'),
           meta: { hideNavBar: true, hideSideMenu: true },

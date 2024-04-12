@@ -12,9 +12,17 @@ of the MIT license. See the LICENSE file for details. -->
         footer-class="py-3 d-flex justify-content-between"
         tag="a"
         @click="emitRouterToTemplate(props.report?.name)">
-        <h2 class="h5">
-          {{ startCase(props.report?.name.toLowerCase()) }}
-        </h2>
+        <BCardHeader header-class="d-flex align-items-start p-0 mb-3 border-0">
+          <h2 class="h5 mb-0 flex-grow-1">
+            {{ startCase(props.report?.name.toLowerCase()) }}
+          </h2>
+          <BBadge
+            v-if="!props.report.ootb"
+            class="text-capitalize ml-2 "
+            :variant="props.report.type === 'published' ? 'success' : 'light'">
+            {{ props.report.type }}
+          </BBadge>
+        </BCardHeader>
         <p class="max-lines max-lines-3">
           {{ props.report?.description }}
         </p>
@@ -34,42 +42,33 @@ of the MIT license. See the LICENSE file for details. -->
             small
             :label="$t('common.loadingEtc')" />
           <FrActionsCell
-            v-else
-            :delete-option="props.report.isOotb === false"
-            :divider="props.report.isOotb === true"
-            :edit-option="props.report.isOotb === false"
+            v-else-if="isAdmin && props.report.ootb === false"
+            :delete-option="isAdmin && props.report.ootb === false"
+            :duplicate-option="isAdmin && props.report.ootb === false"
+            :divider="isAdmin && props.report.ootb === true"
+            :edit-option="isAdmin && props.report.ootb === false"
             @delete-clicked.stop="$emit('delete-template', props.report.name, props.report.type)"
-            @edit-clicked.stop="$emit('edit-template', props.report.name)"
+            @duplicate-clicked.stop="$emit('duplicate-template', props.report.name, props.report.type)"
+            @edit-clicked.stop="$emit('edit-template', props.report.name, reportState)"
             wrapper-class="pr-2">
             <template #custom-top-actions>
-              <!-- Duplicate & Publish buttons are hidden on purpose until the create report epic is complete -->
-              <template v-if="false">
-                <BDropdownItem
-                  @click.stop="$emit('duplicate-template', props.props.report.name, props.report.type)">
-                  <FrIcon
-                    icon-class="mr-2"
-                    name="control_point_duplicate">
-                    {{ $t('common.duplicate') }}
-                  </FrIcon>
-                </BDropdownItem>
-                <BDropdownItem
-                  v-if="props.report.isOotb === false && props.report.type === 'draft'"
-                  @click.stop="$emit('publish-template', props.report.name)">
-                  <FrIcon
-                    icon-class="mr-2"
-                    name="published_with_changes">
-                    {{ $t('common.publish') }}
-                  </FrIcon>
-                </BDropdownItem>
-              </template>
-              <BDropdownItem @click.stop="emitRouterToTemplate(props.report?.name, true)">
+              <BDropdownItem
+                v-if="isAdmin && props.report.ootb === false && props.report.type === 'draft'"
+                @click.stop="$emit('publish-template', props.report.name, reportState)">
                 <FrIcon
                   icon-class="mr-2"
-                  name="list_alt">
-                  {{ $t('reports.menu.runHistory') }}
+                  name="published_with_changes">
+                  {{ $t('common.publish') }}
                 </FrIcon>
               </BDropdownItem>
             </template>
+            <BDropdownItem @click.stop="emitRouterToTemplate(props.report?.name, true)">
+              <FrIcon
+                icon-class="mr-2"
+                name="list_alt">
+                {{ $t('reports.menu.runHistory') }}
+              </FrIcon>
+            </BDropdownItem>
           </FrActionsCell>
         </template>
       </BCard>
@@ -113,9 +112,12 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * @description  The card that shows the info of a report template.
  */
+import { computed } from 'vue';
 import {
+  BBadge,
   BButton,
   BCard,
+  BCardHeader,
   BDropdownItem,
   BSkeleton,
   BSkeletonWrapper,
@@ -124,6 +126,7 @@ import {
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { startCase } from 'lodash';
+import store from '@/store';
 
 const props = defineProps({
   reportNameCurrentlyProcessing: {
@@ -148,8 +151,14 @@ const emit = defineEmits([
 ]);
 
 const hasProperties = Object.keys(props.report).length > 0;
+const reportState = computed(() => {
+  const isOutOfTheBox = props.report.ootb;
+  const state = isOutOfTheBox ? 'published' : props.report.type;
+  return state || 'published';
+});
+const isAdmin = computed(() => store.state.SharedStore.currentPackage === 'admin');
 
 function emitRouterToTemplate(name, toHistory = false) {
-  emit('to-template', { name, toHistory });
+  emit('to-template', { name, toHistory, state: reportState.value });
 }
 </script>

@@ -33,7 +33,9 @@ of the MIT license. See the LICENSE file for details. -->
           </span>
         </h3>
       </BCol>
-      <BCol class="col-3 col-md-3 col-lg-4 d-flex justify-content-end align-items-center">
+      <BCol
+        v-if="state !== 'draft'"
+        class="col-3 col-md-3 col-lg-4 d-flex justify-content-end align-items-center">
         <BDropdown
           right
           toggle-class="text-nowrap d-flex align-items-center"
@@ -195,12 +197,11 @@ import store from '@/store';
 const router = useRouter();
 const route = useRoute();
 
-const { id, template } = route.params;
+const { id, state, template } = route.params;
 const {
   fetchViewReport,
   expiredMessage,
   isExpired,
-  pageToken,
   tableLoading,
   totalRows,
 } = useViewReportTable();
@@ -250,7 +251,7 @@ async function setConfigInfo(report) {
 async function getRunInfo() {
   try {
     const pagedResultOffset = (currentPage.value - 1) * perPage.value;
-    const reportResults = await fetchViewReport(template, id, perPage.value, pagedResultOffset, pageToken.value);
+    const reportResults = await fetchViewReport(id, template, state, perPage.value, pagedResultOffset);
     reportResults.forEach((item) => tableItems.value.push(item));
   } catch (err) {
     showErrorMessage(err, i18n.global.t('common.error'));
@@ -282,7 +283,7 @@ function pageSizeChange(pageSize) {
  * Routes to the Report History page.
  */
 function returnToTemplate() {
-  router.push({ name: 'ReportHistory', params: { template } });
+  router.push({ name: 'ReportHistory', params: { state, template } });
 }
 
 /**
@@ -305,6 +306,7 @@ watch(currentPage, (page) => {
     name: template,
     realm: store.state.realm,
     runId: id,
+    templateType: state,
   });
   const [report] = result;
   setConfigInfo(report);

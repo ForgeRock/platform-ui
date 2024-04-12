@@ -20,9 +20,11 @@ of the MIT license. See the LICENSE file for details. -->
         <Component
           v-if="tabIndex === index"
           :is="tab.component"
+          :is-pre-packaged-report="isPrePackagedReport"
           :new-report-job-id="newReportJobId"
           :report-config="reportConfigData"
           :template-name="templateName"
+          :template-state="templateState"
           @update-tab="updateTab"
           @table-data-ready="newReportJobId = null" />
       </BTab>
@@ -60,10 +62,12 @@ const route = useRoute();
 /**
  * GLOBALS
  */
+const isPrePackagedReport = ref(true);
 const reportConfigData = ref(null);
 const newReportJobId = ref(null);
 const routerMap = ['Report', 'ReportHistory'];
 const templateName = route.params.template;
+const templateState = route.params.state;
 const prettyTemplateName = templateName.toLowerCase().replace(/-/g, ' ');
 const tabIndex = ref(routerMap.indexOf(route.name));
 const tabItems = [
@@ -103,7 +107,10 @@ function updateTab(tabName, jobId) {
  */
 async function getReportTemplate() {
   try {
-    const { result } = await getReportTemplates({ queryFilter: `name eq ${templateName.toUpperCase()}` });
+    const { result } = await getReportTemplates({
+      _queryFilter: `name eq ${templateName.toUpperCase()}`,
+      templateType: templateState,
+    }, false);
     const [reportTemplate] = result;
 
     if (!reportTemplate) {
@@ -125,8 +132,8 @@ async function getReportTemplate() {
  * WATCHERS
  */
 watch(tabIndex, (index) => {
-  const routeUrl = index === 0 ? '' : 'history';
-  window.history.pushState(window.history.state, '', `#/reports/${templateName}/${routeUrl}`);
+  const routeUrl = index === 0 ? 'run' : 'history';
+  window.history.pushState(window.history.state, '', `#/reports/${routeUrl}/${route.params.state}/${templateName}`);
 });
 
 /**
@@ -136,10 +143,14 @@ watch(tabIndex, (index) => {
  *  |;|_|;|_|;|
  */
 (async () => {
-  const { reportConfig } = await getReportTemplate();
+  const report = await getReportTemplate();
 
-  if (reportConfig) {
-    reportConfigData.value = JSON.parse(reportConfig);
+  if (report && report.reportConfig) {
+    const { reportConfig } = report;
+    isPrePackagedReport.value = report.ootb;
+    if (reportConfig) {
+      reportConfigData.value = JSON.parse(reportConfig);
+    }
   }
 })();
 </script>
