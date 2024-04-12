@@ -63,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BImg
               class="mr-2"
               width="24"
-              :alt="option.text"
+              alt=""
               :src="option.imgSrc" />
             {{ option.text }}
           </span>

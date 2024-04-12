@@ -90,18 +90,23 @@ of the MIT license. See the LICENSE file for details. -->
       </transition>
       <input
         ref="searchRef"
-        v-if="searchable"
+        v-if="inputIsCombobox"
         :id="id"
-        class="multiselect__input"
+        :class="[
+          {
+            'multiselect__input': isOpen || !hasSingleLabelSlot,
+            'multiselect__single': !isOpen && !hasSingleLabelSlot,
+            'sr-only': hasSingleLabelSlot,
+          }]"
         :name="name"
         type="search"
-        :autocomplete="searchable ? 'on' : 'off'"
+        :autocomplete="isOpen && searchable ? 'on' : 'off'"
         :spellcheck="false"
         :placeholder="placeholder"
         :style="inputStyle"
         :value="isOpen ? search : getOptionLabel(singleValue)"
         :disabled="disabled"
-        :tabindex="inputIsCombobox ? 0 : -1"
+        tabindex="0"
         :data-testid="testid ? `multi-select-input-${testid}` : null "
         @input="updateSearch($event.target.value)"
         @click="activate()"
@@ -117,7 +122,7 @@ of the MIT license. See the LICENSE file for details. -->
         :aria-labelledby="inputIsCombobox ? comboboxLabelledby || `${id}-label` : null"
         :aria-required="inputIsCombobox ? isRequiredAria: null">
       <span
-        v-if="isSingleLabelVisible"
+        v-if="(isSingleLabelVisible && hasSingleLabelSlot && !isOpen) || wrapperIsCombobox"
         class="multiselect__single"
         @mousedown.prevent="toggle"
       >
@@ -158,7 +163,7 @@ of the MIT license. See the LICENSE file for details. -->
               :id="`${id}-${index}`"
               :role="!(option && option.$isLabel) ? 'option' : null"
               :aria-disabled="!isSelected(option) && option?.$isDisabled"
-              :aria-selected="isSelected(option)">
+              :aria-selected="isOpen ? pointer === index : null">
               <span
                 v-if="!(option && option.$isLabel)"
                 :class="optionHighlight(index, option)"
@@ -218,7 +223,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, useSlots } from 'vue';
 import { debounce, isNull, isUndefined } from 'lodash';
 import useMultiselect from './multiselectComposable';
 import usePointer from './pointerComposable';
@@ -520,6 +525,7 @@ const props = defineProps({
 const rootRef = ref(null);
 const searchRef = ref(null);
 const listRef = ref(null);
+const slots = useSlots();
 
 const {
   activate,
@@ -566,6 +572,7 @@ const {
   pointerSet,
 } = usePointer(props, filteredOptions, isSelected, wholeGroupDisabled, wholeGroupSelected, isOpen, select, listRef, searchRef, activate, rootRef, search, removeElement);
 
+const hasSingleLabelSlot = !!slots?.singleLabel;
 const hasOptionGroup = computed(() => props.groupValues && props.groupLabel && props.groupSelect);
 const visibleValues = computed(() => (props.multiple ? internalValue.value.slice(0, props.limit) : []));
 const singleValue = computed(() => internalValue.value[0]);
@@ -580,7 +587,7 @@ const selectLabelText = computed(() => (props.showLabels ? props.selectLabel : '
 const selectGroupLabelText = computed(() => (props.showLabels ? props.selectGroupLabel : ''));
 const selectedLabelText = computed(() => (props.showLabels ? props.selectedLabel : ''));
 const inputStyle = computed(() => {
-  if (props.searchable || (props.multiple && props.modelValue && props.modelValue.length)) {
+  if (props.multiple && props.modelValue && props.modelValue.length) {
     // Hide input by setting the width to 0 allowing it to receive focus
     return isOpen.value
       ? { width: '100%' }

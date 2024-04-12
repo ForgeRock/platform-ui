@@ -362,7 +362,7 @@ describe('Multiselect.vue', () => {
             },
           });
           expect(wrapper.vm.internalValue).toEqual(['1']);
-          expect(wrapper.find('.multiselect__single').text()).toContainEqual(
+          expect(wrapper.find('.multiselect__single').element.value).toContainEqual(
             '1',
           );
         });
@@ -378,7 +378,7 @@ describe('Multiselect.vue', () => {
             },
           });
           expect(wrapper.vm.internalValue).toEqual([{ id: '2' }]);
-          expect(wrapper.find('.multiselect__single').text()).toContainEqual(
+          expect(wrapper.find('.multiselect__single').element.value).toContainEqual(
             '2',
           );
         });
@@ -1879,7 +1879,7 @@ describe('Multiselect.vue', () => {
       });
 
       expect(wrapper.vm.isSingleLabelVisible).toBe(true);
-      expect(wrapper.find('.multiselect__single').text()).toContainEqual(
+      expect(wrapper.find('.multiselect__single').element.value).toContainEqual(
         '0',
       );
     });
