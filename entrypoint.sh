@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Copyright 2019-2021 ForgeRock AS. All Rights Reserved
 #
@@ -10,7 +10,7 @@
 
 /variable_replacement.sh /usr/share/nginx/html/js/*.js
 
-if [[ -v SUBFOLDER ]]; then
+if [ -n "$SUBFOLDER" ]; then
     echo "Hosting under $SUBFOLDER"
     # creating with -p will build out recursive folders;
     mkdir -p /usr/share/nginx/html/$SUBFOLDER
