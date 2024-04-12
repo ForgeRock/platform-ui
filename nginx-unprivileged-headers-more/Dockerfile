@@ -47,17 +47,20 @@ RUN CONFARGS=$(nginx -V 2>&1 | sed -n -e 's/^.*arguments: //p') \
 
 USER 101
 
-# Main stage, combine the upstream nginx image with the built module and update dependencies
-FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}
+# Main stage, combine the upstream nginx image alpine slim variant with the built module and update dependencies
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}-alpine-slim
 
 COPY nginx-unprivileged-headers-more/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /usr/src/nginx-${NGINX_VERSION}/objs/ngx_http_headers_more_filter_module.so /usr/lib/nginx/modules/ngx_http_headers_more_filter_module.so
 
 USER root
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    rm -rf /var/cache/apt
+RUN apk update && \
+  apk upgrade && \
+  rm -rf /var/cache/apk/*
+
+# Install gettext for envsubst used in variable_replacement.sh
+RUN apk add --no-cache gettext
 
 RUN chown -R nginx /usr/share/nginx/html
 USER nginx
