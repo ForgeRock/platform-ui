@@ -25,7 +25,7 @@ import {
 import store from '../../store';
 
 jest.mock('vue-router', () => ({
-  useRoute: jest.fn(() => ({ params: { template: 'template-name' } })),
+  useRoute: jest.fn(() => ({ params: { template: 'template-name', state: 'draft' } })),
   useRouter: jest.fn(() => ({
     push: jest.fn(),
   })),
@@ -105,7 +105,7 @@ describe('Run Report component', () => {
       const fieldRows = fieldsContainer.findAll('.row');
       expect(fieldRows.length).toBe(1);
 
-      const field = wrapper.find('[placeholder="Last 7 days"]');
+      const field = findByRole(wrapper, 'combobox');
       expect(field.exists()).toBe(true);
       jest.clearAllMocks();
     });
@@ -120,18 +120,13 @@ describe('Run Report component', () => {
         jest.clearAllMocks();
       });
 
-      it('ensures that the "Last 7 days" datepicker values are the default values', () => {
-        const timeframeField = wrapper.find('[placeholder="Last 7 days"]').find('.multiselect__placeholder');
-        expect(timeframeField.text()).toBe('Last 7 days');
-      });
-
       it('reveals the datepicker components if the "custom" option is selected', async () => {
         const datePickerStart = findByTestId(wrapper, 'datepicker-start');
         const datePickerEnd = findByTestId(wrapper, 'datepicker-end');
         expect(datePickerStart.isVisible()).toBe(false);
         expect(datePickerEnd.isVisible()).toBe(false);
 
-        const timeFrameField = wrapper.find('[placeholder="Last 7 days"]');
+        const timeFrameField = findByRole(wrapper, 'combobox');
         await timeFrameField.trigger('click');
 
         const customTimeframeOption = timeFrameField.findAll('li')[4].find('span');
@@ -152,7 +147,7 @@ describe('Run Report component', () => {
         const submitButton = findByTestId(wrapper, 'run-report-button');
         expect(submitButton.attributes('disabled')).toBeFalsy();
 
-        const timeFrameField = wrapper.find('[placeholder="Last 7 days"]');
+        const timeFrameField = findByRole(wrapper, 'combobox');
         await timeFrameField.trigger('click');
 
         const customTimeframeOption = timeFrameField.findAll('li')[4].find('span');
@@ -223,6 +218,7 @@ describe('Run Report component', () => {
         fieldDataMocks();
         wrapper = setup({
           templateName: 'TEMPLATE-NAME',
+          templateState: 'draft',
           reportConfig: { parameters: { my_unexpected_parameter: { type: 'string' } } },
         });
         await flushPromises();
@@ -316,7 +312,7 @@ describe('Run Report component', () => {
         const submitButton = findByTestId(wrapper, 'run-report-button');
         await submitButton.trigger('click');
 
-        expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', { my_unexpected_parameter: 'My unexpected parameter input value' });
+        expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { my_unexpected_parameter: 'My unexpected parameter input value' });
       });
     });
   });
@@ -343,6 +339,7 @@ describe('Run Report component', () => {
       jest.clearAllMocks();
       wrapper = setup({
         templateName: 'TEMPLATE-NAME',
+        templateState: 'draft',
         reportConfig: { parameters: { [parameter]: {} } },
       });
       await flushPromises();
@@ -364,7 +361,7 @@ describe('Run Report component', () => {
         // dates is not feasable because milliseconds will never be exact.
         expect(runReportSpy).toHaveBeenCalled();
       } else {
-        expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', { [parameter]: defaultValue });
+        expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { [parameter]: defaultValue });
       }
       expect(wrapper.emitted('update-tab')).toEqual([['report-history']]);
       expect(successSpy).toHaveBeenCalled();

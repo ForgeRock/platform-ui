@@ -22,8 +22,8 @@ to such license between the licensee and ForgeRock AS. -->
       v-model="entityValue"
       :disabled="isSaving"
       :internal-search="true"
-      :label="entities.length ? $t('reports.template.dataSource') : $t('reports.template.noDataSourcesFound')"
-      :options="entities"
+      :label="columnCheckboxNames.length ? $t('reports.template.dataSource') : $t('reports.template.noDataSourcesFound')"
+      :options="columnCheckboxNames"
       class="mb-5"
       name="data-source-field"
       type="select" />
@@ -40,7 +40,7 @@ to such license between the licensee and ForgeRock AS. -->
           :disabled="disableSave"
           :show-spinner="isSaving"
           :spinner-text="$t('common.loading')"
-          @click="$emit('add-entity', entityValue);"
+          @click="$emit('add-data-source', entityValue);"
           variant="primary" />
       </div>
     </template>
@@ -59,9 +59,9 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import i18n from '@/i18n';
 
 // Definitions
-defineEmits(['add-entity']);
+defineEmits(['add-data-source']);
 const props = defineProps({
-  entities: {
+  columnCheckboxNames: {
     type: Array,
     default: () => [],
   },

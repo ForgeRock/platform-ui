@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BButton>
       </template>
       <template #cell(export)="{ item }">
-        <template v-if="item.reportStatus === 'complete' || item.reportIsExpiredAndHasAtLeastOneDownload()">
+        <template v-if="props.templateState !== 'draft' && (item.reportStatus === 'complete' || item.reportIsExpiredAndHasAtLeastOneDownload())">
           <BTooltip :target="item.tooltipId()">
             {{ item.tooltipLabel() }}
           </BTooltip>
@@ -76,8 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :name="item.hasAnyErrors() ? 'error_outline' : 'file_download'" />
               </div>
             </template>
-            <BDropdownGroup
-              v-if="item.reportStatus === 'complete' || item.reportIsExpiredAndHasAtLeastOneDownload()">
+            <BDropdownGroup>
               <template
                 v-for="(exportStatus, fileType) in item.export"
                 :key="fileType">
@@ -169,6 +168,10 @@ const props = defineProps({
   reportRuns: {
     type: Array,
     default: () => [],
+  },
+  templateState: {
+    type: String,
+    default: '',
   },
   updatedRow: {
     type: Array,

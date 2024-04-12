@@ -7,7 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import TimeframeField from './TimeframeField';
 
@@ -29,7 +29,7 @@ describe('Timeframe field for running reports', () => {
     it('emits "field-value-update" when the FrField input updated', async () => {
       wrapper = setup();
 
-      const timeframeField = wrapper.find('[placeholder="Last 7 days"]');
+      const timeframeField = findByRole(wrapper, 'combobox');
       await timeframeField.trigger('click');
 
       const firstTimeframeFieldOption = timeframeField.findAll('li')[0].find('span');
@@ -44,11 +44,10 @@ describe('Timeframe field for running reports', () => {
 
       const datepickerField = findByTestId(wrapper, 'datepicker-start');
       expect(datepickerField.isVisible()).toBe(false);
+      const timeframeField = findByRole(wrapper, 'combobox');
+      await timeframeField.trigger('click');
 
-      const timeFrameField = wrapper.find('[placeholder="Last 7 days"]');
-      await timeFrameField.trigger('click');
-
-      const customTimeframeOption = timeFrameField.findAll('li')[4].find('span');
+      const customTimeframeOption = timeframeField.findAll('li')[4].find('span');
       expect(customTimeframeOption.text()).toBe('Custom');
 
       await customTimeframeOption.trigger('click');

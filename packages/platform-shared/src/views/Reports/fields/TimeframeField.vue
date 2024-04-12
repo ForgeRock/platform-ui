@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       :name="`timeframe_${_uid}`"
       type="select"
       :options="timeframeOptions"
-      :placeholder="$t('reports.tabs.runReport.timeframe.last7Days')"
+      :label="label"
       :searchable="false" />
     <BCollapse
       data-testid="timeframe-datepicker-fields"
@@ -49,15 +49,20 @@ import dayjs from 'dayjs';
 import i18n from '@/i18n';
 
 const emit = defineEmits(['start-date-update', 'end-date-update']);
+defineProps({
+  label: {
+    type: String,
+    default: '',
+  },
+});
+/**
+ * Globals
+ */
 const customTimeframeOption = i18n.global.t('reports.tabs.runReport.timeframe.custom');
 const todayOption = i18n.global.t('reports.tabs.runReport.timeframe.today');
 const yesterdayOption = i18n.global.t('reports.tabs.runReport.timeframe.yesterday');
 const last7DaysOption = i18n.global.t('reports.tabs.runReport.timeframe.last7Days');
 const last30DaysOption = i18n.global.t('reports.tabs.runReport.timeframe.last30Days');
-
-/**
- * Globals
- */
 const dateFormat = { year: 'numeric', month: 'numeric', day: 'numeric' };
 const timeframeOptions = [
   todayOption,

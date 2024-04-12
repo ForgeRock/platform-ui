@@ -63,6 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
         :max-depth="maxDepth"
         :path="path"
         :properties="properties"
+        :property-select-label="propertySelectLabel"
         @add-rule="addRule"
         @remove-rule="removeRule"
         @rule-change="ruleChange">
@@ -215,6 +216,10 @@ export default {
     properties: {
       default: () => [],
       type: Array,
+    },
+    propertySelectLabel: {
+      default: '',
+      type: String,
     },
   },
   methods: {

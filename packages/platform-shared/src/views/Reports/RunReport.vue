@@ -8,23 +8,24 @@ of the MIT license. See the LICENSE file for details. -->
   </BCard>
   <BCard
     v-else
-    :class="noFieldsToShow ? '' : 'fr-run-report-card'"
-    :footer-border-variant="noFieldsToShow ? 'white' : 'default'"
-    :no-body="noFieldsToShow">
+    :class="isPrePackagedReportWithNoParameters ? '' : 'fr-run-report-card'"
+    :footer-border-variant="isPrePackagedReportWithNoParameters ? 'white' : 'default'"
+    :no-body="isPrePackagedReportWithNoParameters">
     <BContainer
       class="p-0"
       data-testid="fr-run-report-container">
-      <BRow v-if="showTimeframe">
+      <BRow v-if="isPrePackagedReport && showTimeframe">
         <BCol md="3">
           {{ $t('reports.tabs.runReport.timeframe.label') }}
         </BCol>
         <BCol md="9">
           <FrTimeframeField
+            :label="$t('reports.tabs.runReport.timeframe.label')"
             @end-date-update="endDateModel = $event"
             @start-date-update="startDateModel = $event" />
         </BCol>
       </BRow>
-      <BRow v-if="showApplications">
+      <BRow v-if="isPrePackagedReport && showApplications">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.applications.label }}
         </BCol>
@@ -32,13 +33,14 @@ of the MIT license. See the LICENSE file for details. -->
           <FrReportsMultiSelect
             class="mb-3"
             data-testid="fr-field-applications"
+            :label="_REPORT_FIELDS_CONTROLLER.applications.label"
             :options="applicationOptionsFiltered"
             :taggable="fieldIsTaggable('applications')"
             @input="applicationsModel = $event"
             @search="searchDebounce($event, 'applications')" />
         </BCol>
       </BRow>
-      <BRow v-if="showOAuthApplications">
+      <BRow v-if="isPrePackagedReport && showOAuthApplications">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.oauth2_applications.label }}
         </BCol>
@@ -46,13 +48,14 @@ of the MIT license. See the LICENSE file for details. -->
           <FrReportsMultiSelect
             class="mb-3"
             data-testid="fr-field-oauth-applications"
+            :label="_REPORT_FIELDS_CONTROLLER.oauth2_applications.label"
             :options="oAuthApplicationOptionsFiltered"
             :taggable="fieldIsTaggable('oauth2_applications')"
             @input="oAuthApplicationsModel = $event"
             @search="searchDebounce($event, 'oauth2_applications')" />
         </BCol>
       </BRow>
-      <BRow v-if="showOutcome">
+      <BRow v-if="isPrePackagedReport && showOutcome">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.treeResult.label }}
         </BCol>
@@ -61,12 +64,13 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-outcome"
             :internal-search="true"
+            :label="_REPORT_FIELDS_CONTROLLER.treeResult.label"
             :options="outcomeOptions"
             :placeholder="$t('reports.tabs.runReport.outcome.allOutcomes')"
             @input="outcomeFieldValue = $event" />
         </BCol>
       </BRow>
-      <BRow v-if="showCampaignName">
+      <BRow v-if="isPrePackagedReport && showCampaignName">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.campaign_name.label }}
         </BCol>
@@ -75,14 +79,14 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="show-campaign-status"
             :internal-search="true"
+            :label="_REPORT_FIELDS_CONTROLLER.campaign_name.label"
             :options="campaignNameOptionsFiltered"
-            :placeholder="_REPORT_FIELDS_CONTROLLER.campaign_name.label"
             :single-selection="true"
             :taggable="true"
             @input="campaignNameModel = $event[0]" />
         </BCol>
       </BRow>
-      <BRow v-if="showCampaignStatus">
+      <BRow v-if="isPrePackagedReport && showCampaignStatus">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.campaign_status.label }}
         </BCol>
@@ -91,14 +95,14 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-campaign-status"
             :internal-search="true"
+            :label="_REPORT_FIELDS_CONTROLLER.campaign_status.label"
             :options="campaignStatusOptions"
-            :placeholder="_REPORT_FIELDS_CONTROLLER.campaign_status.label"
             :single-selection="true"
             :taggable="true"
             @input="campaignStatusFieldValue = $event" />
         </BCol>
       </BRow>
-      <BRow v-if="showUsers">
+      <BRow v-if="isPrePackagedReport && showUsers">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.user_names.label }}
         </BCol>
@@ -106,13 +110,14 @@ of the MIT license. See the LICENSE file for details. -->
           <FrReportsMultiSelect
             class="mb-3"
             data-testid="fr-field-users"
+            :label="_REPORT_FIELDS_CONTROLLER.user_names.label"
             :options="usersOptionsFiltered"
             :taggable="fieldIsTaggable('user_names')"
             @input="usersModel = $event"
             @search="searchDebounce($event, 'user_names')" />
         </BCol>
       </BRow>
-      <BRow v-if="showStatus">
+      <BRow v-if="isPrePackagedReport && showStatus">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.status.label }}
         </BCol>
@@ -121,12 +126,12 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-status"
             :internal-search="true"
+            :label="_REPORT_FIELDS_CONTROLLER.status.label"
             :options="statusOptions"
-            :label="$t('reports.tabs.runReport.status.allStatuses')"
             @input="statusFieldValue = $event" />
         </BCol>
       </BRow>
-      <BRow v-if="showJourneys">
+      <BRow v-if="isPrePackagedReport && showJourneys">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.journeyName.label }}
         </BCol>
@@ -135,12 +140,13 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-journeys"
             :internal-search="true"
+            :label="_REPORT_FIELDS_CONTROLLER.journeyName.label"
             :options="journeyOptionsFiltered"
             :taggable="fieldIsTaggable('journeyName')"
             @input="journeysModel = $event" />
         </BCol>
       </BRow>
-      <BRow v-if="showOrgs">
+      <BRow v-if="isPrePackagedReport && showOrgs">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.org_names.label }}
         </BCol>
@@ -148,13 +154,14 @@ of the MIT license. See the LICENSE file for details. -->
           <FrReportsMultiSelect
             class="mb-3"
             data-testid="fr-field-organizations"
+            :label="_REPORT_FIELDS_CONTROLLER.org_names.label"
             :options="orgOptionsFiltered"
             :taggable="fieldIsTaggable('org_names')"
             @input="organizationsModel = $event"
             @search="searchDebounce($event, 'org_names')" />
         </BCol>
       </BRow>
-      <BRow v-if="showRoles">
+      <BRow v-if="isPrePackagedReport && showRoles">
         <BCol md="3">
           {{ _REPORT_FIELDS_CONTROLLER.roles.label }}
         </BCol>
@@ -162,6 +169,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrReportsMultiSelect
             class="mb-3"
             data-testid="fr-field-roles"
+            :label="_REPORT_FIELDS_CONTROLLER.roles.label"
             :options="rolesOptionsFiltered"
             :taggable="fieldIsTaggable('roles')"
             @input="rolesModel = $event"
@@ -181,7 +189,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrField
               v-model="parameter.value"
               class="mb-3"
-              :label="parameter.label"
+              :label="parameter.type === 'multiselect' && !parameter.value.length ? $t('reports.tabs.runReport.pressEnterToCreateATag') : parameter.label"
               :placeholder="parameter.type === 'multiselect' ? $t('reports.tabs.runReport.pressEnterToCreateATag') : ''"
               :name="parameter.label"
               :show-no-options="false"
@@ -202,16 +210,16 @@ of the MIT license. See the LICENSE file for details. -->
     </BContainer>
 
     <template #footer>
-      <div :class="`d-flex justify-content-${noFieldsToShow ? 'between' : 'end'} align-items-center`">
+      <div :class="`d-flex justify-content-${isPrePackagedReportWithNoParameters ? 'between' : 'end'} align-items-center`">
         <p
-          v-if="noFieldsToShow"
+          v-if="isPrePackagedReportWithNoParameters"
           class="text-dark m-0 text-capitalize">
           <strong>{{ $t('reports.tabs.runReport.title') }}</strong>
         </p>
         <FrButtonWithSpinner
           data-testid="run-report-button"
           variant="primary"
-          :button-text="noFieldsToShow ? $t('reports.tabs.runReport.runNow') : $t('reports.tabs.runReport.title')"
+          :button-text="isPrePackagedReportWithNoParameters ? $t('reports.tabs.runReport.runNow') : $t('reports.tabs.runReport.title')"
           :disabled="disableSubmit || isSubmitting"
           :spinner-text="$t('common.submitting')"
           :show-spinner="isSubmitting"
@@ -276,6 +284,14 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  templateState: {
+    type: String,
+    default: '',
+  },
+  isPrePackagedReport: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 /**
@@ -288,15 +304,15 @@ const isSubmitting = ref(false);
  * GLOBALS
  */
 const _PARAMETER_KEYS = ref([]);
-const noFieldsToShow = computed(() => {
+const isPrePackagedReportWithNoParameters = computed(() => {
   const includesRealmAsParameter = _PARAMETER_KEYS.value.includes('realm');
 
   // Parameters will usually contain 'realm', which is not a field, so this is
   // why we check for less than 2 parameters (meaning realm is the only value).
-  if (includesRealmAsParameter) {
+  if (props.isPrePackagedReport && includesRealmAsParameter) {
     return _PARAMETER_KEYS.value.length < 2;
   }
-  return _PARAMETER_KEYS.value.length < 1;
+  return props.isPrePackagedReport && _PARAMETER_KEYS.value.length < 1;
 });
 
 /**
@@ -536,7 +552,7 @@ async function submitRunReport() {
 
   try {
     isSubmitting.value = true;
-    const { id } = await runAnalyticsTemplate(props.templateName, payload);
+    const { id } = await runAnalyticsTemplate(props.templateName, props.templateState, payload);
     emit('update-tab', 'report-history', id);
     displayNotification('success', i18n.global.t('reports.tabs.runReport.success'));
   } catch (error) {
@@ -561,13 +577,13 @@ async function setReportFields(reportConfig) {
     integer: 'number',
   };
 
-  _PARAMETER_KEYS.value = Object.keys(parameters);
+  _PARAMETER_KEYS.value = parameters ? Object.keys(parameters) : [];
   _PARAMETER_KEYS.value.forEach((key) => {
     // We map the template report config parameter keys to the _REPORT_FIELDS_CONTROLLER
     // object so we can decide what fields to show and what information to fetch.
     const field = _REPORT_FIELDS_CONTROLLER[key];
 
-    if (field) {
+    if (field && props.isPrePackagedReport !== false) {
       const fieldNeedsToFetch = field.fetch;
 
       // Some fields are not fetchable in enduser, so we need to pass a flag

@@ -13,6 +13,9 @@ import {
 import { mount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import ReportCard from './ReportCard';
+import store from '../../store';
+
+store.state.SharedStore.currentPackage = 'admin';
 
 describe('Report Card', () => {
   let wrapper;
@@ -68,7 +71,7 @@ describe('Report Card', () => {
     wrapper = setup({
       report: {
         ...report,
-        isOotb: false,
+        ootb: false,
       },
     });
 
@@ -80,27 +83,25 @@ describe('Report Card', () => {
     expect(spinnerButton.exists()).toBe(true);
   });
 
-  it('hides the delete option for out of the box reports', async () => {
+  it('hides the ellipse menu for out of the box reports', async () => {
     wrapper = setup({
       report: {
-        isOotb: true,
+        ootb: true,
         ...report,
       },
     });
-    const menu = findByRole(wrapper, 'menu');
-    let deleteOption = findByText(menu, 'a', 'deleteDelete');
-    expect(deleteOption).toBeUndefined();
-
-    await wrapper.setProps({ report: { ...report, isOotb: false } });
-    deleteOption = findByText(menu, 'a', 'deleteDelete');
-    expect(deleteOption.exists()).toBe(true);
+    let menu = findByRole(wrapper, 'menu');
+    expect(menu.exists()).toBe(false);
+    await wrapper.setProps({ report: { ...report, ootb: false } });
+    menu = findByRole(wrapper, 'menu');
+    expect(menu.exists()).toBe(true);
   });
 
   it('emits the correct information when the delete button is clicked', async () => {
     wrapper = setup({
       report: {
         ...report,
-        isOotb: false,
+        ootb: false,
       },
     });
 

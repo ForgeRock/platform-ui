@@ -21,6 +21,7 @@ jest.mock('vue-router', () => ({
   useRouter: jest.fn(() => ({
     push: jest.fn(),
   })),
+  useRoute: jest.fn(() => ({ params: { template: 'template-name', state: 'draft' } })),
 }));
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
@@ -56,6 +57,7 @@ describe('Run History component', () => {
           newReportJobId: 'job_0123',
           reportConfig: {},
           templateName: 'template-name',
+          templateState: 'published',
         });
       });
 
@@ -135,6 +137,7 @@ describe('Run History component', () => {
         wrapper = setup({
           reportConfig: {},
           templateName: 'template-name',
+          templateState: 'published',
         });
 
         await nextTick();
@@ -153,6 +156,7 @@ describe('Run History component', () => {
       wrapper = setup({
         reportConfig: {},
         templateName: 'template-name',
+        templateState: 'published',
       });
     });
 
@@ -184,7 +188,12 @@ describe('Run History component', () => {
       JSONExportButton.trigger('click');
       await nextTick();
       expect(requestExportSpy).toHaveBeenCalledWith('job_0123', 'export', 'TEMPLATE-NAME', 'jsonl');
-      expect(requestReportRunsSpy).toHaveBeenCalledWith({ name: 'TEMPLATE-NAME', runId: 'job_0123' });
+      expect(requestReportRunsSpy).toHaveBeenCalledWith({
+        name: 'TEMPLATE-NAME',
+        runId: 'job_0123',
+        templateType: 'published',
+        realm: undefined,
+      });
       expect(JSONExportButton.text()).toMatch(/(Loading...)/i); // loading (spinner) button state
 
       await flushPromises();

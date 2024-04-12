@@ -76,17 +76,17 @@ export default function useViewReportTable() {
 
   /**
    * Calls the endpoint to get the View Report data.
-   * @param {String} template The name of the template.
    * @param {String} id The Job ID of the Report Run.
+   * @param {String} template The name of the template.
+   * @param {String} state State of the report (draft or published)
    * @param {String} pageSize The amount of results to show.
    * @param {String} pagedResultsOffset The results batch to fetch.
-   * @param {String} pagedResultsCookie pagination cookie.
    * @returns {Array}
    */
-  const fetchViewReport = async (template, id, pageSize, pagedResultsOffset, pagedResultsCookie) => {
+  const fetchViewReport = async (id, template, state, pageSize, pagedResultsOffset) => {
     tableLoading.value = true;
     try {
-      const tableItems = await getReportResult(id, template, pageSize, pagedResultsOffset, pagedResultsCookie);
+      const tableItems = await getReportResult(id, template, state, pageSize, pagedResultsOffset);
       totalRows.value = tableItems.total;
       pageToken.value = tableItems.pageToken;
       return arrangeTable(tableItems);

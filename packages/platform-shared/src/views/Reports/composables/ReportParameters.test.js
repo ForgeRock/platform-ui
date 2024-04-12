@@ -11,7 +11,6 @@ import useReportParameters from './ReportParameters';
 
 describe('@useReportParameters', () => {
   const {
-    getParametersData,
     parameterDefinitions,
     parameterTypeLabels,
     parametersPayload,
@@ -64,27 +63,29 @@ describe('@useReportParameters', () => {
   }));
 
   describe('@unit', () => {
+    const parametersAPIUserProvided = {
+      paramOne: {
+        source: 'user_provided',
+        label: 'paramOne label',
+        description: 'param description',
+        type: 'string',
+        enum: [{
+          name: 'enumName',
+          value: 'enumVal',
+        }],
+        item: { type: 'string' },
+      },
+    };
+
     it('gets the expected parameters data and ensures that parameter types and schema properties output expected lists', async () => {
-      await getParametersData();
+      await parameterDefinitions(parametersAPIUserProvided);
       expect(parameterTypeLabels.value).toEqual(['String', 'Boolean']);
       expect(profileAttributeNames.value).toEqual(['_id', 'name', 'group']);
     });
 
-    it('outputs a UI friendly data set from an expected API input', () => {
-      const parametersAPIUserProvided = {
-        paramOne: {
-          source: 'user_provided',
-          label: 'paramOne label',
-          description: 'param description',
-          type: 'string',
-          enum: [{
-            name: 'enumName',
-            value: 'enumVal',
-          }],
-          item: { type: 'string' },
-        },
-      };
-      expect(parameterDefinitions(parametersAPIUserProvided)).toEqual([userProvidedEnumeratedMultivalued]);
+    it('outputs a UI friendly data set from an expected API input', async () => {
+      const firstDefinition = await parameterDefinitions(parametersAPIUserProvided);
+      expect(firstDefinition).toEqual([userProvidedEnumeratedMultivalued]);
 
       const parametersAPIProfileAttribute = {
         mySecondParam: {
@@ -93,7 +94,9 @@ describe('@useReportParameters', () => {
           profile_attribute: '_id',
         },
       };
-      expect(parameterDefinitions(parametersAPIProfileAttribute)).toEqual([{
+
+      const secondDefinition = await parameterDefinitions(parametersAPIProfileAttribute);
+      expect(secondDefinition).toEqual([{
         _id: 'mySecondParam',
         enumeratedValues: [],
         helpText: undefined,

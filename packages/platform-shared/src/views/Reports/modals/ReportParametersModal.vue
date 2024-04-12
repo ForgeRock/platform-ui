@@ -45,7 +45,14 @@ to such license between the licensee and ForgeRock AS. -->
           type="select"
           :internal-search="true"
           :label="$t('reports.template.inputType')"
-          :options="parameterTypes" />
+          :options="parameterTypes">
+          <template
+            v-for="(slotName, index) in ['singleLabel', 'option']"
+            :key="index"
+            #[slotName]="{ option }">
+            {{ getTranslation(option.text) }}
+          </template>
+        </FrField>
       </BFormGroup>
       <BFormGroup>
         <FrField
@@ -179,6 +186,7 @@ import {
   BModal,
   BFormRadioGroup,
 } from 'bootstrap-vue';
+import { getTranslation } from '@forgerock/platform-shared/src/utils/translations';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';

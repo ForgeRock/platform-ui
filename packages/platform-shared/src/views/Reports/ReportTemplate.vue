@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="h-100 d-flex flex-column">
     <FrReportTemplateHeader
-      :disable-save="disableTemplateSave"
+      :disable-save="disableTemplateSave || templateDoesNotHaveSelectedColumns"
       :report-state="reportState"
       :is-duplicating="isDuplicating"
       :is-saving="isSavingTemplate"
@@ -17,17 +17,17 @@ of the MIT license. See the LICENSE file for details. -->
       class="d-flex w-100 h-100 overflow-auto"
       role="main">
       <template v-if="templateHasAtLeastOneDataSource">
-        <FrReportDataSourceTable />
+        <FrReportDataSourceTable :data-sources="findSettingsObject('entities').definitions" />
         <FrReportTemplateSettings
           v-model="reportDetails"
           :is-saving="isSavingDefinition"
           :report-settings="reportSettings"
-          @delete-data-source="deleteDataSource"
-          @delete-definition="updateSettings"
-          @update-definitions="openSettingsModal"
-          @set-aggregate="setAggregate"
-          @set-column-selections="setDataSourceColumnSelections"
-          @set-related-entity-selections="setRelatedEntitySelections" />
+          @delete-data-source="onDeleteDataSource"
+          @delete-definition="updateSettingsAndSaveTemplate"
+          @update-definitions="onUpdateDefinitions"
+          @set-aggregate="onSetAggregate"
+          @set-column-selections="onSetColumnSelections"
+          @set-related-data-sources="onSetRelatedDataSources" />
       </template>
       <FrReportAddDataSourceCard
         v-else
@@ -35,17 +35,25 @@ of the MIT license. See the LICENSE file for details. -->
         @open-data-source-modal="bvModal.show('report-data-sources-modal')" />
     </main>
     <FrReportDataSourceModal
-      :entities="entityOptions"
+      :column-checkbox-names="dataSourceColumnCheckboxNames"
       :is-saving="isFetchingEntityColumns"
       :is-testing="isTesting"
-      @add-entity="addEntity" />
+      @add-data-source="addDataSource" />
     <FrReportParametersModal
       :is-saving="isSavingDefinition"
       :is-testing="isTesting"
       :parameter-types="parameterTypeLabels"
       :parameter="currentDefinitionBeingEdited"
       :profile-attributes="profileAttributeNames"
-      @update-parameter="updateSettings" />
+      @update-parameter="updateSettingsAndSaveTemplate" />
+    <FrReportFiltersModal
+      :data-source-columns="dataSourceColumns"
+      :existing-filter="findSettingsObject('filter').definitions"
+      :is-saving="isSavingDefinition"
+      :condition-options="reportConditionals"
+      :variable-options="filterVariableOptions"
+      @get-field-options="fetchFieldOptionsForFilters"
+      @update-filters="updateSettingsAndSaveTemplate" />
     <FrDeleteModal
       :is-deleting="isDeletingTemplate"
       :translated-item-type="$t('common.report')"
@@ -62,7 +70,7 @@ import {
   computed, ref, watch,
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { displayNotification } from '@forgerock/platform-shared/src/utils/notification';
+import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import {
   deleteAnalyticsReport,
   duplicateAnalyticsReport,
@@ -84,6 +92,7 @@ import FrReportDataSourceTable from './ReportTemplate/ReportDataSourceTable';
 import FrReportTemplateSettings from './ReportTemplate/ReportTemplateSettings';
 import FrReportDataSourceModal from './modals/ReportDataSourceModal';
 import FrReportParametersModal from './modals/ReportParametersModal';
+import FrReportFiltersModal from './modals/ReportFiltersModal';
 import i18n from '@/i18n';
 import { defaultGroups } from './composables/ManagedUsers';
 
@@ -99,19 +108,30 @@ const { bvModal } = useBvModal();
 const router = useRouter();
 const route = useRoute();
 const {
-  getParametersData,
   parameterDefinitions,
   parameterTypeLabels,
   parametersPayload,
   profileAttributeNames,
 } = useReportParameters();
 const {
+  dataSourceColumnCheckboxNames,
+  dataSourceColumns,
   entityDefinitions,
-  entityOptions,
   entitiesPayload,
   fetchReportEntities,
 } = useReportEntities();
-const { filterDefinitions, filtersPayload } = useReportFilters();
+const {
+  fetchReportOperators,
+  filterDefinitions,
+  filterVariableOptions,
+  filtersPayload,
+  getFieldOptionsForFilters,
+  reportConditionals,
+} = useReportFilters(
+  dataSourceColumns,
+  entitiesPayload,
+  parametersPayload,
+);
 const { aggregateDefinitions, aggregatesPayload } = useReportAggregates();
 const { sortingDefinitions, sortingPayload } = useReportSorting();
 const {
@@ -145,18 +165,18 @@ const reportDetails = ref({
   report_owner: false,
   viewers: '',
 });
-const reportState = ref('draft');
-const templateId = route.params.id.toUpperCase();
-const templateName = route.params.id.replace(/-/g, ' ');
+const reportState = route.params.state;
+const templateId = route.params.template.toUpperCase();
+const templateName = route.params.template.replace(/-/g, ' ');
 
 // Functions
 /**
  * Saves the report template
  * @param {Object} settings complete settings template payload
- * @return {Promise} empty promise :(
  */
 function saveTemplate(settings = reportSettings.value) {
   const payload = reportPayload(settings);
+  console.log('payload: ', payload);
   const groupViewers = defaultGroups.filter((group) => reportDetails.value[group]);
   return saveAnalyticsReport(templateId, payload, [...reportDetails.value.viewers, ...groupViewers], reportDetails.value.description);
 }
@@ -165,11 +185,15 @@ function saveTemplate(settings = reportSettings.value) {
  * After an entity is selected, entity columns are fetched here.
  * @param {String} dataSourceName entity name
  */
-async function addEntity(dataSourceName) {
+async function addDataSource(dataSourceName) {
   if (dataSourceName) {
     isFetchingEntityColumns.value = true;
     const entityDefinitionsList = await entityDefinitions([{ entity: dataSourceName }]);
     displayNotification('success', i18n.global.t('reports.template.dataSetAdded'));
+    // Clear any previously defined parameters and filters since
+    // these have an association with the selected data source.
+    findSettingsObject('parameters').definitions.splice(0);
+    findSettingsObject('filter').definitions.splice(0);
     // Purposeful sequential visual delay to first allow the
     // user to read the success message, then hides the modal.
     setTimeout(() => {
@@ -182,18 +206,20 @@ async function addEntity(dataSourceName) {
 }
 
 /**
- * Updates a report setting by creating a new payload and saving the template,
- * thereafter updating the local settings definition with the current data.
+ * Updates a report settings object by creating a new payload and saving the template.
  * @param {String} settingsId Setting id for reference in the main reportSettings composable
  * @param {Object | String} definition definition object or definition ID used for deletion
  */
-async function updateSettings(settingsId, definition) {
+async function updateSettingsAndSaveTemplate(settingsId, definition) {
   const { definitions, modal } = findSettingsObject(settingsId);
   const updatedDefinitions = generateNewDefinitions(definitions, definition);
   const updatedSettings = generateNewSettings(settingsId, updatedDefinitions);
 
   isSavingDefinition.value = true;
   await saveTemplate(updatedSettings);
+  if (reportState === 'published') {
+    router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: templateId.toLowerCase() } });
+  }
   isSavingDefinition.value = false;
   definitions.splice(0);
   definitions.push(...updatedDefinitions);
@@ -205,9 +231,9 @@ async function updateSettings(settingsId, definition) {
 /**
  * Updates the list of selected columns.
  * @param {Number} defIndex Definition index position
- * @param {Array} columns Selected entity columns
+ * @param {Array} columns Selected data source columns
  */
-function setDataSourceColumnSelections(defIndex, columns) {
+function onSetColumnSelections(defIndex, columns) {
   const { selectedColumns } = findSettingsObject('entities').definitions[defIndex];
   selectedColumns.splice(0);
   selectedColumns.push(...columns);
@@ -215,15 +241,15 @@ function setDataSourceColumnSelections(defIndex, columns) {
 }
 
 /**
- * Adds a related entity
+ * Adds a related data source
  * @param {Number} defIndex Definition index position
- * @param {String} relatedEntityName Related entity name
+ * @param {String} relatedDataSourceName Related data source name
  */
-async function setRelatedEntitySelections(defIndex, relatedEntityName) {
+async function onSetRelatedDataSources(defIndex, relatedDataSourceName) {
   const currentDefinition = findSettingsObject('entities').definitions[defIndex];
-  const relatedDataSourceName = [currentDefinition.name, relatedEntityName].join('.');
-  await addEntity(relatedDataSourceName);
-  currentDefinition.selectedRelatedEntities.push(relatedEntityName);
+  const computedDataSourceName = [currentDefinition.name, relatedDataSourceName].join('.');
+  await addDataSource(computedDataSourceName);
+  currentDefinition.selectedRelatedDataSources.push(relatedDataSourceName);
 }
 
 /**
@@ -243,7 +269,7 @@ async function duplicateTemplate(id, status) {
  * Deletes the current Data source entity
  * @param {Number} defIndex Definition index position
  */
-function deleteDataSource(defIndex) {
+function onDeleteDataSource(defIndex) {
   const entities = findSettingsObject('entities');
   const definitionNamePath = entities.definitions[defIndex].name;
   const definitionPathArray = definitionNamePath.split('.');
@@ -254,7 +280,7 @@ function deleteDataSource(defIndex) {
 
   if (parentDefinition) {
     // Remove the selected related data source item from the parent data source definition
-    parentDefinition.selectedRelatedEntities = parentDefinition.selectedRelatedEntities.filter((entity) => entity !== currentDefinitionName);
+    parentDefinition.selectedRelatedDataSources = parentDefinition.selectedRelatedDataSources.filter((entity) => entity !== currentDefinitionName);
   }
 
   entities.definitions.forEach((def) => {
@@ -274,20 +300,10 @@ function deleteDataSource(defIndex) {
  */
 async function deleteTemplate() {
   isDeletingTemplate.value = true;
-  await deleteAnalyticsReport(templateId, reportState.value);
+  await deleteAnalyticsReport(templateId, reportState);
   isDeletingTemplate.value = false;
   displayNotification('success', i18n.global.t('common.deleteSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
   router.push({ name: 'Reports' });
-}
-
-/**
- * Opens the settings modal
- * @param {String} modalId Settings modal ID
- * @param {Object} definition Setting definition
- */
-function openSettingsModal(modalId, definition = {}) {
-  currentDefinitionBeingEdited.value = definition;
-  bvModal.value.show(modalId);
 }
 
 /**
@@ -296,9 +312,23 @@ function openSettingsModal(modalId, definition = {}) {
 async function saveTemplateFromHeader() {
   isSavingTemplate.value = true;
   await saveTemplate();
-  displayNotification('success', i18n.global.t('reports.template.reportUpdated'));
+  if (reportState === 'published') {
+    router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: templateId.toLowerCase() } });
+  }
   disableTemplateSave.value = true;
   isSavingTemplate.value = false;
+  displayNotification('success', i18n.global.t('reports.template.reportUpdated'));
+}
+
+/**
+ * Opens the settings modal
+ * @param {String} settingId Settings ID
+ * @param {Object} definition Setting definition
+ */
+async function onUpdateDefinitions(settingId, definition = {}) {
+  const { modal } = findSettingsObject(settingId);
+  currentDefinitionBeingEdited.value = definition;
+  bvModal.value.show(modal);
 }
 
 /**
@@ -306,13 +336,29 @@ async function saveTemplateFromHeader() {
  * @param {String} name aggregate name
  * @param {Boolean} value aggregate checkbox value
  */
-function setAggregate(name, value) {
+function onSetAggregate(name, value) {
   const definition = findSettingsObject('aggregates').definitions.find((def) => def.name === name);
   definition.checked = value;
 }
 
+/**
+ * Fetches fieldoptions for filter variables
+ * @param {String} operator filter operator condition
+ */
+function fetchFieldOptionsForFilters(operator) {
+  getFieldOptionsForFilters(
+    operator,
+    findSettingsObject('entities').definitions,
+    findSettingsObject('parameters').definitions,
+  );
+}
+
 // Computed
 const templateHasAtLeastOneDataSource = computed(() => findSettingsObject('entities').definitions.length);
+const templateDoesNotHaveSelectedColumns = computed(() => {
+  const [{ selectedColumns }] = findSettingsObject('entities').definitions;
+  return !selectedColumns?.length;
+});
 
 /**
  * Check to see if detail settings has changed so we can set the save button disabled status correctly
@@ -326,44 +372,51 @@ watch(reportDetails, (newVal, oldVal) => {
 // Start
 (async () => {
   fetchReportEntities();
-  getParametersData();
-  const { result } = await getReportTemplates({ _queryFilter: `name eq ${templateId}` });
+  fetchReportOperators();
+  try {
+    const { result } = await getReportTemplates({
+      _queryFilter: `name eq ${templateId}`,
+      templateType: route.params.state,
+    }, false);
+    if (result?.length) {
+      const [existingTemplate] = result;
+      const {
+        reportConfig,
+        viewers,
+        description,
+      } = existingTemplate;
+      const {
+        entities,
+        fields,
+        parameters,
+        filter,
+        aggregate,
+        sort,
+      } = JSON.parse(reportConfig);
 
-  if (result?.length) {
-    const [existingTemplate] = result;
-    const {
-      name,
-      reportConfig,
-      type,
-      viewers,
-      description,
-    } = existingTemplate;
-    const {
-      entities,
-      fields,
-      parameters,
-      filter,
-      aggregate,
-      sort,
-    } = JSON.parse(reportConfig);
+      reportDetails.value.name = startCase(templateName.toLowerCase());
+      reportDetails.value.description = description;
+      reportDetails.value.report_admin = viewers.includes('report_admin');
+      reportDetails.value.report_owner = viewers.includes('report_owner');
+      reportDetails.value.report_viewer = viewers.includes('report_viewer');
+      reportDetails.value.viewers = viewers.filter((item) => !defaultGroups.includes(item));
 
-    reportState.value = type;
-
-    reportDetails.value.name = startCase(name.replace(/-/, ' ').toLowerCase());
-    reportDetails.value.description = description;
-    reportDetails.value.report_admin = viewers.includes('report_admin');
-    reportDetails.value.report_owner = viewers.includes('report_owner');
-    reportDetails.value.report_viewer = viewers.includes('report_viewer');
-    reportDetails.value.viewers = viewers.filter((item) => !defaultGroups.includes(item));
-
-    findSettingsObject('entities').definitions.push(...await entityDefinitions(entities, fields));
-    findSettingsObject('parameters').definitions.push(...parameterDefinitions(parameters));
-    findSettingsObject('filter').definitions.push(...filterDefinitions(filter));
-    findSettingsObject('aggregate').definitions.push(...aggregateDefinitions(aggregate));
-    findSettingsObject('sort').definitions.push(...sortingDefinitions(sort));
-    isFetchingTemplate.value = false;
-  } else {
-    displayNotification('warning', i18n.global.t('reports.tabs.runReport.errors.templateDoesNotExist'));
+      findSettingsObject('entities').definitions.push(...await entityDefinitions(entities, fields));
+      findSettingsObject('parameters').definitions.push(...await parameterDefinitions(parameters));
+      findSettingsObject('filter').definitions.push(...await filterDefinitions(
+        filter,
+        findSettingsObject('entities').definitions,
+        findSettingsObject('parameters').definitions,
+      ));
+      findSettingsObject('aggregate').definitions.push(...aggregateDefinitions(aggregate));
+      findSettingsObject('sort').definitions.push(...sortingDefinitions(sort));
+      isFetchingTemplate.value = false;
+    } else {
+      displayNotification('warning', i18n.global.t('reports.tabs.runReport.errors.templateDoesNotExist'));
+      router.push({ name: 'Reports' });
+    }
+  } catch (e) {
+    showErrorMessage(e, i18n.global.t('reports.notAvailable'));
     router.push({ name: 'Reports' });
   }
 })();

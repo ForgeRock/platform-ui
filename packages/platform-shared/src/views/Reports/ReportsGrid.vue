@@ -54,8 +54,6 @@ of the MIT license. See the LICENSE file for details. -->
             :report-name-currently-processing="reportBeingProcessed"
             :loading="loading"
             :report="report"
-            :show-delete="false"
-            :show-edit="false"
             @to-template="toTemplate"
             @delete-template="confirmDeleteTemplate"
             @duplicate-template="duplicateTemplate"
@@ -222,10 +220,11 @@ function pageSizeChange(pageSize) {
  * Routes to the report template path when the child component emits the event.
  * @param {String} name The name of the report template.
  * @param {Boolean} toHistory Validates if it should redirect to the report history path.
+ * @param {String} state report state (draft or published).
  */
-function toTemplate({ name, toHistory }) {
-  const path = toHistory ? `/reports/${name.toLowerCase()}/history` : `/reports/${name.toLowerCase()}`;
-  router.push({ path });
+function toTemplate({ name, toHistory, state }) {
+  const component = toHistory ? 'ReportHistory' : 'ReportRun';
+  router.push({ name: component, params: { state, template: name.toLowerCase() } });
 }
 
 /**
@@ -265,10 +264,11 @@ async function duplicateTemplate(id, status) {
 
 /**
  * Routes to the report edit view
- * @param {String} id template name
+ * @param {String} name template name
+ * @param {String} state report state (draft or published).
  */
-function editTemplate(id) {
-  router.push({ name: 'EditReportTemplate', params: { id } });
+function editTemplate(name, state) {
+  router.push({ name: 'EditReportTemplate', params: { state, template: name.toLowerCase() } });
 }
 
 /**
@@ -289,12 +289,13 @@ function handleNewReportSave(payload) {
 
 /**
  * Publishes a report template
- * @param {String} id template name
+ * @param {String} name template name
+ * @param {String} state report state (draft or published).
  */
-async function publishTemplate(id) {
-  reportBeingProcessed.value = id;
+async function publishTemplate(name, state) {
+  reportBeingProcessed.value = name;
   try {
-    await publishAnalyticsReport(id);
+    await publishAnalyticsReport(name, state);
     displayNotification('success', i18n.global.t('common.publishSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
   } catch (err) {
     showErrorMessage(err, i18n.global.t('reports.errorPublishing'));
@@ -309,8 +310,9 @@ watch(saveReportError, (newVal) => {
 
 watch(saveReportReady, (newVal) => {
   if (newVal) {
+    const templateName = templateData.value.data.name.toLowerCase();
     bvModal.value.hide('new-report-modal');
-    router.push({ name: 'EditReportTemplate', params: { id: templateData.value.data.name } });
+    router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: templateName } });
   }
 });
 

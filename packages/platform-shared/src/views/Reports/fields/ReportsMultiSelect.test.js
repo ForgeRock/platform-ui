@@ -41,19 +41,17 @@ describe('Default field, with custom tags, for running reports', () => {
       expect(wrapper.emitted('input')).toEqual([[['second option']]]);
     });
 
-    it('ensures that the placeholder text updates to let the user know that they can input tags if the taggable prop is true', async () => {
+    it('ensures that the label text updates to let the user know that they can input tags if the taggable prop is true', async () => {
       wrapper = setup({
-        label: 'field-label',
         options: [],
-        placeholder: 'My multiselect field',
+        label: 'My multiselect field',
       });
 
-      const myFieldContainer = findByTestId(wrapper, 'reports-multiselect-field');
-      const fieldPlaceholder = myFieldContainer.find('.multiselect__placeholder');
-      expect(fieldPlaceholder.text()).toBe('My multiselect field');
+      const fieldLabel = wrapper.find('label');
+      expect(fieldLabel.text()).toBe('My multiselect field');
 
       await wrapper.setProps({ taggable: true });
-      expect(fieldPlaceholder.text()).toBe('Press enter to create a tag');
+      expect(fieldLabel.text()).toBe('Press enter to create a tag');
     });
   });
 });

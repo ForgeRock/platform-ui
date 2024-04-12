@@ -26,6 +26,7 @@ describe('Report Template Settings component', () => {
       },
       props: {
         reportSettings: stubs.reportSettingsStub,
+        value: {},
         ...props,
       },
     });
@@ -173,7 +174,7 @@ describe('Report Template Settings component', () => {
           result: [
             {
               name: 'applications',
-              relatedEntities: ['Application_Users', 'assignments', 'roles'],
+              relatedDataSources: ['Application_Users', 'assignments', 'roles'],
             },
             {
               name: 'Users',
@@ -199,21 +200,22 @@ describe('Report Template Settings component', () => {
         _id: 'applications',
         dataSourceColumns: [
           {
-            label: 'name',
-            value: 'applications.name',
+            format: 'json',
+            label: '_id',
+            type: 'string',
+            value: 'applications._id',
           },
           {
-            label: '_id',
-            value: 'applications._id',
+            format: 'json',
+            label: 'name',
+            type: 'string',
+            value: 'applications.name',
           },
         ],
         name: 'applications',
-        relatedEntities: [],
-        selectedColumns: [{
-          label: 'name',
-          value: 'applications.name',
-        }],
-        selectedRelatedEntities: [],
+        relatedDataSources: [],
+        selectedColumns: ['applications.name'],
+        selectedRelatedDataSources: [],
       };
 
       it('ensures that the dataSources definitions only show if the definitions property has items', async () => {
@@ -237,9 +239,9 @@ describe('Report Template Settings component', () => {
 
         const dataSourcesSettingsContainer = findByTestId(wrapper, 'entities-settings-container');
         const definitionBody = findByTestId(dataSourcesSettingsContainer, 'definition-body');
-        const [nameCheckbox, _idCheckbox] = definitionBody.findAll('input[type="checkbox"]');
-        expect(nameCheckbox.wrapperElement).toBeChecked();
+        const [_idCheckbox, nameCheckbox] = definitionBody.findAll('input[type="checkbox"]');
         expect(_idCheckbox.wrapperElement).not.toBeChecked();
+        expect(nameCheckbox.wrapperElement).toBeChecked();
       });
     });
 
