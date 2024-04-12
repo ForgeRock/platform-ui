@@ -145,7 +145,7 @@ describe('SelectInput', () => {
     await flushPromises();
 
     // Check that the SelectInput shows the correct initial text
-    expect(wrapper.find('.multiselect__single').text()).toBe('bee');
+    expect(wrapper.find('.multiselect__single').element.value).toBe('bee');
 
     await wrapper.setProps({
       options: [
@@ -155,7 +155,7 @@ describe('SelectInput', () => {
       ],
     });
 
-    expect(wrapper.find('.multiselect__single').text()).toBe('beegees?');
+    expect(wrapper.find('.multiselect__single').element.value).toBe('beegees?');
   });
 
   it('SelectInput removes float for blank values', async () => {

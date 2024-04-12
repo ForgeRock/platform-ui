@@ -129,7 +129,6 @@ fieldset[disabled] {
     padding: 0;
     transition: border 0.1s ease;
     box-sizing: border-box;
-    margin-bottom: 4px;
     margin-right: 30px;
     text-align: left;
     color: $gray-900;
@@ -138,7 +137,6 @@ fieldset[disabled] {
   }
 
   .multiselect__single {
-    padding-left: 0;
     margin-bottom: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -147,7 +145,6 @@ fieldset[disabled] {
 
   .multiselect__input {
     margin-top: 4px;
-    padding-top: 0.4rem !important;
   }
 
   .multiselect__tag,
@@ -300,7 +297,7 @@ fieldset[disabled] {
   width: calc(100%);
   transition: border 0.1s ease;
   box-sizing: border-box;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   vertical-align: top;
 }
 .multiselect__input {
