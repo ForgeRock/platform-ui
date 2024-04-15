@@ -59,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
               :resource-path="getResourcePath(selectedProp)" />
             <FrField
               v-else
+              data-testid="selectedProperty"
               v-model="inputValue.value"
               :disabled="disabled"
               :name="uniqueName"
@@ -77,6 +78,7 @@ of the MIT license. See the LICENSE file for details. -->
         </p>
       </div>
       <BButton
+        v-if="!hideAdvanced"
         class="px-0 pt-4 pb-0"
         variant="link"
         @click="toggleMode(false)">
@@ -115,7 +117,9 @@ import {
   ref,
 } from 'vue';
 import { BButton, BCard, BCol } from 'bootstrap-vue';
-import { cloneDeep, find, omit } from 'lodash';
+import {
+  cloneDeep, find, omit,
+} from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import FrScriptEditor from '@forgerock/platform-shared/src/components/ScriptEditor';
@@ -148,7 +152,15 @@ const props = defineProps({
     default: () => ({}),
     type: Object,
   },
+  hideAdvanced: {
+    default: false,
+    type: Boolean,
+  },
   hideGroup: {
+    default: false,
+    type: Boolean,
+  },
+  rowPosition: {
     default: false,
     type: Boolean,
   },
@@ -182,7 +194,7 @@ const computedConditionOptions = computed(() => {
 });
 
 // Provide fieldWidth for filterBuilderRow to use
-provide('fieldWidth', 12);
+provide('fieldWidth', props.rowPosition ? 4 : 12);
 
 /**
  * Ensures the keys in v-if iteration have unique values
@@ -323,7 +335,7 @@ function checkFilterString(filterString) {
   }
 }
 
-onMounted(() => {
+function loadFilter() {
   igaFilter = props.filterValue;
   if (!Object.keys(igaFilter).length) {
     igaFilter = { or: [{ starts_with: { prefix: { literal: '' }, value: 'user.before.' } }] };
@@ -333,8 +345,12 @@ onMounted(() => {
     toggleMode(false);
   }
   const response = convertFromIGAFilter(cloneDeep(props.filterValue));
-  queryFilter.value = response.convertedFilter;
+  queryFilter.value = cloneDeep(response.convertedFilter);
   uniqueIndex = response.uniqueIndex;
+}
+
+onMounted(() => {
+  loadFilter();
 });
 </script>
 
