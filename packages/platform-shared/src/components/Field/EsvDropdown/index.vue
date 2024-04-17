@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BDropdown
     @show="onDropdownShown"
-    @hidden="onDropdownHidden"
+    @hidden="query = ''"
     right
     no-caret
     variant="link"
@@ -109,15 +109,10 @@ export default {
       filteredEsvData.esvListInUse.value = true;
     }
 
-    function onDropdownHidden() {
-      filteredEsvData.esvListInUse.value = false;
-    }
-
     return {
       query,
       esvClicked,
       onDropdownShown,
-      onDropdownHidden,
       secretsVisible: filteredEsvData.secretsVisible,
       filteredEsvs: filteredEsvData.filteredEsvs,
       isLoading: filteredEsvData.isLoading,
