@@ -3087,9 +3087,13 @@
       "policies": {
         "description": "description TODO",
         "edit": {
+          "activatePolicyBody": "Are you sure you want to activate this policy?",
+          "activatePolicyTitle": "Activate Policy",
           "addRules": "Add Rules",
           "addRulesModalDescription": "Choose rules to add to this policy.",
           "completionDate": "Scan End Date",
+          "deactivatePolicyBody": "Are you sure you want to deactivate this policy?",
+          "deactivatePolicyTitle": "Deactivate Policy",
           "duration": "Duration",
           "editScanSchedule": "Edit Scan Schedule",
           "editSchedule": "Edit Schedule",
