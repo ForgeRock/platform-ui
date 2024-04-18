@@ -3212,10 +3212,7 @@
         }
       },
       "subtitle": "Define Segregation of Duties (SoD) policies and rules to protect against noncompliance and fraudulent activity.",
-      "title": "Compliance",
-      "violations": {
-        "tabTitle": "Violations"
-      }
+      "title": "Compliance"
     },
     "entitlements": {
       "subtitle": "Manage and configure user entitlements across all your configured applications.",

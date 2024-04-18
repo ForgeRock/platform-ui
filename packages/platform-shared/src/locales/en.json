@@ -121,6 +121,7 @@
     "filters": "Filters",
     "forgeRock": "ForgeRock",
     "forward": "Forward",
+    "from": "From",
     "fullscreen": "Fullscreen",
     "genericError": "Something went wrong, please try again.",
     "group": "Group",
@@ -1764,6 +1765,14 @@
       "pending": "Pending",
       "overdue": "Overdue",
       "staging": "Staged"
+    },
+    "violations": {
+      "status": {
+        "inProgress": "In-Progress",
+        "complete": "Complete"
+      },
+      "rule": "Rule",
+      "tabTitle": "Violations"
     }
   },
   "reports": {
