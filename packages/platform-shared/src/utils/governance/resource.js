@@ -110,7 +110,7 @@ export async function getEntitlements(resourceIsUser, searchValue, selectedAppli
           {
             operator: 'CONTAINS',
             operand: {
-              targetName: 'assignment.name',
+              targetName: 'descriptor.idx./entitlement.displayName',
               targetValue: searchValue,
             },
           },
