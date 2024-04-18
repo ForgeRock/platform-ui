@@ -1,0 +1,295 @@
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
+<template>
+  <BCard no-body>
+    <FrViolationToolbar
+      v-model="filters"
+      @get-policy-rule-options="$emit('get-policy-rule-options', $event)"
+      @input="handleFilterChange"
+      :policy-rule-options="policyRuleOptions" />
+    <BTable
+      @sort-changed="sortChanged"
+      class="mb-0"
+      hover
+      no-local-sorting
+      no-sort-reset
+      responsive
+      show-empty
+      tbody-tr-class="cursor-pointer"
+      :busy="isLoading"
+      :fields="tableFields"
+      :items="items"
+      :per-page="pageSize"
+      :sort-by="sortBy"
+      :sort-desc="sortDesc">
+      <template #table-busy>
+        <div class="text-center text-danger my-2">
+          <FrSpinner />
+        </div>
+      </template>
+      <template #cell(user)="{ item }">
+        <div class="text-truncate">
+          <h4 class="h5 mb-1">
+            {{ item?.user?.givenName }} {{ item?.user?.sn }}
+          </h4>
+          <span class="text-body">
+            {{ item?.user?.userName }}
+          </span>
+        </div>
+      </template>
+      <template #cell(policyRule)="{ item }">
+        <div class="text-truncate">
+          {{ item?.policyRule?.name }}
+        </div>
+      </template>
+      <template #cell(created)="{ item }">
+        <div class="text-truncate">
+          {{ convertDate(item.created) }}
+        </div>
+      </template>
+      <template #cell(actions)="{ item }">
+        <BDropdown
+          no-caret
+          toggle-class="p-1"
+          variant="link">
+          <template #button-content>
+            <FrIcon
+              icon-class="text-dark md-24"
+              name="more_horiz" />
+          </template>
+          <BDropdownItem @click="openForwardModal(item)">
+            <FrIcon
+              icon-class="mr-2"
+              name="redo">
+              {{ $t('common.forward') }}
+            </FrIcon>
+          </BDropdownItem>
+        </BDropdown>
+      </template>
+    </BTable>
+    <FrPagination
+      v-if="tableRows?.length"
+      v-model="currentPage"
+      :per-page="pageSize"
+      :total-rows="totalRowCount"
+      @input="paginationChange"
+      @on-page-size-change="updatePageSize" />
+  </BCard>
+</template>
+
+<script setup>
+/**
+ * List of SOD violations. Can filter by status, policy rule, user, and date range.
+ */
+import { computed, ref } from 'vue';
+import {
+  BCard,
+  BDropdown,
+  BDropdownItem,
+  BTable,
+} from 'bootstrap-vue';
+import dayjs from 'dayjs';
+import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import FrViolationToolbar from '@forgerock/platform-shared/src/components/governance/Violations/ViolationToolbar';
+import i18n from '@/i18n';
+
+const emit = defineEmits(['get-policy-rule-options', 'handle-search']);
+
+const props = defineProps({
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  policyRuleOptions: {
+    type: Array,
+    default: () => [],
+  },
+  tableRows: {
+    type: Array,
+    default: () => [],
+  },
+  totalRowCount: {
+    type: Number,
+    default: 0,
+  },
+});
+
+const currentPage = ref(1);
+const pageSize = ref(10);
+const sortBy = ref('created');
+const sortDesc = ref(true);
+
+const filters = ref({
+  status: 'pending',
+  rule: '',
+  user: 'managed/user/all',
+  startDate: '',
+  endDate: '',
+});
+
+const tableFields = [
+  {
+    key: 'user',
+    label: i18n.global.t('common.user.user'),
+    sortable: true,
+  },
+  {
+    key: 'policyRule',
+    label: i18n.global.t('governance.violations.rule'),
+    sortable: true,
+  },
+  {
+    key: 'created',
+    label: i18n.global.t('common.created'),
+    sortable: true,
+    class: 'w-150px',
+  },
+  {
+    key: 'actions',
+    class: 'w-120px',
+    label: '',
+  },
+];
+
+const items = computed(() => {
+  if (!props.tableRows?.length) return [];
+  return props.tableRows.map((violation) => {
+    // TODO: can remove this check and only use violation.decision.startDate
+    // when IGA-2822 is complete
+    const created = violation.decision?.violation
+      ? violation.decision?.violation.startDate
+      : violation.decision?.startDate;
+    return {
+      user: violation.user,
+      policyRule: violation.policyRule,
+      created,
+      id: violation.id,
+    };
+  });
+});
+
+/**
+ * Build target filter object used to filter api response
+ * @param {Object} targetFilter contains various values used to filter request data
+ * @returns {Object} IGA compatible target filter
+ */
+function getTargetFilter(targetFilter) {
+  const filterPayload = {
+    operator: 'AND',
+    operand: [],
+  };
+
+  filterPayload.operand.push(getBasicFilter('EQUALS', 'decision.violation.status', targetFilter.status));
+
+  if (targetFilter.rule.length) {
+    filterPayload.operand.push(getBasicFilter('EQUALS', 'policyRule.id', targetFilter.rule));
+  }
+
+  if (targetFilter.user !== 'managed/user/all') {
+    const id = targetFilter.user.split('/').pop();
+    filterPayload.operand.push(getBasicFilter('EQUALS', 'user.userId', id));
+  }
+
+  if (targetFilter.startDate.length) {
+    let startDate = dayjs(targetFilter.startDate).toISOString().split('.')[0];
+    startDate = `${startDate}+00:00`;
+    filterPayload.operand.push(getBasicFilter('GTE', 'decision.violation.startDate', startDate));
+  }
+
+  if (targetFilter.endDate.length) {
+    let endDate = dayjs(targetFilter.endDate).toISOString().split('.')[0];
+    endDate = `${endDate}+00:00`;
+    filterPayload.operand.push(getBasicFilter('LTE', 'decision.violation.startDate', endDate));
+  }
+
+  return filterPayload;
+}
+
+/**
+ * Builds request params and sends out event to request data from api
+ * @param {Object} filterObj contains various values used to filter request data
+ */
+async function getData(filterObj) {
+  const targetFilter = getTargetFilter(filterObj);
+
+  const searchParams = {
+    pageSize: pageSize.value,
+    pagedResultsOffset: (currentPage.value - 1) * pageSize.value,
+    sortDir: sortDesc.value ? 'desc' : 'asc',
+    fields: 'id,user,policyRule,decision',
+  };
+  const sortKeyMap = {
+    user: 'user.userName',
+    policyRule: 'policyRule.name',
+    created: 'decision.violation.startDate',
+  };
+  searchParams.sortKeys = sortKeyMap[sortBy.value];
+
+  emit('handle-search', searchParams, targetFilter);
+}
+
+/**
+ * TODO: Implement this function when backend api is finalized
+ */
+function openForwardModal(item) {
+  console.log('opening forward modal', item);
+}
+
+/**
+ * Convert date into user friendly format
+ * @param {String} date date string
+ * @returns {String} user friendly date string
+ */
+function convertDate(date) {
+  return dayjs(date).format('MMM D, YYYY');
+}
+
+/**
+ * Update the filter and call to get updated data
+ * @event input
+ * @param {Object} newFilters New filter values
+ */
+function handleFilterChange(newFilters) {
+  filters.value = newFilters;
+  getData(filters.value);
+}
+
+/**
+ * Update the current page number and call to get updated data
+ * @event input
+ * @param {Number} page New page number
+ */
+function paginationChange(page) {
+  currentPage.value = page;
+  getData(filters.value);
+}
+
+/**
+ * Update the sorting used in the table and call to get updated data
+ * @event sort-changed
+ * @param {Object} sortContext Current context of table sorting (sortDesc & sortBy)
+ */
+function sortChanged(sortContext) {
+  sortDesc.value = sortContext.sortDesc;
+  sortBy.value = sortContext.sortBy;
+  getData(filters.value);
+}
+
+/**
+ * Update the page size and call to get updated data
+ * @event on-page-size-change
+ * @param {Number} newPageSize New page size to be used
+ */
+function updatePageSize(newPageSize) {
+  pageSize.value = newPageSize;
+  getData(filters.value);
+}
+
+getData(filters.value);
+
+</script>
