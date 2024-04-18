@@ -14,6 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
       :describedby-id="`policy_panel_${index}`"
       :autofocus="autofocus"
       :is-required-aria="true"
+      :aria-invalid="!!failuresForField.length || !!failuresForPanel.length"
       @blur="lostFocus = true;" />
     <FrPolicyPanel
       class="mt-2"

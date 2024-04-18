@@ -317,6 +317,37 @@ describe('Component Test', () => {
             name: 'prompt',
             value: 'Password',
           },
+          {
+            name: 'policies',
+            value: {
+              policyRequirements: [
+                'VALID_TYPE',
+              ],
+              fallbackPolicies: null,
+              name: 'password',
+              policies: [
+                {
+                  policyRequirements: [
+                    'VALID_TYPE',
+                  ],
+                  policyId: 'valid-type',
+                  params: {
+                    types: [
+                      'string',
+                    ],
+                  },
+                },
+              ],
+              conditionalPolicies: null,
+            },
+          },
+          {
+            name: 'failedPolicies',
+            value: [
+              '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
+              "{ \"policyRequirement\": \"CHARACTER_SET\", \"params\": { \"allow-unclassified-characters\": true, \"character-set-ranges\": [  ], \"character-sets\": [ \"1:0123456789\", \"1:ABCDEFGHIJKLMNOPQRSTUVWXYZ\", \"1:abcdefghijklmnopqrstuvwxyz\", \"1:~!@#$%^&*()-_=+[]{}|;:,.<>/?\\\"'\\\\`\" ], \"min-character-sets\": 0 } }",
+            ],
+          },
         ],
         input: [
           {
@@ -471,6 +502,21 @@ describe('Component Test', () => {
 
       expect(username.attributes('autofocus')).toBe('true');
       expect(password.attributes('autofocus')).toBeUndefined();
+    });
+
+    it('add validation immediate to component if it has failed policies', async () => {
+      const data = {
+        loading: true,
+        step: new FRStep(stepPayload),
+      };
+
+      const wrapper = await mountLogin(data);
+
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      expect(wrapper.vm.componentList[0].callbackSpecificProps.validationImmediate).toBe(false);
+      expect(wrapper.vm.componentList[1].callbackSpecificProps.validationImmediate).toBe(true);
     });
   });
 

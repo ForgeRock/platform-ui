@@ -795,7 +795,7 @@ export default {
           const errors = this.getTranslatedPolicyFailures(callback);
 
           component.callbackSpecificProps = {
-            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label),
+            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label), validationImmediate: !!errors.length,
           };
 
           component.listeners = this.getListeners({ callback, index }, ['input']);

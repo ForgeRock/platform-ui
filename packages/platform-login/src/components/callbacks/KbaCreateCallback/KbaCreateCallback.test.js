@@ -14,6 +14,7 @@ import store from '../../../store';
 
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,
+  unique: ValidationRules.getRules(i18n).unique,
 });
 
 describe('KbaCreateCallback.vue (shallowMount)', () => {
@@ -169,5 +170,15 @@ describe('KbaCreateCallback.vue (mount)', () => {
     const inputs = wrapper.findAll('input');
     expect(inputs[0].html()).toEqual(expect.stringContaining('aria-required="true"'));
     expect(inputs[1].html()).toEqual(expect.stringContaining('aria-required="true"'));
+  });
+
+  it('has aria invalid set when selection change', async () => {
+    const inputs = wrapper.findAll('input');
+    expect(inputs[1].attributes('disabled')).toBeDefined();
+    expect(inputs[1].attributes('aria-invalid')).toBeUndefined();
+    wrapper.vm.$data.selected = 'custom';
+    await flushPromises();
+    expect(inputs[1].attributes('disabled')).toBeUndefined();
+    expect(inputs[1].attributes('aria-invalid')).toBe('true');
   });
 });
