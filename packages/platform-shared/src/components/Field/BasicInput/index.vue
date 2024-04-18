@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
           :autocomplete="$attrs.autocomplete"
           :aria-describedby="ariaDescribedBy"
           :aria-required="isRequiredAria"
+          :aria-invalid="isAriaInvalid"
           @animationstart="floatingLabel && animationStart"
           @blur="onBlur($event)"
           @focus="(floatingLabel && label) && (floatLabels = true)"
@@ -61,6 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
           :style="labelHeight && {height: `${labelHeight}px`, 'padding-top': `${labelHeight - 27}px`}"
           :aria-describedby="ariaDescribedBy"
           :aria-required="isRequiredAria"
+          :aria-invalid="isAriaInvalid"
           @blur="onBlur($event);"
           @focus="(floatingLabel && label) && (floatLabels = true)"
           @animationstart="floatingLabel && animationStart"
@@ -196,6 +198,13 @@ export default {
       type: String,
       default: '',
     },
+    /**
+    *  Sets aria-invalid as the value provided
+     */
+    ariaInvalid: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -271,6 +280,28 @@ export default {
     },
     combinedErrors() {
       return this.errors.concat(this.fieldErrors);
+    },
+    /**
+     * Determines the `aria-invalid` attribute's state based on field interactions and validation status.
+     *
+     * This method calculates whether an input field should be marked as invalid ('aria-invalid') for accessibility purposes.
+     * It evaluates whether the field has been interacted with ('touched') or whether immediate validation is enforced ('validationImmediate'),
+     * this is required because a field should be marked as invalid only if it has been validated that happens when the user touched the field or it is immediately validated.
+     * If neither condition is satisfied, it returns 'false' (boolean). Otherwise, it proceeds to determine the validity based on:
+     *   - 'this.ariaInvalid': an explicitly set boolean property to force the aria-invalid state.
+     *   - 'this.combinedErrors.length': checks if there are any validation errors present.
+     * The final state is converted to a string unless it's a boolean false because Vue optimizes DOM updates by removing attributes explicitly set to 'false' boolean,
+     * so this method ensures that the aria-invalid attribute is present with true/false value when it has already been validated, otherwise the attribute is removed.
+     *
+     * @returns {string|boolean} 'true' or 'false' as strings if the conditions dictate the field is invalid or valid respectively,
+     *                            or false as a boolean if the field is neither touched nor requires immediate validation.
+     */
+    isAriaInvalid() {
+      if (!this.meta.touched && !this.validationImmediate) {
+        return false;
+      }
+      const ariaInvalid = this.ariaInvalid || !!this.combinedErrors.length;
+      return ariaInvalid.toString();
     },
   },
   methods: {

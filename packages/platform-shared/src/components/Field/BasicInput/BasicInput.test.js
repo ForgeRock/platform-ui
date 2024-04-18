@@ -356,6 +356,60 @@ describe('BasicInput', () => {
 
       expect(wrapper.find('.custom-class').exists()).toBe(true);
     });
+
+    describe('aria-invalid validation', () => {
+      it('does not add aria-invalid attribute if the component is not touched and is not validation immediate', async () => {
+        const wrapper = setup();
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        await flushPromises();
+        expect(input.attributes('aria-invalid')).toBeUndefined();
+      });
+
+      it('aria-invalid attribute is false string if the component is touched and the field does not have validation issues', async () => {
+        const wrapper = setup();
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        await input.trigger('blur');
+        await flushPromises();
+        expect(input.attributes('aria-invalid')).toBe('false');
+      });
+
+      it('aria-invalid attribute is true string if the component is touched and the field has validation issues', async () => {
+        const wrapper = setup({ validation: 'required' });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        await input.trigger('blur');
+        await flushPromises();
+        expect(input.attributes('aria-invalid')).toBe('true');
+      });
+
+      it('aria-invalid attribute is true string if the component is touched and the field has external validation issues', async () => {
+        const wrapper = setup({ errors: ['please provide a valid value'] });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        await input.trigger('blur');
+        await flushPromises();
+        expect(input.attributes('aria-invalid')).toBe('true');
+      });
+
+      it('aria-invalid attribute is not present if the component is not touched and the field has external validation issues', async () => {
+        const wrapper = setup({ errors: ['please provide a valid value'] });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        await flushPromises();
+        expect(input.attributes('aria-invalid')).toBeUndefined();
+      });
+
+      it('aria-invalid attribute is true string if the component is not touched, the field is validated immediatly and the field has external validation issues', async () => {
+        const wrapper = setup({ validationImmediate: true, errors: ['please provide a valid value'] });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        await flushPromises();
+        expect(input.attributes('aria-invalid')).toBe('true');
+      });
+
+      it('aria-invalid attribute is true string if the component is not touched, the field is validated immediatly and the field has internal validation issues', async () => {
+        const wrapper = setup({ validationImmediate: true, validation: 'required' });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        await flushPromises();
+        expect(input.attributes('aria-invalid')).toBe('true');
+      });
+    });
   });
 
   describe('@actions', () => {

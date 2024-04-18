@@ -62,8 +62,9 @@ of the MIT license. See the LICENSE file for details. -->
           validation="required"
           :label="answerLabel"
           :name="`callback_${index}_answer_field`"
-          :disabled="selected === null"
+          :disabled="answerFieldDisabled"
           :floating-label="floatingLabel"
+          :validation-immediate="!answerFieldDisabled"
           :is-required-aria="true" />
       </fieldset>
     </VeeForm>
@@ -142,6 +143,9 @@ export default {
     answerLabel() {
       const currentChoice = this.showCustom ? this.questionModel.value : this.selected;
       return currentChoice ? this.$t('login.kba.answerFor', { question: currentChoice }) : this.$t('login.kba.answer');
+    },
+    answerFieldDisabled() {
+      return this.selected === null;
     },
   },
   mounted() {
