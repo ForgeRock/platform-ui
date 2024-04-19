@@ -1230,7 +1230,7 @@
           "uniqueEntityId": "Metadata must contain a unique entityID",
           "generic": "There has been an error uploading your file. Please try again",
           "reupload": "Metadata reupload failed. Please try again"
-          },
+        },
         "attributeStatementsSection": {
           "title": "Attribute Statements (optional)",
           "description": "Insert statements into the SAML assertions shared with your application.",
@@ -1440,6 +1440,7 @@
       "templateModal": {
         "addProperty": "Add Property",
         "addRule": "Add Rule",
+        "addNao": "Add Non-Account Object",
         "correlationQuery": "Correlation Query",
         "createTemplate": "Create Template",
         "mappingRules": "Mapping Rules",
@@ -3130,7 +3131,7 @@
         "errorGetPolicyRuleOptions": "Error getting policy rules",
         "errorUpdate": "Error updating policy",
         "itemType": "Policy",
-        "newPolicy":"New Policy",
+        "newPolicy": "New Policy",
         "newPolicyModal": {
           "policyOwnerDescription": "Owner for this policy.",
           "rules": "Rules",
