@@ -318,6 +318,9 @@ of the MIT license. See the LICENSE file for details. -->
       #app .card .table.b-table > thead > tr {
       color: {{ theme.accountCardHeaderColor || '#23282e' }};
       }
+      #app .card .card-header {
+        outline-color: {{ '#109cf1' }} ;
+      }
 
       #app .card .card-header,
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .card .card-footer,
