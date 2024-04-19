@@ -254,6 +254,7 @@ export default {
       width: unset;
       max-height: none;
       display: inline-block;
+      background-color: transparent;
 
       .pe-none {
         pointer-events: none;
@@ -264,6 +265,10 @@ export default {
     input::placeholder,
     .multiselect__placeholder {
       color: transparent !important;
+    }
+
+    .multiselect--disabled ~ label {
+      background-color: transparent !important;
     }
   }
   .form-label-group-input {
