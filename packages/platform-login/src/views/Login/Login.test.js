@@ -12,8 +12,6 @@ import { URLSearchParams } from 'url';
 import {
   FRStep,
   FRAuth,
-  FRWebAuthn,
-  WebAuthnStepType,
 } from '@forgerock/javascript-sdk';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -332,18 +330,8 @@ describe('Component Test', () => {
     header: 'Sign In',
     description: 'New here? <a href="#/service/Registration">Create an account</a><br><a href="#/service/ForgottenUsername">Forgot username?</a><a href="#/service/ResetPassword"> Forgot password?</a>',
   };
-  const errorPayload = {
-    payload: {
-      code: 401,
-      reason: 'Unauthorized',
-      message: 'Unable to resume session. It may have expired.',
-      status: 401,
-      ok: false,
-    },
-    type: 'LoginFailure',
-  };
 
-  const mountLogin = async (overrideData = {}) => {
+  const mountLogin = async (overrideData = {}, props = {}) => {
     const wrapper = mount(Login, {
       global: {
         stubs: {
@@ -367,8 +355,9 @@ describe('Component Test', () => {
           },
           $sanitize: (message, config) => sanitize(message, config),
         },
-        mixins: [LoginMixinMock],
       },
+      mixins: [LoginMixin, LoginMixinMock],
+      props,
     });
     await flushPromises();
 
@@ -439,86 +428,49 @@ describe('Component Test', () => {
       resumingSpy.mockRestore();
     });
 
-    it('focuses on the first input if journeyFocusFirstFocusableItemEnabled is true', async () => {
+    it('autofocus is true for the first focusable element on build tree form and aria-invalid attribute not rendered when journeyFocusFirstFocusableItemEnabled is false', async () => {
       const data = {
         loading: true,
         step: new FRStep(stepPayload),
       };
-
       const wrapper = await mountLogin(data);
 
       wrapper.vm.buildTreeForm();
+      wrapper.vm.loading = false;
       await flushPromises();
 
-      expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeFalsy();
-      expect(wrapper.vm.componentList[1].callbackSpecificProps.autofocus).toBeFalsy();
+      expect(wrapper.vm.componentList[0].autofocus).toBe(true);
+      expect(wrapper.vm.componentList[1].autofocus).toBeUndefined();
 
-      await wrapper.setData(data);
-      await flushPromises();
+      const username = wrapper.find('fr-field-stub');
+      const password = wrapper.find('fr-password-callback-stub');
 
-      wrapper.vm.step = new FRStep(stepPayload);
-      await wrapper.setProps({ journeyFocusFirstFocusableItemEnabled: true, themeLoading: true });
-      await flushPromises();
-      await wrapper.setProps({ themeLoading: false });
-      await flushPromises();
-
-      expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeTruthy();
-      expect(wrapper.vm.componentList[1].callbackSpecificProps.autofocus).toBeFalsy();
+      expect(username.attributes('autofocus')).toBeUndefined();
+      expect(password.attributes('autofocus')).toBeUndefined();
     });
 
-    it('calls buildTreeForm properly when themeLoading changes and when step exists or does not exist', async () => {
-      // Load with a valid step and not webAuthN
-      let data = {
+    it('autofocus is true for the first focusable element on build tree form and aria-invalid attribute rendered with true when journeyFocusFirstFocusableItemEnabled is true', async () => {
+      const data = {
         loading: true,
         step: new FRStep(stepPayload),
       };
-
-      let wrapper = await mountLogin(data);
-
-      let buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
-
-      jest.spyOn(FRWebAuthn, 'getWebAuthnStepType').mockImplementation(() => WebAuthnStepType.None);
-
-      await wrapper.setProps({ themeLoading: true });
-      await flushPromises();
-      await wrapper.setProps({ themeLoading: false });
-      await flushPromises();
-
-      expect(buildTreeFormSpy).toHaveBeenCalled();
-
-      // Load with an undefined step
-      data = {
-        loading: true,
-        step: undefined,
+      const props = {
+        journeyFocusFirstFocusableItemEnabled: true,
       };
+      const wrapper = await mountLogin(data, props);
 
-      wrapper = await mountLogin(data);
-
-      buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
-
-      await wrapper.setProps({ themeLoading: true });
-      await flushPromises();
-      await wrapper.setProps({ themeLoading: false });
+      wrapper.vm.buildTreeForm();
+      wrapper.vm.loading = false;
       await flushPromises();
 
-      expect(buildTreeFormSpy).not.toHaveBeenCalled();
+      expect(wrapper.vm.componentList[0].autofocus).toBe(true);
+      expect(wrapper.vm.componentList[1].autofocus).toBeUndefined();
 
-      // Load with a login failure
-      data = {
-        loading: true,
-        step: errorPayload,
-      };
+      const username = wrapper.find('fr-field-stub');
+      const password = wrapper.find('fr-password-callback-stub');
 
-      wrapper = await mountLogin(data);
-
-      buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
-
-      await wrapper.setProps({ themeLoading: true });
-      await flushPromises();
-      await wrapper.setProps({ themeLoading: false });
-      await flushPromises();
-
-      expect(buildTreeFormSpy).not.toHaveBeenCalled();
+      expect(username.attributes('autofocus')).toBe('true');
+      expect(password.attributes('autofocus')).toBeUndefined();
     });
   });
 

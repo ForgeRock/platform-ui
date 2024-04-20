@@ -116,6 +116,8 @@ of the MIT license. See the LICENSE file for details. -->
                           :step="step"
                           :floating-label="journeyFloatingLabels"
                           :is-required-aria="component.isRequired"
+                          :autofocus="journeyFocusFirstFocusableItemEnabled && component.autofocus"
+                          :position-button="journeySignInButtonPosition"
                           v-bind="{...component.callbackSpecificProps}"
                           v-on="{
                             'next-step': (event, preventClear) => {
@@ -311,6 +313,8 @@ of the MIT license. See the LICENSE file for details. -->
                       :step="step"
                       :floating-label="journeyFloatingLabels"
                       :is-required-aria="component.isRequired"
+                      :autofocus="journeyFocusFirstFocusableItemEnabled && component.autofocus"
+                      :position-button="journeySignInButtonPosition"
                       v-bind="{...component.callbackSpecificProps}"
                       v-on="{
                         'next-step': (event, preventClear) => {
@@ -658,17 +662,6 @@ export default {
       });
   },
   watch: {
-    themeLoading(themeLoading) {
-      const stepExists = this.step !== undefined && this.step.type === 'Step';
-      const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
-      // IAM-5201 Unfortunately since the theme payload is async, the journey form props are set before the journey theme data is available.
-      // this makes it so that the form is rebuilt if themeLoading is false (and a step is available and the step is not a WebAuthN step) so autofocus is set
-      if (!themeLoading && stepExists && !isWebAuthnStep) {
-        this.loading = true;
-        this.buildTreeForm();
-        this.loading = false;
-      }
-    },
     // on page load journeyRememberMeEnabled will be false, it will
     // update when the theme is loaded
     journeyRememberMeEnabled() {
@@ -726,7 +719,7 @@ export default {
       // Some callbacks don't need to render anything so forEach is used instead of map
       const componentList = [];
       let keyFromDate = Date.now();
-      let enableAutofocus = this.journeyFocusFirstFocusableItemEnabled;
+      let isFirstFocusableElement = false;
       // IAM-5893 this.stage needs to be cloned here because it was being passed in by ref to this.getComponentPropsAndEvents() (from login mixin)
       // which caused ValidatedCreatePasswordCallback, ChoiceCallback, and ConfirmationCallback to function improperly
       const clonedStage = cloneDeep(this.stage);
@@ -771,7 +764,7 @@ export default {
         if (type === this.FrCallbackType.MetadataCallback) return;
 
         // Only components that need extra props or events
-        const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, clonedStage, this.step, this.realm, this.journeySignInButtonPosition);
+        const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, clonedStage, this.step, this.realm);
         const component = {
           callback,
           callbackSpecificProps,
@@ -786,11 +779,12 @@ export default {
         };
 
         // IAM-5201 The autofocus is to be set only on the first focusable component.
-        // setAutoFocus returns a boolean to enable the autofocus for the component
-        // to prevent multiple components getting autofocus, when setAutoFocus returns true we set enabledAutofocus to false
-        const autofocus = this.setAutoFocus(component.type, enableAutofocus);
-        enableAutofocus = autofocus ? false : enableAutofocus;
-        component.callbackSpecificProps.autofocus = autofocus;
+        // isComponentFocusable returns a boolean to enable the autofocus for the component
+        // to prevent multiple components getting autofocus, when isComponentFocusable returns true we set isFirstFocusableElement to true
+        if (!isFirstFocusableElement) {
+          component.autofocus = this.isComponentFocusable(component.type);
+          isFirstFocusableElement = component.autofocus;
+        }
 
         if (component.type === 'FrField' || component.type === 'FrPasswordCallback') {
           const policyRequirements = callback.getOutputByName('policies')?.policyRequirements || [];
@@ -801,7 +795,7 @@ export default {
           const errors = this.getTranslatedPolicyFailures(callback);
 
           component.callbackSpecificProps = {
-            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label), autofocus,
+            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label),
           };
 
           component.listeners = this.getListeners({ callback, index }, ['input']);
@@ -1424,7 +1418,7 @@ export default {
      * @param {Boolean} enableAutofocus should field be receive autofocus
      * @returns {Boolean}
      */
-    setAutoFocus(componentType, enableAutofocus) {
+    isComponentFocusable(componentType) {
       // Add FrChoiceCallback and FrKbaCreateCallback when multiselect is replaced
       // Currently vue-multiselect expands on focus causing other fields to be obscured by the expanded options list
       const componentTypesToAutofocus = [
@@ -1435,7 +1429,7 @@ export default {
         'FrSelectIdPCallback',
         'FrValidatedCreatePasswordCallback',
       ];
-      return enableAutofocus && componentTypesToAutofocus.indexOf(componentType) > -1;
+      return componentTypesToAutofocus.indexOf(componentType) > -1;
     },
     /**
      * Decides whether to save the value of a username field to localStorage
