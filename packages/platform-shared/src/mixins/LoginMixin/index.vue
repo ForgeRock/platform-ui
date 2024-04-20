@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -232,9 +232,8 @@ export function createWebAuthnCallbackPromise(type, step) {
  * @param {Object} currentStage the stage property for the current SDK step
  * @param {Object} currentStep the current SDK step
  * @param {String} realm the realm to validate password requirements against
- * @param {String} positionButton the position of the button in the journey
  */
-export function getComponentPropsAndEvents(componentType, callBackIndex, componentList, currentStage, currentStep, realm, positionButton) {
+export function getComponentPropsAndEvents(componentType, callBackIndex, componentList, currentStage, currentStep, realm) {
   const existsInComponentList = (type) => componentList.find((component) => component.type === `Fr${type}`);
   const componentPropsAndEvents = {
     ChoiceCallback: () => {
@@ -251,7 +250,6 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
       const showButtonsAsLinks = stage?.showButtonsAsLinks;
       const callbackSpecificProps = {
         stage,
-        positionButton,
         variant: existsInComponentList(FrCallbackType.WebAuthnComponent) || authStepIsShowingPushChallenge || showButtonsAsLinks ? 'link' : 'primary',
       };
       return {
