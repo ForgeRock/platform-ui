@@ -3728,6 +3728,8 @@
         "notFound": "{status} workflow {workflowId} not found",
         "createDraftError": "There was an error creating a draft from this workflow",
         "createDraftSuccess": "Draft workflow created successfully",
+        "createWorkflowError": "There was an error creating a draft from this workflow",
+        "createWorkflowSuccess": "Draft workflow created successfully",
         "deleteError": "There was an error deleting this workflow",
         "deleteSuccess": "Workflow deleted successfully",
         "fileImproperlyFormatted": "Selected file is not properly formatted",
@@ -3744,6 +3746,7 @@
         "validationError": "Workflow validation could not be completed"
       },
       "newDraft": "New Draft",
+      "newWorkflow": "New Workflow",
       "workflow": "Workflow",
       "published": "Published"
     },
