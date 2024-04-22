@@ -32,3 +32,24 @@ it('handles decoding special character', () => {
 
   expect(decodedString).toBe('Hello 文');
 });
+
+it('Handles long strings', () => {
+  const longString = 'a'.repeat(200001);
+  const encodedString = convertStringToBase64(longString);
+
+  expect(convertBase64ToString(encodedString)).toBe(longString);
+});
+
+it('Returns the original string if there is an error decoding', () => {
+  // Use a mock to simulate an error being thrown when decoding
+  const atobSpy = jest.spyOn(global, 'atob').mockImplementation(() => {
+    throw Error('Test error');
+  });
+
+  const decodedString = convertBase64ToString('test');
+
+  expect(decodedString).toBe('test');
+
+  // restore the original implementation
+  atobSpy.mockRestore();
+});
