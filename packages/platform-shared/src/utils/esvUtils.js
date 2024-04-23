@@ -153,7 +153,9 @@ export function doesValueContainPlaceholder(fieldValue) {
   switch (typeof fieldValue) {
     case 'object': {
       const values = Object.values(fieldValue);
-      return values.length === 1 && PLACEHOLDER_REGEX.test(values[0]);
+      const objectHasEsvPlaceholder = values.length === 1 && PLACEHOLDER_REGEX.test(values[0]);
+      const objectIsPurposePlaceholder = Object.keys(fieldValue).includes('$purpose');
+      return objectHasEsvPlaceholder || objectIsPurposePlaceholder;
     }
     case 'string': {
       return PLACEHOLDER_REGEX.test(fieldValue);
@@ -172,6 +174,10 @@ export function doesValueContainPlaceholder(fieldValue) {
 export function getPlaceholderValueToDisplay(fieldValueWithPlaceholder) {
   switch (typeof fieldValueWithPlaceholder) {
     case 'object': {
+      const objectIsPurposePlaceholder = Object.keys(fieldValueWithPlaceholder).includes('$purpose');
+      if (objectIsPurposePlaceholder) {
+        return JSON.stringify(fieldValueWithPlaceholder);
+      }
       return Object.values(fieldValueWithPlaceholder)[0];
     }
     case 'string': {

@@ -224,13 +224,14 @@ describe('coercePlaceholderByType matches the expected outout format', () => {
 
 describe('determining whether a field value contains a placeholder', () => {
   it.each`
-    name                                  | fieldValue                | expectedValue
-    ${'string placeholder'}               | ${'&{esv.test}'}          | ${true}
-    ${'string that is not a placeholder'} | ${'blah'}                 | ${false}
-    ${'object placeholder'}               | ${{ key: '&{esv.test}' }} | ${true}
-    ${'object that is not a placeholder'} | ${{ key: 'a' }}           | ${false}
-    ${'object that is not a placeholder'} | ${{ a: '12', b: 23 }}     | ${false}
-    ${'other non-placeholder value'}      | ${false}                  | ${false}
+    name                                  | fieldValue                               | expectedValue
+    ${'string placeholder'}               | ${'&{esv.test}'}                         | ${true}
+    ${'string that is not a placeholder'} | ${'blah'}                                | ${false}
+    ${'object placeholder'}               | ${{ key: '&{esv.test}' }}                | ${true}
+    ${'purpose placeholder'}              | ${{ $purpose: { name: 'test.secret' } }} | ${true}
+    ${'object that is not a placeholder'} | ${{ key: 'a' }}                          | ${false}
+    ${'object that is not a placeholder'} | ${{ a: '12', b: 23 }}                    | ${false}
+    ${'other non-placeholder value'}      | ${false}                                 | ${false}
     `('Value containing $name', ({ fieldValue, expectedValue }) => {
       expect(doesValueContainPlaceholder(fieldValue)).toBe(expectedValue);
     });
@@ -238,9 +239,10 @@ describe('determining whether a field value contains a placeholder', () => {
 
 describe('retrieving the placeholder key from a field value', () => {
   it.each`
-    name                           | fieldValue                | expectedValue
-    ${'string placeholder'}        | ${'&{esv.test}'}          | ${'&{esv.test}'}
-    ${'object placeholder'}        | ${{ key: '&{esv.tast}' }} | ${'&{esv.tast}'}
+    name                     | fieldValue                               | expectedValue
+    ${'string placeholder'}  | ${'&{esv.test}'}                         | ${'&{esv.test}'}
+    ${'object placeholder'}  | ${{ key: '&{esv.tast}' }}                | ${'&{esv.tast}'}
+    ${'purpose placeholder'} | ${{ $purpose: { name: 'test.secret' } }} | ${'{"$purpose":{"name":"test.secret"}}'}
     `('Value containing $name', ({ fieldValue, expectedValue }) => {
       expect(getPlaceholderValueToDisplay(fieldValue)).toBe(expectedValue);
     });
