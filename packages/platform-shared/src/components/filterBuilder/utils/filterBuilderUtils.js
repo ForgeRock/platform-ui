@@ -125,19 +125,34 @@ export function convertFromIGAFilter(filter, currentUniqueIndex = 0) {
         operator,
         uniqueIndex,
       };
-      // find the key that field converts to
-      subfilter.field = fieldValueObject[filterFieldMap[operator]] || fieldValueObject.in_string_array || '';
-      // find the key that value converts to
-      subfilter.value = fieldValueObject[filterValueMap[operator]] || fieldValueObject.search_string_array || '';
-      if (typeof subfilter.value === 'object') {
-        // if there is a literal value, we want to remove that layer
-        subfilter.value = subfilter.value.literal;
-      }
+      // equals and not_equals are used fot the has_changed and has_not_changed operators
+      // these operators will have left and right string values as opposed to a regular
+      // equals or not_equals which will have an object as the right value
+      if ((operator === 'not_equals' || operator === 'equals')
+        && (typeof fieldValueObject.left === 'string' || fieldValueObject.left instanceof String)
+        && (typeof fieldValueObject.right === 'string' || fieldValueObject.right instanceof String)) {
+        // convert to has_changed and has_not_changed
+        const field = fieldValueObject.left?.split('.').pop();
+        subfilter.operator = operator === 'not_equals'
+          ? 'has_changed'
+          : 'has_not_changed';
+        subfilter.field = field;
+        subfilter.temporalValue = 'after';
+      } else {
+        // find the key that field converts to
+        subfilter.field = fieldValueObject[filterFieldMap[operator]] || fieldValueObject.in_string_array || '';
+        // find the key that value converts to
+        subfilter.value = fieldValueObject[filterValueMap[operator]] || fieldValueObject.search_string_array || '';
+        if (typeof subfilter.value === 'object') {
+          // if there is a literal value, we want to remove that layer
+          subfilter.value = subfilter.value.literal;
+        }
 
-      if (subfilter.field) {
-        // pull temporal value from field [resourceName, temporalValue, fieldName]
-        const splitField = subfilter.field.split('.');
-        [, subfilter.temporalValue, subfilter.field] = splitField;
+        if (subfilter.field) {
+          // pull temporal value from field [resourceName, temporalValue, fieldName]
+          const splitField = subfilter.field.split('.');
+          [, subfilter.temporalValue, subfilter.field] = splitField;
+        }
       }
       convertedFilter.subfilters.push(subfilter);
     }

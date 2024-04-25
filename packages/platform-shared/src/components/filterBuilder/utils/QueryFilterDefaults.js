@@ -34,8 +34,8 @@ export const governanceConditionOptions = {
   IsNot: { label: i18n.global.t('filters.isNot'), value: 'not_equals', type: ['string', 'reference'] },
   StartsWith: { label: i18n.global.t('filters.startsWith'), value: 'starts_with', type: ['string'] },
   DoesNotStartsWith: { label: i18n.global.t('filters.endsWith'), value: 'ends_with', type: ['string'] },
-  HasChanged: { label: i18n.global.t('filters.hasChanged'), value: 'has_changed', type: ['reference'] },
-  HasNotChanged: { label: i18n.global.t('filters.hasNotChanged'), value: 'has_not_changed', type: ['reference'] },
+  HasChanged: { label: i18n.global.t('filters.hasChanged'), value: 'has_changed', type: ['reference', 'string', 'number'] },
+  HasNotChanged: { label: i18n.global.t('filters.hasNotChanged'), value: 'has_not_changed', type: ['reference', 'string', 'number'] },
 };
 
 export const temporalValueOptions = [

@@ -75,6 +75,14 @@ describe('iga tests', () => {
         },
       },
       {
+        equals: {
+          left: 'user.after.cn',
+          right: {
+            literal: 'test',
+          },
+        },
+      },
+      {
         and: [
           {
             equals: {
@@ -99,11 +107,17 @@ describe('iga tests', () => {
         uniqueIndex: 1,
       },
       {
-        operator: 'not_equals',
+        operator: 'has_changed',
         field: 'sn',
-        temporalValue: 'before',
+        temporalValue: 'after',
         uniqueIndex: 2,
-        value: 'user.after.sn',
+      },
+      {
+        operator: 'equals',
+        field: 'cn',
+        value: 'test',
+        temporalValue: 'after',
+        uniqueIndex: 3,
       },
       {
         operator: 'and',
@@ -113,10 +127,10 @@ describe('iga tests', () => {
             field: 'members',
             value: 'snValue',
             temporalValue: 'before',
-            uniqueIndex: 4,
+            uniqueIndex: 5,
           },
         ],
-        uniqueIndex: 3,
+        uniqueIndex: 4,
       },
     ],
     uniqueIndex: 0,
@@ -143,7 +157,7 @@ describe('iga tests', () => {
 
   it('converts IGA Filter To component filter', () => {
     const currentUniqueIndex = 0;
-    expect(convertFromIGAFilter(igaFilter, currentUniqueIndex)).toStrictEqual({ convertedFilter: componentFilter, uniqueIndex: 4 });
+    expect(convertFromIGAFilter(igaFilter, currentUniqueIndex)).toStrictEqual({ convertedFilter: componentFilter, uniqueIndex: 5 });
   });
 
   it('checks IGA filter within n layers', () => {
