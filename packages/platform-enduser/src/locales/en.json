@@ -69,14 +69,17 @@
       },
       "cardCount": {
         "accessReviews": "Access Reviews",
+        "complianceViolations": "Compliance Violations",
         "pendingApprovals": "Pending Approvals",
         "pendingRequests": "Pending Requests",
         "viewAccessReviews": "View access reviews",
+        "viewComplianceViolations": "View compliance violations",
         "viewPendingApprovals": "View pending approvals",
         "viewPendingRequests": "View pending requests"
       },
       "errorGetApplications": "There was an error retrieving your applications",
       "errorRetrievingAccesReviews": "There was an error retrieving access reviews",
+      "errorRetrievingComplianceViolations": "There was an error retrieving compliance violations",
       "errorRetrievingPendingApprovals": "There was an error retrieving pending approvals",
       "errorRetrievingPendingRequests": "There was an error retrieving pending requests",
       "errorRetrievingPendingViolations": "There was an error retrieving pending violations",

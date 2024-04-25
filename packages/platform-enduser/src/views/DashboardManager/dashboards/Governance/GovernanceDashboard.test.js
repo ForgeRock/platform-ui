@@ -27,9 +27,12 @@ describe('GovernanceDashboard', () => {
           $t: (text) => (text),
           $store: {
             state: {
-              SharedStore: {},
+              SharedStore: {
+                governanceDevEnabled: true,
+              },
               certificationCount: 1,
               approvalsCount: 1,
+              violationsCount: 2,
             },
           },
         },
@@ -70,5 +73,11 @@ describe('GovernanceDashboard', () => {
     shallowMountComponent();
     const card = wrapper.findComponent('[linkpath="approvals"]');
     expect(card.vm.count).toBe(1);
+  });
+
+  it('Compliance violations count properly rendered', () => {
+    shallowMountComponent();
+    const card = wrapper.findComponent('[linkpath="violations"]');
+    expect(card.vm.count).toBe(2);
   });
 });
