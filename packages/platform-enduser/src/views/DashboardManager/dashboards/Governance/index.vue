@@ -42,6 +42,17 @@ of the MIT license. See the LICENSE file for details. -->
             :loading="$store.state.approvalsCount === null"
             :title="$t('pages.dashboard.cardCount.pendingApprovals')" />
         </BCol>
+        <BCol
+          v-if="$store.state.SharedStore.governanceDevEnabled"
+          lg="4">
+          <FrCountCard
+            class="mb-4"
+            link-path="violations"
+            :count="$store.state.violationsCount"
+            :link-text="$t('pages.dashboard.cardCount.viewComplianceViolations')"
+            :loading="$store.state.violationsCount === null"
+            :title="$t('pages.dashboard.cardCount.complianceViolations')" />
+        </BCol>
       </BRow>
     </BContainer>
   </div>
