@@ -91,9 +91,13 @@ router.beforeEach((to, _from, next) => {
     if (goto) {
       // validate the goto param before logging out
       const validateGotoAndLogout = () => {
+        let realmPath = realm;
+        if (!realmPath.startsWith('/')) {
+          realmPath = `/${realmPath}`;
+        }
         generateAmApi({
           apiVersion: 'protocol=2.1,resource=3.0',
-          path: `realms/root/realms/${realm}`,
+          path: `realms/root/realms${realmPath}`,
         }).post('users?_action=validateGoto', { goto: decodeURIComponent(goto) }, { withCredentials: true }).then((res) => {
           logout(realm, res.data.successURL);
         }).catch(() => {
