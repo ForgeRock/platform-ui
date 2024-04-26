@@ -66,7 +66,7 @@ describe('Accordion Trusted Devices', () => {
 
       // Device Name
       accordionItems.forEach((item, i) => {
-        const deviceName = findByText(item, '.media .media-body h5', deviceNames[i]);
+        const deviceName = findByText(item, '.media .media-body .h5', deviceNames[i]);
         expect(deviceName).not.toBeUndefined();
       });
 

@@ -21,9 +21,9 @@ of the MIT license. See the LICENSE file for details. -->
       :collapsible="false"
       :panel-shown="false">
       <div class="d-inline-flex w-100">
-        <h5 class="align-self-center m-0">
+        <h3 class="h5 align-self-center m-0">
           {{ getTranslation(obj.description) }}
-        </h5>
+        </h3>
         <div class="ml-auto">
           <FrField
             v-model="obj.value"

@@ -31,9 +31,9 @@ of the MIT license. See the LICENSE file for details. -->
               variant="light"
               :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
           </template>
-          <h5 class="my-0 text-truncate">
+          <div class="h5 my-0 text-truncate">
             {{ userDetails.name }}
-          </h5>
+          </div>
           <div class="text-muted text-truncate">
             <template v-if="userDetails.email.length === 0">
               {{ $t('common.notAvailable') }}

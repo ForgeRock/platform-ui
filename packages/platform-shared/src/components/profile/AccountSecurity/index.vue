@@ -6,9 +6,9 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <BCard no-body>
       <BCardHeader class="p-4">
-        <h1 class="h4">
+        <h2 class="h4">
           {{ $t('pages.profile.accountSecurity.title') }}
-        </h1>
+        </h2>
         <p class="m-0">
           {{ $t('pages.profile.accountSecurity.subtitle') }}
         </p>
@@ -20,7 +20,9 @@ of the MIT license. See the LICENSE file for details. -->
           class="border-bottom">
           <BRow>
             <BCol md="5">
-              <h5>{{ item.title }}</h5>
+              <h3 class="h5">
+                {{ item.title }}
+              </h3>
             </BCol>
             <BCol md="5">
               <FrIcon

@@ -29,9 +29,9 @@ of the MIT license. See the LICENSE file for details. -->
                         icon-class="md-24 mr-3"
                         name="stay_primary_portrait" />
                       <div class="media-body">
-                        <h5 class="m-0">
+                        <h2 class="h5 m-0">
                           {{ getTranslation(device.deviceName) }}
-                        </h5>
+                        </h2>
                       </div>
                       <BDropdown
                         variant="link"
@@ -73,10 +73,10 @@ of the MIT license. See the LICENSE file for details. -->
         @close="setModalData('', {})">
         <template #modal-header="{ close }">
           <div class="d-flex w-100 h-100">
-            <h5
-              class="modal-title my-0">
+            <h2
+              class="h5 modal-title my-0">
               {{ modalInfo.title }}
-            </h5>
+            </h2>
             <button
               type="button"
               :aria-label="$t('common.close')"
