@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
       <template #header="slotData">
-        <h5 class="mb-0">
+        <h3 class="h5 mb-0">
           <BImg
             :alt="slotData.name || slotData._id"
             :src="slotData.logoUri || defaultAppImg"
@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
             @error="failedImageHandler"
           />
           {{ slotData.name || slotData._id }}
-        </h5>
+        </h3>
       </template>
       <template #body="slotData">
         <div class="row">

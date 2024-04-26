@@ -9,9 +9,9 @@ of the MIT license. See the LICENSE file for details. -->
       :items="socialProviders">
       <template #accordionHeader>
         <div class="p-4">
-          <h1 class="h4">
+          <h2 class="h4">
             {{ $t('pages.profile.social.title') }}
-          </h1>
+          </h2>
           <p class="m-0">
             {{ $t('pages.profile.social.subtitle') }}
           </p>
@@ -31,9 +31,9 @@ of the MIT license. See the LICENSE file for details. -->
                     :alt="slotData.uiConfig.buttonDisplayName"
                     :src="slotData.uiConfig.buttonImage" />
                 </span>
-                <h5 class="mb-0 d-inline">
+                <h3 class="h5 mb-0 d-inline">
                   {{ slotData.uiConfig.buttonDisplayName }}
-                </h5>
+                </h3>
               </BCol>
               <BCol
                 md="6"

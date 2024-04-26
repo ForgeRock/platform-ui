@@ -12,6 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
     :hide-header-close="isDeleting"
     no-close-on-backdrop
     no-close-on-esc
+    title-tag="h2"
+    title-class="h5"
     :title="$t('deletePanel.deleteTypeQuestion', { type: translatedItemType })">
     <div
       data-testid="delete-modal-custom-message"

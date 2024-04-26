@@ -7,6 +7,8 @@ of the MIT license. See the LICENSE file for details. -->
     id="edit-trusted-device-modal"
     no-close-on-backdrop
     no-close-on-esc
+    title-tag="h2"
+    title-class="h5"
     :title="i18n.global.t('pages.profile.trustedDevices.editModalTitle')">
     <FrField
       v-model="deviceNameModel"

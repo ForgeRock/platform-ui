@@ -52,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
             role="navigation"
             v-show="hasBreadcrumb"
             :to="!checkChangesOnNavigate ? returnRoute : ''">
-            <h1 class="text-truncate h5 d-flex align-items-center font-weight-normal mb-0">
+            <div class="text-truncate h5 d-flex align-items-center font-weight-normal mb-0">
               <FrIcon
                 icon-class="md-24 mr-3"
                 name="arrow_back">
@@ -60,7 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
                   {{ returnRouteText }}
                 </span>
               </FrIcon>
-            </h1>
+            </div>
           </RouterLink>
         </li>
         <li class="d-flex align-items-center">
@@ -101,9 +101,9 @@ of the MIT license. See the LICENSE file for details. -->
                   <BDropdownHeader
                     v-if="$store.state.isFraas && hasTenantInfo"
                     id="tenant-dropdown-header-label">
-                    <h6 class="text-muted">
+                    <div class="h6 text-muted">
                       {{ $t('tenantSettings.details.tenant') }}
-                    </h6>
+                    </div>
                     <BMedia>
                       <FrTenantTierBadge :tenant-tier="$store.state.promotionTenantInfo.currentTier" />
                       <template>
@@ -132,9 +132,9 @@ of the MIT license. See the LICENSE file for details. -->
                         :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
                     </template>
                     <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
-                      <h5 class="my-0 text-truncate">
+                      <div class="h5 my-0 text-truncate">
                         {{ userDetails.company || userDetails.name }}
-                      </h5>
+                      </div>
                       <div class="text-muted text-truncate">
                         {{ userDetails.company ? userDetails.name : userDetails.email }}
                       </div>
@@ -147,12 +147,14 @@ of the MIT license. See the LICENSE file for details. -->
                   <BDropdownHeader
                     class="py-1 fr-dropdown-header">
                     <div class="mt-1">
-                      <h6 v-if="tenantMenuItems.length">
+                      <div
+                        v-if="tenantMenuItems.length"
+                        class="h6">
                         {{ $t('common.tenant').toUpperCase() }}
-                      </h6>
-                      <h5 class="my-0">
+                      </div>
+                      <div class="h5 my-0">
                         {{ userDetails.company }}
-                      </h5>
+                      </div>
                       <span class="text-muted">
                         {{ userDetails.subscription }}
                       </span>

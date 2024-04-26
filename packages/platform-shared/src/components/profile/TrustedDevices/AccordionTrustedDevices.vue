@@ -10,9 +10,9 @@ of the MIT license. See the LICENSE file for details. -->
     @section-expanded="handleSectionExpanded">
     <template #accordionHeader>
       <div class="p-4">
-        <h1 class="h4">
+        <h2 class="h4">
           {{ i18n.global.t('pages.profile.trustedDevices.title') }}
-        </h1>
+        </h2>
         <p class="m-0">
           {{ i18n.global.t('pages.profile.trustedDevices.subtitle') }}
         </p>
@@ -33,9 +33,9 @@ of the MIT license. See the LICENSE file for details. -->
                   data-testid="device-type"
                   class="device device-xs mr-4" />
                 <BMediaBody>
-                  <h5 class="mb-0">
+                  <h3 class="h5 mb-0">
                     {{ slotData.alias }}
-                  </h5>
+                  </h3>
                   <BButton
                     class="p-0"
                     variant="link"

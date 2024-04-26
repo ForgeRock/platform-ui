@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,9 +17,9 @@ of the MIT license. See the LICENSE file for details. -->
         <hr class="my-4">
       </BCol>
     </BRow>
-    <h5 class="text-left">
+    <h2 class="h5 text-left">
       {{ $t('login.recoveryCodes.subtitle') }}
-    </h5>
+    </h2>
     <p class="text-left">
       {{ $t('login.recoveryCodes.info') }}
       <strong>
