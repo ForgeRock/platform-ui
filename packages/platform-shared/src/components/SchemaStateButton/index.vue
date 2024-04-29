@@ -6,9 +6,9 @@ of the MIT license. See the LICENSE file for details. -->
   <BDropdown variant="outline-secondary">
     <template #button-content>
       <FrIcon
-        :icon-class="`${value === $t('common.active') ? 'mr-2' : ''} text-success`"
-        :name="value === $t('common.active') ? 'check_circle' : ''">
-        {{ value }}
+        :icon-class="`${translatedValue === $t('common.active') ? 'mr-2' : ''} text-success`"
+        :name="translatedValue === $t('common.active') ? 'check_circle' : ''">
+        {{ translatedValue }}
       </FrIcon>
     </template>
 
@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrIcon
         :icon-class="`${item.icon ? 'mr-2' : ''} ${item.textClass}`"
         :name="item.icon || ''">
-        {{ item.text }}
+        {{ getTranslation(item.text) }}
       </FrIcon>
     </BDropdownItem>
   </BDropdown>
@@ -34,6 +34,7 @@ import {
   get,
 } from 'lodash';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 /**
  * A component for switching json schema defined items (applications, Agent/gateway config etc) between active and inactive states (and others).
@@ -46,6 +47,9 @@ export default {
     BDropdownItem,
     FrIcon,
   },
+  mixins: [
+    TranslationMixin,
+  ],
   props: {
     /**
      * Schema data
@@ -73,6 +77,7 @@ export default {
     return {
       value: get(this.model, `${this.field}.value`),
       options: get(this.schema, `${this.field}.options`),
+      translatedValue: this.getTranslation(get(this.model, `${this.field}.value`)),
     };
   },
   computed: {
@@ -81,10 +86,10 @@ export default {
         .filter((option) => option.value !== this.value)
         .map((option) => {
           option.textClass = '';
-          if (option.text === this.$t('common.active')) {
+          if (this.getTranslation(option.text) === this.$t('common.active')) {
             option.icon = 'check_circle';
             option.textClass = 'text-success';
-          } else if (option.text === this.$t('common.inactive')) {
+          } else if (this.getTranslation(option.text) === this.$t('common.inactive')) {
             option.icon = 'power_settings_new';
           }
 
@@ -98,6 +103,7 @@ export default {
      */
     changeState(newValue) {
       this.value = newValue;
+      this.translatedValue = this.getTranslation(newValue);
       /**
        * triggered when a new value is selected from the dropdown
        * @param {string} newValue new selected value

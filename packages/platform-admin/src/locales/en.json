@@ -571,7 +571,8 @@
           "optionalDependencies": "Optional Dependencies",
           "optionalDependenciesDescription": "These dependencies are also required for the exported journeys to function, but can be omitted from this export if the importing environment already contains matching configurations.",
           "journeyWillFail": "Note: Journey import will fail if any nested journeys do not exist.",
-          "nestedJourneys": "Nested Journeys"
+          "nestedJourneys": "Nested Journeys",
+          "changeMe": "CHANGE ME"
         },
         "previewList": {
           "renamed": "Renamed",
@@ -611,6 +612,7 @@
         "noJourneys": "No Journeys to Import",
         "resolveDependencyConflicts": "Resolve Dependency Conflicts",
         "conflictResolution": "Conflict Resolution",
+        "jsonFile": "JSON file",
         "steps": {
           "backupTrees": {
             "description": "This process will import journeys and any required dependencies and can overwrite existing configuration if you choose to do so. As such, before importing any journeys, you must first download a backup of your existing journeys to restore in case of errors or unexpected behaviors during or after import.",
@@ -1236,6 +1238,7 @@
           "description": "Insert statements into the SAML assertions shared with your application.",
           "name": "Name",
           "nameFormat": "Name Format",
+          "nameFormatField": "Name Format Field",
           "nameFormatDropdown": "Name Format Dropdown",
           "nameFormatDropdownButton": "Name Format Dropdown Button",
           "nameFormatDropdownSelectedOption": "Selected Name Format Uri Option",
@@ -1353,7 +1356,13 @@
         "domain": "Domain:",
         "clientIDLabel": "Client ID",
         "clientSecretLabel": "Client Secret",
-        "setSecret": "Set secret"
+        "setSecret": "Set secret",
+        "authenticateEndpoint": "OAuth2.0 Authenticate Endpoint",
+        "authorizationEndpoint": "OAuth2.0 Authorization Endpoint",
+        "tokenEndpoint": "OAuth2.0 Token Endpoint",
+        "introspectEndpoint": "OAuth2.0 Introspect Endpoint",
+        "userinfoEndpoint": "OAuth2.0 Userinfo Endpoint",
+        "identityTokenEndpoint": "OAuth2.0 Identity Token Endpoint"
       },
       "applicationDetails": {
         "applicationOwnerLabel": "Application Owners",
@@ -1946,7 +1955,8 @@
         "forNonSuper": "Required for All Admins Except Super Admins",
         "forNonSuperHelp": "Require all admins who are not super admins to use federation to sign in. Super admins can use their ForgeRock credentials or federation to sign in.",
         "forAll": "Required for All Admins",
-        "forAllHelp": "Allow all admins to use federation to sign in. This option requires a support ticket to change."
+        "forAllHelp": "Allow all admins to use federation to sign in. This option requires a support ticket to change.",
+        "identityProvider": "Identity Provider"
       },
       "enforcementModal": {
         "title": "Edit Tenant Federation Enforcement",
@@ -1991,6 +2001,9 @@
         "tokenEndpoint": "Token Endpoint",
         "userInfoEndpoint": "User Info Endpoint",
         "scopes": "Scopes",
+        "adminGroup": "Admin Group",
+        "superAdmins": "Super Admins",
+        "tenantAdmins": "Tenant Admins",
         "stage1": {
           "title": "Add Sign On Method",
           "helpText": "Choose an identity provider to use for admin sign-in to this tenant."
@@ -3014,6 +3027,7 @@
       "errorStarting": "Error initiating promotion",
       "errorTitle": "Promotion Failed",
       "inProgress": "Promotion in-progress",
+      "missingEsvs": "Missing ESVs",
       "secretsAndVariables": "Secrets and variables",
       "success": "Promotion successful!",
       "unexpectedStatus": "Unexpected promotion status encountered",
