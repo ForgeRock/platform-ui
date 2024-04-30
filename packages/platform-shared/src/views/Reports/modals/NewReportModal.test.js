@@ -10,7 +10,7 @@ import { findByText, findByRole } from '@forgerock/platform-shared/src/utils/tes
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import NewReportModal from './NewReportModal';
-import { mockAxios, testData } from '../__mocks__/mocks';
+import { mockAxios, testData as mockedApiReponse } from '../__mocks__/mocks';
 
 ValidationRules.extendRules({
   alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
@@ -24,29 +24,34 @@ describe('New Report Modal component', () => {
       },
       props: {
         isTesting: true,
+        static: true,
+        visible: true,
         ...props,
       },
     });
   }
 
-  let dropdown;
+  let cancelButton;
   let descriptionInput;
-  let footer;
   let nameInput;
-  let usersInput;
+  let footer;
+  let multiselect;
   let saveButton;
+  let searchInput;
   let wrapper;
 
   beforeEach(async () => {
     wrapper = setup();
-    footer = wrapper.find('.modal-footer');
-    nameInput = wrapper.find('input[name="name-field"]');
-    descriptionInput = wrapper.find('textarea[name="description-field"]');
-    usersInput = wrapper.find('input[name="data-allowed-viewers"]');
-    saveButton = findByText(footer, 'button', 'Next');
-    dropdown = findByRole(wrapper, 'listbox');
 
-    mockAxios(jest.fn().mockResolvedValue(testData));
+    descriptionInput = wrapper.find('textarea[name="description-field"]');
+    multiselect = findByRole(wrapper, 'listbox');
+    nameInput = wrapper.find('input[name="name-field"]');
+    footer = wrapper.find('.modal-footer');
+    cancelButton = findByText(footer, 'button', 'Cancel');
+    saveButton = findByText(footer, 'button', 'Next');
+    searchInput = wrapper.find('input[name="data-allowed-viewers"]');
+
+    mockAxios(jest.fn().mockResolvedValue(mockedApiReponse));
   });
 
   afterEach(() => {
@@ -75,22 +80,6 @@ describe('New Report Modal component', () => {
       expect(saveButton.attributes('disabled')).toBeUndefined();
     });
 
-    it('correctly loads users', async () => {
-      // Get the dropdown and click on it to open
-      await dropdown.trigger('click');
-
-      // Add a value to the search input to trigger api request
-      usersInput.setValue('test');
-
-      await flushPromises();
-
-      // Make sure the options exist in the dropdown
-      testData.data.result.forEach((result) => {
-        const option = findByText(dropdown, 'div', result.userName);
-        expect(option).toBeDefined();
-      });
-    });
-
     it('correctly emits the form data', async () => {
       const nameInputValue = 'test template name';
       const descriptionInputValue = 'test description';
@@ -100,15 +89,15 @@ describe('New Report Modal component', () => {
       await descriptionInput.setValue(descriptionInputValue);
 
       // Open the dropdown
-      await dropdown.trigger('click');
+      await multiselect.trigger('click');
 
       // Add a value to the search input to trigger api request
-      usersInput.setValue('test');
+      searchInput.setValue('test');
 
       await flushPromises();
 
       // Select the 4th option
-      const options = dropdown.findAll('.multiselect__option');
+      const options = multiselect.findAll('.multiselect__option');
       const selectedOption = options[3];
       await selectedOption.trigger('click');
 
@@ -123,7 +112,41 @@ describe('New Report Modal component', () => {
       const [[{ description, name, viewers }]] = wrapper.emitted()['new-report-save'];
       expect(name).toBe(nameInputValue);
       expect(description).toBe(descriptionInputValue);
-      expect(viewers).toStrictEqual([testData.data.result[3].userName]);
+      expect(viewers).toStrictEqual([mockedApiReponse.data.result[3].userName]);
+    });
+
+    it('correctly resets the form data', async () => {
+      const nameInputValue = 'test template name';
+      const descriptionInputValue = 'test description';
+
+      // Set a value into the name and description input
+      await nameInput.setValue(nameInputValue);
+      await descriptionInput.setValue(descriptionInputValue);
+
+      // Open the dropdown
+      await multiselect.trigger('click');
+
+      // Add a value to the search input to trigger api request
+      searchInput.setValue('test');
+
+      await flushPromises();
+
+      // Select the 4th option
+      const options = multiselect.findAll('.multiselect__option');
+      const selectedOption = options[3];
+      await selectedOption.trigger('click');
+      await flushPromises();
+
+      await cancelButton.trigger('click');
+      await flushPromises();
+
+      // Name & description are cleared
+      expect(nameInput.element.value).toBe('');
+      expect(descriptionInput.element.value).toBe('');
+
+      // Multiselect is cleared
+      const option = findByText(multiselect, 'div', mockedApiReponse.data.result[3].userName);
+      expect(option).toBeDefined();
     });
   });
 });

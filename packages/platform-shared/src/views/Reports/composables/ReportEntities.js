@@ -4,6 +4,7 @@
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
 import { computed, ref } from 'vue';
 import { getReportEntityFieldOptions, getReportEntities } from '@forgerock/platform-shared/src/api/AutoApi';
 import i18n from '@/i18n';

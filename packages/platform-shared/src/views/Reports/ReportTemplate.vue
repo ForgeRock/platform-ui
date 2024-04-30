@@ -1,9 +1,7 @@
-<!-- Copyright 2023-2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="h-100 d-flex flex-column">
     <FrReportTemplateHeader
@@ -21,6 +19,7 @@ to such license between the licensee and ForgeRock AS. -->
       <template v-if="templateHasAtLeastOneDataSource">
         <FrReportDataSourceTable />
         <FrReportTemplateSettings
+          v-model="reportDetails"
           :is-saving="isSavingDefinition"
           :report-settings="reportSettings"
           @delete-data-source="deleteDataSource"
@@ -59,7 +58,9 @@ to such license between the licensee and ForgeRock AS. -->
  * @description
  * Main component that gives an admin the ability to create custom platform analytics reports.
  */
-import { computed, ref } from 'vue';
+import {
+  computed, ref, watch,
+} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import {
@@ -70,6 +71,7 @@ import {
 } from '@forgerock/platform-shared/src/api/AutoApi';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { isEqual, startCase } from 'lodash';
 import useReportSettings from './composables/ReportSettings';
 import useReportParameters from './composables/ReportParameters';
 import useReportEntities from './composables/ReportEntities';
@@ -83,6 +85,7 @@ import FrReportTemplateSettings from './ReportTemplate/ReportTemplateSettings';
 import FrReportDataSourceModal from './modals/ReportDataSourceModal';
 import FrReportParametersModal from './modals/ReportParametersModal';
 import i18n from '@/i18n';
+import { defaultGroups } from './composables/ManagedUsers';
 
 defineProps({
   isTesting: {
@@ -134,9 +137,15 @@ const isFetchingEntityColumns = ref(false);
 const isFetchingTemplate = ref(true);
 const isSavingDefinition = ref(false);
 const isSavingTemplate = ref(false);
-const reportDescription = ref('');
+const reportDetails = ref({
+  name: '',
+  description: '',
+  report_admin: false,
+  report_viewer: false,
+  report_owner: false,
+  viewers: '',
+});
 const reportState = ref('draft');
-const reportViewers = ref([]);
 const templateId = route.params.id.toUpperCase();
 const templateName = route.params.id.replace(/-/g, ' ');
 
@@ -148,7 +157,8 @@ const templateName = route.params.id.replace(/-/g, ' ');
  */
 function saveTemplate(settings = reportSettings.value) {
   const payload = reportPayload(settings);
-  return saveAnalyticsReport(templateId, payload, reportViewers.value, reportDescription.value);
+  const groupViewers = defaultGroups.filter((group) => reportDetails.value[group]);
+  return saveAnalyticsReport(templateId, payload, [...reportDetails.value.viewers, ...groupViewers], reportDetails.value.description);
 }
 
 /**
@@ -304,6 +314,15 @@ function setAggregate(name, value) {
 // Computed
 const templateHasAtLeastOneDataSource = computed(() => findSettingsObject('entities').definitions.length);
 
+/**
+ * Check to see if detail settings has changed so we can set the save button disabled status correctly
+ */
+watch(reportDetails, (newVal, oldVal) => {
+  if (!isEqual(newVal, oldVal)) {
+    disableTemplateSave.value = false;
+  }
+});
+
 // Start
 (async () => {
   fetchReportEntities();
@@ -313,6 +332,7 @@ const templateHasAtLeastOneDataSource = computed(() => findSettingsObject('entit
   if (result?.length) {
     const [existingTemplate] = result;
     const {
+      name,
       reportConfig,
       type,
       viewers,
@@ -328,8 +348,14 @@ const templateHasAtLeastOneDataSource = computed(() => findSettingsObject('entit
     } = JSON.parse(reportConfig);
 
     reportState.value = type;
-    reportViewers.value = viewers;
-    reportDescription.value = description;
+
+    reportDetails.value.name = startCase(name.replace(/-/, ' ').toLowerCase());
+    reportDetails.value.description = description;
+    reportDetails.value.report_admin = viewers.includes('report_admin');
+    reportDetails.value.report_owner = viewers.includes('report_owner');
+    reportDetails.value.report_viewer = viewers.includes('report_viewer');
+    reportDetails.value.viewers = viewers.filter((item) => !defaultGroups.includes(item));
+
     findSettingsObject('entities').definitions.push(...await entityDefinitions(entities, fields));
     findSettingsObject('parameters').definitions.push(...parameterDefinitions(parameters));
     findSettingsObject('filter').definitions.push(...filterDefinitions(filter));

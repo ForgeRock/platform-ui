@@ -24,7 +24,7 @@ describe('@composable', () => {
     const { userOptionData, fetchManagedUsers } = useManagedUsers(realm);
 
     // Make the request
-    fetchManagedUsers();
+    fetchManagedUsers('search term');
     await flushPromises();
 
     // Validate the response
@@ -55,5 +55,22 @@ describe('@composable', () => {
     // Check if correct query string value is called
     queryString = encodeQueryString({ queryFilter: `givenName co '${searchValue}' or sn co '${searchValue}' or userName co '${searchValue}'`, _pageSize: 10 });
     expect(axiosCreate().get).toHaveBeenCalledWith(`managed/${realm}_user${queryString}`);
+  });
+
+  it('sets the user data to an empty array if the fetch contains no search term', async () => {
+    const axiosCreate = mockAxios(jest.fn().mockResolvedValue(testData));
+
+    const searchValue = '';
+
+    // Setup the composable
+    const { fetchManagedUsers, userOptionData } = useManagedUsers(realm);
+
+    // Make the first request
+    fetchManagedUsers(searchValue, realm);
+    await flushPromises();
+
+    // Check to see if the data is an empty array and the api request never ran
+    expect(userOptionData.value).toStrictEqual([]);
+    expect(axiosCreate().get).not.toHaveBeenCalled();
   });
 });

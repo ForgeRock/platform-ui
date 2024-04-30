@@ -11,6 +11,11 @@ import { watch, ref } from 'vue';
 import { getManagedResourceList } from '../../../api/ManagedResourceApi';
 
 /**
+ * Names of the default groups used in report details settings
+ */
+export const defaultGroups = ['report_admin', 'report_owner', 'report_viewer'];
+
+/**
  * Format the data for the multiselect input
  *
  * @param {Object} data - Array containing managed users
@@ -21,16 +26,16 @@ function formatData(data) {
     return [];
   }
   return data.data.result.map(({
-    sn, givenName, profileImage, userName, _id,
+    sn, givenName, profileImage, userName,
   }) => ({
     meta: {
       givenName,
       sn,
-      multiselectId: _id,
       profileImage,
       type: 'user',
       userName,
     },
+    multiselectId: userName,
     text: userName,
     value: userName,
   }));
@@ -67,10 +72,15 @@ export default function useManagedUsers(realm) {
 
   /**
    * Make a request to retrieve Managed Users and static Managed Groups
+   * If a fetch is called without a searchTerm we need to not return any results
    *
    * @param {String} searchTerm - String containing the term to be used in the queries
    */
   function fetchManagedUsers(searchTerm) {
+    if (!searchTerm) {
+      userOptionData.value = [];
+      return;
+    }
     execute(0, searchTerm, realm);
   }
 

@@ -9,9 +9,14 @@ import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { findByText, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import ReportTemplateSettings from './ReportTemplateSettings';
 import stubs from './ReportTemplateSettingsStubs';
+
+ValidationRules.extendRules({
+  alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
+});
 
 describe('Report Template Settings component', () => {
   function setup(props) {

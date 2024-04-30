@@ -1,9 +1,7 @@
-<!-- Copyright 2023-2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
     body-class="p-0"
@@ -84,7 +82,10 @@ to such license between the licensee and ForgeRock AS. -->
           </div>
         </template>
         <template v-if="tabItems[index].id === 'detailsTab'">
-          Details content
+          <FrReportSettingsDetailsForm
+            :value="value"
+            @input="$emit('input', $event)"
+            :is-name-editable="false" />
         </template>
       </BTab>
     </BTabs>
@@ -108,15 +109,19 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrReportDataSourceDefinition from './ReportDataSourceDefinition';
 import FrReportSettingsDefinition from './ReportSettingsDefinition';
 import i18n from '@/i18n';
+import FrReportSettingsDetailsForm from './ReportSettingsDetailsForm';
 
 const emit = defineEmits([
   'delete-data-source',
   'delete-definition',
+  'input',
   'update-definitions',
+  'update-details',
   'set-aggregate',
   'set-column-selections',
   'set-related-entity-selections',
 ]);
+
 defineProps({
   isSaving: {
     type: Boolean,
@@ -124,6 +129,10 @@ defineProps({
   },
   reportSettings: {
     type: Array,
+    required: true,
+  },
+  value: {
+    type: Object,
     required: true,
   },
 });
