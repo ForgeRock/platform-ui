@@ -15,6 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
       :autofocus="autofocus"
       :is-required-aria="true"
       :aria-invalid="!!failuresForField.length || !!failuresForPanel.length"
+      @focused="touched = true;"
       @blur="lostFocus = true;" />
     <FrPolicyPanel
       class="mt-2"
@@ -24,7 +25,9 @@ of the MIT license. See the LICENSE file for details. -->
       :policy-display-checkmark="policyDisplayCheckmark"
       :policy-failures="failuresForPanel"
       :value-entered="!!password.value"
-      :policy-panel-id="`policy_panel_${index}`" />
+      :policy-panel-id="`policy_panel_${index}`"
+      :touched="touched"
+    />
     <FrField
       v-if="confirmPassword"
       :value="confirmPasswordText"
@@ -130,6 +133,7 @@ export default {
         label: this.callback.getPrompt(),
         value: '',
       },
+      touched: false,
       policies: [],
       policyDisplayCheckmark: this.stage?.policyDisplayCheckmark,
     };
