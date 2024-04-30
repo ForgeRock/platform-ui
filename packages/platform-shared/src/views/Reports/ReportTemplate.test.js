@@ -1,9 +1,8 @@
 /**
- * Copyright 2024 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2024 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { nextTick } from 'vue';
@@ -13,8 +12,13 @@ import { findByRole, findByText, findByTestId } from '@forgerock/platform-shared
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import ReportTemplate from './ReportTemplate';
+
+ValidationRules.extendRules({
+  alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
+});
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('vue-router', () => ({

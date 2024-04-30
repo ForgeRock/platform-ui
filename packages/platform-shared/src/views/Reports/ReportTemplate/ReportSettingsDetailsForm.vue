@@ -1,0 +1,212 @@
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
+<template>
+  <BForm>
+    <BFormGroup label-for="name-field">
+      <FrField
+        name="name-field"
+        type="text"
+        validation="alpha_num_spaces"
+        :disabled="isNameEditable"
+        :description="$t('reports.newReportModal.nameInputDescription')"
+        :label="$t('common.name')"
+        :validation-immediate="false"
+        :value="props.value.name"
+        @input="update('name', $event)" />
+    </BFormGroup>
+    <BFormGroup label-for="description-field">
+      <FrField
+        name="description-field"
+        type="textarea"
+        :label="$t('common.optionalFieldTitle', { fieldTitle: $t('common.description') })"
+        :value="props.value.description"
+        @input="update('description', $event)" />
+    </BFormGroup>
+    <h5 class="mb-3">
+      {{ $t('reports.newReportModal.labelViewers') }}
+    </h5>
+    <BFormGroup>
+      <label>{{ $t('common.groups') }}</label>
+      <FrField
+        class="mb-2"
+        name="report_admin"
+        type="checkbox"
+        :value="props.value.report_admin"
+        :label="$t('reports.newReportModal.reportAdminOption')"
+        @input="update('report_admin', $event)" />
+      <FrField
+        class="mb-2"
+        name="report_viewer"
+        type="checkbox"
+        :value="props.value.report_viewer"
+        :label="$t('reports.newReportModal.reportViewerOption')"
+        @input="update('report_viewer', $event)" />
+      <FrField
+        name="report_owner"
+        type="checkbox"
+        :value="props.value.report_owner"
+        :label="$t('reports.newReportModal.reportOwnerOption')"
+        @input="update('report_owner', $event)" />
+    </BFormGroup>
+    <BFormGroup label-for="allowed-viewers-field">
+      <FrField
+        name="data-allowed-viewers"
+        type="multiselect"
+        :clear-on-select="false"
+        :description="$t('reports.newReportModal.usersInputDescription')"
+        :hide-selected="true"
+        :internal-search="false"
+        :label="$t('common.users')"
+        :loading="isLoading"
+        :options="normalizedUserOptions"
+        :show-no-options="false"
+        :value="props.value.viewers"
+        @search-change="handleSearchChange"
+        @input="update('viewers', $event)">
+        <template
+          v-for="slotName in ['singleLabel', 'option']"
+          :key="slotName"
+          #[slotName]="{ option: { meta: prop } }">
+          <div :class="{ 'mb-1': slotName === 'singleLabel' }">
+            <BMedia no-body>
+              <BMediaAside vertical-align="center">
+                <BAvatar
+                  size="24"
+                  variant="light"
+                  :src="prop.profileImage?.length ? prop.profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+              </BMediaAside>
+              <BMediaBody>
+                <div class="mb-1 text-dark">
+                  {{ `${prop.givenName} ${prop.sn}` }}
+                </div>
+                <small>
+                  {{ prop.userName }}
+                </small>
+              </BMediaBody>
+            </BMedia>
+          </div>
+        </template>
+      </FrField>
+    </BFormGroup>
+  </BForm>
+</template>
+
+<script setup>
+/**
+ * @description Component that contains the Detail Settings form for Report Templates
+ */
+import {
+  ref, computed, toRaw, watch,
+  onMounted,
+} from 'vue';
+import {
+  BAvatar, BForm, BFormGroup, BMedia, BMediaAside, BMediaBody,
+} from 'bootstrap-vue';
+import { useForm } from 'vee-validate';
+import FrField from '@forgerock/platform-shared/src/components/Field';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import i18n from '@forgerock/platform-shared/src/i18n';
+import { debounce } from 'lodash';
+import useManagedUsers from '../composables/ManagedUsers';
+import store from '@/store';
+
+const initialValues = ref(null);
+
+const emit = defineEmits(['input', 'search-change', 'valid-change']);
+const { meta } = useForm();
+
+const {
+  userOptionData, userOptionError, fetchManagedUsers, isLoading,
+} = useManagedUsers(store.state.realm);
+
+const debounceFetchManagedUsers = debounce(fetchManagedUsers, 250, false);
+
+const props = defineProps({
+  isNameEditable: {
+    type: Boolean,
+    default: false,
+  },
+  isTesting: {
+    type: Boolean,
+    default: false,
+  },
+  value: {
+    type: Object,
+    default: () => ({}),
+  },
+});
+
+/**
+ * Fetches managed users based on the search query term passed from form gield
+ *
+ * @param {String} searchQuery - Value from search form field
+ */
+function handleSearchChange(searchQuery) {
+  debounceFetchManagedUsers(searchQuery);
+
+  if (props.isTesting) {
+    fetchManagedUsers(searchQuery);
+  }
+}
+
+/**
+ * Called when resetting the form to the initial value
+ */
+function resetForm() {
+  emit('input', initialValues);
+}
+
+/**
+ * Update function for component v-model
+ *
+ * @param {String} key - Name of object key
+ * @param {*} value - Value of key parameter
+ */
+function update(key, value) {
+  emit('input', { ...props.value, [key]: toRaw(value) });
+}
+
+/**
+ * Sets the options value for multiselect. Adds options for existing viewers
+ * when editing the details for the template. Multiselect will fail if existing
+ * viewers are not added.
+ */
+const normalizedUserOptions = computed(() => {
+  const valueOptions = props.value.viewers?.map((option) => ({
+    meta: {}, multiselectId: option, text: option, value: option,
+  })) || [];
+
+  return [...userOptionData.value, ...valueOptions];
+});
+
+onMounted(() => {
+  initialValues.value = props.value;
+});
+
+/**
+ * Emit the validity of form from Vee Validate
+ */
+watch(meta, (newVal) => {
+  emit('valid-change', newVal.valid);
+});
+
+/**
+ * Handle errors from API request for Managed Users
+ */
+watch(userOptionError, (newVal) => {
+  if (newVal) {
+    showErrorMessage(newVal, i18n.global.t('reports.noUserAndGroupData'));
+  }
+});
+
+defineExpose({ resetForm });
+
+</script>
+<style lang="scss" scoped>
+  .icon-group {
+    height: 24px;
+    width: 24px;
+  }
+</style>
