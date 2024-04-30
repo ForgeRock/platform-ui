@@ -7,6 +7,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
+import { findAllByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 
 let wrapper;
 
@@ -50,6 +51,43 @@ describe('PolicyPanel.vue', () => {
       await wrapper.setProps({ policyFailures: ['test', 'test2', 'test3'] });
       const passingPoliciesArray = wrapper.findAll('.fr-valid');
       expect(passingPoliciesArray.length).toBe(0);
+    });
+
+    it('Will add proper accessible data to the DOM to indicate policy failures', async () => {
+      await wrapper.setProps({ policyFailures: ['test', 'test2', 'test3'] });
+      await wrapper.setProps({ touched: true });
+      const passedPolicies = findAllByTestId(wrapper, 'passed-policy');
+      const failedPolicies = findAllByTestId(wrapper, 'failed-policy');
+
+      expect(passedPolicies.length).toBe(0);
+      expect(failedPolicies.length).toBe(3);
+
+      expect(failedPolicies[0].classes()).toContain('sr-only');
+    });
+
+    it('Will add proper accessible data to the DOM to indicate a mix of policy failures and passes', async () => {
+      await wrapper.setProps({ policyFailures: ['test2'], valueEntered: true });
+      await wrapper.setProps({ touched: true });
+      const passedPolicies = findAllByTestId(wrapper, 'passed-policy');
+      const failedPolicies = findAllByTestId(wrapper, 'failed-policy');
+
+      expect(passedPolicies.length).toBe(2);
+      expect(failedPolicies.length).toBe(1);
+
+      expect(passedPolicies[0].classes()).toContain('sr-only');
+      expect(failedPolicies[0].classes()).toContain('sr-only');
+    });
+
+    it('Will add proper accessible data to the DOM to indicate policy passes', async () => {
+      await wrapper.setProps({ policyFailures: [], valueEntered: true });
+      await wrapper.setProps({ touched: true });
+      const passedPolicies = findAllByTestId(wrapper, 'passed-policy');
+      const failedPolicies = findAllByTestId(wrapper, 'failed-policy');
+
+      expect(passedPolicies.length).toBe(3);
+      expect(failedPolicies.length).toBe(0);
+
+      expect(passedPolicies[0].classes()).toContain('sr-only');
     });
   });
 

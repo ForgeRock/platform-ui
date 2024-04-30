@@ -43,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-invalid="isAriaInvalid"
           @animationstart="floatingLabel && animationStart"
           @blur="onBlur($event)"
-          @focus="(floatingLabel && label) && (floatLabels = true)"
+          @focus="$emit('focused') && (floatingLabel && label) && (floatLabels = true)"
           :data-testid="`input-${testid}`">
         <input
           v-else
@@ -64,7 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-required="isRequiredAria"
           :aria-invalid="isAriaInvalid"
           @blur="onBlur($event);"
-          @focus="(floatingLabel && label) && (floatLabels = true)"
+          @focus="$emit('focused') && (floatingLabel && label) && (floatLabels = true)"
           @animationstart="floatingLabel && animationStart"
           :data-testid="`input-${testid}`">
       </template>

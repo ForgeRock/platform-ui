@@ -3,12 +3,15 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BRow :id="policyPanelId">
+  <BRow>
     <BCol
       v-for="i in numColumns"
       :key="`password_policy_${i}`">
       <small>
-        <ul :class="policyDisplayCheckmark ? 'pl-1' : 'pl-4'">
+        <ul
+          :class="policyDisplayCheckmark ? 'pl-1' : 'pl-4'"
+          :id="policyPanelId"
+        >
           <li
             v-for="(policy) in policyColumns[i-1]"
             class="text-muted fr-policy-list-item"
@@ -24,7 +27,23 @@ of the MIT license. See the LICENSE file for details. -->
                 :icon-class="{ 'text-danger': displayDangerStyle }"
                 name="close" />
             </template>
-            {{ getPolicyDescription(policy) }}
+            <span aria-hidden="true">
+              {{ getPolicyDescription(policy) }}
+            </span>
+            <p
+              v-if="touched && isPolicyMet(policy)"
+              class="sr-only"
+              data-testid="passed-policy"
+              role="alert">
+              {{ $t('common.policyValidationMessages.srOnlyMet', { policy: getPolicyDescription(policy) }) }}
+            </p>
+            <p
+              v-if="touched && !isPolicyMet(policy)"
+              class="sr-only"
+              data-testid="failed-policy"
+              :role="valueEntered ? 'alert': null">
+              {{ $t('common.policyValidationMessages.srOnlyNotMet', { policy: getPolicyDescription(policy) }) }}
+            </p>
           </li>
         </ul>
       </small>
@@ -99,6 +118,13 @@ export default {
     policyPanelId: {
       type: String,
       default: '',
+    },
+    /**
+     * Whether the associated field has been focused
+     */
+    touched: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

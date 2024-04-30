@@ -451,7 +451,9 @@
       "singleSpaces": "Multiple spaces prohibited",
       "secretLabelIdentifier": "Can only contain characters a-z, 0-9, and periods. Cannot start or end with a period",
       "url_with_fragment": "URLs cannot contain #",
-      "whitespace": "Space characters prohibited"
+      "whitespace": "Space characters prohibited",
+      "srOnlyMet": "Met {policy}",
+      "srOnlyNotMet": "Not met {policy}"
     },
     "user": {
       "accountStatus": "Status",
