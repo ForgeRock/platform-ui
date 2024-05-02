@@ -31,9 +31,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import {
-  capitalize,
-} from 'lodash';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
@@ -270,7 +267,7 @@ export default {
       privileges.forEach((obj) => {
         const splitObj = obj.privilegePath.split('/');
         this.menuItems.push({
-          displayName: this.getTranslation(capitalize(obj.title)),
+          displayName: this.getTranslation(obj.title),
           icon: this.getMenuItemIcon(obj),
           routeTo: {
             name: 'ListResource',
