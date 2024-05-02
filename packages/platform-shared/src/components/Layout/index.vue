@@ -293,10 +293,6 @@ body {
       }
     }
   }
-
-  .menu-item-text {
-    display: none;
-  }
 }
 
 #app.fr-menu-expanded:not(.fr-menu-mobile) {
