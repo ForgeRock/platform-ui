@@ -1,4 +1,4 @@
-# Copyright 2020-2023 ForgeRock AS. All Rights Reserved
+# Copyright 2020-2024 ForgeRock AS. All Rights Reserved
 #
 # Use of this code requires a commercial software license with ForgeRock AS.
 # or with one of its affiliates. All use shall be exclusively subject
@@ -7,7 +7,7 @@
 ARG NGINX_VERSION
 
 # First build stage, used to build an nginx module we use in our image
-FROM gcr.io/engineering-devops/ci/nginxinc/nginx-unprivileged:${NGINX_VERSION} as build
+FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} as build
 
 ARG HEADERS_MORE_VERSION
 
