@@ -6,12 +6,12 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import SortModal from './SortModal';
+import ColumnOrganizer from './ColumnOrganizer';
 
 let wrapper;
 
 function setup(options, propsData) {
-  wrapper = shallowMount(SortModal, {
+  wrapper = shallowMount(ColumnOrganizer, {
     global: {
       mocks: {
         $t: (t) => t,
@@ -19,21 +19,21 @@ function setup(options, propsData) {
       },
     },
     props: {
-      taskListColumns: [],
+      activeColumns: [],
       ...propsData,
     },
   });
 }
-describe('SortModal', () => {
+describe('ColumnOrganizer', () => {
   describe('Component mount', () => {
     it('should render default modalId', () => {
       setup();
-      expect(wrapper.find('#CertificationTaskSortConfirmAccountModal').exists()).toBeTruthy();
+      expect(wrapper.find('#ColumnOrganizerModal').exists()).toBeTruthy();
     });
 
     it('should render prop modalId', () => {
-      setup({}, { modalId: 'CertificationTaskSortConfirmEntitlementModal' });
-      expect(wrapper.find('#CertificationTaskSortConfirmEntitlementModal').exists()).toBeTruthy();
+      setup({}, { modalId: 'SortGovernanceColumns' });
+      expect(wrapper.find('#SortGovernanceColumns').exists()).toBeTruthy();
     });
   });
 });

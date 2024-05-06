@@ -257,10 +257,10 @@ of the MIT license. See the LICENSE file for details. -->
       @forward="openForwardModal(null, true, true)"
       @clearDecisions="bulkReset()" />
     <!-- Modals -->
-    <FrSortModal
+    <FrColumnOrganizer
       @update-columns="updateColumns"
       @hidden="closeSortModal"
-      :task-list-columns="tasksFieldsToSort"
+      :active-columns="tasksFieldsToSort"
       :available-columns="availableColumns"
       :modal-id="getModalId('sort')" />
     <FrForwardModal
@@ -392,6 +392,7 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
+import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
 import FrAccountModal from './modals/AccountModal';
 import FrActivityModal from './modals/ActivityModal';
 import FrAddCommentModal from './modals/AddCommentModal';
@@ -403,7 +404,6 @@ import FrEntitlmentModal from './modals/EntitlementModal';
 import FrReviewersModal from './modals/ReviewersModal';
 import FrReassignModal from './modals/ReassignModal';
 import FrRoleModal from './modals/RoleModal/RoleModal';
-import FrSortModal from './modals/SortModal/SortModal';
 import FrTaskActionsCell from './TaskActionsCell';
 import FrTaskFilters from './TaskFilters';
 import FrTaskMultiSelect from './TaskMultiSelect';
@@ -445,6 +445,7 @@ export default {
     FrActivityModal,
     FrForwardModal,
     FrAccountModal,
+    FrColumnOrganizer,
     FrConfirmActionModal,
     FrAddCommentModal,
     FrApplicationModal,
@@ -454,7 +455,6 @@ export default {
     FrReassignModal,
     FrReviewersModal,
     FrRoleModal,
-    FrSortModal,
     FrField,
     FrFloatingActionBar,
     FrGovernanceUserDetailsModal,
