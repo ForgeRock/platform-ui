@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     :id="modalId"
     :ok-title="$t('common.apply')"
-    :title="$t('governance.certificationTask.customizeColumns')"
+    :title="$t('common.customizeColumns')"
     @hidden="$emit('hidden')"
     @ok="applyCustomization()"
     body-class="p-0"
@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
           <template #accordionHeader>
             <div class="p-4">
               <header class="mb-0 h5">
-                {{ $t('governance.certificationTask.availableColumns') }}
+                {{ $t('common.availableColumns') }}
               </header>
             </div>
           </template>
@@ -59,7 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BCol class="p-0">
         <div class="p-4">
           <header class="mb-0 h5">
-            {{ $t('governance.certificationTask.activeColumns') }}
+            {{ $t('common.activeColumns') }}
           </header>
         </div>
         <BListGroup>
@@ -131,7 +131,7 @@ const emit = defineEmits(['update-columns', 'hidden']);
 
 // component props
 const props = defineProps({
-  taskListColumns: {
+  activeColumns: {
     type: Array,
     default: () => [],
   },
@@ -141,7 +141,7 @@ const props = defineProps({
   },
   modalId: {
     type: String,
-    default: 'CertificationTaskSortConfirmAccountModal',
+    default: 'ColumnOrganizerModal',
   },
 });
 
@@ -155,7 +155,7 @@ watch(() => props.availableColumns,
     availableColumnsList.value = cloneDeep(newVal);
   });
 
-watch(() => props.taskListColumns,
+watch(() => props.activeColumns,
   (newVal) => {
     // filter selector column from list
     const columnList = newVal.filter((col) => col.key !== 'selector');
@@ -215,5 +215,4 @@ function applyCustomization() {
   });
   bvModal.value.hide(props.modalId);
 }
-
 </script>
