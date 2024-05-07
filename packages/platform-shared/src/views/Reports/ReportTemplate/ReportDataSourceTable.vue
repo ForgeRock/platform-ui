@@ -5,9 +5,9 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 
 <template>
-  <BContainer class="mt-5">
+  <BContainer class="overflow-hidden mt-5">
     <BCard
-      v-if="true"
+      v-if="!selectedDataSourceColumns.length"
       class="text-center py-2">
       <BCardTitle
         class="h4 mb-2"
@@ -20,15 +20,20 @@ to such license between the licensee and ForgeRock AS. -->
     </BCard>
     <BCard
       v-else
-      class="text-center py-2"
       no-body>
-      <BTableSimple>
+      <BTableSimple responsive>
         <BThead>
           <BTr>
             <BTh
               v-for="(column, index) in selectedDataSourceColumns"
-              :key="index">
-              {{ column.label }}
+              :key="index"
+              class="p-0">
+              <FrField
+                :name="column.label"
+                :value="column.label"
+                @input="updateLabel($event, column.value)"
+                input-class="border-0 font-weight-bold rounded-0 px-4 py-3 data-source-label-input"
+                type="string" />
             </BTh>
           </BTr>
         </BThead>
@@ -36,8 +41,9 @@ to such license between the licensee and ForgeRock AS. -->
           <BTr>
             <BTd
               v-for="(column, index) in selectedDataSourceColumns"
-              :key="index">
-              {{ column.label }}
+              :key="index"
+              class="p-4">
+              &#123;{{ column.vanityValue }}&#125;
             </BTd>
           </BTr>
         </BTbody>
@@ -50,7 +56,7 @@ to such license between the licensee and ForgeRock AS. -->
 /**
  * @description
  * Create report table that displays the selected data source columns
- * along with the ability for the user to edit the table headings.
+ * along with the ability for the user to edit the table heading labels.
  */
 import { computed } from 'vue';
 import {
@@ -65,7 +71,9 @@ import {
   BThead,
   BTr,
 } from 'bootstrap-vue';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
+const emit = defineEmits(['update-data-source-column-label']);
 const props = defineProps({
   dataSources: {
     type: Array,
@@ -75,6 +83,48 @@ const props = defineProps({
 
 const selectedDataSourceColumns = computed(() => {
   const [entity] = props.dataSources;
-  return entity?.selectedColumns;
+
+  if (entity && entity.selectedColumns?.length) {
+    return entity.selectedColumns.map((value) => {
+      const dataSourceColumnMatch = entity.dataSourceColumns.find((column) => column.value === value);
+      const valueArr = dataSourceColumnMatch.value.split('.');
+      // Removes the first word within string by period
+      // delimeter since it matches entity name.
+      valueArr.shift();
+      return {
+        ...dataSourceColumnMatch,
+        vanityValue: valueArr.join('.'),
+      };
+    });
+  }
+  return [];
 });
+
+// Functions
+
+/**
+ * Updates the label for a table heading input.
+ * @param {String} label The updated data source label
+ * @param {String} value The data source value
+ */
+function updateLabel(label, value) {
+  const columnMatch = selectedDataSourceColumns.value.find((obj) => obj.value === value);
+  if (columnMatch.label !== label) {
+    emit('update-data-source-column-label', label, value);
+  }
+}
 </script>
+
+<style lang="scss" scoped>
+  :deep(.table) {
+    table-layout: unset;
+  }
+
+  :deep(.data-source-label-input) {
+    margin-top: 1px;
+  }
+
+  :deep(.form-label-group .form-label-group-input) {
+    padding-right: 1px;
+  }
+</style>

@@ -43,6 +43,19 @@ describe('@useReportEntities', () => {
     },
   }));
 
+  AutoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+    data: {
+      'applications.name': {
+        class: 'json',
+        type: 'string',
+      },
+      'applications._id': {
+        class: 'json',
+        type: 'string',
+      },
+    },
+  }));
+
   const entitiesStub = [{ entity: 'applications', name: 'applications' }];
   const definitionsUIDataStructureStub = [
     {
