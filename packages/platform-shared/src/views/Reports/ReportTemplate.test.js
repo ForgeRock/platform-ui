@@ -158,34 +158,6 @@ describe('Component for creating custom analytics reports', () => {
       expect(UsersOption.text()).toBe('Users');
     });
 
-    it('ensures that the "Add Data" empty state does not show if a data source has been selected', async () => {
-      AutoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
-      jest.useFakeTimers();
-      wrapper = setup();
-      await nextTick();
-
-      const dataSourcesDropdown = findByRole(wrapper, 'listbox');
-      const [applicationsOption] = dataSourcesDropdown.findAll('[role="option"]');
-      await applicationsOption.find('span').trigger('click');
-
-      const modalFooter = wrapper.find('footer');
-      const nextButton = findByText(modalFooter, 'button', 'Next');
-
-      await nextButton.trigger('click');
-      await flushPromises();
-      jest.runAllTimers();
-      await nextTick();
-
-      const mainHeading = wrapper.find('main h2');
-      expect(mainHeading.text()).toBe('Settings');
-
-      // Data source columns
-      const dataSourceColumnLabels = findByRole(wrapper.find('main'), 'group').findAll('label');
-      const [_id, name] = dataSourceColumnLabels;
-      expect(_id.text()).toBe('_id');
-      expect(name.text()).toBe('name');
-    });
-
     it('ensures that the report badge does show the expected report state on load', async () => {
       wrapper = setup();
       const headerNavElement = wrapper.find('header > nav');
@@ -257,6 +229,73 @@ describe('Component for creating custom analytics reports', () => {
       const duplicateButton = findByText(headerToolbar, 'a', 'control_point_duplicateDuplicate');
       await duplicateButton.trigger('click');
       expect(duplicateAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'published');
+    });
+
+    it('ensures that the "Add Data" empty state does not show if a data source has been selected', async () => {
+      await addDataSource();
+
+      const mainHeading = wrapper.find('main h2');
+      expect(mainHeading.text()).toBe('Settings');
+
+      // Data source columns
+      const dataSourceColumnLabels = findByRole(wrapper.find('main'), 'group').findAll('label');
+      const [_id, name] = dataSourceColumnLabels;
+      expect(_id.text()).toBe('_id');
+      expect(name.text()).toBe('name');
+    });
+
+    it('ensures that a selected data source column shows up in the left hand table and enables the save button', async () => {
+      await addDataSource();
+
+      // Left hand table empty state
+      const emptyStateHeading = wrapper.find('h3');
+      expect(emptyStateHeading.text()).toBe('No columns added');
+
+      // Makes sure that the disabled button is actually disabled at first
+      const toolbar = findByRole(wrapper, 'toolbar');
+      let saveButton = findByText(toolbar, 'button', 'Save');
+      expect(saveButton.attributes('disabled')).toBeDefined();
+
+      // Checks a data source checkbox
+      const dataSourceDefinition = findByTestId(wrapper, 'definition-body');
+      const [_idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
+      await _idCheckbox.setChecked();
+      await flushPromises();
+
+      // Ensures that the left preview table displays the selected data source checkbox label as a column header
+      const [_idHeader] = wrapper.findAll('[role="columnheader"]');
+      expect(wrapper.findAll('[role="columnheader"]').length).toBe(1);
+
+      const _idInputValue = _idHeader.find('input').element.value;
+      expect(_idInputValue).toBe('_id');
+
+      // Ensures that the left preview table displays the selected data source checkbox value as a column row
+      const [_idRow] = wrapper.findAll('[role="cell"]');
+      expect(_idRow.text()).toBe('{_id}');
+
+      // Makes sure that the disabled button is now enabled
+      saveButton = findByText(toolbar, 'button', 'Save');
+      expect(saveButton.attributes('disabled')).toBeUndefined();
+    });
+
+    it('saves the form with a selected data source column', async () => {
+      await addDataSource();
+
+      // Checks a data source checkbox
+      const dataSourceDefinition = findByTestId(wrapper, 'definition-body');
+      const [_idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
+      await _idCheckbox.setChecked();
+      await flushPromises();
+
+      // Saves the form with the fields property containing the selected _id column
+      const saveAnalyticsReportSpy = jest.spyOn(AutoApi, 'saveAnalyticsReport');
+      const headerToolbar = findByRole(wrapper, 'toolbar');
+      const saveButton = findByText(headerToolbar, 'button', 'Save');
+      await saveButton.trigger('click');
+      expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
+        entities: [{ entity: 'applications', name: 'applications' }],
+        fields: [{ label: '_id', value: 'applications._id' }],
+      }, ['reportadmin'], '');
     });
   });
 });

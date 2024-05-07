@@ -17,7 +17,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="d-flex w-100 h-100 overflow-auto"
       role="main">
       <template v-if="templateHasAtLeastOneDataSource">
-        <FrReportDataSourceTable :data-sources="findSettingsObject('entities').definitions" />
+        <FrReportDataSourceTable
+          :data-sources="findSettingsObject('entities').definitions"
+          @update-data-source-column-label="onUpdateDataSourceColumnLabel" />
         <FrReportTemplateSettings
           v-model="reportDetails"
           :is-saving="isSavingDefinition"
@@ -172,11 +174,10 @@ const templateName = route.params.template.replace(/-/g, ' ');
 // Functions
 /**
  * Saves the report template
- * @param {Object} settings complete settings template payload
+ * @param {Object} settings complete settings template local data
  */
 function saveTemplate(settings = reportSettings.value) {
   const payload = reportPayload(settings);
-  console.log('payload: ', payload);
   const groupViewers = defaultGroups.filter((group) => reportDetails.value[group]);
   return saveAnalyticsReport(templateId, payload, [...reportDetails.value.viewers, ...groupViewers], reportDetails.value.description);
 }
@@ -250,6 +251,27 @@ async function onSetRelatedDataSources(defIndex, relatedDataSourceName) {
   const computedDataSourceName = [currentDefinition.name, relatedDataSourceName].join('.');
   await addDataSource(computedDataSourceName);
   currentDefinition.selectedRelatedDataSources.push(relatedDataSourceName);
+}
+
+/**
+ * Updates the label for a selected data source column
+ * from the left hand preview table heading inputs.
+ * @param {String} label The updated data source label
+ * @param {String} value The data source value
+ */
+function onUpdateDataSourceColumnLabel(label, value) {
+  const [entity] = findSettingsObject('entities').definitions;
+  const updatedDataSourceColumns = entity.dataSourceColumns.map((obj) => {
+    const columnMatch = obj.value === value;
+    if (columnMatch) {
+      return { ...obj, label };
+    }
+    return obj;
+  });
+
+  entity.dataSourceColumns.splice(0);
+  entity.dataSourceColumns.push(...updatedDataSourceColumns);
+  disableTemplateSave.value = false;
 }
 
 /**
@@ -361,7 +383,7 @@ const templateDoesNotHaveSelectedColumns = computed(() => {
 });
 
 /**
- * Check to see if detail settings has changed so we can set the save button disabled status correctly
+ * Check to see if detail settings has changed so we can set the save button disabled status accordingly
  */
 watch(reportDetails, (newVal, oldVal) => {
   if (!isEqual(newVal, oldVal)) {
@@ -374,6 +396,7 @@ watch(reportDetails, (newVal, oldVal) => {
   fetchReportEntities();
   fetchReportOperators();
   try {
+    // Gets saved data for an existing template
     const { result } = await getReportTemplates({
       _queryFilter: `name eq ${templateId}`,
       templateType: route.params.state,
@@ -394,6 +417,7 @@ watch(reportDetails, (newVal, oldVal) => {
         sort,
       } = JSON.parse(reportConfig);
 
+      // Sets the Details tab information
       reportDetails.value.name = startCase(templateName.toLowerCase());
       reportDetails.value.description = description;
       reportDetails.value.report_admin = viewers.includes('report_admin');
@@ -401,6 +425,7 @@ watch(reportDetails, (newVal, oldVal) => {
       reportDetails.value.report_viewer = viewers.includes('report_viewer');
       reportDetails.value.viewers = viewers.filter((item) => !defaultGroups.includes(item));
 
+      // Populates the settings definitions
       findSettingsObject('entities').definitions.push(...await entityDefinitions(entities, fields));
       findSettingsObject('parameters').definitions.push(...await parameterDefinitions(parameters));
       findSettingsObject('filter').definitions.push(...await filterDefinitions(
