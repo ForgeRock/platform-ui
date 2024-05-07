@@ -9,11 +9,14 @@ import * as BaseApi from '@forgerock/platform-shared/src/api/BaseApi';
 import * as VioaltionApi from './ViolationApi';
 
 const post = jest.fn();
+const get = jest.fn();
 BaseApi.generateIgaApi = jest.fn(() => ({
+  get,
   post,
 }));
 const data = { result: [], totalCount: 0 };
 post.mockReturnValue(Promise.resolve(data));
+get.mockReturnValue(Promise.resolve(data));
 
 describe('ViolationsApi API', () => {
   it('should call getViolationList with correct payload and url', async () => {
@@ -32,6 +35,31 @@ describe('ViolationsApi API', () => {
     };
     const res = await VioaltionApi.getViolationList(queryParams, targetFilter);
     expect(post).toBeCalledWith('/governance/violation/search?_pageNumber=0&_pageSize=10&_queryFilter=nome%20co%20test', { targetFilter });
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('should call getViolation with correct url', async () => {
+    const res = await VioaltionApi.getViolation('testId');
+    expect(get).toBeCalledWith('/governance/violation/testId');
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('should call commentViolation with correct payload and url', async () => {
+    const comment = { comment: 'testComment' };
+    const res = await VioaltionApi.commentViolation('testId', 'testPhase', comment);
+    expect(post).toBeCalledWith('/governance/violation/testId/phases/testPhase/comment', { comment });
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('should call forwardViolation with correct payload and url', async () => {
+    const permissions = { testPermissions: true };
+    const comment = { comment: 'testComment' };
+
+    const res = await VioaltionApi.forwardViolation('testId', 'testPhase', 'newActorId', permissions, comment);
+    expect(post).toBeCalledWith('/governance/violation/testId/phases/testPhase/reassign', { updatedActors: [{ id: 'newActorId', permissions }], comment });
     expect(BaseApi.generateIgaApi).toBeCalled();
     expect(res).toEqual(data);
   });
