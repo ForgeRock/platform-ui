@@ -10,7 +10,48 @@ import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryS
 
 const violationUrl = '/governance/violation';
 
-// eslint-disable-next-line import/prefer-default-export
+/**
+ * Get a list of violations
+ * @param {Object} params query parameters
+ * @param {Object} targetFilter filter to apply to query
+ * @returns {Promise}
+ */
 export function getViolationList(params, targetFilter) {
   return generateIgaApi().post(`${violationUrl}/search${encodeQueryString(params)}`, { targetFilter });
+}
+
+/**
+ * Get a single violation by id
+ * @param {String} violationId id of violation to get
+ * @returns {Promise}
+ */
+export function getViolation(violationId) {
+  return generateIgaApi().get(`${violationUrl}/${violationId}`);
+}
+
+/**
+ * Comment on a violation
+ * @param {String} violationId id of violation to comment on
+ * @param {String} phaseId current phase of violation
+ * @param {String} comment comment string
+ * @returns {Promise}
+ */
+export function commentViolation(violationId, phaseId, comment) {
+  return generateIgaApi().post(`${violationUrl}/${violationId}/phases/${phaseId}/comment`, { comment });
+}
+
+/**
+ * @param {String} violationId id of violation to forward
+ * @param {String} phaseId current phase of violation
+ * @param {String} actorId actor to forward to
+ * @param {Object} permissions permissions to forward with
+ * @param {String} comment comment related to forward
+ * @returns {Promise}
+ */
+export function forwardViolation(violationId, phaseId, actorId, permissions, comment) {
+  const updatedActors = [{
+    id: actorId,
+    permissions,
+  }];
+  return generateIgaApi().post(`${violationUrl}/${violationId}/phases/${phaseId}/reassign`, { updatedActors, comment });
 }

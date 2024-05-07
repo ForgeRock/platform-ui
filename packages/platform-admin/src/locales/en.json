@@ -56,6 +56,7 @@
     "Compliance": "Governance Compliance",
     "ComplianceRuleEdit": "Edit Governance Compliance Policy Rules",
     "CompliancePolicyEdit": "Edit Governance Compliance Policy",
+    "ComplianceViolationEdit": "Edit Governance Compliance Violation",
     "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
     "Cors": "CORS",
@@ -3106,7 +3107,7 @@
         "tabTitle": "Exceptions"
       },
       "policies": {
-        "description": "description TODO",
+        "description": "Create an SoD Policy",
         "edit": {
           "activatePolicyBody": "Are you sure you want to activate this policy?",
           "activatePolicyTitle": "Activate Policy",
@@ -3165,7 +3166,7 @@
         "tabTitle": "Policies"
       },
       "policyRules": {
-        "description": "description TODO",
+        "description": "Create an SoD Policy Rule",
         "editPolicy": "Edit Policy",
         "errorDelete": "Error deleting policy rule",
         "errorGetData": "There was an error retrieving policy rules",

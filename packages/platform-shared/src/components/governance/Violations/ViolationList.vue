@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       @input="handleFilterChange"
       :policy-rule-options="policyRuleOptions" />
     <BTable
+      @row-clicked="$emit('viewViolationDetails', $event)"
       @sort-changed="sortChanged"
       class="mb-0"
       hover
@@ -76,6 +77,10 @@ of the MIT license. See the LICENSE file for details. -->
       :total-rows="totalRowCount"
       @input="paginationChange"
       @on-page-size-change="updatePageSize" />
+
+    <!-- Forward Modal -->
+    <FrViolationForwardModal
+      @forward-item="forwardItem" />
   </BCard>
 </template>
 
@@ -91,14 +96,21 @@ import {
   BTable,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
+import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { forwardViolation } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrViolationToolbar from '@forgerock/platform-shared/src/components/governance/Violations/ViolationToolbar';
+import FrViolationForwardModal from '@forgerock/platform-shared/src/components/governance/Violations/ViolationForwardModal';
 import i18n from '@/i18n';
 
-const emit = defineEmits(['get-policy-rule-options', 'handle-search']);
+// composables
+const { bvModal } = useBvModal();
+
+const emit = defineEmits(['get-policy-rule-options', 'handle-search', 'viewViolationDetails']);
 
 const props = defineProps({
   isLoading: {
@@ -123,6 +135,7 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const sortBy = ref('created');
 const sortDesc = ref(true);
+const itemToForward = ref({});
 
 const filters = ref({
   status: 'pending',
@@ -169,6 +182,7 @@ const items = computed(() => {
       policyRule: violation.policyRule,
       created,
       id: violation.id,
+      rawData: violation,
     };
   });
 });
@@ -184,7 +198,17 @@ function getTargetFilter(targetFilter) {
     operand: [],
   };
 
-  filterPayload.operand.push(getBasicFilter('EQUALS', 'decision.violation.status', targetFilter.status));
+  if (targetFilter.status === 'pending') {
+    filterPayload.operand.push({
+      operator: 'OR',
+      operand: [
+        getBasicFilter('EQUALS', 'decision.violation.status', targetFilter.status),
+        getBasicFilter('EQUALS', 'decision.violation.status', 'in-progress'),
+      ],
+    });
+  } else {
+    filterPayload.operand.push(getBasicFilter('EQUALS', 'decision.violation.status', targetFilter.status));
+  }
 
   if (targetFilter.rule.length) {
     filterPayload.operand.push(getBasicFilter('EQUALS', 'policyRule.id', targetFilter.rule));
@@ -234,10 +258,36 @@ async function getData(filterObj) {
 }
 
 /**
- * TODO: Implement this function when backend api is finalized
+ * Forward a violation to a new user, with an optional comment
+ * @param {String} actorId actor to forward to
+ * @param {String} comment comment
+ */
+async function forwardItem({ actorId, comment }) {
+  try {
+    if (!itemToForward?.value?.rawData?.decision?.violation?.phases?.length) return;
+    const phaseId = itemToForward.value.rawData.decision.violation.phases[0].name;
+    const permissions = {
+      allow: true,
+      comment: true,
+      exception: true,
+      reassign: true,
+      remediate: true,
+    };
+    await forwardViolation(itemToForward.value.id, phaseId, actorId, permissions, comment);
+    displayNotification('success', i18n.global.t('governance.violations.successForwardingViolation'));
+    getData(filters.value);
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.violations.errorForwardingViolation'));
+  }
+}
+
+/**
+ * Open forward modal
+ * @param {Object} item violation to forward
  */
 function openForwardModal(item) {
-  console.log('opening forward modal', item);
+  itemToForward.value = item;
+  bvModal.value.show('violation-forward-modal');
 }
 
 /**

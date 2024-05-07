@@ -1773,8 +1773,28 @@
         "inProgress": "In-Progress",
         "complete": "Complete"
       },
+      "addComment": "Add Comment",
+      "conflictDescription": "Rule dictates that a user cannot have both groups of entitlements.",
+      "conflictingEntitlements": "Conflicting Entitlements",
+      "conflicts": "Conflicts",
+      "controlUrl": "Control Url",
+      "correctionAdvice": "Correction Advice",
+      "errorCommentingViolation": "There was an error commenting on the violation",
+      "errorForwardingViolation": "There was an error forwarding the violation",
+      "errorGettingViolation": "There was an error getting the violation data",
+      "exceptionAllowed": "Exception Allowed",
+      "forwardViolation": "Forward Violation",
+      "initialViolation": "Initial Violation",
+      "mitigatingControl": "Mitigating Control",
+      "riskLevel": "Risk Level",
       "rule": "Rule",
-      "tabTitle": "Violations"
+      "ruleDescription": "Rule Description",
+      "ruleName": "Rule Name",
+      "ruleOwner": "Rule Owner",
+      "successForwardingViolation": "Violation successfully forwarded",
+      "tabTitle": "Violations",
+      "viewConflicts": "View Conflicts",
+      "violation": "Violation"
     }
   },
   "reports": {
