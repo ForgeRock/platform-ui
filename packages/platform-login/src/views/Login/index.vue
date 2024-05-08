@@ -200,7 +200,7 @@ of the MIT license. See the LICENSE file for details. -->
             <div class="d-flex">
               <img
                 v-if="logoEnabled"
-                class="fr-logo mt-4"
+                class="ping-logo mt-4"
                 :alt="logoAltText || $t('common.logo')"
                 :style="{ height: `${logoHeight}px` }"
                 :src="logoPath">
@@ -545,7 +545,7 @@ export default {
     },
     logoHeight: {
       type: String,
-      default: '40',
+      default: '72',
     },
     logoPath: {
       type: String,

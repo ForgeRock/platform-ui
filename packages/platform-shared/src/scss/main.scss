@@ -708,8 +708,8 @@ a.card {
   background-color: $cyan;
 }
 
-.fr-logo-vertical-black {
-  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/vertical-logo-black.svg');
+.ping-logo-square-footer {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-square-footer.svg');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -717,8 +717,8 @@ a.card {
   width: 100%;
 }
 
-.fr-logo-vertical {
-  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/vertical-logo.svg');
+.ping-logo-horizontal {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-horizontal.svg');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -726,11 +726,11 @@ a.card {
   width: 100%;
 }
 
-.fr-logo-horizontal {
-  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/horizontal-logo.svg');
+.ping-logo-square {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-square.svg');
   background-size: contain;
   background-repeat: no-repeat;
-  background-position: left;
+  background-position: center;
   height: 100%;
   width: 100%;
 }

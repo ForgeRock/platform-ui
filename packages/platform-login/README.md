@@ -6,8 +6,8 @@ of the MIT license. See the LICENSE file for details.
 -->
 <div align="center">
   <img width="120" src="logo.png">
-  <h1>ForgeRock Platform Login</h1>
-  Login Application for the ForgeRock Platform.
+  <h1>Ping Identity Platform Login</h1>
+  Login Application for the Ping Identity Platform.
   <p>
 </div>
 
