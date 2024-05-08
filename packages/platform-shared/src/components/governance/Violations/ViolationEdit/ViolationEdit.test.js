@@ -77,13 +77,14 @@ const violation = {
 };
 
 describe('Violation Edit', () => {
-  function mountComponent() {
+  function mountComponent(isException = false) {
     const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
     useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
     setupTestPinia();
     const props = {
       breadcrumbPath: '/back',
       breadcrumbTitle: 'back',
+      isException,
       isTesting: true,
     };
     const wrapper = mount(ViolationEdit, {
@@ -124,6 +125,20 @@ describe('Violation Edit', () => {
     expect(tabs[0].text()).toBe('Details');
     expect(tabs[1].text()).toBe('Activity');
     expect(tabs[2].text()).toBe('Comments');
+  });
+
+  it('should not hide the actions if it is an violation', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+
+    expect(wrapper.vm.hideActions).toBe(false);
+  });
+
+  it('should hide the actions if it is an exception', async () => {
+    const wrapper = mountComponent(true);
+    await flushPromises();
+
+    expect(wrapper.vm.hideActions).toBe(true);
   });
 
   it('opens forward modal', async () => {

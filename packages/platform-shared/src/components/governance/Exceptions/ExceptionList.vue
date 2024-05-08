@@ -1,0 +1,329 @@
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
+<template>
+  <BCard no-body>
+    <FrExceptionToolbar
+      v-model="filters"
+      @get-policy-rule-options="$emit('get-policy-rule-options', $event)"
+      @input="handleFilterChange"
+      @open-columns-modal="openColumnsModal"
+      :policy-rule-options="policyRuleOptions" />
+    <BTable
+      @row-clicked="$emit('view-exception-details', $event)"
+      @sort-changed="sortChanged"
+      class="mb-0"
+      hover
+      no-local-sorting
+      no-sort-reset
+      responsive
+      show-empty
+      tbody-tr-class="cursor-pointer"
+      :busy="isLoading"
+      :fields="exceptionColumnsToShow"
+      :items="items"
+      :per-page="pageSize"
+      :sort-by="sortBy"
+      :sort-desc="sortDesc">
+      <template #table-busy>
+        <div class="text-center text-danger my-2">
+          <FrSpinner />
+        </div>
+      </template>
+      <template #cell(user)="{ item }">
+        <div class="text-truncate">
+          <h4 class="h5 mb-1">
+            {{ item?.user?.givenName }} {{ item?.user?.sn }}
+          </h4>
+          <span class="text-body">
+            {{ item?.user?.userName }}
+          </span>
+        </div>
+      </template>
+      <template #cell(policyRule)="{ item }">
+        <div class="text-truncate">
+          {{ item?.policyRule?.name }}
+        </div>
+      </template>
+      <template #cell(initialViolation)="{ item }">
+        <div class="text-truncate">
+          {{ convertDate(item.initialViolation) }}
+        </div>
+      </template>
+      <template #cell(latestViolation)="{ item }">
+        <div class="text-truncate">
+          {{ convertDate(item.latestViolation) }}
+        </div>
+      </template>
+      <template #cell(expiration)="{ item }">
+        <div class="text-truncate">
+          {{ convertDate(item.expiration) }}
+        </div>
+      </template>
+    </BTable>
+    <FrPagination
+      v-if="tableRows?.length"
+      v-model="currentPage"
+      :per-page="pageSize"
+      :total-rows="totalRowCount"
+      @input="paginationChange"
+      @on-page-size-change="updatePageSize" />
+    <FrColumnOrganizer
+      @update-columns="updateColumns"
+      :active-columns="exceptionColumns"
+      :available-columns="columnCategories" />
+  </BCard>
+</template>
+
+<script setup>
+/**
+ * List of Exceptions. Can filter by user and rule.
+ */
+import { computed, ref } from 'vue';
+import {
+  BCard,
+  BTable,
+} from 'bootstrap-vue';
+import {
+  cloneDeep,
+  groupBy,
+} from 'lodash';
+import dayjs from 'dayjs';
+import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import FrExceptionToolbar from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionToolbar';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import i18n from '@/i18n';
+
+// Composables
+const { bvModal } = useBvModal();
+
+const emit = defineEmits([
+  'get-policy-rule-options',
+  'handle-search',
+  'view-exception-details',
+]);
+
+const props = defineProps({
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  policyRuleOptions: {
+    type: Array,
+    default: () => [],
+  },
+  tableRows: {
+    type: Array,
+    default: () => [],
+  },
+  totalRowCount: {
+    type: Number,
+    default: 0,
+  },
+});
+
+const tableFields = [
+  {
+    key: 'user',
+    label: i18n.global.t('common.user.user'),
+    category: 'user',
+    sortable: true,
+    show: true,
+  },
+  {
+    key: 'policyRule',
+    label: i18n.global.t('governance.violations.rule'),
+    category: 'rule',
+    sortable: true,
+    show: true,
+  },
+  {
+    key: 'initialViolation',
+    label: i18n.global.t('governance.exceptions.initialViolation'),
+    category: 'violation',
+    show: true,
+  },
+  {
+    key: 'latestViolation',
+    label: i18n.global.t('governance.exceptions.latestViolation'),
+    category: 'violation',
+    show: true,
+  },
+  {
+    key: 'expiration',
+    label: i18n.global.t('governance.exceptions.expiration'),
+    category: 'violation',
+    show: true,
+  },
+];
+
+const formatedColumns = groupBy(tableFields, 'category');
+const categories = [
+  {
+    name: 'violation',
+    header: i18n.global.t('common.violation'),
+    items: formatedColumns.violation,
+  },
+  {
+    name: 'user',
+    header: i18n.global.t('common.user.user'),
+    items: formatedColumns.user,
+  },
+  {
+    name: 'rule',
+    header: i18n.global.t('governance.violations.rule'),
+    items: formatedColumns.rule,
+  },
+];
+
+const currentPage = ref(1);
+const exceptionColumns = ref(tableFields);
+const columnCategories = ref(categories);
+const pageSize = ref(10);
+const sortBy = ref('created');
+const sortDesc = ref(true);
+
+const filters = ref({
+  rule: '',
+  user: 'managed/user/all',
+});
+
+// parse items information
+const items = computed(() => {
+  if (!props.tableRows?.length) return [];
+  return props.tableRows.map((exception) => ({
+    expiration: exception.decision?.violation?.events?.exception?.date,
+    id: exception.id,
+    initialViolation: exception.decision?.violation?.startDate,
+    latestViolation: exception.stats?.latestDetectionTime,
+    policyRule: exception.policyRule,
+    user: exception.user,
+  }));
+});
+
+// exception columns to show
+const exceptionColumnsToShow = computed(() => exceptionColumns.value.filter((col) => col.show));
+
+/**
+ * Updates the columns of the list in their corresponding order
+ * @param {Object} columns all the information on the columns and their categories
+ * @param {Array} columns.activeColumns active columns to be displayed
+ * @param {Array} columns.availableColumns available columns separated by category
+ */
+function updateColumns({ activeColumns, availableColumns }) {
+  exceptionColumns.value = activeColumns || cloneDeep(tableFields);
+  columnCategories.value = availableColumns || cloneDeep(categories);
+}
+
+/**
+ * Opens column organizer modal
+ */
+function openColumnsModal() {
+  bvModal.value.show('ColumnOrganizerModal');
+}
+
+/**
+ * Convert date into user friendly format
+ * @param {String} date date string
+ * @returns {String} user friendly date string
+ */
+function convertDate(date) {
+  return date ? dayjs(date).format('MMM D, YYYY') : blankValueIndicator;
+}
+
+/**
+ * Build target filter object used to filter api response
+ * @param {Object} targetFilter contains various values used to filter request data
+ * @returns {Object} IGA compatible target filter
+ */
+function getTargetFilter(targetFilter) {
+  const filterPayload = {
+    operator: 'AND',
+    operand: [],
+  };
+
+  filterPayload.operand.push(getBasicFilter('EQUALS', 'decision.violation.status', 'exception'));
+
+  if (targetFilter.rule.length) {
+    filterPayload.operand.push(getBasicFilter('EQUALS', 'policyRule.id', targetFilter.rule));
+  }
+
+  if (targetFilter.user !== 'managed/user/all') {
+    const id = targetFilter.user.split('/').pop();
+    filterPayload.operand.push(getBasicFilter('EQUALS', 'user.userId', id));
+  }
+
+  return filterPayload;
+}
+
+/**
+ * Builds request params and sends out event to request data from api
+ * @param {Object} filterObj contains various values used to filter request data
+ */
+async function getData(filterObj) {
+  const targetFilter = getTargetFilter(filterObj);
+
+  const searchParams = {
+    pageSize: pageSize.value,
+    pagedResultsOffset: (currentPage.value - 1) * pageSize.value,
+    sortDir: sortDesc.value ? 'desc' : 'asc',
+    fields: 'id,user,policyRule,decision,stats',
+  };
+  const sortKeyMap = {
+    user: 'user.userName',
+    policyRule: 'policyRule.name',
+    created: 'decision.violation.startDate',
+  };
+  searchParams.sortKeys = sortKeyMap[sortBy.value];
+
+  emit('handle-search', searchParams, targetFilter);
+}
+
+/**
+ * Update the filter and call to get updated data
+ * @event input
+ * @param {Object} newFilters New filter values
+ */
+function handleFilterChange(newFilters) {
+  filters.value = newFilters;
+  getData(filters.value);
+}
+
+/**
+ * Update the current page number and call to get updated data
+ * @event input
+ * @param {Number} page New page number
+ */
+function paginationChange(page) {
+  currentPage.value = page;
+  getData(filters.value);
+}
+
+/**
+ * Update the sorting used in the table and call to get updated data
+ * @event sort-changed
+ * @param {Object} sortContext Current context of table sorting (sortDesc & sortBy)
+ */
+function sortChanged(sortContext) {
+  sortDesc.value = sortContext.sortDesc;
+  sortBy.value = sortContext.sortBy;
+  getData(filters.value);
+}
+
+/**
+ * Update the page size and call to get updated data
+ * @event on-page-size-change
+ * @param {Number} newPageSize New page size to be used
+ */
+function updatePageSize(newPageSize) {
+  pageSize.value = newPageSize;
+  getData(filters.value);
+}
+
+getData(filters.value);
+</script>

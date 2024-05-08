@@ -296,6 +296,7 @@
     "viewLess": "View less",
     "viewMore": "View {count} more",
     "viewDetails": "View Details",
+    "violation": "Violation",
     "yes": "Yes",
     "validation": {
       "int": "Please enter a valid integer. A valid integer can contain 0-9 and -",
@@ -916,6 +917,7 @@
     }
   },
   "pageTitles": {
+    "ComplianceExceptionDetails": "Exception Details",
     "MyRequestDetails": "Request Details"
   },
   "pagination": {
@@ -1642,6 +1644,11 @@
     "entitlementDetails": "Entitlement Details",
     "errors": {
       "getUsers": "Users cannot be obtained at the moment"
+    },
+    "exceptions": {
+      "initialViolation": "Initial Violation",
+      "latestViolation": "Latest Violation",
+      "expiration": "Expiration"
     },
     "flags": {
       "RECON": "Recon",
