@@ -2573,13 +2573,20 @@
     "rules": {
       "action": "Action",
       "asyncLabel": "Do nothing",
-      "editModalDescription": "Action to perform in {appType} when application is {action} in {application}.",
+      "editModalDescription": {
+        "assigned": "Action to perform in {appType} when application is assigned in {application}.",
+        "updated": "Action to perform in {appType} when an account is updated in {application}.",
+        "revoked": "Action to perform in {appType} when an account is revoked in {application}.",
+        "deleted": "Action to perform in {appType} when an identity is deleted in {application}.",
+        "error": "Action to perform in {appType} when provisioning fails."
+      },
       "editModalPostActionDescription": "Action to perform after successfully {action} the account.",
       "editModalTitle": "Edit Provisioning Rule",
       "postActionscriptDescription": "For more information on script post action, see <a href=\"https://backstage.forgerock.com/docs/idcloud/latest/idm-synchronization/synchronization-ref.html#sync-policy-objects\" target=\"_blank\">Launch a script as a post action</a>",
       "result": "Result",
       "saved": "Provisioning rule saved",
       "scriptDescription": "For more information on script actions, see <a href=\"https://backstage.forgerock.com/docs/idcloud/latest/idm-synchronization/sync-actions.html#script-actions\" target=\"_blank\">Launch a script as an action</a>",
+      "scriptDescriptionError": "For more information on script triggers, see <a href=\"https://backstage.forgerock.com/docs/idcloud/latest/idm-scripting/script-triggers-mappings.html\" target=\"_blank\">Script triggers defined in mappings</a>",
       "scriptLabel": "Execute a script",
       "title": "Rules",
       "assigned": {
@@ -2597,6 +2604,10 @@
       "deleted": {
         "actionDescription": "Identity is deleted",
         "resultDescription": "Delete account in {appType}"
+      },
+      "error": {
+        "actionDescription": "Provisioning failure",
+        "resultDescription": "Do nothing"
       }
     },
     "selectNonAccountObject": "Select Object Type",
