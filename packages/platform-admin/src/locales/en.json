@@ -3120,6 +3120,7 @@
           "editScanSchedule": "Edit Scan Schedule",
           "editSchedule": "Edit Schedule",
           "errorGetScanDetails": "Error getting scan details",
+          "errorGetViolations": "Error getting violations",
           "errorRunScan": "Error running scan",
           "frequency": "Frequency",
           "fullScan": "Full Scan",
@@ -3143,7 +3144,8 @@
           "startDate": "Start Date",
           "successRunScan": "Scan started successfully",
           "title": "Compliance Policy",
-          "totalViolations": "Total Violations"
+          "totalViolations": "Total Violations",
+          "violations": "Violations"
         },
         "errorCreate": "Error creating policy",
         "errorDelete": "Error deleting policy",
