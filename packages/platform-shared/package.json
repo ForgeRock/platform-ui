@@ -48,7 +48,7 @@
     "vue-multiselect": "2.1.7",
     "vue-prism-editor": "0.6.1",
     "vue-router": "4.2.4",
-    "vue-slider-component": "3.2.15",
+    "vue-slider-component": "next",
     "vue-spinner": "1.0.3",
     "vue2-daterange-picker": "0.6.8",
     "vuedraggable": "4.0.1",
