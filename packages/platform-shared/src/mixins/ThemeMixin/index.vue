@@ -232,7 +232,8 @@ export default {
           this.logoProfileHeight = theme.logoProfileHeight;
         } else {
           this.theme = {};
-          this.logo = `${process.env.BASE_URL}images/vertical-logo.svg`;
+          this.logo = `${process.env.BASE_URL}images/ping-logo-square-color.svg`;
+          this.logoHeight = 72;
           this.favicon = 'favicon.ico';
         }
       }).catch(() => {

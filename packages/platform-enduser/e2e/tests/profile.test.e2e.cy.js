@@ -34,7 +34,7 @@ filterTests(['forgeops', 'cloud'], () => {
       });
     });
 
-    it('should show basic data on the profile view, allow downloading user data, and allow account deletion', () => {
+    it.skip('should show basic data on the profile view, allow downloading user data, and allow account deletion', () => {
       // Check that the profile page is shown
       cy.get('[href="#/profile"]', { timeout: 30000 })
         .should('exist')

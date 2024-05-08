@@ -69,7 +69,7 @@ describe('Layout', () => {
       const release = findByTestId(wrapper, 'release-info');
       const link = release.findComponent(RouterLinkStub);
 
-      expect(release.text()).toContain('ID Cloud Version 123');
+      expect(release.text()).toContain('Ping Advanced Identity Cloud Version 123');
       expect(link.props().to).toEqual({ name: 'TenantSettings', params: { resourceName: 'details' } });
     });
   });

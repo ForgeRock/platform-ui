@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,9 +17,9 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="signup-header-wrapper px-4 px-md-5 w-100">
         <BImg
           class="mt-4"
-          :src="require('@forgerock/platform-shared/src/assets/images/horizontal-logo.svg')"
+          :src="require('@forgerock/platform-shared/src/assets/images/ping-logo-square-color.svg')"
           width="131"
-          alt="ForgeRock" />
+          :alt="$t('common.pingIdentity')" />
       </div>
       <div class="signup-form-wrapper px-4 px-md-5 d-md-flex align-items-center w-100">
         <!-- @slot Main content -->

@@ -6,8 +6,8 @@ of the MIT license. See the LICENSE file for details.
 -->
 <div align="center">
   <img width="120" src="logo.png">
-  <h1>ForgeRock Platform EndUser</h1>
-  EndUser Application for the ForgeRock Platform.
+  <h1>Ping Identity Platform EndUser</h1>
+  EndUser Application for the Ping Identity Platform.
   <p>
 </div>
 
@@ -242,11 +242,11 @@ When you include the theme flag, the `node` build scripts attempt to locate a co
 
 The default project includes three themes:
 
-- ForgeRock default theme
+- Ping Identity default theme
 
-- ForgeRock dark theme `npm run --theme=dark`
+- Ping Identity dark theme `npm run --theme=dark`
 
-- ForgeRock rock theme `npm run --theme=rock`. This theme demonstrates how to use a full background image, with fallback to the default theme.
+- Ping Identity rock theme `npm run --theme=rock`. This theme demonstrates how to use a full background image, with fallback to the default theme.
 
 
 <a name="browser-support"></a>
