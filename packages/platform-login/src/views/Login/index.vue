@@ -35,6 +35,11 @@ of the MIT license. See the LICENSE file for details. -->
                         class="h2">
                         {{ header }}
                       </h1>
+                      <h1
+                        v-if="!header && loginFailure"
+                        class="h2">
+                        {{ $t('login.errorHeading') }}
+                      </h1>
                       <p
                         v-if="description"
                         v-html="description" />
@@ -231,6 +236,11 @@ of the MIT license. See the LICENSE file for details. -->
                   v-if="header"
                   class="display-4 mb-5 h2">
                   {{ header }}
+                </h1>
+                <h1
+                  v-if="!header && loginFailure"
+                  class="h2">
+                  {{ $t('login.errorHeading') }}
                 </h1>
                 <p
                   v-if="description"
