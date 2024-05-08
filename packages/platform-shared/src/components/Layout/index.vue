@@ -65,8 +65,8 @@ of the MIT license. See the LICENSE file for details. -->
         <div
           v-else
           class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
-          <div class="fr-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
-            <div class="fr-logo fr-logo-vertical-black" />
+          <div class="ping-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
+            <div class="ping-logo ping-logo-square-footer" />
           </div>
           <div
             class="mr-4 opacity-70">
@@ -74,10 +74,10 @@ of the MIT license. See the LICENSE file for details. -->
               © {{ currentYear }}
             </span>
             <a
-              href="http://www.forgerock.com"
+              href="http://www.pingidentity.com"
               target="_blank"
               class="text-body">
-              ForgeRock, Inc
+              Ping Identity Corporation
             </a>
           </div>
           <div
@@ -372,7 +372,7 @@ body {
   }
 }
 
-.fr-logo-container {
+.ping-logo-container {
   width: 21px;
   height: 21px;
 }

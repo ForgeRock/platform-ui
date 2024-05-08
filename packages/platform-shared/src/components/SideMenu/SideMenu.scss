@@ -30,11 +30,11 @@
   width: $fr-sidemenu-width-lg;
   transform: translateX(0);
 
-  .fr-logo-horizontal {
+  .ping-logo-horizontal {
     display: block;
   }
 
-  .fr-logo-vertical {
+  .ping-logo-square {
     display: none;
   }
 }
@@ -51,11 +51,11 @@
   .sidebar-item-text,
   :deep(.fr-sidebar-menuitems .menu-item-text),
   :deep(.fr-menu-item-submenuitems),
-  .fr-logo-horizontal {
+  .ping-logo-horizontal {
     display: none;
   }
 
-  .fr-logo-vertical {
+  .ping-logo-square {
     display: block;
   }
 
@@ -74,11 +74,8 @@
         display: block;
       }
 
-      .fr-logo-horizontal {
+      .ping-logo-horizontal {
         display: block;
-      }
-
-      .fr-logo-vertical {
       }
     }
 
@@ -181,7 +178,21 @@
   .fr-menu-mobile.fr-menu-expanded & {
     transform: translateX(0);
 
-    .fr-logo-vertical {
+    .ping-logo-horizontal {
+      display: block;
+    }
+
+    .ping-logo-square {
+      display: none;
+    }
+  }
+
+  .fr-menu-mobile.fr-menu-collapsed & {
+    .ping-logo-horizontal {
+      display: none;
+    }
+
+    .ping-logo-square {
       display: none;
     }
   }
@@ -193,6 +204,11 @@
   }
 
   .fr-sidebar-nav {
+    .ping-logo {
+      height: 24px;
+      background-position: left;
+    }
+
     .material-icons {
       height: 18px;
       width: 18px;

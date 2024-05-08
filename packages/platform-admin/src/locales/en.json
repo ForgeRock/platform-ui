@@ -197,7 +197,7 @@
       "errorLoadingConnectorTemplate": "Error loading connector template",
       "genericHTMLReplacementError": "Unable to connect to remote system",
       "noConnectorsTitle": "No Connector Servers available",
-      "noConnectorsSubtitle": "Connecting to your {type} with ForgeRock involves deploying and running a piece of software called a “Connector Server” on your side.",
+      "noConnectorsSubtitle": "Connecting to your {type} with Ping Identity involves deploying and running a piece of software called a “Connector Server” on your side.",
       "noProvisioning": "You haven't set up provisioning yet",
       "noTokenEndpoint": "No token endpoint configured for this provisioner.",
       "oauthFailure": "Connection failed: {error}",
@@ -805,7 +805,7 @@
     "createApplication": {
       "title": "Add a New Application",
       "altText": "Application Icon",
-      "description": "Add your application to the platform, and integrate the app with ForgeRock authentication."
+      "description": "Add your application to the platform, and integrate the app with authentication."
     },
     "connectIdentities": {
       "title": "Connect Identities",
@@ -821,15 +821,15 @@
       "description": "Control where, when, and how your users can change their information."
     },
     "welcome": {
-      "title": "ForgeRock Identity Platform",
+      "title": "Ping Identity Platform",
       "description": "Helps your customers, workforce, and IoT identities access the connected world – safely and simply.",
       "footer": "Get Started"
     }
   },
   "connectorServers": {
     "activating": "Activating...",
-    "bypassAgent": "Connect directly to ForgeRock",
-    "bypassAgentDescription": "Bypass the recommended agent connection and configure the connector server to connect directly to ForgeRock.",
+    "bypassAgent": "Connect directly to Ping Identity",
+    "bypassAgentDescription": "Bypass the recommended agent connection and configure the connector server to connect directly to Ping Identity.",
     "connectorName": "Connector Name",
     "connectors": "Connectors",
     "connectorServer": "Connector Server",
@@ -992,7 +992,7 @@
     },
     "identities": {
       "managedIdentities": "Manage Identities",
-      "subTitle": "Create and configure ForgeRock-hosted identity resources.",
+      "subTitle": "Create and configure identities.",
       "deleteResource": {
         "title": "Delete {resource}?",
         "body": "Are you sure you want to delete this {resource}?",
@@ -1057,7 +1057,7 @@
       "tableEmpty": "No available applications",
       "app": "Application",
       "title": "Applications",
-      "subTitle": "Set up your applications to use ForgeRock authentication.",
+      "subTitle": "Set up your applications to use authentication.",
       "active": "Active",
       "inactive": "Inactive",
       "name": "Name"
@@ -1095,7 +1095,7 @@
       "applicationDetails": "Application Details",
       "oauthSettings": "{signInMethod} Settings",
       "applicationType": "Application Type",
-      "applicationTypeDescription": "<p>Choose the type of application you want to integrate with ForgeRock.</p> <p>Specifying an application type customizes your experience and provides the best configuration, SDK, and sample recommendations.</p> <p>Learn more about sample apps with the <a href='https://sdks.forgerock.com/' target='_blank'>ForgeRock SDKs.</a></p>",
+      "applicationTypeDescription": "<p>Choose the type of application you want to integrate.</p> <p>Specifying an application type customizes your experience and provides the best configuration, SDK, and sample recommendations.</p> <p>Learn more about sample apps with the <a href='https://sdks.forgerock.com/' target='_blank'>ForgeRock SDKs.</a></p>",
       "defaultModalTitle": "Add a Custom Application",
       "nonWorkforceModalTitle": "Add a Consumer Application",
       "signInMethod": "Sign-in Method",
@@ -1109,7 +1109,7 @@
       "web": "Web",
       "webDescription": "Server-side applications where authentication and tokens are handled on the server (for example, Node.js, Java)",
       "service": "Service",
-      "serviceDescription": "Interact with ForgeRock APIs using the scoped OAuth 2.0 access tokens for machine-to-machine authentication.",
+      "serviceDescription": "Interact with Ping Identity APIs using the scoped OAuth 2.0 access tokens for machine-to-machine authentication.",
       "descriptionFieldLabel": "Description",
       "errorCreatingApp": "Could not create application",
       "clientSecretWarning": "Make sure you copy <small class=\"text-monospace alert-link\">Client Secret</small> as it won't be shown again."
@@ -1133,7 +1133,7 @@
         "deleteAppFail": "Unable to delete application",
         "getAppsDataFail": "Unable to retrieve applications data",
         "noDataTitle": "You haven't added any applications yet",
-        "noDataSubtitle": "Set up an application to use ForgeRock authentication.",
+        "noDataSubtitle": "Set up an application to use authentication.",
         "noSearchResults": "No Applications found."
       },
       "listOauthClients": {
@@ -1181,7 +1181,7 @@
         "initialSetupTitle": "You haven't set up SSO yet",
         "initialSetupDescription": "Sign-in users to this application.",
         "initialSetupButtonText": "Set Up SSO",
-        "quickStartDescription": "Single Sign On using SAML will not work until you configure the app to trust ForgeRock as an Identity Provider.",
+        "quickStartDescription": "Single Sign On using SAML will not work until you configure the app to trust Ping Identity as an Identity Provider.",
         "quickStartTitle": "Quick Start",
         "settingsTitle": "Settings",
         "federationMetadataUrlLabel": "Federation Metadata URL",
@@ -1576,19 +1576,19 @@
     "addDomain": "Add a Custom Domain",
     "addModal": {
       "cName": "CNAME",
-      "content": "Enter the fully qualified domain name that you want as your ForgeRock realm’s URL.",
+      "content": "Enter the fully qualified domain name to use as your realm's URL.",
       "data": "Data",
       "domain": "Domain",
       "domainFieldDescription": "For example, mycompany.com or example.mycompany.com.",
       "host": "Host",
-      "secondStageDescription1": "Before ForgeRock can serve traffic over your domain, you need to add an alias from your custom domain to the ForgeRock subdomain of your ForgeRock realm. You do this by creating or modifying a <code>CNAME</code> record for your custom domain name.<br/><br/><h5>To create a CNAME record:</h5>",
+      "secondStageDescription1": "To serve traffic over your domain, add an alias from your custom domain to your realm's subdomain by creating or modifying the custom domain's CNAME record.",
       "secondStageDescription2": "Sign in to your Domain Name Registrar.",
       "secondStageDescription3": "Find the option to modify your DNS Records.",
       "secondStageDescription4": "Create a <code>CNAME</code> record with the following values for <code>Host</code> and <code>Data</code>:",
       "secondStageDescription5": "Once you have added the <code>CNAME</code> record, click 'Verify' to continue",
       "thirdStageDescription1": "<span class=\"font-weight-bold\">It may take up to 48 hours for these changes to propagate.</span> Warning notices may appear on your custom URL domain until propagation is finished completely.",
-      "thirdStageDescription1Cloud": "We will now start the process of generating your certificate. Once the certificate has been generated you have completed setting up a Custom Domain Name for your ForgeRock realm. ",
-      "thirdStageDescription2": "To confirm that ForgeRock is serving traffic over HTTPS (TLS) for your custom domain, visit: {domainLink}<br/><br/> ForgeRock will continue to serve traffic through {trafficLink} and your custom domain. If your changes do not appear within 48 hours, you may need to confirm your DNS settings.",
+      "thirdStageDescription1Cloud": "We will now start the process of generating your certificate. Once the certificate has been generated you have completed setting up a Custom Domain Name for your realm. ",
+      "thirdStageDescription2": "To confirm that Ping Identity is serving traffic over HTTPS (TLS) for your custom domain, visit: {domainLink}<br/><br/> Ping Identity will continue to serve traffic through {trafficLink} and your custom domain. If your changes do not appear within 48 hours, you may need to confirm your DNS settings.",
       "titleStageTwo": "Verify Domain Name Ownership",
       "verify": "Verify",
       "verifying": "Verifying...",
@@ -1599,8 +1599,8 @@
     "customDomain": "Custom Domain",
     "descriptionLink": "globally-configured custom domains.",
     "domain": "Domain",
-    "domainDescription1": "Use a custom domain to enable a seamless user experience between your domain and ForgeRock. Adding a custom domain to this realm will override any",
-    "domainDescription2": "To complete setup you’ll need access to your Domain Name Registrar so that you can modify Domain Name Server (DNS) records.",
+    "domainDescription1": "Use a custom domain to enable a seamless user experience between your domain and Ping Identity. Adding a custom domain to this realm will override any",
+    "domainDescription2": "To complete setup, you’ll need access to your Domain Name Registrar so that you can modify Domain Name Server (DNS) records.",
     "errorRetrievingCircleOfTrust": "There was an error retrieving the circle of trust",
     "errorRetrievingDomains": "There was an error retrieving this realm's custom domains",
     "errorSavingDomains": "There was an error saving the custom domains",
@@ -1635,7 +1635,7 @@
     "corsConfig": "CORS Configuration",
     "corsConfigLower": "CORS configuration",
     "corsSectionTitle": "Cross-Origin Resource Sharing (CORS)",
-    "corsDescription": "Allow requests to ForgeRock-protected resources to be made from trusted domains.",
+    "corsDescription": "Allow trusted domains to make requests to Ping Identity-protected resources.",
     "deleteCorsConfigError": "Unable to delete CORS Configuration",
     "getCorsConfigsDataError": "Unable to retrieve CORS Configurations",
     "getServiceStatusError": "Failed to retrieve CORS Service status",
@@ -1655,20 +1655,20 @@
       "newCorsConfig": "New CORS Configuration",
       "nameDescription": "Human-readable name for this configuration.",
       "acceptedOrigins": "Accepted Origins",
-      "acceptedOriginsDescription": "Accepted origins that will be allowed to make requests to ForgeRock from your application in a cross-origin context. Wildcards are not supported – each value should be an exact match for the origin of the CORS request including the port number. Eg. <code>https://myapp.example.com:443</code>",
+      "acceptedOriginsDescription": "Accepted origins allowed to make requests to Ping from your application in a cross-origin context. Wildcards are not supported. Each value must match the origin of the CORS request, including port number. Eg. <code>https://myapp.example.com:443</code>",
       "acceptedMethods": "Accepted Methods",
-      "acceptedMethodsDescription": "The set of (non-simple) accepted HTTP methods allowed when making CORS requests to ForgeRock. The method names are case-sensitive, ensure they are entered in all uppercase characters.",
+      "acceptedMethodsDescription": "Set of (non-simple) accepted HTTP Methods allowed when making CORS requests to Ping Identity. Method names are case-sensitive and must include all uppercase letters.",
       "acceptedHeaders": "Accepted Headers (optional)",
       "acceptedHeadersDescription": "Accepted header names when making requests from the above specified trusted domains. Header names are case-insensitive. By default, the following simple headers are explicitly accepted: <code>Cache-Control</code><code>Content-Language</code><code>Expires</code><code>Last-Modified</code><code>Pragma</code>. If you do not specify values for this element, the presence of any header in the CORS request, other than the simple headers listed above, will cause the request to be rejected.",
       "saveCorsConfiguration": "Save CORS Configuration",
       "exposedHeaders": "Exposed Headers (optional)",
-      "exposedHeadersDescription": "Add the response header names that ForgeRock returns. The header names are case-insensitive. User agents can make use of any headers that are listed in this property, as well as the simple response headers, which are as follows: <code>Cache-Control</code><code>Content-Language</code><code>Expires</code><code>Last-Modified</code><code>Pragma</code><code>Content-Type</code>. User agents must filter out all other response headers.",
+      "exposedHeadersDescription": "Add the response header names that return. The header names are case-insensitive. User agents can use any headers listed in this property, as well as the simple response headers, which are as follows: <code>Cache-Control</code><code>Content-Language</code><code>Expires</code><code>Last-Modified</code><code>Pragma</code><code>Content-Type</code>. User agents must filter out all other response headers.",
       "enableCaching": "Enable Caching",
       "enableCachingDescription": "Enable the browser to cache the pre-flight response.",
       "maxAge": "Max Age",
       "maxAgeDescription": "The max age (in seconds) for caching.",
       "allowCredentials": "Allow Credentials",
-      "allowCredentialsDescription": "Whether to transmit the Access-Control-Allow-Credentials: true header in the response.",
+      "allowCredentialsDescription": "Enable transmission of Access-Control-Allow-Credentials: true header in the response.",
       "successCreate": "Successfully created CORS Configuration"
     },
     "deleteCorsConfigModal": {
@@ -1843,8 +1843,8 @@
   },
   "serviceAccounts": {
     "serviceAccount": "Service Account",
-    "noServiceAccounts": "You haven't added any service accounts yet",
-    "createServiceAccountsInfo": "Create service accounts to use for automated access to ForgeRock APIs.",
+    "noServiceAccounts": "You haven't added any service accounts yet.",
+    "createServiceAccountsInfo": "Create service accounts to use for automated access to Ping Identity APIs.",
     "createNewServiceAccount": "New Service Account",
     "serviceAccountsTitle": "Service Accounts",
     "failedToLoad": "Failed to Load Service Accounts. Please try again.",
@@ -1954,9 +1954,9 @@
       "enforcementCard": {
         "error": "Could not establish enforcement rules",
         "forNone": "Optional for All Admins",
-        "forNoneHelp": "Allow all admins to use either their ForgeRock credentials or federation to sign in.",
+        "forNoneHelp": "Allow all admins to use either their local credentials or federation to sign in.",
         "forNonSuper": "Required for All Admins Except Super Admins",
-        "forNonSuperHelp": "Require all admins who are not super admins to use federation to sign in. Super admins can use their ForgeRock credentials or federation to sign in.",
+        "forNonSuperHelp": "Require all admins who are not super admins to use federation to sign in. Super admins can use their local credentials or federation to sign in.",
         "forAll": "Required for All Admins",
         "forAllHelp": "Allow all admins to use federation to sign in. This option requires a support ticket to change.",
         "identityProvider": "Identity Provider"
@@ -1964,15 +1964,15 @@
       "enforcementModal": {
         "title": "Edit Tenant Federation Enforcement",
         "sideTitle": "Federation Enforcement",
-        "sideHelp": "Choose how federation should be enforced in this tenant.",
+        "sideHelp": "Choose how to enforce federation on this tenant.",
         "unlockText": "In order to change federation enforcement you need to <a href=\"https://backstage.forgerock.com/knowledge/kb/article/a60648400\" target=\"_self\">open a support ticket</a>.",
         "confirmTitle": "Change Federation Enforcement?",
         "confirmAll": "Are you sure you want to require all admins to use federation to sign in?",
-        "confirmNone": "Are you sure you want to allow tenant admins to use ForgeRock credentials to sign in?",
+        "confirmNone": "Are you sure you want to allow tenant admins to use local credentials to sign in?",
         "confirmTenantAdmins": "Are you sure you want to require tenant admins to use federation to sign in?",
         "alertText": "This will require you to open a support ticket to change.",
         "note": "Note:",
-        "waitTime": "This change will take approximately 10 minutes to be applied to this tenant."
+        "waitTime": "This change will take about 10 minutes to apply to this tenant."
       },
       "deactivateModal": {
         "modalTitle": "Deactivate {providerName}?",
@@ -1990,7 +1990,7 @@
         "appId": "Application ID",
         "appSecret": "Application Secret",
         "clientAuthenticationMethod": "Client Authentication Method",
-        "groupsClaim": "Use {applicationName} group membership to allow federated login to ForgeRock",
+        "groupsClaim": "Use {applicationName} group membership to allow federated login to Ping Identity",
         "groupsClaimDescription": "Groups claim description",
         "groupsClaimName": "Groups Claim Name",
         "groupsClaimMapTitle": "{providerName} Group",
@@ -2013,14 +2013,14 @@
         },
         "stage2": {
           "title": "Configure Application",
-          "step1Azure": "To configure single sign-on with Microsoft Azure, follow the <a href='{docsLink}' target='_blank' rel='noopener'>{docsName} <span aria-hidden='true' class='material-icons-outlined'>open_in_new</span></a> to learn how to set up the redirect URI in Microsoft Azure and obtain a client ID and Secret.",
-          "step1ADFS": "To configure single sign-on with ADFS, follow the <a href='{docsLink}' target='_blank' rel='noopener'>{docsName} <span aria-hidden='true' class='material-icons-outlined'>open_in_new</span></a> to learn how to set up the redirect URI in ADFS and obtain a client ID and Secret.",
-          "step1OIDC": "To configure single sign-on with an OIDC provider, follow the <a href='{docsLink}' target='_blank' rel='noopener'>{docsName} <span aria-hidden='true' class='material-icons-outlined'>open_in_new</span></a> to learn how to set up the redirect URI in your OIDC provider and obtain a client ID and Secret.",
+          "step1Azure": "Configure single sign-on with Microsoft Azure by referring to the <a href='{docsLink}' target='_blank' rel='noopener'>{docsName}<span aria-hidden='true' class='material-icons-outlined'>open_in_new</span></a> to set up the redirect URI in Microsoft Azure, and get a client ID and secret.",
+          "step1ADFS": "Configure single sign-on with ADFS by referring to the <a href='{docsLink}' target='_blank' rel='noopener'>{docsName}<span aria-hidden='true' class='material-icons-outlined'>open_in_new</span></a> to set up the redirect URI in ADFS and get a client ID and secret.",
+          "step1OIDC": "Configure single sign-on with an OIDC provider by referring to the <a href='{docsLink}' target='_blank' rel='noopener'>{docsName}<span aria-hidden='true' class='material-icons-outlined'>open_in_new</span></a> to set up the redirect URI in your OIDC provider and get a client ID and secret.",
           "redirectLabel": "Redirect URI",
           "claimLabel": "Email Claim",
-          "forgeRockDocs": "ForgeRock Docs",
-          "step2": "The <code>email or mail</code> claim must be added to your {name} token configuration to ensure that the user who receives the email invite is the user who can claim the account and sign in using {name}.",
-          "step3": "Once you've completed these steps proceed with the SSO configuration."
+          "forgeRockDocs": "documentation",
+          "step2": "Add the <code>email or mail</code> claim to your {name} token configuration to ensure that the user who receives the email invite is the user who can claim the account and sign in using {name}.",
+          "step3": "Proceed with SSO configuration."
         },
         "stage3": {
           "title": "Identity Provider Details",
@@ -2087,7 +2087,7 @@
         "introduction": "Deploying an agent or gateway involves downloading and installing a piece of software on your server. To get started choose whether to protect your application using Identity Gateway or an agent."
       },
       "addDetails": {
-        "introduction": "Create a profile for the agent to connect to and communicate with ForgeRock.",
+        "introduction": "Create a profile for the agent to connect to and communicate with Ping Identity.",
         "header": {
           "gateway": "Create Identity Gateway Profile",
           "java-agent": "Create Java Agent Profile",
@@ -2228,7 +2228,7 @@
       "saveSuccess": "Script saved"
     },
     "engineChoice": {
-      "description": "ForgeRock has introduced a new script engine for Journey Decision Node scripts that introduces new features and functions. You can choose to create your script using the new version or continue to use the previous version.",
+      "description": "A new script engine for Journey Decision nodes introduces new features and functions. You can create a script using the new version or use the previous one.",
       "legacyTitle": "Legacy",
       "legacyEngineChoice": "Use the legacy Journey Node scripting engine with existing features and functions.",
       "nextGenerationTitle": "Next Generation",
@@ -2288,7 +2288,7 @@
       },
       "SAML2_NAMEID_MAPPER": {
         "name": "SAML2 NameID Mapper",
-        "description": "Script to customize or generate the SAML Name ID mapping for a given SP when ForgeRock is the Identity Provider."
+        "description": "Script to customize or generate the SAML Name ID mapping for a given SP when Ping Indentity is the Identity Provider."
       }
     },
     "languages": {
@@ -2764,21 +2764,21 @@
     "saveMessage": "Settings saved",
     "accountCorrelation": {
       "editModal": {
-        "subTitle": "Choose the attribute(s) to use to match users in {appName} to users in ForgeRock.",
+        "subTitle": "Choose the attribute(s) to use to match users in {appName} to users in Ping Identity.",
         "selectLabel": "Attribute(s) to match",
-        "defaultUsername": "ForgeRock username",
+        "defaultUsername": "Ping Identity username",
         "defaultName": "Name (First and Last)",
-        "defaultUsernameAndEmail": "ForgeRock username and Email",
-        "defaultUsernameAndName": "ForgeRock username and Name",
+        "defaultUsernameAndEmail": "Ping Identity username and Email",
+        "defaultUsernameAndName": "Ping Identity username and Name",
         "defaultEmailAndName": "Email and Name",
         "custom": "Custom",
-        "defaultUsernameOrEmailAndName": "Forgerock username or Email, and Name",
+        "defaultUsernameOrEmailAndName": "Ping Identity username or Email, and Name",
         "advancedButtonText": "Use advanced query",
         "basicButtonText": "Use basic options",
         "editCorrelation": "Edit Correlation"
       },
       "cardHeaderTitle": "Account Correlation",
-      "subTitle": "Choose the attribute(s) to use to match users in {appName} to users in ForgeRock.",
+      "subTitle": "Choose the attribute(s) to use to match users in {appName} to users in Ping Identity.",
       "fieldLabel": "Match using",
       "configure": "Configure"
     },
@@ -2789,14 +2789,14 @@
         "filterSource": "Filter Source",
         "filterSourceDescription": "Restrict reconciliation to specific identities in {appName} by defining an explicit source query.",
         "filterTarget": "Filter Target",
-        "filterTargetDescription": "Restrict reconciliation to specific identities in ForgeRock by defining an explicit target query.",
+        "filterTargetDescription": "Restrict reconciliation to specific identities in Ping Identity by defining an explicit target query.",
         "validSourceScript": "Valid Source Script",
         "sourceScriptDescription": "Filter the {appName} identities that are included in reconciliation using a script.",
         "persistAssociations": "Persist Associations",
         "persistAssociationsDescription": "Record associations between source or target objects to allow UI to show results of last recon.",
         "persistAssociationsWarning": "Enabling this setting can cause performance issues in large reconciliations.  <a href=\"https://backstage.forgerock.com/knowledge/kb/article/a71844438\" target=\"_blank\" rel=\"noopener\" class=\"alert-link\">Learn more</a>",
         "validTargetScript": "Valid Target Script",
-        "targetScriptDescription": "Filter the ForgeRock identities that are included in reconciliation using a script.",
+        "targetScriptDescription": "Filter the identities that are included in reconciliation using a script.",
         "correlateEmptyTarget": "Correlate empty target objects",
         "correlateTargetDescription": "Allow correlation of source objects to empty target objects.",
         "prefetchLinks": "Prefetch Links",
@@ -2841,7 +2841,7 @@
       "title": "Change User Association",
       "loadingTitle": "Updating user association...",
       "headerLabel": "Associate Remote Application",
-      "inputLabel": "With ForgeRock Identity",
+      "inputLabel": "With Ping Identity",
       "any": "Any",
       "username": "Username",
       "email": "Email",
@@ -2850,18 +2850,18 @@
       "name": "Name",
       "changeError": "error changing user association",
       "linkError": "error linking users",
-      "placeholder": "Search ForgeRock identitites"
+      "placeholder": "Search identitites"
     },
     "modes": {
       "allValid": "All valid {appName} users",
       "1to1": "1-to-1 match",
       "noMatch": "No match found",
-      "noMatchApp": "No match found for Forgerock user in {appName}",
+      "noMatchApp": "No match found for Ping Identity user in {appName}",
       "conflictingMatch": "Conflicting matches",
       "conflictingChanges": "Conflicting changes",
       "allOtherIds": "All other users",
       "unresolvedIds": "Unresolved {appName} users",
-      "unresolvedObjects": "Unresolved ForgeRock users",
+      "unresolvedObjects": "Unresolved Ping Identity users",
       "ignoredUsers": "Ignored users"
     },
     "reportModal": {
@@ -2903,7 +2903,7 @@
     "percentComplete": "% complete",
     "pleaseMapping": "You need to configure an inbound mapping before reconciliation is available",
     "previewAssociations": "Preview Associations",
-    "previewAssociationsDescription": "Reconcile your data between {appName} and ForgeRock.",
+    "previewAssociationsDescription": "Reconcile your data between {appName} and Ping Identity.",
     "processedAndTotal": "Reconciled {processed}/{total} records",
     "readError": "Error getting data",
     "reconAccounts": "Reconcile Accounts",
@@ -2982,7 +2982,7 @@
       "absent": "Source object has no matching target.",
       "allGone": "Source object removed, link not found, correlation not possible.",
       "ambiguous": "Source object correlates to multiple target objects, without a link.",
-      "changesToIncorporate": "Change was made on application and IDM will incorporate.",
+      "changesToIncorporate": "Change was made on application and will be incorporated.",
       "confirmed": "Valid source and target objects linked.",
       "found": "Correlation query from source points to one target object.",
       "foundAlreadyLinked": "Correlation from source points to a target object already linked to a different source.",
@@ -3023,7 +3023,7 @@
       "downloadConfigurationConfirmation": "I confirm I have downloaded my configuration",
       "errorUpdatingMigrationAcknowledgement": "Error updating confirmation of configuration management",
       "externalConfigurationOption": "Configuration is managed externally",
-      "fogerockManagesConfigurationOption": "Forgerock manages configuration",
+      "fogerockManagesConfigurationOption": "Ping Identity manages configuration",
       "goodToGoConfigurationMessage": "If you don’t manage your configuration externally you are set and good to go.",
       "inProgressPopover": "Tenant is locked during tenant migration",
       "tenantMigratedInfo": "Your tenant has been enabled to support self-managed promotions. To learn more about this capability <a href=\"https://backstage.forgerock.com/docs/idcloud/latest/tenants/self-service-promotions-migration-faq.html\" target=\"_blank\" rel=\"noopener\">view the docs</a>",

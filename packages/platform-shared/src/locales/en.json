@@ -197,6 +197,8 @@
     "passwordLower": "password",
     "path": "Path",
     "pending": "Pending",
+    "ping": "Ping",
+    "pingIdentity": "Ping Identity",
     "preview": "Preview",
     "previous": "Previous",
     "print": "Print",
@@ -213,7 +215,7 @@
     "qrCode": "QR code",
     "realm": "Realm",
     "reject": "Reject",
-    "releaseInfo": "ID Cloud Version {version}",
+    "releaseInfo": "Ping Advanced Identity Cloud Version {version}",
     "remove": "Remove",
     "removed": "Removed",
     "report": "Report",
@@ -491,8 +493,8 @@
       "description": "Manage where, when and how your users can change their information."
     },
     "welcome": {
-      "title": "Welcome to ForgeRock!",
-      "description": "With the ForgeRock platform you can control access, identity management and much more.",
+      "title": "Welcome to Ping Identity!",
+      "description": "With the Ping Identity platform you can control access, identity management and much more.",
       "footer": "Get Started"
     }
   },
@@ -977,7 +979,7 @@
     "jsonNotStructured": "JSON is not structured properly"
   },
   "centerCard": {
-    "logoAltText": "ForgeRock logo"
+    "logoAltText": "Ping Identity logo"
   },
   "dataTable": {
     "dropdownMenuOptions": "Dropdown Menu Options"
@@ -1322,7 +1324,7 @@
         "count": "Count"
       },
       "info": {
-        "professionalUseOnly": "This view is intended to help ForgeRock Professional Services to understand the ability of the tool to detect anomalies and help tune AI/ML Models. It is based on test data and intended for context only."
+        "professionalUseOnly": "This view is intended to help Ping Identity Professional Services to understand the ability of the tool to detect anomalies and help tune AI/ML Models. It is based on test data and intended for context only."
       },
       "risk": {
         "allRisk": "Risk Score",

@@ -96,7 +96,7 @@ filterTests(['forgeops', 'cloud'], () => {
       // Log in to the enduser UI and check that the theme has been applied
       cy.logout();
       cy.loginAsEnduser(enduserUserName);
-      cy.get('div.fr-logo:visible')
+      cy.get('div.ping-logo:visible')
         .should('have.css', 'background-image', 'url("https://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png")');
 
       // Clean up the test user
