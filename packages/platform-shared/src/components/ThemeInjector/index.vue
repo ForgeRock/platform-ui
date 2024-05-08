@@ -270,12 +270,12 @@ of the MIT license. See the LICENSE file for details. -->
       color: inherit;
       }
 
-      .fr-logo.fr-logo-vertical {
+      .ping-logo.ping-logo-square {
       background-image: url("{{ logoProfileCollapsed ? logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
       height: {{ logoProfileCollapsed && theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
       }
 
-      .fr-logo.fr-logo-horizontal {
+      .ping-logo.ping-logo-horizontal {
       background-image: url("{{ logoProfile ? logoProfile : require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg') }}");
       height: {{ theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
       }

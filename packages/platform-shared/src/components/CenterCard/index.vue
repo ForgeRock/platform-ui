@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,12 +16,12 @@ of the MIT license. See the LICENSE file for details. -->
             <template v-if="logoEnabled">
               <div
                 v-if="logoPath.length === 0"
-                class="fr-logo fr-logo-vertical mb-3 mt-2"
+                class="ping-logo ping-logo-square mb-3 mt-2"
                 fluid
                 :alt="$t('common.logo')" />
               <img
                 v-else
-                class="fr-logo mb-3 mt-2"
+                class="ping-logo mb-4 mt-2"
                 :alt="logoAltText"
                 :src="logoPath"
                 :style="{ height: `${logoHeight}px`}">
@@ -70,7 +70,7 @@ export default {
      */
     logoHeight: {
       type: String,
-      default: '40',
+      default: '72',
     },
     /**
      * Path to logo
@@ -134,7 +134,7 @@ export default {
       .justify-content-center {
         flex-direction: column;
 
-        .fr-logo {
+        .ping-logo {
           align-self: center;
           height: $fr-center-card-logo-height;
           max-width: 100%;

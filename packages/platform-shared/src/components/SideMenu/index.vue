@@ -78,8 +78,8 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             v-else
             class="d-flex align-items-center p-3 h-100">
-            <div class="fr-logo fr-logo-horizontal" />
-            <div class="fr-logo fr-logo-vertical" />
+            <div class="ping-logo ping-logo-horizontal" />
+            <div class="ping-logo ping-logo-square" />
           </div>
         </div>
         <ul class="fr-sidebar-menuitems flex-grow-1">
