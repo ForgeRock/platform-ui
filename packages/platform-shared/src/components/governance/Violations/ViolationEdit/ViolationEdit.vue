@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       <h2 class="h5 text-muted mb-2">
         {{ $t('governance.violations.violation') }}
       </h2>
-      <h1 class="mb-2">
+      <h1 :class="[hideActions ? 'mb-4' : 'mb-2']">
         {{ violation.policyRule.name }}
       </h1>
 
@@ -147,6 +147,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  isException: {
+    type: Boolean,
+    default: false,
+  },
   isTesting: {
     type: Boolean,
     default: false,
@@ -162,7 +166,7 @@ const tabIndex = ref(0);
 
 const item = computed(() => ({ rawData: { decision: { comments: violation?.value?.decision?.violation?.comments || [] } } }));
 const hideActions = computed(() => {
-  if (!violation?.value?.decision?.violation?.phases?.length) return true;
+  if (!violation?.value?.decision?.violation?.phases?.length || props.isException) return true;
   return false;
 });
 const phaseId = computed(() => {
