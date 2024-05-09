@@ -3708,6 +3708,7 @@
     },
     "workflows": {
       "builder": {
+        "allow": "ALLOW",
         "approvalTaskDefaultDisplayName": "Approval Task",
         "approvalTaskDescription": "Assign an approval task to users and roles. Chain tasks or use in conjunction with switch to implement serial/parallel flows.",
         "approvalTaskDisplayName": "Approval",
@@ -3718,11 +3719,16 @@
         "editPanel": {
           "addApproversManually": "add approvers manually",
           "applicationOwner": "App Owner",
+          "actor": "Actor",
+          "actors": "Actors",
+          "actorDescriptionManual": "Add users and roles who will act on the violation.",
+          "actorDescriptionScript": "Define a script to return users and roles who will act on the violation.",
           "approver": "Approver",
           "approvers": "Approvers",
           "approversDescriptionManual": "Add users and roles who can approve the request.",
           "approversDescriptionScript": "Define a script to return users and roles who can approve the request.",
           "approverType": "Approver Type",
+          "actorType": "Actor Type",
           "assigneeReminders": "Assignee reminders",
           "assignmentNotification": "Assignment notification",
           "daysBeforeExpiration": "days before expiration",
@@ -3735,6 +3741,7 @@
           "expirationNotification": "Expiration notification",
           "expirationSettings": "Expiration Settings",
           "expirationSettingsDescription": "Choose what to do when the request expires.",
+          "expirationSettingsDescriptionViolation": "Choose what to do when the violation expires.",
           "manager": "Manager",
           "modify": "Modify",
           "notificationSettings": "Notification Settings",
@@ -3750,11 +3757,13 @@
           "rejectRequest": "Reject request",
           "roleOwner": "Role Owner",
           "sendEvery": "Send every",
-          "sendTo": "Send to"
+          "sendTo": "Send to",
+          "violationOwner":"Violation Owner"
         },
         "exclusiveGatewayDefaultDisplayName": "Validation Gateway",
         "exclusiveGatewayDescription": "Evaluate a binary response from a preceding node to select a path the workflow should take.",
         "exclusiveGatewayDisplayName": "If/Else",
+        "expiration": "EXPIRATION",
         "export": "Export",
         "importModal": {
           "importNewDraft": "Import New Draft",
@@ -3780,9 +3789,13 @@
           "overwriteWarning": "This will overwrite your existing published workflow."
         },
         "REJECT": "REJECT",
+        "remediate": "REMEDIATE",
         "scriptTaskDefaultDisplayName": "Script Task",
         "scriptTaskDescription": "Invoke APIs or execute business logic using this node.",
         "scriptTaskDisplayName": "Script",
+        "violationTaskDefaultDisplayName": "Violation Task",
+        "violationTaskDescription": "Assign a violation task to users and roles. Chain tasks or use in conjunction with switch to implement serial/parallel flows.",
+        "violationTaskDisplayName": "Violation",
         "viewDetails": "View Details"
       },
       "draft": "Draft",
