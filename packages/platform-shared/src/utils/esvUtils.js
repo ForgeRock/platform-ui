@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import dayjs from 'dayjs';
+import { isObject } from 'lodash';
 
 /**
  * RegExp to determine if a property is a placeholder
@@ -66,6 +67,15 @@ export function formatIdAsPlaceholder(_id) {
  */
 export function formatDate(date) {
   return dayjs(date).format('MMM DD, YYYY hh:mm A');
+}
+
+/**
+ * Determines whether the passed value contains an $purpose based placeholder
+ * @param {*} value the value to evaluate
+ * @returns {Boolean} whether the field contains a $purpose based placeholder
+ */
+export function valueIsPurposePlaceholder(value) {
+  return isObject(value) && Object.keys(value).includes('$purpose');
 }
 
 /**
@@ -154,8 +164,7 @@ export function doesValueContainPlaceholder(fieldValue) {
     case 'object': {
       const values = Object.values(fieldValue);
       const objectHasEsvPlaceholder = values.length === 1 && PLACEHOLDER_REGEX.test(values[0]);
-      const objectIsPurposePlaceholder = Object.keys(fieldValue).includes('$purpose');
-      return objectHasEsvPlaceholder || objectIsPurposePlaceholder;
+      return objectHasEsvPlaceholder || valueIsPurposePlaceholder(fieldValue);
     }
     case 'string': {
       return PLACEHOLDER_REGEX.test(fieldValue);
@@ -174,8 +183,7 @@ export function doesValueContainPlaceholder(fieldValue) {
 export function getPlaceholderValueToDisplay(fieldValueWithPlaceholder) {
   switch (typeof fieldValueWithPlaceholder) {
     case 'object': {
-      const objectIsPurposePlaceholder = Object.keys(fieldValueWithPlaceholder).includes('$purpose');
-      if (objectIsPurposePlaceholder) {
+      if (valueIsPurposePlaceholder(fieldValueWithPlaceholder)) {
         return JSON.stringify(fieldValueWithPlaceholder);
       }
       return Object.values(fieldValueWithPlaceholder)[0];
