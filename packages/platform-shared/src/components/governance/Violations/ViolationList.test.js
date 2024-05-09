@@ -17,15 +17,19 @@ CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
 }));
 
 describe('ViolationList', () => {
-  const props = {
+  const defaultProps = {
     policyRuleOptions: ['ruleOne'],
+    isAdmin: true,
   };
-  function mountComponent() {
+  function mountComponent(props = {}) {
     const wrapper = mount(ViolationList, {
       global: {
         plugins: [i18n],
       },
-      props,
+      props: {
+        ...defaultProps,
+        ...props,
+      },
     });
     return wrapper;
   }
@@ -42,6 +46,22 @@ describe('ViolationList', () => {
     expect(columns[2].text()).toBe('Created (Click to sort ascending)');
   });
 
+  it('add fixed with of 120px to actions column when is admin', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const columns = table.findAll('[role=columnheader]');
+    expect(columns[3].classes()).toContain('w-120px');
+  });
+
+  it('not to add fixed with to actions column when is not admin', async () => {
+    const wrapper = mountComponent({ isAdmin: false });
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const columns = table.findAll('[role=columnheader]');
+    expect(columns[3].classes()).not.toContain('w-120px');
+  });
+
   it('emits handle-search when filter is changed', async () => {
     const wrapper = mountComponent();
     await flushPromises();
@@ -52,6 +72,7 @@ describe('ViolationList', () => {
       user: 'testUser',
       startDate: '',
       endDate: '',
+      searchValue: 'searchValue',
     });
     await flushPromises();
 
@@ -71,6 +92,27 @@ describe('ViolationList', () => {
         operator: 'EQUALS',
         operand: { targetName: 'user.userId', targetValue: 'testUser' },
       },
+      {
+        operator: 'OR',
+        operand: [
+          {
+            operator: 'CONTAINS',
+            operand: { targetName: 'user.userName', targetValue: 'searchValue' },
+          },
+          {
+            operator: 'CONTAINS',
+            operand: { targetName: 'user.givenName', targetValue: 'searchValue' },
+          },
+          {
+            operator: 'CONTAINS',
+            operand: { targetName: 'user.sn', targetValue: 'searchValue' },
+          },
+          {
+            operator: 'CONTAINS',
+            operand: { targetName: 'policyRule.name', targetValue: 'searchValue' },
+          },
+        ],
+      },
     ]);
   });
 
@@ -86,5 +128,77 @@ describe('ViolationList', () => {
       sortDir: 'desc',
       sortKeys: 'decision.violation.startDate',
     });
+  });
+
+  it('should show allow and revoke buttons when is not admin', async () => {
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [
+        {
+          decision: {
+            violation: {
+              status: 'in-progress',
+              startDate: '2024-05-13T23:12:21+00:00',
+            },
+          },
+          policyRule: {
+            name: 'NoCustomerSupport',
+          },
+          user: {
+            cn: 'Opal Millions',
+            givenName: 'Opal',
+            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+            mail: 'Opal@IGATestQA.onmicrosoft.com',
+            sn: 'Millions',
+            userName: 'Opal@IGATestQA.onmicrosoft.com',
+          },
+          id: '002bd665-3946-465c-b444-de470fa04254',
+        },
+      ],
+    });
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const rows = table.findAll('[role="row"]');
+    const row = rows[1];
+    const buttons = row.findAll('button');
+    expect(buttons.length).toBe(3);
+    expect(buttons[0].text()).toBe('checkAllow');
+    expect(buttons[1].text()).toBe('blockRevoke');
+  });
+
+  it('should show view details item on actions list when is not admin', async () => {
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [
+        {
+          decision: {
+            violation: {
+              status: 'in-progress',
+              startDate: '2024-05-13T23:12:21+00:00',
+            },
+          },
+          policyRule: {
+            name: 'NoCustomerSupport',
+          },
+          user: {
+            cn: 'Opal Millions',
+            givenName: 'Opal',
+            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+            mail: 'Opal@IGATestQA.onmicrosoft.com',
+            sn: 'Millions',
+            userName: 'Opal@IGATestQA.onmicrosoft.com',
+          },
+          id: '002bd665-3946-465c-b444-de470fa04254',
+        },
+      ],
+    });
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const rows = table.findAll('[role="row"]');
+    const row = rows[1];
+    const items = row.findAll('[role="menuitem"]');
+
+    expect(items.length).toBe(2);
+    expect(items[1].text()).toBe('list_altView Details');
   });
 });

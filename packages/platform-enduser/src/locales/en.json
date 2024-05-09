@@ -366,6 +366,14 @@
     },
     "hideFilters": "Hide Filters",
     "showFilters": "Show Filters",
-    "sortBy": "Sort by"
+    "sortBy": "Sort by",
+    "violations": {
+      "title": "Compliance Violations",
+      "subtitle": "View and take action on your compliance violations.",
+      "tabs": {
+        "violations": "Violations",
+        "exceptions": "Exceptions"
+      }
+    }
   }
 }

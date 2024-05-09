@@ -9,6 +9,7 @@ import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
 const violationUrl = '/governance/violation';
+const violationEndUserUrl = '/governance/user/violation';
 
 /**
  * Get a list of violations
@@ -18,6 +19,16 @@ const violationUrl = '/governance/violation';
  */
 export function getViolationList(params, targetFilter) {
   return generateIgaApi().post(`${violationUrl}/search${encodeQueryString(params)}`, { targetFilter });
+}
+
+/**
+ * Get a list of violations for end user
+ * @param {Object} params query parameters
+ * @param {Object} targetFilter filter to apply to query
+ * @returns {Promise}
+ */
+export function getViolationListEndUser(params, targetFilter) {
+  return generateIgaApi().post(`${violationEndUserUrl}/search${encodeQueryString(params)}`, { targetFilter });
 }
 
 /**
