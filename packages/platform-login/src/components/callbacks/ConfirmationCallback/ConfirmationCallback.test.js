@@ -199,4 +199,28 @@ describe('ConfirmationCallback', () => {
       expect(optionButton.attributes('class')).toEqual('d-flex');
     });
   });
+
+  it('displays space between buttons when button position is not full-width', async () => {
+    const options = ['Positive', 'Negative'];
+    const positions = ['justify-content-center', 'justify-content-start', 'justify-content-end'];
+    positions.forEach(async (position) => {
+      const propsData = {
+        callback: {
+          getOptions: () => options,
+          payload: {
+            type: 'ConfirmationCallback',
+          },
+        },
+        stage: { showOnlyPositiveAnswer: false },
+        variant: 'primary',
+        positionButton: position,
+      };
+      const wrapper = setup(propsData);
+      await wrapper.vm.$nextTick();
+      options.forEach((option) => {
+        const button = findByTestId(wrapper, `btn-${option.toLowerCase().replace(/\s/g, '')}`);
+        expect(button.attributes('class')).toMatch(/m[r|l]-2/g);
+      });
+    });
+  });
 });

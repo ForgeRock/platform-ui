@@ -19,14 +19,14 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
   <div
     v-else
-    :class="[{ 'd-flex': variant === 'link' }]">
+    :class="[{ 'd-flex': variant === 'link' || positionButton }, positionButton]">
     <div
       v-for="(option, index) in options"
       :key="index"
       :class="[{ 'btn-block mt-3': variant === 'link' },{ 'd-flex': variant !== 'link' },positionButton]"
       :data-testid="`option-${option.toLowerCase().replace(/\s/g, '')}`">
       <BButton
-        :class="[{ 'btn-block': variant === 'link' },'mt-1']"
+        :class="setButtonClasses(index)"
         :variant="variant"
         @click="setValue(index)"
         :aria-label="option"
@@ -83,6 +83,21 @@ export default {
     setValue(value) {
       this.callback.setInputValue(value);
       this.$emit('next-step');
+    },
+    setButtonClasses(index) {
+      let classes = 'mt-1';
+      if (this.variant === 'link') {
+        classes += ' btn-block';
+      }
+      if (this.positionButton !== 'flex-column' && this.variant !== 'link') {
+        if (index + 1 < this.options.length) {
+          classes += ' mr-2';
+        }
+        if (index > 0) {
+          classes += ' ml-2';
+        }
+      }
+      return classes;
     },
   },
 };
