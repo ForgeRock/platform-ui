@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -278,7 +278,7 @@ export default {
       this.loading = true;
       savePipeline({
         pipeline_definition_id: id,
-        pipelineName,
+        pipeline_name: pipelineName,
         pipeline_type: pipelineType,
         pipeline_parameters: {
           ...trainingParameters,
