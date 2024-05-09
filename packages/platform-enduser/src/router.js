@@ -95,7 +95,7 @@ const router = createRouter({
     {
       path: '/violations',
       name: 'Violations',
-      component: () => import('@/views/governance/Violations'),
+      component: () => import('@/views/governance/Violations/Violations.vue'),
       meta: { authenticate: true },
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
     },

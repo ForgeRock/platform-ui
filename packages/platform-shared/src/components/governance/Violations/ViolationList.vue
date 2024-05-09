@@ -6,9 +6,11 @@ of the MIT license. See the LICENSE file for details. -->
   <BCard no-body>
     <FrViolationToolbar
       v-model="filters"
+      :is-admin="isAdmin"
+      :policy-rule-options="policyRuleOptions"
+      :search-input-placeholder="searchInputPlaceholder"
       @get-policy-rule-options="$emit('get-policy-rule-options', $event)"
-      @input="handleFilterChange"
-      :policy-rule-options="policyRuleOptions" />
+      @input="handleFilterChange" />
     <BTable
       @row-clicked="$emit('viewViolationDetails', $event)"
       @sort-changed="sortChanged"
@@ -51,23 +53,59 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
       <template #cell(actions)="{ item }">
-        <BDropdown
-          no-caret
-          toggle-class="p-1"
-          variant="link">
-          <template #button-content>
-            <FrIcon
-              icon-class="text-dark md-24"
-              name="more_horiz" />
+        <div class="d-flex justify-content-end">
+          <template v-if="!isAdmin">
+            <BButton
+              @click="() => {}"
+              class="mr-1"
+              variant="outline-secondary"
+              size="sm">
+              <FrIcon
+                icon-class="mr-2 text-success"
+                name="check">
+                {{ $t('common.allow') }}
+              </FrIcon>
+            </BButton>
+            <BButton
+              @click="() => {}"
+              class="mr-1"
+              variant="outline-secondary"
+              size="sm">
+              <FrIcon
+                icon-class="mr-2 text-danger"
+                name="block">
+                {{ $t('common.revoke') }}
+              </FrIcon>
+            </BButton>
           </template>
-          <BDropdownItem @click="openForwardModal(item)">
-            <FrIcon
-              icon-class="mr-2"
-              name="redo">
-              {{ $t('common.forward') }}
-            </FrIcon>
-          </BDropdownItem>
-        </BDropdown>
+          <BDropdown
+            no-caret
+            toggle-class="py-1 px-3"
+            variant="link">
+            <template #button-content>
+              <FrIcon
+                icon-class="text-dark md-24"
+                name="more_horiz" />
+            </template>
+            <BDropdownItem @click="openForwardModal(item)">
+              <FrIcon
+                icon-class="mr-2"
+                name="redo">
+                {{ $t('common.forward') }}
+              </FrIcon>
+            </BDropdownItem>
+            <template v-if="!isAdmin">
+              <BDropdownDivider />
+              <BDropdownItem @click="() => {}">
+                <FrIcon
+                  icon-class="mr-2"
+                  name="list_alt">
+                  {{ $t('common.viewDetails') }}
+                </FrIcon>
+              </BDropdownItem>
+            </template>
+          </BDropdown>
+        </div>
       </template>
     </BTable>
     <FrPagination
@@ -94,6 +132,7 @@ import {
   BDropdown,
   BDropdownItem,
   BTable,
+  BButton,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
@@ -128,6 +167,14 @@ const props = defineProps({
   totalRowCount: {
     type: Number,
     default: 0,
+  },
+  searchInputPlaceholder: {
+    type: String,
+    default: i18n.global.t('common.search'),
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -164,7 +211,7 @@ const tableFields = [
   },
   {
     key: 'actions',
-    class: 'w-120px',
+    class: props.isAdmin ? 'w-120px' : '',
     label: '',
   },
 ];
@@ -214,7 +261,7 @@ function getTargetFilter(targetFilter) {
     filterPayload.operand.push(getBasicFilter('EQUALS', 'policyRule.id', targetFilter.rule));
   }
 
-  if (targetFilter.user !== 'managed/user/all') {
+  if (targetFilter.user && targetFilter.user !== 'managed/user/all') {
     const id = targetFilter.user.split('/').pop();
     filterPayload.operand.push(getBasicFilter('EQUALS', 'user.userId', id));
   }
@@ -229,6 +276,18 @@ function getTargetFilter(targetFilter) {
     let endDate = dayjs(targetFilter.endDate).toISOString().split('.')[0];
     endDate = `${endDate}+00:00`;
     filterPayload.operand.push(getBasicFilter('LTE', 'decision.violation.startDate', endDate));
+  }
+
+  if (targetFilter.searchValue) {
+    filterPayload.operand.push({
+      operator: 'OR',
+      operand: [
+        getBasicFilter('CONTAINS', 'user.userName', targetFilter.searchValue),
+        getBasicFilter('CONTAINS', 'user.givenName', targetFilter.searchValue),
+        getBasicFilter('CONTAINS', 'user.sn', targetFilter.searchValue),
+        getBasicFilter('CONTAINS', 'policyRule.name', targetFilter.searchValue),
+      ],
+    });
   }
 
   return filterPayload;

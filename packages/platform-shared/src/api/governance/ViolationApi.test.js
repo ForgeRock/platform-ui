@@ -34,23 +34,43 @@ describe('ViolationsApi API', () => {
       }],
     };
     const res = await VioaltionApi.getViolationList(queryParams, targetFilter);
-    expect(post).toBeCalledWith('/governance/violation/search?_pageNumber=0&_pageSize=10&_queryFilter=nome%20co%20test', { targetFilter });
-    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(post).toHaveBeenCalledWith('/governance/violation/search?_pageNumber=0&_pageSize=10&_queryFilter=nome%20co%20test', { targetFilter });
+    expect(BaseApi.generateIgaApi).toHaveBeenCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('should call getViolationList with correct payload and url for end user', async () => {
+    const queryParams = {
+      pageNumber: 0, pageSize: 10, queryFilter: 'nome co test',
+    };
+    const targetFilter = {
+      operator: 'AND',
+      operand: [{
+        operator: 'EQUALS',
+        operand: {
+          targetName: 'decision.violation.status',
+          targetValue: 'pending',
+        },
+      }],
+    };
+    const res = await VioaltionApi.getViolationListEndUser(queryParams, targetFilter);
+    expect(post).toHaveBeenCalledWith('/governance/user/violation/search?_pageNumber=0&_pageSize=10&_queryFilter=nome%20co%20test', { targetFilter });
+    expect(BaseApi.generateIgaApi).toHaveBeenCalled();
     expect(res).toEqual(data);
   });
 
   it('should call getViolation with correct url', async () => {
     const res = await VioaltionApi.getViolation('testId');
-    expect(get).toBeCalledWith('/governance/violation/testId');
-    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(get).toHaveBeenCalledWith('/governance/violation/testId');
+    expect(BaseApi.generateIgaApi).toHaveBeenCalled();
     expect(res).toEqual(data);
   });
 
   it('should call commentViolation with correct payload and url', async () => {
     const comment = { comment: 'testComment' };
     const res = await VioaltionApi.commentViolation('testId', 'testPhase', comment);
-    expect(post).toBeCalledWith('/governance/violation/testId/phases/testPhase/comment', { comment });
-    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(post).toHaveBeenCalledWith('/governance/violation/testId/phases/testPhase/comment', { comment });
+    expect(BaseApi.generateIgaApi).toHaveBeenCalled();
     expect(res).toEqual(data);
   });
 
@@ -59,8 +79,8 @@ describe('ViolationsApi API', () => {
     const comment = { comment: 'testComment' };
 
     const res = await VioaltionApi.forwardViolation('testId', 'testPhase', 'newActorId', permissions, comment);
-    expect(post).toBeCalledWith('/governance/violation/testId/phases/testPhase/reassign', { updatedActors: [{ id: 'newActorId', permissions }], comment });
-    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(post).toHaveBeenCalledWith('/governance/violation/testId/phases/testPhase/reassign', { updatedActors: [{ id: 'newActorId', permissions }], comment });
+    expect(BaseApi.generateIgaApi).toHaveBeenCalled();
     expect(res).toEqual(data);
   });
 });

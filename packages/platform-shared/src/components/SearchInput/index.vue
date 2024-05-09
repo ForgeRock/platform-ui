@@ -136,7 +136,7 @@ export default {
     }
 
     .form-control:focus {
-      box-shadow: none;
+      box-shadow: none !important;
       outline: none;
     }
   }
