@@ -198,6 +198,14 @@ describe('Form Generator', () => {
       expect(wrapper.vm.safeCompare(test)).toBe(true);
     });
 
+    it('will return true when value is purpose based placeholder', () => {
+      const test = {
+        type: 'string',
+        value: { $purpose: { name: 'test.secret' } },
+      };
+      expect(wrapper.vm.safeCompare(test)).toBe(true);
+    });
+
     it('will return false when value does not match type', () => {
       const test = {
         type: 'string',

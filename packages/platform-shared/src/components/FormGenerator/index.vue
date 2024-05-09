@@ -66,6 +66,7 @@ import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
+import { valueIsPurposePlaceholder } from '@forgerock/platform-shared/src/utils/esvUtils';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrArrayDisplay from './renderers/ArrayDisplay';
 import FrBooleanDisplay from './renderers/BooleanDisplay';
@@ -141,7 +142,7 @@ export default {
         .map((formField) => {
           const clonedModel = cloneDeep(this.model);
           const modelObj = get(clonedModel, formField.model, formField.defaultValue);
-          const modelValue = isString(modelObj) || isNumber(modelObj) || isArray(modelObj) || isBoolean(modelObj) ? modelObj : modelObj?.value;
+          const modelValue = isString(modelObj) || isNumber(modelObj) || isArray(modelObj) || isBoolean(modelObj) || valueIsPurposePlaceholder(modelObj) ? modelObj : modelObj?.value;
 
           if (formField.validation === undefined) {
             formField.validation = {};
@@ -182,6 +183,7 @@ export default {
       const valueIsString = isString(property.value);
       const valueIsBool = isBoolean(property.value);
       const valueIsNumber = isNumber(property.value);
+      const valueIsPurpose = valueIsPurposePlaceholder(property.value);
 
       switch (property.type) {
         case 'select':
@@ -190,6 +192,7 @@ export default {
           }
           return valueIsString || valueIsNumber;
         case 'string':
+          return valueIsString || valueIsPurpose;
         case 'textarea':
           return valueIsString;
         case 'multiselect':

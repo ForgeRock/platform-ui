@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import {
   formatIdAsPlaceholder,
+  valueIsPurposePlaceholder,
   mapBooleanToSecretVersionStatus,
   processSecretVersionData,
   PLACEHOLDER_REGEX,
@@ -294,4 +295,20 @@ describe('checking if secrets should be shown for a field type', () => {
     `('Given $name', ({ fieldType, expectedValue }) => {
       expect(showEsvSecretsForField(fieldType)).toBe(expectedValue);
   });
+});
+
+describe('determining whether a field value contains a $purpose based placeholder', () => {
+  it.each`
+    name                                  | fieldValue                               | expectedValue
+    ${'string placeholder'}               | ${'&{esv.test}'}                         | ${false}
+    ${'string that is not a placeholder'} | ${'blah'}                                | ${false}
+    ${'object placeholder'}               | ${{ key: '&{esv.test}' }}                | ${false}
+    ${'purpose placeholder'}              | ${{ $purpose: { name: 'test.secret' } }} | ${true}
+    ${'purpose with extra param'}         | ${{ $purpose: { name: 'test.secret', foo: 'an extra param' } }} | ${true}
+    ${'object that is not a placeholder'} | ${{ key: 'a' }}                          | ${false}
+    ${'object that is not a placeholder'} | ${{ a: '12', b: 23 }}                    | ${false}
+    ${'other non-placeholder value'}      | ${false}                                 | ${false}
+    `('Value containing $name', ({ fieldValue, expectedValue }) => {
+      expect(valueIsPurposePlaceholder(fieldValue)).toBe(expectedValue);
+    });
 });
