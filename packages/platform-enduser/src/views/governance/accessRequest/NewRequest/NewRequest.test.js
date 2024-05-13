@@ -13,6 +13,7 @@ import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as PolicyApi from '@forgerock/platform-shared/src/api/governance/PolicyApi';
 import getPriorityImageSrc from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import NewRequest from './index';
 import i18n from '@/i18n';
@@ -69,6 +70,9 @@ describe('NewRequest', () => {
                 userName: 'bjensen',
                 id: '123',
               }],
+              SharedStore: {
+                governanceDevEnabled: true,
+              },
             },
             ...overrideParams,
           },
@@ -181,5 +185,57 @@ describe('NewRequest', () => {
     await flushPromises();
 
     expect(CommonsApi.getResource).toHaveBeenCalledWith('application', { queryString: 'name', authoritative: false });
+  });
+
+  it('should perform an SOD check if one user is requesting at least one entitlement', async () => {
+    const wrapper = await mountComponent();
+    CommonsApi.getResource.mockImplementation(() => Promise.resolve({
+      data: {
+        result: [],
+      },
+    }));
+    const scanApi = jest.spyOn(PolicyApi, 'scanNewEntitlementAccess').mockImplementation(() => Promise.resolve({ data: { result: [{}] } }));
+
+    await flushPromises();
+    const requestCart = wrapper.findComponent({ name: 'RequestCart' });
+    wrapper.vm.requestCartItems = [
+      {
+        itemType: 'entitlement',
+        id: 'entitlementId',
+        assignmentId: 'assignmentId',
+      },
+    ];
+    await flushPromises();
+    await requestCart.vm.$emit('submit-new-request', {});
+    await flushPromises();
+
+    expect(scanApi).toHaveBeenCalled();
+  });
+
+  it('should call to create a request if the SOD check returns no violations', async () => {
+    const wrapper = await mountComponent();
+    CommonsApi.getResource.mockImplementation(() => Promise.resolve({
+      data: {
+        result: [],
+      },
+    }));
+    const scanApi = jest.spyOn(PolicyApi, 'scanNewEntitlementAccess').mockImplementation(() => Promise.resolve({ data: { result: [] } }));
+    const requestApi = jest.spyOn(AccessRequestApi, 'saveNewRequest').mockImplementation(() => Promise.resolve({ data: [] }));
+
+    await flushPromises();
+    const requestCart = wrapper.findComponent({ name: 'RequestCart' });
+    wrapper.vm.requestCartItems = [
+      {
+        itemType: 'entitlement',
+        id: 'entitlementId',
+        assignmentId: 'assignmentId',
+      },
+    ];
+    await flushPromises();
+    await requestCart.vm.$emit('submit-new-request', {});
+    await flushPromises();
+
+    expect(scanApi).toHaveBeenCalled();
+    expect(requestApi).toHaveBeenCalled();
   });
 });

@@ -37,12 +37,14 @@ of the MIT license. See the LICENSE file for details. -->
             :catalog-items="catalogItems"
             :glossary-schema="glossarySchema"
             :loading="loading"
+            :sod-error="sodError"
             :total-count="totalCount"
             @add-item-to-cart="addItemToCart"
             @get-catalog-filter-schema="getCatalogFilterSchema"
             @remove-item-from-cart="removeRequestedItem('accessItem', $event)"
             @search:catalog="searchCatalog"
-            @search:applications="searchApplications" />
+            @search:applications="searchApplications"
+            @submit-with-violation="submitNewRequest(previousPayload, true)" />
         </div>
         <div class="w-100 h-100 fixed-top fr-sidebar-shim d-lg-none" />
         <transition name="slide-fade">
@@ -163,6 +165,7 @@ import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platfo
 import { getResource, getGlossarySchema, getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import { getCatalogFilterSchema, searchCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
+import { scanNewEntitlementAccess } from '@forgerock/platform-shared/src/api/governance/PolicyApi';
 import { saveNewRequest, validateRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
 import FrRequestCart from '@/components/governance/RequestCart';
@@ -214,9 +217,11 @@ export default {
       catalogFilterSchema: [],
       catalogResults: [],
       currentUser: {},
+      previousPayload: {},
       selectedUserAccountsDetails: { result: [] },
       selectedUserEntitlementsDetails: { result: [] },
       selectedUserRolesDetails: { result: [] },
+      sodError: {},
       glossarySchema: {},
       isTesting: false,
       loading: true,
@@ -249,6 +254,7 @@ export default {
           appType: catalogItem.entitlement.name,
           templateName: catalogItem.application.templateName,
           id: catalogItem.id,
+          assignmentId: catalogItem.assignment.id,
           requested: this.isRequested(catalogItem.id),
           glossary: catalogItem.glossary?.idx['/entitlement'],
         }));
@@ -318,6 +324,7 @@ export default {
      * @param {Object} item item to add to cart
      */
     async addItemToCart(item) {
+      this.sodError = {};
       try {
         // check if user already has access
         const { data } = await validateRequest({
@@ -383,7 +390,7 @@ export default {
         this.loading = true;
         const fieldsMap = {
           accountGrant: 'application,id,glossary',
-          entitlementGrant: 'application,entitlement,id,descriptor,glossary',
+          entitlementGrant: 'application,entitlement,id,descriptor,glossary,assignment',
           roleMembership: 'role,id,glossary',
         };
         const searchParams = {
@@ -520,6 +527,7 @@ export default {
      * @param {String} itemId id of item to remove from cart
      */
     removeRequestedItem(context, itemId) {
+      this.sodError = {};
       const targetArray = context === 'user' ? this.requestCartUsers : this.requestCartItems;
       const index = targetArray.findIndex((targetItem) => targetItem.id === itemId);
       const itemRemovedSuccessTranslation = context === 'user' ? 'requesteeRemoved' : 'itemRemoved';
@@ -530,9 +538,12 @@ export default {
     /**
      * Submits a new request
      * @param {Object} payload justification, priority, expiration properties
+     * @param {Boolean} skipSOD submit request without checking SOD
      */
-    async submitNewRequest(payload) {
+    async submitNewRequest(payload, skipSOD) {
+      this.previousPayload = cloneDeep(payload);
       this.saving = true;
+      this.sodError = {};
       try {
         const users = this.requestedUsers.map((user) => user.id);
         const applications = this.requestedApplications.map((application) => ({ type: 'application', id: application.id }));
@@ -541,11 +552,31 @@ export default {
 
         payload.users = users;
         payload.catalogs = [...applications, ...entitlements, ...roles];
-        await saveNewRequest(payload);
-        this.displayNotification('success', this.$t('governance.request.requestSuccess'));
-        this.$router.push({
-          name: 'MyRequests',
-        });
+
+        // perform SOD check when requesting entitlements for a single user
+        if (this.$store.state.SharedStore.governanceDevEnabled && !skipSOD && users.length === 1 && entitlements.length) {
+          try {
+            const assignmentIds = this.requestedEntitlements.map((entitlement) => (entitlement.assignmentId));
+            const additionalAccess = assignmentIds.map((id) => ({ type: 'entitlementGrant', assignmentId: id }));
+            const { data } = await scanNewEntitlementAccess(users[0], additionalAccess);
+            if (data.result?.length) {
+              // SOD violation found, set error and do not submit request
+              this.sodError = data.result;
+            } else {
+              // no SOD violations, submit request
+              this.sodError = {};
+              await saveNewRequest(payload);
+              this.displayNotification('success', this.$t('governance.request.requestSuccess'));
+              this.$router.push({ name: 'MyRequests' });
+            }
+          } catch (error) {
+            this.showErrorMessage(error, this.$t('governance.request.errorCheckingSod'));
+          }
+        } else {
+          await saveNewRequest(payload);
+          this.displayNotification('success', this.$t('governance.request.requestSuccess'));
+          this.$router.push({ name: 'MyRequests' });
+        }
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.requestErrorTitle'));
       } finally {

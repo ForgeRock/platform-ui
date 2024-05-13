@@ -8,6 +8,10 @@ of the MIT license. See the LICENSE file for details. -->
       <FrPageHeader
         :title="$t('governance.accessRequest.newRequest.catalogTitle')"
         :subtitle="$t('governance.accessRequest.newRequest.catalogSubtitle')" />
+      <FrSODViolationMessage
+        v-if="!isEmpty(sodError)"
+        @submit-with-violation="$emit('submit-with-violation')"
+        :sod-error="sodError" />
     </div>
     <BTabs
       :value="selectedTab"
@@ -274,7 +278,12 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { capitalize, cloneDeep, debounce } from 'lodash';
+import {
+  capitalize,
+  cloneDeep,
+  debounce,
+  isEmpty,
+} from 'lodash';
 import {
   BBadge,
   BButton,
@@ -306,6 +315,7 @@ import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/govern
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
 import FrItemDetailsModal from './modals/ItemDetailsModal';
+import FrSODViolationMessage from './modals/SODViolationMessage';
 
 /**
  * View housing access request catalog and request cart panel
@@ -336,6 +346,7 @@ export default {
     FrPageHeader,
     FrPagination,
     FrSearchInput,
+    FrSODViolationMessage,
     FrSortDropdown,
     FrSpinner,
     VeeForm,
@@ -360,6 +371,10 @@ export default {
     loading: {
       type: Boolean,
       default: true,
+    },
+    sodError: {
+      type: Object,
+      default: () => ({}),
     },
     totalCount: {
       type: Number,
@@ -463,6 +478,7 @@ export default {
     this.searchCatalog();
   },
   methods: {
+    isEmpty,
     /**
      * Clears filter and calls to filter results
      */
@@ -564,6 +580,7 @@ export default {
           icon: item.icon,
           name: item.name,
           id: item.id,
+          assignmentId: item.assignmentId,
         };
         this.$emit('add-item-to-cart', emitItem);
       }

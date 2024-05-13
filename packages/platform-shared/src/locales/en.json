@@ -1377,6 +1377,7 @@
         "completeRequest": "Complete Request",
         "DUPLICATE": "Request Already Exists",
         "entitlement": "entitlement",
+        "errorCheckingSod": "There was an error checking SoD policy",
         "errorGettingAccessRequests": "There was an error getting current users' access requests",
         "errorGettingCatalogFilterSchema": "There was an error getting catalog filter schema",
         "errorValidatingAccessRequests": "There was an error validating this request",
