@@ -138,7 +138,15 @@ export default {
       return doc.toString();
     },
     yamlToJson(str) {
-      return YAML.parse(str);
+      let out = str;
+      try {
+        out = YAML.parse(str);
+        this.error = false;
+        return out;
+      } catch (e) {
+        this.error = true;
+        return '';
+      }
     },
     saved() {
       this.initialProcessYAML = this.processYAML;

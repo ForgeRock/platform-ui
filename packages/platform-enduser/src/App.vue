@@ -318,7 +318,7 @@ export default {
           ],
         },
       ];
-      this.menuItems.splice(6, 0, autoAccessAdminMenu);
+      this.menuItems.splice(6, 0, ...autoAccessAdminMenu);
     },
     showRiskDashboad() {
       const autoAccessDashboardMenu = [
@@ -328,7 +328,7 @@ export default {
           icon: 'show_chart',
         },
       ];
-      this.menuItems.splice(1, 0, autoAccessDashboardMenu);
+      this.menuItems.splice(1, 0, ...autoAccessDashboardMenu);
     },
     /**
      * Retrieves the count of active access reviews and commits the count to the Vuex store.
