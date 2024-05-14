@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       {{ buttonLabel }}
     </div>
     <BPopover
+      :v-if="selectedRange[0] + selectedRange[1]"
       target="risk-score-slider"
       triggers="click"
       ref="popover"
@@ -35,9 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
             {{ tooltip }}
           </BTooltip>
         </div>
-        <RiskScoreSlider
-          v-model="selectedRange"
-        />
+        <RiskScoreSlider v-model="selectedRange" />
       </div>
 
       <div class="border-top p-3 d-flex flex-row justify-content-between">
@@ -73,7 +72,7 @@ export default {
   props: {
     value: {
       type: Array,
-      default: () => [0, 100],
+      required: true,
     },
   },
   data() {
