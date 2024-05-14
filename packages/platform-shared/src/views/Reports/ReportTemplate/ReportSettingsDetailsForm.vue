@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
         name="name-field"
         type="text"
         validation="alpha_num_spaces"
-        :disabled="isNameEditable"
+        :disabled="!isNameEditable"
         :description="$t('reports.newReportModal.nameInputDescription')"
         :label="$t('common.name')"
         :validation-immediate="false"
@@ -126,7 +126,7 @@ const debounceFetchManagedUsers = debounce(fetchManagedUsers, 250, false);
 const props = defineProps({
   isNameEditable: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   isTesting: {
     type: Boolean,

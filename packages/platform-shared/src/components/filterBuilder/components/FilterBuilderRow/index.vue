@@ -143,7 +143,7 @@ export default {
       inputValue: this.parseType(this.rule.field, this.rule.value),
       ruleOperator: Object.values(this.operatorOptions).findIndex((option) => option.value === this.rule.operator) > -1
         ? this.rule.operator
-        : this.operatorOptions[0].value,
+        : this.operatorOptions[0]?.value,
       value: '',
       customPropValue: this.rule.field,
       uniqueName: `${this.resourceName}_${this.rule.uniqueIndex}`,

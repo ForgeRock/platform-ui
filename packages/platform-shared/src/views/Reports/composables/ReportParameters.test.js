@@ -23,7 +23,6 @@ describe('@useReportParameters', () => {
     description: 'param description',
   };
   const userProvidedEnumeratedMultivalued = {
-    _id: 'paramOne',
     enumeratedValues: [{
       name: 'enumName',
       value: 'enumVal',
@@ -97,7 +96,6 @@ describe('@useReportParameters', () => {
 
       const secondDefinition = await parameterDefinitions(parametersAPIProfileAttribute);
       expect(secondDefinition).toEqual([{
-        _id: 'mySecondParam',
         enumeratedValues: [],
         helpText: undefined,
         inputType: 'String',
@@ -124,7 +122,7 @@ describe('@useReportParameters', () => {
 
           expect(parametersPayload([userProvidedEnumeratedMultivalued])).toEqual({
             parameters: {
-              [userProvidedEnumeratedMultivalued._id]: payload,
+              [userProvidedEnumeratedMultivalued.parameterName]: payload,
             },
           });
         });
@@ -145,7 +143,7 @@ describe('@useReportParameters', () => {
 
           expect(parametersPayload([userProvidedEnumerated])).toEqual({
             parameters: {
-              [userProvidedEnumerated._id]: payload,
+              [userProvidedEnumeratedMultivalued.parameterName]: payload,
             },
           });
         });
@@ -163,7 +161,7 @@ describe('@useReportParameters', () => {
 
           expect(parametersPayload([userProvidedMultivalued])).toEqual({
             parameters: {
-              [userProvidedMultivalued._id]: payload,
+              [userProvidedEnumeratedMultivalued.parameterName]: payload,
             },
           });
         });
@@ -181,7 +179,7 @@ describe('@useReportParameters', () => {
 
           expect(parametersPayload([userProvidedPrimitive])).toEqual({
             parameters: {
-              [userProvidedPrimitive._id]: payload,
+              [userProvidedEnumeratedMultivalued.parameterName]: payload,
             },
           });
         });

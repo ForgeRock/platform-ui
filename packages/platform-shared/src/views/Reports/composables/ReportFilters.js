@@ -6,7 +6,7 @@
  */
 
 import { computed, ref } from 'vue';
-import { getReportOperators, getReportEntityFieldOptions } from '@forgerock/platform-shared/src/api/AutoApi';
+import { getReportOperators, getReportFieldOptions } from '@forgerock/platform-shared/src/api/AutoApi';
 
 export default function useReportFilters(entityColumns, entitiesPayload, parametersPayload) {
   const conditionalsFromApi = ref([]);
@@ -14,29 +14,36 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
 
   /**
    * Gets necessary data for the report filters setting modal
-   * @param {String} operator operator value
+   * @param {String} operator operator condition
    * @param {Array} entityDefinitions entity definitions
    * @param {Array} parameterDefinitions parameter definitions
    */
   async function getFieldOptionsForFilters(operator, entityDefinitions, parameterDefinitions) {
+    const includeRightOption = operator !== 'is_null' && operator !== 'is_not_null';
     const fieldOptionsBody = {
       ...entitiesPayload(entityDefinitions),
       ...parametersPayload(parameterDefinitions),
       filter: {
         [operator]: {
           left: { options: {} },
-          right: { options: {} },
+          ...(includeRightOption && { right: { options: {} } }),
         },
       },
     };
-    const { data } = await getReportEntityFieldOptions(fieldOptionsBody);
+    const { data } = await getReportFieldOptions(fieldOptionsBody);
 
     filterVariables.value[operator] = Object.keys(data).map((key) => {
-      const { class: category, label, type } = data[key];
+      const {
+        class: category,
+        label,
+        type,
+        item,
+      } = data[key];
       return {
         class: category,
         name: label || key,
         type,
+        ...(item && { item }),
       };
     });
 
@@ -99,7 +106,6 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
   function filterDefinitions(definition, entityDefinitions, parameterDefinitions) {
     if (definition && Object.keys(definition).length) {
       return Promise.all(Object.keys(definition).map(async (groupOperator, groupIndex) => ({
-        _id: 'filter-group',
         operator: groupOperator,
         subfilters: await compileFilterDefinitionRules(
           definition,

@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
               <BButton
                 v-if="!setting.hideAddDefinitionButton || setting.hideAddDefinitionButton() !== true"
                 :disabled="setting.disableAddDefinitionButton !== undefined && setting.disableAddDefinitionButton() === true"
-                @click="updateDefinitions(setting._id, {})"
+                @click="updateDefinitions(setting._id)"
                 class="text-body px-2 py-0"
                 variant="link">
                 <FrIcon name="add" />
@@ -70,15 +70,14 @@ of the MIT license. See the LICENSE file for details. -->
                   v-for="(definition, defIndex) in setting.definitions"
                   :class="definitionCardStyles(defIndex, setting.definitions.length)"
                   :definition="definition"
-                  :definition-being-updated="definitionBeingUpdated"
+                  :definition-index="defIndex"
                   :is-saving="isSaving"
                   :key="defIndex"
                   :name="definition.name"
                   :setting-id="setting._id"
                   :setting-title="setting.title"
-                  @delete-definition="deleteDefinition(setting._id, definition._id)"
-                  @edit-definition="updateDefinitions(setting._id, definition)"
-                  @set-aggregate="$emit('set-aggregate', definition.name, $event)" />
+                  @delete-definition="deleteDefinition(setting._id, defIndex)"
+                  @edit-definition="updateDefinitions(setting._id, defIndex, definition)" />
               </div>
             </template>
           </div>
@@ -116,10 +115,10 @@ import FrReportSettingsDetailsForm from './ReportSettingsDetailsForm';
 const emit = defineEmits([
   'delete-data-source',
   'delete-definition',
+  'delete-parameter',
   'input',
   'update-definitions',
   'update-details',
-  'set-aggregate',
   'set-column-selections',
   'set-related-data-sources',
 ]);
@@ -140,7 +139,6 @@ defineProps({
 });
 
 // Globals
-const definitionBeingUpdated = ref('');
 const tabIndex = ref(0);
 
 const tabItems = [
@@ -155,25 +153,27 @@ const tabItems = [
 ];
 
 // Functions
-
 /**
- * Updates definitions -- creates a new definition or updates an existing
+ * Loads an existing definition if a definitionId is present.
  * @param {String} settingId Setting ID
- * @param {Object} definition definition object
+ * @param {Number} definitionIndex definition index position
+ * @param {Object} currentDefinition definition object
  */
-function updateDefinitions(settingId, definition) {
-  definitionBeingUpdated.value = definition._id;
-  emit('update-definitions', settingId, definition);
+function updateDefinitions(settingId, definitionIndex, currentDefinition) {
+  emit('update-definitions', settingId, definitionIndex, currentDefinition);
 }
 
 /**
  * Deletes a settings definition
  * @param {String} settingId Setting ID
- * @param {String} definitionId Definition ID
+ * @param {Number} definitionIndex definition index position to delete
  */
-function deleteDefinition(settingId, definitionId) {
-  definitionBeingUpdated.value = definitionId;
-  emit('delete-definition', settingId, definitionId);
+function deleteDefinition(settingId, definitionIndex) {
+  if (settingId === 'parameters') {
+    emit('delete-parameter', definitionIndex);
+  } else {
+    emit('delete-definition', settingId, definitionIndex);
+  }
 }
 
 /**

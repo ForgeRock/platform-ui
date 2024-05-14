@@ -6,9 +6,13 @@
  */
 
 import { computed, ref } from 'vue';
-import { getReportEntityFieldOptions, getReportEntities } from '@forgerock/platform-shared/src/api/AutoApi';
+import { getReportFieldOptions, getReportEntities } from '@forgerock/platform-shared/src/api/AutoApi';
 import i18n from '@/i18n';
 
+/**
+ * Provides the ability to fetch for all report entities as well as compose UI and
+ * API friendly data sets for displaying and sending expected data structures.
+ */
 export default function useReportEntities() {
   const allEntities = ref([{ name: i18n.global.t('common.loadingEtc') }]);
   const processedColumns = ref([]);
@@ -27,7 +31,7 @@ export default function useReportEntities() {
           entities: [{ name: entityName, entity: entityName }],
           fields: [{ name: entityName, value: { options: {} } }],
         };
-        const { data: dataSourceColumns } = await getReportEntityFieldOptions(fieldOptionsBody);
+        const { data: dataSourceColumns } = await getReportFieldOptions(fieldOptionsBody);
 
         if (dataSourceColumns && Object.keys(dataSourceColumns).length) {
           // Entity field options are returned as a string in period delimeter format,
@@ -39,7 +43,7 @@ export default function useReportEntities() {
             keyArr.shift();
             return {
               format: dataSourceColumns[key].class,
-              label: entityColumn?.label || keyArr.join('.'),
+              label: entityColumn?.label || dataSourceColumns[key].label || keyArr.join('.'),
               type: dataSourceColumns[key].type,
               value: key,
             };

@@ -1998,6 +1998,7 @@
       "addData": "Add Data",
       "addADataSource": "Add a Data Source",
       "addAParameter": "Add a Parameter",
+      "addAnAggregate": "Add an Aggregate",
       "addAsDataSource": "Add as Data Source",
       "addDataSourceToGetStarted": "To get started add a data source to report on.",
       "addFilters": "Add Filters",
@@ -2013,6 +2014,7 @@
       "helpText": "Help Text (optional)",
       "inputLabel": "Input Label",
       "inputType": "Input Type",
+      "labelRequired": "Label Required",
       "profileAttribute": "Profile Attribute",
       "parametersSettingDescription": "Define parameters to constrain the results of the report.",
       "parameterType": "Parameter Type",
@@ -2024,7 +2026,10 @@
       "reportUpdated": "Report has been updated",
       "selectColumnsFromDataSets": "Select columns from data sets to appear in the report.",
       "sortingSettingDescription": "Define columns to sort the data table.",
-      "userProvided": "User Provided"
+      "userProvided": "User Provided",
+      "error": {
+        "errorSavingReport": "There was an error saving the report"
+      }
     },
     "title": "Reports",
     "viewReport": "View Report"

@@ -43,12 +43,12 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-describedby="ariaDescribedby">
           <BListGroup>
             <BListGroupItem
-              v-for="(option, index) in dataSourceColumnsWithVanityValue"
+              v-for="(option, index) in dataSourceColumns"
               class="mb-2 py-2 px-3 border-0 rounded"
               :class="selectedColumns.find((value) => value === option.value) ? 'bg-lightblue' : 'bg-light'"
               :key="index">
               <BFormCheckbox :value="option.value">
-                {{ option.vanityValue }}
+                {{ option.label }}
               </BFormCheckbox>
             </BListGroupItem>
           </BListGroup>
@@ -188,21 +188,6 @@ const columnsModel = computed({
   set(values) {
     emit('set-column-selections', values);
   },
-});
-const dataSourceColumnsWithVanityValue = computed(() => {
-  if (props.dataSourceColumns.length) {
-    return props.dataSourceColumns.map((column) => {
-      const valueArr = column.value.split('.');
-      // Removes the first word within string by period
-      // delimeter since it matches entity name.
-      valueArr.shift();
-      return {
-        ...column,
-        vanityValue: valueArr.join('.'),
-      };
-    });
-  }
-  return [];
 });
 
 // Watchers

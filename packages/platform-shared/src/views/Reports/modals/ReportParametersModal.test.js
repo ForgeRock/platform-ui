@@ -55,58 +55,60 @@ describe('Report Parameters Modal component', () => {
       expect(saveButton.attributes().disabled).toBeUndefined();
     });
 
-    it('ensures that only the "Name" text and "Profile Attribute" select fields show when the "Profile Attribute" radio button is selected', async () => {
-      let nameField = wrapper.find('input[name="parameter-name"]');
-      expect(nameField.exists()).toBe(true);
+    // THIS THE TEST IS VALID and PURPOSEFULLY COMMENTED OUT UNTIL
+    // THE API IS ABLE TO HANDLE PROFILE ATTRIBUTE PARAMETERS.
+    // it('ensures that only the "Name" text and "Profile Attribute" select fields show when the "Profile Attribute" radio button is selected', async () => {
+    //   let nameField = wrapper.find('input[name="parameter-name"]');
+    //   expect(nameField.exists()).toBe(true);
 
-      let inputLabelField = wrapper.find('input[name="parameter-label"]');
-      expect(inputLabelField.exists()).toBe(true);
+    //   let inputLabelField = wrapper.find('input[name="parameter-label"]');
+    //   expect(inputLabelField.exists()).toBe(true);
 
-      let inputTypeSelectLabel = findByText(wrapper, 'label', 'Input Type');
-      expect(inputTypeSelectLabel.exists()).toBe(true);
+    //   let inputTypeSelectLabel = findByText(wrapper, 'label', 'Input Type');
+    //   expect(inputTypeSelectLabel.exists()).toBe(true);
 
-      let helpTextField = findByText(wrapper, 'label', 'Help Text (optional)');
-      expect(helpTextField.exists()).toBe(true);
+    //   let helpTextField = findByText(wrapper, 'label', 'Help Text (optional)');
+    //   expect(helpTextField.exists()).toBe(true);
 
-      let multivaluedCheckbox = wrapper.find('input[name="multivalued"]');
-      expect(multivaluedCheckbox.exists()).toBe(true);
+    //   let multivaluedCheckbox = wrapper.find('input[name="multivalued"]');
+    //   expect(multivaluedCheckbox.exists()).toBe(true);
 
-      let profileAttributeFieldLabel = wrapper.find('div[label="Profile Attribute"]');
-      expect(profileAttributeFieldLabel.exists()).toBe(false);
+    //   let profileAttributeFieldLabel = wrapper.find('div[label="Profile Attribute"]');
+    //   expect(profileAttributeFieldLabel.exists()).toBe(false);
 
-      let enumeratedCheckbox = wrapper.find('input[name="enumerated-values"]');
-      expect(enumeratedCheckbox.exists()).toBe(false);
+    //   let enumeratedCheckbox = wrapper.find('input[name="enumerated-values"]');
+    //   expect(enumeratedCheckbox.exists()).toBe(false);
 
-      let enumeratedValuesCard = findByText(wrapper, 'h3', 'Enumerated Values');
-      expect(enumeratedValuesCard).toBeUndefined();
+    //   let enumeratedValuesCard = findByText(wrapper, 'h3', 'Enumerated Values');
+    //   expect(enumeratedValuesCard).toBeUndefined();
 
-      const [, profileAttributeRadio] = wrapper.findAll('input[name="parameter-type"');
-      await profileAttributeRadio.setValue(true);
+    //   const [, profileAttributeRadio] = wrapper.findAll('input[name="parameter-type"');
+    //   await profileAttributeRadio.setValue(true);
 
-      nameField = wrapper.find('input[name="parameter-name"]');
-      expect(nameField.exists()).toBe(true);
+    //   nameField = wrapper.find('input[name="parameter-name"]');
+    //   expect(nameField.exists()).toBe(true);
 
-      profileAttributeFieldLabel = wrapper.find('div[label="Profile Attribute"]');
-      expect(profileAttributeFieldLabel.exists()).toBe(true);
+    //   profileAttributeFieldLabel = wrapper.find('div[label="Profile Attribute"]');
+    //   expect(profileAttributeFieldLabel.exists()).toBe(true);
 
-      inputTypeSelectLabel = findByText(wrapper, 'label', 'Input Type');
-      expect(inputTypeSelectLabel).toBeUndefined();
+    //   inputTypeSelectLabel = findByText(wrapper, 'label', 'Input Type');
+    //   expect(inputTypeSelectLabel).toBeUndefined();
 
-      inputLabelField = wrapper.find('input[name="parameter-label"]');
-      expect(inputLabelField.exists()).toBe(false);
+    //   inputLabelField = wrapper.find('input[name="parameter-label"]');
+    //   expect(inputLabelField.exists()).toBe(false);
 
-      helpTextField = findByText(wrapper, 'label', 'Help Text (optional)');
-      expect(helpTextField).toBeUndefined();
+    //   helpTextField = findByText(wrapper, 'label', 'Help Text (optional)');
+    //   expect(helpTextField).toBeUndefined();
 
-      multivaluedCheckbox = wrapper.find('input[name="multivalued"]');
-      expect(multivaluedCheckbox.exists()).toBe(false);
+    //   multivaluedCheckbox = wrapper.find('input[name="multivalued"]');
+    //   expect(multivaluedCheckbox.exists()).toBe(false);
 
-      enumeratedCheckbox = wrapper.find('input[name="enumerated-values"]');
-      expect(enumeratedCheckbox.exists()).toBe(false);
+    //   enumeratedCheckbox = wrapper.find('input[name="enumerated-values"]');
+    //   expect(enumeratedCheckbox.exists()).toBe(false);
 
-      enumeratedValuesCard = findByText(wrapper, 'h3', 'Enumerated Values');
-      expect(enumeratedValuesCard).toBeUndefined();
-    });
+    //   enumeratedValuesCard = findByText(wrapper, 'h3', 'Enumerated Values');
+    //   expect(enumeratedValuesCard).toBeUndefined();
+    // });
 
     it('ensures that the "Enumerated Values" checkbox only shows when the "Input Type" select has "String" selected as an option', async () => {
       let enumeratedCheckbox = wrapper.find('input[name="enumerated-values"]');
@@ -218,7 +220,6 @@ describe('Report Parameters Modal component', () => {
       const UserProvidedPayload = {
         settingsId: 'parameters',
         definition: {
-          _id: 'My parameter name',
           parameterName: 'My parameter name',
           parameterType: 'user_provided',
           inputLabel: 'My parameter label',
@@ -250,36 +251,37 @@ describe('Report Parameters Modal component', () => {
 
       // Saves form
       await findByText(wrapper, 'button', 'Save').trigger('click');
-      expect(wrapper.emitted('update-parameter')).toEqual([['parameters', UserProvidedPayload.definition]]);
+      expect(wrapper.emitted('update-parameter')).toEqual([[-1, UserProvidedPayload.definition]]);
     });
 
-    it('ensures that the expected payload is emitted when the save button is clicked with the "Profile Attribute" type selected', async () => {
-      const ProfileAttributePayload = {
-        settingsId: 'parameters',
-        definition: {
-          _id: 'My parameter name',
-          parameterName: 'My parameter name',
-          parameterType: 'profile_attribute',
-          profileAttribute: '_id',
-        },
-        definitionId: undefined,
-      };
+    // THIS TEST IS VALID and PURPOSEFULLY COMMENTED OUT UNTIL THE API IS ABLE TO HANDLE PROFILE ATTRIBUTE PARAMETERS
+    // it('ensures that the expected payload is emitted when the save button is clicked with the "Profile Attribute" type selected', async () => {
+    //   const ProfileAttributePayload = {
+    //     settingsId: 'parameters',
+    //     definition: {
+    //       _id: 'My parameter name',
+    //       parameterName: 'My parameter name',
+    //       parameterType: 'profile_attribute',
+    //       profileAttribute: '_id',
+    //     },
+    //     definitionId: undefined,
+    //   };
 
-      await wrapper.find('input[name="parameter-name"]').setValue(ProfileAttributePayload.definition.parameterName);
+    //   await wrapper.find('input[name="parameter-name"]').setValue(ProfileAttributePayload.definition.parameterName);
 
-      // Selects the "Profile Attribute" radio button
-      const [, profileAttributeRadio] = wrapper.findAll('input[name="parameter-type"');
-      await profileAttributeRadio.setValue(true);
+    //   // Selects the "Profile Attribute" radio button
+    //   const [, profileAttributeRadio] = wrapper.findAll('input[name="parameter-type"');
+    //   await profileAttributeRadio.setValue(true);
 
-      // Selects "_id" from the "Profile Attribute" dropdown
-      const profileAttributeSelect = findByRole(wrapper, 'listbox');
-      await profileAttributeSelect.trigger('click');
-      const _idOption = profileAttributeSelect.findAll('li')[0].find('span');
-      await _idOption.trigger('click');
+    //   // Selects "_id" from the "Profile Attribute" dropdown
+    //   const profileAttributeSelect = findByRole(wrapper, 'listbox');
+    //   await profileAttributeSelect.trigger('click');
+    //   const _idOption = profileAttributeSelect.findAll('li')[0].find('span');
+    //   await _idOption.trigger('click');
 
-      // Saves form
-      await findByText(wrapper, 'button', 'Save').trigger('click');
-      expect(wrapper.emitted('update-parameter')).toEqual([['parameters', ProfileAttributePayload.definition]]);
-    });
+    //   // Saves form
+    //   await findByText(wrapper, 'button', 'Save').trigger('click');
+    //   expect(wrapper.emitted('update-parameter')).toEqual([['parameters', ProfileAttributePayload.definition]]);
+    // });
   });
 });

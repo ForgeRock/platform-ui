@@ -183,7 +183,7 @@ describe('Report Template Settings component', () => {
         },
       }));
 
-      autoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+      autoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
         data: {
           'applications.name': {
             class: 'json',

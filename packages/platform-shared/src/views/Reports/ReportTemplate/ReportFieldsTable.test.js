@@ -9,9 +9,9 @@ import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
-import ReportDataSourceTable from './ReportDataSourceTable';
+import ReportFieldsTable from './ReportFieldsTable';
 
-describe('Report Data Source Table component', () => {
+describe('Report Fields table component', () => {
   const dataSources = [{
     _id: 'applications',
     name: 'applications',
@@ -33,7 +33,7 @@ describe('Report Data Source Table component', () => {
   }];
 
   function setup(props) {
-    return mount(ReportDataSourceTable, {
+    return mount(ReportFieldsTable, {
       global: {
         plugins: [i18n],
       },
@@ -99,11 +99,11 @@ describe('Report Data Source Table component', () => {
       expect(_idRow.text()).toBe('{_id}');
     });
 
-    it('ensures that the component emits "update-data-source-column-label" when a table header input value is changed', async () => {
+    it('ensures that the component emits "update-table-entry-label" when a table header input value is changed', async () => {
       const [nameHeader] = wrapper.findAll('[role="columnheader"]');
       const nameInput = nameHeader.find('input');
       await nameInput.setValue('New Name');
-      expect(wrapper.emitted('update-data-source-column-label')[0]).toEqual(['New Name', 'applications.name']);
+      expect(wrapper.emitted('update-table-entry-label')[0]).toEqual(['entities', 'applications.name', 'New Name']);
     });
   });
 });

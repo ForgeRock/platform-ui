@@ -38,7 +38,7 @@ describe('@useReportFilters', () => {
     },
   }));
 
-  AutoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+  AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
     data: {
       'applications.name': {
         class: 'json',
@@ -55,27 +55,76 @@ describe('@useReportFilters', () => {
         source: 'user_provided',
         type: 'string',
       },
+      agg1: {
+        class: 'parameter',
+        description: 'Help text for my first parameter',
+        label: 'agg1',
+        source: 'user_provided',
+        type: 'multivalued',
+      },
+      agg2: {
+        class: 'parameter',
+        description: 'Help text for my first parameter',
+        label: 'agg2',
+        source: 'user_provided',
+        type: 'string',
+      },
     },
   }));
 
-  AutoApi.getReportOperators = jest.fn().mockReturnValue(Promise.resolve([{
-    displayName: 'contains',
-    name: 'contains',
-    schema: [
-      {
-        left: { value: 'search_string' },
-        right: { value: 'in_string_array' },
-      },
-      {
-        left: { value: 'search_integer' },
-        right: { value: 'in_integer_array' },
-      },
-      {
-        left: { value: 'search_string' },
-        right: { value: 'in_string' },
-      },
-    ],
-  }]));
+  const reportOperators = [
+    {
+      displayName: 'contains',
+      name: 'contains',
+      schema: [
+        {
+          left: { value: 'search_string' },
+          right: { value: 'in_string_array' },
+        },
+        {
+          left: { value: 'search_integer' },
+          right: { value: 'in_integer_array' },
+        },
+        {
+          left: { value: 'search_string' },
+          right: { value: 'in_string' },
+        },
+      ],
+    },
+    {
+      displayName: 'greater than or equal to',
+      name: 'gte',
+      schema: [
+        {
+          left: { value: 'left' },
+          right: { value: 'right' },
+        },
+      ],
+    },
+    {
+      displayName: 'starts with',
+      name: 'starts_with',
+      schema: [{
+        left: { value: 'prefix' },
+        right: { value: 'right' },
+      }],
+    },
+    {
+      displayName: 'not ends with',
+      name: 'not_ends_with',
+      schema: [{
+        left: { value: 'suffix' },
+        right: { value: 'right' },
+      }],
+    },
+    {
+      displayName: 'is null',
+      name: 'is_null',
+      schema: [{ left: {} }],
+    },
+  ];
+
+  AutoApi.getReportOperators = jest.fn().mockReturnValue(Promise.resolve(reportOperators));
 
   const entityColumns = ref([
     {
@@ -93,7 +142,7 @@ describe('@useReportFilters', () => {
   ]);
 
   const { entitiesPayload } = useReportEntities();
-  const { parametersPayload } = useReportParameters();
+  const { parameterDefinitions, parametersPayload } = useReportParameters();
   const {
     fetchReportOperators,
     filterDefinitions,
@@ -113,7 +162,6 @@ describe('@useReportFilters', () => {
 
     const entityDefinitions = [
       {
-        _id: 'applications',
         name: 'applications',
         dataSourceColumns: [
           {
@@ -138,7 +186,6 @@ describe('@useReportFilters', () => {
     it('constructs a UI friendly definition object from API data', async () => {
       const definitions = await filterDefinitions(apiDefinitionContainsLiteral, entityDefinitions, {});
       expect(definitions).toEqual([{
-        _id: 'filter-group',
         operator: 'or',
         subfilters: [{
           field: 'applications.name',
@@ -152,25 +199,34 @@ describe('@useReportFilters', () => {
     });
 
     it('outputs a UI friendly data set for the variable options field', async () => {
+      const [contains, gte, startsWith, notEndsWith, isNull] = reportOperators;
       await fetchReportOperators();
+
       expect(reportConditionals.value).toEqual({
-        contains: {
-          label: 'contains',
-          type: [
-            {
-              left: { value: 'search_string' },
-              right: { value: 'in_string_array' },
-            },
-            {
-              left: { value: 'search_integer' },
-              right: { value: 'in_integer_array' },
-            },
-            {
-              left: { value: 'search_string' },
-              right: { value: 'in_string' },
-            },
-          ],
-          value: 'contains',
+        [contains.name]: {
+          label: contains.displayName,
+          type: contains.schema,
+          value: contains.name,
+        },
+        [gte.name]: {
+          label: gte.displayName,
+          type: gte.schema,
+          value: gte.name,
+        },
+        [startsWith.name]: {
+          label: startsWith.displayName,
+          type: startsWith.schema,
+          value: startsWith.name,
+        },
+        [notEndsWith.name]: {
+          label: notEndsWith.displayName,
+          type: notEndsWith.schema,
+          value: notEndsWith.name,
+        },
+        [isNull.name]: {
+          label: isNull.displayName,
+          type: isNull.schema,
+          value: isNull.name,
         },
       });
     });
@@ -184,16 +240,77 @@ describe('@useReportFilters', () => {
         });
       });
 
-      it('outputs an expected payload for a variable value', async () => {
-        const apiDefinitionContainsVariable = {
-          or: [{
-            contains: {
-              search_string: 'applications._id',
-              in_query: 'applications.name',
+      it('outputs an expected payload for a rule that contains all the supplied report operator variations', async () => {
+        AutoApi.getReportParameterTypes = jest.fn().mockReturnValue(Promise.resolve({
+          data: [
+            {
+              description: 'String',
+              label: 'String',
+              type: 'string',
             },
-          }],
+            {
+              description: 'Boolean',
+              label: 'Boolean',
+              type: 'boolean',
+            },
+          ],
+        }));
+
+        ReportsUtils.getManagedObject = jest.fn().mockReturnValue(Promise.resolve({
+          schema: {
+            properties: {
+              _id: { description: 'User ID', type: 'string' },
+              name: { description: 'User Name', type: 'string' },
+              group: { description: 'User Group', type: 'array' },
+            },
+          },
+        }));
+
+        const apiDefinitionContainsVariable = {
+          or: [
+            {
+              contains: {
+                search_string: 'applications.name',
+                in_query: { parameter: 'agg2' },
+              },
+            },
+            {
+              gte: {
+                left: 'applications.name',
+                right: 'applications.name',
+              },
+            },
+            {
+              starts_with: {
+                prefix: 'applications.name',
+                right: { parameter: 'agg1' },
+              },
+            },
+            {
+              contains: {
+                search_string: 'applications.name',
+                in_query: 'applications._id',
+              },
+            },
+            { is_null: 'applications._id' },
+          ],
         };
-        const definitions = await filterDefinitions(apiDefinitionContainsVariable, entityDefinitions, {});
+        const paramDefs = {
+          agg1: {
+            source: 'user_provided',
+            label: 'agg1',
+            description: '',
+            type: 'array',
+            item: { type: 'string' },
+          },
+          agg2: {
+            source: 'user_provided',
+            label: 'agg2',
+            description: '',
+            type: 'string',
+          },
+        };
+        const definitions = await filterDefinitions(apiDefinitionContainsVariable, entityDefinitions, parameterDefinitions(paramDefs));
 
         expect(filtersPayload(definitions)).toEqual({
           filter: apiDefinitionContainsVariable,
