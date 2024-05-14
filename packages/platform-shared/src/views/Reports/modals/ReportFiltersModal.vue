@@ -14,8 +14,7 @@ to such license between the licensee and ForgeRock AS. -->
     title-tag="h2"
     :static="isTesting"
     :title="$t('reports.template.addFilters')"
-    @hidden="resetValues"
-    @show="cloneExistingFilter">
+    @show="populateForm">
     <FrFilterBuilderGroup
       path="0"
       class="pb-3 background-none"
@@ -63,6 +62,7 @@ to such license between the licensee and ForgeRock AS. -->
                 :name="uniqueName"
                 :options="variableOptions[rule.operator] || []"
                 :type="rule.selectedRightValueType === 'literal' ? 'string' : 'select'"
+                :testid="`right-value-${rule.selectedRightValueType === 'literal' ? 'string' : 'select'}`"
                 class="flex-grow-1 fr-right-value-input-styles" />
             </BCol>
           </BRow>
@@ -81,7 +81,7 @@ to such license between the licensee and ForgeRock AS. -->
           :disabled="isSaving || disableSave"
           :show-spinner="isSaving"
           variant="primary"
-          @click="$emit('update-filters', 'filter', queryFilter); modalHiddenAfterSave = true" />
+          @click="saveFilter" />
       </div>
     </template>
   </BModal>
@@ -92,22 +92,17 @@ to such license between the licensee and ForgeRock AS. -->
  * @description
  * Modal for adding filters to a custom analytics report template.
  */
+import { computed, provide, ref } from 'vue';
 import {
-  computed,
-  provide,
-  ref,
-  watch,
-} from 'vue';
-import {
+  BButton,
   BCol,
   BContainer,
-  BButton,
   BDropdown,
   BDropdownItem,
   BModal,
   BRow,
 } from 'bootstrap-vue';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrFilterBuilderGroup from '@forgerock/platform-shared/src/components/filterBuilder/components/FilterBuilderGroup';
@@ -116,7 +111,7 @@ import { findGroup } from '@forgerock/platform-shared/src/components/filterBuild
 import i18n from '@/i18n';
 
 // Definitions
-const emit = defineEmits(['get-field-options', 'update-filters']);
+const emit = defineEmits(['get-field-options', 'update-filter']);
 const props = defineProps({
   conditionOptions: {
     type: Object,
@@ -127,8 +122,8 @@ const props = defineProps({
     default: () => [],
   },
   existingFilter: {
-    type: Array,
-    default: () => [],
+    type: Object,
+    default: () => ({}),
   },
   isSaving: {
     type: Boolean,
@@ -145,8 +140,7 @@ const props = defineProps({
 });
 
 // Globals
-const existingFilterClone = ref([]);
-const modalHiddenAfterSave = ref(false);
+const existingFilterClone = ref({});
 const queryFilter = ref({});
 const rightValueTypes = [
   { label: i18n.global.t('common.literal'), value: 'literal' },
@@ -155,12 +149,6 @@ const rightValueTypes = [
 let uniqueIndex = 0;
 
 // Functions
-/**
- * Clones an existing filter so we can have a snapshot of the original data
- */
-function cloneExistingFilter() {
-  existingFilterClone.value = cloneDeep(props.existingFilter);
-}
 
 /**
  * Ensures our keys in v-if iteration have unique values
@@ -206,7 +194,6 @@ function getDefaultGroup(
   operator = operatorOptions.Any.delimeter,
 ) {
   return {
-    _id: 'filter-group',
     operator,
     subfilters: data,
     uniqueIndex: getUniqueIndex(),
@@ -283,30 +270,61 @@ function updateFilter(eventName, data) {
   }
 }
 
-// Resets the form values
-function resetValues() {
-  if (!props.existingFilter.length) {
-    queryFilter.value = getDefaultGroup();
-  } else if (!modalHiddenAfterSave.value) {
-    [queryFilter.value] = existingFilterClone.value;
+/**
+ * Saves the filter
+ */
+function saveFilter() {
+  emit('update-filter', 'filter', 0, queryFilter.value);
+  existingFilterClone.value = cloneDeep(queryFilter.value);
+}
+
+/**
+ * Fetches fieldoptions for all unique rule operators
+ * @param {Array} existingRules existing filter rules
+ */
+function fetchAllFieldOptions(existingRules) {
+  const operatorList = new Set();
+
+  if (existingRules) {
+    existingRules.forEach((rule) => { operatorList.add(rule.operator); });
+  } else {
+    operatorList.add('contains');
   }
-  modalHiddenAfterSave.value = false;
+
+  if (props.variableOptions) {
+    const keys = Object.keys(props.variableOptions);
+    keys.forEach((variableOption) => { operatorList.add(variableOption); });
+  }
+
+  operatorList.forEach((operator) => { emit('get-field-options', operator); });
+}
+
+/**
+ * Populates the filter rules on the BModal's "@show" event
+ */
+function populateForm() {
+  const existingFilterDefinition = props.existingFilter?.definition;
+
+  if (existingFilterDefinition) {
+    if (!isEqual(existingFilterDefinition, existingFilterClone.value)) {
+      queryFilter.value = cloneDeep(existingFilterDefinition);
+      existingFilterClone.value = cloneDeep(existingFilterDefinition);
+    } else {
+      queryFilter.value = cloneDeep(existingFilterClone.value);
+    }
+  } else {
+    queryFilter.value = getDefaultGroup();
+  }
+  fetchAllFieldOptions(existingFilterDefinition?.subfilters);
 }
 
 // Computed
 const disableSave = computed(() => {
-  const emptyQueries = queryFilter.value.subfilters.filter(({ field, value }) => !field || (value !== undefined && !value));
-  return !!emptyQueries.length;
-});
-
-// Populates filter values from existing filter
-watch(() => props.existingFilter, (filter) => {
-  const [group] = filter;
-  if (group) {
-    queryFilter.value = group;
-  } else {
-    queryFilter.value = getDefaultGroup();
+  if (queryFilter.value) {
+    const emptyQueries = queryFilter.value.subfilters.filter(({ field, value }) => !field || (value !== undefined && !value));
+    return !!emptyQueries.length;
   }
+  return true;
 });
 
 // Start

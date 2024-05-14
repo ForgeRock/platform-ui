@@ -13,7 +13,8 @@ to such license between the licensee and ForgeRock AS. -->
     title-tag="h2"
     :id="modalId"
     :static="isTesting"
-    :title="$t('reports.template.addAParameter')">
+    :title="$t('reports.template.addAParameter')"
+    @hidden="resetValues">
     <BFormGroup>
       <FrField
         v-model="parameterName"
@@ -162,7 +163,7 @@ to such license between the licensee and ForgeRock AS. -->
           :disabled="disableSave || isSaving"
           :show-spinner="isSaving"
           variant="primary"
-          @click="$emit('update-parameter', 'parameters', formValues)" />
+          @click="emit('update-parameter', existingDefinitionIndex, formValues)" />
       </div>
     </template>
   </BModal>
@@ -193,7 +194,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
 
 // Definitions
-defineEmits(['update-parameter']);
+const emit = defineEmits(['update-parameter']);
 const props = defineProps({
   isSaving: {
     type: Boolean,
@@ -207,7 +208,7 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-  parameter: {
+  existingParameter: {
     type: Object,
     default: () => ({}),
   },
@@ -230,10 +231,12 @@ const parameterTypeOptions = [
     text: i18n.global.t('reports.template.userProvided'),
     value: 'user_provided',
   },
-  {
-    text: i18n.global.t('reports.template.profileAttribute'),
-    value: 'profile_attribute',
-  },
+  // Purposefully commented out since this functionality is not currently
+  // available to be handled by the API, but will be in the near future.
+  // {
+  //   text: i18n.global.t('reports.template.profileAttribute'),
+  //   value: 'profile_attribute',
+  // },
 ];
 
 const helpText = ref('');
@@ -250,10 +253,27 @@ function addEnumeratedValue(index) {
     value: '',
   });
 }
+
 function removeEnumeratedValue(index) {
   if (enumeratedValues.value.length > 1) {
     enumeratedValues.value.splice(index, 1);
   }
+}
+
+function resetValues() {
+  parameterName.value = '';
+  profileAttribute.value = '';
+  parameterType.value = parameterTypeOptions[0].value;
+  inputLabel.value = '';
+  inputType.value = '';
+  helpText.value = '';
+  multivalued.value = false;
+  showEnumeratedValues.value = false;
+  enumeratedValues.value = [{
+    name: '',
+    value: '',
+  }];
+  emit('hidden');
 }
 
 // Computed
@@ -269,11 +289,8 @@ const enumeratedValuesAreEmpty = computed(() => {
   const [firstValue] = enumArray;
   return enumArray.length === 1 && (!firstValue.name || !firstValue.value);
 });
-const originalParameterName = computed(() => props.parameter.parameterName);
-
 const formValues = computed(() => {
   const sharedBody = {
-    _id: originalParameterName.value || parameterName.value,
     parameterName: parameterName.value,
     parameterType: parameterType.value,
   };
@@ -297,21 +314,28 @@ const formValues = computed(() => {
   }
   return {};
 });
+const existingDefinitionIndex = computed(() => {
+  const existingIndex = props.existingParameter.index;
+  return existingIndex !== undefined ? existingIndex : -1;
+});
 
 // Watchers
-watch(() => props.parameter, (parameter) => {
-  parameterName.value = parameter.parameterName || '';
-  profileAttribute.value = parameter.profileAttribute || '';
-  parameterType.value = parameter.parameterType || parameterTypeOptions[0].value;
-  inputLabel.value = parameter.inputLabel || '';
-  inputType.value = parameter.inputType || '';
-  helpText.value = parameter.helpText || '';
-  multivalued.value = (parameter.multivalued && parameter.parameterType === 'user_provided') || false;
-  showEnumeratedValues.value = parameter.enumeratedValues?.length && parameter.inputType === 'String';
-  enumeratedValues.value = parameter.enumeratedValues?.length ? parameter.enumeratedValues : [{
-    name: '',
-    value: '',
-  }];
+watch(() => props.existingParameter, (parameter) => {
+  const { definition } = parameter;
+  if (definition) {
+    parameterName.value = definition.parameterName || '';
+    profileAttribute.value = definition.profileAttribute || '';
+    parameterType.value = definition.parameterType || definition[0].value;
+    inputLabel.value = definition.inputLabel || '';
+    inputType.value = definition.inputType || '';
+    helpText.value = definition.helpText || '';
+    multivalued.value = (definition.multivalued && definition.parameterType === 'user_provided') || false;
+    showEnumeratedValues.value = !!(definition.enumeratedValues?.length && definition.inputType === 'String');
+    enumeratedValues.value = definition.enumeratedValues?.length ? definition.enumeratedValues : [{
+      name: '',
+      value: '',
+    }];
+  }
 });
 </script>
 

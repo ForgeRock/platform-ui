@@ -54,7 +54,6 @@ export default function useReportParameters() {
         }
 
         return {
-          _id: key,
           enumeratedValues: val.enum || [],
           helpText: val.description,
           inputType,

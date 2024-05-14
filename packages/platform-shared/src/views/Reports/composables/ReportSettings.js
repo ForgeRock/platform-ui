@@ -69,7 +69,7 @@ export default function useReportSettings(
       _id: 'sort',
       title: i18n.global.t('common.sorting'),
       description: i18n.global.t('reports.template.sortingSettingDescription'),
-      modal: 'report-aggregates-modal',
+      modal: 'report-sort-modal',
       definitions: [],
       payload: sortingPayload,
     },
@@ -85,6 +85,17 @@ export default function useReportSettings(
   }
 
   /**
+   * Finds a definition object from a list of definitions within a specific settings object
+   * @param {String} settingId Report setting id property value
+   * @param {Number} definitionIndex definition index position
+   * @returns {Object}
+   */
+  function findDefinition(settingId, definitionIndex) {
+    const settingsObject = reportSettings.value.find((setting) => setting._id === settingId);
+    return settingsObject.definitions[definitionIndex];
+  }
+
+  /**
    * Generates a new set of definitions from the "newDefinition" argument.
    *
    * If the "newDefinition" argument is an object, then the assumption
@@ -93,25 +104,21 @@ export default function useReportSettings(
    * If the "newDefinition" argument is a string, then the assumption is that
    * the definition is intended to be deleted from the existingDefinitions list.
    * @param {Array} existingDefinitions Existing list of definitions.
-   * @param {Object | String} newDefinition updated definition object or definition ID used for deletion
+   * @param {Number} definitionIndex Definition index position if it exists
+   * @param {Object} currentDefinition updated definition object
    * @returns {Array}
    */
-  function generateNewDefinitions(existingDefinitions, newDefinition) {
-    if (typeof newDefintion === 'object' && newDefinition._id === undefined) {
-      throw new Error('Definition object requires a unique _id property');
-    }
-    const incomingDefinitionId = newDefinition._id || newDefinition;
-    const definitionIndex = existingDefinitions.findIndex((obj) => obj._id === newDefinition._id);
-    const filteredDefinitions = existingDefinitions.filter((obj) => obj._id !== incomingDefinitionId);
+  function generateNewDefinitions(existingDefinitions, definitionIndex, currentDefinition) {
+    const filteredDefinitions = existingDefinitions.filter((obj, index) => index !== definitionIndex);
 
-    if (definitionIndex !== -1) {
+    if (definitionIndex !== undefined && definitionIndex !== -1 && currentDefinition) {
       // We only want to replace the definition if the newDefinition exists within the
       // existingDefinitions array, otherwise we make the assuption that the intention is
       // to delete the given definition so we just return the filtered definitions.
-      filteredDefinitions.splice(definitionIndex, 0, newDefinition);
-    } else if (typeof newDefinition === 'object') {
+      filteredDefinitions.splice(definitionIndex, 0, currentDefinition);
+    } else if (currentDefinition) {
       // new definition so we just push the new object to the end of the existing list
-      return [...existingDefinitions, newDefinition];
+      return [...existingDefinitions, currentDefinition];
     }
 
     return filteredDefinitions;
@@ -145,6 +152,7 @@ export default function useReportSettings(
   }
 
   return {
+    findDefinition,
     findSettingsObject,
     generateNewDefinitions,
     generateNewSettings,

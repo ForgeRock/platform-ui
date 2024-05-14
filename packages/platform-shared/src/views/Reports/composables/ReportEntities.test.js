@@ -30,20 +30,7 @@ describe('@useReportEntities', () => {
     },
   }));
 
-  AutoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
-    data: {
-      'applications.name': {
-        class: 'json',
-        type: 'string',
-      },
-      'applications._id': {
-        class: 'json',
-        type: 'string',
-      },
-    },
-  }));
-
-  AutoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+  AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
     data: {
       'applications.name': {
         class: 'json',
@@ -88,7 +75,7 @@ describe('@useReportEntities', () => {
     });
 
     it('constructs a list of entity definitions from an entity name and corresponding API data', async () => {
-      AutoApi.getReportEntityFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
         data: {
           'applications.name': {
             class: 'json',
@@ -101,10 +88,10 @@ describe('@useReportEntities', () => {
         },
       }));
 
-      const getReportEntityFieldOptionsSpy = jest.spyOn(AutoApi, 'getReportEntityFieldOptions');
+      const getReportFieldOptionsSpy = jest.spyOn(AutoApi, 'getReportFieldOptions');
 
       const definitions = await entityDefinitions(entitiesStub, [{ label: 'name', value: 'applications.name' }]);
-      expect(getReportEntityFieldOptionsSpy).toHaveBeenCalledWith({
+      expect(getReportFieldOptionsSpy).toHaveBeenCalledWith({
         entities: [{
           name: entitiesStub[0].entity,
           entity: entitiesStub[0].entity,

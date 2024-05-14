@@ -15,7 +15,7 @@ const versionedPayload = { version: 'v2' };
   * Returns a list of report templates
   * @param {Object} params Additional query parameters to be encoded
   *
-  * @returns {Promise}
+  * @returns {Object}
   */
 export async function getReportTemplates(params, underscores = true) {
   const { data } = await generateAutoAccessReports().get(`templates${encodeQueryString(params, underscores)}`);
@@ -27,7 +27,7 @@ export async function getReportTemplates(params, underscores = true) {
   * @param {Object} params Additional query parameters to be encoded
   * @param {Boolean} appendUnderscores If perameters get an underscore appended
   *
-  * @returns {Promise}
+  * @returns {Object}
   */
 export async function getReportRuns(params, appendUnderscores = false) {
   const { data } = await generateAutoAccessReports().get(`runs${encodeQueryString(params, appendUnderscores)}`);
@@ -37,10 +37,20 @@ export async function getReportRuns(params, appendUnderscores = false) {
 /**
   * Returns a list report filter operators
   *
-  * @returns {Promise}
+  * @returns {Object}
   */
 export async function getReportOperators() {
   const { data } = await generateAutoAccessReports().get('operators');
+  return data;
+}
+
+/**
+  * Returns a list report aggregate types
+  *
+  * @returns {Object}
+  */
+export async function getAggregateTypes() {
+  const { data } = await generateAutoAccessReports().get('aggregates');
   return data;
 }
 
@@ -74,7 +84,7 @@ export async function runAnalyticsTemplate(template, state, payload) {
 /**
  * Gets a list of report entities
  *
- * @returns {Object}
+ * @returns {Promise<Object>}
  */
 export function getReportEntities() {
   return generateAutoAccessReports().get('entities');
@@ -84,9 +94,9 @@ export function getReportEntities() {
  * Gets a list of entity field options from an existing report entity
  *
  * @param {Object} payload entities and fields
- * @returns {Object}
+ * @returns {Promise<Object>}
  */
-export function getReportEntityFieldOptions(payload) {
+export function getReportFieldOptions(payload) {
   return generateAutoAccessReports().post('fieldoptions', {
     query: JSON.stringify({ ...versionedPayload, ...payload }),
   });
@@ -95,7 +105,7 @@ export function getReportEntityFieldOptions(payload) {
 /**
  * Gets a list of report parameter types
  *
- * @returns {Array}
+ * @returns {Promise}
  */
 export function getReportParameterTypes() {
   return generateAutoAccessReports().get('parameters/types');
@@ -220,7 +230,7 @@ export async function getAutoAccessReportResult(userName, dateRange, template, n
  * Create a report template
  *
  * @param {Object} payload report template attributes
- * @returns {Object}
+ * @returns {Promise<Object>}
  */
 export function saveAnalyticsReport(name, payload, viewers, description = '') {
   return generateAutoAccessReports().post('templates?_action=create&templateType=draft', {
@@ -238,7 +248,7 @@ export function saveAnalyticsReport(name, payload, viewers, description = '') {
  *
  * @param {Object} id template name
  * @param {String} templateType template state (draft, published)
- * @returns {Object}
+ * @returns {Promise<Object>}
  */
 export function publishAnalyticsReport(id) {
   return generateAutoAccessReports().post(`templates/${id}?_action=publish`);
@@ -249,7 +259,7 @@ export function publishAnalyticsReport(id) {
  *
  * @param {Object} id template name
  * @param {String} templateType template state (draft, published)
- * @returns {Object}
+ * @returns {Promise<Object>}
  */
 export function deleteAnalyticsReport(id, templateType) {
   return generateAutoAccessReports().post(`templates/${id}?_action=delete&templateType=${templateType}`);
@@ -260,7 +270,7 @@ export function deleteAnalyticsReport(id, templateType) {
  *
  * @param {Object} id template name
  * @param {String} templateType template status type (draft, published)
- * @returns {Object}
+ * @returns {Promise<Object>}
  */
 export function duplicateAnalyticsReport(id, templateType) {
   return generateAutoAccessReports().post(`templates/${id}?_action=duplicate&templateType=${templateType}`);

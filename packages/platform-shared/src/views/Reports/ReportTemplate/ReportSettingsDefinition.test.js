@@ -55,52 +55,17 @@ describe('Report Settings Definition component', () => {
       expect(filterDefinition.exists()).toBe(true);
     });
 
-    it('displays the "Aggregate" definition checkboxes', () => {
-      let aggregateCheckboxLabel = wrapper.find('label');
-      expect(aggregateCheckboxLabel.exists()).toBe(false);
+    it('displays the "Aggregate" definitions', () => {
+      let aggregatesDefinitionTitle = wrapper.find('h4');
+      expect(aggregatesDefinitionTitle.exists()).toBe(false);
 
       wrapper = setup({
         settingId: 'aggregate',
-        definition: { name: 'My aggregate' },
+        definition: { label: 'My aggregate' },
       });
 
-      aggregateCheckboxLabel = wrapper.find('label');
-      expect(aggregateCheckboxLabel.text()).toBe('My aggregate');
-    });
-
-    it('emits the aggregate checkbox selection', async () => {
-      wrapper = setup({
-        settingId: 'aggregate',
-        definition: { name: 'My aggregate' },
-      });
-
-      const aggregateCheckbox = wrapper.find('input[type="checkbox"]');
-      await aggregateCheckbox.setValue();
-      expect(wrapper.emitted()['set-aggregate'][0]).toEqual([true]);
-    });
-
-    it('pre-selects an aggregate checkbox if the definition prop contains a checked property set to true', async () => {
-      wrapper = setup({
-        settingId: 'aggregate',
-        definition: {
-          name: 'My aggregate',
-          checked: false,
-        },
-      });
-
-      let aggregateCheckbox = wrapper.find('input[type="checkbox"]');
-      expect(aggregateCheckbox.wrapperElement).not.toBeChecked();
-
-      await wrapper.setProps({
-        settingId: 'aggregate',
-        definition: {
-          name: 'My aggregate',
-          checked: true,
-        },
-      });
-
-      aggregateCheckbox = wrapper.find('input[type="checkbox"]');
-      expect(aggregateCheckbox.wrapperElement).toBeChecked();
+      aggregatesDefinitionTitle = wrapper.find('h4');
+      expect(aggregatesDefinitionTitle.text()).toBe('My aggregate');
     });
 
     it('displays the sorting descending definition card elements', () => {
@@ -136,21 +101,21 @@ describe('Report Settings Definition component', () => {
     });
 
     it('displays the definition name as part of the edit button in the ellipse menu', () => {
-      wrapper = setup({ settingTitle: 'Parameters' });
+      wrapper = setup({ settingTitle: 'Parameters', settingId: 'parameters' });
 
       const [editButton] = wrapper.findAll('[role="menuitem"]');
       expect(editButton.text()).toContain('Edit Parameters');
     });
 
     it('displays the definition name as part of the edit button in the ellipse menu', () => {
-      wrapper = setup({ settingTitle: 'Parameters' });
+      wrapper = setup({ settingTitle: 'Parameters', settingId: 'parameters' });
 
       const [editButton] = wrapper.findAll('[role="menuitem"]');
       expect(editButton.text()).toContain('Edit Parameters');
     });
 
     it('emits "edit-definition" when the edit button is clicked in the ellipse menu', async () => {
-      wrapper = setup({ settingTitle: 'Parameters' });
+      wrapper = setup({ settingTitle: 'Parameters', settingId: 'parameters' });
 
       const [editButton] = wrapper.findAll('[role="menuitem"]');
       await editButton.trigger('click');
@@ -163,7 +128,7 @@ describe('Report Settings Definition component', () => {
     });
 
     it('emits "delete-definition" when the delete button is clicked in the ellipse menu', async () => {
-      wrapper = setup({ settingTitle: 'Parameters' });
+      wrapper = setup({ settingTitle: 'Parameters', settingId: 'parameters' });
 
       const [, deleteButton] = wrapper.findAll('[role="menuitem"]');
       await deleteButton.trigger('click');

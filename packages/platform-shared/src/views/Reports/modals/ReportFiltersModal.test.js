@@ -135,8 +135,7 @@ describe('Report Filter Modal component', () => {
 
       // Saves form and emits payload
       await findByText(wrapper, 'button', 'Save').trigger('click');
-      expect(wrapper.emitted('update-filters')).toEqual([['filter', {
-        _id: 'filter-group',
+      expect(wrapper.emitted('update-filter')).toEqual([['filter', 0, {
         operator: 'or',
         subfilters: [{
           field: 'applications._id',
@@ -147,6 +146,39 @@ describe('Report Filter Modal component', () => {
         }],
         uniqueIndex: 2,
       }]]);
+    });
+
+    it('ensures that it loads the correct data in the correct fields for an existing filter', async () => {
+      wrapper = setup({
+        existingFilter: {
+          index: 0,
+          definition: {
+            operator: 'or',
+            subfilters: [{
+              field: 'applications.name',
+              operator: 'contains',
+              selectedRightValueType: 'literal',
+              uniqueIndex: 0,
+              value: 'my right value',
+            }],
+            uniqueIndex: 0,
+          },
+        },
+      });
+
+      // Must use this to simulate the @show BModal method since it is not triggering it natively
+      await wrapper.vm.populateForm();
+
+      const [, leftValueSelect, operatorSelect] = wrapper.findAll('[role="listbox"]');
+
+      const leftValueSelectedOption = leftValueSelect.find('.multiselect__option--selected');
+      expect(leftValueSelectedOption.text()).toBe('Name');
+
+      const operatorSelectedOption = operatorSelect.find('.multiselect__option--selected');
+      expect(operatorSelectedOption.text()).toBe('contains');
+
+      const [, rightValueInput] = wrapper.findAll('input');
+      expect(rightValueInput.element.value).toBe('my right value');
     });
   });
 });

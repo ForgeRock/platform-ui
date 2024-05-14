@@ -37,15 +37,12 @@ of the MIT license. See the LICENSE file for details. -->
             </BListGroup>
           </template>
           <template v-else-if="settingId === 'aggregate'">
-            <BFormGroup
-              class="m-0"
-              :label-for="definition.name">
-              <BFormCheckbox
-                v-model="aggregateModel"
-                :id="definition.name">
-                {{ definition.name }}
-              </BFormCheckbox>
-            </BFormGroup>
+            <BCardTitle
+              class="h5 mb-0"
+              title-tag="h4"
+              :class="!definition.label ? 'text-muted' : ''">
+              {{ definition.label || $t('reports.template.labelRequired') }}
+            </BCardTitle>
           </template>
           <template v-else-if="settingId === 'sort'">
             <BListGroup>
@@ -65,13 +62,13 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-flex align-items-center justify-content-end"
           cols="2">
           <FrSpinner
-            v-if="isSaving && definitionBeingUpdated === definition._id"
+            v-if="isSaving && isCurrentDefinition"
             class="opacity-50 mr-2"
             size="sm" />
           <FrActionsCell
             v-else
             :edit-option="false"
-            @delete-clicked.stop="$emit('delete-definition')"
+            @delete-clicked.stop="deleteDefinition"
             wrapper-class="pr-2">
             <template #custom-top-actions>
               <BDropdownItem @click.stop="$emit('edit-definition')">
@@ -94,7 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
  * @description
  * Report settings definition component for parameters, filters, aggregates and sorting.
  */
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   BCard,
   BCardBody,
@@ -102,8 +99,6 @@ import {
   BCardTitle,
   BCol,
   BDropdownItem,
-  BFormCheckbox,
-  BFormGroup,
   BListGroup,
   BListGroupItem,
   BRow,
@@ -114,19 +109,15 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from '@/i18n';
 
-const emit = defineEmits([
-  'delete-definition',
-  'edit-definition',
-  'set-aggregate',
-]);
+const emit = defineEmits(['delete-definition', 'edit-definition']);
 const props = defineProps({
   definition: {
     type: Object,
     default: () => ({}),
   },
-  definitionBeingUpdated: {
-    type: String,
-    default: '',
+  definitionIndex: {
+    type: Number,
+    default: -1,
   },
   isSaving: {
     type: Boolean,
@@ -151,19 +142,30 @@ const props = defineProps({
   },
 });
 
+// Globals
+const definitionBeingDeleted = ref({});
+
+// Functions
+function deleteDefinition() {
+  definitionBeingDeleted.value = {
+    definitionIndex: props.definitionIndex,
+    settingId: props.settingId,
+  };
+  emit('delete-definition');
+}
+
+// Computed
 const editOptionLabel = computed(() => i18n.global.t('common.editObject', { object: pluralizeSingular(props.settingTitle) }));
-const aggregateModel = computed({
-  get() {
-    // Boolean
-    return props.definition.checked;
-  },
-  /**
-   * Aggregate checkbox selection
-   * @param {Boolean} checked selection
-   */
-  set(checked) {
-    emit('set-aggregate', checked);
-  },
+const isCurrentDefinition = computed(() => {
+  const { definitionIndex: currentIndex, settingId: currentSettingId } = definitionBeingDeleted.value;
+  return currentIndex === props.definitionIndex && currentSettingId === props.settingId;
+});
+
+// Watchers
+watch(() => props.isSaving, (bool) => {
+  if (!bool) {
+    definitionBeingDeleted.value = {};
+  }
 });
 </script>
 
@@ -174,17 +176,5 @@ const aggregateModel = computed({
 
 :deep(.list-group-item) {
   cursor: default;
-}
-
-:deep(.custom-checkbox) {
-  width: 100%;
-
-  .custom-control-label {
-    width: 100%;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
 }
 </style>

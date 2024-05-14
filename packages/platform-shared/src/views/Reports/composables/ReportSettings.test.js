@@ -39,26 +39,34 @@ describe('@useReportSettings', () => {
     });
 
     it('generates a new list of definitions with the provided definition object', () => {
-      const newDefinition = { _id: 'my parameter name' };
-      const newDefinitionsArray = generateNewDefinitions([], newDefinition);
+      const newDefinition = { parameterName: 'my parameter name' };
+      // middle argument is the definition index (if undefined or -1 means it is a new definition)
+      const newDefinitionsArray = generateNewDefinitions([], -1, newDefinition);
       expect(newDefinitionsArray.length).toBe(1);
-      expect(newDefinitionsArray[0]._id).toBe('my parameter name');
+      expect(newDefinitionsArray[0].parameterName).toBe('my parameter name');
     });
 
     it('generates a new list of definitions with the provided definition object and existing list', () => {
-      const secondDefinition = { _id: 'my second parameter' };
-      const updatedDefinitionsArray = generateNewDefinitions([{ _id: 'my parameter name' }], secondDefinition);
+      const secondDefinition = { parameterName: 'my second parameter' };
+      // middle argument is the definition index (if undefined or -1 means it is a new definition)
+      const updatedDefinitionsArray = generateNewDefinitions([{ parameterName: 'my parameter name' }], -1, secondDefinition);
       expect(updatedDefinitionsArray.length).toBe(2);
-      expect(updatedDefinitionsArray[1]._id).toBe('my second parameter');
+      expect(updatedDefinitionsArray[1].parameterName).toBe('my second parameter');
+    });
+
+    it('updates an existing definition', () => {
+      const firstDefinitionUpdated = { parameterName: 'my first parameter with updated name' };
+      // middle argument is the definition index
+      const updatedDefinitionsArray = generateNewDefinitions([{ parameterName: 'my first parameter existing' }], 0, firstDefinitionUpdated);
+      expect(updatedDefinitionsArray.length).toBe(1);
+      expect(updatedDefinitionsArray[0].parameterName).toBe('my first parameter with updated name');
     });
 
     it('outputs an API friendly payload object for parameters', () => {
       const parametersSetting = findSettingsObject('parameters');
-      const newDefinition = {
-        _id: 'my parameter name',
-        parameterName: 'my parameter name',
-      };
-      const newDefinitionsArray = generateNewDefinitions([], newDefinition);
+      const newDefinition = { parameterName: 'my parameter name' };
+      // middle argument is the definition index (if undefined or -1 means it is a new definition)
+      const newDefinitionsArray = generateNewDefinitions([], -1, newDefinition);
 
       parametersSetting.definitions.push(...newDefinitionsArray);
       expect(reportPayload(reportSettings.value)).toEqual({
@@ -73,12 +81,13 @@ describe('@useReportSettings', () => {
     });
 
     it('removes an existing definition', () => {
-      const definitionNameBeingDeleted = 'my parameter name';
       const { definitions } = findSettingsObject('parameters');
-      const [firstDefinition] = definitions;
-      expect(firstDefinition._id).toBe(definitionNameBeingDeleted);
+      expect(definitions.length).toBe(1);
 
-      const updatedDefinitionsArray = generateNewDefinitions(definitions, definitionNameBeingDeleted);
+      // Middle argument is the definition index (if undefined or -1 means it is a new definition).
+      // If third argument not present, it means the definition in the provided index
+      // (second argument) is intended to be deleted.
+      const updatedDefinitionsArray = generateNewDefinitions(definitions, 0);
       expect(updatedDefinitionsArray.length).toBe(0);
     });
   });
