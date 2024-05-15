@@ -427,10 +427,12 @@
       "successMessages": {
         "password": "Your password is secure!"
       },
+      "alphaLowerCasePeriodHypenOnly": "Can only contain lower case alpha characters, hypens and periods",
       "alphaOnly": "Can only contain alphabetic characters",
       "alphaNumericOnly": "Can only contain alphanumeric characters",
       "alphaNumericLowerCaseOnly": "Can only contain lower case alphanumeric characters",
       "alphaNumericDashOnly": "Can only contain alphanumeric characters, dashes or underscores",
+      "connectorBundleVersion": "Invalid bundle version format, must contain the following pattern: [min_version, max_version)",
       "dateFormat": "Invalid date format",
       "excluded": "This {_field_} already exists.",
       "noSpace": "Cannot start or end with the space character",
