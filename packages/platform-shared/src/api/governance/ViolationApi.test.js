@@ -28,7 +28,7 @@ describe('ViolationsApi API', () => {
       operand: [{
         operator: 'EQUALS',
         operand: {
-          targetName: 'decision.violation.status',
+          targetName: 'decision.status',
           targetValue: 'pending',
         },
       }],

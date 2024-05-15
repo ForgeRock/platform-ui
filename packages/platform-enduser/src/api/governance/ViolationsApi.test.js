@@ -22,7 +22,7 @@ describe('Violations API', () => {
     const targetFilter = {
       operator: 'AND',
       operand: {
-        targetName: 'decision.violation.status',
+        targetName: 'decision.status',
         targetValue: 'in-progress',
       },
     };

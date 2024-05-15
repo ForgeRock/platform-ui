@@ -86,7 +86,7 @@ describe('ViolationList', () => {
       {
         operator: 'EQUALS',
         operand: {
-          targetName: 'decision.violation.status',
+          targetName: 'decision.status',
           targetValue: 'testStatus',
         },
       },
@@ -96,7 +96,7 @@ describe('ViolationList', () => {
       },
       {
         operator: 'EQUALS',
-        operand: { targetName: 'user.userId', targetValue: 'testUser' },
+        operand: { targetName: 'user.id', targetValue: 'testUser' },
       },
       {
         operator: 'OR',
@@ -132,7 +132,7 @@ describe('ViolationList', () => {
       pageSize: 10,
       pagedResultsOffset: 0,
       sortDir: 'desc',
-      sortKeys: 'decision.violation.startDate',
+      sortKeys: 'decision.startDate',
     });
   });
 
@@ -142,15 +142,13 @@ describe('ViolationList', () => {
       tableRows: [
         {
           decision: {
-            violation: {
-              status: 'in-progress',
-              startDate: '2024-05-13T23:12:21+00:00',
-              phases: [
-                {
-                  name: 'testPhase',
-                },
-              ],
-            },
+            status: 'in-progress',
+            startDate: '2024-05-13T23:12:21+00:00',
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
           },
           policyRule: {
             name: 'NoCustomerSupport',
@@ -183,15 +181,13 @@ describe('ViolationList', () => {
       tableRows: [
         {
           decision: {
-            violation: {
-              status: 'in-progress',
-              startDate: '2024-05-13T23:12:21+00:00',
-              phases: [
-                {
-                  name: 'testPhase',
-                },
-              ],
-            },
+            status: 'in-progress',
+            startDate: '2024-05-13T23:12:21+00:00',
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
           },
           policyRule: {
             name: 'NoCustomerSupport',
@@ -224,15 +220,13 @@ describe('ViolationList', () => {
       tableRows: [
         {
           decision: {
-            violation: {
-              status: 'in-progress',
-              startDate: '2024-05-13T23:12:21+00:00',
-              phases: [
-                {
-                  name: 'testPhase',
-                },
-              ],
-            },
+            status: 'in-progress',
+            startDate: '2024-05-13T23:12:21+00:00',
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
           },
           policyRule: {
             name: 'NoCustomerSupport',
@@ -264,15 +258,13 @@ describe('ViolationList', () => {
       tableRows: [
         {
           decision: {
-            violation: {
-              status: 'in-progress',
-              startDate: '2024-05-13T23:12:21+00:00',
-              phases: [
-                {
-                  name: 'testPhase',
-                },
-              ],
-            },
+            status: 'in-progress',
+            startDate: '2024-05-13T23:12:21+00:00',
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
           },
           policyRule: {
             name: 'NoCustomerSupport',
@@ -305,15 +297,13 @@ describe('ViolationList', () => {
       tableRows: [
         {
           decision: {
-            violation: {
-              status: 'in-progress',
-              startDate: '2024-05-13T23:12:21+00:00',
-              phases: [
-                {
-                  name: 'testPhase',
-                },
-              ],
-            },
+            status: 'in-progress',
+            startDate: '2024-05-13T23:12:21+00:00',
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
           },
           policyRule: {
             name: 'NoCustomerSupport',
@@ -346,15 +336,13 @@ describe('ViolationList', () => {
       },
       rawData: {
         decision: {
-          violation: {
-            phases: [
-              {
-                name: 'testPhase',
-              },
-            ],
-            startDate: '2024-05-13T23:12:21+00:00',
-            status: 'in-progress',
-          },
+          phases: [
+            {
+              name: 'testPhase',
+            },
+          ],
+          startDate: '2024-05-13T23:12:21+00:00',
+          status: 'in-progress',
         },
         id: '002bd665-3946-465c-b444-de470fa04254',
         policyRule: {

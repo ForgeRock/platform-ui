@@ -30,32 +30,30 @@ ValidationRules.extendRules({
 
 const violation = {
   decision: {
-    violation: {
-      status: 'testStatus',
-      startDate: '2024-05-08T16:33:22+00:00',
-      comments: [
-        {
-          action: 'assignment',
-          comment: 'testAssignment',
-          timeStamp: '2024-05-08T16:33:24+00:00',
-        },
-        {
-          action: 'reasign',
-          comment: 'testReassign',
-          timeStamp: '2024-05-08T16:33:24+00:00',
-        },
-        {
-          action: 'allow',
-          comment: 'testAllow',
-          timeStamp: '2024-05-08T16:33:24+00:00',
-        },
-      ],
-      phases: [
-        {
-          name: 'testPhase',
-        },
-      ],
-    },
+    status: 'testStatus',
+    startDate: '2024-05-08T16:33:22+00:00',
+    comments: [
+      {
+        action: 'assignment',
+        comment: 'testAssignment',
+        timeStamp: '2024-05-08T16:33:24+00:00',
+      },
+      {
+        action: 'reasign',
+        comment: 'testReassign',
+        timeStamp: '2024-05-08T16:33:24+00:00',
+      },
+      {
+        action: 'allow',
+        comment: 'testAllow',
+        timeStamp: '2024-05-08T16:33:24+00:00',
+      },
+    ],
+    phases: [
+      {
+        name: 'testPhase',
+      },
+    ],
   },
   user: {
     userName: 'testUsername',

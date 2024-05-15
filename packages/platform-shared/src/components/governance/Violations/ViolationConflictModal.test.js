@@ -12,12 +12,10 @@ import i18n from '@/i18n';
 describe('Violation Conflict Modal', () => {
   const violation = {
     decision: {
-      violation: {
-        compositeIds: [
-          ['id1', 'id2'],
-          ['id3'],
-        ],
-      },
+      compositeIds: [
+        ['id1', 'id2'],
+        ['id3'],
+      ],
     },
     violatingAccess: [
       {

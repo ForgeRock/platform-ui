@@ -78,7 +78,7 @@ describe('ExceptionList', () => {
       {
         operator: 'EQUALS',
         operand: {
-          targetName: 'decision.violation.status',
+          targetName: 'decision.status',
           targetValue: 'exception',
         },
       },
@@ -88,7 +88,7 @@ describe('ExceptionList', () => {
       },
       {
         operator: 'EQUALS',
-        operand: { targetName: 'user.userId', targetValue: 'testUser' },
+        operand: { targetName: 'user.id', targetValue: 'testUser' },
       },
       {
         operator: 'OR',
@@ -124,7 +124,7 @@ describe('ExceptionList', () => {
       pageSize: 10,
       pagedResultsOffset: 0,
       sortDir: 'desc',
-      sortKeys: 'decision.violation.startDate',
+      sortKeys: 'decision.startDate',
     });
   });
 });

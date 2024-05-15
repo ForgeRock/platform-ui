@@ -227,12 +227,12 @@ const filters = ref({
 const items = computed(() => {
   if (!props.tableRows?.length) return [];
   return props.tableRows.map((exception) => ({
-    comments: exception.decision?.violation?.comments,
-    expiration: exception.decision?.violation?.events?.exception?.date,
+    comments: exception.decision?.comments,
+    expiration: exception.decision?.events?.exception?.date,
     id: exception.id,
-    initialViolation: exception.decision?.violation?.startDate,
+    initialViolation: exception.decision?.startDate,
     latestViolation: exception.stats?.latestDetectionTime,
-    phaseId: exception.decision?.violation?.phases[0]?.name,
+    phaseId: exception.decision?.phases[0]?.name,
     policyRule: exception.policyRule,
     user: exception.user,
   }));
@@ -313,7 +313,7 @@ function getTargetFilter(targetFilter) {
     operand: [],
   };
 
-  filterPayload.operand.push(getBasicFilter('EQUALS', 'decision.violation.status', 'exception'));
+  filterPayload.operand.push(getBasicFilter('EQUALS', 'decision.status', 'exception'));
 
   if (targetFilter.rule.length) {
     filterPayload.operand.push(getBasicFilter('EQUALS', 'policyRule.id', targetFilter.rule));
@@ -321,7 +321,7 @@ function getTargetFilter(targetFilter) {
 
   if (targetFilter.user && targetFilter.user !== 'managed/user/all') {
     const id = targetFilter.user.split('/').pop();
-    filterPayload.operand.push(getBasicFilter('EQUALS', 'user.userId', id));
+    filterPayload.operand.push(getBasicFilter('EQUALS', 'user.id', id));
   }
 
   if (targetFilter.searchValue) {
@@ -355,7 +355,7 @@ async function getData(filterObj) {
   const sortKeyMap = {
     user: 'user.userName',
     policyRule: 'policyRule.name',
-    created: 'decision.violation.startDate',
+    created: 'decision.startDate',
   };
   searchParams.sortKeys = sortKeyMap[sortBy.value];
 

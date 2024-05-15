@@ -224,21 +224,14 @@ const tableFields = [
 
 const items = computed(() => {
   if (!props.tableRows?.length) return [];
-  return props.tableRows.map((violation) => {
-    // TODO: can remove this check and only use violation.decision.startDate
-    // when IGA-2822 is complete
-    const created = violation.decision?.violation
-      ? violation.decision?.violation.startDate
-      : violation.decision?.startDate;
-    return {
-      user: violation.user,
-      policyRule: violation.policyRule,
-      created,
-      id: violation.id,
-      phaseId: violation.decision?.violation?.phases[0]?.name,
-      rawData: violation,
-    };
-  });
+  return props.tableRows.map((violation) => ({
+    user: violation.user,
+    policyRule: violation.policyRule,
+    created: violation.decision?.startDate,
+    id: violation.id,
+    phaseId: violation.decision?.phases[0]?.name,
+    rawData: violation,
+  }));
 });
 
 /**
@@ -256,12 +249,12 @@ function getTargetFilter(targetFilter) {
     filterPayload.operand.push({
       operator: 'OR',
       operand: [
-        getBasicFilter('EQUALS', 'decision.violation.status', targetFilter.status),
-        getBasicFilter('EQUALS', 'decision.violation.status', 'in-progress'),
+        getBasicFilter('EQUALS', 'decision.status', targetFilter.status),
+        getBasicFilter('EQUALS', 'decision.status', 'in-progress'),
       ],
     });
   } else {
-    filterPayload.operand.push(getBasicFilter('EQUALS', 'decision.violation.status', targetFilter.status));
+    filterPayload.operand.push(getBasicFilter('EQUALS', 'decision.status', targetFilter.status));
   }
 
   if (targetFilter.rule.length) {
@@ -270,19 +263,19 @@ function getTargetFilter(targetFilter) {
 
   if (targetFilter.user && targetFilter.user !== 'managed/user/all') {
     const id = targetFilter.user.split('/').pop();
-    filterPayload.operand.push(getBasicFilter('EQUALS', 'user.userId', id));
+    filterPayload.operand.push(getBasicFilter('EQUALS', 'user.id', id));
   }
 
   if (targetFilter.startDate.length) {
     let startDate = dayjs(targetFilter.startDate).toISOString().split('.')[0];
     startDate = `${startDate}+00:00`;
-    filterPayload.operand.push(getBasicFilter('GTE', 'decision.violation.startDate', startDate));
+    filterPayload.operand.push(getBasicFilter('GTE', 'decision.startDate', startDate));
   }
 
   if (targetFilter.endDate.length) {
     let endDate = dayjs(targetFilter.endDate).toISOString().split('.')[0];
     endDate = `${endDate}+00:00`;
-    filterPayload.operand.push(getBasicFilter('LTE', 'decision.violation.startDate', endDate));
+    filterPayload.operand.push(getBasicFilter('LTE', 'decision.startDate', endDate));
   }
 
   if (targetFilter.searchValue) {
@@ -316,7 +309,7 @@ async function getData(filterObj) {
   const sortKeyMap = {
     user: 'user.userName',
     policyRule: 'policyRule.name',
-    created: 'decision.violation.startDate',
+    created: 'decision.startDate',
   };
   searchParams.sortKeys = sortKeyMap[sortBy.value];
 
@@ -330,8 +323,8 @@ async function getData(filterObj) {
  */
 async function forwardItem({ actorId, comment }) {
   try {
-    if (!itemToForward?.value?.rawData?.decision?.violation?.phases?.length) return;
-    const phaseId = itemToForward.value.rawData.decision.violation.phases[0].name;
+    if (!itemToForward?.value?.rawData?.decision?.phases?.length) return;
+    const phaseId = itemToForward.value.rawData.decision.phases[0].name;
     const permissions = {
       allow: true,
       comment: true,

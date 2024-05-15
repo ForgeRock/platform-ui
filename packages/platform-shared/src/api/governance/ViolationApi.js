@@ -22,6 +22,15 @@ export function getViolationList(params, targetFilter) {
 }
 
 /**
+ * Get a single violation by id
+ * @param {String} violationId id of violation to get
+ * @returns {Promise}
+ */
+export function getViolation(violationId) {
+  return generateIgaApi().get(`${violationUrl}/${violationId}`);
+}
+
+/**
  * Get a list of violations for end user
  * @param {Object} params query parameters
  * @param {Object} targetFilter filter to apply to query
@@ -29,15 +38,6 @@ export function getViolationList(params, targetFilter) {
  */
 export function getViolationListEndUser(params, targetFilter) {
   return generateIgaApi().post(`${violationEndUserUrl}/search${encodeQueryString(params)}`, { targetFilter });
-}
-
-/**
- * Get a single violation by id
- * @param {String} violationId id of violation to get
- * @returns {Promise}
- */
-export function getViolation(violationId) {
-  return generateIgaApi().get(`${violationUrl}/${violationId}`);
 }
 
 /**
