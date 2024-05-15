@@ -30,9 +30,7 @@ describe('Violation Details', () => {
       correctionAdvice: 'testCorrectionAdvice',
     },
     decision: {
-      violation: {
-        status: 'testStatus',
-      },
+      status: 'testStatus',
     },
   };
   function mountComponent() {

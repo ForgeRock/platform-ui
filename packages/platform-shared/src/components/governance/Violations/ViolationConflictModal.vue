@@ -131,7 +131,7 @@ function getEntitlementDisplayObjects(compositeIds) {
 }
 
 const setOneEntitlements = computed(() => {
-  const conflicts = props?.violation?.decision?.violation?.compositeIds;
+  const conflicts = props?.violation?.decision?.compositeIds;
   if (!conflicts?.length) return [];
 
   const setOne = getEntitlementDisplayObjects(conflicts[0]);
@@ -139,7 +139,7 @@ const setOneEntitlements = computed(() => {
 });
 
 const setTwoEntitlements = computed(() => {
-  const conflicts = props?.violation?.decision?.violation?.compositeIds;
+  const conflicts = props?.violation?.decision?.compositeIds;
   if (!conflicts?.length) return [];
 
   const setTwo = getEntitlementDisplayObjects(conflicts[1]);

@@ -26,15 +26,13 @@ describe('ViolationsTab', () => {
       result: [
         {
           decision: {
-            violation: {
-              status: 'in-progress',
-              startDate: '2024-05-13T23:12:21+00:00',
-              phases: [
-                {
-                  name: 'testPhase',
-                },
-              ],
-            },
+            status: 'in-progress',
+            startDate: '2024-05-13T23:12:21+00:00',
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
           },
           policyRule: {
             name: 'NoCustomerSupport',
@@ -51,15 +49,13 @@ describe('ViolationsTab', () => {
         },
         {
           decision: {
-            violation: {
-              status: 'in-progress',
-              startDate: '2024-05-14T10:30:00+00:00',
-              phases: [
-                {
-                  name: 'testPhase',
-                },
-              ],
-            },
+            status: 'in-progress',
+            startDate: '2024-05-14T10:30:00+00:00',
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
           },
           policyRule: {
             name: 'NoUnauthorizedAccess',
@@ -76,15 +72,13 @@ describe('ViolationsTab', () => {
         },
         {
           decision: {
-            violation: {
-              status: 'in-progress',
-              startDate: '2024-05-15T15:45:00+00:00',
-              phases: [
-                {
-                  name: 'testPhase',
-                },
-              ],
-            },
+            status: 'in-progress',
+            startDate: '2024-05-15T15:45:00+00:00',
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
           },
           policyRule: {
             name: 'DataPrivacyBreach',

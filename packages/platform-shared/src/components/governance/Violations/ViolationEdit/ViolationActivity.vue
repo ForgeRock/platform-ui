@@ -99,14 +99,14 @@ function generateSteps(violation) {
 
   violationSteps.push(getStep(
     i18n.global.t('governance.violations.initialViolation'),
-    dayjs(violation.decision?.violation?.startDate).format('MMM D, YYYY'),
+    dayjs(violation.decision?.startDate).format('MMM D, YYYY'),
   ));
 
-  if (!violation?.decision?.violation?.comments?.length) return;
+  if (!violation?.decision?.comments?.length) return;
 
-  violationSteps.push(...parseComments(violation.decision.violation.comments));
+  violationSteps.push(...parseComments(violation.decision.comments));
 
-  if (!violation.decision.violation.completionDate) {
+  if (!violation.decision.completionDate) {
     violationSteps[violationSteps.length - 1].complete = false;
     violationSteps[violationSteps.length - 1].active = false;
   }

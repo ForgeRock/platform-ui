@@ -374,7 +374,7 @@ export default {
     getViolationsCount() {
       let count = 0;
 
-      const targetFilter = getBasicFilter('AND', 'decision.violation.status', 'in-progress');
+      const targetFilter = getBasicFilter('AND', 'decision.status', 'in-progress');
       const params = { fields: 'id' };
 
       getViolations(targetFilter, params).then((resourceData) => {

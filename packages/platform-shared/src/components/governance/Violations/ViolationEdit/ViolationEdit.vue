@@ -200,18 +200,18 @@ const comment = ref('');
 const isLoading = ref(true);
 const tabIndex = ref(0);
 
-const item = computed(() => ({ rawData: { decision: { comments: violation?.value?.decision?.violation?.comments || [] } } }));
+const item = computed(() => ({ rawData: { decision: { comments: violation?.value?.decision?.comments || [] } } }));
 const hideActions = computed(() => {
-  if (!violation?.value?.decision?.violation?.phases?.length || props.isException) return true;
+  if (!violation?.value?.decision?.phases?.length || props.isException) return true;
   return false;
 });
 const phaseId = computed(() => {
-  if (!violation?.value?.decision?.violation?.phases?.length) return '';
-  return violation.value.decision.violation.phases[0].name;
+  if (!violation?.value?.decision?.phases?.length) return '';
+  return violation.value.decision.phases[0].name;
 });
 
 const actionPermissions = computed(() => {
-  let permissions = violation?.value?.decision?.violation?.actors?.active?.[0]?.permissions || null;
+  let permissions = violation?.value?.decision?.actors?.active?.[0]?.permissions || null;
   if (!permissions) {
     permissions = {
       allow: false,

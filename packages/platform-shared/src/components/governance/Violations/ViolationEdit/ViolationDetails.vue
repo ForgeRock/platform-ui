@@ -134,7 +134,7 @@ function setColumnData(violation) {
     givenName: violation.policyRule.policyRuleOwner.givenName,
     sn: violation.policyRule.policyRuleOwner.sn,
   };
-  columns.value.status.value = violation.decision.violation.status || blankValueIndicator;
+  columns.value.status.value = violation.decision.status || blankValueIndicator;
   columns.value.riskLevel.value = violation.policyRule.riskScore || 0;
   columns.value.mitigatingControl.value = violation.policyRule.mitigatingControl || blankValueIndicator;
   columns.value.controlUrl.value = violation.policyRule.documentationUrl || blankValueIndicator;
