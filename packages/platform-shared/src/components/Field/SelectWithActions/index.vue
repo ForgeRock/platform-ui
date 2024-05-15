@@ -14,6 +14,12 @@ of the MIT license. See the LICENSE file for details. -->
           :title="option.text"
           class="text-truncate">
           {{ option.text }}
+          <BBadge
+            v-if="option.badgeText"
+            variant="white"
+            class="ml-1 border border-darkened select-with-actions-badge">
+            {{ option.badgeText }}
+          </BBadge>
         </div>
         <!--
           Triggered on click, indicates user would like to view or edit this select list item
@@ -61,6 +67,12 @@ of the MIT license. See the LICENSE file for details. -->
           :title="option.text"
           class="text-truncate py-2 pl-3 pr-2">
           {{ option.text }}
+          <BBadge
+            v-if="option.badgeText"
+            variant="white"
+            class="ml-1 border border-darkened select-with-actions-badge">
+            {{ option.badgeText }}
+          </BBadge>
         </div>
         <!--
           Triggered on click, indicates user would like to view or edit this select list item
@@ -92,7 +104,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { BButton } from 'bootstrap-vue';
+import { BBadge, BButton } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInputDeprecated';
 
@@ -103,6 +115,7 @@ import FrSelectInput from '@forgerock/platform-shared/src/components/Field/Selec
 export default {
   name: 'SelectWithActions',
   components: {
+    BBadge,
     BButton,
     FrSelectInput,
     FrIcon,
@@ -193,5 +206,10 @@ export default {
   z-index: 10;
   background: $white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+}
+
+.select-with-actions-badge {
+  font-size: 12px;
+  font-weight: 400;
 }
 </style>

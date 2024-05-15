@@ -77,4 +77,33 @@ describe('SelectWithActions input', () => {
     expect(wrapper.vm.addLabelOrFallback).toBe('add');
     expect(wrapper.vm.editLabelOrFallback).toBe('edit');
   });
+
+  it('renders badges for options provided with badge text', () => {
+    const wrapper = mount(SelectWithActions, {
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+      },
+      props: {
+        ...defaultProps,
+        options: [
+          { text: 'a', value: 'ID_a', badgeText: 'badge_a' },
+          { text: 'b', value: 'ID_b' },
+        ],
+        value: ['ID_a'],
+      },
+    });
+
+    // Check the correct badge and number of badges are rendered
+    const badges = wrapper.findAll('.badge');
+    expect(badges.length).toBe(1);
+    expect(badges[0].text()).toBe('badge_a');
+
+    // Check the badge is rendered for the correct option
+    const options = wrapper.findAll('li[role="option"]');
+    expect(options.length).toBe(2);
+    expect(options[0].text()).toBe('a badge_aedit');
+    expect(options[1].text()).toBe('b edit');
+  });
 });
