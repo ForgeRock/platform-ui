@@ -24,26 +24,40 @@ of the MIT license. See the LICENSE file for details. -->
     </BButtonToolbar>
     <BCollapse v-model="showFilters">
       <BRow class="p-4 border-bottom">
-        <BCol lg="6">
-          <FrField
-            v-model="selectedRule"
-            @input="handleRuleChange"
-            @search-change="debouncedSearch"
-            class="mb-4"
-            label="Rule"
-            type="select"
-            :options="policyRuleOptions" />
-        </BCol>
-        <BCol lg="6">
-          <FrGovResourceSelect
-            v-model="selectedUser"
-            @input="handleUserChange"
-            class="mb-4"
-            name="requester"
-            resource-path="user"
-            :first-option="allUsersOption"
-            :initial-data="{ id: 'all' }"
-            :label="$t('common.user.user')" />
+        <template v-if="isAdmin">
+          <BCol lg="6">
+            <FrField
+              v-model="selectedRule"
+              @input="handleRuleChange"
+              @search-change="debouncedSearch"
+              class="mb-4"
+              label="Rule"
+              type="select"
+              :options="policyRuleOptions" />
+          </BCol>
+          <BCol lg="6">
+            <FrGovResourceSelect
+              v-model="selectedUser"
+              @input="handleUserChange"
+              class="mb-4"
+              name="requester"
+              resource-path="user"
+              :first-option="allUsersOption"
+              :initial-data="{ id: 'all' }"
+              :label="$t('common.user.user')" />
+          </BCol>
+        </template>
+        <BCol
+          v-else
+          lg="12">
+          <FrSearchInput
+            v-model="searchValue"
+            class="w-100 mb-4"
+            :class="{'fr-search-focus': searchFieldHasFocus}"
+            :placeholder="searchInputPlaceholder"
+            @search-input-blur="searchFieldHasFocus = false"
+            @search-input-focus="searchFieldHasFocus = true"
+            @input="debouncedTextSearch " />
         </BCol>
       </BRow>
     </BCollapse>
@@ -69,6 +83,7 @@ import {
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import i18n from '@/i18n';
 
 // Emits
@@ -84,6 +99,14 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  searchInputPlaceholder: {
+    type: String,
+    default: i18n.global.t('common.search'),
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // Data
@@ -92,6 +115,8 @@ const allUsersOption = ref({
   value: 'all',
 });
 const debouncedSearch = debounce((value) => emit('get-policy-rule-options', value), 350);
+const searchFieldHasFocus = ref(false);
+const searchValue = ref('');
 const selectedRule = ref('');
 const selectedUser = ref('');
 const showFilters = ref(false);
@@ -103,8 +128,11 @@ function emitFilter() {
   emit('input', {
     rule: selectedRule.value,
     user: selectedUser.value,
+    searchValue: searchValue.value,
   });
 }
+
+const debouncedTextSearch = debounce(emitFilter, 500);
 
 /**
  * Update the selected rule and emit new filter values

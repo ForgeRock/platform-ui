@@ -17,15 +17,19 @@ CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
 }));
 
 describe('ExceptionList', () => {
-  const props = {
+  const defaultProps = {
     policyRuleOptions: ['ruleOne'],
+    isAdmin: true,
   };
-  function mountComponent() {
+  function mountComponent(props = {}) {
     const wrapper = mount(ExceptionList, {
       global: {
         plugins: [i18n],
       },
-      props,
+      props: {
+        ...defaultProps,
+        ...props,
+      },
     });
     return wrapper;
   }
@@ -44,6 +48,21 @@ describe('ExceptionList', () => {
     expect(columns[4].text()).toBe('Expiration');
   });
 
+  it('shows exceptions in a list with correct columns if is enduser', async () => {
+    const wrapper = mountComponent({ isAdmin: false });
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const columns = table.findAll('[role=columnheader]');
+
+    expect(columns.length).toBe(6);
+    expect(columns[0].text()).toBe('User (Click to sort ascending)');
+    expect(columns[1].text()).toBe('Rule (Click to sort ascending)');
+    expect(columns[2].text()).toBe('Initial Violation');
+    expect(columns[3].text()).toBe('Latest Violation');
+    expect(columns[4].text()).toBe('Expiration');
+    expect(columns[5].classes()).toContain('w-100px');
+  });
+
   it('emits handle-search when filter is changed', async () => {
     const wrapper = mountComponent();
     await flushPromises();
@@ -51,6 +70,7 @@ describe('ExceptionList', () => {
     filter.vm.$emit('input', {
       rule: 'testRule',
       user: 'testUser',
+      searchValue: 'searchValue',
     });
     await flushPromises();
 
@@ -69,6 +89,27 @@ describe('ExceptionList', () => {
       {
         operator: 'EQUALS',
         operand: { targetName: 'user.userId', targetValue: 'testUser' },
+      },
+      {
+        operator: 'OR',
+        operand: [
+          {
+            operator: 'CONTAINS',
+            operand: { targetName: 'user.userName', targetValue: 'searchValue' },
+          },
+          {
+            operator: 'CONTAINS',
+            operand: { targetName: 'user.givenName', targetValue: 'searchValue' },
+          },
+          {
+            operator: 'CONTAINS',
+            operand: { targetName: 'user.sn', targetValue: 'searchValue' },
+          },
+          {
+            operator: 'CONTAINS',
+            operand: { targetName: 'policyRule.name', targetValue: 'searchValue' },
+          },
+        ],
       },
     ]);
   });

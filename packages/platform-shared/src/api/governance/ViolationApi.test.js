@@ -83,4 +83,35 @@ describe('ViolationsApi API', () => {
     expect(BaseApi.generateIgaApi).toHaveBeenCalled();
     expect(res).toEqual(data);
   });
+
+  it('should call allowException with correct url when payload has exceptionExpirationDate', async () => {
+    const payload = {
+      comment: 'testComment',
+      exceptionExpirationDate: '2024-12-17',
+    };
+    const res = await VioaltionApi.allowException('testId', 'testPhase', payload);
+    expect(post).toHaveBeenCalledWith('/governance/violation/testId/phases/testPhase/exception', payload);
+    expect(BaseApi.generateIgaApi).toHaveBeenCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('should call allowException with correct url when payload does not have exceptionExpirationDate', async () => {
+    const payload = { comment: 'testComment' };
+    const res = await VioaltionApi.allowException('testId', 'testPhase', payload);
+    expect(post).toHaveBeenCalledWith('/governance/violation/testId/phases/testPhase/allow', payload);
+    expect(BaseApi.generateIgaApi).toHaveBeenCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('should call revokeException with correct dataObject and url', async () => {
+    const dataObject = {
+      ids: ['test-id'],
+      comment: 'testComment',
+    };
+
+    const res = await VioaltionApi.revokeException(dataObject);
+    expect(post).toHaveBeenCalledWith('/governance/violation/cancel-exception', dataObject);
+    expect(BaseApi.generateIgaApi).toHaveBeenCalled();
+    expect(res).toEqual(data);
+  });
 });

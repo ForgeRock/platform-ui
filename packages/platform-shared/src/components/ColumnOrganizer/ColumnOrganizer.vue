@@ -146,8 +146,8 @@ const props = defineProps({
 });
 
 // data
-const activeColumnsList = ref(props.activeColumns);
-const availableColumnsList = ref(props.availableColumns);
+const activeColumnsList = ref(cloneDeep(props.activeColumns));
+const availableColumnsList = ref(cloneDeep(props.availableColumns));
 
 // watchers
 watch(() => props.availableColumns,

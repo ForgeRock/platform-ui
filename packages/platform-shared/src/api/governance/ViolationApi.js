@@ -66,3 +66,33 @@ export function forwardViolation(violationId, phaseId, actorId, permissions, com
   }];
   return generateIgaApi().post(`${violationUrl}/${violationId}/phases/${phaseId}/reassign`, { updatedActors, comment });
 }
+
+/**
+ * Allow an exception
+ * @param {String} violationId id of violation to forward
+ * @param {String} phaseId current phase of violation
+ * @param {Object} payload useful information for the request
+ * @returns {Promise}
+ */
+export function allowException(violationId, phaseId, payload) {
+  const { comment, exceptionExpirationDate } = payload;
+  const exceptionUrl = exceptionExpirationDate ? 'exception' : 'allow';
+  const dataObject = exceptionExpirationDate
+    ? {
+      exceptionExpirationDate,
+      comment,
+    }
+    : { comment };
+  return generateIgaApi().post(`${violationUrl}/${violationId}/phases/${phaseId}/${exceptionUrl}`, dataObject);
+}
+
+/**
+ * Revoke an exception
+ * @param {Object} dataObject info of the request
+ * @param {String[]} dataObject.ids ids to ve revoked
+ * @param {String} dataObject.comment comment of the revokation
+ * @returns {Promise}
+ */
+export function revokeException(dataObject) {
+  return generateIgaApi().post(`${violationUrl}/cancel-exception`, dataObject);
+}
