@@ -15,15 +15,23 @@ if [ -f $REMOTE_ENVIRONMENT_INFO_FILE ]; then
 
   exec 6<&-
 
-  echo "Remote environment info loaded from 'e2e/.remote-environment-info.txt':"
-  echo "Remote environment location: $remote_environment_location"
-  echo "Platform mode: $platform_mode"
-  echo "Username of the remote environment admin to test with: $remote_environment_admin_username"
-  echo "Password of the remote environment admin to test with: $remote_environment_admin_password"
-else
-  # Prompt user for remote environment info
-  echo "Remote environment info file not found"
+  # Ask the user if they want to use the data from the remote environment info file
+  read -p "Use info for $remote_environment_location stored in from 'e2e/.remote-environment-info.txt'? [Y/n]" remote_info_loaded
 
+  if [[ "$remote_info_loaded" =~ ^([nN])$ ]]
+  then
+    echo "Remote environment info from 'e2e/.remote-environment-info.txt' will not be used"
+  else
+    echo "Remote environment info loaded from 'e2e/.remote-environment-info.txt':"
+    echo "Remote environment location: $remote_environment_location"
+    echo "Platform mode: $platform_mode"
+    echo "Username of the remote environment admin to test with: $remote_environment_admin_username"
+    echo "Password of the remote environment admin to test with: $remote_environment_admin_password"
+  fi
+fi
+
+if [ ! -f $REMOTE_ENVIRONMENT_INFO_FILE ] || [[ "$remote_info_loaded" =~ ^([nN])$ ]]; then
+  # Prompt user for remote environment info
   echo "Please provide the information for accessing the remote environment to be tested"
   read -p "Remote environment location (eg. openam-my-tenant.forgeblocks.com): " remote_environment_location
   read -p "Platform mode? [Y/n]:" platform_mode
@@ -34,13 +42,17 @@ else
   read -p "Save these inputs in 'e2e/.remote-environment-info.txt' for subsequent test runs? [Y/n]" store_inputs
   if [[ "$store_inputs" =~ ^([nN])$ ]]
   then
-      echo "Remote environment informtion will not be stored"
+    echo "Remote environment informtion will not be stored"
   else
-      echo "Storing remote environment information"
-      echo $remote_environment_location >> $REMOTE_ENVIRONMENT_INFO_FILE
-      echo $platform_mode >> $REMOTE_ENVIRONMENT_INFO_FILE
-      echo $remote_environment_admin_username >> $REMOTE_ENVIRONMENT_INFO_FILE
-      echo $remote_environment_admin_password >> $REMOTE_ENVIRONMENT_INFO_FILE
+    # If an info file existed before, overwrite it
+    if [ -f $REMOTE_ENVIRONMENT_INFO_FILE ]; then
+      rm $REMOTE_ENVIRONMENT_INFO_FILE
+    fi 
+    echo "Storing remote environment information"
+    echo $remote_environment_location >> $REMOTE_ENVIRONMENT_INFO_FILE
+    echo $platform_mode >> $REMOTE_ENVIRONMENT_INFO_FILE
+    echo $remote_environment_admin_username >> $REMOTE_ENVIRONMENT_INFO_FILE
+    echo $remote_environment_admin_password >> $REMOTE_ENVIRONMENT_INFO_FILE
   fi
 fi
 
