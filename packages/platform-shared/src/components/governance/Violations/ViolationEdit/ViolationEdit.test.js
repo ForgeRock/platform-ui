@@ -77,16 +77,18 @@ const violation = {
 };
 
 describe('Violation Edit', () => {
-  function mountComponent(isException = false) {
+  const defaultProps = {
+    breadcrumbPath: '/back',
+    breadcrumbTitle: 'back',
+    isException: false,
+    isTesting: true,
+    isAdmin: true,
+  };
+  function mountComponent(props = {}) {
     const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
     useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
     setupTestPinia();
-    const props = {
-      breadcrumbPath: '/back',
-      breadcrumbTitle: 'back',
-      isException,
-      isTesting: true,
-    };
+
     const wrapper = mount(ViolationEdit, {
       global: {
         plugins: [i18n],
@@ -97,7 +99,10 @@ describe('Violation Edit', () => {
           },
         },
       },
-      props,
+      props: {
+        ...defaultProps,
+        ...props,
+      },
     });
     return wrapper;
   }
@@ -135,7 +140,7 @@ describe('Violation Edit', () => {
   });
 
   it('should hide the actions if it is an exception', async () => {
-    const wrapper = mountComponent(true);
+    const wrapper = mountComponent({ isException: true });
     await flushPromises();
 
     expect(wrapper.vm.hideActions).toBe(true);
@@ -152,7 +157,7 @@ describe('Violation Edit', () => {
     expect(forwardModalSpy).toHaveBeenCalledWith('violation-forward-modal');
   });
 
-  it('calls to forwrad a violation', async () => {
+  it('calls to forward a violation', async () => {
     const wrapper = mountComponent();
     const forwardSpy = jest.spyOn(ViolationApi, 'forwardViolation');
     await flushPromises();
@@ -164,5 +169,46 @@ describe('Violation Edit', () => {
       allow: false, comment: false, exception: false, reassign: false, remediate: false,
     },
     'testComment');
+  });
+
+  it('should show allow and revoke buttons when is not admin', async () => {
+    const wrapper = mountComponent({
+      isAdmin: false,
+    });
+    await flushPromises();
+
+    const buttons = wrapper.findAll('button');
+
+    expect(buttons[0].text()).toBe('checkAllow');
+    expect(buttons[1].text()).toBe('blockRevoke');
+    expect(buttons[2].text()).toBe('redoForward');
+  });
+
+  it('should not show allow and revoke buttons when is admin', async () => {
+    const wrapper = mountComponent();
+    await flushPromises();
+
+    const buttons = wrapper.findAll('button');
+
+    expect(buttons[0].text()).toBe('redoForward');
+  });
+
+  it('opens conflict modal if is admin', async () => {
+    const wrapper = mountComponent();
+    const forwardModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
+    await flushPromises();
+
+    wrapper.vm.openConflictModal();
+
+    expect(forwardModalSpy).toHaveBeenCalledWith('violation-conflicts-modal');
+  });
+
+  it('emits view-conflicts event if is not admin', async () => {
+    const wrapper = mountComponent({ isAdmin: false });
+    await flushPromises();
+
+    wrapper.vm.openConflictModal();
+
+    expect(wrapper.emitted('view-conflicts')).toBeTruthy();
   });
 });

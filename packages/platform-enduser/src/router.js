@@ -94,10 +94,20 @@ const router = createRouter({
     },
     {
       path: '/violations',
-      name: 'Violations',
-      component: () => import('@/views/governance/Violations/Violations.vue'),
       meta: { authenticate: true },
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
+      children: [
+        {
+          path: '',
+          name: 'Violations',
+          component: () => import('@/views/governance/Violations/Violations.vue'),
+        },
+        {
+          path: ':violationId',
+          name: 'ViolationEdit',
+          component: () => import('@/views/governance/Violations/ViolationEdit.vue'),
+        },
+      ],
     },
     {
       path: '/my-requests',
