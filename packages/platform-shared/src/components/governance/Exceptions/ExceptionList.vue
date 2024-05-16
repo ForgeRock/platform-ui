@@ -6,10 +6,12 @@ of the MIT license. See the LICENSE file for details. -->
   <BCard no-body>
     <FrExceptionToolbar
       v-model="filters"
+      :is-admin="isAdmin"
+      :policy-rule-options="policyRuleOptions"
+      :search-input-placeholder="searchInputPlaceholder"
       @get-policy-rule-options="$emit('get-policy-rule-options', $event)"
       @input="handleFilterChange"
-      @open-columns-modal="openColumnsModal"
-      :policy-rule-options="policyRuleOptions" />
+      @open-columns-modal="openColumnsModal" />
     <BTable
       @row-clicked="$emit('view-exception-details', $event)"
       @sort-changed="sortChanged"
@@ -61,6 +63,12 @@ of the MIT license. See the LICENSE file for details. -->
           {{ convertDate(item.expiration) }}
         </div>
       </template>
+      <template #cell(actions)="{ item }">
+        <FrExceptionActionsCell
+          :item="item"
+          @open-revoke-modal="openRevokeModal"
+          @open-exception-modal="openExceptionModal" />
+      </template>
     </BTable>
     <FrPagination
       v-if="tableRows?.length"
@@ -73,6 +81,13 @@ of the MIT license. See the LICENSE file for details. -->
       @update-columns="updateColumns"
       :active-columns="exceptionColumns"
       :available-columns="columnCategories" />
+    <FrExceptionModal
+      extend-exception
+      @action="extendException"
+      :violation="selectedItem" />
+    <FrRevokeExceptionModal
+      @revoke="revoke"
+      :violation-id="selectedItemId" />
   </BCard>
 </template>
 
@@ -90,13 +105,18 @@ import {
   groupBy,
 } from 'lodash';
 import dayjs from 'dayjs';
+import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrExceptionToolbar from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionToolbar';
+import FrExceptionActionsCell from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionActionsCell';
+import FrExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
+import FrRevokeExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/RevokeExceptionModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { allowException, revokeException } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import i18n from '@/i18n';
 
 // Composables
@@ -109,6 +129,10 @@ const emit = defineEmits([
 ]);
 
 const props = defineProps({
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
   isLoading: {
     type: Boolean,
     default: false,
@@ -116,6 +140,10 @@ const props = defineProps({
   policyRuleOptions: {
     type: Array,
     default: () => [],
+  },
+  searchInputPlaceholder: {
+    type: String,
+    default: i18n.global.t('common.search'),
   },
   tableRows: {
     type: Array,
@@ -185,6 +213,8 @@ const currentPage = ref(1);
 const exceptionColumns = ref(tableFields);
 const columnCategories = ref(categories);
 const pageSize = ref(10);
+const selectedItem = ref({});
+const selectedItemId = ref('');
 const sortBy = ref('created');
 const sortDesc = ref(true);
 
@@ -197,17 +227,30 @@ const filters = ref({
 const items = computed(() => {
   if (!props.tableRows?.length) return [];
   return props.tableRows.map((exception) => ({
+    comments: exception.decision?.violation?.comments,
     expiration: exception.decision?.violation?.events?.exception?.date,
     id: exception.id,
     initialViolation: exception.decision?.violation?.startDate,
     latestViolation: exception.stats?.latestDetectionTime,
+    phaseId: exception.decision?.violation?.phases[0]?.name,
     policyRule: exception.policyRule,
     user: exception.user,
   }));
 });
 
 // exception columns to show
-const exceptionColumnsToShow = computed(() => exceptionColumns.value.filter((col) => col.show));
+const exceptionColumnsToShow = computed(() => {
+  const filteredColumns = exceptionColumns.value.filter((col) => col.show);
+  return !props.isAdmin
+    ? filteredColumns.concat({
+      key: 'actions',
+      class: 'w-100px',
+      label: '',
+      sortable: false,
+      show: true,
+    })
+    : filteredColumns;
+});
 
 /**
  * Updates the columns of the list in their corresponding order
@@ -228,12 +271,35 @@ function openColumnsModal() {
 }
 
 /**
+ * Opens exception modal
+ * @param {Object} item selected item information
+ */
+function openExceptionModal(item) {
+  selectedItem.value = item;
+  bvModal.value.show('ExceptionModal');
+}
+
+/**
+ * Opens revoke modal
+ * @param {String} itemId selected item ID
+ */
+function openRevokeModal(itemId) {
+  selectedItemId.value = itemId;
+  bvModal.value.show('RevokeExceptionModal');
+}
+
+/**
  * Convert date into user friendly format
  * @param {String} date date string
  * @returns {String} user friendly date string
  */
 function convertDate(date) {
-  return date ? dayjs(date).format('MMM D, YYYY') : blankValueIndicator;
+  const utcOffset = dayjs().utcOffset();
+  const dayjsDate = dayjs(date);
+
+  // Subtract the local offset from the current date
+  const dateWithoutOffset = dayjsDate.subtract(utcOffset, 'minute');
+  return date ? dateWithoutOffset.format('MMM D, YYYY') : blankValueIndicator;
 }
 
 /**
@@ -253,9 +319,21 @@ function getTargetFilter(targetFilter) {
     filterPayload.operand.push(getBasicFilter('EQUALS', 'policyRule.id', targetFilter.rule));
   }
 
-  if (targetFilter.user !== 'managed/user/all') {
+  if (targetFilter.user && targetFilter.user !== 'managed/user/all') {
     const id = targetFilter.user.split('/').pop();
     filterPayload.operand.push(getBasicFilter('EQUALS', 'user.userId', id));
+  }
+
+  if (targetFilter.searchValue) {
+    filterPayload.operand.push({
+      operator: 'OR',
+      operand: [
+        getBasicFilter('CONTAINS', 'user.userName', targetFilter.searchValue),
+        getBasicFilter('CONTAINS', 'user.givenName', targetFilter.searchValue),
+        getBasicFilter('CONTAINS', 'user.sn', targetFilter.searchValue),
+        getBasicFilter('CONTAINS', 'policyRule.name', targetFilter.searchValue),
+      ],
+    });
   }
 
   return filterPayload;
@@ -323,6 +401,41 @@ function sortChanged(sortContext) {
 function updatePageSize(newPageSize) {
   pageSize.value = newPageSize;
   getData(filters.value);
+}
+
+/**
+ * Update the page size and call to get updated data
+ * @param {Object} actionObject Object with call data
+ * @param {String} actionObject.violationId violation id
+ * @param {String} actionObject.phaseId phase id
+ * @param {Object} payload Request payload
+ */
+async function extendException({ violationId, phaseId, payload }) {
+  try {
+    await allowException(violationId, phaseId, payload);
+    displayNotification('success', i18n.global.t('governance.violations.successExtendingException'));
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.violations.errorExtendingException'));
+  } finally {
+    getData(filters.value);
+  }
+}
+
+/**
+ * Update the page size and call to get updated data
+ * @param {Object} dataObject info of the request
+ * @param {String[]} dataObject.ids ids to ve revoked
+ * @param {String} dataObject.comment comment of the revokation
+ */
+async function revoke(revokeObject) {
+  try {
+    await revokeException(revokeObject);
+    displayNotification('success', i18n.global.t('governance.violations.successRevokingException'));
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.violations.errorRevokingException'));
+  } finally {
+    getData(filters.value);
+  }
 }
 
 getData(filters.value);

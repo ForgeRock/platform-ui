@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
         <ViolationsTab />
       </BTab>
       <BTab :title="$t('governance.violations.tabs.exceptions')">
-        Exceptions
+        <ExceptionsTab />
       </BTab>
     </BTabs>
   </BContainer>
@@ -28,6 +28,7 @@ import {
   BTabs,
 } from 'bootstrap-vue';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import ExceptionsTab from './ExceptionsTab';
 import ViolationsTab from './ViolationsTab';
 
 /**
