@@ -96,7 +96,7 @@ of the MIT license. See the LICENSE file for details. -->
             </BDropdownItem>
             <template v-if="!isAdmin">
               <BDropdownDivider />
-              <BDropdownItem @click="() => {}">
+              <BDropdownItem @click="$emit('viewViolationDetails', item)">
                 <FrIcon
                   icon-class="mr-2"
                   name="list_alt">

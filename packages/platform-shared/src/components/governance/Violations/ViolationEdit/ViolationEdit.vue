@@ -17,6 +17,28 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         v-if="!hideActions"
         class="mb-4">
+        <template v-if="!isAdmin">
+          <BButton
+            @click="() => {}"
+            class="mr-1"
+            variant="outline-secondary">
+            <FrIcon
+              icon-class="mr-2 text-success"
+              name="check">
+              {{ $t('common.allow') }}
+            </FrIcon>
+          </BButton>
+          <BButton
+            @click="() => {}"
+            class="mr-1"
+            variant="outline-secondary">
+            <FrIcon
+              icon-class="mr-2 text-danger"
+              name="block">
+              {{ $t('common.revoke') }}
+            </FrIcon>
+          </BButton>
+        </template>
         <BButton
           @click="openForwardModal"
           class="mr-1"
@@ -46,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
             </BTab>
             <BTab :title="$t('common.activity')">
               <FrViolationActivity
-                :violation="violation"/>
+                :violation="violation" />
             </BTab>
             <BTab :title="$t('common.comments')">
               <FrComments
@@ -155,7 +177,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+// Emits
+const emit = defineEmits(['view-conflicts']);
 
 // data
 const { violationId } = route.params;
@@ -248,7 +277,11 @@ function openForwardModal() {
  * Open the conflict modal
  */
 function openConflictModal() {
-  bvModal.value.show('violation-conflicts-modal');
+  if (props.isAdmin) {
+    bvModal.value.show('violation-conflicts-modal');
+  } else {
+    emit('view-conflicts');
+  }
 }
 
 onMounted(async () => {

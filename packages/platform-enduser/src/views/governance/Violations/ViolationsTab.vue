@@ -3,19 +3,21 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrViolationList
+  <ViolationList
     :table-rows="violations"
     :total-row-count="violationsCount"
     :is-loading="isLoadingViolations"
     :search-input-placeholder="$t('governance.violations.searchViolations')"
-    @handle-search="getViolations" />
+    @handle-search="getViolations"
+    @view-violation-details="viewViolationDetails" />
 </template>
 
 <script setup>
-import FrViolationList from '@forgerock/platform-shared/src/components/governance/Violations/ViolationList';
+import ViolationList from '@forgerock/platform-shared/src/components/governance/Violations/ViolationList';
 import { ref } from 'vue';
 import { getViolationListEndUser } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { useRouter } from 'vue-router';
 import i18n from '@/i18n';
 
 /**
@@ -25,6 +27,7 @@ import i18n from '@/i18n';
 const violations = ref([]);
 const violationsCount = ref(0);
 const isLoadingViolations = ref(false);
+const router = useRouter();
 
 /**
  * Gets the violations for the policy
@@ -43,5 +46,16 @@ async function getViolations(searchParams, filterPayload) {
   } finally {
     isLoadingViolations.value = false;
   }
+}
+
+/**
+ * View the violation details
+ * @param {Object} violation - The violation to view details
+ */
+function viewViolationDetails(violation) {
+  router.push({
+    name: 'ViolationEdit',
+    params: { violationId: violation.id },
+  });
 }
 </script>

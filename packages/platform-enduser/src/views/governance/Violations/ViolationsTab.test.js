@@ -5,17 +5,18 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { flushPromises, shallowMount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ViolationsTab from './ViolationsTab';
 import i18n from '@/i18n';
+import router from '@/router';
 
 describe('ViolationsTab', () => {
   function setup() {
-    return shallowMount(ViolationsTab, {
+    return mount(ViolationsTab, {
       global: {
-        plugins: [i18n],
+        plugins: [i18n, router],
       },
     });
   }
@@ -91,7 +92,8 @@ describe('ViolationsTab', () => {
     ViolationApi.getViolationListEndUser = jest.fn().mockImplementation(() => Promise.resolve({ data }));
 
     const wrapper = setup();
-    wrapper.vm.getViolations();
+    const violationListComponent = wrapper.findComponent({ name: 'ViolationList' });
+    violationListComponent.vm.$emit('handle-search');
     await flushPromises();
 
     expect(wrapper.vm.violations).toEqual(data.result);
@@ -105,13 +107,28 @@ describe('ViolationsTab', () => {
     const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage').mockImplementation(() => {});
 
     const wrapper = setup();
-
-    wrapper.vm.getViolations();
+    const violationListComponent = wrapper.findComponent({ name: 'ViolationList' });
+    violationListComponent.vm.$emit('handle-search');
     await flushPromises();
 
     expect(wrapper.vm.violations).toEqual([]);
     expect(wrapper.vm.violationsCount).toBe(0);
     expect(wrapper.vm.isLoadingViolations).toBe(false);
     expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.compliance.policies.edit.errorGetViolations');
+  });
+
+  it('should navigate to the violation details page', async () => {
+    const wrapper = setup();
+    const routerPushSpy = jest.spyOn(router, 'push').mockImplementation(() => {});
+    const violationListComponent = wrapper.findComponent({ name: 'ViolationList' });
+    violationListComponent.vm.$emit('view-violation-details', { id: '002bd665-3946-465c-b444-de470fa04254' });
+    await flushPromises();
+
+    expect(routerPushSpy).toHaveBeenCalledWith({
+      name: 'ViolationEdit',
+      params: {
+        violationId: '002bd665-3946-465c-b444-de470fa04254',
+      },
+    });
   });
 });

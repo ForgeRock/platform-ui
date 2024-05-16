@@ -201,4 +201,75 @@ describe('ViolationList', () => {
     expect(items.length).toBe(2);
     expect(items[1].text()).toBe('list_altView Details');
   });
+
+  it('emits viewViolationDetails event when a row is clicked', async () => {
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [
+        {
+          decision: {
+            violation: {
+              status: 'in-progress',
+              startDate: '2024-05-13T23:12:21+00:00',
+            },
+          },
+          policyRule: {
+            name: 'NoCustomerSupport',
+          },
+          user: {
+            cn: 'Opal Millions',
+            givenName: 'Opal',
+            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+            mail: 'Opal@IGATestQA.onmicrosoft.com',
+            sn: 'Millions',
+            userName: 'Opal@IGATestQA.onmicrosoft.com',
+          },
+          id: '002bd665-3946-465c-b444-de470fa04254',
+        },
+      ],
+    });
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const rows = table.findAll('[role="row"]');
+    const row = rows[1];
+    await row.trigger('click');
+
+    expect(wrapper.emitted('viewViolationDetails')[0][0].id).toBe('002bd665-3946-465c-b444-de470fa04254');
+  });
+
+  it('emits viewViolationDetails event when view details button is clicked', async () => {
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [
+        {
+          decision: {
+            violation: {
+              status: 'in-progress',
+              startDate: '2024-05-13T23:12:21+00:00',
+            },
+          },
+          policyRule: {
+            name: 'NoCustomerSupport',
+          },
+          user: {
+            cn: 'Opal Millions',
+            givenName: 'Opal',
+            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+            mail: 'Opal@IGATestQA.onmicrosoft.com',
+            sn: 'Millions',
+            userName: 'Opal@IGATestQA.onmicrosoft.com',
+          },
+          id: '002bd665-3946-465c-b444-de470fa04254',
+        },
+      ],
+    });
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const rows = table.findAll('[role="row"]');
+    const row = rows[1];
+    const dropDownItems = row.findAll('.dropdown-item');
+    await dropDownItems[1].trigger('click');
+
+    expect(wrapper.emitted('viewViolationDetails')[0][0].id).toBe('002bd665-3946-465c-b444-de470fa04254');
+  });
 });
