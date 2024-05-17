@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-4">
         <template v-if="!isAdmin">
           <BButton
-            @click="() => {}"
+            @click="bvModal.show('ExceptionModal')"
             class="mr-1"
             variant="outline-secondary">
             <FrIcon
@@ -115,6 +115,11 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Conflict modal -->
     <FrViolationConflictModal
       :violation="violation" />
+
+    <ExceptionModal
+      hide-details
+      :violation="{...violation, phaseId}"
+      @action="extendException" />
   </BContainer>
 </template>
 
@@ -140,6 +145,7 @@ import {
   commentViolation,
   forwardViolation,
   getViolation,
+  allowException,
 } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
@@ -147,6 +153,7 @@ import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrComments from '@forgerock/platform-shared/src/components/governance/RequestDetails/Comments';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import ExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
 import FrViolationActivity from './ViolationActivity';
 import FrViolationConflictModal from '../ViolationConflictModal';
 import FrViolationDetails from './ViolationDetails';
@@ -281,6 +288,23 @@ function openConflictModal() {
     bvModal.value.show('violation-conflicts-modal');
   } else {
     emit('view-conflicts');
+  }
+}
+
+/**
+ * Update the page size and call to get updated data
+ * @param {Object} actionObject Object with call data
+ * @param {String} actionObject.violationId violation id
+ * @param {String} actionObject.phaseId phase id
+ * @param {Object} payload Request payload
+ */
+async function extendException({ violationId: exceptionViolationId, phaseId: exceptionPhaseId, payload }) {
+  try {
+    await allowException(exceptionViolationId, exceptionPhaseId, payload);
+    displayNotification('success', i18n.global.t('governance.violations.successAllowingException'));
+    router.push({ path: props.breadcrumbPath });
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.violations.errorAllowingException'));
   }
 }
 

@@ -7,9 +7,13 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
+import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ViolationList from './ViolationList';
 import i18n from '@/i18n';
 
+jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
   data: {
     result: [{ givenName: 'firstName', sn: 'lastName', id: 'userId' }],
@@ -22,6 +26,8 @@ describe('ViolationList', () => {
     isAdmin: true,
   };
   function mountComponent(props = {}) {
+    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
+    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
     const wrapper = mount(ViolationList, {
       global: {
         plugins: [i18n],
@@ -139,6 +145,11 @@ describe('ViolationList', () => {
             violation: {
               status: 'in-progress',
               startDate: '2024-05-13T23:12:21+00:00',
+              phases: [
+                {
+                  name: 'testPhase',
+                },
+              ],
             },
           },
           policyRule: {
@@ -175,6 +186,11 @@ describe('ViolationList', () => {
             violation: {
               status: 'in-progress',
               startDate: '2024-05-13T23:12:21+00:00',
+              phases: [
+                {
+                  name: 'testPhase',
+                },
+              ],
             },
           },
           policyRule: {
@@ -211,6 +227,11 @@ describe('ViolationList', () => {
             violation: {
               status: 'in-progress',
               startDate: '2024-05-13T23:12:21+00:00',
+              phases: [
+                {
+                  name: 'testPhase',
+                },
+              ],
             },
           },
           policyRule: {
@@ -246,6 +267,11 @@ describe('ViolationList', () => {
             violation: {
               status: 'in-progress',
               startDate: '2024-05-13T23:12:21+00:00',
+              phases: [
+                {
+                  name: 'testPhase',
+                },
+              ],
             },
           },
           policyRule: {
@@ -271,5 +297,149 @@ describe('ViolationList', () => {
     await dropDownItems[1].trigger('click');
 
     expect(wrapper.emitted('viewViolationDetails')[0][0].id).toBe('002bd665-3946-465c-b444-de470fa04254');
+  });
+
+  it('should open the allow exception modal when the allow button for a violation on the list is clicked', async () => {
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [
+        {
+          decision: {
+            violation: {
+              status: 'in-progress',
+              startDate: '2024-05-13T23:12:21+00:00',
+              phases: [
+                {
+                  name: 'testPhase',
+                },
+              ],
+            },
+          },
+          policyRule: {
+            name: 'NoCustomerSupport',
+          },
+          user: {
+            cn: 'Opal Millions',
+            givenName: 'Opal',
+            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+            mail: 'Opal@IGATestQA.onmicrosoft.com',
+            sn: 'Millions',
+            userName: 'Opal@IGATestQA.onmicrosoft.com',
+          },
+          id: '002bd665-3946-465c-b444-de470fa04254',
+        },
+      ],
+    });
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const rows = table.findAll('[role="row"]');
+    const row = rows[1];
+    const buttons = row.findAll('button');
+    await buttons[0].trigger('click');
+
+    expect(wrapper.vm.selectedViolation).toEqual({
+      created: '2024-05-13T23:12:21+00:00',
+      id: '002bd665-3946-465c-b444-de470fa04254',
+      phaseId: 'testPhase',
+      policyRule: {
+        name: 'NoCustomerSupport',
+      },
+      rawData: {
+        decision: {
+          violation: {
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
+            startDate: '2024-05-13T23:12:21+00:00',
+            status: 'in-progress',
+          },
+        },
+        id: '002bd665-3946-465c-b444-de470fa04254',
+        policyRule: {
+          name: 'NoCustomerSupport',
+        },
+        user: {
+          cn: 'Opal Millions',
+          givenName: 'Opal',
+          id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+          mail: 'Opal@IGATestQA.onmicrosoft.com',
+          sn: 'Millions',
+          userName: 'Opal@IGATestQA.onmicrosoft.com',
+        },
+      },
+      user: {
+        cn: 'Opal Millions',
+        givenName: 'Opal',
+        id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+        mail: 'Opal@IGATestQA.onmicrosoft.com',
+        sn: 'Millions',
+        userName: 'Opal@IGATestQA.onmicrosoft.com',
+      },
+    });
+    expect(wrapper.vm.bvModal.show).toHaveBeenCalledWith('ExceptionModal');
+  });
+
+  it('should extend exception when the exception modal emits action event', async () => {
+    ViolationApi.allowException = jest.fn().mockReturnValue(Promise.resolve());
+    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [],
+    });
+    await flushPromises();
+
+    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    exceptionModal.vm.$emit('action', {
+      violationId: '002bd665-3946-465c-b444-de470fa04254',
+      phaseId: 'testPhase',
+      payload: 'test',
+    });
+    await flushPromises();
+
+    expect(ViolationApi.allowException).toHaveBeenCalledWith('002bd665-3946-465c-b444-de470fa04254', 'testPhase', 'test');
+    expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
+    expect(wrapper.emitted('handle-search')).toBeTruthy();
+  });
+
+  it('should show error message when the exception modal emits action event and the api call fails', async () => {
+    const error = new Error('ERROR');
+    ViolationApi.allowException = jest.fn().mockImplementation(() => Promise.reject(error));
+    const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage').mockImplementation(() => {});
+
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [],
+    });
+    await flushPromises();
+
+    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    exceptionModal.vm.$emit('action', {
+      violationId: '002bd665-3946-465c-b444-de470fa04254',
+      phaseId: 'testPhase',
+      payload: 'test',
+    });
+    await flushPromises();
+
+    expect(ViolationApi.allowException).toHaveBeenCalledWith('002bd665-3946-465c-b444-de470fa04254', 'testPhase', 'test');
+    expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error allowing the exception');
+  });
+
+  it('should emit viewViolationDetails event when the exception modal emits view-violation-details', async () => {
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [],
+    });
+    await flushPromises();
+
+    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    exceptionModal.vm.$emit('view-violation-details', {
+      id: '002bd665-3946-465c-b444-de470fa04254',
+    });
+    await flushPromises();
+
+    expect(wrapper.emitted('viewViolationDetails')).toBeTruthy();
   });
 });
