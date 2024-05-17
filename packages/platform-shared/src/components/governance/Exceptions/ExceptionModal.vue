@@ -13,7 +13,9 @@ of the MIT license. See the LICENSE file for details. -->
     :static="isTesting"
     :title="componentComputed.title"
     @ok="exceptionAction">
-    <BCard class="shadow-none border-0 bg-light mb-4">
+    <BCard
+      v-if="!hideDetails"
+      class="shadow-none border-0 bg-light mb-4">
       <small class="mb-1">
         {{ $t('governance.violations.ruleViolated') }}
       </small>
@@ -112,6 +114,10 @@ const props = defineProps({
   violation: {
     type: Object,
     required: true,
+  },
+  hideDetails: {
+    type: Boolean,
+    default: false,
   },
 });
 

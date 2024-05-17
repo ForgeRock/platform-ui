@@ -11,6 +11,7 @@ import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/Vio
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ViolationEdit from './ViolationEdit';
 import i18n from '@/i18n';
 
@@ -210,5 +211,38 @@ describe('Violation Edit', () => {
     wrapper.vm.openConflictModal();
 
     expect(wrapper.emitted('view-conflicts')).toBeTruthy();
+  });
+
+  it('should allow exception and navigate to violations list when the allow exception modal emits action event', async () => {
+    ViolationApi.allowException = jest.fn().mockImplementation(() => Promise.resolve());
+    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+
+    const wrapper = mountComponent();
+    await flushPromises();
+    const routerSpy = jest.spyOn(wrapper.vm.router, 'push').mockImplementation(() => {});
+
+    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    exceptionModal.vm.$emit('action', 'allow');
+    await flushPromises();
+
+    expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
+    expect(routerSpy).toHaveBeenCalledWith({ path: '/back' });
+  });
+
+  it('should show error message when the allow exception api call fails', async () => {
+    const error = new Error('ERROR');
+    ViolationApi.allowException = jest.fn().mockImplementation(() => Promise.reject(error));
+    const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage').mockImplementation(() => {});
+
+    const wrapper = mountComponent();
+    await flushPromises();
+    const routerSpy = jest.spyOn(wrapper.vm.router, 'push').mockImplementation(() => {});
+
+    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    exceptionModal.vm.$emit('action', 'allow');
+    await flushPromises();
+
+    expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error allowing the exception');
+    expect(routerSpy).not.toHaveBeenCalled();
   });
 });

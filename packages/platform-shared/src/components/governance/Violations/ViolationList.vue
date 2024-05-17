@@ -56,7 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="d-flex justify-content-end">
           <template v-if="!isAdmin">
             <BButton
-              @click="() => {}"
+              @click="openExceptionModal(item)"
               class="mr-1"
               variant="outline-secondary"
               size="sm">
@@ -119,6 +119,10 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Forward Modal -->
     <FrViolationForwardModal
       @forward-item="forwardItem" />
+    <ExceptionModal
+      :violation="selectedViolation"
+      @action="extendException"
+      @view-violation-details="$emit('viewViolationDetails', selectedViolation)" />
   </BCard>
 </template>
 
@@ -136,7 +140,7 @@ import {
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { forwardViolation } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
+import { forwardViolation, allowException } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -144,6 +148,7 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrViolationToolbar from '@forgerock/platform-shared/src/components/governance/Violations/ViolationToolbar';
 import FrViolationForwardModal from '@forgerock/platform-shared/src/components/governance/Violations/ViolationForwardModal';
+import ExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
 import i18n from '@/i18n';
 
 // composables
@@ -183,6 +188,7 @@ const pageSize = ref(10);
 const sortBy = ref('created');
 const sortDesc = ref(true);
 const itemToForward = ref({});
+const selectedViolation = ref({});
 
 const filters = ref({
   status: 'pending',
@@ -229,6 +235,7 @@ const items = computed(() => {
       policyRule: violation.policyRule,
       created,
       id: violation.id,
+      phaseId: violation.decision?.violation?.phases[0]?.name,
       rawData: violation,
     };
   });
@@ -397,6 +404,32 @@ function sortChanged(sortContext) {
 function updatePageSize(newPageSize) {
   pageSize.value = newPageSize;
   getData(filters.value);
+}
+
+/**
+ * Opens exception modal
+ * @param {Object} item selected item information
+ */
+function openExceptionModal(item) {
+  selectedViolation.value = item;
+  bvModal.value.show('ExceptionModal');
+}
+
+/**
+ * Update the page size and call to get updated data
+ * @param {Object} actionObject Object with call data
+ * @param {String} actionObject.violationId violation id
+ * @param {String} actionObject.phaseId phase id
+ * @param {Object} payload Request payload
+ */
+async function extendException({ violationId, phaseId, payload }) {
+  try {
+    await allowException(violationId, phaseId, payload);
+    displayNotification('success', i18n.global.t('governance.violations.successAllowingException'));
+    getData(filters.value);
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.violations.errorAllowingException'));
+  }
 }
 
 getData(filters.value);
