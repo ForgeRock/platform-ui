@@ -1,10 +1,10 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BFormGroup
-    :label="uiSchema.label"
+    :label="labelTranslation"
     class="pb-1 mb-4">
     <BFormRadioGroup
       v-if="uiSchema.format && uiSchema.format === 'buttons'"
@@ -22,12 +22,12 @@ of the MIT license. See the LICENSE file for details. -->
       text-field="text" />
     <small
       v-if="uiSchema.isHtml"
-      v-html="uiSchema.description"
+      v-html="descriptionTranslation"
       class="form-text text-muted" />
     <small
       v-else
       class="form-text text-muted">
-      {{ uiSchema.description }}
+      {{ descriptionTranslation }}
     </small>
   </BFormGroup>
 </template>
@@ -37,6 +37,7 @@ import {
   BFormGroup,
   BFormRadioGroup,
 } from 'bootstrap-vue';
+import { getTranslation } from '@forgerock/platform-shared/src/utils/translations';
 
 export default {
   name: 'RadioDisplay',
@@ -73,6 +74,12 @@ export default {
           value: newValue,
         });
       },
+    },
+    descriptionTranslation() {
+      return getTranslation(this.uiSchema.description);
+    },
+    labelTranslation() {
+      return getTranslation(this.uiSchema.label);
     },
   },
 };

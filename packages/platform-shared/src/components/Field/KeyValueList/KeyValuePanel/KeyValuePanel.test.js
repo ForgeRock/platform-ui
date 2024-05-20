@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -21,9 +21,7 @@ describe('KeyValuePanel', () => {
   function setup(props) {
     wrapper = mount(KeyValuePanel, {
       global: {
-        mocks: {
-          $t: (text) => text,
-        },
+        plugins: [i18n],
       },
       props: {
         value: {
@@ -52,8 +50,8 @@ describe('KeyValuePanel', () => {
 
   it('Falls back to default labels when no labels in value prop', () => {
     setup();
-    expect(wrapper.find('label').text()).toBe('common.key');
-    expect(wrapper.find('textarea').attributes('placeholder')).toBe('common.value');
+    expect(wrapper.find('label').text()).toBe('Key');
+    expect(wrapper.find('textarea').attributes('placeholder')).toBe('Value');
   });
 
   it('Will have a select with options when keyOptions prop is provided', async () => {
@@ -84,7 +82,7 @@ describe('KeyValuePanel', () => {
     });
     await flushPromises();
 
-    await findByText(wrapper, 'button', 'common.done').trigger('click');
+    await findByText(wrapper, 'button', 'Done').trigger('click');
     await flushPromises();
 
     expect(wrapper.emitted('save-key-value')).toBeTruthy();

@@ -11,6 +11,7 @@ import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { mount, flushPromises } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
+import i18n from '@/i18n';
 import DirectReportDetail from './index';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
 
@@ -31,10 +32,8 @@ describe('DirectReportDetail', () => {
     setupTestPinia({ user: { userId: 'testId' } });
     return mount(DirectReportDetail, {
       global: {
-        plugins: [Notifications],
+        plugins: [Notifications, i18n],
         mocks: {
-          $t: (t) => t,
-          $tc: (t) => t,
           $route: {
             name: 'DirectReportDetail',
             params: {
@@ -90,7 +89,7 @@ describe('DirectReportDetail', () => {
       const showErrorSpy = jest.spyOn(wrapper.vm, 'displayNotification');
       await flushPromises();
       expect(showErrorSpy).toHaveBeenCalledTimes(1);
-      expect(showErrorSpy).toBeCalledWith('danger', 'governance.directReports.errorGettingDirectReportUserInfo');
+      expect(showErrorSpy).toBeCalledWith('danger', 'Error getting direct report user information.');
     });
   });
 });
