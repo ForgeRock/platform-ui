@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -15,21 +15,23 @@ of the MIT license. See the LICENSE file for details. -->
     <label
       :for="`checkbox-${path}`"
       class="custom-control-label">
-      {{ uiSchema.label }}
+      {{ labelTranslation }}
       <small
         v-if="uiSchema.isHtml"
-        v-html="uiSchema.description"
+        v-html="descriptionTranslation"
         class="form-text text-muted" />
       <small
         v-else
         class="form-text text-muted">
-        {{ uiSchema.description }}
+        {{ descriptionTranslation }}
       </small>
     </label>
   </div>
 </template>
 
 <script>
+import { getTranslation } from '@forgerock/platform-shared/src/utils/translations';
+
 export default {
   name: 'BooleanDisplay',
   props: {
@@ -61,6 +63,12 @@ export default {
           value: newValue,
         });
       },
+    },
+    descriptionTranslation() {
+      return getTranslation(this.uiSchema.description);
+    },
+    labelTranslation() {
+      return getTranslation(this.uiSchema.label);
     },
   },
 };

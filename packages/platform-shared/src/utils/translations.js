@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import i18n from '@forgerock/platform-shared/src/i18n';
+import i18n from '@/i18n';
 
 const overridePrefix = 'overrides';
 
@@ -19,6 +19,7 @@ const overridePrefix = 'overrides';
 export function translationExists(path) {
   return i18n.global.t(path) !== path;
 }
+
 /**
  * Remove non alphanumeric characters from string
  * to get a valid i18n translation key
@@ -30,6 +31,7 @@ export function toTranslationKey(text) {
   const key = text.replace(/[\W_]/g, '');
   return key;
 }
+
 /**
   * Get the string value from the provided locale or fallback if provided
   * @param {string|object} data object containing locale codes or just a string
@@ -54,14 +56,14 @@ export function getLocalizedString(data, locale, fallbackLocale) {
 
   // We have a fallbackLocale and that locale is a string, and is part of the object
   if (fallbackLocale
-        && !Array.isArray(fallbackLocale)
-        && Object.keys(data).includes(fallbackLocale)) {
+    && !Array.isArray(fallbackLocale)
+    && Object.keys(data).includes(fallbackLocale)) {
     return data[fallbackLocale];
   }
 
   // We have a fallbackLocale and that locale is an array, and is part of the object
   if (fallbackLocale
-        && Array.isArray(fallbackLocale)) {
+    && Array.isArray(fallbackLocale)) {
     const arrayLocale = fallbackLocale.find((item) => Object.keys(data).includes(item));
     if (arrayLocale) {
       return data[arrayLocale];
@@ -71,6 +73,18 @@ export function getLocalizedString(data, locale, fallbackLocale) {
   // Finally... just use the first index
   return data[Object.keys(data)[0]];
 }
+
+/**
+ * Check if a given string is a valid translation key
+ *
+ * @param {String} text string to check if it is a valid translation key
+ * @returns {Boolean} if the string is a valid translation key
+ */
+export function isTranslationKey(text) {
+  // Translation keys can only contain alphanumeric characters and periods
+  return /^[a-zA-Z0-9.]+$/.test(text);
+}
+
 /**
  * Attempt to get a translation for a given string.
  * If a translation exists, return that. Else return the string.
@@ -88,6 +102,11 @@ export function getTranslation(text) {
     // handle an array of strings
     if (Array.isArray(text)) {
       return text.map((x) => (getTranslation(x)));
+    }
+
+    // check if the text is a valid translation key with an entry in i18n
+    if (isTranslationKey(text) && translationExists(text)) {
+      return i18n.global.t(text);
     }
 
     // append the translationPrefix because overrides are not stored at the root level

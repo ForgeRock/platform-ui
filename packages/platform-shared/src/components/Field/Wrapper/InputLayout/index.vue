@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
         <slot :label-height="labelHeight" />
         <label
           v-if="label && isHtml"
-          v-html="label"
+          v-html="labelTranslation"
           ref="inputLabel"
           :id="labelId"
           :for="id"
@@ -33,7 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="form-label-group-input">
         <label
           v-if="label && isHtml"
-          v-html="label"
+          v-html="labelTranslation"
           :id="labelId"
           :for="id"
           class="pe-none overflow-hidden text-nowrap full-width" />
@@ -81,7 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
       <small
         v-if="isHtml"
         :id="`${id}_helpText`"
-        v-html="description"
+        v-html="descriptionTranslation"
         class="form-text text-muted" />
       <small
         v-else
@@ -94,7 +94,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 <script>
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
-import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { getTranslation } from '@forgerock/platform-shared/src/utils/translations';
 // eslint-disable-next-line import/extensions
 import { useElementSize } from '@vueuse/core';
 import { ref } from 'vue';
@@ -104,9 +104,6 @@ import { ref } from 'vue';
  */
 export default {
   name: 'InputLayout',
-  mixins: [
-    TranslationMixin,
-  ],
   components: {
     FrValidationError,
   },
@@ -205,10 +202,10 @@ export default {
   },
   computed: {
     labelTranslation() {
-      return this.isHtml ? undefined : this.getTranslation(this.label);
+      return getTranslation(this.label);
     },
     descriptionTranslation() {
-      return this.isHtml ? undefined : this.getTranslation(this.description);
+      return getTranslation(this.description);
     },
   },
 };

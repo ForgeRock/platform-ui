@@ -1061,6 +1061,7 @@
       "Agent": "Agent",
       "applicationIntegration": "Application Integration",
       "applicationDetails": "Application Details",
+      "authoritativeDescription": "Make this application an authoritative source of identity data. <a target='_blank' href=\"https://backstage.forgerock.com/docs/idcloud/latest/app-management/applications.html#target_and_authoritative_applications\">Learn more</a>",
       "Create": "Create",
       "defaultModalTitle": "Browse App Catalog",
       "Delete": "Delete",
