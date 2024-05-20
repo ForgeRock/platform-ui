@@ -28,14 +28,24 @@ of the MIT license. See the LICENSE file for details. -->
           </BDropdownItem>
         </template>
       </BDropdown>
-      <BButton
-        @click="showFilters = !showFilters"
-        class="toolbar-link-text"
-        variant="link">
-        <FrIcon
-          icon-class="md-24"
-          name="filter_list" />
-      </BButton>
+      <div>
+        <BButton
+          @click="showFilters = !showFilters"
+          class="toolbar-link-text"
+          variant="link">
+          <FrIcon
+            icon-class="md-24"
+            name="filter_list" />
+        </BButton>
+        <BButton
+          variant="link-dark"
+          class="mr-2"
+          @click="emit('open-columns-modal')">
+          <FrIcon
+            icon-class="md-24"
+            name="view_column" />
+        </BButton>
+      </div>
     </BButtonToolbar>
     <BCollapse v-model="showFilters">
       <BRow class="p-4 border-bottom">

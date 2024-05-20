@@ -10,7 +10,8 @@ of the MIT license. See the LICENSE file for details. -->
       :policy-rule-options="policyRuleOptions"
       :search-input-placeholder="searchInputPlaceholder"
       @get-policy-rule-options="$emit('get-policy-rule-options', $event)"
-      @input="handleFilterChange" />
+      @input="handleFilterChange"
+      @open-columns-modal="openColumnsModal" />
     <BTable
       @row-clicked="$emit('viewViolationDetails', $event)"
       @sort-changed="sortChanged"
@@ -22,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
       show-empty
       tbody-tr-class="cursor-pointer"
       :busy="isLoading"
-      :fields="tableFields"
+      :fields="violationColumnsToShow"
       :items="items"
       :per-page="pageSize"
       :sort-by="sortBy"
@@ -115,7 +116,11 @@ of the MIT license. See the LICENSE file for details. -->
       :total-rows="totalRowCount"
       @input="paginationChange"
       @on-page-size-change="updatePageSize" />
-
+    <FrColumnOrganizer
+      @update-columns="updateColumns"
+      :active-columns="violationColumns"
+      :available-columns="columnCategories"
+      :is-testing="isTesting" />
     <!-- Forward Modal -->
     <FrViolationForwardModal
       @forward-item="forwardItem" />
@@ -138,11 +143,16 @@ import {
   BTable,
   BButton,
 } from 'bootstrap-vue';
+import {
+  cloneDeep,
+  groupBy,
+} from 'lodash';
 import dayjs from 'dayjs';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { forwardViolation, allowException } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
@@ -161,6 +171,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  isTesting: {
+    type: Boolean,
+    default: false,
+  },
+  searchInputPlaceholder: {
+    type: String,
+    default: i18n.global.t('common.search'),
+  },
   policyRuleOptions: {
     type: Array,
     default: () => [],
@@ -172,14 +194,6 @@ const props = defineProps({
   totalRowCount: {
     type: Number,
     default: 0,
-  },
-  searchInputPlaceholder: {
-    type: String,
-    default: i18n.global.t('common.search'),
-  },
-  isAdmin: {
-    type: Boolean,
-    default: false,
   },
 });
 
@@ -201,26 +215,57 @@ const filters = ref({
 const tableFields = [
   {
     key: 'user',
+    category: 'user',
     label: i18n.global.t('common.user.user'),
+    show: true,
     sortable: true,
   },
   {
     key: 'policyRule',
+    category: 'rule',
     label: i18n.global.t('governance.violations.rule'),
+    show: true,
     sortable: true,
   },
   {
     key: 'created',
-    label: i18n.global.t('common.created'),
-    sortable: true,
+    category: 'violation',
     class: 'w-150px',
+    label: i18n.global.t('common.created'),
+    show: true,
+    sortable: true,
   },
   {
     key: 'actions',
     class: props.isAdmin ? 'w-120px' : '',
     label: '',
+    show: true,
   },
 ];
+
+const formatedColumns = groupBy(tableFields, 'category');
+const categories = [
+  {
+    name: 'violation',
+    header: i18n.global.t('common.violation'),
+    items: formatedColumns.violation,
+  },
+  {
+    name: 'user',
+    header: i18n.global.t('common.user.user'),
+    items: formatedColumns.user,
+  },
+  {
+    name: 'rule',
+    header: i18n.global.t('governance.violations.rule'),
+    items: formatedColumns.rule,
+  },
+];
+
+const violationColumns = ref(tableFields);
+const columnCategories = ref(categories);
+
+const violationColumnsToShow = computed(() => violationColumns.value.filter((col) => col.show));
 
 const items = computed(() => {
   if (!props.tableRows?.length) return [];
@@ -229,7 +274,7 @@ const items = computed(() => {
     policyRule: violation.policyRule,
     created: violation.decision?.startDate,
     id: violation.id,
-    phaseId: violation.decision?.phases[0]?.name,
+    phaseId: violation.decision?.phases?.[0]?.name,
     rawData: violation,
   }));
 });
@@ -338,6 +383,24 @@ async function forwardItem({ actorId, comment }) {
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.violations.errorForwardingViolation'));
   }
+}
+
+/**
+ * Updates the columns of the list in their corresponding order
+ * @param {Object} columns all the information on the columns and their categories
+ * @param {Array} columns.activeColumns active columns to be displayed
+ * @param {Array} columns.availableColumns available columns separated by category
+ */
+function updateColumns({ activeColumns, availableColumns }) {
+  violationColumns.value = activeColumns || cloneDeep(tableFields);
+  columnCategories.value = availableColumns || cloneDeep(categories);
+}
+
+/**
+ * Opens column organizer modal
+ */
+function openColumnsModal() {
+  bvModal.value.show('ColumnOrganizerModal');
 }
 
 /**
