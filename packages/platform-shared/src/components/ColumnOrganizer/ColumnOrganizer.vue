@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     :ok-title="$t('common.apply')"
     :title="$t('common.customizeColumns')"
     @hidden="$emit('hidden')"
+    @cancel="resetColumns"
     @ok="applyCustomization()"
     body-class="p-0"
     cancel-variant="link"
@@ -15,7 +16,8 @@ of the MIT license. See the LICENSE file for details. -->
     no-close-on-esc
     ok-variant="primary"
     scrollable
-    size="lg">
+    size="lg"
+    :static="isTesting">
     <BRow class="m-0">
       <BCol
         class="p-0"
@@ -139,6 +141,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  isTesting: {
+    type: Boolean,
+    default: false,
+  },
   modalId: {
     type: String,
     default: 'ColumnOrganizerModal',
@@ -187,6 +193,14 @@ function hideColumn({ category, key }) {
   itemToHide.show = false;
   // remove column from the list
   removeColumn(key);
+}
+
+/**
+ * Resets the active and available columns to their original state
+ */
+function resetColumns() {
+  activeColumnsList.value = cloneDeep(props.activeColumns);
+  availableColumnsList.value = cloneDeep(props.availableColumns);
 }
 
 /**

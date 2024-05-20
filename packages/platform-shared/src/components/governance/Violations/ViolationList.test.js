@@ -430,4 +430,50 @@ describe('ViolationList', () => {
 
     expect(wrapper.emitted('viewViolationDetails')).toBeTruthy();
   });
+
+  it('should rearrange columns based on event from column organizer', async () => {
+    const wrapper = mountComponent({
+      isTesting: true,
+      tableRows: [],
+    });
+    await flushPromises();
+
+    const activeColumns = [
+      {
+        key: 'policyRule',
+        category: 'rule',
+        label: i18n.global.t('governance.violations.rule'),
+        show: true,
+        sortable: true,
+      },
+      {
+        key: 'user',
+        category: 'user',
+        label: i18n.global.t('common.user.user'),
+        show: true,
+        sortable: true,
+      },
+      {
+        key: 'created',
+        category: 'violation',
+        class: 'w-150px',
+        label: i18n.global.t('common.created'),
+        show: false,
+        sortable: true,
+      },
+      {
+        key: 'actions',
+        label: '',
+        show: true,
+      },
+    ];
+
+    const columnOrganizer = wrapper.findComponent('#ColumnOrganizerModal___BV_modal_outer_');
+    columnOrganizer.vm.$emit('update-columns', { activeColumns });
+
+    await flushPromises();
+    const tableHeadings = wrapper.find('[role=table]').findAll('[role=columnheader]');
+    expect(tableHeadings.at(0).text()).toBe('Rule (Click to sort ascending)');
+    expect(tableHeadings.at(1).text()).toBe('User (Click to sort ascending)');
+  });
 });
