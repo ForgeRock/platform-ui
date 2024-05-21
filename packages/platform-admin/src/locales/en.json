@@ -1460,13 +1460,15 @@
         "saveError": "There was an error saving the template",
         "saveSuccess": "Template saved successfully"
       },
-      "templateModal": {
+      "templateWizard": {
+        "addNao": "Add Non-Account Object",
         "addProperty": "Add Property",
         "addRule": "Add Rule",
-        "addNao": "Add Non-Account Object",
         "correlationQuery": "Correlation Query",
         "createTemplate": "Create Template",
+        "editTemplate": "Edit {templateName} Template",
         "mappingRules": "Mapping Rules",
+        "newTemplate": "New Application Template",
         "nonAccountObject": "Non Account Object",
         "nonAccountObjectDescription": "Must match a non account object type ID",
         "nonAccountProperties": "Non Account Properties",
@@ -3775,7 +3777,7 @@
           "roleOwner": "Role Owner",
           "sendEvery": "Send every",
           "sendTo": "Send to",
-          "violationOwner":"Violation Owner"
+          "violationOwner": "Violation Owner"
         },
         "exclusiveGatewayDefaultDisplayName": "Validation Gateway",
         "exclusiveGatewayDescription": "Evaluate a binary response from a preceding node to select a path the workflow should take.",
