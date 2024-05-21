@@ -173,5 +173,7 @@ module.exports = {
     'vue-i18n',
     'vue-router',
     '@vueuse',
+    '@forgerock/javascript-sdk',
+    '@forgerock/ping-protect',
   ],
 };
