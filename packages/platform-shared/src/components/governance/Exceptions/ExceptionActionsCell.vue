@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- View Details -->
     <BDropdownDivider />
     <BDropdownItem
-      @click="console.log('view details')">
+      @click="viewExceptionDetails(item.id)">
       <FrIcon
         icon-class="mr-2"
         name="article">
@@ -55,6 +55,9 @@ import {
   BDropdownItem,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const emit = defineEmits(['open-exception-modal']);
 
@@ -64,4 +67,18 @@ defineProps({
     required: true,
   },
 });
+
+/**
+ * View the exception details
+ * @param {String} exception - The exception to view details
+ */
+function viewExceptionDetails(id) {
+  router.push({
+    name: 'Violation',
+    params: {
+      violationId: id,
+      itemType: 'exception',
+    },
+  });
+}
 </script>

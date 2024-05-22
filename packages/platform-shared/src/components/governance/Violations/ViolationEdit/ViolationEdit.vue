@@ -24,22 +24,23 @@ of the MIT license. See the LICENSE file for details. -->
             variant="outline-secondary">
             <FrIcon
               icon-class="mr-2 text-success"
-              name="check">
-              {{ $t('common.allow') }}
+              :name="componentActions.allowIcon">
+              {{ componentActions.allowTitle }}
             </FrIcon>
           </BButton>
           <BButton
-            @click="() => {}"
+            @click="componentActions.revokeAction"
             class="mr-1"
             variant="outline-secondary">
             <FrIcon
               icon-class="mr-2 text-danger"
               name="block">
-              {{ $t('common.revoke') }}
+              {{ componentActions.revokeTitle }}
             </FrIcon>
           </BButton>
         </template>
         <BButton
+          v-if="!isEnduserException"
           @click="openForwardModal"
           class="mr-1"
           variant="outline-secondary">
@@ -119,7 +120,12 @@ of the MIT license. See the LICENSE file for details. -->
     <ExceptionModal
       hide-details
       :violation="{...violation, phaseId}"
+      :extend-exception="isEnduserException"
       @action="extendException" />
+
+    <FrRevokeExceptionModal
+      @revoke="revoke"
+      :violation-id="violationId" />
   </BContainer>
 </template>
 
@@ -142,10 +148,11 @@ import {
   BTabs,
 } from 'bootstrap-vue';
 import {
+  allowException,
   commentViolation,
   forwardViolation,
   getViolation,
-  allowException,
+  revokeException,
 } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
@@ -154,6 +161,7 @@ import FrComments from '@forgerock/platform-shared/src/components/governance/Req
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import ExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
+import FrRevokeExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/RevokeExceptionModal';
 import FrViolationActivity from './ViolationActivity';
 import FrViolationConflictModal from '../ViolationConflictModal';
 import FrViolationDetails from './ViolationDetails';
@@ -175,6 +183,10 @@ const props = defineProps({
   breadcrumbTitle: {
     type: String,
     required: true,
+  },
+  isEnduserException: {
+    type: Boolean,
+    default: false,
   },
   isException: {
     type: Boolean,
@@ -222,6 +234,31 @@ const actionPermissions = computed(() => {
     };
   }
   return permissions;
+});
+
+function showRevokeExceptionModal() {
+  bvModal.value.show('RevokeExceptionModal');
+}
+
+const componentActions = computed(() => {
+  if (props.isAdmin) {
+    return {};
+  }
+
+  const violationActionsObject = {
+    allowTitle: i18n.global.t('common.allow'),
+    allowIcon: 'check',
+    revokeTitle: i18n.global.t('common.revoke'),
+    revokeAction: () => {},
+  };
+  const exceptionActionsObject = {
+    allowTitle: i18n.global.t('governance.certificationTask.actions.extendException'),
+    allowIcon: 'update',
+    revokeTitle: i18n.global.t('governance.certificationTask.actions.revokeException'),
+    revokeAction: showRevokeExceptionModal,
+  };
+
+  return props.isEnduserException ? exceptionActionsObject : violationActionsObject;
 });
 
 /**
@@ -299,12 +336,37 @@ function openConflictModal() {
  * @param {Object} payload Request payload
  */
 async function extendException({ violationId: exceptionViolationId, phaseId: exceptionPhaseId, payload }) {
+  const translates = props.isEnduserException
+    ? {
+      success: 'successExtendingException',
+      error: 'errorExtendingException',
+    }
+    : {
+      success: 'successAllowingException',
+      error: 'errorAllowingException',
+    };
   try {
     await allowException(exceptionViolationId, exceptionPhaseId, payload);
-    displayNotification('success', i18n.global.t('governance.violations.successAllowingException'));
+    displayNotification('success', i18n.global.t(`governance.violations.${translates.success}`));
     router.push({ path: props.breadcrumbPath });
   } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.violations.errorAllowingException'));
+    showErrorMessage(error, i18n.global.t(`governance.violations.${translates.error}`));
+  }
+}
+
+/**
+ * Revoke the Exception and redirect to the previous view
+ * @param {Object} revokeObject exception object that is being revoked
+ * @param {String[]} revokeObject.ids ids to be revoked
+ * @param {String} revokeObject.comment comment on the revocation
+ */
+async function revoke(revokeObject) {
+  try {
+    await revokeException(revokeObject);
+    displayNotification('success', i18n.global.t('governance.violations.successRevokingException'));
+    router.push({ path: props.breadcrumbPath });
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.violations.errorRevokingException'));
   }
 }
 

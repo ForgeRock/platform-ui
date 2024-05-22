@@ -183,6 +183,19 @@ describe('Violation Edit', () => {
     expect(buttons[2].text()).toBe('redoForward');
   });
 
+  it('should show extend exception and revoke buttons when is enduser exception', async () => {
+    const wrapper = mountComponent({
+      isAdmin: false,
+      isEnduserException: true,
+    });
+    await flushPromises();
+
+    const buttons = wrapper.findAll('button');
+
+    expect(buttons[0].text()).toBe('updateExtend Exception');
+    expect(buttons[1].text()).toBe('blockRevoke Exception');
+  });
+
   it('should not show allow and revoke buttons when is admin', async () => {
     const wrapper = mountComponent();
     await flushPromises();

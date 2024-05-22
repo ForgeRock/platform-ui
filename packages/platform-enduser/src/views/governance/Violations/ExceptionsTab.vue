@@ -8,19 +8,25 @@ of the MIT license. See the LICENSE file for details. -->
     :total-row-count="exceptionsCount"
     :is-loading="isLoadingExceptions"
     :search-input-placeholder="$t('governance.violations.searchExceptions')"
-    @handle-search="getExceptions" />
+    @handle-search="getExceptions"
+    @view-exception-details="viewExceptionDetails" />
 </template>
 
 <script setup>
+/**
+ * Tab component that shows the list of exceptions of end user
+ */
 import FrExceptionList from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionList';
 import { ref } from 'vue';
 import { getViolationListEndUser } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { useRouter } from 'vue-router';
 import i18n from '@/i18n';
 
 const exceptions = ref([]);
 const exceptionsCount = ref(0);
 const isLoadingExceptions = ref(false);
+const router = useRouter();
 
 /**
  * Gets the Exceptions for the policy
@@ -39,5 +45,19 @@ async function getExceptions(searchParams, filterPayload) {
   } finally {
     isLoadingExceptions.value = false;
   }
+}
+
+/**
+ * View the exception details
+ * @param {Object} exception - The exception to view details
+ */
+function viewExceptionDetails(exception) {
+  router.push({
+    name: 'Violation',
+    params: {
+      violationId: exception.id,
+      itemType: 'exception',
+    },
+  });
 }
 </script>
