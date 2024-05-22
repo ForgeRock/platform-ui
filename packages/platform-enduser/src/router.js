@@ -103,8 +103,8 @@ const router = createRouter({
           component: () => import('@/views/governance/Violations/Violations.vue'),
         },
         {
-          path: ':violationId',
-          name: 'ViolationEdit',
+          path: ':itemType/:violationId',
+          name: 'Violation',
           component: () => import('@/views/governance/Violations/ViolationEdit.vue'),
         },
       ],

@@ -54,8 +54,11 @@ async function getViolations(searchParams, filterPayload) {
  */
 function viewViolationDetails(violation) {
   router.push({
-    name: 'ViolationEdit',
-    params: { violationId: violation.id },
+    name: 'Violation',
+    params: {
+      violationId: violation.id,
+      itemType: 'violation',
+    },
   });
 }
 </script>

@@ -134,9 +134,10 @@ describe('ViolationsTab', () => {
     await flushPromises();
 
     expect(routerPushSpy).toHaveBeenCalledWith({
-      name: 'ViolationEdit',
+      name: 'Violation',
       params: {
         violationId: '002bd665-3946-465c-b444-de470fa04254',
+        itemType: 'violation',
       },
     });
   });

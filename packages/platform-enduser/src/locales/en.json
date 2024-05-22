@@ -230,6 +230,7 @@
     "DirectReportDetail": "Direct Report Details",
     "EditResource": "Edit Resource",
     "Entitlements": "Entitlements",
+    "Exception": "Exception",
     "AccessRequestNew": "New Request",
     "Forbidden": "Forbidden",
     "ListResource": "List Resource",
@@ -243,7 +244,8 @@
     "Reports": "Reports",
     "ReportView": "View Report",
     "Sharing": "Sharing",
-    "Violations": "Violations"
+    "Violations": "Violations",
+    "Violation": "Violation"
   },
   "governance": {
     "accessRequest": {

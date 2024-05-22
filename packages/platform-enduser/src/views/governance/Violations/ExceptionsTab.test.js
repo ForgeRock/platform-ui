@@ -10,12 +10,13 @@ import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/Vio
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ExceptionsTab from './ExceptionsTab';
 import i18n from '@/i18n';
+import router from '@/router';
 
 describe('ExceptionsTab', () => {
   function setup() {
     return shallowMount(ExceptionsTab, {
       global: {
-        plugins: [i18n],
+        plugins: [i18n, router],
       },
     });
   }
@@ -113,5 +114,21 @@ describe('ExceptionsTab', () => {
     expect(wrapper.vm.exceptionsCount).toBe(0);
     expect(wrapper.vm.isLoadingExceptions).toBe(false);
     expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error getting the exception data');
+  });
+
+  it('should navigate to the exception details page', async () => {
+    const wrapper = setup();
+    const routerPushSpy = jest.spyOn(router, 'push').mockImplementation(() => {});
+    const exceptionListComponent = wrapper.findComponent({ name: 'ExceptionList' });
+    exceptionListComponent.vm.$emit('view-exception-details', { id: '002bd665-3946-465c-b444-de470fa04254' });
+    await flushPromises();
+
+    expect(routerPushSpy).toHaveBeenCalledWith({
+      name: 'Violation',
+      params: {
+        violationId: '002bd665-3946-465c-b444-de470fa04254',
+        itemType: 'exception',
+      },
+    });
   });
 });

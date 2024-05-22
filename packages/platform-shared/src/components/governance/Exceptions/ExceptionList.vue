@@ -84,6 +84,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrExceptionModal
       extend-exception
       @action="extendException"
+      @view-violation-details="$emit('view-exception-details', selectedItem)"
       :violation="selectedItem" />
     <FrRevokeExceptionModal
       @revoke="revoke"
