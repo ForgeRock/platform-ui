@@ -68,11 +68,13 @@ function getStep(title, date) {
  */
 function parseComments(comments) {
   const tempSteps = [];
+  let exceptionComment = '';
   comments.forEach((comment) => {
     switch (comment.action) {
       case 'assignment':
       case 'reassign':
       case 'remediate':
+      case 'cancel-exception':
         tempSteps.push(getStep(comment.comment, dayjs(comment.timeStamp).format('MMM D, YYYY')));
         break;
       case 'allow':
@@ -80,6 +82,16 @@ function parseComments(comments) {
           i18n.global.t('governance.violations.exceptionAllowed'),
           dayjs(comment.timeStamp).format('MMM D, YYYY'),
         ));
+        break;
+      case 'exception':
+        if (comment.comment.includes('Exception granted until') || comment.comment.includes('Exception extended until')) {
+          let message = comment.comment;
+          if (exceptionComment.length) message = `${comment.comment} - ${exceptionComment}`;
+          tempSteps.push(getStep(message, dayjs(comment.timeStamp).format('MMM D, YYYY')));
+          exceptionComment = '';
+        } else {
+          exceptionComment = comment.comment;
+        }
         break;
       default:
         break;
