@@ -71,6 +71,7 @@
     "EditResource": "Edit Resource",
     "EditServerCluster": "Edit Server Cluster",
     "EditServerClusterServers": "Edit Server Cluster Servers",
+    "EditTemplateBuilder": "Edit Application Template",
     "EditTermsAndConditions": "Edit Terms And Conditions",
     "EditWorkflow": "Edit Workflow",
     "EmailProvider": "Email Provider",
@@ -1457,6 +1458,7 @@
         "fileImproperlyFormatted": "Selected file is not properly formatted",
         "getError": "There was an error retrieving the list of templates",
         "importValidationError": "The JSON provided is not properly formatted",
+        "provisionerSuccess": "Provisioner saved successfully",
         "saveError": "There was an error saving the template",
         "saveSuccess": "Template saved successfully"
       },
@@ -1511,13 +1513,22 @@
         "title": "Application Template Details"
       },
       "templateModalImport": {
+        "application": {
+          "import": "Import Template",
+          "importDescription": "Provides a valid JSON containing the application template configurations to import.",
+          "templateFileDescription": "Upload the application template configuration.",
+          "title": "Import Application Templates"
+        },
         "configureManuallyOption": "Configure Manually",
-        "importDescription": "Provides a valid JSON containing the application template configurations to import.",
         "importing": "Importing",
         "import": "Import",
         "jsonFile": "JSON File",
-        "templateFileDescription": "Upload the application template configuration.",
-        "title": "Import Application Templates",
+        "provisioner": {
+          "import": "Import Provisioner",
+          "importDescription": "Provides a valid JSON containing the provisioner configuration to import.",
+          "templateFileDescription": "Upload the provisioner configuration.",
+          "title": "Import Provisioner Configuration"
+        },
         "uploadTemplateOption": "Upload Template"
       },
       "templateModalDelete": {
