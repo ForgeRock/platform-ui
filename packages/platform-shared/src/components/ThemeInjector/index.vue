@@ -424,6 +424,50 @@ of the MIT license. See the LICENSE file for details. -->
       #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-dropdown-button-content h5 {
       color: {{ theme.topBarHeaderColor || '#23282e' }};
       }
+
+      .card-input-element:checked + .card-input {
+        border-color: {{ theme.primaryColor }} !important;
+      }
+
+      .card-input-element:checked + .card-input::before {
+        background-color: {{ theme.primaryColor }} !important;
+      }
+
+      .card-input-element + .card-input:hover {
+        border-color: {{ theme.primaryColor }} !important;
+      }
+
+      #app .nav-tabs .nav-item .nav-link.active {
+        border-bottom-color: {{ theme.primaryColor }};
+        color: {{ theme.primaryColor }};
+      }
+
+      #app .btn-outline-primary {
+        color: {{ theme.primaryColor }} !important;
+        border-color: {{ theme.primaryColor }} !important;
+      }
+
+      #app .btn-outline-primary:hover {
+        color: {{ '#ffffff' }} !important;
+        background-color: {{ theme.primaryColor }};
+        border-color: {{ theme.primaryColor }};
+      }
+
+      #app .text-success {
+        color: {{ theme.successColor }};
+      }
+
+      #app .card-footer > span {
+        color: {{ theme.linkColor }};
+      }
+
+      #app span:has(> .text-success) {
+        color: {{ theme.successColor }};
+      }
+
+      #app a.nav-link.router-link-active .badge {
+        background-color: {{ theme.primaryColor }};
+      }
     </Component>
   </div>
 </template>
