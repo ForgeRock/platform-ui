@@ -104,8 +104,25 @@ const router = createRouter({
         },
         {
           path: ':itemType/:violationId',
-          name: 'Violation',
-          component: () => import('@/views/governance/Violations/ViolationEdit.vue'),
+          children: [
+            {
+              path: '',
+              name: 'Violation',
+              component: () => import('@/views/governance/Violations/ViolationEdit.vue'),
+            },
+            {
+              path: 'remediate',
+              name: 'ViolationEditRemediate',
+              meta: { hideNavBar: true, hideSideMenu: true },
+              component: () => import('@/views/governance/Violations/Remediate.vue'),
+            },
+          ],
+        },
+        {
+          path: 'remediate/:violationId',
+          name: 'ViolationRemediate',
+          meta: { hideNavBar: true, hideSideMenu: true },
+          component: () => import('@/views/governance/Violations/Remediate.vue'),
         },
       ],
     },

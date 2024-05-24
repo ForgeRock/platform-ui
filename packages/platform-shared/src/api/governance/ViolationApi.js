@@ -96,3 +96,14 @@ export function allowException(violationId, phaseId, payload) {
 export function revokeException(dataObject) {
   return generateIgaApi().post(`${violationUrl}/cancel-exception`, dataObject);
 }
+
+/**
+ * Remediate a violation
+ * @param {String} violationId id of violation to remediate
+ * @param {String} phaseId current phase of violation
+ * @param {Object} payload data to be used in remediation
+ * @returns {Promise}
+ */
+export function remediate(violationId, phaseId, payload) {
+  return generateIgaApi().post(`${violationUrl}/${violationId}/phases/${phaseId}/remediate`, payload);
+}

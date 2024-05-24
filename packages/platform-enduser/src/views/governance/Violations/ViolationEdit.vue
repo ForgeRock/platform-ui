@@ -6,15 +6,27 @@ of the MIT license. See the LICENSE file for details. -->
   <ViolationEdit
     :breadcrumb-path="'/violations'"
     :breadcrumb-title="$t('governance.violations.tabs.violations')"
-    :is-enduser-exception="itemType === 'exception'" />
+    :is-enduser-exception="itemType === 'exception'"
+    @revoke-violation="revokeViolation" />
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import ViolationEdit from '@forgerock/platform-shared/src/components/governance/Violations/ViolationEdit/ViolationEdit';
 
 // composables
-const route = useRoute();
+const router = useRouter();
 
-const { itemType } = route.params;
+const { itemType } = router.currentRoute.value.params;
+
+/**
+ * Revoke the violation
+ * @param {Object} violation - The violation to revoke
+ */
+function revokeViolation(violation) {
+  router.push({
+    name: 'ViolationEditRemediate',
+    params: { itemType: 'violation', violationId: violation.id },
+  });
+}
 </script>

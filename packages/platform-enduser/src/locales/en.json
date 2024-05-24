@@ -245,7 +245,8 @@
     "ReportView": "View Report",
     "Sharing": "Sharing",
     "Violations": "Violations",
-    "Violation": "Violation"
+    "Violation": "Violation",
+    "ViolationRemediate": "Fix Violation"
   },
   "governance": {
     "accessRequest": {
@@ -376,12 +377,23 @@
     "showFilters": "Show Filters",
     "sortBy": "Sort by",
     "violations": {
-      "title": "Compliance Violations",
+      "remediate": {
+        "addEntitlements": "Add entitlements to revoke",
+        "cartTitle": "Entitlements to Revoke",
+        "entitlementsAdded": "Entitlements added",
+        "errorRemediating": "Revoking the selected entitlements did not fix the violation. Revoke additional entitlements and try again",
+        "howToFix": "How to Fix",
+        "noEntitlementsSelected": "No entitlements selected yet",
+        "revokeEntitlements": "Revoke Entitlements",
+        "revoking": "Revoking entitlements...",
+        "successRemediation": "Violation successfully fixed"
+      },
       "subtitle": "View and take action on your compliance violations.",
       "tabs": {
         "violations": "Violations",
         "exceptions": "Exceptions"
-      }
+      },
+      "title": "Compliance Violations"
     }
   }
 }

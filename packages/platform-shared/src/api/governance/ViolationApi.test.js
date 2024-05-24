@@ -114,4 +114,15 @@ describe('ViolationsApi API', () => {
     expect(BaseApi.generateIgaApi).toHaveBeenCalled();
     expect(res).toEqual(data);
   });
+
+  it('should call remediate with correct dataObject and url', async () => {
+    const dataObject = {
+      ids: ['1', '2'],
+    };
+
+    const res = await VioaltionApi.remediate('12345', '6789', { ids: ['1', '2'] });
+    expect(post).toHaveBeenCalledWith('/governance/violation/12345/phases/6789/remediate', dataObject);
+    expect(BaseApi.generateIgaApi).toHaveBeenCalled();
+    expect(res).toEqual(data);
+  });
 });
