@@ -3736,6 +3736,7 @@
         "APPROVE": "APPROVE",
         "loadingWorkflow": "Loading {status}...",
         "deleteDraft": "Delete Draft",
+        "DENY": "DENY",
         "editDraft": "Edit Draft",
         "editPanel": {
           "addApproversManually": "add approvers manually",
@@ -3795,7 +3796,7 @@
         "exclusiveGatewayDisplayName": "If/Else",
         "expiration": "EXPIRATION",
         "export": "Export",
-        "fulfillment": "FULFILLMENT",
+        "FULFILL": "FULFILL",
         "fulfillmentTaskDefaultDisplayName": "Fulfillment Task",
         "fulfillmentTaskDescription": "Assigns a task to users and roles for manual completion.",
         "fulfillmentTaskDisplayName": "Fulfillment",
