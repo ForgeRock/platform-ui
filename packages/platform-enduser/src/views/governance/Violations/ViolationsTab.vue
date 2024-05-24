@@ -9,7 +9,8 @@ of the MIT license. See the LICENSE file for details. -->
     :is-loading="isLoadingViolations"
     :search-input-placeholder="$t('governance.violations.searchViolations')"
     @handle-search="getViolations"
-    @view-violation-details="viewViolationDetails" />
+    @view-violation-details="viewViolationDetails"
+    @revoke-violation="revokeViolation" />
 </template>
 
 <script setup>
@@ -59,6 +60,17 @@ function viewViolationDetails(violation) {
       violationId: violation.id,
       itemType: 'violation',
     },
+  });
+}
+
+/**
+ * Revoke the violation
+ * @param {Object} violation - The violation to revoke
+ */
+function revokeViolation(violation) {
+  router.push({
+    name: 'ViolationRemediate',
+    params: { violationId: violation.id },
   });
 }
 </script>

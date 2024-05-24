@@ -141,4 +141,19 @@ describe('ViolationsTab', () => {
       },
     });
   });
+
+  it('should navigate to the violation remediate page', async () => {
+    const wrapper = setup();
+    const routerPushSpy = jest.spyOn(router, 'push').mockImplementation(() => {});
+    const violationListComponent = wrapper.findComponent({ name: 'ViolationList' });
+    violationListComponent.vm.$emit('revoke-violation', { id: '002bd665-3946-465c-b444-de470fa04254' });
+    await flushPromises();
+
+    expect(routerPushSpy).toHaveBeenCalledWith({
+      name: 'ViolationRemediate',
+      params: {
+        violationId: '002bd665-3946-465c-b444-de470fa04254',
+      },
+    });
+  });
 });

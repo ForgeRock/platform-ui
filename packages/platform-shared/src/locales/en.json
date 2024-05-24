@@ -223,6 +223,7 @@
     "required": "Required",
     "reset": "Reset",
     "revoke": "Revoke",
+    "revokeAll": "Revoke all",
     "role": "Role",
     "roleOwner": "Role Owner",
     "roles": "Roles",

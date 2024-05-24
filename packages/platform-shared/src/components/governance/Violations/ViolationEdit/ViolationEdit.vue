@@ -63,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BTab :title="$t('common.details')">
               <BCardBody>
                 <FrViolationDetails
-                  @view-conflicts="openConflictModal"
+                  @view-conflicts="isAdmin ? openConflictModal() : $emit('revoke-violation', violation)"
                   :violation="violation" />
               </BCardBody>
             </BTab>
@@ -203,7 +203,7 @@ const props = defineProps({
 });
 
 // Emits
-const emit = defineEmits(['view-conflicts']);
+const emit = defineEmits(['view-conflicts', 'revoke-violation']);
 
 // data
 const { violationId } = route.params;
@@ -249,7 +249,7 @@ const componentActions = computed(() => {
     allowTitle: i18n.global.t('common.allow'),
     allowIcon: 'check',
     revokeTitle: i18n.global.t('common.revoke'),
-    revokeAction: () => {},
+    revokeAction: () => emit('revoke-violation', violation.value),
   };
   const exceptionActionsObject = {
     allowTitle: i18n.global.t('governance.certificationTask.actions.extendException'),

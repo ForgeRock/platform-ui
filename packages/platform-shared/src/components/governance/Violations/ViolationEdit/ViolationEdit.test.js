@@ -14,6 +14,7 @@ import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ViolationEdit from './ViolationEdit';
 import i18n from '@/i18n';
+import ViolationDetails from './ViolationDetails';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/ViolationApi');
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
@@ -255,5 +256,28 @@ describe('Violation Edit', () => {
 
     expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error allowing the exception');
     expect(routerSpy).not.toHaveBeenCalled();
+  });
+
+  it('emits revoke-violation event when is not admin and click on revoke button', async () => {
+    const wrapper = mountComponent({ isAdmin: false });
+    await flushPromises();
+
+    const revokeButton = wrapper.findAll('button')[1];
+    await revokeButton.trigger('click');
+
+    expect(wrapper.emitted('revoke-violation')).toBeTruthy();
+    expect(wrapper.emitted('revoke-violation')[0][0]).toEqual(violation);
+  });
+
+  it('emits revoke-violation event when violation details component emmit the view-conflicts event and it is not admin', async () => {
+    const wrapper = mountComponent({ isAdmin: false });
+    await flushPromises();
+
+    const violationDetailsComponent = wrapper.findComponent(ViolationDetails);
+    violationDetailsComponent.vm.$emit('view-conflicts', violation);
+    await flushPromises();
+
+    expect(wrapper.emitted('revoke-violation')).toBeTruthy();
+    expect(wrapper.emitted('revoke-violation')[0][0]).toEqual(violation);
   });
 });

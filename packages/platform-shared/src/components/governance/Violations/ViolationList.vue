@@ -68,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
               </FrIcon>
             </BButton>
             <BButton
-              @click="() => {}"
+              @click="$emit('revoke-violation', item)"
               class="mr-1"
               variant="outline-secondary"
               size="sm">
@@ -164,7 +164,7 @@ import i18n from '@/i18n';
 // composables
 const { bvModal } = useBvModal();
 
-const emit = defineEmits(['get-policy-rule-options', 'handle-search', 'viewViolationDetails']);
+const emit = defineEmits(['get-policy-rule-options', 'handle-search', 'viewViolationDetails', 'revoke-violation']);
 
 const props = defineProps({
   isLoading: {

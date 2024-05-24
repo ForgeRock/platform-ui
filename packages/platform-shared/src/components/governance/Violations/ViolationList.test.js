@@ -476,4 +476,82 @@ describe('ViolationList', () => {
     expect(tableHeadings.at(0).text()).toBe('Rule (Click to sort ascending)');
     expect(tableHeadings.at(1).text()).toBe('User (Click to sort ascending)');
   });
+
+  it('should emit revoke-violation event when the revoke button is clicked for a violation on the list', async () => {
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [
+        {
+          decision: {
+            status: 'in-progress',
+            startDate: '2024-05-13T23:12:21+00:00',
+            phases: [
+              {
+                name: 'testPhase',
+              },
+            ],
+          },
+          policyRule: {
+            name: 'NoCustomerSupport',
+          },
+          user: {
+            cn: 'Opal Millions',
+            givenName: 'Opal',
+            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+            mail: 'Opal@IGATestQA.onmicrosoft.com',
+            sn: 'Millions',
+            userName: 'Opal@IGATestQA.onmicrosoft.com',
+          },
+          id: '002bd665-3946-465c-b444-de470fa04254',
+        },
+      ],
+    });
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const rows = table.findAll('[role="row"]');
+    const row = rows[1];
+    const buttons = row.findAll('button');
+    await buttons[1].trigger('click');
+
+    expect(wrapper.emitted('revoke-violation')).toBeTruthy();
+    expect(wrapper.emitted('revoke-violation')[0][0]).toEqual({
+      created: '2024-05-13T23:12:21+00:00',
+      id: '002bd665-3946-465c-b444-de470fa04254',
+      phaseId: 'testPhase',
+      policyRule: {
+        name: 'NoCustomerSupport',
+      },
+      rawData: {
+        decision: {
+          phases: [
+            {
+              name: 'testPhase',
+            },
+          ],
+          startDate: '2024-05-13T23:12:21+00:00',
+          status: 'in-progress',
+        },
+        id: '002bd665-3946-465c-b444-de470fa04254',
+        policyRule: {
+          name: 'NoCustomerSupport',
+        },
+        user: {
+          cn: 'Opal Millions',
+          givenName: 'Opal',
+          id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+          mail: 'Opal@IGATestQA.onmicrosoft.com',
+          sn: 'Millions',
+          userName: 'Opal@IGATestQA.onmicrosoft.com',
+        },
+      },
+      user: {
+        cn: 'Opal Millions',
+        givenName: 'Opal',
+        id: '4f268edd-fa51-412a-8168-1443b4ad8198',
+        mail: 'Opal@IGATestQA.onmicrosoft.com',
+        sn: 'Millions',
+        userName: 'Opal@IGATestQA.onmicrosoft.com',
+      },
+    });
+  });
 });
