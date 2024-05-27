@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <FrUserBasicInfo
     v-for="user in usersToRender"
     data-testid="user-info"
-    :class="row-height"
+    class="row-height mb-3"
     :key="user.id"
     :is-role="user.id?.includes('role')"
     :user="user"
@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BCollapse v-model="showMore">
       <FrUserBasicInfo
         v-for="user in usersToShowMore"
-        :class="row-height"
+        class="row-height mb-3"
         :key="user.id"
         :user="user"
         :is-role="user.id?.includes('role')"
@@ -35,6 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * Component for rendering a list of basic user information.
  * @component UserGroupList
+ * @prop {Boolean} hideShowMore - Option to determine if want to hide the 'show more' option.
  * @prop {Array} usersList - The array of user objects to display.
  * @prop {Number} usersToDisplay - The maximum number of users to display initially.
  */
@@ -46,6 +47,10 @@ import { ref, watch } from 'vue';
 import FrUserBasicInfo from './UserBasicInfo';
 
 const prop = defineProps({
+  hideShowMore: {
+    type: Boolean,
+    default: false,
+  },
   usersList: {
     type: Object,
     required: true,
@@ -64,6 +69,10 @@ const renderShowMore = ref(false);
 watch(
   () => prop.usersList,
   (newVal) => {
+    if (prop.hideShowMore) {
+      usersToRender.value = newVal;
+      return;
+    }
     const exceedsRendering = newVal.length > prop.usersToDisplay;
     renderShowMore.value = exceedsRendering;
     if (exceedsRendering) {

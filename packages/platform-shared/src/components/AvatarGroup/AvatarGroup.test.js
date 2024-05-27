@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import AvatarGroup from './AvatarGroup';
 
 let wrapper;
@@ -42,7 +42,7 @@ const USERS = [
 ];
 
 function setup(propsData) {
-  wrapper = shallowMount(AvatarGroup, {
+  wrapper = mount(AvatarGroup, {
     global: {
       mocks: {
         $t: (t) => t,
@@ -82,5 +82,17 @@ describe('AvatarGroup', () => {
     setup({ avatarLimit });
     // Check if the remaining users badge is not rendered
     expect(wrapper.find('[data-testid="overflow-badge"]').exists()).toBe(false);
+  });
+
+  it('should renders the proper component when users prop only have 1 element', () => {
+    const users = [USERS[0]];
+    setup({ users });
+    // check that the proper component is render
+    expect(wrapper.find('[data-testid="avatar-item"]').exists()).toBe(false);
+    expect(wrapper.find('[data-testid="single-user-item"]').exists()).toBe(true);
+
+    // check that the proper info is on the component
+    expect(wrapper.find('p').text()).toBe(`${USERS[0].givenName} ${USERS[0].sn}`);
+    expect(wrapper.find('small').text()).toBe(USERS[0].userName);
   });
 });

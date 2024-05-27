@@ -43,6 +43,18 @@ of the MIT license. See the LICENSE file for details. -->
           </span>
         </div>
       </template>
+      <template #cell(reviewers)="{ item }">
+        <div
+          v-if="item.reviewers.length"
+          @click.stop="clickReviewersRow(item)">
+          <FrAvatarGroup
+            :id="item.id"
+            :users="item.reviewers" />
+        </div>
+        <div v-else>
+          {{ blankValueIndicator }}
+        </div>
+      </template>
       <template #cell(policyRule)="{ item }">
         <div class="text-truncate">
           {{ item?.policyRule?.name }}
@@ -128,6 +140,9 @@ of the MIT license. See the LICENSE file for details. -->
       :violation="selectedViolation"
       @action="extendException"
       @view-violation-details="$emit('viewViolationDetails', selectedViolation)" />
+    <FrViolationReviewersModal
+      :violation="selectedViolation"
+      @hidden="closeReviewersModal" />
   </BCard>
 </template>
 
@@ -135,7 +150,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * List of SOD violations. Can filter by status, policy rule, user, and date range.
  */
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   BCard,
   BDropdown,
@@ -146,19 +161,23 @@ import {
 import {
   cloneDeep,
   groupBy,
+  some,
 } from 'lodash';
 import dayjs from 'dayjs';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { forwardViolation, allowException } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import ExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
+import FrAvatarGroup from '@forgerock/platform-shared/src/components/AvatarGroup/AvatarGroup';
 import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import FrViolationToolbar from '@forgerock/platform-shared/src/components/governance/Violations/ViolationToolbar';
 import FrViolationForwardModal from '@forgerock/platform-shared/src/components/governance/Violations/ViolationForwardModal';
-import ExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
+import FrViolationReviewersModal from '@forgerock/platform-shared/src/components/governance/Violations/ViolationReviewersModal';
+import FrViolationToolbar from '@forgerock/platform-shared/src/components/governance/Violations/ViolationToolbar';
 import i18n from '@/i18n';
 
 // composables
@@ -198,11 +217,11 @@ const props = defineProps({
 });
 
 const currentPage = ref(1);
+const itemToForward = ref({});
 const pageSize = ref(10);
+const selectedViolation = ref({});
 const sortBy = ref('created');
 const sortDesc = ref(true);
-const itemToForward = ref({});
-const selectedViolation = ref({});
 
 const filters = ref({
   status: 'pending',
@@ -219,6 +238,12 @@ const tableFields = [
     label: i18n.global.t('common.user.user'),
     show: true,
     sortable: true,
+  },
+  {
+    key: 'reviewers',
+    category: 'user',
+    label: i18n.global.t('common.reviewers'),
+    show: true,
   },
   {
     key: 'policyRule',
@@ -262,21 +287,61 @@ const categories = [
   },
 ];
 
-const violationColumns = ref(tableFields);
-const columnCategories = ref(categories);
+const tableFieldsEnduser = tableFields.filter((col) => col.key !== 'reviewers');
+const categoriesEnduser = categories.map((category) => ({
+  ...category,
+  items: category.items.filter((item) => item.key !== 'reviewers'),
+}));
+
+const violationColumns = props.isAdmin ? ref(tableFields) : ref(tableFieldsEnduser);
+const columnCategories = props.isAdmin ? ref(categories) : ref(categoriesEnduser);
 
 const violationColumnsToShow = computed(() => violationColumns.value.filter((col) => col.show));
 
 const items = computed(() => {
   if (!props.tableRows?.length) return [];
   return props.tableRows.map((violation) => ({
-    user: violation.user,
-    policyRule: violation.policyRule,
     created: violation.decision?.startDate,
     id: violation.id,
     phaseId: violation.decision?.phases?.[0]?.name,
+    policyRule: violation.policyRule,
     rawData: violation,
+    reviewers: violation.decision?.actors?.active || [],
+    user: violation.user,
   }));
+});
+
+// show/hide the reviewers column according to the status filter
+watch(() => filters.value.status, (newStatus) => {
+  // if it is enduser no change is made
+  if (!props.isAdmin) return;
+
+  // on the other hand, verify the change to pending or completed
+  const columnsClone = cloneDeep(violationColumns.value);
+  const categoriesClone = cloneDeep(columnCategories.value);
+  const hasReviewersCategory = some(categoriesClone, (section) => some(section.items, { key: 'reviewers' }));
+  if (newStatus === 'complete') {
+    // hide reviewers column for completed violations
+    violationColumns.value = columnsClone.filter((col) => col.key !== 'reviewers');
+    columnCategories.value = categoriesClone.map((category) => ({
+      ...category,
+      items: category.items.filter((item) => item.key !== 'reviewers'),
+    }));
+  } else {
+    // add the reviewers category only if it was previously removed
+    if (hasReviewersCategory) return;
+    const reviewersColumn = {
+      key: 'reviewers',
+      category: 'user',
+      label: i18n.global.t('common.reviewers'),
+      show: true,
+    };
+    columnsClone.splice(1, 0, reviewersColumn);
+    violationColumns.value = columnsClone;
+    const userSection = categoriesClone.find((category) => category.name === 'user');
+    userSection.items.push(reviewersColumn);
+    columnCategories.value = categoriesClone;
+  }
 });
 
 /**
@@ -416,6 +481,36 @@ function openColumnsModal() {
 function openForwardModal(item) {
   itemToForward.value = item;
   bvModal.value.show('violation-forward-modal');
+}
+
+/**
+ * Open reviewers modal
+ * @param {Object} item violation clicked
+ */
+function openReviewersModal(item) {
+  selectedViolation.value = item;
+  bvModal.value.show('ViolationReviewersModal');
+}
+
+/**
+ * Restore selected violation on reviewers modal close
+ */
+function closeReviewersModal() {
+  selectedViolation.value = {};
+}
+
+/**
+ * Determines what action to take when clicking on Reviewers row
+ * @param {Object} item violation clicked
+ */
+function clickReviewersRow(item) {
+  // if click on an item with more than one reviewer, open reviewers modal
+  if (item.reviewers.length > 1) {
+    openReviewersModal(item);
+  } else {
+    // otherwise view will be redirected to the Violation details
+    emit('viewViolationDetails', item);
+  }
 }
 
 /**
