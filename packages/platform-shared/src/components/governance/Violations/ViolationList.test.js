@@ -40,8 +40,21 @@ describe('ViolationList', () => {
     return wrapper;
   }
 
-  it('shows violations in a list with correct columns', async () => {
+  it('shows violations in a list with correct columns when is Admin', async () => {
     const wrapper = mountComponent();
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const columns = table.findAll('[role=columnheader]');
+
+    expect(columns.length).toBe(5);
+    expect(columns[0].text()).toBe('User (Click to sort ascending)');
+    expect(columns[1].text()).toBe('Reviewer(s)');
+    expect(columns[2].text()).toBe('Rule (Click to sort ascending)');
+    expect(columns[3].text()).toBe('Created (Click to sort ascending)');
+  });
+
+  it('shows violations in a list with correct columns when is enduser', async () => {
+    const wrapper = mountComponent({ isAdmin: false });
     await flushPromises();
     const table = wrapper.findComponent('.table-responsive');
     const columns = table.findAll('[role=columnheader]');
@@ -57,7 +70,7 @@ describe('ViolationList', () => {
     await flushPromises();
     const table = wrapper.findComponent('.table-responsive');
     const columns = table.findAll('[role=columnheader]');
-    expect(columns[3].classes()).toContain('w-120px');
+    expect(columns[4].classes()).toContain('w-120px');
   });
 
   it('not to add fixed with to actions column when is not admin', async () => {
@@ -342,6 +355,7 @@ describe('ViolationList', () => {
           policyRule: {
             name: 'NoCustomerSupport',
           },
+          reviewers: [],
           user: {
             cn: 'Opal Millions',
             givenName: 'Opal',
@@ -382,6 +396,7 @@ describe('ViolationList', () => {
         policyRule: {
           name: 'NoCustomerSupport',
         },
+        reviewers: [],
         user: {
           cn: 'Opal Millions',
           givenName: 'Opal',
@@ -391,6 +406,7 @@ describe('ViolationList', () => {
           userName: 'Opal@IGATestQA.onmicrosoft.com',
         },
       },
+      reviewers: [],
       user: {
         cn: 'Opal Millions',
         givenName: 'Opal',
@@ -507,8 +523,8 @@ describe('ViolationList', () => {
 
     await flushPromises();
     const tableHeadings = wrapper.find('[role=table]').findAll('[role=columnheader]');
-    expect(tableHeadings.at(0).text()).toBe('Rule (Click to sort ascending)');
-    expect(tableHeadings.at(1).text()).toBe('User (Click to sort ascending)');
+    expect(tableHeadings[0].text()).toBe('Rule (Click to sort ascending)');
+    expect(tableHeadings[1].text()).toBe('User (Click to sort ascending)');
   });
 
   it('should emit revoke-violation event when the revoke button is clicked for a violation on the list', async () => {
@@ -528,6 +544,7 @@ describe('ViolationList', () => {
           policyRule: {
             name: 'NoCustomerSupport',
           },
+          reviewers: [],
           user: {
             cn: 'Opal Millions',
             givenName: 'Opal',
@@ -569,6 +586,7 @@ describe('ViolationList', () => {
         policyRule: {
           name: 'NoCustomerSupport',
         },
+        reviewers: [],
         user: {
           cn: 'Opal Millions',
           givenName: 'Opal',
@@ -578,6 +596,7 @@ describe('ViolationList', () => {
           userName: 'Opal@IGATestQA.onmicrosoft.com',
         },
       },
+      reviewers: [],
       user: {
         cn: 'Opal Millions',
         givenName: 'Opal',

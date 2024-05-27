@@ -57,4 +57,23 @@ describe('UserGroupList', () => {
     const showMoreButton = wrapper.find('[data-testid="show-more-button"');
     expect(showMoreButton.exists()).toBe(true);
   });
+
+  it('Should not renders "show more" button when users exceed limit and hideShowMore is true', () => {
+    const usersList = [
+      { id: 'user1', name: 'John Doe' },
+      { id: 'user2', name: 'Jane Smith' },
+      { id: 'user3', name: 'Alice' },
+      { id: 'user4', name: 'Bob' },
+      { id: 'user5', name: 'Eve' },
+    ];
+    setup({
+      hideShowMore: true,
+      usersList,
+      usersToDisplay: 2,
+    });
+    const userInfos = wrapper.findAll('[data-testid="user-info"');
+    expect(userInfos.length).toBe(5);
+    const showMoreButton = wrapper.find('[data-testid="show-more-button"');
+    expect(showMoreButton.exists()).toBe(false);
+  });
 });

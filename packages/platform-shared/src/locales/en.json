@@ -222,6 +222,7 @@
     "require": "require",
     "required": "Required",
     "reset": "Reset",
+    "reviewers": "Reviewer(s)",
     "revoke": "Revoke",
     "revokeAll": "Revoke all",
     "role": "Role",

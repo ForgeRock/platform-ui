@@ -3,7 +3,18 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="d-flex">
+  <div
+    v-if="singleUser"
+    class="text-truncate">
+    <FrUserBasicInfo
+      data-testid="single-user-item"
+      :is-role="users[0].id?.includes('role')"
+      :pic-dimension="28"
+      :user="users[0]" />
+  </div>
+  <div
+    v-else
+    class="d-flex ml-2">
     <div
       v-for="user in usersToShow"
       :key="`user-${user.id}`"
@@ -21,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrIcon
           v-else
           :id="`user-${user.id}`"
-          icon-class="d-flex align-items-center justify-content-center"
+          class="d-flex align-items-center justify-content-center"
           name="assignment_ind"
           style="width: 28px; height: 28px;" />
       </div>
@@ -64,8 +75,9 @@ import {
   BImg,
   BTooltip,
 } from 'bootstrap-vue';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroupList/UserBasicInfo';
 import i18n from '@/i18n';
 
 const prop = defineProps({
@@ -85,6 +97,8 @@ const prop = defineProps({
 
 const usersToShow = ref([]);
 const remainingUsers = ref(0);
+
+const singleUser = computed(() => prop.users.length === 1);
 
 watch(
   () => prop.users,
