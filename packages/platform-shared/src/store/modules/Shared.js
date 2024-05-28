@@ -15,6 +15,7 @@ const defaultState = {
   autoAccessApiUrl: null,
   autoAccessReportsUrl: null,
   autoAccessTenantId: null,
+  autoCustomReportsEnabled: false,
   autoReportsEnabled: false,
   currentPackage: '',
   extendedSamlConfigEnabled: false,
@@ -157,9 +158,14 @@ const mutations = {
       state.templateBuilderEnabled = true;
     }
 
+    if (env.VUE_APP_ENABLE_ANALYTICS_CUSTOM_REPORTING) {
+      state.autoCustomReportsEnabled = env.VUE_APP_ENABLE_ANALYTICS_CUSTOM_REPORTING === 'true' || env.VUE_APP_ENABLE_ANALYTICS_CUSTOM_REPORTING === true;
+    }
+
     if (env.VUE_APP_ENABLE_ANALYTICS_REPORTING) {
       state.autoReportsEnabled = env.VUE_APP_ENABLE_ANALYTICS_REPORTING === 'true' || env.VUE_APP_ENABLE_ANALYTICS_REPORTING === true;
     }
+
     if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
       state.autoAccessReportsUrl = env.VUE_APP_AUTO_ACCESS_REPORTS_URL;
     }

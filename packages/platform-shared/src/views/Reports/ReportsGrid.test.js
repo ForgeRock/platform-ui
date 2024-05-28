@@ -15,6 +15,7 @@ import ReportsGrid from './ReportsGrid';
 import store from '../../store';
 
 store.state.SharedStore.currentPackage = 'admin';
+store.state.SharedStore.autoCustomReportsEnabled = true;
 
 ValidationRules.extendRules({
   alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
@@ -59,8 +60,11 @@ describe('ReportsGrid', () => {
     result: [],
   };
 
-  it('Report cards displayed successfully', async () => {
+  beforeEach(() => {
     AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve(returnDataSuccess));
+  });
+
+  it('Report cards displayed successfully', async () => {
     const wrapper = setup();
     await flushPromises();
     const templatesGrid = findByText(wrapper, 'h2', 'Template Name');
@@ -80,7 +84,6 @@ describe('ReportsGrid', () => {
   });
 
   it('ensures that the confirm delete modal call is executed when the delete report button is clicked', async () => {
-    AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve(returnDataSuccess));
     const wrapper = setup();
     await flushPromises();
 
@@ -91,7 +94,6 @@ describe('ReportsGrid', () => {
   });
 
   it('deletes a report', async () => {
-    AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve(returnDataSuccess));
     AutoApi.deleteAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
     const wrapper = setup();
     await flushPromises();
@@ -108,7 +110,6 @@ describe('ReportsGrid', () => {
   });
 
   it('routes to expected location when the edit report button is clicked', async () => {
-    AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve(returnDataSuccess));
     const wrapper = setup();
     await flushPromises();
 
@@ -119,5 +120,23 @@ describe('ReportsGrid', () => {
       name: 'EditReportTemplate',
       params: { state: 'draft', template: 'template-name' },
     });
+  });
+
+  it('hides the "New Report" button if the autoCustomReportsEnabled property in the store is set to false', async () => {
+    let wrapper = setup();
+    await flushPromises();
+
+    let newReportButton = findByText(wrapper, 'button', 'add New Report');
+    expect(newReportButton.exists()).toBe(true);
+
+    store.state.SharedStore.autoCustomReportsEnabled = false;
+    wrapper = setup();
+    await flushPromises();
+
+    newReportButton = findByText(wrapper, 'button', 'add New Report');
+    expect(newReportButton).toBeUndefined();
+
+    // Setting this property back to true so further tests do not fail unexpectedly
+    store.state.SharedStore.autoCustomReportsEnabled = true;
   });
 });

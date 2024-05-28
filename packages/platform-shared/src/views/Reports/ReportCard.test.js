@@ -16,6 +16,7 @@ import ReportCard from './ReportCard';
 import store from '../../store';
 
 store.state.SharedStore.currentPackage = 'admin';
+store.state.SharedStore.autoCustomReportsEnabled = true;
 
 describe('Report Card', () => {
   let wrapper;
@@ -83,18 +84,145 @@ describe('Report Card', () => {
     expect(spinnerButton.exists()).toBe(true);
   });
 
-  it('hides the ellipse menu for out of the box reports', async () => {
+  it('hides the ellipse delete, duplicate, edit and publish options for out-of-the-box (ootb) reports', async () => {
     wrapper = setup({
+      report: {
+        ootb: false,
+        ...report,
+      },
+    });
+    let deleteButton = findByText(wrapper, 'li', 'deleteDelete');
+    let duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
+    let editButton = findByText(wrapper, 'li', 'editEdit');
+    let publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
+
+    expect(deleteButton.exists()).toBe(true);
+    expect(duplicateButton.exists()).toBe(true);
+    expect(editButton.exists()).toBe(true);
+    expect(publishButton.exists()).toBe(true);
+
+    // Run History button should always show regardless of out-of-the-box report state
+    let runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
+    expect(runHistoryButton.exists()).toBe(true);
+
+    await wrapper.setProps({
       report: {
         ootb: true,
         ...report,
       },
     });
-    let menu = findByRole(wrapper, 'menu');
-    expect(menu.exists()).toBe(false);
-    await wrapper.setProps({ report: { ...report, ootb: false } });
-    menu = findByRole(wrapper, 'menu');
-    expect(menu.exists()).toBe(true);
+
+    deleteButton = findByText(wrapper, 'li', 'deleteDelete');
+    duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
+    editButton = findByText(wrapper, 'li', 'editEdit');
+    publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
+
+    expect(deleteButton).toBeUndefined();
+    expect(duplicateButton).toBeUndefined();
+    expect(editButton).toBeUndefined();
+    expect(publishButton).toBeUndefined();
+
+    // Run History button should always show regardless of out-of-the-box report state
+    runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
+    expect(runHistoryButton.exists()).toBe(true);
+  });
+
+  it('hides the ellipse delete, duplicate, edit and publish options if the current package is not equal to "admin"', async () => {
+    wrapper = setup({
+      report: {
+        ootb: false,
+        ...report,
+      },
+    });
+
+    let deleteButton = findByText(wrapper, 'li', 'deleteDelete');
+    let duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
+    let editButton = findByText(wrapper, 'li', 'editEdit');
+    let publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
+
+    expect(deleteButton.exists()).toBe(true);
+    expect(duplicateButton.exists()).toBe(true);
+    expect(editButton.exists()).toBe(true);
+    expect(publishButton.exists()).toBe(true);
+
+    // Run History button should always show regardless of the value of the current package
+    let runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
+    expect(runHistoryButton.exists()).toBe(true);
+
+    // Sets the currentPackage to 'enduser'
+    store.state.SharedStore.currentPackage = 'enduser';
+
+    wrapper = setup({
+      report: {
+        ootb: false,
+        ...report,
+      },
+    });
+
+    deleteButton = findByText(wrapper, 'li', 'deleteDelete');
+    duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
+    editButton = findByText(wrapper, 'li', 'editEdit');
+    publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
+    expect(deleteButton).toBeUndefined();
+    expect(duplicateButton).toBeUndefined();
+    expect(editButton).toBeUndefined();
+    expect(publishButton).toBeUndefined();
+
+    // Run History button should always show regardless of the current package
+    runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
+    expect(runHistoryButton.exists()).toBe(true);
+
+    // resets the package back to admin so further tests do not fail unexpectedly
+    store.state.SharedStore.currentPackage = 'admin';
+  });
+
+  it('hides the ellipse delete, duplicate, edit and publish options if the autoCustomReportsEnabled property in the store is not set to true', async () => {
+    wrapper = setup({
+      report: {
+        ootb: false,
+        ...report,
+      },
+    });
+
+    let deleteButton = findByText(wrapper, 'li', 'deleteDelete');
+    let duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
+    let editButton = findByText(wrapper, 'li', 'editEdit');
+    let publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
+
+    expect(deleteButton.exists()).toBe(true);
+    expect(duplicateButton.exists()).toBe(true);
+    expect(editButton.exists()).toBe(true);
+    expect(publishButton.exists()).toBe(true);
+
+    // Run History button should always show regardless of the value of the autoCustomReportsEnabled property value
+    let runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
+    expect(runHistoryButton.exists()).toBe(true);
+
+    // Sets the store autoCustomReportsEnabled property to false
+    store.state.SharedStore.autoCustomReportsEnabled = false;
+
+    wrapper = setup({
+      report: {
+        ootb: false,
+        ...report,
+      },
+    });
+
+    deleteButton = findByText(wrapper, 'li', 'deleteDelete');
+    duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
+    editButton = findByText(wrapper, 'li', 'editEdit');
+    publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
+    expect(deleteButton).toBeUndefined();
+    expect(duplicateButton).toBeUndefined();
+    expect(editButton).toBeUndefined();
+    expect(publishButton).toBeUndefined();
+
+    // Run History button should always show regardless of the value of the autoCustomReportsEnabled property value
+    runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
+    expect(runHistoryButton.exists()).toBe(true);
+
+    // resets the autoCustomReportsEnabled property back to true so further tests do not fail unexpectedly
+    store.state.SharedStore.autoCustomReportsEnabled = true;
   });
 
   it('emits the correct information when the delete button is clicked', async () => {
