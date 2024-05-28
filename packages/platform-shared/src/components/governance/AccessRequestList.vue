@@ -60,15 +60,15 @@ of the MIT license. See the LICENSE file for details. -->
               class="rounded-circle"
               height="18"
               width="18"
-              :alt="item.details.requesteeInfo.givenName"
+              :alt="item.details.requestedFor.givenName"
               :aria-hidden="true"
-              :src="item.details.requesteeInfo.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+              :src="item.details.requestedFor.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
           </BMediaAside>
           <BMediaBody class="align-self-center">
             <div
               class="text-truncate"
               data-testid="request-item-user">
-              {{ item.details.requesteeInfo.givenName }} {{ item.details.requesteeInfo.sn }}
+              {{ $t('common.userFullName', { givenName: item.details.requestedFor.givenName, sn: item.details.requestedFor.sn }) }}
             </div>
           </BMediaBody>
         </BMedia>

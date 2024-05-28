@@ -37,7 +37,7 @@ describe('RequestModal', () => {
         date: '2023-06-22T19:23:26+00:00',
         priority: 'medium',
         icon: 'img/microsoft.8a785075.svg',
-        requesteeInfo: {
+        requestedFor: {
           mail: 'manuel.escobar@test.com',
           givenName: 'Manuel',
           sn: 'Escobar',
