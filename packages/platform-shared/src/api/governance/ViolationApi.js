@@ -37,7 +37,7 @@ export function getViolation(violationId) {
  * @returns {Promise}
  */
 export function getViolationListEndUser(params, targetFilter) {
-  return generateIgaApi().post(`${violationEndUserUrl}/search${encodeQueryString(params)}`, { targetFilter });
+  return generateIgaApi().post(`${violationEndUserUrl}/search${encodeQueryString(params, false)}`, { targetFilter });
 }
 
 /**
