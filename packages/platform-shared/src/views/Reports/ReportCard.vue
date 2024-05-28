@@ -42,18 +42,18 @@ of the MIT license. See the LICENSE file for details. -->
             small
             :label="$t('common.loadingEtc')" />
           <FrActionsCell
-            v-else-if="isAdmin && props.report.ootb === false"
-            :delete-option="isAdmin && props.report.ootb === false"
-            :duplicate-option="isAdmin && props.report.ootb === false"
+            v-else
+            :delete-option="showCustomReport && props.report.ootb === false"
+            :duplicate-option="showCustomReport && props.report.ootb === false"
             :divider="isAdmin && props.report.ootb === true"
-            :edit-option="isAdmin && props.report.ootb === false"
+            :edit-option="showCustomReport && props.report.ootb === false"
             @delete-clicked.stop="$emit('delete-template', props.report.name, props.report.type)"
             @duplicate-clicked.stop="$emit('duplicate-template', props.report.name, props.report.type)"
             @edit-clicked.stop="$emit('edit-template', props.report.name, reportState)"
             wrapper-class="pr-2">
             <template #custom-top-actions>
               <BDropdownItem
-                v-if="isAdmin && props.report.ootb === false && props.report.type === 'draft'"
+                v-if="showCustomReport && props.report.ootb === false && props.report.type === 'draft'"
                 @click.stop="$emit('publish-template', props.report.name, reportState)">
                 <FrIcon
                   icon-class="mr-2"
@@ -61,14 +61,14 @@ of the MIT license. See the LICENSE file for details. -->
                   {{ $t('common.publish') }}
                 </FrIcon>
               </BDropdownItem>
+              <BDropdownItem @click.stop="emitRouterToTemplate(props.report?.name, true)">
+                <FrIcon
+                  icon-class="mr-2"
+                  name="list_alt">
+                  {{ $t('reports.menu.runHistory') }}
+                </FrIcon>
+              </BDropdownItem>
             </template>
-            <BDropdownItem @click.stop="emitRouterToTemplate(props.report?.name, true)">
-              <FrIcon
-                icon-class="mr-2"
-                name="list_alt">
-                {{ $t('reports.menu.runHistory') }}
-              </FrIcon>
-            </BDropdownItem>
           </FrActionsCell>
         </template>
       </BCard>
@@ -150,13 +150,15 @@ const emit = defineEmits([
   'publish-template',
 ]);
 
+const isAdmin = store.state.SharedStore.currentPackage === 'admin';
+const hasCustomReportsFeatureEnabled = store.state.SharedStore.autoCustomReportsEnabled;
+const showCustomReport = hasCustomReportsFeatureEnabled && isAdmin;
 const hasProperties = Object.keys(props.report).length > 0;
 const reportState = computed(() => {
   const isOutOfTheBox = props.report.ootb;
   const state = isOutOfTheBox ? 'published' : props.report.type;
   return state || 'published';
 });
-const isAdmin = computed(() => store.state.SharedStore.currentPackage === 'admin');
 
 function emitRouterToTemplate(name, toHistory = false) {
   emit('to-template', { name, toHistory, state: reportState.value });

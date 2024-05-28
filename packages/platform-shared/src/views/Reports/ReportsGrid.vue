@@ -11,7 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
     />
     <BButtonToolbar class="justify-content-lg-between mb-4 p-0 border-0">
       <BButton
-        class="mb-3 mb-md-0 d-none"
+        v-if="store.state.SharedStore.autoCustomReportsEnabled && store.state.SharedStore.currentPackage === 'admin'"
+        class="mb-3 mb-md-0"
         variant="primary"
         @click="handleNewReportClick">
         <FrIcon
@@ -83,6 +84,7 @@ of the MIT license. See the LICENSE file for details. -->
       :translated-item-type="$t('common.report')"
       @delete-item="deleteTemplate(templateToDelete.name, templateToDelete.status)" />
     <FrNewReportModal
+      v-if="store.state.SharedStore.autoCustomReportsEnabled && store.state.SharedStore.currentPackage === 'admin'"
       :report-is-saving="saveReportPending"
       :is-testing="isTesting"
       @new-report-save="handleNewReportSave" />
@@ -121,6 +123,7 @@ import FrNewReportModal from './modals/NewReportModal';
 import useSaveReportTemplate from './composables/SaveReport';
 import FrReportCard from './ReportCard';
 import i18n from '@/i18n';
+import store from '@/store';
 
 defineProps({
   isTesting: {
