@@ -41,14 +41,14 @@ describe('ViolationsApi API', () => {
 
   it('should call getViolationList with correct payload and url for end user', async () => {
     const queryParams = {
-      pageNumber: 0, pageSize: 10, queryFilter: 'nome co test',
+      _pageNumber: 0, _pageSize: 10, _queryFilter: 'nome co test',
     };
     const targetFilter = {
       operator: 'AND',
       operand: [{
         operator: 'EQUALS',
         operand: {
-          targetName: 'decision.violation.status',
+          targetName: 'decision.status',
           targetValue: 'pending',
         },
       }],

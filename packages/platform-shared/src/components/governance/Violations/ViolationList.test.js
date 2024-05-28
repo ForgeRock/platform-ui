@@ -122,17 +122,51 @@ describe('ViolationList', () => {
     ]);
   });
 
+  it('includes actor status when searching for complete violations in enduser', async () => {
+    const wrapper = mountComponent({ isAdmin: false });
+    await flushPromises();
+    const filter = wrapper.findComponent('[role=toolbar]');
+    filter.vm.$emit('input', {
+      status: 'complete',
+      rule: '',
+      user: '',
+      startDate: '',
+      endDate: '',
+      searchValue: '',
+    });
+    await flushPromises();
+
+    expect(wrapper.emitted('handle-search')[1][1].operand).toEqual([
+      {
+        operator: 'EQUALS',
+        operand: {
+          targetName: 'decision.status',
+          targetValue: 'complete',
+        },
+      },
+    ]);
+
+    expect(wrapper.emitted('handle-search')[1][0]).toEqual({
+      _fields: 'id,user,policyRule,decision',
+      _pageSize: 10,
+      _pagedResultsOffset: 0,
+      _sortDir: 'desc',
+      _sortKeys: 'decision.startDate',
+      actorStatus: 'inactive',
+    });
+  });
+
   it('emits handle-search when sort-changed event is triggered', async () => {
     const wrapper = mountComponent();
     await flushPromises();
     const table = wrapper.findComponent('.table-responsive');
     table.vm.$emit('sort-changed', { sortDesc: true, sortBy: 'name' });
     expect(wrapper.emitted('handle-search')[1][0]).toEqual({
-      fields: 'id,user,policyRule,decision',
-      pageSize: 10,
-      pagedResultsOffset: 0,
-      sortDir: 'desc',
-      sortKeys: 'decision.startDate',
+      _fields: 'id,user,policyRule,decision',
+      _pageSize: 10,
+      _pagedResultsOffset: 0,
+      _sortDir: 'desc',
+      _sortKeys: 'decision.startDate',
     });
   });
 

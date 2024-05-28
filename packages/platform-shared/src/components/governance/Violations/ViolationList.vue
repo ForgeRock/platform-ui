@@ -346,17 +346,23 @@ async function getData(filterObj) {
   const targetFilter = getTargetFilter(filterObj);
 
   const searchParams = {
-    pageSize: pageSize.value,
-    pagedResultsOffset: (currentPage.value - 1) * pageSize.value,
-    sortDir: sortDesc.value ? 'desc' : 'asc',
-    fields: 'id,user,policyRule,decision',
+    _pageSize: pageSize.value,
+    _pagedResultsOffset: (currentPage.value - 1) * pageSize.value,
+    _sortDir: sortDesc.value ? 'desc' : 'asc',
+    _fields: 'id,user,policyRule,decision',
   };
+
+  // enduser violation search must include actorStatus=inactive for complete violations
+  if (filterObj.status === 'complete' && !props.isAdmin) {
+    searchParams.actorStatus = 'inactive';
+  }
+
   const sortKeyMap = {
     user: 'user.userName',
     policyRule: 'policyRule.name',
     created: 'decision.startDate',
   };
-  searchParams.sortKeys = sortKeyMap[sortBy.value];
+  searchParams._sortKeys = sortKeyMap[sortBy.value];
 
   emit('handle-search', searchParams, targetFilter);
 }
