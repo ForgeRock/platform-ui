@@ -1714,6 +1714,7 @@
         "requestDate": "Request Date",
         "requested": "Requested",
         "requestedFor": "Requested For",
+        "requestedBy": "Requested By",
         "requestId": "Request ID",
         "requestSubmitted": "Request Submitted",
         "requestType": "Request Type",

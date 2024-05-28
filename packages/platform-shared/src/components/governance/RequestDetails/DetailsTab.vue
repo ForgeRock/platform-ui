@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BMediaBody>
         </BMedia>
         <BMedia
-          v-else-if="key === 'requestedFor'">
+          v-else-if="key === 'requestedFor' || key === 'requestedBy'">
           <template #aside>
             <BImg
               class="rounded-circle"
@@ -54,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
               width="28"
               alt=""
               :aria-hidden="true"
-              :src="item.details.requesteeInfo.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+              :src="detail.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
           </template>
           <BMediaBody>
             <p class="h5 m-0">
@@ -155,7 +155,10 @@ onMounted(() => {
       description: props.item.details.description,
     },
     requestedFor: {
-      ...props.item.details.requesteeInfo,
+      ...props.item.details.requestedFor,
+    },
+    requestedBy: {
+      ...props.item.details.requestedBy,
     },
     requestId: props.item.details.id,
     requestDate: dayjs(props.item.details.date).format('MMM D, YYYY h:mm A'),

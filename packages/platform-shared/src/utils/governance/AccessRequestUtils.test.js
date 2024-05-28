@@ -5,7 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { getRequestFilter, getStatusText } from './AccessRequestUtils';
+import { getRequestFilter, getStatusText, getFormattedRequest } from './AccessRequestUtils';
+
+jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
+  getApplicationLogo: jest.fn().mockReturnValue('app_logo.png'),
+}));
 
 const testUser = 'managed/user/testuser';
 
@@ -169,6 +173,54 @@ describe('RequestToolbar', () => {
 
       const statusText = getStatusText(options, 'three');
       expect(statusText).toBe(undefined);
+    });
+  });
+});
+
+describe('getFormattedRequest', () => {
+  it('returns a request correctly', () => {
+    const request = {
+      id: 'id test',
+      requestType: 'test',
+      descriptor: {
+        idx: {
+          '/entitlement': {
+            displayName: 'display name test',
+          },
+        },
+      },
+      glossary: {
+        idx: {
+          '/entitlement': {
+            description: 'desc test',
+          },
+        },
+      },
+      request: {
+        common: {
+          priority: 'priority',
+        },
+      },
+      decision: {
+        startDate: '2021-01-01',
+      },
+      user: 'user test',
+      requester: 'requester test',
+    };
+    const result = getFormattedRequest(request, 'entitlement');
+    expect(result).toEqual({
+      details: {
+        id: 'id test',
+        type: 'governance.accessRequest.requestTypes.test',
+        name: 'display name test',
+        description: 'desc test',
+        priority: 'priority',
+        date: '2021-01-01',
+        requestedFor: 'user test',
+        requestedBy: 'requester test',
+        icon: 'app_logo.png',
+      },
+      rawData: request,
     });
   });
 });

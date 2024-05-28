@@ -125,7 +125,14 @@ const openModalMock = {
     id: 3,
     name: 'My Azure App',
     priority: 'high',
-    requesteeInfo: {
+    requestedBy: {
+      givenName: 'Mike',
+      id: '1234-456-1',
+      mail: 'mike.wong@test.com',
+      sn: 'Wong',
+      userName: 'mike.wong@test.com',
+    },
+    requestedFor: {
       givenName: 'Andrew',
       id: '1234-456-2',
       mail: 'andrew.hertel@test.com',

@@ -238,7 +238,7 @@ describe('AccessReviews', () => {
 
   it('should show who access has been requested for', () => {
     const user = findByTestId(wrapper, 'request-item-user');
-    expect(user.text()).toBe('test givenName test sn');
+    expect(user.text()).toBe('common.userFullName');
   });
 
   it('should show the date the request was created', () => {
