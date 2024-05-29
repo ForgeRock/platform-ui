@@ -27,9 +27,6 @@ describe('GovernanceDashboard', () => {
           $t: (text) => (text),
           $store: {
             state: {
-              SharedStore: {
-                governanceDevEnabled: true,
-              },
               certificationCount: 1,
               approvalsCount: 1,
               violationsCount: 2,

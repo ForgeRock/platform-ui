@@ -70,9 +70,6 @@ describe('NewRequest', () => {
                 userName: 'bjensen',
                 id: '123',
               }],
-              SharedStore: {
-                governanceDevEnabled: true,
-              },
             },
             ...overrideParams,
           },

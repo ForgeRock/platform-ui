@@ -554,7 +554,7 @@ export default {
         payload.catalogs = [...applications, ...entitlements, ...roles];
 
         // perform SOD check when requesting entitlements for a single user
-        if (this.$store.state.SharedStore.governanceDevEnabled && !skipSOD && users.length === 1 && entitlements.length) {
+        if (!skipSOD && users.length === 1 && entitlements.length) {
           try {
             const assignmentIds = this.requestedEntitlements.map((entitlement) => (entitlement.assignmentId));
             const additionalAccess = assignmentIds.map((id) => ({ type: 'entitlementGrant', assignmentId: id }));
