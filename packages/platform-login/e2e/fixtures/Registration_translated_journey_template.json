@@ -15,7 +15,7 @@
       "tree": {
         "_id": "Registration - Translated",
         "_rev": "243528536",
-        "identityResource": "managed/alpha_user",
+        "identityResource": "managed/userRealmuser",
         "uiConfig": {
           "categories": "[\"Registration\"]"
         },
@@ -99,9 +99,9 @@
             }
           ],
           "pageDescription": {
-            "cs": "<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es\">| Español |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=en\">| English |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>",
-            "en": "<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es\">| Español |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=cs\">| Čeština |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>",
-            "es": "<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=en\">| English |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=cs\">| Čeština |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>"
+            "cs": "<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es\">| Español |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=en\">| English |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>",
+            "en": "<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es\">| Español |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=cs\">| Čeština |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>",
+            "es": "<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=en\">| English |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=cs\">| Čeština |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>"
           },
           "stage": "{\"ConfirmationCallback\":[{\"id\":\"8853619c-763c-4037-b88f-d1920f580e86\",\"showButtonsAsLinks\":true}]}",
           "pageHeader": {},
@@ -152,9 +152,9 @@
             }
           ],
           "pageDescription": {
-            "cs": "<br>Už máš účet? <a href='#/service/Login'>Přihlaš se</a><br><a href=\"#/service/ForgottenUsername\">Zapomenuté uživatelské jméno?</a><a href=\"#/service/ResetPassword\"> Zapomenuté heslo?</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es\">| Español |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=en\">| English |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>",
-            "en": "<br>Already have an account? <a href='#/service/Login'>Sign In</a><br><a href=\"#/service/ForgottenUsername\">Forgot your username?</a><a href=\"#/service/ResetPassword\"> Forgot your password?</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es\">| Español |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=cs\">| Čeština |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>",
-            "es": "<br>¿Ya tienes una cuenta? <a href='#/service/Login'>Iniciar sesión</a><br><a href=\"#/service/ForgottenUsername\">¿Olvidó su nombre de usuario?</a><a href=\"#/service/ResetPassword\">¿Olvidaste tu contraseña?</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=en\">| English |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=cs\">| Čeština |</a><br>\n<a href=\"?realm=realmRedirect&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale|</a><br>"
+            "cs": "<br>Už máš účet? <a href='#/service/Login'>Přihlaš se</a><br><a href=\"#/service/ForgottenUsername\">Zapomenuté uživatelské jméno?</a><a href=\"#/service/ResetPassword\"> Zapomenuté heslo?</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es\">| Español |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=en\">| English |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>",
+            "en": "<br>Already have an account? <a href='#/service/Login'>Sign In</a><br><a href=\"#/service/ForgottenUsername\">Forgot your username?</a><a href=\"#/service/ResetPassword\"> Forgot your password?</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es\">| Español |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=cs\">| Čeština |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale |</a><br>",
+            "es": "<br>¿Ya tienes una cuenta? <a href='#/service/Login'>Iniciar sesión</a><br><a href=\"#/service/ForgottenUsername\">¿Olvidó su nombre de usuario?</a><a href=\"#/service/ResetPassword\">¿Olvidaste tu contraseña?</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=en\">| English |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=cs\">| Čeština |</a><br>\n<a href=\"?realm=loginRealm&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong\">| Undefined locale|</a><br>"
           },
           "stage": "{\"submitButtonText\":{\"en\":\"Next\",\"cs\":\"Dále\",\"es\":\"Próximo\"},\"pageFooter\":{\"en\":\"Page Footer here!\",\"cs\":\"Zápatí stránky zde!\",\"es\":\"¡Pie de página aquí!\"}}",
           "pageHeader": {
@@ -217,7 +217,7 @@
         "eabe2a9a-51e5-4126-9783-a05adfc8f5fd": {
           "_id": "eabe2a9a-51e5-4126-9783-a05adfc8f5fd",
           "_rev": "1946307201",
-          "identityResource": "managed/alpha_user",
+          "identityResource": "managed/userRealmuser",
           "_type": {
             "_id": "CreateObjectNode",
             "name": "Create Object",

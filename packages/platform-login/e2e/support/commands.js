@@ -8,13 +8,7 @@
 import '@testing-library/cypress/add-commands';
 import 'cypress-file-upload';
 import '@neuralegion/cypress-har-generator/commands';
-import {
-  deleteAMJourney,
-  deleteIDMTheme,
-  deleteIDMEmailTemplate,
-  deleteAMSocialProviderNode,
-  deleteAMScript,
-} from '../api/journeyApi.e2e';
+import { importJourneysViaAPI, deleteJourneysViaAPI } from '../utils/manageJourneys';
 
 Cypress.Commands.add('clearSessionStorage', () => {
   cy.window().then((win) => {
@@ -26,13 +20,20 @@ Cypress.Commands.add('clearAppAuthDatabase', () => {
   indexedDB.deleteDatabase('appAuth');
 });
 
+function clearStorage() {
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.clearSessionStorage();
+}
+
 Cypress.Commands.add('login', () => {
   cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
   const loginUrl = `${Cypress.config().baseUrl}/platform/`;
   const adminUserName = Cypress.env('AM_USERNAME');
   const adminPassword = Cypress.env('AM_PASSWORD');
   cy.clearAppAuthDatabase();
-  cy.clearSessionStorage();
+  // Clear all Cookies and Storage, otherwise there might be unexpected behavior of Login after tests
+  clearStorage();
 
   cy.visit(loginUrl);
   cy.findByLabelText(/User Name/i, { timeout: 20000 }).type(adminUserName);
@@ -53,9 +54,7 @@ Cypress.Commands.add('login', () => {
 });
 
 Cypress.Commands.add('logout', () => {
-  cy.clearCookies();
-  cy.clearLocalStorage();
-  cy.clearSessionStorage();
+  clearStorage();
 });
 
 /**
@@ -87,44 +86,28 @@ Cypress.Commands.add('importTrees', (fixtureArray) => {
 
 /**
  * !!! BEWARE !!! Use this ONLY on fixtures that do not replace any base values, scripts, Journeys, etc
+ * This function overrides EVERY imported Journey including ALL dependencies using the API parsing fixtures in the passed array
+ * @param {Array} fixtureArray an array containing the name of test fixture files to parse and import all dependencies
+ * @param {Boolean} login a boolean to tell if tests should authenticate (in case admin is not already logged in)
+ */
+Cypress.Commands.add('importTreesViaAPI', (fixtureArray) => {
+  // Login as admin first
+  cy.login();
+
+  // Use API to import all Journeys & required data
+  importJourneysViaAPI(fixtureArray);
+});
+
+/**
+ * !!! BEWARE !!! Use this ONLY on fixtures that do not replace any base values, scripts, Journeys, etc
  * This function deletes EVERY imported Journey including ALL dependencies using the API parsing fixtures in the passed array
  * @param {Array} fixtureArray an array containing the name of test fixture files to parse and remove all dependencies
  * @param {Boolean} login a boolean to tell if tests should authenticate (in case admin is not already logged in)
  */
-Cypress.Commands.add('deleteTreesViaAPI', (fixtureArray, login = false) => {
-  if (login) {
-    cy.login();
-  }
+Cypress.Commands.add('deleteTreesViaAPI', (fixtureArray) => {
+  // Login as admin first
+  cy.login();
 
-  fixtureArray.forEach((fixtureName) => {
-    const fixture = `e2e/fixtures/${fixtureName}`;
-    // Read Fixture file
-    cy.readFile(fixture).then((fixtureData) => {
-      // Delete Journey itself first
-      const journeyName = Object.keys(fixtureData.trees)[0].replace(' ', '%20');
-      deleteAMJourney([journeyName]);
-
-      // Then delete everything else in correct order
-      // Delete all Themes
-      const fixtureObj = Object.values(fixtureData.trees)[0];
-      fixtureObj.themes.forEach((theme) => {
-        deleteIDMTheme(theme.name);
-      });
-
-      // Delete all Email Templates
-      Object.keys(fixtureObj.emailTemplates).forEach((emailTemplate) => {
-        deleteIDMEmailTemplate(emailTemplate);
-      });
-
-      // Delete all Social Identity Providers
-      Object.keys(fixtureObj.socialIdentityProviders).forEach((socialIdentityProvider) => {
-        deleteAMSocialProviderNode(socialIdentityProvider);
-      });
-
-      // Delete all Scripts
-      Object.keys(fixtureObj.scripts).forEach((script) => {
-        deleteAMScript(script);
-      });
-    });
-  });
+  // Use API to delete all Journeys & required data
+  deleteJourneysViaAPI(fixtureArray);
 });
