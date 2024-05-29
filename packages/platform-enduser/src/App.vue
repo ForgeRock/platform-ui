@@ -95,17 +95,15 @@ export default {
             name: 'AccessReviews',
           },
         },
+        {
+          showBadgeWithContentFromStore: 'violationsCount',
+          displayName: 'sideMenu.violations',
+          routeTo: {
+            name: 'Violations',
+          },
+        },
       ],
     };
-    if (this.$store.state.SharedStore.governanceDevEnabled === true) {
-      governanceInbox.subItems.push({
-        showBadgeWithContentFromStore: 'violationsCount',
-        displayName: 'sideMenu.violations',
-        routeTo: {
-          name: 'Violations',
-        },
-      });
-    }
 
     return {
       menuItems: [
@@ -223,10 +221,7 @@ export default {
     if (this.$store.state.SharedStore.governanceEnabled === true) {
       this.getAccessReviewsCount();
       this.getPendingApprovalsCount();
-
-      if (this.$store.state.SharedStore.governanceDevEnabled === true) {
-        this.getViolationsCount();
-      }
+      this.getViolationsCount();
     }
   },
   watch: {
