@@ -81,6 +81,24 @@ describe('journeyEditorAsChildPage composable', () => {
     expect(push).toHaveBeenCalledWith('returnRoute');
   });
 
+  it('Clears store state when the user leaves the child page without returning to the parent page', () => {
+    setupTestStore({ editorIsChildPage: true, childJourneyId: '123', parentRoute: 'returnRoute' });
+    const store = useJourneyEditorAsChildPageStore();
+    const { leftChildPage } = useJourneyEditorAsChildPage();
+
+    // Store should be set initially
+    expect(store.editorIsChildPage).toBe(true);
+    expect(store.childJourneyId).toBe('123');
+    expect(store.parentRoute).toBe('returnRoute');
+
+    leftChildPage();
+
+    // Store should be cleared
+    expect(store.editorIsChildPage).toBe(false);
+    expect(store.childJourneyId).toBe('');
+    expect(store.parentRoute).toBe('');
+  });
+
   it('Clears store state when the parent has received data', () => {
     setupTestStore({ editorIsChildPage: false, childJourneyId: '123', parentRoute: 'returnRoute' });
     const store = useJourneyEditorAsChildPageStore();
