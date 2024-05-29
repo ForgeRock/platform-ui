@@ -15,13 +15,13 @@ filterTests(['forgeops', 'cloud'], () => {
 
     before(() => {
       // Login as admin and import the test Journey with scripts
-      cy.importTrees(['IAM-2936.json']);
+      cy.importTreesViaAPI(['IAM-2936.json']);
       cy.logout();
     });
 
     after(() => {
       // Login as admin and delete test Journey with scripts
-      cy.deleteTreesViaAPI(['IAM-2936.json'], true);
+      cy.deleteTreesViaAPI(['IAM-2936.json']);
     });
 
     it('IAM-2936 other callbacks still render in a page node with a metadata callback', () => {

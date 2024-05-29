@@ -21,7 +21,7 @@ function proceedToNextJourneyPage() {
 }
 
 filterTests(['forgeops', 'cloud'], () => {
-  xdescribe('Check Remember Me theme feature functionality', () => {
+  describe('Check Remember Me theme feature functionality', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Remember%20Me#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
     const userPassword = 'Pass1234!';
@@ -29,7 +29,7 @@ filterTests(['forgeops', 'cloud'], () => {
 
     before(() => {
       // Login as admin, import prepared Journey with Remember Me Themes & create testing IDM enduser
-      cy.importTrees(['Remember_me_journey.json']).then(() => {
+      cy.importTreesViaAPI(['Remember_me_journey.json']).then(() => {
         createIDMUser({
           userName,
           password: userPassword,
@@ -52,7 +52,7 @@ filterTests(['forgeops', 'cloud'], () => {
 
     after(() => {
       // Login as admin, delete prepared Journey with Remember Me Themes & delete testing IDM enduser
-      cy.deleteTreesViaAPI(['Remember_me_journey.json'], true).then(() => {
+      cy.deleteTreesViaAPI(['Remember_me_journey.json']).then(() => {
         deleteIDMUser(userId);
       });
     });
@@ -256,10 +256,11 @@ filterTests(['forgeops', 'cloud'], () => {
       });
 
       // Check that Username is still correctly remembered
-      cy.findByLabelText('User Name').should('be.visible').should('have.value', userName);
+      const userNameText = Cypress.env('IS_FRAAS') ? 'User Name' : 'User Name:';
+      cy.findByLabelText(userNameText).should('be.visible').should('have.value', userName);
 
       // And finally check that Remember Me is still enabled
-      cy.findByRole('checkbox', { name: 'Remember my username but with a really longer text here!' }).should('be.checked');
+      cy.findByRole('checkbox', { name: 'Remember Me' }).should('be.checked');
     });
   });
 });

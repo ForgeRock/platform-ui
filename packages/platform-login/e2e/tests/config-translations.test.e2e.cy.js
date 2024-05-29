@@ -44,6 +44,7 @@ const frcaTranslations = {
 
 // Theme/Journey config translations and functions
 const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
+const userRealm = Cypress.env('IS_FRAAS') ? 'alpha_' : '';
 const userPassword = 'Pass1234!';
 
 const mainPageTranslations = {
@@ -417,13 +418,13 @@ filterTests(['forgeops', 'cloud'], () => {
       // Read template file
       cy.readFile(journeyTemplatePath).then((data) => {
         // Replace all Realm redirects with correct ones for current Platform mode
-        const updatedTemplate = JSON.stringify(data).replaceAll('realmRedirect', loginRealm);
+        const updatedTemplate = JSON.stringify(data).replaceAll('loginRealm', loginRealm).replaceAll('userRealm', userRealm);
         // Write moditied data back to the template file
         cy.writeFile(journeyTemplatePath, JSON.parse(updatedTemplate));
       });
 
       // Login as admin and import translated Journey with translated Theme
-      cy.importTrees([journeyTemplate]);
+      cy.importTreesViaAPI([journeyTemplate]);
       cy.logout();
     });
 
@@ -434,7 +435,7 @@ filterTests(['forgeops', 'cloud'], () => {
 
     after(() => {
       // Login as admin and delete translated Journey with translated Theme
-      cy.deleteTreesViaAPI([journeyTemplate], true);
+      cy.deleteTreesViaAPI([journeyTemplate]);
     });
 
     it('Check default Theme/Journey translations (EN), create user and verify email message', () => {

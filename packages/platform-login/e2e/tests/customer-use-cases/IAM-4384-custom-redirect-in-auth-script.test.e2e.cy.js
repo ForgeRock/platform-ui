@@ -16,13 +16,13 @@ filterTests(['cloud'], () => {
 
     before(() => {
       // Login as admin and import test Journey with scripts
-      cy.importTrees(['IAM-4384.json']);
+      cy.importTreesViaAPI(['IAM-4384.json']);
       cy.logout();
     });
 
     after(() => {
       // Login as admin and delete test Journey with scripts
-      cy.deleteTreesViaAPI(['IAM-4384.json'], true);
+      cy.deleteTreesViaAPI(['IAM-4384.json']);
     });
 
     it('IAM-4383 should resume trees using custom redirect flows correctly following a custom redirect where the tracking cookie is present', () => {
