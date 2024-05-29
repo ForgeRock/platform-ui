@@ -37,6 +37,15 @@ export default function useJourneyEditorAsChildPage() {
   }
 
   /**
+   * Resets the store data when a user leaves the child page without returning to the parent page
+   */
+  function leftChildPage() {
+    journeyEditorAsChildPageStore.editorIsChildPage = false;
+    journeyEditorAsChildPageStore.childJourneyId = '';
+    journeyEditorAsChildPageStore.parentRoute = '';
+  }
+
+  /**
    * Clears store data when the parent page has received the data
    */
   function parentHasReceivedData() {
@@ -50,6 +59,7 @@ export default function useJourneyEditorAsChildPage() {
   return {
     viewJourneyAsChildPage,
     returnToParentPage,
+    leftChildPage,
     parentHasReceivedData,
     editorIsChildPage,
     childJourneyId,
