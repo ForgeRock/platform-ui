@@ -3768,14 +3768,11 @@
     },
     "workflows": {
       "builder": {
-        "allow": "ALLOW",
         "approvalTaskDefaultDisplayName": "Approval Task",
         "approvalTaskDescription": "Assign an approval task to users and roles. Chain tasks or use in conjunction with switch to implement serial/parallel flows.",
         "approvalTaskDisplayName": "Approval",
-        "APPROVE": "APPROVE",
         "loadingWorkflow": "Loading {status}...",
         "deleteDraft": "Delete Draft",
-        "DENY": "DENY",
         "denyPermission": "Deny",
         "editDraft": "Edit Draft",
         "editPanel": {
@@ -3834,9 +3831,7 @@
         "exclusiveGatewayDefaultDisplayName": "Validation Gateway",
         "exclusiveGatewayDescription": "Evaluate a binary response from a preceding node to select a path the workflow should take.",
         "exclusiveGatewayDisplayName": "If/Else",
-        "expiration": "EXPIRATION",
         "export": "Export",
-        "FULFILL": "FULFILL",
         "fulfillPermission": "Fulfill",
         "fulfillmentTaskDefaultDisplayName": "Fulfillment Task",
         "fulfillmentTaskDescription": "Assigns a task to users and roles for manual completion.",
@@ -3864,8 +3859,6 @@
           "title": "Publish Workflow?",
           "overwriteWarning": "This will overwrite your existing published workflow."
         },
-        "REJECT": "REJECT",
-        "remediate": "REMEDIATE",
         "scriptTaskDefaultDisplayName": "Script Task",
         "scriptTaskDescription": "Invoke APIs or execute business logic using this node.",
         "scriptTaskDisplayName": "Script",
