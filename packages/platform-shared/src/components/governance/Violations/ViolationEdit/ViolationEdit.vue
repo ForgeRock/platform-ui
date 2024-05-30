@@ -293,7 +293,7 @@ async function addComment() {
  * @param {String} actorId actor to forward to
  * @param {String} comment comment
  */
-async function forwardItem({ actorId, forwardComment }) {
+async function forwardItem({ actorId, comment: forwardComment }) {
   try {
     await forwardViolation(violationId, phaseId.value, actorId, actionPermissions.value, forwardComment);
     displayNotification('success', i18n.global.t('governance.violations.successForwardingViolation'));

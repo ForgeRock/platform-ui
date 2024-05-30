@@ -163,7 +163,7 @@ describe('Violation Edit', () => {
     await flushPromises();
 
     const forwardModal = wrapper.findComponent('#violation-forward-modal___BV_modal_outer_');
-    forwardModal.vm.$emit('forward-item', { actorId: 'testId', forwardComment: 'testComment' });
+    forwardModal.vm.$emit('forward-item', { actorId: 'testId', comment: 'testComment' });
     await flushPromises();
     expect(forwardSpy).toHaveBeenCalledWith('1', 'testPhase', 'testId', {
       allow: false, comment: false, exception: false, reassign: false, remediate: false,
