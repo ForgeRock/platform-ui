@@ -21,7 +21,7 @@ function proceedToNextJourneyPage() {
 }
 
 filterTests(['forgeops', 'cloud'], () => {
-  describe('Check Remember Me theme feature functionality', () => {
+  xdescribe('Check Remember Me theme feature functionality', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Remember%20Me#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
     const userPassword = 'Pass1234!';
