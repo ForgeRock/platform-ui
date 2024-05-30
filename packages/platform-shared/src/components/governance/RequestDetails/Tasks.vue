@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     no-local-sorting
     responsive
     show-empty
+    :empty-text="$t('common.noRecordsToShow')"
     tbody-tr-class="cursor-pointer"
     :fields="tableColumns"
     :items="tableData"

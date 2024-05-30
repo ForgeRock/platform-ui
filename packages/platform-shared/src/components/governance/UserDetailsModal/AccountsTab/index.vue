@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
         :current-page="paginationPage"
         data-testid="accounts-table"
         show-empty
+        :empty-text="$t('common.noRecordsToShow')"
         responsive>
         <template #cell(application)="{ item }">
           <BMedia

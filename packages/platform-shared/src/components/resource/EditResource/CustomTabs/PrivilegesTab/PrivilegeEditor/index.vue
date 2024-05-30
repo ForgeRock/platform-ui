@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="p-0 mb-0"
       no-border
       show-empty
+      :empty-text="$t('common.noRecordsToShow')"
       ref="permissionsGrid"
       :fields="permissionsColumns"
       :items="permissions"
