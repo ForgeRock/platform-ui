@@ -50,6 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
       responsive
       select-mode="single"
       show-empty
+      :empty-text="$t('common.noRecordsToShow')"
       :fields="certificationListColumnsToShow"
       :items="items"
       :no-local-sorting="true"

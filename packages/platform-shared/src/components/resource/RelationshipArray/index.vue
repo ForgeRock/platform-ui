@@ -71,6 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
       ref="relationshipArrayGrid"
       responsive
       show-empty
+      :empty-text="$t('common.noRecordsToShow')"
       :fields="columns"
       :items="gridData"
       :per-page="0"

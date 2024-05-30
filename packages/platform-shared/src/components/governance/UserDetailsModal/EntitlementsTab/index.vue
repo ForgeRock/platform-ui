@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         :per-page="pageSize"
         :current-page="paginationPage"
         show-empty
+        :empty-text="$t('common.noRecordsToShow')"
         responsive>
         <template #cell(application)="{ item }">
           <BMedia

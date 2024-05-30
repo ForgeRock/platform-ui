@@ -66,6 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
       id="list-resource-table"
       responsive
       show-empty
+      :empty-text="$t('common.noRecordsToShow')"
       :fields="columns"
       :items="tableData"
       :no-local-sorting="true"

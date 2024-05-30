@@ -6,14 +6,15 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <BTable
       class="mb-0"
-      data-testid="run-history-table"
-      no-sort-reset
-      responsive
-      show-empty
       :current-page="currentPage"
+      data-testid="run-history-table"
+      :empty-text="$t('common.noRecordsToShow')"
       :fields="tableColumns"
       :items="tableRows"
+      no-sort-reset
       :per-page="itemsPerPage"
+      responsive
+      show-empty
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :thead-class="!tableRows.length ? 'd-none' : ''">

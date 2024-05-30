@@ -33,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
         ref="privilegesGrid"
         class="mb-0 border-top"
         show-empty
+        :empty-text="$t('common.noRecordsToShow')"
         :fields="privilegesColumns"
         :items="privileges"
         :no-local-sorting="true"
