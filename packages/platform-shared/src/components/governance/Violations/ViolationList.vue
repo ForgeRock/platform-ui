@@ -67,7 +67,9 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
       <template #cell(actions)="{ item }">
-        <div class="d-flex justify-content-end">
+        <div
+          v-if="!isComplete"
+          class="d-flex justify-content-end">
           <template v-if="!isAdmin">
             <BButton
               @click="openExceptionModal(item)"
@@ -298,6 +300,7 @@ const violationColumns = props.isAdmin ? ref(tableFields) : ref(tableFieldsEndus
 const columnCategories = props.isAdmin ? ref(categories) : ref(categoriesEnduser);
 
 const violationColumnsToShow = computed(() => violationColumns.value.filter((col) => col.show));
+const isComplete = computed(() => filters.value.status === 'complete');
 
 const items = computed(() => {
   if (!props.tableRows?.length) return [];
