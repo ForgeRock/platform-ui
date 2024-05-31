@@ -14,34 +14,46 @@ of the MIT license. See the LICENSE file for details. -->
         name="more_horiz" />
     </template>
 
-    <!-- Extend -->
+    <template v-if="!isAdmin">
+      <!-- Extend -->
+      <BDropdownItem
+        @click="emit('open-exception-modal', item)">
+        <FrIcon
+          icon-class="mr-2"
+          name="update">
+          {{ $t('governance.certificationTask.actions.extendException') }}
+        </FrIcon>
+      </BDropdownItem>
+      <!-- Revoke -->
+      <BDropdownItem
+        @click="emit('open-revoke-modal', item.id)">
+        <FrIcon
+          icon-class="mr-2"
+          name="block">
+          {{ $t('governance.certificationTask.actions.revokeException') }}
+        </FrIcon>
+      </BDropdownItem>
+    </template>
     <BDropdownItem
-      @click="emit('open-exception-modal', item)">
+      @click="emit('open-forward-modal', item)">
       <FrIcon
         icon-class="mr-2"
-        name="update">
-        {{ $t('governance.certificationTask.actions.extendException') }}
-      </FrIcon>
-    </BDropdownItem>
-    <!-- Revoke -->
-    <BDropdownItem
-      @click="emit('open-revoke-modal', item.id)">
-      <FrIcon
-        icon-class="mr-2"
-        name="block">
-        {{ $t('governance.certificationTask.actions.revokeException') }}
+        name="redo">
+        {{ $t('common.forward') }}
       </FrIcon>
     </BDropdownItem>
     <!-- View Details -->
-    <BDropdownDivider />
-    <BDropdownItem
-      @click="viewExceptionDetails(item.id)">
-      <FrIcon
-        icon-class="mr-2"
-        name="article">
-        {{ $t('common.viewDetails') }}
-      </FrIcon>
-    </BDropdownItem>
+    <template v-if="!isAdmin">
+      <BDropdownDivider />
+      <BDropdownItem
+        @click="viewExceptionDetails(item.id)">
+        <FrIcon
+          icon-class="mr-2"
+          name="article">
+          {{ $t('common.viewDetails') }}
+        </FrIcon>
+      </BDropdownItem>
+    </template>
   </BDropdown>
 </template>
 
@@ -59,9 +71,13 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const emit = defineEmits(['open-exception-modal']);
+const emit = defineEmits(['open-exception-modal', 'open-revoke-modal', 'open-forward-modal']);
 
 defineProps({
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
   item: {
     type: Object,
     required: true,

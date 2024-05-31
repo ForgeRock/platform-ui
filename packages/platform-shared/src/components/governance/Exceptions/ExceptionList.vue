@@ -66,9 +66,11 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(actions)="{ item }">
         <FrExceptionActionsCell
+          :is-admin="isAdmin"
           :item="item"
           @open-revoke-modal="openRevokeModal"
-          @open-exception-modal="openExceptionModal" />
+          @open-exception-modal="openExceptionModal"
+          @open-forward-modal="openForwardModal" />
       </template>
     </BTable>
     <FrPagination
@@ -87,6 +89,8 @@ of the MIT license. See the LICENSE file for details. -->
       @action="extendException"
       @view-violation-details="$emit('view-exception-details', selectedItem)"
       :violation="selectedItem" />
+    <FrViolationForwardModal
+      @forward-item="forwardItem" />
     <FrRevokeExceptionModal
       @revoke="revoke"
       :violation-id="selectedItemId" />
@@ -116,9 +120,10 @@ import FrExceptionToolbar from '@forgerock/platform-shared/src/components/govern
 import FrExceptionActionsCell from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionActionsCell';
 import FrExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
 import FrRevokeExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/RevokeExceptionModal';
+import FrViolationForwardModal from '@forgerock/platform-shared/src/components/governance/Violations/ViolationForwardModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { allowException, revokeException } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
+import { forwardViolation, allowException, revokeException } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import i18n from '@/i18n';
 
 // Composables
@@ -190,6 +195,13 @@ const tableFields = [
     category: 'violation',
     show: true,
   },
+  {
+    key: 'actions',
+    class: 'w-100px',
+    label: '',
+    sortable: false,
+    show: true,
+  },
 ];
 
 const formatedColumns = groupBy(tableFields, 'category');
@@ -236,23 +248,13 @@ const items = computed(() => {
     latestViolation: exception.stats?.latestDetectionTime,
     phaseId: exception.decision?.phases[0]?.name,
     policyRule: exception.policyRule,
+    rawData: exception,
     user: exception.user,
   }));
 });
 
 // exception columns to show
-const exceptionColumnsToShow = computed(() => {
-  const filteredColumns = exceptionColumns.value.filter((col) => col.show);
-  return !props.isAdmin
-    ? filteredColumns.concat({
-      key: 'actions',
-      class: 'w-100px',
-      label: '',
-      sortable: false,
-      show: true,
-    })
-    : filteredColumns;
-});
+const exceptionColumnsToShow = computed(() => exceptionColumns.value.filter((col) => col.show));
 
 /**
  * Updates the columns of the list in their corresponding order
@@ -279,6 +281,15 @@ function openColumnsModal() {
 function openExceptionModal(item) {
   selectedItem.value = item;
   bvModal.value.show('ExceptionModal');
+}
+
+/**
+ * Open forward modal
+ * @param {Object} item violation to forward
+ */
+function openForwardModal(item) {
+  selectedItem.value = item;
+  bvModal.value.show('violation-forward-modal');
 }
 
 /**
@@ -420,6 +431,30 @@ async function extendException({ violationId, phaseId, payload }) {
     showErrorMessage(error, i18n.global.t('governance.violations.errorExtendingException'));
   } finally {
     getData(filters.value);
+  }
+}
+
+/**
+ * Forward an exception to a new user, with an optional comment
+ * @param {String} actorId actor to forward to
+ * @param {String} comment comment
+ */
+async function forwardItem({ actorId, comment }) {
+  try {
+    if (!selectedItem?.value?.rawData?.decision?.phases?.length) return;
+    const phaseId = selectedItem.value.rawData.decision.phases[0].name;
+    const permissions = {
+      allow: true,
+      comment: true,
+      exception: true,
+      reassign: true,
+      remediate: true,
+    };
+    await forwardViolation(selectedItem.value.id, phaseId, actorId, permissions, comment);
+    displayNotification('success', i18n.global.t('governance.violations.successForwardingViolation'));
+    getData(filters.value);
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.violations.errorForwardingViolation'));
   }
 }
 

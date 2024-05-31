@@ -53,6 +53,41 @@ describe('ViolationList', () => {
     expect(columns[3].text()).toBe('Created (Click to sort ascending)');
   });
 
+  it('should show actions in admin when status is pending', async () => {
+    const wrapper = mountComponent({
+      tableRows: [{}],
+    });
+
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const itemCells = table.findAll('tbody td');
+    const actionCell = itemCells.at(4);
+    expect(actionCell.text()).toBe('more_horizredoForward');
+  });
+
+  it('should hide actions in admin when status is complete', async () => {
+    const wrapper = mountComponent({
+      tableRows: [{}],
+    });
+    await flushPromises();
+
+    const filter = wrapper.findComponent('[role=toolbar]');
+    filter.vm.$emit('input', {
+      status: 'complete',
+      rule: '',
+      user: '',
+      startDate: '',
+      endDate: '',
+      searchValue: '',
+    });
+
+    await flushPromises();
+    const table = wrapper.findComponent('.table-responsive');
+    const itemCells = table.findAll('tbody td');
+    const actionCell = itemCells.at(3);
+    expect(actionCell.text()).toBe('');
+  });
+
   it('shows violations in a list with correct columns when is enduser', async () => {
     const wrapper = mountComponent({ isAdmin: false });
     await flushPromises();

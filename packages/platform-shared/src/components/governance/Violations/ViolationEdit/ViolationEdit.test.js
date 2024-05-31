@@ -6,6 +6,7 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { cloneDeep } from 'lodash';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
@@ -132,20 +133,6 @@ describe('Violation Edit', () => {
     expect(tabs[2].text()).toBe('Comments');
   });
 
-  it('should not hide the actions if it is an violation', async () => {
-    const wrapper = mountComponent();
-    await flushPromises();
-
-    expect(wrapper.vm.hideActions).toBe(false);
-  });
-
-  it('should hide the actions if it is an exception', async () => {
-    const wrapper = mountComponent({ isException: true });
-    await flushPromises();
-
-    expect(wrapper.vm.hideActions).toBe(true);
-  });
-
   it('opens forward modal', async () => {
     const wrapper = mountComponent();
     const forwardModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
@@ -171,41 +158,6 @@ describe('Violation Edit', () => {
     'testComment');
   });
 
-  it('should show allow and revoke buttons when is not admin', async () => {
-    const wrapper = mountComponent({
-      isAdmin: false,
-    });
-    await flushPromises();
-
-    const buttons = wrapper.findAll('button');
-
-    expect(buttons[0].text()).toBe('checkAllow');
-    expect(buttons[1].text()).toBe('blockRevoke');
-    expect(buttons[2].text()).toBe('redoForward');
-  });
-
-  it('should show extend exception and revoke buttons when is enduser exception', async () => {
-    const wrapper = mountComponent({
-      isAdmin: false,
-      isEnduserException: true,
-    });
-    await flushPromises();
-
-    const buttons = wrapper.findAll('button');
-
-    expect(buttons[0].text()).toBe('updateExtend Exception');
-    expect(buttons[1].text()).toBe('blockRevoke Exception');
-  });
-
-  it('should not show allow and revoke buttons when is admin', async () => {
-    const wrapper = mountComponent();
-    await flushPromises();
-
-    const buttons = wrapper.findAll('button');
-
-    expect(buttons[0].text()).toBe('redoForward');
-  });
-
   it('opens conflict modal if is admin', async () => {
     const wrapper = mountComponent();
     const forwardModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
@@ -216,7 +168,7 @@ describe('Violation Edit', () => {
     expect(forwardModalSpy).toHaveBeenCalledWith('violation-conflicts-modal');
   });
 
-  it('emits view-conflicts event if is not admin', async () => {
+  it('emits view-conflicts event if is not admin and actions are not hidden', async () => {
     const wrapper = mountComponent({ isAdmin: false });
     await flushPromises();
 
@@ -279,5 +231,86 @@ describe('Violation Edit', () => {
 
     expect(wrapper.emitted('revoke-violation')).toBeTruthy();
     expect(wrapper.emitted('revoke-violation')[0][0]).toEqual(violation);
+  });
+
+  describe('actions', () => {
+    it('violations should have forward button in admin view', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+
+      const buttons = wrapper.findAll('button');
+
+      expect(buttons[0].text()).toBe('redoForward');
+    });
+
+    it('exceptions should have forward button in admin view', async () => {
+      const wrapper = mountComponent({ isException: true });
+      await flushPromises();
+
+      const buttons = wrapper.findAll('button');
+
+      expect(buttons[0].text()).toBe('redoForward');
+    });
+
+    it('should show allow, revoke and forward buttons when is not admin', async () => {
+      const wrapper = mountComponent({
+        isAdmin: false,
+      });
+      await flushPromises();
+
+      const buttons = wrapper.findAll('button');
+
+      expect(buttons[0].text()).toBe('checkAllow');
+      expect(buttons[1].text()).toBe('blockRevoke');
+      expect(buttons[2].text()).toBe('redoForward');
+    });
+
+    it('should show extend exception, revoke, and forward buttons when is enduser exception', async () => {
+      const wrapper = mountComponent({
+        isAdmin: false,
+        isEnduserException: true,
+      });
+      await flushPromises();
+
+      const buttons = wrapper.findAll('button');
+
+      expect(buttons[0].text()).toBe('updateExtend Exception');
+      expect(buttons[1].text()).toBe('blockRevoke Exception');
+      expect(buttons[2].text()).toBe('redoForward');
+    });
+
+    it('should hide actions when violation is complete for admin', async () => {
+      const completeViolation = cloneDeep(violation);
+      completeViolation.decision.status = 'complete';
+      ViolationApi.getViolation = jest.fn().mockReturnValue(Promise.resolve({
+        data: completeViolation,
+      }));
+      const wrapper = mountComponent();
+      await flushPromises();
+
+      const firstButton = wrapper.find('button');
+      expect(firstButton.text()).toBe('View Conflicts');
+
+      ViolationApi.getViolation = jest.fn().mockReturnValue(Promise.resolve({
+        data: violation,
+      }));
+    });
+
+    it('should hide actions when violation is complete when it is not admin', async () => {
+      const completeViolation = cloneDeep(violation);
+      completeViolation.decision.status = 'complete';
+      ViolationApi.getViolation = jest.fn().mockReturnValue(Promise.resolve({
+        data: completeViolation,
+      }));
+      const wrapper = mountComponent({ isAdmin: false });
+      await flushPromises();
+
+      const firstButton = wrapper.find('button');
+      expect(firstButton.text()).toBe('View Conflicts');
+
+      ViolationApi.getViolation = jest.fn().mockReturnValue(Promise.resolve({
+        data: violation,
+      }));
+    });
   });
 });

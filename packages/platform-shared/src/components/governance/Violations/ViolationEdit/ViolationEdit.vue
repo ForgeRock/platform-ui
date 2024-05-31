@@ -40,7 +40,6 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
         </template>
         <BButton
-          v-if="!isEnduserException"
           @click="openForwardModal"
           class="mr-1"
           variant="outline-secondary">
@@ -63,7 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BTab :title="$t('common.details')">
               <BCardBody>
                 <FrViolationDetails
-                  @view-conflicts="isAdmin ? openConflictModal() : $emit('revoke-violation', violation)"
+                  @view-conflicts="(isAdmin || hideActions) ? openConflictModal() : $emit('revoke-violation', violation)"
                   :violation="violation" />
               </BCardBody>
             </BTab>
@@ -213,8 +212,13 @@ const isLoading = ref(true);
 const tabIndex = ref(0);
 
 const item = computed(() => ({ rawData: { decision: { comments: violation?.value?.decision?.comments || [] } } }));
+
+// Actions should be hidden for complete violations and violations with no phase
 const hideActions = computed(() => {
-  if (!violation?.value?.decision?.phases?.length || props.isException) return true;
+  if (
+    !violation?.value?.decision?.phases?.length
+    || violation?.value?.decision?.status === 'complete'
+  ) return true;
   return false;
 });
 const phaseId = computed(() => {
@@ -321,7 +325,7 @@ function openForwardModal() {
  * Open the conflict modal
  */
 function openConflictModal() {
-  if (props.isAdmin) {
+  if (props.isAdmin || hideActions.value) {
     bvModal.value.show('violation-conflicts-modal');
   } else {
     emit('view-conflicts');
