@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template v-if="key === 'status'">
         <BBadge
-          variant="success">
+          :variant="statusVariant">
           {{ column.value }}
         </BBadge>
       </template>
@@ -117,6 +117,40 @@ const columns = ref({
   },
 });
 
+const statusVariant = ref('light');
+
+function getStatus(violation) {
+  const status = violation.decision?.status;
+  switch (status) {
+    case 'complete':
+      if (violation.decision.outcome === 'allow') return i18n.global.t('governance.violations.status.allow');
+      if (violation.decision.outcome === 'remediate') return i18n.global.t('governance.violations.status.remediate');
+      return i18n.global.t('governance.violations.status.complete');
+    case 'exception':
+      return i18n.global.t('governance.violations.status.exception');
+    case 'pending':
+      return i18n.global.t('governance.violations.status.pending');
+    case 'in-progress':
+      return i18n.global.t('governance.violations.status.inProgress');
+    default:
+      return blankValueIndicator;
+  }
+}
+
+function getStatusVariant(violation) {
+  const status = violation.decision?.status;
+  switch (status) {
+    case 'complete':
+      return 'success';
+    case 'exception':
+      return 'warning';
+    case 'in-progress':
+    case 'pending':
+    default:
+      return 'light';
+  }
+}
+
 /**
  * Sets the data that is shown based on the violation object
  * @param {Object} violation violation
@@ -134,7 +168,8 @@ function setColumnData(violation) {
     givenName: violation.policyRule.policyRuleOwner.givenName,
     sn: violation.policyRule.policyRuleOwner.sn,
   };
-  columns.value.status.value = violation.decision.status || blankValueIndicator;
+  columns.value.status.value = getStatus(violation);
+  statusVariant.value = getStatusVariant(violation);
   columns.value.riskLevel.value = violation.policyRule.riskScore || 0;
   columns.value.mitigatingControl.value = violation.policyRule.mitigatingControl || blankValueIndicator;
   columns.value.controlUrl.value = violation.policyRule.documentationUrl || blankValueIndicator;

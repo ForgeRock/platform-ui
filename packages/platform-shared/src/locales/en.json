@@ -1800,8 +1800,12 @@
     },
     "violations": {
       "status": {
+        "allow": "Exception Allowed",
+        "complete": "Complete",
+        "exception": "Exception Granted",
         "inProgress": "In-Progress",
-        "complete": "Complete"
+        "pending": "Pending",
+        "remediate": "Resolved"
       },
       "addComment": "Add Comment",
       "commentBy": "{comment} by {author}",

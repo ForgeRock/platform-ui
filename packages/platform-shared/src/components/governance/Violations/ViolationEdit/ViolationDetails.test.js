@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+import { cloneDeep } from 'lodash';
 import ViolationDetails from './ViolationDetails';
 import i18n from '@/i18n';
 
@@ -33,13 +34,14 @@ describe('Violation Details', () => {
       status: 'testStatus',
     },
   };
-  function mountComponent() {
+  function mountComponent(props) {
     const wrapper = mount(ViolationDetails, {
       global: {
         plugins: [i18n],
       },
       props: {
         violation,
+        ...props,
       },
     });
     return wrapper;
@@ -76,7 +78,7 @@ describe('Violation Details', () => {
       'ruleName',
       'ruleDescription',
       'ruleGivenName ruleSnruleUsername',
-      'testStatus',
+      '--',
       'View Conflicts',
       '1',
       'testMitigating',
@@ -86,6 +88,60 @@ describe('Violation Details', () => {
 
     rows.forEach((row, index) => {
       expect(row.text()).toMatch(expectedValues[index]);
+    });
+  });
+
+  describe('statuses', () => {
+    it('displays exception allowed for allow', () => {
+      const allow = cloneDeep(violation);
+      allow.decision.status = 'complete';
+      allow.decision.outcome = 'allow';
+
+      const wrapper = mountComponent({ violation: allow });
+
+      const status = wrapper.findAll('.col-lg-8').at(4);
+      expect(status.text()).toBe('Exception Allowed');
+    });
+
+    it('displays resolved for remediate', () => {
+      const remediate = cloneDeep(violation);
+      remediate.decision.status = 'complete';
+      remediate.decision.outcome = 'remediate';
+
+      const wrapper = mountComponent({ violation: remediate });
+
+      const status = wrapper.findAll('.col-lg-8').at(4);
+      expect(status.text()).toBe('Resolved');
+    });
+
+    it('displays exception granted for exception', () => {
+      const exception = cloneDeep(violation);
+      exception.decision.status = 'exception';
+
+      const wrapper = mountComponent({ violation: exception });
+
+      const status = wrapper.findAll('.col-lg-8').at(4);
+      expect(status.text()).toBe('Exception Granted');
+    });
+
+    it('displays pending for pending', () => {
+      const pending = cloneDeep(violation);
+      pending.decision.status = 'pending';
+
+      const wrapper = mountComponent({ violation: pending });
+
+      const status = wrapper.findAll('.col-lg-8').at(4);
+      expect(status.text()).toBe('Pending');
+    });
+
+    it('displays in-progress for in-progress', () => {
+      const inProgress = cloneDeep(violation);
+      inProgress.decision.status = 'in-progress';
+
+      const wrapper = mountComponent({ violation: inProgress });
+
+      const status = wrapper.findAll('.col-lg-8').at(4);
+      expect(status.text()).toBe('In-Progress');
     });
   });
 });
