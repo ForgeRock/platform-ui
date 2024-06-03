@@ -51,7 +51,9 @@ of the MIT license. See the LICENSE file for details. -->
           @event add-item-clicked
         -->
         <BButton
-          @click="$emit('add-item-clicked')"
+          @mousedown.stop
+          @mouseup.stop
+          @click.stop="$emit('add-item-clicked')"
           :aria-label="addLabelOrFallback"
           :title="addLabelOrFallback"
           size="sm"
