@@ -1543,6 +1543,37 @@
         "title": "application template",
         "content": "Are you sure you want to delete the {templateName} template?"
       }
+    },
+    "templates": {
+      "authorizationCode": "Authorization Code",
+      "backChannelRequest": "Back Channel Request",
+      "clientCredentials": "Client Credentials",
+      "clientSecretBasic": "client_secret_basic",
+      "clientSecretPost": "client_secret_post",
+      "deviceCode": "Device Code",
+      "emailAddress": "EmailAddress",
+      "jsonResponseFormat": "JSON response format.",
+      "jwtBearer": "JWT Bearer",
+      "jwks": "JWKs",
+      "jwksUri": "JWKs_URI",
+      "pairwise": "pairwise",
+      "privateKeyJwt": "private_key_jwt",
+      "refreshToken": "Refresh Token",
+      "resourceOwnerPasswordCredentials": "Resource Owner Password Credentials",
+      "saml2": "SAML2",
+      "selfSignedTlsClientAuth": "self_signed_tls_client_auth",
+      "signedJwtResponseFormat": "Signed JWT response format.",
+      "signedThenEncryptedJwtResponseFormat": "Signed then encrypted JWT response format.",
+      "tokenExchange": "Token Exchange",
+      "tlsClientAuth": "tls_client_auth",
+      "uma": "UMA",
+      "uriReference": "URI Reference",
+      "userInfoJsonResponseFormat": "User info JSON response format.",
+      "userInfoSignedJwtResponseFormat": "User info signed JWT response format.",
+      "userInfoEncryptedJwtResponseFormat": "User info encrypted JWT response format.",
+      "userInfoSignedThenEncryptedResponseFormat": "User info signed then encrypted response format.",
+      "x509": "X509",
+      "x509SubjectName": "x509SubjectName"
     }
   },
   "realm": {
