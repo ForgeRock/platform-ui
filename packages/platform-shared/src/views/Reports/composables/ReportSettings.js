@@ -69,7 +69,7 @@ export default function useReportSettings(
       _id: 'sort',
       title: i18n.global.t('common.sorting'),
       description: i18n.global.t('reports.template.sortingSettingDescription'),
-      modal: 'report-sort-modal',
+      modal: 'report-sorting-modal',
       definitions: [],
       payload: sortingPayload,
     },

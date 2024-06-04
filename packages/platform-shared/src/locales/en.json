@@ -263,6 +263,7 @@
     "signUp": "Sign Up",
     "sortByLabel": "Sort by: {label}",
     "sorting": "Sorting",
+    "sortOrder": "Sort order",
     "source": "Source",
     "sources": "Sources",
     "specifiedDate": "Specified Date",
@@ -2027,6 +2028,8 @@
       "reportUpdated": "Report has been updated",
       "selectColumnsFromDataSets": "Select columns from data sets to appear in the report.",
       "sortingSettingDescription": "Define columns to sort the data table.",
+      "sortBy": "Sort by",
+      "sortDataBy": "Sort Data By",
       "userProvided": "User Provided",
       "error": {
         "errorSavingReport": "There was an error saving the report"
