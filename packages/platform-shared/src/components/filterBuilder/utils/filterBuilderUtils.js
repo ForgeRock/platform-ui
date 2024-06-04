@@ -69,13 +69,13 @@ const operatorMap = {
  * @param {String} resourceName name of resource filter is aimed against
  * @param {Array} properties list of properties available
  */
-export function convertToIGAFilter(filter, resourceName = 'user', properties) {
+export function convertToIGAFilter(filter, resourceName = 'user', properties, ignoreTemporals) {
   const convertedFilter = {
     [filter.operator]: [],
   };
   filter.subfilters.forEach((filterRule) => {
     if (filterRule.operator === 'or' || filterRule.operator === 'and') {
-      convertedFilter[filter.operator].push(convertToIGAFilter(filterRule, resourceName, properties));
+      convertedFilter[filter.operator].push(convertToIGAFilter(filterRule, resourceName, properties, ignoreTemporals));
     } else {
       const operator = operatorMap[filterRule.operator] || filterRule.operator;
       const subfilter = { [operator]: {} };
@@ -86,11 +86,21 @@ export function convertToIGAFilter(filter, resourceName = 'user', properties) {
       } else {
         subfilter[operator][filterValueMap[operator]] = filterRule.value.startsWith(`${resourceName}.`) ? filterRule.value : { literal: filterRule.value };
         const selectedProperty = properties.find((property) => property.value === filterRule.field);
+
+        // convert boolean values from string to boolean
+        if (selectedProperty?.type === 'boolean') {
+          subfilter[operator][filterValueMap[operator]] = { literal: filterRule.value === 'True' };
+        }
+
         if (selectedProperty?.type === 'array' && selectedProperty.path) {
           // We need to set arrays of relationships back to in_string_array instead of in_string
-          subfilter[operator].in_string_array = `${resourceName}.${filterRule.temporalValue}.${filterRule.field}`;
+          subfilter[operator].in_string_array = ignoreTemporals
+            ? filterRule.field
+            : `${resourceName}.${filterRule.temporalValue}.${filterRule.field}`;
         } else {
-          subfilter[operator][filterFieldMap[operator]] = `${resourceName}.${filterRule.temporalValue}.${filterRule.field}`;
+          subfilter[operator][filterFieldMap[operator]] = ignoreTemporals
+            ? filterRule.field
+            : `${resourceName}.${filterRule.temporalValue}.${filterRule.field}`;
         }
       }
       convertedFilter[filter.operator].push(subfilter);
@@ -104,7 +114,7 @@ export function convertToIGAFilter(filter, resourceName = 'user', properties) {
  * @property {Object} filter - IGA filter to convert
  * @returns {Object} filterBuilder-formatted filter
  */
-export function convertFromIGAFilter(filter, currentUniqueIndex = 0) {
+export function convertFromIGAFilter(filter, currentUniqueIndex = 0, ignoreTemporals) {
   let uniqueIndex = currentUniqueIndex;
   const igaFilter = Object.keys(filter).length ? filter : { or: [{ starts_with: { prefix: { literal: '' }, value: 'user.after.' } }] };
   const filterEntry = Object.entries(igaFilter)[0];
@@ -116,7 +126,7 @@ export function convertFromIGAFilter(filter, currentUniqueIndex = 0) {
   filterEntry[1].forEach((filterRule) => {
     const [operator, fieldValueObject] = Object.entries(filterRule)[0];
     if (operator === 'or' || operator === 'and') {
-      const subfilter = convertFromIGAFilter(filterRule, uniqueIndex + 1);
+      const subfilter = convertFromIGAFilter(filterRule, uniqueIndex + 1, ignoreTemporals);
       convertedFilter.subfilters.push(subfilter.convertedFilter);
       uniqueIndex = subfilter.uniqueIndex;
     } else {
@@ -147,17 +157,22 @@ export function convertFromIGAFilter(filter, currentUniqueIndex = 0) {
           // if there is a literal value, we want to remove that layer
           subfilter.value = subfilter.value.literal;
         }
-
+        if (typeof subfilter.value === 'boolean') {
+          // if type is boolean, need to convert to string
+          subfilter.value = subfilter.value
+            ? 'True'
+            : 'False';
+        }
         if (subfilter.field) {
           // pull temporal value from field [resourceName, temporalValue, fieldName]
           const splitField = subfilter.field.split('.');
-          [, subfilter.temporalValue, subfilter.field] = splitField;
+          if (ignoreTemporals) subfilter.temporalValue = 'after';
+          else [, subfilter.temporalValue, subfilter.field] = splitField;
         }
       }
       convertedFilter.subfilters.push(subfilter);
     }
   });
-
   return { convertedFilter, uniqueIndex };
 }
 

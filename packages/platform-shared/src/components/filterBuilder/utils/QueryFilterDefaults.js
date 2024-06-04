@@ -28,9 +28,9 @@ export const defaultConditionOptions = {
 };
 
 export const governanceConditionOptions = {
-  Contains: { label: i18n.global.t('filters.contains'), value: 'contains', type: ['string'] },
-  DoesNotContain: { label: i18n.global.t('filters.doesNotContain'), value: 'not_contains', type: ['string'] },
-  Is: { label: i18n.global.t('filters.is'), value: 'equals', type: ['string', 'reference'] },
+  Contains: { label: i18n.global.t('filters.contains'), value: 'contains', type: ['string', 'array'] },
+  DoesNotContain: { label: i18n.global.t('filters.doesNotContain'), value: 'not_contains', type: ['string', 'array'] },
+  Is: { label: i18n.global.t('filters.is'), value: 'equals', type: ['string', 'reference', 'boolean'] },
   IsNot: { label: i18n.global.t('filters.isNot'), value: 'not_equals', type: ['string', 'reference'] },
   StartsWith: { label: i18n.global.t('filters.startsWith'), value: 'starts_with', type: ['string'] },
   DoesNotStartsWith: { label: i18n.global.t('filters.endsWith'), value: 'ends_with', type: ['string'] },

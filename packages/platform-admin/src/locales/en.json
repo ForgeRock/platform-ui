@@ -70,6 +70,7 @@
     "EditProvider": "Edit Provider",
     "EditReportTemplate": "Report Template",
     "EditResource": "Edit Resource",
+    "EditScope": "Edit Scope",
     "EditServerCluster": "Edit Server Cluster",
     "EditServerClusterServers": "Edit Server Cluster Servers",
     "EditTemplateBuilder": "Edit Application Template",

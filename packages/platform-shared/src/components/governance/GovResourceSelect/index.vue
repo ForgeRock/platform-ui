@@ -133,11 +133,17 @@ export default {
       // initial value supplied
       const selectedOption = this.savedData.id;
       const match = this.options.find((option) => option.value === selectedOption);
-      const initialOption = {
-        text: this.$t('common.userFullName', { givenName: match?.userInfo?.givenName || this.savedData.givenName, sn: match?.userInfo?.sn || this.savedData.sn }),
-        userInfo: this.savedData,
-        value: selectedOption,
-      };
+
+      const initialOption = (this.resource === 'user' || compareRealmSpecificResourceName(this.resource, 'user'))
+        ? {
+          text: this.$t('common.userFullName', { givenName: match?.userInfo?.givenName || this.savedData.givenName, sn: match?.userInfo?.sn || this.savedData.sn }),
+          userInfo: this.savedData,
+          value: selectedOption,
+        }
+        : {
+          text: this.savedData.name,
+          value: selectedOption,
+        };
 
       // ensures that the selected option is not in the list twice
       if (match || this.isSearching) return [...this.options];
