@@ -51,7 +51,8 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       @change="onFileChange"
       accept=".js, .groovy"
-      :placeholder="fieldPlaceholder">
+      :placeholder="fieldPlaceholder"
+      :browse-text="$t('common.browse')">
       <template #file-name>
         <FrField
           v-model="filePathModel"
