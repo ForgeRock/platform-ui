@@ -7,7 +7,7 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { findByTestId, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, findByRole, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
@@ -34,7 +34,6 @@ jest.mock('vue-router', () => ({
 describe('Run Report component', () => {
   function setup(props) {
     return mount(RunReport, {
-
       global: {
         plugins: [i18n],
       },
@@ -387,6 +386,72 @@ describe('Run Report component', () => {
       expect(wrapper.emitted('tab-update')).not.toBeDefined();
       expect(errorSpy).toHaveBeenCalled();
       expect(wrapper.vm.isSubmitting).toBe(false);
+    });
+
+    it('Only shows out-of-the-box mapped fields if the report is pre-packaged', async () => {
+      jest.clearAllMocks();
+      wrapper = setup({ reportConfig: { parameters: { accountStatus: {} } } });
+      await flushPromises();
+
+      // ensures that out of the box reports show the expected mapped field for accountStatus
+      let statusLabel = wrapper.find('label');
+      expect(statusLabel.text()).toEqual('Status');
+      let statusDropdownField = findByRole(wrapper, 'listbox');
+      const [active, inactive, blocked] = statusDropdownField.findAll('[role="option"]');
+      expect(active.text()).toBe('Active');
+      expect(inactive.text()).toBe('Inactive');
+      expect(blocked.text()).toBe('Blocked');
+
+      // sets the report to NOT be out-of-the-box
+      await wrapper.setProps({
+        isPrePackagedReport: false,
+        reportConfig: { parameters: { accountStatus: {} } },
+      });
+
+      // ensures that the label is now equal to the paremeter supplied name and
+      // not the name that is mapped to the out-of-the-box report.
+      statusLabel = wrapper.find('label');
+      expect(statusLabel.text()).toEqual('accountStatus');
+
+      // ensures that the original out-of-the-box label and dropdowns do not exist
+      statusDropdownField = findByRole(wrapper, 'listbox');
+      expect(statusDropdownField.exists()).toBe(false);
+
+      // ensures that now an input text field shows
+      const inputTextField = wrapper.find('input[type="text"]');
+      expect(inputTextField.exists()).toBe(true);
+    });
+
+    it('ensures that the payload for pre-packaged reports runs through the mapped _REPORT_FIELDS_CONTROLLER payload only', async () => {
+      jest.clearAllMocks();
+      wrapper = setup({
+        templateName: 'TEMPLATE-NAME',
+        templateState: 'draft',
+        reportConfig: { parameters: { accountStatus: {} } },
+      });
+      await flushPromises();
+
+      // ensures that the pre-packaged report outputs the correct payload
+      const runReportSpy = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockImplementation(() => Promise.resolve({}));
+      const runReportButton = findByText(wrapper, 'button', 'Run Report');
+      await runReportButton.trigger('click');
+      expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { accountStatus: ['active', 'inactive', 'blocked'] });
+
+      // sets the report to a NON pre-packaged state
+      await wrapper.setProps({
+        isPrePackagedReport: false,
+        reportConfig: { parameters: { accountStatus: {} } },
+      });
+
+      // sets the input text field value for the accountStatus parameter
+      const customAccountStatusFieldValue = 'My custom account status field value';
+      const inputTextField = wrapper.find('input[type="text"]');
+      await inputTextField.setValue(customAccountStatusFieldValue);
+
+      // submits report and ensures that the payload is now what the user has input and not the
+      // expected payload that is mapped in the _REPORT_FIELDS_CONTROLLER for pre-packaged reports.
+      await runReportButton.trigger('click');
+      expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { accountStatus: customAccountStatusFieldValue });
     });
   });
 });
