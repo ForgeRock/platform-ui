@@ -56,7 +56,8 @@ of the MIT license. See the LICENSE file for details. -->
               v-if="getResourcePath(selectedProp)"
               v-model="inputValue.value"
               @input="ruleChange({ value: $event.split('/').pop() })"
-              :resource-path="getResourcePath(selectedProp)" />
+              :resource-path="getResourcePath(selectedProp)"
+              :label="getResourceLabel(selectedProp)" />
             <FrField
               v-else
               data-testid="selectedProperty"
@@ -160,6 +161,10 @@ const props = defineProps({
     default: false,
     type: Boolean,
   },
+  ignoreTemporals: {
+    default: false,
+    type: Boolean,
+  },
   rowPosition: {
     default: false,
     type: Boolean,
@@ -248,7 +253,17 @@ function getDefaultGroup(
  * @param {String} prop property value to search for
  */
 function getResourcePath(prop) {
-  return prop ? find(props.properties, ((x) => x.value === prop)).path : '';
+  return prop ? find(props.properties, ((x) => x.value === prop))?.path : '';
+}
+
+/**
+ * Retrieves the label of a resource based on the given property.
+ * @param {string} prop - The property to retrieve the resource label for.
+ * @returns {string} the label of the resource.
+ */
+function getResourceLabel(prop) {
+  const resourcePath = getResourcePath(prop);
+  return resourcePath ? resourcePath.split('/').pop() || '' : '';
 }
 
 /**
@@ -284,10 +299,10 @@ function updateFilter(eventName, data) {
     default:
       break;
   }
-  igaFilter = convertToIGAFilter(queryFilter.value, props.resourceName, props.properties);
+  igaFilter = convertToIGAFilter(queryFilter.value, props.resourceName, props.properties, props.ignoreTemporals);
   // check filter for before/after property matching if the event trigger is user updated (as
   // the user created trigger will only ever have non-temporal properties)
-  if (checkIGAFilterMeetsRequirements(igaFilter) || !props.showTemporalValueField) {
+  if (!props.showTemporalValueField || checkIGAFilterMeetsRequirements(igaFilter)) {
     emit('filter-update', igaFilter);
     // clear error
     emit('toggle-valid', true);
@@ -344,7 +359,7 @@ function loadFilter() {
     allowBasicMode.value = false;
     toggleMode(false);
   }
-  const response = convertFromIGAFilter(cloneDeep(props.filterValue));
+  const response = convertFromIGAFilter(cloneDeep(props.filterValue), 0, props.ignoreTemporals);
   queryFilter.value = cloneDeep(response.convertedFilter);
   uniqueIndex = response.uniqueIndex;
 }

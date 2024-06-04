@@ -170,4 +170,94 @@ describe('iga tests', () => {
     const stringIgaFilterWithArray = '{or:[{contains: {search_string_array: [{literal: "value1"}, {literal: "value2"}], in_string_array: "user.after.roles"}}]}';
     expect(checkIGAFilterForArrays(stringIgaFilterWithArray)).toBe(true);
   });
+
+  describe('ignoreTemporals', () => {
+    const igaFilterNoTemporal = {
+      or: [
+        {
+          starts_with: {
+            prefix: {
+              literal: 'snValue',
+            },
+            value: 'user.sn',
+          },
+        },
+        {
+          equals: {
+            left: 'user.cn',
+            right: {
+              literal: 'test',
+            },
+          },
+        },
+        {
+          and: [
+            {
+              equals: {
+                in_string_array: 'user.members',
+                right: {
+                  literal: 'snValue',
+                },
+              },
+            },
+          ],
+        },
+      ],
+    };
+
+    const componentFilterNoTemporal = {
+      operator: 'or',
+      subfilters: [
+        {
+          operator: 'starts_with',
+          field: 'user.sn',
+          value: 'snValue',
+          temporalValue: 'after',
+          uniqueIndex: 1,
+        },
+        {
+          operator: 'equals',
+          field: 'user.cn',
+          value: 'test',
+          temporalValue: 'after',
+          uniqueIndex: 2,
+        },
+        {
+          operator: 'and',
+          subfilters: [
+            {
+              operator: 'equals',
+              field: 'user.members',
+              value: 'snValue',
+              temporalValue: 'after',
+              uniqueIndex: 4,
+            },
+          ],
+          uniqueIndex: 3,
+        },
+      ],
+      uniqueIndex: 0,
+    };
+
+    it('ignores temporals when converting to iga filter', () => {
+      const resourceName = 'user';
+      const properties = [
+        {
+          value: 'user.sn',
+          type: 'string',
+        },
+        {
+          value: 'user.members',
+          type: 'array',
+          path: 'user',
+        },
+      ];
+      expect(convertToIGAFilter(componentFilterNoTemporal, resourceName, properties, true)).toStrictEqual(igaFilterNoTemporal);
+    });
+
+    it('ignores temporals when converting from iga filter', () => {
+      const currentUniqueIndex = 0;
+      expect(convertFromIGAFilter(igaFilterNoTemporal, currentUniqueIndex, true)).toStrictEqual({ convertedFilter: componentFilterNoTemporal, uniqueIndex: 4 });
+    });
+  });
 });
