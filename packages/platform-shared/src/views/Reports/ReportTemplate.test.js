@@ -8,7 +8,12 @@
 import { nextTick } from 'vue';
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import { findByRole, findByText, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import {
+  findAllByTestId,
+  findByRole,
+  findByText,
+  findByTestId,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
@@ -740,6 +745,203 @@ describe('Component for creating custom analytics reports', () => {
           // ensures that the aggregate definition does NOT exist anymore
           newAggregateDefinitionHeading = findByText(aggregateSettingContainer, 'h4', 'My aggregate');
           expect(newAggregateDefinitionHeading).toBeUndefined();
+
+          // Adds the fieldoptions "My Parameter" object back to prevent future tests from having unexpected inconsistencies
+          fieldOptionsStub.data['My Parameter'] = {
+            class: 'parameter',
+            type: 'string',
+            label: 'My Parameter Name',
+          };
+        });
+      });
+
+      describe('@sorting', () => {
+        async function addSortDefinition() {
+          const [,,,, sortModal] = wrapper.findAll('[role="dialog"]');
+
+          // ensures that there are no sort definitions
+          const sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
+          const definitionBody = findByTestId(sortSettingsContainer, 'definition-body');
+          expect(definitionBody.exists()).toBe(false);
+
+          // No other way to trigger the @show BModal event that would call this function
+          await wrapper.vm.fetchFieldOptionsForSorting();
+          await flushPromises();
+
+          const [sortBySelect, sortOrderSelect] = sortModal.findAll('[role="listbox"]');
+
+          // selects the sort by dropdown
+          const [,, sortByMyParameterOption] = sortBySelect.findAll('[role="option"]');
+          await sortBySelect.trigger('click');
+          await sortByMyParameterOption.find('span').trigger('click');
+
+          // selects the sort order dropdown
+          const [sortOrderAscendingOption] = sortOrderSelect.findAll('[role="option"]');
+          await sortOrderSelect.trigger('click');
+          await sortOrderAscendingOption.find('span').trigger('click');
+
+          const saveButton = findByText(sortModal, 'button', 'Save');
+          await saveButton.trigger('click');
+        }
+
+        it('adds a sort definition', async () => {
+          await addDataSource();
+          await addSortDefinition();
+
+          // ensures that the new sort definition exists
+          const sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
+          const definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
+          expect(definitionBody.length).toBe(1);
+
+          const definitionHeading = definitionBody[0].find('.card-text');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
+        });
+
+        it('deletes a sort definition', async () => {
+          await addDataSource();
+          await addSortDefinition();
+
+          // ensures that the sort definition exists
+          const sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
+          let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
+          const definitionHeading = definitionBody[0].find('.card-text');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
+
+          // deletes the sort definition
+          const actionsMenu = findByRole(sortSettingsContainer, 'menu');
+          const deleteOption = findByText(actionsMenu, 'a', 'deleteDelete');
+          await actionsMenu.trigger('click');
+          await deleteOption.trigger('click');
+
+          // ensures that the sort definition does NOT exist anymore
+          definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
+          expect(definitionBody.length).toBe(0);
+        });
+
+        it('modifies an existing sort definition', async () => {
+          await addDataSource();
+          await addSortDefinition();
+
+          // ensures that the existing sort definition has the expect heading
+          let sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
+          let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
+          let definitionHeading = definitionBody[0].find('.card-text');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
+
+          // sets the existing definition to edit
+          const actionsMenu = findByRole(sortSettingsContainer, 'menu');
+          const editOption = findByText(actionsMenu, 'a', 'editEdit Sorting');
+          await actionsMenu.trigger('click');
+          await editOption.trigger('click');
+
+          const [,,,, sortModal] = wrapper.findAll('[role="dialog"]');
+          const [sortBySelect, sortOrderSelect] = sortModal.findAll('[role="listbox"]');
+
+          // selects the sort by dropdown to the _id option now
+          const [sortByIdOption] = sortBySelect.findAll('[role="option"]');
+          await sortBySelect.trigger('click');
+          await sortByIdOption.find('span').trigger('click');
+
+          // selects the new sort order dropdown to descending
+          const [, descendingOption] = sortOrderSelect.findAll('[role="option"]');
+          await sortOrderSelect.trigger('click');
+          await descendingOption.find('span').trigger('click');
+
+          // saves form
+          const saveButton = findByText(sortModal, 'button', 'Save');
+          await saveButton.trigger('click');
+
+          // ensures that the sort definition has the updated heading
+          sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
+          definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
+          definitionHeading = definitionBody[0].find('.card-text');
+          expect(definitionHeading.text()).toBe('arrow_downwardSort by: applications._id');
+        });
+
+        it('updates any parameter names that are chosen as a "Sort By" option if the original parameter definition label is updated', async () => {
+          await addDataSource();
+          await addParameterDefinition();
+          await addSortDefinition();
+
+          // ensures that the existing sort definition has the parameter label to be updated
+          let sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
+          let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
+          let definitionHeading = definitionBody[0].find('.card-text');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
+
+          // field options API response needs to be updated to the changed parameter label to be edited
+          fieldOptionsStub.data['My Parameter'].label = 'My Parameter Name Updated';
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+
+          // sets the parameter to edit
+          const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
+          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
+          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameters');
+
+          await parameterActionsMenu.trigger('click');
+          await parametersEditOption.trigger('click');
+
+          // ensures that the original parameter label is set
+          const [, parametersModal] = wrapper.findAll('[role="dialog"]');
+          const labelField = parametersModal.find('[name="parameter-label"]');
+          expect(labelField.element.value).toBe('My Parameter Name');
+
+          // changes the parameter label to a new value
+          await labelField.setValue('My Parameter Name Updated');
+
+          // saves parameter
+          const saveButton = findByText(parametersModal, 'button', 'Save');
+          await saveButton.trigger('click');
+
+          // ensures that the sort definition has the updated heading
+          sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
+          definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
+          definitionHeading = definitionBody[0].find('.card-text');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name Updated');
+
+          // clicks on the edit sort definition that has been updated
+          const actionsMenu = findByRole(sortSettingsContainer, 'menu');
+          const editOption = findByText(actionsMenu, 'a', 'editEdit Sorting');
+          await actionsMenu.trigger('click');
+          await editOption.trigger('click');
+
+          // ensures that the existing sort definition "Sort by" value option is now set to the new parameter label
+          const [,,,, sortModal] = wrapper.findAll('[role="dialog"]');
+          const [sortBySelect] = sortModal.findAll('[role="listbox"]');
+          const selectedOption = sortBySelect.find('.multiselect__option--selected');
+          expect(selectedOption.text()).toBe('My Parameter Name Updated');
+
+          // Puts the field options label back to it's original name so as to not effect future tests
+          fieldOptionsStub.data['My Parameter'].label = 'My Parameter Name';
+        });
+
+        it('deletes a sort definition if the "Sort by" selected option matches the parameter that is deleted', async () => {
+          await addDataSource();
+          await addParameterDefinition();
+          await addSortDefinition();
+
+          // field options API response needs to be updated to exclude the parameter to be deleted
+          delete fieldOptionsStub.data['My Parameter'];
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+
+          const sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
+
+          // ensures that there is an existing sort definition with the matching parameter name
+          let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
+          const definitionHeading = definitionBody[0].find('.card-text');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
+
+          const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
+          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
+          const parametersDeleteOption = findByText(parameterActionsMenu, 'a', 'deleteDelete');
+
+          // Deletes the parameter
+          await parameterActionsMenu.trigger('click');
+          await parametersDeleteOption.trigger('click');
+
+          // ensures that the sort definition does NOT exist anymore
+          definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
+          expect(definitionBody.length).toBe(0);
 
           // Adds the fieldoptions "My Parameter" object back to prevent future tests from having unexpected inconsistencies
           fieldOptionsStub.data['My Parameter'] = {

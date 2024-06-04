@@ -51,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <FrIcon
                     icon-class="mr-2"
                     :name="definition.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'">
-                    {{ $t('common.sortByLabel', {label: definition.sortBy}) }}
+                    {{ $t('common.sortByLabel', { label: definition.sortBy }) }}
                   </FrIcon>
                 </BCardText>
               </BListGroupItem>
