@@ -503,7 +503,7 @@ function updateParameterSelections(allDefinitions, oldParameterLabel, newParamet
 }
 
 /**
- * Updates an aggregate with a new parameter label
+ * Updates a parameter name for an aggregate, filter or sort definition that has a matching selection.
  * @param {Array} existingDefinitions existing aggregate defintion list
  * @param {String} oldParameterLabel old parameter label
  * @param {String} newParameterLabel new parameter label

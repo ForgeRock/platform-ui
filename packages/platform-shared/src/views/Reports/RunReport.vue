@@ -545,7 +545,9 @@ const searchDebounce = debounce(handleSearch, 500);
  */
 async function submitRunReport() {
   const parameters = _PARAMETER_KEYS.value.map((parameter) => {
-    const field = _REPORT_FIELDS_CONTROLLER[parameter] || unmappedParametersModel.value[parameter];
+    const field = props.isPrePackagedReport
+      ? (_REPORT_FIELDS_CONTROLLER[parameter] || unmappedParametersModel.value[parameter])
+      : unmappedParametersModel.value[parameter];
     return field ? { [parameter]: field.payload.value } : {};
   });
   const payload = Object.assign({}, ...parameters);
