@@ -339,10 +339,14 @@
       "december": "December"
     },
     "timePeriods": {
-      "hours": "hour(s)",
       "days": "day(s)",
+      "hours": "hour(s)",
+      "last7Days": "Last 7 days",
+      "last30Days": "Last 30 days",
+      "months": "month(s)",
+      "today": "Today",
       "weeks": "week(s)",
-      "months": "month(s)"
+      "yesterday": "Yesterday"
     },
     "helpText": {
       "timeConstraint": "Assign role only during a selected time period.",
