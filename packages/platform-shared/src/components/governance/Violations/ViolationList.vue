@@ -95,6 +95,7 @@ of the MIT license. See the LICENSE file for details. -->
             </BButton>
           </template>
           <BDropdown
+            v-if="item.status !== 'pending'"
             no-caret
             toggle-class="py-1 px-3"
             variant="link">
@@ -311,6 +312,7 @@ const items = computed(() => {
     policyRule: violation.policyRule,
     rawData: violation,
     reviewers: violation.decision?.actors?.active || [],
+    status: violation.decision?.status,
     user: violation.user,
   }));
 });
@@ -533,6 +535,7 @@ function convertDate(date) {
  */
 function handleFilterChange(newFilters) {
   filters.value = newFilters;
+  currentPage.value = 1;
   getData(filters.value);
 }
 

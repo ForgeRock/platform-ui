@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
         </template>
         <BButton
+          v-if="violation?.decision?.status !== 'pending'"
           @click="openForwardModal"
           class="mr-1"
           variant="outline-secondary">

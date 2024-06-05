@@ -116,6 +116,43 @@ describe('ViolationList', () => {
     expect(columns[3].classes()).not.toContain('w-120px');
   });
 
+  it('should show dropdown options only for not pending violations', async () => {
+    const tableRows = [
+      {
+        decision: {
+          status: 'pending',
+          startDate: '2024-05-13T23:12:21+00:00',
+          phases: [
+            {
+              name: 'testPhase',
+            },
+          ],
+        },
+      },
+      {
+        decision: {
+          status: 'in-progress',
+          startDate: '2024-05-13T23:12:21+00:00',
+          phases: [
+            {
+              name: 'testPhase-2',
+            },
+          ],
+        },
+      },
+    ];
+    const wrapper = mountComponent({ tableRows });
+    await flushPromises();
+
+    const table = wrapper.findComponent('.table-responsive');
+    const rows = table.findAll('[role=row]');
+    const dropdownInFirstViolation = rows[1].find('div.dropdown.b-dropdown.btn-group');
+    const dropdownInSecondViolation = rows[2].find('div.dropdown.b-dropdown.btn-group');
+
+    expect(dropdownInFirstViolation.exists()).toBe(false);
+    expect(dropdownInSecondViolation.exists()).toBe(true);
+  });
+
   it('emits handle-search when filter is changed', async () => {
     const wrapper = mountComponent();
     await flushPromises();
@@ -442,6 +479,7 @@ describe('ViolationList', () => {
         },
       },
       reviewers: [],
+      status: 'in-progress',
       user: {
         cn: 'Opal Millions',
         givenName: 'Opal',
@@ -632,6 +670,7 @@ describe('ViolationList', () => {
         },
       },
       reviewers: [],
+      status: 'in-progress',
       user: {
         cn: 'Opal Millions',
         givenName: 'Opal',
