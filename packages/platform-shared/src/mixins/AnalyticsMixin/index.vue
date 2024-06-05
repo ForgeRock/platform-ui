@@ -5,10 +5,9 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
-import {
-  getAnalyticsData,
-} from '@forgerock/platform-shared/src/api/AnalyticsApi';
+import { getAnalyticsData } from '@forgerock/platform-shared/src/api/AnalyticsApi';
 import * as d3 from 'd3';
+import i18n from '@/i18n';
 
 /**
  * @description Analytics mixin used for global analytics functionality
@@ -254,11 +253,20 @@ export default {
       // Last 30 days
       const last30DaysStart = formatStart(dayjs().subtract(30, 'day'));
 
+      // Get translated labels
+      // the vue2-daterange-picker library that consumes these doesn't have a way to define
+      // the label apart from the object key, so there is a chance that some customer translation
+      // might cause issues here.
+      const today = i18n.global.t('common.timePeriods.today');
+      const yesterday = i18n.global.t('common.timePeriods.yesterday');
+      const last7Days = i18n.global.t('common.timePeriods.last7Days');
+      const last30Days = i18n.global.t('common.timePeriods.last30Days');
+
       return {
-        Today: [startOfDay, now],
-        Yesterday: [yesterdayStart, yesterdayEnd],
-        'Last 7 Days': [last7DaysStart, now],
-        'Last 30 Days': [last30DaysStart, now],
+        [today]: [startOfDay, now],
+        [yesterday]: [yesterdayStart, yesterdayEnd],
+        [last7Days]: [last7DaysStart, now],
+        [last30Days]: [last30DaysStart, now],
       };
     },
   },
