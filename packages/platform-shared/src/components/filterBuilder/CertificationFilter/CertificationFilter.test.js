@@ -1,12 +1,13 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { flushPromises, mount, shallowMount } from '@vue/test-utils';
 import CertificationFilter from './index';
+import i18n from '@/i18n';
 
 describe('CertificationFilter', () => {
   let wrapper;
@@ -193,6 +194,108 @@ describe('CertificationFilter', () => {
             uniqueIndex: 4,
           },
         ],
+        uniqueIndex: 1,
+      });
+    });
+  });
+
+  describe('with entitlements filter', () => {
+    it('should show the entitlements select component when the filter for entitlement.displayName is selected and the conditional operator is EQUALS', async () => {
+      wrapper = mount(CertificationFilter, {
+        global: {
+          plugins: [i18n],
+          stubs: ['EntitlementSelect'],
+        },
+        props: {
+          resourceName: 'test',
+          filter: {
+            operator: 'OR',
+            operand: [
+              {
+                operator: 'EQUALS',
+                operand: {
+                  targetName: 'entitlement.displayName',
+                  targetValue: '',
+                },
+              },
+            ],
+          },
+        },
+      });
+      await flushPromises();
+
+      const entitlementSelect = wrapper.findComponent({ name: 'EntitlementSelect' });
+      expect(entitlementSelect.exists()).toBe(true);
+      expect(wrapper.vm.queryFilter).toEqual({
+        operator: 'OR',
+        subfilters: [{
+          field: 'entitlement.displayName', operator: 'EQUALS', uniqueIndex: 2, value: '',
+        }],
+        uniqueIndex: 1,
+      });
+    });
+
+    it('should not show the entitlements select component when the filter for entitlement.displayName is not selected', async () => {
+      wrapper = mount(CertificationFilter, {
+        global: {
+          plugins: [i18n],
+          stubs: ['EntitlementSelect'],
+        },
+        props: {
+          resourceName: 'test',
+          filter: {
+            operator: 'OR',
+            operand: [
+              {
+                operator: 'EQUALS',
+                operand: {
+                  targetName: 'entitlement.description',
+                  targetValue: '',
+                },
+              },
+            ],
+          },
+        },
+      });
+      await flushPromises();
+
+      const entitlementSelect = wrapper.findComponent({ name: 'EntitlementSelect' });
+      expect(entitlementSelect.exists()).toBe(false);
+    });
+
+    it('should change rule when the entitlementSelect component emmit a new value', async () => {
+      wrapper = mount(CertificationFilter, {
+        global: {
+          plugins: [i18n],
+          stubs: ['EntitlementSelect'],
+        },
+        props: {
+          resourceName: 'test',
+          filter: {
+            operator: 'OR',
+            operand: [
+              {
+                operator: 'EQUALS',
+                operand: {
+                  targetName: 'entitlement.displayName',
+                  targetValue: '',
+                },
+              },
+            ],
+          },
+        },
+      });
+      await flushPromises();
+
+      const entitlementSelect = wrapper.findComponent({ name: 'EntitlementSelect' });
+      await entitlementSelect.vm.$emit('update:modelValue', 'Entitlement name');
+      await flushPromises();
+
+      expect(wrapper.vm.queryFilter).toEqual({
+        operator: 'OR',
+        subfilters: [{
+          field: 'entitlement.displayName', operator: 'EQUALS', uniqueIndex: 2, value: 'Entitlement name',
+        }],
         uniqueIndex: 1,
       });
     });

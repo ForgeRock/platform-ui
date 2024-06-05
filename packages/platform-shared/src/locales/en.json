@@ -114,6 +114,7 @@
     "enable": "enable",
     "end": "End",
     "endSessions": "End Sessions",
+    "entitlement": "Entitlement",
     "entitlements": "Entitlements",
     "enumeratedValues": "Enumerated Values",
     "error": "Error",
@@ -1698,6 +1699,10 @@
       "rejected": "Rejected"
     },
     "entitlementDetails": "Entitlement Details",
+    "entitlements": {
+      "failedToLoad": "Failed to load entitlements",
+      "notFound": "Entitlement {entitlement} not found"
+    },
     "errors": {
       "getUsers": "Users cannot be obtained at the moment"
     },
