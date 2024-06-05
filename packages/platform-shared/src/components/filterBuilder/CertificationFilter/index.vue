@@ -36,6 +36,10 @@ of the MIT license. See the LICENSE file for details. -->
             v-model="inputValue.value"
             @input="ruleChange({ value: $event })"
             :resource-path="getResourcePath(selectedProp)" />
+          <FrEntitlementSelect
+            v-else-if="selectedProp === 'entitlement.displayName' && selectedCondition === 'EQUALS'"
+            :model-value="inputValue.value"
+            @update:modelValue="ruleChange({ value: $event })" />
           <FrField
             v-else
             v-model="inputValue.value"
@@ -56,6 +60,7 @@ import { cloneDeep, find } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrFilterBuilderGroup from '@forgerock/platform-shared/src/components/filterBuilder/components/FilterBuilderGroup';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
+import FrEntitlementSelect from '@forgerock/platform-shared/src/components/governance/EntitlementSelect';
 import { findGroup } from '@forgerock/platform-shared/src/components/filterBuilder/utils/filterBuilderUtils';
 import { operatorOptions, defaultConditionOptions } from './CertFilterDefaults';
 
@@ -68,6 +73,7 @@ export default {
     FrField,
     FrFilterBuilderGroup,
     FrGovResourceSelect,
+    FrEntitlementSelect,
   },
   data() {
     return {
