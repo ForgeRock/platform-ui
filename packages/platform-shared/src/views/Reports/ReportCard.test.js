@@ -84,17 +84,18 @@ describe('Report Card', () => {
     expect(spinnerButton.exists()).toBe(true);
   });
 
-  it('hides the ellipse delete, duplicate, edit and publish options for out-of-the-box (ootb) reports', async () => {
+  it('shows the ellipse delete, duplicate, edit and publish options for out-of-the-box (ootb) reports', async () => {
     wrapper = setup({
       report: {
-        ootb: false,
         ...report,
+        ootb: false,
       },
     });
-    let deleteButton = findByText(wrapper, 'li', 'deleteDelete');
-    let duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
-    let editButton = findByText(wrapper, 'li', 'editEdit');
-    let publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
+
+    const deleteButton = findByText(wrapper, 'li', 'deleteDelete');
+    const duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
+    const editButton = findByText(wrapper, 'li', 'editEdit');
+    const publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
 
     expect(deleteButton.exists()).toBe(true);
     expect(duplicateButton.exists()).toBe(true);
@@ -102,20 +103,22 @@ describe('Report Card', () => {
     expect(publishButton.exists()).toBe(true);
 
     // Run History button should always show regardless of out-of-the-box report state
-    let runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
+    const runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
     expect(runHistoryButton.exists()).toBe(true);
+  });
 
-    await wrapper.setProps({
+  it('hides the ellipse delete, duplicate, edit and publish options for out-of-the-box (ootb) reports', async () => {
+    wrapper = setup({
       report: {
-        ootb: true,
         ...report,
+        ootb: true,
       },
     });
 
-    deleteButton = findByText(wrapper, 'li', 'deleteDelete');
-    duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
-    editButton = findByText(wrapper, 'li', 'editEdit');
-    publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
+    const deleteButton = findByText(wrapper, 'li', 'deleteDelete');
+    const duplicateButton = findByText(wrapper, 'li', 'control_point_duplicateDuplicate');
+    const editButton = findByText(wrapper, 'li', 'editEdit');
+    const publishButton = findByText(wrapper, 'li', 'published_with_changesPublish');
 
     expect(deleteButton).toBeUndefined();
     expect(duplicateButton).toBeUndefined();
@@ -123,15 +126,15 @@ describe('Report Card', () => {
     expect(publishButton).toBeUndefined();
 
     // Run History button should always show regardless of out-of-the-box report state
-    runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
+    const runHistoryButton = findByText(wrapper, 'li', 'list_altRun History');
     expect(runHistoryButton.exists()).toBe(true);
   });
 
   it('hides the ellipse delete, duplicate, edit and publish options if the current package is not equal to "admin"', async () => {
     wrapper = setup({
       report: {
-        ootb: false,
         ...report,
+        ootb: false,
       },
     });
 
@@ -154,8 +157,8 @@ describe('Report Card', () => {
 
     wrapper = setup({
       report: {
-        ootb: false,
         ...report,
+        ootb: false,
       },
     });
 
@@ -179,8 +182,8 @@ describe('Report Card', () => {
   it('hides the ellipse delete, duplicate, edit and publish options if the autoCustomReportsEnabled property in the store is not set to true', async () => {
     wrapper = setup({
       report: {
-        ootb: false,
         ...report,
+        ootb: false,
       },
     });
 
@@ -203,8 +206,8 @@ describe('Report Card', () => {
 
     wrapper = setup({
       report: {
-        ootb: false,
         ...report,
+        ootb: false,
       },
     });
 
