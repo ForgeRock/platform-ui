@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
+  <VeeForm
+    ref="validation"
+    as="span">
     <FrField
       v-model="timeframeOptionsValue"
       class="mb-3"
@@ -15,25 +17,30 @@ of the MIT license. See the LICENSE file for details. -->
     <BCollapse
       data-testid="timeframe-datepicker-fields"
       :visible="showCustomTimeframe">
-      <div class="d-flex align-items-center mb-4">
-        <FrDatepicker
-          data-testid="datepicker-start"
-          name="startDate"
-          :date-format-options="dateFormat"
-          :placeholder="$t('reports.tabs.runReport.timeframe.startDate')"
-          @input="startDateCustomValue = $event" />
-        <span class="p-2">
+      <div class="d-flex align-items-start mb-4">
+        <div class="w-100">
+          <FrDatepicker
+            data-testid="datepicker-start"
+            name="startDate"
+            :date-format-options="dateFormat"
+            :placeholder="$t('reports.tabs.runReport.timeframe.startDate')"
+            @input="startDateCustomValue = $event" />
+        </div>
+        <p class="p-2">
           {{ $t('common.to').toLowerCase() }}
-        </span>
-        <FrDatepicker
-          data-testid="datepicker-end"
-          name="endDate"
-          :date-format-options="dateFormat"
-          :placeholder="$t('reports.tabs.runReport.timeframe.endDate')"
-          @input="endDateCustomValue = $event" />
+        </p>
+        <div class="w-100">
+          <FrDatepicker
+            data-testid="datepicker-end"
+            name="endDate"
+            :date-format-options="dateFormat"
+            :placeholder="$t('reports.tabs.runReport.timeframe.endDate')"
+            :validation="isAfterDate"
+            @input="endDateCustomValue = $event" />
+        </div>
       </div>
     </BCollapse>
-  </div>
+  </VeeForm>
 </template>
 
 <script setup>
@@ -42,6 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
  */
 import { computed, ref, watch } from 'vue';
 import { BCollapse } from 'bootstrap-vue';
+import { Form as VeeForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import dateRanges from '@forgerock/platform-shared/src/utils/date';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
@@ -80,6 +88,7 @@ const dateMap = {
 };
 const startDateCustomValue = ref('');
 const endDateCustomValue = ref('');
+const validation = ref({});
 
 /**
  * Computed
@@ -90,13 +99,26 @@ const timeframeComputedValue = computed(() => {
   const validDateMap = dateMap[timeframeSelection.value];
   const customStartValue = startDateCustomValue.value;
   const customEndValue = endDateCustomValue.value;
-  if (validDateMap) {
+  const validEndDate = validation.value.getMeta;
+
+  if (validDateMap && !showCustomTimeframe.value) {
     return dateRanges()[validDateMap];
   }
-  if (showCustomTimeframe.value && customStartValue && customEndValue) {
+
+  if (customStartValue && customEndValue && validEndDate().valid) {
     return [dayjs(customStartValue).toISOString(), dayjs(customEndValue).toISOString()];
   }
+
   return [false, false];
+});
+const isAfterDate = computed(() => {
+  const validDate = startDateCustomValue.value || new Date();
+  return {
+    is_after_date: {
+      date: startDateCustomValue.value,
+      message: i18n.global.t('common.policyValidationMessages.IS_AFTER_DATE', { date: dayjs(validDate).format('M/DD/YYYY') }),
+    },
+  };
 });
 const startDateModel = computed(() => {
   const [startDate] = timeframeComputedValue.value;
@@ -113,3 +135,9 @@ const endDateModel = computed(() => {
 watch(() => startDateModel.value, (value) => emit('start-date-update', value), { immediate: true });
 watch(() => endDateModel.value, (value) => emit('end-date-update', value), { immediate: true });
 </script>
+
+<style lang="scss" scoped>
+:deep(.dropdown-menu.show) {
+  z-index: 9999;
+}
+</style>

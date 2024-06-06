@@ -107,13 +107,6 @@ describe('Report Settings Definition component', () => {
       expect(editButton.text()).toContain('Edit Parameters');
     });
 
-    it('displays the definition name as part of the edit button in the ellipse menu', () => {
-      wrapper = setup({ settingTitle: 'Parameters', settingId: 'parameters' });
-
-      const [editButton] = wrapper.findAll('[role="menuitem"]');
-      expect(editButton.text()).toContain('Edit Parameters');
-    });
-
     it('emits "edit-definition" when the edit button is clicked in the ellipse menu', async () => {
       wrapper = setup({ settingTitle: 'Parameters', settingId: 'parameters' });
 

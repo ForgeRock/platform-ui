@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import { findByTestId, findByRole, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
@@ -23,6 +24,9 @@ import {
   getManagedResourceListStub,
 } from './RunReportStubs';
 import store from '../../store';
+
+const rules = ValidationRules.getRules(i18n);
+ValidationRules.extendRules(rules);
 
 jest.mock('vue-router', () => ({
   useRoute: jest.fn(() => ({ params: { template: 'template-name', state: 'draft' } })),
