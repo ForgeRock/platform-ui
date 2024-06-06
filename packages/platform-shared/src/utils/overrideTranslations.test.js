@@ -273,38 +273,23 @@ describe('setLocales()', () => {
   });
 
   it('sets primary locale', () => {
-    setLocales(i18n, 'en');
+    setLocales(i18n, ['en']);
     expect(i18n.global.locale === 'en');
   });
 
   it('sets fallback locale', () => {
-    setLocales(i18n, 'en,es');
+    setLocales(i18n, ['en', 'es']);
     expect(i18n.global.fallbackLocale.includes('es')).toBe(true);
   });
 
   it('sets multiple fallback locales', () => {
-    setLocales(i18n, 'en,es,fr');
+    setLocales(i18n, ['en', 'es', 'fr']);
     expect(i18n.global.fallbackLocale[0]).toBe('es');
     expect(i18n.global.fallbackLocale[1]).toBe('fr');
   });
 
   it('adds en as final fallback locale if not present in locale string', () => {
-    setLocales(i18n, 'es,fr,de', 'en');
-    expect(i18n.global.fallbackLocale[2]).toBe('en');
-  });
-
-  it('does not add en as final fallback locale if present in locale string', () => {
-    setLocales(i18n, 'es,en,de', 'en');
-    expect(i18n.global.fallbackLocale.length).toBe(2);
-    expect(i18n.global.fallbackLocale[0]).toBe('en');
-    expect(i18n.global.fallbackLocale[1]).toBe('de');
-  });
-
-  it('adds general locales as fallbacks to specific locales', () => {
-    setLocales(i18n, 'fr-ca,en-us');
-    expect(i18n.global.locale).toBe('fr-ca');
-    expect(i18n.global.fallbackLocale[0]).toBe('fr');
-    expect(i18n.global.fallbackLocale[1]).toBe('en-us');
+    setLocales(i18n, ['es', 'fr', 'de', 'en']);
     expect(i18n.global.fallbackLocale[2]).toBe('en');
   });
 });

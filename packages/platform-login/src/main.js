@@ -27,6 +27,7 @@ import { createPinia } from 'pinia';
 import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
 import store from '@/store';
 import i18n from './i18n';
 import router from './router';
@@ -143,16 +144,16 @@ const loadApp = () => {
  * We will load the application regardless
  */
 const startApp = () => {
-  getUiConfig().then((uiConfig) => {
-    // check for locale query parameter
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const localeString = urlSearchParams.get('locale');
-    if (localeString) {
-      setLocales(i18n, localeString, uiConfig.data.configuration.defaultLocale || 'en');
+  getUiConfig().then(({ data: { configuration: uiConfig } }) => {
+    // Get & set locales
+    const { locales, localeQueryString } = getAllLocales(uiConfig, true);
+    setLocales(i18n, locales);
+    document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
 
+    if (localeQueryString) {
       // set request header for requests made by sdk
-      const languageMiddleware = (req, action, next) => {
-        req.init.headers.append('accept-language', localeString);
+      const languageMiddleware = (req, _action, next) => {
+        req.init.headers.append('accept-language', localeQueryString);
         next();
       };
 
@@ -160,12 +161,9 @@ const startApp = () => {
       Config.set(Config.get({
         middleware: [languageMiddleware],
       }));
-    } else if (uiConfig.data.configuration.lang) {
-      // if no query param, use the primary browser language
-      setLocales(i18n, uiConfig.data.configuration.lang, uiConfig.data.configuration.defaultLocale || 'en');
     }
 
-    if (uiConfig.data.configuration?.platformSettings?.hostedJourneyPages === false) {
+    if (uiConfig?.platformSettings?.hostedJourneyPages === false) {
       store.commit('setHostedJourneyPagesState', false);
     }
   })
