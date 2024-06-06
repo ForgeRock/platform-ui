@@ -413,7 +413,7 @@ describe('Component for creating custom analytics reports', () => {
           expect(newParameterDefinitionHeading.exists()).toBe(true);
 
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
-          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameters');
+          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameter');
 
           await parameterActionsMenu.trigger('click');
           await parametersEditOption.trigger('click');
@@ -546,7 +546,7 @@ describe('Component for creating custom analytics reports', () => {
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
-          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameters');
+          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameter');
 
           await parameterActionsMenu.trigger('click');
           await parametersEditOption.trigger('click');
@@ -739,7 +739,7 @@ describe('Component for creating custom analytics reports', () => {
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
-          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameters');
+          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameter');
 
           await parameterActionsMenu.trigger('click');
           await parametersEditOption.trigger('click');
@@ -926,7 +926,7 @@ describe('Component for creating custom analytics reports', () => {
           // sets the parameter to edit
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
-          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameters');
+          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameter');
 
           await parameterActionsMenu.trigger('click');
           await parametersEditOption.trigger('click');

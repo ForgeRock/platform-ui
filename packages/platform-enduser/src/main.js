@@ -32,6 +32,7 @@ import { sanitizeUrl } from '@braintree/sanitize-url';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import BootstrapVue from 'bootstrap-vue';
 import createRealmPath from '@forgerock/platform-shared/src/utils/createRealmPath';
+import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
@@ -122,23 +123,25 @@ const startApp = () => {
 
   axios.all([
     idmInstance.get('/info/uiconfig'),
-    idmInstance.get('info/features?_queryFilter=true')]).then(axios.spread((uiConfig, availability) => {
-    if (uiConfig.data.configuration.lang) {
-      setLocales(i18n, uiConfig.data.configuration.lang, uiConfig.data.configuration.defaultLocale || 'en');
-      document.getElementsByTagName('html')[0].setAttribute('lang', uiConfig.data.configuration.lang);
-    }
-    store.commit('SharedStore/setUiConfig', uiConfig.data);
+    idmInstance.get('info/features?_queryFilter=true')])
+    .then(axios.spread((uiConfig, availability) => {
+      // Get & set locales
+      const { locales } = getAllLocales(uiConfig.data.configuration);
+      setLocales(i18n, locales);
+      document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
 
-    if (uiConfig.data.configuration && uiConfig.data.configuration.platformSettings) {
-      store.commit('setHostedPagesState', uiConfig.data.configuration.platformSettings.hostedPages === undefined ? true : uiConfig.data.configuration.platformSettings.hostedPages);
-    }
+      store.commit('SharedStore/setUiConfig', uiConfig.data);
 
-    each(availability.data.result, (feature) => {
-      if (feature.name === 'workflow') {
-        store.commit('setWorkflowState', feature.enabled);
+      if (uiConfig.data.configuration && uiConfig.data.configuration.platformSettings) {
+        store.commit('setHostedPagesState', uiConfig.data.configuration.platformSettings.hostedPages === undefined ? true : uiConfig.data.configuration.platformSettings.hostedPages);
       }
-    });
-  }))
+
+      each(availability.data.result, (feature) => {
+        if (feature.name === 'workflow') {
+          store.commit('setWorkflowState', feature.enabled);
+        }
+      });
+    }))
     .then(() => overrideTranslations(idmContext, i18n, 'enduser'))
     .finally(() => loadApp());
 };

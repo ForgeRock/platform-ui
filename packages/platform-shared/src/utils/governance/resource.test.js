@@ -102,7 +102,7 @@ describe('getGovernanceGrants', () => {
     jest.spyOn(CommonsApi, 'getUserGrants').mockRejectedValue('test');
     const errorSpy = jest.spyOn(notification, 'showErrorMessage');
 
-    getGovernanceGrants();
+    getGovernanceGrants('account', 'testId', {});
     await flushPromises();
 
     expect(errorSpy).toHaveBeenCalled();

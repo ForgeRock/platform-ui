@@ -34,10 +34,10 @@ export function toTranslationKey(text) {
 
 /**
   * Get the string value from the provided locale or fallback if provided
-  * @param {string|object} data object containing locale codes or just a string
-  * @param {string} locale i18n stored locale string
-  * @param {string|string[]} fallbackLocale i18n stored fallback string or array of strings
-  * @returns {string} localized string
+  * @param {String|Object} data object containing locale codes or just a string
+  * @param {String} locale i18n stored locale string
+  * @param {String|String[]} fallbackLocale i18n stored fallback string or array of strings
+  * @returns {String} localized string
   */
 export function getLocalizedString(data, locale, fallbackLocale) {
   if (!data) {
@@ -62,8 +62,7 @@ export function getLocalizedString(data, locale, fallbackLocale) {
   }
 
   // We have a fallbackLocale and that locale is an array, and is part of the object
-  if (fallbackLocale
-    && Array.isArray(fallbackLocale)) {
+  if (fallbackLocale && Array.isArray(fallbackLocale)) {
     const arrayLocale = fallbackLocale.find((item) => Object.keys(data).includes(item));
     if (arrayLocale) {
       return data[arrayLocale];

@@ -407,7 +407,6 @@ export default {
         doLoad();
       }
     },
-    pluralizeSingular,
     async setDisableSortAndSearchOrQueryThreshold(resourceName) {
       const { uiConfig } = this.$store.state.SharedStore;
       const configDisableRelationshipSortAndSearch = has(uiConfig, `configuration.platformSettings.managedObjectsSettings.${resourceName}.disableRelationshipSortAndSearch`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[resourceName].disableRelationshipSortAndSearch : false;

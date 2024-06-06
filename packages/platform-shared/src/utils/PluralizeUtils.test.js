@@ -1,14 +1,19 @@
+/**
+ * Copyright (c) 2024 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 import { pluralizeValue } from './PluralizeUtils';
 import i18n from '@/i18n';
 
 describe('PluralizeUtils', () => {
   beforeEach(() => {
-    process.env.VUE_APP_I18N_LOCALE = 'en';
     i18n.global.locale = 'en-GB';
   });
 
   afterEach(() => {
-    process.env.VUE_APP_I18N_LOCALE = 'en';
     i18n.global.locale = 'en-GB';
   });
 
@@ -42,11 +47,6 @@ describe('PluralizeUtils', () => {
 
   it('Pluralizes Captial words and appends a capital S', () => {
     expect(pluralizeValue('USER')).toBe('USERS');
-  });
-
-  it('Does not pluralize if env vars indicate the UI is used for a non-en locale', () => {
-    process.env.VUE_APP_I18N_LOCALE = 'fr';
-    expect(pluralizeValue('test')).toBe('test');
   });
 
   it('Does not pluralize if i18n locale is not english', () => {

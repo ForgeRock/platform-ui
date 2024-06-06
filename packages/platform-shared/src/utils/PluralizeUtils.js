@@ -14,8 +14,7 @@ import i18n from '@/i18n';
  */
 function canUsePluralizeLib() {
   const isVuei18nLocaleEnBased = i18n?.global?.locale?.startsWith('en') || false;
-  const isEnvLocaleEn = process.env.VUE_APP_I18N_LOCALE === 'en';
-  return isVuei18nLocaleEnBased && isEnvLocaleEn;
+  return isVuei18nLocaleEnBased;
 }
 
 export function pluralizeValue(value) {
