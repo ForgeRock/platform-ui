@@ -591,6 +591,7 @@ async function extendException({ violationId, phaseId, payload }) {
     await allowException(violationId, phaseId, payload);
     displayNotification('success', i18n.global.t('governance.violations.successAllowingException'));
     getData(filters.value);
+    bvModal.value.hide('ExceptionModal');
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.violations.errorAllowingException'));
   }
