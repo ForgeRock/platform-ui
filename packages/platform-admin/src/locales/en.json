@@ -1454,6 +1454,10 @@
         "noTemplatesSubtitle": "Any application template will appear here.",
         "noSearchResults": "No templates found"
       },
+      "mappingRuleModal": {
+        "mappingRuleAdd": "Add a mapping rule",
+        "mappingRuleEdit": "Edit a mapping rule"
+      },
       "messages": {
         "attributeValidationError": "Failed to load {attribute} attribute",
         "connectorTemplateValidation": "Please provide a valid JSON template.",
