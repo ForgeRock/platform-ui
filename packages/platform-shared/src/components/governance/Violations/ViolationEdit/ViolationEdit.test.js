@@ -16,6 +16,7 @@ import * as Notification from '@forgerock/platform-shared/src/utils/notification
 import ViolationEdit from './ViolationEdit';
 import i18n from '@/i18n';
 import ViolationDetails from './ViolationDetails';
+import * as store from '@/store';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/ViolationApi');
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
@@ -116,6 +117,10 @@ describe('Violation Edit', () => {
   }));
   CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('gets violation based on id from route parameter', async () => {
     const getViolationSpy = jest.spyOn(ViolationApi, 'getViolation');
     mountComponent();
@@ -147,6 +152,10 @@ describe('Violation Edit', () => {
   it('calls to forward a violation', async () => {
     const wrapper = mountComponent();
     const forwardSpy = jest.spyOn(ViolationApi, 'forwardViolation');
+    store.default.replaceState({
+      violationsCount: 1,
+    });
+    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
     await flushPromises();
 
     const forwardModal = wrapper.findComponent('#violation-forward-modal___BV_modal_outer_');
@@ -156,6 +165,7 @@ describe('Violation Edit', () => {
       allow: false, comment: false, exception: false, reassign: false, remediate: false,
     },
     'testComment');
+    expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
   });
 
   it('opens conflict modal if is admin', async () => {
@@ -177,20 +187,65 @@ describe('Violation Edit', () => {
     expect(wrapper.emitted('view-conflicts')).toBeTruthy();
   });
 
-  it('should allow exception and navigate to violations list when the allow exception modal emits action event', async () => {
+  it('should allow exception forever and navigate to violations list when the allow exception modal emits action event', async () => {
     ViolationApi.allowException = jest.fn().mockImplementation(() => Promise.resolve());
     const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    store.default.replaceState({
+      violationsCount: 1,
+    });
+    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
 
     const wrapper = mountComponent();
     await flushPromises();
     const routerSpy = jest.spyOn(wrapper.vm.router, 'push').mockImplementation(() => {});
 
     const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
-    exceptionModal.vm.$emit('action', 'allow');
+    exceptionModal.vm.$emit('action', {
+      violationId: '002bd665-3946-465c-b444-de470fa04254',
+      phaseId: 'testPhase',
+      payload: {
+        exceptionExpirationDate: null,
+        comment: '',
+      },
+    });
     await flushPromises();
 
+    expect(ViolationApi.allowException).toHaveBeenCalledWith('002bd665-3946-465c-b444-de470fa04254', 'testPhase', {
+      exceptionExpirationDate: null,
+      comment: '',
+    });
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
     expect(routerSpy).toHaveBeenCalledWith({ path: '/back' });
+    expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
+  });
+
+  it('should allow exception and navigate to violations list when the allow exception modal emits action event and not to update the violations count on the store', async () => {
+    ViolationApi.allowException = jest.fn().mockImplementation(() => Promise.resolve());
+    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
+
+    const wrapper = mountComponent();
+    await flushPromises();
+    const routerSpy = jest.spyOn(wrapper.vm.router, 'push').mockImplementation(() => {});
+
+    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    exceptionModal.vm.$emit('action', {
+      violationId: '002bd665-3946-465c-b444-de470fa04254',
+      phaseId: 'testPhase',
+      payload: {
+        exceptionExpirationDate: '2024-06-18',
+        comment: 'test',
+      },
+    });
+    await flushPromises();
+
+    expect(ViolationApi.allowException).toHaveBeenCalledWith('002bd665-3946-465c-b444-de470fa04254', 'testPhase', {
+      exceptionExpirationDate: '2024-06-18',
+      comment: 'test',
+    });
+    expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
+    expect(routerSpy).toHaveBeenCalledWith({ path: '/back' });
+    expect(storeSpy).not.toHaveBeenCalledWith('setViolationsCount', 0);
   });
 
   it('should show error message when the allow exception api call fails', async () => {
