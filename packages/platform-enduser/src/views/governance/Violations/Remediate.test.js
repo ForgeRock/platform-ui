@@ -13,6 +13,7 @@ import * as Notification from '@forgerock/platform-shared/src/utils/notification
 import i18n from '@/i18n';
 import Remediate from './Remediate';
 import EntitlementsSearchableList from '@/components/governance/EntitlementsCart/EntitlementsSearchableList';
+import * as store from '@/store';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -346,7 +347,7 @@ describe('Remediate', () => {
     ]);
   });
 
-  it('should revoke a violation correctly', async () => {
+  it('should revoke a violation correctly, this also should decrease the violations count on the store', async () => {
     const violation = createViolationMock();
     ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.resolve({ data: violation }));
     const pushSpy = jest.spyOn(router, 'push');
@@ -373,12 +374,17 @@ describe('Remediate', () => {
 
     ViolationApi.remediate = jest.fn().mockImplementation(() => Promise.resolve());
     const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification');
+    store.default.replaceState({
+      violationsCount: 1,
+    });
+    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
 
     const revokeButton = wrapper.find('.btn-primary');
     await revokeButton.trigger('click');
 
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Violation successfully fixed');
     expect(pushSpy).toHaveBeenCalledWith({ name: 'Violations' });
+    expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
   });
 
   it('revoke button is disabled if there is no entitlements selected', async () => {

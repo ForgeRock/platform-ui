@@ -218,6 +218,7 @@ import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/govern
 import EntitlementsCart from '@/components/governance/EntitlementsCart/EntitlementsCart';
 import EntitlementsSearchableList from '@/components/governance/EntitlementsCart/EntitlementsSearchableList';
 import i18n from '@/i18n';
+import store from '@/store';
 
 /**
  * View that allows the user to remediate a violation by revoking entitlements
@@ -296,6 +297,7 @@ async function sendRemediate() {
       ],
       justification: justification.value,
     });
+    store.commit('setViolationsCount', store.state.violationsCount - 1);
     displayNotification('success', i18n.global.t('governance.violations.remediate.successRemediation'));
     router.push({ name: 'Violations' }); // if violation successfully revoked, redirect to violations list in all cases
   } catch (error) {

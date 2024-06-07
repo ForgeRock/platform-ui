@@ -125,6 +125,7 @@ import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { forwardViolation, allowException, revokeException } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import i18n from '@/i18n';
+import store from '@/store';
 
 // Composables
 const { bvModal } = useBvModal();
@@ -426,6 +427,10 @@ function updatePageSize(newPageSize) {
 async function extendException({ violationId, phaseId, payload }) {
   try {
     await allowException(violationId, phaseId, payload);
+    // if the violation is allowed forever, it will be removed from the list
+    if (!payload.exceptionExpirationDate) {
+      store.commit('setViolationsCount', store.state.violationsCount - 1);
+    }
     displayNotification('success', i18n.global.t('governance.violations.successExtendingException'));
     bvModal.value.hide('ExceptionModal');
   } catch (error) {
@@ -452,6 +457,7 @@ async function forwardItem({ actorId, comment }) {
       remediate: true,
     };
     await forwardViolation(selectedItem.value.id, phaseId, actorId, permissions, comment);
+    store.commit('setViolationsCount', store.state.violationsCount - 1);
     displayNotification('success', i18n.global.t('governance.violations.successForwardingViolation'));
     getData(filters.value);
   } catch (error) {

@@ -12,6 +12,7 @@ import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/Vio
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ViolationList from './ViolationList';
 import i18n from '@/i18n';
+import * as store from '@/store';
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
@@ -39,6 +40,10 @@ describe('ViolationList', () => {
     });
     return wrapper;
   }
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('shows violations in a list with correct columns when is Admin', async () => {
     const wrapper = mountComponent();
@@ -492,9 +497,13 @@ describe('ViolationList', () => {
     expect(wrapper.vm.bvModal.show).toHaveBeenCalledWith('ExceptionModal');
   });
 
-  it('should extend exception when the exception modal emits action event', async () => {
+  it('should extend exception when the exception modal emits action event and decrease the violations count on the store when the violation is allowed forever', async () => {
     ViolationApi.allowException = jest.fn().mockReturnValue(Promise.resolve());
     const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    store.default.replaceState({
+      violationsCount: 1,
+    });
+    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
 
     const wrapper = mountComponent({
       isAdmin: false,
@@ -506,13 +515,51 @@ describe('ViolationList', () => {
     exceptionModal.vm.$emit('action', {
       violationId: '002bd665-3946-465c-b444-de470fa04254',
       phaseId: 'testPhase',
-      payload: 'test',
+      payload: {
+        exceptionExpirationDate: null,
+        comment: '',
+      },
     });
     await flushPromises();
 
-    expect(ViolationApi.allowException).toHaveBeenCalledWith('002bd665-3946-465c-b444-de470fa04254', 'testPhase', 'test');
+    expect(ViolationApi.allowException).toHaveBeenCalledWith('002bd665-3946-465c-b444-de470fa04254', 'testPhase', {
+      exceptionExpirationDate: null,
+      comment: '',
+    });
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
     expect(wrapper.emitted('handle-search')).toBeTruthy();
+    expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
+  });
+
+  it('should extend exception when the exception modal emits action event and not decrease the violations count on the store when the violation is not allowed forever', async () => {
+    ViolationApi.allowException = jest.fn().mockReturnValue(Promise.resolve());
+    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
+
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [],
+    });
+    await flushPromises();
+
+    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    exceptionModal.vm.$emit('action', {
+      violationId: '002bd665-3946-465c-b444-de470fa04254',
+      phaseId: 'testPhase',
+      payload: {
+        exceptionExpirationDate: '2024-06-15',
+        comment: 'test',
+      },
+    });
+    await flushPromises();
+
+    expect(ViolationApi.allowException).toHaveBeenCalledWith('002bd665-3946-465c-b444-de470fa04254', 'testPhase', {
+      exceptionExpirationDate: '2024-06-15',
+      comment: 'test',
+    });
+    expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
+    expect(wrapper.emitted('handle-search')).toBeTruthy();
+    expect(storeSpy).not.toHaveBeenCalled();
   });
 
   it('should show error message when the exception modal emits action event and the api call fails', async () => {
@@ -680,5 +727,45 @@ describe('ViolationList', () => {
         userName: 'Opal@IGATestQA.onmicrosoft.com',
       },
     });
+  });
+
+  it('should forward the violation when the forward modal emits forward-item event and decrease the violations count value in the store', async () => {
+    ViolationApi.forwardViolation = jest.fn().mockReturnValue(Promise.resolve());
+    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    store.default.replaceState({
+      violationsCount: 1,
+    });
+    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
+
+    const wrapper = mountComponent({
+      isAdmin: false,
+      tableRows: [],
+    });
+    await flushPromises();
+
+    wrapper.vm.itemToForward = {
+      id: '002bd665-3946-465c-b444-de470fa04254',
+      rawData: {
+        decision: {
+          phases: [
+            {
+              name: 'testPhase',
+            },
+          ],
+        },
+      },
+    };
+
+    const forwardModal = wrapper.findComponent({ name: 'ViolationForwardModal' });
+    forwardModal.vm.$emit('forward-item', {
+      actorId: 'test', comment: 'test',
+    });
+    await flushPromises();
+
+    expect(ViolationApi.forwardViolation).toHaveBeenCalledWith('002bd665-3946-465c-b444-de470fa04254', 'testPhase', 'test', {
+      allow: true, comment: true, exception: true, reassign: true, remediate: true,
+    }, 'test');
+    expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Violation successfully forwarded');
+    expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
   });
 });

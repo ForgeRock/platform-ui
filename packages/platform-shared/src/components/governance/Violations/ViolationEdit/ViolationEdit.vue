@@ -167,6 +167,7 @@ import FrViolationConflictModal from '../ViolationConflictModal';
 import FrViolationDetails from './ViolationDetails';
 import FrViolationForwardModal from '../ViolationForwardModal';
 import i18n from '@/i18n';
+import store from '@/store';
 
 // composables
 const route = useRoute();
@@ -301,6 +302,7 @@ async function addComment() {
 async function forwardItem({ actorId, comment: forwardComment }) {
   try {
     await forwardViolation(violationId, phaseId.value, actorId, actionPermissions.value, forwardComment);
+    store.commit('setViolationsCount', store.state.violationsCount - 1);
     displayNotification('success', i18n.global.t('governance.violations.successForwardingViolation'));
     router.push({ path: props.breadcrumbPath });
   } catch (error) {
@@ -352,6 +354,10 @@ async function extendException({ violationId: exceptionViolationId, phaseId: exc
     };
   try {
     await allowException(exceptionViolationId, exceptionPhaseId, payload);
+    // if the violation is allowed forever, it will be removed from the list
+    if (!payload.exceptionExpirationDate) {
+      store.commit('setViolationsCount', store.state.violationsCount - 1);
+    }
     displayNotification('success', i18n.global.t(`governance.violations.${translates.success}`));
     router.push({ path: props.breadcrumbPath });
   } catch (error) {

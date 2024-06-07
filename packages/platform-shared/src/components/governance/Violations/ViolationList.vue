@@ -183,6 +183,7 @@ import FrViolationForwardModal from '@forgerock/platform-shared/src/components/g
 import FrViolationReviewersModal from '@forgerock/platform-shared/src/components/governance/Violations/ViolationReviewersModal';
 import FrViolationToolbar from '@forgerock/platform-shared/src/components/governance/Violations/ViolationToolbar';
 import i18n from '@/i18n';
+import store from '@/store';
 
 // composables
 const { bvModal } = useBvModal();
@@ -455,6 +456,7 @@ async function forwardItem({ actorId, comment }) {
       remediate: true,
     };
     await forwardViolation(itemToForward.value.id, phaseId, actorId, permissions, comment);
+    store.commit('setViolationsCount', store.state.violationsCount - 1);
     displayNotification('success', i18n.global.t('governance.violations.successForwardingViolation'));
     getData(filters.value);
   } catch (error) {
@@ -589,6 +591,10 @@ function openExceptionModal(item) {
 async function extendException({ violationId, phaseId, payload }) {
   try {
     await allowException(violationId, phaseId, payload);
+    // if the violation is allowed forever, it will be removed from the list
+    if (!payload.exceptionExpirationDate) {
+      store.commit('setViolationsCount', store.state.violationsCount - 1);
+    }
     displayNotification('success', i18n.global.t('governance.violations.successAllowingException'));
     getData(filters.value);
     bvModal.value.hide('ExceptionModal');
