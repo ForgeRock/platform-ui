@@ -128,7 +128,7 @@ const existingDefinitionIndex = computed(() => {
   const existingIndex = props.existingSort.index;
   return existingIndex !== undefined ? existingIndex : -1;
 });
-const sortByOptionNames = computed(() => props.sortByOptions.map(({ name }) => name));
+const sortByOptionNames = computed(() => props.sortByOptions.map(({ value }) => value).sort());
 
 // Watchers
 watch(() => props.existingSort, (sort) => {

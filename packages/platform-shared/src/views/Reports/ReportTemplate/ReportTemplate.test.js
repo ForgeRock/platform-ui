@@ -23,6 +23,8 @@ import ReportTemplate from './ReportTemplate';
 
 ValidationRules.extendRules({
   alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
+  whitespace: ValidationRules.getRules(i18n).whitespace,
+  required: ValidationRules.getRules(i18n).required,
 });
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
@@ -148,7 +150,7 @@ describe('Component for creating custom analytics reports', () => {
         class: 'json',
         type: 'string',
       },
-      'My Parameter': {
+      MyParameter: {
         class: 'parameter',
         type: 'string',
         label: 'My Parameter Name',
@@ -171,7 +173,7 @@ describe('Component for creating custom analytics reports', () => {
       const dataSourcesOptions = dataSourcesDropdown.findAll('[role="option"]');
       expect(dataSourcesOptions.length).toBe(2);
 
-      const [applicationsOption, UsersOption] = dataSourcesOptions;
+      const [UsersOption, applicationsOption] = dataSourcesOptions;
       expect(applicationsOption.text()).toBe('applications');
       expect(UsersOption.text()).toBe('Users');
     });
@@ -192,7 +194,7 @@ describe('Component for creating custom analytics reports', () => {
       await nextTick();
 
       const dataSourcesDropdown = findByRole(wrapper, 'listbox');
-      const [applicationsOption] = dataSourcesDropdown.findAll('[role="option"]');
+      const [, applicationsOption] = dataSourcesDropdown.findAll('[role="option"]');
       await applicationsOption.find('span').trigger('click');
 
       const modalFooter = wrapper.find('footer');
@@ -223,7 +225,7 @@ describe('Component for creating custom analytics reports', () => {
       // selects entity so save button can be enabled
       const dataSourcesSettingsContainer = findByTestId(wrapper, 'entities-settings-container');
       const definitionBody = findByTestId(dataSourcesSettingsContainer, 'definition-body');
-      const [_idCheckbox] = definitionBody.findAll('input[type="checkbox"]');
+      const [, _idCheckbox] = definitionBody.findAll('input[type="checkbox"]');
       await _idCheckbox.setValue(true);
 
       // saves the template
@@ -257,9 +259,9 @@ describe('Component for creating custom analytics reports', () => {
 
       // Data source columns
       const dataSourceColumnLabels = findByRole(wrapper.find('main'), 'group').findAll('label');
-      const [_id, name] = dataSourceColumnLabels;
+      const [name, _id] = dataSourceColumnLabels;
       expect(_id.text()).toBe('_id');
-      expect(name.text()).toBe('name');
+      expect(name.text()).toBe('My Parameter Name');
     });
 
     it('ensures that a selected data source column shows up in the left hand table and enables the save button', async () => {
@@ -276,7 +278,7 @@ describe('Component for creating custom analytics reports', () => {
 
       // Checks a data source checkbox
       const dataSourceDefinition = findByTestId(wrapper, 'definition-body');
-      const [_idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
+      const [, _idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
       await _idCheckbox.setChecked();
       await flushPromises();
 
@@ -301,7 +303,7 @@ describe('Component for creating custom analytics reports', () => {
 
       // Checks a data source checkbox
       const dataSourceDefinition = findByTestId(wrapper, 'definition-body');
-      const [_idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
+      const [, _idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
       await _idCheckbox.setChecked();
       await flushPromises();
 
@@ -330,10 +332,11 @@ describe('Component for creating custom analytics reports', () => {
         const parameterHeading = parametersSettingContainer.find('h4');
         expect(parameterHeading.exists()).toBe(false);
 
-        await nameField.setValue('My Parameter');
+        await nameField.setValue('MyParameter');
         await labelField.setValue('My Parameter Name');
         await typeSelect.trigger('click');
         await typeStringOption.trigger('click');
+        await flushPromises();
         await saveButton.trigger('click');
       }
 
@@ -343,7 +346,7 @@ describe('Component for creating custom analytics reports', () => {
           await addParameterDefinition();
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'My Parameter user_provided');
+          const newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter user_provided');
           expect(newParameterDefinitionHeading.exists()).toBe(true);
         });
 
@@ -355,13 +358,13 @@ describe('Component for creating custom analytics reports', () => {
           const actionsMenu = findByRole(parametersSettingContainer, 'menu');
           const deleteOption = findByText(actionsMenu, 'a', 'deleteDelete');
 
-          let newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'My Parameter user_provided');
+          let newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter user_provided');
           expect(newParameterDefinitionHeading.exists()).toBe(true);
 
           await actionsMenu.trigger('click');
           await deleteOption.trigger('click');
 
-          newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'My Parameter user_provided');
+          newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter user_provided');
           expect(newParameterDefinitionHeading).toBeUndefined();
         });
 
@@ -370,7 +373,7 @@ describe('Component for creating custom analytics reports', () => {
           await addParameterDefinition();
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'My Parameter user_provided');
+          const newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter user_provided');
           expect(newParameterDefinitionHeading.exists()).toBe(true);
 
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
@@ -419,9 +422,9 @@ describe('Component for creating custom analytics reports', () => {
           await variableOption.trigger('click');
 
           const rightValueSelect = findByTestId(filtersModal, 'right-value-select');
-          const [,, MyParameterOption] = rightValueSelect.findAll('[role="option"]');
+          const [MyParameterOption] = rightValueSelect.findAll('[role="option"]');
 
-          // selects the right value select menu and chooses the "My Parameter" option
+          // selects the right value select menu and chooses the "MyParameter" option
           await findByRole(rightValueSelect, 'listbox').trigger('click');
           await MyParameterOption.find('span').trigger('click');
 
@@ -432,7 +435,7 @@ describe('Component for creating custom analytics reports', () => {
 
           const [, secondRule] = filtersModal.findAll('.queryfilter-row');
           const [secondLeftValueSelect, secondRuleOperatorSelect] = secondRule.findAll('[role="listbox"]');
-          const [_idLeftValOption] = secondLeftValueSelect.findAll('[role="option"]');
+          const [, _idLeftValOption] = secondLeftValueSelect.findAll('[role="option"]');
           const secondContainsRuleOperatorOption = secondRuleOperatorSelect.find('[role="option"]');
           const [, rightLiteralInput] = secondRule.findAll('input');
 
@@ -482,7 +485,7 @@ describe('Component for creating custom analytics reports', () => {
           expect(activeFilterCard).toBeUndefined();
         });
 
-        it('updates any parameter names that are chosen as a right value variable if the original parameter definition label is updated', async () => {
+        it('updates any parameter names that are chosen as a right value filter variable if the original parameter definition name is updated', async () => {
           await addDataSource();
           await addParameterDefinition();
           await addFilterDefinition();
@@ -491,11 +494,19 @@ describe('Component for creating custom analytics reports', () => {
           const [, parametersModal, filtersModal] = wrapper.findAll('[role="dialog"]');
           const rightValueSelect = findByTestId(filtersModal, 'right-value-select');
           const selectedOption = rightValueSelect.find('.multiselect__option--selected');
-          expect(selectedOption.text()).toBe('My Parameter Name');
+          expect(selectedOption.text()).toBe('MyParameter');
 
-          // field options API response needs to be updated to the changed parameter label to be edited
-          fieldOptionsStub.data['My Parameter'].label = 'My Parameter Name Updated';
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+          // field options API response needs to be updated to the changed parameter name to be edited
+          const fieldOptionsWithUpdatedParameter = Object.entries(fieldOptionsStub.data).map(([key, val]) => {
+            if (key === 'MyParameter') {
+              return ['MyParameterUpdated', val];
+            }
+            return [key, val];
+          });
+          const fieldOptionsStubFiltered = {
+            data: Object.fromEntries(fieldOptionsWithUpdatedParameter),
+          };
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
@@ -504,12 +515,12 @@ describe('Component for creating custom analytics reports', () => {
           await parameterActionsMenu.trigger('click');
           await parametersEditOption.trigger('click');
 
-          // ensures that the original parameter label is set
-          const labelField = parametersModal.find('[name="parameter-label"]');
-          expect(labelField.element.value).toBe('My Parameter Name');
+          // ensures that the original parameter name is set
+          const nameField = parametersModal.find('[name="parameter-name"]');
+          expect(nameField.element.value).toBe('MyParameter');
 
           // changes the parameter label to a new value
-          await labelField.setValue('My Parameter Name Updated');
+          await nameField.setValue('MyParameterUpdated');
 
           // saves parameter
           const saveButton = findByText(parametersModal, 'button', 'Save');
@@ -517,10 +528,7 @@ describe('Component for creating custom analytics reports', () => {
 
           // ensures that the existing filter rule's parameter right value options is now the new parameter Name
           const updatedSelectOption = rightValueSelect.find('.multiselect__option--selected');
-          expect(updatedSelectOption.text()).toBe('My Parameter Name Updated');
-
-          // Puts the field options label back to it's original name so as to not effect future tests
-          fieldOptionsStub.data['My Parameter'].label = 'My Parameter Name';
+          expect(updatedSelectOption.text()).toBe('MyParameterUpdated');
         });
 
         it('deletes a filter rule that has a chosen right value variable that matches a parameter that has been deleted', async () => {
@@ -534,15 +542,18 @@ describe('Component for creating custom analytics reports', () => {
           let [firstRule, secondRule] = filtersModal.findAll('.queryfilter-row');
           let rightValueSelect = findByTestId(firstRule, 'right-value-select');
           const [,, MyParameterOption] = rightValueSelect.findAll('[role="option"]');
-          expect(MyParameterOption.text()).toBe('My Parameter Name');
+          expect(MyParameterOption.text()).toBe('applications.name');
 
           // ensures that both rules exist
           expect(firstRule.exists()).toBe(true);
           expect(secondRule.exists()).toBe(true);
 
           // field options API response needs to be updated to exclude the parameter to be deleted
-          delete fieldOptionsStub.data['My Parameter'];
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+          const fieldOptionsWithoutParameter = Object.entries(fieldOptionsStub.data).filter(([key]) => key !== 'MyParameter');
+          const fieldOptionsStubFiltered = {
+            data: Object.fromEntries(fieldOptionsWithoutParameter),
+          };
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
@@ -564,13 +575,6 @@ describe('Component for creating custom analytics reports', () => {
           // ensures that the first rule is not the rule with the 'My Parameter Name' selected as the right value
           const [, rightLiteralInput] = firstRule.findAll('input');
           expect(rightLiteralInput.element.value).toBe('My second rule right literal value');
-
-          // Adds the fieldoptions "My Parameter" object back to prevent future tests from having unexpected inconsistencies
-          fieldOptionsStub.data['My Parameter'] = {
-            class: 'parameter',
-            type: 'string',
-            label: 'My Parameter Name',
-          };
         });
 
         it('deletes the filter definition altogether when there is only one rule that has the right value selected to a parameter that is deleted', async () => {
@@ -587,8 +591,11 @@ describe('Component for creating custom analytics reports', () => {
           await flushPromises();
 
           // field options API response needs to be updated to exclude the parameter to be deleted
-          delete fieldOptionsStub.data['My Parameter'];
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+          const fieldOptionsWithoutParameter = Object.entries(fieldOptionsStub.data).filter(([key]) => key !== 'MyParameter');
+          const fieldOptionsStubFiltered = {
+            data: Object.fromEntries(fieldOptionsWithoutParameter),
+          };
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
@@ -602,24 +609,22 @@ describe('Component for creating custom analytics reports', () => {
           const filterSettingsContainer = findByTestId(wrapper, 'filter-settings-container');
           const activeFilterCard = findByText(filterSettingsContainer, 'p', 'checkFilter active');
           expect(activeFilterCard).toBeUndefined();
-
-          // Adds the fieldoptions "My Parameter" object back to prevent future tests from having unexpected inconsistencies
-          fieldOptionsStub.data['My Parameter'] = {
-            class: 'parameter',
-            type: 'string',
-            label: 'My Parameter Name',
-          };
         });
       });
 
       describe('@aggregates', () => {
         async function addAggregate() {
-          const [,,, aggregatesModal] = wrapper.findAll('[role="dialog"]');
-
           // ensures that there are no aggregate definitions
           const aggregateSettingContainer = findByTestId(wrapper, 'aggregate-settings-container');
           const aggregateHeading = aggregateSettingContainer.find('h4');
           expect(aggregateHeading.exists()).toBe(false);
+
+          // sets the existing definition to edit
+          const addDefinitionButton = findByText(aggregateSettingContainer, 'button', 'add');
+          await addDefinitionButton.trigger('click');
+          await flushPromises();
+
+          const [,,, aggregatesModal] = wrapper.findAll('[role="dialog"]');
 
           // Sets the aggregate name
           const [aggregateNameField] = aggregatesModal.findAll('input');
@@ -634,8 +639,9 @@ describe('Component for creating custom analytics reports', () => {
 
           // Sets the aggregate value
           const aggregateValueOptions = aggregateValueSelect.findAll('[role="option"]');
+          const [MyParameterOption] = aggregateValueOptions;
           expect(aggregateValueOptions.length).toBe(3);
-          await aggregateValueOptions[2].find('span').trigger('click');
+          await MyParameterOption.find('span').trigger('click');
 
           const saveButton = findByText(aggregatesModal, 'button', 'Save');
           await saveButton.trigger('click');
@@ -677,15 +683,23 @@ describe('Component for creating custom analytics reports', () => {
           await addParameterDefinition();
           await addAggregate();
 
-          // ensures that the existing aggregate's right value options is selected to the parameter label to be updated
+          // ensures that the existing aggregate's right value options is selected to the parameter name to be updated
           const [, parametersModal,, aggregatesModal] = wrapper.findAll('[role="dialog"]');
           const [, aggregateValueSelect] = aggregatesModal.findAll('[role="listbox"]');
           const selectedOption = aggregateValueSelect.find('.multiselect__option--selected');
-          expect(selectedOption.text()).toBe('My Parameter Name');
+          expect(selectedOption.text()).toBe('MyParameter');
 
-          // field options API response needs to be updated to the changed parameter label to be edited
-          fieldOptionsStub.data['My Parameter'].label = 'My Parameter Name Updated';
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+          // field options API response needs to be updated to the changed parameter name to be edited
+          const fieldOptionsWithUpdatedParameter = Object.entries(fieldOptionsStub.data).map(([key, val]) => {
+            if (key === 'MyParameter') {
+              return ['MyParameterUpdated', val];
+            }
+            return [key, val];
+          });
+          const fieldOptionsStubFiltered = {
+            data: Object.fromEntries(fieldOptionsWithUpdatedParameter),
+          };
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
@@ -694,12 +708,12 @@ describe('Component for creating custom analytics reports', () => {
           await parameterActionsMenu.trigger('click');
           await parametersEditOption.trigger('click');
 
-          // ensures that the original parameter label is set
-          const labelField = parametersModal.find('[name="parameter-label"]');
-          expect(labelField.element.value).toBe('My Parameter Name');
+          // ensures that the original parameter name is set
+          const nameField = parametersModal.find('[name="parameter-name"]');
+          expect(nameField.element.value).toBe('MyParameter');
 
           // changes the parameter label to a new value
-          await labelField.setValue('My Parameter Name Updated');
+          await nameField.setValue('MyParameterUpdated');
 
           // saves parameter
           const saveButton = findByText(parametersModal, 'button', 'Save');
@@ -713,10 +727,7 @@ describe('Component for creating custom analytics reports', () => {
 
           // ensures that the existing aggregate's right value option is now set to the new parameter label
           const updatedSelectedOption = aggregateValueSelect.find('.multiselect__option--selected');
-          expect(updatedSelectedOption.text()).toBe('My Parameter Name Updated');
-
-          // Puts the field options label back to it's original name so as to not effect future tests
-          fieldOptionsStub.data['My Parameter'].label = 'My Parameter Name';
+          expect(updatedSelectedOption.text()).toBe('MyParameterUpdated');
         });
 
         it('deletes an aggregate definition if the aggregates right value matches the parameter that is deleted', async () => {
@@ -725,8 +736,11 @@ describe('Component for creating custom analytics reports', () => {
           await addAggregate();
 
           // field options API response needs to be updated to exclude the parameter to be deleted
-          delete fieldOptionsStub.data['My Parameter'];
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+          const fieldOptionsWithoutParameter = Object.entries(fieldOptionsStub.data).filter(([key]) => key !== 'MyParameter');
+          const fieldOptionsStubFiltered = {
+            data: Object.fromEntries(fieldOptionsWithoutParameter),
+          };
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
 
           const aggregateSettingContainer = findByTestId(wrapper, 'aggregate-settings-container');
 
@@ -745,13 +759,6 @@ describe('Component for creating custom analytics reports', () => {
           // ensures that the aggregate definition does NOT exist anymore
           newAggregateDefinitionHeading = findByText(aggregateSettingContainer, 'h4', 'My aggregate');
           expect(newAggregateDefinitionHeading).toBeUndefined();
-
-          // Adds the fieldoptions "My Parameter" object back to prevent future tests from having unexpected inconsistencies
-          fieldOptionsStub.data['My Parameter'] = {
-            class: 'parameter',
-            type: 'string',
-            label: 'My Parameter Name',
-          };
         });
       });
 
@@ -771,7 +778,7 @@ describe('Component for creating custom analytics reports', () => {
           const [sortBySelect, sortOrderSelect] = sortModal.findAll('[role="listbox"]');
 
           // selects the sort by dropdown
-          const [,, sortByMyParameterOption] = sortBySelect.findAll('[role="option"]');
+          const [sortByMyParameterOption] = sortBySelect.findAll('[role="option"]');
           await sortBySelect.trigger('click');
           await sortByMyParameterOption.find('span').trigger('click');
 
@@ -794,7 +801,7 @@ describe('Component for creating custom analytics reports', () => {
           expect(definitionBody.length).toBe(1);
 
           const definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
         });
 
         it('deletes a sort definition', async () => {
@@ -805,7 +812,7 @@ describe('Component for creating custom analytics reports', () => {
           const sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
           let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
           const definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
 
           // deletes the sort definition
           const actionsMenu = findByRole(sortSettingsContainer, 'menu');
@@ -826,7 +833,7 @@ describe('Component for creating custom analytics reports', () => {
           let sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
           let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
           let definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
 
           // sets the existing definition to edit
           const actionsMenu = findByRole(sortSettingsContainer, 'menu');
@@ -836,9 +843,8 @@ describe('Component for creating custom analytics reports', () => {
 
           const [,,,, sortModal] = wrapper.findAll('[role="dialog"]');
           const [sortBySelect, sortOrderSelect] = sortModal.findAll('[role="listbox"]');
-
           // selects the sort by dropdown to the _id option now
-          const [sortByIdOption] = sortBySelect.findAll('[role="option"]');
+          const [, sortByIdOption] = sortBySelect.findAll('[role="option"]');
           await sortBySelect.trigger('click');
           await sortByIdOption.find('span').trigger('click');
 
@@ -858,20 +864,28 @@ describe('Component for creating custom analytics reports', () => {
           expect(definitionHeading.text()).toBe('arrow_downwardSort by: applications._id');
         });
 
-        it('updates any parameter names that are chosen as a "Sort By" option if the original parameter definition label is updated', async () => {
+        it('updates any parameter names that are chosen as a "Sort By" option if the original parameter definition name is updated', async () => {
           await addDataSource();
           await addParameterDefinition();
           await addSortDefinition();
 
-          // ensures that the existing sort definition has the parameter label to be updated
+          // field options API response needs to be updated to include the updated parameter name to be edited
+          const fieldOptionsWithUpdatedParameter = Object.entries(fieldOptionsStub.data).map(([key, val]) => {
+            if (key === 'MyParameter') {
+              return ['MyParameterUpdated', val];
+            }
+            return [key, val];
+          });
+          const fieldOptionsStubFiltered = {
+            data: Object.fromEntries(fieldOptionsWithUpdatedParameter),
+          };
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
+
+          // ensures that the existing sort definition has the parameter name to be updated
           let sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
           let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
           let definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
-
-          // field options API response needs to be updated to the changed parameter label to be edited
-          fieldOptionsStub.data['My Parameter'].label = 'My Parameter Name Updated';
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
 
           // sets the parameter to edit
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
@@ -881,13 +895,13 @@ describe('Component for creating custom analytics reports', () => {
           await parameterActionsMenu.trigger('click');
           await parametersEditOption.trigger('click');
 
-          // ensures that the original parameter label is set
+          // ensures that the original parameter name is set
           const [, parametersModal] = wrapper.findAll('[role="dialog"]');
-          const labelField = parametersModal.find('[name="parameter-label"]');
-          expect(labelField.element.value).toBe('My Parameter Name');
+          const nameField = parametersModal.find('[name="parameter-name"]');
+          expect(nameField.element.value).toBe('MyParameter');
 
-          // changes the parameter label to a new value
-          await labelField.setValue('My Parameter Name Updated');
+          // changes the parameter name to a new value
+          await nameField.setValue('MyParameterUpdated');
 
           // saves parameter
           const saveButton = findByText(parametersModal, 'button', 'Save');
@@ -897,7 +911,7 @@ describe('Component for creating custom analytics reports', () => {
           sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
           definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
           definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name Updated');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameterUpdated');
 
           // clicks on the edit sort definition that has been updated
           const actionsMenu = findByRole(sortSettingsContainer, 'menu');
@@ -909,10 +923,7 @@ describe('Component for creating custom analytics reports', () => {
           const [,,,, sortModal] = wrapper.findAll('[role="dialog"]');
           const [sortBySelect] = sortModal.findAll('[role="listbox"]');
           const selectedOption = sortBySelect.find('.multiselect__option--selected');
-          expect(selectedOption.text()).toBe('My Parameter Name Updated');
-
-          // Puts the field options label back to it's original name so as to not effect future tests
-          fieldOptionsStub.data['My Parameter'].label = 'My Parameter Name';
+          expect(selectedOption.text()).toBe('MyParameterUpdated');
         });
 
         it('deletes a sort definition if the "Sort by" selected option matches the parameter that is deleted', async () => {
@@ -921,15 +932,18 @@ describe('Component for creating custom analytics reports', () => {
           await addSortDefinition();
 
           // field options API response needs to be updated to exclude the parameter to be deleted
-          delete fieldOptionsStub.data['My Parameter'];
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+          const fieldOptionsWithoutParameter = Object.entries(fieldOptionsStub.data).filter(([key]) => key !== 'MyParameter');
+          const fieldOptionsStubFiltered = {
+            data: Object.fromEntries(fieldOptionsWithoutParameter),
+          };
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
 
           const sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
 
           // ensures that there is an existing sort definition with the matching parameter name
           let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
           const definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: My Parameter Name');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
@@ -942,13 +956,6 @@ describe('Component for creating custom analytics reports', () => {
           // ensures that the sort definition does NOT exist anymore
           definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
           expect(definitionBody.length).toBe(0);
-
-          // Adds the fieldoptions "My Parameter" object back to prevent future tests from having unexpected inconsistencies
-          fieldOptionsStub.data['My Parameter'] = {
-            class: 'parameter',
-            type: 'string',
-            label: 'My Parameter Name',
-          };
         });
       });
     });

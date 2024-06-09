@@ -7,8 +7,10 @@
 
 import { computed, ref } from 'vue';
 import { getReportOperators, getReportFieldOptions } from '@forgerock/platform-shared/src/api/AutoApi';
+import useReportSettings from './ReportSettings';
 
 export default function useReportFilters(entityColumns, entitiesPayload, parametersPayload) {
+  const { sortCompare } = useReportSettings();
   const conditionalsFromApi = ref([]);
   const filterVariables = ref({});
 
@@ -41,11 +43,12 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
       } = data[key];
       return {
         class: category,
-        name: label || key,
+        label: label || key,
         type,
+        value: key,
         ...(item && { item }),
       };
-    });
+    }).sort((a, b) => sortCompare(a, b, 'value'));
 
     return Promise.resolve();
   }
@@ -84,7 +87,7 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
       if (rightValueName) {
         // This function populates the 'filterVariables' variable when it resolves
         await getFieldOptionsForFilters(ruleOperator, entityDefinitions, parameterDefinitions);
-        rightValueExistsInFilterVariables = filterVariables.value[ruleOperator].find((values) => values.name.includes(rightValueName));
+        rightValueExistsInFilterVariables = filterVariables.value[ruleOperator].find(({ value }) => value.includes(rightValueName));
       }
 
       return {
@@ -137,7 +140,7 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
   ) {
     const leftValueEntity = entityColumns.value.find((column) => column.value === leftValue);
     const rightValueInputType = selectedRightValueType === 'variable'
-      ? filterVariables.value[ruleOperator].find((obj) => obj.name.includes(rightValue))
+      ? filterVariables.value[ruleOperator].find(({ value }) => value.includes(rightValue))
       : { type: 'string', class: 'literal' };
     const hasMultipleLeftProperties = schema.filter((obj) => obj.left).length > 1;
     const hasMultipleRightProperties = schema.filter((obj) => obj.right).length > 1;
@@ -220,13 +223,19 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
     conditionalsFromApi.value = await getReportOperators();
   }
 
-  const reportConditionals = computed(() => conditionalsFromApi.value.map(({ displayName, name, schema }) => ({
-    [name]: { label: displayName, value: name, type: schema },
-  })).reduce((a, c) => ({ ...a, ...c }), {}));
+  const reportConditionals = computed(() => {
+    const conditionalConstruct = conditionalsFromApi.value.map(({ displayName, name, schema }) => ({
+      [name]: { label: displayName, value: name, type: schema },
+    }));
+    return Object.assign({}, ...conditionalConstruct);
+  });
 
-  const filterVariableOptions = computed(() => Object.keys(filterVariables.value).map((varKey) => ({
-    [varKey]: filterVariables.value[varKey].map(({ name }) => name),
-  })).reduce((a, c) => ({ ...a, ...c }), {}));
+  const filterVariableOptions = computed(() => {
+    const filterVariablesConstruct = Object.keys(filterVariables.value).map((varKey) => ({
+      [varKey]: filterVariables.value[varKey].map(({ value }) => value),
+    }));
+    return Object.assign({}, ...filterVariablesConstruct);
+  });
 
   return {
     fetchReportOperators,

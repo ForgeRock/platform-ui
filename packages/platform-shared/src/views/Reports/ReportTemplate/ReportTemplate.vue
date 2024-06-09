@@ -107,23 +107,23 @@ import {
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { isEqual, startCase } from 'lodash';
-import useReportSettings from './composables/ReportSettings';
-import useReportParameters from './composables/ReportParameters';
-import useReportEntities from './composables/ReportEntities';
-import useReportFilters from './composables/ReportFilters';
-import useReportAggregates from './composables/ReportAggregates';
-import useReportSorting from './composables/ReportSorting';
-import FrReportTemplateHeader from './ReportTemplate/ReportTemplateHeader';
-import FrReportAddDataSourceCard from './ReportTemplate/ReportAddDataSourceCard';
-import FrReportFieldsTable from './ReportTemplate/ReportFieldsTable';
-import FrReportTemplateSettings from './ReportTemplate/ReportTemplateSettings';
-import FrReportDataSourceModal from './modals/ReportDataSourceModal';
-import FrReportParametersModal from './modals/ReportParametersModal';
-import FrReportFiltersModal from './modals/ReportFiltersModal';
-import FrReportAggregatesModal from './modals/ReportAggregatesModal';
-import FrReportSortingModal from './modals/ReportSortingModal';
+import useReportSettings from '../composables/ReportSettings';
+import useReportParameters from '../composables/ReportParameters';
+import useReportEntities from '../composables/ReportEntities';
+import useReportFilters from '../composables/ReportFilters';
+import useReportAggregates from '../composables/ReportAggregates';
+import useReportSorting from '../composables/ReportSorting';
+import FrReportTemplateHeader from './ReportTemplateHeader';
+import FrReportAddDataSourceCard from './ReportAddDataSourceCard';
+import FrReportFieldsTable from './ReportFieldsTable';
+import FrReportTemplateSettings from './ReportTemplateSettings';
+import FrReportDataSourceModal from '../modals/ReportDataSourceModal';
+import FrReportParametersModal from '../modals/ReportParametersModal';
+import FrReportFiltersModal from '../modals/ReportFiltersModal';
+import FrReportAggregatesModal from '../modals/ReportAggregatesModal';
+import FrReportSortingModal from '../modals/ReportSortingModal';
 import i18n from '@/i18n';
-import { defaultGroups } from './composables/ManagedUsers';
+import { defaultGroups } from '../composables/ManagedUsers';
 
 defineProps({
   isTesting: {
@@ -245,10 +245,12 @@ async function addDataSource(dataSourceName) {
     isFetchingEntityColumns.value = true;
     const entityDefinitionsList = await entityDefinitions([{ entity: dataSourceName }]);
     displayNotification('success', i18n.global.t('reports.template.dataSetAdded'));
-    // Clear any previously defined parameters and filters since
-    // these have an association with the selected data source.
+    // Clear any previously defined parameters, filters, aggregates and sorting
+    // definitions since these have an association with the selected data source.
     findSettingsObject('parameters').definitions.splice(0);
     findSettingsObject('filter').definitions.splice(0);
+    findSettingsObject('aggregate').definitions.splice(0);
+    findSettingsObject('sort').definitions.splice(0);
     // Purposeful sequential visual delay to first allow the
     // user to read the success message, then hides the modal.
     setTimeout(() => {
@@ -464,15 +466,15 @@ function fetchFieldOptionsForSorting() {
 }
 
 /**
- * Replaces an updated parameter selection label with an associated existing
+ * Replaces an updated parameter selection name with an associated existing
  * filter rule, aggregate, or sorting definition and returns a list of
  * relevant operators as well as a new list of updated definitions.
  * @param {Array} allDefinitions list of all setting definitions
- * @param {String} oldParameterLabel old parameter label
- * @param {String} newParameterLabel new parameter label
+ * @param {String} oldParameterName old parameter name
+ * @param {String} newParameterName new parameter name
  * @returns {Object} operatorList and updatedDefinitions
  */
-function updateParameterSelections(allDefinitions, oldParameterLabel, newParameterLabel) {
+function updateParameterSelections(allDefinitions, oldParameterName, newParameterName) {
   const operatorList = new Set();
   const updatedDefinitions = allDefinitions.map((definition) => {
     const {
@@ -484,13 +486,13 @@ function updateParameterSelections(allDefinitions, oldParameterLabel, newParamet
     // Aggregates and filters use the "value" property, sort uses "sortBy".
     const definitionParameterNameSelection = value || sortBy;
 
-    if (definitionParameterNameSelection === oldParameterLabel) {
+    if (definitionParameterNameSelection === oldParameterName) {
       // operator only needed for either aggregates (type) or filters (operator)
       operatorList.add(type || operator);
       return {
         ...definition,
-        ...(value && { value: newParameterLabel }), // aggregates || filters
-        ...(sortBy && { sortBy: newParameterLabel }), // sort
+        ...(value && { value: newParameterName }), // aggregates || filters
+        ...(sortBy && { sortBy: newParameterName }), // sort
       };
     }
     return definition;
@@ -505,21 +507,21 @@ function updateParameterSelections(allDefinitions, oldParameterLabel, newParamet
 /**
  * Updates a parameter name for an aggregate, filter or sort definition that has a matching selection.
  * @param {Array} existingDefinitions existing aggregate defintion list
- * @param {String} oldParameterLabel old parameter label
- * @param {String} newParameterLabel new parameter label
+ * @param {String} oldParameterName old parameter name
+ * @param {String} newParameterName new parameter name
  * @return {Array} new list of operators to fetch
  */
-function updateDefinitionOnParameterChange(existingDefinitions, oldParameterLabel, newParameterLabel) {
-  if (!newParameterLabel) {
+function updateDefinitionOnParameterChange(existingDefinitions, oldParameterName, newParameterName) {
+  if (!newParameterName) {
     // Parameter in question is intended to be deleted, so we filter out definitions that have the same parameter name
-    return { updatedDefinitions: existingDefinitions.filter(({ value, sortBy }) => (value || sortBy) !== oldParameterLabel) };
+    return { updatedDefinitions: existingDefinitions.filter(({ value, sortBy }) => (value || sortBy) !== oldParameterName) };
   }
-  return updateParameterSelections(existingDefinitions, oldParameterLabel, newParameterLabel);
+  return updateParameterSelections(existingDefinitions, oldParameterName, newParameterName);
 }
 
 /**
  * Saves template with the updated parameter definition (or deletes it) while also checking to
- * see if a parameter label has changed, or has been deleted, so any presently defined filters,
+ * see if the parameter name has changed, or has been deleted, so any presently defined filters,
  * aggregates or sort definitions with the same parameter selection can be updated accordingly.
  * @param {Number} definitionIndex parameter definition index position
  * @param {Object} currentDefinition parameter definition object
@@ -529,17 +531,17 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
   const existingParameterDefinitions = findSettingsObject('parameters').definitions;
   const existingAggregateDefinitions = findSettingsObject('aggregate').definitions;
   const existingSortDefinitions = findSettingsObject('sort').definitions;
-  const { inputLabel: oldParameterLabel } = existingParameterDefinitions[definitionIndex] || {};
+  const { parameterName: oldParameterName } = existingParameterDefinitions[definitionIndex] || {};
   const [filterGroup] = existingFilterDefinitions;
-  const filterRulesThatMatchParameter = filterGroup ? filterGroup.subfilters.filter((rule) => rule.value === oldParameterLabel) : [];
-  const aggregatesThatMatchParameter = existingAggregateDefinitions.filter((aggregate) => aggregate.value === oldParameterLabel);
-  const sortingThatMatchParameter = existingSortDefinitions.filter((sort) => sort.sortBy === oldParameterLabel);
-  const parameterHasNewLabel = oldParameterLabel !== currentDefinition?.inputLabel;
+  const filterRulesThatMatchParameter = filterGroup ? filterGroup.subfilters.filter((rule) => rule.value === oldParameterName) : [];
+  const aggregatesThatMatchParameter = existingAggregateDefinitions.filter((aggregate) => aggregate.value === oldParameterName);
+  const sortingThatMatchParameter = existingSortDefinitions.filter((sort) => sort.sortBy === oldParameterName);
+  const parameterHasNewLabel = oldParameterName !== currentDefinition?.parameterName;
   let aggregateOperatorList = [];
 
   // Handle aggregates on parameter update
   if (parameterHasNewLabel && aggregatesThatMatchParameter.length) {
-    const { operatorList, updatedDefinitions } = updateDefinitionOnParameterChange(existingAggregateDefinitions, oldParameterLabel, currentDefinition?.inputLabel);
+    const { operatorList, updatedDefinitions } = updateDefinitionOnParameterChange(existingAggregateDefinitions, oldParameterName, currentDefinition?.parameterName);
     aggregateOperatorList = operatorList || [];
     // Replaces the aggregate definitions
     existingAggregateDefinitions.splice(0);
@@ -548,7 +550,7 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
 
   // Handle sorting on parameter update
   if (parameterHasNewLabel && sortingThatMatchParameter.length) {
-    const { updatedDefinitions } = updateDefinitionOnParameterChange(existingSortDefinitions, oldParameterLabel, currentDefinition?.inputLabel);
+    const { updatedDefinitions } = updateDefinitionOnParameterChange(existingSortDefinitions, oldParameterName, currentDefinition?.parameterName);
     // Replaces the sort definitions
     existingSortDefinitions.splice(0);
     existingSortDefinitions.push(...updatedDefinitions);
@@ -567,7 +569,7 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
 
   // Handle filters on parameter update
   if (parameterHasNewLabel && filterRulesThatMatchParameter.length) {
-    const { operatorList, updatedDefinitions: updatedRules } = updateDefinitionOnParameterChange(filterGroup.subfilters, oldParameterLabel, currentDefinition?.inputLabel);
+    const { operatorList, updatedDefinitions: updatedRules } = updateDefinitionOnParameterChange(filterGroup.subfilters, oldParameterName, currentDefinition?.parameterName);
     const fieldOptionPromises = [];
 
     if (operatorList) {

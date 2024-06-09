@@ -49,14 +49,14 @@ describe('@useReportEntities', () => {
       _id: entitiesStub[0].entity,
       dataSourceColumns: [
         {
-          label: 'name',
-          value: 'applications.name',
+          label: '_id',
+          value: 'applications._id',
           format: 'json',
           type: 'string',
         },
         {
-          label: '_id',
-          value: 'applications._id',
+          label: 'name',
+          value: 'applications.name',
           format: 'json',
           type: 'string',
         },
@@ -71,17 +71,17 @@ describe('@useReportEntities', () => {
   describe('@unit', () => {
     it('gets the expected list of report entities', async () => {
       await fetchReportEntities();
-      expect(dataSourceColumnCheckboxNames.value).toEqual(['applications', 'Users']);
+      expect(dataSourceColumnCheckboxNames.value).toEqual(['Users', 'applications']);
     });
 
     it('constructs a list of entity definitions from an entity name and corresponding API data', async () => {
       AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
         data: {
-          'applications.name': {
+          'applications._id': {
             class: 'json',
             type: 'string',
           },
-          'applications._id': {
+          'applications.name': {
             class: 'json',
             type: 'string',
           },

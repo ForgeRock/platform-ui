@@ -21,17 +21,17 @@ describe('Report Sorting Modal component', () => {
         sortByOptions: [
           {
             class: 'json',
-            name: 'applications.name',
+            value: 'applications._id',
             type: 'string',
           },
           {
             class: 'json',
-            name: 'applications._id',
+            value: 'applications.name',
             type: 'string',
           },
           {
             class: 'parameter',
-            name: 'My Parameter',
+            value: 'MyParameter',
             type: 'string',
           },
         ],
@@ -70,19 +70,19 @@ describe('Report Sorting Modal component', () => {
     it('ensures that the "sortByOptions" prop populates the "Sort by" select with the expected options', async () => {
       const [sortBySelect] = wrapper.findAll('[role="listbox"]');
       const sortByOptions = sortBySelect.findAll('[role="option"]');
-      const [sortByNameOption, sortByIdOption, sortByMyParameterOption] = sortByOptions;
+      const [sortByMyParameterOption, sortByIdOption, sortByNameOption] = sortByOptions;
 
       expect(sortByOptions.length).toBe(3);
       expect(sortByNameOption.text()).toBe('applications.name');
       expect(sortByIdOption.text()).toBe('applications._id');
-      expect(sortByMyParameterOption.text()).toBe('My Parameter');
+      expect(sortByMyParameterOption.text()).toBe('MyParameter');
     });
 
     it('ensures that the expected payload is emitted when the save button is clicked', async () => {
       const [sortBySelect, sortOrderSelect] = wrapper.findAll('[role="listbox"]');
 
       // selects the sort by dropdown
-      const [sortByNameOption] = sortBySelect.findAll('[role="option"]');
+      const [,, sortByNameOption] = sortBySelect.findAll('[role="option"]');
       await sortBySelect.trigger('click');
       await sortByNameOption.find('span').trigger('click');
 

@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
           <template v-else-if="settingId === 'sort'">
             <BListGroup>
-              <BListGroupItem class="border-0 p-0">
+              <BListGroupItem class="border-0 p-0 text-break">
                 <BCardText>
                   <FrIcon
                     icon-class="mr-2"

@@ -7,6 +7,7 @@
 
 import { computed, ref } from 'vue';
 import { getReportFieldOptions, getReportEntities } from '@forgerock/platform-shared/src/api/AutoApi';
+import useReportSettings from './ReportSettings';
 import i18n from '@/i18n';
 
 /**
@@ -14,6 +15,7 @@ import i18n from '@/i18n';
  * API friendly data sets for displaying and sending expected data structures.
  */
 export default function useReportEntities() {
+  const { sortCompare } = useReportSettings();
   const allEntities = ref([{ name: i18n.global.t('common.loadingEtc') }]);
   const processedColumns = ref([]);
 
@@ -47,7 +49,7 @@ export default function useReportEntities() {
               type: dataSourceColumns[key].type,
               value: key,
             };
-          });
+          }).sort((a, b) => sortCompare(a, b, 'label'));
         }
         const selectedColumns = fields
           ? processedColumns.value.filter((column) => fields.find((field) => field.value === column.value))
@@ -101,7 +103,7 @@ export default function useReportEntities() {
     }
   }
 
-  const dataSourceColumnCheckboxNames = computed(() => allEntities.value.map(({ name }) => name));
+  const dataSourceColumnCheckboxNames = computed(() => allEntities.value.map(({ name }) => name).sort());
 
   return {
     dataSourceColumnCheckboxNames,
