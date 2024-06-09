@@ -235,7 +235,7 @@ const modalData = ref({});
 async function setConfigInfo(report) {
   reportDate.value = dayjs(report.createDate).format('MM/D/YYYY');
   reportTime.value = dayjs(report.createDate).format('h:mm A');
-  reportName.value = startCase(report.name.toLowerCase());
+  reportName.value = startCase(report.name?.toLowerCase());
   csvStatus.value = report.exportCsvStatus === 'EXPORT_SUCCESS';
   jsonStatus.value = report.exportJsonStatus === 'EXPORT_SUCCESS';
   const [paramsWithoutRealm] = [JSON.parse(report.parameters)].map(({ ...parameter }) => parameter);
