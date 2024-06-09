@@ -43,6 +43,16 @@ describe('Report Filter Modal component', () => {
             type: [],
             value: 'contains',
           },
+          {
+            label: 'is null',
+            type: [],
+            value: 'is_null',
+          },
+          {
+            label: 'is not null',
+            type: [],
+            value: 'is_not_null',
+          },
         ],
         ...props,
       },
@@ -179,6 +189,51 @@ describe('Report Filter Modal component', () => {
 
       const [, rightValueInput] = wrapper.findAll('input');
       expect(rightValueInput.element.value).toBe('my right value');
+    });
+
+    it('ensures that the right value (literal / variable) field does not show when the operator is equal to "is null" or "is not null"', async () => {
+      const [, valueSelect, operatorSelect] = wrapper.findAll('[role="listbox"]');
+
+      // Value field selection
+      const valueOption = findByText(valueSelect, 'li', '_id').find('span').find('span');
+      await valueSelect.trigger('click');
+      await valueOption.trigger('click');
+
+      // Operator "contains" selection
+      let operatorContainsOption = findByText(wrapper, 'li', 'contains').find('span').find('span');
+      await operatorSelect.trigger('click');
+      await operatorContainsOption.trigger('click');
+
+      // expects the right value field to be showing at this point
+      let rightValueField = findByTestId(wrapper, 'input-right-value-string');
+      expect(rightValueField.exists()).toBe(true);
+
+      // Operator "is null" selection
+      const operatorIsNullOption = findByText(wrapper, 'li', 'is null').find('span').find('span');
+      await operatorSelect.trigger('click');
+      await operatorIsNullOption.trigger('click');
+
+      // expects the right value field to be hidden
+      rightValueField = findByTestId(wrapper, 'input-right-value-string');
+      expect(rightValueField.exists()).toBe(false);
+
+      // Operator "is not null" selection
+      const operatorIsNotNullOption = findByText(wrapper, 'li', 'is not null').find('span').find('span');
+      await operatorSelect.trigger('click');
+      await operatorIsNotNullOption.trigger('click');
+
+      // expects the right value field to still be hidden
+      rightValueField = findByTestId(wrapper, 'input-right-value-string');
+      expect(rightValueField.exists()).toBe(false);
+
+      // Selects "contains" operator once more
+      operatorContainsOption = findByText(wrapper, 'li', 'contains').find('span').find('span');
+      await operatorSelect.trigger('click');
+      await operatorContainsOption.trigger('click');
+
+      // expects the right value field to show once more
+      rightValueField = findByTestId(wrapper, 'input-right-value-string');
+      expect(rightValueField.exists()).toBe(true);
     });
   });
 });
