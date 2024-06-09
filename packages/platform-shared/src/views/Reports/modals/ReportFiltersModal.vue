@@ -34,7 +34,7 @@ to such license between the licensee and ForgeRock AS. -->
       @rule-change="updateFilter('rule-change', $event)">
       <template #valueField="{ rule, uniqueName }">
         <BContainer
-          v-if="rule.value !== undefined"
+          v-if="rule.operator !== 'is_null' && rule.operator !== 'is_not_null'"
           class="p-0"
           data-testid="filter-builder-values">
           <BRow no-gutters>
