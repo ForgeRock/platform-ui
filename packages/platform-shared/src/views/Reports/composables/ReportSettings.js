@@ -151,6 +151,16 @@ export default function useReportSettings(
       .reduce((a, c) => ({ ...a, ...c }), {});
   }
 
+  function sortCompare(a, b, property) {
+    if (a[property] < b[property]) {
+      return -1;
+    }
+    if (a[property] > b[property]) {
+      return 1;
+    }
+    return 0;
+  }
+
   return {
     findDefinition,
     findSettingsObject,
@@ -158,5 +168,6 @@ export default function useReportSettings(
     generateNewSettings,
     reportPayload,
     reportSettings,
+    sortCompare,
   };
 }

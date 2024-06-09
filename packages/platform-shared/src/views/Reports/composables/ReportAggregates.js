@@ -44,10 +44,10 @@ export default function useReportAggregates(entitiesPayload, parametersPayload, 
       const { data } = await getReportFieldOptions(fieldOptionsBody);
 
       aggregateValues.value[aggregateType] = Object.keys(data).map((key) => {
-        const { class: category, label, type } = data[key];
+        const { class: category, type } = data[key];
         return {
           class: category,
-          name: label || key,
+          value: key,
           type,
         };
       });
@@ -108,13 +108,9 @@ export default function useReportAggregates(entitiesPayload, parametersPayload, 
     const aggregateValueKeys = Object.keys(aggregateValues.value);
     if (aggregateValueKeys.length) {
       const arrayOfOperatorsAndFieldOptions = aggregateValueKeys.map((key) => ({
-        [key]: aggregateValues.value[key].map(({ name }) => name),
+        [key]: aggregateValues.value[key].map(({ value }) => value).sort(),
       }));
-      // Creates an object of the list of operators above with the key being the
-      // operator and the value being its respective array of right value field options.
-      return arrayOfOperatorsAndFieldOptions.reduce((accumulator, currentValue) => ({
-        ...accumulator, ...currentValue,
-      }), {});
+      return Object.assign({}, ...arrayOfOperatorsAndFieldOptions);
     }
     return {};
   });

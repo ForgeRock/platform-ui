@@ -182,7 +182,7 @@ describe('Report Filter Modal component', () => {
       const [, leftValueSelect, operatorSelect] = wrapper.findAll('[role="listbox"]');
 
       const leftValueSelectedOption = leftValueSelect.find('.multiselect__option--selected');
-      expect(leftValueSelectedOption.text()).toBe('Name');
+      expect(leftValueSelectedOption.text()).toBe('applications.name');
 
       const operatorSelectedOption = operatorSelect.find('.multiselect__option--selected');
       expect(operatorSelectedOption.text()).toBe('contains');

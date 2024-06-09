@@ -11,12 +11,12 @@ import useReportSorting from './ReportSorting';
 const sortFieldOptionsResponse = [
   {
     class: 'json',
-    name: 'applications._id',
+    value: 'applications._id',
     type: 'string',
   },
   {
     class: 'json',
-    name: 'applications.name',
+    value: 'applications.name',
     type: 'string',
   },
 ];

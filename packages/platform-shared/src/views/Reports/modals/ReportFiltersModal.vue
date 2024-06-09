@@ -25,7 +25,7 @@ to such license between the licensee and ForgeRock AS. -->
       :max-depth="1"
       :index="0"
       :operator-options="operatorOptions"
-      :properties="dataSourceColumns"
+      :properties="dataSourceColumnsSorted"
       :property-select-label="$t('common.value')"
       :prefix-group-text="$t('queryFilterBuilder.includeWhen')"
       @add-rule="updateFilter('add-rule', $event)"
@@ -108,6 +108,7 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import FrFilterBuilderGroup from '@forgerock/platform-shared/src/components/filterBuilder/components/FilterBuilderGroup';
 import { operatorOptions } from '@forgerock/platform-shared/src/components/filterBuilder/utils/QueryFilterDefaults';
 import { findGroup } from '@forgerock/platform-shared/src/components/filterBuilder/utils/filterBuilderUtils';
+import useReportSettings from '../composables/ReportSettings';
 import i18n from '@/i18n';
 
 // Definitions
@@ -138,6 +139,9 @@ const props = defineProps({
     default: () => ({}),
   },
 });
+
+// Composables
+const { sortCompare } = useReportSettings();
 
 // Globals
 const existingFilterClone = ref({});
@@ -326,6 +330,9 @@ const disableSave = computed(() => {
   }
   return true;
 });
+const dataSourceColumnsSorted = computed(() => props.dataSourceColumns
+  .map(({ value }) => ({ value, label: value }))
+  .sort((a, b) => sortCompare(a, b, 'value')));
 
 // Start
 (() => {

@@ -5,10 +5,16 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { findByText, findByRole, findAllByText } from '@forgerock/platform-shared/src/utils/testHelpers';
-import i18n from '@/i18n';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import ReportParametersModal from './ReportParametersModal';
+import i18n from '@/i18n';
+
+ValidationRules.extendRules({
+  whitespace: ValidationRules.getRules(i18n).whitespace,
+  required: ValidationRules.getRules(i18n).required,
+});
 
 describe('Report Parameters Modal component', () => {
   function setup(props) {
@@ -32,14 +38,68 @@ describe('Report Parameters Modal component', () => {
       wrapper = setup();
     });
 
-    it('ensures that on load, the save button is disabled until the "Name", "Input label" and "Input type" fields have values', async () => {
+    it('ensures that the save button is disabled until the "Name", "Input label", "Input type" and enumerated values that are showing have values', async () => {
+      let saveButton = findByText(wrapper, 'button', 'Save');
+      expect(saveButton.attributes().disabled).toBeDefined();
+
+      // sets name field
+      await wrapper.find('input[name="parameter-name"]').setValue('MyParameter');
+      saveButton = findByText(wrapper, 'button', 'Save');
+      expect(saveButton.attributes().disabled).toBeDefined();
+
+      // sets Input label field
+      await wrapper.find('input[name="parameter-label"]').setValue('My parameter label');
+      saveButton = findByText(wrapper, 'button', 'Save');
+      expect(saveButton.attributes().disabled).toBeDefined();
+
+      // sets Input type select field
+      const inputTypeSelect = findByRole(wrapper, 'listbox');
+      await inputTypeSelect.trigger('click');
+      const inputTypeStringOption = inputTypeSelect.findAll('li')[0].find('span');
+      await inputTypeStringOption.trigger('click');
+      await flushPromises();
+
+      // ensures that save button is enabled
+      saveButton = findByText(wrapper, 'button', 'Save');
+      expect(saveButton.attributes().disabled).toBeUndefined();
+
+      // checks enumeraged values
+      const enumeratedCheckbox = wrapper.find('input[name="enumerated-values"]');
+      await enumeratedCheckbox.setValue(true);
+      await flushPromises();
+
+      // ensures that the save button is disabled once again since there are empty enumerated values
+      saveButton = findByText(wrapper, 'button', 'Save');
+      expect(saveButton.attributes().disabled).toBeDefined();
+
+      // fills out the enumerated name field
+      const enumeratedNameField = wrapper.find('input[name="enumerated-name-0"]');
+      await enumeratedNameField.setValue('enum name');
+      await flushPromises();
+
+      // ensures that the save button is still disabled
+      saveButton = findByText(wrapper, 'button', 'Save');
+      expect(saveButton.attributes().disabled).toBeDefined();
+
+      // fills out the enumerated value field
+      const enumeratedValueField = wrapper.find('input[name="enumerated-value-0"]');
+      await enumeratedValueField.setValue('enum value');
+      await flushPromises();
+
+      // ensures that save button is enabled once again
+      saveButton = findByText(wrapper, 'button', 'Save');
+      expect(saveButton.attributes().disabled).toBeUndefined();
+    });
+
+    it('ensures that the parameter name field does not allow spaces and disables the save button if it does', async () => {
       let saveButton = findByText(wrapper, 'button', 'Save');
       expect(saveButton.attributes().disabled).toBeDefined();
 
       // Name field
-      await wrapper.find('input[name="parameter-name"]').setValue('My parameter name');
+      await wrapper.find('input[name="parameter-name"]').setValue('MyParameter');
       saveButton = findByText(wrapper, 'button', 'Save');
       expect(saveButton.attributes().disabled).toBeDefined();
+      await flushPromises();
 
       // Input label field
       await wrapper.find('input[name="parameter-label"]').setValue('My parameter label');
@@ -51,6 +111,25 @@ describe('Report Parameters Modal component', () => {
       await inputTypeSelect.trigger('click');
       const inputTypeStringOption = inputTypeSelect.findAll('li')[0].find('span');
       await inputTypeStringOption.trigger('click');
+      await flushPromises();
+
+      // Should enable the save button
+      saveButton = findByText(wrapper, 'button', 'Save');
+      expect(saveButton.attributes().disabled).toBeUndefined();
+
+      // Sets the parameter name field to a value that has spaces
+      await wrapper.find('input[name="parameter-name"]').setValue('My Updated Parameter Name With Spaces');
+      await flushPromises();
+
+      // Should now disable the save button
+      saveButton = findByText(wrapper, 'button', 'Save');
+      expect(saveButton.attributes().disabled).toBeDefined();
+
+      // Sets the parameter name field back to a value without spaces
+      await wrapper.find('input[name="parameter-name"]').setValue('My_Updated_Parameter_Name_With_Non_Spaces');
+      await flushPromises();
+
+      // Should now enable the save button
       saveButton = findByText(wrapper, 'button', 'Save');
       expect(saveButton.attributes().disabled).toBeUndefined();
     });
@@ -220,7 +299,7 @@ describe('Report Parameters Modal component', () => {
       const UserProvidedPayload = {
         settingsId: 'parameters',
         definition: {
-          parameterName: 'My parameter name',
+          parameterName: 'MyParameterName',
           parameterType: 'user_provided',
           inputLabel: 'My parameter label',
           inputType: 'String',
@@ -244,10 +323,11 @@ describe('Report Parameters Modal component', () => {
       await wrapper.find('input[name="enumerated-values"]').setValue(true);
 
       // Fills out Name and Value for enumerated values
-      const enumeratedFieldset = wrapper.find('.card-body').find('fieldset');
-      const [nameField, valueField] = enumeratedFieldset.findAll('input[name="parameter-label"]');
+      const nameField = wrapper.find('input[name="enumerated-name-0"]');
+      const valueField = wrapper.find('input[name="enumerated-value-0"]');
       await nameField.setValue(UserProvidedPayload.definition.enumeratedValues[0].name);
       await valueField.setValue(UserProvidedPayload.definition.enumeratedValues[0].value);
+      await flushPromises();
 
       // Saves form
       await findByText(wrapper, 'button', 'Save').trigger('click');
