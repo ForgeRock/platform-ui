@@ -15,7 +15,7 @@ to such license between the licensee and ForgeRock AS. -->
         {{ $t('reports.template.noColumnsAdded') }}
       </BCardTitle>
       <BCardText>
-        {{ $t('reports.template.selectColumnsFromDataSets') }}
+        {{ $t('reports.template.filtersSettingDescription') }}
       </BCardText>
     </BCard>
     <BCard
