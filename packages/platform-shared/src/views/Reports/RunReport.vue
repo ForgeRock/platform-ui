@@ -451,11 +451,20 @@ const rolesDisableSubmit = computed(() => showRoles.value && !rolesModel.value.l
 const unmappedParameters = ref([]);
 const unmappedParametersModel = computed(() => {
   const payload = {};
+
   unmappedParameters.value.forEach((parameter) => {
-    payload[parameter.label] = {
-      payload: { value: parameter.type === 'array' ? [parameter.value] : parameter.value },
+    let parameterValue = parameter.value;
+
+    if (parameter.type === 'date') {
+      const dateValue = new Date(parameterValue);
+      parameterValue = dateValue.toISOString();
+    }
+
+    payload[parameter.name] = {
+      payload: { value: parameterValue },
     };
   });
+
   return payload;
 });
 const unmappedFieldsDisableSubmit = computed(() => {
@@ -577,6 +586,7 @@ async function setReportFields(reportConfig) {
     string: 'string',
     boolean: 'boolean',
     integer: 'number',
+    date: 'date',
   };
 
   _PARAMETER_KEYS.value = parameters ? Object.keys(parameters) : [];
@@ -599,7 +609,8 @@ async function setReportFields(reportConfig) {
       const fieldType = fieldTypeMap[parameters[key].type] || 'string';
       // Any unexpected parameters are shown alongside a corresponding generic field.
       unmappedParameters.value.push({
-        label: key,
+        name: key,
+        label: parameters[key].label || key,
         type: fieldType,
         value: fieldType === 'boolean' ? false : '',
       });

@@ -279,7 +279,7 @@ describe('Run Report component', () => {
         expect(unexpectedParameterField.attributes('type')).toBe('multiselect');
       });
 
-      it('ensures that the unexpected parameter displays the correct field type based on the parameter type property for arrays.', async () => {
+      it('ensures that the unexpected parameter displays the correct field type based on the parameter type property for booleans.', async () => {
         fieldDataMocks();
         wrapper = setup({
           templateName: 'TEMPLATE-NAME',
@@ -291,6 +291,20 @@ describe('Run Report component', () => {
         const unexpectedParameterInput = findByTestId(wrapper, 'fr-field-my_unexpected_parameter').find('[testid="my_unexpected_parameter"]');
         expect(unexpectedParameterInput.exists()).toBe(true);
         expect(unexpectedParameterInput.attributes('type')).toBe('boolean');
+      });
+
+      it('ensures that the unexpected parameter displays the correct field type based on the parameter type property for a date field.', async () => {
+        fieldDataMocks();
+        wrapper = setup({
+          templateName: 'TEMPLATE-NAME',
+          reportConfig: { parameters: { my_unexpected_parameter: { type: 'date' } } },
+        });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const unexpectedParameterInput = findByTestId(wrapper, 'fr-field-my_unexpected_parameter').find('[testid="my_unexpected_parameter"]');
+        expect(unexpectedParameterInput.exists()).toBe(true);
+        expect(unexpectedParameterInput.attributes('type')).toBe('date');
       });
 
       it('ensures that unexpected parameters disable the submit button if they do not have a value', () => {
