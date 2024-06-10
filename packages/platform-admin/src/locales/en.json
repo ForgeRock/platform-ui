@@ -2260,12 +2260,17 @@
     "deleteFail": "Unable to delete script",
     "editorModal": {
       "selectTypeTitle": "New Script",
+      "categories": {
+        "SAML": "SAML",
+        "OAUTH": "OAuth2 / OIDC",
+        "JOURNEYS": "Journeys",
+        "OTHER": "Other"
+      },
       "editTitle": {
         "create": "New {typeName} Script",
         "edit": "Edit {typeName} Script",
         "duplicate": "Duplicate {typeName} Script"
       },
-      "chooseType": "Choose the type of script to create.",
       "errorSaving": "Error saving script",
       "errorLoading": "Error loading script data",
       "legacyScriptAlert": "You are creating this script using the legacy script engine. There is an enhanced scripting engine available that offers new features and functions. Learn more about it and about how to migrate existing scripts to the new version.",
@@ -2334,6 +2339,26 @@
       "SAML2_NAMEID_MAPPER": {
         "name": "SAML2 NameID Mapper",
         "description": "Script to customize or generate the SAML Name ID mapping for a given SP when Ping Indentity is the Identity Provider."
+      },
+      "OAUTH2_SCRIPTED_JWT_ISSUER": {
+        "name": "OAuth2 Trusted JWT Issuer",
+        "description": "Script to dynamically retrieve the details of an issuer during the JWT profile for authorization grant."
+      },
+      "OAUTH2_EVALUATE_SCOPE": {
+        "name": "OAuth2 Evaluate Scope",
+        "description": "Script to change scopes are evaluated and retrieved for OAuth 2.0 access token introspection."
+      },
+      "SAML2_SP_ADAPTER": {
+        "name": "SAML2 SP Adapter",
+        "description": "Script type to make application-specific changes during the processing of the authentication request on the SP side, such as updating the SPNameQualifier attribute."
+      },
+      "SAML2_IDP_ADAPTER": {
+        "name": "SAML2 IDP Adapter",
+        "description": "Script to alter the processing of the authentication request; for example, redirect the user before single sign-on, or before sending a failure response."
+      },
+      "SAML2_IDP_ATTRIBUTE_MAPPER": {
+        "name": "SAML2 IDP Attribute Mapper",
+        "description": "Script to map user-configured attributes to SAML attributes into the generated SAML assertion."
       }
     },
     "languages": {
