@@ -371,6 +371,7 @@
       "addOption": "Add an option",
       "emailAddress": "Email address",
       "password": "Password",
+      "esvs": "ESVs",
       "retypePassword": "Retype Password",
       "timeZoneOffset": "Time Zone Offset",
       "username": "Username",

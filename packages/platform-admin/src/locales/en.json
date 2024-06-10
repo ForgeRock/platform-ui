@@ -2371,7 +2371,8 @@
       "libraryError": "Error loading libraries data",
       "libraryScripts": "Library Scripts",
       "noLibrariesFound": "No library scripts found",
-      "noSearchResult": "No results found for '{searchString}'"
+      "noSearchResult": "No results found for '{searchString}'",
+      "noESVsFound": "No ESVs found"
     }
   },
   "events": {
