@@ -9,9 +9,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-0">
       {{ pushChallengeMessage }}
     </p>
-    <h2 class="h1 mb-2 mt-4 p-3">
+    <h1 class="mb-2 mt-4 p-3">
       {{ pushChallengeNumber }}
-    </h2>
+    </h1>
   </div>
 </template>
 <script>

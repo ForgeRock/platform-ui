@@ -5,20 +5,26 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     :class="[{'hide-polling-spinner': hideSpinner }, 'row', 'mb-2 mx-0']"
-    ref="textOutputPanel">
+    aria-labelledby="message"
+    :aria-level="isFirstRenderedCallback ? 1 : 2"
+    ref="textOutputPanel"
+    role="heading" >
     <div
       v-if="messageType === 'INFORMATION'"
       class="text-muted w-100"
+      id="message"
       :aria-hidden="isFirstRenderedCallback"
       v-html="sanitizedMessage" />
     <div
       v-else-if="messageType === 'WARNING'"
       class="alert w-100 alert-warning"
+      id="message"
       :aria-hidden="isFirstRenderedCallback"
       v-html="sanitizedMessage" />
     <div
       v-else-if="!isFirstRenderedCallback && messageType === 'ERROR'"
       class="alert w-100 alert-danger"
+      id="message"
       v-html="sanitizedMessage" />
     <div
       v-else-if="messageType === 'SCRIPT'"
