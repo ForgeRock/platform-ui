@@ -21,7 +21,7 @@ describe('@useReportEntities', () => {
       result: [
         {
           name: 'applications',
-          relatedDataSources: ['roles', 'assignments'],
+          relatedEntities: ['roles', 'assignments'],
         },
         {
           name: 'Users',
@@ -46,7 +46,6 @@ describe('@useReportEntities', () => {
   const entitiesStub = [{ entity: 'applications', name: 'applications' }];
   const definitionsUIDataStructureStub = [
     {
-      _id: entitiesStub[0].entity,
       dataSourceColumns: [
         {
           label: '_id',
@@ -62,7 +61,7 @@ describe('@useReportEntities', () => {
         },
       ],
       name: entitiesStub[0].entity,
-      relatedDataSources: [],
+      relatedDataSources: ['roles', 'assignments'],
       selectedColumns: ['applications.name'],
       selectedRelatedDataSources: [],
     },

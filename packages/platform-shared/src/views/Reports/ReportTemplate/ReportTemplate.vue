@@ -213,7 +213,7 @@ const reportDetails = ref({
   report_admin: false,
   report_viewer: false,
   report_owner: false,
-  viewers: '',
+  viewers: [],
 });
 const reportState = route.params.state;
 const templateId = route.params.template.toUpperCase();
@@ -629,11 +629,7 @@ watch(reportDetails, (newVal, oldVal) => {
     }, false);
     if (result?.length) {
       const [existingTemplate] = result;
-      const {
-        reportConfig,
-        viewers,
-        description,
-      } = existingTemplate;
+      const { reportConfig, viewers, description } = existingTemplate;
       const {
         entities,
         fields,
@@ -649,7 +645,7 @@ watch(reportDetails, (newVal, oldVal) => {
       reportDetails.value.report_admin = viewers.includes('report_admin');
       reportDetails.value.report_owner = viewers.includes('report_owner');
       reportDetails.value.report_viewer = viewers.includes('report_viewer');
-      reportDetails.value.viewers = viewers.filter((item) => !defaultGroups.includes(item));
+      reportDetails.value.viewers = viewers ? viewers.filter((item) => !defaultGroups.includes(item)) : [];
 
       // Populates the settings definitions
       findSettingsObject('entities').definitions.push(...await entityDefinitions(entities, fields));

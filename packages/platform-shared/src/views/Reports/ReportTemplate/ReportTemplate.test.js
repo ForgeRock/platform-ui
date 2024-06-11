@@ -59,25 +59,12 @@ describe('Component for creating custom analytics reports', () => {
   let wrapper;
 
   beforeEach(() => {
-    const reportConfig = {
-      version: 'v2',
-      parameters: {
-        myParamName: {
-          source: 'user_provided',
-          label: 'param label',
-          description: 'param description',
-          type: 'string',
-        },
-      },
-    };
-    const reportConfigString = JSON.stringify(reportConfig);
-
     AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         result: [
           {
             name: 'applications',
-            relatedDataSources: ['roles', 'assignments'],
+            relatedEntities: ['roles', 'assignments'],
           },
           {
             name: 'Users',
@@ -109,7 +96,17 @@ describe('Component for creating custom analytics reports', () => {
       result: [{
         name: 'TEST-REPORT',
         description: '',
-        reportConfig: reportConfigString,
+        reportConfig: JSON.stringify({
+          version: 'v2',
+          parameters: {
+            myParamName: {
+              source: 'user_provided',
+              label: 'param label',
+              description: 'param description',
+              type: 'string',
+            },
+          },
+        }),
         viewers: ['reportadmin'],
         type: 'draft',
       }],
@@ -187,15 +184,22 @@ describe('Component for creating custom analytics reports', () => {
   });
 
   describe('@actions', () => {
-    async function addDataSource() {
+    async function addDataSource(entitySelection = 'applications') {
       AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
       jest.useFakeTimers();
       wrapper = setup();
       await nextTick();
 
       const dataSourcesDropdown = findByRole(wrapper, 'listbox');
-      const [, applicationsOption] = dataSourcesDropdown.findAll('[role="option"]');
-      await applicationsOption.find('span').trigger('click');
+      const [usersOption, applicationsOption] = dataSourcesDropdown.findAll('[role="option"]');
+
+      if (entitySelection === 'applications') {
+        await applicationsOption.find('span').trigger('click');
+      }
+
+      if (entitySelection === 'users') {
+        await usersOption.find('span').trigger('click');
+      }
 
       const modalFooter = wrapper.find('footer');
       const nextButton = findByText(modalFooter, 'button', 'Next');
@@ -262,6 +266,38 @@ describe('Component for creating custom analytics reports', () => {
       const [name, _id] = dataSourceColumnLabels;
       expect(_id.text()).toBe('_id');
       expect(name.text()).toBe('My Parameter Name');
+    });
+
+    it('ensures that the related data sources block for the corresponding entity shows up for the expected api response', async () => {
+      await addDataSource();
+
+      // Should show related entities for the applications entity since the getReportEntities
+      // api call returns a value for the relatedEntities property.
+      let entitiesSettingContainer = findByTestId(wrapper, 'entities-settings-container');
+      let relatedDataSourcesLegend = findByText(entitiesSettingContainer, 'legend', 'Related data sources');
+      expect(relatedDataSourcesLegend.exists()).toBe(true);
+
+      // should detect roles and assignments as related entity options
+      const [rolesRelatedEntity, assignmentsRelatedEntity] = findAllByTestId(entitiesSettingContainer, 'related-entity-list-item');
+      expect(rolesRelatedEntity.find('p').text()).toBe('roles');
+      expect(assignmentsRelatedEntity.find('p').text()).toBe('assignments');
+
+      // We want to change the data source to Users since it does not have any
+      // related entities and test that there are no related entity elements.
+
+      // delete current entity
+      await findByText(entitiesSettingContainer, 'a', 'deleteDelete').trigger('click');
+
+      // add users entity
+      await addDataSource('users');
+
+      // ensure that there are no related entities because users does not have a relatedEntities property
+      entitiesSettingContainer = findByTestId(wrapper, 'entities-settings-container');
+      relatedDataSourcesLegend = findByText(entitiesSettingContainer, 'legend', 'Related data sources');
+      expect(relatedDataSourcesLegend).toBeUndefined();
+
+      const relatedEntities = findAllByTestId(entitiesSettingContainer, 'related-entity-list-item');
+      expect(relatedEntities.length).toBe(0);
     });
 
     it('ensures that a selected data source column shows up in the left hand table and enables the save button', async () => {

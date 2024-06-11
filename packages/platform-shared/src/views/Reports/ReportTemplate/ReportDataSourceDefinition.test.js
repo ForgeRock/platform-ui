@@ -69,7 +69,7 @@ describe('Report Data Source Definition component', () => {
       expect(allDataSourceColumnCheckboxes[1].attributes('value')).toBe('applications.lastName');
     });
 
-    it('renders the related data sources" buttons when the "relatedDataSources" prop has items', () => {
+    it('renders the "related data sources" buttons when the "relatedDataSources" prop has items', () => {
       let allFieldSets = wrapper.findAll('fieldset');
       const firstFieldsetLabel = allFieldSets[0].find('legend');
 

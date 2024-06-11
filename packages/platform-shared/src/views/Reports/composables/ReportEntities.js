@@ -54,12 +54,12 @@ export default function useReportEntities() {
         const selectedColumns = fields
           ? processedColumns.value.filter((column) => fields.find((field) => field.value === column.value))
           : [];
+        const relatedDataSources = allEntities.value.find(({ name }) => name === entityName)?.relatedEntities || [];
 
         return {
-          _id: entityName,
           name: entityName,
           dataSourceColumns: processedColumns.value,
-          relatedDataSources: [],
+          relatedDataSources,
           selectedColumns: selectedColumns.map(({ value }) => value),
           selectedRelatedDataSources: [],
         };
@@ -78,14 +78,10 @@ export default function useReportEntities() {
       const entities = [];
       const fields = [];
       definitions.forEach((definition) => {
-        const {
-          _id,
-          dataSourceColumns,
-          selectedColumns,
-        } = definition;
+        const { dataSourceColumns, name, selectedColumns } = definition;
         const selectedDataSourceColumns = dataSourceColumns.filter((column) => selectedColumns.find((value) => value === column.value));
         const selectedColumnsProcessed = selectedDataSourceColumns.map(({ label, value }) => ({ label, value }));
-        entities.push({ entity: _id, name: _id });
+        entities.push({ entity: name, name });
         fields.push(...selectedColumnsProcessed);
       });
       return { entities, fields };
