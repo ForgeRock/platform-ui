@@ -62,14 +62,18 @@ of the MIT license. See the LICENSE file for details. -->
       <BFormGroup
         v-if="relatedDataSources.length"
         v-slot="{ ariaDescribedby }"
+        class="d-none"
         :label="$t('reports.template.relatedDataSources')">
         <BListGroup :aria-describedby="ariaDescribedby">
           <BListGroupItem
             v-for="(entity, index) in relatedDataSources"
             class="d-flex align-items-center mb-2 py-2 px-3 border-0 rounded justify-content-between"
+            data-testid="related-entity-list-item"
             :class="selectedRelatedDataSources.includes(entity) ? 'bg-lightblue' : 'bg-light'"
             :key="index">
-            {{ entity }}
+            <p class="m-0">
+              {{ entity }}
+            </p>
             <FrSpinner
               v-if="currentEntityBeingFetched === entity && !selectedRelatedDataSources.includes(entity)"
               class="ml-auto opacity-50"

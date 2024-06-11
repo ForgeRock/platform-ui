@@ -34,36 +34,37 @@ to such license between the licensee and ForgeRock AS. -->
       @rule-change="updateFilter('rule-change', $event)">
       <template #valueField="{ rule, uniqueName }">
         <BContainer
-          v-if="rule.operator !== 'is_null' && rule.operator !== 'is_not_null'"
           class="p-0"
           data-testid="filter-builder-values">
           <BRow no-gutters>
             <BCol
               class="d-flex"
               md="12">
-              <BDropdown
-                :id="`filter-type-${uniqueName}}`"
-                :text="rightValueTypes.find((obj) => obj.value === rule.selectedRightValueType).label"
-                class="fr-type-button-styles"
-                toggle-class="text-dark py-2"
-                variant="link">
-                <BDropdownItem
-                  v-for="(option, key) in rightValueTypes"
-                  :active="option.value === rule.selectedRightValueType"
-                  :key="key"
-                  @click.prevent="rightValueTypeUpdate(rule, option.value)">
-                  {{ option.label }}
-                </BDropdownItem>
-              </BDropdown>
-              <FrField
-                v-model="rule.value"
-                :id="`right-value-${uniqueName}}`"
-                :label="$t('common.value')"
-                :name="uniqueName"
-                :options="variableOptions[rule.operator] || []"
-                :type="rule.selectedRightValueType === 'literal' ? 'string' : 'select'"
-                :testid="`right-value-${rule.selectedRightValueType === 'literal' ? 'string' : 'select'}`"
-                class="flex-grow-1 fr-right-value-input-styles" />
+              <template v-if="rule.operator !== 'is_null' && rule.operator !== 'is_not_null'">
+                <BDropdown
+                  :id="`filter-type-${uniqueName}}`"
+                  :text="rightValueTypes.find((obj) => obj.value === rule.selectedRightValueType).label"
+                  class="fr-type-button-styles"
+                  toggle-class="text-dark py-2"
+                  variant="link">
+                  <BDropdownItem
+                    v-for="(option, key) in rightValueTypes"
+                    :active="option.value === rule.selectedRightValueType"
+                    :key="key"
+                    @click.prevent="rightValueTypeUpdate(rule, option.value)">
+                    {{ option.label }}
+                  </BDropdownItem>
+                </BDropdown>
+                <FrField
+                  v-model="rule.value"
+                  :id="`right-value-${uniqueName}}`"
+                  :label="$t('common.value')"
+                  :name="uniqueName"
+                  :options="variableOptions[rule.operator] || []"
+                  :type="rule.selectedRightValueType === 'literal' ? 'string' : 'select'"
+                  :testid="`right-value-${rule.selectedRightValueType === 'literal' ? 'string' : 'select'}`"
+                  class="flex-grow-1 fr-right-value-input-styles" />
+              </template>
             </BCol>
           </BRow>
         </BContainer>
