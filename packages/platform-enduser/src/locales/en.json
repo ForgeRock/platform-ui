@@ -324,7 +324,7 @@
         "role": "role",
         "showIf": "Show if",
         "sodViolation" : {
-          "violationMessage": "Granting access to these entitlement(s) will result in a Segragation of Duties (SoD) violation",
+          "violationMessage": "Granting access to these entitlement(s) will result in a Segregation of Duties (SoD) violation",
           "modalTitle": "Violations Found",
           "modalDescription": "The following violations were found when attempting to submit the request.",
           "submitWithViolations": "Submit with Violation"

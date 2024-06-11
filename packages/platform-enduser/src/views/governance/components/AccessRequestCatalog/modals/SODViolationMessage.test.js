@@ -34,7 +34,7 @@ describe('SODViolationMessage', () => {
     const alert = wrapper.find('[class=fr-alert]');
     expect(alert.find('[class=fr-alert]')).toBeTruthy();
     expect(alert.text()).toMatch('error_outline');
-    expect(alert.text()).toMatch('Granting access to these entitlement(s) will result in a Segragation of Duties (SoD) violationView Details');
+    expect(alert.text()).toMatch('Granting access to these entitlement(s) will result in a Segregation of Duties (SoD) violationView Details');
   });
 
   it('has a button to view details', () => {
