@@ -3257,7 +3257,7 @@
           "afterSpecifiedTime": "After specified time",
           "appliesTo": "Applies To",
           "appliesToSubtitle": "Define users for whom this policy will apply.",
-          "cannotConflictWith": "Cannot conflict with",
+          "conflictsWith": "Conflicts with",
           "closeViolation": "Close violation",
           "controlUrl": "Control URL",
           "documentationUrlDescription": "A link to a reference site, such as an internal policy.",

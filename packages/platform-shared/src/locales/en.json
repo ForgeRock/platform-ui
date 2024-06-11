@@ -1880,6 +1880,7 @@
       "successRevokingException": "Exception successfully revoked",
       "tabTitle": "Violations",
       "viewConflicts": "View Conflicts",
+      "viewViolation": "View Violation",
       "violation": "Violation"
     }
   },

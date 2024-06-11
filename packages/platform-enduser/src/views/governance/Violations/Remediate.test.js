@@ -68,10 +68,6 @@ function createViolationMock() {
     violatingAccess: [
       {
         compositeId: 'compositeId2',
-        assignment: {
-          description: '767494e5-2868-4803-90a0-933b080fef62',
-          name: 'Teaching laboratory technician2866',
-        },
         application: {
           description: 'Target AD App',
           icon: '',
@@ -80,14 +76,11 @@ function createViolationMock() {
           templateName: 'azure.ad',
           templateVersion: '2.2',
         },
+        'descriptor.idx./entitlement.displayName': 'Teaching laboratory technician2866',
+        'glossary.idx./entitlement.description': '767494e5-2868-4803-90a0-933b080fef62',
       },
       {
         compositeId: 'compositeId1',
-        assignment: {
-          description: '2446621e-895f-4664-bb6e-c107706a4fd0',
-          id: 'system_Targettestigaautom21___GROUP___2446621e-895f-4664-bb6e-c107706a4fd0',
-          name: 'Careers information officer3583',
-        },
         application: {
           description: 'Target AD App',
           icon: '',
@@ -96,6 +89,8 @@ function createViolationMock() {
           templateName: 'azure.ad',
           templateVersion: '2.2',
         },
+        'descriptor.idx./entitlement.displayName': 'Careers information officer3583',
+        'glossary.idx./entitlement.description': '2446621e-895f-4664-bb6e-c107706a4fd0',
       },
     ],
     id: '53feffce-1ade-4627-ac6c-b12ea7429ea6',

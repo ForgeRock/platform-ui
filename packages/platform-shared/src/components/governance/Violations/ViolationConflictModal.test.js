@@ -20,33 +20,27 @@ describe('Violation Conflict Modal', () => {
     violatingAccess: [
       {
         compositeId: 'id1',
-        assignment: {
-          name: 'name1',
-          description: 'description1',
-        },
         application: {
           name: 'appName1',
         },
+        'descriptor.idx./entitlement.displayName': 'name1',
+        'glossary.idx./entitlement.description': 'description1',
       },
       {
         compositeId: 'id2',
-        assignment: {
-          name: 'name2',
-          description: 'description2',
-        },
         application: {
           name: 'appName2',
         },
+        'descriptor.idx./entitlement.displayName': 'name2',
+        'glossary.idx./entitlement.description': 'description2',
       },
       {
         compositeId: 'id3',
-        assignment: {
-          name: 'name3',
-          description: 'description3',
-        },
         application: {
           name: 'appName3',
         },
+        'descriptor.idx./entitlement.displayName': 'name3',
+        'glossary.idx./entitlement.description': 'description3',
       },
     ],
   };
