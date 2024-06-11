@@ -201,6 +201,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
+import { get } from 'lodash';
 import {
   BButton, BButtonClose, BContainer, BRow, BCol, BMedia, BImg, BMediaBody, BMediaAside, BFormGroup,
 } from 'bootstrap-vue';
@@ -269,8 +270,8 @@ function getEntitlementDisplayObjects(compositeIds) {
   return compositeIds.map((id) => {
     const item = violation.value.violatingAccess.find((violationItem) => (violationItem.compositeId === id));
     return {
-      name: item.assignment.name,
-      description: item.assignment.description,
+      name: get(item, 'descriptor.idx./entitlement.displayName') || get(item, 'entitlement.displayName') || '',
+      description: get(item, 'glossary.idx./entitlement.description') || get(item, 'entitlement.description') || '',
       appName: item.application.name,
       app: item.application,
       compositeId: item.compositeId,

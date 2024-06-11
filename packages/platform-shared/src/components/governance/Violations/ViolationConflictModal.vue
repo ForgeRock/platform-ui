@@ -5,12 +5,12 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     :id="modalId"
-    title="View Violation"
     ok-only
     ok-variant="outline-primary"
-    ok-title="Done"
     size="lg"
-    :static="isTesting">
+    :ok-title="$t('common.done')"
+    :static="isTesting"
+    :title="$t('governance.violations.viewViolation')">
     <p class="mb-4">
       {{ $t('governance.violations.conflictDescription') }}
     </p>
@@ -86,6 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
  * Read only view of the conflicting entitlements for a violation
  */
 import { computed } from 'vue';
+import { get } from 'lodash';
 import {
   BCol,
   BImg,
@@ -122,8 +123,8 @@ function getEntitlementDisplayObjects(compositeIds) {
   return compositeIds.map((id) => {
     const item = props.violation.violatingAccess.find((violation) => (violation.compositeId === id));
     return {
-      name: item.assignment.name,
-      description: item.assignment.description,
+      name: get(item, 'descriptor.idx./entitlement.displayName') || get(item, 'entitlement.displayName') || '',
+      description: get(item, 'glossary.idx./entitlement.description') || get(item, 'entitlement.description') || '',
       appName: item.application.name,
       app: item.application,
     };
