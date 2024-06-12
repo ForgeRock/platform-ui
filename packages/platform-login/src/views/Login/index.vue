@@ -501,7 +501,7 @@ export default {
     },
     journeyFocusElement: {
       type: String,
-      default: 'header',
+      default: '',
     },
     journeyFocusFirstFocusableItemEnabled: {
       type: Boolean,
@@ -690,25 +690,19 @@ export default {
     journeyRememberMeEnabled() {
       this.setRememberedUsername();
     },
-    /*
-    * Set timeout to focus on a tag according to the selected theme of the current Step (journey node)
-    * Time out is set to focus after the set-theme was called and established to avoid slow rendering or vue reloads
-    */
     journeyFocusElement() {
-      setTimeout(() => {
-        // refresh accessibility between steps by focusing on the body before the next focus to avoid the aplication from keeping the same activeElement
-        this.$refs.container.focus();
-        if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
-          /*
-          * This should focus on the card inside either of the main tags
-          * which  after tab would focus on the first focusable item (a description link or form input)
-          */
-          this.$refs.callbackMain ? this.$refs.callbackMain.focus() : this.$refs.main.focus();
-        } else {
-          // This will always focus on header if it exists or components container
-          this.$refs.callbackAppHeaderContainer ? this.$refs.callbackAppHeaderContainer.focus() : this.$refs.container.focus();
-        }
-      }, 600);
+      // refresh accessibility between steps by focusing on the body before the next focus to avoid the aplication from keeping the same activeElement
+      this.$refs.container.focus();
+      if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
+        /*
+        * This should focus on the card inside either of the main tags
+        * which  after tab would focus on the first focusable item (a description link or form input)
+        */
+        this.$refs.callbackMain ? this.$refs.callbackMain.focus() : this.$refs.main.focus();
+      } else {
+        // This will always focus on header if it exists or components container
+        this.$refs.callbackAppHeaderContainer ? this.$refs.callbackAppHeaderContainer.focus() : this.$refs.container.focus();
+      }
     },
   },
   methods: {
@@ -1205,7 +1199,7 @@ export default {
             }
           }
           const previousStep = this.step;
-          this.isFirstStep = !!previousStep;
+          this.isFirstStep = !previousStep;
           this.step = step;
 
           // Tree resumption parameters should generally only be supplied once, so we remove them from memory after we've sent them to the SDK (see IAM-492)
@@ -1302,13 +1296,14 @@ export default {
               this.loading = false;
               break;
           }
-          this.$emit('set-theme', this.realm, this.treeId, this.nodeThemeId);
         },
         () => {
           this.$emit('component-ready', 'error');
           this.errorMessage = this.$t('login.issueConnecting');
           this.redirectToFailure(this.step);
           this.loading = false;
+        }).finally(() => {
+          this.$emit('set-theme', this.realm, this.treeId, this.nodeThemeId);
         });
     },
     /**

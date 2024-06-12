@@ -87,7 +87,6 @@ export default {
   data() {
     return {
       hideAppOnTransition: false,
-      journeyFocusElement: undefined,
       localizedFooter: '',
       localizedHeader: '',
       localizedJustifiedContent: '',
