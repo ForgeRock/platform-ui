@@ -13,7 +13,7 @@ import * as CertFilterDefaults from '../../CertificationFilter/CertFilterDefault
 const mountProps = {
   global: {
     mocks: {
-      $t: () => {},
+      $t: (t) => t,
       $store: {
         state: {
           userId: 'foo',
@@ -43,6 +43,7 @@ const mountProps = {
       { label: 'State/Province', value: '/stateProvince', type: 'string' },
       { label: 'Preferences/updates', value: '/preferences/updates', type: 'boolean' },
       { label: 'Preferences/marketing', value: '/preferences/marketing', type: 'boolean' },
+      { label: 'testBoolean', type: 'boolean', value: 'glossary.testBoolean' },
     ],
     resourceName: 'user',
     rule: {
@@ -51,6 +52,7 @@ const mountProps = {
       uniqueIndex: 2,
       value: 'test',
     },
+    booleanValueType: 'boolean',
   },
 };
 
@@ -191,5 +193,25 @@ describe('FilterBuilderRow', () => {
     wrapper.vm.removeRule();
     await wrapper.vm.$nextTick();
     expect(wrapper.emitted()['remove-rule']).toBeTruthy();
+  });
+
+  describe('parseType', () => {
+    it('returns type string for empty input', () => {
+      const result = wrapper.vm.parseType(null);
+      expect(result).toEqual({ type: 'string', value: '' });
+    });
+
+    it('parses boolean type correctly', () => {
+      jest.mock('../../utils/QueryFilterDefaults', () => ({
+        getTypeFromValue: jest.fn().mockReturnValue('boolean'),
+      }));
+
+      const result = wrapper.vm.parseType('glossary.testBoolean', false);
+      expect(result).toEqual({
+        type: 'select',
+        value: false,
+        options: [{ value: true, text: 'common.true' }, { value: false, text: 'common.false' }],
+      });
+    });
   });
 });
