@@ -25,7 +25,7 @@ export function getGovernanceFilter(filterObject) {
     } else if (!filter?.subfilters) {
       newFilter.operand = {
         targetName: filter?.field || '',
-        targetValue: filter?.value || '',
+        targetValue: filter?.value ?? '',
       };
     } else {
       newFilter.operand = [];

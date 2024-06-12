@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrFilterBuilderGroup
       path="0"
       class="pb-3"
+      boolean-value-type="boolean"
       :disabled="disabled"
       :rules="queryFilter"
       :resource-name="resourceName"
@@ -197,6 +198,16 @@ export default {
           break;
         case 'rule-change':
           group.subfilters[index] = { ...group.subfilters[index], ...value };
+          if (value.field) {
+            const propertyType = find(this.properties, { value: value.field })?.type;
+            switch (propertyType) {
+              case 'boolean':
+                group.subfilters[index].value = true;
+                break;
+              default:
+                group.subfilters[index].value = '';
+            }
+          }
           break;
         case 'remove-rule':
           group.subfilters.splice(index, 1);

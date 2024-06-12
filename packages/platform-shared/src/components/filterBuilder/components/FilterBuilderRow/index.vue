@@ -202,6 +202,10 @@ export default {
       type: Object,
       required: true,
     },
+    booleanValueType: {
+      type: String,
+      default: 'string',
+    },
   },
   inject: {
     fieldWidth: {
@@ -244,12 +248,25 @@ export default {
     },
     parseType(fieldValue, value) {
       if (!fieldValue) return { type: 'string', value: '' };
-
       const type = getTypeFromValue(fieldValue, this.properties);
+
       switch (type) {
         case 'boolean':
-          return {
-            type: 'select', value: value.toLowerCase() === 'false' || value === false ? 'False' : 'True', options: ['True', 'False'],
+          return this.booleanValueType === 'boolean' ? {
+            type: 'select',
+            value: typeof value === 'string' ? value.toLowerCase() !== 'false' : Boolean(value),
+            options: [{
+              value: true,
+              text: this.$t('common.true'),
+            },
+            {
+              value: false,
+              text: this.$t('common.false'),
+            }],
+          } : {
+            type: 'select',
+            value: value.toLowerCase() === 'false' || value === false ? 'False' : 'True',
+            options: ['True', 'False'],
           };
         case 'number':
         case 'int':
