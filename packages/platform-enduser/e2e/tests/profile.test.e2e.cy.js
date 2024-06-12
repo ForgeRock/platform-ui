@@ -18,7 +18,7 @@ import { getThemesList } from '../api/themeApi.e2e';
 
 const path = require('path');
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('Enduser Profile View', () => {
     const userObject = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
     const downloadsFolder = Cypress.config('downloadsFolder');

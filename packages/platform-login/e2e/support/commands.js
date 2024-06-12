@@ -28,14 +28,13 @@ function clearStorage() {
 
 Cypress.Commands.add('login', () => {
   cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
-  const loginUrl = `${Cypress.config().baseUrl}/platform/`;
   const adminUserName = Cypress.env('AM_USERNAME');
   const adminPassword = Cypress.env('AM_PASSWORD');
   cy.clearAppAuthDatabase();
   // Clear all Cookies and Storage, otherwise there might be unexpected behavior of Login after tests
   clearStorage();
 
-  cy.visit(loginUrl);
+  cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
   cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type(adminUserName, { force: true });
   cy.findAllByLabelText(/Password/i).first().should('be.visible').type(adminPassword, { force: true });
   cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');

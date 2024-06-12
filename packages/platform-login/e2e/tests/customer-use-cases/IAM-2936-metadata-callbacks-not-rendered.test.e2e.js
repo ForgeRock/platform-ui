@@ -9,7 +9,7 @@ import { filterTests } from '../../../../../e2e/util';
 
 const realm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('IAM-2936 Metadata callbacks are not rendered', () => {
     const testTreeUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${realm}&authIndexType=service&authIndexValue=IAM-2936`;
 

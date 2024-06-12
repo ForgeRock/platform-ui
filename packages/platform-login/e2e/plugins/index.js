@@ -6,12 +6,15 @@
  */
 
 const { install, ensureBrowserFlags } = require('@neuralegion/cypress-har-generator');
+const cucumber = require('cypress-cucumber-preprocessor').default;
 const {
   createEmailAccount,
   getLatestEmail,
 } = require('./email-account');
 
 module.exports = (on, config) => {
+  on('file:preprocessor', cucumber());
+
   // Install the HAR generator plugin
   install(on);
 

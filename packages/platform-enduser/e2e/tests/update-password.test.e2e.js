@@ -9,7 +9,7 @@ import { random } from 'lodash';
 import { filterTests } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser } from '../../../platform-admin/e2e/api/managedApi.e2e';
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('End-user update password flow', () => {
     const realmUser = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
     const userInfoRealm = Cypress.env('IS_FRAAS') ? '/realms/root/realms/alpha' : '';

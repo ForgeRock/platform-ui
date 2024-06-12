@@ -10,7 +10,7 @@ import { filterTests } from '../../../../../e2e/util';
 // TODO: Disabling out until these tests can be updated to work reliably
 const realm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('IAM-2927, IAM-3089, and IAM-3939 can return to login from social IDP pages without authenticating', () => {
     const referenceTreeUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${realm}&authIndexType=service&authIndexValue=Login`;
     const testTreeWithOneIDPUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${realm}&authIndexType=service&authIndexValue=IAM-3939`;

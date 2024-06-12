@@ -9,7 +9,7 @@ import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 
 const loginFailedErrorMessage = Cypress.env('IS_FRAAS') ? 'Login failure' : 'Authentication Failed';
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('Login View', () => {
     const userName = Cypress.env('AM_USERNAME');
 

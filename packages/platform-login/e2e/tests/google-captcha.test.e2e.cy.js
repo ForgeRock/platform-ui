@@ -9,7 +9,7 @@ import { random } from 'lodash';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   const loginFailedErrorMessage = 'Login failure';
   const userPassword = 'Test1234!';
   const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';

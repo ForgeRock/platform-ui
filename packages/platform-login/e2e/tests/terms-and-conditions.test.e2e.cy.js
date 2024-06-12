@@ -10,7 +10,7 @@ import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import setTerms from '../api/consentApi.e2e';
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('Login tests for Terms and Conditions', () => {
     // T&C params
     const termsName = 'QA - Accept Terms and Conditions';

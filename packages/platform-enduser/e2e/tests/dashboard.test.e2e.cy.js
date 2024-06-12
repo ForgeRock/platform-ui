@@ -8,7 +8,7 @@
 import { filterTests } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser, assignUserDashboard } from '../api/managedApi.e2e';
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('Enduser Dashboard View', () => {
     let userId = '';
     let userName = '';

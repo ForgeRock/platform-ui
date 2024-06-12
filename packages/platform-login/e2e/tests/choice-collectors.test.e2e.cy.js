@@ -9,7 +9,7 @@ import { random } from 'lodash';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('Tests for Journey Choice collector', () => {
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const journey = `QA-Choice_Collectors_${Cypress.env('IS_FRAAS') ? 'Cloud' : 'ForgeOps'}.json`;

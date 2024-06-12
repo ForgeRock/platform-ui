@@ -343,7 +343,7 @@ function fillOutTranslatedRegistrationForm(userName, userEmail) {
   }
 }
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('Login config translations', () => {
     const loginBaseUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login`;
 

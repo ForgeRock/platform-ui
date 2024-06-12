@@ -17,7 +17,7 @@ import {
 } from '../pages/common/hostedPages';
 import { getThemesList } from '../api/themeApi.e2e';
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   describe('Enduser Theming', () => {
     const enduserRealm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
     const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';

@@ -8,7 +8,7 @@
 import { random } from 'lodash';
 import { filterTests } from '../../../../e2e/util';
 
-filterTests(['cloud'], () => {
+filterTests(['@cloud'], () => {
   function fillOutRegistrationForm(fieldData) {
     fieldData.forEach((field) => {
       cy.findByText(field.placeholder, { timeout: 10000 })

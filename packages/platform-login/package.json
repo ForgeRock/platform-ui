@@ -31,6 +31,7 @@
     "bootstrap-vue": "2.23.1",
     "clipboard-polyfill": "3.0.1",
     "core-js": "3.32.0",
+    "cypress-cucumber-preprocessor": "4.3.1",
     "es6-promise": "4.2.4",
     "lodash": "4.17.21",
     "pinia": "2.1.6",
@@ -84,5 +85,8 @@
     "> 1%",
     "last 2 versions",
     "not ie < 11"
-  ]
+  ],
+  "cypress-cucumber-preprocessor": {
+    "stepDefinitions": "e2e/stepDefinitions"
+  }
 }

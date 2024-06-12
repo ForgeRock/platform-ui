@@ -20,7 +20,7 @@ function proceedToNextJourneyPage() {
   cy.findByRole('button', { name: 'Next' }).click();
 }
 
-filterTests(['forgeops', 'cloud'], () => {
+filterTests(['@forgeops', '@cloud'], () => {
   xdescribe('Check Remember Me theme feature functionality', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Remember%20Me#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;

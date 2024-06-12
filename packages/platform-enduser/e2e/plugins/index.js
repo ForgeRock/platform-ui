@@ -21,10 +21,13 @@
 // `on` is used to hook into various events Cypress emits
 // `config` is the resolved Cypress config
 const { install, ensureBrowserFlags } = require('@neuralegion/cypress-har-generator');
+const cucumber = require('cypress-cucumber-preprocessor').default;
 
 module.exports = (on, config) => {
   // Install the HAR generator plugin
   install(on);
+
+  on('file:preprocessor', cucumber());
 
   on('before:browser:launch', (browser = {}, launchOptions) => {
     // Ensure necessary browser flags for HAR recording if the browser is Chrome
