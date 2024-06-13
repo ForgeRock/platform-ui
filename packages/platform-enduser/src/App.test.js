@@ -11,6 +11,7 @@ import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeA
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
 import * as ViolationsApi from '@/api/governance/ViolationsApi';
 import i18n from '@/i18n';
@@ -47,6 +48,7 @@ describe('App.vue', () => {
     AccessReviewApi.getCertificationItems = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     AccessRequestApi.getUserApprovals = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     ViolationsApi.getViolations = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
+    ManagedResourceApi.getManagedResourceList = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [] } }));
     getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
     store = {
       state: {
@@ -101,6 +103,28 @@ describe('App.vue', () => {
     await wrapper.vm.$nextTick();
     const logoutText = wrapper.find('fr-layout-stub');
     expect(logoutText.exists()).toBeTruthy();
+  });
+
+  it('should set view IDM users privilege as true when the getManagedResourceList call is correct and governance is enabled', async () => {
+    store.state.SharedStore.governanceEnabled = true;
+    shallowMountComponent(store);
+    await flushPromises();
+    expect(wrapper.vm.setIDMUsersViewPrivilege).toHaveBeenCalledWith(true);
+  });
+
+  it('should set view IDM users privilege as false when the getManagedResourceList call fails and governance is enabled', async () => {
+    ManagedResourceApi.getManagedResourceList = jest.fn().mockRejectedValue({ response: { status: 403 } });
+    store.state.SharedStore.governanceEnabled = true;
+    shallowMountComponent(store);
+    await flushPromises();
+    expect(wrapper.vm.setIDMUsersViewPrivilege).toHaveBeenCalledWith(false);
+  });
+
+  it('should not set view IDM users privilege when governance is disabled', async () => {
+    store.state.SharedStore.governanceEnabled = false;
+    shallowMountComponent(store);
+    await flushPromises();
+    expect(wrapper.vm.setIDMUsersViewPrivilege).not.toHaveBeenCalled();
   });
 
   describe('with wrapper mounted', () => {

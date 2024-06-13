@@ -17,11 +17,63 @@ of the MIT license. See the LICENSE file for details. -->
       :title="$t('governance.delegates.addDelegates')"
       :ok-function="okHandler">
       <p>{{ $t('governance.delegates.addModalTitle') }}</p>
-      <FrGovResourceSelect
+      <FrResourceSelect
         v-model="delegates"
-        name="delegates"
         class="mb-3"
-        resource-path="user" />
+        validation="required"
+        type="multiselect"
+        :fields="['givenName', 'sn', 'userName', 'profileImage']"
+        :label="$t('common.users')"
+        :resource-path="'alpha_user'">
+        <template #option="{ option }">
+          <BMedia
+            no-body
+            class="py-1">
+            <BImg
+              :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+              :alt="$t('governance.accessRequest.newRequest.userImageAltText', { userName: option.value.userName })"
+              class="mr-2 align-self-center rounded rounded-circle"
+              width="24" />
+            <BMediaBody>
+              <div class="mb-1 text-dark">
+                {{ $t('common.userFullName', { givenName: option.value.givenName, sn: option.value.sn }) }}
+              </div>
+              <small class="text-muted">
+                {{ option.value.userName }}
+              </small>
+            </BMediaBody>
+          </BMedia>
+        </template>
+        <template #tag="{ option, remove }">
+          <span class="multiselect__tag">
+            <BMedia
+              no-body
+              class="py-1">
+              <BImg
+                :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                :alt="$t('governance.accessRequest.newRequest.userImageAltText', { userName: option.value.userName })"
+                class="mr-2 align-self-center rounded rounded-circle"
+                width="24" />
+              <BMediaBody>
+                <div class="mb-1 text-dark">
+                  {{ $t('common.userFullName', { givenName: option.value.givenName, sn: option.value.sn }) }}
+                </div>
+                <div>
+                  <small class="text-muted">
+                    {{ option.value.userName }}
+                  </small>
+                </div>
+              </BMediaBody>
+            </BMedia>
+            <span
+              class="multiselect__tag-icon"
+              tabindex="0"
+              :aria-label="$t('common.remove')"
+              @click.prevent="remove(option)"
+              @keydown.enter="remove(option)" />
+          </span>
+        </template>
+      </FrResourceSelect>
       <FrField
         name="enableTimeConstraint"
         testid="enable-time-constraint"
@@ -76,6 +128,9 @@ import {
   BButton,
   BCol,
   BCollapse,
+  BImg,
+  BMedia,
+  BMediaBody,
   BModal,
   BRow,
 } from 'bootstrap-vue';
@@ -84,9 +139,9 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import dayjs from 'dayjs';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { Form as VeeForm } from 'vee-validate';
+import FrResourceSelect from '@forgerock/platform-shared/src/components/Field/ResourceSelect';
 import { addTaskProxy } from '@/api/governance/DirectoryApi';
 
 export default {
@@ -95,17 +150,20 @@ export default {
     BButton,
     BCol,
     BCollapse,
+    BImg,
+    BMedia,
+    BMediaBody,
     BModal,
     BRow,
     FrDatepicker,
     FrField,
-    FrGovResourceSelect,
+    FrResourceSelect,
     VeeForm,
   },
   mixins: [NotificationMixin],
   data() {
     return {
-      delegates: '',
+      delegates: [],
       enableTimeConstraint: false,
       endDate: '',
       startDate: '',
@@ -122,7 +180,7 @@ export default {
   },
   methods: {
     resetModal() {
-      this.delegates = '';
+      this.delegates = [];
       this.enableTimeConstraint = false;
       this.startDate = '';
       this.endDate = '';
@@ -140,7 +198,7 @@ export default {
           : null;
       }
 
-      addTaskProxy(this.userId, [this.delegates], startDate, endDate).then(() => {
+      addTaskProxy(this.userId, this.delegates.map((delegate) => `managed/user/${delegate._id}`), startDate, endDate).then(() => {
         this.$emit('delegate-added');
         this.displayNotification('success', this.$t('governance.delegates.delegateAdded'));
         ok();

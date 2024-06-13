@@ -48,6 +48,7 @@ import { getUserApprovals } from '@forgerock/platform-shared/src/api/governance/
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { mapState } from 'pinia';
+import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 import { getViolations } from '@/api/governance/ViolationsApi';
 import i18n from '@/i18n';
@@ -73,7 +74,7 @@ export default {
       }
       return '';
     },
-    ...mapState(useUserStore, ['userId']),
+    ...mapState(useUserStore, ['userId', 'setIDMUsersViewPrivilege']),
   },
   data() {
     const governanceInbox = {
@@ -222,6 +223,7 @@ export default {
       this.getAccessReviewsCount();
       this.getPendingApprovalsCount();
       this.getViolationsCount();
+      this.getEnduserPrivileges();
     }
   },
   watch: {
@@ -378,6 +380,23 @@ export default {
         this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingPendingViolations'));
       }).finally(() => {
         this.$store.commit('setViolationsCount', count);
+      });
+    },
+    /**
+     * Retrieves the IDM users and save the privilege of view users depending of the result of this call
+     * The value stored here is used in the delegates view and in the new request modal
+     */
+    getEnduserPrivileges() {
+      getManagedResourceList(`${this.$store.state.realm}_user`, {
+        queryFilter: true,
+        pageSize: 1,
+        fields: '_id',
+      }).then(() => {
+        this.setIDMUsersViewPrivilege(true);
+      }).catch((error) => {
+        if (error.response?.status === 403) {
+          this.setIDMUsersViewPrivilege(false);
+        }
       });
     },
   },
