@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -22,6 +22,7 @@ export const useUserStore = defineStore('user', () => {
   const amAdmin = ref(false);
   const privileges = ref({});
   const hasFederationAdminPrivilege = computed(() => privileges.value.FederationAdmin === true);
+  const hasIDMUsersViewPrivilege = computed(() => privileges.value.IDMUsersView === true);
 
   // Presentational properties
   const company = ref('');
@@ -78,6 +79,13 @@ export const useUserStore = defineStore('user', () => {
     company.value = 'System';
   }
 
+  function setIDMUsersViewPrivilege(value) {
+    privileges.value = {
+      ...privileges.value,
+      IDMUsersView: value,
+    };
+  }
+
   return {
     managedResource,
     userSearchAttribute,
@@ -89,6 +97,7 @@ export const useUserStore = defineStore('user', () => {
     givenName,
     name,
     hasFederationAdminPrivilege,
+    hasIDMUsersViewPrivilege,
     userId,
     userName,
     userDetails,
@@ -99,5 +108,6 @@ export const useUserStore = defineStore('user', () => {
     amRoles,
     effectiveRoles,
     allRoles,
+    setIDMUsersViewPrivilege,
   };
 });

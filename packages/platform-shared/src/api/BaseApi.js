@@ -44,6 +44,17 @@ export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
       }
       return Promise.reject(error);
     }
+
+    // if is a governance enduser and the managed/alpha_user call is forbidden reject with the error,
+    // this error is used by the App component to verify the view IDM user privilege
+    // TODO for now governance is only supported in alpha realm if that changes all supported realms should be verified here
+    if (store.state.SharedStore.currentPackage === 'enduser'
+      && store.state.SharedStore.governanceEnabled
+      && error.config.url.split('?')[0] === 'managed/alpha_user'
+      && error.response.status === 403) {
+      return Promise.reject(error);
+    }
+
     return false;
   });
 

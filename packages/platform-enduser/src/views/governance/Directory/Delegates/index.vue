@@ -10,8 +10,9 @@ of the MIT license. See the LICENSE file for details. -->
       :subtitle="$t('governance.delegates.subtitle')" />
     <BCard no-body>
       <BCardHeader class="p-0">
-        <div class="btn-toolbar justify-content-between p-3 border-bottom-0">
+        <div :class="`btn-toolbar ${hasIDMUsersViewPrivilege ? 'justify-content-between' : 'justify-content-end'} p-3 border-bottom-0`">
           <BButton
+            v-if="hasIDMUsersViewPrivilege"
             @click="showAddModal"
             data-testid="add-delegate"
             variant="primary">
@@ -95,6 +96,7 @@ of the MIT license. See the LICENSE file for details. -->
       />
     </BCard>
     <FrAddDelegateModal
+      v-if="hasIDMUsersViewPrivilege"
       @delegate-added="loadData()" />
     <FrDeleteModal
       @delete-item="removeDelegate()"
@@ -188,7 +190,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(useUserStore, ['userId']),
+    ...mapState(useUserStore, ['userId', 'hasIDMUsersViewPrivilege']),
   },
   mounted() {
     this.loadData();

@@ -52,6 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
             </FrCardRadioInput>
             <!-- Other users -->
             <FrCardRadioInput
+              v-if="hasIDMUsersViewPrivilege"
               class="mb-3"
               radio-value="others"
               name="requestOption"
@@ -196,7 +197,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(useUserStore, ['givenName', 'sn', 'userName', 'userId']),
+    ...mapState(useUserStore, ['givenName', 'sn', 'userName', 'userId', 'hasIDMUsersViewPrivilege']),
     ...mapState(useEnduserStore, ['profileImage']),
     userFullName() {
       return this.$t('common.userFullName', {
