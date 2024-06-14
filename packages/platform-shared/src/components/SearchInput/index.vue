@@ -30,7 +30,8 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           class="border-0"
           @click.prevent.stop="clearSearch()"
-          variant="link">
+          variant="link"
+          :aria-label="$t('common.clear')">
           <FrIcon :name="appendIcon" />
         </BButton>
       </BInputGroupAppend>
