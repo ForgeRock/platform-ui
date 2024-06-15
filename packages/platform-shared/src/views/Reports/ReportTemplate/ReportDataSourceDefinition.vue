@@ -11,16 +11,21 @@ of the MIT license. See the LICENSE file for details. -->
       variant="link"
       @click="showAccordion = !showAccordion">
       <BCardTitle
-        class="h5 m-0 d-flex align-items-start flex-column justify-content-center text-left"
+        class="h5 m-0 d-flex align-items-start flex-column justify-content-center text-left text-break"
         title-tag="h4">
         <small
-          v-if="relatedPath"
+          v-if="entityNamePath"
           class="d-block text-muted">
-          {{ relatedPath }}
+          {{ entityNamePath }}
         </small>
         {{ currentName }}
       </BCardTitle>
+      <FrSpinner
+        v-if="reportIsLoading"
+        class="ml-auto"
+        size="sm" />
       <FrActionsCell
+        v-else
         wrapper-class="ml-auto"
         :divider="false"
         :edit-option="false"
@@ -31,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BButton>
     <BCollapse
       class="px-3 mb-3"
-      :class="{'margin-top-offset': !relatedPath.length}"
+      :class="{'margin-top-offset': !entityNamePath.length}"
       :visible="showAccordion">
       <BFormGroup
         v-slot="{ ariaDescribedby }"
@@ -43,10 +48,10 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-describedby="ariaDescribedby">
           <BListGroup>
             <BListGroupItem
-              v-for="(option, index) in dataSourceColumns"
+              v-for="(option) in dataSourceColumns"
               class="mb-2 py-2 px-3 border-0 rounded"
               :class="selectedColumns.find((value) => value === option.value) ? 'bg-lightblue' : 'bg-light'"
-              :key="index">
+              :key="option.dataSource">
               <BFormCheckbox :value="option.value">
                 {{ option.label }}
               </BFormCheckbox>
@@ -62,24 +67,24 @@ of the MIT license. See the LICENSE file for details. -->
       <BFormGroup
         v-if="relatedDataSources.length"
         v-slot="{ ariaDescribedby }"
-        class="d-none"
-        :label="$t('reports.template.relatedDataSources')">
+        :label="$t('reports.template.relatedDataSources')"
+        class="d-none">
         <BListGroup :aria-describedby="ariaDescribedby">
           <BListGroupItem
-            v-for="(entity, index) in relatedDataSources"
+            v-for="(dataSourceName, index) in relatedDataSources"
             class="d-flex align-items-center mb-2 py-2 px-3 border-0 rounded justify-content-between"
             data-testid="related-entity-list-item"
-            :class="selectedRelatedDataSources.includes(entity) ? 'bg-lightblue' : 'bg-light'"
+            :class="selectedRelatedDataSources.includes(dataSourceName) ? 'bg-lightblue' : 'bg-light'"
             :key="index">
             <p class="m-0">
-              {{ entity }}
+              {{ dataSourceName }}
             </p>
             <FrSpinner
-              v-if="currentEntityBeingFetched === entity && !selectedRelatedDataSources.includes(entity)"
+              v-if="currentEntityBeingFetched === dataSourceName && !selectedRelatedDataSources.includes(dataSourceName)"
               class="ml-auto opacity-50"
               size="sm" />
             <BDropdown
-              v-else-if="!selectedRelatedDataSources.includes(entity)"
+              v-else-if="!selectedRelatedDataSources.includes(dataSourceName)"
               class="p-0 ml-auto"
               no-caret
               right
@@ -90,7 +95,7 @@ of the MIT license. See the LICENSE file for details. -->
                   icon-class="text-dark md-18"
                   name="add" />
               </template>
-              <BDropdownItem @click="addRelatedEntity(entity)">
+              <BDropdownItem @click="addRelatedEntity(dataSourceName)">
                 <FrIcon
                   icon-class="mr-2"
                   name="add">
@@ -139,17 +144,21 @@ const emit = defineEmits([
   'set-related-data-sources',
 ]);
 const props = defineProps({
+  dataSource: {
+    type: String,
+    default: '',
+  },
   dataSourceColumns: {
     type: Array,
     default: () => [],
   },
-  name: {
-    type: String,
-    default: '',
-  },
   relatedDataSources: {
     type: Array,
     default: () => [],
+  },
+  reportIsLoading: {
+    type: Boolean,
+    default: false,
   },
   selectedColumns: {
     type: Array,
@@ -163,8 +172,8 @@ const props = defineProps({
 
 // Globals
 const currentEntityBeingFetched = ref('');
-const relatedPath = computed(() => {
-  const nameArray = props.name.split('.');
+const entityNamePath = computed(() => {
+  const nameArray = props.dataSource.split('.');
   nameArray.pop();
   if (nameArray.length) {
     return `${nameArray.join(' / ')} /`;
@@ -174,13 +183,14 @@ const relatedPath = computed(() => {
 const showAccordion = ref(false);
 
 // Functions
-function addRelatedEntity(entity) {
-  currentEntityBeingFetched.value = entity;
-  emit('set-related-data-sources', entity);
+function addRelatedEntity(dataSourceName) {
+  currentEntityBeingFetched.value = dataSourceName;
+  const dataSourcePath = `${props.dataSource}.${dataSourceName}`;
+  emit('set-related-data-sources', dataSourcePath);
 }
 
 // Computed
-const currentName = computed(() => props.name.split('.').pop());
+const currentName = computed(() => props.dataSource.split('.').pop());
 const columnsModel = computed({
   get() {
     return props.selectedColumns;

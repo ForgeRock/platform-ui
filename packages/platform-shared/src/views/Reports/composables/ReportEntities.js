@@ -17,51 +17,65 @@ import i18n from '@/i18n';
 export default function useReportEntities() {
   const { sortCompare } = useReportSettings();
   const allEntities = ref([{ name: i18n.global.t('common.loadingEtc') }]);
-  const processedColumns = ref([]);
+  const allDataSourceColumns = ref([]);
 
   /**
-   * Creates a list of definitions for a given entity list.
+   * Creates a list of UI friendly definitions for an API list of entities.
    * @param {Array} entities list entity names
    * @param {Array} fields entity columns
+   * @param {Boolean} add determines if dataSourceColumns should be added to the original list.
    * @returns {Array}
    */
-  async function entityDefinitions(entities, fields) {
+  async function entityDefinitions(entities, fields, add = false) {
+    if (!entities || entities.length === 0 || add === false) {
+      // If no entities or empty array, list is supposed to be cleared.
+      // If multiple entities, the list is meant to be replaced, so we also clear it.
+      // If only one entity, then we don't clear list because it is meant to be pushed.
+      allDataSourceColumns.value = [];
+    }
+
     if (entities?.length) {
-      return Promise.all(entities.map(async (obj) => {
-        const entityName = obj.entity;
+      return Promise.all(entities.map(async ({ entity, type }) => {
+        const entityNameArr = entity.split('.');
+        const entityResource = entityNameArr.pop();
         const fieldOptionsBody = {
-          entities: [{ name: entityName, entity: entityName }],
-          fields: [{ name: entityName, value: { options: {} } }],
+          entities: [{ entity: entityResource }],
+          fields: [{ value: { options: {} } }],
         };
         const { data: dataSourceColumns } = await getReportFieldOptions(fieldOptionsBody);
+        const currentDataSourceColumns = ref([]);
 
         if (dataSourceColumns && Object.keys(dataSourceColumns).length) {
-          // Entity field options are returned as a string in period delimeter format,
-          // 'entity.field.attribute', and we are intentionally removing the first part
-          // to avoid repetition since it matches the data source entity name label.
-          processedColumns.value = Object.keys(dataSourceColumns).map((key) => {
-            const entityColumn = fields ? fields.find((field) => field.value === key) : [];
-            const keyArr = key.split('.');
-            keyArr.shift();
+          const entityColumns = Object.keys(dataSourceColumns).map((columnName) => {
+            const entityColumn = fields ? fields.find(({ value }) => value === columnName) : {};
+            const namePath = entityNameArr.length ? `${entityNameArr.join('.')}.${columnName}` : columnName;
             return {
-              format: dataSourceColumns[key].class,
-              label: entityColumn?.label || dataSourceColumns[key].label || keyArr.join('.'),
-              type: dataSourceColumns[key].type,
-              value: key,
+              format: dataSourceColumns[columnName].class,
+              label: entityColumn?.label || dataSourceColumns[columnName].label || columnName.split('.').pop(),
+              type: dataSourceColumns[columnName].type,
+              value: namePath,
             };
           }).sort((a, b) => sortCompare(a, b, 'label'));
+
+          allDataSourceColumns.value.push(...entityColumns);
+          currentDataSourceColumns.value = entityColumns;
         }
+
+        const relatedDataSources = allEntities.value.find(({ name }) => name === entityResource)?.relatedEntities || [];
         const selectedColumns = fields
-          ? processedColumns.value.filter((column) => fields.find((field) => field.value === column.value))
+          ? currentDataSourceColumns.value
+            .filter((column) => fields.find(({ value }) => value === column.value))
+            .map(({ value }) => value)
           : [];
-        const relatedDataSources = allEntities.value.find(({ name }) => name === entityName)?.relatedEntities || [];
+        const entityResourceNames = entities.map((obj) => obj.entity.split('.').pop());
 
         return {
-          name: entityName,
-          dataSourceColumns: processedColumns.value,
+          dataSource: entity,
+          dataSourceColumns: currentDataSourceColumns,
           relatedDataSources,
-          selectedColumns: selectedColumns.map(({ value }) => value),
-          selectedRelatedDataSources: [],
+          selectedColumns,
+          selectedRelatedDataSources: entityResourceNames.filter((resource) => relatedDataSources.includes(resource)),
+          ...(entityNameArr.length && { relationship: type || 'left' }),
         };
       }));
     }
@@ -78,10 +92,15 @@ export default function useReportEntities() {
       const entities = [];
       const fields = [];
       definitions.forEach((definition) => {
-        const { dataSourceColumns, name, selectedColumns } = definition;
+        const {
+          dataSourceColumns,
+          dataSource,
+          relationship,
+          selectedColumns,
+        } = definition;
         const selectedDataSourceColumns = dataSourceColumns.filter((column) => selectedColumns.find((value) => value === column.value));
         const selectedColumnsProcessed = selectedDataSourceColumns.map(({ label, value }) => ({ label, value }));
-        entities.push({ entity: name, name });
+        entities.push({ entity: dataSource, ...(relationship && { type: relationship }) });
         fields.push(...selectedColumnsProcessed);
       });
       return { entities, fields };
@@ -103,7 +122,7 @@ export default function useReportEntities() {
 
   return {
     dataSourceColumnCheckboxNames,
-    dataSourceColumns: processedColumns,
+    dataSourceColumns: allDataSourceColumns,
     entityDefinitions,
     entitiesPayload,
     fetchReportEntities,

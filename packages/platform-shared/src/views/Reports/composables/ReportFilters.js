@@ -156,7 +156,7 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
       const itemType = leftValueEntity?.item?.type
         ? `${leftValueEntity.item.type}_`
         : '';
-      const leftValueType = leftValueEntity.type;
+      const leftValueType = leftValueEntity?.type;
       leftKey = prefix + itemType + leftValueType;
     }
 

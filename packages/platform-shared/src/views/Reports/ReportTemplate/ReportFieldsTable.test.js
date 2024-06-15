@@ -95,8 +95,8 @@ describe('Report Fields table component', () => {
 
       const [nameRow, _idRow] = wrapper.findAll('[role="cell"]');
       expect(wrapper.findAll('[role="cell"]').length).toBe(2);
-      expect(nameRow.text()).toBe('{name}');
-      expect(_idRow.text()).toBe('{_id}');
+      expect(nameRow.text()).toBe('{applications.name}');
+      expect(_idRow.text()).toBe('{applications._id}');
     });
 
     it('ensures that the component emits "update-table-entry-label" when a table header input value is changed', async () => {

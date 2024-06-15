@@ -44,7 +44,6 @@ to such license between the licensee and ForgeRock AS. -->
                 :placeholder="$t('common.label')"
                 :value="column.label"
                 @input="updateLabel(column, $event)"
-                @blur="labelCheck(column)"
                 type="string" />
             </BTh>
           </BTr>
@@ -56,7 +55,7 @@ to such license between the licensee and ForgeRock AS. -->
               :key="index"
               class="px-2 py-4 text-nowrap">
               <div class="mx-2">
-                &#123;{{ column.vanityValue || column.label }}&#125;
+                &#123;{{ column.context }}&#125;
               </div>
             </BTd>
           </BTr>
@@ -92,6 +91,7 @@ import {
   BTr,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import i18n from '@/i18n';
 
 const emit = defineEmits(['update-table-entry-label', 'disable-template-save']);
 const props = defineProps({
@@ -110,28 +110,29 @@ const entityColumnSelectionTable = ref(null);
 
 // computed
 const tableEntries = computed(() => {
-  const [entity] = props.dataSources;
-  let selectedColumns = [];
+  const selectedColumns = [];
   let aggregates = [];
 
-  if (entity && entity.selectedColumns?.length) {
-    selectedColumns = entity.selectedColumns.map((value) => {
-      const dataSourceColumnMatch = entity.dataSourceColumns.find((column) => column.value === value);
-      const vanityValue = dataSourceColumnMatch.value.split('.');
-      vanityValue.shift();
-      return {
-        ...dataSourceColumnMatch,
-        settingId: 'entities',
-        vanityValue: vanityValue.join('.'),
-      };
-    });
-  }
+  props.dataSources.forEach((entity) => {
+    if (entity && entity.selectedColumns?.length) {
+      const columns = entity.selectedColumns.map((value) => {
+        const dataSourceColumnMatch = entity.dataSourceColumns.find((column) => column.value === value);
+        return {
+          ...dataSourceColumnMatch,
+          context: dataSourceColumnMatch.value,
+          settingId: 'entities',
+        };
+      });
+      selectedColumns.push(...columns);
+    }
+  });
 
   if (props.aggregates.length) {
     aggregates = props.aggregates.map(({ label }, definitionIndex) => ({
-      settingId: 'aggregate',
+      context: i18n.global.t('common.aggregate').toUpperCase(),
       definitionIndex,
       label,
+      settingId: 'aggregate',
     }));
   }
   return [...selectedColumns, ...aggregates];
@@ -143,15 +144,6 @@ function updateLabel({ settingId, value, definitionIndex }, label) {
   const columnMatch = tableEntries.value.find((obj) => (obj.value || obj.definitionIndex) === (value || definitionIndex));
   if (columnMatch.label !== label) {
     emit('update-table-entry-label', settingId, (value || definitionIndex), label);
-  }
-}
-
-function labelCheck(column) {
-  const { label, settingId } = column;
-
-  if (!label && settingId === 'entities') {
-    const { value, vanityValue } = column;
-    updateLabel({ settingId, value }, vanityValue);
   }
 }
 

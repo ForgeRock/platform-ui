@@ -583,10 +583,11 @@ async function setReportFields(reportConfig) {
   const fetchModelList = [];
   const fieldTypeMap = {
     array: 'multiselect',
-    string: 'string',
     boolean: 'boolean',
-    integer: 'number',
     date: 'date',
+    float: 'number',
+    integer: 'number',
+    string: 'string',
   };
 
   _PARAMETER_KEYS.value = parameters ? Object.keys(parameters) : [];

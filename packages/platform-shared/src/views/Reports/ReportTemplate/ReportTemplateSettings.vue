@@ -35,7 +35,6 @@ of the MIT license. See the LICENSE file for details. -->
               </h3>
               <BButton
                 v-if="!setting.hideAddDefinitionButton || setting.hideAddDefinitionButton() !== true"
-                :disabled="setting.disableAddDefinitionButton !== undefined && setting.disableAddDefinitionButton() === true"
                 @click="updateDefinitions(setting._id)"
                 class="text-body px-2 py-0"
                 variant="link">
@@ -52,10 +51,11 @@ of the MIT license. See the LICENSE file for details. -->
                 data-testid="definition-body">
                 <FrReportDataSourceDefinition
                   v-for="(definition, defIndex) in setting.definitions"
+                  :data-source="definition.dataSource"
                   :data-source-columns="definition.dataSourceColumns"
                   :key="defIndex"
-                  :name="definition.name"
                   :related-data-sources="definition.relatedDataSources"
+                  :report-is-loading="reportIsLoading"
                   :selected-columns="definition.selectedColumns"
                   :selected-related-data-sources="definition.selectedRelatedDataSources"
                   @delete-data-source="$emit('delete-data-source', defIndex)"
@@ -71,7 +71,6 @@ of the MIT license. See the LICENSE file for details. -->
                   :class="definitionCardStyles(defIndex, setting.definitions.length)"
                   :definition="definition"
                   :definition-index="defIndex"
-                  :is-saving="isSaving"
                   :key="defIndex"
                   :name="definition.name"
                   :setting-id="setting._id"
@@ -124,7 +123,7 @@ const emit = defineEmits([
 ]);
 
 defineProps({
-  isSaving: {
+  reportIsLoading: {
     type: Boolean,
     default: false,
   },

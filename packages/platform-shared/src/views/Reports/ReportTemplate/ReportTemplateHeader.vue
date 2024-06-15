@@ -89,10 +89,6 @@ defineProps({
     type: Boolean,
     default: true,
   },
-  reportState: {
-    type: String,
-    default: '',
-  },
   isDuplicating: {
     type: Boolean,
     default: false,
@@ -100,6 +96,10 @@ defineProps({
   isSaving: {
     type: Boolean,
     default: false,
+  },
+  reportState: {
+    type: String,
+    default: '',
   },
   templateName: {
     type: String,
