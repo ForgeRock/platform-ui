@@ -48,10 +48,6 @@ export default function useReportSettings(
       _id: 'filter',
       title: i18n.global.t('common.filters'),
       description: i18n.global.t('reports.template.filtersSettingDescription'),
-      disableAddDefinitionButton: () => {
-        const [entity] = reportSettings.value.find((setting) => setting._id === 'entities').definitions;
-        return !entity?.selectedColumns?.length;
-      },
       hideAddDefinitionButton: () => !!reportSettings.value.find((setting) => setting._id === 'filter').definitions.length,
       modal: 'report-filters-modal',
       definitions: [],

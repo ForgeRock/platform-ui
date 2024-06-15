@@ -61,14 +61,9 @@ of the MIT license. See the LICENSE file for details. -->
         <BCol
           class="d-flex align-items-center justify-content-end"
           cols="2">
-          <FrSpinner
-            v-if="isSaving && isCurrentDefinition"
-            class="opacity-50 mr-2"
-            size="sm" />
           <FrActionsCell
-            v-else
             :edit-option="false"
-            @delete-clicked.stop="deleteDefinition"
+            @delete-clicked.stop="emit('delete-definition')"
             wrapper-class="pr-2">
             <template #custom-top-actions>
               <BDropdownItem @click.stop="$emit('edit-definition')">
@@ -91,7 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
  * @description
  * Report settings definition component for parameters, filters, aggregates and sorting.
  */
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import {
   BCard,
   BCardBody,
@@ -106,7 +101,6 @@ import {
 import { pluralizeSingular } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from '@/i18n';
 
 const emit = defineEmits(['delete-definition', 'edit-definition']);
@@ -118,10 +112,6 @@ const props = defineProps({
   definitionIndex: {
     type: Number,
     default: -1,
-  },
-  isSaving: {
-    type: Boolean,
-    default: false,
   },
   settingId: {
     type: String,
@@ -142,31 +132,8 @@ const props = defineProps({
   },
 });
 
-// Globals
-const definitionBeingDeleted = ref({});
-
-// Functions
-function deleteDefinition() {
-  definitionBeingDeleted.value = {
-    definitionIndex: props.definitionIndex,
-    settingId: props.settingId,
-  };
-  emit('delete-definition');
-}
-
 // Computed
 const editOptionLabel = computed(() => i18n.global.t('common.editObject', { object: pluralizeSingular(props.settingTitle) }));
-const isCurrentDefinition = computed(() => {
-  const { definitionIndex: currentIndex, settingId: currentSettingId } = definitionBeingDeleted.value;
-  return currentIndex === props.definitionIndex && currentSettingId === props.settingId;
-});
-
-// Watchers
-watch(() => props.isSaving, (bool) => {
-  if (!bool) {
-    definitionBeingDeleted.value = {};
-  }
-});
 </script>
 
 <style lang="scss" scoped>

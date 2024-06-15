@@ -93,7 +93,12 @@ to such license between the licensee and ForgeRock AS. -->
  * @description
  * Modal for adding filters to a custom analytics report template.
  */
-import { computed, provide, ref } from 'vue';
+import {
+  computed,
+  nextTick,
+  provide,
+  ref,
+} from 'vue';
 import {
   BButton,
   BCol,
@@ -307,7 +312,8 @@ function fetchAllFieldOptions(existingRules) {
 /**
  * Populates the filter rules on the BModal's "@show" event
  */
-function populateForm() {
+async function populateForm() {
+  await nextTick();
   const existingFilterDefinition = props.existingFilter?.definition;
 
   if (existingFilterDefinition) {

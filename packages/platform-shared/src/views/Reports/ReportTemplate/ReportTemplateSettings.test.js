@@ -7,7 +7,7 @@
 
 import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
-import { findByText, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByText, findAllByTestId, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
@@ -176,7 +176,7 @@ describe('Report Template Settings component', () => {
           result: [
             {
               name: 'applications',
-              relatedDataSources: ['Application_Users', 'assignments', 'roles'],
+              relatedEntities: ['assignments', 'roles'],
             },
             {
               name: 'Users',
@@ -199,7 +199,7 @@ describe('Report Template Settings component', () => {
       }));
 
       const entityDefinitionStub = {
-        _id: 'applications',
+        dataSource: 'applications',
         dataSourceColumns: [
           {
             format: 'json',
@@ -214,10 +214,9 @@ describe('Report Template Settings component', () => {
             value: 'applications.name',
           },
         ],
-        name: 'applications',
-        relatedDataSources: [],
+        relatedDataSources: ['assignments', 'roles'],
         selectedColumns: ['applications.name'],
-        selectedRelatedDataSources: [],
+        selectedRelatedDataSources: ['roles'],
       };
 
       it('ensures that the dataSources definitions only show if the definitions property has items', async () => {
@@ -245,11 +244,51 @@ describe('Report Template Settings component', () => {
         expect(_idCheckbox.wrapperElement).not.toBeChecked();
         expect(nameCheckbox.wrapperElement).toBeChecked();
       });
+
+      it('ensures that the related entities button list shows, along with the correctly selected and unselected states, when the definition contains values for the relatedDataSources and selectedRelatedDataSources properties', () => {
+        const dataSourcesWithDefinitions = [{ _id: 'entities', definitions: [entityDefinitionStub] }];
+        wrapper = setup({ reportSettings: dataSourcesWithDefinitions });
+
+        const relatedDataSourceLegend = findByText(wrapper, 'legend', 'Related data sources');
+        expect(relatedDataSourceLegend.exists()).toBe(true);
+
+        const definitionElement = findByTestId(wrapper, 'definition-body');
+        const [, relatedDataSources] = definitionElement.findAll('fieldset');
+        const [assignmentsRelatedEntityElement, rolesRelatedEntityElement] = findAllByTestId(relatedDataSources, 'related-entity-list-item');
+
+        // checks that the related entity buttons exist since they are included in the relatedDataSources property
+        expect(assignmentsRelatedEntityElement.find('p').text()).toBe('assignments');
+        expect(rolesRelatedEntityElement.find('p').text()).toBe('roles');
+
+        // ensures that the assignments related data source DOES NOT show a check icon since it is NOT listed under the selectedRelatedDataSources property
+        const assignmentsRelatedEntityCheck = findByText(assignmentsRelatedEntityElement, 'span', 'check');
+        expect(assignmentsRelatedEntityCheck).toBeUndefined();
+
+        // ensures that the roles related data source has a check icon since it is listed under the selectedRelatedDataSources property
+        const rolesRelatedEntityCheck = findByText(rolesRelatedEntityElement, 'span', 'check');
+        expect(rolesRelatedEntityCheck.exists()).toBe(true);
+      });
+
+      it('emits "set-related-data-sources" when the "Add as Data Source" button is clicked for a related data source', async () => {
+        const dataSourcesWithDefinitions = [{ _id: 'entities', definitions: [entityDefinitionStub] }];
+        wrapper = setup({ reportSettings: dataSourcesWithDefinitions });
+
+        const definitionElement = findByTestId(wrapper, 'definition-body');
+        const [, relatedDataSources] = definitionElement.findAll('fieldset');
+        const [assignmentsRelatedEntityElement] = findAllByTestId(relatedDataSources, 'related-entity-list-item');
+        const assignmentsRelatedEntityButton = assignmentsRelatedEntityElement.find('button');
+        const assignmentsRelatedEntityAddOption = assignmentsRelatedEntityElement.find('a');
+
+        await assignmentsRelatedEntityButton.trigger('click');
+        await assignmentsRelatedEntityAddOption.trigger('click');
+        const [[definitionIndex, entityValue]] = wrapper.emitted()['set-related-data-sources'];
+        expect(definitionIndex).toEqual(0);
+        expect(entityValue).toBe('applications.assignments');
+      });
     });
 
     describe('@parameters', () => {
       const parameterDefinitionStub = {
-        _id: 'my parameter',
         enumeratedValues: [],
         helpText: '',
         inputType: 'String',

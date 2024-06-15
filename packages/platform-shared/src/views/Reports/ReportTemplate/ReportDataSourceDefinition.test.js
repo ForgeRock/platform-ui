@@ -21,6 +21,7 @@ describe('Report Data Source Definition component', () => {
         plugins: [i18n],
       },
       props: {
+        dataSource: 'applications',
         ...props,
       },
     });
@@ -38,7 +39,8 @@ describe('Report Data Source Definition component', () => {
     type: 'string',
     value: 'applications.lastName',
   }];
-  const relatedDataSources = ['users', 'assignments'];
+  const relatedDataSources = ['assignments', 'roles'];
+  const selectedRelatedDataSources = ['assignments'];
 
   let wrapper;
 
@@ -48,10 +50,8 @@ describe('Report Data Source Definition component', () => {
     });
 
     it('displays the definition name as the card title when the "name" prop has a value', () => {
-      wrapper = setup({ name: 'Data Source Title' });
-
       const dataSourceDefinitionHeading = wrapper.find('h4');
-      expect(dataSourceDefinitionHeading.text()).toBe('Data Source Title');
+      expect(dataSourceDefinitionHeading.text()).toBe('applications');
     });
 
     it('renders the "available columns" checkbox options when the "dataSourceColumns" prop has items', () => {
@@ -88,11 +88,32 @@ describe('Report Data Source Definition component', () => {
       const relatedDataSourcesFieldsetLabel = relatedDataSourcesFieldset.find('legend');
       expect(relatedDataSourcesFieldsetLabel.text()).toBe('Related data sources');
 
-      const usersRelatedDataSourceElement = findByText(relatedDataSourcesFieldset, 'div', 'users');
-      expect(usersRelatedDataSourceElement.exists()).toBe(true);
-
-      const assignmentsRelatedDataSourceElement = findByText(relatedDataSourcesFieldset, 'div', 'assignments');
+      const assignmentsRelatedDataSourceElement = findByText(relatedDataSourcesFieldset, 'p', 'assignments');
       expect(assignmentsRelatedDataSourceElement.exists()).toBe(true);
+
+      const rolesRelatedDataSourceElement = findByText(relatedDataSourcesFieldset, 'p', 'roles');
+      expect(rolesRelatedDataSourceElement.exists()).toBe(true);
+    });
+
+    it('shows a checkmark for any related data sources that appear in the list of the selectedRelatedDataSources prop', () => {
+      wrapper = setup({ relatedDataSources, selectedRelatedDataSources });
+
+      const allFieldSets = wrapper.findAll('fieldset');
+      expect(allFieldSets.length).toBe(2);
+
+      const allRelatedDataSourceListItems = allFieldSets[1].findAll('.list-group-item');
+      expect(allRelatedDataSourceListItems.length).toBe(2);
+
+      const [, relatedDataSourcesFieldset] = allFieldSets;
+      const assignmentsRelatedDataSourceCheck = findByText(relatedDataSourcesFieldset, 'p + span', 'check');
+      expect(assignmentsRelatedDataSourceCheck.exists()).toBe(true);
+    });
+
+    it('shows a specific title path that includes the parent data source name for related data source definitions', () => {
+      wrapper = setup({ dataSource: 'applications.assignments' });
+
+      const dataSourceDefinitionHeading = wrapper.find('h4');
+      expect(dataSourceDefinitionHeading.text()).toBe('applications / assignments');
     });
 
     it('emits the data source columns array when a column checkbox is selected', async () => {
@@ -114,11 +135,12 @@ describe('Report Data Source Definition component', () => {
       expect(allRelatedDataSourceListItems.length).toBe(2);
 
       const [, relatedDataSourcesFieldset] = allFieldSets;
-      const usersRelatedDataSourceElement = findByText(relatedDataSourcesFieldset, 'div', 'users');
-      const addUsersRelatedDataSourceButton = findByRole(usersRelatedDataSourceElement, 'menuitem');
+      const [assignmentsRelatedDataSourceButton] = relatedDataSourcesFieldset.findAll('button');
+      const [addAssignmentsRelatedDataSourceOption] = relatedDataSourcesFieldset.findAll('a');
 
-      await addUsersRelatedDataSourceButton.trigger('click');
-      expect(wrapper.emitted()['set-related-data-sources'][0]).toEqual(['users']);
+      await assignmentsRelatedDataSourceButton.trigger('click');
+      await addAssignmentsRelatedDataSourceOption.trigger('click');
+      expect(wrapper.emitted()['set-related-data-sources'][0]).toEqual(['applications.assignments']);
     });
 
     it('emits "delete-data-source" when a data source definition card is deleted', async () => {

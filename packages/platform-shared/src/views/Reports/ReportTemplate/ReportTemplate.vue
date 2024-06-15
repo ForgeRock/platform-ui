@@ -24,10 +24,10 @@ of the MIT license. See the LICENSE file for details. -->
           @disable-template-save="disableTemplateSave = $event" />
         <FrReportTemplateSettings
           v-model="reportDetails"
-          :is-saving="isSavingDefinition"
+          :report-is-loading="reportIsLoading"
           :report-settings="reportSettings"
           @delete-data-source="onDeleteDataSource"
-          @delete-definition="saveTemplateAndUpdateSettings"
+          @delete-definition="updateSettings"
           @delete-parameter="onUpdateParameter"
           @update-definitions="onUpdateDefinitions"
           @set-column-selections="onSetColumnSelections"
@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
       :column-checkbox-names="dataSourceColumnCheckboxNames"
       :is-saving="isFetchingEntityColumns"
       :is-testing="isTesting"
-      @add-data-source="addDataSource" />
+      @add-data-source="onAddDataSource" />
     <FrReportParametersModal
       :is-saving="isSavingDefinition"
       :is-testing="isTesting"
@@ -90,12 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
  * @description
  * Main component that gives an admin the ability to create custom platform analytics reports.
  */
-import {
-  computed,
-  nextTick,
-  ref,
-  watch,
-} from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import {
@@ -215,6 +210,7 @@ const reportDetails = ref({
   report_owner: false,
   viewers: [],
 });
+const reportIsLoading = ref(true);
 const reportState = route.params.state;
 const templateId = route.params.template.toUpperCase();
 const templateName = route.params.template.replace(/-/g, ' ');
@@ -224,42 +220,70 @@ const templateName = route.params.template.replace(/-/g, ' ');
  * Saves the report template
  * @param {Object} settings complete settings template local data
  */
-function saveTemplate(settings = reportSettings.value) {
+async function saveTemplate(settings = reportSettings.value) {
   const payload = reportPayload(settings);
   const groupViewers = defaultGroups.filter((group) => reportDetails.value[group]);
 
   try {
-    return saveAnalyticsReport(templateId, payload, [...reportDetails.value.viewers, ...groupViewers], reportDetails.value.description);
+    await saveAnalyticsReport(templateId, payload, [...reportDetails.value.viewers, ...groupViewers], reportDetails.value.description);
+    if (reportState === 'published') {
+      router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: templateId.toLowerCase() } });
+    }
   } catch (error) {
     showErrorMessage(error, i18n.global.t('reports.template.error.errorSavingReport'));
     return error;
   }
+
+  return Promise.resolve();
 }
 
 /**
  * After an entity is selected, entity columns are fetched here.
- * @param {String} dataSourceName entity name
+ * @param {String} dataSource entity name
  */
-async function addDataSource(dataSourceName) {
-  if (dataSourceName) {
+async function onAddDataSource(dataSource) {
+  if (dataSource) {
     isFetchingEntityColumns.value = true;
-    const entityDefinitionsList = await entityDefinitions([{ entity: dataSourceName }]);
+    const entityDefinitionsList = await entityDefinitions([{ entity: dataSource }], [], true);
     displayNotification('success', i18n.global.t('reports.template.dataSetAdded'));
-    // Clear any previously defined parameters, filters, aggregates and sorting
-    // definitions since these have an association with the selected data source.
-    findSettingsObject('parameters').definitions.splice(0);
-    findSettingsObject('filter').definitions.splice(0);
-    findSettingsObject('aggregate').definitions.splice(0);
-    findSettingsObject('sort').definitions.splice(0);
+
     // Purposeful sequential visual delay to first allow the
     // user to read the success message, then hides the modal.
     setTimeout(() => {
-      findSettingsObject('entities').definitions.push(...entityDefinitionsList);
+      const entitiesList = findSettingsObject('entities').definitions;
+      const dataSourceArrPopped = dataSource.split('.');
+      dataSourceArrPopped.pop();
+      const parentIndex = entitiesList.findIndex((entity) => entity.dataSource === dataSourceArrPopped.join('.'));
+
+      entitiesList.splice(parentIndex + 1, 0, ...entityDefinitionsList);
       bvModal.value.hide('report-data-sources-modal');
+      disableTemplateSave.value = false;
       isFetchingEntityColumns.value = false;
     }, 1001);
   }
   return Promise.resolve();
+}
+
+/**
+ * Updates the report settings object with a new definition
+ * @param {String} settingsId Setting id for reference in the main reportSettings composable
+ * @param {Number} definitionIndex Definition index position
+ * @param {Object} updatedDefinition Definition object
+ */
+function updateSettings(settingsId, definitionIndex, updatedDefinition) {
+  const { definitions, modal } = findSettingsObject(settingsId);
+  const updatedDefinitionsList = generateNewDefinitions(definitions, definitionIndex, updatedDefinition);
+  const definitionIntendedToBeDeleted = updatedDefinition === undefined;
+
+  if (definitionIntendedToBeDeleted) {
+    delete definitionBeingEdited.value[settingsId];
+  }
+
+  definitions.splice(0);
+  definitions.push(...updatedDefinitionsList);
+  disableTemplateSave.value = false;
+
+  bvModal.value.hide(modal);
 }
 
 /**
@@ -272,22 +296,18 @@ async function saveTemplateAndUpdateSettings(settingsId, definitionIndex, update
   const { definitions, modal } = findSettingsObject(settingsId);
   const updatedDefinitionsList = generateNewDefinitions(definitions, definitionIndex, updatedDefinition);
   const updatedSettings = generateNewSettings(settingsId, updatedDefinitionsList);
-  const definitionIntendedToBeDeleted = updatedDefinition === undefined;
 
   isSavingDefinition.value = true;
   await saveTemplate(updatedSettings);
 
-  if (definitionIntendedToBeDeleted) {
-    delete definitionBeingEdited.value[settingsId];
-  }
+  updateSettings(settingsId, definitionIndex, updatedDefinition);
 
   if (reportState === 'published') {
     router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: templateId.toLowerCase() } });
   }
 
   isSavingDefinition.value = false;
-  definitions.splice(0);
-  definitions.push(...updatedDefinitionsList);
+  disableTemplateSave.value = true;
 
   displayNotification('success', i18n.global.t('reports.template.reportUpdated'));
   bvModal.value.hide(modal);
@@ -307,14 +327,13 @@ function onSetColumnSelections(defIndex, columns) {
 
 /**
  * Adds a related data source
- * @param {Number} defIndex Definition index position
- * @param {String} relatedDataSourceName Related data source name
+ * @param {Number} parentIndex Parent entity definition index position
+ * @param {String} relatedDataSource Related data source path
  */
-async function onSetRelatedDataSources(defIndex, relatedDataSourceName) {
-  const currentDefinition = findSettingsObject('entities').definitions[defIndex];
-  const computedDataSourceName = [currentDefinition.name, relatedDataSourceName].join('.');
-  await addDataSource(computedDataSourceName);
-  currentDefinition.selectedRelatedDataSources.push(relatedDataSourceName);
+async function onSetRelatedDataSources(parentIndex, relatedDataSource) {
+  const { selectedRelatedDataSources } = findSettingsObject('entities').definitions[parentIndex];
+  await onAddDataSource(relatedDataSource);
+  selectedRelatedDataSources.push(relatedDataSource.split('.').pop());
 }
 
 /**
@@ -325,18 +344,28 @@ async function onSetRelatedDataSources(defIndex, relatedDataSourceName) {
  */
 function onUpdateTableEntryLabel(settingsId, id, label) {
   const { definitions } = findSettingsObject(settingsId);
-  const [entity] = definitions;
-  const definitionsTarget = settingsId === 'entities' ? entity.dataSourceColumns : definitions;
-  const updatedDefinitions = definitionsTarget.map((definitionObj, index) => {
-    const definitionPropertyMatch = settingsId === 'entities' ? definitionObj.value === id : index === id;
-    if (definitionPropertyMatch) {
+  const updatedDefinitions = definitions.map((definitionObj, index) => {
+    const columns = definitionObj.dataSourceColumns;
+
+    if (columns) {
+      const updatedDataSourceColumns = columns.map((column) => {
+        if (column.value === id) {
+          return { ...column, label };
+        }
+        return column;
+      });
+      return { ...definitionObj, dataSourceColumns: updatedDataSourceColumns };
+    }
+
+    if (index === id) {
       return { ...definitionObj, label };
     }
+
     return definitionObj;
   });
 
-  definitionsTarget.splice(0);
-  definitionsTarget.push(...updatedDefinitions);
+  definitions.splice(0);
+  definitions.push(...updatedDefinitions);
   disableTemplateSave.value = false;
 }
 
@@ -354,16 +383,53 @@ async function duplicateTemplate(id, status) {
 }
 
 /**
+ * Loops through any filter, aggregate or sorting definitions to see
+ * if any of the deleted data source columns are found as selections in
+ * any of the definitions data.  If found, the definition is deleted.
+ * @param {Array} deleteList list of deleted data source paths
+ */
+function removeAssociatedDefinitions(deleteList) {
+  const filter = findSettingsObject('filter').definitions;
+  const filterRules = filter.length ? filter[0].subfilters : null;
+  const aggregates = findSettingsObject('aggregate').definitions;
+  const sortings = findSettingsObject('sort').definitions;
+
+  if (filterRules) {
+    const filteredRules = filterRules.filter(({ field, value }) => !deleteList.filter((path) => (field.startsWith(path) || value.startsWith(path))).length);
+
+    if (filteredRules.length) {
+      filterRules.splice(0);
+      filterRules.push(...filteredRules);
+    } else {
+      // Filter should be deleted entirely if there are no rules
+      filter.splice(0);
+    }
+  }
+
+  if (aggregates.length) {
+    const filteredAggregates = aggregates.filter(({ value }) => !deleteList.filter((path) => value.startsWith(path)).length);
+    aggregates.splice(0);
+    aggregates.push(...filteredAggregates);
+  }
+
+  if (sortings.length) {
+    const filteredSorting = sortings.filter(({ value }) => !deleteList.filter((path) => value.startsWith(path)).length);
+    sortings.splice(0);
+    sortings.push(...filteredSorting);
+  }
+}
+
+/**
  * Deletes the current Data source entity
  * @param {Number} defIndex Definition index position
  */
 function onDeleteDataSource(defIndex) {
-  const entities = findSettingsObject('entities');
-  const definitionNamePath = entities.definitions[defIndex].name;
+  const definitionsList = findSettingsObject('entities').definitions;
+  const definitionNamePath = definitionsList[defIndex].dataSource;
   const definitionPathArray = definitionNamePath.split('.');
   const currentDefinitionName = definitionPathArray.pop();
   const parentDefinitionName = definitionPathArray.join('.');
-  const parentDefinition = entities.definitions.find((def) => def.name === parentDefinitionName);
+  const parentDefinition = definitionsList.find((def) => def.dataSource === parentDefinitionName);
   const deleteQueue = [];
 
   if (parentDefinition) {
@@ -371,16 +437,31 @@ function onDeleteDataSource(defIndex) {
     parentDefinition.selectedRelatedDataSources = parentDefinition.selectedRelatedDataSources.filter((entity) => entity !== currentDefinitionName);
   }
 
-  entities.definitions.forEach((def) => {
-    if (def.name.split('.').includes(currentDefinitionName)) {
-      deleteQueue.push(def.name);
+  definitionsList.forEach((def) => {
+    if (def.dataSource.split('.').includes(currentDefinitionName)) {
+      deleteQueue.push(def.dataSource);
     }
   });
 
   // Remove any nested related data sources
-  const filteredDefinitions = entities.definitions.filter((def) => !deleteQueue.includes(def.name));
-  entities.definitions.splice(0);
-  entities.definitions.push(...filteredDefinitions);
+  const filteredDefinitions = definitionsList.filter((def) => !deleteQueue.includes(def.dataSource));
+  definitionsList.splice(0);
+  definitionsList.push(...filteredDefinitions);
+  disableTemplateSave.value = false;
+
+  if (Object.keys(definitionsList).length) {
+    const { entities } = entitiesPayload(definitionsList);
+    removeAssociatedDefinitions(deleteQueue);
+    entityDefinitions(entities);
+  } else {
+    // If the last data source is deleted we must clear any previously
+    // defined entity columns, parameters, filters, aggregates and sorting definitions.
+    entityDefinitions([]);
+    findSettingsObject('parameters').definitions.splice(0);
+    findSettingsObject('filter').definitions.splice(0);
+    findSettingsObject('aggregate').definitions.splice(0);
+    findSettingsObject('sort').definitions.splice(0);
+  }
 }
 
 /**
@@ -423,8 +504,6 @@ async function onUpdateDefinitions(settingId, definitionIndex, currentDefinition
       [settingId]: { index: definitionIndex, definition: currentDefinition },
     };
   }
-  // Necessary so the @show BModal method can have access to props
-  await nextTick();
   bvModal.value.show(modal);
 }
 
@@ -519,8 +598,7 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
   const filterRulesThatMatchParameter = filterGroup ? filterGroup.subfilters.filter((rule) => rule.value === oldParameterName) : [];
   const parameterHasNewName = oldParameterName !== currentDefinition?.parameterName;
 
-  await saveTemplateAndUpdateSettings('parameters', definitionIndex, currentDefinition);
-  disableTemplateSave.value = true;
+  updateSettings('parameters', definitionIndex, currentDefinition);
 
   // Handle filters on parameter update
   if (filterRulesThatMatchParameter.length) {
@@ -542,15 +620,9 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
     // variable list options get updated with the new parameter label.
     filterRulesThatMatchParameter.forEach((rule) => { fieldOptionPromises.push(fetchFieldOptionsForFilters(rule.operator)); });
 
-    // We must await the response since the filters payload that runs when we
-    // execute saveTemplate below relies on these updated select options.
+    // We must await the response since the filters payload that runs when
+    // we the template is saved relies on these updated select options.
     await Promise.all(fieldOptionPromises);
-
-    // Template needs to be saved a second time because the filters payload relies on an API supplied field
-    // options object for determining the filters payload. The template is saved with the initial parameter
-    // updates above which forces us to fetch a new filter fieldoptions that includes the updated parameter
-    // data, then we save the template a second time with the newly updated parameter data.
-    saveTemplate();
   }
 }
 
@@ -568,16 +640,17 @@ watch(reportDetails, (newVal, oldVal) => {
 
 // Start
 (async () => {
-  fetchReportEntities();
+  const getTemplate = getReportTemplates({
+    _queryFilter: `name eq ${templateId}`,
+    templateType: route.params.state,
+  }, false);
   fetchReportOperators();
   fetchAggregateTypes();
 
   try {
-    // Gets saved data for an existing template
-    const { result } = await getReportTemplates({
-      _queryFilter: `name eq ${templateId}`,
-      templateType: route.params.state,
-    }, false);
+    // Gets saved report data and report entities
+    const [{ result }] = await Promise.all([getTemplate, fetchReportEntities()]);
+
     if (result?.length) {
       const [existingTemplate] = result;
       const { reportConfig, viewers, description } = existingTemplate;
@@ -617,6 +690,8 @@ watch(reportDetails, (newVal, oldVal) => {
   } catch (e) {
     showErrorMessage(e, i18n.global.t('reports.notAvailable'));
     router.push({ name: 'Reports' });
+  } finally {
+    reportIsLoading.value = false;
   }
 })();
 </script>

@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { ref } from 'vue';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import useReportEntities from './ReportEntities';
 
@@ -43,24 +44,24 @@ describe('@useReportEntities', () => {
     },
   }));
 
-  const entitiesStub = [{ entity: 'applications', name: 'applications' }];
+  const entitiesStub = [{ entity: 'applications' }];
   const definitionsUIDataStructureStub = [
     {
+      dataSource: 'applications',
       dataSourceColumns: [
         {
-          label: '_id',
+          label: 'Applications ID',
           value: 'applications._id',
           format: 'json',
           type: 'string',
         },
         {
-          label: 'name',
+          label: 'Applications Name',
           value: 'applications.name',
           format: 'json',
           type: 'string',
         },
       ],
-      name: entitiesStub[0].entity,
       relatedDataSources: ['roles', 'assignments'],
       selectedColumns: ['applications.name'],
       selectedRelatedDataSources: [],
@@ -78,10 +79,12 @@ describe('@useReportEntities', () => {
         data: {
           'applications._id': {
             class: 'json',
+            label: 'Applications ID',
             type: 'string',
           },
           'applications.name': {
             class: 'json',
+            label: 'Applications Name',
             type: 'string',
           },
         },
@@ -89,20 +92,39 @@ describe('@useReportEntities', () => {
 
       const getReportFieldOptionsSpy = jest.spyOn(AutoApi, 'getReportFieldOptions');
 
-      const definitions = await entityDefinitions(entitiesStub, [{ label: 'name', value: 'applications.name' }]);
+      const definitions = await entityDefinitions(entitiesStub, [{ label: 'Applications Name', value: 'applications.name' }]);
       expect(getReportFieldOptionsSpy).toHaveBeenCalledWith({
         entities: [{
-          name: entitiesStub[0].entity,
           entity: entitiesStub[0].entity,
         }],
         fields: [{
-          name: entitiesStub[0].entity,
           value: {
             options: {},
           },
         }],
       });
-      expect(definitions).toEqual(definitionsUIDataStructureStub);
+      expect(definitions).toEqual([
+        {
+          dataSource: 'applications',
+          dataSourceColumns: ref([
+            {
+              label: 'Applications ID',
+              value: 'applications._id',
+              format: 'json',
+              type: 'string',
+            },
+            {
+              label: 'Applications Name',
+              value: 'applications.name',
+              format: 'json',
+              type: 'string',
+            },
+          ]),
+          relatedDataSources: ['roles', 'assignments'],
+          selectedColumns: ['applications.name'],
+          selectedRelatedDataSources: [],
+        },
+      ]);
     });
 
     it('Creates an API friendly payload for entities', () => {
@@ -110,7 +132,7 @@ describe('@useReportEntities', () => {
       expect(payload).toEqual({
         entities: entitiesStub,
         fields: [{
-          label: 'name',
+          label: 'Applications Name',
           value: 'applications.name',
         }],
       });
