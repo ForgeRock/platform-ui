@@ -8,6 +8,7 @@
 import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getBasicNotFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import Notifications from '@kyvg/vue3-notification';
 import GovernanceDashboard from './index';
 
@@ -18,6 +19,7 @@ describe('GovernanceDashboard', () => {
   let wrapper;
 
   AccessRequestApi.getUserRequests = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  const noEntityMutationFilter = getBasicNotFilter('EQUALS', 'requestType', 'entityMutation');
 
   function shallowMountComponent() {
     setupTestPinia({ user: { userId: '123' } });
@@ -55,7 +57,7 @@ describe('GovernanceDashboard', () => {
             pageSize: 0,
             status: 'in-progress',
           },
-          { operand: [{ operand: { targetName: 'decision.status', targetValue: 'in-progress' }, operator: 'EQUALS' }], operator: 'AND' },
+          { operand: [noEntityMutationFilter, { operand: { targetName: 'decision.status', targetValue: 'in-progress' }, operator: 'EQUALS' }], operator: 'AND' },
         );
     });
   });

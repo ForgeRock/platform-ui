@@ -47,3 +47,26 @@ export function getBasicFilter(operator, targetName, targetValue) {
     },
   };
 }
+
+/**
+ * Returns a basic "NOT" filter object.
+ *
+ * @param {string} operator - The operator for the filter.
+ * @param {string} targetName - The target name for the filter.
+ * @param {any} targetValue - The target value for the filter.
+ * @returns {object} - The "NOT" filter object.
+ */
+export function getBasicNotFilter(operator, targetName, targetValue) {
+  return {
+    operator: 'NOT',
+    operand: [
+      {
+        operator,
+        operand: {
+          targetName,
+          targetValue,
+        },
+      },
+    ],
+  };
+}

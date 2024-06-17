@@ -3275,7 +3275,7 @@
           "enableException": "Enable Exception",
           "enableExceptionDescription": "Allow a user to be granted a temporary exception to retain access.",
           "errorDelete": "Error deleting policy rule",
-          "exceptionDuration": "Exception Duration",
+          "exceptionDuration": "Exception Duration (days)",
           "exceptionDurationDescription": "Maximum duration for excepted access.",
           "expireViolationsAfter": "Expire violations after",
           "includeEntitlements": "Include entitlements if ",
