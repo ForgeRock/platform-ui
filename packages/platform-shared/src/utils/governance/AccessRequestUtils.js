@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { getBasicFilter, getBasicNotFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import i18n from '@/i18n';
 
@@ -63,6 +63,9 @@ export const sortKeysMap = {
 
 export function getRequestFilter(filter, status) {
   const allFilters = [];
+
+  // exclude entityMutation requests until they are supported by the inbox
+  allFilters.push(getBasicNotFilter('EQUALS', 'requestType', 'entityMutation'));
 
   if (filter.requestId) allFilters.push(getBasicFilter('EQUALS', 'id', filter.requestId));
   if (filter.requestedFor) allFilters.push(getBasicFilter('EQUALS', 'user.id', filter.requestedFor.split('/').pop()));

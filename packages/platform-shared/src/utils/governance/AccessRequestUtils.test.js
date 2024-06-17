@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { getBasicNotFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getRequestFilter, getStatusText, getFormattedRequest } from './AccessRequestUtils';
 
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
@@ -14,12 +15,13 @@ jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
 const testUser = 'managed/user/testuser';
 
 describe('RequestToolbar', () => {
+  const noEntityMutationFilter = getBasicNotFilter('EQUALS', 'requestType', 'entityMutation');
   describe('getRequestFilter', () => {
     it('request id', () => {
       const filter = { requestId: 'testId' };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [{
+        operand: [noEntityMutationFilter, {
           operator: 'EQUALS',
           operand: {
             targetName: 'id',
@@ -33,7 +35,7 @@ describe('RequestToolbar', () => {
       const filter = { requestedFor: testUser };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [{
+        operand: [noEntityMutationFilter, {
           operator: 'EQUALS',
           operand: {
             targetName: 'user.id',
@@ -47,7 +49,7 @@ describe('RequestToolbar', () => {
       const filter = { requester: testUser };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [{
+        operand: [noEntityMutationFilter, {
           operator: 'EQUALS',
           operand: {
             targetName: 'requester.id',
@@ -61,7 +63,7 @@ describe('RequestToolbar', () => {
       const filter = { requestType: 'testType' };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [{
+        operand: [noEntityMutationFilter, {
           operator: 'EQUALS',
           operand: {
             targetName: 'requestType',
@@ -75,7 +77,7 @@ describe('RequestToolbar', () => {
       const filter = { priorities: { high: true } };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [{
+        operand: [noEntityMutationFilter, {
           operator: 'OR',
           operand: [{
             operator: 'EQUALS',
@@ -92,7 +94,7 @@ describe('RequestToolbar', () => {
       const filter = { priorities: { high: true, medium: true } };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [{
+        operand: [noEntityMutationFilter, {
           operator: 'OR',
           operand: [
             {
@@ -118,7 +120,7 @@ describe('RequestToolbar', () => {
       const filter = { priorities: {} };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [{
+        operand: [noEntityMutationFilter, {
           operator: 'EQUALS',
           operand: {
             targetName: 'request.common.priority',
@@ -131,7 +133,7 @@ describe('RequestToolbar', () => {
     it('filters for in-progress requests', () => {
       expect(getRequestFilter({}, 'in-progress')).toEqual({
         operator: 'AND',
-        operand: [{
+        operand: [noEntityMutationFilter, {
           operator: 'EQUALS',
           operand: {
             targetName: 'decision.status',

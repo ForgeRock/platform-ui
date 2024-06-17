@@ -11,6 +11,7 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import { clone } from 'lodash';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getBasicNotFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import i18n from '@/i18n';
 import router from '@/router';
 import Approvals from './index';
@@ -197,6 +198,7 @@ const openModalMock = {
     },
   },
 };
+const noEntityMutationFilter = getBasicNotFilter('EQUALS', 'requestType', 'entityMutation');
 
 describe('Approvals', () => {
   CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({}));
@@ -265,7 +267,7 @@ describe('Approvals', () => {
       },
       {
         operator: 'AND',
-        operand: [],
+        operand: [noEntityMutationFilter],
       },
     );
   });
@@ -300,7 +302,7 @@ describe('Approvals', () => {
       },
       {
         operator: 'AND',
-        operand: [],
+        operand: [noEntityMutationFilter],
       },
     );
   });
@@ -334,7 +336,7 @@ describe('Approvals', () => {
       },
       {
         operator: 'AND',
-        operand: [],
+        operand: [noEntityMutationFilter],
       },
     );
   });
@@ -374,6 +376,7 @@ describe('Approvals', () => {
       {
         operator: 'AND',
         operand: [
+          noEntityMutationFilter,
           {
             operator: 'EQUALS',
             operand: {
