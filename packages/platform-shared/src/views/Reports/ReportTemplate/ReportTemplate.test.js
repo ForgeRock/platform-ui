@@ -555,12 +555,13 @@ describe('Component for creating custom analytics reports', () => {
           const nameField = parametersModal.find('[name="parameter-name"]');
           expect(nameField.element.value).toBe('MyParameter');
 
-          // changes the parameter label to a new value
+          // changes the parameter name to a new value
           await nameField.setValue('MyParameterUpdated');
 
           // saves parameter
           const saveButton = findByText(parametersModal, 'button', 'Save');
           await saveButton.trigger('click');
+          await flushPromises();
 
           // ensures that the existing filter rule's parameter right value options is now the new parameter Name
           const updatedSelectOption = rightValueSelect.find('.multiselect__option--selected');
