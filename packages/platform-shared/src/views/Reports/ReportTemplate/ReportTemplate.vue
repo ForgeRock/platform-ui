@@ -266,13 +266,13 @@ async function addDataSource(dataSourceName) {
  * Updates a report settings object by creating a new payload and saving the template.
  * @param {String} settingsId Setting id for reference in the main reportSettings composable
  * @param {Number} definitionIndex Definition index position
- * @param {Object} currentDefinition Definition object
+ * @param {Object} updatedDefinition Definition object
  */
-async function saveTemplateAndUpdateSettings(settingsId, definitionIndex, currentDefinition) {
+async function saveTemplateAndUpdateSettings(settingsId, definitionIndex, updatedDefinition) {
   const { definitions, modal } = findSettingsObject(settingsId);
-  const updatedDefinitions = generateNewDefinitions(definitions, definitionIndex, currentDefinition);
-  const updatedSettings = generateNewSettings(settingsId, updatedDefinitions);
-  const definitionIntendedToBeDeleted = currentDefinition === undefined;
+  const updatedDefinitionsList = generateNewDefinitions(definitions, definitionIndex, updatedDefinition);
+  const updatedSettings = generateNewSettings(settingsId, updatedDefinitionsList);
+  const definitionIntendedToBeDeleted = updatedDefinition === undefined;
 
   isSavingDefinition.value = true;
   await saveTemplate(updatedSettings);
@@ -287,7 +287,7 @@ async function saveTemplateAndUpdateSettings(settingsId, definitionIndex, curren
 
   isSavingDefinition.value = false;
   definitions.splice(0);
-  definitions.push(...updatedDefinitions);
+  definitions.push(...updatedDefinitionsList);
 
   displayNotification('success', i18n.global.t('reports.template.reportUpdated'));
   bvModal.value.hide(modal);
@@ -319,8 +319,8 @@ async function onSetRelatedDataSources(defIndex, relatedDataSourceName) {
 
 /**
  * Updates the label for an heading element in the left hand preview table.
- * @param {String} settingsId The updated data source label
- * @param {Number} id The definition id
+ * @param {String} settingsId The settings object ID
+ * @param {Number|String} id The definition id or value
  * @param {String} label The updated label
  */
 function onUpdateTableEntryLabel(settingsId, id, label) {
@@ -457,7 +457,7 @@ function fetchFieldOptionsForAggregates(aggregateTypeName) {
  * Fetches fieldoptions for sorting options
  */
 function fetchFieldOptionsForSorting() {
-  getFieldOptionsForSorting(
+  return getFieldOptionsForSorting(
     findSettingsObject('entities').definitions,
     findSettingsObject('parameters').definitions,
     findSettingsObject('filter').definitions,
@@ -476,12 +476,10 @@ function fetchFieldOptionsForSorting() {
  */
 function updateParameterSelections(allDefinitions, oldParameterName, newParameterName) {
   return allDefinitions.map((definition) => {
-    const [nameProperty] = Object.keys(definition).filter((definitionKey) => definition[definitionKey] === oldParameterName);
-    if (nameProperty) {
-      return {
-        ...definition,
-        [nameProperty]: newParameterName,
-      };
+    const nameKeyMatches = Object.keys(definition).filter((definitionKey) => definition[definitionKey] === oldParameterName);
+    const propertyReplacements = nameKeyMatches.map((key) => ({ [key]: newParameterName }));
+    if (propertyReplacements.length) {
+      return Object.assign({}, definition, ...propertyReplacements);
     }
     return definition;
   });
@@ -522,7 +520,7 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
   const [filterGroup] = existingFilterDefinitions;
   const filterRulesThatMatchParameter = filterGroup ? filterGroup.subfilters.filter((rule) => rule.value === oldParameterName) : [];
   const aggregatesThatMatchParameter = existingAggregateDefinitions.filter((aggregate) => aggregate.value === oldParameterName);
-  const sortingThatMatchParameter = existingSortDefinitions.filter((sort) => sort.sortBy === oldParameterName);
+  const sortingThatMatchParameter = existingSortDefinitions.filter((sort) => sort.value === oldParameterName);
   const parameterHasNewName = oldParameterName !== currentDefinition?.parameterName;
   const aggregateOperatorList = [];
 
@@ -644,6 +642,7 @@ watch(reportDetails, (newVal, oldVal) => {
         findSettingsObject('parameters').definitions,
       ));
       findSettingsObject('aggregate').definitions.push(...aggregateDefinitions(aggregate));
+      await fetchFieldOptionsForSorting();
       findSettingsObject('sort').definitions.push(...sortingDefinitions(sort));
       isFetchingTemplate.value = false;
     } else {

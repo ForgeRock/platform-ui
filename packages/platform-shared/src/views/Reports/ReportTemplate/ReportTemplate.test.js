@@ -58,6 +58,26 @@ describe('Component for creating custom analytics reports', () => {
 
   let wrapper;
 
+  const fieldOptionsStub = {
+    data: {
+      'applications._id': {
+        class: 'json',
+        label: 'Applications Id',
+        type: 'string',
+      },
+      'applications.name': {
+        class: 'json',
+        label: 'Applications Name',
+        type: 'string',
+      },
+      MyParameter: {
+        class: 'parameter',
+        type: 'string',
+        label: 'My Parameter Name',
+      },
+    },
+  };
+
   beforeEach(() => {
     AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
       data: {
@@ -134,26 +154,10 @@ describe('Component for creating custom analytics reports', () => {
       schema: [],
     }]));
 
+    AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+
     jest.clearAllMocks();
   });
-
-  const fieldOptionsStub = {
-    data: {
-      'applications._id': {
-        class: 'json',
-        type: 'string',
-      },
-      'applications.name': {
-        class: 'json',
-        type: 'string',
-      },
-      MyParameter: {
-        class: 'parameter',
-        type: 'string',
-        label: 'My Parameter Name',
-      },
-    },
-  };
 
   describe('@renders', () => {
     it('ensures that the "Add Data" empty state loads on mount', () => {
@@ -185,7 +189,6 @@ describe('Component for creating custom analytics reports', () => {
 
   describe('@actions', () => {
     async function addDataSource(entitySelection = 'applications') {
-      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
       jest.useFakeTimers();
       wrapper = setup();
       await nextTick();
@@ -229,7 +232,7 @@ describe('Component for creating custom analytics reports', () => {
       // selects entity so save button can be enabled
       const dataSourcesSettingsContainer = findByTestId(wrapper, 'entities-settings-container');
       const definitionBody = findByTestId(dataSourcesSettingsContainer, 'definition-body');
-      const [, _idCheckbox] = definitionBody.findAll('input[type="checkbox"]');
+      const [_idCheckbox] = definitionBody.findAll('input[type="checkbox"]');
       await _idCheckbox.setValue(true);
 
       // saves the template
@@ -239,7 +242,7 @@ describe('Component for creating custom analytics reports', () => {
       await saveButton.trigger('click');
       expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
         entities: [{ entity: 'applications', name: 'applications' }],
-        fields: [{ label: '_id', value: 'applications._id' }],
+        fields: [{ label: 'Applications Id', value: 'applications._id' }],
       }, ['reportadmin'], '');
     });
 
@@ -263,9 +266,9 @@ describe('Component for creating custom analytics reports', () => {
 
       // Data source columns
       const dataSourceColumnLabels = findByRole(wrapper.find('main'), 'group').findAll('label');
-      const [name, _id] = dataSourceColumnLabels;
-      expect(_id.text()).toBe('_id');
-      expect(name.text()).toBe('My Parameter Name');
+      const [_id, applications] = dataSourceColumnLabels;
+      expect(_id.text()).toBe('Applications Id');
+      expect(applications.text()).toBe('Applications Name');
     });
 
     it('ensures that the related data sources block for the corresponding entity shows up for the expected api response', async () => {
@@ -314,7 +317,7 @@ describe('Component for creating custom analytics reports', () => {
 
       // Checks a data source checkbox
       const dataSourceDefinition = findByTestId(wrapper, 'definition-body');
-      const [, _idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
+      const [_idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
       await _idCheckbox.setChecked();
       await flushPromises();
 
@@ -323,7 +326,7 @@ describe('Component for creating custom analytics reports', () => {
       expect(wrapper.findAll('[role="columnheader"]').length).toBe(1);
 
       const _idInputValue = _idHeader.find('input').element.value;
-      expect(_idInputValue).toBe('_id');
+      expect(_idInputValue).toBe('Applications Id');
 
       // Ensures that the left preview table displays the selected data source checkbox value as a column row
       const [_idRow] = wrapper.findAll('[role="cell"]');
@@ -339,7 +342,7 @@ describe('Component for creating custom analytics reports', () => {
 
       // Checks a data source checkbox
       const dataSourceDefinition = findByTestId(wrapper, 'definition-body');
-      const [, _idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
+      const [_idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
       await _idCheckbox.setChecked();
       await flushPromises();
 
@@ -350,7 +353,7 @@ describe('Component for creating custom analytics reports', () => {
       await saveButton.trigger('click');
       expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
         entities: [{ entity: 'applications', name: 'applications' }],
-        fields: [{ label: '_id', value: 'applications._id' }],
+        fields: [{ label: 'Applications Id', value: 'applications._id' }],
       }, ['reportadmin'], '');
     });
 
@@ -808,10 +811,6 @@ describe('Component for creating custom analytics reports', () => {
           const definitionBody = findByTestId(sortSettingsContainer, 'definition-body');
           expect(definitionBody.exists()).toBe(false);
 
-          // No other way to trigger the @show BModal event that would call this function
-          await wrapper.vm.fetchFieldOptionsForSorting();
-          await flushPromises();
-
           const [sortBySelect, sortOrderSelect] = sortModal.findAll('[role="listbox"]');
 
           // selects the sort by dropdown
@@ -943,6 +942,7 @@ describe('Component for creating custom analytics reports', () => {
           // saves parameter
           const saveButton = findByText(parametersModal, 'button', 'Save');
           await saveButton.trigger('click');
+          await flushPromises();
 
           // ensures that the sort definition has the updated heading
           sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');

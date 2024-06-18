@@ -97,28 +97,22 @@ export default function useReportSettings(
 
   /**
    * Generates a new set of definitions from the "newDefinition" argument.
-   *
-   * If the "newDefinition" argument is an object, then the assumption
-   * is that the definition is intended to either be added or replaced.
-   *
-   * If the "newDefinition" argument is a string, then the assumption is that
-   * the definition is intended to be deleted from the existingDefinitions list.
    * @param {Array} existingDefinitions Existing list of definitions.
    * @param {Number} definitionIndex Definition index position if it exists
-   * @param {Object} currentDefinition updated definition object
+   * @param {Object} newDefinition updated definition object
    * @returns {Array}
    */
-  function generateNewDefinitions(existingDefinitions, definitionIndex, currentDefinition) {
+  function generateNewDefinitions(existingDefinitions, definitionIndex, newDefinition) {
     const filteredDefinitions = existingDefinitions.filter((obj, index) => index !== definitionIndex);
 
-    if (definitionIndex !== undefined && definitionIndex !== -1 && currentDefinition) {
+    if (definitionIndex !== undefined && definitionIndex !== -1 && newDefinition) {
       // We only want to replace the definition if the newDefinition exists within the
       // existingDefinitions array, otherwise we make the assuption that the intention is
       // to delete the given definition so we just return the filtered definitions.
-      filteredDefinitions.splice(definitionIndex, 0, currentDefinition);
-    } else if (currentDefinition) {
+      filteredDefinitions.splice(definitionIndex, 0, newDefinition);
+    } else if (newDefinition) {
       // new definition so we just push the new object to the end of the existing list
-      return [...existingDefinitions, currentDefinition];
+      return [...existingDefinitions, newDefinition];
     }
 
     return filteredDefinitions;

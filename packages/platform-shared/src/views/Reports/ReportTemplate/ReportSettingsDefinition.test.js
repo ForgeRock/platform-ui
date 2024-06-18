@@ -69,34 +69,36 @@ describe('Report Settings Definition component', () => {
     });
 
     it('displays the sorting descending definition card elements', () => {
-      let sortingDescDefinition = findByText(wrapper, 'p', 'arrow_downward Sort by: First Name');
+      let sortingDescDefinition = findByText(wrapper, 'p', 'arrow_downward Sort by: applications.name');
       expect(sortingDescDefinition).toBeFalsy();
 
       wrapper = setup({
         settingId: 'sort',
         definition: {
           sortBy: 'First Name',
+          value: 'applications.name',
           direction: 'desc',
         },
       });
 
-      sortingDescDefinition = findByText(wrapper, 'p', 'arrow_downwardSort by: First Name');
+      sortingDescDefinition = findByText(wrapper, 'p', 'arrow_downwardSort by: applications.name');
       expect(sortingDescDefinition.exists()).toBe(true);
     });
 
     it('displays the sorting ascending definition card elements', () => {
-      let sortingAscDefinition = findByText(wrapper, 'p', 'arrow_upwardSort by: Last Name');
+      let sortingAscDefinition = findByText(wrapper, 'p', 'arrow_upwardSort by: applications.sn');
       expect(sortingAscDefinition).toBeFalsy();
 
       wrapper = setup({
         settingId: 'sort',
         definition: {
           sortBy: 'Last Name',
+          value: 'applications.sn',
           direction: 'asc',
         },
       });
 
-      sortingAscDefinition = findByText(wrapper, 'p', 'arrow_upwardSort by: Last Name');
+      sortingAscDefinition = findByText(wrapper, 'p', 'arrow_upwardSort by: applications.sn');
       expect(sortingAscDefinition.exists()).toBe(true);
     });
 

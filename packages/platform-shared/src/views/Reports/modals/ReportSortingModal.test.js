@@ -22,16 +22,19 @@ describe('Report Sorting Modal component', () => {
           {
             class: 'json',
             value: 'applications._id',
+            label: 'Applications ID',
             type: 'string',
           },
           {
             class: 'json',
             value: 'applications.name',
+            label: 'Applications Name',
             type: 'string',
           },
           {
             class: 'parameter',
             value: 'MyParameter',
+            label: 'My Parameter Name',
             type: 'string',
           },
         ],
@@ -96,8 +99,9 @@ describe('Report Sorting Modal component', () => {
       await saveButton.trigger('click');
 
       expect(wrapper.emitted('update-sort')).toEqual([['sort', -1, {
-        sortBy: 'applications.name',
+        sortBy: 'Applications Name',
         direction: 'asc',
+        value: 'applications.name',
       }]]);
     });
 
@@ -106,7 +110,8 @@ describe('Report Sorting Modal component', () => {
         existingSort: {
           index: 0,
           definition: {
-            sortBy: 'applications._id',
+            sortBy: 'Applications ID',
+            value: 'applications._id',
             direction: 'desc',
           },
         },
