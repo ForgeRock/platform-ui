@@ -84,6 +84,7 @@
     "ESV": "Environment Secrets & Variables",
     "Events": "Event Hooks",
     "Forbidden": "Forbidden",
+    "Forms": "Forms",
     "GatewaysAndAgents": "Gateways And Agents",
     "Glossary": "Glossary",
     "GovernanceEventEdit": "Governance Event",
@@ -143,6 +144,7 @@
     "dataSources": "Data Sources",
     "email": "Email",
     "entitlements": "Entitlements",
+    "forms": "Forms",
     "glossary": "Glossary",
     "governance": "Governance",
     "governanceEvents": "Events",
@@ -3771,6 +3773,12 @@
         "title": "Scopes"
       },
       "scope": "Scope"
+    },
+    "forms": {
+      "listView": {
+        "title": "Request Forms",
+        "subtitle": "Create forms for use in user administration and application provisioning requests."
+      }
     },
     "workflows": {
       "builder": {
