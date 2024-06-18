@@ -42,11 +42,12 @@ export default function useReportSorting(entitiesPayload, parametersPayload, fil
     const { data } = await getReportFieldOptions(fieldOptionsBody);
 
     sortByValues.value = Object.keys(data).map((key) => {
-      const { class: category, type } = data[key];
+      const { class: category, label, type } = data[key];
       return {
         class: category,
-        value: key,
+        label: label || key,
         type,
+        value: key,
       };
     });
 
@@ -60,7 +61,10 @@ export default function useReportSorting(entitiesPayload, parametersPayload, fil
    */
   function sortingDefinitions(definitions) {
     if (definitions?.length) {
-      return definitions.map(({ value: sortBy, direction }) => ({ sortBy, direction }));
+      return definitions.map(({ value: sortBy, direction }) => {
+        const value = sortByValues.value.find(({ label }) => label === sortBy)?.value;
+        return { sortBy, direction, value };
+      });
     }
     return [];
   }

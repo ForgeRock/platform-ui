@@ -65,7 +65,7 @@ export default function useReportEntities() {
         };
       }));
     }
-    return [];
+    return Promise.resolve([]);
   }
 
   /**

@@ -12,16 +12,18 @@ const sortFieldOptionsResponse = [
   {
     class: 'json',
     value: 'applications._id',
+    label: 'Applications ID',
     type: 'string',
   },
   {
     class: 'json',
     value: 'applications.name',
+    label: 'Applications Name',
     type: 'string',
   },
 ];
-const sortDefinitionDataFromAPI = [{ value: 'applications.name', direction: 'asc' }];
-const uiSortDefinitions = [{ sortBy: 'applications.name', direction: 'asc' }];
+const sortDefinitionDataFromAPI = [{ value: 'Applications Name', direction: 'asc' }];
+const uiSortDefinitions = [{ sortBy: 'Applications Name', direction: 'asc', value: 'applications.name' }];
 
 describe('@useReportSorting', () => {
   const {
@@ -35,8 +37,8 @@ describe('@useReportSorting', () => {
     it('fetches sort field options and ensures that the sortByValues variable outputs expected data', async () => {
       AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
         data: {
-          'applications._id': { class: 'json', type: 'string' },
-          'applications.name': { class: 'json', type: 'string' },
+          'applications._id': { class: 'json', type: 'string', label: 'Applications ID' },
+          'applications.name': { class: 'json', type: 'string', label: 'Applications Name' },
         },
       }));
 
