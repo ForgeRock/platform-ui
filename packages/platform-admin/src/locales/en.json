@@ -3548,8 +3548,9 @@
     },
     "editTemplate": {
       "closeActions": {
+        "allowException": "allow exception to",
         "certify": "certify",
-        "allowException": "allow exception to"
+        "revoke": "revoke"
       },
       "types": {
         "IDENTITY": "Identity",
