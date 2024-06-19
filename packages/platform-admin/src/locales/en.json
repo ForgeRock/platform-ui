@@ -3778,6 +3778,9 @@
       "listView": {
         "title": "Request Forms",
         "subtitle": "Create forms for use in user administration and application provisioning requests."
+      },
+      "editor": {
+        "notFound": "Form not found"
       }
     },
     "workflows": {
