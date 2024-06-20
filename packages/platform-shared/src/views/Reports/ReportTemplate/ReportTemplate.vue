@@ -505,53 +505,22 @@ function updateDefinitionOnParameterChange(allDefinitions, oldParameterName, new
 }
 
 /**
- * Saves template with the updated parameter definition (or deletes it) while also checking to
- * see if the parameter name has changed, or has been deleted, so any presently defined filters,
- * aggregates or sort definitions with the same parameter selection can be updated accordingly.
+ * Saves template with the updated parameter definition (or deletes it) while also checking
+ * to see if the parameter name has changed, or has been deleted, so any presently defined
+ * filter definitions with the same parameter selection can be updated accordingly.
  * @param {Number} definitionIndex parameter definition index position
  * @param {Object} currentDefinition parameter definition object
  */
 async function onUpdateParameter(definitionIndex, currentDefinition) {
   const existingFilterDefinitions = findSettingsObject('filter').definitions;
   const existingParameterDefinitions = findSettingsObject('parameters').definitions;
-  const existingAggregateDefinitions = findSettingsObject('aggregate').definitions;
-  const existingSortDefinitions = findSettingsObject('sort').definitions;
   const { parameterName: oldParameterName } = existingParameterDefinitions[definitionIndex] || {};
   const [filterGroup] = existingFilterDefinitions;
   const filterRulesThatMatchParameter = filterGroup ? filterGroup.subfilters.filter((rule) => rule.value === oldParameterName) : [];
-  const aggregatesThatMatchParameter = existingAggregateDefinitions.filter((aggregate) => aggregate.value === oldParameterName);
-  const sortingThatMatchParameter = existingSortDefinitions.filter((sort) => sort.value === oldParameterName);
   const parameterHasNewName = oldParameterName !== currentDefinition?.parameterName;
-  const aggregateOperatorList = [];
-
-  // Handle aggregates on parameter update
-  if (parameterHasNewName && aggregatesThatMatchParameter.length) {
-    const updatedDefinitions = updateDefinitionOnParameterChange(existingAggregateDefinitions, oldParameterName, currentDefinition?.parameterName);
-    aggregatesThatMatchParameter.forEach((definition) => { aggregateOperatorList.push(definition.type); });
-    // Replaces the aggregate definitions
-    existingAggregateDefinitions.splice(0);
-    existingAggregateDefinitions.push(...updatedDefinitions);
-  }
-
-  // Handle sorting on parameter update
-  if (parameterHasNewName && sortingThatMatchParameter.length) {
-    const updatedDefinitions = updateDefinitionOnParameterChange(existingSortDefinitions, oldParameterName, currentDefinition?.parameterName);
-    // Replaces the sort definitions
-    existingSortDefinitions.splice(0);
-    existingSortDefinitions.push(...updatedDefinitions);
-  }
 
   await saveTemplateAndUpdateSettings('parameters', definitionIndex, currentDefinition);
   disableTemplateSave.value = true;
-
-  // Necessary to fetch field options for aggregates and sorting after template saves
-  // in order for the associated parameter names to be updated.
-  if (aggregateOperatorList) {
-    aggregateOperatorList.forEach((operatorType) => { fetchFieldOptionsForAggregates(operatorType); });
-  }
-  if (sortingThatMatchParameter.length && currentDefinition) {
-    fetchFieldOptionsForSorting();
-  }
 
   // Handle filters on parameter update
   if (filterRulesThatMatchParameter.length) {

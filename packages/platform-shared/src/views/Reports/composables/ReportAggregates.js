@@ -43,14 +43,16 @@ export default function useReportAggregates(entitiesPayload, parametersPayload, 
     try {
       const { data } = await getReportFieldOptions(fieldOptionsBody);
 
-      aggregateValues.value[aggregateType] = Object.keys(data).map((key) => {
-        const { class: category, type } = data[key];
-        return {
-          class: category,
-          value: key,
-          type,
-        };
-      });
+      aggregateValues.value[aggregateType] = Object.keys(data)
+        .filter((key) => data[key].class !== 'parameter')
+        .map((key) => {
+          const { class: category, type } = data[key];
+          return {
+            class: category,
+            value: key,
+            type,
+          };
+        });
     } catch (error) {
       return error;
     }

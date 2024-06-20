@@ -39,6 +39,7 @@ describe('@useReportSorting', () => {
         data: {
           'applications._id': { class: 'json', type: 'string', label: 'Applications ID' },
           'applications.name': { class: 'json', type: 'string', label: 'Applications Name' },
+          MyParameter: { class: 'parameter', type: 'string', label: 'My Parameter' },
         },
       }));
 

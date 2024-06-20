@@ -41,15 +41,17 @@ export default function useReportSorting(entitiesPayload, parametersPayload, fil
     };
     const { data } = await getReportFieldOptions(fieldOptionsBody);
 
-    sortByValues.value = Object.keys(data).map((key) => {
-      const { class: category, label, type } = data[key];
-      return {
-        class: category,
-        label: label || key,
-        type,
-        value: key,
-      };
-    });
+    sortByValues.value = Object.keys(data)
+      .filter((key) => data[key].class !== 'parameter')
+      .map((key) => {
+        const { class: category, label, type } = data[key];
+        return {
+          class: category,
+          label: label || key,
+          type,
+          value: key,
+        };
+      });
 
     return Promise.resolve();
   }

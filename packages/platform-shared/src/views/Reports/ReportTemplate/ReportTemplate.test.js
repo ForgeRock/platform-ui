@@ -679,9 +679,9 @@ describe('Component for creating custom analytics reports', () => {
 
           // Sets the aggregate value
           const aggregateValueOptions = aggregateValueSelect.findAll('[role="option"]');
-          const [MyParameterOption] = aggregateValueOptions;
-          expect(aggregateValueOptions.length).toBe(3);
-          await MyParameterOption.find('span').trigger('click');
+          const [_idOption] = aggregateValueOptions;
+          expect(aggregateValueOptions.length).toBe(2);
+          await _idOption.find('span').trigger('click');
 
           const saveButton = findByText(aggregatesModal, 'button', 'Save');
           await saveButton.trigger('click');
@@ -716,89 +716,6 @@ describe('Component for creating custom analytics reports', () => {
           // ensures that the aggregate definition does NOT exist anymore
           newParameterDefinitionHeading = findByText(aggregateSettingContainer, 'h4', 'My aggregate');
           expect(newParameterDefinitionHeading).toBeUndefined();
-        });
-
-        it('updates any parameter names that are chosen as a right value option if the original parameter definition label is updated', async () => {
-          await addDataSource();
-          await addParameterDefinition();
-          await addAggregate();
-
-          // ensures that the existing aggregate's right value options is selected to the parameter name to be updated
-          const [, parametersModal,, aggregatesModal] = wrapper.findAll('[role="dialog"]');
-          const [, aggregateValueSelect] = aggregatesModal.findAll('[role="listbox"]');
-          const selectedOption = aggregateValueSelect.find('.multiselect__option--selected');
-          expect(selectedOption.text()).toBe('MyParameter');
-
-          // field options API response needs to be updated to the changed parameter name to be edited
-          const fieldOptionsWithUpdatedParameter = Object.entries(fieldOptionsStub.data).map(([key, val]) => {
-            if (key === 'MyParameter') {
-              return ['MyParameterUpdated', val];
-            }
-            return [key, val];
-          });
-          const fieldOptionsStubFiltered = {
-            data: Object.fromEntries(fieldOptionsWithUpdatedParameter),
-          };
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
-
-          const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
-          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameter');
-
-          await parameterActionsMenu.trigger('click');
-          await parametersEditOption.trigger('click');
-
-          // ensures that the original parameter name is set
-          const nameField = parametersModal.find('[name="parameter-name"]');
-          expect(nameField.element.value).toBe('MyParameter');
-
-          // changes the parameter label to a new value
-          await nameField.setValue('MyParameterUpdated');
-
-          // saves parameter
-          const saveButton = findByText(parametersModal, 'button', 'Save');
-          await saveButton.trigger('click');
-
-          const aggregateSettingContainer = findByTestId(wrapper, 'aggregate-settings-container');
-          const actionsMenu = findByRole(aggregateSettingContainer, 'menu');
-          const editOption = findByText(actionsMenu, 'a', 'editEdit Aggregate');
-          await actionsMenu.trigger('click');
-          await editOption.trigger('click');
-
-          // ensures that the existing aggregate's right value option is now set to the new parameter label
-          const updatedSelectedOption = aggregateValueSelect.find('.multiselect__option--selected');
-          expect(updatedSelectedOption.text()).toBe('MyParameterUpdated');
-        });
-
-        it('deletes an aggregate definition if the aggregates right value matches the parameter that is deleted', async () => {
-          await addDataSource();
-          await addParameterDefinition();
-          await addAggregate();
-
-          // field options API response needs to be updated to exclude the parameter to be deleted
-          const fieldOptionsWithoutParameter = Object.entries(fieldOptionsStub.data).filter(([key]) => key !== 'MyParameter');
-          const fieldOptionsStubFiltered = {
-            data: Object.fromEntries(fieldOptionsWithoutParameter),
-          };
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
-
-          const aggregateSettingContainer = findByTestId(wrapper, 'aggregate-settings-container');
-
-          // ensures that the aggregate definition exists
-          let newAggregateDefinitionHeading = findByText(aggregateSettingContainer, 'h4', 'My aggregate');
-          expect(newAggregateDefinitionHeading.exists()).toBe(true);
-
-          const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
-          const parametersDeleteOption = findByText(parameterActionsMenu, 'a', 'deleteDelete');
-
-          // Deletes the parameter
-          await parameterActionsMenu.trigger('click');
-          await parametersDeleteOption.trigger('click');
-
-          // ensures that the aggregate definition does NOT exist anymore
-          newAggregateDefinitionHeading = findByText(aggregateSettingContainer, 'h4', 'My aggregate');
-          expect(newAggregateDefinitionHeading).toBeUndefined();
         });
       });
 
@@ -837,7 +754,7 @@ describe('Component for creating custom analytics reports', () => {
           expect(definitionBody.length).toBe(1);
 
           const definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: applications._id');
         });
 
         it('deletes a sort definition', async () => {
@@ -848,7 +765,7 @@ describe('Component for creating custom analytics reports', () => {
           const sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
           let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
           const definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: applications._id');
 
           // deletes the sort definition
           const actionsMenu = findByRole(sortSettingsContainer, 'menu');
@@ -869,7 +786,7 @@ describe('Component for creating custom analytics reports', () => {
           let sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
           let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
           let definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
+          expect(definitionHeading.text()).toBe('arrow_upwardSort by: applications._id');
 
           // sets the existing definition to edit
           const actionsMenu = findByRole(sortSettingsContainer, 'menu');
@@ -880,9 +797,9 @@ describe('Component for creating custom analytics reports', () => {
           const [,,,, sortModal] = wrapper.findAll('[role="dialog"]');
           const [sortBySelect, sortOrderSelect] = sortModal.findAll('[role="listbox"]');
           // selects the sort by dropdown to the _id option now
-          const [, sortByIdOption] = sortBySelect.findAll('[role="option"]');
+          const [, sortByNameOption] = sortBySelect.findAll('[role="option"]');
           await sortBySelect.trigger('click');
-          await sortByIdOption.find('span').trigger('click');
+          await sortByNameOption.find('span').trigger('click');
 
           // selects the new sort order dropdown to descending
           const [, descendingOption] = sortOrderSelect.findAll('[role="option"]');
@@ -897,102 +814,7 @@ describe('Component for creating custom analytics reports', () => {
           sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
           definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
           definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_downwardSort by: applications._id');
-        });
-
-        it('updates any parameter names that are chosen as a "Sort By" option if the original parameter definition name is updated', async () => {
-          await addDataSource();
-          await addParameterDefinition();
-          await addSortDefinition();
-
-          // field options API response needs to be updated to include the updated parameter name to be edited
-          const fieldOptionsWithUpdatedParameter = Object.entries(fieldOptionsStub.data).map(([key, val]) => {
-            if (key === 'MyParameter') {
-              return ['MyParameterUpdated', val];
-            }
-            return [key, val];
-          });
-          const fieldOptionsStubFiltered = {
-            data: Object.fromEntries(fieldOptionsWithUpdatedParameter),
-          };
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
-
-          // ensures that the existing sort definition has the parameter name to be updated
-          let sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
-          let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
-          let definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
-
-          // sets the parameter to edit
-          const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
-          const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameter');
-
-          await parameterActionsMenu.trigger('click');
-          await parametersEditOption.trigger('click');
-
-          // ensures that the original parameter name is set
-          const [, parametersModal] = wrapper.findAll('[role="dialog"]');
-          const nameField = parametersModal.find('[name="parameter-name"]');
-          expect(nameField.element.value).toBe('MyParameter');
-
-          // changes the parameter name to a new value
-          await nameField.setValue('MyParameterUpdated');
-
-          // saves parameter
-          const saveButton = findByText(parametersModal, 'button', 'Save');
-          await saveButton.trigger('click');
-          await flushPromises();
-
-          // ensures that the sort definition has the updated heading
-          sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
-          definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
-          definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameterUpdated');
-
-          // clicks on the edit sort definition that has been updated
-          const actionsMenu = findByRole(sortSettingsContainer, 'menu');
-          const editOption = findByText(actionsMenu, 'a', 'editEdit Sorting');
-          await actionsMenu.trigger('click');
-          await editOption.trigger('click');
-
-          // ensures that the existing sort definition "Sort by" value option is now set to the new parameter label
-          const [,,,, sortModal] = wrapper.findAll('[role="dialog"]');
-          const [sortBySelect] = sortModal.findAll('[role="listbox"]');
-          const selectedOption = sortBySelect.find('.multiselect__option--selected');
-          expect(selectedOption.text()).toBe('MyParameterUpdated');
-        });
-
-        it('deletes a sort definition if the "Sort by" selected option matches the parameter that is deleted', async () => {
-          await addDataSource();
-          await addParameterDefinition();
-          await addSortDefinition();
-
-          // field options API response needs to be updated to exclude the parameter to be deleted
-          const fieldOptionsWithoutParameter = Object.entries(fieldOptionsStub.data).filter(([key]) => key !== 'MyParameter');
-          const fieldOptionsStubFiltered = {
-            data: Object.fromEntries(fieldOptionsWithoutParameter),
-          };
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
-
-          const sortSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
-
-          // ensures that there is an existing sort definition with the matching parameter name
-          let definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
-          const definitionHeading = definitionBody[0].find('.card-text');
-          expect(definitionHeading.text()).toBe('arrow_upwardSort by: MyParameter');
-
-          const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
-          const parametersDeleteOption = findByText(parameterActionsMenu, 'a', 'deleteDelete');
-
-          // Deletes the parameter
-          await parameterActionsMenu.trigger('click');
-          await parametersDeleteOption.trigger('click');
-
-          // ensures that the sort definition does NOT exist anymore
-          definitionBody = findAllByTestId(sortSettingsContainer, 'definition-body');
-          expect(definitionBody.length).toBe(0);
+          expect(definitionHeading.text()).toBe('arrow_downwardSort by: applications.name');
         });
       });
     });
