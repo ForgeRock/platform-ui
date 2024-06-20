@@ -53,8 +53,9 @@ describe('@useReportAggregates', () => {
 
   AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
     data: {
-      'applications._id': { class: 'json', type: 'string' },
-      'applications.name': { class: 'json', type: 'string' },
+      'applications._id': { class: 'json', type: 'string', label: 'Application ID' },
+      'applications.name': { class: 'json', type: 'string', label: 'Applications Name' },
+      MyParameter: { class: 'parameter', type: 'string', label: 'My Parameter' },
     },
   }));
 
