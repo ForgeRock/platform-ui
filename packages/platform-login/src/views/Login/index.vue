@@ -690,19 +690,28 @@ export default {
     journeyRememberMeEnabled() {
       this.setRememberedUsername();
     },
+
+    /*
+    * Set timeout to focus on a tag according to the selected theme of the current Step (journey node)
+    * Time out is set to focus after the set-theme was called and established to avoid slow rendering or vue reloads
+    */
     journeyFocusElement() {
-      // refresh accessibility between steps by focusing on the body before the next focus to avoid the aplication from keeping the same activeElement
-      this.$refs.container.focus();
-      if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
-        /*
-        * This should focus on the card inside either of the main tags
-        * which  after tab would focus on the first focusable item (a description link or form input)
-        */
-        this.$refs.callbackMain ? this.$refs.callbackMain.focus() : this.$refs.main.focus();
-      } else {
-        // This will always focus on header if it exists or components container
-        this.$refs.callbackAppHeaderContainer ? this.$refs.callbackAppHeaderContainer.focus() : this.$refs.container.focus();
-      }
+      setTimeout(() => {
+        // refresh accessibility between steps by focusing on the body before the next focus to avoid the aplication from keeping the same activeElement
+        this.$refs.container.focus();
+        if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
+          /*
+          * This should focus on the card inside either of the main tags
+          * which  after tab would focus on the first focusable item (a description link or form input)
+          *
+          * journeyFocusFirstFocusableItemEnabled was an old property that could be enabled in imported journeys, if enabled it will have the default accessibility behavior of content focused
+          */
+          this.$refs.callbackMain ? this.$refs.callbackMain.focus() : this.$refs.main.focus();
+        } else {
+          // This will always focus on header if it exists or components container
+          this.$refs.callbackAppHeaderContainer ? this.$refs.callbackAppHeaderContainer.focus() : this.$refs.container.focus();
+        }
+      }, 200);
     },
   },
   methods: {
@@ -1276,6 +1285,7 @@ export default {
                   }
                 });
               }
+              this.isFirstStep = true;
               break;
             default:
               // retry only when previous was undefined (first step)
