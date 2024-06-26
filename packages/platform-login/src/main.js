@@ -28,6 +28,7 @@ import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
+import { JAVASCRIPT_SDK_TIMEOUT } from '@forgerock/platform-shared/src/utils/constants';
 import store from '@/store';
 import i18n from './i18n';
 import router from './router';
@@ -55,8 +56,13 @@ function getRootTransactionId() {
 const rootTransactionId = getRootTransactionId();
 let authRequestNumber = 0;
 
+// set the serverConfig with a timeout of 60 seconds this is required because the default timeout is 5 seconds and some trees can take longer to load
+// @see IAM-6840
 Config.set({
-  serverConfig: { baseUrl: getFQDN(`${process.env.VUE_APP_AM_URL}/`) },
+  serverConfig: {
+    baseUrl: getFQDN(`${process.env.VUE_APP_AM_URL}/`),
+    timeout: JAVASCRIPT_SDK_TIMEOUT,
+  },
   middleware: [
     (req, action, next) => {
       // increment the request number
