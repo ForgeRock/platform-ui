@@ -3802,6 +3802,10 @@
     },
     "forms": {
       "listView": {
+        "forms": "Forms",
+        "form": "Form",
+        "type": "Type",
+        "errorGetData": "There was an error retrieving forms",
         "title": "Request Forms",
         "subtitle": "Create forms for use in user administration and application provisioning requests."
       },
