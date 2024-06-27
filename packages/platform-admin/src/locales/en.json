@@ -3883,7 +3883,7 @@
         "fulfillmentTaskDisplayName": "Fulfillment",
         "importModal": {
           "importNewDraft": "Import New Draft",
-          "stepOneBody": "Import an workflow as a draft version.",
+          "stepOneBody": "Import a workflow as a draft version.",
           "stepTwoBody": "Are you sure you want to import a new version?",
           "overwriteWarning": "This will overwrite your existing Draft.",
           "downloadBackup": "Download backup",
@@ -3940,6 +3940,8 @@
         "templatesError": "There was an error retrieving email templates",
         "validationError": "Workflow validation could not be completed"
       },
+      "createDuplicate": "Create Duplicate",
+      "immutableDescription": "This workflow is immutable and cannot be edited",
       "newDraft": "New Draft",
       "newWorkflow": "New Workflow",
       "workflow": "Workflow",
