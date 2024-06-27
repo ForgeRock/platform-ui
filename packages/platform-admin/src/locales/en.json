@@ -1448,13 +1448,13 @@
     },
     "templateBuilder": {
       "listView": {
+        "addTemplate": "Add Template",
         "name": "Name",
-        "version": "Version",
-        "addTemplate": "Add a Template",
-        "subTitle": "Build your template applications.",
+        "noSearchResults": "No templates found",
         "noTemplates": "No templates",
         "noTemplatesSubtitle": "Any application template will appear here.",
-        "noSearchResults": "No templates found"
+        "subTitle": "Build application templates to be used in the application catalog",
+        "version": "Version"
       },
       "mappingRuleModal": {
         "mappingRuleAdd": "Add a mapping rule",
@@ -1467,8 +1467,8 @@
         "deleteSuccess": "Template deleted successfully",
         "fileImproperlyFormatted": "Selected file is not properly formatted",
         "getError": "There was an error retrieving the list of templates",
-        "importObjectWarning": "Warning: If you add an object type that is already defined (i.e. User object type is defined in the template, but you want to update it with the new User object type from this imported provisioner), you will wipe out ALL existing data for that object type. If you are adding a brand new object type, the existing ones will not be changed.",
-        "importProvisionerWarning": "Warning: A provisioner file was uploaded already. Would you like to upload a new provisioner file?",
+        "importObjectWarning": "Warning: Adding an object type that is already defined in the template will wipe out ALL existing data for that object type. Adding a new object type will not affect existing ones.",
+        "importProvisionerWarning": "Warning: A provisioner file was uploaded already. Would you like to upload a new one?",
         "importValidationError": "The JSON provided is not properly formatted",
         "provisionerSuccess": "Provisioner saved successfully",
         "saveError": "There was an error saving the template",
@@ -1484,20 +1484,19 @@
         "editTemplate": "Edit {templateName} Template",
         "mappingRules": "Mapping Rules",
         "newTemplate": "New Application Template",
-        "nonAccountObject": "Non Account Object",
+        "nonAccountObject": "Non-Account Object",
         "nonAccountObjectDescription": "Must match a non account object type ID",
         "nonAccountProperties": "Non Account Properties",
-        "nonAccountPropertiesSubtitle": "Target should always be <code>assignments</code>, source is the account attribute, and referenced object type is the ID of the Non Account Object.",
-        "objectTypeDropdownDescription1": "Don't see the object type you were expecting? Go to",
-        "objectTypeDropdownDescription2": "and upload a provisioner configuration.",
+        "nonAccountPropertiesSubtitle": "Referenced object type is the ID of the Non-account object and Source is the account property. This should also be set on the account property above.",
+        "objectTypeDropdownDescription1": "Don't see the object type you were expecting?",
+        "objectTypeDropdownDescription2": "Import a provisioner configuration.",
         "objectTypeId": "Object Type ID",
-        "objectTypeInboundMapping": "Inbound Mapping Details",
+        "objectTypeInboundMapping": "Inbound Mapping",
         "objectTypeManagedResource": "Object Type Managed Resource",
-        "objectTypeMetadata": "Object Type Details",
+        "objectTypeMetadata": "Details",
         "objectTypeName": "Object Type Name",
-        "objectTypeOutboundMapping": "Outbound Mapping Details",
-        "objectTypeProperties": "Object Type Properties",
-        "objectTypePropertiesDescription": "Ensure these details match what is provided by the connector, otherwise the connection will fail.",
+        "objectTypeOutboundMapping": "Outbound Mapping",
+        "objectTypeProperties": "Properties",
         "propertyEditPanelTitle": "Property Details",
         "propertyIsDisplay": "Is Display",
         "propertyIsDisplayDescription": "Target system attribute used to populate a human-readable name for this object type.",
@@ -1515,8 +1514,8 @@
         "settings": "Settings",
         "stageFourTitle": "Connector Configuration",
         "stageOneTitle": "Template Details",
-        "stageThreeTitle": "Non-Account Object Type Details",
-        "stageTwoTitle": "Account Object Type Details",
+        "stageThreeTitle": "Non-Account Object Types",
+        "stageTwoTitle": "Account Object Type",
         "typeBoolean": "Boolean",
         "typeInteger": "Integer",
         "typeObject": "Object",
@@ -1530,9 +1529,8 @@
       "templateModalImport": {
         "application": {
           "import": "Import Template",
-          "importDescription": "Provides a valid JSON containing the application template configurations to import.",
-          "templateFileDescription": "Upload the application template configuration.",
-          "title": "Import Application Templates"
+          "importDescription": "Provide valid JSON containing the application template to import.",
+          "title": "Import Application Template"
         },
         "configureManuallyOption": "Configure Manually",
         "importing": "Importing",
@@ -1540,11 +1538,10 @@
         "jsonFile": "JSON File",
         "provisioner": {
           "import": "Import Provisioner",
-          "importDescription": "Provides a valid JSON containing the provisioner configuration to import.",
-          "templateFileDescription": "Upload the provisioner configuration.",
+          "importDescription": " Provide a valid JSON containing the provisioner configuration to import.",
           "title": "Import Provisioner Configuration"
         },
-        "uploadTemplateOption": "Upload Template"
+        "uploadOption": "Upload File"
       },
       "templateModalDelete": {
         "title": "application template",
