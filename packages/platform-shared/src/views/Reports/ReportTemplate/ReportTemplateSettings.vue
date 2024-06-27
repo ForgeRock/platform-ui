@@ -84,9 +84,9 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
         <template v-if="tabItems[index].id === 'detailsTab'">
           <FrReportSettingsDetailsForm
+            :is-name-editable="false"
             :value="value"
-            @input="$emit('input', $event)"
-            :is-name-editable="false" />
+            @input="$emit('input', $event)" />
         </template>
       </BTab>
     </BTabs>

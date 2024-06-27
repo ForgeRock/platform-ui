@@ -46,9 +46,9 @@ of the MIT license. See the LICENSE file for details. -->
       <FrField
         name="report_owner"
         type="checkbox"
-        :value="props.value.report_owner"
+        :value="props.value.report_author"
         :label="$t('reports.newReportModal.reportOwnerOption')"
-        @input="update('report_owner', $event)" />
+        @input="update('report_author', $event)" />
     </BFormGroup>
     <BFormGroup label-for="allowed-viewers-field">
       <FrField
@@ -60,11 +60,11 @@ of the MIT license. See the LICENSE file for details. -->
         :internal-search="false"
         :label="$t('common.users')"
         :loading="isLoading"
-        :options="normalizedUserOptions"
+        :options="[...userOptionData, ...userNameOptions]"
         :show-no-options="false"
-        :value="props.value.viewers"
+        :value="viewers"
         @search-change="handleSearchChange"
-        @input="update('viewers', $event)">
+        @input="updateViewers">
         <template
           v-for="slotName in ['singleLabel', 'option']"
           :key="slotName"
@@ -98,11 +98,19 @@ of the MIT license. See the LICENSE file for details. -->
  * @description Component that contains the Detail Settings form for Report Templates
  */
 import {
-  ref, computed, toRaw, watch,
+  computed,
+  ref,
+  toRaw,
+  watch,
   onMounted,
 } from 'vue';
 import {
-  BAvatar, BForm, BFormGroup, BMedia, BMediaAside, BMediaBody,
+  BAvatar,
+  BForm,
+  BFormGroup,
+  BMedia,
+  BMediaAside,
+  BMediaBody,
 } from 'bootstrap-vue';
 import { useForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -118,7 +126,10 @@ const emit = defineEmits(['input', 'search-change', 'valid-change']);
 const { meta } = useForm();
 
 const {
-  userOptionData, userOptionError, fetchManagedUsers, isLoading,
+  userOptionData,
+  userOptionError,
+  fetchManagedUsers,
+  isLoading,
 } = useManagedUsers(store.state.realm);
 
 const debounceFetchManagedUsers = debounce(fetchManagedUsers, 250, false);
@@ -138,8 +149,15 @@ const props = defineProps({
   },
 });
 
+const userNameOptions = ref([]);
+// The value prop on the multiselect field requires options to be resolved and include
+// a reference to all viewers first before being added, otherwise we run into a JS error.
+const viewers = computed(() => (
+  (userNameOptions.value.length >= props.value.viewers.length) ? props.value.viewers : []
+));
+
 /**
- * Fetches managed users based on the search query term passed from form gield
+ * Fetches managed users based on the search query term passed from form field
  *
  * @param {String} searchQuery - Value from search form field
  */
@@ -169,20 +187,34 @@ function update(key, value) {
 }
 
 /**
- * Sets the options value for multiselect. Adds options for existing viewers
- * when editing the details for the template. Multiselect will fail if existing
- * viewers are not added.
+ * Updates the viewers when there is a report viewer that is added or removed
+ * @param {Array} ids list of viewer ids
  */
-const normalizedUserOptions = computed(() => {
-  const valueOptions = props.value.viewers?.map((option) => ({
-    meta: {}, multiselectId: option, text: option, value: option,
-  })) || [];
+function updateViewers(ids) {
+  if (ids.length > userNameOptions.value.length) {
+    // adding a viewer
+    const [newViewer] = userOptionData.value;
+    userNameOptions.value.push(newViewer);
+  } else {
+    // removing a viewer
+    userNameOptions.value = userNameOptions.value.filter((option) => ids.includes(option.value));
+  }
 
-  return [...userOptionData.value, ...valueOptions];
-});
+  update('viewers', ids);
+}
 
 onMounted(() => {
   initialValues.value = props.value;
+
+  /**
+   * Makes API calls for each viewer ID in order to retrieve username
+   */
+  const propViewers = props.value?.viewers;
+  const userPromises = [];
+  if (propViewers.length) {
+    propViewers.forEach((id) => { userPromises.push(fetchManagedUsers(id, true)); });
+    Promise.all(userPromises);
+  }
 });
 
 /**
@@ -201,12 +233,25 @@ watch(userOptionError, (newVal) => {
   }
 });
 
-defineExpose({ resetForm });
+/**
+ * Adds API options object when a user belongs to the viewers list
+ */
+watch(userOptionData, ([user]) => {
+  if (user && props.value.viewers.includes(user.value)) {
+    userNameOptions.value.push(user);
+  }
+});
 
+defineExpose({ resetForm });
 </script>
+
 <style lang="scss" scoped>
   .icon-group {
     height: 24px;
     width: 24px;
+  }
+
+  :deep(.multiselect .multiselect__tags-wrap) {
+    max-width: 100%;
   }
 </style>

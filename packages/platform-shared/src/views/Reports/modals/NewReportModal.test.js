@@ -112,7 +112,7 @@ describe('New Report Modal component', () => {
       const [[{ description, name, viewers }]] = wrapper.emitted()['new-report-save'];
       expect(name).toBe(nameInputValue);
       expect(description).toBe(descriptionInputValue);
-      expect(viewers).toStrictEqual([mockedApiReponse.data.result[3].userName]);
+      expect(viewers).toStrictEqual([mockedApiReponse.data.result[3]._id]);
     });
 
     it('correctly resets the form data', async () => {

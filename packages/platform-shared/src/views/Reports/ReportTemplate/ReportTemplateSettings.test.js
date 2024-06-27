@@ -26,7 +26,9 @@ describe('Report Template Settings component', () => {
       },
       props: {
         reportSettings: stubs.reportSettingsStub,
-        value: {},
+        value: {
+          viewers: [],
+        },
         ...props,
       },
     });

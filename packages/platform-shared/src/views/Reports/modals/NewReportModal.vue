@@ -51,7 +51,12 @@ import FrReportSettingsDetailsForm from '../ReportTemplate/ReportSettingsDetails
 const form = ref(null);
 const valid = ref(false);
 const newReportFormData = ref({
-  name: '', description: '', report_admin: false, report_viewer: false, report_owner: false, viewers: [],
+  name: '',
+  description: '',
+  report_admin: false,
+  report_viewer: false,
+  report_author: false,
+  viewers: [],
 });
 
 const emit = defineEmits(['new-report-save']);

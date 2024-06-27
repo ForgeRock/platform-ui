@@ -16,6 +16,7 @@ import {
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
+import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
@@ -155,6 +156,16 @@ describe('Component for creating custom analytics reports', () => {
     }]));
 
     AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStub));
+
+    managedResourceApi.getManagedResourceList = jest.fn().mockReturnValue(Promise.resolve({
+      data: {
+        result: [
+          { name: 'prop1' },
+          { name: 'prop2' },
+          { name: 'prop3' },
+        ],
+      },
+    }));
 
     jest.clearAllMocks();
   });

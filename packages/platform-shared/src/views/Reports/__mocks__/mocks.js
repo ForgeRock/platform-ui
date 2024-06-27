@@ -100,7 +100,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'reportadmin',
     text: 'reportadmin',
-    value: 'reportadmin',
+    value: '6c8f411f-db0e-4fb3-a92d-2281dc6ef7a8',
   },
   {
     meta: {
@@ -112,7 +112,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'Binni@IGATestQA.onmicrosoft.com',
     text: 'Binni@IGATestQA.onmicrosoft.com',
-    value: 'Binni@IGATestQA.onmicrosoft.com',
+    value: '13c0ab62-a072-4e52-ba47-c0ee43d7b9fd',
   },
   {
     meta: {
@@ -124,7 +124,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'Dieter@IGATestQA.onmicrosoft.com',
     text: 'Dieter@IGATestQA.onmicrosoft.com',
-    value: 'Dieter@IGATestQA.onmicrosoft.com',
+    value: 'a82cc159-4f81-4698-962c-e42e1ea8eeb0',
   },
   {
     meta: {
@@ -136,7 +136,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'Court@IGATestQA.onmicrosoft.com',
     text: 'Court@IGATestQA.onmicrosoft.com',
-    value: 'Court@IGATestQA.onmicrosoft.com',
+    value: 'be7d07d6-6989-4069-84e4-c4513367fe5e',
   },
   {
     meta: {
@@ -148,7 +148,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'Barth@IGATestQA.onmicrosoft.com',
     text: 'Barth@IGATestQA.onmicrosoft.com',
-    value: 'Barth@IGATestQA.onmicrosoft.com',
+    value: 'c9c2073e-92ab-43ee-b072-914b3b3df81a',
   },
   {
     meta: {
@@ -160,7 +160,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'Bernice@IGATestQA.onmicrosoft.com',
     text: 'Bernice@IGATestQA.onmicrosoft.com',
-    value: 'Bernice@IGATestQA.onmicrosoft.com',
+    value: '0ab8ea10-8f70-4af2-b482-a164eb5949ff',
   },
   {
     meta: {
@@ -172,7 +172,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'Denny@IGATestQA.onmicrosoft.com',
     text: 'Denny@IGATestQA.onmicrosoft.com',
-    value: 'Denny@IGATestQA.onmicrosoft.com',
+    value: '80cc3894-071a-4f33-bc52-cd022ced981f',
   },
   {
     meta: {
@@ -184,7 +184,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'Ariela@IGATestQA.onmicrosoft.com',
     text: 'Ariela@IGATestQA.onmicrosoft.com',
-    value: 'Ariela@IGATestQA.onmicrosoft.com',
+    value: '97a08c4f-861f-4614-9e45-4901482edd33',
   },
   {
     meta: {
@@ -196,7 +196,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'chris@IGATestQA.onmicrosoft.com',
     text: 'chris@IGATestQA.onmicrosoft.com',
-    value: 'chris@IGATestQA.onmicrosoft.com',
+    value: '2bc6a2bb-a1a5-4c13-a631-a5db755ffd78',
   },
   {
     meta: {
@@ -208,7 +208,7 @@ export const testUserResponseTransformed = [
     },
     multiselectId: 'Alyson@IGATestQA.onmicrosoft.com',
     text: 'Alyson@IGATestQA.onmicrosoft.com',
-    value: 'Alyson@IGATestQA.onmicrosoft.com',
+    value: 'e656beee-d1b2-45e8-9991-c25c653dba99',
   },
 ];
 
