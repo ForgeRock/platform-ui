@@ -2295,6 +2295,10 @@
         "name": "Journey Decision Node",
         "description": "Script to be included in an authentication journey node and executed on the server during authentication."
       },
+      "DEVICE_MATCH_NODE": {
+        "name": "Device Match Node",
+        "description": "Script to compare any collected device metadata with that stored in the user's profile"
+      },
       "CONFIG_PROVIDER_NODE": {
         "name": "Configuration Provider Node",
         "description": "Default global script for Config Provider."
@@ -2365,13 +2369,15 @@
       "JAVASCRIPT": "JavaScript"
     },
     "editorTabs": {
+      "bindings": "Bindings",
       "libraries": "Libraries",
       "documents": "Docs",
       "libraryError": "Error loading libraries data",
       "libraryScripts": "Library Scripts",
       "noLibrariesFound": "No library scripts found",
       "noSearchResult": "No results found for '{searchString}'",
-      "noESVsFound": "No ESVs found"
+      "noESVsFound": "No ESVs found",
+      "noBindingsFound": "No Bindings found"
     }
   },
   "events": {
