@@ -41,13 +41,23 @@ describe('Report Settings Details Form component', () => {
 
   const initialFormData = {
     value: {
-      name: 'Test template', description: 'Test template description', report_admin: true, report_viewer: false, report_owner: true, viewers: ['user1@example.com', 'user2@example.com'],
+      name: 'Test template',
+      description: 'Test template description',
+      report_admin: true,
+      report_viewer: false,
+      report_author: true,
+      viewers: ['13c0ab62-a072-4e52-ba47-c0ee43d7b9fd'],
     },
   };
 
   const initialFormDataEmpty = {
     value: {
-      name: '', description: '', report_admin: false, report_viewer: false, report_owner: false, viewers: [],
+      name: '',
+      description: '',
+      report_admin: false,
+      report_viewer: false,
+      report_author: false,
+      viewers: [],
     },
   };
 
@@ -158,12 +168,25 @@ describe('Report Settings Details Form component', () => {
       const emittedOption = lastEmittedInputChange()[0].viewers;
 
       // Emitted description should match
-      expect(emittedOption[0]).toBe(mockedApiResponse.data.result[3].userName);
+      expect(emittedOption[0]).toBe(mockedApiResponse.data.result[3]._id);
     });
   });
 
   describe('@component data-filled form', () => {
     beforeEach(async () => {
+      mockAxios(jest.fn().mockResolvedValue({
+        data: {
+          result: [
+            {
+              _id: '13c0ab62-a072-4e52-ba47-c0ee43d7b9fd',
+              profileImage: null,
+              givenName: 'Binni',
+              sn: 'Crinkley',
+              userName: 'Binni@IGATestQA.onmicrosoft.com',
+            },
+          ],
+        },
+      }));
       // Set up wrappers
       wrapper = setup(initialFormData);
       groupReportAdminCheckbox = wrapper.find('input[name="report_admin"]');
@@ -174,13 +197,9 @@ describe('Report Settings Details Form component', () => {
       multiselectValues = wrapper.find('.multiselect__tags');
       nameInput = wrapper.find('input[name="name-field"]');
       searchInput = wrapper.find('input[name="data-allowed-viewers"]');
-
-      mockAxios(jest.fn().mockResolvedValue(mockedApiResponse));
     });
 
     it('fills the correct values into the form', async () => {
-      wrapper = setup(initialFormData);
-
       // Name
       expect(nameInput.element.value).toBe(initialFormData.value.name);
 
@@ -191,16 +210,14 @@ describe('Report Settings Details Form component', () => {
       expect(groupReportAdminCheckbox.element.checked).toBe(initialFormData.value.report_admin);
 
       // Who Can Run Report Owner Group checkbox
-      expect(groupReportOwnerCheckbox.element.checked).toBe(initialFormData.value.report_owner);
+      expect(groupReportOwnerCheckbox.element.checked).toBe(initialFormData.value.report_author);
 
       // Who Can Run Report Viewer Group checkbox
       expect(groupReportViewerCheckbox.element.checked).toBe(initialFormData.value.report_viewer);
 
       // Who Can Run Users multiselect
-      initialFormData.value.viewers.forEach((result) => {
-        const option = findByText(multiselectValues, 'div', result);
-        expect(option).toBeDefined();
-      });
+      const option = findByText(multiselectValues, 'div', 'Binni@IGATestQA.onmicrosoft.com');
+      expect(option).toBeDefined();
     });
   });
 });

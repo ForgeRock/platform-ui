@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="h-100 d-flex flex-column">
     <FrReportTemplateHeader
-      :disable-save="disableTemplateSave || templateDoesNotHaveSelectedColumns"
+      :disable-save="disableTemplateSave"
       :report-state="reportState"
       :is-duplicating="isDuplicating"
       :is-saving="isSavingTemplate"
@@ -556,10 +556,6 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
 
 // Computed
 const templateHasAtLeastOneDataSource = computed(() => findSettingsObject('entities').definitions.length);
-const templateDoesNotHaveSelectedColumns = computed(() => {
-  const [{ selectedColumns }] = findSettingsObject('entities').definitions;
-  return !selectedColumns?.length;
-});
 
 /**
  * Check to see if detail settings has changed so we can set the save button disabled status accordingly
@@ -598,7 +594,7 @@ watch(reportDetails, (newVal, oldVal) => {
       reportDetails.value.name = startCase(templateName.toLowerCase());
       reportDetails.value.description = description;
       reportDetails.value.report_admin = viewers.includes('report_admin');
-      reportDetails.value.report_owner = viewers.includes('report_owner');
+      reportDetails.value.report_author = viewers.includes('report_author');
       reportDetails.value.report_viewer = viewers.includes('report_viewer');
       reportDetails.value.viewers = viewers ? viewers.filter((item) => !defaultGroups.includes(item)) : [];
 
