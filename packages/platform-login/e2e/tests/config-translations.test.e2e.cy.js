@@ -8,6 +8,7 @@
 import { random } from 'lodash';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import addOverrides, { deleteOverrides } from '../api/localizationApi.e2e';
+import { prepareJourneyTemplate } from '../utils/manageJourneys';
 
 // Login config translations
 const enTranslations = {
@@ -412,16 +413,8 @@ filterTests(['forgeops', 'cloud'], () => {
     const defaultLocale = 'en';
 
     before(() => {
-      // Prepare Journey template with correct Realm redirects
-      const journeyTemplatePath = `e2e/fixtures/${journeyTemplate}`;
-
-      // Read template file
-      cy.readFile(journeyTemplatePath).then((data) => {
-        // Replace all Realm redirects with correct ones for current Platform mode
-        const updatedTemplate = JSON.stringify(data).replaceAll('loginRealm', loginRealm).replaceAll('userRealm', userRealm);
-        // Write moditied data back to the template file
-        cy.writeFile(journeyTemplatePath, JSON.parse(updatedTemplate));
-      });
+      // Prepare Journey template with correct Realm redirects and Identity Resources
+      prepareJourneyTemplate(journeyTemplate, loginRealm, userRealm);
 
       // Login as admin and import translated Journey with translated Theme
       cy.importTreesViaAPI([journeyTemplate]);
