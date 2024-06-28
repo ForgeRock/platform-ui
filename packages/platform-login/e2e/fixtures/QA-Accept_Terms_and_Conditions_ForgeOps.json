@@ -1,0 +1,499 @@
+{
+  "meta": {
+    "origin": "https://user2cdm-adam-zahatlan.iam.team-pit-perf-eu.engineeringpit.com/platform/?realm=root#/journeys",
+    "exportedBy": "No Email",
+    "exportDate": "2024-06-25T14:26:28.918Z",
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "QA - Accept Terms and Conditions"
+    ],
+    "innerTreesIncluded": [
+      "QA - ProgressiveProfile for Accept Terms and Conditions"
+    ]
+  },
+  "trees": {
+    "QA - ProgressiveProfile for Accept Terms and Conditions": {
+      "tree": {
+        "_id": "QA - ProgressiveProfile for Accept Terms and Conditions",
+        "_rev": "-1803645616",
+        "identityResource": "managed/user",
+        "uiConfig": {
+          "categories": "[\"Progressive Profile\",\"QA\"]"
+        },
+        "entryNodeId": "5259c70d-b4eb-4407-993b-81056d489a5b",
+        "innerTreeOnly": false,
+        "nodes": {
+          "cf06daae-b997-4298-b689-fdbba6970a1b": {
+            "x": 701,
+            "y": 135.5,
+            "connections": {
+              "outcome": "9320b016-da04-4047-8469-a078e7686ee8"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "013356df-20a6-40ed-8710-97788edd6703": {
+            "x": 456,
+            "y": 137.5,
+            "connections": {
+              "true": "cf06daae-b997-4298-b689-fdbba6970a1b",
+              "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "nodeType": "QueryFilterDecisionNode",
+            "displayName": "Query Filter Decision"
+          },
+          "9320b016-da04-4047-8469-a078e7686ee8": {
+            "x": 946,
+            "y": 137.5,
+            "connections": {
+              "PATCHED": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "FAILURE": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "PatchObjectNode",
+            "displayName": "Patch Object"
+          },
+          "5259c70d-b4eb-4407-993b-81056d489a5b": {
+            "x": 210,
+            "y": 137.5,
+            "connections": {
+              "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "true": "013356df-20a6-40ed-8710-97788edd6703"
+            },
+            "nodeType": "LoginCountDecisionNode",
+            "displayName": "Login Count Decision"
+          }
+        },
+        "description": "Prompt for missing preferences on 3rd login",
+        "staticNodes": {
+          "startNode": {
+            "x": 70,
+            "y": 155
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 1176,
+            "y": 80
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 1176,
+            "y": 230
+          }
+        },
+        "mustRun": false,
+        "enabled": true
+      },
+      "nodes": {
+        "cf06daae-b997-4298-b689-fdbba6970a1b": {
+          "_id": "cf06daae-b997-4298-b689-fdbba6970a1b",
+          "_rev": "-1880764524",
+          "nodes": [
+            {
+              "_id": "f62bd84b-44c2-482d-8928-9c715b9f0a39",
+              "nodeType": "AttributeCollectorNode",
+              "displayName": "Attribute Collector"
+            }
+          ],
+          "pageDescription": {},
+          "pageHeader": {
+            "en": "Please select your preferences"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "013356df-20a6-40ed-8710-97788edd6703": {
+          "_id": "013356df-20a6-40ed-8710-97788edd6703",
+          "_rev": "-871778534",
+          "identityAttribute": "userName",
+          "queryFilter": "!(/preferences pr) or /preferences/marketing eq false or /preferences/updates eq false",
+          "_type": {
+            "_id": "QueryFilterDecisionNode",
+            "name": "Query Filter Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "9320b016-da04-4047-8469-a078e7686ee8": {
+          "_id": "9320b016-da04-4047-8469-a078e7686ee8",
+          "_rev": "-1078545647",
+          "identityResource": "managed/user",
+          "patchAsObject": false,
+          "ignoredFields": [],
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "PatchObjectNode",
+            "name": "Patch Object",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "PATCHED",
+              "displayName": "Patched"
+            },
+            {
+              "id": "FAILURE",
+              "displayName": "Failed"
+            }
+          ]
+        },
+        "5259c70d-b4eb-4407-993b-81056d489a5b": {
+          "_id": "5259c70d-b4eb-4407-993b-81056d489a5b",
+          "_rev": "-2081298232",
+          "interval": "AT",
+          "identityAttribute": "userName",
+          "amount": 300,
+          "_type": {
+            "_id": "LoginCountDecisionNode",
+            "name": "Login Count Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "f62bd84b-44c2-482d-8928-9c715b9f0a39": {
+          "_id": "f62bd84b-44c2-482d-8928-9c715b9f0a39",
+          "_rev": "-118236863",
+          "attributesToCollect": [
+            "preferences/updates",
+            "preferences/marketing"
+          ],
+          "identityAttribute": "userName",
+          "validateInputs": false,
+          "required": false,
+          "_type": {
+            "_id": "AttributeCollectorNode",
+            "name": "Attribute Collector",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    },
+    "QA - Accept Terms and Conditions": {
+      "tree": {
+        "_id": "QA - Accept Terms and Conditions",
+        "_rev": "-1705308809",
+        "identityResource": "managed/user",
+        "uiConfig": {
+          "categories": "[\"Authentication\",\"QA\"]"
+        },
+        "entryNodeId": "5231cc77-f548-4081-a6f4-523cc4fc3021",
+        "innerTreeOnly": false,
+        "nodes": {
+          "c8742636-efe7-4084-8017-29ee69d2eb8c": {
+            "x": 455,
+            "y": 137.5,
+            "connections": {
+              "true": "35ae8b4e-58ef-4cfa-900b-e06fe3672ca4",
+              "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "DataStoreDecisionNode",
+            "displayName": "Data Store Decision"
+          },
+          "5231cc77-f548-4081-a6f4-523cc4fc3021": {
+            "x": 210,
+            "y": 109,
+            "connections": {
+              "outcome": "c8742636-efe7-4084-8017-29ee69d2eb8c"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "35ae8b4e-58ef-4cfa-900b-e06fe3672ca4": {
+            "x": 692,
+            "y": 162.5,
+            "connections": {
+              "outcome": "9db2f136-e0d5-4ec3-b95c-6fe844394e5b"
+            },
+            "nodeType": "IncrementLoginCountNode",
+            "displayName": "Increment Login Count"
+          },
+          "9db2f136-e0d5-4ec3-b95c-6fe844394e5b": {
+            "x": 951,
+            "y": 137.5,
+            "connections": {
+              "true": "1c602b7b-b891-4b3b-9206-238f52764bba",
+              "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "InnerTreeEvaluatorNode",
+            "displayName": "Inner Tree Evaluator"
+          },
+          "1c602b7b-b891-4b3b-9206-238f52764bba": {
+            "x": 1193,
+            "y": 137.5,
+            "connections": {
+              "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "false": "ba4e73f8-3641-4a31-9e74-efa5bf2d5126"
+            },
+            "nodeType": "TermsAndConditionsDecisionNode",
+            "displayName": "Terms and Conditions Decision"
+          },
+          "ba4e73f8-3641-4a31-9e74-efa5bf2d5126": {
+            "x": 1506,
+            "y": 162.5,
+            "connections": {
+              "outcome": "b40da7e4-4e03-4397-b5d2-562eb69ba23c"
+            },
+            "nodeType": "AcceptTermsAndConditionsNode",
+            "displayName": "Accept Terms and Conditions"
+          },
+          "b40da7e4-4e03-4397-b5d2-562eb69ba23c": {
+            "x": 1807,
+            "y": 137.5,
+            "connections": {
+              "PATCHED": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "FAILURE": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "PatchObjectNode",
+            "displayName": "Patch Object"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 70,
+            "y": 155
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 2037,
+            "y": 80
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 2037,
+            "y": 230
+          }
+        },
+        "description": "Platform Login Tree",
+        "mustRun": false,
+        "enabled": true
+      },
+      "nodes": {
+        "c8742636-efe7-4084-8017-29ee69d2eb8c": {
+          "_id": "c8742636-efe7-4084-8017-29ee69d2eb8c",
+          "_rev": "1832980527",
+          "_type": {
+            "_id": "DataStoreDecisionNode",
+            "name": "Data Store Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "5231cc77-f548-4081-a6f4-523cc4fc3021": {
+          "_id": "5231cc77-f548-4081-a6f4-523cc4fc3021",
+          "_rev": "1225559035",
+          "nodes": [
+            {
+              "_id": "ac94f875-da66-471a-8fea-2d0d5e2a0376",
+              "nodeType": "ValidatedUsernameNode",
+              "displayName": "Platform Username"
+            },
+            {
+              "_id": "2f523ac1-e957-4c26-8a69-fb9c18654b22",
+              "nodeType": "ValidatedPasswordNode",
+              "displayName": "Platform Password"
+            }
+          ],
+          "pageDescription": {
+            "en": "<b>Precondition for this Journey:</b><br>\n<p>-  user created via admin UI</p>\nUse that user to fully test happy path of this Journey (accept T&C and successfully login).\nUser, which has already accepted T&C will not be asked for it."
+          },
+          "pageHeader": {
+            "en": "Terms & Conditions UI Journey"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "35ae8b4e-58ef-4cfa-900b-e06fe3672ca4": {
+          "_id": "35ae8b4e-58ef-4cfa-900b-e06fe3672ca4",
+          "_rev": "2052930323",
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "IncrementLoginCountNode",
+            "name": "Increment Login Count",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "9db2f136-e0d5-4ec3-b95c-6fe844394e5b": {
+          "_id": "9db2f136-e0d5-4ec3-b95c-6fe844394e5b",
+          "_rev": "-1191216761",
+          "tree": "QA - ProgressiveProfile for Accept Terms and Conditions",
+          "_type": {
+            "_id": "InnerTreeEvaluatorNode",
+            "name": "Inner Tree Evaluator",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "1c602b7b-b891-4b3b-9206-238f52764bba": {
+          "_id": "1c602b7b-b891-4b3b-9206-238f52764bba",
+          "_rev": "-40368698",
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "TermsAndConditionsDecisionNode",
+            "name": "Terms and Conditions Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "ba4e73f8-3641-4a31-9e74-efa5bf2d5126": {
+          "_id": "ba4e73f8-3641-4a31-9e74-efa5bf2d5126",
+          "_rev": "588185154",
+          "_type": {
+            "_id": "AcceptTermsAndConditionsNode",
+            "name": "Accept Terms and Conditions",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "b40da7e4-4e03-4397-b5d2-562eb69ba23c": {
+          "_id": "b40da7e4-4e03-4397-b5d2-562eb69ba23c",
+          "_rev": "-751242426",
+          "identityResource": "managed/user",
+          "patchAsObject": false,
+          "ignoredFields": [],
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "PatchObjectNode",
+            "name": "Patch Object",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "PATCHED",
+              "displayName": "Patched"
+            },
+            {
+              "id": "FAILURE",
+              "displayName": "Failed"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "ac94f875-da66-471a-8fea-2d0d5e2a0376": {
+          "_id": "ac94f875-da66-471a-8fea-2d0d5e2a0376",
+          "_rev": "273468862",
+          "usernameAttribute": "userName",
+          "validateInput": false,
+          "_type": {
+            "_id": "ValidatedUsernameNode",
+            "name": "Platform Username",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "2f523ac1-e957-4c26-8a69-fb9c18654b22": {
+          "_id": "2f523ac1-e957-4c26-8a69-fb9c18654b22",
+          "_rev": "439516562",
+          "validateInput": false,
+          "passwordAttribute": "password",
+          "_type": {
+            "_id": "ValidatedPasswordNode",
+            "name": "Platform Password",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}

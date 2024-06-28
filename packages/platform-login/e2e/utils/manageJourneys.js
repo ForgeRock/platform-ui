@@ -259,3 +259,22 @@ export function deleteJourneysViaAPI(fixtureArray) {
     });
   });
 }
+
+/**
+ * Prepare the Journey template to be used in the correct Environment (Cloud or ForgeOps)
+ * @param {String} journeyTemplate a Journey template location
+ * @param {String} loginRealm an Environment Login Realm to be replaced in Journey template file (example 'alpha' for Cloud, '/' for ForgeOps)
+ * @param {String} userRealm an Environment User Realm to be replaced in Journey template file (example 'alpha_' for Cloud, '' for ForgeOps)
+ */
+export function prepareJourneyTemplate(journeyTemplate, loginRealm, userRealm) {
+  // Prepare Journey template path
+  const journeyTemplatePath = `e2e/fixtures/${journeyTemplate}`;
+
+  // Read template file
+  cy.readFile(journeyTemplatePath).then((data) => {
+    // Replace all Realm redirects and Identity Resources with correct ones for current Platform mode
+    const updatedTemplate = JSON.stringify(data).replaceAll('loginRealm', loginRealm).replaceAll('userRealm', userRealm);
+    // Write moditied data back to the template file
+    cy.writeFile(journeyTemplatePath, JSON.parse(updatedTemplate));
+  });
+}

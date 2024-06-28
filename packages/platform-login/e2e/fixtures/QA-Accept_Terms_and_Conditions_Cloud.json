@@ -1,0 +1,571 @@
+{
+  "meta": {
+    "origin": "https://openam-adam-zahatlan17.forgeblocks.com/platform/?realm=alpha#/journeys",
+    "exportedBy": "adam.zahatlan@forgerock.com",
+    "exportDate": "2024-06-19T12:01:18.980Z",
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "QA - Accept Terms and Conditions"
+    ],
+    "innerTreesIncluded": [
+      "QA - ProgressiveProfile for Accept Terms and Conditions"
+    ]
+  },
+  "trees": {
+    "QA - ProgressiveProfile for Accept Terms and Conditions": {
+      "tree": {
+        "_id": "QA - ProgressiveProfile for Accept Terms and Conditions",
+        "_rev": "1647846881",
+        "identityResource": "managed/alpha_user",
+        "uiConfig": {
+          "categories": "[\"Progressive Profile\",\"QA\"]"
+        },
+        "entryNodeId": "30586ac6-5d83-4a15-bfbf-3f213eb17a9b",
+        "innerTreeOnly": false,
+        "nodes": {
+          "207669f8-712d-4757-81fb-01e4487469f3": {
+            "x": 457,
+            "y": 137,
+            "connections": {
+              "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "true": "f4e8be18-9204-4868-8c20-726043af9491"
+            },
+            "nodeType": "QueryFilterDecisionNode",
+            "displayName": "Query Filter Decision"
+          },
+          "30586ac6-5d83-4a15-bfbf-3f213eb17a9b": {
+            "x": 210,
+            "y": 137,
+            "connections": {
+              "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "true": "207669f8-712d-4757-81fb-01e4487469f3"
+            },
+            "nodeType": "LoginCountDecisionNode",
+            "displayName": "Login Count Decision"
+          },
+          "f4e8be18-9204-4868-8c20-726043af9491": {
+            "x": 703,
+            "y": 135,
+            "connections": {
+              "outcome": "0b8d4fd6-5b20-4996-bd29-38419813c4f3"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "0b8d4fd6-5b20-4996-bd29-38419813c4f3": {
+            "x": 948,
+            "y": 137,
+            "connections": {
+              "FAILURE": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "PATCHED": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "nodeType": "PatchObjectNode",
+            "displayName": "Patch Object"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 70,
+            "y": 155
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 1178,
+            "y": 230
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 1178,
+            "y": 80
+          }
+        },
+        "description": "Prompt for missing preferences on 3rd login",
+        "enabled": true
+      },
+      "nodes": {
+        "207669f8-712d-4757-81fb-01e4487469f3": {
+          "_id": "207669f8-712d-4757-81fb-01e4487469f3",
+          "_rev": "46607075",
+          "identityAttribute": "userName",
+          "queryFilter": "!(/preferences pr) or /preferences/marketing eq false or /preferences/updates eq false",
+          "_type": {
+            "_id": "QueryFilterDecisionNode",
+            "name": "Query Filter Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "30586ac6-5d83-4a15-bfbf-3f213eb17a9b": {
+          "_id": "30586ac6-5d83-4a15-bfbf-3f213eb17a9b",
+          "_rev": "-202607564",
+          "interval": "AT",
+          "identityAttribute": "userName",
+          "amount": 300,
+          "_type": {
+            "_id": "LoginCountDecisionNode",
+            "name": "Login Count Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "f4e8be18-9204-4868-8c20-726043af9491": {
+          "_id": "f4e8be18-9204-4868-8c20-726043af9491",
+          "_rev": "-1780822029",
+          "nodes": [
+            {
+              "_id": "62e99fc8-2340-479c-ac1d-68e61ab0bda4",
+              "nodeType": "AttributeCollectorNode",
+              "displayName": "Attribute Collector"
+            }
+          ],
+          "pageDescription": {},
+          "pageHeader": {
+            "en": "Please select your preferences"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "0b8d4fd6-5b20-4996-bd29-38419813c4f3": {
+          "_id": "0b8d4fd6-5b20-4996-bd29-38419813c4f3",
+          "_rev": "282669035",
+          "identityResource": "managed/alpha_user",
+          "patchAsObject": false,
+          "ignoredFields": [],
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "PatchObjectNode",
+            "name": "Patch Object",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "PATCHED",
+              "displayName": "Patched"
+            },
+            {
+              "id": "FAILURE",
+              "displayName": "Failed"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "62e99fc8-2340-479c-ac1d-68e61ab0bda4": {
+          "_id": "62e99fc8-2340-479c-ac1d-68e61ab0bda4",
+          "_rev": "548677437",
+          "attributesToCollect": [
+            "preferences/updates",
+            "preferences/marketing"
+          ],
+          "identityAttribute": "userName",
+          "validateInputs": false,
+          "required": false,
+          "_type": {
+            "_id": "AttributeCollectorNode",
+            "name": "Attribute Collector",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    },
+    "QA - Accept Terms and Conditions": {
+      "tree": {
+        "_id": "QA - Accept Terms and Conditions",
+        "_rev": "-2017011230",
+        "identityResource": "managed/alpha_user",
+        "uiConfig": {
+          "categories": "[\"Authentication\",\"QA\"]"
+        },
+        "entryNodeId": "fc1fc71b-d2e1-48d3-a428-b790e91c8402",
+        "innerTreeOnly": false,
+        "nodes": {
+          "26499841-e744-4c79-893b-554f9658fc0b": {
+            "x": 712,
+            "y": 80,
+            "connections": {
+              "outcome": "9545ca7d-d110-4a98-b31e-7f83df7e8bc1"
+            },
+            "nodeType": "IncrementLoginCountNode",
+            "displayName": "Increment Login Count"
+          },
+          "9545ca7d-d110-4a98-b31e-7f83df7e8bc1": {
+            "x": 971,
+            "y": 216,
+            "connections": {
+              "false": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "true": "6dcd55ec-f5d3-42fb-aa8b-325e4dd5c315"
+            },
+            "nodeType": "InnerTreeEvaluatorNode",
+            "displayName": "Inner Tree Evaluator"
+          },
+          "1bfa95a9-3b1f-4ce4-8b2b-b005d970173b": {
+            "x": 455,
+            "y": 110.5,
+            "connections": {
+              "CANCELLED": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "EXPIRED": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "FALSE": "149fd1bc-4c43-4cd2-a0f8-2b0d63482fff",
+              "LOCKED": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "TRUE": "26499841-e744-4c79-893b-554f9658fc0b"
+            },
+            "nodeType": "IdentityStoreDecisionNode",
+            "displayName": "Identity Store Decision"
+          },
+          "149fd1bc-4c43-4cd2-a0f8-2b0d63482fff": {
+            "x": 712,
+            "y": 216,
+            "connections": {
+              "Reject": "d2e76244-136a-4116-83e4-c782ef52961b",
+              "Retry": "fc1fc71b-d2e1-48d3-a428-b790e91c8402"
+            },
+            "nodeType": "RetryLimitDecisionNode",
+            "displayName": "Retry Limit Decision"
+          },
+          "fc1fc71b-d2e1-48d3-a428-b790e91c8402": {
+            "x": 210,
+            "y": 119.5,
+            "connections": {
+              "outcome": "1bfa95a9-3b1f-4ce4-8b2b-b005d970173b"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "d2e76244-136a-4116-83e4-c782ef52961b": {
+            "x": 971,
+            "y": 80,
+            "connections": {
+              "outcome": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "AccountLockoutNode",
+            "displayName": "Account Lockout"
+          },
+          "6dcd55ec-f5d3-42fb-aa8b-325e4dd5c315": {
+            "x": 1214,
+            "y": 148,
+            "connections": {
+              "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "false": "e64fa5d2-bb1d-47ed-a137-9673d959e1b6"
+            },
+            "nodeType": "TermsAndConditionsDecisionNode",
+            "displayName": "Terms and Conditions Decision"
+          },
+          "e64fa5d2-bb1d-47ed-a137-9673d959e1b6": {
+            "x": 1527,
+            "y": 173,
+            "connections": {
+              "outcome": "8bffed43-ad9f-4970-81d5-40fbac2736b6"
+            },
+            "nodeType": "AcceptTermsAndConditionsNode",
+            "displayName": "Accept Terms and Conditions"
+          },
+          "8bffed43-ad9f-4970-81d5-40fbac2736b6": {
+            "x": 1828,
+            "y": 148,
+            "connections": {
+              "PATCHED": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "FAILURE": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "PatchObjectNode",
+            "displayName": "Patch Object"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 70,
+            "y": 166
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 2058,
+            "y": 87.33333333333333
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 2058,
+            "y": 233.66666666666666
+          }
+        },
+        "description": "Platform Login Tree",
+        "enabled": true
+      },
+      "nodes": {
+        "26499841-e744-4c79-893b-554f9658fc0b": {
+          "_id": "26499841-e744-4c79-893b-554f9658fc0b",
+          "_rev": "1301961836",
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "IncrementLoginCountNode",
+            "name": "Increment Login Count",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "9545ca7d-d110-4a98-b31e-7f83df7e8bc1": {
+          "_id": "9545ca7d-d110-4a98-b31e-7f83df7e8bc1",
+          "_rev": "-1942842964",
+          "tree": "QA - ProgressiveProfile for Accept Terms and Conditions",
+          "_type": {
+            "_id": "InnerTreeEvaluatorNode",
+            "name": "Inner Tree Evaluator",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "1bfa95a9-3b1f-4ce4-8b2b-b005d970173b": {
+          "_id": "1bfa95a9-3b1f-4ce4-8b2b-b005d970173b",
+          "_rev": "780207431",
+          "useUniversalIdForUsername": false,
+          "minimumPasswordLength": 8,
+          "mixedCaseForPasswordChangeMessages": false,
+          "_type": {
+            "_id": "IdentityStoreDecisionNode",
+            "name": "Identity Store Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "TRUE",
+              "displayName": "True"
+            },
+            {
+              "id": "FALSE",
+              "displayName": "False"
+            },
+            {
+              "id": "LOCKED",
+              "displayName": "Locked"
+            },
+            {
+              "id": "CANCELLED",
+              "displayName": "Cancelled"
+            },
+            {
+              "id": "EXPIRED",
+              "displayName": "Expired"
+            }
+          ]
+        },
+        "149fd1bc-4c43-4cd2-a0f8-2b0d63482fff": {
+          "_id": "149fd1bc-4c43-4cd2-a0f8-2b0d63482fff",
+          "_rev": "-1729328474",
+          "incrementUserAttributeOnFailure": true,
+          "retryLimit": 5,
+          "_type": {
+            "_id": "RetryLimitDecisionNode",
+            "name": "Retry Limit Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "Retry",
+              "displayName": "Retry"
+            },
+            {
+              "id": "Reject",
+              "displayName": "Reject"
+            }
+          ]
+        },
+        "fc1fc71b-d2e1-48d3-a428-b790e91c8402": {
+          "_id": "fc1fc71b-d2e1-48d3-a428-b790e91c8402",
+          "_rev": "1128740980",
+          "nodes": [
+            {
+              "_id": "dde5356c-2480-4038-a713-189563183f0f",
+              "nodeType": "ValidatedUsernameNode",
+              "displayName": "Platform Username"
+            },
+            {
+              "_id": "78c70bdd-7da9-446e-808d-6a46e1a6700e",
+              "nodeType": "ValidatedPasswordNode",
+              "displayName": "Platform Password"
+            }
+          ],
+          "pageDescription": {
+            "en": "<b>Precondition for this Journey:</b><br>\n<p>-  user created via admin UI</p>\nUse that user to fully test happy path of this Journey (accept T&C and successfully login).\nUser, which has already accepted T&C will not be asked for it."
+          },
+          "pageHeader": {
+            "en": "Terms & Conditions UI Journey"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "d2e76244-136a-4116-83e4-c782ef52961b": {
+          "_id": "d2e76244-136a-4116-83e4-c782ef52961b",
+          "_rev": "-811515946",
+          "lockAction": "LOCK",
+          "_type": {
+            "_id": "AccountLockoutNode",
+            "name": "Account Lockout",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "6dcd55ec-f5d3-42fb-aa8b-325e4dd5c315": {
+          "_id": "6dcd55ec-f5d3-42fb-aa8b-325e4dd5c315",
+          "_rev": "-514158198",
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "TermsAndConditionsDecisionNode",
+            "name": "Terms and Conditions Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "e64fa5d2-bb1d-47ed-a137-9673d959e1b6": {
+          "_id": "e64fa5d2-bb1d-47ed-a137-9673d959e1b6",
+          "_rev": "-144435719",
+          "_type": {
+            "_id": "AcceptTermsAndConditionsNode",
+            "name": "Accept Terms and Conditions",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "8bffed43-ad9f-4970-81d5-40fbac2736b6": {
+          "_id": "8bffed43-ad9f-4970-81d5-40fbac2736b6",
+          "_rev": "1752983416",
+          "identityResource": "managed/alpha_user",
+          "patchAsObject": false,
+          "ignoredFields": [],
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "PatchObjectNode",
+            "name": "Patch Object",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "PATCHED",
+              "displayName": "Patched"
+            },
+            {
+              "id": "FAILURE",
+              "displayName": "Failed"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "dde5356c-2480-4038-a713-189563183f0f": {
+          "_id": "dde5356c-2480-4038-a713-189563183f0f",
+          "_rev": "2040371880",
+          "usernameAttribute": "userName",
+          "validateInput": false,
+          "_type": {
+            "_id": "ValidatedUsernameNode",
+            "name": "Platform Username",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "78c70bdd-7da9-446e-808d-6a46e1a6700e": {
+          "_id": "78c70bdd-7da9-446e-808d-6a46e1a6700e",
+          "_rev": "1569830755",
+          "passwordAttribute": "password",
+          "validateInput": false,
+          "_type": {
+            "_id": "ValidatedPasswordNode",
+            "name": "Platform Password",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}

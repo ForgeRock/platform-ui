@@ -1,0 +1,678 @@
+{
+  "meta": {
+    "origin": "https://user2cdm-adam-zahatlan.iam.team-pit-perf-eu.engineeringpit.com/platform/?realm=root#/journeys",
+    "exportedBy": "No Email",
+    "exportDate": "2024-06-25T13:44:55.830Z",
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "QA - Choice Collectors"
+    ],
+    "innerTreesIncluded": [
+      "QA - ProgressiveProfile for Choice Collectors"
+    ]
+  },
+  "trees": {
+    "QA - ProgressiveProfile for Choice Collectors": {
+      "tree": {
+        "_id": "QA - ProgressiveProfile for Choice Collectors",
+        "_rev": "-1312192251",
+        "identityResource": "managed/user",
+        "uiConfig": {
+          "categories": "[\"Progressive Profile\",\"QA\"]"
+        },
+        "entryNodeId": "afd3fdd4-20fc-43d0-a4b9-30c15c213345",
+        "innerTreeOnly": false,
+        "nodes": {
+          "b158e74d-29af-4054-b6ca-03b8293000cc": {
+            "x": 456,
+            "y": 137.5,
+            "connections": {
+              "true": "0f7f5d6e-48d2-4d17-88f5-d41f8c44390d",
+              "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "nodeType": "QueryFilterDecisionNode",
+            "displayName": "Query Filter Decision"
+          },
+          "18eae5a4-0764-4c61-81d5-63e3327b2caf": {
+            "x": 946,
+            "y": 137.5,
+            "connections": {
+              "PATCHED": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "FAILURE": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "PatchObjectNode",
+            "displayName": "Patch Object"
+          },
+          "0f7f5d6e-48d2-4d17-88f5-d41f8c44390d": {
+            "x": 701,
+            "y": 135.5,
+            "connections": {
+              "outcome": "18eae5a4-0764-4c61-81d5-63e3327b2caf"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "afd3fdd4-20fc-43d0-a4b9-30c15c213345": {
+            "x": 210,
+            "y": 137.5,
+            "connections": {
+              "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "true": "b158e74d-29af-4054-b6ca-03b8293000cc"
+            },
+            "nodeType": "LoginCountDecisionNode",
+            "displayName": "Login Count Decision"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 70,
+            "y": 155
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 1176,
+            "y": 80
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 1176,
+            "y": 230
+          }
+        },
+        "description": "Prompt for missing preferences on 3rd login",
+        "mustRun": false,
+        "enabled": true
+      },
+      "nodes": {
+        "b158e74d-29af-4054-b6ca-03b8293000cc": {
+          "_id": "b158e74d-29af-4054-b6ca-03b8293000cc",
+          "_rev": "-1573155574",
+          "identityAttribute": "userName",
+          "queryFilter": "!(/preferences pr) or /preferences/marketing eq false or /preferences/updates eq false",
+          "_type": {
+            "_id": "QueryFilterDecisionNode",
+            "name": "Query Filter Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "18eae5a4-0764-4c61-81d5-63e3327b2caf": {
+          "_id": "18eae5a4-0764-4c61-81d5-63e3327b2caf",
+          "_rev": "-139339523",
+          "identityResource": "managed/user",
+          "patchAsObject": false,
+          "ignoredFields": [],
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "PatchObjectNode",
+            "name": "Patch Object",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "PATCHED",
+              "displayName": "Patched"
+            },
+            {
+              "id": "FAILURE",
+              "displayName": "Failed"
+            }
+          ]
+        },
+        "0f7f5d6e-48d2-4d17-88f5-d41f8c44390d": {
+          "_id": "0f7f5d6e-48d2-4d17-88f5-d41f8c44390d",
+          "_rev": "420596689",
+          "nodes": [
+            {
+              "_id": "ef4591c1-582e-46d7-8912-731db235f36c",
+              "nodeType": "AttributeCollectorNode",
+              "displayName": "Attribute Collector"
+            }
+          ],
+          "pageDescription": {},
+          "pageHeader": {
+            "en": "Please select your preferences"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "afd3fdd4-20fc-43d0-a4b9-30c15c213345": {
+          "_id": "afd3fdd4-20fc-43d0-a4b9-30c15c213345",
+          "_rev": "-277340554",
+          "interval": "AT",
+          "identityAttribute": "userName",
+          "amount": 300,
+          "_type": {
+            "_id": "LoginCountDecisionNode",
+            "name": "Login Count Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "ef4591c1-582e-46d7-8912-731db235f36c": {
+          "_id": "ef4591c1-582e-46d7-8912-731db235f36c",
+          "_rev": "-1912556178",
+          "attributesToCollect": [
+            "preferences/updates",
+            "preferences/marketing"
+          ],
+          "identityAttribute": "userName",
+          "validateInputs": false,
+          "required": false,
+          "_type": {
+            "_id": "AttributeCollectorNode",
+            "name": "Attribute Collector",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    },
+    "QA - Choice Collectors": {
+      "tree": {
+        "_id": "QA - Choice Collectors",
+        "_rev": "-1130346561",
+        "identityResource": "managed/user",
+        "uiConfig": {
+          "categories": "[\"Authentication\",\"QA\"]"
+        },
+        "entryNodeId": "9462b428-13d9-4ad9-b0e0-72cb6309f433",
+        "innerTreeOnly": false,
+        "nodes": {
+          "3c085879-1272-49de-91ae-4c929f80cf44": {
+            "x": 692,
+            "y": 344,
+            "connections": {
+              "outcome": "cb5f627b-5434-46fc-b602-6df27fe3c035"
+            },
+            "nodeType": "IncrementLoginCountNode",
+            "displayName": "Increment Login Count"
+          },
+          "9462b428-13d9-4ad9-b0e0-72cb6309f433": {
+            "x": 210,
+            "y": 290.5,
+            "connections": {
+              "outcome": "58ed49c1-375b-4d08-836f-b3d4cd07a797"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "cb5f627b-5434-46fc-b602-6df27fe3c035": {
+            "x": 951,
+            "y": 319,
+            "connections": {
+              "true": "1cc196ac-c353-405f-a7be-a64ce5ef026b",
+              "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "InnerTreeEvaluatorNode",
+            "displayName": "Inner Tree Evaluator"
+          },
+          "58ed49c1-375b-4d08-836f-b3d4cd07a797": {
+            "x": 455,
+            "y": 319,
+            "connections": {
+              "true": "3c085879-1272-49de-91ae-4c929f80cf44",
+              "false": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "DataStoreDecisionNode",
+            "displayName": "Data Store Decision"
+          },
+          "1cc196ac-c353-405f-a7be-a64ce5ef026b": {
+            "x": 1193,
+            "y": 146.33333333333331,
+            "connections": {
+              "Buttons test!": "46881b28-a7c7-4b4b-8a0f-e2d5ea054ad0",
+              "Message node!": "61c2c67d-3fc4-447a-8522-2af7c05aa3fd",
+              "Select Choice Collector!": "0858a2e5-1983-43a0-ad6d-a7b6429b2fc9",
+              "Go back :/": "9462b428-13d9-4ad9-b0e0-72cb6309f433"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "46881b28-a7c7-4b4b-8a0f-e2d5ea054ad0": {
+            "x": 1438,
+            "y": 80,
+            "connections": {
+              "false": "1cc196ac-c353-405f-a7be-a64ce5ef026b",
+              "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "0858a2e5-1983-43a0-ad6d-a7b6429b2fc9": {
+            "x": 1438,
+            "y": 504,
+            "connections": {
+              "Proceed!": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "Return back :/": "1cc196ac-c353-405f-a7be-a64ce5ef026b"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "61c2c67d-3fc4-447a-8522-2af7c05aa3fd": {
+            "x": 1438,
+            "y": 319,
+            "connections": {
+              "false": "1cc196ac-c353-405f-a7be-a64ce5ef026b",
+              "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "nodeType": "MessageNode",
+            "displayName": "Message Node"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 70,
+            "y": 336.5
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 1683,
+            "y": 336.5
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 1193,
+            "y": 427.1666666666667
+          }
+        },
+        "description": "Platform Login Tree",
+        "mustRun": false,
+        "enabled": true
+      },
+      "nodes": {
+        "3c085879-1272-49de-91ae-4c929f80cf44": {
+          "_id": "3c085879-1272-49de-91ae-4c929f80cf44",
+          "_rev": "-708576834",
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "IncrementLoginCountNode",
+            "name": "Increment Login Count",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "9462b428-13d9-4ad9-b0e0-72cb6309f433": {
+          "_id": "9462b428-13d9-4ad9-b0e0-72cb6309f433",
+          "_rev": "-1087549071",
+          "nodes": [
+            {
+              "_id": "708ab703-3ce5-42f8-ae43-5602a2994560",
+              "nodeType": "ValidatedUsernameNode",
+              "displayName": "Platform Username"
+            },
+            {
+              "_id": "d3cf71d3-b3f9-4e21-84a8-369a53c9bd57",
+              "nodeType": "ValidatedPasswordNode",
+              "displayName": "Platform Password"
+            }
+          ],
+          "pageDescription": {
+            "en": "Journey includes various UI options of choice collectors and message nodes."
+          },
+          "pageHeader": {
+            "en": "Choices UI Journey"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "cb5f627b-5434-46fc-b602-6df27fe3c035": {
+          "_id": "cb5f627b-5434-46fc-b602-6df27fe3c035",
+          "_rev": "-670485066",
+          "tree": "QA - ProgressiveProfile for Choice Collectors",
+          "_type": {
+            "_id": "InnerTreeEvaluatorNode",
+            "name": "Inner Tree Evaluator",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "58ed49c1-375b-4d08-836f-b3d4cd07a797": {
+          "_id": "58ed49c1-375b-4d08-836f-b3d4cd07a797",
+          "_rev": "-1825782999",
+          "_type": {
+            "_id": "DataStoreDecisionNode",
+            "name": "Data Store Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "1cc196ac-c353-405f-a7be-a64ce5ef026b": {
+          "_id": "1cc196ac-c353-405f-a7be-a64ce5ef026b",
+          "_rev": "236294978",
+          "nodes": [
+            {
+              "_id": "a84ba3ce-3769-4bfa-a023-00bdeedbcc50",
+              "nodeType": "ChoiceCollectorNode",
+              "displayName": "Choice Collector"
+            }
+          ],
+          "stage": "{\"ChoiceCallback\":[{\"id\":\"a84ba3ce-3769-4bfa-a023-00bdeedbcc50\",\"displayType\":\"radio\"}]}",
+          "pageDescription": {},
+          "pageHeader": {
+            "en": "Radio Choice Collector!"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "Buttons test!",
+              "displayName": "Buttons test!"
+            },
+            {
+              "id": "Message node!",
+              "displayName": "Message node!"
+            },
+            {
+              "id": "Select Choice Collector!",
+              "displayName": "Select Choice Collector!"
+            },
+            {
+              "id": "Unconnected node",
+              "displayName": "Unconnected node"
+            },
+            {
+              "id": "Go back :/",
+              "displayName": "Go back :/"
+            }
+          ]
+        },
+        "46881b28-a7c7-4b4b-8a0f-e2d5ea054ad0": {
+          "_id": "46881b28-a7c7-4b4b-8a0f-e2d5ea054ad0",
+          "_rev": "-1656712852",
+          "nodes": [
+            {
+              "_id": "3e108eee-fe9d-499d-9096-428714e344f4",
+              "nodeType": "MessageNode",
+              "displayName": "Message Node"
+            }
+          ],
+          "pageDescription": {},
+          "pageHeader": {
+            "en": "Buttons test!"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "0858a2e5-1983-43a0-ad6d-a7b6429b2fc9": {
+          "_id": "0858a2e5-1983-43a0-ad6d-a7b6429b2fc9",
+          "_rev": "-131292511",
+          "nodes": [
+            {
+              "_id": "f255ad08-51d2-40b1-8a65-408eb00e52ca",
+              "nodeType": "ChoiceCollectorNode",
+              "displayName": "Choice Collector"
+            }
+          ],
+          "pageDescription": {},
+          "pageHeader": {
+            "en": "Select Choice Collector!"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "Proceed!",
+              "displayName": "Proceed!"
+            },
+            {
+              "id": "Return back :/",
+              "displayName": "Return back :/"
+            }
+          ]
+        },
+        "61c2c67d-3fc4-447a-8522-2af7c05aa3fd": {
+          "_id": "61c2c67d-3fc4-447a-8522-2af7c05aa3fd",
+          "_rev": "444820152",
+          "messageYes": {
+            "en": "OK!"
+          },
+          "message": {
+            "en": "Message node!"
+          },
+          "messageNo": {
+            "en": "NOT OK!"
+          },
+          "_type": {
+            "_id": "MessageNode",
+            "name": "Message Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "708ab703-3ce5-42f8-ae43-5602a2994560": {
+          "_id": "708ab703-3ce5-42f8-ae43-5602a2994560",
+          "_rev": "-355534960",
+          "usernameAttribute": "userName",
+          "validateInput": false,
+          "_type": {
+            "_id": "ValidatedUsernameNode",
+            "name": "Platform Username",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "d3cf71d3-b3f9-4e21-84a8-369a53c9bd57": {
+          "_id": "d3cf71d3-b3f9-4e21-84a8-369a53c9bd57",
+          "_rev": "865742973",
+          "validateInput": false,
+          "passwordAttribute": "password",
+          "_type": {
+            "_id": "ValidatedPasswordNode",
+            "name": "Platform Password",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "a84ba3ce-3769-4bfa-a023-00bdeedbcc50": {
+          "_id": "a84ba3ce-3769-4bfa-a023-00bdeedbcc50",
+          "_rev": "-239000149",
+          "defaultChoice": "Go back :/",
+          "choices": [
+            "Buttons test!",
+            "Message node!",
+            "Select Choice Collector!",
+            "Unconnected node",
+            "Go back :/"
+          ],
+          "prompt": "Lets try some Choice Collectors! Because... why not? Also, this text should fit here perfectly and be properly visible across whole UI! If this is not the case and text overflows, we have a bug in UI and it shall be reported! This one should show working radio buttons. Do you see select dropdown instead of radio buttons? That's another UI bug!",
+          "_type": {
+            "_id": "ChoiceCollectorNode",
+            "name": "Choice Collector",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "Buttons test!",
+              "displayName": "Buttons test!"
+            },
+            {
+              "id": "Message node!",
+              "displayName": "Message node!"
+            },
+            {
+              "id": "Select Choice Collector!",
+              "displayName": "Select Choice Collector!"
+            },
+            {
+              "id": "Unconnected node",
+              "displayName": "Unconnected node"
+            },
+            {
+              "id": "Go back :/",
+              "displayName": "Go back :/"
+            }
+          ]
+        },
+        "3e108eee-fe9d-499d-9096-428714e344f4": {
+          "_id": "3e108eee-fe9d-499d-9096-428714e344f4",
+          "_rev": "1829686382",
+          "messageYes": {
+            "en": "Yes!"
+          },
+          "message": {
+            "en": "Are you ready to login?"
+          },
+          "messageNo": {
+            "en": "No!"
+          },
+          "_type": {
+            "_id": "MessageNode",
+            "name": "Message Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "f255ad08-51d2-40b1-8a65-408eb00e52ca": {
+          "_id": "f255ad08-51d2-40b1-8a65-408eb00e52ca",
+          "_rev": "1128499317",
+          "defaultChoice": "Return back :/",
+          "choices": [
+            "Proceed!",
+            "Return back :/"
+          ],
+          "prompt": "Lets try some Choice Collectors! Because... why not? Also, this text should fit here perfectly and be properly visible across whole UI! If this is not the case and text overflows, we have a bug in UI and it shall be reported! This one should show working select buttons. Do you see radio buttons instead of select dropdown? That's another UI bug!",
+          "_type": {
+            "_id": "ChoiceCollectorNode",
+            "name": "Choice Collector",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "Proceed!",
+              "displayName": "Proceed!"
+            },
+            {
+              "id": "Return back :/",
+              "displayName": "Return back :/"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}
