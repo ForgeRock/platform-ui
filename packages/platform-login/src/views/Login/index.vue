@@ -236,7 +236,8 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             class="px-4 px-md-5"
             aria-live="polite"
-            ref="callbackMain">
+            ref="callbackMain"
+            tabindex="-1">
             <BRow class="m-0">
               <BCol xl="9">
                 <h1
@@ -697,7 +698,7 @@ export default {
     */
     journeyFocusElement() {
       setTimeout(() => {
-        // refresh accessibility between steps by focusing on the body before the next focus to avoid the aplication from keeping the same activeElement
+        // refresh accessibility between steps by focusing on the body before the next focus to avoid the application from keeping the same activeElement
         this.$refs.container.focus();
         if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
           /*
