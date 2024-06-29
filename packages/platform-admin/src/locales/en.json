@@ -1462,7 +1462,8 @@
       },
       "messages": {
         "attributeValidationError": "Failed to load {attribute} attribute",
-        "connectorTemplateValidation": "Please provide a valid JSON template.",
+        "configurationFieldsValidation": "Please provide valid JSON in the available configuration fields.",
+        "connectorTemplateValidation": "Please provide valid JSON in the connector template.",
         "deleteError": "There was an error deleting the template",
         "deleteSuccess": "Template deleted successfully",
         "fileImproperlyFormatted": "Selected file is not properly formatted",
