@@ -36,7 +36,7 @@ Cypress.Commands.add('login', () => {
   clearStorage();
 
   cy.visit(loginUrl);
-  cy.findByLabelText(/User Name/i, { timeout: 20000 }).type(adminUserName);
+  cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type(adminUserName, { force: true });
   cy.findAllByLabelText(/Password/i).first().type(adminPassword, { force: true });
   cy.findByRole('button', { name: /Next/i }).click();
   if (Cypress.env('IS_FRAAS')) {

@@ -32,8 +32,8 @@ filterTests(['forgeops', 'cloud'], () => {
     });
 
     it('should fail login with incorrect credentials', () => {
-      cy.findByLabelText(/User Name/i, { timeout: 20000 })
-        .type(userName)
+      cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible')
+        .type(userName, { force: true })
         .should('have.value', userName);
       cy.findAllByLabelText(/Password/i).first()
         .type(userName, { force: true })
