@@ -1,10 +1,10 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    v-model="show"
+    v-model="showIdleTimeout"
     data-testId="session-timeout-warning"
     :title="$t('sessionTimeoutWarning.title')"
     centered
@@ -19,6 +19,20 @@ of the MIT license. See the LICENSE file for details. -->
     role="alertdialog">
     {{ $t('sessionTimeoutWarning.description') }}
   </BModal>
+  <BModal
+    v-model="showSessionExpired"
+    data-testId="session-timeout-warning"
+    :title="$t('sessionTimeoutWarning.titleMaxSession')"
+    centered
+    hide-header-close
+    no-close-on-backdrop
+    no-close-on-esc
+    @cancel="logout"
+    :cancel-title="$t('sessionTimeoutWarning.end')"
+    :ok-title="$t('sessionTimeoutWarning.dismiss')"
+    role="alertdialog">
+    {{ $t('sessionTimeoutWarning.descriptionMaxSession') }}
+  </BModal>
 </template>
 
 <script setup>
@@ -27,57 +41,73 @@ of the MIT license. See the LICENSE file for details. -->
  */
 import { BModal } from 'bootstrap-vue';
 import dayjs from 'dayjs';
-import { ref, watch, onMounted } from 'vue';
+import { ref, onBeforeUnmount, onMounted } from 'vue';
 import store from '@/store';
 
-const show = ref(false);
-const modalTimeout = ref(null);
+const showIdleTimeout = ref(false);
+const showSessionExpired = ref(null);
+const interval = ref(null);
 const imminentTimeout = ref(null);
 /**
   * Starts timeout to log out user and shows modal with options.
   */
-function startImminentLogout() {
+function startImminentLogoutTimeout(timeout) {
+  clearTimeout(imminentTimeout.value);
+  clearInterval(interval.value);
   imminentTimeout.value = setTimeout(() => {
     window.logout();
-  }, 60000);
-  show.value = true;
+  }, timeout);
 }
 /**
-  * Stops timeout to logout user and hides modal.
-  */
-function stopImminentLogout() {
-  clearTimeout(imminentTimeout.value);
-  show.value = false;
-}
-/**
-  * Starts timeout to trigger startImminentLogout.
+  * Starts timeout to trigger startImminentLogout if conditions are met.
   * Calling this method resets the modalTimeout with the last provided date as the end of the session
   *
-  * @param {Date} expirationTime date as returned by AM getSessionInfo request
+  * @param {Date} maxIdleDate date for maxIdleExpirationTime as returned by AM getSessionInfo request
+  * @param {Date} maxSessionDate date for maxSessionExpirationTime as returned by AM getSessionInfo request
   */
-function resetModalTimeout(expirationTime) {
-  if (expirationTime) {
-    clearTimeout(modalTimeout.value);
+function checkSessionAndIdleExpiration(maxIdleDate, maxSessionDate) {
+  if (maxIdleDate) {
     const now = dayjs();
-    const expirationDate = dayjs(expirationTime);
-    const timeLeft = expirationDate.diff(now);
-    // if timeLeft is over 2074000000 (24 days) don't start the timer
-    if (timeLeft < 2074000000) {
-      modalTimeout.value = setTimeout(() => {
-        startImminentLogout();
-      }, timeLeft - 70000);
+    const idleDate = dayjs(maxIdleDate);
+    const sessionExpirationDate = dayjs(maxSessionDate);
+    const idleTimeLeft = idleDate.diff(now);
+    const sessionTimeLeft = sessionExpirationDate.diff(now);
+    // show the session expired modal if no modal is shown and session ends within 2.5 minutes. If this is true the next condition will be false.
+    if (!showSessionExpired.value && !showIdleTimeout.value && sessionTimeLeft <= 150000) {
+      showSessionExpired.value = true;
+      startImminentLogoutTimeout(120000);
+    }
+    // show the idle timeout modal if no modal is shown and session times out within 1.5 minutes.
+    if (!showSessionExpired.value && !showIdleTimeout.value && !sessionTimeLeft <= 210000 && idleTimeLeft <= 90000) {
+      showIdleTimeout.value = true;
+      startImminentLogoutTimeout(60000);
     }
   }
 }
+
 function logout() {
   window.logout();
 }
-
-watch(() => store.getters['SharedStore/maxIdleExpirationTime'], async (expirationTime) => {
-  resetModalTimeout(expirationTime);
-});
+/**
+  * Stops the interval session and idle check
+  */
+function startIntervalCheck() {
+  clearInterval(interval.value);
+  interval.value = setInterval(() => checkSessionAndIdleExpiration(store.state.SharedStore.maxIdleExpirationTime, store.state.SharedStore.maxSessionExpirationTime), 20000);
+}
+/**
+  * Stops timeout to logout user and starts interval again.
+  */
+function stopImminentLogout() {
+  clearTimeout(imminentTimeout.value);
+  startIntervalCheck();
+}
 
 onMounted(() => {
-  resetModalTimeout(store.state.SharedStore.maxIdleExpirationTime);
+  startIntervalCheck();
+});
+
+onBeforeUnmount(() => {
+  clearInterval(interval.value);
 });
 </script>

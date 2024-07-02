@@ -33,18 +33,21 @@ filterTests(['forgeops', 'cloud'], () => {
           cy.loginAsEnduser(userName);
 
           cy.findByTestId('session-timeout-warning').should('not.exist');
-
-          const inNinetySeconds = new Date(Date.now() + 85000);
-          const maxIdleExpirationTime = inNinetySeconds.toISOString();
+          const inEightySeconds = new Date(Date.now() + 80000);
+          const inFiveMinutes = new Date(Date.now() + 300000);
+          const maxIdleExpirationTime = inEightySeconds.toISOString();
+          const maxSessionExpirationTime = inFiveMinutes.toISOString();
           if (Cypress.env('IS_FRAAS')) {
             cy.intercept('POST', '**/alpha/sessions?_action=getSessionInfo', {
               realm: '/test',
               maxIdleExpirationTime,
+              maxSessionExpirationTime,
             });
           } else {
             cy.intercept('POST', '**/root/sessions?_action=getSessionInfo', {
               realm: '/test',
               maxIdleExpirationTime,
+              maxSessionExpirationTime,
             });
           }
 
@@ -76,17 +79,21 @@ filterTests(['forgeops', 'cloud'], () => {
 
           cy.findByTestId('session-timeout-warning').should('not.exist');
 
-          const inNinetySeconds = new Date(Date.now() + 85000);
-          const maxIdleExpirationTime = inNinetySeconds.toISOString();
+          const inEightySeconds = new Date(Date.now() + 80000);
+          const inFiveMinutes = new Date(Date.now() + 300000);
+          const maxIdleExpirationTime = inEightySeconds.toISOString();
+          const maxSessionExpirationTime = inFiveMinutes.toISOString();
           if (Cypress.env('IS_FRAAS')) {
             cy.intercept('POST', '**/alpha/sessions?_action=getSessionInfo', {
               realm: '/test',
               maxIdleExpirationTime,
+              maxSessionExpirationTime,
             });
           } else {
             cy.intercept('POST', '**/root/sessions?_action=getSessionInfo', {
               realm: '/test',
               maxIdleExpirationTime,
+              maxSessionExpirationTime,
             });
           }
 
@@ -123,16 +130,20 @@ filterTests(['forgeops', 'cloud'], () => {
 
           // this put it over 32-bit signed integer
           const inOverTwentyFiveDays = new Date(Date.now() + 2160000000);
+          const inTenMinutes = new Date(Date.now() + 600000);
           const maxIdleExpirationTime = inOverTwentyFiveDays.toISOString();
+          const maxSessionExpirationTime = inTenMinutes.toISOString();
           if (Cypress.env('IS_FRAAS')) {
             cy.intercept('POST', '**/alpha/sessions?_action=getSessionInfo', {
               realm: '/test',
               maxIdleExpirationTime,
+              maxSessionExpirationTime,
             });
           } else {
             cy.intercept('POST', '**/root/sessions?_action=getSessionInfo', {
               realm: '/test',
               maxIdleExpirationTime,
+              maxSessionExpirationTime,
             });
           }
 
