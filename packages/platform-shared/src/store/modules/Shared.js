@@ -38,6 +38,7 @@ const defaultState = {
   secretsEnablementEnabled: false,
   managedObjectMinimumUIFilterLength: {},
   maxIdleExpirationTime: null,
+  maxSessionExpirationTime: null,
   newMultiselectEnabled: false,
   promoteAppsViaApi: false,
   showEsvUi: false,
@@ -183,10 +184,14 @@ const mutations = {
   setMaxIdleExpirationTime(state, val) {
     state.maxIdleExpirationTime = val;
   },
+  setMaxSessionExpirationTime(state, val) {
+    state.maxSessionExpirationTime = val;
+  },
 };
 
 const getters = {
   maxIdleExpirationTime: (state) => state.maxIdleExpirationTime,
+  maxSessionExpirationTime: (state) => state.maxSessionExpirationTime,
 };
 
 export default {

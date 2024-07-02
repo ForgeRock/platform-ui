@@ -693,7 +693,10 @@
   },
   "sessionTimeoutWarning": {
     "title": "You will be signed out soon",
+    "titleMaxSession": "Your session is about to expire.",
     "description": "You've been inactive for a while. For your security we'll sign you out in approximately 1 minute. Choose to \"Stay Signed In\" to continue or \"Sign Out\" if you're done.",
+    "descriptionMaxSession": "Your user session has reach it's maximum time allowed. In approximately 2 minutes you will be signed out. Please save any changes you've made. Once signed out you may sign in again. Sorry for the inconvenience.",
+    "dismiss": "Dismiss Warning",
     "extend": "Stay Signed In",
     "end": "Sign Out"
   },
