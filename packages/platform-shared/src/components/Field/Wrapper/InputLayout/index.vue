@@ -277,7 +277,8 @@ export default {
     /* stylelint-disable */
     .polyfill-placeholder,
     input:not(:placeholder-shown)
-    input:focus{
+    input:focus,
+    input:autofill {
 
       /*
        * if there is no placeholder, we do not need to apply padding to move
