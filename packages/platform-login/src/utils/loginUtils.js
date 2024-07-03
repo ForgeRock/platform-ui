@@ -13,6 +13,7 @@ const autocompleteFieldLookup = {
   // identification
   username: 'username',
   'user name': 'username',
+  password: 'password',
   prefix: 'honorific-prefix',
   'first name': 'given-name',
   'last name': 'family-name',

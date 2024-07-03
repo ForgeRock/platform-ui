@@ -5,25 +5,25 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-// ***********************************************************
-// This example plugins/index.js can be used to load plugins
-//
-// You can change the location of this file or turn off loading
-// the plugins file with the 'pluginsFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/plugins-guide
-// ***********************************************************
-
-// This function is called when a project is opened or re-opened (e.g. due to
-// the project's config changing)
-
-// `on` is used to hook into various events Cypress emits
-// `config` is the resolved Cypress config
 const { install } = require('@neuralegion/cypress-har-generator');
+const {
+  createEmailAccount,
+  getLatestEmail,
+} = require('./email-account');
 
 module.exports = (on, config) => {
   install(on);
+
+  on('task', {
+    async getTestEmailAccount() {
+      const account = await createEmailAccount();
+      return account;
+    },
+    async getLatestEmail(emailAccount) {
+      const email = await getLatestEmail(emailAccount);
+      return email;
+    },
+  });
 
   return {
     ...config,
