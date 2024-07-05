@@ -21,12 +21,13 @@ of the MIT license. See the LICENSE file for details. -->
   </BModal>
   <BModal
     v-model="showSessionExpired"
-    data-testId="session-timeout-warning"
+    data-testId="session-expiration-warning"
     :title="$t('sessionTimeoutWarning.titleMaxSession')"
     centered
     hide-header-close
     no-close-on-backdrop
     no-close-on-esc
+    cancel-variant="link"
     @cancel="logout"
     :cancel-title="$t('sessionTimeoutWarning.end')"
     :ok-title="$t('sessionTimeoutWarning.dismiss')"
