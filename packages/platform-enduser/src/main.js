@@ -225,6 +225,7 @@ const addAppAuth = (realm) => {
         sessionCheck.triggerSessionCheck();
         getSessionTimeoutInfo().then(({ data }) => {
           store.commit('SharedStore/setMaxIdleExpirationTime', data.maxIdleExpirationTime);
+          store.commit('SharedStore/setMaxSessionExpirationTime', data.maxSessionExpirationTime);
         });
       };
       // check the validity of the session immediately

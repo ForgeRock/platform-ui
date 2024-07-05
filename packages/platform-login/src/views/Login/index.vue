@@ -234,7 +234,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
 
           <div
-            class="px-4 px-md-5"
+            class="px-4 px-md-5 focus-ring-none"
             aria-live="polite"
             ref="callbackMain"
             tabindex="-1">
