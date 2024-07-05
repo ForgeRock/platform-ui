@@ -18,7 +18,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.logout();
     });
 
-    it('should show session timeout and extend session', () => {
+    it('when session is about to idle out should show session timeout modal and extend session', () => {
       // Get an admin access token and use it to create the test user
       cy.loginAsAdmin().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
@@ -51,19 +51,19 @@ filterTests(['forgeops', 'cloud'], () => {
             });
           }
 
-          // expect the session warning to be shown
+          // expect the session timeout modal to be shown
           cy.visit(locationUrl);
           cy.findByTestId('session-timeout-warning', { timeout: 35000 }).within(() => {
             cy.get('button.btn-primary').click();
           });
 
-          // expect the session warning to be dismissed
+          // expect the session timeout modal to be dismissed
           cy.findByTestId('session-timeout-warning').should('not.exist');
         });
       });
     });
 
-    it('should show session timeout and end session', () => {
+    it('when session is about to idle out should show session timeout modal and end session', () => {
       // Get an admin access token and use it to create the test user
       cy.loginAsAdmin().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
@@ -97,9 +97,102 @@ filterTests(['forgeops', 'cloud'], () => {
             });
           }
 
-          // expect the session warning to be shown
+          // expect the session timeout modal to be shown
           cy.visit(locationUrl);
           cy.findByTestId('session-timeout-warning', { timeout: 35000 }).within(() => {
+            cy.get('button.btn-link').click();
+          });
+
+          // expect the user to be signed out
+          cy.location().should((location) => {
+            expect(location.href).to.contain('/am/XUI/');
+          });
+        });
+      });
+    });
+
+    it('when session is about to expire should show session expiration modal and dismiss the warning', () => {
+      // Get an admin access token and use it to create the test user
+      cy.loginAsAdmin().then(() => {
+        createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
+          const locationUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/enduser/?realm=alpha#/profile` : `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
+
+          userId = responseUserId;
+          userName = responseUserName;
+
+          cy.logout();
+
+          // Login to the endusers profile page
+          cy.loginAsEnduser(userName);
+
+          cy.findByTestId('session-timeout-warning').should('not.exist');
+
+          const inEightySeconds = new Date(Date.now() + 80000);
+          const maxIdleExpirationTime = inEightySeconds.toISOString();
+          const maxSessionExpirationTime = inEightySeconds.toISOString();
+          if (Cypress.env('IS_FRAAS')) {
+            cy.intercept('POST', '**/alpha/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+              maxSessionExpirationTime,
+            });
+          } else {
+            cy.intercept('POST', '**/root/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+              maxSessionExpirationTime,
+            });
+          }
+
+          // expect the session expiration modal to be shown
+          cy.visit(locationUrl);
+          cy.findByTestId('session-timeout-warning', { timeout: 35000 }).should('not.exist');
+          cy.findByTestId('session-expiration-warning', { timeout: 35000 }).within(() => {
+            cy.get('button.btn-primary').click();
+          });
+
+          cy.findByTestId('session-expiration-warning').should('not.exist');
+        });
+      });
+    });
+
+    it('when session is about to expire should show session expiration modal and end the session', () => {
+      // Get an admin access token and use it to create the test user
+      cy.loginAsAdmin().then(() => {
+        createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
+          const locationUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/enduser/?realm=alpha#/profile` : `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
+
+          userId = responseUserId;
+          userName = responseUserName;
+
+          cy.logout();
+
+          // Login to the endusers profile page
+          cy.loginAsEnduser(userName);
+
+          cy.findByTestId('session-timeout-warning').should('not.exist');
+
+          const inEightySeconds = new Date(Date.now() + 80000);
+          const maxIdleExpirationTime = inEightySeconds.toISOString();
+          const maxSessionExpirationTime = inEightySeconds.toISOString();
+          if (Cypress.env('IS_FRAAS')) {
+            cy.intercept('POST', '**/alpha/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+              maxSessionExpirationTime,
+            });
+          } else {
+            cy.intercept('POST', '**/root/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+              maxSessionExpirationTime,
+            });
+          }
+
+          // expect the session expiration modal to be shown
+          cy.visit(locationUrl);
+          cy.findByTestId('session-timeout-warning', { timeout: 35000 }).should('not.exist');
+          cy.findByTestId('session-expiration-warning', { timeout: 35000 }).within(() => {
             cy.get('button.btn-link').click();
           });
 
