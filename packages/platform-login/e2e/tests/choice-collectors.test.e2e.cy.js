@@ -10,7 +10,7 @@ import { filterTests } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 
 filterTests(['forgeops', 'cloud'], () => {
-  describe('Choice collector tests', () => {
+  describe('Tests for Journey Choice collector', () => {
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const journey = `QA-Choice_Collectors_${Cypress.env('IS_FRAAS') ? 'Cloud' : 'ForgeOps'}.json`;
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=QA%20-%20Choice%20Collectors#/`;
@@ -116,7 +116,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.findByRole('button', { name: 'Yes!' }).click();
 
       // Wait for successfull login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 });
+      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
     });
 
     it('Page Node with Message Node - Negative answer works correctly', () => {
@@ -156,7 +156,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.findByRole('button', { name: 'OK!' }).click();
 
       // Wait for successfull login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 });
+      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
     });
 
     it('Message Node - Negative answer works correctly', () => {
@@ -200,7 +200,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for successfull login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 });
+      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
     });
 
     it('Page Node with Select Choice Collector - Unhappy path works correctly', () => {
