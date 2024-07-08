@@ -169,7 +169,7 @@ filterTests(['cloud'], () => {
       // Return the email provider back to its default config
       cy.login();
       getDefaultProviderConfig().then((config) => {
-        putEmailProviderConfig(config);
+        putEmailProviderConfig(config.body);
       });
     });
 
@@ -227,7 +227,7 @@ filterTests(['cloud'], () => {
         });
 
         // and be logged in with the registered user
-        cy.findByTestId('dashboard-welcome-greeting').contains(`Hello, ${emailAccount.user}`);
+        cy.findByTestId('dashboard-welcome-greeting').contains(`Hello, ${emailAccount.user}`).should('be.visible');
       });
     });
   });

@@ -50,7 +50,7 @@ Cypress.Commands.add('login', () => {
     // afterwards by Cypress with a then block or similar
     Cypress.env('ACCESS_TOKEN', response.body);
   });
-  cy.findAllByTestId('dashboard-welcome-title', { timeout: 20000 });
+  cy.findAllByTestId('dashboard-welcome-title', { timeout: 20000 }).should('be.visible');
 });
 
 Cypress.Commands.add('logout', () => {

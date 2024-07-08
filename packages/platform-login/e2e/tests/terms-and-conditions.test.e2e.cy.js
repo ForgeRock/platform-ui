@@ -137,7 +137,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for successfull login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 });
+      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
 
       // Logout to proceed with the next step
       cy.logout();
@@ -149,7 +149,7 @@ filterTests(['forgeops', 'cloud'], () => {
       loginEnduser();
 
       // Wait for successfull login (user should not be prompted to accept T&C again)
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 });
+      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
     });
   });
 });

@@ -27,9 +27,10 @@ export function putEmailProviderConfig(config, accessToken = Cypress.env('ACCESS
  * @param {Object} the default provider details
  */
 export function getDefaultProviderConfig(accessToken = Cypress.env('ACCESS_TOKEN')?.access_token) {
+  const emailEndpoint = Cypress.env('IS_FRAAS') ? 'external.emailDefault' : 'external.email';
   return cy.request({
     method: 'GET',
-    url: `https://${Cypress.env('FQDN')}/openidm/config/external.emailDefault`,
+    url: `https://${Cypress.env('FQDN')}/openidm/config/${emailEndpoint}`,
     headers: {
       authorization: `Bearer ${accessToken}`,
       'content-type': 'application/json',
