@@ -29,7 +29,19 @@ of the MIT license. See the LICENSE file for details. -->
         wrapper-class="ml-auto"
         :divider="false"
         :edit-option="false"
-        @delete-clicked.stop="$emit('delete-data-source')" />
+        @delete-clicked.stop="$emit('delete-data-source')">
+        <template #custom-top-actions>
+          <BDropdownItem
+            v-if="entityNamePath"
+            @click.stop="$emit('related-entity-settings')">
+            <FrIcon
+              icon-class="mr-2"
+              name="settings">
+              {{ $t('common.settings') }}
+            </FrIcon>
+          </BDropdownItem>
+        </template>
+      </FrActionsCell>
       <FrIcon
         icon-class="pl-2"
         :name="showAccordion ? 'expand_less' : 'expand_more'" />
@@ -67,8 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BFormGroup
         v-if="relatedDataSources.length"
         v-slot="{ ariaDescribedby }"
-        :label="$t('reports.template.relatedDataSources')"
-        class="d-none">
+        :label="$t('reports.template.relatedDataSources')">
         <BListGroup :aria-describedby="ariaDescribedby">
           <BListGroupItem
             v-for="(dataSourceName, index) in relatedDataSources"
@@ -140,6 +151,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 const emit = defineEmits([
   'delete-data-source',
+  'related-entity-settings',
   'set-column-selections',
   'set-related-data-sources',
 ]);

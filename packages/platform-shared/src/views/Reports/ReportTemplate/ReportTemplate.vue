@@ -29,9 +29,10 @@ of the MIT license. See the LICENSE file for details. -->
           @delete-data-source="onDeleteDataSource"
           @delete-definition="updateSettings"
           @delete-parameter="onUpdateParameter"
-          @update-definitions="onUpdateDefinitions"
+          @related-entity-settings="onRelatedEntitySettings"
           @set-column-selections="onSetColumnSelections"
-          @set-related-data-sources="onSetRelatedDataSources" />
+          @set-related-data-sources="onSetRelatedDataSources"
+          @update-definitions="onUpdateDefinitions" />
       </template>
       <FrReportAddDataSourceCard
         v-else
@@ -77,6 +78,12 @@ of the MIT license. See the LICENSE file for details. -->
       @get-field-options="fetchFieldOptionsForSorting"
       @update-sort="saveTemplateAndUpdateSettings"
       @hidden="delete definitionBeingEdited.sort" />
+    <FrRelatedEntitySettingsModal
+      :join-type="relatedEntityDefinitionToEdit.joinType"
+      :is-saving="isSavingDefinition"
+      :is-testing="isTesting"
+      @set-related-entity-type="onSetRelatedEntityType($event, relatedEntityDefinitionToEdit.dataSource)"
+      @hidden="relatedEntityDefinitionToEdit = {}" />
     <FrDeleteModal
       :is-deleting="isDeletingTemplate"
       :is-testing="isTesting"
@@ -117,6 +124,7 @@ import FrReportParametersModal from '../modals/ReportParametersModal';
 import FrReportFiltersModal from '../modals/ReportFiltersModal';
 import FrReportAggregatesModal from '../modals/ReportAggregatesModal';
 import FrReportSortingModal from '../modals/ReportSortingModal';
+import FrRelatedEntitySettingsModal from '../modals/RelatedEntitySettingsModal';
 import i18n from '@/i18n';
 import { defaultGroups } from '../composables/ManagedUsers';
 
@@ -202,6 +210,7 @@ const isFetchingEntityColumns = ref(false);
 const isFetchingTemplate = ref(true);
 const isSavingDefinition = ref(false);
 const isSavingTemplate = ref(false);
+const relatedEntityDefinitionToEdit = ref({});
 const reportDetails = ref({
   name: '',
   description: '',
@@ -624,6 +633,32 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
     // we the template is saved relies on these updated select options.
     await Promise.all(fieldOptionPromises);
   }
+}
+
+/**
+ * Opens the related entity settings modal
+ * @param {Number} definitionIndex definition object index
+ */
+function onRelatedEntitySettings(definitionIndex) {
+  relatedEntityDefinitionToEdit.value = findSettingsObject('entities').definitions[definitionIndex];
+  bvModal.value.show('related-entity-settings-modal');
+}
+
+/**
+ * Sets the related entity join type property and saves the updated settings
+ * @param {String} joinType join type value
+ * @param {String} dataSourceName related entity data source name
+ */
+async function onSetRelatedEntityType(joinType, dataSourceName) {
+  const definition = findSettingsObject('entities').definitions.find(({ dataSource }) => dataSource === dataSourceName);
+  const definitionIndex = findSettingsObject('entities').definitions.findIndex(({ dataSource }) => dataSource === dataSourceName);
+  const updatedDefinition = {
+    ...definition,
+    joinType,
+  };
+
+  await saveTemplateAndUpdateSettings('entities', definitionIndex, updatedDefinition);
+  bvModal.value.hide('related-entity-settings-modal');
 }
 
 // Computed

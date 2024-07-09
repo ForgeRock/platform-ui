@@ -387,6 +387,41 @@ describe('Component for creating custom analytics reports', () => {
       }, ['reportadmin'], '');
     });
 
+    it('ensures that the correct payload is sent when a related data source join type is saved', async () => {
+      await addDataSource();
+      await addRelatedDataSource();
+
+      AutoApi.saveAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
+      const entitiesSettingContainer = findByTestId(wrapper, 'entities-settings-container');
+      const [, applicationRolesRelatedEntity] = entitiesSettingContainer.findAll('.card-body');
+      const ellipseMenu = applicationRolesRelatedEntity.find('[role="menu"]');
+      const allMenuItemOptions = ellipseMenu.findAll('[role="menuitem"]');
+      const [settingsOption] = allMenuItemOptions;
+
+      // loads current related entity data to edit
+      await ellipseMenu.trigger('click');
+      await settingsOption.trigger('click');
+
+      const saveAnalyticsReportSpy = jest.spyOn(AutoApi, 'saveAnalyticsReport');
+      const [,,,,, relatedEntitySettingsModal] = wrapper.findAll('[role="dialog"]');
+      const joinRadios = relatedEntitySettingsModal.findAll('[type="radio"]');
+      const [, rightRadioOption] = joinRadios;
+
+      // selects the 'right' join radio option
+      await rightRadioOption.setChecked();
+
+      const saveButton = findByText(relatedEntitySettingsModal, 'button', 'Save');
+      await saveButton.trigger('click');
+
+      expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
+        entities: [
+          { entity: 'applications' },
+          { entity: 'applications.roles', type: 'right' },
+        ],
+        fields: [],
+      }, ['reportadmin'], '');
+    });
+
     describe('@settings', () => {
       async function addParameterDefinition() {
         const [, parametersModal] = wrapper.findAll('[role="dialog"]');
