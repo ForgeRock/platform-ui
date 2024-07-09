@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -463,9 +463,25 @@ export default {
       if (!activeData.length) {
         return;
       }
-      const { data } = activeData[0];
-      const overLimit = data.length > 7;
-      const tickValues = overLimit ? [0, data.length - 1] : data.map((_d, i) => i);
+      const { data: successData } = activeData[0];
+
+      // Max of 7 tick values on X axis if interval type is 'daily'
+      const overLimit = interval === 'daily' ? successData.length > 7 : false;
+
+      // Default tick values are at the start and end of the x axis
+      let tickValues = [0, successData.length - 1];
+
+      // Unless we are not over the limit, we want to show the axes at 6 hour intervals
+      if (!overLimit && interval === 'hourly') {
+        const median = Math.floor(successData.length / 2);
+        const lowInterval = median - Math.floor(median / 2);
+        const highInterval = median + Math.floor(median / 2);
+        tickValues = [0, lowInterval, median, highInterval, successData.length - 1];
+      }
+      // Since we are under the limit of 7 ticks and not hourly, we can show every tick on the chart
+      if (!overLimit && interval !== 'hourly') {
+        tickValues = successData.map((_d, i) => i);
+      }
 
       const xAxis = d3.axisBottom(scale.x)
         .tickValues(tickValues)
@@ -473,7 +489,7 @@ export default {
           if (!Number.isInteger(d)) {
             return '';
           }
-          const { timestamp } = data[d];
+          const { timestamp } = successData[d];
           switch (interval) {
             case 'hourly':
               return dayjs(timestamp).format('ha');
@@ -587,9 +603,7 @@ export default {
         return () => null;
       }
       return {
-        x: d3.scaleLinear()
-          .range(this.range.x)
-          .domain(d3.extent(this.chartData[0].data, (_d, i) => i)),
+        x: d3.scaleLinear(d3.extent(this.chartData[0].data, (_d, i) => i), this.range.x),
         y: d3.scaleLinear()
           .range(this.range.y)
           .domain([

@@ -91,7 +91,7 @@ export default {
         }
 
         const value = found ? found.result[resultKey] : persistedValue;
-        const timestamp = found ? found.intervalValue : nextIntervalValue.format(foundFormat);
+        const timestamp = nextIntervalValue.utc('z').local().format(foundFormat);
         return {
           id: i,
           resultKey,
@@ -190,7 +190,13 @@ export default {
       const endDate = dayjs(dateRange.endDate);
       const startDate = dayjs(dateRange.startDate);
       const diffInterval = this.getDayjsIntervalType(this.selectedIntervalType);
-      const diff = endDate.diff(startDate, diffInterval);
+      let diff = endDate.diff(startDate, diffInterval);
+
+      // Add an extra hour when the diff interval is an hour to pad it to 24 hours
+      if (diffInterval === 'hour') {
+        diff += 1;
+      }
+
       const foundFormat = this.getDayjsIntervalFormat(this.selectedIntervalType);
 
       return {
@@ -236,8 +242,8 @@ export default {
       * @returns {DateRange[]} array of DateRange objects
       */
     ranges() {
-      const formatStart = (dayjsDate) => dayjsDate.hour(0).minute(0).second(0).toDate();
-      const formatEnd = (dayjsDate) => dayjsDate.hour(23).minute(59).second(59).toDate();
+      const formatStart = (dayjsDate) => dayjsDate.startOf('day').toDate();
+      const formatEnd = (dayjsDate) => dayjsDate.endOf('day').toDate();
 
       // Today
       const startOfDay = formatStart(dayjs());
