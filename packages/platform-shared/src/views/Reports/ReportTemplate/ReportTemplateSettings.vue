@@ -59,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :selected-columns="definition.selectedColumns"
                   :selected-related-data-sources="definition.selectedRelatedDataSources"
                   @delete-data-source="$emit('delete-data-source', defIndex)"
+                  @related-entity-settings="$emit('related-entity-settings', defIndex)"
                   @set-column-selections="$emit('set-column-selections', defIndex, $event)"
                   @set-related-data-sources="$emit('set-related-data-sources', defIndex, $event)" />
               </div>
@@ -116,10 +117,11 @@ const emit = defineEmits([
   'delete-definition',
   'delete-parameter',
   'input',
-  'update-definitions',
-  'update-details',
+  'related-entity-settings',
   'set-column-selections',
   'set-related-data-sources',
+  'update-definitions',
+  'update-details',
 ]);
 
 defineProps({

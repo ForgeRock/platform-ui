@@ -28,9 +28,6 @@ export default function useReportEntities() {
    */
   async function entityDefinitions(entities, fields, add = false) {
     if (!entities || entities.length === 0 || add === false) {
-      // If no entities or empty array, list is supposed to be cleared.
-      // If multiple entities, the list is meant to be replaced, so we also clear it.
-      // If only one entity, then we don't clear list because it is meant to be pushed.
       allDataSourceColumns.value = [];
     }
 
@@ -75,7 +72,9 @@ export default function useReportEntities() {
           relatedDataSources,
           selectedColumns,
           selectedRelatedDataSources: entityResourceNames.filter((resource) => relatedDataSources.includes(resource)),
-          ...(entityNameArr.length && { relationship: type || 'left' }),
+          // If entityNameArr has items, it means this is a related entity and it
+          // is intended to only add the joinType property to related entity definitions.
+          ...(entityNameArr.length && { joinType: type || 'left' }),
         };
       }));
     }
@@ -95,12 +94,12 @@ export default function useReportEntities() {
         const {
           dataSourceColumns,
           dataSource,
-          relationship,
+          joinType,
           selectedColumns,
         } = definition;
         const selectedDataSourceColumns = dataSourceColumns.filter((column) => selectedColumns.find((value) => value === column.value));
         const selectedColumnsProcessed = selectedDataSourceColumns.map(({ label, value }) => ({ label, value }));
-        entities.push({ entity: dataSource, ...(relationship && { type: relationship }) });
+        entities.push({ entity: dataSource, ...(joinType && { type: joinType }) });
         fields.push(...selectedColumnsProcessed);
       });
       return { entities, fields };

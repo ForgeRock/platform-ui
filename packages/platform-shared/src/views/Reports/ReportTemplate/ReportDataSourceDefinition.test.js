@@ -148,5 +148,38 @@ describe('Report Data Source Definition component', () => {
       await deleteButton.trigger('click');
       expect(wrapper.emitted()['delete-data-source'][0]).toBeTruthy();
     });
+
+    it('only displays the "settings" option in the ellipse menu for related entity definitions', () => {
+      const ellipseMenu = wrapper.find('[role="menu"]');
+      const allMenuItemOptions = ellipseMenu.findAll('[role="menuitem"]');
+      const [deleteOption] = allMenuItemOptions;
+
+      expect(allMenuItemOptions.length).toBe(1);
+      expect(deleteOption.text()).toBe('deleteDelete');
+
+      // sets a related entity
+      wrapper = setup({ dataSource: 'applications.roles' });
+
+      const ellipseMenuForRelatedEntities = wrapper.find('[role="menu"]');
+      const allMenuItemOptionsForRelatedEntities = ellipseMenuForRelatedEntities.findAll('[role="menuitem"]');
+      const [settingsOptionForRelatedEntities, deleteOptionForRelatedEntities] = allMenuItemOptionsForRelatedEntities;
+
+      expect(allMenuItemOptionsForRelatedEntities.length).toBe(2);
+      expect(settingsOptionForRelatedEntities.text()).toBe('settingsSettings');
+      expect(deleteOptionForRelatedEntities.text()).toBe('deleteDelete');
+    });
+
+    it('emits "related-entity-settings" when the related entity "settings" ellipse menu option is selected.', async () => {
+      // sets a related entity
+      wrapper = setup({ dataSource: 'applications.roles' });
+
+      const ellipseMenu = wrapper.find('[role="menu"]');
+      const allMenuItemOptions = ellipseMenu.findAll('[role="menuitem"]');
+      const [settingsOption] = allMenuItemOptions;
+
+      await ellipseMenu.trigger('click');
+      await settingsOption.trigger('click');
+      expect(wrapper.emitted()['related-entity-settings'][0]).toBeTruthy();
+    });
   });
 });

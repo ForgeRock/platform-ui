@@ -44,7 +44,7 @@ describe('@useReportEntities', () => {
     },
   }));
 
-  const entitiesStub = [{ entity: 'applications' }];
+  const entitiesStub = [{ entity: 'applications' }, { entity: 'applications.roles', type: 'left' }];
   const definitionsUIDataStructureStub = [
     {
       dataSource: 'applications',
@@ -64,6 +64,21 @@ describe('@useReportEntities', () => {
       ],
       relatedDataSources: ['roles', 'assignments'],
       selectedColumns: ['applications.name'],
+      selectedRelatedDataSources: [],
+    },
+    {
+      dataSource: 'applications.roles',
+      dataSourceColumns: [
+        {
+          label: 'Application Role ID',
+          value: 'applications.roles._id',
+          format: 'json',
+          type: 'string',
+        },
+      ],
+      joinType: 'left',
+      relatedDataSources: ['groups'],
+      selectedColumns: ['applications.roles._id'],
       selectedRelatedDataSources: [],
     },
   ];
@@ -92,7 +107,7 @@ describe('@useReportEntities', () => {
 
       const getReportFieldOptionsSpy = jest.spyOn(AutoApi, 'getReportFieldOptions');
 
-      const definitions = await entityDefinitions(entitiesStub, [{ label: 'Applications Name', value: 'applications.name' }]);
+      const definitions = await entityDefinitions([{ entity: 'applications' }], [{ label: 'Applications Name', value: 'applications.name' }]);
       expect(getReportFieldOptionsSpy).toHaveBeenCalledWith({
         entities: [{
           entity: entitiesStub[0].entity,
@@ -127,6 +142,63 @@ describe('@useReportEntities', () => {
       ]);
     });
 
+    it('constructs a list of UI friendly related entity definitions from API data', async () => {
+      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+        data: {
+          'roles._id': {
+            class: 'json',
+            label: 'Role ID',
+            type: 'string',
+          },
+          'roles.name': {
+            class: 'json',
+            label: 'Role Name',
+            type: 'string',
+          },
+        },
+      }));
+
+      const getReportFieldOptionsSpy = jest.spyOn(AutoApi, 'getReportFieldOptions');
+
+      const definitions = await entityDefinitions(
+        [{ entity: 'applications.roles' }],
+        [{ label: 'Application Roles', value: 'applications.roles.name' }],
+      );
+      expect(getReportFieldOptionsSpy).toHaveBeenCalledWith({
+        entities: [{
+          entity: 'roles',
+        }],
+        fields: [{
+          value: {
+            options: {},
+          },
+        }],
+      });
+      expect(definitions).toEqual([
+        {
+          dataSource: 'applications.roles',
+          dataSourceColumns: ref([
+            {
+              label: 'Role ID',
+              value: 'applications.roles._id',
+              format: 'json',
+              type: 'string',
+            },
+            {
+              label: 'Role Name',
+              value: 'applications.roles.name',
+              format: 'json',
+              type: 'string',
+            },
+          ]),
+          joinType: 'left',
+          relatedDataSources: [],
+          selectedColumns: ['applications.roles.name'],
+          selectedRelatedDataSources: [],
+        },
+      ]);
+    });
+
     it('Creates an API friendly payload for entities', () => {
       const payload = entitiesPayload(definitionsUIDataStructureStub);
       expect(payload).toEqual({
@@ -134,6 +206,10 @@ describe('@useReportEntities', () => {
         fields: [{
           label: 'Applications Name',
           value: 'applications.name',
+        },
+        {
+          label: 'Application Role ID',
+          value: 'applications.roles._id',
         }],
       });
     });

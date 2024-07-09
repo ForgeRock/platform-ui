@@ -2066,6 +2066,13 @@
       "helpText": "Help Text (optional)",
       "inputLabel": "Input Label",
       "inputType": "Input Type",
+      "joinTypes": {
+        "title": "Define how this data source is related to it's parent data source.",
+        "includeAll": "Include all",
+        "includeMatch": "Include match only",
+        "includeParentMatch": "Include parent match",
+        "includeParentNonMatch": "Include parent non match"
+      },
       "labelRequired": "Label Required",
       "profileAttribute": "Profile Attribute",
       "parametersSettingDescription": "Define parameters to constrain the results of the report.",
@@ -2075,6 +2082,7 @@
       "noColumnsAdded": "No columns added",
       "noDataSourcesFound": "No data sources found",
       "relatedDataSources": "Related data sources",
+      "relationshipSettings": "Relationship Settings",
       "reportUpdated": "Report has been updated",
       "sortingSettingDescription": "Define columns to sort the data table.",
       "sortBy": "Sort by",
