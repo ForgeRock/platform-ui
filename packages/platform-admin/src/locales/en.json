@@ -3800,13 +3800,29 @@
       "scope": "Scope"
     },
     "forms": {
+      "form": "Form",
       "listView": {
+        "errorGetData": "There was an error retrieving forms",
         "forms": "Forms",
         "form": "Form",
-        "type": "Type",
-        "errorGetData": "There was an error retrieving forms",
-        "title": "Request Forms",
-        "subtitle": "Create forms for use in user administration and application provisioning requests."
+        "subtitle": "Create forms for use in user administration and application provisioning requests.",
+        "title": "Request Forms"
+      },
+      "creation": {
+        "applicationDesc": "Choose an application for which this request form applies.",
+        "applicationRequestType": "Application Request Form",
+        "applicationRequestTypeDesc": "Create a form for creating or modifying an application object.",
+        "customRequestForm": "Custom Request Form",
+        "customRequestFormDesc": "Create a form for submitting a custom request.",
+        "errorSaving": "There was an error saving the form",
+        "errorReturningData": "Error returning data",
+        "formTypeDescription": "Choose the type of form to create.",
+        "formType": "Form Type",
+        "formDetails": "Form Details",
+        "formName": "Form Name",
+        "optionalDescription": "Description (optional)",
+        "objectType": "Object type",
+        "savingSuccess": "Form created successfully"
       },
       "editor": {
         "notFound": "Form not found"
