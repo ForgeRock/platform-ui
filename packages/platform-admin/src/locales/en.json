@@ -1489,7 +1489,7 @@
         "nonAccountObject": "Non-Account Object",
         "nonAccountObjectDescription": "Must match a non account object type ID",
         "nonAccountProperties": "Non Account Properties",
-        "nonAccountPropertiesSubtitle": "Referenced object type is the ID of the Non-account object and Source is the account property. This should also be set on the account property above.",
+        "nonAccountPropertiesSubtitle": "Source is the account property and Referenced object type is the ID of the Non-account object. This should also be set on the account property above.",
         "objectTypeDropdownDescription1": "Don't see the object type you were expecting?",
         "objectTypeDropdownDescription2": "Import a provisioner configuration.",
         "objectTypeId": "Object Type ID",

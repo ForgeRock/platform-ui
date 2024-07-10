@@ -38,10 +38,10 @@ export function getRules(i18n) {
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.ALPHA_NUM_SPACES');
   };
 
-  // Alpha lowercase, hypen and period rule
-  const alpha_lower_period_hyphen = (value) => {
-    const regex = /^([a-z]|\.|-)+$/g;
-    return regex.test(value) || i18n.global.t('common.policyValidationMessages.alphaLowerCasePeriodHypenOnly');
+  // Alphanumeric lowercase, hypen and period rule
+  const alpha_num_lower_period_hyphen = (value) => {
+    const regex = /^([a-z]|[0-9]|\.|-)+$/g;
+    return regex.test(value) || i18n.global.t('common.policyValidationMessages.alphaNumericLowerCasePeriodHypenOnly');
   };
 
   // Allows alphanumeric, underscores and commas
@@ -50,10 +50,10 @@ export function getRules(i18n) {
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.ALPHA_NUM_UNDER_COMMA');
   };
 
-  // Bundle version rules for the applications connector, written as a range [min_version, max_version)
+  // Bundle version rules for the applications connector, written a min_version
   // errors if input value contains characters not of
-  // open square bracket, numeric, periods, space, comma and right parenthesis
-  const connector_bundle_version = (value) => value.match(/^[[][1-9](.(0|[1-9][0-9]?)){3}, [1-9](.(0|[1-9][0-9]?)){3}[)]$/g) || i18n.global.t('common.policyValidationMessages.connectorBundleVersion');
+  // numeric and periods
+  const connector_bundle_version = (value) => value.match(/^[1].[5](.(0|[1-9][0-9]?)){2}$/g) || i18n.global.t('common.policyValidationMessages.connectorBundleVersion');
 
   // Date rule
   // added for workflow
@@ -208,9 +208,9 @@ export function getRules(i18n) {
     alpha,
     alpha_dash,
     alpha_dash_spaces,
-    alpha_lower_period_hyphen,
     alpha_num,
     alpha_num_lower,
+    alpha_num_lower_period_hyphen,
     alpha_num_spaces,
     alpha_num_under_comma,
     connector_bundle_version,
