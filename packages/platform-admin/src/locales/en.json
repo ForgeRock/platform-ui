@@ -1478,6 +1478,7 @@
       "templateWizard": {
         "accountObjectType": "Account Object Type",
         "addNao": "Add Non-Account Object",
+        "addNaoWarning": "You must add an account object type before a non-account object type can be added.",
         "addProperty": "Add Property",
         "addRule": "Add Rule",
         "correlationQuery": "Correlation Query",
