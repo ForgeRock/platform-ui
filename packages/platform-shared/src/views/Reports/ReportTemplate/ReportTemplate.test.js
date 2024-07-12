@@ -436,12 +436,15 @@ describe('Component for creating custom analytics reports', () => {
         const parameterHeading = parametersSettingContainer.find('h4');
         expect(parameterHeading.exists()).toBe(false);
 
+        AutoApi.saveAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
+
         await nameField.setValue('MyParameter');
         await labelField.setValue('My Parameter Name');
         await typeSelect.trigger('click');
         await typeStringOption.trigger('click');
         await flushPromises();
         await saveButton.trigger('click');
+        await nextTick();
       }
 
       describe('@parameters', () => {
@@ -493,6 +496,7 @@ describe('Component for creating custom analytics reports', () => {
 
           const saveButton = findByText(parametersModal, 'button', 'Save');
           await saveButton.trigger('click');
+          await flushPromises();
 
           const updatedParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'My Updated Parameter user_provided');
           expect(updatedParameterDefinitionHeading.exists()).toBe(true);

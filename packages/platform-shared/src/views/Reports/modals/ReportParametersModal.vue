@@ -68,7 +68,7 @@ to such license between the licensee and ForgeRock AS. -->
             :label="$t('reports.template.helpText')"
             :placeholder="$t('common.optionalFieldTitle', {fieldTitle: $t('reports.template.helpText')})" />
         </BFormGroup>
-        <BFormGroup>
+        <BFormGroup v-if="inputType === 'String'">
           <FrField
             v-model="multivalued"
             name="multivalued"
@@ -304,7 +304,7 @@ const formValues = computed(() => {
       inputLabel: inputLabel.value,
       inputType: inputType.value,
       helpText: helpText.value,
-      multivalued: multivalued.value,
+      multivalued: inputType.value !== 'String' ? false : multivalued.value,
       enumeratedValues: !enumeratedValuesAreEmpty.value && showEnumeratedValues.value
         ? enumeratedValues.value
         : [],
