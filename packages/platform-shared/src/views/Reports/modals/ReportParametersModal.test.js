@@ -189,6 +189,22 @@ describe('Report Parameters Modal component', () => {
     //   expect(enumeratedValuesCard).toBeUndefined();
     // });
 
+    it('ensures that the "Multivalued" checkbox shows only when the "Input Type" dropdown has a selection of "String"', async () => {
+      let multivaluedCheckbox = wrapper.find('input[name="multivalued"]');
+      expect(multivaluedCheckbox.exists()).toBe(false);
+
+      // Input type select field
+      const inputTypeSelect = findByRole(wrapper, 'listbox');
+      await inputTypeSelect.trigger('click');
+
+      const inputTypeStringOption = inputTypeSelect.findAll('li')[0].find('span');
+      expect(inputTypeStringOption.text()).toBe('String');
+
+      await inputTypeStringOption.trigger('click');
+      multivaluedCheckbox = wrapper.find('input[name="multivalued"');
+      expect(multivaluedCheckbox.exists()).toBe(true);
+    });
+
     it('ensures that the "Enumerated Values" checkbox only shows when the "Input Type" select has "String" selected as an option', async () => {
       let enumeratedCheckbox = wrapper.find('input[name="enumerated-values"]');
       expect(enumeratedCheckbox.exists()).toBe(false);

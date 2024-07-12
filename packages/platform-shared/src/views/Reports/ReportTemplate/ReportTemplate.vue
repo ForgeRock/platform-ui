@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
           :report-settings="reportSettings"
           @delete-data-source="onDeleteDataSource"
           @delete-definition="updateSettings"
-          @delete-parameter="onUpdateParameter"
+          @delete-parameter="onDeleteParameter"
           @related-entity-settings="onRelatedEntitySettings"
           @set-column-selections="onSetColumnSelections"
           @set-related-data-sources="onSetRelatedDataSources"
@@ -607,7 +607,8 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
   const filterRulesThatMatchParameter = filterGroup ? filterGroup.subfilters.filter((rule) => rule.value === oldParameterName) : [];
   const parameterHasNewName = oldParameterName !== currentDefinition?.parameterName;
 
-  updateSettings('parameters', definitionIndex, currentDefinition);
+  await saveTemplateAndUpdateSettings('parameters', definitionIndex, currentDefinition);
+  disableTemplateSave.value = true;
 
   // Handle filters on parameter update
   if (filterRulesThatMatchParameter.length) {
@@ -629,9 +630,52 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
     // variable list options get updated with the new parameter label.
     filterRulesThatMatchParameter.forEach((rule) => { fieldOptionPromises.push(fetchFieldOptionsForFilters(rule.operator)); });
 
-    // We must await the response since the filters payload that runs when
-    // we the template is saved relies on these updated select options.
+    // We must await the response since the filters payload that runs when we
+    // execute saveTemplate below relies on these updated select options.
     await Promise.all(fieldOptionPromises);
+
+    // Template needs to be saved a second time because the filters payload relies on an API supplied field
+    // options object for determining the filters payload. The template is saved with the initial parameter
+    // updates above which forces us to fetch a new filter fieldoptions that includes the updated parameter
+    // data, then we save the template a second time with the newly updated parameter data.
+    saveTemplate();
+  }
+}
+
+/**
+ * Deletes a parameter definition while also checking to see if the
+ * parameter name has changed, so any presently defined filter definitions
+ * with the same parameter selection can be updated accordingly.
+ * @param {Number} definitionIndex parameter definition index position
+ * @param {Object} currentDefinition parameter definition object
+ */
+async function onDeleteParameter(definitionIndex, currentDefinition) {
+  const existingFilterDefinitions = findSettingsObject('filter').definitions;
+  const existingParameterDefinitions = findSettingsObject('parameters').definitions;
+  const { parameterName: oldParameterName } = existingParameterDefinitions[definitionIndex] || {};
+  const [filterGroup] = existingFilterDefinitions;
+  const filterRulesThatMatchParameter = filterGroup ? filterGroup.subfilters.filter((rule) => rule.value === oldParameterName) : [];
+  const parameterHasNewName = oldParameterName !== currentDefinition?.parameterName;
+
+  updateSettings('parameters', definitionIndex, currentDefinition);
+
+  // Handle filters on parameter update
+  if (filterRulesThatMatchParameter.length) {
+    if (parameterHasNewName) {
+      const updatedRules = updateDefinitionOnParameterChange(filterGroup.subfilters, oldParameterName, currentDefinition?.parameterName);
+      if (!updatedRules.length) {
+        // Must delete the filter definition altogether since there are no rules
+        existingFilterDefinitions.splice(0);
+      } else {
+        // Replaces the filter rules
+        filterGroup.subfilters.splice(0);
+        filterGroup.subfilters.push(...updatedRules);
+      }
+    }
+
+    // Must fetch filter field options for all unique operators so the
+    // variable list options get updated with the new parameter label.
+    filterRulesThatMatchParameter.forEach((rule) => { fetchFieldOptionsForFilters(rule.operator); });
   }
 }
 
