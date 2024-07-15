@@ -116,23 +116,6 @@ export function setStageValue(pageNode, id, key, value) {
   }
 }
 
-export function createCustomStageValue(stageJSON, type, id, key, value) {
-  let stage = parseStage(stageJSON);
-
-  if (!stage) {
-    stage = {};
-  }
-  const propertyName = key.split('.')[1] || key;
-  if (value) {
-    if (typeof value === 'object' && !Object.keys(value).length) {
-      delete stage[propertyName];
-    } else {
-      stage[propertyName] = value;
-    }
-  }
-  return JSON.stringify({ [type]: [stage] });
-}
-
 /**
  * Check if a string is a valid JSON
  */
