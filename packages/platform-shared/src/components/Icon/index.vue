@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <span>
     <slot name="prepend" /><span
       aria-hidden="true"
-      :class="computedClass">
+      :class="`notranslate ${computedClass}`">
       {{ name }}
     </span><slot name="default" />
   </span>
