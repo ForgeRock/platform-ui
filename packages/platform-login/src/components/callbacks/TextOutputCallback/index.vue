@@ -8,12 +8,12 @@ of the MIT license. See the LICENSE file for details. -->
     aria-labelledby="message"
     :aria-level="isFirstRenderedCallback ? 1 : 2"
     ref="textOutputPanel"
-    role="heading" >
+    role="heading">
     <div
       v-if="messageType === 'INFORMATION'"
       class="text-muted w-100"
       id="message"
-      :aria-hidden="isFirstRenderedCallback"
+      :aria-hidden="!isMfaRegistrationStep && isFirstRenderedCallback"
       v-html="sanitizedMessage" />
     <div
       v-else-if="messageType === 'WARNING'"
@@ -65,6 +65,10 @@ export default {
       required: true,
     },
     isFirstRenderedCallback: {
+      type: Boolean,
+      required: true,
+    },
+    isMfaRegistrationStep: {
       type: Boolean,
       required: true,
     },

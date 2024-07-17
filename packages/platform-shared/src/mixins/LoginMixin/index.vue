@@ -287,10 +287,13 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
       callbackSpecificProps: { isOnlyCallback: currentStep.callbacks.length === 1 },
       listeners: ['hide-next-button', 'disable-next-button'],
     }),
-    TextOutputCallback: () => ({
-      callbackSpecificProps: { isFirstRenderedCallback: componentList.length === 0 },
-      listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback', 'update-screen-reader-message'],
-    }),
+    TextOutputCallback: () => {
+      const isMfaRegistrationStep = currentStep.getCallbacksOfType(FrCallbackType.HiddenValueCallback)?.[0]?.getInputValue() === 'mfaDeviceRegistration';
+      return {
+        callbackSpecificProps: { isFirstRenderedCallback: componentList.length === 0, isMfaRegistrationStep },
+        listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback', 'update-screen-reader-message'],
+      };
+    },
     ValidatedCreatePasswordCallback: () => {
       let stage;
       if (currentStage.ValidatedCreatePasswordCallback) {
