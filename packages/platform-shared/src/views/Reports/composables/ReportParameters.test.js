@@ -112,7 +112,7 @@ describe('@useReportParameters', () => {
         it('outputs an expected payload with enumerated values and is multivalued', async () => {
           const payload = {
             ...sharedUserProvidedBody,
-            type: 'string',
+            type: 'array',
             enum: [{
               name: 'enumName',
               value: 'enumVal',

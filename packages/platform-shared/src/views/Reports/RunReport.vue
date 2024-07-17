@@ -189,12 +189,15 @@ of the MIT license. See the LICENSE file for details. -->
             <FrField
               v-model="parameter.value"
               class="mb-3"
-              :label="parameter.type === 'multiselect' && !parameter.value.length ? $t('reports.tabs.runReport.pressEnterToCreateATag') : parameter.label"
-              :placeholder="parameter.type === 'multiselect' ? $t('reports.tabs.runReport.pressEnterToCreateATag') : ''"
+              :label="parameter.type === 'multiselect' && !parameter.value.length
+                ? $t('reports.tabs.runReport.pressEnterToCreateATag')
+                : (parameter.placeholder || parameter.label)"
+              :placeholder="parameter.type === 'multiselect' ? $t('reports.tabs.runReport.pressEnterToCreateATag') : parameter.placeholder"
               :name="parameter.label"
+              :options="parameter.enums || []"
               :show-no-options="false"
               :show-no-results="false"
-              :taggable="true"
+              :taggable="parameter.type !== 'select'"
               :testid="parameter.label"
               :type="parameter.type" />
           </BCol>
@@ -469,7 +472,7 @@ const unmappedParametersModel = computed(() => {
 });
 const unmappedFieldsDisableSubmit = computed(() => {
   if (unmappedParameters.value.length) {
-    return !!unmappedParameters.value.filter((parameter) => parameter.value === '').length;
+    return !!unmappedParameters.value.filter((parameter) => !parameter.value.length).length;
   }
   return false;
 });
@@ -511,17 +514,22 @@ const doesNotContainAtLeastOneValidParameter = computed(() => {
   const doesNotHaveUnmappedParameters = !unmappedParameters.value.length;
   return doesNotHaveMappedParameters && doesNotHaveUnmappedParameters;
 });
-const disableSubmit = computed(() => doesNotContainAtLeastOneValidParameter.value
-  || timeframeDisableSubmit.value
-  || applicationsDisableSubmit.value
-  || campaignNameDisableSubmit.value
-  || campaignStatusDisableSubmit.value
-  || oAuthApplicationsDisableSubmit.value
-  || usersDisableSubmit.value
-  || orgsDisableSubmit.value
-  || rolesDisableSubmit.value
-  || journeysDisableSubmit.value
-  || unmappedFieldsDisableSubmit.value);
+const disableSubmit = computed(() => {
+  if (props.isPrePackagedReport) {
+    return doesNotContainAtLeastOneValidParameter.value
+    || timeframeDisableSubmit.value
+    || applicationsDisableSubmit.value
+    || campaignNameDisableSubmit.value
+    || campaignStatusDisableSubmit.value
+    || oAuthApplicationsDisableSubmit.value
+    || usersDisableSubmit.value
+    || orgsDisableSubmit.value
+    || rolesDisableSubmit.value
+    || journeysDisableSubmit.value
+    || unmappedFieldsDisableSubmit.value;
+  }
+  return unmappedFieldsDisableSubmit.value;
+});
 
 /**
  * Determines if a field should allow user input tags
@@ -587,6 +595,7 @@ async function setReportFields(reportConfig) {
     date: 'date',
     float: 'number',
     integer: 'number',
+    select: 'select',
     string: 'string',
   };
 
@@ -607,13 +616,23 @@ async function setReportFields(reportConfig) {
         fetchModelList.push(config.model);
       }
     } else {
-      const fieldType = fieldTypeMap[parameters[key].type] || 'string';
-      // Any unexpected parameters are shown alongside a corresponding generic field.
+      const parameterType = parameters[key].type;
+      const fieldTypeMapValue = parameters[key].enum && parameterType === 'string'
+        ? 'select'
+        : parameterType || 'string';
+      const fieldType = fieldTypeMap[fieldTypeMapValue];
+      const enumSelectOptions = parameters[key].enum
+        ? parameters[key].enum.map(({ name, value }) => ({ text: name, value }))
+        : undefined;
+
+      // Any unexpected parameters are shown alongside a corresponding field.
       unmappedParameters.value.push({
         name: key,
         label: parameters[key].label || key,
+        placeholder: parameters[key].description || '',
         type: fieldType,
         value: fieldType === 'boolean' ? false : '',
+        ...(enumSelectOptions && { enums: enumSelectOptions }),
       });
     }
   });

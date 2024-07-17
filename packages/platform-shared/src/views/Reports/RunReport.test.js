@@ -222,7 +222,9 @@ describe('Run Report component', () => {
         wrapper = setup({
           templateName: 'TEMPLATE-NAME',
           templateState: 'draft',
-          reportConfig: { parameters: { my_unexpected_parameter: { type: 'string' } } },
+          reportConfig: {
+            parameters: { my_unexpected_parameter: { type: 'string' } },
+          },
         });
         await flushPromises();
         jest.clearAllMocks();
@@ -305,6 +307,78 @@ describe('Run Report component', () => {
         const unexpectedParameterInput = findByTestId(wrapper, 'fr-field-my_unexpected_parameter').find('[testid="my_unexpected_parameter"]');
         expect(unexpectedParameterInput.exists()).toBe(true);
         expect(unexpectedParameterInput.attributes('type')).toBe('date');
+      });
+
+      it('ensures that unexpected parameter displays a single select dropdown with the provided enum list', async () => {
+        const enums = [
+          { name: 'enum1', value: 'enum1-val' },
+          { name: 'enum2', value: 'enum2-val' },
+        ];
+
+        fieldDataMocks();
+        wrapper = setup({
+          templateName: 'TEMPLATE-NAME',
+          reportConfig: { parameters: { single_select_enum: { type: 'string', enum: enums } } },
+        });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const enumSingleSelect = findByRole(wrapper, 'listbox');
+        expect(enumSingleSelect.exists()).toBe(true);
+
+        const options = enumSingleSelect.findAll('[role="option"]');
+        expect(options.length).toBe(2);
+
+        const [enum1, enum2] = options;
+        expect(enum1.text()).toBe('enum1');
+        expect(enum2.text()).toBe('enum2');
+
+        await enumSingleSelect.trigger('click');
+        await enum1.find('span').trigger('click');
+
+        const singleSelectEnumInput = findByTestId(wrapper, 'fr-field-single_select_enum');
+        expect(singleSelectEnumInput.attributes('value')).toEqual('enum1-val');
+
+        await enumSingleSelect.trigger('click');
+        await enum2.find('span').trigger('click');
+
+        expect(singleSelectEnumInput.attributes('value')).toEqual('enum2-val');
+      });
+
+      it('ensures that unexpected parameter displays a multi-select dropdown with the provided enum list', async () => {
+        const enums = [
+          { name: 'enum1', value: 'enum1-val' },
+          { name: 'enum2', value: 'enum2-val' },
+        ];
+
+        fieldDataMocks();
+        wrapper = setup({
+          templateName: 'TEMPLATE-NAME',
+          reportConfig: { parameters: { multi_select_enum: { type: 'array', enum: enums } } },
+        });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const enumMultiSingleSelect = findByRole(wrapper, 'listbox');
+        expect(enumMultiSingleSelect.exists()).toBe(true);
+
+        const options = enumMultiSingleSelect.findAll('[role="option"]');
+        expect(options.length).toBe(2);
+
+        const [enum1, enum2] = options;
+        expect(enum1.text()).toBe('enum1');
+        expect(enum2.text()).toBe('enum2');
+
+        await enumMultiSingleSelect.trigger('click');
+        await enum1.find('span').trigger('click');
+
+        const multiSelectEnumInput = findByTestId(wrapper, 'fr-field-multi_select_enum');
+        expect(multiSelectEnumInput.attributes('value')).toEqual('enum1-val');
+
+        await enumMultiSingleSelect.trigger('click');
+        await enum2.find('span').trigger('click');
+
+        expect(multiSelectEnumInput.attributes('value')).toEqual('enum1-val,enum2-val');
       });
 
       it('ensures that unexpected parameters disable the submit button if they do not have a value', () => {
