@@ -4011,5 +4011,74 @@
       "afterADuration": "after a duration",
       "allowExceptionFor": "For {exceptionDuration} {exceptionTimespan}"
     }
+  },
+  "forms": {
+    "editor": {
+      "categories": {
+        "customFields": "Custom Fields"
+      },
+      "closeButtonTooltip": "Toggle Field List",
+      "exitPreview": "Exit Preview",
+      "field": {
+        "columns": {
+          "label": "Columns",
+          "description": "Columns this field should span on a 12 column grid."
+        },
+        "defaultValue": {
+          "label": "Provide Default Value",
+          "description": "Provide a default value for this property."
+        },
+        "description": {
+          "description": "Help text to appear below the field.",
+          "label": "Description"
+        },
+        "label": {
+          "description": "Label for this field.",
+          "label": "Label"
+        },
+        "model": {
+          "description": "Property to write field value to.",
+          "label": "Model"
+        },
+        "offset": {
+          "label": "Offset",
+          "description": "Columns this field should be offset from the previous column on a 12 column grid."
+        },
+        "required": {
+          "label": "Required"
+        }
+      },
+      "fields": "Fields",
+      "notFound": "Form not found",
+      "types": {
+        "checkbox": {
+          "defaultValue": {
+            "label": "Provide Default Value"
+          },
+          "description": "Checkbox input to accept a single boolean value.",
+          "name": "Checkbox"
+        },
+        "date": {
+          "description": "Date input to accept a single ISO-formatted time/date stamp.",
+          "name": "Date"
+        }, 
+        "multiselect": {
+          "description": "Select input to accept multiple strings from a list of enumerated values or freeform text input.",
+          "name": "Multiselect"
+        },
+        "select": {
+          "description": "Select input to accept a single string from a list of enumerated values.",
+          "name": "Select"
+        },
+        "text": {
+          "description": "Textfield input to accept a single string.",
+          "name": "Text"
+        },
+        "textarea": {
+          "description": "Text area to accept a multiline string input.",
+          "name": "Textarea"
+        }
+      }
+    }
   }
 }
