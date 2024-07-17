@@ -87,50 +87,17 @@ export default function useReportParameters() {
             multivalued,
             profileAttribute,
           } = definition;
-          const isPrimitiveValue = inputType === 'String' || inputType === 'Boolean' || inputType === 'Integer' || inputType === 'Date' || inputType === 'Float';
 
           if (parameterType === 'user_provided') {
             const inputTypeFromLabel = parameterTypes.value.find((paramType) => paramType.label === inputType).type;
-            const sharedBody = {
-              source: parameterType,
-              label: inputLabel,
-              description: helpText,
-            };
-
-            if (enumeratedValues.length && inputType === 'String') {
-              return {
-                [parameterName]: {
-                  ...sharedBody,
-                  type: inputTypeFromLabel,
-                  enum: enumeratedValues,
-                  ...(multivalued && { item: { type: inputTypeFromLabel } }),
-                },
-              };
-            }
-            if (multivalued) {
-              return {
-                [parameterName]: {
-                  ...sharedBody,
-                  type: 'array',
-                  item: {
-                    type: inputTypeFromLabel,
-                  },
-                },
-              };
-            }
-            if (isPrimitiveValue) {
-              return {
-                [parameterName]: {
-                  ...sharedBody,
-                  type: inputTypeFromLabel,
-                },
-              };
-            }
             return {
               [parameterName]: {
-                ...sharedBody,
-                type: 'reference',
-                reference: '',
+                source: parameterType,
+                label: inputLabel,
+                description: helpText,
+                type: multivalued ? 'array' : inputTypeFromLabel,
+                ...(multivalued && { item: { type: inputTypeFromLabel } }),
+                ...(enumeratedValues.length && inputType === 'String' && { enum: enumeratedValues }),
               },
             };
           }
