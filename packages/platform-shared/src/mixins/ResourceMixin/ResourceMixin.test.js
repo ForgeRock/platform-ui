@@ -60,7 +60,8 @@ describe('ResourceMixin', () => {
   describe('Finding Policy errors', () => {
     const policyReqs = [
       { a: 'a', params: {}, policyRequirement: 'REQUIRED' },
-      { a: 'b', params: {}, policyRequirement: 'UNIQUE' },
+      { a: 'b', params: {}, policyRequirement: 'MATCH_REGEXP' },
+      { a: 'c', params: {}, policyRequirement: 'UNIQUE' },
     ];
 
     const errorResponseKey = {
@@ -70,6 +71,19 @@ describe('ResourceMixin', () => {
             {
               policyRequirements: [{ a: 'REQUIRED', params: {} }],
               property: 'foo',
+            },
+          ],
+        },
+      },
+    };
+
+    const errorResponseRegExp = {
+      data: {
+        detail: {
+          failedPolicyRequirements: [
+            {
+              policyRequirements: [{ a: 'MATCH_REGEXP', params: {} }],
+              property: 'fizz',
             },
           ],
         },
@@ -89,20 +103,30 @@ describe('ResourceMixin', () => {
       },
     };
 
-    const properties = [{ name: 'foo' }, { name: 'bar', title: 'Title Bar' }];
+    const properties = [
+      { name: 'foo' },
+      { propName: 'fizz' },
+      { name: 'bar', title: 'Title Bar' },
+    ];
     const finalErrorKey = [{ exists: true, field: 'foo', msg: 'common.policyValidationMessages.REQUIRED' }];
-    const finalErrorTitle = [{ exists: true, field: 'bar', msg: 'common.policyValidationMessages.REQUIRED' }];
+    const finalErrorRegExp = [{ exists: true, field: 'fizz', msg: 'common.policyValidationMessages.MATCH_REGEXP' }];
+    const finalErrorTitle = [{ exists: true, field: 'bar', msg: 'common.policyValidationMessages.UNIQUE' }];
 
     it('Finds and returns policy error', () => {
-      const normalizeSpy = jest.spyOn(wrapper.vm, 'normalizePolicies').mockReturnValue(policyReqs);
-
+      const normalizeSpyForErrorKey = jest.spyOn(wrapper.vm, 'normalizePolicies').mockReturnValue([policyReqs[0]]);
       const parsedErrorKey = wrapper.vm.findPolicyError(errorResponseKey, properties);
       expect(parsedErrorKey).toStrictEqual(finalErrorKey);
+      expect(normalizeSpyForErrorKey).toHaveBeenCalled();
 
+      const normalizeSpyForRegExpError = jest.spyOn(wrapper.vm, 'normalizePolicies').mockReturnValue([policyReqs[1]]);
+      const parsedErrorRegExp = wrapper.vm.findPolicyError(errorResponseRegExp, properties);
+      expect(parsedErrorRegExp).toStrictEqual(finalErrorRegExp);
+      expect(normalizeSpyForRegExpError).toHaveBeenCalled();
+
+      const normalizeSpyForErrorTitle = jest.spyOn(wrapper.vm, 'normalizePolicies').mockReturnValue([policyReqs[2]]);
       const parsedErrorTitle = wrapper.vm.findPolicyError(errorResponseTitle, properties);
       expect(parsedErrorTitle).toStrictEqual(finalErrorTitle);
-
-      expect(normalizeSpy).toHaveBeenCalled();
+      expect(normalizeSpyForErrorTitle).toHaveBeenCalled();
     });
   });
 
