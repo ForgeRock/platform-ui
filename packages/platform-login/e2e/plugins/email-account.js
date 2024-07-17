@@ -36,13 +36,13 @@ const getLatestEmail = (account) => new Promise((resolve, reject) => {
 
   // Wait for connection to be ready
   connection.once('ready', () => {
-    // Open its inbox
-    connection.openBox('INBOX', true, (err, box) => {
+    // Open its inbox in read-write mode
+    connection.openBox('INBOX', false, (err, box) => {
       if (err) {
         reject(err);
       }
 
-      // If there are no messages, return false
+      // If there are no new messages, return false
       if (box.messages.total === 0) {
         resolve(false);
       } else {
@@ -76,24 +76,41 @@ const getLatestEmail = (account) => new Promise((resolve, reject) => {
 
         // Finally
         fetch.on('end', () => {
-          // End the connection
-          connection.end();
-
           // If email details are empty return false
           if (!headers.length && !body.length) {
+            // End the connection
+            connection.end();
             resolve(false);
-          }
+          } else {
+            const parsedHeaders = Imap.parseHeader(headers);
 
-          // Return the email details
-          const parsedHeaders = Imap.parseHeader(headers);
-          resolve({
-            headers: {
-              from: parsedHeaders.from[0],
-              to: parsedHeaders.to[0],
-              subject: parsedHeaders.subject[0],
-            },
-            body,
-          });
+            // Set the flag to delete fetched email
+            connection.seq.addFlags(box.messages.total, 'Deleted', (e) => {
+              if (e) {
+                // End the connection
+                connection.end();
+                reject(e);
+              } else {
+                connection.expunge(() => {
+                  // Get the email details
+                  const emailDetails = {
+                    headers: {
+                      from: parsedHeaders.from[0],
+                      to: parsedHeaders.to[0],
+                      subject: parsedHeaders.subject[0],
+                    },
+                    body,
+                  };
+
+                  // End the connection
+                  connection.end();
+
+                  // Resolve with the email details
+                  resolve(emailDetails);
+                });
+              }
+            });
+          }
         });
       }
     });
