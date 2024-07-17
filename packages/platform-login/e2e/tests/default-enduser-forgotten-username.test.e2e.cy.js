@@ -13,13 +13,11 @@ import { setEmailProviderConfigByAccount, extractLinkFromEmail } from '../utils/
 import { putEmailProviderConfig, getDefaultProviderConfig } from '../api/emailApi.e2e';
 
 filterTests(['forgeops', 'cloud'], () => {
-  describe('Default ResetPassword Journey tests', () => {
+  describe('Default ForgottenUsername Journey tests', () => {
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
-    const resetPasswordUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ResetPassword#/`;
-    const defaultLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login#/`;
+    const forgotUsernameUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ForgottenUsername#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-    const defaultPassword = 'Pass1234!';
-    const resetPassword = 'Reset4321?';
+    const userPassword = 'Pass1234!';
     let userId;
     let emailAccount;
     let defaulEmailConfig;
@@ -59,7 +57,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.log('Create new IDM Enduser').then(() => {
         createIDMUser({
           userName,
-          password: defaultPassword,
+          password: userPassword,
           givenName: userName,
           sn: 'test',
           mail: emailAccount.user,
@@ -74,13 +72,13 @@ filterTests(['forgeops', 'cloud'], () => {
 
     beforeEach(() => {
       // Load base Journey URL
-      cy.visit(resetPasswordUrl);
+      cy.visit(forgotUsernameUrl);
 
       // Wait for a Journey page to fully load
       cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
 
       // Check correct Journey has loaded
-      cy.findByRole('heading', { name: 'Reset Password', level: 1 }).should('be.visible');
+      cy.findByRole('heading', { name: 'Forgotten Username', level: 1 }).should('be.visible');
     });
 
     after(() => {
@@ -95,14 +93,14 @@ filterTests(['forgeops', 'cloud'], () => {
       });
     });
 
-    function loginEnduser(endUserName, password) {
+    function loginEnduser() {
       // Check the browser has been directed to the default Login page
       cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible');
       cy.findByRole('heading', { name: 'Sign In', level: 1 }).should('exist').should('be.visible');
 
       // Try to login Enduser
-      cy.findByLabelText('User Name').should('be.visible').type(endUserName, { force: true });
-      cy.findAllByLabelText('Password').first().type(password, { force: true });
+      cy.findByLabelText('User Name').should('be.visible').type(userName, { force: true });
+      cy.findAllByLabelText('Password').first().type(userPassword, { force: true });
       cy.findByRole('button', { name: 'Next' }).click();
     }
 
@@ -114,24 +112,24 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
       cy.findByRole('heading', { name: 'Sign In', level: 1 }).should('exist').should('be.visible');
 
-      // Check that we can return to the start of ResetPassword Journey page
+      // Check that we can return to the start of ForgottenUsername Journey page
       cy.go('back');
 
       // Wait for a Journey page to fully load
       cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
       // Check correct Journey has loaded
-      cy.findByRole('heading', { name: 'Reset Password', level: 1, timeout: 10000 }).should('be.visible');
+      cy.findByRole('heading', { name: 'Forgotten Username', level: 1, timeout: 10000 }).should('be.visible');
       // Find Sign in link and check its functionality
       cy.findByRole('link', { name: 'Sign in' }).should('be.visible').click();
 
       // Login as Enduser with password used during creation
-      loginEnduser(userName, defaultPassword);
+      loginEnduser();
 
       // Wait for successfull login
       cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
     });
 
-    it('Reset user password, get link from Email, finish resetting password and check new password is correctly set for subsequent logins', () => {
+    it('Fill in user email, get link from Email, correctly login with the link from recieved email', () => {
       // Fill in account under which testing Enduser is registered
       cy.findByLabelText('Email Address').should('be.visible').type(emailAccount.user);
 
@@ -141,73 +139,32 @@ filterTests(['forgeops', 'cloud'], () => {
       // Ensure we are at the suspended stage
       cy.findByText('An email has been sent to the address you entered. Click the link in that email to proceed.').should('be.visible');
 
-      // Get the "Reset your password" email
+      // Get the "Account Information - username" email
       getLastEmail();
 
       cy.get('@emailObject').then((emailObject) => {
-        // Check the "Reset your password" emails details are as expected
-        expect(emailObject.headers.subject).to.equal('Reset your password');
+        // Check the "Account Information - username" emails details are as expected
+        expect(emailObject.headers.subject).to.equal('Account Information - username');
         expect(emailObject.headers.from).to.equal('Test <test@forgerock.com>');
         expect(emailObject.headers.to).to.equal(emailAccount.user);
-        expect(emailObject.body).contains('Click to reset your password');
-        expect(emailObject.body).contains('Password reset link');
+        expect(emailObject.body).contains(`Your username is '${userName}'`);
+        expect(emailObject.body).contains('Click here to login');
 
         // Get the registration link from the email
-        const resetLink = extractLinkFromEmail(emailObject.body);
+        const loginLink = extractLinkFromEmail(emailObject.body);
 
-        // Visit the Password reset link from email
-        cy.visit(resetLink);
+        // Visit the Login link from email
+        cy.visit(loginLink);
 
-        // Wait for a Journey page to fully load
-        cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
-
-        // We landed on a correct page where user can reset its password
-        cy.findByRole('heading', { name: 'Reset Password', level: 1 }).should('be.visible');
-
-        // Make sure password requirements are fully loaded (Journey won't work without password requirements being shown and they might load after Next button is visible)
-        cy.findByText('Must be at least 8 characters long').should('be.visible');
-        if (!Cypress.env('IS_FRAAS')) {
-          cy.findByText('Must have at least 1 capital letter(s)').should('be.visible');
-          cy.findByText('Must have at least 1 number(s)').should('be.visible');
-        } else {
-          cy.findByText('One lowercase character, one uppercase character, one number, one special character').should('be.visible');
-        }
-
-        // Type in password to reset to
-        cy.findByLabelText('Password').should('be.visible').type(resetPassword);
-
-        // Proceed to the next step
-        cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
-
-        // We should get redirected to end user
-        cy.location().should((location) => {
-          expect(location.pathname).to.eq('/enduser/');
-        });
+        // Check that Login Journey page is correctly loaded and proceed with user login
+        loginEnduser();
 
         // Wait for successfull login
         cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
       });
-
-      // Logout enduser to check old password does no longer work and new password is sucessfully set
-      cy.logout();
-
-      // Visit default Login Journey page
-      cy.visit(defaultLoginUrl);
-
-      // Try to login with old password that should no longer work
-      loginEnduser(userName, defaultPassword);
-      if (!Cypress.env('IS_FRAAS')) {
-        cy.findByTestId('FrAlert').should('exist').contains('Login failure').should('be.visible');
-      }
-
-      // Try to login with new password that should be correctly set
-      loginEnduser(userName, resetPassword);
-
-      // Wait for successfull login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
     });
 
-    it('Reset password link works only once', () => {
+    it('Forgot username link works only once', () => {
       // Fill in account under which testing Enduser is registered
       cy.findByLabelText('Email Address').should('be.visible').type(emailAccount.user);
 
@@ -217,34 +174,34 @@ filterTests(['forgeops', 'cloud'], () => {
       // Ensure we are at the suspended stage
       cy.findByText('An email has been sent to the address you entered. Click the link in that email to proceed.').should('be.visible');
 
-      // Get the "Reset your password" email
+      // Get the "Account Information - username" email
       getLastEmail();
 
       cy.get('@emailObject').then((emailObject) => {
         // Get the registration link from the email
-        const resetLink = extractLinkFromEmail(emailObject.body);
+        const loginLink = extractLinkFromEmail(emailObject.body);
 
-        // Visit the Password reset link from email
-        cy.visit(resetLink);
+        // Visit the Login link from email
+        cy.visit(loginLink);
 
-        // We landed on a correct page where user can reset its password
-        cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
-        cy.findByRole('heading', { name: 'Reset Password', level: 1 }).should('be.visible');
+        // We landed on a correct page where user can Login
+        cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible');
+        cy.findByRole('heading', { name: 'Sign In', level: 1 }).should('be.visible');
 
         // Clear cookies
         cy.logout();
 
-        // Visit the Password reset link from email again
-        cy.visit(resetLink);
+        // Visit the Login link from email again
+        cy.visit(loginLink);
 
         // Link should no longer be working, check correct Error page is shown and we are able to start over
         cy.findByRole('heading', { name: 'Error', level: 1, timeout: 10000 }).should('exist').should('be.visible');
         cy.findByTestId('FrAlert').should('exist').contains('Unable to resume session. It may have expired.').should('be.visible');
         cy.findByRole('link', { name: 'Start Over' }).should('be.visible').click();
 
-        // Check the browser has been directed to the ResetPassword page
+        // Check the browser has been directed to the ForgottenUsername page
         cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
-        cy.findByRole('heading', { name: 'Reset Password', level: 1 }).should('be.visible');
+        cy.findByRole('heading', { name: 'Forgotten Username', level: 1 }).should('be.visible');
       });
     });
   });
