@@ -3803,6 +3803,10 @@
     "forms": {
       "form": "Form",
       "listView": {
+        "actions": {
+          "deleteFormError": "There was an error deleting this form",
+          "deleteFormSuccessfully": "Form deleted successfully"
+        },
         "errorGetData": "There was an error retrieving forms",
         "forms": "Forms",
         "form": "Form",
