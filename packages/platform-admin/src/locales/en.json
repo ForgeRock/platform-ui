@@ -1462,7 +1462,7 @@
       "messages": {
         "attributeValidationError": "Failed to load {attribute} attribute",
         "configurationFieldsValidation": "Please provide valid JSON in the available configuration fields.",
-        "connectorTemplateValidation": "Please provide valid JSON in the connector template.",
+        "connectorConfigValidation": "Please provide valid JSON in the connector configuration.",
         "deleteError": "There was an error deleting the template",
         "deleteSuccess": "Template deleted successfully",
         "fileImproperlyFormatted": "Selected file is not properly formatted",
@@ -1480,6 +1480,16 @@
         "addNaoWarning": "You must add an account object type before a non-account object type can be added.",
         "addProperty": "Add Property",
         "addRule": "Add Rule",
+        "connectorConfig": {
+          "advancedEditor": "Use advanced editor",
+          "basicEditor": "Use basic editor",
+          "scriptLabel": "Provide valid JSON containing the connector configuration setup",
+          "warningModal": {
+            "title": "Switch to Advanced Editor?",
+            "text": "Are you sure you want to switch to the advanced editor? You will not be able to switch back to the basic editor.",
+            "button": "Switch to Advanced"
+          }
+        },
         "correlationQuery": "Correlation Query",
         "createTemplate": "Create Template",
         "editTemplate": "Edit {templateName} Template",
@@ -1522,7 +1532,10 @@
         "typeObject": "Object",
         "typePassword": "Password",
         "typeString": "String",
-        "updateTemplate": "Update Template"
+        "updateTemplate": "Update Template",
+        "prerequisites": "Prerequisites",
+        "basic": "Basic",
+        "advanced": "Advanced"
       },
       "templateModalDetails": {
         "title": "Application Template Details"
