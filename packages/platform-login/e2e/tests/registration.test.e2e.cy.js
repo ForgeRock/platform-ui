@@ -119,23 +119,50 @@ filterTests(['forgeops'], () => {
 });
 
 filterTests(['cloud'], () => {
+  /**
+   * This function is created to select the default security question "What's your favorite color?" And filling the answer field with the word "orange, which is a valid setting for the journey"
+   */
+  function fillOutKBADefaultColorKBA() {
+    cy.findAllByRole('combobox').first().click();
+    cy.findAllByText('What\'s your favorite color?').first().click();
+    cy.findAllByLabelText('Answer for: What\'s your favorite color?').first().clear().type('orange');
+  }
+
   function fillOutRegistrationForm(fieldData) {
     fieldData.forEach((field) => {
       cy.findByLabelText(field.placeholder)
         .clear()
         .type(field.text);
     });
-
-    cy.findAllByRole('combobox').first().click();
-    cy.findAllByText('What\'s your favorite color?').first().click();
-    cy.findAllByLabelText('Answer for: What\'s your favorite color?').first().clear().type('orange');
-
-    cy.get('[type="submit"]').click();
+    fillOutKBADefaultColorKBA();
   }
 
-  describe('Registration form', () => {
+  describe('Enduser default registration journey, successful registration and negative verifications', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=Registration#/`;
     let emailAccount;
+
+    const invalidFieldData = [
+      {
+        placeholder: 'Username',
+        text: random(Number.MAX_SAFE_INTEGER),
+      },
+      {
+        placeholder: 'Password',
+        text: `Aa.1${random(Number.MAX_SAFE_INTEGER)}`,
+      },
+      {
+        placeholder: 'First Name',
+        text: random(Number.MAX_SAFE_INTEGER),
+      },
+      {
+        placeholder: 'Last Name',
+        text: random(Number.MAX_SAFE_INTEGER),
+      },
+      {
+        placeholder: 'Email Address',
+        text: 'incorrectEmail',
+      },
+    ];
 
     const getLastEmail = () => {
       recurse(() => cy.task('getLatestEmail', emailAccount),
@@ -148,7 +175,7 @@ filterTests(['cloud'], () => {
       });
     };
 
-    beforeEach(() => {
+    before(() => {
       // Initially login to admin
       cy.login();
 
@@ -165,7 +192,7 @@ filterTests(['cloud'], () => {
       });
     });
 
-    afterEach(() => {
+    after(() => {
       // Return the email provider back to its default config
       cy.login();
       getDefaultProviderConfig().then((config) => {
@@ -174,13 +201,10 @@ filterTests(['cloud'], () => {
     });
 
     it('creates new user, sends registration email and logs in', () => {
-      // Go to registration journey
-      cy.visit(locationUrl);
-
-      const fieldData = [
+      const validFieldData = [
         {
           placeholder: 'Username',
-          text: emailAccount.user,
+          text: emailAccount.user + random(Number.MAX_SAFE_INTEGER),
         },
         {
           placeholder: 'Password',
@@ -200,7 +224,11 @@ filterTests(['cloud'], () => {
         },
       ];
 
-      fillOutRegistrationForm(fieldData);
+      // Go to registration journey
+      cy.visit(locationUrl);
+
+      fillOutRegistrationForm(validFieldData);
+      cy.get('[type="submit"]').click();
 
       // Ensure we are at the suspended stage
       cy.findByTestId('suspend-text-output').contains('An email has been sent to the address you entered. Click the link in that email to proceed.');
@@ -227,8 +255,93 @@ filterTests(['cloud'], () => {
         });
 
         // and be logged in with the registered user
-        cy.findByTestId('dashboard-welcome-greeting').contains(`Hello, ${emailAccount.user}`).should('be.visible');
+        cy.findByTestId('dashboard-welcome-greeting', { timeout: 10000 }).contains(`Hello, ${emailAccount.user}`).should('be.visible');
+
+        // The registered username can not be used again
+        cy.logout();
+        cy.visit(locationUrl);
+        fillOutRegistrationForm(validFieldData);
+        cy.get('[type="submit"]').click();
+        cy.get('.error-message').contains('Invalid username').should('be.visible');
       });
+    });
+
+    it('Can not proceed with empty or incorrect credentials', () => {
+      cy.visit(locationUrl);
+
+      // Verify that the submit button is disabled when the form is empty
+      cy.get('[type="submit"]').should('be.disabled');
+
+      // Verify that Submit button does not get enabled by filling a single field of the form
+      cy.findByLabelText('Username').type(random(Number.MAX_SAFE_INTEGER));
+      cy.get('[type="submit"]').should('be.disabled');
+
+      // Verify that the form shows an error message when the email format is incorrect
+      fillOutRegistrationForm(invalidFieldData);
+      cy.get('[type="submit"]').click();
+      cy.get('.error-message').contains('Invalid email format').should('be.visible');
+
+      // Validate that the form correctly shows policies when the password does not meet requirements
+      cy.findByLabelText('Email Address').clear().type('Valid@email.format');
+      fillOutKBADefaultColorKBA();
+      cy.findByLabelText('Password').type('0');
+      cy.get('[type="submit"]').should('be.disabled');
+      cy.get('li:contains("Must be at least 8 characters long")')
+        .should('not.have.class', 'fr-valid').and('be.visible');
+      cy.get('li:contains("One lowercase character, one uppercase character, one number, one special character")')
+        .should('not.have.class', 'fr-valid').and('be.visible');
+
+      // Validate that the form correctly shows policies when the password meets some but not all requirements
+      cy.findByLabelText('Password').type('longenoughtopass');
+      cy.get('li:contains("Must be at least 8 characters long")')
+        .should('have.class', 'fr-valid').and('be.visible');
+      cy.get('li:contains("One lowercase character, one uppercase character, one number, one special character")')
+        .should('not.have.class', 'fr-valid').and('be.visible');
+      cy.get('[type="submit"]').should('be.disabled');
+
+      // Validate that the form correctly shows policies and Submit button is enabled when the password meets all requirements
+      cy.findByLabelText('Password').type('LongAndValidOne1.');
+      cy.get('li:contains("Must be at least 8 characters long")')
+        .should('have.class', 'fr-valid').and('be.visible');
+      cy.get('li:contains("One lowercase character, one uppercase character, one number, one special character")')
+        .should('have.class', 'fr-valid').and('be.visible');
+      cy.get('[type="submit"]').should('be.enabled');
+    });
+
+    it('Can not proceed with empty KBA question/answer', () => {
+      cy.visit(locationUrl);
+      fillOutRegistrationForm(invalidFieldData);
+      cy.get('[type="submit"]').should('be.enabled');
+      cy.findAllByLabelText('Answer for: What\'s your favorite color?').first().clear();
+      cy.get('[type="submit"]').should('be.disabled');
+
+      // Validate that Submit button is disabled when selecting "Provide your own:" and leaving blank fields
+      cy.findAllByRole('combobox').first().click();
+      cy.findAllByText('Provide your own:').first().click();
+      cy.get('[type="submit"]').should('be.disabled');
+      cy.get('.error-message').contains('Please provide a value').should('be.visible');
+
+      // Validate KBA is still invalid with a question and no answer
+      cy.findByLabelText('Question').type('RandomString');
+      cy.get('.error-message').contains('Please provide a value').should('be.visible');
+      cy.get('[type="submit"]').should('be.disabled');
+
+      // Validate KBA is still invalid with an answer and no question
+      cy.findByLabelText('Question').clear();
+      cy.findByLabelText('Answer').type('RandomString');
+      cy.get('.error-message').contains('Please provide a value').should('be.visible');
+      cy.get('[type="submit"]').should('be.disabled');
+
+      // Validate valid provided KBA enables Submit button
+      cy.findByLabelText('Question').type('RandomString');
+      cy.get('.error-message').should('not.exist');
+      cy.get('[type="submit"]').should('be.enabled');
+    });
+
+    it('Terms and Conditions modal is displayed', () => {
+      cy.visit(locationUrl);
+      cy.findByRole('link', { name: 'Terms & Conditions' }).click();
+      cy.findByRole('heading', { name: 'Terms & Conditions' }).should('be.visible');
     });
   });
 });
