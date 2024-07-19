@@ -19,6 +19,8 @@ module.exports = defineConfig({
 
   chromeWebSecurity: false,
 
+  experimentalWebKitSupport: true,
+
   env: {
     lighthousePassThreshold: {
       performance: 0.75,

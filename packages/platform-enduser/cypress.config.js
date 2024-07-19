@@ -9,6 +9,7 @@ const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
   chromeWebSecurity: false,
+  experimentalWebKitSupport: true,
   retries: 3,
   reporter: '../../node_modules/mochawesome',
   reporterOptions: {
