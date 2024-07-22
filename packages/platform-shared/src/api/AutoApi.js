@@ -218,7 +218,7 @@ export async function getAutoAccessReportResult(userName, dateRange, template, n
     userName, startDate: dateRange[0], endDate: dateRange[1], numberOfItems, enable_users: isEnableUsers, enable_all: isEnableAll,
   };
 
-  const { id, status } = await runAnalyticsTemplate(template, params);
+  const { id, status } = await runAnalyticsTemplate(template, 'published', params);
   if (!status === 'COMPLETED_SUCCESS') {
     throw new Error(status);
   }
