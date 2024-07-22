@@ -367,23 +367,29 @@ describe('Component for creating custom analytics reports', () => {
       expect(_idRow.text()).toBe('{applications._id}');
     });
 
-    it('saves the form with a selected data source column', async () => {
+    it('saves the form with the selected data source columns in the order that they were selected', async () => {
       await addDataSource();
 
       // Checks a data source checkbox
       const dataSourceDefinition = findByTestId(wrapper, 'definition-body');
-      const [_idCheckbox] = dataSourceDefinition.findAll('input[type="checkbox"]');
+      const [_idCheckbox, name, parameter] = dataSourceDefinition.findAll('input[type="checkbox"]');
       await _idCheckbox.setChecked();
+      await parameter.setChecked();
+      await name.setChecked();
       await flushPromises();
 
-      // Saves the form with the fields property containing the selected _id column
+      // Saves the form with the fields property containing the selected columns in the order they were checked
       const saveAnalyticsReportSpy = jest.spyOn(AutoApi, 'saveAnalyticsReport');
       const headerToolbar = findByRole(wrapper, 'toolbar');
       const saveButton = findByText(headerToolbar, 'button', 'Save');
       await saveButton.trigger('click');
       expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
         entities: [{ entity: 'applications' }],
-        fields: [{ label: 'Applications Id', value: 'applications._id' }],
+        fields: [
+          { label: 'Applications Id', value: 'applications._id' },
+          { label: 'My Parameter Name', value: 'MyParameter' },
+          { label: 'Applications Name', value: 'applications.name' },
+        ],
       }, ['reportadmin'], '');
     });
 
