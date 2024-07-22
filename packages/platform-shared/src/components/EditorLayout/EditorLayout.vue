@@ -62,6 +62,7 @@ import { ref, watch } from 'vue';
 import FrEditorLayoutSidebar from './EditorLayoutSidebar';
 import FrEditorLayoutToolbar from './EditorLayoutToolbar';
 import { EDITOR_LAYOUT_SIDEBAR_DEFAULT_MIN_WIDTH, EDITOR_LAYOUT_SIDEBAR_POSITION } from './Utils/constants';
+import i18n from '@/i18n';
 
 /**
  * component to manage the layout of the editor pages, like forms editor, journeys, workflows
@@ -90,11 +91,11 @@ const props = defineProps({
   },
   sidebarLeftCloseButtonTooltip: {
     type: String,
-    default: '',
+    default: i18n.global.t('common.close'),
   },
   sidebarRightCloseButtonTooltip: {
     type: String,
-    default: '',
+    default: i18n.global.t('common.close'),
   },
   sidebarLeftOpenButtonText: {
     type: String,

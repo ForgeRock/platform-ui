@@ -4026,6 +4026,10 @@
   },
   "forms": {
     "editor": {
+      "canvas": {
+        "emptyTitle": "You haven't added any fields yet",
+        "emptySubtitle": "Drag fields into your form to get started."
+      },
       "categories": {
         "customFields": "Custom Fields"
       },
