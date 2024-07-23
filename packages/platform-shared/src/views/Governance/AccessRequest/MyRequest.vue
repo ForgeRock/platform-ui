@@ -67,7 +67,8 @@ of the MIT license. See the LICENSE file for details. -->
                     test-id="cell-button"
                     :delete-option="false"
                     :divider="false"
-                    :edit-option="false">
+                    :edit-option="false"
+                    :enable-sr-only-label="true">
                     <template #custom-top-actions>
                       <BDropdownItem
                         data-testid="view-details-button"

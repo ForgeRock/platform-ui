@@ -71,6 +71,9 @@ of the MIT license. See the LICENSE file for details. -->
                       <FrIcon
                         icon-class="text-muted md-24"
                         name="more_horiz" />
+                      <p class="sr-only">
+                        {{ $t('common.moreActions') }}
+                      </p>
                     </template>
                     <template v-if="status === 'pending'">
                       <BDropdownItem
