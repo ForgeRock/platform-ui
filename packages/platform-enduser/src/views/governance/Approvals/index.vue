@@ -174,8 +174,8 @@ import {
   getRequestFilter,
   getStatusText,
   sortKeysMap,
-  getRequestObjectType,
   getFormattedRequest,
+  getRequestTypeDisplayNames,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
@@ -274,8 +274,7 @@ export default {
           const index = this.accessRequests.findIndex((request) => request.id === id);
           this.$set(this.accessRequests, index, updatedItem.data);
 
-          const objectType = getRequestObjectType(updatedItem.data.requestType);
-          const newItem = getFormattedRequest(updatedItem.data, objectType);
+          const newItem = getFormattedRequest(updatedItem.data);
           this.modalItem = newItem;
         }
       } catch (error) {
@@ -303,7 +302,7 @@ export default {
 
       try {
         const { data } = await getUserApprovals(this.userId, params, payload);
-        this.accessRequests = data.result;
+        this.accessRequests = await getRequestTypeDisplayNames(data.result);
         this.totalCount = data.totalCount;
       } catch (error) {
         this.accessRequests = [];

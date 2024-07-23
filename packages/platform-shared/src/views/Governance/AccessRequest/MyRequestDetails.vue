@@ -11,8 +11,13 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-4 align-items-center">
         <template #aside>
           <div class="d-flex align-items-center justify-content-center p-3 mr-2 rounded border border-darkened app-logo">
+            <BImg
+              v-if="item.details.isCustom"
+              :src="require('@forgerock/platform-shared/src/assets/images/applications/custom.svg')"
+              :alt="$t('governance.accessRequest.customRequestAltText')"
+              width="24" />
             <FrIcon
-              v-if="isTypeRole(item.rawData.requestType)"
+              v-else-if="isTypeRole(item.rawData.requestType)"
               icon-class="mr-1 md-28 rounded-circle"
               :name="item.details.icon" />
             <BImg
@@ -108,11 +113,10 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import { getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getRequest, getRequestType } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { useRoute, useRouter } from 'vue-router';
 import {
   getFormattedRequest,
-  getRequestObjectType,
   isTypeRole,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
@@ -153,7 +157,9 @@ async function getRequestData() {
   isLoading.value = true;
   try {
     const { data } = await getRequest(requestId);
-    item.value = getFormattedRequest(data, getRequestObjectType(data.requestType));
+    const { data: requestTypeData } = await getRequestType(data.requestType);
+    data.requestTypeDisplayName = requestTypeData.displayName;
+    item.value = getFormattedRequest(data);
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.accessRequest.myRequests.errorGettingRequests'));
   } finally {

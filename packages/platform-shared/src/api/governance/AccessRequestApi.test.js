@@ -8,16 +8,20 @@
 import * as BaseApi from '@forgerock/platform-shared/src/api/BaseApi';
 import * as AccessRequestApi from './AccessRequestApi';
 
+let get;
 let post;
 const data = { result: [], totalCount: 0 };
 
 describe('Access Review API', () => {
   beforeEach(() => {
     post = jest.fn();
+    get = jest.fn();
     BaseApi.generateIgaApi = jest.fn(() => ({
+      get,
       post,
     }));
     post.mockReturnValue(Promise.resolve(data));
+    get.mockReturnValue(Promise.resolve(data));
   });
 
   it('should call requestAction endpoint with correct payload and url', async () => {
@@ -61,6 +65,13 @@ describe('Access Review API', () => {
       '/governance/user/testId/approvals?_pageSize=10&_pagedResultsOffset=0&_action=search',
       { targetFilter: { testFilter: true } },
     );
+    expect(BaseApi.generateIgaApi).toBeCalled();
+  });
+
+  it('should call getRequestType endpoint with correct URL', async () => {
+    const requestTypeId = '12345';
+    await AccessRequestApi.getRequestType(requestTypeId);
+    expect(get).toBeCalledWith(`/governance/requestTypes/${requestTypeId}`);
     expect(BaseApi.generateIgaApi).toBeCalled();
   });
 });

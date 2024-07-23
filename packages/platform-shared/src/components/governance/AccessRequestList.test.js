@@ -73,6 +73,19 @@ const role = {
   },
 };
 
+const custom = {
+  id: 4,
+  decision: {
+    startDate: '2023-06-22T19:23:26+00:00',
+  },
+  request: {
+    common: {
+      priority: '',
+    },
+  },
+  requestType: 'customRequest',
+};
+
 describe('AccessReviews', () => {
   let wrapper;
   beforeEach(() => {
@@ -233,6 +246,19 @@ describe('AccessReviews', () => {
 
       const requestDescription = findByTestId(wrapper, 'request-item-description');
       expect(requestDescription.text()).toBe('test description');
+    });
+  });
+
+  describe('custom request', () => {
+    it('should show a custom request', async () => {
+      await wrapper.setProps({
+        requests: [
+          custom,
+        ],
+      });
+
+      const requestName = findByTestId(wrapper, 'request-item-name');
+      expect(requestName.text()).toBe('customRequest');
     });
   });
 

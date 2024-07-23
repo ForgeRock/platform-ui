@@ -18,41 +18,66 @@ of the MIT license. See the LICENSE file for details. -->
       :items="items"
       @row-clicked="$emit('open-detail', $event);">
       <template #cell(details)="{ item }">
-        <div class="mb-2">
-          <small data-testid="request-type">
-            {{ item.details.type }}
-          </small>
-        </div>
-        <BMedia
-          no-body
-          class="mb-2">
-          <BMediaAside class="align-self-center">
-            <FrIcon
-              v-if="isTypeRole(item.rawData.requestType)"
-              icon-class="mr-1 md-28 rounded-circle"
-              :name="item.details.icon" />
-            <BImg
-              v-else
-              width="24"
-              height="24"
-              class="align-self-center"
-              :src="item.details.icon"
-              :alt="$t('common.logo')" />
-          </BMediaAside>
-          <BMediaBody>
-            <h2
-              class="m-0 h5"
-              data-testid="request-item-name">
-              {{ item.details.name }}
-            </h2>
-            <small
-              class="text-muted"
-              data-testid="request-item-description">
-              {{ item.details.description }}
+        <!-- Custom Request -->
+        <template v-if="item.details.isCustom">
+          <BMedia
+            no-body
+            class="mb-2">
+            <BMediaAside class="align-self-center">
+              <BImg
+                :src="require('@forgerock/platform-shared/src/assets/images/applications/custom.svg')"
+                :alt="$t('governance.accessRequest.customRequestAltText')"
+                width="24" />
+            </BMediaAside>
+            <BMediaBody>
+              <h2
+                class="mt-1 h5"
+                data-testid="request-item-name">
+                {{ item.details.type }}
+              </h2>
+            </BMediaBody>
+          </BMedia>
+        </template>
+        <!-- OOTB request -->
+        <template v-else>
+          <div class="mb-2">
+            <small data-testid="request-type">
+              {{ item.details.type }}
             </small>
-          </BMediaBody>
-        </BMedia>
+          </div>
+          <BMedia
+            no-body
+            class="mb-2">
+            <BMediaAside class="align-self-center">
+              <FrIcon
+                v-if="isTypeRole(item.rawData.requestType)"
+                icon-class="mr-1 md-28 rounded-circle"
+                :name="item.details.icon" />
+              <BImg
+                v-else
+                width="24"
+                height="24"
+                class="align-self-center"
+                :src="item.details.icon"
+                :alt="$t('common.logo')" />
+            </BMediaAside>
+            <BMediaBody>
+              <h2
+                class="m-0 h5"
+                data-testid="request-item-name">
+                {{ item.details.name }}
+              </h2>
+              <small
+                class="text-muted"
+                data-testid="request-item-description">
+                {{ item.details.description }}
+              </small>
+            </BMediaBody>
+          </BMedia>
+        </template>
+        <!-- Common -->
         <BMedia
+          v-if="item.details.requestedFor"
           no-body
           class="mb-2">
           <BMediaAside class="align-self-center mr-2">

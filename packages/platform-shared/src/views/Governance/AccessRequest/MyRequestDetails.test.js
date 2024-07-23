@@ -96,6 +96,13 @@ describe('MyRequestDetails', () => {
     data: accessRequest,
   }));
 
+  AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promise.resolve({
+    data: {
+      id: value,
+      displayName: `${value}-displayName`,
+    },
+  }));
+
   describe('@Component Tests', () => {
     it('has header with request type and name', async () => {
       wrapper = setup();
