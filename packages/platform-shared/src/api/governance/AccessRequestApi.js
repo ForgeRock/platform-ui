@@ -33,10 +33,34 @@ export function getRequests(params, filter) {
   return generateIgaApi().post(`/governance/requests${queryString}`, { targetFilter: filter });
 }
 
+/**
+ * Retrieves a specific access request by its ID.
+ *
+ * @param {string} requestId - The ID of the access request to retrieve.
+ * @returns {Promise} A promise that resolves with the access request data.
+ */
 export function getRequest(requestId) {
   return generateIgaApi().get(`/governance/requests/${requestId}`);
 }
 
+/**
+ * Retrieves the request type with the specified ID.
+ *
+ * @param {string} requestTypeId - The ID of the request type to retrieve.
+ * @returns {Promise} A Promise that resolves to the request type object.
+ */
+export function getRequestType(requestTypeId) {
+  return generateIgaApi().get(`/governance/requestTypes/${requestTypeId}`);
+}
+
+/**
+ * Retrieves the approvals for a specific user.
+ *
+ * @param {string} userId - The ID of the user.
+ * @param {Object} params - The parameters for the request.
+ * @param {string} filter - The target filter.
+ * @returns {Promise} A promise that resolves with the user approvals.
+ */
 export function getUserApprovals(userId, params, filter) {
   params._action = 'search';
   const queryString = encodeQueryString(params, false);

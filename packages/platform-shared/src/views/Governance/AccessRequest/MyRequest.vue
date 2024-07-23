@@ -150,6 +150,7 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import {
+  getRequestTypeDisplayNames,
   getRequestFilter,
   getStatusText,
   sortKeysMap,
@@ -232,7 +233,8 @@ async function loadRequests(goToFirstPage) {
     const { data } = userStore.value.adminUser
       ? await getRequests(params, payload)
       : await getUserRequests(userId, params, payload);
-    accessRequests.value = data.result;
+
+    accessRequests.value = await getRequestTypeDisplayNames(data.result);
     totalRows.value = data.totalCount;
   } catch (error) {
     accessRequests.value = [];

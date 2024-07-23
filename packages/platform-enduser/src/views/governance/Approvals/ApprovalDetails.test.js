@@ -28,6 +28,13 @@ CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.reso
   },
 }));
 
+AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promise.resolve({
+  data: {
+    id: value,
+    displayName: value,
+  },
+}));
+
 const decision = {
   actors: {
     active: [

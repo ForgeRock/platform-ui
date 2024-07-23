@@ -11,7 +11,6 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import { clone } from 'lodash';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import { getBasicNotFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import i18n from '@/i18n';
 import router from '@/router';
 import Approvals from './index';
@@ -23,6 +22,13 @@ CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.reso
     requireApproveJustification: false,
     defaultApprover: '',
     allowSelfApproval: true,
+  },
+}));
+
+AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promise.resolve({
+  data: {
+    id: value,
+    displayName: `${value}-displayName`,
   },
 }));
 
@@ -182,6 +188,7 @@ const openModalMock = {
       },
     },
     requestType: 'applicationRemove',
+    requestTypeDisplayName: 'applicationRemove-displayName',
     requester: {
       givenName: 'Mike',
       id: '1234-456-1',
@@ -198,7 +205,6 @@ const openModalMock = {
     },
   },
 };
-const noEntityMutationFilter = getBasicNotFilter('EQUALS', 'requestType', 'entityMutation');
 
 describe('Approvals', () => {
   CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({}));
@@ -267,7 +273,7 @@ describe('Approvals', () => {
       },
       {
         operator: 'AND',
-        operand: [noEntityMutationFilter],
+        operand: [],
       },
     );
   });
@@ -302,7 +308,7 @@ describe('Approvals', () => {
       },
       {
         operator: 'AND',
-        operand: [noEntityMutationFilter],
+        operand: [],
       },
     );
   });
@@ -336,7 +342,7 @@ describe('Approvals', () => {
       },
       {
         operator: 'AND',
-        operand: [noEntityMutationFilter],
+        operand: [],
       },
     );
   });
@@ -376,7 +382,6 @@ describe('Approvals', () => {
       {
         operator: 'AND',
         operand: [
-          noEntityMutationFilter,
           {
             operator: 'EQUALS',
             operand: {
@@ -475,6 +480,7 @@ describe('Approvals', () => {
     newMockRequest.decision.comments = [{ comment: 'test' }];
     const newOpenModalMock = clone(openModalMock);
     newOpenModalMock.rawData.decision.comments = [{ comment: 'test' }];
+    delete newOpenModalMock.rawData.requestTypeDisplayName;
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {

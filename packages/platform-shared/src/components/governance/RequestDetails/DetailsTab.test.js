@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import DetailsTab from './DetailsTab';
 
@@ -50,12 +50,13 @@ describe('DetailsTab', () => {
               justification: 'justification.',
             },
           },
+          requestType: 'requestType test',
         },
       },
       ...propsData,
     };
 
-    return shallowMount(DetailsTab, {
+    return mount(DetailsTab, {
       global: {
         plugins: [i18n],
       },
@@ -69,5 +70,63 @@ describe('DetailsTab', () => {
     expect(wrapper.vm.details.requested.name).toBe('name test');
     expect(wrapper.vm.details.status.name).toContain('Approved');
     expect(wrapper.vm.details.requestDate).toBe('Jan 1, 2021 12:00 AM');
+  });
+
+  it('handles when the request is submitted by the system', async () => {
+    const wrapper = setup({
+      item: {
+        details: {
+          requestedBy: {
+            id: 'SYSTEM',
+          },
+        },
+        rawData: {},
+      },
+    });
+    await flushPromises();
+    const requestedBy = wrapper.find('.row');
+    expect(requestedBy.text()).toBe('Requested BySystem');
+  });
+
+  it('shows requested, requested for, and requested by if present', async () => {
+    const wrapper = setup({
+      item: {
+        details: {
+          name: 'name test',
+          icon: 'icon test',
+          description: 'description test',
+          requestedBy: {
+            givenName: 'test',
+            sn: 'name',
+            userName: 'test',
+          },
+          requestedFor: {
+            givenName: 'test',
+            sn: 'name',
+            userName: 'test',
+          },
+        },
+        rawData: {
+          requestType: 'requestType test',
+        },
+      },
+    });
+    await flushPromises();
+    expect(wrapper.text()).toContain('Requested By');
+    expect(wrapper.text()).toContain('Requested For');
+    expect(wrapper.text()).toContain('Requested');
+  });
+
+  it('hides requested, requested for, and requested by if is not present', async () => {
+    const wrapper = setup({
+      item: {
+        details: {},
+        rawData: {},
+      },
+    });
+    await flushPromises();
+    expect(wrapper.text()).not.toContain('Requested By');
+    expect(wrapper.text()).not.toContain('Requested For');
+    expect(wrapper.text()).not.toContain('Requested');
   });
 });

@@ -82,6 +82,13 @@ describe('MyRequests', () => {
     },
   }));
 
+  AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promise.resolve({
+    data: {
+      id: value,
+      displayName: `${value}-displayName`,
+    },
+  }));
+
   describe('@Component Tests', () => {
     it('Navigates to request details page after clicking on "View Details"', async () => {
       const wrapper = setup();

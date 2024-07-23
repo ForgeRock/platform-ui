@@ -5,23 +5,34 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { getBasicNotFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
-import { getRequestFilter, getStatusText, getFormattedRequest } from './AccessRequestUtils';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import {
+  getRequestFilter,
+  getStatusText,
+  getFormattedRequest,
+  getRequestTypeDisplayNames,
+} from './AccessRequestUtils';
 
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
   getApplicationLogo: jest.fn().mockReturnValue('app_logo.png'),
 }));
 
+AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promise.resolve({
+  data: {
+    id: value,
+    displayName: `${value}-displayName`,
+  },
+}));
+
 const testUser = 'managed/user/testuser';
 
 describe('RequestToolbar', () => {
-  const noEntityMutationFilter = getBasicNotFilter('EQUALS', 'requestType', 'entityMutation');
   describe('getRequestFilter', () => {
     it('request id', () => {
       const filter = { requestId: 'testId' };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [noEntityMutationFilter, {
+        operand: [{
           operator: 'EQUALS',
           operand: {
             targetName: 'id',
@@ -35,7 +46,7 @@ describe('RequestToolbar', () => {
       const filter = { requestedFor: testUser };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [noEntityMutationFilter, {
+        operand: [{
           operator: 'EQUALS',
           operand: {
             targetName: 'user.id',
@@ -49,7 +60,7 @@ describe('RequestToolbar', () => {
       const filter = { requester: testUser };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [noEntityMutationFilter, {
+        operand: [{
           operator: 'EQUALS',
           operand: {
             targetName: 'requester.id',
@@ -63,7 +74,7 @@ describe('RequestToolbar', () => {
       const filter = { requestType: 'testType' };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [noEntityMutationFilter, {
+        operand: [{
           operator: 'EQUALS',
           operand: {
             targetName: 'requestType',
@@ -77,7 +88,7 @@ describe('RequestToolbar', () => {
       const filter = { priorities: { high: true } };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [noEntityMutationFilter, {
+        operand: [{
           operator: 'OR',
           operand: [{
             operator: 'EQUALS',
@@ -94,7 +105,7 @@ describe('RequestToolbar', () => {
       const filter = { priorities: { high: true, medium: true } };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [noEntityMutationFilter, {
+        operand: [{
           operator: 'OR',
           operand: [
             {
@@ -120,7 +131,7 @@ describe('RequestToolbar', () => {
       const filter = { priorities: {} };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [noEntityMutationFilter, {
+        operand: [{
           operator: 'EQUALS',
           operand: {
             targetName: 'request.common.priority',
@@ -133,7 +144,7 @@ describe('RequestToolbar', () => {
     it('filters for in-progress requests', () => {
       expect(getRequestFilter({}, 'in-progress')).toEqual({
         operator: 'AND',
-        operand: [noEntityMutationFilter, {
+        operand: [{
           operator: 'EQUALS',
           operand: {
             targetName: 'decision.status',
@@ -178,12 +189,11 @@ describe('RequestToolbar', () => {
     });
   });
 });
-
 describe('getFormattedRequest', () => {
-  it('returns a request correctly', () => {
+  it('returns an advanced request correctly', () => {
     const request = {
       id: 'id test',
-      requestType: 'test',
+      requestType: 'entitlementGrant',
       descriptor: {
         idx: {
           '/entitlement': {
@@ -209,11 +219,11 @@ describe('getFormattedRequest', () => {
       user: 'user test',
       requester: 'requester test',
     };
-    const result = getFormattedRequest(request, 'entitlement');
+    const result = getFormattedRequest(request);
     expect(result).toEqual({
       details: {
         id: 'id test',
-        type: 'governance.accessRequest.requestTypes.test',
+        type: 'Grant Entitlement',
         name: 'display name test',
         description: 'desc test',
         priority: 'priority',
@@ -223,6 +233,60 @@ describe('getFormattedRequest', () => {
         icon: 'app_logo.png',
       },
       rawData: request,
+    });
+  });
+
+  it('returns a basic request correctly', () => {
+    const request = {
+      id: 'testId',
+      requestType: 'testType',
+      request: {
+        common: {
+          priority: 'high',
+        },
+      },
+      decision: {
+        startDate: '2021-01-01',
+      },
+      requester: 'testRequester',
+    };
+    const result = getFormattedRequest(request);
+    expect(result).toEqual({
+      details: {
+        id: 'testId',
+        type: 'testType',
+        priority: 'high',
+        date: '2021-01-01',
+        requestedBy: 'testRequester',
+        isCustom: true,
+      },
+      rawData: request,
+    });
+  });
+
+  describe('getRequestTypeDisplayNames', () => {
+    it('returns an array of requests with request type display names added', async () => {
+      const requests = [
+        { requestType: 'ACCOUNT_GRANT' },
+        { requestType: 'ENTITLEMENT_GRANT' },
+        { requestType: 'ROLE_GRANT' },
+      ];
+
+      const expectedRequests = [
+        { requestType: 'ACCOUNT_GRANT', requestTypeDisplayName: 'ACCOUNT_GRANT-displayName' },
+        { requestType: 'ENTITLEMENT_GRANT', requestTypeDisplayName: 'ENTITLEMENT_GRANT-displayName' },
+        { requestType: 'ROLE_GRANT', requestTypeDisplayName: 'ROLE_GRANT-displayName' },
+      ];
+
+      const result = await getRequestTypeDisplayNames(requests);
+      expect(result).toEqual(expectedRequests);
+    });
+
+    it('returns an empty array if no requests are provided', async () => {
+      const requests = [];
+
+      const result = await getRequestTypeDisplayNames(requests);
+      expect(result).toEqual([]);
     });
   });
 });

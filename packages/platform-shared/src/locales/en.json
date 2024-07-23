@@ -288,6 +288,7 @@
     "success": "Success",
     "successful": "Successful",
     "summary": "Summary",
+    "system": "System",
     "target": "Target",
     "task": "Task",
     "tasks": "Tasks",
@@ -1471,6 +1472,7 @@
         "userImageAltText": "Profile Picture - {userName}",
         "yourRequest": "Your Request"
       },
+      "customRequestAltText": "Custom Request",
       "noRequests": "No {status} Access Requests",
       "requestedFor": "Requested For",
       "requester": "Requester",

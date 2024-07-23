@@ -7,8 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BRow
       v-for="(detail, key) in details"
       :key="key"
-      class="row-height"
-    >
+      class="row-height">
       <BCol
         lg="4"
         class="font-weight-bold">
@@ -45,26 +44,32 @@ of the MIT license. See the LICENSE file for details. -->
             </small>
           </BMediaBody>
         </BMedia>
-        <BMedia
-          v-else-if="key === 'requestedFor' || key === 'requestedBy'">
-          <template #aside>
-            <BImg
-              class="rounded-circle"
-              height="28"
-              width="28"
-              alt=""
-              :aria-hidden="true"
-              :src="detail.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
-          </template>
-          <BMediaBody>
-            <p class="h5 m-0">
-              {{ $t('common.userFullName', { givenName: detail.givenName, sn: detail.sn }) }}
-            </p>
-            <small class="mb-0">
-              {{ detail.userName }}
-            </small>
-          </BMediaBody>
-        </BMedia>
+        <template v-else-if="key === 'requestedFor' || key === 'requestedBy'">
+          <p
+            v-if="detail.id === 'SYSTEM'"
+            class="font-weight-normal">
+            {{ $t('common.system') }}
+          </p>
+          <BMedia v-else>
+            <template #aside>
+              <BImg
+                class="rounded-circle"
+                height="28"
+                width="28"
+                alt=""
+                :aria-hidden="true"
+                :src="detail.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+            </template>
+            <BMediaBody>
+              <p class="h5 m-0">
+                {{ $t('common.userFullName', { givenName: detail.givenName, sn: detail.sn }) }}
+              </p>
+              <small class="mb-0">
+                {{ detail.userName }}
+              </small>
+            </BMediaBody>
+          </BMedia>
+        </template>
         <span
           v-else-if="key === 'priority'">
           <BImg
@@ -97,6 +102,7 @@ import {
   BImg,
   BBadge,
 } from 'bootstrap-vue';
+import { pickBy } from 'lodash';
 import { onMounted, ref } from 'vue';
 import dayjs from 'dayjs';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
@@ -144,29 +150,42 @@ function setDecisionValue(type) {
  * @returns {String} Request status
  */
 function getStatus(decision) {
-  return decision.decision || decision.status;
+  return decision?.decision || decision?.status;
+}
+
+/**
+ * Retrieves the details for a given item.
+ *
+ * @param {Object} item - The item for which to retrieve the details.
+ * @returns {Object} - The details of the item.
+ */
+function getDetails(item) {
+  const newDetails = {
+    requested: null,
+    requestedFor: item.details.requestedFor || null,
+    requestedBy: item.details.requestedBy || null,
+    requestId: item.details.id,
+    requestDate: dayjs(item.details.date).format('MMM D, YYYY h:mm A'),
+    requestType: item.details.type,
+    status: setDecisionValue(getStatus(item.rawData.decision)),
+    priority: item.details.priority || null,
+    justification: item.rawData.request?.common?.justification,
+  };
+
+  // only add the requested details for the 6 catalog request types
+  if (item.details.name) {
+    newDetails.requested = {
+      icon: item.details.icon,
+      name: item.details.name,
+      description: item.details.description,
+    };
+  }
+
+  return pickBy(newDetails, (value) => value !== null);
 }
 
 onMounted(() => {
-  details.value = {
-    requested: {
-      icon: props.item.details.icon,
-      name: props.item.details.name,
-      description: props.item.details.description,
-    },
-    requestedFor: {
-      ...props.item.details.requestedFor,
-    },
-    requestedBy: {
-      ...props.item.details.requestedBy,
-    },
-    requestId: props.item.details.id,
-    requestDate: dayjs(props.item.details.date).format('MMM D, YYYY h:mm A'),
-    requestType: props.item.details.type,
-    status: setDecisionValue(getStatus(props.item.rawData.decision)),
-    priority: props.item.details.priority,
-    justification: props.item.rawData.request.common.justification,
-  };
+  details.value = getDetails(props.item);
 });
 </script>
 
