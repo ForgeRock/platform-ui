@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <VueDraggableResizable
-    class="fr-panel h-100 position-relative"
+    class="fr-panel position-relative"
     class-name-handle="fr-handle"
     prevent-deactivation
     :class="{ open }"
@@ -17,7 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
     :resizable="resizable"
     @resizing="onResize">
     <BCard
-      class="w-100 h-100 p-0 rounded-0"
+      class="w-100 h-100 p-0 rounded-0 overflow-auto"
       no-body>
       <div class="d-flex px-4 w-100 align-items-center justify-content-between">
         <div
@@ -128,20 +128,31 @@ function onResize(_, __, resizeWidth) {
   left: unset !important;
   right: -1px;
   transition: all 0.1s linear;
+  height: calc(100vh - 100px) !important;
 
   &.open {
     visibility: visible;
     opacity: 1;
   }
 }
-:deep(.fr-handle) {
-  box-sizing: border-box;
-  position: absolute;
-  width: 10px;
-  top: 0;
-  left: -5px;
-  height: 100%;
-  cursor: ew-resize;
-  z-index: 1;
+
+:deep {
+  .fr-handle {
+    box-sizing: border-box;
+    position: absolute;
+    width: 10px;
+    top: 0;
+    left: -5px;
+    cursor: ew-resize;
+    z-index: 1;
+  }
+
+  .fr-handle-ml {
+    position: absolute;
+    top: 0;
+    left: -5px;
+    height: 100%;
+    cursor: ew-resize;
+  }
 }
 </style>

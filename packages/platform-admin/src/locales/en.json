@@ -85,6 +85,7 @@
     "Events": "Event Hooks",
     "Forbidden": "Forbidden",
     "Forms": "Forms",
+    "FormEditor": "Form Editor",
     "GatewaysAndAgents": "Gateways And Agents",
     "Glossary": "Glossary",
     "GovernanceEventEdit": "Governance Event",
@@ -4049,8 +4050,13 @@
       "categories": {
         "customFields": "Custom Fields"
       },
+      "optionsModal": {
+        "addOption": "Add Option",
+        "valueDescription": "Option value",
+        "labelDescription": "Label text",
+        "selectedByDefault": "Selected by default"
+      },
       "closeButtonTooltip": "Toggle Field List",
-      "exitPreview": "Exit Preview",
       "field": {
         "columns": {
           "label": "Columns",
@@ -4091,7 +4097,7 @@
           "name": "Checkbox"
         },
         "date": {
-          "description": "Date input to accept a single ISO-formatted time/date stamp.",
+          "description": "Date input to accept a single ISO-formatted date stamp.",
           "name": "Date"
         },
         "multiselect": {
