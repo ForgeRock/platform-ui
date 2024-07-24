@@ -1393,6 +1393,85 @@
       }
     }
   },
+  "forms": {
+    "editor": {
+      "closeButtonText": "Toggle Field List",
+      "notFound": "Form not found",
+      "categories": {
+        "fields": "Fields"
+      },
+      "types": {
+        "checkbox": {
+          "defaultValue": {
+            "label": "Provide Default Value"
+          },
+          "description": "Checkbox input to accept a single boolean value.",
+          "name": "Checkbox"
+        },
+        "date": {
+          "description": "Date input to accept a single ISO-formatted date stamp.",
+          "name": "Date"
+        },
+        "field": {
+          "columns": {
+            "label": "Columns",
+            "description": "Columns this field should span on a 12 column grid."
+          },
+          "defaultValue": {
+            "description": "Provide a default value for this property.",
+            "label": "Provide Default Value"
+          },
+          "description": {
+            "description": "Help text to appear below the field.",
+            "label": "Description"
+          },
+          "fieldType": {
+            "description": "Property to provide value for this field.",
+            "label": "Field Type"
+          },
+          "label": {
+            "description": "Label for this field.",
+            "label": "Label"
+          },
+          "key": {
+            "description": "Property to write field value to.",
+            "label": "Key"
+          },
+          "offset": {
+            "label": "Offset",
+            "description": "Columns this field should be offset from the previous column on a 12 column grid."
+          },
+          "required": {
+            "label": "Required"
+          },
+          "provideDefaultValue": {
+            "description": "Provide a default value for this property.",
+            "label": "Provide Default Value",
+            "defaultValueInputLabel": "Default Value"
+          }
+        },
+        "layout": "Layout",
+        "multiselect": {
+          "description": "Select input to accept multiple strings from a list of enumerated values or freeform text input.",
+          "name": "Multiselect"
+        },
+        "select": {
+          "description": "Select input to accept a single string from a list of enumerated values.",
+          "name": "Select",
+          "options": "Options",
+          "optionsDescription": "Specify enumerated values for this field."
+        },
+        "text": {
+          "description": "Textfield input to accept a single string.",
+          "name": "Text"
+        },
+        "textarea": {
+          "description": "Text area to accept a multiline string input.",
+          "name": "Textarea"
+        }
+      }
+    }
+  },
   "governance": {
     "access": {
       "accountName": "Account Name",
