@@ -543,8 +543,11 @@ describe('Component for creating custom analytics reports', () => {
           await MyParameterOption.find('span').trigger('click');
 
           // adds another rule that does not contain a parameter for any values
-          const addRuleButton = findByText(filtersModal, 'button', 'add');
+          const filterBuilderButtons = wrapper.find('.filter-builder-row-buttons');
+          const addRuleButton = findByText(filterBuilderButtons, 'button', 'add');
+          const [addRuleOption] = filterBuilderButtons.findAll('[role="menuitem"]');
           await addRuleButton.trigger('click');
+          await addRuleOption.trigger('click');
           await flushPromises();
 
           const [, secondRule] = filtersModal.findAll('.queryfilter-row');
