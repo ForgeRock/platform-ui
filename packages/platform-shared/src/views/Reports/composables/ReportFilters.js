@@ -55,49 +55,48 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
 
   /**
    * Creates a list of filter rules from user input
-   * @param {Object} definition filter definition
-   * @param {String} groupOperator rule group operator
+   * @param {Object} rules filter rules
    * @param {Array} entityDefinitions entity definitions
    * @param {Array} parameterDefinitions parameter definitions
+   * @param {Number} subIndex index for each rule
    */
-  function compileFilterDefinitionRules(
-    definition,
-    groupOperator,
+  async function compileFilterDefinitionRules(
+    rules,
     entityDefinitions,
     parameterDefinitions,
+    subIndex,
   ) {
-    return Promise.all(definition[groupOperator].map(async (rules, subIndex) => {
-      const [ruleOperator] = Object.keys(rules);
-      const interpretRuleValues = typeof rules[ruleOperator] === 'object'
-        ? Object.entries(rules[ruleOperator]).map(([key, val]) => {
-          if (key.startsWith('search_') || key.startsWith('prefix') || key.startsWith('suffix') || key.startsWith('left') || key.startsWith(ruleOperator)) {
-            return ['leftValue', val];
-          }
-          if (key.startsWith('in_') || key.startsWith('right') || key.startsWith('value')) {
-            return ['rightValue', val];
-          }
-          return [undefined, val];
-        })
-        : [['leftValue', rules[ruleOperator]], ['rightValue', undefined]];
+    const [ruleOperator] = Object.keys(rules);
+    const { schema } = conditionalsFromApi.value.find(({ name }) => name === ruleOperator);
+    const [conditionalKeys] = schema;
+    const interpretRuleValues = typeof rules[ruleOperator] === 'object'
+      ? Object.entries(rules[ruleOperator]).map(([key, val]) => {
+        // The schema left.value and right.value property values
+        // are what determines the left and right payload keys.
+        if (conditionalKeys.left.value === key) {
+          return ['leftValue', val];
+        }
+        return ['rightValue', val];
+      })
+      : [['leftValue', rules[ruleOperator]]];
 
-      const { leftValue, rightValue } = Object.fromEntries(interpretRuleValues);
-      const [rightValueName] = typeof rightValue === 'object' ? Object.values(rightValue) : [rightValue];
-      let rightValueExistsInFilterVariables = false;
+    const { leftValue, rightValue } = Object.fromEntries(interpretRuleValues);
+    const [rightValueName] = typeof rightValue === 'object' ? Object.values(rightValue) : [rightValue];
+    let rightValueExistsInFilterVariables = false;
 
-      if (rightValueName) {
-        // This function populates the 'filterVariables' variable when it resolves
-        await getFieldOptionsForFilters(ruleOperator, entityDefinitions, parameterDefinitions);
-        rightValueExistsInFilterVariables = filterVariables.value[ruleOperator].find(({ value }) => value.includes(rightValueName));
-      }
+    if (rightValueName) {
+      // This function populates the 'filterVariables' variable when it resolves
+      await getFieldOptionsForFilters(ruleOperator, entityDefinitions, parameterDefinitions);
+      rightValueExistsInFilterVariables = filterVariables.value[ruleOperator].find(({ value }) => value.includes(rightValueName));
+    }
 
-      return {
-        field: leftValue,
-        operator: ruleOperator,
-        uniqueIndex: subIndex,
-        ...(rightValueName && { value: rightValueName }),
-        ...(rightValueName && { selectedRightValueType: rightValueExistsInFilterVariables ? 'variable' : 'literal' }),
-      };
-    }));
+    return {
+      field: leftValue,
+      operator: ruleOperator,
+      uniqueIndex: subIndex,
+      ...(rightValueName && { value: rightValueName }),
+      ...(rightValueName && { selectedRightValueType: rightValueExistsInFilterVariables ? 'variable' : 'literal' }),
+    };
   }
 
   /**
@@ -110,12 +109,19 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
     if (definition && Object.keys(definition).length) {
       return Promise.all(Object.keys(definition).map(async (groupOperator, groupIndex) => ({
         operator: groupOperator,
-        subfilters: await compileFilterDefinitionRules(
-          definition,
-          groupOperator,
-          entityDefinitions,
-          parameterDefinitions,
-        ),
+        subfilters: await Promise.all(definition[groupOperator].map(async (rules, subIndex) => {
+          const [ruleOperator] = Object.keys(rules);
+          if (ruleOperator === 'and' || ruleOperator === 'or') {
+            const [group] = await filterDefinitions(rules, entityDefinitions, parameterDefinitions);
+            return group;
+          }
+          return compileFilterDefinitionRules(
+            rules,
+            entityDefinitions,
+            parameterDefinitions,
+            subIndex,
+          );
+        })),
         uniqueIndex: groupIndex,
       })));
     }
@@ -124,7 +130,7 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
 
   /**
    * Creates the payload for the left and right values that come from the
-   * Query Filter Builder component.  It looks at the schema to determine structure.
+   * Query Filter Builder component.  It references the schema to determine structure.
    * @param {Object} selectedRightValueType filter definition
    * @param {Array} schema rule schema that comes from the report operators api call
    * @param {String} leftValue left value input
@@ -184,6 +190,40 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
   }
 
   /**
+   * Constructs an API payload for the filters setting.
+   * @param {String} groupOperator group operator
+   * @param {Array} subfilters filter rules list
+   */
+  function payloadStructure(groupOperator, subfilters) {
+    return {
+      [groupOperator]: subfilters.map((sub) => {
+        const {
+          field: leftValue,
+          operator,
+          selectedRightValueType,
+          value: rightValue,
+          subfilters: nestedSubfilters,
+        } = sub;
+        const { schema } = conditionalsFromApi.value.find((condition) => condition.name === operator) || {};
+
+        if (nestedSubfilters) {
+          return payloadStructure(operator, nestedSubfilters);
+        }
+
+        return {
+          [operator]: compileLeftAndRightValues(
+            selectedRightValueType,
+            schema,
+            leftValue,
+            operator,
+            rightValue,
+          ),
+        };
+      }),
+    };
+  }
+
+  /**
    * Interprets the UI data into an API friendly payload for each filter rule.
    * @param {Array} definitions list of filter definitions
    * @returns {Object}
@@ -193,26 +233,7 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
     if (filterDefinition) {
       const { operator: groupOperator, subfilters } = filterDefinition;
       return {
-        filter: {
-          [groupOperator]: subfilters.map((sub) => {
-            const {
-              field: leftValue,
-              operator: ruleOperator,
-              selectedRightValueType,
-              value: rightValue,
-            } = sub;
-            const { schema } = conditionalsFromApi.value.find((condition) => condition.name === ruleOperator);
-            return {
-              [ruleOperator]: compileLeftAndRightValues(
-                selectedRightValueType,
-                schema,
-                leftValue,
-                ruleOperator,
-                rightValue,
-              ),
-            };
-          }),
-        },
+        filter: payloadStructure(groupOperator, subfilters),
       };
     }
     return {};

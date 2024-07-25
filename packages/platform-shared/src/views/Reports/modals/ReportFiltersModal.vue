@@ -14,7 +14,7 @@ to such license between the licensee and ForgeRock AS. -->
     title-tag="h2"
     :static="isTesting"
     :title="$t('reports.template.addFilters')"
-    @show="populateForm">
+    @show="fetchAllFieldOptions">
     <FrFilterBuilderGroup
       path="0"
       class="pb-3 background-none"
@@ -22,7 +22,7 @@ to such license between the licensee and ForgeRock AS. -->
       :rules="queryFilter"
       :resource-name="``"
       :depth="0"
-      :max-depth="1"
+      :max-depth="4"
       :index="0"
       :operator-options="operatorOptions"
       :properties="dataSourceColumnsSorted"
@@ -98,6 +98,7 @@ import {
   nextTick,
   provide,
   ref,
+  watch,
 } from 'vue';
 import {
   BButton,
@@ -290,30 +291,44 @@ function saveFilter() {
 
 /**
  * Fetches fieldoptions for all unique rule operators
- * @param {Array} existingRules existing filter rules
  */
-function fetchAllFieldOptions(existingRules) {
+async function fetchAllFieldOptions() {
+  // Necessary because the @show hook used to trigger this function in the
+  // <BModal> component was not executing in time for the props to populate.
+  await nextTick();
+  const existingRules = props.existingFilter?.definition?.subfilters;
+  const nonFieldoptionOperators = ['is_null', 'is_not_null', 'and', 'or'];
   const operatorList = new Set();
 
+  // In order to be able to identify all unique operators so we can fetch
+  // their corresponding field options, we must search through the rules
+  // array and call this function recursively when we run into a subfilters
+  // property, since this property assumes a nested set of filter rules.
+  function rulesRecursion(rules) {
+    rules.forEach((rule) => {
+      if (rule.subfilters) {
+        rulesRecursion(rule.subfilters);
+      }
+
+      if (!nonFieldoptionOperators.includes(rule.operator)) {
+        operatorList.add(rule.operator);
+      }
+    });
+  }
+
   if (existingRules) {
-    existingRules.forEach((rule) => { operatorList.add(rule.operator); });
+    rulesRecursion(existingRules);
   } else {
     operatorList.add('contains');
+    queryFilter.value = getDefaultGroup();
   }
-
-  if (props.variableOptions) {
-    const keys = Object.keys(props.variableOptions);
-    keys.forEach((variableOption) => { operatorList.add(variableOption); });
-  }
-
   operatorList.forEach((operator) => { emit('get-field-options', operator); });
 }
 
 /**
- * Populates the filter rules on the BModal's "@show" event
+ * Populates the filter rules when props.existingFilter changes
  */
 async function populateForm() {
-  await nextTick();
   const existingFilterDefinition = props.existingFilter?.definition;
 
   if (existingFilterDefinition) {
@@ -323,23 +338,38 @@ async function populateForm() {
     } else {
       queryFilter.value = cloneDeep(existingFilterClone.value);
     }
-  } else {
-    queryFilter.value = getDefaultGroup();
   }
-  fetchAllFieldOptions(existingFilterDefinition?.subfilters);
+}
+
+function hasEmptyValues(obj) {
+  // Check if the object itself has an empty 'field' or 'value' property
+  if (obj.field === '' || (obj.value !== undefined && obj.value === '')) {
+    return true;
+  }
+
+  // If the object has 'subfilters', recursively check each one
+  if (obj.subfilters && Array.isArray(obj.subfilters)) {
+    for (let i = 0; i < obj.subfilters.length; i += 1) {
+      if (hasEmptyValues(obj.subfilters[i])) {
+        return true;
+      }
+    }
+  }
+
+  // If no empty 'field' or 'value' found, return false
+  return false;
 }
 
 // Computed
-const disableSave = computed(() => {
-  if (queryFilter.value) {
-    const emptyQueries = queryFilter.value.subfilters.filter(({ field, value }) => !field || (value !== undefined && !value));
-    return !!emptyQueries.length;
-  }
-  return true;
-});
+const disableSave = computed(() => hasEmptyValues(queryFilter.value));
 const dataSourceColumnsSorted = computed(() => props.dataSourceColumns
   .map(({ value }) => ({ value, label: value }))
   .sort((a, b) => sortCompare(a, b, 'value')));
+
+// Watchers
+watch(() => props.existingFilter, () => {
+  populateForm();
+});
 
 // Start
 (() => {
@@ -368,6 +398,10 @@ const dataSourceColumnsSorted = computed(() => props.dataSourceColumns
 
   &.depth-3 {
     border-left: 2px solid $yellow;
+  }
+
+  &.depth-4 {
+    border-left: 2px solid $red;
   }
 }
 </style>

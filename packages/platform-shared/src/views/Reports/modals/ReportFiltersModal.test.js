@@ -96,8 +96,12 @@ describe('Report Filter Modal component', () => {
       let rightFormValues = findAllByTestId(wrapper, 'filter-builder-values');
       expect(rightFormValues.length).toBe(1);
 
-      const addButton = findByText(wrapper, 'button', 'add');
+      const filterBuilderButtons = wrapper.find('.filter-builder-row-buttons');
+      const addButton = findByText(filterBuilderButtons, 'button', 'add');
+      const [addRule] = filterBuilderButtons.findAll('[role="menuitem"]');
+
       await addButton.trigger('click');
+      await addRule.trigger('click');
       await flushPromises();
       rightFormValues = findAllByTestId(wrapper, 'filter-builder-values');
       expect(rightFormValues.length).toBe(2);
@@ -118,28 +122,45 @@ describe('Report Filter Modal component', () => {
       expect(wrapper.emitted('get-field-options')).toEqual([['contains']]);
     });
 
-    it('ensures that the expected payload is emitted when the save button is clicked with the "User Provided" type selected', async () => {
-      const [, valueSelect, operatorSelect] = wrapper.findAll('[role="listbox"]');
+    it('ensures that the expected payload is emitted with nested groups and rules when the form is saved', async () => {
+      const filterBuilderButtons = wrapper.find('.filter-builder-row-buttons');
+      const addButton = findByText(filterBuilderButtons, 'button', 'add');
+      const [, addGroup] = filterBuilderButtons.findAll('[role="menuitem"]');
       let saveButton = findByText(wrapper, 'button', 'Save');
-      expect(saveButton.attributes().disabled).toBeDefined();
 
-      // Value field selection
-      const valueOption = findByText(valueSelect, 'li', '_id').find('span').find('span');
-      await valueSelect.trigger('click');
-      await valueOption.trigger('click');
-      saveButton = findByText(wrapper, 'button', 'Save');
-      expect(saveButton.attributes().disabled).toBeDefined();
+      // adds a new group
+      await addButton.trigger('click');
+      await addGroup.trigger('click');
+      await flushPromises();
 
-      // Operator selection
-      const operatorOption = findByText(wrapper, 'li', 'contains').find('span').find('span');
-      await operatorSelect.trigger('click');
-      await operatorOption.trigger('click');
-      saveButton = findByText(wrapper, 'button', 'Save');
-      expect(saveButton.attributes().disabled).toBeDefined();
+      async function fillOutFilterRule(container) {
+        const [valueSelect, operatorSelect] = container.findAll('[role="listbox"]');
+        expect(saveButton.attributes().disabled).toBeDefined();
 
-      // Literal field input
-      const [, rightValue] = wrapper.findAll('input[type="text"]');
-      await rightValue.setValue('My literal input');
+        // Value field selection
+        const valueOption = findByText(valueSelect, 'li', '_id').find('span').find('span');
+        await valueSelect.trigger('click');
+        await valueOption.trigger('click');
+        saveButton = findByText(wrapper, 'button', 'Save');
+        expect(saveButton.attributes().disabled).toBeDefined();
+
+        // Operator selection
+        const operatorOption = findByText(container, 'li', 'contains').find('span').find('span');
+        await operatorSelect.trigger('click');
+        await operatorOption.trigger('click');
+        saveButton = findByText(wrapper, 'button', 'Save');
+        expect(saveButton.attributes().disabled).toBeDefined();
+
+        // Literal field input
+        const [, rightValue] = container.findAll('input[type="text"]');
+        await rightValue.setValue('My literal input');
+      }
+
+      const [firstGroup, secondGroup] = wrapper.findAll('.filter-builder-row');
+
+      await fillOutFilterRule(firstGroup);
+      await fillOutFilterRule(secondGroup);
+
       saveButton = findByText(wrapper, 'button', 'Save');
       expect(saveButton.attributes().disabled).toBeUndefined();
 
@@ -147,30 +168,56 @@ describe('Report Filter Modal component', () => {
       await findByText(wrapper, 'button', 'Save').trigger('click');
       expect(wrapper.emitted('update-filter')).toEqual([['filter', 0, {
         operator: 'or',
-        subfilters: [{
-          field: 'applications._id',
-          operator: 'contains',
-          selectedRightValueType: 'literal',
-          uniqueIndex: 1,
-          value: 'My literal input',
-        }],
+        subfilters: [
+          {
+            field: 'applications._id',
+            operator: 'contains',
+            selectedRightValueType: 'literal',
+            uniqueIndex: 1,
+            value: 'My literal input',
+          },
+          {
+            operator: 'or',
+            subfilters: [{
+              field: 'applications._id',
+              operator: 'contains',
+              selectedRightValueType: 'literal',
+              uniqueIndex: 3,
+              value: 'My literal input',
+            }],
+            uniqueIndex: 4,
+          },
+        ],
         uniqueIndex: 2,
       }]]);
     });
 
-    it('ensures that it loads the correct data in the correct fields for an existing filter', async () => {
+    it('ensures that it loads the correct data in the correct fields for a nested existing filter', async () => {
       wrapper = setup({
         existingFilter: {
           index: 0,
           definition: {
             operator: 'or',
-            subfilters: [{
-              field: 'applications.name',
-              operator: 'contains',
-              selectedRightValueType: 'literal',
-              uniqueIndex: 0,
-              value: 'my right value',
-            }],
+            subfilters: [
+              {
+                field: 'applications.name',
+                operator: 'contains',
+                selectedRightValueType: 'literal',
+                uniqueIndex: 0,
+                value: 'my right value',
+              },
+              {
+                operator: 'or',
+                subfilters: [{
+                  field: 'applications._id',
+                  operator: 'contains',
+                  selectedRightValueType: 'literal',
+                  uniqueIndex: 3,
+                  value: 'My literal input',
+                }],
+                uniqueIndex: 4,
+              },
+            ],
             uniqueIndex: 0,
           },
         },
@@ -179,16 +226,29 @@ describe('Report Filter Modal component', () => {
       // Must use this to simulate the @show BModal method since it is not triggering it natively
       await wrapper.vm.populateForm();
 
-      const [, leftValueSelect, operatorSelect] = wrapper.findAll('[role="listbox"]');
+      const [firstGroup, secondGroup] = wrapper.findAll('.filter-builder-row');
 
+      // first group values
+      const [leftValueSelect, operatorSelect] = firstGroup.findAll('[role="listbox"]');
       const leftValueSelectedOption = leftValueSelect.find('.multiselect__option--selected');
       expect(leftValueSelectedOption.text()).toBe('applications.name');
 
       const operatorSelectedOption = operatorSelect.find('.multiselect__option--selected');
       expect(operatorSelectedOption.text()).toBe('contains');
 
-      const [, rightValueInput] = wrapper.findAll('input');
+      const [, rightValueInput] = firstGroup.findAll('input[type="text"]');
       expect(rightValueInput.element.value).toBe('my right value');
+
+      // second group values
+      const [secondLeftValueSelect, secondOperatorSelect] = secondGroup.findAll('[role="listbox"]');
+      const secondLeftValueSelectedOption = secondLeftValueSelect.find('.multiselect__option--selected');
+      expect(secondLeftValueSelectedOption.text()).toBe('applications._id');
+
+      const secondOperatorSelectedOption = secondOperatorSelect.find('.multiselect__option--selected');
+      expect(secondOperatorSelectedOption.text()).toBe('contains');
+
+      const [, secondRightValueInput] = secondGroup.findAll('input[type="text"]');
+      expect(secondRightValueInput.element.value).toBe('My literal input');
     });
 
     it('ensures that the right value (literal / variable) field does not show when the operator is equal to "is null" or "is not null"', async () => {

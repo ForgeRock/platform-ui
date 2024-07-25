@@ -152,12 +152,22 @@ describe('@useReportFilters', () => {
 
   describe('@unit', () => {
     const apiDefinitionContainsLiteral = {
-      or: [{
-        contains: {
-          search_string: 'applications.name',
-          in_query: { literal: 'my literal value' },
+      or: [
+        {
+          contains: {
+            search_string: 'applications.name',
+            in_query: { literal: 'my literal value' },
+          },
         },
-      }],
+        {
+          and: [{
+            contains: {
+              search_string: 'applications._id',
+              in_query: { literal: 'My _id literal value' },
+            },
+          }],
+        },
+      ],
     };
 
     const entityDefinitions = [
@@ -184,16 +194,30 @@ describe('@useReportFilters', () => {
     ];
 
     it('constructs a UI friendly definition object from API data', async () => {
+      await fetchReportOperators();
       const definitions = await filterDefinitions(apiDefinitionContainsLiteral, entityDefinitions, {});
       expect(definitions).toEqual([{
         operator: 'or',
-        subfilters: [{
-          field: 'applications.name',
-          operator: 'contains',
-          selectedRightValueType: 'literal',
-          uniqueIndex: 0,
-          value: 'my literal value',
-        }],
+        subfilters: [
+          {
+            field: 'applications.name',
+            operator: 'contains',
+            selectedRightValueType: 'literal',
+            uniqueIndex: 0,
+            value: 'my literal value',
+          },
+          {
+            operator: 'and',
+            subfilters: [{
+              field: 'applications._id',
+              operator: 'contains',
+              selectedRightValueType: 'literal',
+              uniqueIndex: 0,
+              value: 'My _id literal value',
+            }],
+            uniqueIndex: 0,
+          },
+        ],
         uniqueIndex: 0,
       }]);
     });
