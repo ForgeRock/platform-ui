@@ -22,6 +22,20 @@ Cypress.Commands.add(
     cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type(userName, { force: true });
     cy.findAllByLabelText(/Password/i).first().type(password, { force: true });
     cy.findByRole('button', { name: /Next/i }).click();
+
+    // Wait for the spinner div to disappear
+    cy.findByRole('status', { timeout: 3000 }).should('not.exist');
+
+    // Every third Login user is asked about preferences on the default Login Journey
+    cy.get('body').then(($body) => {
+      // Check if "Please select your preferences" screen appears
+      if ($body.find('h1:contains("Please select your preferences")').length > 0) {
+        // Confirm the preferences
+        cy.findByRole('button', { name: /Next/i }).click();
+      }
+    });
+
+    // Check for the dashboard-welcome-greeting message
     cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
   },
 );

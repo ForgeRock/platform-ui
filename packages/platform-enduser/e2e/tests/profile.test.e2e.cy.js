@@ -5,34 +5,85 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { random, find } from 'lodash';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import { createIDMUser } from '../api/managedApi.e2e';
+import {
+  createNewTheme,
+  setThemeAsDefault,
+  deleteTheme,
+  saveThemeEdit,
+} from '../pages/common/hostedPages';
+import { getThemesList } from '../api/themeApi.e2e';
 
 const path = require('path');
 
 filterTests(['forgeops', 'cloud'], () => {
-  const userObject = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
-
   describe('Enduser Profile View', () => {
-    let userName;
-    let userId;
+    const userObject = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
     const downloadsFolder = Cypress.config('downloadsFolder');
+    const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
+    const hostedPagesUrl = `${Cypress.config().baseUrl}/platform/?realm=${loginRealm}#/hosted-pages`;
+    let userName = '';
+    let userId;
+    let testThemeName = '';
+    let defaultTheme = '';
 
     retryableBeforeEach(() => {
-      // Get an admin access token and use it to create the test user
+      // Generate unique test Theme name
+      testThemeName = `test_theme_${random(Number.MAX_SAFE_INTEGER)}`;
+
       cy.loginAsAdmin().then(() => {
+        getThemesList().then((list) => {
+          // Gets the Default Theme from the list of themes so it can be set back as the Realm default at the end of the test
+          defaultTheme = find(list.body.realm[loginRealm], { isDefault: true }).name;
+        });
+      });
+
+      // Create testing IDM enduser
+      cy.log('Create new IDM Enduser').then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
           userName = responseUserName;
           userId = responseUserId;
-          cy.logout();
-
-          // Login as Enduser
-          cy.loginAsEnduser(userName);
         });
+      });
+
+      cy.log('Create new testing Theme with "Account Controls" option enabled').then(() => {
+        cy.visit(hostedPagesUrl);
+        createNewTheme(testThemeName);
+        // Setup "Account Controls" option for the test Theme
+        cy.findByRole('tab', { name: 'Account Pages' }).click();
+        cy.findByRole('tab', { name: 'Layout' }).click();
+        cy.findByRole('checkbox', { name: 'Account Controls' }).scrollIntoView().should('not.be.checked').click({ force: true });
+
+        // Save the Theme and set it as the Realm Default
+        saveThemeEdit();
+        setThemeAsDefault(testThemeName);
+
+        cy.logout();
+      });
+    });
+
+    afterEach(() => {
+      // Clear cookies
+      cy.logout();
+
+      // Login as admin, set the Default Theme back as the Realm default and delete the test Theme
+      cy.loginAsAdmin().then(() => {
+        cy.visit(hostedPagesUrl);
+        // Wait for the Themes table to load
+        cy.findByRole('heading', { level: 1, name: 'Hosted Pages' }).should('be.visible');
+        cy.findByRole('button', { name: 'New Theme', timeout: 10000 }).should('be.visible');
+
+        setThemeAsDefault(defaultTheme);
+        deleteTheme(testThemeName);
       });
     });
 
     it('should show basic data on the profile view, allow downloading user data, and allow account deletion', () => {
+      // Log in to the enduser UI and check that the Theme changes have been correctly applied
+      cy.loginAsEnduser(userName);
+
       // Redirect to Enduser profile page
       cy.get('[href="#/profile"]').should('be.visible').click();
 
