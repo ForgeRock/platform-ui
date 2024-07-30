@@ -158,8 +158,8 @@ describe('Run Report component', () => {
 
         expect(submitButton.attributes().disabled).toBeDefined();
 
-        // I couldnt find a way to get the DOM to display the datepicker calendar popup to
-        // interact with it, so I had to inject the values into the datepicker variable directly.
+        // I couldn't find a way to get the DOM to display the datepicker calendar popup to
+        // interact with, so I had to inject the values into the datepicker variable directly.
         wrapper.vm.startDateModel = '2023-10-10';
         expect(submitButton.attributes('disabled')).toBeDefined();
 
@@ -169,16 +169,20 @@ describe('Run Report component', () => {
         expect(submitButton.attributes().disabled).toBeUndefined();
       });
 
-      it('disables the submit button if there are no valid report parameters', async () => {
+      it('displays the expected submit button label and help text if a report contains no parameters', async () => {
         fieldDataMocks();
         wrapper = setup({ reportConfig: { parameters: {} } });
         await flushPromises();
 
-        const submitButton = findByTestId(wrapper, 'run-report-button');
-        expect(submitButton.attributes('disabled')).toBeDefined();
+        const runReportContainer = wrapper.find('.card');
+        expect(runReportContainer.attributes('footer-border-variant')).toBe('white');
+        expect(runReportContainer.attributes('no-body')).toBe('true');
 
-        const fieldsContainer = findByTestId(wrapper, 'fr-run-report-container');
-        expect(fieldsContainer.text()).toBe('Report does not contain any valid parameters');
+        const submitButton = findByTestId(runReportContainer, 'run-report-button');
+        expect(submitButton.attributes('disabled')).toBeUndefined();
+
+        const footerDescription = findByText(runReportContainer, 'p', 'Run Report');
+        expect(footerDescription.exists()).toBe(true);
       });
     });
 

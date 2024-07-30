@@ -8,9 +8,9 @@ of the MIT license. See the LICENSE file for details. -->
   </BCard>
   <BCard
     v-else
-    :class="isPrePackagedReportWithNoParameters ? '' : 'fr-run-report-card'"
-    :footer-border-variant="isPrePackagedReportWithNoParameters ? 'white' : 'default'"
-    :no-body="isPrePackagedReportWithNoParameters">
+    :class="reportHasNoParameters ? '' : 'fr-run-report-card'"
+    :footer-border-variant="reportHasNoParameters ? 'white' : 'default'"
+    :no-body="reportHasNoParameters">
     <BContainer
       class="p-0"
       data-testid="fr-run-report-container">
@@ -203,26 +203,19 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
         </BRow>
       </template>
-      <BRow v-if="doesNotContainAtLeastOneValidParameter">
-        <BCol
-          class="text-center mt-4"
-          md="12">
-          {{ $t('reports.tabs.runReport.errors.noValidParameters') }}
-        </BCol>
-      </BRow>
     </BContainer>
 
     <template #footer>
-      <div :class="`d-flex justify-content-${isPrePackagedReportWithNoParameters ? 'between' : 'end'} align-items-center`">
+      <div :class="`d-flex justify-content-${reportHasNoParameters ? 'between' : 'end'} align-items-center`">
         <p
-          v-if="isPrePackagedReportWithNoParameters"
+          v-if="reportHasNoParameters"
           class="text-dark m-0 text-capitalize">
           <strong>{{ $t('reports.tabs.runReport.title') }}</strong>
         </p>
         <FrButtonWithSpinner
           data-testid="run-report-button"
           variant="primary"
-          :button-text="isPrePackagedReportWithNoParameters ? $t('reports.tabs.runReport.runNow') : $t('reports.tabs.runReport.title')"
+          :button-text="reportHasNoParameters ? $t('reports.tabs.runReport.runNow') : $t('reports.tabs.runReport.title')"
           :disabled="disableSubmit || isSubmitting"
           :spinner-text="$t('common.submitting')"
           :show-spinner="isSubmitting"
@@ -307,15 +300,15 @@ const isSubmitting = ref(false);
  * GLOBALS
  */
 const _PARAMETER_KEYS = ref([]);
-const isPrePackagedReportWithNoParameters = computed(() => {
+const reportHasNoParameters = computed(() => {
   const includesRealmAsParameter = _PARAMETER_KEYS.value.includes('realm');
 
   // Parameters will usually contain 'realm', which is not a field, so this is
   // why we check for less than 2 parameters (meaning realm is the only value).
-  if (props.isPrePackagedReport && includesRealmAsParameter) {
+  if (includesRealmAsParameter) {
     return _PARAMETER_KEYS.value.length < 2;
   }
-  return props.isPrePackagedReport && _PARAMETER_KEYS.value.length < 1;
+  return _PARAMETER_KEYS.value.length < 1;
 });
 
 /**
@@ -509,15 +502,10 @@ const {
 /**
  * Submit button disable conditions
  */
-const doesNotContainAtLeastOneValidParameter = computed(() => {
-  const doesNotHaveMappedParameters = !_PARAMETER_KEYS.value.filter((parameter) => Object.keys(_REPORT_FIELDS_CONTROLLER).includes(parameter)).length;
-  const doesNotHaveUnmappedParameters = !unmappedParameters.value.length;
-  return doesNotHaveMappedParameters && doesNotHaveUnmappedParameters;
-});
+
 const disableSubmit = computed(() => {
   if (props.isPrePackagedReport) {
-    return doesNotContainAtLeastOneValidParameter.value
-    || timeframeDisableSubmit.value
+    return timeframeDisableSubmit.value
     || applicationsDisableSubmit.value
     || campaignNameDisableSubmit.value
     || campaignStatusDisableSubmit.value
