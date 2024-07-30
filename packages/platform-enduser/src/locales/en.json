@@ -243,6 +243,7 @@
     "ReportRun": "Run Report",
     "Reports": "Reports",
     "ReportView": "View Report",
+    "RequestFormLauncher": "Request Form",
     "Sharing": "Sharing",
     "Violations": "Violations",
     "Violation": "Violation",
@@ -374,6 +375,16 @@
       "title": "My Direct Reports"
     },
     "hideFilters": "Hide Filters",
+    "requestForm": {
+      "loadingForm": "Loading Form Definition...",
+      "title": "Request Form",
+      "noRequestTypeFound": "No request type found for this form",
+      "errorGettingForm": "Error getting form",
+      "errorSubmittingRequest": "Error submitting request",
+      "requestSubmitted": "Request submitted successfully",
+      "submitRequest": "Submit Request",
+      "submitting": "Submitting..."
+    },
     "showFilters": "Show Filters",
     "sortBy": "Sort by",
     "violations": {

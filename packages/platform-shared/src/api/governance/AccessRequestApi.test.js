@@ -74,4 +74,17 @@ describe('Access Review API', () => {
     expect(get).toBeCalledWith(`/governance/requestTypes/${requestTypeId}`);
     expect(BaseApi.generateIgaApi).toBeCalled();
   });
+
+  it('should call submitCustomRequest endpoint with correct payload and url', async () => {
+    const requestPayload = {
+      test: 'test',
+    };
+
+    await AccessRequestApi.submitCustomRequest('testId', requestPayload);
+    expect(post).toBeCalledWith(
+      '/governance/requests/testId?_action=publish',
+      requestPayload,
+    );
+    expect(BaseApi.generateIgaApi).toBeCalled();
+  });
 });
