@@ -2023,7 +2023,6 @@
           "couldNotRunReport": "Error running the report.",
           "errorRetrievingTemplate": "Error retrieving template.",
           "errorRunningReport": "There was an error while attempting to run the report.",
-          "noValidParameters": "Report does not contain any valid parameters",
           "templateDoesNotExist": "Report template does not exist."
         }
       },
