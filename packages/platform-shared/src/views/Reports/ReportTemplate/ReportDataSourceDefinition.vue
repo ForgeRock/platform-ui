@@ -82,20 +82,20 @@ of the MIT license. See the LICENSE file for details. -->
         :label="$t('reports.template.relatedDataSources')">
         <BListGroup :aria-describedby="ariaDescribedby">
           <BListGroupItem
-            v-for="(dataSourceName, index) in relatedDataSources"
+            v-for="({ label, name }) in relatedDataSources"
             class="d-flex align-items-center mb-2 py-2 px-3 border-0 rounded justify-content-between"
             data-testid="related-entity-list-item"
-            :class="selectedRelatedDataSources.includes(dataSourceName) ? 'bg-lightblue' : 'bg-light'"
-            :key="index">
+            :class="selectedRelatedDataSources.includes(name) ? 'bg-lightblue' : 'bg-light'"
+            :key="name">
             <p class="m-0">
-              {{ dataSourceName }}
+              {{ label }}
             </p>
             <FrSpinner
-              v-if="currentEntityBeingFetched === dataSourceName && !selectedRelatedDataSources.includes(dataSourceName)"
+              v-if="currentEntityBeingFetched === name && !selectedRelatedDataSources.includes(name)"
               class="ml-auto opacity-50"
               size="sm" />
             <BDropdown
-              v-else-if="!selectedRelatedDataSources.includes(dataSourceName)"
+              v-else-if="!selectedRelatedDataSources.includes(name)"
               class="p-0 ml-auto"
               no-caret
               right
@@ -106,7 +106,7 @@ of the MIT license. See the LICENSE file for details. -->
                   icon-class="text-dark md-18"
                   name="add" />
               </template>
-              <BDropdownItem @click="addRelatedEntity(dataSourceName)">
+              <BDropdownItem @click="addRelatedEntity(name)">
                 <FrIcon
                   icon-class="mr-2"
                   name="add">

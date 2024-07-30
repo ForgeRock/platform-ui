@@ -22,8 +22,8 @@ to such license between the licensee and ForgeRock AS. -->
       v-model="entityValue"
       :disabled="isSaving"
       :internal-search="true"
-      :label="columnCheckboxNames.length ? $t('reports.template.dataSource') : $t('reports.template.noDataSourcesFound')"
-      :options="columnCheckboxNames"
+      :label="dataSources.length ? $t('reports.template.dataSource') : $t('reports.template.noDataSourcesFound')"
+      :options="dataSources"
       class="mb-5"
       name="data-source-field"
       type="select" />
@@ -61,7 +61,7 @@ import i18n from '@/i18n';
 // Definitions
 defineEmits(['add-data-source']);
 const props = defineProps({
-  columnCheckboxNames: {
+  dataSources: {
     type: Array,
     default: () => [],
   },

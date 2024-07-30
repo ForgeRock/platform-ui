@@ -176,7 +176,14 @@ describe('Report Template Settings component', () => {
           result: [
             {
               name: 'applications',
-              relatedEntities: ['assignments', 'roles'],
+              relatedEntities: [{
+                name: 'roles',
+                label: 'roles',
+              },
+              {
+                name: 'assignments',
+                label: 'assignments',
+              }],
             },
             {
               name: 'Users',
@@ -214,7 +221,14 @@ describe('Report Template Settings component', () => {
             value: 'applications.name',
           },
         ],
-        relatedDataSources: ['assignments', 'roles'],
+        relatedDataSources: [{
+          name: 'assignments',
+          label: 'assignments',
+        },
+        {
+          name: 'roles',
+          label: 'roles',
+        }],
         selectedColumns: ['applications.name'],
         selectedRelatedDataSources: ['roles'],
       };

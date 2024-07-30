@@ -100,13 +100,23 @@ describe('Component for creating custom analytics reports', () => {
         result: [
           {
             name: 'applications',
-            relatedEntities: ['roles', 'assignments'],
+            label: 'applications',
+            relatedEntities: [{
+              name: 'roles',
+              label: 'roles',
+            },
+            {
+              name: 'assignments',
+              label: 'assignments',
+            }],
           },
           {
             name: 'Users',
+            label: 'Users',
           },
           {
             name: 'roles',
+            label: 'roles',
           },
         ],
       },
