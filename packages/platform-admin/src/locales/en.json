@@ -3845,6 +3845,9 @@
         "formName": "Form Name",
         "optionalDescription": "Description (optional)",
         "objectType": "Object type",
+        "requestTypeAlreadyAssigned": "Request type already assigned to a form",
+        "requestTypeDescription": "Choose a request type for which this request form applies.",
+        "requestTypeLabel": "Request Type (optional)",
         "savingSuccess": "Form created successfully"
       },
       "editor": {
