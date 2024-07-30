@@ -4,8 +4,7 @@
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
-
-import resolveImage from '@forgerock/platform-shared/src/utils/applicationImageResolver';
+import { resolveImage } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 
 const logoMap = {
   'active.directory': 'active-directory.svg',

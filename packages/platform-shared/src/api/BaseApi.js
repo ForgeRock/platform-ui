@@ -133,6 +133,23 @@ export function generateIgaApi(requestOverride = {}) {
 }
 
 /**
+ * Generates a CDN API Axios instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generateCdnApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: 'https://cdn.forgerock.com/platform/app-templates',
+    headers: { 'Content-Encoding': 'gzip' },
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
+
+/**
  * Generates an IGA Workflow API Axios instance
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
  * on extra information or override default properties https://github.com/axios/axios#request-config

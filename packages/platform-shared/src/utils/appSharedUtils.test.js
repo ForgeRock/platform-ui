@@ -5,15 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import resolveImage from '@forgerock/platform-shared/src/utils/applicationImageResolver';
+import { resolveImage } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 
-jest.mock('@forgerock/platform-shared/src/utils/applicationImageResolver', () => ({
-  __esModule: true,
-  default: jest.fn((imagePath) => (imagePath ? `resolved/${imagePath}` : '')),
-}));
-
 const logoMap = {
+  template1: 'path/to/template1Icon.png',
 };
 
 describe('AppSharedUtils', () => {
@@ -27,7 +23,7 @@ describe('AppSharedUtils', () => {
       expect(result).toBe(application.icon);
     });
 
-    it('should return logo based on templateName if it exists in logoMap', () => {
+    it('should return icon based on templateName if it exists in logoMap', () => {
       const application = {
         icon: '',
         templateName: 'template1',
