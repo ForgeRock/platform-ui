@@ -32,11 +32,12 @@ of the MIT license. See the LICENSE file for details. -->
             <BCardBody class="d-flex justify-content-center align-items-center">
               <div class="d-flex flex-column align-items-center justify-content-center">
                 <div class="d-flex align-items-center justify-content-center mb-3 app-image">
-                  <BImg
+                  <img
                     width="50"
                     height="50"
                     :src="getLogo(app.icon)"
-                    :alt="app.name" />
+                    :alt="app.name"
+                    :onerror="onImageError">
                 </div>
                 <h5 class="card-title mb-0">
                   {{ app.name }}
@@ -53,11 +54,11 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import { BContainer, BImg } from 'bootstrap-vue';
+import { BContainer } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
-import resolveImage from '@forgerock/platform-shared/src/utils/applicationImageResolver';
+import { onImageError, resolveImage } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getDefinedDashboards } from '@forgerock/platform-shared/src/api/DashboardApi';
 import { getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getUserSamlApplications } from '@/api/ProfileApi';
@@ -66,7 +67,6 @@ export default {
   name: 'WorkforceApplications',
   components: {
     BContainer,
-    BImg,
     FrHeader,
     FrSearchInput,
   },
@@ -137,6 +137,7 @@ export default {
       }
       return resolveImage(logoUrl);
     },
+    onImageError,
   },
 };
 </script>

@@ -371,6 +371,7 @@ describe('Remediate', () => {
     const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification');
     store.default.replaceState({
       violationsCount: 1,
+      SharedStore: {},
     });
     const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
 
