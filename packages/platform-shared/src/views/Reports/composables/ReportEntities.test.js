@@ -12,7 +12,7 @@ import useReportEntities from './ReportEntities';
 describe('@useReportEntities', () => {
   const {
     entityDefinitions,
-    dataSourceColumnCheckboxNames,
+    dataSources,
     entitiesPayload,
     fetchReportEntities,
   } = useReportEntities();
@@ -22,10 +22,19 @@ describe('@useReportEntities', () => {
       result: [
         {
           name: 'applications',
-          relatedEntities: ['roles', 'assignments'],
+          label: 'applications',
+          relatedEntities: [{
+            name: 'roles',
+            label: 'roles',
+          },
+          {
+            name: 'assignments',
+            label: 'assignments',
+          }],
         },
         {
           name: 'Users',
+          label: 'Users',
         },
       ],
     },
@@ -62,7 +71,14 @@ describe('@useReportEntities', () => {
           type: 'string',
         },
       ],
-      relatedDataSources: ['roles', 'assignments'],
+      relatedDataSources: [{
+        name: 'assignments',
+        label: 'assignments',
+      },
+      {
+        name: 'roles',
+        label: 'roles',
+      }],
       selectedColumns: ['applications.name'],
       selectedRelatedDataSources: [],
     },
@@ -77,7 +93,7 @@ describe('@useReportEntities', () => {
         },
       ],
       joinType: 'left',
-      relatedDataSources: ['groups'],
+      relatedDataSources: [{ name: 'groups', label: 'groups' }],
       selectedColumns: ['applications.roles._id'],
       selectedRelatedDataSources: [],
     },
@@ -86,7 +102,16 @@ describe('@useReportEntities', () => {
   describe('@unit', () => {
     it('gets the expected list of report entities', async () => {
       await fetchReportEntities();
-      expect(dataSourceColumnCheckboxNames.value).toEqual(['Users', 'applications']);
+      expect(dataSources.value).toEqual([
+        {
+          text: 'Users',
+          value: 'Users',
+        },
+        {
+          text: 'applications',
+          value: 'applications',
+        },
+      ]);
     });
 
     it('constructs a list of entity definitions from an entity name and corresponding API data', async () => {
@@ -135,7 +160,14 @@ describe('@useReportEntities', () => {
               type: 'string',
             },
           ]),
-          relatedDataSources: ['roles', 'assignments'],
+          relatedDataSources: [{
+            name: 'roles',
+            label: 'roles',
+          },
+          {
+            name: 'assignments',
+            label: 'assignments',
+          }],
           selectedColumns: ['applications.name'],
           selectedRelatedDataSources: [],
         },

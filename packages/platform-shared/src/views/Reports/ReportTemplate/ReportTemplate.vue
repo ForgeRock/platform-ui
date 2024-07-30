@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         @open-data-source-modal="bvModal.show('report-data-sources-modal')" />
     </main>
     <FrReportDataSourceModal
-      :column-checkbox-names="dataSourceColumnCheckboxNames"
+      :data-sources="dataSources"
       :is-saving="isFetchingEntityColumns"
       :is-testing="isTesting"
       @add-data-source="onAddDataSource" />
@@ -140,7 +140,7 @@ const { bvModal } = useBvModal();
 const router = useRouter();
 const route = useRoute();
 const {
-  dataSourceColumnCheckboxNames,
+  dataSources,
   dataSourceColumns,
   entityDefinitions,
   entitiesPayload,

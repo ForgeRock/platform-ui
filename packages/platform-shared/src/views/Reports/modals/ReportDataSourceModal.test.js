@@ -17,7 +17,14 @@ describe('Report Data Source Modal component', () => {
         plugins: [i18n],
       },
       props: {
-        columnCheckboxNames: ['entityOne', 'entityTwo'],
+        dataSources: [{
+          text: 'entityOne',
+          value: 'entityOne',
+        },
+        {
+          text: 'entityTwo',
+          value: 'entityTwo',
+        }],
         isTesting: true,
         ...props,
       },

@@ -71,7 +71,7 @@ export default function useReportEntities() {
           dataSourceColumns: currentDataSourceColumns,
           relatedDataSources,
           selectedColumns,
-          selectedRelatedDataSources: entityResourceNames.filter((resource) => relatedDataSources.includes(resource)),
+          selectedRelatedDataSources: entityResourceNames.filter((resource) => relatedDataSources.map(({ name }) => name).includes(resource)),
           // If entityNameArr has items, it means this is a related entity and it
           // is intended to only add the joinType property to related entity definitions.
           ...(entityNameArr.length && { joinType: type || 'left' }),
@@ -117,10 +117,13 @@ export default function useReportEntities() {
     }
   }
 
-  const dataSourceColumnCheckboxNames = computed(() => allEntities.value.map(({ name }) => name).sort());
+  // Computed
+  const dataSources = computed(() => allEntities.value
+    .map(({ label, name }) => ({ text: label, value: name }))
+    .sort((a, b) => sortCompare(a, b, 'text')));
 
   return {
-    dataSourceColumnCheckboxNames,
+    dataSources,
     dataSourceColumns: allDataSourceColumns,
     entityDefinitions,
     entitiesPayload,

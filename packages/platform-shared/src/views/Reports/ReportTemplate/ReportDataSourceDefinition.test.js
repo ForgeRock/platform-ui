@@ -39,7 +39,14 @@ describe('Report Data Source Definition component', () => {
     type: 'string',
     value: 'applications.lastName',
   }];
-  const relatedDataSources = ['assignments', 'roles'];
+  const relatedDataSources = [{
+    name: 'assignments',
+    label: 'assignments',
+  },
+  {
+    name: 'roles',
+    label: 'roles',
+  }];
   const selectedRelatedDataSources = ['assignments'];
 
   let wrapper;
