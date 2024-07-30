@@ -101,3 +101,14 @@ export function validateRequest(payload) {
   const url = '/governance/requests?_action=validate';
   return generateIgaApi().post(url, payload);
 }
+
+/**
+ * Submits a custom access request.
+ *
+ * @param {string} requestTypeId - The ID of the request type.
+ * @param {object} request - The request object.
+ * @returns {Promise} A promise that contains the created request.
+ */
+export function submitCustomRequest(requestTypeId, request) {
+  return generateIgaApi().post(`/governance/requests/${requestTypeId}?_action=publish`, request);
+}

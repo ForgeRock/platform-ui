@@ -151,10 +151,17 @@ const router = createRouter({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.requestCartUsers.length > 0], { path: '/my-requests' }),
     },
     {
+      path: '/requestForm/:formId',
+      name: 'RequestFormLauncher',
+      component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/RequestForm/RequestFormLauncher'),
+      meta: { hideNavBar: true, hideSideMenu: true, authenticate: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
+    },
+    {
       path: '/certification/certification-task/:campaignId',
       name: 'CertificationTask',
       component: () => import('@forgerock/platform-shared/src/views/Governance/CertificationTask'),
-      meta: { hideNavBar: true, hideSideMenu: true },
+      meta: { hideNavBar: true, hideSideMenu: true, authenticate: true },
     },
     {
       path: '/applications',
