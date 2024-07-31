@@ -1053,7 +1053,6 @@
     "errorRetrievingApplications": "Error retrieving Applications",
     "errorRetrievingApplicationTemplates": "Error retrieving Application templates",
     "errorLoadingAppTemplate": "Error loading Application template",
-    "deprecated": "(deprecated)",
     "templateVersion": "v{version}",
     "listView": {
       "addApp": "Add Application",
@@ -4077,7 +4076,7 @@
         "date": {
           "description": "Date input to accept a single ISO-formatted time/date stamp.",
           "name": "Date"
-        }, 
+        },
         "multiselect": {
           "description": "Select input to accept multiple strings from a list of enumerated values or freeform text input.",
           "name": "Multiselect"
