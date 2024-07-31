@@ -460,10 +460,20 @@
       "successMessages": {
         "password": "Your password is secure!"
       },
+      "customValidation": {
+        "alphabetic": "alphabetic characters",
+        "alphaLower": "lower case alphabetic characters",
+        "alphaUpper": "upper case alphabetic characters",
+        "hypens": "hypens",
+        "message": "Can only contain {ruleNames}.",
+        "numeric": "numeric characters",
+        "periods": "periods",
+        "spaces": "spaces",
+        "underscores": "underscores"
+      },
       "alphaOnly": "Can only contain alphabetic characters",
       "alphaNumericOnly": "Can only contain alphanumeric characters",
       "alphaNumericLowerCaseOnly": "Can only contain lower case alphanumeric characters",
-      "alphaNumericLowerCasePeriodHypenOnly": "Can only contain lower case alphanumeric characters, hypens and periods",
       "alphaNumericDashOnly": "Can only contain alphanumeric characters, dashes or underscores",
       "connectorBundleVersion": "Format should be x.x.x.x and the first two digits should be 1.5",
       "dateFormat": "Invalid date format",
@@ -817,7 +827,7 @@
       "ruleBased": "Rule-based",
       "successSavingOnTargetSystem": "Target system resource saved",
       "noOperation": "No Operation",
-      "newEventText": "\/\/ Script has access to the following variables:\n\/\/ sourceObject\n\/\/ targetObject\n\/\/ existingTargetObject\n\/\/ linkQualifier \nreturn targetObject;\n\/\/ Role assignment scripts must always return targetObject, otherwise\n\/\/ other scripts and code that occur downstream of your script will\n\/\/ not work as expected. ",
+      "newEventText": "// Script has access to the following variables:\n// sourceObject\n// targetObject\n// existingTargetObject\n// linkQualifier \nreturn targetObject;\n// Role assignment scripts must always return targetObject, otherwise\n// other scripts and code that occur downstream of your script will\n// not work as expected. ",
       "resourceNotFound": "Cannot retrieve resource on the target system.",
       "resourceUpdated": "Resource updated",
       "errorSavingAssignment": "Error saving assignment"

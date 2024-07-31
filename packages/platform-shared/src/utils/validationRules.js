@@ -12,6 +12,34 @@ import * as customValidators from '@forgerock/platform-shared/src/utils/validato
 import dayjs from 'dayjs';
 
 export function getRules(i18n) {
+/**
+ * Validates a value against custom rules and generates a descriptive message if the value is invalid.
+ * @param {string} value - The value to be validated.
+ * @param {string[]} customRules - An array of rule keys defining the allowed characters.
+ * @returns {boolean|string} - Returns true if the value passes the validation, otherwise returns a descriptive message.
+ */
+  const allowedRules = (value, customRules) => {
+    const ruleMapping = {
+      alpha_lower: { regex: '[a-z]', name: i18n.global.t('common.policyValidationMessages.customValidation.alphaLower') },
+      alpha_upper: { regex: '[A-Z]', name: i18n.global.t('common.policyValidationMessages.customValidation.alphaUpper') },
+      alpha: { regex: '[a-zA-Z]', name: i18n.global.t('common.policyValidationMessages.customValidation.alphabetic') },
+      hypen: { regex: '-', name: i18n.global.t('common.policyValidationMessages.customValidation.hypens') },
+      numeric: { regex: '[0-9]', name: i18n.global.t('common.policyValidationMessages.customValidation.numeric') },
+      period: { regex: '\\.', name: i18n.global.t('common.policyValidationMessages.customValidation.periods') },
+      space: { regex: ' ', name: i18n.global.t('common.policyValidationMessages.customValidation.spaces') },
+      under: { regex: '_', name: i18n.global.t('common.policyValidationMessages.customValidation.underscores') },
+    };
+    const regexParts = customRules.map((rule) => ruleMapping[rule].regex);
+    const regex = new RegExp(`^(${regexParts.join('|')})+$`, 'g');
+    const names = customRules.map((rule) => ruleMapping[rule].name);
+    let ruleNames = names.join(', ');
+    if (names.length > 1) {
+      const lastName = names.pop();
+      ruleNames = `${names.join(', ')}, and ${lastName}`;
+    }
+    return regex.test(value) || i18n.global.t('common.policyValidationMessages.customValidation.message', { ruleNames });
+  };
+
   const alpha = (value) => rules.alpha(value) || i18n.global.t('common.policyValidationMessages.alphaOnly');
 
   const alpha_dash = (value) => rules.alpha_dash(value) || i18n.global.t('common.policyValidationMessages.alphaNumericDashOnly');
@@ -36,12 +64,6 @@ export function getRules(i18n) {
   const alpha_num_spaces = (value) => {
     const regex = /^([A-Z]|[0-9]| )+$/ig;
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.ALPHA_NUM_SPACES');
-  };
-
-  // Alphanumeric lowercase, hypen and period rule
-  const alpha_num_lower_period_hyphen = (value) => {
-    const regex = /^([a-z]|[0-9]|\.|-)+$/g;
-    return regex.test(value) || i18n.global.t('common.policyValidationMessages.alphaNumericLowerCasePeriodHypenOnly');
   };
 
   // Allows alphanumeric, underscores and commas
@@ -205,12 +227,12 @@ export function getRules(i18n) {
   const secret_label_identifier = (value) => /^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*$/.test(value) || i18n.global.t('common.policyValidationMessages.secretLabelIdentifier');
 
   const validationRules = {
+    allowedRules,
     alpha,
     alpha_dash,
     alpha_dash_spaces,
     alpha_num,
     alpha_num_lower,
-    alpha_num_lower_period_hyphen,
     alpha_num_spaces,
     alpha_num_under_comma,
     connector_bundle_version,
