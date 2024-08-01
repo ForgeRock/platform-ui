@@ -109,8 +109,8 @@ const directionOptions = [
   { label: i18n.global.t('common.descending'), value: 'desc' },
 ];
 const directionSelection = ref('asc');
-const sortBy = computed(() => props.sortByOptions.find(({ value }) => value === sortBySelection.value)?.label);
-const fieldOptionsValue = computed(() => props.sortByOptions.find(({ label }) => label === sortBy.value)?.value);
+const sortBy = computed(() => props.sortByOptions.find(({ value }) => value === sortBySelection.value)?.value);
+const fieldOptionsValue = computed(() => props.sortByOptions.find(({ value }) => value === sortBy.value)?.value);
 
 // Functions
 function resetValues() {
@@ -122,7 +122,6 @@ function resetValues() {
 // Computed
 const disableSave = computed(() => !sortBySelection.value || !directionSelection.value);
 const formValues = computed(() => ({
-  sortBy: sortBy.value,
   direction: directionSelection.value,
   value: fieldOptionsValue.value,
 }));
@@ -138,14 +137,14 @@ watch(() => props.existingSort, (sort) => {
     const { definition } = sort;
     directionSelection.value = definition.direction;
     if (Object.keys(props.sortByOptions).length) {
-      sortBySelection.value = props.sortByOptions.find(({ label }) => label === definition.sortBy)?.value;
+      sortBySelection.value = props.sortByOptions.find(({ value }) => value === definition.value)?.value;
     }
   }
 });
 
 watch(() => props.sortByOptions, (options) => {
   if (Object.keys(props.existingSort).length) {
-    sortBySelection.value = options.find(({ label }) => label === props.existingSort.definition.sortBy)?.value;
+    sortBySelection.value = options.find(({ value }) => value === props.existingSort.definition.value)?.value;
   }
 });
 </script>

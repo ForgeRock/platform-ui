@@ -99,7 +99,6 @@ describe('Report Sorting Modal component', () => {
       await saveButton.trigger('click');
 
       expect(wrapper.emitted('update-sort')).toEqual([['sort', -1, {
-        sortBy: 'Applications Name',
         direction: 'asc',
         value: 'applications.name',
       }]]);
@@ -110,7 +109,6 @@ describe('Report Sorting Modal component', () => {
         existingSort: {
           index: 0,
           definition: {
-            sortBy: 'Applications ID',
             value: 'applications._id',
             direction: 'desc',
           },

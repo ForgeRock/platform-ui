@@ -36,7 +36,7 @@ export default function useReportEntities() {
         const entityNameArr = entity.split('.');
         const entityResource = entityNameArr.pop();
         const fieldOptionsBody = {
-          entities: [{ entity: entityResource }],
+          entities: [{ entity }],
           fields: [{ value: { options: {} } }],
         };
         const { data: dataSourceColumns } = await getReportFieldOptions(fieldOptionsBody);
@@ -45,12 +45,12 @@ export default function useReportEntities() {
         if (dataSourceColumns && Object.keys(dataSourceColumns).length) {
           const entityColumns = Object.keys(dataSourceColumns).map((columnName) => {
             const entityColumn = fields ? fields.find(({ value }) => value === columnName) : {};
-            const namePath = entityNameArr.length ? `${entityNameArr.join('.')}.${columnName}` : columnName;
             return {
               format: dataSourceColumns[columnName].class,
-              label: entityColumn?.label || dataSourceColumns[columnName].label || columnName.split('.').pop(),
+              label: dataSourceColumns[columnName].label || columnName.split('.').pop(),
+              columnLabel: entityColumn?.label || dataSourceColumns[columnName].column_label || '',
               type: dataSourceColumns[columnName].type,
-              value: namePath,
+              path: columnName,
             };
           }).sort((a, b) => sortCompare(a, b, 'label'));
 
@@ -61,7 +61,7 @@ export default function useReportEntities() {
         const relatedDataSources = allEntities.value.find(({ name }) => name === entityResource)?.relatedEntities || [];
         const selectedColumns = fields?.length
           ? fields
-            .filter((field) => currentDataSourceColumns.value.find(({ value }) => value === field.value))
+            .filter((field) => currentDataSourceColumns.value.find(({ path }) => path === field.value))
             .map(({ value }) => value)
           : [];
         const entityResourceNames = entities.map((obj) => obj.entity.split('.').pop());
@@ -97,8 +97,8 @@ export default function useReportEntities() {
           joinType,
           selectedColumns,
         } = definition;
-        const selectedDataSourceColumns = selectedColumns.map((selectedColumnValue) => dataSourceColumns.find((column) => column.value === selectedColumnValue));
-        const selectedColumnsProcessed = selectedDataSourceColumns.map(({ label, value }) => ({ label, value }));
+        const selectedDataSourceColumns = selectedColumns.map((source) => dataSourceColumns.find((column) => column.path === source));
+        const selectedColumnsProcessed = selectedDataSourceColumns.map(({ columnLabel, path }) => ({ label: columnLabel, value: path }));
         entities.push({ entity: dataSource, ...(joinType && { type: joinType }) });
         fields.push(...selectedColumnsProcessed);
       });

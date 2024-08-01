@@ -28,14 +28,16 @@ describe('Report Filter Modal component', () => {
           {
             format: 'json',
             label: 'Name',
+            columnLabel: 'App Name',
             type: 'string',
-            value: 'applications.name',
+            path: 'applications.name',
           },
           {
             format: 'json',
             label: '_id',
+            columnLabel: 'App ID',
             type: 'string',
-            value: 'applications._id',
+            path: 'applications._id',
           }],
         conditionOptions: [
           {
