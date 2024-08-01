@@ -346,28 +346,31 @@ async function onSetRelatedDataSources(parentIndex, relatedDataSource) {
 }
 
 /**
- * Updates the label for an heading element in the left hand preview table.
+ * Updates the label for a data source column selection or aggregate.
  * @param {String} settingsId The settings object ID
- * @param {Number|String} id The definition id or value
- * @param {String} label The updated label
+ * @param {Number|String} id The data source path or aggregate object index
+ * @param {String} inputText The updated label
  */
-function onUpdateTableEntryLabel(settingsId, id, label) {
+function onUpdateTableEntryLabel(settingsId, id, inputText) {
   const { definitions } = findSettingsObject(settingsId);
+  const { definitions: sortDefinitions } = findSettingsObject('sort');
   const updatedDefinitions = definitions.map((definitionObj, index) => {
     const columns = definitionObj.dataSourceColumns;
 
+    // is a data source column label update
     if (columns) {
       const updatedDataSourceColumns = columns.map((column) => {
-        if (column.value === id) {
-          return { ...column, label };
+        if (column.path === id) {
+          return { ...column, columnLabel: inputText };
         }
         return column;
       });
       return { ...definitionObj, dataSourceColumns: updatedDataSourceColumns };
     }
 
+    // is an aggregate label update
     if (index === id) {
-      return { ...definitionObj, label };
+      return { ...definitionObj, label: inputText };
     }
 
     return definitionObj;
@@ -375,6 +378,21 @@ function onUpdateTableEntryLabel(settingsId, id, label) {
 
   definitions.splice(0);
   definitions.push(...updatedDefinitions);
+
+  // Must check to see if updated label belongs to any existing sort definitions
+  // so we can also update the associated value in the sort definition.
+  if (sortDefinitions.length) {
+    const updatedSortDefinitions = sortDefinitions.map((definitionObj) => {
+      if (definitionObj.value === id) {
+        return { ...definitionObj, sortBy: inputText };
+      }
+      return definitionObj;
+    });
+
+    sortDefinitions.splice(0);
+    sortDefinitions.push(...updatedSortDefinitions);
+  }
+
   disableTemplateSave.value = false;
 }
 
@@ -494,7 +512,6 @@ async function saveTemplateFromHeader() {
   if (reportState === 'published') {
     router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: templateId.toLowerCase() } });
   }
-
   disableTemplateSave.value = true;
   isSavingTemplate.value = false;
   displayNotification('success', i18n.global.t('reports.template.reportUpdated'));

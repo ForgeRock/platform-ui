@@ -196,10 +196,12 @@ describe('Report Template Settings component', () => {
         data: {
           'applications.name': {
             class: 'json',
+            column_label: 'Name',
             type: 'string',
           },
           'applications._id': {
             class: 'json',
+            column_label: 'ID',
             type: 'string',
           },
         },
@@ -211,14 +213,16 @@ describe('Report Template Settings component', () => {
           {
             format: 'json',
             label: '_id',
+            columnLabel: 'ID',
             type: 'string',
-            value: 'applications._id',
+            path: 'applications._id',
           },
           {
             format: 'json',
             label: 'name',
+            columnLabel: 'Name',
             type: 'string',
-            value: 'applications.name',
+            path: 'applications.name',
           },
         ],
         relatedDataSources: [{

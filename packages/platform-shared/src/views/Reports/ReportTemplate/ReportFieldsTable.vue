@@ -42,7 +42,7 @@ to such license between the licensee and ForgeRock AS. -->
                 `"
                 :name="column.label"
                 :placeholder="$t('common.label')"
-                :value="column.label"
+                :value="column.context === 'AGGREGATE' ? column.label : column.columnLabel"
                 @input="updateLabel(column, $event)"
                 type="string" />
             </BTh>
@@ -115,11 +115,11 @@ const tableEntries = computed(() => {
 
   props.dataSources.forEach((entity) => {
     if (entity && entity.selectedColumns?.length) {
-      const columns = entity.selectedColumns.map((value) => {
-        const dataSourceColumnMatch = entity.dataSourceColumns.find((column) => column.value === value);
+      const columns = entity.selectedColumns.map((source) => {
+        const dataSourceColumnMatch = entity.dataSourceColumns.find((column) => column.path === source);
         return {
           ...dataSourceColumnMatch,
-          context: dataSourceColumnMatch.value,
+          context: dataSourceColumnMatch.path,
           settingId: 'entities',
         };
       });
@@ -137,13 +137,28 @@ const tableEntries = computed(() => {
   }
   return [...selectedColumns, ...aggregates];
 });
-const atLeastOneLabelIsEmpty = computed(() => tableEntries.value.filter(({ label }) => !label));
+const atLeastOneLabelIsEmpty = computed(() => tableEntries.value.filter(({ context, columnLabel, label }) => {
+  if (context === 'AGGREGATE') {
+    return !label;
+  }
+  return !columnLabel;
+}));
 
 // functions
-function updateLabel({ settingId, value, definitionIndex }, label) {
-  const columnMatch = tableEntries.value.find((obj) => (obj.value || obj.definitionIndex) === (value || definitionIndex));
-  if (columnMatch.label !== label) {
-    emit('update-table-entry-label', settingId, (value || definitionIndex), label);
+/**
+ * Data source columns as well as aggregates are what makes up the list of tableEntries.
+ * The 'path' destructured parameter is associated with data source columns and the definitionIndex
+ * is associated with aggregates and both of these values are used for updating a changed label.
+ * @param {Object} obj tableEntries destructured object
+ * @param {String} obj.settingId Report settings ID
+ * @param {String} obj.path data source path
+ * @param {String} obj.definitionIndex aggregate object index
+ * @param {String} inputText label text input
+ */
+function updateLabel({ settingId, path, definitionIndex }, inputText) {
+  const columnMatch = tableEntries.value.find((entry) => (entry.path || entry.definitionIndex) === (path || definitionIndex));
+  if (columnMatch.columnLabel !== inputText) {
+    emit('update-table-entry-label', settingId, (path || definitionIndex), inputText);
   }
 }
 

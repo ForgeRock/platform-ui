@@ -144,7 +144,7 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
     ruleOperator,
     rightValue,
   ) {
-    const leftValueEntity = entityColumns.value.find((column) => column.value === leftValue);
+    const leftValueEntity = entityColumns.value.find((column) => column.path === leftValue);
     const rightValueInputType = selectedRightValueType === 'variable'
       ? filterVariables.value[ruleOperator].find(({ value }) => value.includes(rightValue))
       : { type: 'string', class: 'literal' };

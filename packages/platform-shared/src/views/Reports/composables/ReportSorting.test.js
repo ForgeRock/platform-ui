@@ -13,17 +13,19 @@ const sortFieldOptionsResponse = [
     class: 'json',
     value: 'applications._id',
     label: 'Applications ID',
+    columnLabel: 'Applications ID column label',
     type: 'string',
   },
   {
     class: 'json',
     value: 'applications.name',
     label: 'Applications Name',
+    columnLabel: 'Applications Name column label',
     type: 'string',
   },
 ];
-const sortDefinitionDataFromAPI = [{ value: 'Applications Name', direction: 'asc' }];
-const uiSortDefinitions = [{ sortBy: 'Applications Name', direction: 'asc', value: 'applications.name' }];
+const sortDefinitionDataFromAPI = [{ value: 'applications.name', direction: 'asc' }];
+const uiSortDefinitions = [{ direction: 'asc', value: 'applications.name' }];
 
 describe('@useReportSorting', () => {
   const {
@@ -37,8 +39,18 @@ describe('@useReportSorting', () => {
     it('fetches sort field options and ensures that the sortByValues variable outputs expected data', async () => {
       AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
         data: {
-          'applications._id': { class: 'json', type: 'string', label: 'Applications ID' },
-          'applications.name': { class: 'json', type: 'string', label: 'Applications Name' },
+          'applications._id': {
+            class: 'json',
+            type: 'string',
+            label: 'Applications ID',
+            column_label: 'Applications ID column label',
+          },
+          'applications.name': {
+            class: 'json',
+            type: 'string',
+            label: 'Applications Name',
+            column_label: 'Applications Name column label',
+          },
           MyParameter: { class: 'parameter', type: 'string', label: 'My Parameter' },
         },
       }));

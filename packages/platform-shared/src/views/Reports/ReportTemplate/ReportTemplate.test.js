@@ -64,11 +64,13 @@ describe('Component for creating custom analytics reports', () => {
       'applications._id': {
         class: 'json',
         label: 'Applications Id',
+        column_label: 'Applications Id',
         type: 'string',
       },
       'applications.name': {
         class: 'json',
         label: 'Applications Name',
+        column_label: 'Applications Name',
         type: 'string',
       },
       MyParameter: {
@@ -79,16 +81,35 @@ describe('Component for creating custom analytics reports', () => {
     },
   };
 
-  const fieldOptionsStubWithRelatedEntities = {
+  const fieldOptionsStubWithoutParameter = {
     data: {
-      'roles.admin': {
+      'applications._id': {
         class: 'json',
-        label: 'Application Role Admin',
+        label: 'Applications Id',
+        column_label: 'Applications Id',
         type: 'string',
       },
-      'roles.manager': {
+      'applications.name': {
+        class: 'json',
+        label: 'Applications Name',
+        column_label: 'Applications Name',
+        type: 'string',
+      },
+    },
+  };
+
+  const fieldOptionsStubWithRelatedEntities = {
+    data: {
+      'applications.roles.admin': {
+        class: 'json',
+        label: 'Application Role Admin',
+        column_label: 'Application Role Admin',
+        type: 'string',
+      },
+      'applications.roles.manager': {
         class: 'json',
         label: 'Application Role Manager',
+        column_label: 'Application Role Manager',
         type: 'string',
       },
     },
@@ -215,7 +236,8 @@ describe('Component for creating custom analytics reports', () => {
   });
 
   describe('@actions', () => {
-    async function addDataSource(entitySelection = 'applications') {
+    async function addDataSource(entitySelection = 'applications', reportFieldOptionsStub = fieldOptionsStub) {
+      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(reportFieldOptionsStub));
       const dataSourcesDropdown = findByRole(wrapper, 'listbox');
       const [usersOption, applicationsOption] = dataSourcesDropdown.findAll('[role="option"]');
 
@@ -353,7 +375,7 @@ describe('Component for creating custom analytics reports', () => {
     });
 
     it('ensures that a selected data source column shows up in the left hand table and enables the save button', async () => {
-      await addDataSource();
+      await addDataSource('applications', fieldOptionsStubWithoutParameter);
 
       // Left hand table empty state
       const emptyStateHeading = wrapper.find('h3');
@@ -378,27 +400,25 @@ describe('Component for creating custom analytics reports', () => {
     });
 
     it('saves the form with the selected data source columns in the order that they were selected', async () => {
-      await addDataSource();
+      await addDataSource('applications', fieldOptionsStubWithoutParameter);
 
-      // Checks a data source checkbox
-      const dataSourceDefinition = findByTestId(wrapper, 'definition-body');
-      const [_idCheckbox, name, parameter] = dataSourceDefinition.findAll('input[type="checkbox"]');
-      await _idCheckbox.setChecked();
-      await parameter.setChecked();
-      await name.setChecked();
-      await flushPromises();
-
-      // Saves the form with the fields property containing the selected columns in the order they were checked
       const saveAnalyticsReportSpy = jest.spyOn(AutoApi, 'saveAnalyticsReport');
+      const dataSourceDefinition = findByTestId(wrapper, 'definition-body');
+      const [_idCheckbox, name] = dataSourceDefinition.findAll('input[type="checkbox"]');
+
+      // Checks the data source columns in specific order
+      await name.setChecked();
+      await _idCheckbox.setChecked();
+      await nextTick();
+      // Saves the form with the fields property containing the selected columns in the order they were checked
       const headerToolbar = findByRole(wrapper, 'toolbar');
       const saveButton = findByText(headerToolbar, 'button', 'Save');
       await saveButton.trigger('click');
       expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
         entities: [{ entity: 'applications' }],
         fields: [
-          { label: 'Applications Id', value: 'applications._id' },
-          { label: 'My Parameter Name', value: 'MyParameter' },
           { label: 'Applications Name', value: 'applications.name' },
+          { label: 'Applications Id', value: 'applications._id' },
         ],
       }, ['reportadmin'], '');
     });
@@ -584,7 +604,7 @@ describe('Component for creating custom analytics reports', () => {
         }
 
         it('adds a filter definition', async () => {
-          await addDataSource();
+          await addDataSource('applications', fieldOptionsStub);
           await addFilterDefinition();
 
           // ensures that the filter definition exists
@@ -799,7 +819,7 @@ describe('Component for creating custom analytics reports', () => {
           // verify that the left value for the remaining rule does not have applications.roles.admin selected since it was deleted
           const [firstRule] = rules;
           const firstRuleLeftVariableOptionSelection = firstRule.find('.multiselect__option--selected');
-          expect(firstRuleLeftVariableOptionSelection.text()).toBe('applications.name');
+          expect(firstRuleLeftVariableOptionSelection.text()).toBe('MyParameter');
         });
       });
 

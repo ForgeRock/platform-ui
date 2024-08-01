@@ -45,10 +45,14 @@ describe('@useReportEntities', () => {
       'applications.name': {
         class: 'json',
         type: 'string',
+        column_label: 'Application Name column label',
+        label: 'application name label',
       },
       'applications._id': {
         class: 'json',
         type: 'string',
+        column_label: 'Application Id column label',
+        label: 'application id label',
       },
     },
   }));
@@ -59,25 +63,27 @@ describe('@useReportEntities', () => {
       dataSource: 'applications',
       dataSourceColumns: [
         {
+          columnLabel: 'Application Role ID columnLabel',
           label: 'Applications ID',
-          value: 'applications._id',
+          path: 'applications._id',
           format: 'json',
           type: 'string',
         },
         {
+          columnLabel: 'Application Name columnLabel',
           label: 'Applications Name',
-          value: 'applications.name',
+          path: 'applications.name',
           format: 'json',
           type: 'string',
         },
       ],
       relatedDataSources: [{
         name: 'assignments',
-        label: 'assignments',
+        label: 'Assignments',
       },
       {
         name: 'roles',
-        label: 'roles',
+        label: 'Roles',
       }],
       selectedColumns: ['applications.name'],
       selectedRelatedDataSources: [],
@@ -86,8 +92,9 @@ describe('@useReportEntities', () => {
       dataSource: 'applications.roles',
       dataSourceColumns: [
         {
+          columnLabel: 'Application Role ID columnLabel',
           label: 'Application Role ID',
-          value: 'applications.roles._id',
+          path: 'applications.roles._id',
           format: 'json',
           type: 'string',
         },
@@ -120,11 +127,13 @@ describe('@useReportEntities', () => {
           'applications._id': {
             class: 'json',
             label: 'Applications ID',
+            column_label: 'Application Id column label',
             type: 'string',
           },
           'applications.name': {
             class: 'json',
             label: 'Applications Name',
+            column_label: 'Application Name column label',
             type: 'string',
           },
         },
@@ -148,14 +157,16 @@ describe('@useReportEntities', () => {
           dataSource: 'applications',
           dataSourceColumns: ref([
             {
+              columnLabel: 'Application Id column label',
               label: 'Applications ID',
-              value: 'applications._id',
+              path: 'applications._id',
               format: 'json',
               type: 'string',
             },
             {
+              columnLabel: 'Applications Name',
               label: 'Applications Name',
-              value: 'applications.name',
+              path: 'applications.name',
               format: 'json',
               type: 'string',
             },
@@ -177,14 +188,16 @@ describe('@useReportEntities', () => {
     it('constructs a list of UI friendly related entity definitions from API data', async () => {
       AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
         data: {
-          'roles._id': {
+          'applications.roles._id': {
             class: 'json',
             label: 'Role ID',
+            column_label: 'Role Id column label',
             type: 'string',
           },
-          'roles.name': {
+          'applications.roles.name': {
             class: 'json',
             label: 'Role Name',
+            column_label: 'Role Name column label',
             type: 'string',
           },
         },
@@ -198,7 +211,7 @@ describe('@useReportEntities', () => {
       );
       expect(getReportFieldOptionsSpy).toHaveBeenCalledWith({
         entities: [{
-          entity: 'roles',
+          entity: 'applications.roles',
         }],
         fields: [{
           value: {
@@ -211,14 +224,16 @@ describe('@useReportEntities', () => {
           dataSource: 'applications.roles',
           dataSourceColumns: ref([
             {
+              columnLabel: 'Role Id column label',
               label: 'Role ID',
-              value: 'applications.roles._id',
+              path: 'applications.roles._id',
               format: 'json',
               type: 'string',
             },
             {
+              columnLabel: 'Application Roles',
               label: 'Role Name',
-              value: 'applications.roles.name',
+              path: 'applications.roles.name',
               format: 'json',
               type: 'string',
             },
@@ -236,11 +251,11 @@ describe('@useReportEntities', () => {
       expect(payload).toEqual({
         entities: entitiesStub,
         fields: [{
-          label: 'Applications Name',
+          label: 'Application Name columnLabel',
           value: 'applications.name',
         },
         {
-          label: 'Application Role ID',
+          label: 'Application Role ID columnLabel',
           value: 'applications.roles._id',
         }],
       });

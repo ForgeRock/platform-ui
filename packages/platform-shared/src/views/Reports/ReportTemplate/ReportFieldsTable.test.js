@@ -19,14 +19,16 @@ describe('Report Fields table component', () => {
       {
         format: 'json',
         label: 'Name',
+        columnLabel: 'Name',
         type: 'string',
-        value: 'applications.name',
+        path: 'applications.name',
       },
       {
         format: 'json',
         label: '_id',
+        columnLabel: 'ID',
         type: 'string',
-        value: 'applications._id',
+        path: 'applications._id',
       },
     ],
     selectedColumns: ['applications.name', 'applications._id'],
@@ -91,7 +93,7 @@ describe('Report Fields table component', () => {
       expect(nameInputValue).toBe('Name');
 
       const _idInputValue = _idHeader.find('input').element.value;
-      expect(_idInputValue).toBe('_id');
+      expect(_idInputValue).toBe('ID');
 
       const [nameRow, _idRow] = wrapper.findAll('[role="cell"]');
       expect(wrapper.findAll('[role="cell"]').length).toBe(2);

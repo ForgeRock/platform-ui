@@ -42,14 +42,24 @@ export default function useReportSorting(entitiesPayload, parametersPayload, fil
     const { data } = await getReportFieldOptions(fieldOptionsBody);
 
     sortByValues.value = Object.keys(data)
-      .filter((key) => data[key].class !== 'parameter')
-      .map((key) => {
-        const { class: category, label, type } = data[key];
+      .filter((path) => data[path].class !== 'parameter')
+      .map((path) => {
+        const {
+          class: category,
+          column_label: columnLabel,
+          label,
+          type,
+        } = data[path];
+        const entityColumn = fieldOptionsBody.fields
+          ? fieldOptionsBody.fields.find(({ value }) => value === path)
+          : {};
+
         return {
           class: category,
-          label: label || key,
+          columnLabel: entityColumn?.label || columnLabel || '',
+          label: label || path,
           type,
-          value: key,
+          value: path,
         };
       });
 
@@ -63,10 +73,7 @@ export default function useReportSorting(entitiesPayload, parametersPayload, fil
    */
   function sortingDefinitions(definitions) {
     if (definitions?.length) {
-      return definitions.map(({ value: sortBy, direction }) => {
-        const value = sortByValues.value.find(({ label }) => label === sortBy)?.value;
-        return { sortBy, direction, value };
-      });
+      return definitions.map(({ value, direction }) => ({ value, direction }));
     }
     return [];
   }
@@ -79,7 +86,7 @@ export default function useReportSorting(entitiesPayload, parametersPayload, fil
   function sortingPayload(definitions) {
     if (definitions.length) {
       return {
-        sort: definitions.map(({ sortBy: value, direction }) => ({ value, direction })),
+        sort: definitions.map(({ value, direction }) => ({ value, direction })),
       };
     }
     return {};

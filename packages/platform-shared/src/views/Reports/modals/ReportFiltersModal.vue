@@ -363,8 +363,8 @@ function hasEmptyValues(obj) {
 // Computed
 const disableSave = computed(() => hasEmptyValues(queryFilter.value));
 const dataSourceColumnsSorted = computed(() => props.dataSourceColumns
-  .map(({ value }) => ({ value, label: value }))
-  .sort((a, b) => sortCompare(a, b, 'value')));
+  .map(({ path }) => ({ value: path, label: path }))
+  .sort((a, b) => sortCompare(a, b, 'path')));
 
 // Watchers
 watch(() => props.existingFilter, () => {

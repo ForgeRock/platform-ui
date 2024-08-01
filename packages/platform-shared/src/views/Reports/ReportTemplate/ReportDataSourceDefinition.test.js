@@ -30,14 +30,16 @@ describe('Report Data Source Definition component', () => {
   const dataSourceColumns = [{
     format: 'json',
     label: 'firstName',
+    columnLabel: 'First Name',
     type: 'string',
-    value: 'applications.firstName',
+    path: 'applications.firstName',
   },
   {
     format: 'json',
     label: 'lastName',
+    columnLabel: 'Last Name',
     type: 'string',
-    value: 'applications.lastName',
+    path: 'applications.lastName',
   }];
   const relatedDataSources = [{
     name: 'assignments',

@@ -131,13 +131,13 @@ describe('@useReportFilters', () => {
       format: 'json',
       label: 'Name',
       type: 'string',
-      value: 'applications.name',
+      path: 'applications.name',
     },
     {
       format: 'json',
       label: '_id',
       type: 'string',
-      value: 'applications._id',
+      path: 'applications._id',
     },
   ]);
 
@@ -178,13 +178,13 @@ describe('@useReportFilters', () => {
             format: 'json',
             label: 'Name',
             type: 'string',
-            value: 'applications.name',
+            path: 'applications.name',
           },
           {
             format: 'json',
             label: '_id',
             type: 'string',
-            value: 'applications._id',
+            path: 'applications._id',
           },
         ],
         relatedDataSources: [],

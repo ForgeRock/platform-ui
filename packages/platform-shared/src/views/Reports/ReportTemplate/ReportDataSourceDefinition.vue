@@ -60,12 +60,12 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-describedby="ariaDescribedby">
           <BListGroup>
             <BListGroupItem
-              v-for="(option) in dataSourceColumns"
+              v-for="column in dataSourceColumns"
               class="mb-2 py-2 px-3 border-0 rounded"
-              :class="selectedColumns.find((value) => value === option.value) ? 'bg-lightblue' : 'bg-light'"
-              :key="option.dataSource">
-              <BFormCheckbox :value="option.value">
-                {{ option.label }}
+              :class="selectedColumns.find((value) => value === column.path) ? 'bg-lightblue' : 'bg-light'"
+              :key="column.path">
+              <BFormCheckbox :value="column.path">
+                {{ column.label }}
               </BFormCheckbox>
             </BListGroupItem>
           </BListGroup>
