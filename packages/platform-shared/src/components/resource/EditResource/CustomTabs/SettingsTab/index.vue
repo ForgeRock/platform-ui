@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -194,8 +194,18 @@ export default {
         this.hideModal();
         this.$emit('refresh-data');
       },
-      () => {
-        this.showErrorMessage('error', this.$t('pages.access.invalidEdit'));
+      (error) => {
+        /**
+         * Special case to handle AIC proxy timeouts that respond to the request before IDM finishes processing data.
+         * For this 502 Gateway Timeout we will issue the user a warning that their request is still be processed by IDM
+         * and will eventually complete - being visible in the UI.
+         */
+        if (error.response.status === 502) {
+          this.displayNotification('warning', this.$t('pages.access.gatewayWarning'), 10000);
+          this.hideModal();
+        } else {
+          this.showErrorMessage('error', this.$t('pages.access.invalidEdit'));
+        }
       });
     },
     setConditionOptions() {

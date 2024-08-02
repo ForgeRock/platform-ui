@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -30,12 +30,12 @@ describe('NotificationMixin', () => {
 
   it('Displays a non-error notification', async () => {
     wrapper.vm.displayNotification('foo', 'message');
-    expect(notify).toHaveBeenCalledWith({ type: 'foo', text: 'message' });
+    expect(notify).toHaveBeenCalledWith({ type: 'foo', text: 'message', duration: 3000 });
   });
 
   it('Displays an error notification', () => {
     wrapper.vm.showErrorMessage('error', 'message');
-    expect(notify).toHaveBeenCalledWith({ type: 'danger', text: 'message' });
+    expect(notify).toHaveBeenCalledWith({ type: 'danger', text: 'message', duration: 3000 });
   });
 
   it('Shows an error message with a default message', () => {

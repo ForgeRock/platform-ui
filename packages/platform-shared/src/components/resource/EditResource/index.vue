@@ -646,7 +646,16 @@ export default {
             path: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`,
           });
         }).catch((error) => {
-          this.showErrorMessage(error, this.$t('errors.deleteObject', { object: this.resourceName }));
+          /**
+           * Special case to handle AIC proxy timeouts that respond to the request before IDM finishes processing data.
+           * For this 502 Gateway Timeout we will issue the user a warning that their request is still be processed by IDM
+           * and will eventually complete - being visible in the UI.
+           */
+          if (error.response.status === 502) {
+            this.displayNotification('warning', this.$t('pages.access.gatewayWarning'), 10000);
+          } else {
+            this.showErrorMessage(error, this.$t('errors.deleteObject', { object: this.resourceName }));
+          }
         }).finally(() => {
           this.isDeleting = false;
           this.$root.$emit('bv::hide::modal', 'deleteModal');

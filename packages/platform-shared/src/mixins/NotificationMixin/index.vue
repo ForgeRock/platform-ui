@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,8 +17,8 @@ export default {
     TranslationMixin,
   ],
   methods: {
-    // Display an application notification
-    displayNotification(notificationType, message) {
+    // Display an application notification. Duration of 3000ms is the component default.
+    displayNotification(notificationType, message, duration = 3000) {
       let type = notificationType;
 
       if (type === 'error') {
@@ -28,6 +28,7 @@ export default {
       notify({
         type,
         text: this.getTranslation(message),
+        duration,
       });
     },
     showErrorMessage(error, defaultMessage) {

@@ -304,7 +304,17 @@ export default {
             this.displayNotification('success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));
           },
           (error) => {
-            this.setErrors(error.response);
+            /**
+             * Special case to handle AIC proxy timeouts that respond to the request before IDM finishes processing data.
+             * For this 502 Gateway Timeout we will issue the user a warning that their request is still be processed by IDM
+             * and will eventually complete - being visible in the UI.
+             */
+            if (error.response.status === 502) {
+              this.displayNotification('warning', this.$t('pages.access.gatewayWarning'), 10000);
+              this.hideModal();
+            } else {
+              this.setErrors(error.response);
+            }
           }).finally(() => {
             this.isSaving = false;
           });
