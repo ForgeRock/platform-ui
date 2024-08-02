@@ -756,7 +756,8 @@
       "temporalConstraintDescription": "Optionally, allow this role to assigned only a temporary basis.",
       "objectPermissions": "{object} Permissions",
       "objectTimeConstraint": "{object} Time Constraint",
-      "getSchemaError": "There was an error retrieving schema"
+      "getSchemaError": "There was an error retrieving schema",
+      "gatewayWarning": "Advanced Identity Cloud is processing your request. This request can take 30 minutes or more, particularly if you have a large set of identities. During this time, your identities may not be visible in the UI."
     },
     "app": {
       "notifications": {
