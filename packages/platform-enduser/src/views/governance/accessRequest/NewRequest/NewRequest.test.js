@@ -235,4 +235,42 @@ describe('NewRequest', () => {
     expect(scanApi).toHaveBeenCalled();
     expect(requestApi).toHaveBeenCalled();
   });
+
+  it('should submit request with requestData if it is an application with request data', async () => {
+    const wrapper = await mountComponent();
+    CommonsApi.getResource.mockImplementation(() => Promise.resolve({
+      data: {
+        result: [],
+      },
+    }));
+    const requestApi = jest.spyOn(AccessRequestApi, 'saveNewRequest').mockImplementation(() => Promise.resolve({ data: [] }));
+
+    await flushPromises();
+    const requestCart = wrapper.findComponent({ name: 'RequestCart' });
+    wrapper.vm.requestCartItems = [
+      {
+        itemType: 'application',
+        id: 'applicationId',
+        requestData: { test: 'test' },
+      },
+    ];
+    await flushPromises();
+    await requestCart.vm.$emit('submit-new-request', {});
+    await flushPromises();
+
+    expect(requestApi).toHaveBeenCalledWith({
+      catalogs: [
+        {
+          data: {
+            form: {
+              test: 'test',
+            },
+          },
+          id: 'applicationId',
+          type: 'application',
+        },
+      ],
+      users: ['123'],
+    });
+  });
 });

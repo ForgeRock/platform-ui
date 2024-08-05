@@ -298,7 +298,7 @@ export default {
      * the field label.
      */
     indexCollapsibleFields(schema) {
-      return schema.filter((field) => field[0].collapsible)
+      return schema.filter((field) => field[0]?.collapsible)
         .reduce((currentCollapsibleFieldState, nextField) => ({
           ...currentCollapsibleFieldState,
           [nextField[0].label]: false,

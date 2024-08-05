@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,11 +8,10 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { BModal, BButton } from 'bootstrap-vue';
-import ItemDetailsModal from './ItemDetailsModal';
+import ItemDetailsStep from './ItemDetailsStep';
 import i18n from '@/i18n';
 
-describe('ItemDetailsModal', () => {
+describe('ItemDetailsStep', () => {
   let wrapper;
 
   const propsData = {
@@ -39,17 +38,12 @@ describe('ItemDetailsModal', () => {
         roleOwner: 'managed/user/user-id',
       },
     },
-    itemType: 'role',
-    isTesting: true,
   };
 
   function setup(props) {
-    return mount(ItemDetailsModal, {
+    return mount(ItemDetailsStep, {
       global: {
         plugins: [i18n],
-        components: {
-          BModal, BButton,
-        },
       },
       props: {
         ...propsData,
@@ -62,14 +56,6 @@ describe('ItemDetailsModal', () => {
     wrapper = setup();
     await flushPromises();
 
-    // Assert modal title
-    const title = findByTestId(wrapper, 'modal-title');
-    expect(title.text()).toBe('Request Role Access');
-
-    // Assert item name and description
-    expect(findByTestId(wrapper, 'item-name').text()).toBe(propsData.item.name);
-    expect(findByTestId(wrapper, 'description').text()).toBe(propsData.item.description);
-
     // Assert glossary fields
     const { glossarySchema, item } = propsData;
 
@@ -77,20 +63,6 @@ describe('ItemDetailsModal', () => {
     expect(findByTestId(wrapper, `glossary-title-${glossarySchema[1].name}`).text()).toBe(glossarySchema[1].displayName);
     expect(findByTestId(wrapper, `glossary-item-${glossarySchema[0].name}`).text()).toBe(item.glossary[glossarySchema[0].name]);
     expect(findByTestId(wrapper, `glossary-item-${glossarySchema[1].name}`).text()).toBe(item.glossary[glossarySchema[1].name]);
-  });
-
-  it('emits the correct event on OK button click', async () => {
-    wrapper = setup();
-    await flushPromises();
-
-    // Trigger OK button click
-    await wrapper.find('.modal-footer button.btn-primary').trigger('click');
-    await flushPromises();
-
-    // Assert that the correct event is emitted
-    expect(wrapper.emitted()).toHaveProperty('toggle-item');
-    expect(wrapper.emitted()['toggle-item']).toHaveLength(1);
-    expect(wrapper.emitted()['toggle-item'][0]).toEqual([propsData.item]);
   });
 
   describe('glossary managed objects', () => {

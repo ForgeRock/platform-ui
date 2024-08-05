@@ -222,9 +222,9 @@ onMounted(async () => {
   await getRequestData();
   try {
     const { data } = await getIgaAccessRequest();
-    requireApproveJustification = !data.requireApproveJustification;
-    requireRejectJustification = !data.requireRejectJustification;
-    allowSelfApproval = !data.allowSelfApproval;
+    requireApproveJustification = data.requireApproveJustification;
+    requireRejectJustification = data.requireRejectJustification;
+    allowSelfApproval = data.allowSelfApproval;
   } catch {
     // We don't need to show an error here
   }

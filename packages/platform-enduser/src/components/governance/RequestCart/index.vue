@@ -27,7 +27,6 @@ of the MIT license. See the LICENSE file for details. -->
       <FrRequestItemsGroup
         context="accessItem"
         data-testid="request-items-container"
-        :fr-hover="true"
         :request-items="requestCartItems"
         v-on="$listeners" />
     </div>

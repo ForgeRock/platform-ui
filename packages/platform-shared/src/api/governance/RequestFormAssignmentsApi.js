@@ -69,3 +69,15 @@ export function getFormAssignmentByRequestType(requestTypeId) {
 export function getFormRequestTypes(formId) {
   return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId co "requestType/" and formId eq "${formId}"`);
 }
+
+/**
+ * Retrieves the request form assignment for a specific application and object type.
+ *
+ * @param {string} applicationId - The ID of the application.
+ * @param {string} objectType - The connector object type.
+ * @returns {Promise} A promise that resolves to the request form assignment.
+ */
+export function getApplicationRequestFormAssignment(applicationId, objectType) {
+  const objectId = `application/${applicationId}/${objectType}/create`;
+  return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId eq "${objectId}"`);
+}

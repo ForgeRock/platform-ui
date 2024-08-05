@@ -59,4 +59,12 @@ describe('RequestFormAssignments Api', () => {
     await RequestFormAssignmentsApi.getFormRequestTypes(formId);
     expect(getMock).toBeCalledWith(`${formAssignmentUrl}?_queryFilter=objectId co "requestType/" and formId eq "${formId}"`);
   });
+
+  it('getApplicationRequestFormAssignment should call api with the correct query', async () => {
+    const appId = '123';
+    const objectType = 'user';
+
+    await RequestFormAssignmentsApi.getApplicationRequestFormAssignment(appId, objectType);
+    expect(getMock).toBeCalledWith(`${formAssignmentUrl}?_queryFilter=objectId eq "application/${appId}/${objectType}/create"`);
+  });
 });

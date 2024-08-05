@@ -144,6 +144,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   cloneDeep,
   get,
+  isEmpty,
   pick,
 } from 'lodash';
 import {
@@ -269,6 +270,9 @@ export default {
           id: catalogItem.id,
           requested: this.isRequested(catalogItem.id),
           glossary: catalogItem.glossary?.idx['/application'],
+          applicationId: catalogItem.application.id,
+          mappingNames: catalogItem.application.mappingNames,
+          connectorId: catalogItem.application.connectorId,
         }));
       }
       return this.catalogResults;
@@ -546,7 +550,12 @@ export default {
       this.sodError = {};
       try {
         const users = this.requestedUsers.map((user) => user.id);
-        const applications = this.requestedApplications.map((application) => ({ type: 'application', id: application.id }));
+        // Add form request data to applications, if present
+        const applications = this.requestedApplications.map((application) => {
+          const item = { type: 'application', id: application.id };
+          if (!isEmpty(application.requestData)) item.data = { form: application.requestData };
+          return item;
+        });
         const entitlements = this.requestedEntitlements.map((entitlement) => ({ type: 'entitlement', id: entitlement.id }));
         const roles = this.requestedRoles.map((role) => ({ type: 'role', id: role.id }));
 

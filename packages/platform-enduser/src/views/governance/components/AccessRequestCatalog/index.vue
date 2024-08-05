@@ -314,7 +314,7 @@ import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUt
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
-import FrItemDetailsModal from './modals/ItemDetailsModal';
+import FrItemDetailsModal from './modals/ItemDetailsModal/ItemDetailsModal';
 import FrSODViolationMessage from './modals/SODViolationMessage';
 
 /**
@@ -569,7 +569,7 @@ export default {
      * Adds or removes selected catalog item in request cart
      * @param {Object} item metadata of item to add or remove from cart (only id is used for remove)
      */
-    toggleItemInCart(item) {
+    toggleItemInCart(item, requestData) {
       if (item.requested) {
         this.$emit('remove-item-from-cart', item.id);
       } else {
@@ -581,6 +581,7 @@ export default {
           name: item.name,
           id: item.id,
           assignmentId: item.assignmentId,
+          requestData,
         };
         this.$emit('add-item-to-cart', emitItem);
       }
