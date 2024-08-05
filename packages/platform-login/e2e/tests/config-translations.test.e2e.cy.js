@@ -211,7 +211,7 @@ function verifyFooterTranslations(locale) {
 
   cy.get('#appFooter').within(() => {
     // Check all Footer headings in H5
-    cy.findAllByRole('heading', { level: 5 }).each(($element, index) => {
+    cy.findAllByRole('heading').each(($element, index) => {
       cy.wrap($element).should('contain', footerHeadings[index]);
     });
 
@@ -345,65 +345,80 @@ function fillOutTranslatedRegistrationForm(userName, userEmail) {
 
 filterTests(['forgeops', 'cloud'], () => {
   describe('Login config translations', () => {
-    let accessToken;
     const loginBaseUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login`;
 
-    // add config translation override
+    // Add config translation overrides
     before(() => {
-      // get admin access token
-      cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
-      cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
-      cy.login();
-
-      // user token to write translations to config
-      cy.wait('@getAccessToken').then(({ response }) => {
-        accessToken = response.body.access_token;
-        addOverrides(accessToken, 'en', enTranslations);
-        addOverrides(accessToken, 'fr', frTranslations);
-        addOverrides(accessToken, 'fr-ca', frcaTranslations);
-        cy.clearCookies();
+      // Login as admin and upload config translation overrides
+      cy.login().then(() => {
+        addOverrides('en', enTranslations);
+        addOverrides('fr', frTranslations);
+        addOverrides('fr-ca', frcaTranslations);
+        cy.logout();
       });
     });
 
-    it('should override the text of the next button, username placeholder, and password placeholder', () => {
+    it('Should override the text of the next button, username placeholder, and password placeholder', () => {
+      // Visit base page of our Login Journey with default locale
       cy.visit(`${loginBaseUrl}#/`);
-      cy.findByRole('button', { name: 'Next Test' }).should('exist');
-      cy.findByLabelText('User Name Test').should('exist');
-      cy.findByLabelText('Password Test').should('exist');
+
+      // Check override translations are applied correctly for default locale
+      cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible');
+      cy.findByLabelText('User Name Test').should('be.visible');
+      cy.findByLabelText('Password Test').should('be.visible');
     });
 
-    it('should override the text of the login failure message', () => {
+    it('Should override the text of the login failure message', () => {
       cy.intercept('/openidm/config/ui/themerealm').as('themeRealConfig');
+
+      // Visit base page of our Login Journey with default locale
       cy.visit(`${loginBaseUrl}#/`);
-      cy.findByRole('button', { name: 'Next Test' }).should('exist').click();
+
+      // Check override translations are applied correctly for default locale
+      cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible').click();
       cy.wait('@themeRealConfig');
-      cy.findAllByRole('alert').contains('Login Failure Override');
+
+      if (!Cypress.env('IS_FRAAS')) {
+        // Error is now only displayed for the ForgeOps Tenant
+        cy.findAllByRole('alert').should('be.visible').contains('Login Failure Override');
+      } else {
+        // Cloud Tenant does not show any error
+        cy.findAllByRole('alert').should('not.exist');
+      }
     });
 
-    it('should display french overrides when locale query parameter is fr', () => {
+    it('Should display French overrides when locale query parameter is "fr"', () => {
+      // Visit base page of our Login Journey with added locale
       cy.visit(`${loginBaseUrl}&locale=fr#/`);
-      cy.findByRole('button', { name: 'Suivant Test' }).should('exist');
-      cy.findByLabelText('Nom d\'utilisateur Test').should('exist');
 
-      // english fallback is used when french is not present
-      cy.findByLabelText('Password Test').should('exist');
+      // Check override translations are applied correctly for added locale
+      cy.findByRole('button', { name: 'Suivant Test', timeout: 10000 }).should('be.visible');
+      cy.findByLabelText('Nom d\'utilisateur Test').should('be.visible');
+
+      // English fallback is used when french is not present
+      cy.findByLabelText('Password Test').should('be.visible');
     });
 
-    it('should fallback to a general locale when a specific one is not present', () => {
+    it('Should fallback to a general locale when a specific one is not present', () => {
+      // Visit base page of our Login Journey with added locale
       cy.visit(`${loginBaseUrl}&locale=fr-ca#/`);
+
+      // Check override translations are applied correctly for added locale and fallback locale
       // fr-ca
-      cy.findByRole('button', { name: 'Suivant Test frca' }).should('exist');
+      cy.findByRole('button', { name: 'Suivant Test frca', timeout: 10000 }).should('be.visible');
       // fr
-      cy.findByLabelText('Nom d\'utilisateur Test').should('exist');
+      cy.findByLabelText('Nom d\'utilisateur Test').should('be.visible');
       // en
-      cy.findByLabelText('Password Test').should('exist');
+      cy.findByLabelText('Password Test').should('be.visible');
     });
 
-    // cleanup
     after(() => {
-      deleteOverrides(accessToken, 'en');
-      deleteOverrides(accessToken, 'fr');
-      deleteOverrides(accessToken, 'fr-ca');
+      // Login as admin and delete config translation overrides after tests
+      cy.login().then(() => {
+        deleteOverrides('en');
+        deleteOverrides('fr');
+        deleteOverrides('fr-ca');
+      });
     });
   });
 

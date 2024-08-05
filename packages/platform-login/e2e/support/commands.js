@@ -37,13 +37,16 @@ Cypress.Commands.add('login', () => {
 
   cy.visit(loginUrl);
   cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type(adminUserName, { force: true });
-  cy.findAllByLabelText(/Password/i).first().type(adminPassword, { force: true });
-  cy.findByRole('button', { name: /Next/i }).click();
+  cy.findAllByLabelText(/Password/i).first().should('be.visible').type(adminPassword, { force: true });
+  cy.intercept('/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.findByRole('button', { name: /Next/i }).should('be.visible').click();
   if (Cypress.env('IS_FRAAS')) {
+    cy.wait('@themerealmConfig');
+    cy.findByRole('status', { timeout: 3000 }).should('not.exist');
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1200);
-    cy.findByRole('button', { name: /Skip for now/i, timeout: 5000 }).click();
+    cy.findByRole('button', { name: /Skip for now/i }).should('be.visible').wait(100).click();
   }
+
   cy.wait('@getAccessToken').then(({ response }) => {
     // Use the access token from the admin login as the API access token for this test
     // Note that for code to use this access token it needs to be queued to execute
