@@ -77,6 +77,13 @@ import FrStringDisplay from './renderers/StringDisplay';
 import FrTextAreaDisplay from './renderers/TextAreaDisplay';
 import FrDateDisplay from './renderers/DateDisplay';
 
+/**
+ * @description FormGenerator component is a dynamic form generator that takes a schema and model object and
+ * renders the form based on the schema. The schema is an array of arrays, where each array contains objects
+ * with information for displaying the correct field, in order.
+ * This component is used in several places in the platform, including the FormEditor and Application forms.
+ */
+
 export default {
   name: 'FormGenerator',
   components: {
