@@ -15,7 +15,7 @@
  */
 export const findFieldNamesMatchingName = (name, veeValidateValues) => {
   const relevantFields = Object.keys(veeValidateValues).reduce((fieldNames, fieldName) => {
-    if (fieldName.startsWith(`${name}-id-`)) {
+    if (fieldName.startsWith(`${name}-id-`) || (fieldName === name && fieldName !== '')) {
       fieldNames.push(fieldName);
     }
     return fieldNames;
