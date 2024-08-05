@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,7 +8,7 @@
 /**
  * Delete a config translation file
  */
-export function deleteOverrides(accessToken = Cypress.env('ACCESS_TOKEN').access_token, locale) {
+export function deleteOverrides(locale, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
   return cy.request({
     method: 'DELETE',
     url: `https://${Cypress.env('FQDN')}/openidm/config/uilocale/${locale}`,
@@ -21,7 +21,7 @@ export function deleteOverrides(accessToken = Cypress.env('ACCESS_TOKEN').access
 /**
  * Add a config translation file
  */
-export default function (accessToken = Cypress.env('ACCESS_TOKEN').access_token, locale, body) {
+export default function (locale, body, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
   return cy.request({
     method: 'PUT',
     url: `https://${Cypress.env('FQDN')}/openidm/config/uilocale/${locale}`,
