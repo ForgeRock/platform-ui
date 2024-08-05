@@ -61,11 +61,12 @@ describe('veeValidateUtils tests', () => {
   });
 
   describe('Finding matching fields', () => {
-    it('matches each field whos name starts with the passed fieldName', () => {
+    it('matches each field whos name starts with the passed fieldName or whos name exactly matches the passed field name', () => {
       const veeValidateValues = {
         'testField-id-0123': 'Hello there',
         'testField-id-abcd': 'General Kenobi',
         'otherField-id-1234': 'fighting ensues',
+        testField: 'this is not the field you are looking for',
       };
 
       const foundNames = findFieldNamesMatchingName('testField', veeValidateValues);
@@ -73,6 +74,7 @@ describe('veeValidateUtils tests', () => {
       expect(foundNames).toStrictEqual([
         'testField-id-0123',
         'testField-id-abcd',
+        'testField',
       ]);
     });
   });
