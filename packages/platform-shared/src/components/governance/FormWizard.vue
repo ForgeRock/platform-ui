@@ -111,6 +111,7 @@ const { setBreadcrumb } = useBreadcrumb();
 
 // Events
 const emit = defineEmits([
+  'changeStep',
   'save',
 ]);
 
@@ -169,7 +170,10 @@ function changeStep(amount) {
 }
 
 function activateTabHandler(newIndex, oldIndex, event) {
-  if (newIndex <= highestStep.value) return;
+  if (newIndex <= highestStep.value) {
+    emit('changeStep', newIndex);
+    return;
+  }
   event.preventDefault();
 }
 </script>
