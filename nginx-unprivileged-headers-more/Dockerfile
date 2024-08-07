@@ -7,7 +7,7 @@
 ARG NGINX_VERSION
 
 # First build stage, used to build an nginx module we use in our image
-FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} as build
+FROM gcr.io/engineering-devops/ci/base-images/nginxinc/nginx-unprivileged:${NGINX_VERSION} as build
 
 ARG HEADERS_MORE_VERSION
 
@@ -48,7 +48,7 @@ RUN CONFARGS=$(nginx -V 2>&1 | sed -n -e 's/^.*arguments: //p') \
 USER 101
 
 # Main stage, combine the upstream nginx image alpine slim variant with the built module and update dependencies
-FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}-alpine-slim
+FROM gcr.io/engineering-devops/ci/base-images/nginxinc/nginx-unprivileged:${NGINX_VERSION}-alpine-slim
 
 COPY nginx-unprivileged-headers-more/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /usr/src/nginx-${NGINX_VERSION}/objs/ngx_http_headers_more_filter_module.so /usr/lib/nginx/modules/ngx_http_headers_more_filter_module.so
