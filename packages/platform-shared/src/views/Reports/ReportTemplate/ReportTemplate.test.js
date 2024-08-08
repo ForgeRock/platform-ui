@@ -98,7 +98,7 @@ describe('Component for creating custom analytics reports', () => {
     },
   };
 
-  const fieldOptionsStubWithRelatedEntities = {
+  const fieldOptionsStubForRelatedEntities = {
     data: {
       'applications.roles.admin': {
         class: 'json',
@@ -121,23 +121,15 @@ describe('Component for creating custom analytics reports', () => {
         result: [
           {
             name: 'applications',
-            label: 'applications',
-            relatedEntities: [{
-              name: 'roles',
-              label: 'roles',
-            },
-            {
-              name: 'assignments',
-              label: 'assignments',
-            }],
+            label: 'Applications',
           },
           {
-            name: 'Users',
+            name: 'users',
             label: 'Users',
           },
           {
             name: 'roles',
-            label: 'roles',
+            label: 'Roles',
           },
         ],
       },
@@ -223,9 +215,11 @@ describe('Component for creating custom analytics reports', () => {
       const dataSourcesOptions = dataSourcesDropdown.findAll('[role="option"]');
       expect(dataSourcesOptions.length).toBe(3);
 
-      const [UsersOption, applicationsOption] = dataSourcesOptions;
-      expect(applicationsOption.text()).toBe('applications');
-      expect(UsersOption.text()).toBe('Users');
+      // expected to show up in alphabetical order
+      const [applicationsOption, rolesOption, usersOption] = dataSourcesOptions;
+      expect(applicationsOption.text()).toBe('Applications');
+      expect(rolesOption.text()).toBe('Roles');
+      expect(usersOption.text()).toBe('Users');
     });
 
     it('ensures that the report badge does show the expected report state on load', async () => {
@@ -236,16 +230,40 @@ describe('Component for creating custom analytics reports', () => {
   });
 
   describe('@actions', () => {
-    async function addDataSource(entitySelection = 'applications', reportFieldOptionsStub = fieldOptionsStub) {
-      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(reportFieldOptionsStub));
+    async function addDataSource(entitySelection = 'applications') {
       const dataSourcesDropdown = findByRole(wrapper, 'listbox');
-      const [usersOption, applicationsOption] = dataSourcesDropdown.findAll('[role="option"]');
+      const [applicationsOption,, usersOption] = dataSourcesDropdown.findAll('[role="option"]');
 
       if (entitySelection === 'applications') {
+        // related entities response
+        AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
+          data: {
+            result: [
+              {
+                name: 'applications.members',
+                label: 'Members',
+              },
+              {
+                name: 'applications.roles',
+                label: 'Roles',
+              },
+              {
+                name: 'applications.owners',
+                label: 'Owners',
+              },
+            ],
+          },
+        }));
         await applicationsOption.find('span').trigger('click');
       }
 
       if (entitySelection === 'users') {
+        // empty related entities response
+        AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
+          data: {
+            result: [],
+          },
+        }));
         await usersOption.find('span').trigger('click');
       }
 
@@ -261,10 +279,24 @@ describe('Component for creating custom analytics reports', () => {
     async function addRelatedDataSource() {
       const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
       const [, relatedDataSourcesFieldset] = dataSourceContainer.findAll('fieldset');
-      const [rolesRelatedDataSourceButton] = relatedDataSourcesFieldset.findAll('button');
-      const [rolesRelatedDataSourceOption] = relatedDataSourcesFieldset.findAll('a');
+      const [,, rolesRelatedDataSourceButton] = relatedDataSourcesFieldset.findAll('button');
+      const [,, rolesRelatedDataSourceOption] = relatedDataSourcesFieldset.findAll('a');
 
-      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubWithRelatedEntities));
+      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubForRelatedEntities));
+      AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
+        data: {
+          result: [
+            {
+              name: 'applications.roles.admin',
+              label: 'Admin',
+            },
+            {
+              name: 'applications.roles.manager',
+              label: 'Manager',
+            },
+          ],
+        },
+      }));
 
       await rolesRelatedDataSourceButton.trigger('click');
       await rolesRelatedDataSourceOption.trigger('click');
@@ -342,19 +374,20 @@ describe('Component for creating custom analytics reports', () => {
       expect(name.text()).toBe('Applications Name');
     });
 
-    it('ensures that the related data sources block for the corresponding entity shows up for the expected api response', async () => {
+    it('ensures that the related data sources block for the corresponding entity shows up for the expected API response', async () => {
       await addDataSource();
 
       // Should show related entities for the applications entity since the getReportEntities
-      // api call returns a value for the relatedEntities property.
+      // API call returns a value for the relatedEntities property.
       let entitiesSettingContainer = findByTestId(wrapper, 'entities-settings-container');
       let relatedDataSourcesLegend = findByText(entitiesSettingContainer, 'legend', 'Related data sources');
       expect(relatedDataSourcesLegend.exists()).toBe(true);
 
       // should detect roles and assignments as related entity options
-      const [rolesRelatedEntity, assignmentsRelatedEntity] = findAllByTestId(entitiesSettingContainer, 'related-entity-list-item');
-      expect(rolesRelatedEntity.find('p').text()).toBe('roles');
-      expect(assignmentsRelatedEntity.find('p').text()).toBe('assignments');
+      const [membersRelatedEntity, ownersRelatedEntity, rolesRelatedEntity] = findAllByTestId(entitiesSettingContainer, 'related-entity-list-item');
+      expect(membersRelatedEntity.find('p').text()).toBe('Members');
+      expect(ownersRelatedEntity.find('p').text()).toBe('Owners');
+      expect(rolesRelatedEntity.find('p').text()).toBe('Roles');
 
       // We want to change the data source to Users since it does not have any
       // related entities and test that there are no related entity elements.
@@ -365,7 +398,7 @@ describe('Component for creating custom analytics reports', () => {
       // add users related entity
       await addDataSource('users');
 
-      // ensure that there are no related entities because users does not have a relatedEntities property
+      // ensure that there are no related entities because users does not have related entities.
       entitiesSettingContainer = findByTestId(wrapper, 'entities-settings-container');
       relatedDataSourcesLegend = findByText(entitiesSettingContainer, 'legend', 'Related data sources');
       expect(relatedDataSourcesLegend).toBeUndefined();
@@ -548,7 +581,7 @@ describe('Component for creating custom analytics reports', () => {
 
           const [,, filtersModal] = wrapper.findAll('[role="dialog"]');
           const [, leftValueSelect, ruleOperatorSelect] = filtersModal.findAll('[role="listbox"]');
-          const [,, nameLeftValOption] = leftValueSelect.findAll('[role="option"]');
+          const [, nameLeftValOption] = leftValueSelect.findAll('[role="option"]');
           const containsRuleOperatorOption = ruleOperatorSelect.find('[role="option"]');
           const [rightValueTypeMenu] = filtersModal.findAll('[role="menu"]');
           const [, variableOption] = rightValueTypeMenu.findAll('[role="menuitem"]');
@@ -765,7 +798,7 @@ describe('Component for creating custom analytics reports', () => {
           await addRelatedDataSource();
           // fieldoptions endpoint should include both parent entity and related entity results so the expected filter options get selected
           AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
-            data: { ...fieldOptionsStub.data, ...fieldOptionsStubWithRelatedEntities.data },
+            data: { ...fieldOptionsStub.data, ...fieldOptionsStubForRelatedEntities.data },
           }));
           await addFilterDefinition();
 
@@ -801,7 +834,8 @@ describe('Component for creating custom analytics reports', () => {
 
           // deletes the "applications / roles" data source
           const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
-          const [,, deleteMenu] = dataSourceContainer.findAll('[role="menu"]');
+          const [, applicationsRoles] = dataSourceContainer.findAll('.card');
+          const deleteMenu = applicationsRoles.find('[role="menu"]');
           await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
 
           // opens filter modal to ensure that the second rule that had the deleted data source selection is also deleted
@@ -819,7 +853,7 @@ describe('Component for creating custom analytics reports', () => {
           // verify that the left value for the remaining rule does not have applications.roles.admin selected since it was deleted
           const [firstRule] = rules;
           const firstRuleLeftVariableOptionSelection = firstRule.find('.multiselect__option--selected');
-          expect(firstRuleLeftVariableOptionSelection.text()).toBe('MyParameter');
+          expect(firstRuleLeftVariableOptionSelection.text()).toBe('applications.name');
         });
       });
 
@@ -928,7 +962,8 @@ describe('Component for creating custom analytics reports', () => {
 
           // deletes the "applications / roles" data source
           const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
-          const [,, deleteMenu] = dataSourceContainer.findAll('[role="menu"]');
+          const [, applicationsRoles] = dataSourceContainer.findAll('.card');
+          const deleteMenu = applicationsRoles.find('[role="menu"]');
           await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
           await flushPromises();
 
@@ -1082,11 +1117,12 @@ describe('Component for creating custom analytics reports', () => {
 
           // deletes the "applications / roles" data source
           const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
-          const [,, deleteMenu] = dataSourceContainer.findAll('[role="menu"]');
+          const [, applicationsRoles] = dataSourceContainer.findAll('.card');
+          const deleteMenu = applicationsRoles.find('[role="menu"]');
           await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
           await flushPromises();
 
-          // Checks to make sure that only the sort definitino that had the deleted data source is not present
+          // Checks to make sure that only the sort definition that had the deleted data source is not present
           sortSettingContainer = findByTestId(wrapper, 'sort-settings-container');
           definitionHeadings = sortSettingContainer.findAll('.card-text');
           expect(definitionHeadings.length).toBe(1);

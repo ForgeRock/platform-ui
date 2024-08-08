@@ -84,10 +84,11 @@ export async function runAnalyticsTemplate(template, state, payload) {
 /**
  * Gets a list of report entities
  *
+ * @param {String} path optional path for retrieving related entities
  * @returns {Promise<Object>}
  */
-export function getReportEntities() {
-  return generateAutoAccessReports().get('entities');
+export function getReportEntities(path) {
+  return generateAutoAccessReports().get(`entities${path ? `?path=${path}` : ''}`);
 }
 
 /**

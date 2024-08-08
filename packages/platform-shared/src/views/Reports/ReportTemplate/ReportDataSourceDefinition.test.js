@@ -42,14 +42,14 @@ describe('Report Data Source Definition component', () => {
     path: 'applications.lastName',
   }];
   const relatedDataSources = [{
-    name: 'assignments',
-    label: 'assignments',
+    name: 'applications.assignments',
+    label: 'Assignments',
   },
   {
-    name: 'roles',
-    label: 'roles',
+    name: 'applications.roles',
+    label: 'Roles',
   }];
-  const selectedRelatedDataSources = ['assignments'];
+  const selectedRelatedDataSources = ['applications.assignments'];
 
   let wrapper;
 
@@ -97,10 +97,10 @@ describe('Report Data Source Definition component', () => {
       const relatedDataSourcesFieldsetLabel = relatedDataSourcesFieldset.find('legend');
       expect(relatedDataSourcesFieldsetLabel.text()).toBe('Related data sources');
 
-      const assignmentsRelatedDataSourceElement = findByText(relatedDataSourcesFieldset, 'p', 'assignments');
+      const assignmentsRelatedDataSourceElement = findByText(relatedDataSourcesFieldset, 'p', 'Assignments');
       expect(assignmentsRelatedDataSourceElement.exists()).toBe(true);
 
-      const rolesRelatedDataSourceElement = findByText(relatedDataSourcesFieldset, 'p', 'roles');
+      const rolesRelatedDataSourceElement = findByText(relatedDataSourcesFieldset, 'p', 'Roles');
       expect(rolesRelatedDataSourceElement.exists()).toBe(true);
     });
 
@@ -149,7 +149,7 @@ describe('Report Data Source Definition component', () => {
 
       await assignmentsRelatedDataSourceButton.trigger('click');
       await addAssignmentsRelatedDataSourceOption.trigger('click');
-      expect(wrapper.emitted()['set-related-data-sources'][0]).toEqual(['applications.assignments']);
+      expect(wrapper.emitted()['set-related-data-source'][0]).toEqual(['applications.assignments']);
     });
 
     it('emits "delete-data-source" when a data source definition card is deleted', async () => {

@@ -287,7 +287,7 @@ describe('Report Template Settings component', () => {
         expect(rolesRelatedEntityCheck.exists()).toBe(true);
       });
 
-      it('emits "set-related-data-sources" when the "Add as Data Source" button is clicked for a related data source', async () => {
+      it('emits "set-related-data-source" when the "Add as Data Source" button is clicked for a related data source', async () => {
         const dataSourcesWithDefinitions = [{ _id: 'entities', definitions: [entityDefinitionStub] }];
         wrapper = setup({ reportSettings: dataSourcesWithDefinitions });
 
@@ -299,9 +299,9 @@ describe('Report Template Settings component', () => {
 
         await assignmentsRelatedEntityButton.trigger('click');
         await assignmentsRelatedEntityAddOption.trigger('click');
-        const [[definitionIndex, entityValue]] = wrapper.emitted()['set-related-data-sources'];
+        const [[definitionIndex, entityValue]] = wrapper.emitted()['set-related-data-source'];
         expect(definitionIndex).toEqual(0);
-        expect(entityValue).toBe('applications.assignments');
+        expect(entityValue).toBe('assignments');
       });
     });
 

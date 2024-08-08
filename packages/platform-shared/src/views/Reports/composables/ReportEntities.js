@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { getReportFieldOptions, getReportEntities } from '@forgerock/platform-shared/src/api/AutoApi';
 import useReportSettings from './ReportSettings';
 import i18n from '@/i18n';
@@ -18,6 +18,24 @@ export default function useReportEntities() {
   const { sortCompare } = useReportSettings();
   const allEntities = ref([{ name: i18n.global.t('common.loadingEtc') }]);
   const allDataSourceColumns = ref([]);
+
+  /**
+   * Gets all report entities including related entities.
+   * @param {String} entity optinally used for fetching related entities
+   */
+  async function fetchReportEntities(entity) {
+    const { data: { result: responseEntities } } = await getReportEntities(entity);
+
+    if (entity && responseEntities.length) {
+      // returning related entities here
+      return responseEntities.sort((a, b) => sortCompare(a, b, 'label'));
+    }
+
+    allEntities.value = responseEntities
+      .map(({ label, name }) => ({ text: label, value: name }))
+      .sort((a, b) => sortCompare(a, b, 'text'));
+    return [];
+  }
 
   /**
    * Creates a list of UI friendly definitions for an API list of entities.
@@ -34,12 +52,11 @@ export default function useReportEntities() {
     if (entities?.length) {
       return Promise.all(entities.map(async ({ entity, type }) => {
         const entityNameArr = entity.split('.');
-        const entityResource = entityNameArr.pop();
         const fieldOptionsBody = {
           entities: [{ entity }],
           fields: [{ value: { options: {} } }],
         };
-        const { data: dataSourceColumns } = await getReportFieldOptions(fieldOptionsBody);
+        const [{ data: dataSourceColumns }, relatedDataSources] = await Promise.all([getReportFieldOptions(fieldOptionsBody), fetchReportEntities(entity)]);
         const currentDataSourceColumns = ref([]);
 
         if (dataSourceColumns && Object.keys(dataSourceColumns).length) {
@@ -48,7 +65,7 @@ export default function useReportEntities() {
             return {
               format: dataSourceColumns[columnName].class,
               label: dataSourceColumns[columnName].label || columnName.split('.').pop(),
-              columnLabel: entityColumn?.label || dataSourceColumns[columnName].column_label || '',
+              columnLabel: entityColumn?.label || dataSourceColumns[columnName].column_label || columnName.split('.').pop() || '',
               type: dataSourceColumns[columnName].type,
               path: columnName,
             };
@@ -58,13 +75,12 @@ export default function useReportEntities() {
           currentDataSourceColumns.value = entityColumns;
         }
 
-        const relatedDataSources = allEntities.value.find(({ name }) => name === entityResource)?.relatedEntities || [];
         const selectedColumns = fields?.length
           ? fields
             .filter((field) => currentDataSourceColumns.value.find(({ path }) => path === field.value))
             .map(({ value }) => value)
           : [];
-        const entityResourceNames = entities.map((obj) => obj.entity.split('.').pop());
+        const entityResourceNames = entities.map(({ entity: entityName }) => entityName);
 
         return {
           dataSource: entity,
@@ -72,9 +88,9 @@ export default function useReportEntities() {
           relatedDataSources,
           selectedColumns,
           selectedRelatedDataSources: entityResourceNames.filter((resource) => relatedDataSources.map(({ name }) => name).includes(resource)),
-          // If entityNameArr has items, it means this is a related entity and it
-          // is intended to only add the joinType property to related entity definitions.
-          ...(entityNameArr.length && { joinType: type || 'left' }),
+          // If entityNameArr has more than one item, it means that this is a related entity and
+          // it is intended to only add the joinType property to related entity definitions.
+          ...(entityNameArr.length > 1 && { joinType: type || 'left' }),
         };
       }));
     }
@@ -107,23 +123,8 @@ export default function useReportEntities() {
     return {};
   }
 
-  /**
-   * Gets all report entities
-   */
-  async function fetchReportEntities() {
-    const { data: { result: responseEntities } } = await getReportEntities();
-    if (responseEntities.length) {
-      allEntities.value = responseEntities;
-    }
-  }
-
-  // Computed
-  const dataSources = computed(() => allEntities.value
-    .map(({ label, name }) => ({ text: label, value: name }))
-    .sort((a, b) => sortCompare(a, b, 'text')));
-
   return {
-    dataSources,
+    dataSources: allEntities,
     dataSourceColumns: allDataSourceColumns,
     entityDefinitions,
     entitiesPayload,

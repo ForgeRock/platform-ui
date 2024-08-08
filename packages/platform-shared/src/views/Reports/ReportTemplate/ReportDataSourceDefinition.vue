@@ -153,7 +153,7 @@ const emit = defineEmits([
   'delete-data-source',
   'related-entity-settings',
   'set-column-selections',
-  'set-related-data-sources',
+  'set-related-data-source',
 ]);
 const props = defineProps({
   dataSource: {
@@ -197,8 +197,7 @@ const showAccordion = ref(false);
 // Functions
 function addRelatedEntity(dataSourceName) {
   currentEntityBeingFetched.value = dataSourceName;
-  const dataSourcePath = `${props.dataSource}.${dataSourceName}`;
-  emit('set-related-data-sources', dataSourcePath);
+  emit('set-related-data-source', dataSourceName);
 }
 
 // Computed

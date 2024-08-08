@@ -139,12 +139,26 @@ describe('@useReportEntities', () => {
         },
       }));
 
-      const getReportFieldOptionsSpy = jest.spyOn(AutoApi, 'getReportFieldOptions');
+      AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
+        data: {
+          result: [
+            {
+              name: 'applications.users',
+              label: 'Users',
+            },
+            {
+              name: 'applications.owners',
+              label: 'Owners',
+            },
+          ],
+        },
+      }));
 
+      const getReportFieldOptionsSpy = jest.spyOn(AutoApi, 'getReportFieldOptions');
       const definitions = await entityDefinitions([{ entity: 'applications' }], [{ label: 'Applications Name', value: 'applications.name' }]);
       expect(getReportFieldOptionsSpy).toHaveBeenCalledWith({
         entities: [{
-          entity: entitiesStub[0].entity,
+          entity: 'applications',
         }],
         fields: [{
           value: {
@@ -172,12 +186,12 @@ describe('@useReportEntities', () => {
             },
           ]),
           relatedDataSources: [{
-            name: 'roles',
-            label: 'roles',
+            name: 'applications.owners',
+            label: 'Owners',
           },
           {
-            name: 'assignments',
-            label: 'assignments',
+            name: 'applications.users',
+            label: 'Users',
           }],
           selectedColumns: ['applications.name'],
           selectedRelatedDataSources: [],
@@ -200,6 +214,12 @@ describe('@useReportEntities', () => {
             column_label: 'Role Name column label',
             type: 'string',
           },
+        },
+      }));
+
+      AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
+        data: {
+          result: [],
         },
       }));
 

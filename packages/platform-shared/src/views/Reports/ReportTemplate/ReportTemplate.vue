@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
           @delete-parameter="onDeleteParameter"
           @related-entity-settings="onRelatedEntitySettings"
           @set-column-selections="onSetColumnSelections"
-          @set-related-data-sources="onSetRelatedDataSources"
+          @set-related-data-source="onSetRelatedDataSource"
           @update-definitions="onUpdateDefinitions" />
       </template>
       <FrReportAddDataSourceCard
@@ -247,7 +247,7 @@ async function saveTemplate(settings = reportSettings.value) {
 }
 
 /**
- * After an entity is selected, entity columns are fetched here.
+ * After a a data source entity is selected, we then fetch entity columns and related entities here.
  * @param {String} dataSource entity name
  */
 async function onAddDataSource(dataSource) {
@@ -339,10 +339,10 @@ function onSetColumnSelections(defIndex, columns) {
  * @param {Number} parentIndex Parent entity definition index position
  * @param {String} relatedDataSource Related data source path
  */
-async function onSetRelatedDataSources(parentIndex, relatedDataSource) {
+async function onSetRelatedDataSource(parentIndex, relatedDataSource) {
   const { selectedRelatedDataSources } = findSettingsObject('entities').definitions[parentIndex];
   await onAddDataSource(relatedDataSource);
-  selectedRelatedDataSources.push(relatedDataSource.split('.').pop());
+  selectedRelatedDataSources.push(relatedDataSource);
 }
 
 /**
@@ -454,18 +454,18 @@ function onDeleteDataSource(defIndex) {
   const definitionsList = findSettingsObject('entities').definitions;
   const definitionNamePath = definitionsList[defIndex].dataSource;
   const definitionPathArray = definitionNamePath.split('.');
-  const currentDefinitionName = definitionPathArray.pop();
+  definitionPathArray.pop();
   const parentDefinitionName = definitionPathArray.join('.');
   const parentDefinition = definitionsList.find((def) => def.dataSource === parentDefinitionName);
   const deleteQueue = [];
 
   if (parentDefinition) {
     // Remove the selected related data source item from the parent data source definition
-    parentDefinition.selectedRelatedDataSources = parentDefinition.selectedRelatedDataSources.filter((entity) => entity !== currentDefinitionName);
+    parentDefinition.selectedRelatedDataSources = parentDefinition.selectedRelatedDataSources.filter((entity) => entity !== definitionNamePath);
   }
 
   definitionsList.forEach((def) => {
-    if (def.dataSource.split('.').includes(currentDefinitionName)) {
+    if (def.dataSource.includes(definitionNamePath)) {
       deleteQueue.push(def.dataSource);
     }
   });

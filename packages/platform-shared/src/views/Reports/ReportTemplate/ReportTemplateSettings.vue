@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
                   @delete-data-source="$emit('delete-data-source', defIndex)"
                   @related-entity-settings="$emit('related-entity-settings', defIndex)"
                   @set-column-selections="$emit('set-column-selections', defIndex, $event)"
-                  @set-related-data-sources="$emit('set-related-data-sources', defIndex, $event)" />
+                  @set-related-data-source="$emit('set-related-data-source', defIndex, $event)" />
               </div>
               <div
                 v-else
@@ -119,7 +119,7 @@ const emit = defineEmits([
   'input',
   'related-entity-settings',
   'set-column-selections',
-  'set-related-data-sources',
+  'set-related-data-source',
   'update-definitions',
   'update-details',
 ]);
