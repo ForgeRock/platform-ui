@@ -28,11 +28,12 @@ of the MIT license. See the LICENSE file for details. -->
             </h5>
             <BMedia no-body>
               <BMediaAside>
-                <BImg
-                  :src="getApplicationLogo(entitlement.app) || require('@forgerock/platform-shared/src/assets/images/applications/custom.svg')"
+                <img
+                  :src="getApplicationLogo(entitlement.app)"
                   :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: entitlement.app.name })"
                   class="mr-2"
-                  width="24" />
+                  :onerror="onImageError"
+                  width="24">
               </BMediaAside>
               <BMediaBody class="align-self-center text-truncate">
                 <h5 class="mb-0 text-truncate">
@@ -59,11 +60,12 @@ of the MIT license. See the LICENSE file for details. -->
             </h5>
             <BMedia no-body>
               <BMediaAside>
-                <BImg
-                  :src="getApplicationLogo(entitlement.app) || require('@forgerock/platform-shared/src/assets/images/applications/custom.svg')"
+                <img
+                  :src="getApplicationLogo(entitlement.app)"
                   :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: entitlement.app.name })"
                   class="mr-2"
-                  width="24" />
+                  :onerror="onImageError"
+                  width="24">
               </BMediaAside>
               <BMediaBody class="align-self-center text-truncate">
                 <h5 class="mb-0 text-truncate">
@@ -89,7 +91,6 @@ import { computed } from 'vue';
 import { get } from 'lodash';
 import {
   BCol,
-  BImg,
   BListGroup,
   BListGroupItem,
   BMedia,
@@ -99,6 +100,7 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 
 const props = defineProps({
   isTesting: {
@@ -111,7 +113,7 @@ const props = defineProps({
   },
   violation: {
     type: Object,
-    default: () => {},
+    default: () => ({}),
   },
 });
 

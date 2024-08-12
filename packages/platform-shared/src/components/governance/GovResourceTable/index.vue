@@ -108,12 +108,13 @@ of the MIT license. See the LICENSE file for details. -->
         <template #cell(appName)="{ item }">
           <BMedia no-body>
             <BMediaAside class="mr-4 align-self-center">
-              <BImg
+              <img
                 :alt="$t('common.logo')"
                 :src="getApplicationLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
-                :aria-hidden="true"
+                aria-hidden
+                :onerror="onImageError"
                 width="24"
-                height="24" />
+                height="24">
             </BMediaAside>
             <BMediaBody class="text-truncate">
               <h3 class="h5 mb-0 text-truncate">
@@ -128,12 +129,13 @@ of the MIT license. See the LICENSE file for details. -->
         <template #cell(entitlementNameAppName)="{ item }">
           <BMedia no-body>
             <BMediaAside class="mr-4 align-self-center">
-              <BImg
+              <img
                 :alt="$t('common.logo')"
                 :src="getApplicationLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
                 aria-hidden
+                :onerror="onImageError"
                 width="24"
-                height="24" />
+                height="24">
             </BMediaAside>
             <BMediaBody class="text-truncate">
               <h3 class="h5 mb-0 text-truncate">
@@ -282,7 +284,6 @@ import {
   BCardHeader,
   BDropdownItem,
   BFormCheckbox,
-  BImg,
   BMedia,
   BMediaAside,
   BMediaBody,
@@ -292,6 +293,7 @@ import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUt
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
@@ -317,7 +319,6 @@ export default {
     BCardHeader,
     BDropdownItem,
     BFormCheckbox,
-    BImg,
     BMedia,
     BMediaAside,
     BMediaBody,
@@ -553,6 +554,7 @@ export default {
         this.$refs['gov-resource-table'].unselectRow(row.index);
       }
     },
+    onImageError,
     /**
      * Verifies selected row is a row that should be able to be revoked, and adds to selected array if so
      * @param {Array} selectedItems Currently selected table rows

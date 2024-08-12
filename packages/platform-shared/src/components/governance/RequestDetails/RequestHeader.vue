@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="d-flex align-items-center justify-content-center p-3 mr-2 rounded border border-darkened app-logo">
         <BImg
           v-if="item.details.isCustom"
-          :src="require('@forgerock/platform-shared/src/assets/images/applications/custom.svg')"
+          :src="require('@forgerock/platform-shared/src/assets/images/custom.svg')"
           :alt="$t('governance.accessRequest.customRequestAltText')"
           width="48"
           height="48" />
@@ -19,13 +19,14 @@ of the MIT license. See the LICENSE file for details. -->
           v-else-if="isTypeRole(item.rawData.requestType)"
           icon-class="mr-1 md-48 rounded-circle"
           :name="item.details.icon" />
-        <BImg
+        <img
           v-else
           width="54"
           height="54"
           class="align-self-center"
+          :onerror="onImageError"
           :src="item.details.icon"
-          :alt="$t('common.logo')" />
+          :alt="$t('common.logo')">
       </div>
     </template>
     <BMediaBody class="align-self-center text-truncate">
@@ -71,6 +72,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import {
   isTypeRole,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import dayjs from 'dayjs';
 import i18n from '@/i18n';
 

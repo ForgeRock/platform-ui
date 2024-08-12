@@ -29,12 +29,13 @@ of the MIT license. See the LICENSE file for details. -->
         <BMedia
           class="align-items-center"
           no-body>
-          <BImg
+          <img
             class="mr-3"
             width="28"
             height="33"
+            :onerror="onImageError"
             :src="getApplicationLogo(item)"
-            :alt="$t('common.logo')" />
+            :alt="$t('common.logo')">
           <BMediaBody class="overflow-hidden d-flex flex-column">
             <span class="text-truncate">
               {{ item.name }}
@@ -68,11 +69,11 @@ of the MIT license. See the LICENSE file for details. -->
  * @description Application Tab used to display the applications attached to an specific role
  */
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import {
   ref,
 } from 'vue';
 import {
-  BImg,
   BMedia,
   BMediaBody,
   BTable,

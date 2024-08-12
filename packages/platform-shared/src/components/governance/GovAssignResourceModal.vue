@@ -25,13 +25,13 @@ of the MIT license. See the LICENSE file for details. -->
           v-else
           class="align-items-center"
           no-body>
-          <BImg
-            class="mr-4 align-self-center"
+          <img
+            class="mr-4 align-self-center mw-100 h-auto"
             height="36"
             width="36"
             :alt="$t('governance.resource.assignResourceModal.appLogoAltText')"
-            :src="appLogoSource"
-            fluid />
+            :onerror="onImageError"
+            :src="appLogoSource">
           <BMediaBody>
             <small class="mb-0">
               {{ modalTitle }}
@@ -66,11 +66,12 @@ of the MIT license. See the LICENSE file for details. -->
             <BMedia
               no-body
               class="m-0 py-1 align-items-center">
-              <BImg
-                :src="getApplicationLogo(option) || require('@forgerock/platform-shared/src/assets/images/applications/custom.svg')"
+              <img
+                :src="getApplicationLogo(option)"
                 :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.name })"
                 class="mr-2"
-                width="18" />
+                :onerror="onImageError"
+                width="18">
               <BMediaBody>
                 {{ option.text }}
               </BMediaBody>
@@ -139,7 +140,6 @@ import { capitalize, debounce } from 'lodash';
 import {
   BButton,
   BButtonClose,
-  BImg,
   BMedia,
   BMediaBody,
   BModal,
@@ -148,6 +148,7 @@ import { Form as VeeForm } from 'vee-validate';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import i18n from '@/i18n';

@@ -48,14 +48,14 @@ of the MIT license. See the LICENSE file for details. -->
         <BMedia
           class="clickable">
           <template #aside>
-            <BImg
+            <img
               class="mt-2"
               height="24"
               width="24"
               :alt="$t('common.logo')"
               :aria-hidden="true"
-              :src="getLogo(selectedItem.application)"
-            />
+              :onerror="onImageError"
+              :src="getLogo(selectedItem.application)">
           </template>
           <BMediaBody>
             <h1
@@ -96,10 +96,10 @@ import {
   BCardHeader,
   BMedia,
   BMediaBody,
-  BImg,
 } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrTaskList from '../TaskList';
 
 export default {
@@ -109,7 +109,6 @@ export default {
     BCardHeader,
     BMedia,
     BMediaBody,
-    BImg,
     FrTaskList,
     FrSpinner,
   },
@@ -190,6 +189,7 @@ export default {
     getLogo(item) {
       return getApplicationLogo(item);
     },
+    onImageError,
   },
 };
 </script>

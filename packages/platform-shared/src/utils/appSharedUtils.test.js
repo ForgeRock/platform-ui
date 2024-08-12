@@ -9,7 +9,7 @@ import { resolveImage } from '@forgerock/platform-shared/src/utils/applicationIm
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 
 const logoMap = {
-  template1: 'path/to/template1Icon.png',
+  'active.directory': 'active-directory.svg',
 };
 
 describe('AppSharedUtils', () => {
@@ -26,20 +26,20 @@ describe('AppSharedUtils', () => {
     it('should return icon based on templateName if it exists in logoMap', () => {
       const application = {
         icon: '',
-        templateName: 'template1',
+        templateName: 'active.directory',
       };
       const expectedImagePath = logoMap[application.templateName];
       const result = getApplicationLogo(application);
       expect(result).toBe(resolveImage(expectedImagePath));
     });
 
-    it('should return empty string if no icon or templateName provided', () => {
+    it('should return default cdn path string if no icon or templateName provided', () => {
       const application = {
         icon: '',
         templateName: null,
       };
       const result = getApplicationLogo(application);
-      expect(result).toBe('');
+      expect(result).toBe('https://cdn.forgerock.com/platform/app-templates/images/');
     });
   });
 

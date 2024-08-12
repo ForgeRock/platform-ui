@@ -64,13 +64,13 @@ of the MIT license. See the LICENSE file for details. -->
                 v-if="grant.application"
                 class="align-items-center"
                 no-body>
-                <BImg
-                  class="mr-3"
+                <img
+                  class="mr-3 mw-100 h-auto"
                   height="36"
                   width="36"
                   :alt="appName"
-                  :src="logo"
-                  fluid />
+                  :onerror="onImageError"
+                  :src="logo">
                 <BMediaBody>
                   <small class="mb-1 d-block">
                     {{ appName }}
@@ -158,6 +158,7 @@ import {
 import { isNil } from 'lodash';
 import { computed } from 'vue';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrContentDetailsTab from '@forgerock/platform-shared/src/views/Governance/CertificationTask/TaskList/modals/AccountModal/ContentDetailsTab';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';

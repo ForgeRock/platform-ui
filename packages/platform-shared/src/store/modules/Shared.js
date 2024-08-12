@@ -17,7 +17,6 @@ const defaultState = {
   autoAccessTenantId: null,
   autoCustomReportsEnabled: false,
   autoReportsEnabled: false,
-  loadAppTemplatesFromCDN: false,
   currentPackage: '',
   extendedSamlConfigEnabled: false,
   scriptBindingsApiEnabled: false,
@@ -154,10 +153,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
       state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
-    }
-
-    if (env.VUE_APP_LOAD_APP_TEMPLATES_FROM_CDN) {
-      state.loadAppTemplatesFromCDN = env.VUE_APP_LOAD_APP_TEMPLATES_FROM_CDN === 'true' || env.VUE_APP_LOAD_APP_TEMPLATES_FROM_CDN === true;
     }
 
     if (env.VUE_APP_ENABLE_TEMPLATE_BUILDER === 'true' || env.VUE_APP_ENABLE_TEMPLATE_BUILDER === true) {

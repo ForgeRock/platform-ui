@@ -145,12 +145,13 @@ of the MIT license. See the LICENSE file for details. -->
                 <BMedia
                   class="align-items-center"
                   no-body>
-                  <BImg
+                  <img
                     class="mr-4"
                     width="28"
                     height="28"
+                    :onerror="onImageError"
                     :src="getLogo(option)"
-                    :alt="$t('common.logo')" />
+                    :alt="$t('common.logo')">
                   <div class="media-body align-self-center overflow-hidden text-nowrap">
                     <span class="text-dark">
                       {{ option.text }}
@@ -169,12 +170,13 @@ of the MIT license. See the LICENSE file for details. -->
                 <BMedia
                   class="align-items-center"
                   no-body>
-                  <BImg
+                  <img
                     class="mr-4"
                     width="28"
                     height="28"
+                    :onerror="onImageError"
                     :src="getLogo(option)"
-                    :alt="$t('common.logo')" />
+                    :alt="$t('common.logo')">
                   <div class="media-body align-self-center overflow-hidden text-nowrap">
                     <span class="text-dark">
                       {{ option.name }}
@@ -197,6 +199,7 @@ import {
   BFormGroup,
 } from 'bootstrap-vue';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -284,6 +287,7 @@ export default {
     getLogo(item) {
       return getApplicationLogo(item);
     },
+    onImageError,
   },
   mounted() {
     if (this.actorId) {

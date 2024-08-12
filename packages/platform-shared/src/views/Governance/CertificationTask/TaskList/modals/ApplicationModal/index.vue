@@ -17,13 +17,13 @@ of the MIT license. See the LICENSE file for details. -->
       <BMedia
         class="align-items-center"
         no-body>
-        <BImg
-          class="mr-3"
+        <img
+          class="mr-3 mw-100 h-auto"
           height="36"
           width="36"
           :alt="application.name"
-          :src="logo"
-          fluid />
+          :onerror="onImageError"
+          :src="logo">
         <div class="media-body">
           <small class="mb-1">
             {{ displayName }}
@@ -112,6 +112,7 @@ import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/gov
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 
 export default {
   name: 'ApplicationModal',
@@ -158,6 +159,7 @@ export default {
         sn,
       });
     },
+    onImageError,
   },
 };
 </script>

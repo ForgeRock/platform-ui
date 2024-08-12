@@ -19,13 +19,13 @@ of the MIT license. See the LICENSE file for details. -->
       <BMedia
         class="align-items-center"
         no-body>
-        <BImg
-          class="mr-3"
+        <img
+          class="mr-3 mw-100 h-auto"
           height="36"
           width="36"
           :alt="displayName"
-          :src="logo"
-          fluid />
+          :onerror="onImageError"
+          :src="logo">
         <div class="media-body">
           <small class="mb-1 d-block">
             {{ displayName }}
@@ -68,7 +68,6 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   BButtonClose,
-  BImg,
   BMedia,
   BModal,
   BTab,
@@ -77,6 +76,7 @@ import {
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrEntitlementDetailsTab from './EntitlementDetailsTab';
 
 /**
@@ -92,7 +92,6 @@ export default {
   name: 'EntitlementModal',
   components: {
     BButtonClose,
-    BImg,
     BMedia,
     BModal,
     BTab,
@@ -134,6 +133,9 @@ export default {
     glossaryValues() {
       return this.entitlement?.glossary?.idx?.['/entitlement'] || {};
     },
+  },
+  methods: {
+    onImageError,
   },
 };
 </script>

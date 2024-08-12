@@ -18,13 +18,13 @@ of the MIT license. See the LICENSE file for details. -->
           <BMedia
             class="align-items-center"
             no-body>
-            <BImg
-              class="mr-3"
+            <img
+              class="mr-3 mw-100 h-auto"
               height="28"
               width="28"
               :alt="item.application.name"
-              :src="getLogo(item.application)"
-              fluid />
+              :onerror="onImageError"
+              :src="getLogo(item.application)">
             <BMediaBody>
               <span class="text-dark">
                 {{ item.application.name }}
@@ -54,9 +54,9 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { get } from 'lodash';
 import {
-  BImg,
   BMedia,
   BMediaBody,
   BPagination,
@@ -70,7 +70,6 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 export default {
   name: 'AccountsTab',
   components: {
-    BImg,
     BMedia,
     BMediaBody,
     BPagination,
@@ -116,6 +115,7 @@ export default {
     nameValue(descriptor) {
       return get(descriptor, 'idx./account.displayName', this.blankValueIndicator);
     },
+    onImageError,
   },
   computed: {
     totalRows() {

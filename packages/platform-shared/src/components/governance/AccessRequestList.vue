@@ -25,7 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-2">
             <BMediaAside class="align-self-center">
               <BImg
-                :src="require('@forgerock/platform-shared/src/assets/images/applications/custom.svg')"
+                :src="require('@forgerock/platform-shared/src/assets/images/custom.svg')"
                 :alt="$t('governance.accessRequest.customRequestAltText')"
                 width="24" />
             </BMediaAside>

@@ -51,11 +51,13 @@ of the MIT license. See the LICENSE file for details. -->
                 <template #tag="{ option, remove }">
                   <span class="multiselect__tag">
                     <BMedia no-body>
-                      <BImg
+                      <img
+                        :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.value })"
                         height="24"
                         width="24"
                         class="mr-2 align-self-center"
-                        :src="option.icon" />
+                        :onerror="onImageError"
+                        :src="option.icon">
                       <BMediaBody class="pl-1">
                         <div
                           class="mb-1 text-dark"
@@ -77,11 +79,13 @@ of the MIT license. See the LICENSE file for details. -->
                 </template>
                 <template #option="{ option }">
                   <BMedia no-body>
-                    <BImg
+                    <img
+                      :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.value })"
                       height="24"
                       width="24"
                       class="mr-2 align-self-center"
-                      :src="option.icon" />
+                      :onerror="onImageError"
+                      :src="option.icon">
                     <BMediaBody class="pl-1">
                       <div class="mb-1 text-dark">
                         {{ option.title }}
@@ -162,12 +166,13 @@ of the MIT license. See the LICENSE file for details. -->
                           <BMedia
                             body-class="overflow-hidden"
                             class="overflow-hidden">
-                            <BImg
+                            <img
                               v-if="selectedTab < 2"
                               height="28"
                               class="mb-3"
                               :alt="item.appType || $t('governance.accessRequest.newRequest.role')"
-                              :src="item.icon" />
+                              :onerror="onImageError"
+                              :src="item.icon">
                             <div
                               v-else
                               class="rounded-circle bg-lightblue color-blue d-flex align-items-center justify-content-center mb-3"
@@ -293,7 +298,6 @@ import {
   BCardFooter,
   BCol,
   BContainer,
-  BImg,
   BMedia,
   BMediaBody,
   BModal,
@@ -311,6 +315,7 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
@@ -331,7 +336,6 @@ export default {
     BCardFooter,
     BCol,
     BContainer,
-    BImg,
     BMedia,
     BMediaBody,
     BModal,
@@ -510,6 +514,7 @@ export default {
       this.searchCatalog({ page: 1 });
     },
     getGovernanceFilter,
+    onImageError,
     /**
      * Sets filter back to what it was when filter modal was opened
      */

@@ -128,7 +128,7 @@ const openModalMock = {
   details: {
     date: '2023-06-22T19:23:26+00:00',
     description: 'My Azure App',
-    icon: '',
+    icon: 'https://cdn.forgerock.com/platform/app-templates/images/microsoft.svg',
     id: 3,
     name: 'My Azure App',
     priority: 'high',

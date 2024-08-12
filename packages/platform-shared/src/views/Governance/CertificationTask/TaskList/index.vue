@@ -100,12 +100,13 @@ of the MIT license. See the LICENSE file for details. -->
             class="clickable align-items-center"
             data-testid="application-cell"
             no-body>
-            <BImg
+            <img
               class="mr-4"
               height="28"
               width="28"
               :alt="$t('common.logo')"
-              :src="getLogo(item.application)" />
+              :onerror="onImageError"
+              :src="getApplicationLogo(item.application)">
             <div class="media-body align-self-center overflow-hidden text-nowrap">
               <span class="text-dark">
                 {{ item.application.name }}
@@ -385,6 +386,7 @@ import { ADMIN_REVIEWER_PERMISSIONS, blankValueIndicator } from '@forgerock/plat
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrForwardModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/ForwardModal';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -1177,9 +1179,8 @@ export default {
     getResourceDisplayName(item, resource) {
       return item.descriptor?.idx?.[resource]?.displayName;
     },
-    getLogo(item) {
-      return getApplicationLogo(item);
-    },
+    getApplicationLogo,
+    onImageError,
     /**
      * Handles actions events from single items
      * @param {String} type action type
