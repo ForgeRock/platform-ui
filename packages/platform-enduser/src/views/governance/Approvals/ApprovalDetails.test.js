@@ -78,9 +78,6 @@ const accessRequest = {
     templateName: 'azure.ad',
     templateVersion: '2.0',
   },
-  rawData: {
-    decision,
-  },
   decision,
   id: 1,
   request: {
@@ -104,6 +101,21 @@ const accessRequest = {
     sn: 'Escobar',
     userName: 'manuel.escobar@test.com',
   },
+  phases: [
+    {
+      name: 'phase-name',
+      permissions: {
+        approve: true,
+        comment: true,
+        modify: true,
+        reassign: true,
+        reject: true,
+        cancel: false,
+        fulfill: false,
+        deny: false,
+      },
+    },
+  ],
 };
 
 describe('ApprovalDetails', () => {
@@ -130,7 +142,7 @@ describe('ApprovalDetails', () => {
     it('has header with request type and name', async () => {
       wrapper = setup();
       await flushPromises();
-      const header = findByTestId(wrapper, 'approval-detail-header');
+      const header = findByTestId(wrapper, 'request-detail-header');
       expect(header.text()).toContain('Remove Application');
       expect(header.text()).toContain('My Azure App');
     });
@@ -141,7 +153,6 @@ describe('ApprovalDetails', () => {
       expect(detail.text()).toContain('My Azure App');
       expect(detail.text()).toContain('Manuel Escobar');
       expect(detail.text()).toContain('manuel.escobar@test.com');
-      expect(detail.text()).toContain('Remove Application');
       expect(detail.text()).toContain('Pending');
       expect(detail.text()).toContain('Medium Priority');
     });
@@ -154,7 +165,7 @@ describe('ApprovalDetails', () => {
       wrapper = setup();
       await flushPromises();
 
-      const header = findByTestId(wrapper, 'approval-detail-header');
+      const header = findByTestId(wrapper, 'request-detail-header');
       expect(header.exists()).toBeTruthy();
       const detail = findByTestId(wrapper, 'approval-detail');
       expect(detail.exists()).toBeTruthy();
@@ -180,10 +191,13 @@ describe('ApprovalDetails', () => {
         it('should set the permissions with the api permissions result', () => {
           expect(wrapper.vm.actionPermissions).toEqual({
             approve: true,
-            cancel: true,
-            reject: true,
             comment: true,
+            modify: true,
             reassign: true,
+            reject: true,
+            cancel: false,
+            fulfill: false,
+            deny: false,
           });
         });
       });

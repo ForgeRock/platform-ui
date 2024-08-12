@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import FrFormGenerator from '@forgerock/platform-shared/src/components/FormGenerator';
+import { cloneDeep, set } from 'lodash';
 import { useForm } from 'vee-validate';
 import { watch, ref } from 'vue';
 import { transformSchemaToFormGenerator } from './utils/formGeneratorSchemaTransformer';
@@ -24,6 +25,10 @@ const props = defineProps({
     type: Object,
     default: () => {},
   },
+  readOnly: {
+    type: Boolean,
+    default: false,
+  },
   schema: {
     type: Array,
     default: () => [],
@@ -36,7 +41,7 @@ const schemaFormGenerator = ref([]);
 const { meta } = useForm();
 
 watch(() => props.schema, (newVal) => {
-  schemaFormGenerator.value = transformSchemaToFormGenerator(newVal);
+  schemaFormGenerator.value = transformSchemaToFormGenerator(newVal, props.readOnly);
 }, { immediate: true });
 
 watch(meta, (newVal) => {
@@ -44,9 +49,8 @@ watch(meta, (newVal) => {
 });
 
 function fieldChanged({ path, value }) {
-  emit('update:modelValue', {
-    ...props.modelValue,
-    [path]: value,
-  });
+  const emitValue = cloneDeep(props.modelValue);
+  set(emitValue, path, value);
+  emit('update:modelValue', emitValue);
 }
 </script>

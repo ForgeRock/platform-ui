@@ -14,7 +14,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as PolicyApi from '@forgerock/platform-shared/src/api/governance/PolicyApi';
-import getPriorityImageSrc from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import NewRequest from './index';
 import i18n from '@/i18n';
 

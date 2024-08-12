@@ -118,7 +118,6 @@ describe('MyRequestDetails', () => {
       expect(detail.text()).toContain('My Azure App');
       expect(detail.text()).toContain('Manuel Escobar');
       expect(detail.text()).toContain('manuel.escobar@test.com');
-      expect(detail.text()).toContain('Remove Application');
       expect(detail.text()).toContain('Pending');
       expect(detail.text()).toContain('Medium Priority');
     });

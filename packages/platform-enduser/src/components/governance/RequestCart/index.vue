@@ -105,7 +105,7 @@ import { Form as VeeForm } from 'vee-validate';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import getPriorityImageSrc from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import FrRequestItemsGroup from './RequestItemsGroup';
 
 /**

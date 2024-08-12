@@ -58,7 +58,7 @@ describe('FormBuilder', () => {
       label: 'Field 7',
       layout: { columns: 12, offset: 0 },
     },
-  ]) {
+  ], propsData) {
     return mount(FormBuilder, {
       global: {
         plugins: [i18n],
@@ -66,6 +66,7 @@ describe('FormBuilder', () => {
       props: {
         schema,
         'model-value': modelValue,
+        ...propsData,
       },
     });
   }
@@ -86,6 +87,7 @@ describe('FormBuilder', () => {
           model: 'field1',
           columnClass: 'col-md-6 offset-md-0',
           label: 'Field 1',
+          disabled: false,
           layout: { columns: 6, offset: 0 },
         },
         {
@@ -93,6 +95,7 @@ describe('FormBuilder', () => {
           model: 'field2',
           columnClass: 'col-md-6 offset-md-0',
           label: 'Field 2',
+          disabled: false,
           layout: { columns: 6, offset: 0 },
         },
       ],
@@ -102,6 +105,7 @@ describe('FormBuilder', () => {
           model: 'field3',
           columnClass: 'col-md-4 offset-md-0',
           label: 'Field 3',
+          disabled: false,
           layout: { columns: 4, offset: 0 },
         },
         {
@@ -109,6 +113,7 @@ describe('FormBuilder', () => {
           model: 'field4',
           columnClass: 'col-md-4 offset-md-0',
           label: 'Field 4',
+          disabled: false,
           layout: { columns: 4, offset: 0 },
         },
         {
@@ -116,6 +121,7 @@ describe('FormBuilder', () => {
           model: 'field5',
           columnClass: 'col-md-4 offset-md-0',
           label: 'Field 5',
+          disabled: false,
           layout: { columns: 4, offset: 0 },
         },
       ],
@@ -125,6 +131,7 @@ describe('FormBuilder', () => {
           model: 'field6',
           columnClass: 'col-md-4 offset-md-0',
           label: 'Field 6',
+          disabled: false,
           layout: { columns: 4, offset: 0 },
         },
       ],
@@ -134,6 +141,7 @@ describe('FormBuilder', () => {
           model: 'field7',
           columnClass: 'col-md-12 offset-md-0',
           label: 'Field 7',
+          disabled: false,
           layout: { columns: 12, offset: 0 },
         },
       ],
@@ -901,5 +909,24 @@ describe('FormBuilder', () => {
     field = wrapper.findComponent({ name: 'StringDisplay' });
     input = field.find('input');
     expect(input.element.value).toBe('Field 1 new value');
+  });
+
+  it('should disable form fields when readOnly prop is true', async () => {
+    const wrapper = setup({}, [
+      {
+        type: 'string',
+        model: 'field1',
+        label: 'Text 1',
+        description: 'This is a text field',
+        layout: { columns: 12, offset: 0 },
+      },
+    ], {
+      readOnly: true,
+    });
+
+    await wrapper.vm.$nextTick();
+
+    const field = wrapper.findComponent({ name: 'StringDisplay' }).find('.fr-field');
+    expect(field.attributes('disabled')).toBe('true');
   });
 });

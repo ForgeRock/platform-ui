@@ -274,3 +274,79 @@ describe('formGeneratorSchemaTransformer', () => {
     expect(result).toEqual(expected);
   });
 });
+it('creates disabled fields when readOnly prop is true', () => {
+  const schema = [
+    {
+      label: 'Field 1',
+      model: 'field1',
+      type: 'string',
+      layout: {
+        columns: 12,
+        offset: 0,
+      },
+    },
+    {
+      label: 'Field 3',
+      model: 'field3',
+      type: 'boolean',
+      layout: {
+        columns: 12,
+        offset: 0,
+      },
+    },
+    {
+      label: 'Field 4',
+      model: 'field4',
+      type: 'string',
+      layout: {
+        columns: 12,
+        offset: 0,
+      },
+    },
+  ];
+
+  const expected = [
+    [
+      {
+        columnClass: 'col-md-12 offset-md-0',
+        label: 'Field 1',
+        model: 'field1',
+        type: 'string',
+        layout: {
+          columns: 12,
+          offset: 0,
+        },
+        disabled: true,
+      },
+    ],
+    [
+      {
+        columnClass: 'col-md-12 offset-md-0',
+        label: 'Field 3',
+        model: 'field3',
+        type: 'boolean',
+        layout: {
+          columns: 12,
+          offset: 0,
+        },
+        disabled: true,
+      },
+    ],
+    [
+      {
+        columnClass: 'col-md-12 offset-md-0',
+        label: 'Field 4',
+        model: 'field4',
+        type: 'string',
+        layout: {
+          columns: 12,
+          offset: 0,
+        },
+        disabled: true,
+      },
+    ],
+  ];
+
+  const result = transformSchemaToFormGenerator(schema, true);
+  expect(result).toEqual(expected);
+});

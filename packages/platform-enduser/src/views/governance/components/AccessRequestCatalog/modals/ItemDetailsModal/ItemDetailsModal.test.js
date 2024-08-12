@@ -117,19 +117,6 @@ describe('ItemDetailsModal', () => {
       },
     };
 
-    it('can get the object type from the application mappings', async () => {
-      wrapper = setup();
-      await flushPromises();
-
-      const objectType = wrapper.vm.getObjectType({
-        connectorId: 'testConnector',
-        mappingNames: [
-          'systemTestconnectorAccount_managedAlpha_user',
-        ],
-      });
-      expect(objectType).toBe('Account');
-    });
-
     it('gets a form for an application item for the correct application and object type', async () => {
       const formRelationshipSpy = jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
         .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });

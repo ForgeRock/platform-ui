@@ -6,11 +6,16 @@
  */
 
 import {
+  capitalize,
   isEmpty,
 } from 'lodash';
 import {
+  getRequestForm,
+} from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
+import {
   createFormAssignment,
   deleteFormAssignment,
+  getApplicationRequestFormAssignment,
   getFormAssignmentByWorkflowNode,
   getFormAssignmentByFormId,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
@@ -88,4 +93,69 @@ export async function deleteAllFormAssignments(formId) {
     return Promise.all(promises);
   }
   return Promise.resolve();
+}
+
+/**
+ * Retrieves the object type from the given application object.
+ *
+ * @param {Object} application - The application object.
+ * @returns {string|null} - The object type or null if not found.
+ */
+function getObjectType(application) {
+  const connectorId = capitalize(application.connectorId);
+  const expression = `system${connectorId}(.*)_managedAlpha_user`;
+  const regExp = new RegExp(expression, 'g');
+  const results = application.mappingNames.map((mappingName) => regExp.exec(mappingName)).filter((result) => result !== null);
+  let objectType = null;
+  if (results.length === 1 && results[0].length === 2) {
+    [[, objectType]] = results;
+  }
+  return objectType;
+}
+
+/**
+ * Retrieves the request form for a given application and application ID.
+ *
+ * @param {string} application - The application name.
+ * @param {string} applicationId - The application ID.
+ * @returns {Promise<object|null>} A promise that resolves to the request form data if found, or null if not found.
+ */
+export async function getApplicationRequestForm(application, applicationId) {
+  try {
+    const objectType = getObjectType(application);
+    if (!objectType) return Promise.resolve(null);
+
+    // check for a form for this application and object type
+    const { data } = await getApplicationRequestFormAssignment(applicationId, objectType);
+    if (data.result.length) {
+      const { formId } = data.result[0];
+      const { data: formData } = await getRequestForm(formId);
+      return formData;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
+
+/**
+ * Retrieves the request form for a given workflow and phase ID.
+ *
+ * @param {string} workflow - The workflow identifier.
+ * @param {string} phaseId - The phase identifier.
+ * @returns {Promise<object|null>} A promise that resolves to the request form data if found, or null if not found.
+ */
+export async function getWorkflowRequestForm(workflow, phaseId) {
+  try {
+    const { data } = await getFormAssignmentByWorkflowNode(workflow, phaseId);
+    if (data?.result?.length) {
+      const { formId } = data.result[0];
+      const { data: formData } = await getRequestForm(formId);
+      return formData;
+    }
+
+    return null;
+  } catch (error) {
+    return null;
+  }
 }

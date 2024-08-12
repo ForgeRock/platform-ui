@@ -155,7 +155,11 @@ import dayjs from 'dayjs';
 import { ref, watch } from 'vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import getPriorityImageSrc, { buildRequestDisplay, getRequestObjectType } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import {
+  buildRequestDisplay,
+  getPriorityImageSrc,
+  getRequestObjectType,
+} from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 
 const prop = defineProps({
   isLoading: {

@@ -6,15 +6,12 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import i18n from '@/i18n';
+import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
+import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import DetailsTab from './DetailsTab';
-
-jest.mock('dayjs', () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    format: jest.fn().mockReturnValue('Jan 1, 2021 12:00 AM'),
-  })),
-}));
+import i18n from '@/i18n';
+import store from '@/store';
 
 describe('DetailsTab', () => {
   const setup = (propsData = {}) => {
@@ -69,7 +66,6 @@ describe('DetailsTab', () => {
     await wrapper.vm.$nextTick();
     expect(wrapper.vm.details.requested.name).toBe('name test');
     expect(wrapper.vm.details.status.name).toContain('Approved');
-    expect(wrapper.vm.details.requestDate).toBe('Jan 1, 2021 12:00 AM');
   });
 
   it('handles when the request is submitted by the system', async () => {
@@ -85,26 +81,16 @@ describe('DetailsTab', () => {
     });
     await flushPromises();
     const requestedBy = wrapper.find('.row');
-    expect(requestedBy.text()).toBe('Requested BySystem');
+    expect(requestedBy.text()).toBe('StatusPendingPriority--');
   });
 
-  it('shows requested, requested for, and requested by if present', async () => {
+  it('shows requested if present', async () => {
     const wrapper = setup({
       item: {
         details: {
           name: 'name test',
           icon: 'icon test',
           description: 'description test',
-          requestedBy: {
-            givenName: 'test',
-            sn: 'name',
-            userName: 'test',
-          },
-          requestedFor: {
-            givenName: 'test',
-            sn: 'name',
-            userName: 'test',
-          },
         },
         rawData: {
           requestType: 'requestType test',
@@ -112,12 +98,10 @@ describe('DetailsTab', () => {
       },
     });
     await flushPromises();
-    expect(wrapper.text()).toContain('Requested By');
-    expect(wrapper.text()).toContain('Requested For');
     expect(wrapper.text()).toContain('Requested');
   });
 
-  it('hides requested, requested for, and requested by if is not present', async () => {
+  it('hides requested if is not present', async () => {
     const wrapper = setup({
       item: {
         details: {},
@@ -125,8 +109,176 @@ describe('DetailsTab', () => {
       },
     });
     await flushPromises();
-    expect(wrapper.text()).not.toContain('Requested By');
-    expect(wrapper.text()).not.toContain('Requested For');
     expect(wrapper.text()).not.toContain('Requested');
+  });
+
+  describe('forms', () => {
+    beforeEach(() => { store.state.SharedStore.governanceDevEnabled = true; });
+    afterEach(() => { store.state.SharedStore.governanceDevEnabled = false; });
+
+    const testFormSchema = {
+      form: {
+        fields: [
+          {
+            label: 'testLabel',
+            model: 'testModel',
+            name: 'test',
+            type: 'string',
+            layout: {
+              offset: 0,
+              columns: 12,
+            },
+            required: false,
+          },
+        ],
+      },
+    };
+
+    describe('custom request', () => {
+      const customRequestItem = {
+        item: {
+          details: {
+            id: 'testId',
+          },
+          rawData: {
+            phases: [{ name: 'testPhase' }],
+            workflow: { id: 'testWorkflowId' },
+            requestType: 'custom',
+          },
+        },
+      };
+
+      it('shows a workflow form if present', async () => {
+        const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+          .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+        const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm')
+          .mockResolvedValue({ data: testFormSchema });
+
+        const wrapper = setup(customRequestItem);
+        await flushPromises();
+
+        expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
+        expect(formSpy).toHaveBeenCalledWith('someForm');
+        expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
+      });
+
+      it('shows no form if no form assigned', async () => {
+        const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+          .mockResolvedValue({ data: { result: [] } });
+
+        const wrapper = setup(customRequestItem);
+        await flushPromises();
+
+        expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
+        expect(wrapper.find('[label="testLabel"]').exists()).toBe(false);
+      });
+    });
+
+    describe('application request', () => {
+      const applicationRequestItem = {
+        item: {
+          details: {
+            id: 'testId',
+          },
+          rawData: {
+            phases: [{ name: 'testPhase' }],
+            workflow: { id: 'testWorkflowId' },
+            requestType: 'applicationGrant',
+            application: {
+              id: 'testApp',
+              connectorId: 'testConnector',
+              mappingNames: [
+                'systemTestconnectorAccount_managedAlpha_user',
+              ],
+            },
+          },
+        },
+      };
+
+      it('shows an application form if no worklow form', async () => {
+        const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+          .mockResolvedValue({ data: { result: [] } });
+        const applicationAssignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+          .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+        const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm')
+          .mockResolvedValue({ data: testFormSchema });
+
+        const wrapper = setup(applicationRequestItem);
+        await flushPromises();
+
+        expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
+        expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account');
+        expect(formSpy).toHaveBeenCalledWith('someForm');
+        expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
+      });
+
+      it('shows no form if no worklow form and no application form', async () => {
+        const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+          .mockResolvedValue({ data: { result: [] } });
+        const applicationAssignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getApplicationRequestFormAssignment')
+          .mockResolvedValue({ data: { result: [] } });
+
+        const wrapper = setup(applicationRequestItem);
+        await flushPromises();
+
+        expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
+        expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account');
+        expect(wrapper.find('[label="testLabel"]').exists()).toBe(false);
+      });
+    });
+
+    it('calls to save a request', async () => {
+      const requestSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockResolvedValue({ data: {} });
+      jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      jest.spyOn(RequestFormsApi, 'getRequestForm')
+        .mockResolvedValue({ data: testFormSchema });
+
+      const formItem = {
+        item: {
+          details: {
+            id: 'testId',
+          },
+          rawData: {
+            id: 'testId',
+            phases: [{ name: 'testPhase' }],
+            workflow: { id: 'testWorkflowId' },
+            requestType: 'custom',
+            request: {
+              common: {
+                blob: {
+                  form: {
+                    existingData: 'existing data',
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const wrapper = setup(formItem);
+      await flushPromises();
+      await wrapper.findComponent('#testLabel').vm.$emit('input', 'a custom value');
+      await wrapper.find('button.btn-primary').trigger('click');
+
+      const expectedPayload = {
+        common: {
+          blob: {
+            form: {
+              existingData: 'existing data',
+            },
+          },
+        },
+        testModel: 'a custom value',
+      };
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        'testId',
+        'modify',
+        'testPhase',
+        expectedPayload,
+      );
+    });
   });
 });

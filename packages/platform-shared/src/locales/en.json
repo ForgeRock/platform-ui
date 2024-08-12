@@ -130,6 +130,7 @@
     "false": "False",
     "filter": "Filter",
     "filters": "Filters",
+    "for": "For",
     "forever": "Forever",
     "forgeRock": "ForgeRock",
     "forward": "Forward",
@@ -1570,7 +1571,10 @@
       "requestDate": "Request Date",
       "requestedBy": "Requested By",
       "requestId": "Request ID",
-      "requestType": "Request Type"
+      "requestSaveError": "Error saving request",
+      "requestSaveSuccess": "Request saved successfully",
+      "requestType": "Request Type",
+      "submittedRequest": "submitted this request"
     },
     "accountDetails": "Account Details",
     "certificationTask": {
@@ -1850,13 +1854,9 @@
         "priority": "Priority",
         "provisioning": "Provisioning",
         "requestComplete": "Request Complete",
-        "requestDate": "Request Date",
         "requested": "Requested",
-        "requestedFor": "Requested For",
-        "requestedBy": "Requested By",
         "requestId": "Request ID",
         "requestSubmitted": "Request Submitted",
-        "requestType": "Request Type",
         "status": "Status"
       },
       "titles": {

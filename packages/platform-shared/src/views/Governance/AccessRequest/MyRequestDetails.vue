@@ -6,42 +6,11 @@ of the MIT license. See the LICENSE file for details. -->
   <BContainer class="my-5">
     <template v-if="!isLoading">
       <!-- Header -->
-      <BMedia
-        data-testId="request-detail-header"
-        class="mb-4 align-items-center">
-        <template #aside>
-          <div class="d-flex align-items-center justify-content-center p-3 mr-2 rounded border border-darkened app-logo">
-            <BImg
-              v-if="item.details.isCustom"
-              :src="require('@forgerock/platform-shared/src/assets/images/applications/custom.svg')"
-              :alt="$t('governance.accessRequest.customRequestAltText')"
-              width="24" />
-            <FrIcon
-              v-else-if="isTypeRole(item.rawData.requestType)"
-              icon-class="mr-1 md-28 rounded-circle"
-              :name="item.details.icon" />
-            <BImg
-              v-else
-              width="54"
-              height="54"
-              class="align-self-center"
-              :src="item.details.icon"
-              :alt="$t('common.logo')" />
-          </div>
-        </template>
-        <BMediaBody class="align-self-center text-truncate">
-          <h2 class="h5 text-muted mb-2">
-            {{ item.details.type }}
-          </h2>
-          <h1 class="pb-1 text-truncate">
-            {{ item.details.name }}
-          </h1>
-        </BMediaBody>
-      </BMedia>
+      <FrRequestHeader
+        :item="item" />
 
       <!-- Actions -->
       <div
-        data-testId="request-detail-actions"
         v-if="isActive && adminUser"
         class="mb-4">
         <BButton
@@ -63,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
         no-body>
         <FrRequestDetails
           @add-comment="openModal('COMMENT')"
+          :hide-actions="{ modify: true }"
           :item="item" />
       </BCard>
 
@@ -104,9 +74,6 @@ import {
   BButton,
   BCard,
   BContainer,
-  BImg,
-  BMedia,
-  BMediaBody,
 } from 'bootstrap-vue';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
@@ -117,11 +84,11 @@ import { getRequest, getRequestType } from '@forgerock/platform-shared/src/api/g
 import { useRoute, useRouter } from 'vue-router';
 import {
   getFormattedRequest,
-  isTypeRole,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestDetails';
+import FrRequestHeader from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestHeader';
 import i18n from '@/i18n';
 
 // Composables

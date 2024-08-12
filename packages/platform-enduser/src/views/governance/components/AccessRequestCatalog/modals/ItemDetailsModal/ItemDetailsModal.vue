@@ -115,8 +115,7 @@ import {
   onMounted,
   ref,
 } from 'vue';
-import { getApplicationRequestFormAssignment } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
-import { getRequestForm } from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
+import { getApplicationRequestForm } from '@forgerock/platform-shared/src/utils/governance/requestFormAssignments';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrItemDetailsStep from './ItemDetailsStep';
 import FrItemFormStep from './ItemFormStep';
@@ -192,24 +191,6 @@ function setRequestData(data) {
 }
 
 /**
- * Retrieves the object type of the given item based on the mapping names.
- *
- * @param {Object} item - The item for which to retrieve the object type.
- * @returns {string} The object type of the item.
- */
-function getObjectType(item) {
-  const application = capitalize(item.connectorId);
-  const expression = `system${application}(.*)_managedAlpha_user`;
-  const regExp = new RegExp(expression, 'g');
-  const results = item.mappingNames.map((mappingName) => regExp.exec(mappingName)).filter((result) => result !== null);
-  let objectType = null;
-  if (results.length === 1 && results[0].length === 2) {
-    [[, objectType]] = results;
-  }
-  return objectType;
-}
-
-/**
  * Retrieves the form for the specified item and item type.
  *
  * @param {Object} item - The item object.
@@ -220,21 +201,8 @@ async function getForm(item, itemType) {
   if (!store.state.SharedStore.governanceDevEnabled || itemType !== 'application') {
     return;
   }
-
-  try {
-    const objectType = getObjectType(item);
-    if (!objectType) return;
-
-    // check for a form for this application and object type
-    const { data } = await getApplicationRequestFormAssignment(item.applicationId, objectType);
-    if (data.result.length) {
-      const { formId } = data.result[0];
-      const { data: formData } = await getRequestForm(formId);
-      form.value = formData;
-    }
-  } catch (error) {
-    // do nothing
-  }
+  const formDefinition = await getApplicationRequestForm(item, item.applicationId);
+  form.value = formDefinition;
 }
 
 /**
@@ -244,7 +212,7 @@ async function getForm(item, itemType) {
  * @param {any} value - The value to be added to the current step.
  */
 function changeStep(okFunction, value) {
-  if (isEmpty(form.value) || currentStep.value === 1 || modalProps.value.isRequested) {
+  if (isEmpty(form.value) || isEmpty(form.value.form) || currentStep.value === 1 || modalProps.value.isRequested) {
     okFunction();
     return;
   }

@@ -113,7 +113,7 @@ import {
 import { computed, ref, watch } from 'vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
-import getPriorityImageSrc, { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { getPriorityImageSrc, requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 
 const emit = defineEmits(['filter-change']);

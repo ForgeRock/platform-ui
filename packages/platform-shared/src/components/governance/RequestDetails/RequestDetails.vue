@@ -31,6 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
           :is="tab.component"
           :item="item"
           :hide-actions="tab.hideActions"
+          :read-only="tab.readOnly"
           v-on="$listeners"
         />
       </BTab>
@@ -70,6 +71,7 @@ const tabs = ref([
   {
     component: FrDetailsTab,
     title: i18n.global.t('common.details'),
+    readOnly: props.hideActions.modify,
   },
   {
     component: FrWorkflow,

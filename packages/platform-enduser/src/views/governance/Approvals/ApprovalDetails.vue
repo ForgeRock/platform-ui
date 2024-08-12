@@ -6,38 +6,8 @@ of the MIT license. See the LICENSE file for details. -->
   <BContainer class="my-5">
     <template v-if="!isEmpty(item)">
       <!-- Header -->
-      <BMedia
-        data-testId="approval-detail-header"
-        class="mb-4 align-items-center">
-        <template #aside>
-          <div class="d-flex align-items-center justify-content-center p-3 mr-2 rounded border border-darkened app-logo">
-            <BImg
-              v-if="item.details.isCustom"
-              :src="require('@forgerock/platform-shared/src/assets/images/applications/custom.svg')"
-              :alt="$t('governance.accessRequest.customRequestAltText')"
-              width="24" />
-            <FrIcon
-              v-else-if="isTypeRole(item.rawData.requestType)"
-              icon-class="mr-1 md-28 rounded-circle"
-              :name="item.details.icon" />
-            <BImg
-              v-else
-              width="54"
-              height="54"
-              class="align-self-center"
-              :src="item.details.icon"
-              :alt="$t('common.logo')" />
-          </div>
-        </template>
-        <BMediaBody class="align-self-center text-truncate">
-          <h2 class="h5 text-muted mb-2">
-            {{ item.details.type }}
-          </h2>
-          <h1 class="pb-1 text-truncate">
-            {{ item.details.name }}
-          </h1>
-        </BMediaBody>
-      </BMedia>
+      <FrRequestHeader
+        :item="item" />
 
       <!-- Actions -->
       <div
@@ -86,7 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
         no-body>
         <FrRequestDetails
           @add-comment="openModal('COMMENT')"
-          :hide-actions="{ comment: !actionPermissions.comment }"
+          :hide-actions="{ comment: !actionPermissions.comment, modify: !actionPermissions.modify }"
           :item="item" />
       </BCard>
     </template>
@@ -112,9 +82,6 @@ import {
   BButton,
   BCard,
   BContainer,
-  BMedia,
-  BMediaBody,
-  BImg,
 } from 'bootstrap-vue';
 import { isEmpty } from 'lodash';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -125,14 +92,12 @@ import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getRequest, getUserApprovals, getRequestType } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import {
-  getFormattedRequest,
-  isTypeRole,
-} from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { getFormattedRequest } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { useRoute, useRouter } from 'vue-router';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestDetails';
+import FrRequestHeader from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestHeader';
 import i18n from '@/i18n';
 
 // Composables
@@ -151,6 +116,7 @@ const actionPermissions = ref({
   reject: false,
   reassign: false,
   comment: false,
+  modify: false,
 });
 let requireApproveJustification = false;
 let requireRejectJustification = false;
@@ -170,20 +136,18 @@ async function getBaseRequest() {
   }
 }
 
-function currentUserId() {
-  return `managed/user/${userId.value}`;
-}
-
 function updateActionsPermissions() {
-  const actorInfo = item.value?.rawData?.decision.actors.active.find((actor) => actor.id === currentUserId());
+  const permissions = item.value?.rawData?.phases?.[0]?.permissions;
   const isSelfApprover = item.value?.rawData?.user?.id
     ? userId.value === item.value.rawData.user.id
     : false;
 
-  actionPermissions.value = {
-    ...actorInfo?.permissions,
-    approve: allowSelfApproval ? actorInfo?.permissions.approve : !isSelfApprover && actorInfo?.permissions.approve,
-  };
+  if (permissions) {
+    actionPermissions.value = {
+      ...permissions,
+      approve: allowSelfApproval ? permissions.approve : !isSelfApprover && permissions.approve,
+    };
+  }
 }
 
 async function getApproval() {

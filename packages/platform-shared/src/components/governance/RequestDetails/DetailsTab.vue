@@ -3,88 +3,102 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="p-4">
-    <BRow
-      v-for="(detail, key) in details"
-      :key="key"
-      class="row-height">
-      <BCol
-        lg="4"
-        class="font-weight-bold">
-        {{ $t(`governance.requestModal.detailsTab.${key}`) }}
-      </BCol>
-      <BCol
-        lg="8"
-        class="mb-4">
-        <BBadge
-          v-if="key === 'status'"
-          class="px-4"
-          :variant="detail.variant">
-          {{ detail.name }}
-        </BBadge>
-        <BMedia
-          v-else-if="key === 'requested'">
-          <template #aside>
-            <FrIcon
-              v-if="isTypeRole(item.rawData.requestType)"
-              icon-class="mr-1 md-28 rounded-circle"
-              :name="item.details.icon" />
-            <BImg
-              v-else
-              height="24"
-              class="mt-2"
-              :src="detail.icon" />
-          </template>
-          <BMediaBody>
-            <p class="h5 m-0">
-              {{ detail.name }}
-            </p>
-            <small class="mb-0">
-              {{ detail.description }}
+  <div>
+    <div class="p-4">
+      <div
+        v-if="details"
+        class="bg-light p-4 rounded mb-3">
+        <BRow class="mb-4">
+          <BCol lg="6">
+            <small class="d-block mb-2">
+              {{ $t(`governance.requestModal.detailsTab.status`) }}
             </small>
-          </BMediaBody>
-        </BMedia>
-        <template v-else-if="key === 'requestedFor' || key === 'requestedBy'">
-          <p
-            v-if="detail.id === 'SYSTEM'"
-            class="font-weight-normal">
-            {{ $t('common.system') }}
-          </p>
-          <BMedia v-else>
-            <template #aside>
+            <BBadge
+              class="px-4 text-dark"
+              :variant="details.status.variant">
+              {{ details.status.name }}
+            </BBadge>
+          </BCol>
+          <BCol lg="6">
+            <small class="d-block mb-2">
+              {{ $t(`governance.requestModal.detailsTab.priority`) }}
+            </small>
+            <template v-if="details.priority">
               <BImg
-                class="rounded-circle"
-                height="28"
-                width="28"
-                alt=""
-                :aria-hidden="true"
-                :src="detail.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+                class="mr-1"
+                height="24"
+                :src="getPriorityImageSrc(details.priority)" />
+              {{ $t(`governance.accessRequest.priorities.${details.priority}Priority`) }}
             </template>
-            <BMediaBody>
-              <p class="h5 m-0">
-                {{ $t('common.userFullName', { givenName: detail.givenName, sn: detail.sn }) }}
-              </p>
-              <small class="mb-0">
-                {{ detail.userName }}
+            <template v-else>
+              {{ blankValueIndicator }}
+            </template>
+          </BCol>
+        </BRow>
+        <BRow class="mb-4">
+          <BCol lg="6">
+            <small class="d-block mb-2">
+              {{ $t(`governance.requestModal.detailsTab.requestId`) }}
+            </small>
+            {{ details.requestId }}
+          </BCol>
+          <BCol lg="6">
+            <template v-if="details.requested">
+              <small class="d-block mb-2">
+                {{ $t(`governance.requestModal.detailsTab.requested`) }}
               </small>
-            </BMediaBody>
-          </BMedia>
-        </template>
-        <span
-          v-else-if="key === 'priority'">
-          <BImg
-            class="mr-3"
-            height="24"
-            :src="getPriorityImageSrc(detail)" />
-          {{ $t(`governance.accessRequest.priorities.${detail}Priority`) }}
-        </span>
-        <p
-          v-else
-          class="font-weight-normal">
-          {{ detail || blankValueIndicator }}
-        </p>
-      </BCol>
-    </BRow>
+              <BMedia>
+                <template #aside>
+                  <FrIcon
+                    v-if="isTypeRole(item.rawData.requestType)"
+                    icon-class="mr-1 md-28 rounded-circle"
+                    :name="details.requested.icon" />
+                  <BImg
+                    v-else
+                    height="24"
+                    class="mt-2"
+                    :src="details.requested.icon" />
+                </template>
+                <BMediaBody>
+                  <p class="h5 m-0">
+                    {{ details.requested.name }}
+                  </p>
+                  <small class="mb-0">
+                    {{ details.requested.description }}
+                  </small>
+                </BMediaBody>
+              </BMedia>
+            </template>
+          </BCol>
+        </BRow>
+        <BRow>
+          <BCol lg="12">
+            <small class="d-block mb-2">
+              {{ $t(`governance.requestModal.detailsTab.justification`) }}
+            </small>
+            {{ details.justification || blankValueIndicator }}
+          </BCol>
+        </BRow>
+      </div>
+
+      <FrFormBuilder
+        v-if="form"
+        class="pt-4"
+        @is-valid="isValidForm = $event"
+        @update:model-value="formValue = $event"
+        :model-value="formValue"
+        :read-only="readOnly"
+        :schema="form.form?.fields" />
+    </div>
+    <div
+      v-if="form?.form?.fields && !readOnly"
+      class="border-top p-4 d-flex justify-content-end">
+      <FrButtonWithSpinner
+        @click="modifyRequest(formValue)"
+        :disabled="savingRequest || !isValidForm"
+        :show-spinner="savingRequest"
+        variant="primary" />
+    </div>
   </div>
 </template>
 
@@ -95,29 +109,52 @@ of the MIT license. See the LICENSE file for details. -->
  * @prop {Object} item - All details info
  */
 import {
-  BRow,
+  computed,
+  onMounted,
+  ref,
+} from 'vue';
+import { cloneDeep } from 'lodash';
+import {
+  BBadge,
   BCol,
+  BImg,
   BMedia,
   BMediaBody,
-  BImg,
-  BBadge,
+  BRow,
 } from 'bootstrap-vue';
-import { pickBy } from 'lodash';
-import { onMounted, ref } from 'vue';
-import dayjs from 'dayjs';
+import {
+  getApplicationRequestForm,
+  getWorkflowRequestForm,
+} from '@forgerock/platform-shared/src/utils/governance/requestFormAssignments';
+import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { getPriorityImageSrc, isTypeRole, isSupportedRequestType } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
+import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import getPriorityImageSrc, { isTypeRole } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
+import store from '@/store';
 
 const props = defineProps({
   item: {
     type: Object,
     required: true,
   },
+  readOnly: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const details = ref({});
+const details = ref(null);
+const form = ref(null);
+const formValue = ref({});
+const savingRequest = ref(false);
+const isValidForm = ref(false);
+
+const phaseId = computed(() => props.item.rawData.phases?.[0]?.name);
+const isCustom = computed(() => !isSupportedRequestType(props.item.rawData.requestType));
 
 function setDecisionValue(type) {
   switch (type) {
@@ -139,7 +176,7 @@ function setDecisionValue(type) {
     default:
       return {
         name: i18n.global.t('governance.decisions.pending'),
-        variant: 'light',
+        variant: 'warning',
       };
   }
 }
@@ -162,11 +199,7 @@ function getStatus(decision) {
 function getDetails(item) {
   const newDetails = {
     requested: null,
-    requestedFor: item.details.requestedFor || null,
-    requestedBy: item.details.requestedBy || null,
     requestId: item.details.id,
-    requestDate: dayjs(item.details.date).format('MMM D, YYYY h:mm A'),
-    requestType: item.details.type,
     status: setDecisionValue(getStatus(item.rawData.decision)),
     priority: item.details.priority || null,
     justification: item.rawData.request?.common?.justification,
@@ -180,12 +213,66 @@ function getDetails(item) {
       description: item.details.description,
     };
   }
+  return newDetails;
+}
 
-  return pickBy(newDetails, (value) => value !== null);
+/**
+ * Retrieves the form for the specified item.
+ *
+ * @param {Object} item - The item for which to retrieve the form.
+ */
+async function getForm(item) {
+  if (!store.state.SharedStore.governanceDevEnabled) return;
+
+  const request = item.rawData;
+  const workflowId = request.workflow.id;
+  let formDefinition = await getWorkflowRequestForm(workflowId, phaseId.value);
+  if (formDefinition) {
+    form.value = formDefinition;
+    if (isCustom.value) formValue.value = request.request || {};
+    else formValue.value = request.request?.common?.blob?.form || {};
+    return;
+  }
+
+  if (request.requestType === 'applicationGrant') {
+    // fallback to the default form if the workflow request form is not available
+    formDefinition = await getApplicationRequestForm(request.application, request.application.id);
+    form.value = formDefinition;
+    formValue.value = request.request?.common?.blob?.form || {};
+  }
+}
+
+/**
+ * Modifies a request with the provided values.
+ *
+ * @param {Object} values - The values to modify the request with.
+ */
+async function modifyRequest(values) {
+  savingRequest.value = true;
+
+  try {
+    let requestPayload = cloneDeep(props.item.rawData.request);
+
+    if (isCustom.value) {
+      requestPayload = values;
+    } else {
+      requestPayload.common.blob.form = {
+        ...requestPayload.common.blob.form,
+        ...values,
+      };
+    }
+    await requestAction(props.item.rawData.id, 'modify', phaseId.value, requestPayload);
+    displayNotification('success', i18n.global.t('governance.accessRequest.requestSaveSuccess'));
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.accessRequest.requestSaveError'));
+  } finally {
+    savingRequest.value = false;
+  }
 }
 
 onMounted(() => {
   details.value = getDetails(props.item);
+  getForm(props.item);
 });
 </script>
 

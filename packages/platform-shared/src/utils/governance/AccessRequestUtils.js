@@ -16,7 +16,7 @@ import i18n from '@/i18n';
  * @param {String} priority access request priority: high, medium, low
  * @returns {String} image src for the given priority
  */
-export default function getPriorityImageSrc(priority) {
+export function getPriorityImageSrc(priority) {
   try {
     const images = require.context('@forgerock/platform-shared/src/assets/images/priorities/', false, /\.svg$/);
     let imageName = '';
@@ -56,7 +56,7 @@ export const requestTypes = {
   },
 };
 
-function isSupportedRequestType(requestType) {
+export function isSupportedRequestType(requestType) {
   return Object.values(requestTypes).some((type) => type.value === requestType);
 }
 
