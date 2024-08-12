@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,15 +12,14 @@ of the MIT license. See the LICENSE file for details. -->
       }"
       @mouseover="hover = true"
       @mouseleave="hover = false">
-      <VuePrismEditor
-        language="json"
-        v-model="stringifiedValue"
-        :aria-label="$t('editor.accessibilityHelp')"
-        :line-numbers="true"
+      <FrScriptEditor
+        script-title=""
+        :disabled="readOnly"
         :readonly="readOnly"
-        @input="validateCurrentJson($event.target.innerText)"
-        @keydown="blurOnEscape"
-      />
+        :show-file-upload="false"
+        :show-variables="false"
+        :value="{source: stringifiedValue}"
+        @input="validateCurrentJson($event.source)" />
       <div class="d-flex justify-content-center w-100 position-absolute py-2 code-editor-expander pe-none">
         <button
           v-if="hover"
@@ -45,12 +44,12 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 <script>
-import VuePrismEditor from 'vue-prism-editor';
 import 'prismjs';
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
 import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
+import FrScriptEditor from '@forgerock/platform-shared/src/components/ScriptEditor';
 
 /**
  * JSON editor. Code editor used when data is too complex to edit with various inputs.
@@ -58,7 +57,7 @@ import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 export default {
   name: 'InlineJsonEditor',
   components: {
-    VuePrismEditor,
+    FrScriptEditor,
   },
   props: {
     /**
@@ -130,6 +129,7 @@ export default {
 .code-editor {
   transition: height 0.2s ease;
   height: 110px;
+  overflow: hidden;
 }
 
 .code-editor-expander {
@@ -142,7 +142,7 @@ export default {
 }
 
 .code-editor .code-editor-expander {
-  background: linear-gradient(180deg, rgba(246, 248, 250, 0), $gray-100);
+  background: linear-gradient(180deg, rgba(246, 248, 250, 0), #1a1e22);
 }
 
 .pe-none {

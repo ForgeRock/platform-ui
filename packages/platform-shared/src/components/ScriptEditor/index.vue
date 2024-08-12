@@ -4,7 +4,9 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="form-group mb-0 h-100 d-flex flex-column">
-    <div class="d-flex justify-content-between align-items-center">
+    <div
+      v-if="scriptTitle!=='' || showFileUpload || showScriptType"
+      class="d-flex justify-content-between align-items-center">
       <label class="mb-0 mr-2 py-2">
         {{ scriptTitle === null ? $t('scriptEditor.title') : scriptTitle }}
       </label>

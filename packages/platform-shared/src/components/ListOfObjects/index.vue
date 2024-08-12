@@ -104,12 +104,13 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
         <div v-else>
           <FrInlineJsonEditor
+            v-if="showEditor"
             v-on="$listeners"
             language="json"
             :line-count="lineCount"
             :read-only="false"
             :value="advancedValue"
-            @update-field="$emit('input', $event)" />
+            @update-field="emitInput($event)" />
         </div>
       </div>
     </div>
@@ -218,6 +219,7 @@ export default {
   data() {
     return {
       listUniqueIndex: 0,
+      showEditor: false,
     };
   },
   computed: {
@@ -248,6 +250,7 @@ export default {
         val.listUniqueIndex = this.getUniqueIndex();
       });
       this.listValues = listValues;
+      this.showEditor = !!listValues.length;
       this.validateField();
     }
   },
@@ -256,6 +259,7 @@ export default {
      * populate list of objects with new member.  Set defaults for boolean and number properties
      */
     addObjectToList(valueIndex) {
+      this.showEditor = true;
       const emptyObjectWithKeys = this.createObject(this.properties);
       this.listValues.splice(valueIndex + 1, 0, { ...emptyObjectWithKeys });
       this.updateListKey();
