@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
                         {{ header }}
                       </h1>
                       <h1
-                        v-if="!header && loginFailure"
+                        v-if=" journeyA11yAddFallbackErrorHeading && !header && loginFailure"
                         class="h2">
                         {{ $t('login.errorHeading') }}
                       </h1>
@@ -246,7 +246,7 @@ of the MIT license. See the LICENSE file for details. -->
                   {{ header }}
                 </h1>
                 <h1
-                  v-if="!header && loginFailure"
+                  v-if="journeyA11yAddFallbackErrorHeading && !header && loginFailure"
                   class="h2">
                   {{ $t('login.errorHeading') }}
                 </h1>
@@ -495,6 +495,10 @@ export default {
     buttonText: {
       type: String,
       default: '',
+    },
+    journeyA11yAddFallbackErrorHeading: {
+      type: Boolean,
+      default: true,
     },
     journeyFloatingLabels: {
       type: Boolean,

@@ -16,8 +16,10 @@ of the MIT license. See the LICENSE file for details. -->
         <Transition
           name="fade"
           mode="out-in">
+          <!-- journeyA11yAddFallbackErrorHeading default state is true so if no value is set then it should be true. -->
           <Component
             :is="Component"
+            :journey-a11y-add-fallback-error-heading="journeyA11yAddFallbackErrorHeading === undefined ? true : journeyA11yAddFallbackErrorHeading"
             :journey-floating-labels="journeyFloatingLabels"
             :journey-focus-first-focusable-item-enabled="journeyFocusFirstFocusableItemEnabled"
             :journey-focus-element="journeyFocusElement"

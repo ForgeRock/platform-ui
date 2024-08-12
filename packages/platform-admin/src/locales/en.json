@@ -394,6 +394,8 @@
         "headerDescription": "Place a header above the sign-in card.",
         "headerSkipLink": "Header skip link",
         "headerSkipLinkDescription": "Add a skip to main content link in the header for accessibility.",
+        "fallbackErrorHeading": "Error Heading Fallback",
+        "fallbackErrorHeadingDescription": "Add a fallback error heading if there is no heading present.",
         "journeyCardBackgroundColor": "Card Background Color",
         "journeyCardHeaderBackgroundColor": "Card Header Background Color",
         "journeyCardShadow": "Card Shadow: {pixelValue}px",

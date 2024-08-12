@@ -210,6 +210,7 @@ export default {
           const placeholderImage = require('@forgerock/platform-shared/src/assets/images/placeholder.svg');
           this.theme = theme;
           this.favicon = theme.favicon;
+          this.journeyA11yAddFallbackErrorHeading = theme.journeyA11yAddFallbackErrorHeading;
           this.journeyFloatingLabels = theme.journeyFloatingLabels;
           this.journeyFocusElement = theme.journeyFocusElement;
           this.journeyFooter = theme.journeyFooter;
