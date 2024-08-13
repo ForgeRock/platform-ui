@@ -303,9 +303,10 @@ const _PARAMETER_KEYS = ref([]);
 const reportHasNoParameters = computed(() => {
   const includesRealmAsParameter = _PARAMETER_KEYS.value.includes('realm');
 
-  // Parameters will usually contain 'realm', which is not a field, so this is
-  // why we check for less than 2 parameters (meaning realm is the only value).
-  if (includesRealmAsParameter) {
+  // For out-of-the-box reports, parameters will usually contain 'realm',
+  // which is not a field, so this is why we check for less than 2 parameters
+  // (meaning realm is the only value).
+  if (includesRealmAsParameter && props.isPrePackagedReport) {
     return _PARAMETER_KEYS.value.length < 2;
   }
   return _PARAMETER_KEYS.value.length < 1;

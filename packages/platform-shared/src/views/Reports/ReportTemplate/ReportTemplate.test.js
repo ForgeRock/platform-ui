@@ -598,7 +598,7 @@ describe('Component for creating custom analytics reports', () => {
           await rightValueTypeMenu.trigger('click');
           await variableOption.trigger('click');
 
-          const rightValueSelect = findByTestId(filtersModal, 'right-value-select');
+          const rightValueSelect = findByTestId(filtersModal, 'right-value-select-inputValue__1');
           const [MyParameterOption] = rightValueSelect.findAll('[role="option"]');
 
           // selects the right value select menu and chooses the "MyParameter" option
@@ -629,6 +629,10 @@ describe('Component for creating custom analytics reports', () => {
 
           // Sets the right value literal
           await rightLiteralInput.setValue('My second rule right literal value');
+          const [, secondRuleRedefined] = filtersModal.findAll('.queryfilter-row');
+          const rightFieldContainer = findByTestId(secondRuleRedefined, 'fr-field-inputValue__3');
+          const addAnOptionButton = rightFieldContainer.find('.multiselect__element').find('span');
+          await addAnOptionButton.trigger('click');
 
           // saves filter
           const saveButton = findByText(filtersModal, 'button', 'Save');
@@ -673,8 +677,8 @@ describe('Component for creating custom analytics reports', () => {
 
           // ensures that the existing filter's first rule parameter right value option name is the existing name
           const [, parametersModal, filtersModal] = wrapper.findAll('[role="dialog"]');
-          const rightValueSelect = findByTestId(filtersModal, 'right-value-select');
-          const selectedOption = rightValueSelect.find('.multiselect__option--selected');
+          const firstRule = findByTestId(filtersModal, 'fr-field-inputValue__1');
+          const selectedOption = firstRule.find('.multiselect__option--selected');
           expect(selectedOption.text()).toBe('MyParameter');
 
           // field options API response needs to be updated to the changed parameter name to be edited
@@ -709,7 +713,7 @@ describe('Component for creating custom analytics reports', () => {
           await flushPromises();
 
           // ensures that the existing filter rule's parameter right value options is now the new parameter Name
-          const updatedSelectOption = rightValueSelect.find('.multiselect__option--selected');
+          const updatedSelectOption = firstRule.find('.multiselect__option--selected');
           expect(updatedSelectOption.text()).toBe('MyParameterUpdated');
         });
 
@@ -722,8 +726,8 @@ describe('Component for creating custom analytics reports', () => {
           // value option has the paremeter to be deleted as the selection.
           let [,, filtersModal] = wrapper.findAll('[role="dialog"]');
           let [firstRule, secondRule] = filtersModal.findAll('.queryfilter-row');
-          let rightValueSelect = findByTestId(firstRule, 'right-value-select');
-          const [,, MyParameterOption] = rightValueSelect.findAll('[role="option"]');
+          let rightValueContainer = findByTestId(firstRule, 'fr-field-inputValue__1');
+          const [,, MyParameterOption] = rightValueContainer.findAll('[role="option"]');
           expect(MyParameterOption.text()).toBe('applications.name');
 
           // ensures that all 2 rules exist
@@ -747,16 +751,17 @@ describe('Component for creating custom analytics reports', () => {
 
           [,, filtersModal] = wrapper.findAll('[role="dialog"]');
           [firstRule, secondRule] = filtersModal.findAll('.queryfilter-row');
-          rightValueSelect = findByTestId(firstRule, 'right-value-select');
+          rightValueContainer = findByTestId(firstRule, 'fr-field-inputValue__1');
 
           // ensures that only one rule exists now
           expect(firstRule.exists()).toBe(true);
           expect(secondRule).toBeUndefined();
-          expect(rightValueSelect.exists()).toBe(false);
+          expect(rightValueContainer.exists()).toBe(false);
 
-          // ensures that the first rule is not the rule with the 'My Parameter Name' selected as the right value
-          const [, rightLiteralInput] = firstRule.findAll('input');
-          expect(rightLiteralInput.element.value).toBe('My second rule right literal value');
+          // ensures that the first rule does not exist with the 'My Parameter Name' selection by checking
+          // for the existence of the right value of the second rule which has now become the first rule.
+          const rightItemInput = findByText(firstRule, 'li', 'My second rule right literal value');
+          expect(rightItemInput.exists()).toBe(true);
         });
 
         it('deletes the filter definition altogether when there is only one rule that has the right value selected to a parameter that is deleted', async () => {

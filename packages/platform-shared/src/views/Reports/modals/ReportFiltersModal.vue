@@ -1,4 +1,4 @@
-<!-- Copyright 2024 ForgeRock AS. All Rights Reserved
+  <!-- Copyright 2024 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS
 or with one of its affiliates. All use shall be exclusively subject
@@ -60,9 +60,10 @@ to such license between the licensee and ForgeRock AS. -->
                   :id="`right-value-${uniqueName}}`"
                   :label="$t('common.value')"
                   :name="uniqueName"
-                  :options="variableOptions[rule.operator] || []"
-                  :type="rule.selectedRightValueType === 'literal' ? 'string' : 'select'"
-                  :testid="`right-value-${rule.selectedRightValueType === 'literal' ? 'string' : 'select'}`"
+                  :options="rule.selectedRightValueType === 'variable' ? variableOptions[rule.operator] || [] : rule.value"
+                  :taggable="rule.fieldType === 'multiselect'"
+                  :type="rule.fieldType"
+                  :testid="`right-value-${rule.fieldType}-${uniqueName}`"
                   class="flex-grow-1 fr-right-value-input-styles" />
               </template>
             </BCol>
@@ -174,6 +175,7 @@ function getUniqueIndex() {
 /**
  * Generates default rule based on passed-in values
  * @property {String} field - Field name of new rule
+ * @property {String} fieldType - Field type of new rule
  * @property {String} operator - Operator to compare the field's value to
  * @property {String} selectedRightValueType - right value type (literal, variable)
  * @property {String} value - Field value of new rule
@@ -181,12 +183,14 @@ function getUniqueIndex() {
  */
 function getDefaultRule(
   field = '',
+  fieldType = 'multiselect',
   operator = 'contains',
   selectedRightValueType = 'literal',
-  value = '',
+  value = [],
 ) {
   return {
     field,
+    fieldType,
     operator,
     selectedRightValueType,
     value,
@@ -219,11 +223,18 @@ function getDefaultGroup(
  */
 function rightValueTypeUpdate(rule, type) {
   rule.selectedRightValueType = type;
+
   if (type === 'variable') {
     if (!props.variableOptions[rule.operator]) {
       emit('get-field-options', rule.operator);
     }
+    rule.fieldType = 'select';
+    rule.value = '';
+  } else if (rule.operator === 'contains' || rule.operator === 'not_contains') {
+    rule.fieldType = 'multiselect';
+    rule.value = [];
   } else {
+    rule.fieldType = 'string';
     rule.value = '';
   }
 }
@@ -256,9 +267,25 @@ function updateFilter(eventName, data) {
   if (eventName === 'rule-change' && value.operator) {
     if (value.operator === 'is_null' || value.operator === 'is_not_null') {
       delete group.subfilters[index].selectedRightValueType;
+      delete group.subfilters[index].fieldType;
       delete group.subfilters[index].value;
     } else {
-      group.subfilters[index].selectedRightValueType = 'literal';
+      if (!group.subfilters[index].selectedRightValueType) {
+        group.subfilters[index].selectedRightValueType = 'literal';
+      }
+
+      if (value.operator === 'contains' || value.operator === 'not_contains') {
+        if (group.subfilters[index].selectedRightValueType === 'literal') {
+          group.subfilters[index].fieldType = 'multiselect';
+        } else {
+          group.subfilters[index].fieldType = 'select';
+        }
+      } else if (group.subfilters[index].selectedRightValueType === 'literal') {
+        group.subfilters[index].fieldType = 'string';
+      } else {
+        group.subfilters[index].fieldType = 'select';
+      }
+
       group.subfilters[index].value = '';
     }
   }
@@ -343,7 +370,7 @@ async function populateForm() {
 
 function hasEmptyValues(obj) {
   // Check if the object itself has an empty 'field' or 'value' property
-  if (obj.field === '' || (obj.value !== undefined && obj.value === '')) {
+  if (obj.field === '' || (obj.value !== undefined && !obj.value?.length)) {
     return true;
   }
 

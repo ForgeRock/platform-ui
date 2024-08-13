@@ -83,11 +83,22 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
     const { leftValue, rightValue } = Object.fromEntries(interpretRuleValues);
     const [rightValueName] = typeof rightValue === 'object' ? Object.values(rightValue) : [rightValue];
     let rightValueExistsInFilterVariables = false;
+    let fieldType = 'multiselect';
 
     if (rightValueName) {
       // This function populates the 'filterVariables' variable when it resolves
       await getFieldOptionsForFilters(ruleOperator, entityDefinitions, parameterDefinitions);
       rightValueExistsInFilterVariables = filterVariables.value[ruleOperator].find(({ value }) => value.includes(rightValueName));
+
+      if (rightValueExistsInFilterVariables) {
+        fieldType = 'select';
+      } else if (ruleOperator !== 'contains' && ruleOperator !== 'not_contains') {
+        // The API is explicitly asking that we hard-code an exception that makes
+        // the right literal field a multi-value field when the 'contains' and 'not_contains'
+        // operators are selected.  This is because the API expects an array of values
+        // for literal values that use the 'contains' and 'not_contains' operators.
+        fieldType = 'string';
+      }
     }
 
     return {
@@ -95,6 +106,7 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
       operator: ruleOperator,
       uniqueIndex: subIndex,
       ...(rightValueName && { value: rightValueName }),
+      ...(rightValueName && { fieldType }),
       ...(rightValueName && { selectedRightValueType: rightValueExistsInFilterVariables ? 'variable' : 'literal' }),
     };
   }
@@ -147,7 +159,12 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
     const leftValueEntity = entityColumns.value.find((column) => column.path === leftValue);
     const rightValueInputType = selectedRightValueType === 'variable'
       ? filterVariables.value[ruleOperator].find(({ value }) => value.includes(rightValue))
-      : { type: 'string', class: 'literal' };
+      : {
+        class: 'literal',
+        // API requirement to hard-code right value types for 'contains' and 'not_contains'
+        type: ruleOperator === 'contains' || ruleOperator === 'not_contains' ? 'array' : 'string',
+        ...((ruleOperator === 'contains' || ruleOperator === 'not_contains') && { item: { type: 'string' } }),
+      };
     const hasMultipleLeftProperties = schema.filter((obj) => obj.left).length > 1;
     const hasMultipleRightProperties = schema.filter((obj) => obj.right).length > 1;
     const [schemaObj] = schema;
@@ -172,7 +189,7 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
         ? `${rightValueInputType.item.type}_`
         : '';
       // The API is explicitly asking that we make a hard-coded exception
-      // for a right value variable that is equal to 'string' to be 'query'.
+      // for a right value, that is equal to 'string', to be 'query'.
       const rightValueType = rightValueInputType.type === 'string' ? 'query' : rightValueInputType.type;
       rightKey = prefix + itemType + rightValueType;
     }

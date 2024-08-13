@@ -156,14 +156,14 @@ describe('@useReportFilters', () => {
         {
           contains: {
             search_string: 'applications.name',
-            in_query: { literal: 'my literal value' },
+            in_string_array: { literal: ['My literal value'] },
           },
         },
         {
           and: [{
             contains: {
               search_string: 'applications._id',
-              in_query: { literal: 'My _id literal value' },
+              in_string_array: { literal: ['My _id literal value'] },
             },
           }],
         },
@@ -201,19 +201,21 @@ describe('@useReportFilters', () => {
         subfilters: [
           {
             field: 'applications.name',
+            fieldType: 'multiselect',
             operator: 'contains',
             selectedRightValueType: 'literal',
             uniqueIndex: 0,
-            value: 'my literal value',
+            value: ['My literal value'],
           },
           {
             operator: 'and',
             subfilters: [{
               field: 'applications._id',
+              fieldType: 'multiselect',
               operator: 'contains',
               selectedRightValueType: 'literal',
               uniqueIndex: 0,
-              value: 'My _id literal value',
+              value: ['My _id literal value'],
             }],
             uniqueIndex: 0,
           },

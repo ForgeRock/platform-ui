@@ -39,23 +39,33 @@ describe('Report Filter Modal component', () => {
             type: 'string',
             path: 'applications._id',
           }],
-        conditionOptions: [
-          {
+        conditionOptions: {
+          contains: {
             label: 'contains',
             type: [],
             value: 'contains',
           },
-          {
+          not_contains: {
+            label: 'does not contain',
+            type: [],
+            value: 'not_contains',
+          },
+          equals: {
+            label: 'equals to',
+            type: [],
+            value: 'equals',
+          },
+          is_null: {
             label: 'is null',
             type: [],
             value: 'is_null',
           },
-          {
+          is_not_null: {
             label: 'is not null',
             type: [],
             value: 'is_not_null',
           },
-        ],
+        },
         ...props,
       },
     });
@@ -87,9 +97,14 @@ describe('Report Filter Modal component', () => {
       saveButton = findByText(wrapper, 'button', 'Save');
       expect(saveButton.attributes().disabled).toBeDefined();
 
-      // Literal text field
-      const [, rightValue] = wrapper.findAll('input[type="text"]');
-      await rightValue.setValue('My literal input');
+      // Sets the right literal multivalue field
+      const rightValueContainer = findByTestId(wrapper, 'right-value-multiselect-inputValue__1');
+      const rightValueInput = rightValueContainer.find('input');
+      await rightValueInput.setValue('My literal input item');
+      const addAnOptionButton = rightValueContainer.find('.multiselect__element').find('span');
+      await addAnOptionButton.trigger('click');
+
+      // saves the form
       saveButton = findByText(wrapper, 'button', 'Save');
       expect(saveButton.attributes().disabled).toBeUndefined();
     });
@@ -135,7 +150,7 @@ describe('Report Filter Modal component', () => {
       await addGroup.trigger('click');
       await flushPromises();
 
-      async function fillOutFilterRule(container) {
+      async function fillOutFilterRule(container, index) {
         const [valueSelect, operatorSelect] = container.findAll('[role="listbox"]');
         expect(saveButton.attributes().disabled).toBeDefined();
 
@@ -153,15 +168,18 @@ describe('Report Filter Modal component', () => {
         saveButton = findByText(wrapper, 'button', 'Save');
         expect(saveButton.attributes().disabled).toBeDefined();
 
-        // Literal field input
-        const [, rightValue] = container.findAll('input[type="text"]');
-        await rightValue.setValue('My literal input');
+        // Sets the right literal multivalue field
+        const rightValueContainer = findByTestId(container, `right-value-multiselect-inputValue__${index}`);
+        const rightValueInput = rightValueContainer.find('input');
+        await rightValueInput.setValue('My literal input item');
+        const addAnOptionButton = rightValueContainer.find('.multiselect__element').find('span');
+        await addAnOptionButton.trigger('click');
       }
 
       const [firstGroup, secondGroup] = wrapper.findAll('.filter-builder-row');
 
-      await fillOutFilterRule(firstGroup);
-      await fillOutFilterRule(secondGroup);
+      await fillOutFilterRule(firstGroup, 1);
+      await fillOutFilterRule(secondGroup, 3);
 
       saveButton = findByText(wrapper, 'button', 'Save');
       expect(saveButton.attributes().disabled).toBeUndefined();
@@ -173,19 +191,21 @@ describe('Report Filter Modal component', () => {
         subfilters: [
           {
             field: 'applications._id',
+            fieldType: 'multiselect',
             operator: 'contains',
             selectedRightValueType: 'literal',
             uniqueIndex: 1,
-            value: 'My literal input',
+            value: ['My literal input item'],
           },
           {
             operator: 'or',
             subfilters: [{
               field: 'applications._id',
+              fieldType: 'multiselect',
               operator: 'contains',
               selectedRightValueType: 'literal',
               uniqueIndex: 3,
-              value: 'My literal input',
+              value: ['My literal input item'],
             }],
             uniqueIndex: 4,
           },
@@ -267,7 +287,7 @@ describe('Report Filter Modal component', () => {
       await operatorContainsOption.trigger('click');
 
       // expects the right value field to be showing at this point
-      let rightValueField = findByTestId(wrapper, 'input-right-value-string');
+      let rightValueField = findByTestId(wrapper, 'right-value-multiselect-inputValue__1');
       expect(rightValueField.exists()).toBe(true);
 
       // Operator "is null" selection
@@ -276,7 +296,7 @@ describe('Report Filter Modal component', () => {
       await operatorIsNullOption.trigger('click');
 
       // expects the right value field to be hidden
-      rightValueField = findByTestId(wrapper, 'input-right-value-string');
+      rightValueField = findByTestId(wrapper, 'right-value-multiselect-inputValue__1');
       expect(rightValueField.exists()).toBe(false);
 
       // Operator "is not null" selection
@@ -285,7 +305,7 @@ describe('Report Filter Modal component', () => {
       await operatorIsNotNullOption.trigger('click');
 
       // expects the right value field to still be hidden
-      rightValueField = findByTestId(wrapper, 'input-right-value-string');
+      rightValueField = findByTestId(wrapper, 'right-value-multiselect-inputValue__1');
       expect(rightValueField.exists()).toBe(false);
 
       // Selects "contains" operator once more
@@ -294,8 +314,44 @@ describe('Report Filter Modal component', () => {
       await operatorContainsOption.trigger('click');
 
       // expects the right value field to show once more
-      rightValueField = findByTestId(wrapper, 'input-right-value-string');
+      rightValueField = findByTestId(wrapper, 'right-value-multiselect-inputValue__1');
       expect(rightValueField.exists()).toBe(true);
+    });
+
+    it('ensures that the right literal value field is a multi-select field when the operator has a selection of "contains" or "does not contain"', async () => {
+      const [, valueSelect, operatorSelect] = wrapper.findAll('[role="listbox"]');
+
+      // Value field selection
+      const valueOption = findByText(valueSelect, 'li', '_id').find('span').find('span');
+      await valueSelect.trigger('click');
+      await valueOption.trigger('click');
+
+      // Operator "contains" selection
+      const operatorContainsOption = findByText(wrapper, 'li', 'contains').find('span').find('span');
+      await operatorSelect.trigger('click');
+      await operatorContainsOption.trigger('click');
+
+      // expects the right value field to be a multi-select field
+      let rightValueField = findByTestId(wrapper, 'right-value-multiselect-inputValue__1');
+      expect(rightValueField.attributes('type')).toEqual('multiselect');
+
+      // Operator "does not contain" selection
+      const operatorDoesNotContainOption = findByText(wrapper, 'li', 'does not contain').find('span').find('span');
+      await operatorSelect.trigger('click');
+      await operatorDoesNotContainOption.trigger('click');
+
+      // expects the right value field to be a multi-select field
+      rightValueField = findByTestId(wrapper, 'right-value-multiselect-inputValue__1');
+      expect(rightValueField.attributes('type')).toEqual('multiselect');
+
+      // Operator "equals to" selection
+      const operatorEqualsOption = findByText(wrapper, 'li', 'equals to').find('span').find('span');
+      await operatorSelect.trigger('click');
+      await operatorEqualsOption.trigger('click');
+
+      // expects the right value field to be a text input field
+      rightValueField = findByTestId(wrapper, 'input-right-value-string-inputValue__1');
+      expect(rightValueField.attributes('type')).toEqual('text');
     });
   });
 });
