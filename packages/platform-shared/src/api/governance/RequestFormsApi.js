@@ -46,3 +46,12 @@ export function createForm(form) {
 export function deleteForm(formId) {
   return generateIgaApi().delete(`${requestFormsUrl}/${formId}`);
 }
+
+/**
+ * update a new governance form
+ * @param {object} form form to update
+ * @returns The response is a promise that resolves to the updated form.
+ */
+export function saveForm(form) {
+  return generateIgaApi().put(`${requestFormsUrl}/${form.id}`, form);
+}

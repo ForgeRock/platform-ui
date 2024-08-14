@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
           <slot name="toolbar" />
         </FrEditorLayoutToolbar>
         <div class="d-flex flex-fill overflow-hidden">
-          <div class="flex-fill">
+          <div class="flex-fill overflow-auto fr-canvas-panel">
             <slot name="canvas" />
           </div>
           <FrEditorLayoutSidebar
@@ -129,3 +129,9 @@ function toggleSidebarRight() {
   emit('toggle-sidebar-right', isSidebarRightOpen.value);
 }
 </script>
+
+<style lang="scss" scoped>
+.fr-canvas-panel {
+  height: calc(100vh - 200px) !important;
+}
+</style>

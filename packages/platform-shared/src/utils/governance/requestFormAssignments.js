@@ -18,7 +18,10 @@ import {
   getApplicationRequestFormAssignment,
   getFormAssignmentByWorkflowNode,
   getFormAssignmentByFormId,
+  deleteForm,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
+import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
+import i18n from '@/i18n';
 
 /**
  * Returns an object representing the assignment of a form to a workflow node.
@@ -88,7 +91,7 @@ export async function buildFormAssignmentPromises(workflowId, formUpdates) {
 export async function deleteAllFormAssignments(formId) {
   const existingAssignments = await getFormAssignmentByFormId(formId);
   const assignments = existingAssignments?.data?.result;
-  if (assignments.length) {
+  if (assignments?.length) {
     const promises = assignments.map((assignment) => deleteFormAssignment({ formId, objectId: assignment.objectId }));
     return Promise.all(promises);
   }
@@ -157,5 +160,23 @@ export async function getWorkflowRequestForm(workflow, phaseId) {
     return null;
   } catch (error) {
     return null;
+  }
+}
+
+/*
+ * Deletes form using provided form id, it also deletes all form assignments
+ */
+export async function deleteFormById(formId) {
+  // Note: the order matters here
+  // first delete form assignments
+  try {
+    await deleteAllFormAssignments(formId);
+    // second delete the form
+    await deleteForm(formId);
+    displayNotification('success', i18n.global.t('governance.forms.listView.actions.deleteFormSuccessfully'));
+    return Promise.resolve();
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.forms.listView.actions.deleteFormError'));
+    return Promise.reject(error);
   }
 }
