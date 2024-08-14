@@ -227,7 +227,12 @@ describe('Run Report component', () => {
           templateName: 'TEMPLATE-NAME',
           templateState: 'draft',
           reportConfig: {
-            parameters: { my_unexpected_parameter: { type: 'string' } },
+            parameters: {
+              my_unexpected_parameter: { type: 'string' },
+              my_unexpected_integer_parameter: { type: 'integer' },
+              my_unexpected_float_parameter: { type: 'float' },
+              my_unexpected_boolean_parameter: { type: 'boolean' },
+            },
           },
         });
         await flushPromises();
@@ -257,11 +262,25 @@ describe('Run Report component', () => {
         expect(unexpectedParameterField.attributes('type')).toBe('boolean');
       });
 
-      it('ensures that unexpected parameters displays a switch field if the parameter type is of integer', async () => {
+      it('ensures that unexpected parameters displays a number field if the parameter type is of integer', async () => {
         fieldDataMocks();
         wrapper = setup({
           templateName: 'TEMPLATE-NAME',
           reportConfig: { parameters: { my_unexpected_parameter: { type: 'integer' } } },
+        });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const unexpectedParameterField = findByTestId(wrapper, 'fr-field-my_unexpected_parameter').find('input');
+        expect(unexpectedParameterField.exists()).toBe(true);
+        expect(unexpectedParameterField.attributes('inputmode')).toBe('numeric');
+      });
+
+      it('ensures that unexpected parameters displays a number field if the parameter type is of float', async () => {
+        fieldDataMocks();
+        wrapper = setup({
+          templateName: 'TEMPLATE-NAME',
+          reportConfig: { parameters: { my_unexpected_parameter: { type: 'float' } } },
         });
         await flushPromises();
         jest.clearAllMocks();
@@ -283,20 +302,6 @@ describe('Run Report component', () => {
         const unexpectedParameterField = findByTestId(wrapper, 'my_unexpected_parameter');
         expect(unexpectedParameterField.exists()).toBe(true);
         expect(unexpectedParameterField.attributes('type')).toBe('multiselect');
-      });
-
-      it('ensures that the unexpected parameter displays the correct field type based on the parameter type property for booleans.', async () => {
-        fieldDataMocks();
-        wrapper = setup({
-          templateName: 'TEMPLATE-NAME',
-          reportConfig: { parameters: { my_unexpected_parameter: { type: 'boolean' } } },
-        });
-        await flushPromises();
-        jest.clearAllMocks();
-
-        const unexpectedParameterInput = findByTestId(wrapper, 'fr-field-my_unexpected_parameter').find('[testid="my_unexpected_parameter"]');
-        expect(unexpectedParameterInput.exists()).toBe(true);
-        expect(unexpectedParameterInput.attributes('type')).toBe('boolean');
       });
 
       it('ensures that the unexpected parameter displays the correct field type based on the parameter type property for a date field.', async () => {
@@ -392,8 +397,12 @@ describe('Run Report component', () => {
 
       it('ensures that unexpected parameters enable the submit button if they have a value', async () => {
         const unexpectedParameterInput = findByTestId(wrapper, 'input-my_unexpected_parameter');
+        const unexpectedIntegerParameter = findByTestId(wrapper, 'input-my_unexpected_integer_parameter');
+        const unexpectedFloatParameter = findByTestId(wrapper, 'input-my_unexpected_float_parameter');
 
         await unexpectedParameterInput.setValue('My unexpected parameter input value');
+        await unexpectedIntegerParameter.setValue(123);
+        await unexpectedFloatParameter.setValue(123.456);
 
         const submitButton = findByTestId(wrapper, 'run-report-button');
         expect(submitButton.attributes('disabled')).toBeUndefined();
@@ -402,12 +411,21 @@ describe('Run Report component', () => {
       it('submits a run report for the my_unexpected_parameter field', async () => {
         const runReportSpy = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockImplementation(() => Promise.resolve({}));
         const unexpectedParameterInput = findByTestId(wrapper, 'input-my_unexpected_parameter');
+        const unexpectedIntegerParameter = findByTestId(wrapper, 'input-my_unexpected_integer_parameter');
+        const unexpectedFloatParameter = findByTestId(wrapper, 'input-my_unexpected_float_parameter');
 
         await unexpectedParameterInput.setValue('My unexpected parameter input value');
+        await unexpectedIntegerParameter.setValue(123);
+        await unexpectedFloatParameter.setValue(123.456);
         const submitButton = findByTestId(wrapper, 'run-report-button');
         await submitButton.trigger('click');
 
-        expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { my_unexpected_parameter: 'My unexpected parameter input value' });
+        expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', {
+          my_unexpected_boolean_parameter: false,
+          my_unexpected_integer_parameter: 123,
+          my_unexpected_float_parameter: 123.456,
+          my_unexpected_parameter: 'My unexpected parameter input value',
+        });
       });
     });
   });

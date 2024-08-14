@@ -465,7 +465,16 @@ const unmappedParametersModel = computed(() => {
 });
 const unmappedFieldsDisableSubmit = computed(() => {
   if (unmappedParameters.value.length) {
-    return !!unmappedParameters.value.filter((parameter) => !parameter.value.length).length;
+    return !!unmappedParameters.value.filter((parameter) => {
+      if (parameter.type === 'boolean') {
+        // a boolean field will always have a value
+        return false;
+      }
+      if (parameter.type === 'number') {
+        return typeof parameter.value !== 'number';
+      }
+      return !parameter.value.length;
+    }).length;
   }
   return false;
 });
