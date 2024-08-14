@@ -22,16 +22,15 @@ of the MIT license. See the LICENSE file for details. -->
           </FrIcon>
         </BLink>
       </BCol>
-      <BCol class="col-7 col-md-6 col-lg-4 d-flex justify-content-center align-items-center">
+      <BCol class="col-7 col-md-6 col-lg-4 d-flex flex-column justify-content-center align-items-center">
         <h3
           v-if="!runDataLoading"
-          class="h4 my-3 text-nowrap text-truncate">
-          <span class="mr-2 text-nowrap d-flex">
-            {{ reportDate }}
-            <br class="d-md-none">
-            {{ reportTime }}
-          </span>
+          class="h4 my-0 text-center">
+          {{ reportName }}
         </h3>
+        <span class="text-center">
+          {{ reportDate }} {{ reportTime }}
+        </span>
       </BCol>
       <BCol
         v-if="state !== 'draft'"
