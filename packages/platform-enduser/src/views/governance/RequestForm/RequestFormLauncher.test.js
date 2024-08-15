@@ -48,7 +48,25 @@ describe('RequestFormLauncher', () => {
     });
 
     getFormSpy = jest.spyOn(RequestFormsApi, 'getRequestForm').mockResolvedValue({
-      id: 'testId',
+      data: {
+        id: 'testId',
+        form: {
+          fields: [
+            {
+              model: 'custom.testProperty1',
+              type: 'string',
+              label: 'testLabel',
+              validation: {
+                required: false,
+              },
+              layout: {
+                columns: 12,
+                offset: '0',
+              },
+            },
+          ],
+        },
+      },
     });
   });
 
@@ -79,6 +97,17 @@ describe('RequestFormLauncher', () => {
     await wrapper.find('[aria-label="Submit Request"]').trigger('click');
 
     expect(submitSpy).toBeCalledWith('customRequestType', { common: {}, custom: {} });
+  });
+
+  it('should submit a request with form data', async () => {
+    const submitSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue(true);
+
+    const wrapper = mountComponent();
+    await flushPromises();
+    await wrapper.findComponent('#testLabel').vm.$emit('input', 'a custom value');
+    await wrapper.find('[aria-label="Submit Request"]').trigger('click');
+
+    expect(submitSpy).toBeCalledWith('customRequestType', { common: {}, custom: { testProperty1: 'a custom value' } });
   });
 
   it('should display an error when there is no request type associated with form', async () => {

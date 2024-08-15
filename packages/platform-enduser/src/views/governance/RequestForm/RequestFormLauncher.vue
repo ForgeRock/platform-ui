@@ -33,20 +33,17 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
           </div>
           <template v-else>
-            <!-- TODO: Replace this div with the form rendering component -->
-            <div>
-              <p>
-                Form: {{ form }}
-              </p>
-              <p>
-                RequestType: {{ requestType }}
-              </p>
-            </div>
+            <FrFormBuilder
+              @update:model-value="formValue = $event"
+              @is-valid="isValid = $event"
+              :model-value="formValue"
+              :schema="form.form?.fields" />
             <div class="d-flex justify-content-end">
               <FrButtonWithSpinner
                 :button-text="$t('governance.requestForm.submitRequest')"
                 :spinner-text="$t('governance.requestForm.submitting')"
                 :show-spinner="submittingRequest"
+                :disabled="!isValid || submittingRequest"
                 variant="primary"
                 @click="submitRequest()" />
             </div>
@@ -69,6 +66,7 @@ import {
 } from 'bootstrap-vue';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
+import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { getRequestForm } from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
@@ -86,6 +84,8 @@ const router = useRouter();
 const { formId } = route.params;
 const errorMsg = ref('');
 const form = ref({});
+const formValue = ref({});
+const isValid = ref(false);
 const loadingForm = ref(true);
 const requestType = ref('');
 const submittingRequest = ref(false);
@@ -121,10 +121,10 @@ async function loadForm() {
 async function submitRequest() {
   submittingRequest.value = true;
   try {
-    // TODO: values from form go here
     const requestBody = {
       common: {},
       custom: {},
+      ...formValue.value,
     };
     await submitCustomRequest(requestType.value, requestBody);
     displayNotification('success', i18n.global.t('governance.requestForm.requestSubmitted'));
