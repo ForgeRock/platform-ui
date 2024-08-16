@@ -3839,9 +3839,13 @@
           "deleteFormError": "There was an error deleting this form",
           "deleteFormSuccessfully": "Form deleted successfully"
         },
+        "associatedApplications": "Associated Applications:",
+        "associatedRequestTypes": "Associated Request Types:",
+        "associatedWorkflows": "Associated Workflows:",
         "errorGetData": "There was an error retrieving forms",
         "forms": "Forms",
         "form": "Form",
+        "noForms": "There are no forms to show",
         "subtitle": "Create forms for use in user administration and application provisioning requests.",
         "title": "Request Forms"
       },
