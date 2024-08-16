@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,9 +32,9 @@ of the MIT license. See the LICENSE file for details. -->
         :script-title="$t('queryFilterBuilder.basicEditorHeadline')"
         :show-file-upload="false"
         :show-variables="false"
-        @input="setFilterObject($event.source)"
-        :readonly="disabled"
-      />
+        @input="updateScriptEditor"
+        :readonly="disabled" />
+
       <BButton
         :disabled="!allowBasic"
         class="px-0"
@@ -391,6 +391,16 @@ export default {
       }
       this.filterString = this.toFilterString(tempFilter);
       this.queryFilter = tempFilter;
+    },
+    /**
+     * Updates the filter string with the provided script's source code.
+     *
+     * @param {Object} script - The script object containing the source code.
+     *
+     */
+    updateScriptEditor(script) {
+      this.filterString = script.source;
+      this.setFilterObject(script.source);
     },
   },
 };
