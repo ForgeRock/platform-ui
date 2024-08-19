@@ -82,7 +82,8 @@ const joinTypeRadios = [
   { text: i18n.global.t('reports.template.joinTypes.includeParentMatch'), value: 'left' },
   { text: i18n.global.t('reports.template.joinTypes.includeParentNonMatch'), value: 'right' },
   { text: i18n.global.t('reports.template.joinTypes.includeMatch'), value: 'inner' },
-  { text: i18n.global.t('reports.template.joinTypes.includeAll'), value: 'full' },
+  // API cannot currently handle this option so this has been requested to be hidden for now.
+  // { text: i18n.global.t('reports.template.joinTypes.includeAll'), value: 'full' },
 ];
 
 // Functions

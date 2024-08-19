@@ -33,20 +33,18 @@ describe('Related entity settings modal', () => {
     it('ensures that the expected join type radio buttons show up as expected', () => {
       const radioGroup = wrapper.find('[role="radiogroup"]');
       const radios = radioGroup.findAll('div');
-      const [leftRadio, rightRadio, innerRadio, fullRadio] = radios;
+      const [leftRadio, rightRadio, innerRadio] = radios;
 
-      expect(radios.length).toBe(4);
+      expect(radios.length).toBe(3);
 
       expect(leftRadio.text()).toBe('Include parent match');
       expect(rightRadio.text()).toBe('Include parent non match');
       expect(innerRadio.text()).toBe('Include match only');
-      expect(fullRadio.text()).toBe('Include all');
 
       expect(leftRadio.find('input').element.checked).toBe(true); // default
       expect(leftRadio.find('input').element.value).toBe('left');
       expect(rightRadio.find('input').element.value).toBe('right');
       expect(innerRadio.find('input').element.value).toBe('inner');
-      expect(fullRadio.find('input').element.value).toBe('full');
     });
 
     it('ensures that the expected payload is emitted for the left value radio when the save button is clicked', async () => {
@@ -85,20 +83,6 @@ describe('Related entity settings modal', () => {
       expect(wrapper.emitted('set-related-entity-type')).toEqual([['inner']]);
     });
 
-    it('ensures that the expected payload is emitted for the full value radio when the save button is clicked', async () => {
-      const radioGroup = wrapper.find('[role="radiogroup"]');
-      const radios = radioGroup.findAll('input');
-      const [,,, fullRadio] = radios;
-
-      await fullRadio.setChecked();
-
-      // Saves form and emits payload
-      const saveButton = findByText(wrapper, 'button', 'Save');
-      await saveButton.trigger('click');
-
-      expect(wrapper.emitted('set-related-entity-type')).toEqual([['full']]);
-    });
-
     it('ensures that it selects the correct radio button for an existing related entity definition that has a joinType of "left"', async () => {
       const radioGroup = wrapper.find('[role="radiogroup"]');
       const radios = radioGroup.findAll('input');
@@ -128,16 +112,6 @@ describe('Related entity settings modal', () => {
       expect(innerRadio.element.checked).toBe(false);
       await wrapper.setProps({ joinType: 'inner' });
       expect(innerRadio.element.checked).toBe(true);
-    });
-
-    it('ensures that it selects the correct radio button for an existing related entity definition that has a joinType of "full"', async () => {
-      const radioGroup = wrapper.find('[role="radiogroup"]');
-      const radios = radioGroup.findAll('input');
-      const [,,, fullRadio] = radios;
-
-      expect(fullRadio.element.checked).toBe(false);
-      await wrapper.setProps({ joinType: 'full' });
-      expect(fullRadio.element.checked).toBe(true);
     });
   });
 });

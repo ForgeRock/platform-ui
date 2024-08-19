@@ -189,6 +189,7 @@ import FrReportViewTable from './ReportViewTable';
 import useExportReport from './composables/ExportReport';
 import useViewReportTable from './composables/ViewReportTable';
 import useRunHistoryTable from './composables/RunHistoryTable';
+import useRunReport from './composables/RunReport';
 import i18n from '@/i18n';
 import store from '@/store';
 
@@ -237,9 +238,22 @@ async function setConfigInfo(report) {
   reportName.value = startCase(report.name?.toLowerCase());
   csvStatus.value = report.exportCsvStatus === 'EXPORT_SUCCESS';
   jsonStatus.value = report.exportJsonStatus === 'EXPORT_SUCCESS';
+
+  const reportConfigParameters = JSON.parse(report.reportConfig).parameters;
   const [paramsWithoutRealm] = [JSON.parse(report.parameters)].map(({ ...parameter }) => parameter);
   delete paramsWithoutRealm.realm;
-  params.value = paramsWithoutRealm;
+  const { _REPORT_FIELDS_CONTROLLER } = useRunReport();
+  const parametersWithLabels = Object.keys(paramsWithoutRealm).map((paramKey) => {
+    const reportConfigParamLabel = reportConfigParameters[paramKey]?.label;
+    const reportControllerLabel = _REPORT_FIELDS_CONTROLLER[paramKey]?.label;
+    const label = reportConfigParamLabel || reportControllerLabel || paramKey;
+    const paramValue = paramsWithoutRealm[paramKey];
+    const value = Array.isArray(paramValue) ? paramValue.join(', ') : paramValue;
+    const parameterIsDate = paramKey === 'startDate' || paramKey === 'endDate';
+    return { label, value: parameterIsDate ? dayjs(value).format('YYYY-MM-DD') : value };
+  });
+
+  params.value = parametersWithLabels;
   const data = reportHistoryTableDataGenerator([report]);
   modalData.value = data.flat();
 }

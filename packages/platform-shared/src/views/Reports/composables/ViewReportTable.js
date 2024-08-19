@@ -19,14 +19,6 @@ export default function useViewReportTable() {
   const totalRows = ref(0);
 
   /**
-   * Displays a message instead of the table in case the report is expired.
-   */
-  function handleExpiredResponse(tableItems) {
-    isExpired.value = true;
-    expiredMessage.value = tableItems.message;
-  }
-
-  /**
    * Joins an array into a string if it does not contains objects as values.
    * @param {Array|String} arr The value.
    * @returns {Array|String}
@@ -66,7 +58,9 @@ export default function useViewReportTable() {
    */
   function arrangeTable(tableItems) {
     if (tableItems.message) {
-      return handleExpiredResponse(tableItems);
+      isExpired.value = true;
+      expiredMessage.value = tableItems.message;
+      return [];
     }
     if (tableItems.result && tableItems.result.length > 0) {
       return createTableFields(tableItems);
