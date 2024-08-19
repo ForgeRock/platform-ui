@@ -2601,6 +2601,16 @@
       "updateWarning": "Changes may take up to 10 minutes to propagate, during which time you will not be able to make further updates."
     }
   },
+  "sslConfigurations": {
+    "title": "SSL Configurations",
+    "subtitle": "Provide your own certificates for use in custom domains and other features.",
+    "createNewCSR": "New SSL Configuration",
+    "noCerts": "You haven't added any Certificates yet",
+    "createCSRInfo": "Generate a Certificate Signing Request (CSR) to use to order an SSL certificate. Once you have received a valid SSL certificate you can add it to use with your custom domains.",
+    "certFile": "Select your certificate...",
+    "dropFile": "Drop file here...",
+    "pasteText": "...or paste your certificate contents directly"
+  },
   "securityQuestions": {
     "subtitle": "Define security questions to use for verification purposes.",
     "title": "Security Questions",

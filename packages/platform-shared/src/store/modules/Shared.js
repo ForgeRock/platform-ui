@@ -42,6 +42,7 @@ const defaultState = {
   newMultiselectEnabled: false,
   promoteAppsViaApi: false,
   showEsvUi: false,
+  showCertsUi: false,
   uiConfig: null,
   webStorageAvailable: true,
   workforceEnabled: false,
@@ -141,6 +142,9 @@ const mutations = {
     if (env.VUE_APP_FRAAS === 'true') {
       if (env.VUE_APP_SHOW_ESV_UI) {
         state.showEsvUi = env.VUE_APP_SHOW_ESV_UI === 'true' || env.VUE_APP_SHOW_ESV_UI === true;
+      }
+      if (env.VUE_APP_ENABLE_CERTS_UI === 'true' || env.VUE_APP_ENABLE_CERTS_UI === true) {
+        state.showCertsUi = true;
       }
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true) {
         state.governanceEnabled = true;
