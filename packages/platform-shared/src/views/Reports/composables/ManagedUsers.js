@@ -13,7 +13,7 @@ import { getManagedResourceList } from '../../../api/ManagedResourceApi';
 /**
  * Names of the default groups used in report details settings
  */
-export const defaultGroups = ['report_admin', 'report_author', 'report_viewer'];
+export const defaultGroups = ['report_viewer'];
 
 /**
  * Format the data for the multiselect input

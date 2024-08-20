@@ -28,14 +28,6 @@ of the MIT license. See the LICENSE file for details. -->
       {{ $t('reports.newReportModal.labelViewers') }}
     </h5>
     <BFormGroup>
-      <label>{{ $t('common.groups') }}</label>
-      <FrField
-        class="mb-2"
-        name="report_admin"
-        type="checkbox"
-        :value="props.value.report_admin"
-        :label="$t('reports.newReportModal.reportAdminOption')"
-        @input="update('report_admin', $event)" />
       <FrField
         class="mb-2"
         name="report_viewer"
@@ -43,12 +35,6 @@ of the MIT license. See the LICENSE file for details. -->
         :value="props.value.report_viewer"
         :label="$t('reports.newReportModal.reportViewerOption')"
         @input="update('report_viewer', $event)" />
-      <FrField
-        name="report_owner"
-        type="checkbox"
-        :value="props.value.report_author"
-        :label="$t('reports.newReportModal.reportOwnerOption')"
-        @input="update('report_author', $event)" />
     </BFormGroup>
     <BFormGroup label-for="allowed-viewers-field">
       <FrField

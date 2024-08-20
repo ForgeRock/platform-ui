@@ -2022,9 +2022,7 @@
       "labelGroups": "Groups",
       "labelViewers": "Who Can Run",
       "title": "New Report",
-      "reportAdminOption": "Report Admin",
-      "reportViewerOption": "Report Viewer",
-      "reportOwnerOption": "Report Owner"
+      "reportViewerOption": "Report Viewer Group"
     },
     "newReport": "New Report",
     "noData": "No Report Template found",

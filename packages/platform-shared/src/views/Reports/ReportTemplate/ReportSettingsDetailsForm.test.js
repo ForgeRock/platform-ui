@@ -30,8 +30,6 @@ describe('Report Settings Details Form component', () => {
   }
 
   let descriptionInput;
-  let groupReportAdminCheckbox;
-  let groupReportOwnerCheckbox;
   let groupReportViewerCheckbox;
   let multiselect;
   let multiselectValues;
@@ -43,9 +41,7 @@ describe('Report Settings Details Form component', () => {
     value: {
       name: 'Test template',
       description: 'Test template description',
-      report_admin: true,
       report_viewer: false,
-      report_author: true,
       viewers: ['13c0ab62-a072-4e52-ba47-c0ee43d7b9fd'],
     },
   };
@@ -54,9 +50,7 @@ describe('Report Settings Details Form component', () => {
     value: {
       name: '',
       description: '',
-      report_admin: false,
       report_viewer: false,
-      report_author: false,
       viewers: [],
     },
   };
@@ -69,8 +63,6 @@ describe('Report Settings Details Form component', () => {
     beforeEach(async () => {
       // Set up wrappers
       wrapper = setup(initialFormDataEmpty);
-      groupReportAdminCheckbox = wrapper.find('input[name="report_admin"]');
-      groupReportOwnerCheckbox = wrapper.find('input[name="report_owner"]');
       groupReportViewerCheckbox = wrapper.find('input[name="report_viewer"]');
       descriptionInput = wrapper.find('textarea[name="description-field"]');
       multiselect = findByRole(wrapper, 'listbox');
@@ -138,14 +130,10 @@ describe('Report Settings Details Form component', () => {
       const emittedDescription = lastEmittedInputChange()[0].description;
 
       // Check the group checkboxes
-      groupReportAdminCheckbox.setChecked();
-      groupReportOwnerCheckbox.setChecked();
       groupReportViewerCheckbox.setChecked();
       await flushPromises();
 
       // All checkbox states shouldbe true
-      expect(groupReportAdminCheckbox.element.checked).toBe(true);
-      expect(groupReportOwnerCheckbox.element.checked).toBe(true);
       expect(groupReportViewerCheckbox.element.checked).toBe(true);
 
       // Emitted description should match
@@ -189,8 +177,6 @@ describe('Report Settings Details Form component', () => {
       }));
       // Set up wrappers
       wrapper = setup(initialFormData);
-      groupReportAdminCheckbox = wrapper.find('input[name="report_admin"]');
-      groupReportOwnerCheckbox = wrapper.find('input[name="report_owner"]');
       groupReportViewerCheckbox = wrapper.find('input[name="report_viewer"]');
       descriptionInput = wrapper.find('textarea[name="description-field"]');
       multiselect = findByRole(wrapper, 'listbox');
@@ -205,12 +191,6 @@ describe('Report Settings Details Form component', () => {
 
       // Description
       expect(descriptionInput.element.value).toBe(initialFormData.value.description);
-
-      // Who Can Run Report Admin Group checkbox
-      expect(groupReportAdminCheckbox.element.checked).toBe(initialFormData.value.report_admin);
-
-      // Who Can Run Report Owner Group checkbox
-      expect(groupReportOwnerCheckbox.element.checked).toBe(initialFormData.value.report_author);
 
       // Who Can Run Report Viewer Group checkbox
       expect(groupReportViewerCheckbox.element.checked).toBe(initialFormData.value.report_viewer);

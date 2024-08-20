@@ -214,9 +214,7 @@ const relatedEntityDefinitionToEdit = ref({});
 const reportDetails = ref({
   name: '',
   description: '',
-  report_admin: false,
   report_viewer: false,
-  report_owner: false,
   viewers: [],
 });
 const reportIsLoading = ref(true);
@@ -762,8 +760,6 @@ watch(reportDetails, (newVal, oldVal) => {
       // Sets the Details tab information
       reportDetails.value.name = startCase(templateName.toLowerCase());
       reportDetails.value.description = description;
-      reportDetails.value.report_admin = viewers.includes('report_admin');
-      reportDetails.value.report_author = viewers.includes('report_author');
       reportDetails.value.report_viewer = viewers.includes('report_viewer');
       reportDetails.value.viewers = viewers ? viewers.filter((item) => !defaultGroups.includes(item)) : [];
 

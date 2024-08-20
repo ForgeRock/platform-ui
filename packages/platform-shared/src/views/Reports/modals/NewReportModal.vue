@@ -53,9 +53,7 @@ const valid = ref(false);
 const newReportFormData = ref({
   name: '',
   description: '',
-  report_admin: false,
   report_viewer: false,
-  report_author: false,
   viewers: [],
 });
 
