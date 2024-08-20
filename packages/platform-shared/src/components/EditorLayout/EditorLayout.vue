@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="d-flex flex-column w-100 h-100 overflow-hidden">
+  <div class="d-flex flex-column w-100 h-100">
     <FrNavbar
       hide-dropdown
       hide-toggle
@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
         <slot name="navbar-center-content" />
       </template>
     </FrNavbar>
-    <div class="d-flex flex-fill w-100">
+    <div class="fr-editor-container d-flex w-100">
       <FrEditorLayoutSidebar
         v-if="!sidebarLeftCustom"
         :open="isSidebarLeftOpen"
@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
           <slot name="toolbar" />
         </FrEditorLayoutToolbar>
         <div class="d-flex flex-fill overflow-hidden">
-          <div class="flex-fill overflow-auto fr-canvas-panel">
+          <div class="flex-fill overflow-auto">
             <slot name="canvas" />
           </div>
           <FrEditorLayoutSidebar
@@ -131,7 +131,7 @@ function toggleSidebarRight() {
 </script>
 
 <style lang="scss" scoped>
-.fr-canvas-panel {
-  height: calc(100vh - 200px) !important;
+.fr-editor-container {
+  height: calc(100vh - 72px) !important;
 }
 </style>

@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <VueDraggableResizable
-    class="fr-panel position-relative"
+    class="fr-panel position-relative h-100"
     class-name-handle="fr-handle"
     prevent-deactivation
     :class="{ open }"
@@ -128,7 +128,6 @@ function onResize(_, __, resizeWidth) {
   left: unset !important;
   right: -1px;
   transition: all 0.1s linear;
-  height: calc(100vh - 100px) !important;
 
   &.open {
     visibility: visible;

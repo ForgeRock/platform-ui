@@ -4059,6 +4059,12 @@
   },
   "forms": {
     "editor": {
+      "addApplication": "Add Application",
+      "applicationAssigmentAlreadyExist": "The application and object type is already assigned to the form, please choose another.",
+      "applicationAssigmentCreated": "Application added",
+      "applicationAssigmentDeleted": "Application removed",
+      "applicationAssigmentDescription": "Applications for which this form will be used for requests.",
+      "applicationAssigmentsError": "Error getting application assignments",
       "canvas": {
         "emptyTitle": "You haven't added any fields yet",
         "emptySubtitle": "Drag fields into your form to get started."
@@ -4070,13 +4076,10 @@
       "categories": {
         "customFields": "Custom Fields"
       },
-      "optionsModal": {
-        "addOption": "Add Option",
-        "valueDescription": "Option value",
-        "labelDescription": "Label text",
-        "selectedByDefault": "Selected by default"
-      },
       "closeButtonTooltip": "Toggle Field List",
+      "createApplicationAssigmentError": "Error creating application assignment",
+      "deleteApplicationAssigmentError": "Error deleting application assignment",
+      "errorGettingApplicationAssigments": "Error getting application assignments",
       "field": {
         "columns": {
           "label": "Columns",
@@ -4108,6 +4111,13 @@
       },
       "fields": "Fields",
       "notFound": "Form not found",
+      "optionsModal": {
+        "addOption": "Add Option",
+        "valueDescription": "Option value",
+        "labelDescription": "Label text",
+        "selectedByDefault": "Selected by default"
+      },
+      "settings": "Form Settings",
       "types": {
         "checkbox": {
           "defaultValue": {
