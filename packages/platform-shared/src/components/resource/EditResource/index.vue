@@ -648,10 +648,10 @@ export default {
         }).catch((error) => {
           /**
            * Special case to handle AIC proxy timeouts that respond to the request before IDM finishes processing data.
-           * For this 502 Gateway Timeout we will issue the user a warning that their request is still be processed by IDM
+           * For this 502 Bad Gateway or 504 Gateway Timeout we will issue the user a warning that their request is still be processed by IDM
            * and will eventually complete - being visible in the UI.
            */
-          if (error.response.status === 502) {
+          if (error.response.status === 502 || error.response.status === 504) {
             this.displayNotification('warning', this.$t('pages.access.gatewayWarning'), 10000);
           } else {
             this.showErrorMessage(error, this.$t('errors.deleteObject', { object: this.resourceName }));
