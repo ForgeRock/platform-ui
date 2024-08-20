@@ -6,15 +6,29 @@
  */
 
 import {
-  getFormAssignmentByWorkflowNode, deleteFormAssignment, createFormAssignment, getFormAssignmentByFormId,
+  createFormAssignment,
+  deleteFormAssignment,
+  getFormAssignmentByFormId,
+  getFormAssignmentByRequestType,
+  getFormAssignmentByWorkflowNode,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
-import { buildFormAssignmentPromises, deleteAllFormAssignments } from './requestFormAssignments';
+import { getRequestForm } from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
+import {
+  buildFormAssignmentPromises,
+  deleteAllFormAssignments,
+  getCustomRequestForm,
+} from './requestFormAssignments';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi', () => ({
   getFormAssignmentByWorkflowNode: jest.fn(),
   deleteFormAssignment: jest.fn(),
   createFormAssignment: jest.fn(),
   getFormAssignmentByFormId: jest.fn(),
+  getFormAssignmentByRequestType: jest.fn(),
+}));
+
+jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormsApi', () => ({
+  getRequestForm: jest.fn(),
 }));
 
 describe('buildFormAssignmentPromises', () => {
@@ -113,5 +127,44 @@ describe('buildFormAssignmentPromises', () => {
 
     expect(getFormAssignmentByFormId).toHaveBeenCalledWith(formId);
     expect(deleteFormAssignment).not.toHaveBeenCalled();
+  });
+});
+
+describe('getCustomRequestForm', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should return the custom request form data if found', async () => {
+    const requestTypeId = 'requestType1';
+    const formId = 'form1';
+    const formData = { id: formId, name: 'Custom Request Form' };
+
+    const formAssignment = { formId };
+    const formAssignmentResponse = { data: { result: [formAssignment] } };
+    const getRequestFormResponse = { data: formData };
+
+    getFormAssignmentByRequestType.mockResolvedValue(formAssignmentResponse);
+    getRequestForm.mockResolvedValue(getRequestFormResponse);
+
+    const result = await getCustomRequestForm(requestTypeId);
+
+    expect(getFormAssignmentByRequestType).toHaveBeenCalledWith(requestTypeId);
+    expect(getRequestForm).toHaveBeenCalledWith(formId);
+    expect(result).toEqual(formData);
+  });
+
+  it('should return null if no custom request form is found', async () => {
+    const requestTypeId = 'requestType1';
+
+    const formAssignmentResponse = { data: { result: [] } };
+
+    getFormAssignmentByRequestType.mockResolvedValue(formAssignmentResponse);
+
+    const result = await getCustomRequestForm(requestTypeId);
+
+    expect(getFormAssignmentByRequestType).toHaveBeenCalledWith(requestTypeId);
+    expect(getRequestForm).not.toHaveBeenCalled();
+    expect(result).toBeNull();
   });
 });

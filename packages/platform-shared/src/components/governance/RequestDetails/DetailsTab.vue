@@ -80,7 +80,6 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
         </BRow>
       </div>
-
       <FrFormBuilder
         v-if="form"
         class="pt-4"
@@ -124,6 +123,7 @@ import {
 } from 'bootstrap-vue';
 import {
   getApplicationRequestForm,
+  getCustomRequestForm,
   getWorkflowRequestForm,
 } from '@forgerock/platform-shared/src/utils/governance/requestFormAssignments';
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
@@ -137,6 +137,10 @@ import i18n from '@/i18n';
 import store from '@/store';
 
 const props = defineProps({
+  isApproval: {
+    type: Boolean,
+    default: false,
+  },
   item: {
     type: Object,
     required: true,
@@ -226,16 +230,29 @@ async function getForm(item) {
 
   const request = item.rawData;
   const workflowId = request.workflow.id;
-  let formDefinition = await getWorkflowRequestForm(workflowId, phaseId.value);
-  if (formDefinition) {
+  let formDefinition;
+
+  // when viewing an approval request, show the form associated with the workflow phase
+  if (props.isApproval) {
+    formDefinition = await getWorkflowRequestForm(workflowId, phaseId.value);
+    if (formDefinition) {
+      form.value = formDefinition;
+      if (isCustom.value) formValue.value = request.request || {};
+      else formValue.value = request.request?.common?.blob?.form || {};
+      return;
+    }
+  }
+
+  // when viewing a custom request outside of approvals, show the form assocated with the request type
+  if (isCustom.value && !props.isApproval) {
+    formDefinition = await getCustomRequestForm(request.requestType);
     form.value = formDefinition;
-    if (isCustom.value) formValue.value = request.request || {};
-    else formValue.value = request.request?.common?.blob?.form || {};
+    formValue.value = request.request || {};
     return;
   }
 
+  // fallback to the default form if the workflow request form is not available
   if (request.requestType === 'applicationGrant') {
-    // fallback to the default form if the workflow request form is not available
     formDefinition = await getApplicationRequestForm(request.application, request.application.id);
     form.value = formDefinition;
     formValue.value = request.request?.common?.blob?.form || {};

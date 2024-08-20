@@ -19,6 +19,7 @@ import {
   getApplicationRequestFormAssignment,
   getFormAssignmentByWorkflowNode,
   getFormAssignmentByFormId,
+  getFormAssignmentByRequestType,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
@@ -156,7 +157,26 @@ export async function getWorkflowRequestForm(workflow, phaseId) {
       const { data: formData } = await getRequestForm(formId);
       return formData;
     }
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
 
+/**
+ * Retrieves the custom request form for a given request type ID.
+ *
+ * @param {string} requestTypeId - The ID of the request type.
+ * @returns {Promise<object|null>} - A promise that resolves to the custom request form data, or null if not found.
+ */
+export async function getCustomRequestForm(requestTypeId) {
+  try {
+    const { data } = await getFormAssignmentByRequestType(requestTypeId);
+    if (data?.result?.length) {
+      const { formId } = data.result[0];
+      const { data: formData } = await getRequestForm(formId);
+      return formData;
+    }
     return null;
   } catch (error) {
     return null;

@@ -148,13 +148,13 @@ describe('DetailsTab', () => {
         },
       };
 
-      it('shows a workflow form if present', async () => {
+      it('shows a workflow form if present and is an approval', async () => {
         const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
           .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
         const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm')
           .mockResolvedValue({ data: testFormSchema });
 
-        const wrapper = setup(customRequestItem);
+        const wrapper = setup({ isApproval: true, ...customRequestItem });
         await flushPromises();
 
         expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
@@ -162,7 +162,23 @@ describe('DetailsTab', () => {
         expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
       });
 
+      it('shows the request type form if present and not an approval', async () => {
+        const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType')
+          .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+        const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm')
+          .mockResolvedValue({ data: testFormSchema });
+
+        const wrapper = setup(customRequestItem);
+        await flushPromises();
+
+        expect(assignmentSpy).toHaveBeenCalledWith('custom');
+        expect(formSpy).toHaveBeenCalledWith('someForm');
+        expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
+      });
+
       it('shows no form if no form assigned', async () => {
+        jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType')
+          .mockResolvedValue({ data: { result: [] } });
         const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
           .mockResolvedValue({ data: { result: [] } });
 
@@ -257,7 +273,7 @@ describe('DetailsTab', () => {
         },
       };
 
-      const wrapper = setup(formItem);
+      const wrapper = setup({ isApproval: true, ...formItem });
       await flushPromises();
       await wrapper.findComponent('#testLabel').vm.$emit('input', 'a custom value');
       await wrapper.find('button.btn-primary').trigger('click');

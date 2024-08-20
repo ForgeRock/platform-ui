@@ -56,6 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
         no-body>
         <FrRequestDetails
           @add-comment="openModal('COMMENT')"
+          is-approval
           :hide-actions="{ comment: !actionPermissions.comment, modify: !actionPermissions.modify }"
           :item="item" />
       </BCard>

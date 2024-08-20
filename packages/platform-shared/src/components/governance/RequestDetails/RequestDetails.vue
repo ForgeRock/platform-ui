@@ -31,9 +31,9 @@ of the MIT license. See the LICENSE file for details. -->
           :is="tab.component"
           :item="item"
           :hide-actions="tab.hideActions"
+          :is-approval="tab.isApproval"
           :read-only="tab.readOnly"
-          v-on="$listeners"
-        />
+          v-on="$listeners" />
       </BTab>
     </BTabs>
   </div>
@@ -65,12 +65,17 @@ const props = defineProps({
     type: Object,
     default: () => ({ comment: false }),
   },
+  isApproval: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const tabs = ref([
   {
     component: FrDetailsTab,
     title: i18n.global.t('common.details'),
+    isApproval: props.isApproval,
     readOnly: props.hideActions.modify,
   },
   {
