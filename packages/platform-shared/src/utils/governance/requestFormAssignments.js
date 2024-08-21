@@ -11,6 +11,7 @@ import {
 } from 'lodash';
 import {
   getRequestForm,
+  deleteForm,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
 import {
   createFormAssignment,
@@ -18,7 +19,6 @@ import {
   getApplicationRequestFormAssignment,
   getFormAssignmentByWorkflowNode,
   getFormAssignmentByFormId,
-  deleteForm,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
