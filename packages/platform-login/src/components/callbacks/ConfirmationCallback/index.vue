@@ -39,12 +39,16 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { BButton } from 'bootstrap-vue';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 export default {
   name: 'ConfirmationCallback',
   components: {
     BButton,
   },
+  mixins: [
+    TranslationMixin,
+  ],
   props: {
     callback: {
       type: Object,
@@ -67,7 +71,7 @@ export default {
     },
   },
   mounted() {
-    this.options = this.callback.getOptions();
+    this.options = this.getTranslation(this.callback.getOptions());
     if (this.showOnlyPositiveAnswer) {
       [this.firstOption] = this.options;
     }

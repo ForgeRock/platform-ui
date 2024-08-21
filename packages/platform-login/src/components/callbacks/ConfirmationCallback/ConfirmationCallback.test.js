@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ConfirmationCallback from '@/components/callbacks/ConfirmationCallback';
 import i18n from '@/i18n';
 
@@ -126,6 +126,26 @@ describe('ConfirmationCallback', () => {
           expect(optionButton.attributes('class')).toContain(expectedClass);
           expect(optionButton.text()).toBe(option);
         });
+      });
+    });
+
+    describe('translation of option text value', () => {
+      it('displays translated value when provided a valid i18n JSON path', async () => {
+        const propsData = {
+          callback: {
+            getOptions: () => ['common.next', 'common.previous'],
+          },
+          stage: {
+            showOnlyPositiveAnswer: false,
+          },
+        };
+        const wrapper = setup(propsData);
+        await wrapper.vm.$nextTick();
+
+        const nextButton = findByText(wrapper, '.btn', 'Next');
+        const prevButton = findByText(wrapper, '.btn', 'Previous');
+        expect(nextButton.exists()).toBe(true);
+        expect(prevButton.exists()).toBe(true);
       });
     });
   });
