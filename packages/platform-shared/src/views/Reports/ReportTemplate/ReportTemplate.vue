@@ -450,25 +450,34 @@ function removeAssociatedDefinitions(deleteList) {
  */
 function onDeleteDataSource(defIndex) {
   const definitionsList = findSettingsObject('entities').definitions;
-  const definitionNamePath = definitionsList[defIndex].dataSource;
-  const definitionPathArray = definitionNamePath.split('.');
+  const targetPath = definitionsList[defIndex].dataSource;
+  const definitionPathArray = targetPath.split('.');
   definitionPathArray.pop();
   const parentDefinitionName = definitionPathArray.join('.');
   const parentDefinition = definitionsList.find((def) => def.dataSource === parentDefinitionName);
-  const deleteQueue = [];
 
   if (parentDefinition) {
     // Remove the selected related data source item from the parent data source definition
-    parentDefinition.selectedRelatedDataSources = parentDefinition.selectedRelatedDataSources.filter((entity) => entity !== definitionNamePath);
+    parentDefinition.selectedRelatedDataSources = parentDefinition.selectedRelatedDataSources.filter((definitionPath) => definitionPath !== targetPath);
   }
 
+  const deleteQueue = [];
   definitionsList.forEach((def) => {
-    if (def.dataSource.includes(definitionNamePath)) {
+    // In order to know if any of the data source definitions are children of the target
+    // data source, we must compare the data source paths of all existing definitions
+    // to the target path at the same length, and if they both match, we know the
+    // current definition in the iteration is a child of the target data source.
+    const definitionPathToMatch = def.dataSource
+      .split('.')
+      .splice(0, targetPath.split('.').length)
+      .join('.');
+
+    if (definitionPathToMatch === targetPath) {
       deleteQueue.push(def.dataSource);
     }
   });
 
-  // Remove any nested related data sources
+  // Remove any nested related data sources from the delete queue and update the definition list.
   const filteredDefinitions = definitionsList.filter((def) => !deleteQueue.includes(def.dataSource));
   definitionsList.splice(0);
   definitionsList.push(...filteredDefinitions);

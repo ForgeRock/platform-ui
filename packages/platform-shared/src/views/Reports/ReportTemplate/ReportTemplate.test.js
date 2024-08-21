@@ -98,7 +98,7 @@ describe('Component for creating custom analytics reports', () => {
     },
   };
 
-  const fieldOptionsStubForRelatedEntities = {
+  const fieldOptionsStubForApplicationRolesRelatedEntities = {
     data: {
       'applications.roles.admin': {
         class: 'json',
@@ -110,6 +110,23 @@ describe('Component for creating custom analytics reports', () => {
         class: 'json',
         label: 'Application Role Manager',
         column_label: 'Application Role Manager',
+        type: 'string',
+      },
+    },
+  };
+
+  const fieldOptionsStubForApplicationOwnersRelatedEntities = {
+    data: {
+      'applications.owners.admin': {
+        class: 'json',
+        label: 'Application Owner Admin',
+        column_label: 'Application Owner Admin',
+        type: 'string',
+      },
+      'applications.owners.manager': {
+        class: 'json',
+        label: 'Application Owner Manager',
+        column_label: 'Application Owner Manager',
         type: 'string',
       },
     },
@@ -279,10 +296,10 @@ describe('Component for creating custom analytics reports', () => {
     async function addRelatedDataSource() {
       const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
       const [, relatedDataSourcesFieldset] = dataSourceContainer.findAll('fieldset');
-      const [,, rolesRelatedDataSourceButton] = relatedDataSourcesFieldset.findAll('button');
-      const [,, rolesRelatedDataSourceOption] = relatedDataSourcesFieldset.findAll('a');
+      const [, ownersRelatedDataSourceButton, rolesRelatedDataSourceButton] = relatedDataSourcesFieldset.findAll('button');
+      const [, ownersRelatedDataSourceOption, rolesRelatedDataSourceOption] = relatedDataSourcesFieldset.findAll('a');
 
-      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubForRelatedEntities));
+      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubForApplicationRolesRelatedEntities));
       AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
         data: {
           result: [
@@ -300,6 +317,27 @@ describe('Component for creating custom analytics reports', () => {
 
       await rolesRelatedDataSourceButton.trigger('click');
       await rolesRelatedDataSourceOption.trigger('click');
+      await flushPromises();
+      jest.runAllTimers();
+      await nextTick();
+
+      AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubForApplicationOwnersRelatedEntities));
+      AutoApi.getReportEntities = jest.fn().mockReturnValue(Promise.resolve({
+        data: {
+          result: [
+            {
+              name: 'applications.owners.name',
+              label: 'Owner Name',
+            },
+            {
+              name: 'applications.owners.groups',
+              label: 'Owner Groups',
+            },
+          ],
+        },
+      }));
+      await ownersRelatedDataSourceButton.trigger('click');
+      await ownersRelatedDataSourceOption.trigger('click');
 
       await flushPromises();
       jest.runAllTimers();
@@ -310,10 +348,31 @@ describe('Component for creating custom analytics reports', () => {
       await addDataSource();
       await addRelatedDataSource();
 
-      // verifies that the related entity was added
+      // verifies that the related entities were added
       const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
-      const [, rolesHeading] = dataSourceContainer.findAll('h4');
+      const [, ownersHeading, rolesHeading] = dataSourceContainer.findAll('h4');
+      expect(ownersHeading.text()).toBe('applications / owners');
       expect(rolesHeading.text()).toBe('applications / roles');
+    });
+
+    it('deletes a related data source', async () => {
+      await addDataSource();
+      await addRelatedDataSource();
+      const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
+
+      let allDataSourceHeadings = dataSourceContainer.findAll('h4');
+      expect(allDataSourceHeadings.length).toBe(3);
+
+      // deletes the "owners" related entity
+      const [, applicationOwners] = dataSourceContainer.findAll('.card');
+      const deleteMenu = applicationOwners.find('[role="menu"]');
+      await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
+
+      // should now only show the parent "applications" entity and "applications / roles" related entity.
+      allDataSourceHeadings = dataSourceContainer.findAll('h4');
+      expect(allDataSourceHeadings.length).toBe(2);
+      expect(allDataSourceHeadings[0].text()).toBe('applications');
+      expect(allDataSourceHeadings[1].text()).toBe('applications / roles');
     });
 
     it('deletes a data source', async () => {
@@ -485,7 +544,8 @@ describe('Component for creating custom analytics reports', () => {
       expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
         entities: [
           { entity: 'applications' },
-          { entity: 'applications.roles', type: 'right' },
+          { entity: 'applications.owners', type: 'right' },
+          { entity: 'applications.roles', type: 'left' },
         ],
         fields: [],
       }, ['reportadmin'], '');
@@ -615,7 +675,7 @@ describe('Component for creating custom analytics reports', () => {
 
           const [, secondRule] = filtersModal.findAll('.queryfilter-row');
           const [secondLeftValueSelect, secondRuleOperatorSelect] = secondRule.findAll('[role="listbox"]');
-          const [, _idLeftValOption] = secondLeftValueSelect.findAll('[role="option"]');
+          const [_idLeftValOption] = secondLeftValueSelect.findAll('[role="option"]');
           const secondContainsRuleOperatorOption = secondRuleOperatorSelect.find('[role="option"]');
           const [, rightLiteralInput] = secondRule.findAll('input');
 
@@ -801,9 +861,13 @@ describe('Component for creating custom analytics reports', () => {
         it('deletes a filter rule that has a chosen value that matches a data source column that has been deleted', async () => {
           await addDataSource();
           await addRelatedDataSource();
-          // fieldoptions endpoint should include both parent entity and related entity results so the expected filter options get selected
+          // fieldoptions endpoint should include both parent entity and all related entity results so the expected filter options get selected
           AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
-            data: { ...fieldOptionsStub.data, ...fieldOptionsStubForRelatedEntities.data },
+            data: {
+              ...fieldOptionsStub.data,
+              ...fieldOptionsStubForApplicationRolesRelatedEntities.data,
+              ...fieldOptionsStubForApplicationOwnersRelatedEntities.data,
+            },
           }));
           await addFilterDefinition();
 
@@ -830,16 +894,17 @@ describe('Component for creating custom analytics reports', () => {
           await saveButton.trigger('click');
           await flushPromises();
 
-          // field options API response needs to be updated to exclude the data source to be deleted
-          const fieldOptionsWithoutColumn = Object.entries(fieldOptionsStub.data).filter(([key]) => key !== 'applications.roles.admin');
-          const fieldOptionsStubFiltered = {
-            data: Object.fromEntries(fieldOptionsWithoutColumn),
-          };
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
+          // field options API response needs to be updated to exclude the applications.roles related data source to be deleted
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+            data: {
+              ...fieldOptionsStub.data,
+              ...fieldOptionsStubForApplicationOwnersRelatedEntities.data,
+            },
+          }));
 
           // deletes the "applications / roles" data source
           const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
-          const [, applicationsRoles] = dataSourceContainer.findAll('.card');
+          const [,, applicationsRoles] = dataSourceContainer.findAll('.card');
           const deleteMenu = applicationsRoles.find('[role="menu"]');
           await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
 
@@ -933,22 +998,13 @@ describe('Component for creating custom analytics reports', () => {
           AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
             data: {
               ...fieldOptionsStub.data,
-              ...{
-                'applications.roles.admin': {
-                  class: 'json',
-                  label: 'Application Role Admin',
-                  type: 'string',
-                },
-                'applications.roles.manager': {
-                  class: 'json',
-                  label: 'Application Role Manager',
-                  type: 'string',
-                },
-              },
+              ...fieldOptionsStubForApplicationRolesRelatedEntities.data,
+              ...fieldOptionsStubForApplicationOwnersRelatedEntities.data,
             },
           }));
           await addAggregate();
-          await addAggregate(2, 'Application Role Admin Aggregate');
+          // first param is the index of the value option to select, second param is the name of the aggregate (applications.roles.admin)
+          await addAggregate(4, 'Application Role Admin Aggregate');
 
           let aggregateSettingContainer = findByTestId(wrapper, 'aggregate-settings-container');
           let allTitles = aggregateSettingContainer.findAll('h4');
@@ -958,16 +1014,17 @@ describe('Component for creating custom analytics reports', () => {
           expect(aggregate1Title.text()).toBe('My aggregate');
           expect(aggregate2Title.text()).toBe('Application Role Admin Aggregate');
 
-          // field options API response needs to be updated to exclude the data source to be deleted
-          const fieldOptionsWithoutColumn = Object.entries(fieldOptionsStub.data).filter(([key]) => key !== 'applications.roles.admin');
-          const fieldOptionsStubFiltered = {
-            data: Object.fromEntries(fieldOptionsWithoutColumn),
-          };
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
+          // field options API response needs to be updated to exclude the applications.roles related data source to be deleted
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+            data: {
+              ...fieldOptionsStub.data,
+              ...fieldOptionsStubForApplicationOwnersRelatedEntities.data,
+            },
+          }));
 
           // deletes the "applications / roles" data source
           const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
-          const [, applicationsRoles] = dataSourceContainer.findAll('.card');
+          const [,, applicationsRoles] = dataSourceContainer.findAll('.card');
           const deleteMenu = applicationsRoles.find('[role="menu"]');
           await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
           await flushPromises();
@@ -1088,22 +1145,12 @@ describe('Component for creating custom analytics reports', () => {
           AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
             data: {
               ...fieldOptionsStub.data,
-              ...{
-                'applications.roles.admin': {
-                  class: 'json',
-                  label: 'Application Role Admin',
-                  type: 'string',
-                },
-                'applications.roles.manager': {
-                  class: 'json',
-                  label: 'Application Role Manager',
-                  type: 'string',
-                },
-              },
+              ...fieldOptionsStubForApplicationRolesRelatedEntities.data,
+              ...fieldOptionsStubForApplicationOwnersRelatedEntities.data,
             },
           }));
           await addSortDefinition();
-          await addSortDefinition(2);
+          await addSortDefinition(4);
 
           let sortSettingContainer = findByTestId(wrapper, 'sort-settings-container');
           let definitionHeadings = sortSettingContainer.findAll('.card-text');
@@ -1113,16 +1160,17 @@ describe('Component for creating custom analytics reports', () => {
           expect(sort1Title.text()).toBe('arrow_upwardSort by: applications._id');
           expect(sort2Title.text()).toBe('arrow_upwardSort by: applications.roles.admin');
 
-          // field options API response needs to be updated to exclude the data source to be deleted
-          const fieldOptionsWithoutColumn = Object.entries(fieldOptionsStub.data).filter(([key]) => key !== 'applications.roles.admin');
-          const fieldOptionsStubFiltered = {
-            data: Object.fromEntries(fieldOptionsWithoutColumn),
-          };
-          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
+          // field options API response needs to be updated to exclude the applications.roles related data source to be deleted
+          AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
+            data: {
+              ...fieldOptionsStub.data,
+              ...fieldOptionsStubForApplicationOwnersRelatedEntities.data,
+            },
+          }));
 
           // deletes the "applications / roles" data source
           const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
-          const [, applicationsRoles] = dataSourceContainer.findAll('.card');
+          const [,, applicationsRoles] = dataSourceContainer.findAll('.card');
           const deleteMenu = applicationsRoles.find('[role="menu"]');
           await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
           await flushPromises();

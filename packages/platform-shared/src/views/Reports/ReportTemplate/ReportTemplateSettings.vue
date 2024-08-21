@@ -53,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
                   v-for="(definition, defIndex) in setting.definitions"
                   :data-source="definition.dataSource"
                   :data-source-columns="definition.dataSourceColumns"
-                  :key="defIndex"
+                  :key="definition.dataSource"
                   :related-data-sources="definition.relatedDataSources"
                   :report-is-loading="reportIsLoading"
                   :selected-columns="definition.selectedColumns"
