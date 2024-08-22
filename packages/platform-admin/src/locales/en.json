@@ -3869,7 +3869,10 @@
         "savingSuccess": "Form created successfully"
       },
       "editor": {
-        "notFound": "Form not found"
+        "errorMessage": "Error message",
+        "notFound": "Form not found",
+        "regex": "Regex",
+        "useValidation": "Use validation"
       }
     },
     "workflows": {

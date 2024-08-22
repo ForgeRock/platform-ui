@@ -222,6 +222,11 @@ export function getRules(i18n) {
     return !regex.test(value) || i18n.global.t('common.policyValidationMessages.whitespace');
   };
 
+  const regex = (value, { pattern, message }) => {
+    const customRegex = new RegExp(pattern);
+    return customRegex.test(value) || message;
+  };
+
   // Secret label identifiers must only contain a-z, A-Z, 0-9 and ., they cannot
   // start or end with .
   const secret_label_identifier = (value) => /^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*$/.test(value) || i18n.global.t('common.policyValidationMessages.secretLabelIdentifier');
@@ -236,6 +241,7 @@ export function getRules(i18n) {
     alpha_num_spaces,
     alpha_num_under_comma,
     connector_bundle_version,
+    regex,
     date_format,
     email,
     email_from,
