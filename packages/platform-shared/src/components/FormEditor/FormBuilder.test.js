@@ -472,8 +472,8 @@ describe('FormBuilder', () => {
         description: 'This is a select field',
         layout: { columns: 12, offset: 0 },
         options: [
-          { value: 'value1', text: 'Value 1' },
-          { value: 'value2', text: 'Value 2' },
+          { value: 'value1', label: 'Value 1' },
+          { value: 'value2', label: 'Value 2' },
         ],
       },
     ]);
@@ -512,8 +512,8 @@ describe('FormBuilder', () => {
         description: 'This is a select field',
         layout: { columns: 12, offset: 0 },
         options: [
-          { value: 'value1', text: 'Value 1' },
-          { value: 'value2', text: 'Value 2' },
+          { value: 'value1', label: 'Value 1' },
+          { value: 'value2', label: 'Value 2' },
         ],
       },
     ]);
@@ -550,8 +550,8 @@ describe('FormBuilder', () => {
         description: 'This is a select field',
         layout: { columns: 12, offset: 0 },
         options: [
-          { value: 'value1', text: 'Value 1' },
-          { value: 'value2', text: 'Value 2' },
+          { value: 'value1', label: 'Value 1' },
+          { value: 'value2', label: 'Value 2' },
         ],
       },
     ]);
@@ -578,9 +578,9 @@ describe('FormBuilder', () => {
         defaultValue: ['value1'],
         layout: { columns: 12, offset: 0 },
         options: [
-          { value: 'value1', text: 'Value 1' },
-          { value: 'value2', text: 'Value 2' },
-          { value: 'value3', text: 'Value 3' },
+          { value: 'value1', label: 'Value 1' },
+          { value: 'value2', label: 'Value 2' },
+          { value: 'value3', label: 'Value 3' },
         ],
       },
     ]);
@@ -620,9 +620,9 @@ describe('FormBuilder', () => {
         defaultValue: ['value1'],
         layout: { columns: 12, offset: 0 },
         options: [
-          { value: 'value1', text: 'Value 1' },
-          { value: 'value2', text: 'Value 2' },
-          { value: 'value3', text: 'Value 3' },
+          { value: 'value1', label: 'Value 1' },
+          { value: 'value2', label: 'Value 2' },
+          { value: 'value3', label: 'Value 3' },
         ],
       },
     ]);
@@ -660,9 +660,9 @@ describe('FormBuilder', () => {
         defaultValue: ['value1'],
         layout: { columns: 12, offset: 0 },
         options: [
-          { value: 'value1', text: 'Value 1' },
-          { value: 'value2', text: 'Value 2' },
-          { value: 'value3', text: 'Value 3' },
+          { value: 'value1', label: 'Value 1' },
+          { value: 'value2', label: 'Value 2' },
+          { value: 'value3', label: 'Value 3' },
         ],
       },
     ]);

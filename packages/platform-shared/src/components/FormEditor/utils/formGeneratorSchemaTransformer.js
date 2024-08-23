@@ -67,6 +67,15 @@ export function transformSchemaToFormGenerator(schema, readOnly) {
       type: getFormGeneratorType(schemaField.type),
       columnClass: getColumnClasses(schemaField.layout),
     };
+
+    // the form generator component expects the options to be an array of objects with value and text properties
+    if (schemaField.type === 'multiselect' || schemaField.type === 'select') {
+      field.options = schemaField.options.map((option) => ({
+        value: option.value,
+        text: option.label,
+      }));
+    }
+
     // Set the default value to an empty array if the field is a multiselect and does not have a default value to avoid have an undefined value and make that the field is not shown in the form
     if (schemaField.type === 'multiselect' && !schemaField.defaultValue) {
       field.defaultValue = [];

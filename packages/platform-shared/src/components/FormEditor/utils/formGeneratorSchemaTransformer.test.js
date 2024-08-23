@@ -59,11 +59,11 @@ describe('formGeneratorSchemaTransformer', () => {
         description: 'Field 4 description',
         options: [
           {
-            text: 'Option 1',
+            label: 'Option 1',
             value: 'option1',
           },
           {
-            text: 'Option 2',
+            label: 'Option 2',
             value: 'option2',
           },
         ],
@@ -90,15 +90,15 @@ describe('formGeneratorSchemaTransformer', () => {
         },
         options: [
           {
-            text: 'Option 1',
+            label: 'Option 1',
             value: 'option1',
           },
           {
-            text: 'Option 2',
+            label: 'Option 2',
             value: 'option2',
           },
           {
-            text: 'Option 3',
+            label: 'Option 3',
             value: 'option3',
           },
         ],
