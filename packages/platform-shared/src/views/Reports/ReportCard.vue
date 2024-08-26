@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
             </FrIcon>
           </BButton>
           <BSpinner
-            v-if="reportNameCurrentlyProcessing === props.report.name"
+            v-if="reportIsCurrentlyProcessing"
             class="ml-auto opacity-50 mt-2 mr-3"
             small
             :label="$t('common.loadingEtc')" />
@@ -129,9 +129,9 @@ import { startCase } from 'lodash';
 import store from '@/store';
 
 const props = defineProps({
-  reportNameCurrentlyProcessing: {
-    type: String,
-    default: '',
+  reportCurrentlyProcessing: {
+    type: Object,
+    default: () => ({}),
   },
   loading: {
     type: Boolean,
@@ -154,6 +154,10 @@ const isAdmin = store.state.SharedStore.currentPackage === 'admin';
 const hasCustomReportsFeatureEnabled = store.state.SharedStore.autoCustomReportsEnabled;
 const showCustomReport = hasCustomReportsFeatureEnabled && isAdmin && props.report.ootb === false;
 const hasProperties = Object.keys(props.report).length > 0;
+const reportIsCurrentlyProcessing = computed(() => {
+  const { id: reportNameBeingProcessed, status: reportStatusBeingProcessed } = props.reportCurrentlyProcessing;
+  return reportNameBeingProcessed === props.report.name && reportStatusBeingProcessed === props.report.type;
+});
 const reportState = computed(() => {
   const isOutOfTheBox = props.report.ootb;
   const state = isOutOfTheBox ? 'published' : props.report.type;

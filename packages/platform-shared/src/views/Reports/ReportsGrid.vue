@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BButtonToolbar class="justify-content-lg-between mb-4 p-0 border-0">
       <BButton
         v-if="store.state.SharedStore.autoCustomReportsEnabled && store.state.SharedStore.currentPackage === 'admin'"
-        class="mb-3 mb-md-0"
+        class="mb-3 mr-3 mb-md-0"
         variant="primary"
         @click="handleNewReportClick">
         <FrIcon
@@ -52,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
           lg="4"
           :key="report.name">
           <FrReportCard
-            :report-name-currently-processing="reportBeingProcessed"
+            :report-currently-processing="reportBeingProcessed"
             :loading="loading"
             :report="report"
             @to-template="toTemplate"
@@ -79,7 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
       :total-rows="reports.length"
       @on-page-size-change="pageSizeChange" />
     <FrDeleteModal
-      :is-deleting="!!reportBeingProcessed"
+      :is-deleting="!!Object.keys(reportBeingProcessed).length"
       :is-testing="isTesting"
       :translated-item-type="$t('common.report')"
       @delete-item="deleteTemplate(templateToDelete.name, templateToDelete.status)" />
@@ -108,6 +108,7 @@ import { useRouter } from 'vue-router';
 import {
   deleteAnalyticsReport,
   duplicateAnalyticsReport,
+  editAnalyticsReport,
   getReportTemplates,
   publishAnalyticsReport,
 } from '@forgerock/platform-shared/src/api/AutoApi';
@@ -146,7 +147,7 @@ const hasFocus = ref(false);
 const loading = ref(true);
 const perPage = ref(6);
 const reports = ref([]);
-const reportBeingProcessed = ref('');
+const reportBeingProcessed = ref({});
 const searchValue = ref('');
 const templateToDelete = ref({});
 
@@ -236,7 +237,7 @@ function toTemplate({ name, toHistory, state }) {
  * @param {String} status template status type (draft, published)
  */
 async function deleteTemplate(id, status) {
-  reportBeingProcessed.value = id;
+  reportBeingProcessed.value = { id, status };
   try {
     await deleteAnalyticsReport(id, status);
     displayNotification('success', i18n.global.t('common.deleteSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
@@ -245,7 +246,7 @@ async function deleteTemplate(id, status) {
   }
   retrieveReportTemplates();
   bvModal.value.hide('deleteModal');
-  reportBeingProcessed.value = '';
+  reportBeingProcessed.value = {};
 }
 
 /**
@@ -254,7 +255,7 @@ async function deleteTemplate(id, status) {
  * @param {String} status template status type (draft, published)
  */
 async function duplicateTemplate(id, status) {
-  reportBeingProcessed.value = id;
+  reportBeingProcessed.value = { id, status };
   try {
     await duplicateAnalyticsReport(id, status);
     displayNotification('success', i18n.global.t('common.duplicateSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
@@ -262,16 +263,29 @@ async function duplicateTemplate(id, status) {
     showErrorMessage(err, i18n.global.t('reports.errorDuplicating'));
   }
   retrieveReportTemplates();
-  reportBeingProcessed.value = '';
+  reportBeingProcessed.value = {};
 }
 
 /**
- * Routes to the report edit view
- * @param {String} name template name
- * @param {String} state report state (draft or published).
+ * If report is published and is edited, a draft template is created then routes to the new draft
+ * report edit view, otherwise, only routes to the currently existing draft report edit view.
+ * @param {String} id template name
+ * @param {String} status template status type (draft, published)
  */
-function editTemplate(name, state) {
-  router.push({ name: 'EditReportTemplate', params: { state, template: name.toLowerCase() } });
+async function editTemplate(id, status) {
+  if (status === 'published') {
+    reportBeingProcessed.value = { id, status };
+    try {
+      await editAnalyticsReport(id);
+      displayNotification('success', i18n.global.t('reports.newDraft'));
+      router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: id.toLowerCase() } });
+    } catch (err) {
+      showErrorMessage(err, i18n.global.t('reports.errorEditing'));
+    }
+    reportBeingProcessed.value = {};
+  } else {
+    router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: id.toLowerCase() } });
+  }
 }
 
 /**
@@ -292,19 +306,19 @@ function handleNewReportSave(payload) {
 
 /**
  * Publishes a report template
- * @param {String} name template name
- * @param {String} state report state (draft or published).
+ * @param {String} id template name
+ * @param {String} status template status (draft or published).
  */
-async function publishTemplate(name, state) {
-  reportBeingProcessed.value = name;
+async function publishTemplate(id, status) {
+  reportBeingProcessed.value = { id, status };
   try {
-    await publishAnalyticsReport(name, state);
+    await publishAnalyticsReport(id, status);
     displayNotification('success', i18n.global.t('common.publishSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
   } catch (err) {
     showErrorMessage(err, i18n.global.t('reports.errorPublishing'));
   }
   retrieveReportTemplates();
-  reportBeingProcessed.value = '';
+  reportBeingProcessed.value = {};
 }
 
 watch(saveReportError, (newVal) => {

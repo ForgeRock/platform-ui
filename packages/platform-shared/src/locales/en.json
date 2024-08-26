@@ -1981,7 +1981,7 @@
       "violation": "Violation"
     }
   },
-  "reports": {
+  "reports": {    
     "deleteReport": "Are you sure you want to delete this report?",
     "downloadComplete": "Download complete",
     "downloadFile": "Download {fileType}",
@@ -1989,6 +1989,7 @@
     "downloadingFile": "Downloading {fileType}...",
     "errorDeleting": "Error deleting report",
     "errorDuplicating": "Error duplicating report",
+    "errorEditing": "Error editing report",
     "errorPublishing": "Error publishing report",
     "export": "Export",
     "exportFile": "Export {fileType}",
@@ -2014,6 +2015,7 @@
       "errorTitle": "There was an error generating the {fileType}",
       "errorMessage": "Please try again or contact your administrator."
     },
+    "newDraft": "A new draft has been created",
     "newReportModal": {
       "viewersInputLabel": "Search for Users",
       "usersInputDescription": "Users who can run this report.",

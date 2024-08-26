@@ -184,8 +184,8 @@ export async function fetchDownload(runId, params) {
 
 /**
   * Exports or download a report in JSON or CSV format.
-  * @param {String} id Job ID of the report run.
   * @param {String} template Name of the report template.
+  * @param {String} id Job ID of the report run.
   * @param {String} action Action to execute, can be export or download.
   * @param {String} format Format of the report to be exported.
   * @returns {Object} Contains the data to be placed in a download file.
@@ -230,7 +230,10 @@ export async function getAutoAccessReportResult(userName, dateRange, template, n
 /**
  * Create a report template
  *
+ * @param {String} name report template name
  * @param {Object} payload report template attributes
+ * @param {Array} viewers report template viewers
+ * @param {String} description report template description
  * @returns {Promise<Object>}
  */
 export function saveAnalyticsReport(name, payload, viewers, description = '') {
@@ -247,8 +250,7 @@ export function saveAnalyticsReport(name, payload, viewers, description = '') {
 /**
  * Publish report template
  *
- * @param {Object} id template name
- * @param {String} templateType template state (draft, published)
+ * @param {String} id template name
  * @returns {Promise<Object>}
  */
 export function publishAnalyticsReport(id) {
@@ -256,9 +258,19 @@ export function publishAnalyticsReport(id) {
 }
 
 /**
+ * Edit report template
+ *
+ * @param {String} id template name
+ * @returns {Promise<Object>}
+ */
+export function editAnalyticsReport(id) {
+  return generateAutoAccessReports().post(`templates/${id}?_action=edit`);
+}
+
+/**
  * Delete report template
  *
- * @param {Object} id template name
+ * @param {String} id template name
  * @param {String} templateType template state (draft, published)
  * @returns {Promise<Object>}
  */
@@ -269,7 +281,7 @@ export function deleteAnalyticsReport(id, templateType) {
 /**
  * Duplicate report template
  *
- * @param {Object} id template name
+ * @param {String} id template name
  * @param {String} templateType template status type (draft, published)
  * @returns {Promise<Object>}
  */

@@ -41,7 +41,7 @@ describe('ReportsGrid', () => {
       },
     });
   }
-  const returnDataSuccess = {
+  const returnDataSuccessDraft = {
     result: [
       {
         name: 'TEMPLATE-NAME',
@@ -56,12 +56,27 @@ describe('ReportsGrid', () => {
       },
     ],
   };
+  const returnDataSuccessPublished = {
+    result: [
+      {
+        name: 'PUBLISHED-TEMPLATE-NAME',
+        description: 'Lorem ipsum.',
+        version: 0,
+        reportConfig: {},
+        owner: null,
+        ootb: false,
+        type: 'publsihed',
+        createDate: '2010-10-10T10:10:10.123456789Z',
+        updateDate: '2010-10-10T10:10:10.123456789Z',
+      },
+    ],
+  };
   const returnDataFail = {
     result: [],
   };
 
   beforeEach(() => {
-    AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve(returnDataSuccess));
+    AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve(returnDataSuccessDraft));
   });
 
   it('Report cards displayed successfully', async () => {
@@ -101,7 +116,7 @@ describe('ReportsGrid', () => {
     // Opens delete modal
     await findByText(wrapper, 'span', 'Delete').trigger('click');
 
-    const { name, type } = returnDataSuccess.result[0];
+    const { name, type } = returnDataSuccessDraft.result[0];
     const deleteAnalyticsReportSpy = jest.spyOn(AutoApi, 'deleteAnalyticsReport');
     const deleteModal = wrapper.find('#deleteModal');
     const deleteButton = findByText(deleteModal, 'button', 'Delete');
@@ -109,7 +124,7 @@ describe('ReportsGrid', () => {
     expect(deleteAnalyticsReportSpy).toHaveBeenCalledWith(name, type);
   });
 
-  it('routes to expected location when the edit report button is clicked', async () => {
+  it('routes to expected location when the edit report button is clicked for a draft report', async () => {
     const wrapper = setup();
     await flushPromises();
 
@@ -119,6 +134,21 @@ describe('ReportsGrid', () => {
     expect(routerPushSpy).toHaveBeenCalledWith({
       name: 'EditReportTemplate',
       params: { state: 'draft', template: 'template-name' },
+    });
+  });
+
+  it('routes to expected location when the edit report button is clicked for a published report', async () => {
+    AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve(returnDataSuccessPublished));
+    AutoApi.editAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
+    const wrapper = setup();
+    await flushPromises();
+
+    const routerPushSpy = jest.spyOn(wrapper.vm.router, 'push');
+    const editButton = findByText(wrapper, 'span', 'Edit');
+    await editButton.trigger('click');
+    expect(routerPushSpy).toHaveBeenCalledWith({
+      name: 'EditReportTemplate',
+      params: { state: 'draft', template: 'published-template-name' },
     });
   });
 
