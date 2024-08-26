@@ -71,11 +71,17 @@ filterTests(['forgeops', 'cloud'], () => {
     });
 
     beforeEach(() => {
+      // Set up intercept
+      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
       // Load base Journey URL
       cy.visit(forgotUsernameUrl);
 
       // Wait for a Journey page to fully load
-      cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
+      cy.wait('@themerealmConfig', { timeout: 10000 });
+
+      // Wait for a Journey page to fully load
+      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');
 
       // Check correct Journey has loaded
       cy.findByRole('heading', { name: 'Forgotten Username', level: 1 }).should('be.visible');
@@ -94,8 +100,11 @@ filterTests(['forgeops', 'cloud'], () => {
     });
 
     function loginEnduser() {
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
+
       // Check the browser has been directed to the default Login page
-      cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible');
+      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible');
       cy.findByRole('heading', { name: 'Sign In', level: 1 }).should('exist').should('be.visible');
 
       // Try to login Enduser
@@ -108,15 +117,21 @@ filterTests(['forgeops', 'cloud'], () => {
       // Find Sign in link and check its functionality
       cy.findByRole('link', { name: 'Sign in' }).click();
 
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
+
       // Check the browser has been directed to the default Login page
-      cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
+      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');
       cy.findByRole('heading', { name: 'Sign In', level: 1 }).should('exist').should('be.visible');
 
       // Check that we can return to the start of ForgottenUsername Journey page
       cy.go('back');
 
       // Wait for a Journey page to fully load
-      cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
+      cy.wait('@themerealmConfig', { timeout: 10000 });
+
+      // Wait for a Journey page to fully load
+      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');
       // Check correct Journey has loaded
       cy.findByRole('heading', { name: 'Forgotten Username', level: 1, timeout: 10000 }).should('be.visible');
       // Find Sign in link and check its functionality
@@ -184,8 +199,11 @@ filterTests(['forgeops', 'cloud'], () => {
         // Visit the Login link from email
         cy.visit(loginLink);
 
+        // Wait for a Journey page to fully load
+        cy.wait('@themerealmConfig', { timeout: 10000 });
+
         // We landed on a correct page where user can Login
-        cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible');
+        cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible');
         cy.findByRole('heading', { name: 'Sign In', level: 1 }).should('be.visible');
 
         // Clear cookies
@@ -194,13 +212,19 @@ filterTests(['forgeops', 'cloud'], () => {
         // Visit the Login link from email again
         cy.visit(loginLink);
 
+        // Wait for a Journey page to fully load
+        cy.wait('@themerealmConfig', { timeout: 10000 });
+
         // Link should no longer be working, check correct Error page is shown and we are able to start over
-        cy.findByRole('heading', { name: 'Error', level: 1, timeout: 10000 }).should('exist').should('be.visible');
+        cy.findByRole('heading', { name: 'Error', level: 1, timeout: 5000 }).should('exist').should('be.visible');
         cy.findByTestId('FrAlert').should('exist').contains('Unable to resume session. It may have expired.').should('be.visible');
         cy.findByRole('link', { name: 'Start Over' }).should('be.visible').click();
 
+        // Wait for a Journey page to fully load
+        cy.wait('@themerealmConfig', { timeout: 10000 });
+
         // Check the browser has been directed to the ForgottenUsername page
-        cy.findByRole('button', { name: 'Next', timeout: 10000 }).should('be.visible').should('be.disabled');
+        cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');
         cy.findByRole('heading', { name: 'Forgotten Username', level: 1 }).should('be.visible');
       });
     });

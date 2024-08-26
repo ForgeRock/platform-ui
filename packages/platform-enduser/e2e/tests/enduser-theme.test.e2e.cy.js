@@ -22,12 +22,12 @@ filterTests(['forgeops', 'cloud'], () => {
     const enduserRealm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
     const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
     const hostedPagesUrl = `${Cypress.config().baseUrl}/platform/?realm=${loginRealm}#/hosted-pages`;
-    const enduserUrl = `${Cypress.config().baseUrl}/enduser/?realm=${enduserRealm}#/profile`;
+    const enduserProfileUrl = `${Cypress.config().baseUrl}/enduser/?realm=${enduserRealm}#/profile`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
     const userPassword = 'Pass1234!';
     let userId;
-    let testThemeName = '';
     let defaultTheme = '';
+    let testThemeName = '';
 
     before(() => {
       cy.loginAsAdmin().then(() => {
@@ -71,7 +71,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.loginAsAdmin().then(() => {
         cy.visit(hostedPagesUrl);
         // Wait for the Themes table to load
-        cy.findByRole('heading', { level: 1, name: 'Hosted Pages' }).should('be.visible');
+        cy.findByRole('heading', { name: 'Hosted Pages' }).should('be.visible');
         cy.findByRole('button', { name: 'New Theme', timeout: 10000 }).should('be.visible');
 
         setThemeAsDefault(defaultTheme);
@@ -89,7 +89,7 @@ filterTests(['forgeops', 'cloud'], () => {
       });
     });
 
-    it('should change enduser colors', () => {
+    it('Should change enduser colors', () => {
       // Set the Theme color data for the test
       changeColorValue(/^Link Color/, '16FF96');
       changeColorValue(/^Link Hover Color/, '123123');
@@ -111,15 +111,25 @@ filterTests(['forgeops', 'cloud'], () => {
 
       // Logout admin
       cy.logout();
-      // Log in to the enduser UI and check that the Theme changes have been correctly applied
+      // Log in to the Enduser UI
       cy.loginAsEnduser(userName, userPassword);
-      cy.visit(enduserUrl);
+
+      // Set up intercept
+      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
+      // Visit Enduser Profile page
+      cy.visit(enduserProfileUrl);
+
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
+
+      // Check that the Theme is correctly applied
       cy.get('body').should('have.css', 'background-color', 'rgb(255, 255, 255)');
       cy.findByRole('link', { name: 'Reset Security Questions' }).should('have.css', 'color', 'rgb(22, 255, 150)');
       cy.get('#app .router-link-active').should('have.css', 'background-color', 'rgb(18, 49, 35)');
     });
 
-    it('should change profile page logo', () => {
+    it('Should change profile page logo', () => {
       // Set the Theme logo data for the test
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('tab', { name: 'Logo' }).click();
@@ -145,13 +155,15 @@ filterTests(['forgeops', 'cloud'], () => {
 
       // Logout admin
       cy.logout();
-      // Log in to the enduser UI and check that the Theme changes have been correctly applied
+      // Log in to the Enduser UI
       cy.loginAsEnduser(userName, userPassword);
+
+      // Check that the Theme is correctly applied
       cy.get('div.ping-logo:visible')
         .should('have.css', 'background-image', 'url("https://mods.vorondesign.com/files/FDqscS50BRdqtEhUK1U9hA/%2FVPlainL%2F1ColorLayer%2FVDesignPlainLorig.png")');
     });
 
-    it('should toggle profile pieces', () => {
+    it('Should toggle profile pieces', () => {
       // Set the Theme data for the test
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('tab', { name: 'Layout' }).click();
@@ -165,19 +177,29 @@ filterTests(['forgeops', 'cloud'], () => {
 
       // Logout admin
       cy.logout();
-      // Log in to the enduser UI and check that the Theme changes have been correctly applied
+      // Log in to the Enduser UI
       cy.loginAsEnduser(userName, userPassword);
-      cy.visit(enduserUrl);
-      // verify personal information, password row, and 2-step verification row do not appear
+
+      // Set up intercept
+      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
+      // Visit Enduser Profile page
+      cy.visit(enduserProfileUrl);
+
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
+
+      // Check that the Theme is correctly applied
+      // Verify personal information, password row, and 2-step verification row do not appear
       cy.findByRole('heading', { name: 'Sign-in & Security' }).should('exist');
       cy.findByRole('heading', { name: 'Password' }).should('not.exist');
       cy.findByRole('heading', { name: '2-Step Verification' }).should('not.exist');
-      // verify username and Security Questions rows do appear
+      // Verify username and Security Questions rows do appear
       cy.findByRole('heading', { name: 'Username' }).should('exist');
       cy.findByRole('heading', { name: 'Security Questions' }).should('exist');
     });
 
-    it('should change login/profile favicon', () => {
+    it('Should change login/profile favicon', () => {
       // Set the Theme favicon data for the test
       cy.findByRole('tab', { name: 'Favicon' }).click();
       cy.findByTestId('favicon-preview').should('be.visible').click();
@@ -197,12 +219,23 @@ filterTests(['forgeops', 'cloud'], () => {
 
       // Logout admin
       cy.logout();
-      // Check Login page has proper favicon
+
+      // Set up intercept
+      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
+      // Visit Default Journey
       cy.visit(Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha#/` : `${Cypress.config().baseUrl}/enduser/`);
+
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
+
+      // Check Login page has proper favicon
       cy.findByTestId('favicon').should('have.attr', 'href').and('include', 'https://www.favicon.cc/logo3d/850851.png');
 
-      // Log in to ensure enduser has proper favicon
+      // Log in to the Enduser UI
       cy.loginAsEnduser(userName, userPassword);
+
+      // Ensure enduser has proper favicon
       cy.findByTestId('favicon').should('have.attr', 'href').and('include', 'https://www.favicon.cc/logo3d/850851.png');
     });
   });

@@ -18,8 +18,17 @@ Cypress.Commands.add(
     cy.clearAppAuthDatabase();
     cy.clearSessionStorage();
 
+    // Set up intercept
+    cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
+    // Visit enduser URL
     cy.visit(loginUrl);
-    cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type(userName, { force: true });
+
+    // Wait for a Journey page to fully load
+    cy.wait('@themerealmConfig', { timeout: 10000 });
+
+    // Fill in Enduser name and password
+    cy.findByLabelText(/User Name/i, { timeout: 10000 }).should('be.visible').type(userName, { force: true });
     cy.findAllByLabelText(/Password/i).first().type(password, { force: true });
     cy.findByRole('button', { name: /Next/i }).click();
 
@@ -58,7 +67,7 @@ Cypress.Commands.add('loginAsAdmin', () => {
   cy.visit(`${Cypress.config().baseUrl}/am/XUI/`);
   cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type(Cypress.env('AM_USERNAME'), { force: true });
   cy.findAllByLabelText(/Password/i).first().should('be.visible').type(Cypress.env('AM_PASSWORD'), { force: true });
-  cy.intercept('/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
   cy.findByRole('button', { name: /Next/i }).should('be.visible').click();
   if (Cypress.env('IS_FRAAS')) {
     cy.wait('@themerealmConfig');

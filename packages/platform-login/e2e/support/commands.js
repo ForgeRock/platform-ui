@@ -38,7 +38,7 @@ Cypress.Commands.add('login', () => {
   cy.visit(loginUrl);
   cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type(adminUserName, { force: true });
   cy.findAllByLabelText(/Password/i).first().should('be.visible').type(adminPassword, { force: true });
-  cy.intercept('/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
   cy.findByRole('button', { name: /Next/i }).should('be.visible').click();
   if (Cypress.env('IS_FRAAS')) {
     cy.wait('@themerealmConfig');
