@@ -3865,7 +3865,7 @@
         "objectType": "Object type",
         "requestTypeAlreadyAssigned": "Request type already assigned to a form",
         "requestTypeDescription": "Choose a request type for which this request form applies.",
-        "requestTypeLabel": "Request Type (optional)",
+        "requestTypeLabel": "Request Type",
         "savingSuccess": "Form created successfully"
       },
       "editor": {
@@ -4060,6 +4060,7 @@
   "forms": {
     "editor": {
       "addApplication": "Add Application",
+      "addRequestType": "Add Request Type",
       "applicationAssigmentAlreadyExist": "The application and object type is already assigned to the form, please choose another.",
       "applicationAssigmentCreated": "Application added",
       "applicationAssigmentDeleted": "Application removed",
@@ -4078,7 +4079,10 @@
       },
       "closeButtonTooltip": "Toggle Field List",
       "createApplicationAssigmentError": "Error creating application assignment",
+      "createRequestTypeAssigmentError": "Error creating request type assignment",
       "deleteApplicationAssigmentError": "Error deleting application assignment",
+      "deleteRequestTypeAssigmentError": "Error deleting request type assignment",
+      "emptyRequestTypes": "No request types selected",
       "errorGettingApplicationAssigments": "Error getting application assignments",
       "field": {
         "columns": {
@@ -4117,6 +4121,12 @@
         "labelDescription": "Label text",
         "selectedByDefault": "Selected by default"
       },
+      "requestTypes": "Request Types",
+      "requestTypeAssigmentAlreadyExist": "The request type is already assigned to the form, please choose another.",
+      "requestTypeAssigmentDeleted": "Request type removed",
+      "requestTypeAssigmentDescription": "Request types for which this form will be used.",
+      "requestTypeAssigmentSuccess": "Request type added",
+      "requestTypeAssigmentsError": "Error getting request type assignments",
       "settings": "Form Settings",
       "types": {
         "checkbox": {
