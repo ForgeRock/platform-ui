@@ -4,6 +4,7 @@
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+import i18n from '@/i18n';
 
 /**
  * return the type of the field for the form generator based on the type of the field in the form builder
@@ -28,6 +29,18 @@ function getFormGeneratorType(formBuilderType) {
  */
 function getColumnClasses(layout) {
   return `col-md-${layout.columns} offset-md-${layout.offset}`;
+}
+
+/**
+ * Retrieves the label for an optional property.
+ * @param {object} propSchema - The schema of the property.
+ * @returns {string} - The label for the property.
+ */
+function getOptionalPropLabel(propSchema) {
+  if (!propSchema.label) return '';
+  // checkboxes cannot be required/optional
+  if (propSchema.type === 'checkbox' || propSchema.validation?.required === true) return propSchema.label;
+  return i18n.global.t('common.optionalFieldTitle', { fieldTitle: propSchema.label });
 }
 
 /**
@@ -66,6 +79,7 @@ export function transformSchemaToFormGenerator(schema, readOnly) {
       disabled: readOnly,
       type: getFormGeneratorType(schemaField.type),
       columnClass: getColumnClasses(schemaField.layout),
+      label: getOptionalPropLabel(schemaField),
     };
 
     // the form generator component expects the options to be an array of objects with value and text properties

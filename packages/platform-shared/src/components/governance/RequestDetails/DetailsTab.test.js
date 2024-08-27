@@ -6,12 +6,16 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { defineRule } from 'vee-validate';
+import { required } from '@vee-validate/rules';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import DetailsTab from './DetailsTab';
 import i18n from '@/i18n';
 import store from '@/store';
+
+defineRule('required', () => required);
 
 describe('DetailsTab', () => {
   const setup = (propsData = {}) => {
@@ -128,7 +132,9 @@ describe('DetailsTab', () => {
               offset: 0,
               columns: 12,
             },
-            required: false,
+            validation: {
+              required: true,
+            },
           },
         ],
       },

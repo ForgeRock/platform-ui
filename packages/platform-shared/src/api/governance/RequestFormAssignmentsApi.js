@@ -71,6 +71,16 @@ export function getFormRequestTypes(formId) {
 }
 
 /**
+ * Retrieves the form application assignments for a given form ID.
+ *
+ * @param {string} formId - The ID of the form.
+ * @returns {Promise} A promise that resolves with the form application assignments.
+ */
+export function getFormApplications(formId) {
+  return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId co "application/" and formId eq "${formId}"`);
+}
+
+/**
  * Retrieves the request form assignment for a specific application and object type.
  *
  * @param {string} applicationId - The ID of the application.

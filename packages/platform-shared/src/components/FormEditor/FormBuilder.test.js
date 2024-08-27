@@ -21,42 +21,63 @@ describe('FormBuilder', () => {
       model: 'field1',
       label: 'Field 1',
       layout: { columns: 6, offset: 0 },
+      validation: {
+        required: true,
+      },
     },
     {
       type: 'string',
       model: 'field2',
       label: 'Field 2',
       layout: { columns: 6, offset: 0 },
+      validation: {
+        required: true,
+      },
     },
     {
       type: 'string',
       model: 'field3',
       label: 'Field 3',
       layout: { columns: 4, offset: 0 },
+      validation: {
+        required: true,
+      },
     },
     {
       type: 'string',
       model: 'field4',
       label: 'Field 4',
       layout: { columns: 4, offset: 0 },
+      validation: {
+        required: true,
+      },
     },
     {
       type: 'string',
       model: 'field5',
       label: 'Field 5',
       layout: { columns: 4, offset: 0 },
+      validation: {
+        required: true,
+      },
     },
     {
       type: 'string',
       model: 'field6',
       label: 'Field 6',
       layout: { columns: 4, offset: 0 },
+      validation: {
+        required: true,
+      },
     },
     {
       type: 'string',
       model: 'field7',
       label: 'Field 7',
       layout: { columns: 12, offset: 0 },
+      validation: {
+        required: true,
+      },
     },
   ], propsData) {
     return mount(FormBuilder, {
@@ -89,6 +110,9 @@ describe('FormBuilder', () => {
           label: 'Field 1',
           disabled: false,
           layout: { columns: 6, offset: 0 },
+          validation: {
+            required: true,
+          },
         },
         {
           type: 'string',
@@ -97,6 +121,9 @@ describe('FormBuilder', () => {
           label: 'Field 2',
           disabled: false,
           layout: { columns: 6, offset: 0 },
+          validation: {
+            required: true,
+          },
         },
       ],
       [
@@ -107,6 +134,9 @@ describe('FormBuilder', () => {
           label: 'Field 3',
           disabled: false,
           layout: { columns: 4, offset: 0 },
+          validation: {
+            required: true,
+          },
         },
         {
           type: 'string',
@@ -115,6 +145,9 @@ describe('FormBuilder', () => {
           label: 'Field 4',
           disabled: false,
           layout: { columns: 4, offset: 0 },
+          validation: {
+            required: true,
+          },
         },
         {
           type: 'string',
@@ -123,6 +156,9 @@ describe('FormBuilder', () => {
           label: 'Field 5',
           disabled: false,
           layout: { columns: 4, offset: 0 },
+          validation: {
+            required: true,
+          },
         },
       ],
       [
@@ -133,6 +169,9 @@ describe('FormBuilder', () => {
           label: 'Field 6',
           disabled: false,
           layout: { columns: 4, offset: 0 },
+          validation: {
+            required: true,
+          },
         },
       ],
       [
@@ -143,6 +182,9 @@ describe('FormBuilder', () => {
           label: 'Field 7',
           disabled: false,
           layout: { columns: 12, offset: 0 },
+          validation: {
+            required: true,
+          },
         },
       ],
     ]);
@@ -205,6 +247,9 @@ describe('FormBuilder', () => {
         label: 'Text 1',
         description: 'This is a text field',
         layout: { columns: 12, offset: 0 },
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -238,6 +283,9 @@ describe('FormBuilder', () => {
         label: 'Text 1',
         description: 'This is a text field',
         layout: { columns: 12, offset: 0 },
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -295,6 +343,9 @@ describe('FormBuilder', () => {
         label: 'Textarea 1',
         description: 'This is a textarea field',
         layout: { columns: 12, offset: 0 },
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -327,6 +378,9 @@ describe('FormBuilder', () => {
         label: 'Textarea 1',
         description: 'This is a textarea field',
         layout: { columns: 12, offset: 0 },
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -383,6 +437,9 @@ describe('FormBuilder', () => {
         label: 'Checkbox 1',
         description: 'This is a checkbox field',
         layout: { columns: 12, offset: 0 },
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -415,6 +472,9 @@ describe('FormBuilder', () => {
         label: 'Checkbox 1',
         description: 'This is a checkbox field',
         layout: { columns: 12, offset: 0 },
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -475,6 +535,9 @@ describe('FormBuilder', () => {
           { value: 'value1', label: 'Value 1' },
           { value: 'value2', label: 'Value 2' },
         ],
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -515,6 +578,9 @@ describe('FormBuilder', () => {
           { value: 'value1', label: 'Value 1' },
           { value: 'value2', label: 'Value 2' },
         ],
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -582,6 +648,9 @@ describe('FormBuilder', () => {
           { value: 'value2', label: 'Value 2' },
           { value: 'value3', label: 'Value 3' },
         ],
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -624,6 +693,9 @@ describe('FormBuilder', () => {
           { value: 'value2', label: 'Value 2' },
           { value: 'value3', label: 'Value 3' },
         ],
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -688,6 +760,9 @@ describe('FormBuilder', () => {
         label: 'Date 1',
         description: 'This is a date field',
         layout: { columns: 12, offset: 0 },
+        validation: {
+          required: true,
+        },
       },
     ]);
 
@@ -721,6 +796,9 @@ describe('FormBuilder', () => {
         label: 'Date 1',
         description: 'This is a date field',
         layout: { columns: 12, offset: 0 },
+        validation: {
+          required: true,
+        },
       },
     ]);
 

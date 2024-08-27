@@ -6,6 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
@@ -13,6 +14,10 @@ import { BModal, BButton } from 'bootstrap-vue';
 import ItemDetailsModal from './ItemDetailsModal';
 import i18n from '@/i18n';
 import store from '@/store';
+
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+});
 
 describe('ItemDetailsModal', () => {
   let wrapper;
@@ -111,7 +116,9 @@ describe('ItemDetailsModal', () => {
               offset: 0,
               columns: 12,
             },
-            required: false,
+            validation: {
+              required: true,
+            },
           },
         ],
       },

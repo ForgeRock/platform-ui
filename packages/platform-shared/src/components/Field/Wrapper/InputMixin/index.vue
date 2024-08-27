@@ -163,6 +163,12 @@ export default {
       },
       deep: true,
     },
+    label(newVal) {
+      const hasValue = Array.isArray(this.inputValue)
+        ? this.inputValue.length
+        : !!this.inputValue;
+      if (this.floatingLabel && hasValue) this.floatLabels = !!newVal;
+    },
   },
   methods: {
     /**
