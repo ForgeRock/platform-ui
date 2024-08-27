@@ -1564,6 +1564,25 @@
       "templateModalDelete": {
         "title": "application template",
         "content": "Are you sure you want to delete the {templateName} template?"
+      },
+      "validations": {
+        "applicationDetails": "Invalid app template: missing required applicationDetails field {fieldLabel} in {path}",
+        "attributeType": "Attribute {attributeName} in {path} must be of type {type}, but is currently of type {attributeType}",
+        "authoritativeField": "Invalid app template: authoritative field attribute {attribute} must be {expectedValue} in {path}",
+        "baseAttributes": "base attributes",
+        "connectorDisplayName": "Invalid app template: connectorDisplayName must end with \"Connector\" in {path}",
+        "connectorTemplateArray": "Invalid app template: {itemType} item must be an array in {path}",
+        "containsProvisioning": "Invalid app template: missing required attribute provisioning within schema in {path}",
+        "mappingAccountObject": "Invalid app template object type {objectTypeName}: account object must have both provisioning and recon mappings in {path}",
+        "mappingNao": "Invalid app template object type {objectTypeName}: non-account object must have recon mapping in {path}",
+        "mappingObjectType": "Invalid app template object type {objectTypeName}: mappings must be an object in {path}",
+        "multiValuedObject": "Invalid app template: property {propertyName} is a multiValued \"object\" and must have nativeType of \"object\" in {path}",
+        "nonAccountObject": "Invalid app template: property {propertyName}'s nonAccountObject {propertyNao} does not exist in {path}",
+        "objectTypeArray": "Invalid app template: objectTypes must be an array in {path}",
+        "objectTypeProperty": "Invalid app template object type {objectTypeName}: properties must be an array in {path}",
+        "objectTypesContainsAccountObject": "Invalid app template: objectTypes must contain an object with managedResource \"user\" in {path}",
+        "passwordIsNotReadable": "Invalid app template: property {propertyName} is a password field and must be marked as notReadable in {path}",
+        "requiredAttribute": "Invalid app template: missing required attribute {attributeName} in {path}"
       }
     },
     "templates": {
