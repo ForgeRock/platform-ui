@@ -38,6 +38,20 @@ describe('Report Filter Modal component', () => {
             columnLabel: 'App ID',
             type: 'string',
             path: 'applications._id',
+          },
+          {
+            format: 'json',
+            label: 'JSON',
+            columnLabel: 'App json stub',
+            type: 'json',
+            path: 'applications.json',
+          },
+          {
+            format: 'json',
+            label: 'Array',
+            columnLabel: 'App array stub',
+            type: 'array',
+            path: 'applications.array',
           }],
         conditionOptions: {
           contains: {
@@ -107,6 +121,18 @@ describe('Report Filter Modal component', () => {
       // saves the form
       saveButton = findByText(wrapper, 'button', 'Save');
       expect(saveButton.attributes().disabled).toBeUndefined();
+    });
+
+    it('ensures that "json" and "array" data type options are not available for selection in the left value field', async () => {
+      const [, valueSelect] = wrapper.findAll('[role="listbox"]');
+
+      // should filter out the "json" and "array" data type options from the dataSourceColumns prop
+      const leftValueOptions = valueSelect.findAll('li[role="option"]');
+      expect(leftValueOptions.length).toBe(2);
+
+      const [nameOption, idOption] = leftValueOptions;
+      expect(nameOption.text()).toBe('applications.name');
+      expect(idOption.text()).toBe('applications._id');
     });
 
     it('ensures that a new rule is added when the plus button is clicked and removed when the minus button is clicked', async () => {

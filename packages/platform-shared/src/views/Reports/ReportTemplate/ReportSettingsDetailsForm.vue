@@ -139,7 +139,7 @@ const userNameOptions = ref([]);
 // The value prop on the multiselect field requires options to be resolved and include
 // a reference to all viewers first before being added, otherwise we run into a JS error.
 const viewers = computed(() => (
-  (userNameOptions.value.length >= props.value.viewers.length) ? props.value.viewers : []
+  (userNameOptions.value.length >= props.value.viewers?.length) ? props.value.viewers : []
 ));
 
 /**

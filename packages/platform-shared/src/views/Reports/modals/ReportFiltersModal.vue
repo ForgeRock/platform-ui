@@ -25,7 +25,7 @@ to such license between the licensee and ForgeRock AS. -->
       :max-depth="4"
       :index="0"
       :operator-options="operatorOptions"
-      :properties="dataSourceColumnsSorted"
+      :properties="dataSourceColumnsSortedAndFiltered"
       :property-select-label="$t('common.value')"
       :prefix-group-text="$t('queryFilterBuilder.includeWhen')"
       @add-rule="updateFilter('add-rule', $event)"
@@ -389,7 +389,8 @@ function hasEmptyValues(obj) {
 
 // Computed
 const disableSave = computed(() => hasEmptyValues(queryFilter.value));
-const dataSourceColumnsSorted = computed(() => props.dataSourceColumns
+const dataSourceColumnsSortedAndFiltered = computed(() => props.dataSourceColumns
+  .filter(({ type }) => type !== 'json' && type !== 'array')
   .map(({ path }) => ({ value: path, label: path }))
   .sort((a, b) => sortCompare(a, b, 'path')));
 
