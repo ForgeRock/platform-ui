@@ -1448,6 +1448,9 @@
           "required": {
             "label": "Required"
           },
+          "readOnly": {
+            "label": "Read Only"
+          },
           "provideDefaultValue": {
             "description": "Provide a default value for this property.",
             "label": "Provide Default Value",

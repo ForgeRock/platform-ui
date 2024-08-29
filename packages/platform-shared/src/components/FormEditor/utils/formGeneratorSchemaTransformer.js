@@ -4,6 +4,7 @@
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
 import { set } from 'lodash';
 import i18n from '@/i18n';
 
@@ -82,7 +83,7 @@ export function transformSchemaToFormGenerator(schema, readOnly = false, include
     // create field object with the properties required by the form generator component
     const field = {
       ...schemaField,
-      disabled: readOnly,
+      disabled: schemaField.readOnly || readOnly,
       type: getFormGeneratorType(schemaField.type),
       columnClass: getColumnClasses(schemaField.layout),
       label: getOptionalPropLabel(schemaField),

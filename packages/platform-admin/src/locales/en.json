@@ -4092,9 +4092,13 @@
         "emptyTitle": "You haven't added any fields yet",
         "emptySubtitle": "Drag fields into your form to get started."
       },
+      "objectVisualizer": {
+        "formValue": "Form Value"
+      },
       "actions": {
         "saveFormSuccessfully": "Form saved successfully",
-        "saveFormError": "There was an error saving the form"
+        "saveFormError": "There was an error saving the form",
+        "exitPreview": "Exit preview" 
       },
       "categories": {
         "customFields": "Custom Fields"
