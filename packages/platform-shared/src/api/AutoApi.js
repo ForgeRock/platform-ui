@@ -281,10 +281,26 @@ export function deleteAnalyticsReport(id, templateType) {
 /**
  * Duplicate report template
  *
- * @param {String} id template name
- * @param {String} templateType template status type (draft, published)
+ * @param {Object} payload template payload
  * @returns {Promise<Object>}
  */
-export function duplicateAnalyticsReport(id, templateType) {
-  return generateAutoAccessReports().post(`templates/${id}?_action=duplicate&templateType=${templateType}`);
+export function duplicateAnalyticsReport(payload) {
+  const {
+    description,
+    name,
+    originalReportName,
+    viewers,
+    status,
+  } = payload;
+
+  // We replace all spaces with dashes. This is a requirement of the backend.
+  const apiFormattedReportName = name.replaceAll(' ', '-').toUpperCase();
+
+  return generateAutoAccessReports().post(`templates/${originalReportName}?_action=duplicate&templateType=${status}`, {
+    reportTemplate: {
+      description,
+      name: apiFormattedReportName,
+      viewers,
+    },
+  });
 }

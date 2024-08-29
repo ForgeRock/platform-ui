@@ -19,6 +19,7 @@ store.state.SharedStore.autoCustomReportsEnabled = true;
 
 ValidationRules.extendRules({
   alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
+  unique: ValidationRules.getRules(i18n).unique,
 });
 
 jest.mock('vue-router', () => ({
@@ -65,7 +66,7 @@ describe('ReportsGrid', () => {
         reportConfig: {},
         owner: null,
         ootb: false,
-        type: 'publsihed',
+        type: 'published',
         createDate: '2010-10-10T10:10:10.123456789Z',
         updateDate: '2010-10-10T10:10:10.123456789Z',
       },
@@ -168,5 +169,15 @@ describe('ReportsGrid', () => {
 
     // Setting this property back to true so further tests do not fail unexpectedly
     store.state.SharedStore.autoCustomReportsEnabled = true;
+  });
+
+  it('opens the new report modal when the "Duplicate" button is clicked', async () => {
+    const wrapper = setup();
+    await flushPromises();
+
+    const showSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
+    const duplicateButton = findByText(wrapper, 'span', 'Duplicate');
+    await duplicateButton.trigger('click');
+    expect(showSpy).toHaveBeenCalledWith('new-report-modal');
   });
 });

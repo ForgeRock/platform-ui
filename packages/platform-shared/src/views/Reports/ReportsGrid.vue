@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
             :report="report"
             @to-template="toTemplate"
             @delete-template="confirmDeleteTemplate"
-            @duplicate-template="duplicateTemplate"
+            @open-duplicate-modal="openDuplicateModal"
             @edit-template="editTemplate"
             @publish-template="publishTemplate" />
         </BCol>
@@ -85,9 +85,13 @@ of the MIT license. See the LICENSE file for details. -->
       @delete-item="deleteTemplate(templateToDelete.name, templateToDelete.status)" />
     <FrNewReportModal
       v-if="store.state.SharedStore.autoCustomReportsEnabled && store.state.SharedStore.currentPackage === 'admin'"
-      :report-is-saving="saveReportPending"
       :is-testing="isTesting"
-      @new-report-save="handleNewReportSave" />
+      :report-data-for-duplication="reportBeingProcessed || {}"
+      :report-is-saving="saveReportPending || reportIsDuplicating"
+      :report-names="allReportNames"
+      @new-report-save="handleNewReportSave"
+      @duplicate-report="duplicateTemplate"
+      @hidden="reportBeingProcessed = {}" />
   </BContainer>
 </template>
 
@@ -95,7 +99,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
 * @description Shows and filter the list of the report templates.
 */
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   BButton,
   BButtonToolbar,
@@ -148,6 +152,7 @@ const loading = ref(true);
 const perPage = ref(6);
 const reports = ref([]);
 const reportBeingProcessed = ref({});
+const reportIsDuplicating = ref(false);
 const searchValue = ref('');
 const templateToDelete = ref({});
 
@@ -251,19 +256,33 @@ async function deleteTemplate(id, status) {
 
 /**
  * Duplicates a report template
- * @param {String} id template name
- * @param {String} status template status type (draft, published)
+ * @param {Object} payload - {originalReportName, name, description, viewers, status} values from New Report modal
  */
-async function duplicateTemplate(id, status) {
-  reportBeingProcessed.value = { id, status };
+async function duplicateTemplate(payload) {
+  reportIsDuplicating.value = true;
   try {
-    await duplicateAnalyticsReport(id, status);
+    await duplicateAnalyticsReport(payload);
+    retrieveReportTemplates();
     displayNotification('success', i18n.global.t('common.duplicateSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
   } catch (err) {
     showErrorMessage(err, i18n.global.t('reports.errorDuplicating'));
   }
-  retrieveReportTemplates();
-  reportBeingProcessed.value = {};
+  bvModal.value.hide('new-report-modal');
+  reportIsDuplicating.value = false;
+}
+
+/**
+ * Opens the duplicate report modal
+ * @param {Object} report report object
+ */
+function openDuplicateModal(report) {
+  reportBeingProcessed.value = {
+    id: report.name,
+    description: report.description,
+    status: report.type,
+    viewers: report.viewers,
+  };
+  bvModal.value.show('new-report-modal');
 }
 
 /**
@@ -297,7 +316,6 @@ function handleNewReportClick() {
 
 /**
  * Handles calling the API to create a new Report Template
- *
  * @param {Object} payload - Name, description, and viewers values from New Report modal
  */
 function handleNewReportSave(payload) {
@@ -321,6 +339,10 @@ async function publishTemplate(id, status) {
   reportBeingProcessed.value = {};
 }
 
+// Computed
+const allReportNames = computed(() => reports.value.map((report) => report.name));
+
+// Watchers
 watch(saveReportError, (newVal) => {
   showErrorMessage(newVal, i18n.global.t('reports.saveError'));
 });

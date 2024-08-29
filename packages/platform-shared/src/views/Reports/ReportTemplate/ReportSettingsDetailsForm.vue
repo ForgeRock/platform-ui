@@ -8,10 +8,10 @@ of the MIT license. See the LICENSE file for details. -->
       <FrField
         name="name-field"
         type="text"
-        validation="alpha_num_spaces"
         :disabled="!isNameEditable"
         :description="$t('reports.newReportModal.nameInputDescription')"
         :label="$t('common.name')"
+        :validation="validationRules"
         :validation-immediate="false"
         :value="props.value.name"
         @input="update('name', $event)" />
@@ -106,20 +106,7 @@ import { debounce } from 'lodash';
 import useManagedUsers from '../composables/ManagedUsers';
 import store from '@/store';
 
-const initialValues = ref(null);
-
 const emit = defineEmits(['input', 'search-change', 'valid-change']);
-const { meta } = useForm();
-
-const {
-  userOptionData,
-  userOptionError,
-  fetchManagedUsers,
-  isLoading,
-} = useManagedUsers(store.state.realm);
-
-const debounceFetchManagedUsers = debounce(fetchManagedUsers, 250, false);
-
 const props = defineProps({
   isNameEditable: {
     type: Boolean,
@@ -129,19 +116,30 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  reportNames: {
+    type: Array,
+    default: () => [],
+  },
   value: {
     type: Object,
     default: () => ({}),
   },
 });
 
-const userNameOptions = ref([]);
-// The value prop on the multiselect field requires options to be resolved and include
-// a reference to all viewers first before being added, otherwise we run into a JS error.
-const viewers = computed(() => (
-  (userNameOptions.value.length >= props.value.viewers?.length) ? props.value.viewers : []
-));
+// Composables
+const { meta } = useForm();
+const {
+  userOptionData,
+  userOptionError,
+  fetchManagedUsers,
+  isLoading,
+} = useManagedUsers(store.state.realm);
 
+// Globals
+const debounceFetchManagedUsers = debounce(fetchManagedUsers, 250, false);
+const userNameOptions = ref([]);
+
+// Methods
 /**
  * Fetches managed users based on the search query term passed from form field
  *
@@ -153,13 +151,6 @@ function handleSearchChange(searchQuery) {
   if (props.isTesting) {
     fetchManagedUsers(searchQuery);
   }
-}
-
-/**
- * Called when resetting the form to the initial value
- */
-function resetForm() {
-  emit('input', initialValues);
 }
 
 /**
@@ -189,20 +180,19 @@ function updateViewers(ids) {
   update('viewers', ids);
 }
 
-onMounted(() => {
-  initialValues.value = props.value;
+// Computed
+const vanityReportNames = computed(() => props.reportNames.map((name) => name.replace(/-/g, ' ').toLowerCase()));
+const validationRules = computed(() => ({
+  alpha_num_spaces: true,
+  ...(props.reportNames.length && { unique: vanityReportNames.value }),
+}));
+// The value prop on the multiselect field requires options to be resolved and include
+// a reference to all viewers first before being added, otherwise we run into a JS error.
+const viewers = computed(() => (
+  (userNameOptions.value.length >= props.value.viewers?.length) ? props.value.viewers : []
+));
 
-  /**
-   * Makes API calls for each viewer ID in order to retrieve username
-   */
-  const propViewers = props.value?.viewers;
-  const userPromises = [];
-  if (propViewers.length) {
-    propViewers.forEach((id) => { userPromises.push(fetchManagedUsers(id, true)); });
-    Promise.all(userPromises);
-  }
-});
-
+// Watchers
 /**
  * Emit the validity of form from Vee Validate
  */
@@ -228,7 +218,18 @@ watch(userOptionData, ([user]) => {
   }
 });
 
-defineExpose({ resetForm });
+// Start
+onMounted(() => {
+  /**
+   * Makes API calls for each viewer ID in order to retrieve username
+   */
+  const propViewers = props.value?.viewers;
+  const userPromises = [];
+  if (propViewers.length) {
+    propViewers.forEach((id) => { userPromises.push(fetchManagedUsers(id, true)); });
+    Promise.all(userPromises);
+  }
+});
 </script>
 
 <style lang="scss" scoped>

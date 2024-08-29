@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
             :divider="showCustomReport"
             :edit-option="showCustomReport"
             @delete-clicked.stop="$emit('delete-template', props.report.name, props.report.type)"
-            @duplicate-clicked.stop="$emit('duplicate-template', props.report.name, props.report.type)"
+            @duplicate-clicked.stop="$emit('open-duplicate-modal', props.report)"
             @edit-clicked.stop="$emit('edit-template', props.report.name, reportState)"
             wrapper-class="pr-2">
             <template #custom-top-actions>
@@ -145,7 +145,7 @@ const props = defineProps({
 const emit = defineEmits([
   'to-template',
   'delete-template',
-  'duplicate-template',
+  'open-duplicate-modal',
   'edit-template',
   'publish-template',
 ]);

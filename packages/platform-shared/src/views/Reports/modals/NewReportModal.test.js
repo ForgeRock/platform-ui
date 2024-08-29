@@ -8,12 +8,13 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { findByText, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
-import i18n from '@/i18n';
 import NewReportModal from './NewReportModal';
 import { mockAxios, testData as mockedApiReponse } from '../__mocks__/mocks';
+import i18n from '@/i18n';
 
 ValidationRules.extendRules({
   alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
+  unique: ValidationRules.getRules(i18n).unique,
 });
 
 describe('New Report Modal component', () => {
@@ -24,8 +25,6 @@ describe('New Report Modal component', () => {
       },
       props: {
         isTesting: true,
-        static: true,
-        visible: true,
         ...props,
       },
     });
@@ -80,7 +79,7 @@ describe('New Report Modal component', () => {
       expect(saveButton.attributes('disabled')).toBeUndefined();
     });
 
-    it('correctly emits the form data', async () => {
+    it('correctly emits the form data for a new report', async () => {
       const nameInputValue = 'test template name';
       const descriptionInputValue = 'test description';
 
@@ -115,6 +114,38 @@ describe('New Report Modal component', () => {
       expect(viewers).toStrictEqual([mockedApiReponse.data.result[3]._id]);
     });
 
+    it('correctly emits the form data for a duplicate report', async () => {
+      await wrapper.setProps({ reportDataForDuplication: { id: 'MY-REPORT' } });
+
+      const descriptionInputValue = 'test description';
+
+      // Set a value into the description input
+      await descriptionInput.setValue(descriptionInputValue);
+
+      // Open the dropdown
+      await multiselect.trigger('click');
+
+      // Add a value to the search input to trigger api request
+      searchInput.setValue('test');
+      await flushPromises();
+
+      // Select the 4th option
+      const options = multiselect.findAll('.multiselect__option');
+      const selectedOption = options[3];
+      await selectedOption.trigger('click');
+      await flushPromises();
+
+      // Click the save button
+      await saveButton.trigger('click');
+      await flushPromises();
+
+      // Check the emitted value
+      const [[{ description, name, viewers }]] = wrapper.emitted()['duplicate-report'];
+      expect(name).toBe('Copy of My Report');
+      expect(description).toBe(descriptionInputValue);
+      expect(viewers).toStrictEqual([mockedApiReponse.data.result[3]._id]);
+    });
+
     it('correctly resets the form data', async () => {
       const nameInputValue = 'test template name';
       const descriptionInputValue = 'test description';
@@ -138,6 +169,8 @@ describe('New Report Modal component', () => {
       await flushPromises();
 
       await cancelButton.trigger('click');
+      // Only way to trigger the @hidden <BModal> event hook
+      wrapper.vm.handleModalHide();
       await flushPromises();
 
       // Name & description are cleared
@@ -147,6 +180,65 @@ describe('New Report Modal component', () => {
       // Multiselect is cleared
       const option = findByText(multiselect, 'div', mockedApiReponse.data.result[3].userName);
       expect(option).toBeDefined();
+    });
+
+    it('ensures that the expected title and submit button text are displayed for a new report request', () => {
+      const title = findByText(wrapper, 'h2', 'New Report');
+      expect(title).toBeDefined();
+
+      const submitButton = findByText(wrapper, 'button', 'Next');
+      expect(submitButton).toBeDefined();
+    });
+
+    it('ensures that the expected title and submit button text are displayed for a duplicate report request', () => {
+      wrapper = setup({ reportDataForDuplication: { id: 'MY-REPORT' } });
+
+      const title = findByText(wrapper, 'h2', 'Duplicate Report');
+      expect(title).toBeDefined();
+
+      const submitButton = findByText(wrapper, 'button', 'Duplicate');
+      expect(submitButton).toBeDefined();
+    });
+
+    it('ensures that the report name field throws a validation error if a non-unique report name is input', async () => {
+      // Must setProps in order to trigger validation rules
+      await wrapper.setProps({ reportNames: ['MY-REPORT', 'ANOTHER-REPORT'] });
+
+      // Ensures that the validation error does not exist on load
+      let validationError = findByText(wrapper, 'p', 'Must be unique');
+      expect(validationError).toBeUndefined();
+
+      const nameInputValue = 'another report';
+      await nameInput.setValue(nameInputValue);
+      await flushPromises();
+
+      // Check the validation error
+      validationError = findByText(wrapper, 'p', 'Must be unique');
+      expect(validationError).toBeDefined();
+
+      // Ensures that the Next button is disabled
+      expect(saveButton.attributes('disabled')).toBeDefined();
+
+      // Changes the report name value to a unique name
+      await nameInput.setValue('unique report');
+      await flushPromises();
+
+      // Ensures that the validation error does not exist
+      validationError = findByText(wrapper, 'p', 'Must be unique');
+      expect(validationError).toBeUndefined();
+
+      // Ensures that the Next button enabled
+      expect(saveButton.attributes('disabled')).toBeUndefined();
+    });
+
+    it('ensures that the report name field is automatically populated with the report name, with a prepended "Copy of", when duplicating a report', async () => {
+      let nameInputValue = nameInput.element.value;
+      expect(nameInputValue).toBe('');
+
+      await wrapper.setProps({ reportDataForDuplication: { id: 'MY-REPORT', state: 'published' } });
+
+      nameInputValue = nameInput.element.value;
+      expect(nameInputValue).toBe('Copy of My Report');
     });
   });
 });

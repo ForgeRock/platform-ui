@@ -36,7 +36,7 @@ export default function useSaveReport() {
     const { description, name, viewers } = payload;
 
     // We replace all spaces with dashes. This is a requirement of the backend.
-    const normalName = name.replaceAll(' ', '-');
+    const normalName = name.replaceAll(' ', '-').toUpperCase();
 
     execute(0, normalName, {}, viewers, description);
   }

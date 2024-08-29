@@ -242,4 +242,18 @@ describe('Report Card', () => {
     expect(wrapper.emitted()['delete-template'][0][0]).toEqual(report.name);
     expect(wrapper.emitted()['delete-template'][0][1]).toEqual(report.type);
   });
+
+  it('emits the report object when the duplicate button is clicked', async () => {
+    wrapper = setup({
+      report: {
+        ...report,
+        ootb: false,
+      },
+    });
+
+    const menu = findByRole(wrapper, 'menu');
+    const duplicateButton = findByText(menu, 'a', 'control_point_duplicateDuplicate');
+    await duplicateButton.trigger('click');
+    expect(wrapper.emitted()['open-duplicate-modal'][0][0]).toEqual({ ...report, ootb: false });
+  });
 });
