@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
               <div class="form-row align-items-center">
                 <template v-for="(objValue, key) in obj">
                   <div
-                    v-if="key !== 'listUniqueIndex' && !properties[key].hidden"
+                    v-if="key !== 'listUniqueIndex' && properties[key] && !properties[key].hidden"
                     :key="key"
                     :class="fill ? 'col-lg-6' : 'col-lg-4'"
                     class="pb-2">
