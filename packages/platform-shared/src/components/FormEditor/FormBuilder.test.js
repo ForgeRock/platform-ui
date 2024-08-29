@@ -87,6 +87,7 @@ describe('FormBuilder', () => {
       props: {
         schema,
         'model-value': modelValue,
+        includeDefaults: true,
         ...propsData,
       },
     });
@@ -527,12 +528,11 @@ describe('FormBuilder', () => {
       {
         type: 'select',
         model: 'field1',
-        defaultValue: 'value1',
         label: 'Select 1',
         description: 'This is a select field',
         layout: { columns: 12, offset: 0 },
         options: [
-          { value: 'value1', label: 'Value 1' },
+          { value: 'value1', label: 'Value 1', selectedByDefault: true },
           { value: 'value2', label: 'Value 2' },
         ],
         validation: {
@@ -641,10 +641,9 @@ describe('FormBuilder', () => {
         model: 'field1',
         label: 'Multiselect 1',
         description: 'This is a multiselect field',
-        defaultValue: ['value1'],
         layout: { columns: 12, offset: 0 },
         options: [
-          { value: 'value1', label: 'Value 1' },
+          { value: 'value1', label: 'Value 1', selectedByDefault: true },
           { value: 'value2', label: 'Value 2' },
           { value: 'value3', label: 'Value 3' },
         ],

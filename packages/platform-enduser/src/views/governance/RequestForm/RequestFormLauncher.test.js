@@ -96,7 +96,7 @@ describe('RequestFormLauncher', () => {
     await flushPromises();
     await wrapper.find('[aria-label="Submit Request"]').trigger('click');
 
-    expect(submitSpy).toBeCalledWith('customRequestType', { common: {}, custom: {} });
+    expect(submitSpy).toBeCalledWith('customRequestType', { common: {}, custom: { testProperty1: '' } });
   });
 
   it('should submit a request with form data', async () => {

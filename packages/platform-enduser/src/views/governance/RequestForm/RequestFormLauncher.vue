@@ -34,10 +34,10 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
           <template v-else>
             <FrFormBuilder
-              @update:model-value="formValue = $event"
+              v-model:model-value="formValue"
+              :schema="form.form?.fields"
               @is-valid="isValid = $event"
-              :model-value="formValue"
-              :schema="form.form?.fields" />
+              include-defaults />
             <div class="d-flex justify-content-end">
               <FrButtonWithSpinner
                 :button-text="$t('governance.requestForm.submitRequest')"
@@ -73,6 +73,7 @@ import { getRequestForm } from '@forgerock/platform-shared/src/api/governance/Re
 import { getFormRequestTypes } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { getInitialModel } from '@forgerock/platform-shared/src/components/FormEditor/utils/formGeneratorSchemaTransformer';
 import i18n from '@/i18n';
 
 // composables
@@ -101,6 +102,7 @@ async function loadForm() {
   try {
     const { data: formDefinition } = await getRequestForm(formId);
     form.value = formDefinition;
+    formValue.value = getInitialModel(formDefinition.form?.fields, true);
 
     const { data: formAssignment } = await getFormRequestTypes(formId);
     if (formAssignment.result.length) {

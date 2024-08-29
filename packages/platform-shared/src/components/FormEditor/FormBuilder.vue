@@ -33,6 +33,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  includeDefaults: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'is-valid']);
@@ -41,7 +45,7 @@ const schemaFormGenerator = ref([]);
 const { meta } = useForm();
 
 watch(() => props.schema, (newVal) => {
-  schemaFormGenerator.value = transformSchemaToFormGenerator(newVal, props.readOnly);
+  schemaFormGenerator.value = transformSchemaToFormGenerator(newVal, props.readOnly, props.includeDefaults);
 }, { immediate: true });
 
 watch(meta, (newVal) => {
