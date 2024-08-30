@@ -1,0 +1,197 @@
+{
+  "meta": {
+    "origin": "https://openam-boring-ahhh.forgeblocks.com/platform/?realm=alpha#/journeys/QA-Google_Captcha_Login_Default",
+    "exportedBy": "carlos.vibancoo@pingidentity.com",
+    "exportDate": "2024-08-29T16:23:02.889Z",
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "QA-Google_Captcha_Login_Default"
+    ],
+    "innerTreesIncluded": []
+  },
+  "trees": {
+    "QA-Google_Captcha_Login_Default": {
+      "tree": {
+        "_id": "QA-Google_Captcha_Login_Default",
+        "_rev": "1632274539",
+        "identityResource": "managed/alpha_user",
+        "uiConfig": {
+          "categories": "[\"QA\"]"
+        },
+        "entryNodeId": "58d098a6-f224-4c74-a120-c207d7d2ebaf",
+        "innerTreeOnly": false,
+        "nodes": {
+          "a244b0da-aceb-43d2-9809-79e4ca6d8bfc": {
+            "x": 435,
+            "y": 95,
+            "connections": {
+              "false": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "nodeType": "DataStoreDecisionNode",
+            "displayName": "Data Store Decision"
+          },
+          "58d098a6-f224-4c74-a120-c207d7d2ebaf": {
+            "x": 136,
+            "y": 59,
+            "connections": {
+              "false": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "true": "a244b0da-aceb-43d2-9809-79e4ca6d8bfc"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 50,
+            "y": 25
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 1008,
+            "y": 186
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 812,
+            "y": 261
+          }
+        },
+        "description": "Google Captcha login",
+        "enabled": true
+      },
+      "nodes": {
+        "a244b0da-aceb-43d2-9809-79e4ca6d8bfc": {
+          "_id": "a244b0da-aceb-43d2-9809-79e4ca6d8bfc",
+          "_rev": "206292497",
+          "_type": {
+            "_id": "DataStoreDecisionNode",
+            "name": "Data Store Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "58d098a6-f224-4c74-a120-c207d7d2ebaf": {
+          "_id": "58d098a6-f224-4c74-a120-c207d7d2ebaf",
+          "_rev": "-653068291",
+          "nodes": [
+            {
+              "_id": "40bbcc74-96ad-4c3d-bc50-4776502af886",
+              "nodeType": "ValidatedUsernameNode",
+              "displayName": "Platform Username"
+            },
+            {
+              "_id": "11e2327d-d220-42f6-85f6-965cd514b329",
+              "nodeType": "ValidatedPasswordNode",
+              "displayName": "Platform Password"
+            },
+            {
+              "_id": "5b7952f6-dad2-491b-8585-589871dc44f6",
+              "nodeType": "product-CaptchaNode",
+              "displayName": "CAPTCHA"
+            }
+          ],
+          "pageDescription": {
+            "en": "New here? <a href=\"#/service/Registration\">Create an account</a><br><a href=\"#/service/ForgottenUsername\">Forgot username?</a><a href=\"#/service/ResetPassword\"> Forgot password?</a>"
+          },
+          "pageHeader": {
+            "en": "Sign In"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "40bbcc74-96ad-4c3d-bc50-4776502af886": {
+          "_id": "40bbcc74-96ad-4c3d-bc50-4776502af886",
+          "_rev": "-1227937977",
+          "usernameAttribute": "userName",
+          "validateInput": false,
+          "_type": {
+            "_id": "ValidatedUsernameNode",
+            "name": "Platform Username",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "11e2327d-d220-42f6-85f6-965cd514b329": {
+          "_id": "11e2327d-d220-42f6-85f6-965cd514b329",
+          "_rev": "-1162746129",
+          "passwordAttribute": "password",
+          "validateInput": false,
+          "_type": {
+            "_id": "ValidatedPasswordNode",
+            "name": "Platform Password",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "5b7952f6-dad2-491b-8585-589871dc44f6": {
+          "_id": "5b7952f6-dad2-491b-8585-589871dc44f6",
+          "_rev": "-1228817274",
+          "disableSubmission": true,
+          "apiUri": "https://www.google.com/recaptcha/api.js",
+          "divClass": "g-recaptcha",
+          "secretKey": "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe",
+          "scoreThreshold": "0.0",
+          "siteKey": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
+          "captchaUri": "https://www.google.com/recaptcha/api/siteverify",
+          "reCaptchaV3": false,
+          "_type": {
+            "_id": "product-CaptchaNode",
+            "name": "CAPTCHA",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}
