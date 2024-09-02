@@ -124,17 +124,22 @@ describe('DetailsTab', () => {
       form: {
         fields: [
           {
-            label: 'testLabel',
-            model: 'testModel',
-            name: 'test',
-            type: 'string',
-            layout: {
-              offset: 0,
-              columns: 12,
-            },
-            validation: {
-              required: true,
-            },
+            id: 'rowid',
+            fields: [
+              {
+                label: 'testLabel',
+                model: 'testModel',
+                name: 'test',
+                type: 'string',
+                layout: {
+                  offset: 0,
+                  columns: 12,
+                },
+                validation: {
+                  required: true,
+                },
+              },
+            ],
           },
         ],
       },
@@ -281,7 +286,7 @@ describe('DetailsTab', () => {
 
       const wrapper = setup({ isApproval: true, ...formItem });
       await flushPromises();
-      await wrapper.findComponent('#testLabel').vm.$emit('input', 'a custom value');
+      await wrapper.find('input[name="testLabel"]').setValue('a custom value');
       await wrapper.find('button.btn-primary').trigger('click');
 
       const expectedPayload = {

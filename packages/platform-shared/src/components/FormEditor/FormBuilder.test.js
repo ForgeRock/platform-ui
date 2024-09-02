@@ -17,67 +17,87 @@ ValidationRules.extendRules({
 describe('FormBuilder', () => {
   function setup(modelValue = {}, schema = [
     {
-      type: 'string',
-      model: 'field1',
-      label: 'Field 1',
-      layout: { columns: 6, offset: 0 },
-      validation: {
-        required: true,
-      },
+      id: 'row1',
+      fields: [
+        {
+          type: 'string',
+          model: 'field1',
+          label: 'Field 1',
+          layout: { columns: 6, offset: 0 },
+          validation: {
+            required: true,
+          },
+        },
+        {
+          type: 'string',
+          model: 'field2',
+          label: 'Field 2',
+          layout: { columns: 6, offset: 0 },
+          validation: {
+            required: true,
+          },
+        },
+      ],
     },
     {
-      type: 'string',
-      model: 'field2',
-      label: 'Field 2',
-      layout: { columns: 6, offset: 0 },
-      validation: {
-        required: true,
-      },
+      id: 'row2',
+      fields: [
+        {
+          type: 'string',
+          model: 'field3',
+          label: 'Field 3',
+          layout: { columns: 4, offset: 0 },
+          validation: {
+            required: true,
+          },
+        },
+        {
+          type: 'string',
+          model: 'field4',
+          label: 'Field 4',
+          layout: { columns: 4, offset: 0 },
+          validation: {
+            required: true,
+          },
+        },
+        {
+          type: 'string',
+          model: 'field5',
+          label: 'Field 5',
+          layout: { columns: 4, offset: 0 },
+          validation: {
+            required: true,
+          },
+        },
+      ],
     },
     {
-      type: 'string',
-      model: 'field3',
-      label: 'Field 3',
-      layout: { columns: 4, offset: 0 },
-      validation: {
-        required: true,
-      },
+      id: 'row3',
+      fields: [
+        {
+          type: 'string',
+          model: 'field6',
+          label: 'Field 6',
+          layout: { columns: 4, offset: 0 },
+          validation: {
+            required: true,
+          },
+        },
+      ],
     },
     {
-      type: 'string',
-      model: 'field4',
-      label: 'Field 4',
-      layout: { columns: 4, offset: 0 },
-      validation: {
-        required: true,
-      },
-    },
-    {
-      type: 'string',
-      model: 'field5',
-      label: 'Field 5',
-      layout: { columns: 4, offset: 0 },
-      validation: {
-        required: true,
-      },
-    },
-    {
-      type: 'string',
-      model: 'field6',
-      label: 'Field 6',
-      layout: { columns: 4, offset: 0 },
-      validation: {
-        required: true,
-      },
-    },
-    {
-      type: 'string',
-      model: 'field7',
-      label: 'Field 7',
-      layout: { columns: 12, offset: 0 },
-      validation: {
-        required: true,
-      },
+      id: 'row4',
+      fields: [
+        {
+          type: 'string',
+          model: 'field7',
+          label: 'Field 7',
+          layout: { columns: 12, offset: 0 },
+          validation: {
+            required: true,
+          },
+        },
+      ],
     },
   ], propsData) {
     return mount(FormBuilder, {
@@ -215,10 +235,15 @@ describe('FormBuilder', () => {
   it('should emit is-valid event properly', async () => {
     const wrapper = setup({}, [
       {
-        type: 'string',
-        model: 'field1',
-        validation: { required: true },
-        layout: { columns: 12 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            validation: { required: true },
+            layout: { columns: 12 },
+          },
+        ],
       },
     ]);
 
@@ -242,15 +267,20 @@ describe('FormBuilder', () => {
   it('should render correctly a text input', async () => {
     const wrapper = setup({}, [
       {
-        type: 'string',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Text 1',
-        description: 'This is a text field',
-        layout: { columns: 12, offset: 0 },
-        validation: {
-          required: true,
-        },
+        id: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Text 1',
+            description: 'This is a text field',
+            layout: { columns: 12, offset: 0 },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ]);
 
@@ -278,15 +308,20 @@ describe('FormBuilder', () => {
       field1: 'Field 1 value',
     }, [
       {
-        type: 'string',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Text 1',
-        description: 'This is a text field',
-        layout: { columns: 12, offset: 0 },
-        validation: {
-          required: true,
-        },
+        rowId: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Text 1',
+            description: 'This is a text field',
+            layout: { columns: 12, offset: 0 },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ]);
 
@@ -312,12 +347,17 @@ describe('FormBuilder', () => {
   it('should update correctly the model value when the input changes', async () => {
     const wrapper = setup({}, [
       {
-        type: 'string',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Text 1',
-        description: 'This is a text field',
-        layout: { columns: 12, offset: 0 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Text 1',
+            description: 'This is a text field',
+            layout: { columns: 12, offset: 0 },
+          },
+        ],
       },
     ]);
 
@@ -338,15 +378,20 @@ describe('FormBuilder', () => {
   it('should render correctly a textarea', async () => {
     const wrapper = setup({}, [
       {
-        type: 'textarea',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Textarea 1',
-        description: 'This is a textarea field',
-        layout: { columns: 12, offset: 0 },
-        validation: {
-          required: true,
-        },
+        id: 'row1',
+        fields: [
+          {
+            type: 'textarea',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Textarea 1',
+            description: 'This is a textarea field',
+            layout: { columns: 12, offset: 0 },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ]);
 
@@ -373,15 +418,20 @@ describe('FormBuilder', () => {
       field1: 'Field 1 value',
     }, [
       {
-        type: 'textarea',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Textarea 1',
-        description: 'This is a textarea field',
-        layout: { columns: 12, offset: 0 },
-        validation: {
-          required: true,
-        },
+        id: 'row1',
+        fields: [
+          {
+            type: 'textarea',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Textarea 1',
+            description: 'This is a textarea field',
+            layout: { columns: 12, offset: 0 },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ]);
 
@@ -406,12 +456,17 @@ describe('FormBuilder', () => {
   it('should update correctly the model value when the textarea changes', async () => {
     const wrapper = setup({}, [
       {
-        type: 'textarea',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Textarea 1',
-        description: 'This is a textarea field',
-        layout: { columns: 12, offset: 0 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'textarea',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Textarea 1',
+            description: 'This is a textarea field',
+            layout: { columns: 12, offset: 0 },
+          },
+        ],
       },
     ]);
 
@@ -432,15 +487,20 @@ describe('FormBuilder', () => {
   it('should render correctly a checkbox', async () => {
     const wrapper = setup({}, [
       {
-        type: 'checkbox',
-        model: 'field1',
-        defaultValue: true,
-        label: 'Checkbox 1',
-        description: 'This is a checkbox field',
-        layout: { columns: 12, offset: 0 },
-        validation: {
-          required: true,
-        },
+        id: 'row1',
+        fields: [
+          {
+            type: 'checkbox',
+            model: 'field1',
+            defaultValue: true,
+            label: 'Checkbox 1',
+            description: 'This is a checkbox field',
+            layout: { columns: 12, offset: 0 },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ]);
 
@@ -467,15 +527,20 @@ describe('FormBuilder', () => {
       field1: false,
     }, [
       {
-        type: 'checkbox',
-        model: 'field1',
-        defaultValue: true,
-        label: 'Checkbox 1',
-        description: 'This is a checkbox field',
-        layout: { columns: 12, offset: 0 },
-        validation: {
-          required: true,
-        },
+        id: 'row1',
+        fields: [
+          {
+            type: 'checkbox',
+            model: 'field1',
+            defaultValue: true,
+            label: 'Checkbox 1',
+            description: 'This is a checkbox field',
+            layout: { columns: 12, offset: 0 },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ]);
 
@@ -500,12 +565,17 @@ describe('FormBuilder', () => {
   it('should update correctly the model value when the checkbox changes', async () => {
     const wrapper = setup({}, [
       {
-        type: 'checkbox',
-        model: 'field1',
-        defaultValue: true,
-        label: 'Checkbox 1',
-        description: 'This is a checkbox field',
-        layout: { columns: 12, offset: 0 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'checkbox',
+            model: 'field1',
+            defaultValue: true,
+            label: 'Checkbox 1',
+            description: 'This is a checkbox field',
+            layout: { columns: 12, offset: 0 },
+          },
+        ],
       },
     ]);
 
@@ -526,18 +596,24 @@ describe('FormBuilder', () => {
   it('should render correctly a select', async () => {
     const wrapper = setup({}, [
       {
-        type: 'select',
-        model: 'field1',
-        label: 'Select 1',
-        description: 'This is a select field',
-        layout: { columns: 12, offset: 0 },
-        options: [
-          { value: 'value1', label: 'Value 1', selectedByDefault: true },
-          { value: 'value2', label: 'Value 2' },
+        id: 'row1',
+        fields: [
+          {
+            type: 'select',
+            model: 'field1',
+            defaultValue: 'value1',
+            label: 'Select 1',
+            description: 'This is a select field',
+            layout: { columns: 12, offset: 0 },
+            options: [
+              { value: 'value1', label: 'Value 1', selectedByDefault: true },
+              { value: 'value2', label: 'Value 2' },
+            ],
+            validation: {
+              required: true,
+            },
+          },
         ],
-        validation: {
-          required: true,
-        },
       },
     ]);
 
@@ -568,19 +644,24 @@ describe('FormBuilder', () => {
       field1: 'value2',
     }, [
       {
-        type: 'select',
-        model: 'field1',
-        defaultValue: 'value1',
-        label: 'Select 1',
-        description: 'This is a select field',
-        layout: { columns: 12, offset: 0 },
-        options: [
-          { value: 'value1', label: 'Value 1' },
-          { value: 'value2', label: 'Value 2' },
+        id: 'row1',
+        fields: [
+          {
+            type: 'select',
+            model: 'field1',
+            defaultValue: 'value1',
+            label: 'Select 1',
+            description: 'This is a select field',
+            layout: { columns: 12, offset: 0 },
+            options: [
+              { value: 'value1', label: 'Value 1' },
+              { value: 'value2', label: 'Value 2' },
+            ],
+            validation: {
+              required: true,
+            },
+          },
         ],
-        validation: {
-          required: true,
-        },
       },
     ]);
 
@@ -609,15 +690,20 @@ describe('FormBuilder', () => {
   it('should update correctly the model value when the select changes', async () => {
     const wrapper = setup({}, [
       {
-        type: 'select',
-        model: 'field1',
-        defaultValue: 'value1',
-        label: 'Select 1',
-        description: 'This is a select field',
-        layout: { columns: 12, offset: 0 },
-        options: [
-          { value: 'value1', label: 'Value 1' },
-          { value: 'value2', label: 'Value 2' },
+        id: 'row1',
+        fields: [
+          {
+            type: 'select',
+            model: 'field1',
+            defaultValue: 'value1',
+            label: 'Select 1',
+            description: 'This is a select field',
+            layout: { columns: 12, offset: 0 },
+            options: [
+              { value: 'value1', label: 'Value 1' },
+              { value: 'value2', label: 'Value 2' },
+            ],
+          },
         ],
       },
     ]);
@@ -637,19 +723,25 @@ describe('FormBuilder', () => {
   it('should render correctly a multiselect', async () => {
     const wrapper = setup({}, [
       {
-        type: 'multiselect',
-        model: 'field1',
-        label: 'Multiselect 1',
-        description: 'This is a multiselect field',
-        layout: { columns: 12, offset: 0 },
-        options: [
-          { value: 'value1', label: 'Value 1', selectedByDefault: true },
-          { value: 'value2', label: 'Value 2' },
-          { value: 'value3', label: 'Value 3' },
+        id: 'row1',
+        fields: [
+          {
+            type: 'multiselect',
+            model: 'field1',
+            label: 'Multiselect 1',
+            description: 'This is a multiselect field',
+            defaultValue: ['value1'],
+            layout: { columns: 12, offset: 0 },
+            options: [
+              { value: 'value1', label: 'Value 1', selectedByDefault: true },
+              { value: 'value2', label: 'Value 2' },
+              { value: 'value3', label: 'Value 3' },
+            ],
+            validation: {
+              required: true,
+            },
+          },
         ],
-        validation: {
-          required: true,
-        },
       },
     ]);
 
@@ -681,20 +773,25 @@ describe('FormBuilder', () => {
       field1: ['value2'],
     }, [
       {
-        type: 'multiselect',
-        model: 'field1',
-        label: 'Multiselect 1',
-        description: 'This is a multiselect field',
-        defaultValue: ['value1'],
-        layout: { columns: 12, offset: 0 },
-        options: [
-          { value: 'value1', label: 'Value 1' },
-          { value: 'value2', label: 'Value 2' },
-          { value: 'value3', label: 'Value 3' },
+        id: 'row1',
+        fields: [
+          {
+            type: 'multiselect',
+            model: 'field1',
+            label: 'Multiselect 1',
+            description: 'This is a multiselect field',
+            defaultValue: ['value1'],
+            layout: { columns: 12, offset: 0 },
+            options: [
+              { value: 'value1', label: 'Value 1' },
+              { value: 'value2', label: 'Value 2' },
+              { value: 'value3', label: 'Value 3' },
+            ],
+            validation: {
+              required: true,
+            },
+          },
         ],
-        validation: {
-          required: true,
-        },
       },
     ]);
 
@@ -724,16 +821,21 @@ describe('FormBuilder', () => {
   it('should update correctly the model value when the multiselect changes', async () => {
     const wrapper = setup({}, [
       {
-        type: 'multiselect',
-        model: 'field1',
-        label: 'Multiselect 1',
-        description: 'This is a multiselect field',
-        defaultValue: ['value1'],
-        layout: { columns: 12, offset: 0 },
-        options: [
-          { value: 'value1', label: 'Value 1' },
-          { value: 'value2', label: 'Value 2' },
-          { value: 'value3', label: 'Value 3' },
+        id: 'row1',
+        fields: [
+          {
+            type: 'multiselect',
+            model: 'field1',
+            label: 'Multiselect 1',
+            description: 'This is a multiselect field',
+            defaultValue: ['value1'],
+            layout: { columns: 12, offset: 0 },
+            options: [
+              { value: 'value1', label: 'Value 1' },
+              { value: 'value2', label: 'Value 2' },
+              { value: 'value3', label: 'Value 3' },
+            ],
+          },
         ],
       },
     ]);
@@ -753,15 +855,20 @@ describe('FormBuilder', () => {
   it('should render correctly a date', async () => {
     const wrapper = setup({}, [
       {
-        type: 'date',
-        model: 'field1',
-        defaultValue: '2021-01-01',
-        label: 'Date 1',
-        description: 'This is a date field',
-        layout: { columns: 12, offset: 0 },
-        validation: {
-          required: true,
-        },
+        id: 'row1',
+        fields: [
+          {
+            type: 'date',
+            model: 'field1',
+            defaultValue: '2021-01-01',
+            label: 'Date 1',
+            description: 'This is a date field',
+            layout: { columns: 12, offset: 0 },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ]);
 
@@ -789,15 +896,20 @@ describe('FormBuilder', () => {
       field1: '2024-01-01',
     }, [
       {
-        type: 'date',
-        model: 'field1',
-        defaultValue: '2021-01-01',
-        label: 'Date 1',
-        description: 'This is a date field',
-        layout: { columns: 12, offset: 0 },
-        validation: {
-          required: true,
-        },
+        id: 'row1',
+        fields: [
+          {
+            type: 'date',
+            model: 'field1',
+            defaultValue: '2021-01-01',
+            label: 'Date 1',
+            description: 'This is a date field',
+            layout: { columns: 12, offset: 0 },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ]);
 
@@ -823,12 +935,17 @@ describe('FormBuilder', () => {
   it('should update correctly the model value when the date changes', async () => {
     const wrapper = setup({}, [
       {
-        type: 'date',
-        model: 'field1',
-        defaultValue: '2021-01-01',
-        label: 'Date 1',
-        description: 'This is a date field',
-        layout: { columns: 12, offset: 0 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'date',
+            model: 'field1',
+            defaultValue: '2021-01-01',
+            label: 'Date 1',
+            description: 'This is a date field',
+            layout: { columns: 12, offset: 0 },
+          },
+        ],
       },
     ]);
 
@@ -849,20 +966,25 @@ describe('FormBuilder', () => {
   it('should render properly a row with two fields with offset', async () => {
     const wrapper = setup({}, [
       {
-        type: 'string',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Text 1',
-        description: 'This is a text field',
-        layout: { columns: 6, offset: 0 },
-      },
-      {
-        type: 'string',
-        model: 'field2',
-        defaultValue: 'Field 2 default value',
-        label: 'Text 2',
-        description: 'This is a text field',
-        layout: { columns: 4, offset: 2 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Text 1',
+            description: 'This is a text field',
+            layout: { columns: 6, offset: 0 },
+          },
+          {
+            type: 'string',
+            model: 'field2',
+            defaultValue: 'Field 2 default value',
+            label: 'Text 2',
+            description: 'This is a text field',
+            layout: { columns: 4, offset: 2 },
+          },
+        ],
       },
     ]);
 
@@ -880,20 +1002,30 @@ describe('FormBuilder', () => {
   it('should render properly two fields because one field is too big for a single row', async () => {
     const wrapper = setup({}, [
       {
-        type: 'string',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Text 1',
-        description: 'This is a text field',
-        layout: { columns: 6, offset: 0 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Text 1',
+            description: 'This is a text field',
+            layout: { columns: 6, offset: 0 },
+          },
+        ],
       },
       {
-        type: 'string',
-        model: 'field2',
-        defaultValue: 'Field 2 default value',
-        label: 'Text 2',
-        description: 'This is a text field',
-        layout: { columns: 12, offset: 0 },
+        id: 'row2',
+        fields: [
+          {
+            type: 'string',
+            model: 'field2',
+            defaultValue: 'Field 2 default value',
+            label: 'Text 2',
+            description: 'This is a text field',
+            layout: { columns: 12, offset: 0 },
+          },
+        ],
       },
     ]);
 
@@ -914,12 +1046,17 @@ describe('FormBuilder', () => {
   it('should react to schema changes', async () => {
     const wrapper = setup({}, [
       {
-        type: 'string',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Text 1',
-        description: 'This is a text field',
-        layout: { columns: 12, offset: 0 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Text 1',
+            description: 'This is a text field',
+            layout: { columns: 12, offset: 0 },
+          },
+        ],
       },
     ]);
 
@@ -931,20 +1068,30 @@ describe('FormBuilder', () => {
     wrapper.setProps({
       schema: [
         {
-          type: 'string',
-          model: 'field1',
-          defaultValue: 'Field 1 default value',
-          label: 'Text 1',
-          description: 'This is a text field',
-          layout: { columns: 12, offset: 0 },
+          id: 'row1',
+          fields: [
+            {
+              type: 'string',
+              model: 'field1',
+              defaultValue: 'Field 1 default value',
+              label: 'Text 1',
+              description: 'This is a text field',
+              layout: { columns: 12, offset: 0 },
+            },
+          ],
         },
         {
-          type: 'string',
-          model: 'field2',
-          defaultValue: 'Field 2 default value',
-          label: 'Text 2',
-          description: 'This is a text field',
-          layout: { columns: 12, offset: 0 },
+          id: 'row2',
+          fields: [
+            {
+              type: 'string',
+              model: 'field2',
+              defaultValue: 'Field 2 default value',
+              label: 'Text 2',
+              description: 'This is a text field',
+              layout: { columns: 12, offset: 0 },
+            },
+          ],
         },
       ],
     });
@@ -960,12 +1107,17 @@ describe('FormBuilder', () => {
       field1: 'Field 1 value',
     }, [
       {
-        type: 'string',
-        model: 'field1',
-        defaultValue: 'Field 1 default value',
-        label: 'Text 1',
-        description: 'This is a text field',
-        layout: { columns: 12, offset: 0 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            defaultValue: 'Field 1 default value',
+            label: 'Text 1',
+            description: 'This is a text field',
+            layout: { columns: 12, offset: 0 },
+          },
+        ],
       },
     ]);
 
@@ -991,11 +1143,16 @@ describe('FormBuilder', () => {
   it('should disable form fields when readOnly prop is true', async () => {
     const wrapper = setup({}, [
       {
-        type: 'string',
-        model: 'field1',
-        label: 'Text 1',
-        description: 'This is a text field',
-        layout: { columns: 12, offset: 0 },
+        id: 'row1',
+        fields: [
+          {
+            type: 'string',
+            model: 'field1',
+            label: 'Text 1',
+            description: 'This is a text field',
+            layout: { columns: 12, offset: 0 },
+          },
+        ],
       },
     ], {
       readOnly: true,

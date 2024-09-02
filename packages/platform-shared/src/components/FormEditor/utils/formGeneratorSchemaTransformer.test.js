@@ -11,127 +11,147 @@ describe('formGeneratorSchemaTransformer', () => {
   it('should transform form editor schema to form generator schema', () => {
     const schema = [
       {
-        type: 'text',
-        model: 'field1',
-        label: 'Field 1',
-        description: 'Field 1 description',
-        defaultValue: 'Field 1 default value',
-        layout: {
-          columns: 6,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
-      },
-      {
-        type: 'textarea',
-        model: 'field2',
-        label: 'Field 2',
-        description: 'Field 2 description',
-        defaultValue: 'Field 2 default value',
-        layout: {
-          columns: 6,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
-      },
-      {
-        type: 'checkbox',
-        model: 'field3',
-        label: 'Field 3',
-        description: 'Field 3 description',
-        defaultValue: true,
-        layout: {
-          columns: 4,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
-      },
-      {
-        type: 'select',
-        model: 'field4',
-        label: 'Field 4',
-        description: 'Field 4 description',
-        options: [
+        id: 'row1',
+        fields: [
           {
-            label: 'Option 1',
-            value: 'option1',
-            selectedByDefault: true,
+            type: 'text',
+            model: 'field1',
+            label: 'Field 1',
+            description: 'Field 1 description',
+            defaultValue: 'Field 1 default value',
+            layout: {
+              columns: 6,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
           },
           {
-            label: 'Option 2',
-            value: 'option2',
+            type: 'textarea',
+            model: 'field2',
+            label: 'Field 2',
+            description: 'Field 2 description',
+            defaultValue: 'Field 2 default value',
+            layout: {
+              columns: 6,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
           },
         ],
-        defaultValue: 'option1',
-        layout: {
-          columns: 4,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
       },
       {
-        type: 'multiselect',
-        model: 'field5',
-        label: 'Field 5',
-        description: 'Field 5 description',
-        layout: {
-          columns: 4,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
-        options: [
+        id: 'row2',
+        fields: [
           {
-            label: 'Option 1',
-            value: 'option1',
-            selectedByDefault: true,
+            type: 'checkbox',
+            model: 'field3',
+            label: 'Field 3',
+            description: 'Field 3 description',
+            defaultValue: true,
+            layout: {
+              columns: 4,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
           },
           {
-            label: 'Option 2',
-            value: 'option2',
+            type: 'select',
+            model: 'field4',
+            label: 'Field 4',
+            description: 'Field 4 description',
+            options: [
+              {
+                label: 'Option 1',
+                value: 'option1',
+                selectedByDefault: true,
+              },
+              {
+                label: 'Option 2',
+                value: 'option2',
+              },
+            ],
+            defaultValue: 'option1',
+            layout: {
+              columns: 4,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
           },
           {
-            label: 'Option 3',
-            value: 'option3',
+            type: 'multiselect',
+            model: 'field5',
+            label: 'Field 5',
+            description: 'Field 5 description',
+            layout: {
+              columns: 4,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
+            options: [
+              {
+                label: 'Option 1',
+                value: 'option1',
+                selectedByDefault: true,
+              },
+              {
+                label: 'Option 2',
+                value: 'option2',
+              },
+              {
+                label: 'Option 3',
+                value: 'option3',
+              },
+            ],
+            defaultValue: ['option1'],
           },
         ],
-        defaultValue: ['option1'],
       },
       {
-        type: 'date',
-        model: 'field6',
-        label: 'Field 6',
-        description: 'Field 6 description',
-        defaultValue: '2024-01-01',
-        layout: {
-          columns: 4,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
+        id: 'row3',
+        fields: [
+          {
+            type: 'date',
+            model: 'field6',
+            label: 'Field 6',
+            description: 'Field 6 description',
+            defaultValue: '2024-01-01',
+            layout: {
+              columns: 4,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
       {
-        type: 'text',
-        model: 'field7',
-        label: 'Field 7',
-        description: 'Field 7 description',
-        layout: {
-          columns: 12,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
+        id: 'row4',
+        fields: [
+          {
+            type: 'text',
+            model: 'field7',
+            label: 'Field 7',
+            description: 'Field 7 description',
+            layout: {
+              columns: 12,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ];
     const expected = [
@@ -286,127 +306,147 @@ describe('formGeneratorSchemaTransformer', () => {
   it('should transform form editor schema to form generator schema without defaults when include defaults is false', () => {
     const schema = [
       {
-        type: 'text',
-        model: 'field1',
-        label: 'Field 1',
-        description: 'Field 1 description',
-        defaultValue: 'Field 1 default value',
-        layout: {
-          columns: 6,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
-      },
-      {
-        type: 'textarea',
-        model: 'field2',
-        label: 'Field 2',
-        description: 'Field 2 description',
-        defaultValue: 'Field 2 default value',
-        layout: {
-          columns: 6,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
-      },
-      {
-        type: 'checkbox',
-        model: 'field3',
-        label: 'Field 3',
-        description: 'Field 3 description',
-        defaultValue: true,
-        layout: {
-          columns: 4,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
-      },
-      {
-        type: 'select',
-        model: 'field4',
-        label: 'Field 4',
-        description: 'Field 4 description',
-        options: [
+        id: 'row1',
+        fields: [
           {
-            label: 'Option 1',
-            value: 'option1',
-            selectedByDefault: true,
+            type: 'text',
+            model: 'field1',
+            label: 'Field 1',
+            description: 'Field 1 description',
+            defaultValue: 'Field 1 default value',
+            layout: {
+              columns: 6,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
           },
           {
-            label: 'Option 2',
-            value: 'option2',
+            type: 'textarea',
+            model: 'field2',
+            label: 'Field 2',
+            description: 'Field 2 description',
+            defaultValue: 'Field 2 default value',
+            layout: {
+              columns: 6,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
           },
         ],
-        defaultValue: 'option1',
-        layout: {
-          columns: 4,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
       },
       {
-        type: 'multiselect',
-        model: 'field5',
-        label: 'Field 5',
-        description: 'Field 5 description',
-        layout: {
-          columns: 4,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
-        options: [
+        id: 'row2',
+        fields: [
           {
-            label: 'Option 1',
-            value: 'option1',
-            selectedByDefault: true,
+            type: 'checkbox',
+            model: 'field3',
+            label: 'Field 3',
+            description: 'Field 3 description',
+            defaultValue: true,
+            layout: {
+              columns: 4,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
           },
           {
-            label: 'Option 2',
-            value: 'option2',
+            type: 'select',
+            model: 'field4',
+            label: 'Field 4',
+            description: 'Field 4 description',
+            options: [
+              {
+                label: 'Option 1',
+                value: 'option1',
+                selectedByDefault: true,
+              },
+              {
+                label: 'Option 2',
+                value: 'option2',
+              },
+            ],
+            defaultValue: 'option1',
+            layout: {
+              columns: 4,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
           },
           {
-            label: 'Option 3',
-            value: 'option3',
+            type: 'multiselect',
+            model: 'field5',
+            label: 'Field 5',
+            description: 'Field 5 description',
+            layout: {
+              columns: 4,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
+            options: [
+              {
+                label: 'Option 1',
+                value: 'option1',
+                selectedByDefault: true,
+              },
+              {
+                label: 'Option 2',
+                value: 'option2',
+              },
+              {
+                label: 'Option 3',
+                value: 'option3',
+              },
+            ],
+            defaultValue: ['option1'],
           },
         ],
-        defaultValue: ['option1'],
       },
       {
-        type: 'date',
-        model: 'field6',
-        label: 'Field 6',
-        description: 'Field 6 description',
-        defaultValue: '2024-01-01',
-        layout: {
-          columns: 4,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
+        id: 'row3',
+        fields: [
+          {
+            type: 'date',
+            model: 'field6',
+            label: 'Field 6',
+            description: 'Field 6 description',
+            defaultValue: '2024-01-01',
+            layout: {
+              columns: 4,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
       {
-        type: 'text',
-        model: 'field7',
-        label: 'Field 7',
-        description: 'Field 7 description',
-        layout: {
-          columns: 12,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
+        id: 'row4',
+        fields: [
+          {
+            type: 'text',
+            model: 'field7',
+            label: 'Field 7',
+            description: 'Field 7 description',
+            layout: {
+              columns: 12,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ];
     const expected = [
@@ -556,40 +596,55 @@ describe('formGeneratorSchemaTransformer', () => {
   it('creates disabled fields when readOnly prop is true', () => {
     const schema = [
       {
-        label: 'Field 1',
-        model: 'field1',
-        type: 'string',
-        layout: {
-          columns: 12,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
+        id: 'row1',
+        fields: [
+          {
+            label: 'Field 1',
+            model: 'field1',
+            type: 'string',
+            layout: {
+              columns: 12,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
       {
-        label: 'Field 3',
-        model: 'field3',
-        type: 'boolean',
-        layout: {
-          columns: 12,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
+        id: 'row2',
+        fields: [
+          {
+            label: 'Field 3',
+            model: 'field3',
+            type: 'boolean',
+            layout: {
+              columns: 12,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
       {
-        label: 'Field 4',
-        model: 'field4',
-        type: 'string',
-        layout: {
-          columns: 12,
-          offset: 0,
-        },
-        validation: {
-          required: true,
-        },
+        id: 'row3',
+        fields: [
+          {
+            label: 'Field 4',
+            model: 'field4',
+            type: 'string',
+            layout: {
+              columns: 12,
+              offset: 0,
+            },
+            validation: {
+              required: true,
+            },
+          },
+        ],
       },
     ];
 
@@ -651,13 +706,18 @@ describe('formGeneratorSchemaTransformer', () => {
   it('should add optional labels to optional properties', () => {
     const schema = [
       {
-        label: 'Field 1',
-        model: 'field1',
-        type: 'string',
-        layout: {
-          columns: 12,
-          offset: 0,
-        },
+        id: 'row1',
+        fields: [
+          {
+            label: 'Field 1',
+            model: 'field1',
+            type: 'string',
+            layout: {
+              columns: 12,
+              offset: 0,
+            },
+          },
+        ],
       },
     ];
 

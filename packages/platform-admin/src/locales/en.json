@@ -4170,6 +4170,10 @@
           "description": "Select input to accept a single string from a list of enumerated values.",
           "name": "Select"
         },
+        "string": {
+          "description": "Textfield input to accept a single string.",
+          "name": "Text"
+        },
         "text": {
           "description": "Textfield input to accept a single string.",
           "name": "Text"

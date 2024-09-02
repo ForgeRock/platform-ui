@@ -65,6 +65,6 @@ defineEmits(['toggle-sidebar-left']);
 .fr-toolbar {
   background-color: $white;
   min-height: 83px;
-  z-index: 1;
+  z-index: 10;
 }
 </style>

@@ -231,6 +231,8 @@ export function getRules(i18n) {
   // start or end with .
   const secret_label_identifier = (value) => /^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*$/.test(value) || i18n.global.t('common.policyValidationMessages.secretLabelIdentifier');
 
+  const check_form_row_width = (fields) => fields.reduce((acc, field) => acc + field.columns + field.offset, 0) <= 12 || i18n.global.t('common.policyValidationMessages.formRowOversized');
+
   const validationRules = {
     allowedRules,
     alpha,
@@ -241,6 +243,7 @@ export function getRules(i18n) {
     alpha_num_spaces,
     alpha_num_under_comma,
     connector_bundle_version,
+    check_form_row_width,
     regex,
     date_format,
     email,

@@ -108,17 +108,22 @@ describe('ItemDetailsModal', () => {
       form: {
         fields: [
           {
-            label: 'testLabel',
-            model: 'testModel',
-            name: 'test',
-            type: 'string',
-            layout: {
-              offset: 0,
-              columns: 12,
-            },
-            validation: {
-              required: true,
-            },
+            id: 'rowid',
+            fields: [
+              {
+                label: 'testLabel',
+                model: 'testModel',
+                name: 'test',
+                type: 'string',
+                layout: {
+                  offset: 0,
+                  columns: 12,
+                },
+                validation: {
+                  required: true,
+                },
+              },
+            ],
           },
         ],
       },

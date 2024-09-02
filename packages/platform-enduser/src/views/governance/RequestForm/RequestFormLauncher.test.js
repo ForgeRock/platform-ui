@@ -53,16 +53,21 @@ describe('RequestFormLauncher', () => {
         form: {
           fields: [
             {
-              model: 'custom.testProperty1',
-              type: 'string',
-              label: 'testLabel',
-              validation: {
-                required: false,
-              },
-              layout: {
-                columns: 12,
-                offset: '0',
-              },
+              id: 'rowid',
+              fields: [
+                {
+                  model: 'custom.testProperty1',
+                  type: 'string',
+                  label: 'testLabel',
+                  validation: {
+                    required: false,
+                  },
+                  layout: {
+                    columns: 12,
+                    offset: '0',
+                  },
+                },
+              ],
             },
           ],
         },

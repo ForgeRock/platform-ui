@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { createApp } from 'vue';
+
 /**
  * vue-test-utils helper function for getting an element by data-testid
  * @param {*} wrapper the component wrapper
@@ -119,6 +121,24 @@ export function createTooltipContainer(idArray = []) {
     tooltipElement.setAttribute('id', elementId);
     document.body.appendChild(tooltipElement);
   });
+}
+
+/**
+ * Helper function for testing composable functions that require setup to be called.
+ * It will return the result and the app instance for testing provide/unmount functions if needed
+ * @param {*} composable the composable function to test
+ */
+export function withSetup(composable) {
+  let result;
+  const app = createApp({
+    setup() {
+      result = composable();
+      // suppress missing template warning
+      return () => {};
+    },
+  });
+  app.mount(document.createElement('div'));
+  return [result, app];
 }
 
 export default { findByTestId, findByRole };
