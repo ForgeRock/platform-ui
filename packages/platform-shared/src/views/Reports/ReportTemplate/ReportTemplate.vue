@@ -7,11 +7,9 @@ of the MIT license. See the LICENSE file for details. -->
     <FrReportTemplateHeader
       :disable-save="disableTemplateSave"
       :report-state="reportState"
-      :is-duplicating="isDuplicating"
       :is-saving="isSavingTemplate"
       :template-name="templateName"
       @delete="bvModal.show('deleteModal')"
-      @duplicate="duplicateTemplate(templateId, reportState)"
       @save="saveTemplateFromHeader" />
     <main
       class="d-flex w-100 h-100 overflow-auto"
@@ -100,12 +98,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import {
-  deleteAnalyticsReport,
-  duplicateAnalyticsReport,
-  getReportTemplates,
-  saveAnalyticsReport,
-} from '@forgerock/platform-shared/src/api/AutoApi';
+import { deleteAnalyticsReport, getReportTemplates, saveAnalyticsReport } from '@forgerock/platform-shared/src/api/AutoApi';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { isEqual, startCase } from 'lodash';
@@ -205,7 +198,6 @@ const {
 const definitionBeingEdited = ref({});
 const disableTemplateSave = ref(true);
 const isDeletingTemplate = ref(false);
-const isDuplicating = ref(false);
 const isFetchingEntityColumns = ref(false);
 const isFetchingTemplate = ref(true);
 const isSavingDefinition = ref(false);
@@ -392,19 +384,6 @@ function onUpdateTableEntryLabel(settingsId, id, inputText) {
   }
 
   disableTemplateSave.value = false;
-}
-
-/**
- * Duplicates the current report template
- * @param {String} id template name
- * @param {String} status template status type (draft, published)
- */
-async function duplicateTemplate(id, status) {
-  isDuplicating.value = true;
-  await duplicateAnalyticsReport(id, status);
-  displayNotification('success', i18n.global.t('common.duplicateSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
-  isDuplicating.value = false;
-  router.push({ name: 'Reports' });
 }
 
 /**

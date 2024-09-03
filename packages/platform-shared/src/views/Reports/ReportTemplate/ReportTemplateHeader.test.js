@@ -43,14 +43,6 @@ describe('Report Template Header component', () => {
       expect(wrapper.emitted().save[0]).toBeTruthy();
     });
 
-    it('emits "duplicate" when the duplicate option is selected from the ellipse menu', async () => {
-      const actionsMenu = findByRole(wrapper, 'menu');
-      const duplicateOption = findByText(actionsMenu, 'a', 'control_point_duplicateDuplicate');
-
-      await duplicateOption.trigger('click');
-      expect(wrapper.emitted().duplicate[0]).toBeTruthy();
-    });
-
     it('emits "delete" when the duplicate option is selected from the ellipse menu', async () => {
       const actionsMenu = findByRole(wrapper, 'menu');
       const deleteOption = findByText(actionsMenu, 'a', 'deleteDelete');

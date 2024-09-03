@@ -408,18 +408,6 @@ describe('Component for creating custom analytics reports', () => {
       }, ['reportadmin'], '');
     });
 
-    it('duplicates a template', async () => {
-      AutoApi.duplicateAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
-      await addDataSource();
-
-      // duplicates the template
-      const duplicateAnalyticsReportSpy = jest.spyOn(AutoApi, 'duplicateAnalyticsReport');
-      const headerToolbar = findByRole(wrapper, 'toolbar');
-      const duplicateButton = findByText(headerToolbar, 'a', 'control_point_duplicateDuplicate');
-      await duplicateButton.trigger('click');
-      expect(duplicateAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'published');
-    });
-
     it('ensures that the "Add Data" empty state does not show if a data source has been selected', async () => {
       await addDataSource();
 
