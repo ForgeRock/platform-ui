@@ -73,7 +73,7 @@ export default function useReportSorting(entitiesPayload, parametersPayload, fil
    */
   function sortingDefinitions(definitions) {
     if (definitions?.length) {
-      return definitions.map(({ value, direction }) => ({ value, direction }));
+      return definitions.map(({ direction, label, value }) => ({ direction, columnLabel: label, value }));
     }
     return [];
   }
@@ -86,7 +86,7 @@ export default function useReportSorting(entitiesPayload, parametersPayload, fil
   function sortingPayload(definitions) {
     if (definitions.length) {
       return {
-        sort: definitions.map(({ value, direction }) => ({ value, direction })),
+        sort: definitions.map(({ direction, columnLabel: label, value }) => ({ direction, label, value })),
       };
     }
     return {};

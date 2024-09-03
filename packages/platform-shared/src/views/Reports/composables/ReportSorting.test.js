@@ -24,8 +24,8 @@ const sortFieldOptionsResponse = [
     type: 'string',
   },
 ];
-const sortDefinitionDataFromAPI = [{ value: 'applications.name', direction: 'asc' }];
-const uiSortDefinitions = [{ direction: 'asc', value: 'applications.name' }];
+const sortDefinitionDataFromAPI = [{ value: 'applications.name', direction: 'asc', label: 'Applications Name column label' }];
+const uiSortDefinitions = [{ direction: 'asc', value: 'applications.name', columnLabel: 'Applications Name column label' }];
 
 describe('@useReportSorting', () => {
   const {

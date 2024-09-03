@@ -109,8 +109,7 @@ const directionOptions = [
   { label: i18n.global.t('common.descending'), value: 'desc' },
 ];
 const directionSelection = ref('asc');
-const sortBy = computed(() => props.sortByOptions.find(({ value }) => value === sortBySelection.value)?.value);
-const fieldOptionsValue = computed(() => props.sortByOptions.find(({ value }) => value === sortBy.value)?.value);
+const sortBySelectionItem = computed(() => props.sortByOptions.find(({ value }) => value === sortBySelection.value));
 
 // Functions
 function resetValues() {
@@ -123,7 +122,8 @@ function resetValues() {
 const disableSave = computed(() => !sortBySelection.value || !directionSelection.value);
 const formValues = computed(() => ({
   direction: directionSelection.value,
-  value: fieldOptionsValue.value,
+  columnLabel: sortBySelectionItem.value?.columnLabel || '',
+  value: sortBySelection.value,
 }));
 const existingDefinitionIndex = computed(() => {
   const existingIndex = props.existingSort.index;

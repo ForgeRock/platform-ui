@@ -22,12 +22,14 @@ describe('Report Sorting Modal component', () => {
           {
             class: 'json',
             value: 'applications._id',
+            columnLabel: 'Applications ID column label',
             label: 'Applications ID',
             type: 'string',
           },
           {
             class: 'json',
             value: 'applications.name',
+            columnLabel: 'Applications Name column label',
             label: 'Applications Name',
             type: 'string',
           },
@@ -100,6 +102,7 @@ describe('Report Sorting Modal component', () => {
 
       expect(wrapper.emitted('update-sort')).toEqual([['sort', -1, {
         direction: 'asc',
+        columnLabel: 'Applications Name column label',
         value: 'applications.name',
       }]]);
     });
