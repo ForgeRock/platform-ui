@@ -13,7 +13,6 @@ import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/
 import { BModal, BButton } from 'bootstrap-vue';
 import ItemDetailsModal from './ItemDetailsModal';
 import i18n from '@/i18n';
-import store from '@/store';
 
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,
@@ -101,9 +100,6 @@ describe('ItemDetailsModal', () => {
   });
 
   describe('application items', () => {
-    beforeEach(() => { store.state.SharedStore.governanceDevEnabled = true; });
-    afterEach(() => { store.state.SharedStore.governanceDevEnabled = false; });
-
     const testFormSchema = {
       form: {
         fields: [

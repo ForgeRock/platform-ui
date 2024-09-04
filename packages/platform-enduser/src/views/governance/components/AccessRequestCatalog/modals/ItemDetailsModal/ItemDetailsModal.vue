@@ -120,7 +120,6 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrItemDetailsStep from './ItemDetailsStep';
 import FrItemFormStep from './ItemFormStep';
 import i18n from '@/i18n';
-import store from '@/store';
 
 const props = defineProps({
   glossarySchema: {
@@ -197,8 +196,8 @@ function setRequestData(data) {
  * @param {string} itemType - The type of the item (application, role, entitlement).
  */
 async function getForm(item, itemType) {
-  // forms can only be displayed for applications and if gov dev flag is enabled
-  if (!store.state.SharedStore.governanceDevEnabled || itemType !== 'application') {
+  // forms can only be displayed for applications
+  if (itemType !== 'application') {
     return;
   }
   const formDefinition = await getApplicationRequestForm(item, item.applicationId);

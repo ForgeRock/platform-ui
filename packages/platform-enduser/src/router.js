@@ -155,7 +155,7 @@ const router = createRouter({
       name: 'RequestFormLauncher',
       component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/RequestForm/RequestFormLauncher'),
       meta: { hideNavBar: true, hideSideMenu: true, authenticate: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/certification/certification-task/:campaignId',

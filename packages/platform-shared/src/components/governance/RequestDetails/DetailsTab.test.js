@@ -13,7 +13,6 @@ import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import DetailsTab from './DetailsTab';
 import i18n from '@/i18n';
-import store from '@/store';
 
 defineRule('required', () => required);
 
@@ -64,6 +63,8 @@ describe('DetailsTab', () => {
       props,
     });
   };
+
+  jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType').mockResolvedValue({ data: { result: [] } });
 
   it('initializes with the correct default data structure based on props', async () => {
     const wrapper = setup();
@@ -117,9 +118,6 @@ describe('DetailsTab', () => {
   });
 
   describe('forms', () => {
-    beforeEach(() => { store.state.SharedStore.governanceDevEnabled = true; });
-    afterEach(() => { store.state.SharedStore.governanceDevEnabled = false; });
-
     const testFormSchema = {
       form: {
         fields: [

@@ -11,6 +11,7 @@ import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHe
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import i18n from '@/i18n';
 import router from '@/router';
 import ApprovalDetails from './ApprovalDetails';
@@ -136,6 +137,7 @@ describe('ApprovalDetails', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(Promise.resolve({
       data: { result: [accessRequest] },
     }));
+    RequestFormAssignmentsApi.getFormAssignmentByWorkflowNode = jest.fn().mockResolvedValue({ data: { result: [] } });
   });
 
   describe('@Component Tests', () => {

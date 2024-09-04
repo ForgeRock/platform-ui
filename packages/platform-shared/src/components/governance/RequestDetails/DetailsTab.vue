@@ -134,7 +134,6 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
-import store from '@/store';
 
 const props = defineProps({
   isApproval: {
@@ -226,14 +225,12 @@ function getDetails(item) {
  * @param {Object} item - The item for which to retrieve the form.
  */
 async function getForm(item) {
-  if (!store.state.SharedStore.governanceDevEnabled) return;
-
   const request = item.rawData;
-  const workflowId = request.workflow.id;
+  const workflowId = request.workflow?.id;
   let formDefinition;
 
   // when viewing an approval request, show the form associated with the workflow phase
-  if (props.isApproval) {
+  if (props.isApproval && workflowId) {
     formDefinition = await getWorkflowRequestForm(workflowId, phaseId.value);
     if (formDefinition) {
       form.value = formDefinition;
