@@ -78,13 +78,20 @@ const newReportFormData = ref({
 
 // Methods
 /**
- * Resets the settings details form on modal hide
+ * Resets the form values
  */
-function handleModalHide() {
+function resetFormValues() {
   newReportFormData.value.name = '';
   newReportFormData.value.description = '';
   newReportFormData.value.report_viewer = false;
   newReportFormData.value.viewers = [];
+}
+
+/**
+ * Resets the settings details form on modal hide
+ */
+function handleModalHide() {
+  resetFormValues();
   emit('hidden');
 }
 
@@ -121,6 +128,8 @@ watch(() => props.reportDataForDuplication, (report) => {
     newReportFormData.value.description = report.description || '';
     newReportFormData.value.viewers = report.viewers ? report.viewers.filter((viewer) => !viewer.includes('report_viewer')) : [];
     newReportFormData.value.report_viewer = report.viewers ? report.viewers.includes('report_viewer') : false;
+  } else {
+    resetFormValues();
   }
 });
 </script>

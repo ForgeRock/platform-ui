@@ -76,7 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
       aria-controls="reportTemplatesGrid"
       class="border-0"
       :per-page="perPage"
-      :total-rows="reports.length"
+      :total-rows="searchValue ? filteredReports.length : reports.length"
       @on-page-size-change="pageSizeChange" />
     <FrDeleteModal
       :is-deleting="!!Object.keys(reportBeingProcessed).length"
@@ -147,6 +147,7 @@ const {
 // Globals
 const currentPage = ref(1);
 const displayedReports = ref([]);
+const filteredReports = ref([]);
 const hasFocus = ref(false);
 const loading = ref(true);
 const perPage = ref(6);
@@ -173,7 +174,8 @@ function confirmDeleteTemplate(name, status) {
 function updateDisplayedReports() {
   const from = (currentPage.value - 1) * perPage.value;
   const to = from + perPage.value;
-  displayedReports.value = reports.value.slice(from, to);
+  const targetReports = searchValue.value !== '' ? filteredReports.value : reports.value;
+  displayedReports.value = targetReports.slice(from, to);
 }
 
 /**
@@ -182,10 +184,13 @@ function updateDisplayedReports() {
  */
 async function retrieveReportTemplates(params = null) {
   loading.value = true;
-  reports.value = [];
   try {
     const { result } = await getReportTemplates(params);
-    reports.value = result;
+    if (params) {
+      filteredReports.value = result;
+    } else {
+      reports.value = result;
+    }
   } catch (error) {
     showErrorMessage(error, i18n.global.t('reports.noData'));
   } finally {
@@ -249,7 +254,13 @@ async function deleteTemplate(id, status) {
   } catch (err) {
     showErrorMessage(err, i18n.global.t('reports.errorDeleting'));
   }
-  retrieveReportTemplates();
+
+  if (searchValue.value) {
+    onSearchChange(searchValue.value);
+  } else {
+    retrieveReportTemplates();
+  }
+
   bvModal.value.hide('deleteModal');
   reportBeingProcessed.value = {};
 }

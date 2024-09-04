@@ -5,8 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { nextTick } from 'vue';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
-import { findByText, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByText, findAllByTestId, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import { mount, flushPromises } from '@vue/test-utils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
@@ -45,7 +46,7 @@ describe('ReportsGrid', () => {
   const returnDataSuccessDraft = {
     result: [
       {
-        name: 'TEMPLATE-NAME',
+        name: 'DRAFT-TEMPLATE-NAME',
         description: 'Lorem ipsum.',
         version: 0,
         reportConfig: {},
@@ -55,10 +56,6 @@ describe('ReportsGrid', () => {
         createDate: '2010-10-10T10:10:10.123456789Z',
         updateDate: '2010-10-10T10:10:10.123456789Z',
       },
-    ],
-  };
-  const returnDataSuccessPublished = {
-    result: [
       {
         name: 'PUBLISHED-TEMPLATE-NAME',
         description: 'Lorem ipsum.',
@@ -134,12 +131,11 @@ describe('ReportsGrid', () => {
     await editButton.trigger('click');
     expect(routerPushSpy).toHaveBeenCalledWith({
       name: 'EditReportTemplate',
-      params: { state: 'draft', template: 'template-name' },
+      params: { state: 'draft', template: 'draft-template-name' },
     });
   });
 
   it('routes to expected location when the edit report button is clicked for a published report', async () => {
-    AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve(returnDataSuccessPublished));
     AutoApi.editAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
     const wrapper = setup();
     await flushPromises();
@@ -149,7 +145,7 @@ describe('ReportsGrid', () => {
     await editButton.trigger('click');
     expect(routerPushSpy).toHaveBeenCalledWith({
       name: 'EditReportTemplate',
-      params: { state: 'draft', template: 'published-template-name' },
+      params: { state: 'draft', template: 'draft-template-name' },
     });
   });
 
@@ -179,5 +175,78 @@ describe('ReportsGrid', () => {
     const duplicateButton = findByText(wrapper, 'span', 'Duplicate');
     await duplicateButton.trigger('click');
     expect(showSpy).toHaveBeenCalledWith('new-report-modal');
+  });
+
+  it('ensures that the new report modal form name field throws a validation error when a duplicate name input is part of the overall list but not part of the search report list', async () => {
+    jest.useFakeTimers();
+    const wrapper = setup();
+    await flushPromises();
+
+    let reportTemplateCards = findAllByTestId(wrapper, 'report-card');
+    expect(reportTemplateCards.length).toBe(2);
+
+    const [draftTemplate, publishedTemplate] = reportTemplateCards;
+    expect(draftTemplate.find('h2').text()).toBe('Draft Template Name');
+    expect(publishedTemplate.find('h2').text()).toBe('Published Template Name');
+
+    // Opens new report modal
+    const newReportButton = findByText(wrapper, 'button', 'add New Report');
+    await newReportButton.trigger('click');
+
+    // Expects that the name input does not have a validation error on load
+    const [, newReportModal] = wrapper.findAll('div[role="dialog"]');
+    let validationError = findByText(newReportModal, 'p', 'Must be unique');
+    expect(validationError).toBeUndefined();
+
+    // Inputs an existing template name
+    const nameInput = newReportModal.find('input[name="name-field"]');
+    await nameInput.setValue('Published template name');
+    await flushPromises();
+
+    // Expects that the name input has a validation error letting the user know that the name is not unique
+    validationError = findByText(newReportModal, 'p', 'Must be unique');
+    expect(validationError).toBeDefined();
+
+    // Clears the name input field
+    await nameInput.setValue('');
+
+    // Cancels the new report modal
+    const cancelButton = findByText(newReportModal, 'button', 'Cancel');
+    await cancelButton.trigger('click');
+
+    // We want to search and filter out the report template list to include only the second result that matches the search string
+    AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve({ result: [returnDataSuccessDraft.result[1]] }));
+    const reportSearchField = wrapper.find('input[type="search"]');
+    await reportSearchField.setValue('Published template name');
+    await flushPromises();
+    // debounce timer
+    jest.runAllTimers();
+    // renders skeleton loader
+    await nextTick();
+    // renders search results
+    await nextTick();
+
+    // There should only be the Published report card displayed after searching
+    reportTemplateCards = findAllByTestId(wrapper, 'report-card');
+    expect(reportTemplateCards.length).toBe(1);
+    const [draftTemplateAfterSearch] = reportTemplateCards;
+    expect(draftTemplateAfterSearch.find('h2').text()).toBe('Published Template Name');
+
+    // We want to open the new report modal again and ensure that we still get a validation error when we type
+    // "Draft template name" into the name input field, even though the search results only show one report card
+    await newReportButton.trigger('click');
+
+    // Expects that the name input does not have a validation error on load
+    validationError = findByText(newReportModal, 'p', 'Must be unique');
+    expect(validationError).toBeUndefined();
+
+    // Inputs an existing template name that is not part of the search results
+    await nameInput.setValue('Draft template name');
+    await flushPromises();
+
+    // Expects that we get the same validation error letting the user know that the
+    // name is not unique even though the search results only shows the published template
+    validationError = findByText(newReportModal, 'p', 'Must be unique');
+    expect(validationError).toBeDefined();
   });
 });
