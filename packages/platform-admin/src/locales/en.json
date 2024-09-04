@@ -479,7 +479,6 @@
     "journey": "Journey",
     "journeyName": "Journey Name",
     "identityResource": "Identity Object",
-    "previewInputLabel": "Preview URL",
     "previewHelp": "Copy and paste into an incognito window to preview journey.",
     "usageInputLabel": "Tree ID",
     "usageHelp": "Use when configuring the <a target=\"_blank\" href=\"https://sdks.forgerock.com/\">ForgeRock SDK</a> or calling the REST APIs.",
@@ -4147,6 +4146,7 @@
         "labelDescription": "Label text",
         "selectedByDefault": "Selected by default"
       },
+      "previewHelp": "Copy and paste into an incognito window to preview form. Form will only be shown if linked to a request type.",
       "requestTypes": "Request Types",
       "requestTypeAssigmentAlreadyExist": "The request type is already assigned to the form, please choose another.",
       "requestTypeAssigmentDeleted": "Request type removed",

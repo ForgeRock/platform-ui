@@ -13,6 +13,9 @@ of the MIT license. See the LICENSE file for details. -->
       <template #center-content>
         <slot name="navbar-center-content" />
       </template>
+      <template #right-content>
+        <slot name="navbar-right-content" />
+      </template>
     </FrNavbar>
     <div class="fr-editor-container d-flex w-100">
       <FrEditorLayoutSidebar
