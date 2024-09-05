@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     :disabled="uiSchema.disabled"
     :is-html="uiSchema.isHtml"
     :label="uiSchema.label"
+    :name="uiSchema.label || uiSchema.id"
     :options="arrayOptions"
     :type="arrayType"
     :allow-empty="uiSchema.allowEmpty"

@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       :description="uiSchema.description"
       :is-html="uiSchema.isHtml"
       :label="uiSchema.label"
+      :name="uiSchema.label || uiSchema.id"
       :validation="uiSchema.validation"
       :value="uiSchema.value"
       :readonly="uiSchema.readonly"
