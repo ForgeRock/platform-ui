@@ -183,7 +183,7 @@ export function getRules(i18n) {
   const text_without_fragment = (value) => (Array.isArray(value) ? !value.some((element) => element.includes('#')) : !value.includes('#')) || i18n.global.t('common.policyValidationMessages.url_with_fragment');
 
   // Rule to check whether url is valid
-  const url = (value) => customValidators.url(value, i18n);
+  const url = (value) => (value ? customValidators.url(value, i18n) : i18n.global.t('common.policyValidationMessages.url'));
 
   // Rule to check whether url, relative path or esv is valid in bookmark applications
   const validBookmarkUrl = (value) => customValidators.validBookmarkUrl(value) || i18n.global.t('common.policyValidationMessages.urlPathEsv');
