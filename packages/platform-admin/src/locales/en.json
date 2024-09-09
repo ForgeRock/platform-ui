@@ -2667,6 +2667,16 @@
   "objectTypeEditor": {
     "addObjectType": "Add Object Type",
     "addProperty": "Add a Property",
+    "advancedSync": {
+      "title": "Advanced Sync",
+      "noSyncDataSubtitle": "Synchronize data between {appDisplayName} {objectTypeName} and other applications.",
+      "noSyncData": "No synchronized applications yet",
+      "addSyncData": "Sync Data",
+      "loadingSyncData": "Loading sync data...",
+      "errors": {
+        "errorGettingSyncData": "Error retrieving advanced sync data"
+      }
+    },
     "allObjectsAssigned": "All non-account object types have already been assigned to a property (each object type can only be assigned to one property).",
     "allPropertiesAdded": "All available properties added",
     "applicationObjectType": "Application Object Type",
@@ -4100,7 +4110,7 @@
       "actions": {
         "saveFormSuccessfully": "Form saved successfully",
         "saveFormError": "There was an error saving the form",
-        "exitPreview": "Exit preview" 
+        "exitPreview": "Exit preview"
       },
       "categories": {
         "customFields": "Custom Fields"
