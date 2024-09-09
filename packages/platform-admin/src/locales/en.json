@@ -2813,7 +2813,7 @@
   },
   "jobs": {
     "allJobs": "All Jobs",
-    "days": "days(s)",
+    "days": "day(s)",
     "deactivateButton": "Deactivate Job",
     "defaultCronDescription": "Enter a valid cron string.",
     "deleteModal": {
@@ -2848,7 +2848,9 @@
       "taskStateDescription": "The names of the fields in which the start message, and the completed message are stored.",
       "taskStateStartedLabel": "Started",
       "timezone": "Timezone",
-      "timezoneMismatch": "Start and end times must have the same timezone offset"
+      "timezoneMismatch": "Start and end times must have the same timezone offset",
+      "loadingReconciliation": "Loading Reconciliation...",
+      "endDateBeforeStartDate": "Please ensure the end date is after the start date"
     },
     "jobs": "Jobs",
     "listSubtitle": "Monitor and schedule jobs.",
@@ -2862,6 +2864,7 @@
     "noJobs": "No jobs scheduled",
     "noJobsSubtitle": "Any scheduled jobs will appear here.",
     "noSearchResults": "No scheduled jobs found",
+    "notScheduled": "Not scheduled",
     "reconEdit": "Edit in Application",
     "repeat": "Repeat",
     "runError": "Error starting scheduled job",
