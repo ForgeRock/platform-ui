@@ -2132,7 +2132,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@forgerock/copyright-bot@workspace:packages/copyright-bot"
   dependencies:
-    micromatch: 4.0.7
+    micromatch: 4.0.8
     nodegit: 0.28.0-alpha.21
     tempy: 0.7.1
     yargs: 16.1.1
@@ -13937,7 +13937,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromatch@npm:4.0.7, micromatch@npm:^4.0.2, micromatch@npm:^4.0.4":
+"micromatch@npm:4.0.8":
+  version: 4.0.8
+  resolution: "micromatch@npm:4.0.8"
+  dependencies:
+    braces: ^3.0.3
+    picomatch: ^2.3.1
+  checksum: 79920eb634e6f400b464a954fcfa589c4e7c7143209488e44baf627f9affc8b1e306f41f4f0deedde97e69cb725920879462d3e750ab3bd3c1aed675bb3a8966
+  languageName: node
+  linkType: hard
+
+"micromatch@npm:^4.0.2, micromatch@npm:^4.0.4":
   version: 4.0.7
   resolution: "micromatch@npm:4.0.7"
   dependencies:
