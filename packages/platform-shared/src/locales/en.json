@@ -1580,6 +1580,7 @@
       "requestSaveError": "Error saving request",
       "requestSaveSuccess": "Request saved successfully",
       "requestType": "Request Type",
+      "requestTypesTabTitle": "Request Types",
       "submittedRequest": "submitted this request"
     },
     "accountDetails": "Account Details",
