@@ -46,6 +46,7 @@ const defaultState = {
   uiConfig: null,
   webStorageAvailable: true,
   workforceEnabled: false,
+  workforceAdvancedSyncEnabled: false,
   templateBuilderEnabled: false,
 };
 
