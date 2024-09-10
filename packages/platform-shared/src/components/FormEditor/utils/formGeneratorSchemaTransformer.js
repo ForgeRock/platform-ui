@@ -117,31 +117,32 @@ export function getInitialModel(schema, includeDefaults = false) {
   const updatedModel = {};
   schema.forEach((row) => row.fields.forEach((field) => {
     let value;
+    const model = field.model || '';
     switch (field.type) {
       case 'string':
       case 'textarea':
         value = includeDefaults
           ? field.defaultValue || ''
           : '';
-        set(updatedModel, field.model, value);
+        set(updatedModel, model, value);
         break;
       case 'select':
         value = includeDefaults
           ? field.options?.find((option) => (option.selectedByDefault))?.value || ''
           : '';
-        set(updatedModel, field.model, value);
+        set(updatedModel, model, value);
         break;
       case 'multiselect':
         value = includeDefaults
           ? field.options?.filter((option) => (option.selectedByDefault))?.map((option) => (option.value))
           : [];
-        set(updatedModel, field.model, value);
+        set(updatedModel, model, value);
         break;
       case 'checkbox':
         value = includeDefaults
           ? field.defaultValue || false
           : false;
-        set(updatedModel, field.model, value);
+        set(updatedModel, model, value);
         break;
       default:
         break;
