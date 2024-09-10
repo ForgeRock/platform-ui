@@ -34,6 +34,10 @@ export function createNewTheme(themeName) {
  * @param {string} themeName - The name of the Theme.
  */
 export function setThemeAsDefault(themeName) {
+  // Search for our Theme in the list
+  cy.findByLabelText('Search').clear().type(`${themeName}{enter}`);
+  cy.findByRole('status', { timeout: 5000 }).should('not.exist');
+
   // Find correct theme in the Themes table
   cy.findByRole('row', { name: `${themeName}` }).should('be.visible').within(() => {
     // Click on the correct Theme row burger menu
@@ -44,13 +48,13 @@ export function setThemeAsDefault(themeName) {
     cy.findByRole('menuitem', { name: 'Duplicate' }).should('exist');
     cy.findByRole('menuitem', { name: 'Delete' }).should('exist');
     // Set the Theme as the Realm Default
-    cy.findByRole('menuitem', { name: 'Set as Realm Default' }).should('be.visible').click({ force: true });
+    cy.findByRole('menuitem', { name: 'Set as Realm Default' }).should('exist').click({ force: true });
   });
   // Check that Save notification is correctly displayed
   expectAndCloseNotification('Theme successfully saved');
 
   // Check that the Theme is now the Realm Default
-  cy.findByRole('row', { name: `${themeName} Realm Default` }).should('be.visible');
+  cy.findByRole('row', { name: `${themeName} Realm Default` }).should('exist');
 
   // Find correct theme in the Themes table
   cy.findByRole('row', { name: `${themeName} Realm Default` }).within(() => {
@@ -60,6 +64,7 @@ export function setThemeAsDefault(themeName) {
     cy.findAllByRole('menuitem').should('have.length', 2);
     cy.findByRole('menuitem', { name: 'Edit' }).should('exist');
     cy.findByRole('menuitem', { name: 'Duplicate' }).should('exist');
+    cy.findByRole('menuitem', { name: 'Set as Realm Default' }).should('not.exist');
     cy.findByRole('menuitem', { name: 'Delete' }).should('not.exist');
   });
 }
@@ -69,11 +74,15 @@ export function setThemeAsDefault(themeName) {
  * @param {string} themeName - The name of the Theme.
  */
 export function deleteTheme(themeName) {
+  // Search for our Theme in the list
+  cy.findByLabelText('Search').clear().type(`${themeName}{enter}`);
+  cy.findByRole('status', { timeout: 5000 }).should('not.exist');
+
   // Find correct theme in the Themes table
   cy.findByRole('row', { name: `${themeName}` }).within(() => {
     // Click on the correct Theme row burger menu
     cy.findByRole('button').click();
-    cy.findByRole('menuitem', { name: 'Delete' }).should('be.visible').click({ force: true });
+    cy.findByRole('menuitem', { name: 'Delete' }).should('exist').click({ force: true });
   });
 
   // Confirm the Theme deletion

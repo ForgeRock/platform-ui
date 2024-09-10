@@ -16,6 +16,7 @@ import {
   putEmailProviderConfig,
   getDefaultProviderConfig,
 } from '../api/emailApi.e2e';
+import { deleteIDMUser } from '../api/managedApi.e2e';
 
 filterTests(['forgeops'], () => {
   function fillOutRegistrationForm(fieldData) {
@@ -200,7 +201,7 @@ filterTests(['cloud'], () => {
       });
     });
 
-    it('creates new user, sends registration email and logs in', () => {
+    it('Creates new user, sends registration email and logs in', () => {
       const validFieldData = [
         {
           placeholder: 'Username',
@@ -246,8 +247,15 @@ filterTests(['cloud'], () => {
         // Get the registration link from the email
         const registrationLink = extractLinkFromEmail(emailObject.body);
 
+        // Set up intercept
+        cy.intercept('POST', '/am/json/realms/root/realms/alpha/sessions?_action=getSessionInfo').as('getSessionInfo');
+
         // Visit the link
         cy.visit(registrationLink);
+
+        cy.wait('@getSessionInfo', { timeout: 10000 }).then(({ response }) => {
+          cy.wrap(response.body.username).as('userId');
+        });
 
         // We should get redirected to end user
         cy.location().should((location) => {
@@ -255,7 +263,7 @@ filterTests(['cloud'], () => {
         });
 
         // and be logged in with the registered user
-        cy.findByTestId('dashboard-welcome-greeting', { timeout: 10000 }).contains(`Hello, ${emailAccount.user}`).should('be.visible');
+        cy.findByRole('heading', { timeout: 10000 }).contains(`Hello, ${emailAccount.user}`).should('be.visible');
 
         // The registered username can not be used again
         cy.logout();
@@ -263,6 +271,11 @@ filterTests(['cloud'], () => {
         fillOutRegistrationForm(validFieldData);
         cy.get('[type="submit"]').click();
         cy.get('.error-message').contains('Invalid username').should('be.visible');
+
+        // Delete created user
+        cy.get('@userId').then((userId) => {
+          deleteIDMUser(userId);
+        });
       });
     });
 

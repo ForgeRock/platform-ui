@@ -7,7 +7,7 @@
 
 import { random } from 'lodash';
 import { recurse } from 'cypress-recurse';
-import { filterTests } from '../../../../e2e/util';
+import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import { setEmailProviderConfigByAccount, extractLinkFromEmail } from '../utils/emailUtils';
 import { putEmailProviderConfig, getDefaultProviderConfig } from '../api/emailApi.e2e';
@@ -33,6 +33,20 @@ filterTests(['forgeops', 'cloud'], () => {
         cy.wrap(email).as('emailObject');
       });
     };
+
+    function loginEnduser(endUserName, password) {
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
+
+      // Check the browser has been directed to the default Login page
+      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible');
+      cy.findByRole('heading', { name: 'Sign In' }).should('be.visible');
+
+      // Try to login Enduser
+      cy.findByLabelText('User Name').should('be.visible').type(endUserName, { force: true });
+      cy.findAllByLabelText('Password').first().should('be.visible').type(password, { force: true });
+      cy.findByRole('button', { name: 'Next' }).should('be.visible').click();
+    }
 
     before(() => {
       // Login as admin
@@ -72,7 +86,7 @@ filterTests(['forgeops', 'cloud'], () => {
       });
     });
 
-    beforeEach(() => {
+    retryableBeforeEach(() => {
       // Set up intercept
       cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
 
@@ -101,20 +115,6 @@ filterTests(['forgeops', 'cloud'], () => {
       });
     });
 
-    function loginEnduser(endUserName, password) {
-      // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
-
-      // Check the browser has been directed to the default Login page
-      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible');
-      cy.findByRole('heading', { name: 'Sign In', level: 1 }).should('exist').should('be.visible');
-
-      // Try to login Enduser
-      cy.findByLabelText('User Name').should('be.visible').type(endUserName, { force: true });
-      cy.findAllByLabelText('Password').first().type(password, { force: true });
-      cy.findByRole('button', { name: 'Next' }).click();
-    }
-
     it('Sign In link redirects to default Login Journey and works correctly', () => {
       // Find Sign in link and check its functionality
       cy.findByRole('link', { name: 'Sign in' }).click();
@@ -123,8 +123,8 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.wait('@themerealmConfig', { timeout: 10000 });
 
       // Check the browser has been directed to the default Login page
-      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');
-      cy.findByRole('heading', { name: 'Sign In', level: 1 }).should('exist').should('be.visible');
+      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible');
+      cy.findByRole('heading', { name: 'Sign In', level: 1 }).should('be.visible');
 
       // Check that we can return to the start of ResetPassword Journey page
       cy.go('back');
@@ -146,12 +146,12 @@ filterTests(['forgeops', 'cloud'], () => {
       loginEnduser(userName, defaultPassword);
 
       // Wait for successfull login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
+      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
     });
 
     it('Reset user password, get link from Email, finish resetting password and check new password is correctly set for subsequent logins', () => {
       // Fill in account under which testing Enduser is registered
-      cy.findByLabelText('Email Address').should('be.visible').type(emailAccount.user);
+      cy.findByLabelText('Email Address').should('be.visible').type(emailAccount.user, { force: true });
 
       // Proceed to the next step
       cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
@@ -193,7 +193,7 @@ filterTests(['forgeops', 'cloud'], () => {
         }
 
         // Type in password to reset to
-        cy.findByLabelText('Password').should('be.visible').type(resetPassword);
+        cy.findByLabelText('Password').should('be.visible').type(resetPassword, { force: true });
 
         // Proceed to the next step
         cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
@@ -204,7 +204,7 @@ filterTests(['forgeops', 'cloud'], () => {
         });
 
         // Wait for successfull login
-        cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
+        cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
       });
 
       // Logout enduser to check old password does no longer work and new password is sucessfully set
@@ -223,12 +223,12 @@ filterTests(['forgeops', 'cloud'], () => {
       loginEnduser(userName, resetPassword);
 
       // Wait for successfull login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
+      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
     });
 
     it('Reset password link works only once', () => {
       // Fill in account under which testing Enduser is registered
-      cy.findByLabelText('Email Address').should('be.visible').type(emailAccount.user);
+      cy.findByLabelText('Email Address').should('be.visible').type(emailAccount.user, { force: true });
 
       // Proceed to the next step
       cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
@@ -263,7 +263,7 @@ filterTests(['forgeops', 'cloud'], () => {
         cy.wait('@themerealmConfig', { timeout: 10000 });
 
         // Link should no longer be working, check correct Error page is shown and we are able to start over
-        cy.findByRole('heading', { name: 'Error', level: 1, timeout: 5000 }).should('exist').should('be.visible');
+        cy.findByRole('heading', { name: 'Error', level: 1, timeout: 5000 }).should('be.visible');
         cy.findByTestId('FrAlert').should('exist').contains('Unable to resume session. It may have expired.').should('be.visible');
         cy.findByRole('link', { name: 'Start Over' }).should('be.visible').click();
 

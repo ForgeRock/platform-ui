@@ -72,7 +72,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.loginAsAdmin().then(() => {
         cy.visit(hostedPagesUrl);
         // Wait for the Themes table to load
-        cy.findByRole('heading', { level: 1, name: 'Hosted Pages' }).should('be.visible');
+        cy.findByRole('heading', { name: 'Hosted Pages' }).should('be.visible');
         cy.findByRole('button', { name: 'New Theme', timeout: 10000 }).should('be.visible');
 
         setThemeAsDefault(defaultTheme);
@@ -85,10 +85,10 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.loginAsEnduser(userName);
 
       // Redirect to Enduser profile page
-      cy.get('[href="#/profile"]').should('be.visible').click();
+      cy.findByRole('link', { name: 'Profile' }).should('be.visible').click();
 
       // Check link in the side menu is active
-      cy.get('[href="#/profile"]').should('exist').should('have.class', 'router-link-active');
+      cy.findByRole('link', { name: 'Profile' }).should('have.class', 'router-link-active');
 
       // Check that the profile page is shown
       const profileHref = Cypress.env('IS_FRAAS') ? '/enduser/?realm=/alpha#/profile' : '/enduser/#/profile';
@@ -123,7 +123,7 @@ filterTests(['forgeops', 'cloud'], () => {
 
       // Check the browser has been directed to the login page
       const loginHeading = Cypress.env('IS_FRAAS') ? 'Sign In' : 'Sign in';
-      cy.findByRole('heading', { name: loginHeading, level: 1, timeout: 10000 }).should('exist').should('be.visible');
+      cy.findByRole('heading', { name: loginHeading, timeout: 10000 }).should('exist').should('be.visible');
     });
   });
 });

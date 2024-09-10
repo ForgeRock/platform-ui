@@ -42,8 +42,6 @@ filterTests(['forgeops', 'cloud'], () => {
         createIDMUser({
           userName,
           password: userPassword,
-          givenName: userName,
-          sn: 'test',
         }).then((result) => {
           expect(result.status).to.equal(201);
           userId = result.body._id;

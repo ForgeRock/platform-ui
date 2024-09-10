@@ -6,7 +6,7 @@
  */
 
 import { random } from 'lodash';
-import { filterTests } from '../../../../e2e/util';
+import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import setTerms from '../api/consentApi.e2e';
 
@@ -47,14 +47,17 @@ filterTests(['forgeops', 'cloud'], () => {
       // Load base Journey URL
       cy.visit(locationUrl);
 
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
+
       // Check correct Journey has loaded
       cy.findByRole('heading', { name: 'Terms & Conditions UI Journey', level: 1 }).should('be.visible');
     }
 
     function loginEnduser() {
       // Fill in credetials
-      cy.findByLabelText('User Name', { timeout: 20000 }).type(userName);
-      cy.findByLabelText('Password').type(userPassword);
+      cy.findByLabelText('User Name', { timeout: 20000 }).type(userName, { force: true });
+      cy.findByLabelText('Password').type(userPassword, { force: true });
       // Proceed to the next step
       cy.findByRole('button', { name: 'Next' }).click();
     }
@@ -84,7 +87,10 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.logout();
     });
 
-    beforeEach(() => {
+    retryableBeforeEach(() => {
+      // Set up intercept
+      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
       // Redirect to the start of T&C Journey
       loadJourney();
     });
@@ -106,6 +112,9 @@ filterTests(['forgeops', 'cloud'], () => {
 
       // Reload page to check that T&C are not automatically accepted when prompted
       cy.reload();
+
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
 
       // Again Login as Enduser
       loginEnduser();
@@ -137,7 +146,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for successfull login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
+      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
 
       // Logout to proceed with the next step
       cy.logout();
@@ -149,7 +158,7 @@ filterTests(['forgeops', 'cloud'], () => {
       loginEnduser();
 
       // Wait for successfull login (user should not be prompted to accept T&C again)
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
+      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
     });
   });
 });

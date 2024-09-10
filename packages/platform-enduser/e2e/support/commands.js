@@ -8,12 +8,25 @@
 import '@testing-library/cypress/add-commands';
 import '@neuralegion/cypress-har-generator/commands';
 
+Cypress.Commands.add('clearSessionStorage', () => {
+  cy.window().then((win) => {
+    win.sessionStorage.clear();
+  });
+});
+
+Cypress.Commands.add('clearAppAuthDatabase', () => {
+  indexedDB.deleteDatabase('appAuth');
+});
+
 Cypress.Commands.add(
   'loginAsEnduser',
   (
     userName,
     password = 'Welcome1!',
+    sucessLogin = true,
     loginUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha#/` : `${Cypress.config().baseUrl}/enduser/`,
+    givenName = 'First',
+    lastName = 'Last',
   ) => {
     cy.clearAppAuthDatabase();
     cy.clearSessionStorage();
@@ -29,7 +42,7 @@ Cypress.Commands.add(
 
     // Fill in Enduser name and password
     cy.findByLabelText(/User Name/i, { timeout: 10000 }).should('be.visible').type(userName, { force: true });
-    cy.findAllByLabelText(/Password/i).first().type(password, { force: true });
+    cy.findAllByLabelText(/Password/i).first().should('be.visible').type(password, { force: true });
     cy.findByRole('button', { name: /Next/i }).click();
 
     // Wait for the spinner div to disappear
@@ -44,20 +57,12 @@ Cypress.Commands.add(
       }
     });
 
-    // Check for the dashboard-welcome-greeting message
-    cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
+    if (sucessLogin) {
+      // Check for the Dashboard welcome greeting message
+      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${givenName} ${lastName}`).should('be.visible');
+    }
   },
 );
-
-Cypress.Commands.add('clearSessionStorage', () => {
-  cy.window().then((win) => {
-    win.sessionStorage.clear();
-  });
-});
-
-Cypress.Commands.add('clearAppAuthDatabase', () => {
-  indexedDB.deleteDatabase('appAuth');
-});
 
 Cypress.Commands.add('loginAsAdmin', () => {
   cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
