@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <FrField
     class="pb-1 mb-4"
     :description="uiSchema.description"
-    :disabled="uiSchema.disabled"
+    :disabled="uiSchema.disabled || uiSchema.readonly"
     :is-html="uiSchema.isHtml"
     :label="uiSchema.label"
     :name="uiSchema.label || uiSchema.id"
