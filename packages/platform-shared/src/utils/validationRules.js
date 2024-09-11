@@ -111,7 +111,7 @@ export function getRules(i18n) {
 
   const isNumber = (value) => /^[0-9-.]*$/.test(value) || i18n.global.t('common.validation.number');
 
-  const max = (value, params) => rules.max(value, params) || i18n.global.t('common.policyValidationMessages.maxLength');
+  const max = (value, params) => rules.max(value, params) || i18n.global.t('common.policyValidationMessages.maxLength', { length: params[0] });
 
   const max_value = (value, { max: maxValue, message }) => rules.max_value(value, { max: maxValue }) || message || i18n.global.t('common.policyValidationMessages.MAX_VALUE', { max: maxValue });
 
@@ -170,6 +170,10 @@ export function getRules(i18n) {
   // URL without path rule
   // Errors if not valid url or if url has a path
   const url_without_path = (value) => customValidators.urlWithoutPath(value, i18n);
+
+  // URL domain only rule
+  // Errors if is not a valid url or contains any element beyond the basic domain name
+  const url_domain_only = (value) => customValidators.urlDomainOnly(value, i18n);
 
   const text_without_fragment = (value) => (Array.isArray(value) ? !value.some((element) => element.includes('#')) : !value.includes('#')) || i18n.global.t('common.policyValidationMessages.url_with_fragment');
 
@@ -274,6 +278,7 @@ export function getRules(i18n) {
     unique_email_template_id,
     uniqueValue,
     url,
+    url_domain_only,
     url_with_path,
     url_without_path,
     validBookmarkUrl,

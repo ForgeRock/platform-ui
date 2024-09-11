@@ -31,6 +31,24 @@ of the MIT license. See the LICENSE file for details. -->
       :data-testid="testid"
       @click="onClick"
       @blur="inputValueHandler(inputValue)" />
+    <template
+      #defaultButtons>
+      <BInputGroupAppend v-if="copy">
+        <button
+          :id="`copyButton-${value}`"
+          :data-testid="`btn-copy-${testid}`"
+          class="btn btn-outline-secondary"
+          name="copyButton"
+          @click.prevent="copyValueToClipboard(value)">
+          <FrIcon name="copy" />
+        </button>
+        <BTooltip
+          :target="`copyButton-${value}`"
+          placement="top"
+          triggers="hover"
+          :title="$t('common.copy')" />
+      </BInputGroupAppend>
+    </template>
   </FrInputLayout>
 </template>
 
@@ -38,6 +56,10 @@ of the MIT license. See the LICENSE file for details. -->
 import { useField } from 'vee-validate';
 import uuid from 'uuid/v4';
 import { toRef } from 'vue';
+import * as clipboard from 'clipboard-polyfill/text';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import { BInputGroupAppend, BTooltip } from 'bootstrap-vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -49,8 +71,14 @@ import InputMixin from '../Wrapper/InputMixin';
  */
 export default {
   name: 'TextArea',
-  mixins: [InputMixin],
+  mixins: [
+    InputMixin,
+    NotificationMixin,
+  ],
   components: {
+    BInputGroupAppend,
+    BTooltip,
+    FrIcon,
     FrInputLayout,
   },
   props: {
@@ -97,6 +125,13 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * Determines if copy button should be appended to field
+     */
+    copy: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const {
@@ -130,6 +165,18 @@ export default {
       if (inputValue !== null) {
         this.floatLabels = inputValue.toString().length > 0 && !!this.label;
       }
+    },
+    /**
+     * Copy field value to clipboard
+     *
+     * @param {String} payload string to copy
+     */
+    copyValueToClipboard(payload) {
+      clipboard.writeText(payload).then(() => {
+        this.displayNotification('success', this.$t('common.copySuccess'));
+      }, (error) => {
+        this.showErrorMessage(error, this.$t('common.copyFail'));
+      });
     },
   },
   computed: {

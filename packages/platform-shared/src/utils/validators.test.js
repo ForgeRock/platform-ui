@@ -5,7 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { validEmail } from './validators';
+import { urlDomainOnly, validEmail } from './validators';
+import i18n from '@/i18n';
 
 const nonEnglishEmailAddresses = [
   '用户@例子.广告',
@@ -94,5 +95,49 @@ describe('email address validators', () => {
     emptyEmailAddresses.forEach((emailAddress) => {
       expect(validEmail(emailAddress)).toBe(true);
     });
+  });
+});
+
+describe('url validators', () => {
+  it('should fail urlDomainOnly when protocol is included', () => {
+    const testVar = 'https://test.com';
+    const result = urlDomainOnly(testVar, i18n);
+    expect(result).toBe('Must be a valid URL containing only a single domain');
+  });
+
+  it('should fail urlDomainOnly when no domain is included', () => {
+    const testVar = 'test';
+    const result = urlDomainOnly(testVar, i18n);
+    expect(result).toBe('Must be a valid URL containing only a single domain');
+  });
+
+  it('should fail urlDomainOnly when empty', () => {
+    const testVar = '';
+    const result = urlDomainOnly(testVar, i18n);
+    expect(result).toBe('Must be a valid URL containing only a single domain');
+  });
+
+  it('should fail urlDomainOnly when sub-domains are included', () => {
+    const testVar = 'test.something.com';
+    const result = urlDomainOnly(testVar, i18n);
+    expect(result).toBe('Must be a valid URL containing only a single domain');
+  });
+
+  it('should fail urlDomainOnly when special characters are included', () => {
+    const testVar = 'test$#¢.com';
+    const result = urlDomainOnly(testVar, i18n);
+    expect(result).toBe('Must be a valid URL containing only a single domain');
+  });
+
+  it('should fail urlDomainOnly when path is included', () => {
+    const testVar = 'test.com/path';
+    const result = urlDomainOnly(testVar, i18n);
+    expect(result).toBe('Must be a valid URL containing only a single domain');
+  });
+
+  it('should pass urlDomainOnly when url is valid single domain', () => {
+    const testVar = 'test.com';
+    const result = urlDomainOnly(testVar, i18n);
+    expect(result).toBe(true);
   });
 });

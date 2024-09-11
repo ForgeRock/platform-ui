@@ -64,6 +64,28 @@ export const url = (value) => {
 };
 
 /**
+ * validates a text field represents solely a single domain of a URL with no invalid characters.
+ * a protocol is prepended to allow easier validation and to ensure one has not already been entered
+ * @param {String} value
+ * @returns {Boolean}
+ */
+export const urlDomainOnly = (value, i18n) => {
+  const testValue = `http://${value}`;
+  const noSpecialCharactersRegex = /^[a-zA-Z0-9-_.]+$/;
+  try {
+    const potentialUrl = new URL(testValue);
+    const parts = value.split('.');
+    if (urlHasPath(potentialUrl) || value.includes(':') || !parts[0] || !parts[1] || parts.length !== 2 || !noSpecialCharactersRegex.test(value)) {
+      return i18n.global.t('common.policyValidationMessages.urlDomainOnly');
+    }
+
+    return true;
+  } catch (e) {
+    return i18n.global.t('common.policyValidationMessages.urlDomainOnly');
+  }
+};
+
+/**
  * validates a text field is a url, a relative path or an ESV
  * @param {String} value
  * @returns {Boolean}
