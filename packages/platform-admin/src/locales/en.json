@@ -1085,6 +1085,7 @@
       "SAML": "SAML",
       "sso": "Access",
       "ssoBadge": "SSO",
+      "showPreviousVersions": "Show previous versions",
       "support": "Support",
       "templateHeader": "{displayName} Application",
       "Update": "Update",
