@@ -484,6 +484,8 @@
     "journey": "Journey",
     "journeyName": "Journey Name",
     "identityResource": "Identity Object",
+    "innerTreeOnly": "Inner Journey",
+    "innerTreeOnlyDescription": "Only allow this journey to be initiated from within another journey.",
     "previewHelp": "Copy and paste into an incognito window to preview journey.",
     "usageInputLabel": "Tree ID",
     "usageHelp": "Use when configuring the <a target=\"_blank\" href=\"https://sdks.forgerock.com/\">ForgeRock SDK</a> or calling the REST APIs.",
@@ -506,6 +508,7 @@
     "export": "Export",
     "exportJourneys": "Export Journeys",
     "importJourneys": "Import Journeys",
+    "defaultCheckboxDescription": "Make this the default authentication journey for users in this realm.",
     "defaultCheckboxTitle": "Default journey for end users",
     "defaultAdminCheckboxTitle": "Default journey for admins",
     "mustRun": "Run journey for all users regardless of current session.",
@@ -516,6 +519,7 @@
     "noJourneySearchResults": "There are no journeys matching the search term.",
     "noJourneySubtitle": "Configure journeys to allow users to sign in, register and perform self-service functions like reset their password or recover their username.",
     "noAuthServicesMessage": "Sign in users to your application by creating journeys",
+    "overrideThemeCheckboxDescription": "Use a custom themed sign-in UI for this journey.",
     "overrideThemeCheckboxTitle": "Override theme",
     "errorRetrievingJourney": "Error retrieving journey",
     "errorRetrievingJourneys": "Error retrieving journeys",
@@ -543,7 +547,7 @@
       "treeNameDescription": "Human-friendly name for this user flow.",
       "treeManagedIdentityDescription": "Managed identity to authenticate using this journey.",
       "treeDescriptionDescription": "Provide consumers of your flow a brief description of this flow.",
-      "treeThemeDescription": "Theme that will appear when using this tree."
+      "treeThemeDescription": "Select a theme to use with this Journey."
     },
     "setDefaultModal": {
       "okText": "Save Default",
