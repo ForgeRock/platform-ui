@@ -19,7 +19,6 @@ const defaultState = {
   autoReportsEnabled: false,
   currentPackage: '',
   applicationPolicyEnabled: false,
-  scriptBindingsApiEnabled: false,
   oidcJourneysEnabled: false,
   fraasEnvironmentUrl: null,
   fraasFederationUrl: null,
@@ -165,10 +164,6 @@ const mutations = {
 
     if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
       state.googleMapsApiKey = env.VUE_APP_GOOGLE_MAPS_API_KEY;
-    }
-
-    if (env.VUE_APP_SCRIPT_BINDINGS_API_ENABLED === true || env.VUE_APP_SCRIPT_BINDINGS_API_ENABLED === 'true') {
-      state.scriptBindingsApiEnabled = true;
     }
 
     if (env.VUE_APP_NODE_DESIGNER_ENABLED === true || env.VUE_APP_NODE_DESIGNER_ENABLED === 'true') {
