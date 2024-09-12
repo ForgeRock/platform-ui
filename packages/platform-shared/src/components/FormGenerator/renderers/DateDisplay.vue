@@ -48,3 +48,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+:deep(.date-button) {
+  height: auto;
+}
+</style>
