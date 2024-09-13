@@ -63,6 +63,7 @@
     "Cors": "CORS",
     "Csp": "Content Security Policy",
     "CustomEndpoints": "Custom Endpoints",
+    "CustomNodes": "Custom Nodes",
     "Dashboard": "Dashboard",
     "EditApplication": "Edit Application",
     "EditConnectorServer": "Edit Connector Server",
@@ -147,6 +148,7 @@
     "configureManaged": "Configure",
     "connect": "Connect",
     "customEndpoints": "Custom Endpoints",
+    "customNodes": "Custom Nodes",
     "dataSources": "Data Sources",
     "email": "Email",
     "entitlements": "Entitlements",
@@ -659,6 +661,16 @@
         }
       }
     }
+  },
+  "customNodes": {
+    "title": "Custom Nodes",
+    "subtitle": "Custom nodes you've created.",
+    "noNodes": "No custom node types configured",
+    "noNodesSubtitle": "Create new node types to place into trees",
+    "noSearchResults": "No Custom Nodes found.",
+    "noResultsHelp": "Try a new search in the box above.",
+    "errorLoadingInstances": "Error loading instances",
+    "errorLoading": "Error loading Custom Nodes"
   },
   "bulkImport": {
     "title": "Import Identities",

@@ -42,6 +42,7 @@ const defaultState = {
   maxSessionExpirationTime: null,
   newMultiselectEnabled: false,
   pingFederateUrl: null,
+  nodeDesignerEnabled: false,
   promoteAppsViaApi: false,
   showEsvUi: false,
   showCertsUi: false,
@@ -137,6 +138,10 @@ const mutations = {
 
     if (env.VUE_APP_SCRIPT_BINDINGS_API_ENABLED === true || env.VUE_APP_SCRIPT_BINDINGS_API_ENABLED === 'true') {
       state.scriptBindingsApiEnabled = true;
+    }
+
+    if (env.VUE_APP_NODE_DESIGNER_ENABLED === true || env.VUE_APP_NODE_DESIGNER_ENABLED === 'true') {
+      state.nodeDesignerEnabled = true;
     }
   },
 

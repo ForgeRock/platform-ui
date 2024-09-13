@@ -406,6 +406,9 @@ export default {
         padding: 0.7rem 0.75rem;
       }
     }
+    &.disabled {
+      opacity: 0.5;
+    }
   }
 }
 </style>
