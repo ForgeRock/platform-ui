@@ -211,6 +211,7 @@
     "reports": "Reports",
     "requests": "My Requests",
     "roles": "Roles",
+    "tasks": "Tasks",
     "violations": "Violations"
   },
   "pageTitles": {
@@ -245,6 +246,7 @@
     "ReportView": "View Report",
     "RequestFormLauncher": "Request Form",
     "Sharing": "Sharing",
+    "Tasks": "Tasks",
     "Violations": "Violations",
     "Violation": "Violation",
     "ViolationRemediate": "Fix Violation"

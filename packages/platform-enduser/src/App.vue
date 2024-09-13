@@ -106,6 +106,16 @@ export default {
       ],
     };
 
+    // move this into the governanceInbox when removing feature flag
+    if (this.$store.state.SharedStore.governanceDevEnabled) {
+      governanceInbox.subItems.splice(1, 0, {
+        displayName: 'sideMenu.tasks',
+        routeTo: {
+          name: 'Tasks',
+        },
+      });
+    }
+
     return {
       menuItems: [
         {

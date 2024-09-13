@@ -86,6 +86,18 @@ const router = createRouter({
       ],
     },
     {
+      path: '/tasks',
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
+      meta: { authenticate: true },
+      children: [
+        {
+          path: '',
+          name: 'Tasks',
+          component: () => import('@/views/governance/Tasks/Tasks.vue'),
+        },
+      ],
+    },
+    {
       path: '/access-reviews',
       name: 'AccessReviews',
       component: () => import('@/views/governance/AccessReviews'),
