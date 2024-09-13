@@ -30,6 +30,8 @@ describe('GovernanceDashboard', () => {
               certificationCount: 1,
               approvalsCount: 1,
               violationsCount: 2,
+              fulfillmentTasksCount: 3,
+              SharedStore: { governanceDevEnabled: true },
             },
           },
         },
@@ -76,5 +78,11 @@ describe('GovernanceDashboard', () => {
     shallowMountComponent();
     const card = wrapper.findComponent('[linkpath="violations"]');
     expect(card.vm.count).toBe(2);
+  });
+
+  it('Pending tasks count properly rendered', () => {
+    shallowMountComponent();
+    const card = wrapper.findComponent('[linkpath="tasks"]');
+    expect(card.vm.count).toBe(3);
   });
 });

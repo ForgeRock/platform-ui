@@ -8,23 +8,11 @@ exports[`App.vue Loaded Menus File should load default items: console-error-snap
   [
     "Un-mocked API call made with Axios. All API calls should be mocked",
   ],
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
 ]
 `;
 
 exports[`App.vue Loaded Menus File with governance: console-error-snapshot 1`] = `
 [
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
   [
     "Un-mocked call made to Axios create. All API calls should be mocked",
   ],
@@ -42,23 +30,11 @@ exports[`App.vue should not set view IDM users privilege when governance is disa
   [
     "Un-mocked API call made with Axios. All API calls should be mocked",
   ],
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
 ]
 `;
 
 exports[`App.vue should set view IDM users privilege as false when the getManagedResourceList call fails and governance is enabled: console-error-snapshot 1`] = `
 [
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
   [
     "Un-mocked call made to Axios create. All API calls should be mocked",
   ],
@@ -76,23 +52,11 @@ exports[`App.vue should set view IDM users privilege as true when the getManaged
   [
     "Un-mocked API call made with Axios. All API calls should be mocked",
   ],
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
 ]
 `;
 
 exports[`App.vue shows a regular layout: console-error-snapshot 1`] = `
 [
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
   [
     "Un-mocked call made to Axios create. All API calls should be mocked",
   ],
@@ -110,12 +74,6 @@ exports[`App.vue with wrapper mounted should get access reviews count and save i
   [
     "Un-mocked API call made with Axios. All API calls should be mocked",
   ],
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
 ]
 `;
 
@@ -127,6 +85,11 @@ exports[`App.vue with wrapper mounted should get pending approvals count and sav
   [
     "Un-mocked API call made with Axios. All API calls should be mocked",
   ],
+]
+`;
+
+exports[`App.vue with wrapper mounted should get pending fulfillment tasks count and save it in the store on call getFulfillmentTasksCount: console-error-snapshot 1`] = `
+[
   [
     "Un-mocked call made to Axios create. All API calls should be mocked",
   ],
@@ -144,23 +107,11 @@ exports[`App.vue with wrapper mounted should get pending violations count and sa
   [
     "Un-mocked API call made with Axios. All API calls should be mocked",
   ],
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
 ]
 `;
 
 exports[`App.vue with wrapper mounted should set a 0 to access reviews count and save it in the store on call getAccessReviewsCount when the call to API fails: console-error-snapshot 1`] = `
 [
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
   [
     "Un-mocked call made to Axios create. All API calls should be mocked",
   ],
@@ -178,23 +129,11 @@ exports[`App.vue with wrapper mounted should set a 0 to pending approvals count 
   [
     "Un-mocked API call made with Axios. All API calls should be mocked",
   ],
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
 ]
 `;
 
 exports[`App.vue with wrapper mounted should set a 0 to pending violations count and save it in the store on call getViolationsCount when the call to API fails: console-error-snapshot 1`] = `
 [
-  [
-    "Un-mocked call made to Axios create. All API calls should be mocked",
-  ],
-  [
-    "Un-mocked API call made with Axios. All API calls should be mocked",
-  ],
   [
     "Un-mocked call made to Axios create. All API calls should be mocked",
   ],

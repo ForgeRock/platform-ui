@@ -18,15 +18,6 @@ of the MIT license. See the LICENSE file for details. -->
         <BCol lg="4">
           <FrCountCard
             class="mb-4"
-            link-path="access-reviews"
-            :count="$store.state.certificationCount"
-            :link-text="$t('pages.dashboard.cardCount.viewAccessReviews')"
-            :loading="$store.state.certificationCount === null"
-            :title="$t('pages.dashboard.cardCount.accessReviews')" />
-        </BCol>
-        <BCol lg="4">
-          <FrCountCard
-            class="mb-4"
             link-path="my-requests"
             :count="pendingRequestsCount"
             :link-text="$t('pages.dashboard.cardCount.viewPendingRequests')"
@@ -41,6 +32,26 @@ of the MIT license. See the LICENSE file for details. -->
             :link-text="$t('pages.dashboard.cardCount.viewPendingApprovals')"
             :loading="$store.state.approvalsCount === null"
             :title="$t('pages.dashboard.cardCount.pendingApprovals')" />
+        </BCol>
+        <BCol
+          v-if="$store.state.SharedStore.governanceDevEnabled"
+          lg="4">
+          <FrCountCard
+            class="mb-4"
+            link-path="tasks"
+            :count="$store.state.fulfillmentTasksCount"
+            :link-text="$t('pages.dashboard.cardCount.viewPendingTasks')"
+            :loading="$store.state.fulfillmentTasksCount === null"
+            :title="$t('pages.dashboard.cardCount.pendingTasks')" />
+        </BCol>
+        <BCol lg="4">
+          <FrCountCard
+            class="mb-4"
+            link-path="access-reviews"
+            :count="$store.state.certificationCount"
+            :link-text="$t('pages.dashboard.cardCount.viewAccessReviews')"
+            :loading="$store.state.certificationCount === null"
+            :title="$t('pages.dashboard.cardCount.accessReviews')" />
         </BCol>
         <BCol lg="4">
           <FrCountCard
@@ -60,7 +71,6 @@ of the MIT license. See the LICENSE file for details. -->
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { get } from 'lodash';
-
 import FrCountCard from '@forgerock/platform-shared/src/components/CountCard';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getUserRequests } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';

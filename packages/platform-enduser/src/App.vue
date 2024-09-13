@@ -50,6 +50,7 @@ import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/
 import { mapState } from 'pinia';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
+import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';
 import { getViolations } from '@/api/governance/ViolationsApi';
 import i18n from '@/i18n';
 import './scss/main.scss';
@@ -109,6 +110,7 @@ export default {
     // move this into the governanceInbox when removing feature flag
     if (this.$store.state.SharedStore.governanceDevEnabled) {
       governanceInbox.subItems.splice(1, 0, {
+        showBadgeWithContentFromStore: 'fulfillmentTasksCount',
         displayName: 'sideMenu.tasks',
         routeTo: {
           name: 'Tasks',
@@ -232,6 +234,7 @@ export default {
     if (this.$store.state.SharedStore.governanceEnabled === true) {
       this.getAccessReviewsCount();
       this.getPendingApprovalsCount();
+      this.getFulfillmentTasksCount();
       this.getViolationsCount();
       this.getEnduserPrivileges();
     }
@@ -370,6 +373,26 @@ export default {
         this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingPendingApprovals'));
       }).finally(() => {
         this.$store.commit('setApprovalsCount', count);
+      });
+    },
+    /**
+     * Retrieves the count of fulfillment tasks.
+     *
+     * @returns {void} Does not return a value. The result of the operation is a side-effect (Vuex store update or error message display).
+     */
+    getFulfillmentTasksCount() {
+      if (!this.$store.state.SharedStore.governanceDevEnabled) return;
+
+      let count = 0;
+      getUserFulfillmentTasks(this.userId, {
+        pageSize: 0,
+        actorStatus: 'active',
+      }).then((resourceData) => {
+        count = resourceData?.data?.totalCount || 0;
+      }).catch((error) => {
+        this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingPendingFulfillmentTasks'));
+      }).finally(() => {
+        this.$store.commit('setFulfillmentTasksCount', count);
       });
     },
     /**

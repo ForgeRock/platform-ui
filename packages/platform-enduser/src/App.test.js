@@ -8,12 +8,14 @@
 import { flushPromises, shallowMount } from '@vue/test-utils';
 import { createStore } from 'vuex';
 import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import * as ServerinfoApi from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
 import * as ViolationsApi from '@/api/governance/ViolationsApi';
+import * as TasksApi from '@/api/governance/TasksApi';
 import i18n from '@/i18n';
 import App from '@/App';
 
@@ -48,15 +50,18 @@ describe('App.vue', () => {
     AccessReviewApi.getCertificationItems = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     AccessRequestApi.getUserApprovals = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     ViolationsApi.getViolations = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
+    TasksApi.getUserFulfillmentTasks = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     ManagedResourceApi.getManagedResourceList = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [] } }));
+    ServerinfoApi.getIdmServerInfo = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
     getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
     store = {
       state: {
-        SharedStore: { workforceEnabled: false },
+        SharedStore: { workforceEnabled: false, governanceDevEnabled: true },
         menusFile: 'menus.platform',
         certificationCount: null,
         approvalsCount: null,
         violationsCount: null,
+        fulfillmentTasksCount: null,
       },
       getters: {
         menusFile: (state) => state.menusFile,
@@ -70,6 +75,9 @@ describe('App.vue', () => {
         },
         setViolationsCount(state, count) {
           state.violationsCount = count;
+        },
+        setFulfillmentTasksCount(state, count) {
+          state.fulfillmentTasksCount = count;
         },
       },
     };
@@ -188,6 +196,14 @@ describe('App.vue', () => {
       await flushPromises();
       expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error retrieving pending violations');
       expect(wrapper.vm.$store.state.violationsCount).toBe(0);
+    });
+
+    it('should get pending fulfillment tasks count and save it in the store on call getFulfillmentTasksCount', async () => {
+      const getUserFulfillmentTasks = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
+      wrapper.vm.getFulfillmentTasksCount();
+      await flushPromises();
+      expect(getUserFulfillmentTasks).toHaveBeenCalled();
+      expect(wrapper.vm.$store.state.fulfillmentTasksCount).toBe(1);
     });
   });
 });
