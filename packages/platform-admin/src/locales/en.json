@@ -1370,6 +1370,8 @@
       },
       "authenticationTab": {
         "title": "Authentication",
+        "journeyNameLabel": "Journey Name",
+        "journeyNameHelp": "A journey to authenticate users to this application.",
         "tokenEndpointAuthMethodLabel": "Token Endpoint Authentication Method",
         "tokenEndpointAuthMethodHelp": "The authentication method with which a client authenticates to the authorization server at the token endpoint. The authentication method applies to OIDC requests with the openid scope.",
         "clientTypeLabel": "Client Type",

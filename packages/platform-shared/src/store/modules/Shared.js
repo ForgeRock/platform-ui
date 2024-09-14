@@ -22,6 +22,7 @@ const defaultState = {
   extendedSamlConfigEnabled: false,
   scriptBindingsApiEnabled: false,
   samlJourneysEnabled: false,
+  oidcJourneysEnabled: false,
   fraasEnvironmentUrl: null,
   fraasFederationUrl: null,
   fraasLoggingKeyURL: null,
@@ -99,6 +100,9 @@ const mutations = {
       }
       if (env.VUE_APP_ENABLE_SAML_JOURNEYS === 'true' || env.VUE_APP_ENABLE_SAML_JOURNEYS === true) {
         state.samlJourneysEnabled = env.VUE_APP_ENABLE_SAML_JOURNEYS;
+      }
+      if (env.VUE_APP_ENABLE_OIDC_JOURNEYS === 'true' || env.VUE_APP_ENABLE_OIDC_JOURNEYS === true) {
+        state.oidcJourneysEnabled = env.VUE_APP_ENABLE_OIDC_JOURNEYS;
       }
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
         if (env.VUE_APP_IGA_API_URL) {
