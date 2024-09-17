@@ -4106,7 +4106,8 @@
         "errorSearchingTemplates": "Error obtaining existing templates"
       },
       "notifications": {
-        "savingSuccess": "Saving succeeded"
+        "deleteSuccess": "Template deleted successfully",
+        "savingSuccess": "Template saved successfully"
       },
       "scheduleModal": {
         "editSchedule": "Edit Schedule",
