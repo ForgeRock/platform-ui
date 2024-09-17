@@ -3076,6 +3076,7 @@
       },
       "title": "Event Hooks",
       "subTitle": "Trigger a script or a workflow when specified reconciliation events occurs.",
+      "accountChangeDetected": "Account Change Detected",
       "link": "Link",
       "unlink": "Unlink"
     },
