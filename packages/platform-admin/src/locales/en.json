@@ -3945,6 +3945,7 @@
         "approvalTaskDisplayName": "Approval",
         "loadingWorkflow": "Loading {status}...",
         "deleteDraft": "Delete Draft",
+        "deletePublished": "Delete Published",
         "denyPermission": "Deny",
         "editDraft": "Edit Draft",
         "editPanel": {
@@ -4047,6 +4048,7 @@
       "draft": "Draft",
       "listView": {
         "deleteDraftMessage": "Are you sure you want to delete this draft workflow?",
+        "deletePublishedMessage": "Are you sure you want to delete this published workflow?",
         "subTitle": "Create and manage identity governance workflows.",
         "viewDraft": "View Draft",
         "viewPublished": "View Published"
