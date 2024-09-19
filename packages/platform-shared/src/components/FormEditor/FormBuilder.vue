@@ -6,7 +6,13 @@ of the MIT license. See the LICENSE file for details. -->
   <FrFormGenerator
     :schema="schemaFormGenerator"
     :model="modelValue"
-    @update:model="fieldChanged" />
+    @update:model="fieldChanged">
+    <template #formText="{ property }">
+      <div class="pb-1 mb-4">
+        {{ property.formText }}
+      </div>
+    </template>
+  </FrFormGenerator>
 </template>
 
 <script setup>

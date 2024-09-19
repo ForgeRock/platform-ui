@@ -1457,6 +1457,10 @@
             "description": "Provide a default value for this property.",
             "label": "Provide Default Value",
             "defaultValueInputLabel": "Default Value"
+          },
+          "text": {
+            "label": "Text",
+            "description": "Text to show in the form."
           }
         },
         "layout": "Layout",
@@ -1473,6 +1477,10 @@
         "text": {
           "description": "Textfield input to accept a single string.",
           "name": "Text"
+        },
+        "formText": {
+          "description": "Text to display.",
+          "name": "Form Text"
         },
         "textarea": {
           "description": "Text area to accept a multiline string input.",

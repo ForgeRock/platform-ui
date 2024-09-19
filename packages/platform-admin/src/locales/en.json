@@ -4152,7 +4152,8 @@
         "exitPreview": "Exit preview"
       },
       "categories": {
-        "customFields": "Custom Fields"
+        "customFields": "Custom Fields",
+        "utilities": "Utilities"
       },
       "closeButtonTooltip": "Toggle Field List",
       "createApplicationAssigmentError": "Error creating application assignment",

@@ -85,6 +85,7 @@ export function transformSchemaToFormGenerator(schema, readOnly = false, include
       ...schemaField,
       disabled: schemaField.readOnly || readOnly,
       type: getFormGeneratorType(schemaField.type),
+      customSlot: schemaField.customSlot,
       columnClass: getColumnClasses(schemaField.layout),
       label: getOptionalPropLabel(schemaField),
     };

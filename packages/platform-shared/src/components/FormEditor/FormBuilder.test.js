@@ -303,6 +303,34 @@ describe('FormBuilder', () => {
     expect(input.element.value).toBe('Field 1 default value');
   });
 
+  it('should render correctly a form text div', async () => {
+    const wrapper = setup({}, [
+      {
+        id: 'row1',
+        fields: [
+          {
+            type: 'formText',
+            layout: { columns: 12, offset: 0 },
+            formText: 'form text to be tested',
+            customSlot: 'formText',
+          },
+        ],
+      },
+    ]);
+
+    await wrapper.vm.$nextTick();
+
+    const row = wrapper.findAllComponents({ name: 'BRow' });
+    expect(row.length).toBe(1);
+
+    const col = row[0].findAllComponents({ name: 'BCol' });
+    expect(col.length).toBe(1);
+    expect(col[0].classes()).toContain('col-md-12', 'offset-md-0');
+
+    const formTextCol = col[0];
+    expect(formTextCol.text()).toBe('form text to be tested');
+  });
+
   it('should render correctly a text input with model value', async () => {
     const wrapper = setup({
       field1: 'Field 1 value',
