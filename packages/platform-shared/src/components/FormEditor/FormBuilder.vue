@@ -8,7 +8,9 @@ of the MIT license. See the LICENSE file for details. -->
     :model="modelValue"
     @update:model="fieldChanged">
     <template #formText="{ property }">
-      <div class="pb-1 mb-4">
+      <div
+        class="pb-1 mb-4"
+        tab-index="0">
         {{ property.formText }}
       </div>
     </template>
