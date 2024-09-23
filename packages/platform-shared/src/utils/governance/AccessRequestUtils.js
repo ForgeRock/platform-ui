@@ -135,7 +135,7 @@ export function getRequestObjectType(requestType) {
  * Retrieves the display names of request types and adds them to the requests.
  *
  * @param {Array} requests - The array of requests.
- * @returns {Array} - The array of requests with request type display names added.
+ * @returns {Promise<Array>} - The array of requests with request type display names added.
  */
 export async function getRequestTypeDisplayNames(requests) {
   const requestsClone = cloneDeep(requests);

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
 
       <!-- Actions -->
       <div
-        v-if="isActive && adminUser"
+        v-if="isActive && allowForwarding"
         class="mb-4">
         <BButton
           @click="openModal('REASSIGN')"
@@ -60,28 +60,21 @@ of the MIT license. See the LICENSE file for details. -->
       is-approvals
       @modal-closed="modalType = null"
       @update-item="getRequestData"
-      @update-list="toListView" />
+      @update-list="$emit('navigate-to-list')" />
   </BContainer>
 </template>
 
 <script setup>
-import {
-  computed,
-  onMounted,
-  ref,
-} from 'vue';
+import { computed, ref } from 'vue';
 import {
   BButton,
   BCard,
   BContainer,
 } from 'bootstrap-vue';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getRequest, getRequestType } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import { useRoute, useRouter } from 'vue-router';
 import {
   getFormattedRequest,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
@@ -91,39 +84,33 @@ import FrRequestDetails from '@forgerock/platform-shared/src/components/governan
 import FrRequestHeader from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestHeader';
 import i18n from '@/i18n';
 
+const props = defineProps({
+  requestId: {
+    type: String,
+    required: true,
+  },
+  allowForwarding: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+defineEmits(['navigate-to-list']);
+
 // Composables
-const router = useRouter();
-const route = useRoute();
 const { bvModal } = useBvModal();
-const { setBreadcrumb } = useBreadcrumb();
-const { adminUser } = useUserStore();
 
 // Data
-const { requestId } = route.params;
 const item = ref({});
 const isLoading = ref(true);
 const modalType = ref('');
 
 const isActive = computed(() => item.value.rawData?.decision?.status === 'in-progress');
-const routerVariables = computed(() => {
-  if (adminUser) {
-    return {
-      breadcrumbRoute: '/requests',
-      breadcrumbText: 'sideMenu.governanceRequests',
-      listViewRouteName: 'GovernanceRequests',
-    };
-  }
-  return {
-    breadcrumbRoute: '/my-requests',
-    breadcrumbText: 'sideMenu.requests',
-    listViewRouteName: 'MyRequests',
-  };
-});
 
 async function getRequestData() {
   isLoading.value = true;
   try {
-    const { data } = await getRequest(requestId);
+    const { data } = await getRequest(props.requestId);
     const { data: requestTypeData } = await getRequestType(data.requestType);
     data.requestTypeDisplayName = requestTypeData.displayName;
     item.value = getFormattedRequest(data);
@@ -134,18 +121,10 @@ async function getRequestData() {
   }
 }
 
-onMounted(async () => {
-  setBreadcrumb(routerVariables.value.breadcrumbRoute, i18n.global.t(routerVariables.value.breadcrumbText));
-
-  await getRequestData();
-});
-
 function openModal(type) {
   modalType.value = REQUEST_MODAL_TYPES[type];
   bvModal.value.show('request_modal');
 }
 
-function toListView() {
-  router.push({ name: routerVariables.value.listViewRouteName });
-}
+getRequestData();
 </script>

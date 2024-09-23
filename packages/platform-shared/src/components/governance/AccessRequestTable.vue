@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrAccessRequestList
       :is-loading="isLoading"
       :requests="accessRequests"
-      @open-detail="viewDetails">
+      @open-detail="$emit('navigate-to-details', $event)">
       <template #header>
         <FrRequestToolbar
           :status-options="statusOptions"
@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
             <template #custom-top-actions>
               <BDropdownItem
                 data-testid="view-details-button"
-                @click="viewDetails(item)">
+                @click="$emit('navigate-to-details', item)">
                 <FrIcon
                   icon-class="mr-2"
                   name="list_alt">
@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
               <template v-if="status === 'in-progress'">
                 <BDropdownDivider />
                 <BDropdownItem
-                  v-if="userStore.adminUser"
+                  v-if="allowForwarding"
                   @click="openModal(item, 'REASSIGN')">
                   <FrIcon
                     icon-class="mr-2"
@@ -93,30 +93,21 @@ import {
   BDropdownDivider,
   BDropdownItem,
 } from 'bootstrap-vue';
-import {
-  computed,
-  onMounted,
-  ref,
-} from 'vue';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { ref } from 'vue';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import {
-  getRequestTypeDisplayNames,
   getRequestFilter,
   getStatusText,
   sortKeysMap,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { getRequests, getUserRequests } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrAccessRequestList from '@forgerock/platform-shared/src/components/governance/AccessRequestList';
 import FrRequestToolbar from '@forgerock/platform-shared/src/components/governance/RequestToolbar';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { useRouter } from 'vue-router';
 import i18n from '@/i18n';
 
 /**
@@ -124,20 +115,32 @@ import i18n from '@/i18n';
  * @component MyRequest
  */
 
+const props = defineProps({
+  accessRequests: {
+    type: Array,
+    default: () => [],
+  },
+  totalRows: {
+    type: Number,
+    default: 0,
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  allowForwarding: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(['load-requests', 'navigate-to-details']);
+
 // Composables
-const { userId, adminUser } = useUserStore();
 const { bvModal } = useBvModal();
-const router = useRouter();
 
-const userStore = computed(() => ({
-  userId,
-  adminUser,
-}));
-
-const accessRequests = ref([]);
 const currentPage = ref(1);
 const filter = ref({});
-const isLoading = ref(false);
 const modalItem = ref({});
 const modalType = ref(REQUEST_MODAL_TYPES.CANCEL);
 const pageSize = ref(10);
@@ -158,7 +161,6 @@ const statusOptions = ref([
     value: 'cancelled',
   },
 ]);
-const totalRows = ref(0);
 
 const componentRefs = new Map([
   ['currentPage', currentPage],
@@ -168,15 +170,13 @@ const componentRefs = new Map([
   ['sortDir', sortDir],
   ['sortKeys', sortKeys],
   ['status', status],
-  ['totalRows', totalRows],
+  ['totalRows', props.totalRows],
 ]);
 
 /**
  * Get current users access requests based on query params and target filter
  */
 async function loadRequests(goToFirstPage) {
-  isLoading.value = true;
-
   if (goToFirstPage) currentPage.value = 1;
   const payload = getRequestFilter(filter.value, status.value);
   const params = {
@@ -187,28 +187,7 @@ async function loadRequests(goToFirstPage) {
   };
 
   if (sortKeys.value === 'date') params.sortType = 'date';
-
-  try {
-    const { data } = userStore.value.adminUser
-      ? await getRequests(params, payload)
-      : await getUserRequests(userId, params, payload);
-
-    accessRequests.value = await getRequestTypeDisplayNames(data.result);
-    totalRows.value = data.totalCount;
-  } catch (error) {
-    accessRequests.value = [];
-    totalRows.value = 0;
-    showErrorMessage(error, i18n.global.t('governance.accessRequest.myRequests.errorGettingRequests'));
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-function viewDetails(item) {
-  router.push({
-    name: 'MyRequestDetails',
-    params: { requestId: item.details.id },
-  });
+  emit('load-requests', params, payload);
 }
 
 function openModal(item, type) {
@@ -227,8 +206,4 @@ function filterHandler(property) {
   const resetPaging = (key !== 'currentPage');
   loadRequests(resetPaging);
 }
-
-onMounted(async () => {
-  loadRequests();
-});
 </script>

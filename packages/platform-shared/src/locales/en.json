@@ -993,8 +993,7 @@
     }
   },
   "pageTitles": {
-    "ComplianceExceptionDetails": "Exception Details",
-    "MyRequestDetails": "Request Details"
+    "ComplianceExceptionDetails": "Exception Details"
   },
   "pagination": {
     "dropdown": {
@@ -1582,6 +1581,7 @@
       "requestSaveError": "Error saving request",
       "requestSaveSuccess": "Request saved successfully",
       "requestType": "Request Type",
+      "requestTypesError": "Error getting request types",
       "requestTypesTabTitle": "Request Types",
       "submittedRequest": "submitted this request"
     },

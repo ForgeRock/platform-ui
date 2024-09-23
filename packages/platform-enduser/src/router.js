@@ -146,12 +146,12 @@ const router = createRouter({
         {
           path: '',
           name: 'MyRequests',
-          component: () => import(/* webpackChunkName: "MyRequests" */ '@forgerock/platform-shared/src/views/Governance/AccessRequest/MyRequest'),
+          component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequests'),
         },
         {
           path: 'details/:requestId',
           name: 'MyRequestDetails',
-          component: () => import(/* webpackChunkName: "MyRequests" */ '@forgerock/platform-shared/src/views/Governance/AccessRequest/MyRequestDetails'),
+          component: () => import(/* webpackChunkName: "MyRequestDetails" */ '@/views/governance/accessRequest/MyRequestDetails'),
         },
       ],
     },
