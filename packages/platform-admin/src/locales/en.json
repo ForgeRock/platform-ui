@@ -120,6 +120,7 @@
     "ReportView": "View Report",
     "RequestDetails": "Request Details",
     "Requests": "Requests",
+    "RequestTypeDetails": "Request Type Details",
     "Scopes": "Scopes",
     "Scripts": "Scripts",
     "SecurityQuestions": "Security Questions",
@@ -3846,6 +3847,12 @@
     },
     "requests": {
       "errorGettingRequests": "There was an error retrieving the requests"
+    },
+    "requestTypes": {
+      "errorGettingRequestTypes": "There was an error retrieving the request types",
+      "errorGettingWorkflows": "There was an error retrieving the workflows",
+      "errorSavingRequestType": "There was an error saving the request type",
+      "requestTypeSaved": "Request type saved"
     },
     "scopes": {
       "editScope": {
