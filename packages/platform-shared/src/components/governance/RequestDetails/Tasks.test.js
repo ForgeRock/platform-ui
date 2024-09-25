@@ -23,9 +23,11 @@ const ITEM = {
       pases: [
         {
           name: 'Phase-1',
+          displayName: 'Phase Number 1',
         },
         {
           name: 'Phase-2',
+          displayName: 'Phase Number 2',
         },
       ],
     },

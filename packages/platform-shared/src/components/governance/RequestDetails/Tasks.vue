@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
     @row-clicked="showTaskDetailsModal($event)">
     <template #cell(task)="{ item }">
       <h2 class="h5">
-        {{ capitalize(item.name) }}
+        {{ item.displayName || capitalize(item.name) }}
       </h2>
       <small>
         {{ parseDate(item.startDate) }}
@@ -204,7 +204,7 @@ function parseDate(date) {
 function showTaskDetailsModal(currentItem) {
   taskDetails.value = {
     approvers: currentItem.actors,
-    name: currentItem.name,
+    name: currentItem.displayName || currentItem.name,
     startDate: parseDate(currentItem.startDate),
     status: getStatus(currentItem.decision || currentItem.status),
     statusBadge: getBadgeVariant(currentItem.decision || currentItem.status),
