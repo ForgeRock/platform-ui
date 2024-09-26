@@ -152,7 +152,6 @@ describe('ApprovalDetails', () => {
       wrapper = setup();
       await flushPromises();
       const detail = findByTestId(wrapper, 'approval-detail');
-      expect(detail.text()).toContain('My Azure App');
       expect(detail.text()).toContain('Manuel Escobar');
       expect(detail.text()).toContain('manuel.escobar@test.com');
       expect(detail.text()).toContain('Pending');

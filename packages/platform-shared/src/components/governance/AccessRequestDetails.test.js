@@ -115,7 +115,6 @@ describe('AccessRequestDetails', () => {
       const wrapper = setup();
       await flushPromises();
       const detail = findByTestId(wrapper, 'request-detail');
-      expect(detail.text()).toContain('My Azure App');
       expect(detail.text()).toContain('Manuel Escobar');
       expect(detail.text()).toContain('manuel.escobar@test.com');
       expect(detail.text()).toContain('Pending');

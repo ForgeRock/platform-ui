@@ -43,32 +43,10 @@ of the MIT license. See the LICENSE file for details. -->
             {{ details.requestId }}
           </BCol>
           <BCol lg="6">
-            <template v-if="details.requested">
-              <small class="d-block mb-2">
-                {{ $t(`governance.requestModal.detailsTab.requested`) }}
-              </small>
-              <BMedia>
-                <template #aside>
-                  <FrIcon
-                    v-if="isTypeRole(item.rawData.requestType)"
-                    icon-class="mr-1 md-28 rounded-circle"
-                    :name="details.requested.icon" />
-                  <BImg
-                    v-else
-                    height="24"
-                    class="mt-2"
-                    :src="details.requested.icon" />
-                </template>
-                <BMediaBody>
-                  <p class="h5 m-0">
-                    {{ details.requested.name }}
-                  </p>
-                  <small class="mb-0">
-                    {{ details.requested.description }}
-                  </small>
-                </BMediaBody>
-              </BMedia>
-            </template>
+            <small class="d-block mb-2">
+              {{ $t(`governance.requestModal.detailsTab.externalRequestId`) }}
+            </small>
+            {{ details.externalRequestId || blankValueIndicator }}
           </BCol>
         </BRow>
         <BRow>
@@ -117,8 +95,6 @@ import {
   BBadge,
   BCol,
   BImg,
-  BMedia,
-  BMediaBody,
   BRow,
 } from 'bootstrap-vue';
 import {
@@ -129,10 +105,9 @@ import {
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { getPriorityImageSrc, isTypeRole, isSupportedRequestType } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { getPriorityImageSrc, isSupportedRequestType } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -201,21 +176,13 @@ function getStatus(decision) {
  */
 function getDetails(item) {
   const newDetails = {
-    requested: null,
+    externalRequestId: item.rawData.request?.common?.externalRequestId,
     requestId: item.details.id,
     status: setDecisionValue(getStatus(item.rawData.decision)),
     priority: item.details.priority || null,
     justification: item.rawData.request?.common?.justification,
   };
 
-  // only add the requested details for the 6 catalog request types
-  if (item.details.name) {
-    newDetails.requested = {
-      icon: item.details.icon,
-      name: item.details.name,
-      description: item.details.description,
-    };
-  }
   return newDetails;
 }
 

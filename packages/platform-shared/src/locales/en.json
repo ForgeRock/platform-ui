@@ -1867,11 +1867,11 @@
       },
       "detailsTab": {
         "awaitingApproval": "Awaiting Approval",
+        "externalRequestId": "External Request ID",
         "justification": "Justification",
         "priority": "Priority",
         "provisioning": "Provisioning",
         "requestComplete": "Request Complete",
-        "requested": "Requested",
         "requestId": "Request ID",
         "requestSubmitted": "Request Submitted",
         "status": "Status"

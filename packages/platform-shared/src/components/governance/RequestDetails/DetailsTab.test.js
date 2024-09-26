@@ -69,7 +69,6 @@ describe('DetailsTab', () => {
   it('initializes with the correct default data structure based on props', async () => {
     const wrapper = setup();
     await wrapper.vm.$nextTick();
-    expect(wrapper.vm.details.requested.name).toBe('name test');
     expect(wrapper.vm.details.status.name).toContain('Approved');
   });
 
@@ -89,21 +88,17 @@ describe('DetailsTab', () => {
     expect(requestedBy.text()).toBe('StatusPendingPriority--');
   });
 
-  it('shows requested if present', async () => {
+  it('shows external request id if present', async () => {
     const wrapper = setup({
       item: {
-        details: {
-          name: 'name test',
-          icon: 'icon test',
-          description: 'description test',
-        },
+        details: {},
         rawData: {
-          requestType: 'requestType test',
+          request: { common: { externalRequestId: 'externalId' } },
         },
       },
     });
     await flushPromises();
-    expect(wrapper.text()).toContain('Requested');
+    expect(wrapper.text()).toContain('externalId');
   });
 
   it('hides requested if is not present', async () => {
