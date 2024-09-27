@@ -40,7 +40,9 @@ of the MIT license. See the LICENSE file for details. -->
                     class="p-0"
                     variant="link"
                     v-if="slotData.open$"
-                    @click="handleEditButtonClick">
+                    @click.stop="handleEditButtonClick"
+                    @keydown.enter.stop="handleEditButtonClick"
+                    @keydown.space.prevent.stop="handleEditButtonClick">
                     {{ i18n.global.t('common.edit') }}
                   </BButton>
                 </BMediaBody>
