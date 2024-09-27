@@ -149,10 +149,7 @@ export default {
      */
     setTheme(realm, themeOptions) {
       const idmRequestService = this.getRequestService({
-        'X-OpenIDM-NoSession': true,
-        'X-OpenIDM-Password': 'anonymous',
-        'X-OpenIDM-Username': 'anonymous',
-        'cache-control': 'no-cache',
+        timeout: 150000,
       });
 
       return idmRequestService.get('/config/ui/themerealm').then((results) => {
