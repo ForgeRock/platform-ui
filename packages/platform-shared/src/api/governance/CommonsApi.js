@@ -15,9 +15,12 @@ import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryS
  * @returns {Promise} IGA resources
  */
 export function getResource(resource, queryParams = {}) {
+  const baseResources = ['user', 'role', 'application', 'organization'];
+  const adjustedResource = baseResources.includes(resource) ? `alpha_${resource}` : resource;
+
   queryParams.queryString = queryParams.queryString ?? '';
   const encodedQueryParams = encodeQueryString(queryParams, false);
-  return generateIgaApi().get(`commons/search/${resource}${encodedQueryParams}`);
+  return generateIgaApi().get(`commons/search/${adjustedResource}${encodedQueryParams}`);
 }
 
 /**

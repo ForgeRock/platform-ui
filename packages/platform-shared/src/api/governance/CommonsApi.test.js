@@ -25,9 +25,17 @@ describe('Commons API', () => {
       pageNumber: 0, pageSize: 10, queryString: 'test',
     };
     const res = await CommonsApi.getResource(resource, queryParams);
-    expect(get).toBeCalledWith('commons/search/user?pageNumber=0&pageSize=10&queryString=test');
+    expect(get).toBeCalledWith('commons/search/alpha_user?pageNumber=0&pageSize=10&queryString=test');
     expect(BaseApi.generateIgaApi).toBeCalled();
     expect(res).toEqual(data);
+  });
+
+  it('appends alpha_ to user, role, application, and organization resources', async () => {
+    const resources = ['user', 'role', 'application', 'organization'];
+    resources.forEach((resource) => {
+      CommonsApi.getResource(resource);
+      expect(get).toBeCalledWith(`commons/search/alpha_${resource}?queryString=`);
+    });
   });
 
   it('should call getIgaAccessRequest', async () => {
