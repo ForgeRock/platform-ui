@@ -3870,7 +3870,10 @@
       "errorGettingRequestTypes": "There was an error retrieving the request types",
       "errorGettingWorkflows": "There was an error retrieving the workflows",
       "errorSavingRequestType": "There was an error saving the request type",
-      "requestTypeSaved": "Request type saved"
+      "requestTypeSaved": "Request type saved",
+      "validation": {
+        "nameNotUnique": "Name is already in use by another request type"
+      }
     },
     "scopes": {
       "editScope": {
