@@ -45,19 +45,20 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </div>
     <div
-      v-else-if="!tableData.length & !(queryThreshold > 0 && !noData && !tableData.length)"
+      v-else-if="!tableData.length && !(queryThreshold > 0 && !noData && !tableData.length)"
       class="col-lg-8 offset-lg-2"
       data-testid="no-resources-found">
-      <div class="text-center mt-2 mb-5 py-5">
-        <FrIcon
-          icon-class="fr-no-data-icon md-48 text-secondary opacity-20 mt-4 mb-2"
-          :name="managedIcon" />
-        <h5>{{ $t('listResource.noManaged', { capitalizedResourceName: getTranslation(capitalizedResourceName) }) }}</h5>
-        <p class="mb-4">
-          {{ $t('listResource.noResultsHelp') }}
-        </p>
-        <slot />
-      </div>
+      <slot name="noResourcesFound">
+        <div class="text-center mt-2 mb-5 py-5">
+          <FrIcon
+            icon-class="fr-no-data-icon md-48 text-secondary opacity-20 mt-4 mb-2"
+            :name="managedIcon" />
+          <h5>{{ $t('listResource.noManaged', { capitalizedResourceName: getTranslation(capitalizedResourceName) }) }}</h5>
+          <p class="mb-4">
+            {{ $t('listResource.noResultsHelp') }}
+          </p>
+        </div>
+      </slot>
     </div>
     <BTable
       v-show="tableData.length && !isLoading"

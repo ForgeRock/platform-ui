@@ -5,11 +5,12 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import generateIDMAPI from './__mocks__/generateIDMAPI';
 import ListResource from './index';
+import i18n from '@/i18n';
 
 describe('ListResource Component', () => {
   let wrapper = null;
@@ -24,14 +25,14 @@ describe('ListResource Component', () => {
   };
 
   beforeEach(() => {
-    wrapper = shallowMount(ListResource, {
+    wrapper = mount(ListResource, {
       global: {
         stubs: {
           'router-link': true,
         },
+        plugins: [i18n],
         mocks: {
           $route,
-          $t: (translation) => translation,
           generateIDMAPI: () => {
             const retv = {
               data: {
@@ -50,6 +51,7 @@ describe('ListResource Component', () => {
         },
       },
       props: {
+        resourceTitle: 'Resource title',
         routerParameters: {
           resourceName: 'resourceName',
           icon: 'testIcon',
@@ -95,8 +97,12 @@ describe('ListResource Component', () => {
     });
   });
 
-  it('Component successfully loaded', () => {
+  it('Component successfully loaded and displays the "no data" state', () => {
+    const noDataHeading = wrapper.find('h5');
+    const noDataSubheading = wrapper.find('h5 + p');
     expect(wrapper.vm.columns.length).toEqual(2);
+    expect(noDataHeading.text()).toEqual('No Resource titles Found');
+    expect(noDataSubheading.text()).toEqual('Try a new search in the seach box above.');
   });
 
   it('Loads table column definitions', () => {
