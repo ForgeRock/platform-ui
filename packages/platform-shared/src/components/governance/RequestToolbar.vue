@@ -69,9 +69,12 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="filter-collapse"
       id="filter-collapse">
       <div class="p-4 border-top">
-        <FrRequestFilter
-          data-testid="request-filter"
-          @filter-change="handleFilterChange" />
+        <slot name="filter">
+          <FrRequestFilter
+            data-testid="request-filter"
+            @filter-count="handleFilterCount"
+            @filter-change="handleFilterChange" />
+        </slot>
       </div>
     </BCollapse>
   </div>
@@ -93,7 +96,6 @@ import { onMounted, ref } from 'vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrRequestFilter from '@forgerock/platform-shared/src/components/governance/RequestFilter';
 import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
-import i18n from '@/i18n';
 
 const emit = defineEmits([
   'filter-change',
@@ -103,46 +105,41 @@ const emit = defineEmits([
 ]);
 
 const props = defineProps({
+  numFilters: {
+    type: Number,
+    default: 0,
+  },
   statusOptions: {
+    type: Array,
+    default: () => [],
+  },
+  sortByOptions: {
     type: Array,
     default: () => [],
   },
 });
 
-const numFilters = ref(0);
 const selectedStatus = ref({});
 const showFilters = ref(false);
 const sortField = ref('date');
-const sortByOptions = ref([
-  {
-    value: 'date',
-    text: i18n.global.t('governance.accessRequest.requestDate'),
-  },
-  {
-    value: 'requestedFor',
-    text: i18n.global.t('governance.accessRequest.requestedFor'),
-  },
-  {
-    value: 'priority',
-    text: i18n.global.t('common.priority'),
-  },
-  {
-    value: 'id',
-    text: i18n.global.t('governance.accessRequest.requestId'),
-  },
-]);
 
 onMounted(() => {
   if (props.statusOptions.length) [selectedStatus.value] = props.statusOptions;
 });
 
 /**
- * Set number of filters and emit event with the filter
- * @param {Object} filter object representing applied filters
+ * Set number of filters and emit event with the count
  * @param {Number} count number of applied filters
  */
-function handleFilterChange({ filter, count }) {
-  numFilters.value = count;
+function handleFilterCount(count) {
+  emit('update:num-filters', count);
+}
+
+/**
+ * Set number of filters and emit event with the filter
+ * @param {Object} filter object representing applied filters
+ */
+function handleFilterChange(filter) {
   emit('filter-change', filter);
 }
 

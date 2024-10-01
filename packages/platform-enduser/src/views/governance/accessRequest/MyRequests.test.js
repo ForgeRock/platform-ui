@@ -246,15 +246,14 @@ describe('MyRequests', () => {
     const cellsFirstRow = requestRows[0].findAll('td');
     expect(cellsFirstRow[0].text()).toContain('entitlementRevoke');
     expect(cellsFirstRow[0].text()).toContain('ID: 1');
-    expect(cellsFirstRow[1].text()).toContain('Pending');
-    expect(cellsFirstRow[1].findAll('ul li')[2].text()).toContain('Cancel Request');
+    expect(cellsFirstRow[1].text()).toContain('Jun 22, 2023');
+    expect(cellsFirstRow[2].findAll('ul li')[2].text()).toContain('Cancel Request');
     const cellsSecondRow = requestRows[1].findAll('td');
     expect(cellsSecondRow[0].text()).toContain('Grant Application');
     expect(cellsSecondRow[0].text()).toContain('Test Application');
     expect(cellsSecondRow[0].text()).toContain('Test User');
     expect(cellsSecondRow[0].text()).toContain('ID: 387b7fa9-c57a-495c-a276-74d025020cdc');
-    expect(cellsSecondRow[1].text()).toContain('Pending');
-    expect(cellsSecondRow[1].findAll('ul li')[2].text()).toContain('Cancel Request');
+    expect(cellsSecondRow[2].findAll('ul li')[2].text()).toContain('Cancel Request');
     expect(wrapper.vm.isLoading).toBe(false);
   });
 
@@ -280,7 +279,6 @@ describe('MyRequests', () => {
     expect(cellsFirstRow[0].text()).toContain('Test Application');
     expect(cellsFirstRow[0].text()).toContain('Test User');
     expect(cellsFirstRow[0].text()).toContain('ID: 387b7fa9-c57a-495c-a276-74d025020cdc');
-    expect(cellsFirstRow[1].text()).toContain('Completed');
     expect(wrapper.vm.isLoading).toBe(false);
   });
 

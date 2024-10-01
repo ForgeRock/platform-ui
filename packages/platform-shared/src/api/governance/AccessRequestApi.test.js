@@ -62,7 +62,7 @@ describe('Access Review API', () => {
 
     await AccessRequestApi.getUserApprovals('testId', params, { testFilter: true });
     expect(post).toBeCalledWith(
-      '/governance/user/testId/approvals?_pageSize=10&_pagedResultsOffset=0&_action=search',
+      '/governance/user/testId/tasks?_pageSize=10&_pagedResultsOffset=0&_action=search&type=request',
       { targetFilter: { testFilter: true } },
     );
     expect(BaseApi.generateIgaApi).toBeCalled();

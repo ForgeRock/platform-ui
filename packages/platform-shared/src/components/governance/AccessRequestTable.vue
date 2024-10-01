@@ -10,6 +10,8 @@ of the MIT license. See the LICENSE file for details. -->
       @open-detail="$emit('navigate-to-details', $event)">
       <template #header>
         <FrRequestToolbar
+          v-model:num-filters="numFilters"
+          :sort-by-options="sortByOptions"
           :status-options="statusOptions"
           @filter-change="filterHandler({ filter: $event })"
           @sort-change="filterHandler({ sortKeys: $event })"
@@ -24,51 +26,42 @@ of the MIT license. See the LICENSE file for details. -->
           :subtitle="$t('governance.accessRequest.noRequests', { status: getStatusText(statusOptions, status) })" />
       </template>
       <template #actions="{ item }">
-        <div class="d-flex justify-content-end align-items-center">
-          <div class="d-none d-lg-block mr-4">
-            <BBadge
-              class="w-100px font-weight-normal"
-              :variant="status === 'complete' ? 'success' : 'light'">
-              {{ getStatusText(statusOptions, status) }}
-            </BBadge>
-          </div>
-          <FrActionsCell
-            :delete-option="false"
-            :divider="false"
-            :edit-option="false"
-            :enable-sr-only-label="true">
-            <template #custom-top-actions>
+        <FrActionsCell
+          :delete-option="false"
+          :divider="false"
+          :edit-option="false"
+          :enable-sr-only-label="true">
+          <template #custom-top-actions>
+            <BDropdownItem
+              data-testid="view-details-button"
+              @click="$emit('navigate-to-details', item)">
+              <FrIcon
+                icon-class="mr-2"
+                name="list_alt">
+                {{ $t('common.viewDetails') }}
+              </FrIcon>
+            </BDropdownItem>
+            <template v-if="status === 'in-progress'">
+              <BDropdownDivider />
               <BDropdownItem
-                data-testid="view-details-button"
-                @click="$emit('navigate-to-details', item)">
+                v-if="allowForwarding"
+                @click="openModal(item, 'REASSIGN')">
                 <FrIcon
                   icon-class="mr-2"
-                  name="list_alt">
-                  {{ $t('common.viewDetails') }}
+                  name="redo">
+                  {{ $t('common.forward') }}
                 </FrIcon>
-              </BDropdownItem>
-              <template v-if="status === 'in-progress'">
-                <BDropdownDivider />
-                <BDropdownItem
-                  v-if="allowForwarding"
-                  @click="openModal(item, 'REASSIGN')">
-                  <FrIcon
-                    icon-class="mr-2"
-                    name="redo">
-                    {{ $t('common.forward') }}
-                  </FrIcon>
-                </Bdropdownitem>
-                <BDropdownItem @click="openModal(item, 'CANCEL')">
-                  <FrIcon
-                    icon-class="mr-2"
-                    name="cancel">
-                    {{ $t('governance.accessRequest.myRequests.cancelRequest') }}
-                  </FrIcon>
-                </Bdropdownitem>
-              </template>
+              </Bdropdownitem>
+              <BDropdownItem @click="openModal(item, 'CANCEL')">
+                <FrIcon
+                  icon-class="mr-2"
+                  name="cancel">
+                  {{ $t('governance.accessRequest.myRequests.cancelRequest') }}
+                </FrIcon>
+              </Bdropdownitem>
             </template>
-          </FrActionsCell>
-        </div>
+          </template>
+        </FrActionsCell>
       </template>
     </FrAccessRequestList>
     <FrPagination
@@ -88,7 +81,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
-  BBadge,
   BCard,
   BDropdownDivider,
   BDropdownItem,
@@ -102,6 +94,7 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import {
   getRequestFilter,
   getStatusText,
+  sortByOptions,
   sortKeysMap,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
@@ -134,15 +127,18 @@ const props = defineProps({
   },
 });
 
+// Emits
 const emit = defineEmits(['load-requests', 'navigate-to-details']);
 
 // Composables
 const { bvModal } = useBvModal();
 
+// Data
 const currentPage = ref(1);
 const filter = ref({});
 const modalItem = ref({});
 const modalType = ref(REQUEST_MODAL_TYPES.CANCEL);
+const numFilters = ref(0);
 const pageSize = ref(10);
 const sortDir = ref('desc');
 const sortKeys = ref('date');

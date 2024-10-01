@@ -40,20 +40,20 @@ of the MIT license. See the LICENSE file for details. -->
       </h1>
       <div>
         <span class="text-dark">
-          {{ requestedBy }}
+          {{ item.details.requestedBy }}
         </span>
         <span class="text-muted ml-1">
           {{ $t('governance.accessRequest.submittedRequest') }}
         </span>
-        <template v-if="requestedFor">
+        <template v-if="item.details.requestedFor">
           <span class="text-muted ml-1">
             {{ $t('common.for').toLowerCase() }}
           </span>
-          {{ requestedFor }}
+          {{ item.details.requestedFor }}
         </template>
-        <template v-if="requestedDate">
+        <template v-if="item.details.date">
           <span class="text-muted ml-1">
-            {{ $t('common.on').toLowerCase() }} {{ requestedDate }}
+            {{ $t('common.on').toLowerCase() }} {{ item.details.date }}
           </span>
         </template>
       </div>
@@ -62,43 +62,20 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import {
   BImg,
   BMedia,
   BMediaBody,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import {
-  isTypeRole,
-} from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { isTypeRole } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
-import dayjs from 'dayjs';
-import i18n from '@/i18n';
 
-const props = defineProps({
+defineProps({
   item: {
     type: Object,
     default: () => ({}),
   },
-});
-
-const requestedBy = computed(() => {
-  const value = props.item?.details?.requestedBy || null;
-  if (value?.id === 'SYSTEM') return i18n.global.t('common.system');
-  if (value?.givenName || value?.sn) return i18n.global.t('common.userFullName', { givenName: value.givenName, sn: value.sn });
-  return value?.userName || '';
-});
-
-const requestedFor = computed(() => {
-  const value = props.item?.details?.requestedFor || null;
-  if (value?.givenName || value?.sn) return i18n.global.t('common.userFullName', { givenName: value.givenName, sn: value.sn });
-  return value?.userName || '';
-});
-
-const requestedDate = computed(() => {
-  if (!props.item?.details?.date) return '';
-  return dayjs(props.item.details.date).format('MMM D, YYYY');
 });
 
 </script>

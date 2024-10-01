@@ -128,15 +128,24 @@ describe('RequestToolbar', () => {
     });
 
     it('filters for a no priority', () => {
-      const filter = { priorities: {} };
+      const filter = { priorities: { none: true } };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
         operand: [{
-          operator: 'EQUALS',
-          operand: {
-            targetName: 'request.common.priority',
-            targetValue: 'none',
-          },
+          operator: 'OR',
+          operand: [
+            {
+              operator: 'NOT',
+              operand: [
+                {
+                  operator: 'EXISTS',
+                  operand: {
+                    targetName: 'request.common.priority',
+                  },
+                },
+              ],
+            },
+          ],
         }],
       });
     });
@@ -216,8 +225,14 @@ describe('getFormattedRequest', () => {
       decision: {
         startDate: '2021-01-01',
       },
-      user: 'user test',
-      requester: 'requester test',
+      user: {
+        givenName: 'user',
+        sn: 'test',
+      },
+      requester: {
+        givenName: 'requester',
+        sn: 'test',
+      },
     };
     const result = getFormattedRequest(request);
     expect(result).toEqual({
@@ -227,7 +242,7 @@ describe('getFormattedRequest', () => {
         name: 'display name test',
         description: 'desc test',
         priority: 'priority',
-        date: '2021-01-01',
+        date: 'Jan 1, 2021',
         requestedFor: 'user test',
         requestedBy: 'requester test',
         icon: 'app_logo.png',
@@ -248,7 +263,10 @@ describe('getFormattedRequest', () => {
       decision: {
         startDate: '2021-01-01',
       },
-      requester: 'testRequester',
+      requester: {
+        givenName: 'test',
+        sn: 'Requester',
+      },
     };
     const result = getFormattedRequest(request);
     expect(result).toEqual({
@@ -256,8 +274,9 @@ describe('getFormattedRequest', () => {
         id: 'testId',
         type: 'testType',
         priority: 'high',
-        date: '2021-01-01',
-        requestedBy: 'testRequester',
+        date: 'Jan 1, 2021',
+        requestedBy: 'test Requester',
+        requestedFor: '',
         isCustom: true,
       },
       rawData: request,

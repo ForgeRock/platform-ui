@@ -6,59 +6,9 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <BRow>
       <BCol lg="12">
-        <div class="mb-4 mt-2">
-          <div class="d-inline-block border rounded-pill px-3 py-2 mr-2 mb-2">
-            <FrField
-              v-model="formFields.highPriority"
-              inline
-              class="d-inline"
-              :label="$t('governance.accessRequest.priorities.highPriority')"
-              name="highPriority"
-              testid="priority-high"
-              type="checkbox"
-              @input="formFields.highPriority = $event">
-              <template #prepend>
-                <BImg
-                  height="24"
-                  :src="getPriorityImageSrc('high')" />
-              </template>
-            </FrField>
-          </div>
-          <div class="d-inline-block border rounded-pill px-3 py-2 mr-2 mb-2">
-            <FrField
-              v-model="formFields.mediumPriority"
-              inline
-              class="d-inline"
-              :label="$t('governance.accessRequest.priorities.mediumPriority')"
-              name="mediumPriority"
-              testid="priority-medium"
-              type="checkbox"
-              @input="formFields.mediumPriority = $event">
-              <template #prepend>
-                <BImg
-                  height="24"
-                  :src="getPriorityImageSrc('medium')" />
-              </template>
-            </FrField>
-          </div>
-          <div class="d-inline-block border rounded-pill px-3 py-2 mr-2 mb-2">
-            <FrField
-              v-model="formFields.lowPriority"
-              inline
-              class="d-inline"
-              :label="$t('governance.accessRequest.priorities.lowPriority')"
-              name="lowPriority"
-              testid="priority-low"
-              type="checkbox"
-              @input="formFields.lowPriority = $event">
-              <template #prepend>
-                <BImg
-                  height="24"
-                  :src="getPriorityImageSrc('low')" />
-              </template>
-            </FrField>
-          </div>
-        </div>
+        <FrPriorityFilter
+          v-model:value="formPriorities"
+          class="mb-4 mt-2" />
       </BCol>
       <BCol lg="6">
         <FrField
@@ -107,26 +57,31 @@ of the MIT license. See the LICENSE file for details. -->
  */
 import {
   BCol,
-  BImg,
   BRow,
 } from 'bootstrap-vue';
 import { computed, ref, watch } from 'vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
-import { getPriorityImageSrc, requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import FrPriorityFilter from '@forgerock/platform-shared/src/components/governance/PriorityFilter';
+import { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 
-const emit = defineEmits(['filter-change']);
+const emit = defineEmits(['filter-change', 'filter-count']);
 
+// data
 const formFields = ref({
-  highPriority: true,
-  mediumPriority: true,
-  lowPriority: true,
   requester: 'managed/user/all',
   requestedFor: 'managed/user/all',
   requestId: '',
   requestType: 'all',
 });
+const formPriorities = ref({
+  high: true,
+  medium: true,
+  low: true,
+  none: true,
+});
+
 const allRequestersOption = ref({
   text: i18n.global.t('governance.accessRequest.allRequesters'),
   value: 'all',
@@ -164,9 +119,10 @@ const requestTypeOptions = ref([
 
 const numFilters = computed(() => {
   let filters = 0;
-  if (!formFields.value.highPriority) filters += 1;
-  if (!formFields.value.mediumPriority) filters += 1;
-  if (!formFields.value.lowPriority) filters += 1;
+  if (!formPriorities.value.high) filters += 1;
+  if (!formPriorities.value.medium) filters += 1;
+  if (!formPriorities.value.low) filters += 1;
+  if (!formPriorities.value.none) filters += 1;
   if (formFields.value.requestType !== 'all') filters += 1;
   if (formFields.value.requestedFor !== 'managed/user/all') filters += 1;
   if (formFields.value.requester !== 'managed/user/all') filters += 1;
@@ -180,9 +136,10 @@ const numFilters = computed(() => {
  */
 function getFilterPayload() {
   const priorities = {
-    high: formFields.value.highPriority,
-    medium: formFields.value.mediumPriority,
-    low: formFields.value.lowPriority,
+    high: formPriorities.value.high,
+    medium: formPriorities.value.medium,
+    low: formPriorities.value.low,
+    none: formPriorities.value.none,
   };
   const requestType = formFields.value.requestType === 'all'
     ? null
@@ -206,7 +163,13 @@ function getFilterPayload() {
   };
 }
 
+watch(() => formPriorities.value, () => {
+  emit('filter-count', numFilters.value);
+  emit('filter-change', getFilterPayload());
+}, { deep: true });
+
 watch(() => formFields.value, () => {
-  emit('filter-change', { filter: getFilterPayload(), count: numFilters.value });
+  emit('filter-count', numFilters.value);
+  emit('filter-change', getFilterPayload());
 }, { deep: true });
 </script>

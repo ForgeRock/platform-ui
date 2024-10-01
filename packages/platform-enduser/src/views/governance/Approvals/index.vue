@@ -16,6 +16,8 @@ of the MIT license. See the LICENSE file for details. -->
           <template #header>
             <FrRequestToolbar
               data-testid="approvals-toolbar"
+              v-model:num-filters="numFilters"
+              :sort-by-options="sortByOptions"
               :status-options="statusOptions"
               @filter-change="filterHandler({ filter: $event })"
               @sort-change="filterHandler({ sortKeys: $event })"
@@ -31,103 +33,66 @@ of the MIT license. See the LICENSE file for details. -->
               :subtitle="$t('governance.accessRequest.noRequests', { status: getStatusText(statusOptions, status) })" />
           </template>
           <template #actions="{ item }">
-            <div class="d-flex align-items-center justify-content-end">
-              <div class="d-flex">
+            <div class="d-flex align-items-center justify-content-end text-right dropdown-padding">
+              <BDropdown
+                boundary="window"
+                variant="link"
+                no-caret
+                right
+                toggle-class="text-decoration-none p-0"
+                data-testid="dropdown-actions">
+                <template #button-content>
+                  <FrIcon
+                    icon-class="text-muted md-24"
+                    name="more_horiz" />
+                  <p class="sr-only">
+                    {{ $t('common.moreActions') }}
+                  </p>
+                </template>
                 <template v-if="status === 'pending'">
-                  <BButton
-                    variant="outline-secondary"
-                    size="sm"
-                    class="d-none d-lg-block mx-lg-1"
-                    data-testid="action-approve"
-                    @click="openModal(item, 'APPROVE')">
+                  <BDropdownItem
+                    @click="openModal(item, 'APPROVE')"
+                    data-testid="dropdown-action-approve">
                     <FrIcon
                       icon-class="mr-2 text-success"
-                      name="check">
-                      {{ $t('common.approve') }}
-                    </FrIcon>
-                  </BButton>
-                  <BButton
-                    variant="outline-secondary"
-                    size="sm"
-                    class="d-none d-lg-block mx-lg-1"
-                    data-testid="action-reject"
+                      name="check" />
+                    {{ $t('common.approve') }}
+                  </BDropdownItem>
+                  <BDropdownItem
+                    data-testid="dropdown-action-reject"
                     @click="openModal(item, 'REJECT')">
                     <FrIcon
                       icon-class="mr-2 text-danger"
-                      name="block">
-                      {{ $t('common.reject') }}
-                    </FrIcon>
-                  </BButton>
+                      name="block" />
+                    {{ $t('common.reject') }}
+                  </BDropdownItem>
+                  <BDropdownDivider />
+                  <BDropdownItem
+                    data-testid="dropdown-action-reassign"
+                    @click="openModal(item, 'REASSIGN')">
+                    <FrIcon
+                      icon-class="mr-2"
+                      name="redo" />
+                    {{ $t('common.forward') }}
+                  </BDropdownItem>
+                  <BDropdownItem
+                    data-testid="dropdown-action-comment"
+                    @click="openModal(item, 'COMMENT')">
+                    <FrIcon
+                      icon-class="mr-2"
+                      name="chat_bubble_outline" />
+                    {{ $t('governance.requestModal.addComment') }}
+                  </BDropdownItem>
                 </template>
-                <div class="text-right dropdown-padding">
-                  <BDropdown
-                    boundary="window"
-                    variant="link"
-                    no-caret
-                    right
-                    toggle-class="text-decoration-none p-0"
-                    data-testid="dropdown-actions">
-                    <template #button-content>
-                      <FrIcon
-                        icon-class="text-muted md-24"
-                        name="more_horiz" />
-                      <p class="sr-only">
-                        {{ $t('common.moreActions') }}
-                      </p>
-                    </template>
-                    <template v-if="status === 'pending'">
-                      <BDropdownItem
-                        class="d-block d-lg-none"
-                        @click="openModal(item, 'APPROVE')"
-                        data-testid="dropdown-action-approve">
-                        <FrIcon
-                          icon-class="mr-2 text-success"
-                          name="check">
-                          {{ $t('common.approve') }}
-                        </FrIcon>
-                      </BDropdownItem>
-                      <BDropdownItem
-                        class="d-block d-lg-none"
-                        data-testid="dropdown-action-reject"
-                        @click="openModal(item, 'REJECT')">
-                        <FrIcon
-                          icon-class="mr-2 text-danger"
-                          name="block">
-                          {{ $t('common.reject') }}
-                        </FrIcon>
-                      </BDropdownItem>
-                      <BDropdownDivider class="d-block d-lg-none" />
-                      <BDropdownItem
-                        data-testid="dropdown-action-reassign"
-                        @click="openModal(item, 'REASSIGN')">
-                        <FrIcon
-                          icon-class="mr-2"
-                          name="redo">
-                          {{ $t('common.forward') }}
-                        </FrIcon>
-                      </BDropdownItem>
-                      <BDropdownItem
-                        data-testid="dropdown-action-comment"
-                        @click="openModal(item, 'COMMENT')">
-                        <FrIcon
-                          icon-class="mr-2"
-                          name="chat_bubble_outline">
-                          {{ $t('governance.requestModal.addComment') }}
-                        </FrIcon>
-                      </BDropdownItem>
-                    </template>
-                    <BDropdownItem
-                      data-testid="dropdown-action-details"
-                      @click="viewDetails(item)">
-                      <FrIcon
-                        icon-class="mr-2"
-                        name="list_alt">
-                        {{ $t('common.viewDetails') }}
-                      </FrIcon>
-                    </BDropdownItem>
-                  </BDropdown>
-                </div>
-              </div>
+                <BDropdownItem
+                  data-testid="dropdown-action-details"
+                  @click="viewDetails(item)">
+                  <FrIcon
+                    icon-class="mr-2"
+                    name="list_alt" />
+                  {{ $t('common.viewDetails') }}
+                </BDropdownItem>
+              </BDropdown>
             </div>
           </template>
           <template #footer>
@@ -157,7 +122,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  BButton,
   BDropdown,
   BDropdownItem,
   BDropdownDivider,
@@ -176,6 +140,7 @@ import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governan
 import {
   getRequestFilter,
   getStatusText,
+  sortByOptions,
   sortKeysMap,
   getFormattedRequest,
   getRequestTypeDisplayNames,
@@ -191,7 +156,6 @@ import FrRequestToolbar from '@forgerock/platform-shared/src/components/governan
 export default {
   name: 'Approvals',
   components: {
-    BButton,
     BCard,
     BContainer,
     BDropdown,
@@ -215,10 +179,12 @@ export default {
       isLoading: false,
       modalItem: null,
       modalType: REQUEST_MODAL_TYPES.DETAILS,
+      numFilters: 0,
       pageSize: 10,
       requireApproveJustification: false,
       requireRejectJustification: false,
       allowSelfApproval: false,
+      sortByOptions,
       sortDir: 'desc',
       sortKeys: 'date',
       status: 'pending',

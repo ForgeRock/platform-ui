@@ -7,8 +7,8 @@
 
 import { cloneDeep } from 'lodash';
 import { mount } from '@vue/test-utils';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import AccessRequestList from './AccessRequestList';
+import i18n from '@/i18n';
 
 const application = {
   id: 1,
@@ -28,6 +28,10 @@ const application = {
   user: {
     givenName: 'test givenName',
     sn: 'test sn',
+  },
+  requester: {
+    givenName: 'requester givenName',
+    sn: 'requester sn',
   },
 };
 
@@ -90,16 +94,7 @@ describe('AccessReviews', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(AccessRequestList, {
-      global: {
-        mocks: {
-          $t: (text, params) => {
-            if (text === 'governance.accessRequest.idLabel') {
-              return text + params.id;
-            }
-            return text;
-          },
-        },
-      },
+      global: { plugins: [i18n] },
       props: {
         requests: [
           application,
@@ -117,8 +112,7 @@ describe('AccessReviews', () => {
         ],
       });
 
-      let requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('Grant Application');
+      expect(wrapper.text()).toMatch('Grant Application');
 
       app.requestType = 'applicationRemove';
 
@@ -128,8 +122,7 @@ describe('AccessReviews', () => {
         ],
       });
 
-      requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('Remove Application');
+      expect(wrapper.text()).toMatch('Remove Application');
     });
 
     it('should display application name', () => {
@@ -139,19 +132,7 @@ describe('AccessReviews', () => {
         ],
       });
 
-      const requestName = findByTestId(wrapper, 'request-item-name');
-      expect(requestName.text()).toBe('test application');
-    });
-
-    it('should display application description', () => {
-      wrapper.setProps({
-        requests: [
-          application,
-        ],
-      });
-
-      const requestDescription = findByTestId(wrapper, 'request-item-description');
-      expect(requestDescription.text()).toBe('test description');
+      expect(wrapper.text()).toMatch('test application');
     });
   });
 
@@ -164,8 +145,7 @@ describe('AccessReviews', () => {
         ],
       });
 
-      let requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('Grant Entitlement');
+      expect(wrapper.text()).toMatch('Grant Entitlement');
 
       ent.requestType = 'entitlementRemove';
 
@@ -175,8 +155,7 @@ describe('AccessReviews', () => {
         ],
       });
 
-      requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('Remove Entitlement');
+      expect(wrapper.text()).toMatch('Remove Entitlement');
     });
 
     it('should display entitlement name', async () => {
@@ -186,19 +165,7 @@ describe('AccessReviews', () => {
         ],
       });
 
-      const requestName = findByTestId(wrapper, 'request-item-name');
-      expect(requestName.text()).toBe('test entitlement');
-    });
-
-    it('should display entitlement description', () => {
-      wrapper.setProps({
-        requests: [
-          entitlement,
-        ],
-      });
-
-      const requestDescription = findByTestId(wrapper, 'request-item-description');
-      expect(requestDescription.text()).toBe('test description');
+      expect(wrapper.text()).toMatch('test entitlement');
     });
   });
 
@@ -211,8 +178,7 @@ describe('AccessReviews', () => {
         ],
       });
 
-      let requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('Grant Role');
+      expect(wrapper.text()).toMatch('Grant Role');
 
       myRole.requestType = 'roleRemove';
 
@@ -222,8 +188,7 @@ describe('AccessReviews', () => {
         ],
       });
 
-      requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('Remove Role');
+      expect(wrapper.text()).toMatch('Remove Role');
     });
 
     it('should display role name', async () => {
@@ -233,19 +198,7 @@ describe('AccessReviews', () => {
         ],
       });
 
-      const requestName = findByTestId(wrapper, 'request-item-name');
-      expect(requestName.text()).toBe('test role');
-    });
-
-    it('should display role description', () => {
-      wrapper.setProps({
-        requests: [
-          role,
-        ],
-      });
-
-      const requestDescription = findByTestId(wrapper, 'request-item-description');
-      expect(requestDescription.text()).toBe('test description');
+      expect(wrapper.text()).toMatch('test role');
     });
   });
 
@@ -257,23 +210,23 @@ describe('AccessReviews', () => {
         ],
       });
 
-      const requestName = findByTestId(wrapper, 'request-item-name');
-      expect(requestName.text()).toBe('customRequest');
+      expect(wrapper.text()).toMatch('customRequest');
     });
   });
 
+  it('should show who submitted the request', () => {
+    expect(wrapper.text()).toMatch('requester givenName requester sn');
+  });
+
   it('should show who access has been requested for', () => {
-    const user = findByTestId(wrapper, 'request-item-user');
-    expect(user.text()).toBe('common.userFullName');
+    expect(wrapper.text()).toMatch('test givenName test sn');
   });
 
   it('should show the date the request was created', () => {
-    const date = findByTestId(wrapper, 'request-item-date');
-    expect(date.text()).toBe('Jun 22, 2023');
+    expect(wrapper.text()).toMatch('Jun 22, 2023');
   });
 
   it('should show the request id', () => {
-    const id = findByTestId(wrapper, 'request-item-id');
-    expect(id.text()).toBe('governance.accessRequest.idLabel1');
+    expect(wrapper.text()).toMatch('ID: 1');
   });
 });

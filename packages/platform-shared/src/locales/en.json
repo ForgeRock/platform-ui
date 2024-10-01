@@ -1516,7 +1516,8 @@
       "priorities": {
         "lowPriority": "Low Priority",
         "mediumPriority": "Medium Priority",
-        "highPriority": "High Priority"
+        "highPriority": "High Priority",
+        "noPriority": "No Priority"
       },
       "allRequesters": "All Requesters",
       "idLabel": "ID: {id}",
@@ -1595,6 +1596,7 @@
       "requestType": "Request Type",
       "requestTypesError": "Error getting request types",
       "requestTypesTabTitle": "Request Types",
+      "submittedARequest": "submitted a request",
       "submittedRequest": "submitted this request"
     },
     "accountDetails": "Account Details",

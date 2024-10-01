@@ -6,9 +6,10 @@
  */
 
 import { cloneDeep, uniq } from 'lodash';
-import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { getBasicFilter, getPriorityFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { getRequestType } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import dayjs from 'dayjs';
 import i18n from '@/i18n';
 
 /**
@@ -67,6 +68,25 @@ export const sortKeysMap = {
   id: 'metadata.primaryKey',
 };
 
+export const sortByOptions = [
+  {
+    value: 'date',
+    text: i18n.global.t('governance.accessRequest.requestDate'),
+  },
+  {
+    value: 'requestedFor',
+    text: i18n.global.t('governance.accessRequest.requestedFor'),
+  },
+  {
+    value: 'priority',
+    text: i18n.global.t('common.priority'),
+  },
+  {
+    value: 'id',
+    text: i18n.global.t('governance.accessRequest.requestId'),
+  },
+];
+
 export function getRequestFilter(filter, status) {
   const allFilters = [];
 
@@ -76,19 +96,9 @@ export function getRequestFilter(filter, status) {
   if (filter.requestType) allFilters.push(getBasicFilter('EQUALS', 'requestType', filter.requestType));
 
   if (filter.priorities) {
-    const priorities = [];
-    if (filter.priorities.high) priorities.push('high');
-    if (filter.priorities.medium) priorities.push('medium');
-    if (filter.priorities.low) priorities.push('low');
-
-    if (!priorities.length) {
-      allFilters.push(getBasicFilter('EQUALS', 'request.common.priority', 'none'));
-    } else {
-      const priorityFilters = priorities.map((priority) => getBasicFilter('EQUALS', 'request.common.priority', priority));
-      allFilters.push({
-        operator: 'OR',
-        operand: priorityFilters,
-      });
+    const priorityFilters = getPriorityFilter(filter.priorities);
+    if (priorityFilters) {
+      allFilters.push(priorityFilters);
     }
   }
 
@@ -172,6 +182,39 @@ export function getTypeString(requestType) {
 }
 
 /**
+ * Generates a display text for the requester based on their details.
+ * @param {Object} requester - The requester user.
+ * @returns {String} The display text for the requester.
+ */
+function getRequestedByText(requester) {
+  const value = requester || null;
+  if (value?.id === 'SYSTEM') return i18n.global.t('common.system');
+  if (value?.givenName || value?.sn) return i18n.global.t('common.userFullName', { givenName: value.givenName, sn: value.sn });
+  return value?.userName || '';
+}
+
+/**
+ * Generates a display text for the requested user.
+ * @param {Object} requestedFor - The user object containing user details.
+ * @returns {String} The full name of the user if available, otherwise the username or an empty string.
+ */
+function getRequestedForText(requestedFor) {
+  const value = requestedFor || null;
+  if (value?.givenName || value?.sn) return i18n.global.t('common.userFullName', { givenName: value.givenName, sn: value.sn });
+  return value?.userName || '';
+}
+
+/**
+ * Formats a given date into a readable string format 'MMM D, YYYY'.
+ * @param {String} date - The date to format.
+ * @returns {String} The formatted date string. Returns an empty string if the date is not provided.
+ */
+function getRequestedDateText(date) {
+  if (!date) return '';
+  return dayjs(date).format('MMM D, YYYY');
+}
+
+/**
  * Returns the basic request display object for a given request.
  * This is used for requests that are not for applications, entitlement, or roles
  *
@@ -184,8 +227,9 @@ function getBasicRequestDisplay(request) {
       id: request.id,
       type: request.requestTypeDisplayName || request.requestType,
       priority: request.request?.common?.priority,
-      date: request.decision?.startDate,
-      requestedBy: request.requester,
+      date: getRequestedDateText(request.decision?.startDate),
+      requestedBy: getRequestedByText(request.requester),
+      requestedFor: getRequestedForText(request.user),
       isCustom: true,
     },
     rawData: request,
@@ -208,9 +252,9 @@ function getAdvancedRequestDisplay(request, objectType) {
       name: objectType === 'entitlement' ? request.descriptor?.idx?.['/entitlement']?.displayName || request[objectType]?.displayName : request[objectType]?.name,
       description: objectType === 'entitlement' ? request.glossary?.idx?.['/entitlement']?.description || request[objectType]?.description : request[objectType]?.description,
       priority: request.request?.common?.priority,
-      date: request.decision?.startDate,
-      requestedFor: request.user,
-      requestedBy: request.requester,
+      date: getRequestedDateText(request.decision?.startDate),
+      requestedFor: getRequestedForText(request.user),
+      requestedBy: getRequestedByText(request.requester),
       icon: objectType === 'role' ? 'assignment_ind' : getApplicationLogo(request.application),
     },
     rawData: request,

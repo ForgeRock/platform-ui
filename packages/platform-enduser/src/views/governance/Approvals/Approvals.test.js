@@ -125,27 +125,16 @@ const mockRequest = {
 };
 
 const openModalMock = {
+  itemName: 'Remove Application: My Azure App',
   details: {
-    date: '2023-06-22T19:23:26+00:00',
+    date: 'Jun 22, 2023',
     description: 'My Azure App',
     icon: 'https://cdn.forgerock.com/platform/app-templates/images/microsoft.svg',
     id: 3,
     name: 'My Azure App',
     priority: 'high',
-    requestedBy: {
-      givenName: 'Mike',
-      id: '1234-456-1',
-      mail: 'mike.wong@test.com',
-      sn: 'Wong',
-      userName: 'mike.wong@test.com',
-    },
-    requestedFor: {
-      givenName: 'Andrew',
-      id: '1234-456-2',
-      mail: 'andrew.hertel@test.com',
-      sn: 'Hertel',
-      userName: 'andrew.hertel@test.com',
-    },
+    requestedBy: 'Mike Wong',
+    requestedFor: 'Andrew Hertel',
     type: 'Remove Application',
   },
   rawData: {
@@ -409,12 +398,9 @@ describe('Approvals', () => {
       .spyOn(wrapper.vm, 'openModal')
       .mockImplementation();
     await flushPromises();
-    await wrapper.vm.$nextTick();
-    expect(findByTestId(wrapper, 'approvals-no-data').exists).toBeTruthy();
-    const approveButton = findByTestId(wrapper, 'action-approve');
-    expect(approveButton.exists()).toBe(true);
-    await wrapper.vm.$nextTick();
-    approveButton.trigger('click');
+
+    findByTestId(wrapper, 'dropdown-actions').trigger('click');
+    findByTestId(wrapper, 'dropdown-action-approve').trigger('click');
     expect(showModalSpy).toHaveBeenCalledWith(openModalMock, 'APPROVE');
   });
   it('test open modal with reject', async () => {
@@ -433,7 +419,8 @@ describe('Approvals', () => {
       .mockImplementation();
     await flushPromises();
 
-    findByTestId(wrapper, 'action-reject').trigger('click');
+    findByTestId(wrapper, 'dropdown-actions').trigger('click');
+    findByTestId(wrapper, 'dropdown-action-reject').trigger('click');
     await wrapper.vm.$nextTick();
     expect(showModalSpy).toHaveBeenCalledWith(openModalMock, 'REJECT');
   });
@@ -446,18 +433,18 @@ describe('Approvals', () => {
         },
       }),
     );
+    const newOpenModalMock = clone(openModalMock);
 
     wrapper = mountComponent();
     const showModalSpy = jest
       .spyOn(wrapper.vm, 'openModal')
       .mockImplementation();
-    jest.spyOn(wrapper.vm, 'viewDetails').mockImplementation();
     await flushPromises();
 
     findByTestId(wrapper, 'dropdown-actions').trigger('click');
     findByTestId(wrapper, 'dropdown-action-reassign').trigger('click');
     await wrapper.vm.$nextTick();
-    expect(showModalSpy).toHaveBeenCalledWith(openModalMock, 'REASSIGN');
+    expect(showModalSpy).toHaveBeenCalledWith(newOpenModalMock, 'REASSIGN');
   });
 
   it('sets approval count to show in side nav bar badge', async () => {
@@ -480,6 +467,7 @@ describe('Approvals', () => {
     newMockRequest.decision.comments = [{ comment: 'test' }];
     const newOpenModalMock = clone(openModalMock);
     newOpenModalMock.rawData.decision.comments = [{ comment: 'test' }];
+    delete newOpenModalMock.itemName;
     delete newOpenModalMock.rawData.requestTypeDisplayName;
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({

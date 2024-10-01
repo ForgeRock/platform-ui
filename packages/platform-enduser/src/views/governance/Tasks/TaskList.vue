@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,27 +19,18 @@ of the MIT license. See the LICENSE file for details. -->
       <template #cell(details)="{ item }">
         <BMedia
           v-if="item.details"
-          data-testId="request-detail-header"
           class="align-items-center">
           <BMediaBody class="align-self-center text-truncate">
             <h2 class="h5 mb-2">
-              {{ item.itemName }}
+              {{ item.details.name }}
             </h2>
             <div class="mb-1">
-              <span class="text-dark mr-1">
-                {{ item.details.requestedBy }}
-              </span>
               <span class="text-muted mr-1">
-                {{ $t('governance.accessRequest.submittedARequest') }}
+                {{ capitalize($t('governance.tasks.assignedTo')) }}
               </span>
-              <template v-if="item.details.requestedFor">
-                <span class="text-muted mr-1">
-                  {{ $t('common.for').toLowerCase() }}
-                </span>
-                <span class="text-dark">
-                  {{ item.details.requestedFor }}
-                </span>
-              </template>
+              <span class="text-dark mr-3">
+                {{ item.details.assignee }}
+              </span>
             </div>
             <div>
               <small
@@ -56,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(date)="{ item }">
         <small class="text-muted">
-          {{ item.details.date }}
+          {{ item.details.assignedDate }}
         </small>
       </template>
       <template #cell(actions)="{ item }">
@@ -74,20 +65,19 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 /**
- * Displays the list of Access Request.
- * @component AccessRequestList
- * @prop {Boolean} isLoading - Determines if the information is loading
- * @prop {Array} requests - All users requests
+ * Displays the list of tasks.
  */
 import {
   BImg,
-  BTable,
   BMedia,
   BMediaBody,
+  BTable,
 } from 'bootstrap-vue';
+import { capitalize } from 'lodash';
 import { ref, watch } from 'vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import { buildRequestDisplay, getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { buildTaskDisplay } from '@forgerock/platform-shared/src/utils/governance/fulfillmentTasks';
+import { getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 
 const prop = defineProps({
@@ -95,39 +85,36 @@ const prop = defineProps({
     type: Boolean,
     default: false,
   },
-  requests: {
+  tasks: {
     type: Array,
     default: () => [],
   },
 });
 
+// emits
 defineEmits(['open-detail']);
 
-const items = ref([]);
+// data
 const fields = [
   {
     key: 'details',
-    label: i18n.global.t('governance.accessRequest.newRequest.request'),
+    label: i18n.global.t('governance.tasks.task'),
     class: 'w-65',
   },
   {
     key: 'date',
-    label: i18n.global.t('governance.accessRequest.requestDate'),
+    label: i18n.global.t('governance.tasks.dateAssigned'),
   },
   {
     key: 'actions',
     label: '',
   },
 ];
+const items = ref([]);
 
-watch(() => prop.requests, (newRequests) => {
-  items.value = buildRequestDisplay(newRequests).map((item) => ({
-    ...item,
-    itemName: item.details?.isCustom
-      ? item.details.type
-      : `${item.details.type}: ${item.details.name}`,
-  }));
-}, { immediate: true });
+watch(() => prop.tasks, (newTasks) => {
+  items.value = buildTaskDisplay(newTasks);
+}, { immediate: true, deep: true });
 
 </script>
 <style lang="scss" scoped>

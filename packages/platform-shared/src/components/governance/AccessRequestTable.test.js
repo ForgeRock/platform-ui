@@ -96,10 +96,9 @@ describe('AccessRequestTable', () => {
       expect(requestRows).toHaveLength(1);
       const cellsFirstRow = requestRows[0].findAll('td');
       expect(cellsFirstRow[0].text()).toContain('entitlementRevoke');
-      expect(cellsFirstRow[0].text()).toContain('Jun 22, 2023');
       expect(cellsFirstRow[0].text()).toContain('ID: 1');
-      expect(cellsFirstRow[1].text()).toContain('Pending');
-      expect(cellsFirstRow[1].findAll('ul li')[2].text()).toContain('Cancel Request');
+      expect(cellsFirstRow[1].text()).toContain('Jun 22, 2023');
+      expect(cellsFirstRow[2].findAll('ul li')[2].text()).toContain('Cancel Request');
     });
 
     it('should filter by status correctly', async () => {

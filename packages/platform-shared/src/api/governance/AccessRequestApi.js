@@ -63,8 +63,9 @@ export function getRequestType(requestTypeId) {
  */
 export function getUserApprovals(userId, params, filter) {
   params._action = 'search';
+  params.type = 'request';
   const queryString = encodeQueryString(params, false);
-  return generateIgaApi().post(`/governance/user/${userId}/approvals${queryString}`, { targetFilter: filter });
+  return generateIgaApi().post(`/governance/user/${userId}/tasks${queryString}`, { targetFilter: filter });
 }
 
 /**

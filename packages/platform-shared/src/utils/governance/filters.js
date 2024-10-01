@@ -70,3 +70,49 @@ export function getBasicNotFilter(operator, targetName, targetValue) {
     ],
   };
 }
+
+/**
+ * Generates a filter object based on the provided priorities.
+ *
+ * @param {Object} priorities - An object where keys are priority levels and values are booleans indicating if the priority is selected.
+ * @returns {Object|null} A filter object with an 'OR' operator and an array of priority filters, or null if no priorities are selected.
+ */
+export function getPriorityFilter(priorities) {
+  const prioritiesArray = [];
+  Object.keys(priorities).forEach((priority) => {
+    if (priorities[priority]) prioritiesArray.push(priority);
+  });
+
+  const priorityFilters = prioritiesArray.map((priority) => {
+    if (priority === 'none') return getBasicNotFilter('EXISTS', 'request.common.priority');
+    return getBasicFilter('EQUALS', 'request.common.priority', priority);
+  });
+
+  return priorityFilters.length
+    ? { operator: 'OR', operand: priorityFilters }
+    : null;
+}
+
+/**
+ * Generates a filter object to look for active phases that match the query string.
+ *
+ * @param {String} queryString - The query string to filter phases by display name or name.
+ * @returns {Object|null} The filter object if queryString is provided, otherwise null.
+ */
+export function getActivePhaseFilter(queryString) {
+  if (!queryString) return null;
+
+  return {
+    operator: 'AND',
+    operand: [
+      {
+        operator: 'OR',
+        operand: [
+          getBasicFilter('EQUALS', 'decision.phases.displayName', queryString),
+          getBasicFilter('EQUALS', 'decision.phases.name', queryString),
+        ],
+      },
+      getBasicFilter('EQUALS', 'decision.phases.status', 'in-progress'),
+    ],
+  };
+}

@@ -26,15 +26,9 @@ describe('RequestHeader', () => {
 
   const item = {
     details: {
-      requestedBy: {
-        givenName: 'test',
-        sn: 'name',
-      },
-      requestedFor: {
-        givenName: 'test2',
-        sn: 'name2',
-      },
-      date: '2024-08-13T16:10:49+00:00',
+      requestedBy: 'test name',
+      requestedFor: 'test2 name2',
+      date: 'Aug 13, 2024',
     },
     rawData: {
       requestType: 'test',
@@ -57,7 +51,7 @@ describe('RequestHeader', () => {
 
   it('handles when the requester has id of SYSTEM', () => {
     const itemCopy = cloneDeep(item);
-    itemCopy.details.requestedBy = { id: 'SYSTEM' };
+    itemCopy.details.requestedBy = 'System';
     wrapper = setup({ item: itemCopy });
 
     expect(wrapper.text()).toBe('Systemsubmitted this requestfor test2 name2on Aug 13, 2024');

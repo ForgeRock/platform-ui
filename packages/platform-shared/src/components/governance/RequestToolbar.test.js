@@ -7,10 +7,23 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import RequestToolbar from './RequestToolbar';
 
 describe('RequestToolbar', () => {
-  function mountComponent(stubs = []) {
+  CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+    data: {
+      result: [
+        {
+          givenName: 'testGivenName',
+          sn: 'testSn',
+          id: 'testId',
+        },
+      ],
+    },
+  }));
+
+  function mountComponent(stubs = [], props = {}) {
     const wrapper = mount(RequestToolbar, {
       global: {
         mocks: {
@@ -29,6 +42,7 @@ describe('RequestToolbar', () => {
             value: 'stat2',
           },
         ],
+        ...props,
       },
     });
     return wrapper;
@@ -53,16 +67,11 @@ describe('RequestToolbar', () => {
   });
 
   it('the badge reflects the number of filters applied', async () => {
-    const wrapper = mountComponent();
-    const requestFilter = findComponentByTestId(wrapper, 'request-filter');
-    requestFilter.vm.$emit('filter-change', {
-      filter: {},
-      count: 1,
-    });
+    const wrapper = mountComponent([], { numFilters: 5 });
     await flushPromises();
 
     const filterBadge = findByTestId(wrapper, 'filter-badge');
-    expect(filterBadge.text()).toBe('1');
+    expect(filterBadge.text()).toBe('5');
   });
 
   it('changing the status emits the status-change event with the new status', async () => {
@@ -83,12 +92,17 @@ describe('RequestToolbar', () => {
   it('when the filter changes emit filter-change event with new filter', () => {
     const wrapper = mountComponent();
     const requestFilter = findComponentByTestId(wrapper, 'request-filter');
-    requestFilter.vm.$emit('filter-change', {
-      filter: { prop1: 'test value' },
-      count: 1,
-    });
+    requestFilter.vm.$emit('filter-change', { prop1: 'test value' });
 
     expect(wrapper.emitted()['filter-change'][0]).toEqual([{ prop1: 'test value' }]);
+  });
+
+  it('when the filter changes emit update:num-filters event with new count', () => {
+    const wrapper = mountComponent();
+    const requestFilter = findComponentByTestId(wrapper, 'request-filter');
+    requestFilter.vm.$emit('filter-count', 1);
+
+    expect(wrapper.emitted()['update:num-filters'][0]).toEqual([1]);
   });
 
   it('emits a new sort value when the handleSortChange method is executed', () => {
