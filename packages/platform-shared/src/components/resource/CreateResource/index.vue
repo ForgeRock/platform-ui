@@ -288,9 +288,13 @@ export default {
       validateSave.then(({ valid }) => {
         if (valid) {
           this.clonedCreateProperties.forEach((field) => {
+            // account for boolean type properties when the field's value is undefined
+            if (field.type === 'boolean' && field.value === undefined) {
+              field.value = false;
+            }
             this.formFields[field.key] = field.value;
-
-            if (!field.value) {
+            // only remove fields with empty values when they are not boolean type
+            if (!field.value && field.type !== 'boolean') {
               delete this.formFields[field.key];
             }
           });

@@ -276,6 +276,7 @@ describe('CreateResource.vue', () => {
       value: [],
     }]);
     expect(wrapper.vm.formFields).toStrictEqual({
+      boolTest: false,
       arrayTest: [],
       privileges: 'testDefault',
     });
