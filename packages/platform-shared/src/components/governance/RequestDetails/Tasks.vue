@@ -24,10 +24,16 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
 
     <template #cell(approvers)="{ item }">
-      <FrAvatarGroup
-        :id="item.name"
-        :users="item.actors"
-      />
+      <BButton
+        class="btn-unstyled"
+        @keydown.enter="showTaskDetailsModal(item)"
+        @keydown.space="showTaskDetailsModal(item)"
+        @click="showTaskDetailsModal(item)">
+        <FrAvatarGroup
+          :id="item.name"
+          :users="item.actors"
+        />
+      </BButton>
     </template>
 
     <template #cell(status)="{ item }">
@@ -53,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { capitalize } from 'lodash';
 import {
   BBadge,
+  BButton,
   BTable,
 } from 'bootstrap-vue';
 import { ref, watch } from 'vue';
@@ -217,3 +224,15 @@ function closeTaskDetailsModal() {
   taskDetails.value = {};
 }
 </script>
+
+<style scoped>
+.btn-unstyled {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+}
+</style>
