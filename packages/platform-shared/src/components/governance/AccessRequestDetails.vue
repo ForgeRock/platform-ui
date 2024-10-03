@@ -74,9 +74,10 @@ import {
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import { getRequest, getRequestType } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import {
   getFormattedRequest,
+  getRequestTypeDisplayName,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
@@ -111,7 +112,7 @@ async function getRequestData() {
   isLoading.value = true;
   try {
     const { data } = await getRequest(props.requestId);
-    const { data: requestTypeData } = await getRequestType(data.requestType);
+    const { data: requestTypeData } = await getRequestTypeDisplayName(data.requestType);
     data.requestTypeDisplayName = requestTypeData.displayName;
     item.value = getFormattedRequest(data);
   } catch (error) {

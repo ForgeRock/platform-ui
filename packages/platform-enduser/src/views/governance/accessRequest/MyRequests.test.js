@@ -296,7 +296,7 @@ describe('MyRequests', () => {
     expect(wrapper.vm.accessRequests).toHaveLength(0);
   });
 
-  it('should show error if requests types cannot be fetched', async () => {
+  it('should show request type ids if request types cannot be fetched', async () => {
     const error = new Error('Error fetching requests');
     AccessRequestApi.getRequestType = jest.fn().mockRejectedValue(error);
     Notification.showErrorMessage = jest.fn();
@@ -305,9 +305,13 @@ describe('MyRequests', () => {
     const wrapper = setup();
     await flushPromises();
 
-    expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error retrieving your requests');
-    expect(wrapper.vm.isLoading).toBe(false);
-    expect(wrapper.vm.accessRequests).toHaveLength(0);
+    expect(showErrorMessageSpy).not.toHaveBeenCalled();
+    const requestRows = wrapper.findAll('table tbody [role="row"]');
+    expect(requestRows).toHaveLength(2);
+    const cellsFirstRow = requestRows[0].findAll('td');
+    expect(cellsFirstRow[0].text()).toContain('entitlementRevoke');
+    const cellsSecondRow = requestRows[1].findAll('td');
+    expect(cellsSecondRow[0].text()).toContain('Grant Application');
   });
 
   it('Navigates to request details page after clicking on "View Details"', async () => {

@@ -10,6 +10,7 @@ import {
   getRequestFilter,
   getStatusText,
   getFormattedRequest,
+  getRequestTypeDisplayName,
   getRequestTypeDisplayNames,
 } from './AccessRequestUtils';
 
@@ -306,6 +307,33 @@ describe('getFormattedRequest', () => {
 
       const result = await getRequestTypeDisplayNames(requests);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('getRequestTypeDisplayName', () => {
+    it('returns the display name for a valid request type', async () => {
+      const requestType = 'ACCOUNT_GRANT';
+      const expectedResponse = {
+        data: {
+          id: requestType,
+          displayName: `${requestType}-displayName`,
+        },
+      };
+
+      AccessRequestApi.getRequestType.mockResolvedValueOnce(expectedResponse);
+
+      const result = await getRequestTypeDisplayName(requestType);
+      expect(result).toEqual(expectedResponse);
+    });
+
+    it('returns the request type id when an error occurs', async () => {
+      const requestType = 'INVALID_TYPE';
+      const expectedResponse = { data: { id: requestType } };
+
+      AccessRequestApi.getRequestType.mockRejectedValueOnce(new Error('Error'));
+
+      const result = await getRequestTypeDisplayName(requestType);
+      expect(result).toEqual(expectedResponse);
     });
   });
 });

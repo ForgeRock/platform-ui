@@ -91,9 +91,9 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import { getRequest, getUserApprovals, getRequestType } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getRequest, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { getFormattedRequest } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { getFormattedRequest, getRequestTypeDisplayName } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { useRoute, useRouter } from 'vue-router';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
@@ -128,7 +128,7 @@ const userId = computed(() => useUserStore().userId);
 async function getBaseRequest() {
   try {
     const { data } = await getRequest(requestId);
-    const { data: requestTypeData } = await getRequestType(data.requestType);
+    const { data: requestTypeData } = await getRequestTypeDisplayName(data.requestType);
     data.requestTypeDisplayName = requestTypeData.displayName;
     item.value = getFormattedRequest(data);
     isActive.value = false;
@@ -161,7 +161,7 @@ async function getApproval() {
     const { data } = await getUserApprovals(userId.value, params, filter);
     if (data?.result?.length) {
       const request = data.result[0];
-      const { data: requestTypeData } = await getRequestType(request.requestType);
+      const { data: requestTypeData } = await getRequestTypeDisplayName(request.requestType);
       request.requestTypeDisplayName = requestTypeData.displayName;
       item.value = getFormattedRequest(request);
       isActive.value = true;

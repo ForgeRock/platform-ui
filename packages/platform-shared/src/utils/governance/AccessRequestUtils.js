@@ -142,6 +142,19 @@ export function getRequestObjectType(requestType) {
 }
 
 /**
+ * Retrieves the display name for a given request type.
+ * @param {String} requestType - The type of the request.
+ * @returns {Promise<Object>} A promise that resolves to the request type display name or an object containing the request type ID in case of an error.
+ */
+export async function getRequestTypeDisplayName(requestType) {
+  try {
+    return await getRequestType(requestType);
+  } catch (error) {
+    return { data: { id: requestType } };
+  }
+}
+
+/**
  * Retrieves the display names of request types and adds them to the requests.
  *
  * @param {Array} requests - The array of requests.
@@ -156,7 +169,7 @@ export async function getRequestTypeDisplayNames(requests) {
   // get each request type to get the display name. Then create an
   // object that maps the request type to the display name
   uniqRequestTypes.forEach((requestType) => {
-    allRequestTypesPromises.push(getRequestType(requestType));
+    allRequestTypesPromises.push(getRequestTypeDisplayName(requestType));
   });
   const typeData = await Promise.all(allRequestTypesPromises);
   typeData.forEach((requestType) => {
