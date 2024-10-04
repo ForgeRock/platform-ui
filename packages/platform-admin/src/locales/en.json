@@ -3871,6 +3871,12 @@
       "errorGettingRequestTypes": "There was an error retrieving the request types",
       "errorGettingWorkflows": "There was an error retrieving the workflows",
       "errorSavingRequestType": "There was an error saving the request type",
+      "properties": {
+        "emptyTitle": "You haven't added any properties yet",
+        "emptySubtitle": "Add properties for this request type.",
+        "errorDeletingProperty": "There was an error deleting the property",
+        "propertyDeleted": "Property deleted successfully"
+      },
       "requestTypeDeleted": "Request type deleted",
       "requestTypeSaved": "Request type saved",
       "validation": {
