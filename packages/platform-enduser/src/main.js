@@ -215,7 +215,8 @@ const addAppAuth = (realm) => {
            * If not set it so we know what realm to use for logout.
            */
           if (!localStorage.getItem('originalLoginRealm')) {
-            localStorage.setItem('originalLoginRealm', realm);
+            // if the realm comes in as '/' save it as 'root'
+            localStorage.setItem('originalLoginRealm', (realm === '/') ? 'root' : realm);
           }
         },
         cooldownPeriod: 5,
