@@ -224,15 +224,3 @@ function closeTaskDetailsModal() {
   taskDetails.value = {};
 }
 </script>
-
-<style scoped>
-.btn-unstyled {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  font: inherit;
-  color: inherit;
-  text-align: inherit;
-}
-</style>

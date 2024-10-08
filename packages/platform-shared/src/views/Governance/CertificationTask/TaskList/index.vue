@@ -70,49 +70,57 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(user)="{ item }">
         <div class="d-flex justify-content-start align-items-center">
-          <BMedia
+          <BButton
             @click.stop="openUserModal(item.id, item.manager)"
-            class="clickable">
-            <template #aside>
-              <BImg
-                class="mt-2"
-                height="24"
-                width="24"
-                :alt="item.text"
-                :aria-hidden="true"
-                :src="item.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
-            </template>
-            <div class="media-body">
-              <h3 class="h5 mb-0 text-dark text-truncate">
-                {{ $t('common.userFullName', { givenName: item.user.givenName, sn: item.user.sn }) }}
-              </h3>
-              <small class="text-truncate">
-                {{ item.user.userName }}
-              </small>
-            </div>
-          </BMedia>
+            class="text-dark btn-unstyled"
+            variant="link">
+            <BMedia>
+              <template #aside>
+                <BImg
+                  class="mt-2"
+                  height="24"
+                  width="24"
+                  :alt="item.text"
+                  :aria-hidden="true"
+                  :src="item.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+              </template>
+              <div class="media-body">
+                <h3 class="h5 mb-0 text-dark text-truncate">
+                  {{ $t('common.userFullName', { givenName: item.user.givenName, sn: item.user.sn }) }}
+                </h3>
+                <small class="text-truncate">
+                  {{ item.user.userName }}
+                </small>
+              </div>
+            </BMedia>
+          </BButton>
         </div>
       </template>
       <template #cell(application)="{ item }">
         <div class="d-flex justify-content-between align-items-center">
-          <BMedia
+          <BButton
             @click.stop="openApplicationModal(item.application, item.applicationOwner, item.glossary)"
-            class="clickable align-items-center"
-            data-testid="application-cell"
-            no-body>
-            <img
-              class="mr-4"
-              height="28"
-              width="28"
-              :alt="$t('common.logo')"
-              :onerror="onImageError"
-              :src="getApplicationLogo(item.application)">
-            <div class="media-body align-self-center overflow-hidden text-nowrap">
-              <span class="text-dark">
-                {{ item.application.name }}
-              </span>
-            </div>
-          </BMedia>
+            class="text-dark"
+            variant="link">
+            <BMedia
+              class="align-items-center"
+              data-testid="application-cell"
+              no-body>
+              <img
+                class="mr-4"
+                height="28"
+                width="28"
+                :alt="$t('common.logo')"
+                :aria-hidden="true"
+                :onerror="onImageError"
+                :src="getApplicationLogo(item.application)">
+              <div class="media-body align-self-center overflow-hidden text-nowrap">
+                <span class="text-dark">
+                  {{ item.application.name }}
+                </span>
+              </div>
+            </BMedia>
+          </BButton>
         </div>
       </template>
       <template #cell(entitlement)="{ item }">
