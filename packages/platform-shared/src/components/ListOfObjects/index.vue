@@ -243,7 +243,7 @@ export default {
   mounted() {
     if (this.value) {
       let listValues = cloneDeep(this.value);
-      if (!this.multiValued) {
+      if (!this.multiValued || !Array.isArray(listValues)) {
         listValues = [listValues];
       }
       listValues.forEach((val) => {
