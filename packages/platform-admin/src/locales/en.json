@@ -3876,10 +3876,15 @@
       "errorGettingWorkflows": "There was an error retrieving the workflows",
       "errorSavingRequestType": "There was an error saving the request type",
       "properties": {
+        "editProperty":"Edit Property",
         "emptyTitle": "You haven't added any properties yet",
         "emptySubtitle": "Add properties for this request type.",
         "errorDeletingProperty": "There was an error deleting the property",
-        "propertyDeleted": "Property deleted successfully"
+        "errorSavingRequestProperty": "There was an error saving the property",
+        "labelDescription": "Human-readable label for this property.",
+        "newProperty": "New Property",
+        "propertyDeleted": "Property deleted successfully",
+        "propertySaved": "Property saved successfully"
       },
       "requestTypeDeleted": "Request type deleted",
       "requestTypeSaved": "Request type saved",
