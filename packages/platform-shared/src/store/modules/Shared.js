@@ -18,6 +18,7 @@ const defaultState = {
   autoCustomReportsEnabled: false,
   autoReportsEnabled: false,
   currentPackage: '',
+  applicationPolicyEnabled: false,
   extendedSamlConfigEnabled: false,
   scriptBindingsApiEnabled: false,
   samlJourneysEnabled: false,
@@ -88,6 +89,9 @@ const mutations = {
         if (env.VUE_APP_AUTO_ACCESS_TENANT_ID) {
           state.autoAccessTenantId = env.VUE_APP_AUTO_ACCESS_TENANT_ID;
         }
+      }
+      if (env.VUE_APP_ENABLE_APPLICATION_POLICY === 'true' || env.VUE_APP_ENABLE_APPLICATION_POLICY === true) {
+        state.applicationPolicyEnabled = env.VUE_APP_ENABLE_APPLICATION_POLICY;
       }
       if (env.VUE_APP_ENABLE_EXTENDED_SAML_CONFIG === 'true' || env.VUE_APP_ENABLE_EXTENDED_SAML_CONFIG === true) {
         state.extendedSamlConfigEnabled = env.VUE_APP_ENABLE_EXTENDED_SAML_CONFIG;

@@ -1135,6 +1135,15 @@
     },
     "edit": {
       "authoritative": "Authoritative",
+      "authorizationPolicies": {
+        "accessPolicy": "Access Policy",
+        "authorizationDescription": "Policy to be enforced in the journey used to authenticate users to this application.",
+        "createAPolicy": "Create a Policy",
+        "getAuthorizationPoliciesFail": "Unable to retrieve access policy",
+        "updateAuthorizationPoliciesSuccess": "Access policy updated",
+        "policyDetails": "POLICY DETAILS",
+        "updateAuthorizationPoliciesFail": "Unable to update access policy"
+      },
       "messages": {
         "getAppDataFail": "Unable to retrieve application data",
         "getDashboardFail": "Unable to retrieve enduser application details",
