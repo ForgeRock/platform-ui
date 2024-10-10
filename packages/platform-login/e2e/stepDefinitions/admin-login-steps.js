@@ -21,7 +21,7 @@ When('Admin logs in with {string} credentials', (scenario) => {
       cy.findByRole('button', { name: 'Next' }).click();
       break;
     case 'valid':
-      cy.login();
+      cy.loginAsAdmin();
       break;
     default:
       console.error('Invalid step');

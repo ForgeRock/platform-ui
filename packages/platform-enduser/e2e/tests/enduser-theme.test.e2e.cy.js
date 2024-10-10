@@ -5,40 +5,32 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { random, find } from 'lodash';
+import { random } from 'lodash';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import {
+  navigateToHostedPagesViaSidebar,
   createNewTheme,
   setThemeAsDefault,
-  deleteTheme,
   saveThemeEdit,
   changeColorValue,
+  searchForThemes,
+  deleteAllThemesFromList,
 } from '../pages/common/hostedPages';
-import { getThemesList } from '../api/themeApi.e2e';
 
 filterTests(['@forgeops', '@cloud'], () => {
   describe('Enduser Theming', () => {
     const enduserRealm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
-    const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
-    const hostedPagesUrl = `${Cypress.config().baseUrl}/platform/?realm=${loginRealm}#/hosted-pages`;
     const enduserProfileUrl = `${Cypress.config().baseUrl}/enduser/?realm=${enduserRealm}#/profile`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
     const userPassword = 'Pass1234!';
+    const defaultTheme = Cypress.env('IS_FRAAS') ? 'Starter Theme' : 'ForgeRock Theme';
     let userId;
-    let defaultTheme = '';
     let testThemeName = '';
 
     before(() => {
+      // Login as admin and create testing IDM user
       cy.loginAsAdmin().then(() => {
-        getThemesList().then((list) => {
-          // Gets the Default Theme from the list of themes so it can be set back as the Realm default at the end of the test
-          defaultTheme = find(list.body.realm[loginRealm], { isDefault: true }).name;
-        });
-      });
-
-      // Create testing IDM enduser
-      cy.log('Create new IDM Enduser').then(() => {
         createIDMUser({
           userName,
           password: userPassword,
@@ -55,25 +47,13 @@ filterTests(['@forgeops', '@cloud'], () => {
       // Generate unique test Theme name
       testThemeName = `test_theme_${random(Number.MAX_SAFE_INTEGER)}`;
 
+      // Login as admin
       cy.loginAsAdmin().then(() => {
-        cy.visit(hostedPagesUrl);
+        // Navigate to the Hosted Pages page
+        navigateToHostedPagesViaSidebar();
+
+        // Create a new testing Theme
         createNewTheme(testThemeName);
-      });
-    });
-
-    afterEach(() => {
-      // Clear cookies
-      cy.logout();
-
-      // Login as admin, set the Default Theme back as the Realm default and delete the test Theme
-      cy.loginAsAdmin().then(() => {
-        cy.visit(hostedPagesUrl);
-        // Wait for the Themes table to load
-        cy.findByRole('heading', { name: 'Hosted Pages' }).should('be.visible');
-        cy.findByRole('button', { name: 'New Theme', timeout: 10000 }).should('be.visible');
-
-        setThemeAsDefault(defaultTheme);
-        deleteTheme(testThemeName);
       });
     });
 
@@ -83,6 +63,19 @@ filterTests(['@forgeops', '@cloud'], () => {
 
       // Login as admin and delete testing IDM enduser
       cy.loginAsAdmin().then(() => {
+        // Navigate to the Hosted Pages page
+        navigateToHostedPagesViaSidebar();
+
+        // Set the Realm Default Theme back to the default
+        setThemeAsDefault(defaultTheme);
+
+        // Search for our Theme in the list
+        searchForThemes('test_theme');
+
+        // Delete all of the testing Themes
+        deleteAllThemesFromList();
+
+        // Delete the testing IDM enduser
         deleteIDMUser(userId);
       });
     });

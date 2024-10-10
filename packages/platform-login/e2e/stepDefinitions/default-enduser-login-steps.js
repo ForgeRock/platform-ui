@@ -16,7 +16,7 @@ import generateUserData from '../utils/endUserData';
  */
 Given('There is an end user account created', () => {
   const { userName, userPassword, userSN } = generateUserData();
-  cy.login().then(() => {
+  cy.loginAsAdmin().then(() => {
     createIDMUser({
       userName,
       password: userPassword,

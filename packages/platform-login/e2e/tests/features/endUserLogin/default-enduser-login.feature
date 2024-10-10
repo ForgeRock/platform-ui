@@ -1,7 +1,7 @@
 @forgeops
 @cloud
-Feature: End user login
-As an end user
+Feature: Enduser Login
+As an enduser
 I want to verify the login functionality
 So that I can ensure the application handles login and logout correctly
 

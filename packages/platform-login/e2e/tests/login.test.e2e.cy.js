@@ -43,14 +43,14 @@ filterTests(['@forgeops', '@cloud'], () => {
     });
 
     it('should succeed login with valid credentials', () => {
-      cy.login();
+      cy.loginAsAdmin();
       cy.location().should((location) => {
         expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
       });
     });
 
     it('should logout when using am/XUI/logout url', () => {
-      cy.login();
+      cy.loginAsAdmin();
       cy.location().should((location) => {
         expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
       });
@@ -64,7 +64,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     });
 
     it('when using am/UI/Logout url with goto query param, should navigate to am/XUI with goto param to allow am to validate url', () => {
-      cy.login();
+      cy.loginAsAdmin();
       cy.location().should((location) => {
         expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/&goto=www.google.com#/`);
       });

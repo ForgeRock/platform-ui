@@ -24,7 +24,7 @@ Cypress.Commands.add(
     userName,
     password = 'Welcome1!',
     sucessLogin = true,
-    loginUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha#/` : `${Cypress.config().baseUrl}/enduser/`,
+    loginUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=Login#/` : `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Login#/`,
     givenName = 'First',
     lastName = 'Last',
   ) => {

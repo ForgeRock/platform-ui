@@ -350,7 +350,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     // Add config translation overrides
     before(() => {
       // Login as admin and upload config translation overrides
-      cy.login().then(() => {
+      cy.loginAsAdmin().then(() => {
         addOverrides('en', enTranslations);
         addOverrides('fr', frTranslations);
         addOverrides('fr-ca', frcaTranslations);
@@ -414,7 +414,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     after(() => {
       // Login as admin and delete config translation overrides after tests
-      cy.login().then(() => {
+      cy.loginAsAdmin().then(() => {
         deleteOverrides('en');
         deleteOverrides('fr');
         deleteOverrides('fr-ca');

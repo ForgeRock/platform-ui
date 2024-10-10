@@ -91,7 +91,7 @@ filterTests(['@cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
 
       // Successful registration and login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 15000 }).contains(`Hello, ${validFieldData[2].text}`).should('be.visible');
+      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${validFieldData[2].text}`).should('be.visible');
 
       // Used data is displayed in the user profile
       cy.findByRole('link', { name: 'Profile' }).click();

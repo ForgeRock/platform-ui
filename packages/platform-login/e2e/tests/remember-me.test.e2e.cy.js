@@ -245,7 +245,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       proceedToNextJourneyPage();
 
       // Wait for successfull login
-      cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 }).should('be.visible');
+      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
 
       // And logout enduser
       // Toggle settings dropdown

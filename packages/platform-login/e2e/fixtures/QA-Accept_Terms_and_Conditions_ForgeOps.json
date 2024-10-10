@@ -19,7 +19,7 @@
         "_rev": "-1803645616",
         "identityResource": "managed/user",
         "uiConfig": {
-          "categories": "[\"Progressive Profile\",\"QA\"]"
+          "categories": "[\"Progressive Profile\",\"QA_autotests\"]"
         },
         "entryNodeId": "5259c70d-b4eb-4407-993b-81056d489a5b",
         "innerTreeOnly": false,
@@ -213,7 +213,7 @@
         "_rev": "-1705308809",
         "identityResource": "managed/user",
         "uiConfig": {
-          "categories": "[\"Authentication\",\"QA\"]"
+          "categories": "[\"Authentication\",\"QA_autotests\"]"
         },
         "entryNodeId": "5231cc77-f548-4081-a6f4-523cc4fc3021",
         "innerTreeOnly": false,

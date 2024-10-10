@@ -16,6 +16,7 @@ filterTests(['@forgeops', '@cloud'], () => {
   describe('Default ForgottenUsername Journey tests', () => {
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const forgotUsernameUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ForgottenUsername#/`;
+    const forgotUsernameLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ForgottenUsername#/service/Login`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
     const userPassword = 'Pass1234!';
     let userId;
@@ -32,23 +33,9 @@ filterTests(['@forgeops', '@cloud'], () => {
       });
     };
 
-    function loginEnduser(endUserName, password) {
-      // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
-
-      // Check the browser has been directed to the default Login page
-      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible');
-      cy.findByRole('heading', { name: 'Sign In' }).should('be.visible');
-
-      // Try to login Enduser
-      cy.findByLabelText('User Name').should('be.visible').type(endUserName, { force: true });
-      cy.findAllByLabelText('Password').first().should('be.visible').type(password, { force: true });
-      cy.findByRole('button', { name: 'Next' }).should('be.visible').click();
-    }
-
     before(() => {
       // Login as admin
-      cy.login().then(() => {
+      cy.loginAsAdmin().then(() => {
         // Backup default email provider
         getDefaultProviderConfig().then((config) => {
           defaulEmailConfig = config.body;
@@ -103,7 +90,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     after(() => {
       // Login as admin, delete testing IDM enduser and return the email provider back to its default config
-      cy.login().then(() => {
+      cy.loginAsAdmin().then(() => {
         deleteIDMUser(userId);
 
         // Put back default email provider
@@ -138,7 +125,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('link', { name: 'Sign in' }).should('be.visible').click();
 
       // Login as Enduser with password used during creation
-      loginEnduser(userName, userPassword);
+      cy.loginAsEnduser(userName, userPassword, true, forgotUsernameLoginUrl);
 
       // Wait for successfull login
       cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
@@ -168,11 +155,8 @@ filterTests(['@forgeops', '@cloud'], () => {
         // Get the registration link from the email
         const loginLink = extractLinkFromEmail(emailObject.body);
 
-        // Visit the Login link from email
-        cy.visit(loginLink);
-
-        // Check that Login Journey page is correctly loaded and proceed with user login
-        loginEnduser(userName, userPassword);
+        // Visit the Login link from email, heck that Login Journey page is correctly loaded and proceed with user login
+        cy.loginAsEnduser(userName, userPassword, true, loginLink);
 
         // Wait for successfull login
         cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');

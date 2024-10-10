@@ -16,7 +16,7 @@ filterTests(['@forgeops', '@cloud'], () => {
   describe('Default ResetPassword Journey tests', () => {
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const resetPasswordUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ResetPassword#/`;
-    const defaultLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login#/`;
+    const resetPasswordLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ResetPassword#/service/Login`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
     const defaultPassword = 'Pass1234!';
     const resetPassword = 'Reset4321?';
@@ -34,23 +34,9 @@ filterTests(['@forgeops', '@cloud'], () => {
       });
     };
 
-    function loginEnduser(endUserName, password) {
-      // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
-
-      // Check the browser has been directed to the default Login page
-      cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible');
-      cy.findByRole('heading', { name: 'Sign In' }).should('be.visible');
-
-      // Try to login Enduser
-      cy.findByLabelText('User Name').should('be.visible').type(endUserName, { force: true });
-      cy.findAllByLabelText('Password').first().should('be.visible').type(password, { force: true });
-      cy.findByRole('button', { name: 'Next' }).should('be.visible').click();
-    }
-
     before(() => {
       // Login as admin
-      cy.login().then(() => {
+      cy.loginAsAdmin().then(() => {
         // Backup default email provider
         getDefaultProviderConfig().then((config) => {
           defaulEmailConfig = config.body;
@@ -105,7 +91,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     after(() => {
       // Login as admin, delete testing IDM enduser and return the email provider back to its default config
-      cy.login().then(() => {
+      cy.loginAsAdmin().then(() => {
         deleteIDMUser(userId);
 
         // Put back default email provider
@@ -143,7 +129,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.wait('@themerealmConfig', { timeout: 10000 });
 
       // Login as Enduser with password used during creation
-      loginEnduser(userName, defaultPassword);
+      cy.loginAsEnduser(userName, defaultPassword, true, resetPasswordLoginUrl);
 
       // Wait for successfull login
       cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
@@ -210,17 +196,14 @@ filterTests(['@forgeops', '@cloud'], () => {
       // Logout enduser to check old password does no longer work and new password is sucessfully set
       cy.logout();
 
-      // Visit default Login Journey page
-      cy.visit(defaultLoginUrl);
-
       // Try to login with old password that should no longer work
-      loginEnduser(userName, defaultPassword);
+      cy.loginAsEnduser(userName, defaultPassword, false);
       if (!Cypress.env('IS_FRAAS')) {
         cy.findByTestId('FrAlert').should('exist').contains('Login failure').should('be.visible');
       }
 
       // Try to login with new password that should be correctly set
-      loginEnduser(userName, resetPassword);
+      cy.loginAsEnduser(userName, resetPassword);
 
       // Wait for successfull login
       cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');

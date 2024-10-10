@@ -141,7 +141,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       // Wait for a Journey page to fully load
       cy.wait('@themerealmConfig', { timeout: 10000 });
       if (!Cypress.env('IS_FRAAS')) {
-        cy.findByTestId('FrAlert').should('exist').contains('Authentication Failed').should('be.visible');
+        cy.findByTestId('FrAlert').should('exist').contains('Login failure').should('be.visible');
       }
 
       // Try to login with new password that should be correctly set

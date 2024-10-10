@@ -17,7 +17,7 @@
         "_rev": "105489536",
         "identityResource": "managed/alpha_user",
         "uiConfig": {
-          "categories": "[]"
+          "categories": "[\"QA_autotests\"]"
         },
         "entryNodeId": "273b8d5b-df4e-4766-b0a0-3efe634416f8",
         "innerTreeOnly": false,

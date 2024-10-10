@@ -178,7 +178,7 @@ filterTests(['@cloud'], () => {
 
     before(() => {
       // Initially login to admin
-      cy.login();
+      cy.loginAsAdmin();
 
       cy.task('getTestEmailAccount').then((account) => {
         expect(account.user).to.be.a('string');
@@ -195,7 +195,7 @@ filterTests(['@cloud'], () => {
 
     after(() => {
       // Return the email provider back to its default config
-      cy.login();
+      cy.loginAsAdmin();
       getDefaultProviderConfig().then((config) => {
         putEmailProviderConfig(config.body);
       });
