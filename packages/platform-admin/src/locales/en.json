@@ -2710,22 +2710,30 @@
     "addProperty": "Add a Property",
     "advancedSync": {
       "addSyncData": "Sync Data",
+      "errors": {
+        "errorGettingSyncData": "Error retrieving advanced sync data",
+        "mappingUnavailable": "Mapping Unavailable",
+        "unableToLoadMapping": "Unable to load the selected mapping",
+        "errorGettingMappingProperties": "Error retrieving {mappingType} properties",
+        "errorCreatingNewMapping": "Failed creating new mapping"
+      },
       "goBackToApp": "Go back to the application.",
       "loadingSyncData": "Loading sync data...",
-      "noSyncData": "No synchronized applications yet",
+      "title": "Advanced Sync",
+      "modal": {
+        "title": "Sync account object type",
+        "syncFrom": "Sync From",
+        "syncTo": "Sync To",
+        "flipSyncIconLabel": "Flip sync direction",
+        "identityProfile": "Identity Profile"
+      },
       "noSyncDataSubtitle": "Synchronize data between {appDisplayName} {objectTypeName} and other applications.",
+      "noSyncData": "No synchronized applications yet",
       "tabs": {
         "mapping": {
           "subtitle": "Define the account types you need to reconcile with {appDisplayName}.",
           "previewMapping": "Preview Mapping"
         }
-      },
-      "title": "Advanced Sync",
-      "errors": {
-        "errorGettingSyncData": "Error retrieving advanced sync data",
-        "mappingUnavailable": "Mapping Unavailable",
-        "unableToLoadMapping": "Unable to load the selected mapping",
-        "errorGettingMappingProperties": "Error retrieving {mappingType} properties"
       }
     },
     "allObjectsAssigned": "All non-account object types have already been assigned to a property (each object type can only be assigned to one property).",
