@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     :class="{ invisible: hideAppOnTransition }">
     <ThemeInjector
       :theme="theme"
-      v-if="theme !== null" />
+      v-if="theme !== null && Object.keys(theme).length > 0" />
     <div
       id="appContentWrapper"
       class="h-100">

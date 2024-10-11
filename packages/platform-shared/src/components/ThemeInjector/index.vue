@@ -6,15 +6,15 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div id="theme-injector">
     <Component :is="'style'">
+      <!--
+        GLOBAL STYLES
+      -->
       <template v-if="fontUrl">
         @import url('{{ fontUrl }}');
       </template>
 
-      /**
-      Shared styles
-      */
       body {
-      background-color: {{ backgroundColor }};
+        background-color: {{ backgroundColor }};
       }
 
       #app <template v-if="mock">.fr-theme-preview</template> {
@@ -22,84 +22,93 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       .fr-body-image {
-      background-image: url('{{ theme.backgroundImage }}');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
+        background-image: url('{{ theme.backgroundImage }}');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn:not(.within-input-button .btn) {
-      border-radius: {{ theme.buttonRounded }}px !important;
+        border-radius: {{ theme.buttonRounded }}px !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-primary {
-      background-color: {{ theme.primaryColor }} !important;
-      outline-color: {{ theme.primaryColor }} !important;
-      border-color: {{ theme.primaryColor }} !important;
-      color: {{ theme.textColor }};
+        background-color: {{ theme.primaryColor }} !important;
+        outline-color: {{ theme.primaryColor }} !important;
+        border-color: {{ theme.primaryColor }} !important;
+        color: {{ theme.textColor }};
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-primary:disabled {
-      background-color: {{ theme.primaryOffColor }} !important;
+        background-color: {{ theme.primaryOffColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-primary:hover {
-      background-color: {{ theme.primaryOffColor }} !important;
+        background-color: {{ theme.primaryOffColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> a {
-      font-weight: {{ theme.boldLinks ? 700 : 400 }};
-      color: {{ theme.linkColor }};
+        font-weight: {{ theme.boldLinks ? 700 : 400 }};
+        color: {{ theme.linkColor }};
       }
 
       <template v-if="mock">.fr-theme-preview</template> a:hover {
-      color: {{ theme.linkActiveColor }};
+        color: {{ theme.linkActiveColor }};
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-link,
       <template v-if="mock">.fr-theme-preview</template> .nav-link {
-      color: {{ theme.linkColor }};
+        color: {{ theme.linkColor }};
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-link:hover,
-      .nav-link:hover {
-      color: {{ theme.linkActiveColor }};
+        .nav-link:hover {
+        color: {{ theme.linkActiveColor }};
       }
 
       <template v-if="mock">.fr-theme-preview</template> body {
-      color: {{ theme.bodyText }};
+        color: {{ theme.bodyText }};
       }
 
       .text-body {
-      color: {{ theme.bodyText }} !important;
+        color: {{ theme.bodyText }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .text-muted {
-      color: {{ theme.secondaryColor }} !important;
+        color: {{ theme.secondaryColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .text-danger {
-      color: {{ theme.dangerColor }} !important;
+        color: {{ theme.dangerColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .text-success {
-      color: {{ theme.successColor }} !important;
+        color: {{ theme.successColor }} !important;
       }
 
       h1 {
-      color: {{ theme.pageTitle }};
+        color: {{ theme.pageTitle }};
       }
 
       .btn-primary:focus {
-      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
-      box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
+        box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
       }
 
       .fr-custom-logo {
-      max-width: 80px;
-      align-self: center;
+        max-width: 80px;
+        align-self: center;
       }
 
+      <!--
+        GLOBAL INPUT FOCUS STYLES
+         * textarea
+         * input
+         * .form-control
+         * .form-control .multiselect
+         * .form-cohtrol .multiselect__tags
+         * .uneditable-input
+      -->
       textarea:focus,
       <template v-if="mock">.fr-theme-preview</template> input:focus:not(.multiselect__input),
       <template v-if="mock">.fr-theme-preview</template> input[type]:focus:not(.multiselect__input),
@@ -107,77 +116,85 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
-      <template v-if="mock">.fr-theme-preview</template> .form-control multiselect:focus .multiselect__tags {
-      border-color: {{ theme.primaryColor }} !important;
-      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;
-      box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;
-      outline: 0 none;
+      <template v-if="mock">.fr-theme-preview</template> .form-control .multiselect:focus .multiselect__tags {
+        border-color: {{ theme.primaryColor }} !important;
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;
+        box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;
+        outline: 0 none;
       }
 
       .fr-toggle-primary.custom-switch.b-custom-control-lg .custom-control-label::before {
-      background-color: {{ theme.switchBackgroundColor }};
+        background-color: {{ theme.switchBackgroundColor }};
       }
 
       .fr-toggle-primary.custom-switch.b-custom-control-lg .custom-control-input:checked ~ .custom-control-label::before,
       .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before,
       .custom-control.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
-      background-color: {{ theme.primaryColor }};
+        background-color: {{ theme.primaryColor }};
       }
 
       .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before,
       .custom-control.custom-checkbox .custom-control-input ~ .custom-control-label::before {
-      border-color: {{ theme.primaryColor }}
+        border-color: {{ theme.primaryColor }}
       }
 
       .spinner-primary {
-      color: {{ theme.primaryColor }};
+        color: {{ theme.primaryColor }};
       }
     </Component>
 
     <Component
       :is="'style'"
       v-if="!isEnduser">
-      <!-- login card themes -->
+      <!--
+        JOURNEY PAGES STYLES
+      -->
       .card {
-      border-radius: {{ theme.journeyCardBorderRadius || 4 }}px !important;
+        border-radius: {{ theme.journeyCardBorderRadius || 4 }}px !important;
       }
 
       .card .login-header {
-      border-radius: {{ theme.journeyCardBorderRadius || 4 }}px {{ theme.journeyCardBorderRadius || 4 }}px 0 0 !important;
+        border-radius: {{ theme.journeyCardBorderRadius || 4 }}px {{ theme.journeyCardBorderRadius || 4 }}px 0 0 !important;
       }
 
       <template v-if="mock">.fr-theme-preview.login</template> .card,
       .journey-card {
-      background-color: {{ theme.journeyCardBackgroundColor || '#ffffff' }} !important;
-      color: {{ theme.journeyCardTextColor || '#5e6d82' }};
-      box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.journeyCardShadow !== undefined ? theme.journeyCardShadow : 3 }}px;
+        background-color: {{ theme.journeyCardBackgroundColor || '#ffffff' }} !important;
+        color: {{ theme.journeyCardTextColor || '#5e6d82' }};
+        box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.journeyCardShadow !== undefined ? theme.journeyCardShadow : 3 }}px;
       }
 
+      <!--
+        INPUT FOCUS STYLES
+         * .form-label-group .form-control
+         * .form-label-group .button
+         * .form-label-group .input-buttons .within-input-button .btn
+      -->
       <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:not(.fr-field-error) .form-control:focus,
-      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:not(.fr-field-error) .button:focus-visible,
-      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:focus-within .input-buttons:not(:focus-within) .within-input-button .btn {
-        border-color: {{ theme.journeyInputBorderColor }} !important;
-        -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
-        box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
+      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:not(.fr-field-error) .button:focus-visible, <!-- Show Password Button -->
+      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:focus-within .input-buttons:not(:focus-within) .within-input-button .btn { <!-- Show Password Button -->
+        border-color: {{ journeyInputFocusBorderColor }} !important;
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ journeyInputFocusBorderColor }} !important;
+        box-shadow: 0 0 0 0.0625rem {{ journeyInputFocusBorderColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags {
-        border-color: {{ theme.journeyInputBorderColor }} !important;
+        border-color: {{ journeyInputFocusBorderColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview.login</template> .form-label-group:not(.fr-field-error) .form-label-group-input .multiselect--active {
-        -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
-        box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ journeyInputFocusBorderColor }} !important;
+        box-shadow: 0 0 0 0.0625rem {{ journeyInputFocusBorderColor }} !important;
       }
 
       .login-header {
-      background-color: {{ theme.journeyCardHeaderBackgroundColor || '#ffffff' }} !important;
+        background-color: {{ theme.journeyCardHeaderBackgroundColor || '#ffffff' }} !important;
       }
 
       <!-- login card title -->
       .card .h2,
       .journey-card .h2 {
-      color: {{ theme.journeyCardTitleColor || '#23282e' }};
+        color: {{ theme.journeyCardTitleColor || '#23282e' }};
       }
 
       <!-- login input and select fields -->
@@ -186,9 +203,9 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__tags,
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__select,
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__select::before {
-      background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
-      border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
-      color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
+        background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
+        border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
+        color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
       <template v-if="newMultiselectEnabled">
@@ -196,127 +213,127 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
       <template v-if="mock">.fr-theme-preview</template> .form-control multiselect:focus .multiselect__tags {
-      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
-      box-shadow: 0 0 0 0.0625rem {{ theme.journeyInputBorderColor }} !important;
-      outline: 0 none;
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ journeyInputBorderColor }} !important;
+        box-shadow: 0 0 0 0.0625rem {{ journeyInputFocusBorderColor }} !important;
+        outline: 0 none;
       }
       </template>
 
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__element {
-      background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
-      color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
+        background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
+        color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__content-wrapper {
-      border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
+        border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__option--highlight {
-      background-color: {{ theme.journeyInputSelectHoverColor || '#f6f8fa' }} !important;
+        background-color: {{ theme.journeyInputSelectHoverColor || '#f6f8fa' }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__option--selected {
-      background-color: {{ theme.journeyInputSelectColor || '#e4f4fd' }} !important;
+        background-color: {{ theme.journeyInputSelectColor || '#e4f4fd' }} !important;
       }
 
       <!-- Styling for buttons within form label group inputs -->
       .form-label-group button span,
       .multiselect__placeholder,
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect__single {
-      color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
+        color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview.login</template> .form-label-group .form-label-group-input .white-label-background ~ label {
-      background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
+        background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview.login</template> .form-label-group label {
-      color: {{ theme.journeyInputLabelColor || '#5e6d82' }} !important;
+        color: {{ theme.journeyInputLabelColor || '#5e6d82' }} !important;
       }
     </Component>
 
     <Component
       :is="'style'"
       v-if="isEnduser">
-      /**
-      Enduser Theme Styles
-      */
+      <!--
+        ACCOUNT PAGES (ENDUSER) STYLES
+      -->
 
       #app .fr-sidebar-menuitems li a:not(.router-link-active),
       #app .fr-sidebar-menuitems li button {
-      outline-color: {{ theme.primaryColor }};
-      color: {{ theme.accountNavigationTextColor || '#455469' }};
+        outline-color: {{ theme.primaryColor }};
+        color: {{ theme.accountNavigationTextColor || '#455469' }};
       }
 
       #app .fr-sidebar-menuitems li a:hover,
       #app .fr-sidebar-menuitems li button:hover {
-      background-color: {{ theme.profileMenuHoverColor }};
-      color: {{ theme.profileMenuHoverTextColor }};
+        background-color: {{ theme.profileMenuHoverColor }};
+        color: {{ theme.profileMenuHoverTextColor }};
       }
 
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .router-link-active {
       background-color: {{ theme.profileMenuHighlightColor }};
-      color: {{ theme.profileMenuTextHighlightColor }};
-      border-left-color: {{ theme.primaryColor }};
+        color: {{ theme.profileMenuTextHighlightColor }};
+        border-left-color: {{ theme.primaryColor }};
       }
 
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .router-link-active:hover {
-      background-color: {{ theme.profileMenuHoverColor }};
-      color: {{ theme.profileMenuHoverTextColor }};
+        background-color: {{ theme.profileMenuHoverColor }};
+        color: {{ theme.profileMenuHoverTextColor }};
       }
 
       #app .fr-sidebar-brand:hover {
-      background-color: inherit;
-      color: inherit;
+        background-color: inherit;
+        color: inherit;
       }
 
       .ping-logo.ping-logo-square {
-      background-image: url("{{ logoProfileCollapsed ? logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
-      height: {{ logoProfileCollapsed && theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
+        background-image: url("{{ logoProfileCollapsed ? logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
+        height: {{ logoProfileCollapsed && theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
       }
 
       .ping-logo.ping-logo-horizontal {
-      background-image: url("{{ logoProfile ? logoProfile : require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg') }}");
-      height: {{ theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
+        background-image: url("{{ logoProfile ? logoProfile : require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg') }}");
+        height: {{ theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
       }
 
       <template v-if="mock">.fr-theme-preview.enduser</template> .fr-sidebar-nav{
-      background-color: {{ theme.accountNavigationBackgroundColor|| '#ffffff' }};
+        background-color: {{ theme.accountNavigationBackgroundColor|| '#ffffff' }};
       }
 
       .fr-sidebar-wrapper .fr-sidebar-bottom {
-      border-top-color: {{ theme.accountNavigationToggleBorderColor || '#e7eef4' }} !important;
+        border-top-color: {{ theme.accountNavigationToggleBorderColor || '#e7eef4' }} !important;
       }
 
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .card,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content,
       .modal-content .card,
-      #app .dropdown-menu {
-      background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
-      border: 1px solid {{ theme.accountCardOuterBorderColor || '#e7eef4' }};
-      color: {{ theme.accountCardTextColor || '#5e6d82' }};
-      box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.accountCardShadow !== undefined ? theme.accountCardShadow : 3 }}px;
+        #app .dropdown-menu {
+        background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
+        border: 1px solid {{ theme.accountCardOuterBorderColor || '#e7eef4' }};
+        color: {{ theme.accountCardTextColor || '#5e6d82' }};
+        box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.accountCardShadow !== undefined ? theme.accountCardShadow : 3 }}px;
       }
 
       #app .card .table {
-      color: {{ theme.accountCardTextColor || '#5e6d82' }};
+        color: {{ theme.accountCardTextColor || '#5e6d82' }};
       }
 
       #app .card .list-group-item {
-      background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
-      border: none;
-      border-top: 1px solid;
-      border-color: {{ theme.accountCardInnerBorderColor || '#e7eef4' }};
+        background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
+        border: none;
+        border-top: 1px solid;
+        border-color: {{ theme.accountCardInnerBorderColor || '#e7eef4' }};
       }
 
       #app .card .list-group-flush {
-      border: none;
+        border: none;
       }
 
       #app .card h4,
       #app .card h5,
       #app .card .table.b-table > thead > tr {
-      color: {{ theme.accountCardHeaderColor || '#23282e' }};
+        color: {{ theme.accountCardHeaderColor || '#23282e' }};
       }
       #app .card .card-header {
         outline-color: {{ '#109cf1' }} ;
@@ -330,11 +347,11 @@ of the MIT license. See the LICENSE file for details. -->
       #app .card .tabs .col-auto,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content header,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content footer {
-      border-color: {{ theme.accountCardInnerBorderColor || '#e7eef4' }} !important;
+        border-color: {{ theme.accountCardInnerBorderColor || '#e7eef4' }} !important;
       }
 
       #app .card .toolbar-divider {
-      background-color: {{ theme.accountCardInnerBorderColor || '#e7eef4' }} !important;
+        background-color: {{ theme.accountCardInnerBorderColor || '#e7eef4' }} !important;
       }
 
       #app .card input,
@@ -345,32 +362,32 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .form-control,
       .modal-content .form-control .dropdown-menu ,
       .modal-content .b-dropdown .dropdown-menu {
-      background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
-      border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
-      color: {{ theme.accountCardInputTextColor || '#23282e' }};
+        background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
+        border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
+        color: {{ theme.accountCardInputTextColor || '#23282e' }};
       }
 
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--highlight {
-      background-color: {{ theme.accountCardInputSelectHoverColor || '#f6f8fa' }} !important;
+        background-color: {{ theme.accountCardInputSelectHoverColor || '#f6f8fa' }} !important;
       }
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--selected {
-      background-color: {{ theme.accountCardInputSelectColor || '#e4f4fd' }} !important;
+        background-color: {{ theme.accountCardInputSelectColor || '#e4f4fd' }} !important;
       }
 
       .modal-content .input-group-text {
-      border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
-      background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
+        border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
+        background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
       }
 
       #app .card .fr-tag-input {
-      box-shadow: none;
+        box-shadow: none;
       }
 
       #app .card .input-group-text,
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__select,
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .form-control {
-      background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
-      color: {{ theme.accountCardInputTextColor || '#23282e' }};
+        background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
+        color: {{ theme.accountCardInputTextColor || '#23282e' }};
       }
 
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .multiselect .multiselect__select::before,
@@ -379,51 +396,51 @@ of the MIT license. See the LICENSE file for details. -->
       .modal-content .multiselect .multiselect__input,
       .modal-content .multiselect .multiselect__input::placeholder,
       .modal-content label.form-control {
-      color: {{ theme.accountCardInputTextColor || '#23282e' }};
-      }
+        color: {{ theme.accountCardInputTextColor || '#23282e' }};
+        }
 
       .modal-content .white-label-background ~ label,
       #app .card .white-label-background ~ label {
-      background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
+        background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
       }
 
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .card label,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .fr-field label,
-      .modal-content .form-control label .sr-only,
+        .modal-content .form-control label .sr-only,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .form-label-group .form-label-group-input label,
       #app .card .input-group-text .text-muted,
       #app .card .fr-icon-input-holder .fr-icon,
       .form-label-group .material-icons-outlined,
       .form-control .material-icons-outlined {
-      color: {{ theme.accountCardInputLabelColor || '#5e6d82' }};
+        color: {{ theme.accountCardInputLabelColor || '#5e6d82' }};
       }
 
       #app .card .nav-pills .nav-link.active {
-      background-color: {{ theme.accountCardTabActiveColor || '#e4f4fd' }};
-      border-left-color: {{ theme.accountCardTabActiveBorderColor || '#109cf1' }};
+        background-color: {{ theme.accountCardTabActiveColor || '#e4f4fd' }};
+        border-left-color: {{ theme.accountCardTabActiveBorderColor || '#109cf1' }};
       }
 
       #app .card .table-hover tbody tr:hover,
       #app .card .table tr.b-table-row-selected.table-transparent,
       #app .dropdown-item:hover,
       #app .nav-pills .nav-link:hover {
-      background-color: {{ theme.accountTableRowHoverColor || '#f6f8fa' }} !important;
+        background-color: {{ theme.accountTableRowHoverColor || '#f6f8fa' }} !important;
       }
 
       #app .fr-main-navbar<template v-if="mock">-mock</template> {
-      background-color: {{ theme.topBarBackgroundColor || '#ffffff' }};
-      border-bottom-color: {{ theme.topBarBorderColor || '#e7eef4' }};
+        background-color: {{ theme.topBarBackgroundColor || '#ffffff' }};
+        border-bottom-color: {{ theme.topBarBorderColor || '#e7eef4' }};
       }
 
       #app .fr-main-navbar<template v-if="mock">-mock</template> .material-icons-outlined,
       #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-back-link h4,
       #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-dropdown-button-content div,
       #app .fr-main-navbar<template v-if="mock">-mock</template> .dropdown-toggle::after {
-      color: {{ theme.topBarTextColor || '#324054' }} !important;
+        color: {{ theme.topBarTextColor || '#324054' }} !important;
       }
 
       #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-dropdown-button-content h5 {
-      color: {{ theme.topBarHeaderColor || '#23282e' }};
+        color: {{ theme.topBarHeaderColor || '#23282e' }};
       }
 
       .card-input-element:checked + .card-input {
@@ -469,6 +486,29 @@ of the MIT license. See the LICENSE file for details. -->
       #app a.nav-link.router-link-active .badge {
         background-color: {{ theme.primaryColor }};
       }
+
+      <!--
+        INPUT FOCUS STYLES
+         * textarea
+         * input
+         * .form-control
+         * .form-control .multiselect
+         * .form-cohtrol .multiselect__tags
+         * .uneditable-input
+      -->
+      textarea:focus,
+      <template v-if="mock">.fr-theme-preview</template> input:focus:not(.multiselect__input),
+      <template v-if="mock">.fr-theme-preview</template> input[type]:focus:not(.multiselect__input),
+      .uneditable-input:focus,
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
+      <template v-if="mock">.fr-theme-preview</template> .form-control .multiselect:focus .multiselect__tags {
+        border-color: {{ accountCardInputFocusBorderColor }} !important;
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ accountCardInputFocusBorderColor }} !important;
+        box-shadow: 0 0 0 0.0625rem {{ accountCardInputFocusBorderColor }} !important;
+        outline: 0 none;
+      }
     </Component>
   </div>
 </template>
@@ -485,6 +525,7 @@ accountCardHeaderColor: "#23282e",
 accountCardInnerBorderColor: "#e7eef4",
 accountCardInputBackgroundColor: '#ffffff',
 accountCardInputBorderColor: '#c0c9d5',
+accountCardInputFocusBorderColor: '#E50914',
 accountCardInputLabelColor: '#5e6d82',
 accountCardInputSelectColor: "#e4f4fd",
 accountCardInputTextColor: '#23282e',
@@ -508,6 +549,7 @@ journeyCardTextColor: "#5e6d82"
 journeyCardTitleColor: "#23282e"
 journeyInputBackgroundColor: "#ffffff"
 journeyInputBorderColor: "#c0c9d5"
+journeyInputFocusBorderColor: '#B20710',
 journeyInputLabelColor: "#5e6d82",
 journeyInputSelectColor: "#e4f4fd",
 journeyInputTextColor: "#23282e",
@@ -529,8 +571,8 @@ topBarBackgroundColor: "#ffffff",
 topBarBorderColor: "#e7eef4",
 topBarHeaderColor: "#23282e",
 topBarTextColor: "#69788b",
-
  */
+
 /**
  * Injects a style sheet based on provided theming variables.
  * Intended functionality is to allow for basic theming and overriding in
@@ -589,6 +631,22 @@ export default {
         return typeof fontFamily === 'string' ? fontFamily : fontFamily.family;
       }
       return '';
+    },
+    /**
+     * Provides the color used for the focus state of an input in the Journey Pages
+     *
+     * @returns {String} - Hexadecimal color value
+     */
+    journeyInputFocusBorderColor() {
+      return this.theme.journeyInputFocusBorderColor || this.theme.journeyInputBorderColor || this.theme.primaryColor;
+    },
+    /**
+     * Provides the color used for the focus state of an input in the Account Pages
+     *
+     * @returns {String} - Hexadecimal color value
+     */
+    accountCardInputFocusBorderColor() {
+      return this.theme.accountCardInputFocusBorderColor || this.theme.primaryColor;
     },
     logoProfile() {
       return this.getLocalizedString(this.theme.logoProfile, i18n.global.locale, i18n.global.fallbackLocale);
