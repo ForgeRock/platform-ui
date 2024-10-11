@@ -10,20 +10,12 @@ of the MIT license. See the LICENSE file for details. -->
         :item="item" />
 
       <!-- Actions -->
-      <div
-        v-if="isActive && allowForwarding"
-        class="mb-4">
-        <BButton
-          @click="openModal('REASSIGN')"
-          class="mr-1"
-          variant="outline-secondary">
-          <FrIcon
-            icon-class="mr-2"
-            name="redo">
-            {{ $t('common.forward') }}
-          </FrIcon>
-        </BButton>
-      </div>
+      <FrRequestActions
+        v-if="isActive && type === detailTypes.ADMIN_REQUEST"
+        :permissions="{ reassign: true }"
+        :type="detailTypes.ADMIN_REQUEST"
+        @action="openModal($event)"
+        class="mb-4" />
 
       <!-- Request details -->
       <BCard
@@ -72,10 +64,10 @@ import {
   BContainer,
 } from 'bootstrap-vue';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import {
+  detailTypes,
   getFormattedRequest,
   getRequestTypeDisplayName,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
@@ -83,6 +75,7 @@ import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/govern
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestDetails';
 import FrRequestHeader from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestHeader';
+import FrRequestActions from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActions';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -90,9 +83,9 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  allowForwarding: {
-    type: Boolean,
-    default: false,
+  type: {
+    type: String,
+    default: '',
   },
 });
 

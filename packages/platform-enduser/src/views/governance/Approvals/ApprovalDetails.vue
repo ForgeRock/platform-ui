@@ -10,44 +10,13 @@ of the MIT license. See the LICENSE file for details. -->
         :item="item" />
 
       <!-- Actions -->
-      <div
-        data-testId="approval-detail-actions"
+      <FrRequestActions
         v-if="isActive"
-        class="mb-4">
-        <BButton
-          v-if="actionPermissions.approve"
-          @click="openModal('APPROVE')"
-          class="mr-1"
-          variant="outline-secondary">
-          <FrIcon
-            icon-class="text-success mr-2"
-            name="check">
-            {{ $t('common.approve') }}
-          </FrIcon>
-        </BButton>
-        <BButton
-          v-if="actionPermissions.reject"
-          @click="openModal('REJECT')"
-          class="mr-1"
-          variant="outline-secondary">
-          <FrIcon
-            icon-class="text-danger mr-2"
-            name="block">
-            {{ $t('common.reject') }}
-          </FrIcon>
-        </BButton>
-        <BButton
-          v-if="actionPermissions.reassign"
-          @click="openModal('REASSIGN')"
-          class="mr-1"
-          variant="outline-secondary">
-          <FrIcon
-            icon-class="mr-2"
-            name="redo">
-            {{ $t('common.forward') }}
-          </FrIcon>
-        </BButton>
-      </div>
+        data-testId="approval-detail-actions"
+        :permissions="actionPermissions"
+        :type="detailTypes.APPROVAL"
+        @action="openModal($event)"
+        class="mb-4" />
 
       <!-- Request details -->
       <BCard
@@ -80,12 +49,10 @@ import {
   computed,
 } from 'vue';
 import {
-  BButton,
   BCard,
   BContainer,
 } from 'bootstrap-vue';
 import { isEmpty } from 'lodash';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
@@ -93,12 +60,13 @@ import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getRequest, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { getFormattedRequest, getRequestTypeDisplayName } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { detailTypes, getFormattedRequest, getRequestTypeDisplayName } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { useRoute, useRouter } from 'vue-router';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestDetails';
 import FrRequestHeader from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestHeader';
+import FrRequestActions from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActions';
 import i18n from '@/i18n';
 
 // Composables

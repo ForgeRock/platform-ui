@@ -10,7 +10,8 @@ of the MIT license. See the LICENSE file for details. -->
     <BCard no-body>
       <FrTaskList
         :is-loading="isLoading"
-        :tasks="fulfillmentTasks">
+        :tasks="fulfillmentTasks"
+        @open-detail="viewDetails">
         <template #header>
           <FrRequestToolbar
             :num-filters="numFilters"
@@ -33,6 +34,32 @@ of the MIT license. See the LICENSE file for details. -->
             icon="inbox"
             :subtitle="$t('governance.tasks.noTasks')" />
         </template>
+        <template #actions="{ item }">
+          <div class="d-flex justify-content-end dropdown-padding">
+            <BDropdown
+              boundary="window"
+              variant="link"
+              no-caret
+              right
+              toggle-class="text-decoration-none p-0">
+              <template #button-content>
+                <FrIcon
+                  icon-class="text-muted md-24"
+                  name="more_horiz" />
+                <p class="sr-only">
+                  {{ $t('common.moreActions') }}
+                </p>
+              </template>
+              <BDropdownItem
+                @click="viewDetails(item)">
+                <FrIcon
+                  icon-class="mr-2"
+                  name="list_alt" />
+                {{ $t('common.viewDetails') }}
+              </BDropdownItem>
+            </BDropdown>
+          </div>
+        </template>
         <template #footer>
           <FrPagination
             v-model="currentPage"
@@ -51,11 +78,15 @@ of the MIT license. See the LICENSE file for details. -->
  * View to display fulfillment tasks. Includes the ability to select a status, sort, and filter tasks.
  */
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   BCard,
   BContainer,
+  BDropdown,
+  BDropdownItem,
 } from 'bootstrap-vue';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrRequestToolbar from '@forgerock/platform-shared/src/components/governance/RequestToolbar';
@@ -69,6 +100,7 @@ import i18n from '@/i18n';
 import store from '@/store';
 
 // composables
+const router = useRouter();
 const { userId } = useUserStore();
 
 // data
@@ -197,6 +229,22 @@ function filterHandler(property) {
   loadTasks(resetPaging);
 }
 
+/**
+ * Navigate to the task details view.
+ * @param {Object} task - The task object.
+ */
+function viewDetails(task) {
+  router.push({
+    name: 'TaskDetails',
+    params: { taskId: task.details.id },
+  });
+}
+
 loadFulfillmentTasksAndUpdateBadge();
 
 </script>
+<style scoped>
+.dropdown-padding {
+  padding: 0 20px;
+}
+</style>

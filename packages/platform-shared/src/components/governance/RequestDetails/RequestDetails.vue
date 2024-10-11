@@ -6,12 +6,13 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="card-tabs-vertical">
     <BTabs
       class="w-100"
+      style="min-height: 375px;"
       pills
       card
       vertical
       v-model="tabIndex">
       <BTab
-        v-for="(tab, index) in tabs"
+        v-for="(tab, index) in tabsToShow"
         :key="tab.title"
         :title="tab.title"
         class="p-0"
@@ -65,6 +66,10 @@ const props = defineProps({
     type: Object,
     default: () => ({ comment: false }),
   },
+  hideTracking: {
+    type: Boolean,
+    default: false,
+  },
   isApproval: {
     type: Boolean,
     default: false,
@@ -81,6 +86,7 @@ const tabs = ref([
   {
     component: FrWorkflow,
     title: i18n.global.t('governance.requestModal.titles.tracking'),
+    hide: props.hideTracking,
   },
   {
     component: FrComments,
@@ -92,6 +98,7 @@ const tabs = ref([
     title: i18n.global.t('common.tasks'),
   },
 ]);
+const tabsToShow = computed(() => tabs.value.filter(({ hide }) => !hide));
 const tabIndex = ref(0);
 
 const commentsCount = computed(() => props.item.rawData.decision.comments.filter(({ action }) => action === 'comment').length);

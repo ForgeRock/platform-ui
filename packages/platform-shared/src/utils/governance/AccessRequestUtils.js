@@ -30,6 +30,12 @@ export function getPriorityImageSrc(priority) {
   }
 }
 
+export const detailTypes = {
+  APPROVAL: 'approval',
+  ADMIN_REQUEST: 'adminRequest',
+  FULFILLMENT: 'fulfillment',
+};
+
 export const requestTypes = {
   ACCOUNT_GRANT: {
     label: 'governance.accessRequest.requestTypes.applicationGrant',

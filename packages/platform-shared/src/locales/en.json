@@ -1824,6 +1824,8 @@
     "decisions": {
       "approved": "Approved",
       "canceled": "Canceled",
+      "denied": "Denied",
+      "fulfilled": "Fulfilled",
       "pending": "Pending",
       "rejected": "Rejected"
     },

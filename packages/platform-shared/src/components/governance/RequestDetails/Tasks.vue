@@ -143,6 +143,11 @@ function setDecisionValue(type) {
         name: i18n.global.t('governance.decisions.approved'),
         variant: 'success',
       };
+    case 'fulfill':
+      return {
+        name: i18n.global.t('governance.decisions.fulfilled'),
+        variant: 'success',
+      };
     case 'in-progress':
       return {
         name: i18n.global.t('governance.status.in-progress'),
@@ -156,6 +161,11 @@ function setDecisionValue(type) {
     case 'reject':
       return {
         name: i18n.global.t('governance.decisions.rejected'),
+        variant: 'danger',
+      };
+    case 'deny':
+      return {
+        name: i18n.global.t('governance.decisions.denied'),
         variant: 'danger',
       };
     default:
