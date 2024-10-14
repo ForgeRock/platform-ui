@@ -1288,7 +1288,8 @@
         "title": "Users & Roles",
         "noMappings": "A mapping has not been set up yet",
         "noMappingsSubtitle": "Set up the provisioner and a mapping to proceed.",
-        "proceedToProvisioning": "Proceed to Provisioning"
+        "proceedToProvisioning": "Proceed to Provisioning",
+        "multipleAssignmentError": "Multiple override assignments found."
       },
       "provisioningTab": {
         "updateMappingSuccess": "Mappings set successfully",
@@ -3887,7 +3888,7 @@
       "errorGettingWorkflows": "There was an error retrieving the workflows",
       "errorSavingRequestType": "There was an error saving the request type",
       "properties": {
-        "editProperty":"Edit Property",
+        "editProperty": "Edit Property",
         "emptyTitle": "You haven't added any properties yet",
         "emptySubtitle": "Add properties for this request type.",
         "errorDeletingProperty": "There was an error deleting the property",

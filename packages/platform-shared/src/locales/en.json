@@ -589,7 +589,7 @@
   },
   "errors": {
     "errorSaving": "Error saving list",
-    "ErrorSavingResource": "Error saving resource",
+    "ErrorSavingResource": "Error saving resource. {error}",
     "errorCreating": "Error creating file",
     "couldNotRetrieveConfigurationInfo": "There was an error retrieving configuration information.",
     "couldNotRetrieveVersion": "There was an error retrieving version information.",
@@ -2008,7 +2008,7 @@
       "violation": "Violation"
     }
   },
-  "reports": {    
+  "reports": {
     "deleteReport": "Are you sure you want to delete this report?",
     "downloadComplete": "Download complete",
     "downloadFile": "Download {fileType}",
