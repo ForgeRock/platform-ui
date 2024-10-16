@@ -5,9 +5,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { cloneDeep, assign, get } from 'lodash';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import FormGenerator from './index';
+import i18n from '@/i18n';
+
+ValidationRules.extendRules({
+  integer: ValidationRules.getRules(i18n).integer,
+  required: ValidationRules.getRules(i18n).required,
+});
 
 const SchemaMixin = {
   methods: {
@@ -155,8 +163,8 @@ const model = {
 
 let wrapper;
 
-beforeEach(() => {
-  wrapper = shallowMount(FormGenerator, {
+function setup(props) {
+  return mount(FormGenerator, {
     global: {
       mocks: {
         $t: () => {},
@@ -167,26 +175,29 @@ beforeEach(() => {
         BCol: false,
       },
     },
-    data() {
-      return {
-        sectionExpanded: {},
-      };
+    props: {
+      ...props,
     },
   });
+}
+
+beforeEach(() => {
+  wrapper = setup();
+  wrapper.setData({ sectionExpanded: {} });
 });
 
 describe('Form Generator', () => {
   it('Renders each of the sub components', async () => {
     const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
     await wrapper.setProps({ schema: combinedSchema, model });
-    expect(wrapper.find('fr-string-display-stub').exists()).toBe(true);
-    expect(wrapper.find('fr-array-display-stub').exists()).toBe(true);
-    expect(wrapper.find('fr-boolean-display-stub').exists()).toBe(true);
-    expect(wrapper.find('fr-number-display-stub').exists()).toBe(true);
-    expect(wrapper.find('fr-radio-display-stub').exists()).toBe(true);
-    expect(wrapper.find('fr-password-display-stub').exists()).toBe(true);
-    expect(wrapper.find('fr-date-display-stub').exists()).toBe(true);
-    expect(wrapper.find('fr-text-area-display-stub').exists()).toBe(true);
+    expect(findByTestId(wrapper, 'fr-field-StringLabel').exists()).toBe(true);
+    expect(findByTestId(wrapper, 'fr-field-ArrayLabel').exists()).toBe(true);
+    expect(wrapper.find('[type="boolean"]').exists()).toBe(true);
+    expect(findByTestId(wrapper, 'fr-field-NumberLabel').exists()).toBe(true);
+    expect(wrapper.find('[role="radiogroup"]').exists()).toBe(true);
+    expect(findByTestId(wrapper, 'fr-field-PasswordLabel').exists()).toBe(true);
+    expect(findByTestId(wrapper, 'fr-field-DateLabel').exists()).toBe(true);
+    expect(findByTestId(wrapper, 'fr-field-TextAreaLabel').exists()).toBe(true);
   });
 
   describe('safeCompare method', () => {
@@ -414,6 +425,11 @@ describe('Form Generator', () => {
     it('returns the modelValue or a default of 0 for integer field types', () => {
       expect(wrapper.vm.getFieldValue(7, 'integer', false)).toBe(7);
       expect(wrapper.vm.getFieldValue(undefined, 'integer', false)).toBe(0);
+    });
+
+    it('returns null for an integer field when the "defaultValueForInteger" prop is set to null', async () => {
+      await wrapper.setProps({ defaultValueForInteger: null });
+      expect(wrapper.vm.getFieldValue(undefined, 'integer', false)).toBe(null);
     });
 
     it('returns the first element of the modelValue array or an empty string if modelIsArrayElement is true', () => {

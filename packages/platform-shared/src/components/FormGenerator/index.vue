@@ -101,6 +101,13 @@ export default {
   },
   props: {
     /**
+     * Determines the default value for an integer field.
+     */
+    defaultValueForInteger: {
+      type: [Number, null],
+      default: 0,
+    },
+    /**
      * Model data.
      */
     model: {
@@ -191,6 +198,7 @@ export default {
       const valueIsBool = isBoolean(property.value);
       const valueIsNumber = isNumber(property.value);
       const valueIsPurpose = valueIsPurposePlaceholder(property.value);
+      const valueIsNull = property.value === null;
 
       switch (property.type) {
         case 'select':
@@ -212,7 +220,7 @@ export default {
         case 'boolean':
           return valueIsBool;
         case 'integer':
-          return valueIsNumber;
+          return valueIsNumber || valueIsNull;
         case 'radio':
           return true;
         case 'password':
@@ -286,7 +294,7 @@ export default {
         return propertyValue || false;
       }
       if (fieldType === 'integer') {
-        return propertyValue || 0;
+        return propertyValue || this.defaultValueForInteger;
       }
       if (isArray(propertyValue)) {
         return propertyValue[0] || '';
