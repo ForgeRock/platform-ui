@@ -3881,6 +3881,7 @@
       }
     },
     "requestTypes": {
+      "enableValidation": "Enable validation",
       "errorDeletingRequestType": "There was an error deleting the request type",
       "errorGettingRequestTypes": "There was an error retrieving the request types",
       "errorGettingWorkflows": "There was an error retrieving the workflows",
