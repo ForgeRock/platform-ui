@@ -40,6 +40,7 @@ const defaultState = {
   maxIdleExpirationTime: null,
   maxSessionExpirationTime: null,
   newMultiselectEnabled: false,
+  pingFederateUrl: null,
   promoteAppsViaApi: false,
   showEsvUi: false,
   showCertsUi: false,
@@ -47,6 +48,7 @@ const defaultState = {
   webStorageAvailable: true,
   workforceEnabled: false,
   workforceAdvancedSyncEnabled: false,
+  wsfedEnabled: false,
   templateBuilderEnabled: false,
 };
 
@@ -116,6 +118,9 @@ const mutations = {
       if (env.VUE_APP_PROMOTE_APPS_VIA_API === true || env.VUE_APP_PROMOTE_APPS_VIA_API === 'true') {
         state.promoteAppsViaApi = env.VUE_APP_PROMOTE_APPS_VIA_API;
       }
+      if (env.VUE_APP_ENABLE_WSFED === 'true' || env.VUE_APP_ENABLE_WSFED === true) {
+        state.pingFederateUrl = getFQDN(env.VUE_APP_PINGFEDERATE_URL);
+      }
     }
 
     if (env.VUE_APP_GOOGLE_FONTS_API_KEY) {
@@ -162,6 +167,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_WORKFORCE_ADVANCED_SYNC) {
       state.workforceAdvancedSyncEnabled = env.VUE_APP_ENABLE_WORKFORCE_ADVANCED_SYNC === 'true' || env.VUE_APP_ENABLE_WORKFORCE_ADVANCED_SYNC === true;
+    }
+
+    if (env.VUE_APP_ENABLE_WSFED === 'true' || env.VUE_APP_ENABLE_WSFED === true) {
+      state.wsfedEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_TEMPLATE_BUILDER === 'true' || env.VUE_APP_ENABLE_TEMPLATE_BUILDER === true) {
