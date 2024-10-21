@@ -1,5 +1,6 @@
 @forgeops
 @cloud
+@smoke
 Feature: Enduser Login
 As an enduser
 I want to verify the login functionality

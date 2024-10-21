@@ -1,4 +1,5 @@
 @forgeops
+@smoke
 Feature: Enduser Registration
 
   Background:

@@ -9,8 +9,8 @@ import { random } from 'lodash';
 import { filterTests } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 
-filterTests(['forgeops', 'cloud'], () => {
-  describe('EndUser Login Journey', () => {
+filterTests(['@forgeops', '@cloud', '@smoke'], () => {
+  xdescribe('EndUser Login Journey', () => {
     const loginFailedErrorMessage = Cypress.env('IS_FRAAS') ? 'Login failure' : 'Authentication Failed';
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const defaultLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login#/`;
@@ -93,7 +93,7 @@ filterTests(['forgeops', 'cloud'], () => {
     });
 
     /** This scenario is locked by bug https://bugster.forgerock.org/jira/browse/IAM-6739 */
-    it('C20236 - Make 6 failed logins in a row - user is locked', () => {
+    xit('C20236 - Make 6 failed logins in a row - user is locked', () => {
       const maxAttempts = 6;
       for (let i = 0; i < maxAttempts; i += 1) {
         loginEnduser(userName, incorrectPassword);

@@ -18,7 +18,7 @@ import {
 } from '../api/emailApi.e2e';
 import { deleteIDMUser } from '../api/managedApi.e2e';
 
-filterTests(['@forgeops'], () => {
+filterTests(['@forgeops', '@smoke'], () => {
   function fillOutRegistrationForm(fieldData) {
     fieldData.forEach((field) => {
       cy.findByLabelText(field.placeholder)
@@ -119,7 +119,7 @@ filterTests(['@forgeops'], () => {
   });
 });
 
-filterTests(['@cloud'], () => {
+filterTests(['@cloud', '@smoke'], () => {
   /**
    * This function is created to select the default security question "What's your favorite color?" And filling the answer field with the word "orange, which is a valid setting for the journey"
    */

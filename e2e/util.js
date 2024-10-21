@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 ForgeRock AS. All Rights Reserved
+ * Copyright 2023-2024 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -15,13 +15,15 @@
  * @example cypress open --env TAGS=forgeops/cloud
  */
 export const filterTests = (definedTags, runTest) => {
+  let executed = false;
   if (Cypress.env('TAGS')) {
-    const tags = Cypress.env('TAGS').split('/');
-    const found = definedTags.some(($definedTag) => tags.includes($definedTag));
-
-    if (found) {
-      runTest();
-    }
+    const orTagsGroups = Cypress.env('TAGS').split(' or ');
+    orTagsGroups.forEach((andTagsGroup) => {
+      if (andTagsGroup.split(' and ').every((tag) => definedTags.includes(tag)) && !executed) {
+        runTest();
+        executed = true;
+      }
+    });
   } else {
     runTest();
   }

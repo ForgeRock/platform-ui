@@ -1,4 +1,5 @@
 @forgeops
+@smoke
 Feature:Admin Login
   As an admin user
   I want to verify the login functionality
