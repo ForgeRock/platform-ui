@@ -81,9 +81,11 @@ import { requestAction } from '@forgerock/platform-shared/src/api/governance/Acc
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrAddComment from './AddComment';
 import FrApproveRequest from './ApproveRequest';
-import FrForwardRequest from './ForwardRequest';
-import FrRejectRequest from './RejectRequest';
 import FrCancelRequest from './CancelRequest';
+import FrForwardRequest from './ForwardRequest';
+import FrFulfillTask from './FulfillTask';
+import FrRejectRequest from './RejectRequest';
+import FrRejectTask from './RejectTask';
 import i18n from '@/i18n';
 
 // Composables
@@ -144,7 +146,6 @@ const componentComputed = computed(() => {
         loadingText: i18n.global.t('governance.requestModal.messages.loadingCancel'),
         message: i18n.global.t('governance.requestModal.messages.cancel'),
         size: 'md',
-        showRequestDetailsLink: false,
         title: i18n.global.t('governance.requestModal.titles.cancel'),
       };
     case REQUEST_MODAL_TYPES.COMMENT:
@@ -155,8 +156,27 @@ const componentComputed = computed(() => {
         loadingText: i18n.global.t('governance.requestModal.messages.loadingComment'),
         message: i18n.global.t('governance.requestModal.messages.comment'),
         size: 'lg',
-        showRequestDetailsLink: false,
         title: i18n.global.t('governance.requestModal.titles.addComment'),
+      };
+    case REQUEST_MODAL_TYPES.DENY:
+      return {
+        buttonName: i18n.global.t('common.reject'),
+        component: FrRejectTask,
+        errorMessage: i18n.global.t('governance.requestModal.messages.errorRejectTask'),
+        loadingText: i18n.global.t('governance.requestModal.messages.loadingRejectTask'),
+        message: i18n.global.t('governance.requestModal.messages.rejectTask'),
+        size: 'lg',
+        title: i18n.global.t('governance.requestModal.titles.rejectTask'),
+      };
+    case REQUEST_MODAL_TYPES.FULFILL:
+      return {
+        buttonName: i18n.global.t('common.complete'),
+        component: FrFulfillTask,
+        errorMessage: i18n.global.t('governance.requestModal.messages.errorComplete'),
+        loadingText: i18n.global.t('governance.requestModal.messages.loadingComplete'),
+        message: i18n.global.t('governance.requestModal.messages.taskComplete'),
+        size: 'lg',
+        title: i18n.global.t('governance.requestModal.titles.complete'),
       };
     case REQUEST_MODAL_TYPES.REASSIGN:
       return {
@@ -166,7 +186,6 @@ const componentComputed = computed(() => {
         loadingText: i18n.global.t('governance.requestModal.messages.loadingForward'),
         message: i18n.global.t('governance.requestModal.messages.forward'),
         size: 'lg',
-        showRequestDetailsLink: false,
         title: i18n.global.t('governance.requestModal.titles.forward'),
       };
     case REQUEST_MODAL_TYPES.REJECT:
@@ -180,7 +199,6 @@ const componentComputed = computed(() => {
           requireJustification: props.requireRejectJustification,
         },
         size: 'lg',
-        showRequestDetailsLink: true,
         title: i18n.global.t('governance.requestModal.titles.reject'),
       };
     case REQUEST_MODAL_TYPES.APPROVE:
@@ -195,7 +213,6 @@ const componentComputed = computed(() => {
           requireJustification: props.requireApproveJustification,
         },
         size: 'lg',
-        showRequestDetailsLink: true,
         title: i18n.global.t('governance.requestModal.titles.approve'),
       };
   }
@@ -232,6 +249,9 @@ function modalAction(item, ok) {
     case 'approve':
     case 'reject':
       requestPayload.justification = comment.value;
+      break;
+    case 'fulfill':
+    case 'deny':
       break;
     default:
       requestPayload.comment = comment.value;

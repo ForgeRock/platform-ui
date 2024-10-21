@@ -28,21 +28,29 @@ of the MIT license. See the LICENSE file for details. -->
       <!-- Task actions -->
       <FrRequestActions
         v-if="isActive"
+        class="mb-4"
         :permissions="permissions"
         :type="detailTypes.FULFILLMENT"
-        class="mb-4" />
+        @action="openModal($event)" />
 
       <!-- Task details -->
       <BCard
         class="mb-3"
         no-body>
         <FrRequestDetails
-          is-approval
           hide-tracking
+          is-approval
           :hide-actions="{ comment: !permissions.comment, modify: !permissions.modify }"
-          :item="item" />
+          :item="item"
+          @add-comment="openModal('COMMENT')" />
       </BCard>
     </template>
+    <FrRequestModal
+      :type="modalType"
+      :item="item"
+      @modal-closed="modalType = null"
+      @update-item="getTaskData"
+      @update-list="toListView" />
   </BContainer>
 </template>
 
@@ -52,28 +60,34 @@ of the MIT license. See the LICENSE file for details. -->
  * Actions are available based on the task's status and the user's permissions.
  */
 import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { BCard, BContainer } from 'bootstrap-vue';
 import { capitalize, isEmpty } from 'lodash';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { buildTaskDisplay } from '@forgerock/platform-shared/src/utils/governance/fulfillmentTasks';
 import { detailTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrRequestActions from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActions';
+import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestDetails';
 import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';
 import i18n from '@/i18n';
 
 // Composables
+const router = useRouter();
 const route = useRoute();
 const { setBreadcrumb } = useBreadcrumb();
+const { bvModal } = useBvModal();
 
 // Data
 const { taskId } = route.params;
 const isActive = ref(false);
 const item = ref({});
+const modalType = ref('');
 
 // Computed
 const userId = computed(() => useUserStore().userId);
@@ -124,6 +138,22 @@ async function getTaskData() {
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.tasks.taskLoadError'));
   }
+}
+
+/**
+ * Opens a modal dialog of the specified type.
+ * @param {string} type - The type of modal to open.
+ */
+function openModal(type) {
+  modalType.value = REQUEST_MODAL_TYPES[type];
+  bvModal.value.show('request_modal');
+}
+
+/**
+ * Navigates to the task list view.
+ */
+function toListView() {
+  router.push({ name: 'Tasks' });
 }
 
 setBreadcrumb('/tasks', i18n.global.t('sideMenu.tasks'));

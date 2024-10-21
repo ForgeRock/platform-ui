@@ -33,67 +33,12 @@ of the MIT license. See the LICENSE file for details. -->
               :subtitle="$t('governance.accessRequest.noRequests', { status: getStatusText(statusOptions, status) })" />
           </template>
           <template #actions="{ item }">
-            <div class="d-flex align-items-center justify-content-end text-right dropdown-padding">
-              <BDropdown
-                boundary="window"
-                variant="link"
-                no-caret
-                right
-                toggle-class="text-decoration-none p-0"
-                data-testid="dropdown-actions">
-                <template #button-content>
-                  <FrIcon
-                    icon-class="text-muted md-24"
-                    name="more_horiz" />
-                  <p class="sr-only">
-                    {{ $t('common.moreActions') }}
-                  </p>
-                </template>
-                <template v-if="status === 'pending'">
-                  <BDropdownItem
-                    @click="openModal(item, 'APPROVE')"
-                    data-testid="dropdown-action-approve">
-                    <FrIcon
-                      icon-class="mr-2 text-success"
-                      name="check" />
-                    {{ $t('common.approve') }}
-                  </BDropdownItem>
-                  <BDropdownItem
-                    data-testid="dropdown-action-reject"
-                    @click="openModal(item, 'REJECT')">
-                    <FrIcon
-                      icon-class="mr-2 text-danger"
-                      name="block" />
-                    {{ $t('common.reject') }}
-                  </BDropdownItem>
-                  <BDropdownDivider />
-                  <BDropdownItem
-                    data-testid="dropdown-action-reassign"
-                    @click="openModal(item, 'REASSIGN')">
-                    <FrIcon
-                      icon-class="mr-2"
-                      name="redo" />
-                    {{ $t('common.forward') }}
-                  </BDropdownItem>
-                  <BDropdownItem
-                    data-testid="dropdown-action-comment"
-                    @click="openModal(item, 'COMMENT')">
-                    <FrIcon
-                      icon-class="mr-2"
-                      name="chat_bubble_outline" />
-                    {{ $t('governance.requestModal.addComment') }}
-                  </BDropdownItem>
-                </template>
-                <BDropdownItem
-                  data-testid="dropdown-action-details"
-                  @click="viewDetails(item)">
-                  <FrIcon
-                    icon-class="mr-2"
-                    name="list_alt" />
-                  {{ $t('common.viewDetails') }}
-                </BDropdownItem>
-              </BDropdown>
-            </div>
+            <FrRequestActionsCell
+              v-if="status === 'pending'"
+              :allow-self-approval="allowSelfApproval"
+              :item="item"
+              :type="detailTypes.APPROVAL"
+              @action="handleAction($event, item)" />
           </template>
           <template #footer>
             <FrPagination
@@ -111,7 +56,6 @@ of the MIT license. See the LICENSE file for details. -->
     <FrRequestModal
       :type="modalType"
       :item="modalItem"
-      :is-approvals="true"
       :require-approve-justification="requireApproveJustification"
       :require-reject-justification="requireRejectJustification"
       @modal-closed="modalType = null; modalItem = null"
@@ -122,22 +66,19 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  BDropdown,
-  BDropdownItem,
-  BDropdownDivider,
   BCard,
   BContainer,
 } from 'bootstrap-vue';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { getUserApprovals, getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import {
+  detailTypes,
   getRequestFilter,
   getStatusText,
   sortByOptions,
@@ -146,10 +87,10 @@ import {
   getRequestTypeDisplayNames,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
+import FrRequestActionsCell from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActionsCell';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrAccessRequestList from '@forgerock/platform-shared/src/components/governance/AccessRequestList';
 import FrRequestToolbar from '@forgerock/platform-shared/src/components/governance/RequestToolbar';
-
 /**
  * @description Landing page for User Approvals
  */
@@ -158,12 +99,9 @@ export default {
   components: {
     BCard,
     BContainer,
-    BDropdown,
-    BDropdownItem,
-    BDropdownDivider,
     FrAccessRequestList,
     FrHeader,
-    FrIcon,
+    FrRequestActionsCell,
     FrRequestModal,
     FrRequestToolbar,
     FrNoData,
@@ -173,6 +111,7 @@ export default {
   data() {
     return {
       REQUEST_MODAL_TYPES,
+      detailTypes,
       accessRequests: [],
       currentPage: 1,
       filter: {},
@@ -282,6 +221,15 @@ export default {
       }
     },
     /**
+     * Handles the specified action for a given item.
+     * @param {string} action - The action to be performed.
+     * @param {Object} item - The item on which the action is to be performed.
+     */
+    handleAction(action, item) {
+      if (action === 'DETAILS') this.viewDetails(item);
+      else this.openModal(item, action);
+    },
+    /**
      * Update status and reload requests
      * @param {Object} status status of requests to load
      */
@@ -299,6 +247,10 @@ export default {
       this.modalType = REQUEST_MODAL_TYPES[type];
       this.$bvModal.show('request_modal');
     },
+    /**
+     * Navigates to the detail view of the selected item.
+     * @param {Object} item - The item to view.
+     */
     viewDetails(item) {
       this.$router.push({ name: 'ApprovalDetails', params: { requestId: item.details.id } });
     },

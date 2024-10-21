@@ -33,6 +33,7 @@ export function getPriorityImageSrc(priority) {
 export const detailTypes = {
   APPROVAL: 'approval',
   ADMIN_REQUEST: 'adminRequest',
+  USER_REQUEST: 'userRequest',
   FULFILLMENT: 'fulfillment',
 };
 

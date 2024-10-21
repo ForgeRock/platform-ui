@@ -33,7 +33,6 @@ of the MIT license. See the LICENSE file for details. -->
     <FrRequestModal
       :type="modalType"
       :item="item"
-      is-approvals
       :require-approve-justification="requireApproveJustification"
       :require-reject-justification="requireRejectJustification"
       @modal-closed="modalType = null"
@@ -77,21 +76,28 @@ const { setBreadcrumb } = useBreadcrumb();
 
 // Data
 const { requestId } = route.params;
+const modalType = ref('');
 const isActive = ref(false);
 const item = ref({});
-const modalType = ref('');
-const actionPermissions = ref({
-  approve: false,
-  reject: false,
-  reassign: false,
-  comment: false,
-  modify: false,
-});
-let requireApproveJustification = false;
-let requireRejectJustification = false;
-let allowSelfApproval = false;
+const requireApproveJustification = ref(false);
+const requireRejectJustification = ref(false);
+const allowSelfApproval = ref(false);
 
 const userId = computed(() => useUserStore().userId);
+
+const actionPermissions = computed(() => {
+  const permissions = item.value?.rawData?.phases?.[0]?.permissions;
+  const isSelfApprover = item.value?.rawData?.user?.id
+    ? userId.value === item.value.rawData.user.id
+    : false;
+  return {
+    approve: allowSelfApproval.value ? permissions.approve : !isSelfApprover && permissions.approve,
+    reject: permissions.reject || false,
+    reassign: permissions.reassign || false,
+    comment: permissions.comment || false,
+    modify: permissions.modify || false,
+  };
+});
 
 async function getBaseRequest() {
   try {
@@ -102,20 +108,6 @@ async function getBaseRequest() {
     isActive.value = false;
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.approval.errorGettingApprovals'));
-  }
-}
-
-function updateActionsPermissions() {
-  const permissions = item.value?.rawData?.phases?.[0]?.permissions;
-  const isSelfApprover = item.value?.rawData?.user?.id
-    ? userId.value === item.value.rawData.user.id
-    : false;
-
-  if (permissions) {
-    actionPermissions.value = {
-      ...permissions,
-      approve: allowSelfApproval ? permissions.approve : !isSelfApprover && permissions.approve,
-    };
   }
 }
 
@@ -133,7 +125,6 @@ async function getApproval() {
       request.requestTypeDisplayName = requestTypeData.displayName;
       item.value = getFormattedRequest(request);
       isActive.value = true;
-      updateActionsPermissions();
     }
   } catch (error) {
     showErrorMessage('error', i18n.global.t('governance.approval.errorGettingApprovals'));
@@ -152,15 +143,15 @@ async function getRequestData() {
 onMounted(async () => {
   setBreadcrumb('/approvals', i18n.global.t('sideMenu.approvals'));
 
-  await getRequestData();
   try {
     const { data } = await getIgaAccessRequest();
-    requireApproveJustification = data.requireApproveJustification;
-    requireRejectJustification = data.requireRejectJustification;
-    allowSelfApproval = data.allowSelfApproval;
+    requireApproveJustification.value = data.requireApproveJustification;
+    requireRejectJustification.value = data.requireRejectJustification;
+    allowSelfApproval.value = data.allowSelfApproval;
   } catch {
     // We don't need to show an error here
   }
+  getRequestData();
 });
 
 function openModal(type) {

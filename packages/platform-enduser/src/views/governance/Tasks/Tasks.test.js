@@ -7,13 +7,18 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as TasksApi from '@/api/governance/TasksApi';
 import * as store from '@/store';
 import i18n from '@/i18n';
 import Tasks from './Tasks';
 
+jest.mock('@forgerock/platform-shared/src/composables/bvModal');
+
 const mountComponent = () => {
+  const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
+  useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
   setupTestPinia({ user: { userId: '1234' } });
   return mount(Tasks, {
     global: {
@@ -178,5 +183,25 @@ describe('Approvals', () => {
     await flushPromises();
 
     expect(storeSpy).toHaveBeenCalledWith('setFulfillmentTasksCount', 1);
+  });
+
+  it('opens request modal with type FULFILL', async () => {
+    wrapper = mountComponent();
+    const showModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
+    await flushPromises();
+
+    wrapper.findComponent({ name: 'RequestActionsCell' }).vm.$emit('action', 'FULFILL');
+    expect(wrapper.vm.modalType).toBe('FULFILL');
+    expect(showModalSpy).toHaveBeenCalledWith('request_modal');
+  });
+
+  it('opens request modal with type DENY', async () => {
+    wrapper = mountComponent();
+    const showModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
+    await flushPromises();
+
+    wrapper.findComponent({ name: 'RequestActionsCell' }).vm.$emit('action', 'DENY');
+    expect(wrapper.vm.modalType).toBe('DENY');
+    expect(showModalSpy).toHaveBeenCalledWith('request_modal');
   });
 });

@@ -26,42 +26,12 @@ of the MIT license. See the LICENSE file for details. -->
           :subtitle="$t('governance.accessRequest.noRequests', { status: getStatusText(statusOptions, status) })" />
       </template>
       <template #actions="{ item }">
-        <FrActionsCell
-          :delete-option="false"
-          :divider="false"
-          :edit-option="false"
-          :enable-sr-only-label="true">
-          <template #custom-top-actions>
-            <BDropdownItem
-              data-testid="view-details-button"
-              @click="$emit('navigate-to-details', item)">
-              <FrIcon
-                icon-class="mr-2"
-                name="list_alt">
-                {{ $t('common.viewDetails') }}
-              </FrIcon>
-            </BDropdownItem>
-            <template v-if="status === 'in-progress'">
-              <BDropdownDivider />
-              <BDropdownItem
-                v-if="allowForwarding"
-                @click="openModal(item, 'REASSIGN')">
-                <FrIcon
-                  icon-class="mr-2"
-                  name="redo">
-                  {{ $t('common.forward') }}
-                </FrIcon>
-              </Bdropdownitem>
-              <BDropdownItem @click="openModal(item, 'CANCEL')">
-                <FrIcon
-                  icon-class="mr-2"
-                  name="cancel">
-                  {{ $t('governance.accessRequest.myRequests.cancelRequest') }}
-                </FrIcon>
-              </Bdropdownitem>
-            </template>
-          </template>
-        </FrActionsCell>
+        <FrRequestActionsCell
+          v-if="status === 'in-progress'"
+          class="mr-3"
+          :item="item"
+          :type="allowForwarding ? detailTypes.ADMIN_REQUEST : detailTypes.USER_REQUEST"
+          @action="handleAction($event, item)" />
       </template>
     </FrAccessRequestList>
     <FrPagination
@@ -82,16 +52,13 @@ of the MIT license. See the LICENSE file for details. -->
 <script setup>
 import {
   BCard,
-  BDropdownDivider,
-  BDropdownItem,
 } from 'bootstrap-vue';
 import { ref } from 'vue';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
-import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import {
+  detailTypes,
   getRequestFilter,
   getStatusText,
   sortByOptions,
@@ -99,6 +66,7 @@ import {
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrAccessRequestList from '@forgerock/platform-shared/src/components/governance/AccessRequestList';
+import FrRequestActionsCell from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActionsCell';
 import FrRequestToolbar from '@forgerock/platform-shared/src/components/governance/RequestToolbar';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import i18n from '@/i18n';
@@ -186,10 +154,25 @@ async function loadRequests(goToFirstPage) {
   emit('load-requests', params, payload);
 }
 
+/**
+ * Opens a modal based on the provided item and type.
+ * @param {Object} item - The item to show in the modal.
+ * @param {string} type - The type of modal to open.
+ */
 function openModal(item, type) {
   modalItem.value = item;
   modalType.value = REQUEST_MODAL_TYPES[type];
   bvModal.value.show('request_modal');
+}
+
+/**
+ * Handles the specified action for a given item.
+ * @param {string} action - The action to be performed.
+ * @param {Object} item - The item on which the action is to be performed.
+ */
+function handleAction(action, item) {
+  if (action === 'DETAILS') emit('navigate-to-details', item);
+  else openModal(item, action);
 }
 
 /**

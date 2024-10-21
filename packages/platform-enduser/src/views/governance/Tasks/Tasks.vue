@@ -35,30 +35,11 @@ of the MIT license. See the LICENSE file for details. -->
             :subtitle="$t('governance.tasks.noTasks')" />
         </template>
         <template #actions="{ item }">
-          <div class="d-flex justify-content-end dropdown-padding">
-            <BDropdown
-              boundary="window"
-              variant="link"
-              no-caret
-              right
-              toggle-class="text-decoration-none p-0">
-              <template #button-content>
-                <FrIcon
-                  icon-class="text-muted md-24"
-                  name="more_horiz" />
-                <p class="sr-only">
-                  {{ $t('common.moreActions') }}
-                </p>
-              </template>
-              <BDropdownItem
-                @click="viewDetails(item)">
-                <FrIcon
-                  icon-class="mr-2"
-                  name="list_alt" />
-                {{ $t('common.viewDetails') }}
-              </BDropdownItem>
-            </BDropdown>
-          </div>
+          <FrRequestActionsCell
+            v-if="status === 'pending'"
+            :item="item"
+            :type="detailTypes.FULFILLMENT"
+            @action="handleAction($event, item)" />
         </template>
         <template #footer>
           <FrPagination
@@ -70,6 +51,11 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </FrTaskList>
     </BCard>
+    <FrRequestModal
+      :type="modalType"
+      :item="modalItem"
+      @modal-closed="modalType = null; modalItem = null"
+      @update-list="loadFulfillmentTasksAndUpdateBadge" />
   </BContainer>
 </template>
 
@@ -82,17 +68,19 @@ import { useRouter } from 'vue-router';
 import {
   BCard,
   BContainer,
-  BDropdown,
-  BDropdownItem,
 } from 'bootstrap-vue';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import FrRequestActionsCell from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActionsCell';
+import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestToolbar from '@forgerock/platform-shared/src/components/governance/RequestToolbar';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { detailTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getTaskFilter } from '@forgerock/platform-shared/src/utils/governance/fulfillmentTasks';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrTaskFilter from './TaskFilter';
 import FrTaskList from './TaskList';
 import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';
@@ -102,6 +90,7 @@ import store from '@/store';
 // composables
 const router = useRouter();
 const { userId } = useUserStore();
+const { bvModal } = useBvModal();
 
 // data
 const currentPage = ref(1);
@@ -109,6 +98,8 @@ const filter = ref({});
 const fulfillmentTasks = ref([]);
 const isLoading = ref(false);
 const numFilters = ref(0);
+const modalItem = ref({});
+const modalType = ref('');
 const pageSize = ref(10);
 const sortDir = ref('desc');
 const sortKeys = ref('date');
@@ -238,6 +229,27 @@ function viewDetails(task) {
     name: 'TaskDetails',
     params: { taskId: task.details.id },
   });
+}
+
+/**
+ * Opens a modal based on the provided item and type.
+ * @param {Object} item - The item to show in the modal.
+ * @param {string} type - The type of modal to open.
+ */
+function openModal(item, type) {
+  modalItem.value = item;
+  modalType.value = REQUEST_MODAL_TYPES[type];
+  bvModal.value.show('request_modal');
+}
+
+/**
+ * Handles the specified action for a given item.
+ * @param {string} action - The action to be performed.
+ * @param {Object} item - The item on which the action is to be performed.
+ */
+function handleAction(action, item) {
+  if (action === 'DETAILS') viewDetails(item);
+  else openModal(item, action);
 }
 
 loadFulfillmentTasksAndUpdateBadge();

@@ -237,6 +237,7 @@ async function modifyRequest(values) {
     if (isCustom.value) {
       requestPayload = values;
     } else {
+      if (!requestPayload.common.blob) requestPayload.common.blob = {};
       requestPayload.common.blob.form = {
         ...requestPayload.common.blob.form,
         ...values,

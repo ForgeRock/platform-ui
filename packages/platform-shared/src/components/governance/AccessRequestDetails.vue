@@ -49,7 +49,6 @@ of the MIT license. See the LICENSE file for details. -->
     <FrRequestModal
       :type="modalType"
       :item="item"
-      is-approvals
       @modal-closed="modalType = null"
       @update-item="getRequestData"
       @update-list="$emit('navigate-to-list')" />

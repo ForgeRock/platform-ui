@@ -111,9 +111,6 @@ const accessRequest = {
         modify: true,
         reassign: true,
         reject: true,
-        cancel: false,
-        fulfill: false,
-        deny: false,
       },
     },
   ],
@@ -196,9 +193,6 @@ describe('ApprovalDetails', () => {
             modify: true,
             reassign: true,
             reject: true,
-            cancel: false,
-            fulfill: false,
-            deny: false,
           });
         });
       });

@@ -221,6 +221,32 @@ describe('RequestModal', () => {
     expect(loader.exists()).toBeTruthy();
     expect(loadingText.text()).toEqual('Rejecting Request...');
   });
+  it('test deny loading modal', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    wrapper.vm.loading = true;
+    wrapper.vm.modalType = 'DENY';
+
+    await flushPromises();
+    const loader = await findByTestId(wrapper, 'loading-modal');
+    await wrapper.vm.$nextTick();
+    const loadingText = await findByTestId(wrapper, 'loading-text');
+    await wrapper.vm.$nextTick();
+    expect(loader.exists()).toBeTruthy();
+    expect(loadingText.text()).toEqual('Rejecting Task...');
+  });
+  it('test fulfill loading modal', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    wrapper.vm.loading = true;
+    wrapper.vm.modalType = 'FULFILL';
+
+    await flushPromises();
+    const loader = await findByTestId(wrapper, 'loading-modal');
+    await wrapper.vm.$nextTick();
+    const loadingText = await findByTestId(wrapper, 'loading-text');
+    await wrapper.vm.$nextTick();
+    expect(loader.exists()).toBeTruthy();
+    expect(loadingText.text()).toEqual('Completing Task...');
+  });
   it('close got called with comment and previousModal = DETAILS', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
     const cancel = jest.fn();

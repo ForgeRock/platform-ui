@@ -112,6 +112,7 @@ describe('RequestActions', () => {
 
   it('hides buttons if no permissions', () => {
     Object.values(detailTypes).forEach((type) => {
+      if (type === detailTypes.USER_REQUEST) return;
       wrapper = setup({
         permissions: {},
         type,

@@ -7,10 +7,13 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import * as VueRouter from 'vue-router';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import i18n from '@/i18n';
-// import router from '@/router';
 import TaskDetail from './TaskDetail';
 import * as TasksApi from '@/api/governance/TasksApi';
+
+jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 
 const decision = {
   actors: {
@@ -70,13 +73,13 @@ const task = {
   ],
 };
 
-jest.mock('vue-router', () => ({
-  useRoute: jest.fn(() => ({ params: { taskId: 'testTaskId' } })),
-}));
+jest.mock('vue-router');
 
 describe('TaskDetail', () => {
   let wrapper;
   const setup = () => {
+    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
+    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
     setupTestPinia({ user: { userId: '1234' } });
     return mount(TaskDetail, {
       global: {
@@ -86,6 +89,11 @@ describe('TaskDetail', () => {
   };
 
   beforeEach(() => {
+    VueRouter.useRoute.mockReturnValue({
+      params: {
+        taskId: 'testTaskId',
+      },
+    });
     TasksApi.getUserFulfillmentTasks = jest.fn().mockReturnValue(Promise.resolve({
       data: { result: [task] },
     }));
@@ -153,5 +161,25 @@ describe('TaskDetail', () => {
     expect(actions[0].text()).toMatch('Complete');
     expect(actions[1].text()).toMatch('Reject');
     expect(actions[2].text()).toMatch('Forward');
+  });
+
+  it('opens request modal with type FULFILL', async () => {
+    wrapper = setup();
+    const showModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
+    await flushPromises();
+
+    wrapper.findComponent({ name: 'RequestActions' }).vm.$emit('action', 'FULFILL');
+    expect(wrapper.vm.modalType).toBe('FULFILL');
+    expect(showModalSpy).toHaveBeenCalledWith('request_modal');
+  });
+
+  it('opens request modal with type DENY', async () => {
+    wrapper = setup();
+    const showModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
+    await flushPromises();
+
+    wrapper.findComponent({ name: 'RequestActions' }).vm.$emit('action', 'DENY');
+    expect(wrapper.vm.modalType).toBe('DENY');
+    expect(showModalSpy).toHaveBeenCalledWith('request_modal');
   });
 });
