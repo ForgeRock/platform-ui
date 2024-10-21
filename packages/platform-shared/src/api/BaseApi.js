@@ -320,3 +320,23 @@ export function generateFraasPromotionApi(requestOverride = {}) {
 
   return axios.create(requestDetails);
 }
+
+/**
+ * Generates a PingFederate API Axios instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generatePingFederateApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: store.state.SharedStore.pingFederateUrl,
+    headers: {
+      accept: 'application/json',
+      'X-XSRF-Header': 'PingFederate',
+    },
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
