@@ -2782,12 +2782,18 @@
       "goBackToApp": "Go back to the application.",
       "loadingSyncData": "Loading sync data...",
       "title": "Advanced Sync",
-      "modal": {
+      "addModal": {
         "title": "Sync account object type",
         "syncFrom": "Sync From",
         "syncTo": "Sync To",
         "flipSyncIconLabel": "Flip sync direction",
         "identityProfile": "Identity Profile"
+      },
+      "deleteModal": {
+        "title": "Sync Data",
+        "content": "Are you sure you want to delete this sync data?",
+        "deleteSuccess": "Advanced sync data deleted successfully",
+        "deleteError": "There was an error deleting the sync data"
       },
       "noSyncDataSubtitle": "Synchronize data between {appDisplayName} {objectTypeName} and other applications.",
       "noSyncData": "No synchronized applications yet",
