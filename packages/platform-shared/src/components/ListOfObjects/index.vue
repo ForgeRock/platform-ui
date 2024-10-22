@@ -77,11 +77,12 @@ of the MIT license. See the LICENSE file for details. -->
                 </template>
               </div>
             </div>
-            <div>
+            <div v-if="multiValued || noListValuesOnMount">
               <div
                 class="position-relative d-inline-flex justify-content-end"
                 style="width: 128px;">
                 <button
+                  v-if="listValues.length > 0"
                   :data-testid="`list-objects-remove-${index}`"
                   :class="buttonClass"
                   class="btn mr-1 mb-2 mb-lg-0"
@@ -218,6 +219,7 @@ export default {
   },
   data() {
     return {
+      noListValuesOnMount: true,
       listUniqueIndex: 0,
       showEditor: false,
     };
@@ -251,6 +253,7 @@ export default {
       });
       this.listValues = listValues;
       this.showEditor = !!listValues.length;
+      this.noListValuesOnMount = !listValues.length;
       this.validateField();
     }
   },
@@ -263,6 +266,7 @@ export default {
       const emptyObjectWithKeys = this.createObject(this.properties);
       this.listValues.splice(valueIndex + 1, 0, { ...emptyObjectWithKeys });
       this.updateListKey();
+      this.$emit('list-updated', 'add', valueIndex + 1);
       this.emitInput(this.listValues);
     },
     emitInput(value) {
@@ -330,6 +334,7 @@ export default {
     removeElementFromList(index) {
       this.listValues.splice(index, 1);
       this.updateListKey();
+      this.$emit('list-updated', 'remove', index);
       this.emitInput(this.listValues);
     },
     validateField() {
