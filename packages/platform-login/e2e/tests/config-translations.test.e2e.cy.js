@@ -7,7 +7,7 @@
 
 import { random } from 'lodash';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
-import addOverrides, { deleteOverrides } from '../api/localizationApi.e2e';
+import { addOverrides, deleteOverrides } from '../api/localizationApi.e2e';
 import { prepareJourneyTemplate } from '../utils/manageJourneys';
 
 // Login config translations
@@ -426,13 +426,14 @@ filterTests(['@forgeops', '@cloud'], () => {
     const journeyTemplate = 'Registration_translated_journey_template.json';
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated#/`;
     const defaultLocale = 'en';
+    let preparedJourney;
 
     before(() => {
       // Prepare Journey template with correct Realm redirects and Identity Resources
-      prepareJourneyTemplate(journeyTemplate, loginRealm, userRealm);
+      preparedJourney = prepareJourneyTemplate(journeyTemplate, { loginRealm, userRealm });
 
       // Login as admin and import translated Journey with translated Theme
-      cy.importTreesViaAPI([journeyTemplate]);
+      cy.importTreesViaAPI([preparedJourney]);
       cy.logout();
     });
 
@@ -443,7 +444,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     after(() => {
       // Login as admin and delete translated Journey with translated Theme
-      cy.deleteTreesViaAPI([journeyTemplate]);
+      cy.deleteTreesViaAPI([preparedJourney]);
     });
 
     it('Check default Theme/Journey translations (EN), create user and verify email message', () => {

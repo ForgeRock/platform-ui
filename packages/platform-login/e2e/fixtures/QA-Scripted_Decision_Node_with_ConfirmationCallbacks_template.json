@@ -1,0 +1,139 @@
+{
+  "meta": {
+    "origin": "https://openam-adam-zahatlan22.forgeblocks.com/platform/?realm=alpha#/journeys/QA%20-%20Scripted%20Decision%20Node%20with%20ConfirmationCallbacks",
+    "exportedBy": "adam.zahatlan@pingidentity.com",
+    "exportDate": "2024-10-15T08:30:08.367Z",
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "QA - Scripted Decision Node with ConfirmationCallbacks"
+    ],
+    "innerTreesIncluded": []
+  },
+  "trees": {
+    "QA - Scripted Decision Node with ConfirmationCallbacks": {
+      "tree": {
+        "_id": "QA - Scripted Decision Node with ConfirmationCallbacks",
+        "_rev": "-1542107154",
+        "identityResource": "managed/alpha_user",
+        "uiConfig": {
+          "categories": "[\"QA_autotests\"]"
+        },
+        "entryNodeId": "44468498-3a26-43af-bde9-0c64646976cc",
+        "innerTreeOnly": false,
+        "nodes": {
+          "44468498-3a26-43af-bde9-0c64646976cc": {
+            "x": 210,
+            "y": 110.5,
+            "connections": {
+              "login": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "cancel": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 70,
+            "y": 155
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 455,
+            "y": 80
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 455,
+            "y": 230
+          }
+        },
+        "description": "QA autotests Journey",
+        "mustRun": false,
+        "enabled": true
+      },
+      "nodes": {
+        "44468498-3a26-43af-bde9-0c64646976cc": {
+          "_id": "44468498-3a26-43af-bde9-0c64646976cc",
+          "_rev": "955619686",
+          "nodes": [
+            {
+              "_id": "b7249787-3583-438c-bdc9-9add0102708b",
+              "nodeType": "ScriptedDecisionNode",
+              "displayName": "Scripted Decision"
+            }
+          ],
+          "pageDescription": {},
+          "pageHeader": {},
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "login",
+              "displayName": "login"
+            },
+            {
+              "id": "cancel",
+              "displayName": "cancel"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "b7249787-3583-438c-bdc9-9add0102708b": {
+          "_id": "b7249787-3583-438c-bdc9-9add0102708b",
+          "_rev": "1123650110",
+          "script": "78658ee4-9448-4db8-bdeb-5dc8e98e34a4",
+          "outcomes": [
+            "login",
+            "cancel"
+          ],
+          "outputs": [
+            "*"
+          ],
+          "inputs": [
+            "*"
+          ],
+          "_type": {
+            "_id": "ScriptedDecisionNode",
+            "name": "Scripted Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "login",
+              "displayName": "login"
+            },
+            {
+              "id": "cancel",
+              "displayName": "cancel"
+            }
+          ]
+        }
+      },
+      "scripts": {
+        "78658ee4-9448-4db8-bdeb-5dc8e98e34a4": {
+          "_id": "78658ee4-9448-4db8-bdeb-5dc8e98e34a4",
+          "name": "QA - Journey Decision Node Script with ConfirmationCallbacks",
+          "description": "QA_autotests",
+          "script": "script_content",
+          "default": false,
+          "language": "JAVASCRIPT",
+          "context": "AUTHENTICATION_TREE_DECISION_NODE",
+          "createdBy": "null",
+          "creationDate": 0,
+          "lastModifiedBy": "null",
+          "lastModifiedDate": 0,
+          "evaluatorVersion": "script_version"
+        }
+      },
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}

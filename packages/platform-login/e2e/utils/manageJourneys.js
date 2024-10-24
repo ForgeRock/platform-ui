@@ -262,19 +262,31 @@ export function deleteJourneysViaAPI(fixtureArray) {
 
 /**
  * Prepare the Journey template to be used in the correct Environment (Cloud or ForgeOps)
- * @param {String} journeyTemplate a Journey template location
+ * @param {String} templateName a Journey template location
  * @param {String} loginRealm an Environment Login Realm to be replaced in Journey template file (example 'alpha' for Cloud, '/' for ForgeOps)
  * @param {String} userRealm an Environment User Realm to be replaced in Journey template file (example 'alpha_' for Cloud, '' for ForgeOps)
  */
-export function prepareJourneyTemplate(journeyTemplate, loginRealm, userRealm) {
+export function prepareJourneyTemplate(templateName, replaceDict) {
   // Prepare Journey template path
-  const journeyTemplatePath = `e2e/fixtures/${journeyTemplate}`;
+  const preparedJourneyName = templateName.replace('_template', '');
+  const templatePath = `e2e/fixtures/${templateName}`;
+  const preparedJourneyPath = `e2e/fixtures/${preparedJourneyName}`;
 
   // Read template file
-  cy.readFile(journeyTemplatePath).then((data) => {
-    // Replace all Realm redirects and Identity Resources with correct ones for current Platform mode
-    const updatedTemplate = JSON.stringify(data).replaceAll('loginRealm', loginRealm).replaceAll('userRealm', userRealm);
+  cy.readFile(templatePath).then((data) => {
+    let updatedTemplate = JSON.stringify(data);
+
+    // Replace all requested key with correct testing values
+    for (const [key, value] of Object.entries(replaceDict)) {
+      // console.log(`Replacing ${key} with ${value}`);
+      const regex = new RegExp(key, 'g');
+      const escapedValue = value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      updatedTemplate = updatedTemplate.replace(regex, escapedValue);
+    }
+    // console.log(`Updated Template: ${updatedTemplate}`);
     // Write moditied data back to the template file
-    cy.writeFile(journeyTemplatePath, JSON.parse(updatedTemplate));
+    cy.writeFile(preparedJourneyPath, JSON.parse(updatedTemplate));
   });
+
+  return preparedJourneyName;
 }
