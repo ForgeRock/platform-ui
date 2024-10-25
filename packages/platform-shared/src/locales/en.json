@@ -488,6 +488,7 @@
       "policyServiceError": {
         "policyApi": "Unable to retrieve {policyApi}, Please try again later.",
         "policyReadError": "Error retrieving password policy",
+        "policyValidationError": "Error validating password policy",
         "registration": "Unable to register. Please try again later.",
         "reset": "Unable to reset your password. Please try again later."
       },
