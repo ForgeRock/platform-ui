@@ -1253,6 +1253,7 @@
     "passwordLength": "Password length",
     "minLength": "Minimum",
     "characters": "characters",
+    "charactersForEachAttribute": "characters for each attribute",
     "minCharacters": "Minimum characters",
     "numMinCharacters": "Number of minimum characters",
     "cannotInclude": "Cannot include",
