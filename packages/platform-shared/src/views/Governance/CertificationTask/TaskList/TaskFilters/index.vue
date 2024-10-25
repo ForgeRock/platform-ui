@@ -11,45 +11,55 @@ of the MIT license. See the LICENSE file for details. -->
             v-model="formFields.certified"
             testid="cert-filter-certify"
             class="mr-2"
+            aria-labelledby="label-certified"
             name="certifiedColumnSelected"
             type="checkbox" />
           <FrIcon
             icon-class="color-green mr-2"
             name="check">
-            {{ $t('governance.certificationTask.certified') }}
+            <span id="label-certified">
+              {{ $t('governance.certificationTask.certified') }}
+            </span>
           </FrIcon>
         </div>
         <div class="d-flex justify-content-start mr-4">
           <FrField
             v-model="formFields.revoked"
             class="mr-2"
+            aria-labelledby="label-revoke"
             name="revokedColumnSelected"
             type="checkbox" />
           <FrIcon
             icon-class="color-red mr-2"
             name="block">
-            {{ $t('governance.certificationTask.revoked') }}
+            <span id="label-revoke">
+              {{ $t('governance.certificationTask.revoked') }}
+            </span>
           </FrIcon>
         </div>
         <div class="d-flex justify-content-start mr-4">
           <FrField
             v-model="formFields.exceptionAllowed"
             class="mr-2"
+            aria-labelledby="label-exception"
             name="exceptionAllowedColumnSelected"
             type="checkbox" />
           <FrIcon
             icon-class="color-gray mr-2"
             name="schedule">
-            {{ $t('governance.certificationTask.exceptionAllowed') }}
+            <span id="label-exception">
+              {{ $t('governance.certificationTask.exceptionAllowed') }}
+            </span>
           </FrIcon>
         </div>
         <div class="d-flex justify-content-start">
           <FrField
             v-model="formFields.noDecision"
             class="mr-2"
+            aria-labelledby="label-no-decision"
             name="noDecisionColumnSelected"
             type="checkbox" />
-          <span>
+          <span id="label-no-decision">
             {{ $t('governance.certificationTask.noDecision') }}
           </span>
         </div>
