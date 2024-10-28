@@ -91,6 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
         :operator-options="operatorOptions"
         :path="`${path}:${i}`"
         :properties="properties"
+        :property-select-label="propertySelectLabel"
         @add-rule="addRule"
         @operator-change="operatorChange"
         @remove-rule="removeRule"

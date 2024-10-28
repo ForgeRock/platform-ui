@@ -253,6 +253,21 @@
       "errorLoadingRoutes": "Error loading route definitions."
     }
   },
+  "filters": {
+    "authorizationPolicyFilters": {
+      "authLevel": "Minimum Authentication Level",
+      "condition": "Condition",
+      "dnsName": "DNS Name",
+      "endDate": "End Date",
+      "ipAddress": "IP Address",
+      "ipAddressRange": "IP Address Range",
+      "ipv4": "IPv4 Address",
+      "ipv6": "IPv6 Address",
+      "simpleTime": "Date Range",
+      "singleIpAddress": "Single IP Address",
+      "startDate": "Start Date"
+    }
+  },
   "hostedPages": {
     "settings": {
       "description": "Control access to hosted account and journey pages.",
@@ -1151,10 +1166,27 @@
         "accessPolicy": "Access Policy",
         "authorizationDescription": "Policy to be enforced in the journey used to authenticate users to this application.",
         "createAPolicy": "Create a Policy",
+        "deletePolicyFail": "Unable to delete access policy",
+        "deletePolicySuccess": "Policy deleted successfully",
+        "editModal": {
+          "accessPolicyDescription": "Restrict access to this application by choosing an authorization policy.",
+          "customDescription": "Create a custom authorization policy.",
+          "environmental": "Environmental",
+          "environmentalDescription": "Restrict access based on time of day and IP address range.",
+          "filterBuilderPrefix": "Restrict access to users who meet",
+          "filterBuilderSuffix": "of the following criteria",
+          "groupBasedAccess": "Group-based Access",
+          "groupBasedAccessDescription": "Restrict access to members of specific groups.",
+          "modalHeaderAdd": "Add Access Policy",
+          "modalHeaderEdit": "Edit Access Policy",
+          "roleBasedAccess": "Role-based Access",
+          "roleBasedAccessDescription": "Restrict access to users who hold specific roles."
+        },
         "getAuthorizationPoliciesFail": "Unable to retrieve access policy",
-        "updateAuthorizationPoliciesSuccess": "Access policy updated",
+        "notSet": "Not Set",
         "policyDetails": "POLICY DETAILS",
-        "updateAuthorizationPoliciesFail": "Unable to update access policy"
+        "saveAuthorizationPolicyFail": "Unable to save access policy",
+        "saveAuthorizationPolicySuccess": "Access policy saved"
       },
       "messages": {
         "getAppDataFail": "Unable to retrieve application data",

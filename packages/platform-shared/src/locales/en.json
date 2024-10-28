@@ -647,6 +647,7 @@
     "isPresent": "is present",
     "lessThan": "LT (<)",
     "lessThanEqual": "LTE (<=)",
+    "none": "None",
     "previousValueOf": "Previous value of",
     "startsWith": "starts with"
   },

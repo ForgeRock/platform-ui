@@ -37,19 +37,27 @@ of the MIT license. See the LICENSE file for details. -->
                 @input="customPropValue = $event; ruleChange({ field: $event })" />
             </BCol>
           </slot>
-          <BCol
-            class="rule-condition-col mb-2"
-            :class="{ 'mb-lg-0': !fieldWidth }"
-            :md="fieldWidth || true">
-            <FrField
-              :value="ruleOperator"
-              type="select"
-              :disabled="disabled"
-              :name="`ruleCondition_${uniqueName}`"
-              :options="operatorSelectOptions"
-              :searchable="false"
-              @input="ruleOperator = $event; ruleChange({ operator: $event })" />
-          </BCol>
+          <slot
+            name="operatorField"
+            :operator-value="ruleOperator"
+            :rule="rule"
+            :rule-change="ruleChange"
+            :selected-prop="ruleProperty.value"
+            :unique-name="`ruleCondition_${uniqueName}`">
+            <BCol
+              class="rule-condition-col mb-2"
+              :class="{ 'mb-lg-0': !fieldWidth }"
+              :md="fieldWidth || true">
+              <FrField
+                :value="ruleOperator"
+                type="select"
+                :disabled="disabled"
+                :name="`ruleCondition_${uniqueName}`"
+                :options="operatorSelectOptions"
+                :searchable="false"
+                @input="ruleOperator = $event; ruleChange({ operator: $event })" />
+            </BCol>
+          </slot>
           <BCol
             v-if="!conditionIsPresent"
             class="rule-value-col mb-2 mb-lg-0"
@@ -57,10 +65,10 @@ of the MIT license. See the LICENSE file for details. -->
             <slot
               name="valueField"
               :input-value="inputValue"
-              :selected-condition="ruleOperator"
-              :selected-prop="ruleProperty.value"
               :rule="rule"
               :rule-change="ruleChange"
+              :selected-condition="ruleOperator"
+              :selected-prop="ruleProperty.value"
               :unique-name="`inputValue_${uniqueName}`">
               <FrField
                 :value="inputValue.value"

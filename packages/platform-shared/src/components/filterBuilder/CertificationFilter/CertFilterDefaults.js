@@ -8,8 +8,8 @@
 import i18n from '@/i18n';
 
 export const operatorOptions = {
-  All: { label: 'All', delimeter: 'AND' },
-  Any: { label: 'Any', delimeter: 'OR' },
+  All: { label: i18n.global.t('filters.all'), delimeter: 'AND' },
+  Any: { label: i18n.global.t('filters.any'), delimeter: 'OR' },
 };
 
 export const defaultConditionOptions = {
