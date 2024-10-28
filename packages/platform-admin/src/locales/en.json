@@ -1340,10 +1340,6 @@
         "saveError": "Error saving SAML configuration"
       },
       "enterpriseSso": {
-        "chooseDomainText": "<p>Choose which domain to use for sign on.</p>",
-        "domainName": "Domain Name",
-        "journeyPickerDescription": "Journey to authenticate users to this application.",
-        "signOnDomain": "Sign on domain",
         "quickStart": "Quick Start"
       },
       "assignmentsTab": {
