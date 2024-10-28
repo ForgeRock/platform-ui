@@ -98,7 +98,7 @@ describe('getGatewaysOrAgents', () => {
       await AgentsApi.getGatewaysOrAgents(agentType, params);
 
       expect(generateAmApiSpy).toHaveBeenCalledWith({
-        apiVersion: 'protocol=2.1,resource=1.0',
+        apiVersion: 'protocol=2.1,resource=2.0',
         path,
       });
       expect(getSpy).toHaveBeenCalledWith(expect.stringContaining(url), { withCredentials: true });

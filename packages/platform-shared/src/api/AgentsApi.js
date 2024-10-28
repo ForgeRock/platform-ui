@@ -9,12 +9,12 @@ import { each } from 'lodash';
 import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import apiUtils from '@forgerock/platform-shared/src/api/utils/apiUtils';
 
-const getAgentsApiOverrides = (realm) => {
+const getAgentsApiOverrides = (realm, resourceVersion = '1.0') => {
   const configPath = realm?.length
     ? apiUtils.getRealmConfigPath(realm) : apiUtils.getCurrentRealmConfigPath();
   return {
     path: `${configPath}/agents`,
-    apiVersion: 'protocol=2.1,resource=1.0',
+    apiVersion: `protocol=2.1,resource=${resourceVersion}`,
   };
 };
 
@@ -65,7 +65,7 @@ export function getGatewaysOrAgents(agentType, params, pageSize = 10) {
     resourceUrl += '&_queryFilter=true';
   }
 
-  return generateAmApi(getAgentsApiOverrides()).get(
+  return generateAmApi(getAgentsApiOverrides('', '2.0')).get(
     resourceUrl,
     { withCredentials: true },
   );
