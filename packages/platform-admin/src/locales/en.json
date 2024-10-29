@@ -3075,15 +3075,17 @@
       }
     },
     "eventHooks": {
+      "accountChangeDetected": "Account Change Detected",
+      "deleted": " Event Hook deleted",
+      "link": "Link",
       "modal": {
         "editEventHook": "Edit Event Hook",
         "addEventHook": "Add Event Hook",
         "deleteEventHook": "{eventHook} Event Hook"
       },
-      "title": "Event Hooks",
+      "saved": " Event Hook saved",
       "subTitle": "Trigger a script or a workflow when specified reconciliation events occurs.",
-      "accountChangeDetected": "Account Change Detected",
-      "link": "Link",
+      "title": "Event Hooks",
       "unlink": "Unlink"
     },
     "rules": {
