@@ -7,7 +7,7 @@
 
 import {
   Then, When, Given,
-} from 'cypress-cucumber-preprocessor/steps';
+} from '@badeball/cypress-cucumber-preprocessor';
 import { createIDMUser } from '../api/managedApi.e2e';
 import generateUserData from '../utils/endUserData';
 

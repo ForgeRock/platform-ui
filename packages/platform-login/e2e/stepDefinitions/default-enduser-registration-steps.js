@@ -6,8 +6,8 @@
  */
 
 import {
-  And, Then, When,
-} from 'cypress-cucumber-preprocessor/steps';
+  Then, When,
+} from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
 
 /**
@@ -69,7 +69,7 @@ When('User fills out the default registration form with {string} credentials', (
 /**
  * Submits the registration form.
  */
-And('User submits the registration form', () => {
+When('User submits the registration form', () => {
   cy.findByRole('button', { name: 'Next' }).click({ force: true });
 });
 

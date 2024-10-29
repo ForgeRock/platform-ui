@@ -6,14 +6,20 @@
  */
 
 const { install, ensureBrowserFlags } = require('@neuralegion/cypress-har-generator');
-const cucumber = require('cypress-cucumber-preprocessor').default;
+const createBundler = require('@bahmutov/cypress-esbuild-preprocessor');
+const { addCucumberPreprocessorPlugin } = require('@badeball/cypress-cucumber-preprocessor');
+// eslint-disable-next-line import/no-unresolved
+const { createEsbuildPlugin } = require('@badeball/cypress-cucumber-preprocessor/esbuild');
 const {
   createEmailAccount,
   getLatestEmail,
 } = require('./email-account');
 
-module.exports = (on, config) => {
-  on('file:preprocessor', cucumber());
+module.exports = async (on, config) => {
+  // This is required for the preprocessor to be able to generate JSON reports after each run, and more,
+  await addCucumberPreprocessorPlugin(on, config);
+
+  on('file:preprocessor', createBundler({ plugins: [createEsbuildPlugin(config)] }));
 
   // Install the HAR generator plugin
   install(on);

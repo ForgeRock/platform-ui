@@ -20,6 +20,8 @@
     "test:cb": "jest --config=../../jest.config.crossbrowser.js"
   },
   "dependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "21.0.2",
+    "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
     "@forgerock/javascript-sdk": "4.4.2",
     "@forgerock/ping-protect": "4.4.2",
     "@forgerock/platform-shared": "1.0.0",
@@ -31,7 +33,6 @@
     "bootstrap-vue": "2.23.1",
     "clipboard-polyfill": "3.0.1",
     "core-js": "3.32.0",
-    "cypress-cucumber-preprocessor": "4.3.1",
     "es6-promise": "4.2.4",
     "lodash": "4.17.21",
     "pinia": "2.1.6",
@@ -62,7 +63,7 @@
     "babel-core": "7.0.0-bridge.0",
     "copy-webpack-plugin": "11.0.0",
     "cypress": "13.15.2",
-    "cypress-file-upload": "5.0.6",
+    "cypress-file-upload": "5.0.8",
     "cypress-lighthouse": "0.1.0",
     "cypress-recurse": "1.35.3",
     "imap": "^0.8.19",
@@ -87,6 +88,8 @@
     "not ie < 11"
   ],
   "cypress-cucumber-preprocessor": {
-    "stepDefinitions": "e2e/stepDefinitions"
+    "e2e": {
+      "stepDefinitions": "e2e/stepDefinitions/*.js"
+    }
   }
 }

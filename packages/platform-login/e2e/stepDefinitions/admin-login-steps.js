@@ -6,8 +6,8 @@
  */
 
 import {
-  And, When,
-} from 'cypress-cucumber-preprocessor/steps';
+  When,
+} from '@badeball/cypress-cucumber-preprocessor';
 
 /**
  * Logs in the user with valid or invalid credentials.
@@ -32,6 +32,6 @@ When('Admin logs in with {string} credentials', (scenario) => {
 /**
  * The user clicks the Next button.
  */
-And('clicks the Next button', () => {
+When('clicks the Next button', () => {
   cy.findByRole('button', { name: 'Next' }).click();
 });

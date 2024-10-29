@@ -37,7 +37,7 @@ module.exports = defineConfig({
   videosFolder: 'e2e/videos',
 
   e2e: {
-    setupNodeEvents(on, config) {
+    async setupNodeEvents(on, config) {
       return require('./e2e/plugins/index.js')(on, config); // eslint-disable-line global-require
     },
     excludeSpecPattern: ['lighthouse.suite.cy.js'],

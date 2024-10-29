@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { Given, And, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 
 function visitJourneyPage(journeyPageUrl) {
   // Set up intercept
@@ -51,7 +51,7 @@ Given('Admin/User navigates to {string} page', (page) => {
  * @param {string} scenario - The scenario type ('should' or 'should not').
  * @param {string} expectedPath - The expected URL path.
  */
-And('The URL path {string} contain {string}', (scenario, expectedPath) => {
+When('The URL path {string} contain {string}', (scenario, expectedPath) => {
   const shouldContain = scenario === 'should';
 
   cy.url({ timeout: 10000 }).should((actualUrl) => {
@@ -89,7 +89,7 @@ Then('User should be redirected to User dashboard', () => {
   cy.findByRole('heading', { name: `avatar Hello, ${Cypress.env('endUserFirstName')} ${Cypress.env('endUserLastName')}` }).should('be.visible');
 });
 
-And('Cleanup {string} Journey with all dependencies', (journeyName) => {
+When('Cleanup {string} Journey with all dependencies', (journeyName) => {
   const fullJourneyName = `${journeyName}.json`;
 
   // Delete Imported Journey with all dependencies

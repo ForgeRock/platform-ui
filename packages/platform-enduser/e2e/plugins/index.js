@@ -21,13 +21,19 @@
 // `on` is used to hook into various events Cypress emits
 // `config` is the resolved Cypress config
 const { install, ensureBrowserFlags } = require('@neuralegion/cypress-har-generator');
-const cucumber = require('cypress-cucumber-preprocessor').default;
+const createBundler = require('@bahmutov/cypress-esbuild-preprocessor');
+const { addCucumberPreprocessorPlugin } = require('@badeball/cypress-cucumber-preprocessor');
+// eslint-disable-next-line import/no-unresolved
+const { createEsbuildPlugin } = require('@badeball/cypress-cucumber-preprocessor/esbuild');
 
-module.exports = (on, config) => {
+module.exports = async (on, config) => {
+  // This is required for the preprocessor to be able to generate JSON reports after each run, and more,
+  await addCucumberPreprocessorPlugin(on, config);
+
+  on('file:preprocessor', createBundler({ plugins: [createEsbuildPlugin(config)] }));
+
   // Install the HAR generator plugin
   install(on);
-
-  on('file:preprocessor', cucumber());
 
   on('before:browser:launch', (browser = {}, launchOptions) => {
     // Ensure necessary browser flags for HAR recording if the browser is Chrome

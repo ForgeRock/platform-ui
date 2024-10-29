@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { Given, Then } from 'cypress-cucumber-preprocessor/steps';
+import { Given, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { addOverrides, deleteOverrides } from '../api/localizationApi.e2e';
 import { prepareJourneyTemplate } from '../utils/manageJourneys';
 

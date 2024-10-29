@@ -20,6 +20,8 @@
     "test:lighthouse": "../../e2e/passwords.sh cypress run --spec e2e/tests/lighthouse.suite.js --config ignoreTestFiles=''"
   },
   "dependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "21.0.2",
+    "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
     "@braintree/sanitize-url": "6.0.2",
     "@forgerock/platform-shared": "1.0.0",
     "@kyvg/vue3-notification": "3.0.2",
@@ -31,12 +33,12 @@
     "bootstrap-vue": "2.23.1",
     "brace": "0.11.1",
     "core-js": "3.32.0",
-    "cypress-cucumber-preprocessor": "4.3.1",
     "d3-simple-slider": "1.10.4",
     "dayjs": "1.11.7",
     "es6-promise": "4.2.4",
     "lodash": "4.17.21",
     "oidcsessioncheck-enduser": "npm:oidcsessioncheck@1.1.0",
+    "path-browserify": "1.0.1",
     "pinia": "2.1.6",
     "vee-validate": "4.11.8",
     "vue": "3.3.4",
@@ -80,7 +82,12 @@
     "last 2 versions",
     "not ie < 11"
   ],
+  "browser": {
+    "path": "path-browserify"
+  },
   "cypress-cucumber-preprocessor": {
-    "stepDefinitions": "e2e/stepDefinitions"
+    "e2e": {
+      "stepDefinitions": "e2e/stepDefinitions/*.js"
+    }
   }
 }
