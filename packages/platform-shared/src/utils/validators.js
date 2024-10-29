@@ -73,7 +73,7 @@ export const url = (value, i18n) => {
 };
 
 /**
- * validates a text field represents solely a single domain of a URL with no invalid characters.
+ * validates a text field represents solely the domain of a URL with no invalid characters.
  * a protocol is prepended to allow easier validation and to ensure one has not already been entered
  * @param {String} value
  * @returns {Boolean}
@@ -84,7 +84,7 @@ export const urlDomainOnly = (value, i18n) => {
   try {
     const potentialUrl = new URL(testValue);
     const parts = value.split('.');
-    if (urlHasPath(potentialUrl) || value.includes(':') || !parts[0] || !parts[1] || parts.length !== 2 || !noSpecialCharactersRegex.test(value)) {
+    if (urlHasPath(potentialUrl) || value.includes(':') || !parts[0] || !parts[1] || !noSpecialCharactersRegex.test(value)) {
       return i18n.global.t('common.policyValidationMessages.urlDomainOnly');
     }
 

@@ -499,7 +499,7 @@
       "excluded": "This {_field_} already exists.",
       "noSpace": "Cannot start or end with the space character",
       "url": "Must be a valid URL",
-      "urlDomainOnly": "Must be a valid URL containing only a single domain",
+      "urlDomainOnly": "Must be a valid URL containing only domain information",
       "urlWithPath": "Please provide a valid URL that contains a path",
       "urlWithoutPath": "Please provide a valid URL that does not contain a path",
       "validUrl": "Please provide a valid URL",

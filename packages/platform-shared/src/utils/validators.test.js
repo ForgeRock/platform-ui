@@ -102,37 +102,31 @@ describe('url validators', () => {
   it('should fail urlDomainOnly when protocol is included', () => {
     const testVar = 'https://test.com';
     const result = urlDomainOnly(testVar, i18n);
-    expect(result).toBe('Must be a valid URL containing only a single domain');
+    expect(result).toBe('Must be a valid URL containing only domain information');
   });
 
   it('should fail urlDomainOnly when no domain is included', () => {
     const testVar = 'test';
     const result = urlDomainOnly(testVar, i18n);
-    expect(result).toBe('Must be a valid URL containing only a single domain');
+    expect(result).toBe('Must be a valid URL containing only domain information');
   });
 
   it('should fail urlDomainOnly when empty', () => {
     const testVar = '';
     const result = urlDomainOnly(testVar, i18n);
-    expect(result).toBe('Must be a valid URL containing only a single domain');
-  });
-
-  it('should fail urlDomainOnly when sub-domains are included', () => {
-    const testVar = 'test.something.com';
-    const result = urlDomainOnly(testVar, i18n);
-    expect(result).toBe('Must be a valid URL containing only a single domain');
+    expect(result).toBe('Must be a valid URL containing only domain information');
   });
 
   it('should fail urlDomainOnly when special characters are included', () => {
     const testVar = 'test$#¢.com';
     const result = urlDomainOnly(testVar, i18n);
-    expect(result).toBe('Must be a valid URL containing only a single domain');
+    expect(result).toBe('Must be a valid URL containing only domain information');
   });
 
   it('should fail urlDomainOnly when path is included', () => {
     const testVar = 'test.com/path';
     const result = urlDomainOnly(testVar, i18n);
-    expect(result).toBe('Must be a valid URL containing only a single domain');
+    expect(result).toBe('Must be a valid URL containing only domain information');
   });
 
   it('should pass urlDomainOnly when url is valid single domain', () => {
