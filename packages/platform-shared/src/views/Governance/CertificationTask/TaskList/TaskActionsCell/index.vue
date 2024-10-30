@@ -7,14 +7,15 @@ of the MIT license. See the LICENSE file for details. -->
     <template v-if="item.permissions.certify">
       <!-- Certify -->
       <BButton
-        @click="$emit('action', 'certify', item)"
-        class="mr-1 p-0"
-        style="height: 30px; width: 35px;"
-        variant="outline-success"
+        :aria-label="$t(certifyButtonLabel)"
         :data-testid="`btnCertify-${item.id}`"
         :disabled="isStaged"
         :id="`btnCertify-${item.id}`"
-        :pressed="pressedButton(item, 'certify')">
+        :pressed="pressedButton(item, 'certify')"
+        @click="$emit('action', 'certify', item)"
+        class="mr-1 p-0"
+        style="height: 30px; width: 35px;"
+        variant="outline-success">
         <FrIcon name="check" />
       </BButton>
       <BTooltip
@@ -22,23 +23,22 @@ of the MIT license. See the LICENSE file for details. -->
         :target="`btnCertify-${item.id}`"
         triggers="hover"
         placement="top">
-        {{ item.isAcknowledge
-          ? $t('governance.certificationTask.actions.acknowledge')
-          : $t('governance.certificationTask.actions.certify') }}
+        {{ $t(certifyButtonLabel) }}
       </BTooltip>
     </template>
 
     <!-- Revoke -->
     <template v-if="item.permissions.revoke && !item.isAcknowledge">
       <BButton
-        @click="$emit('action', 'revoke', item)"
-        class="mr-1 p-0"
-        style="height: 30px; width: 35px;"
-        variant="outline-danger"
+        :aria-label="$t('common.revoke')"
         :data-testid="`btnRevoke-${item.id}`"
         :disabled="isStaged"
         :id="`btnRevoke-${item.id}`"
-        :pressed="pressedButton(item, 'revoke')">
+        :pressed="pressedButton(item, 'revoke')"
+        @click="$emit('action', 'revoke', item)"
+        class="mr-1 p-0"
+        style="height: 30px; width: 35px;"
+        variant="outline-danger">
         <FrIcon name="block" />
       </BButton>
       <BTooltip
@@ -52,14 +52,15 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Allow exception -->
     <template v-if="campaignDetails.exceptionDuration > 0 && item.permissions.exception && !item.isAcknowledge">
       <BButton
-        @click="$emit('action', 'exception', item)"
-        class="mr-1 p-0"
-        style="height: 30px; width: 35px;"
-        variant="outline-secondary"
+        :aria-label="$t('governance.certificationTask.actions.allowException')"
         :data-testid="`btnAllowException-${item.id}`"
         :disabled="isStaged"
         :id="`btnAllowException-${item.id}`"
-        :pressed="pressedButton(item, 'exception')">
+        :pressed="pressedButton(item, 'exception')"
+        @click="$emit('action', 'exception', item)"
+        class="mr-1 p-0"
+        style="height: 30px; width: 35px;"
+        variant="outline-secondary">
         <FrIcon name="schedule" />
       </BButton>
       <BTooltip
@@ -76,6 +77,10 @@ of the MIT license. See the LICENSE file for details. -->
       toggle-class="p-1 d-inline"
       variant="link">
       <template #button-content>
+        <!-- Visually hidden label for screen readers -->
+        <span class="sr-only">
+          {{ $t('common.moreActions') }}
+        </span>
         <FrIcon
           icon-class="text-dark md-24"
           name="more_horiz" />
@@ -176,6 +181,16 @@ export default {
     pressedButton(item, status) {
       const decision = get(item, 'decision.certification.decision', '');
       return decision === status;
+    },
+  },
+  computed: {
+    /**
+     * Returns the label for the certify button based on the acknowledge status
+     */
+    certifyButtonLabel() {
+      return this.item.isAcknowledge
+        ? 'governance.certificationTask.actions.acknowledge'
+        : 'governance.certificationTask.actions.certify';
     },
   },
 };

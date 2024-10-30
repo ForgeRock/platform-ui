@@ -18,15 +18,17 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           v-if="!entitlementUserId"
           @click="showFiltersSection = !showFiltersSection"
+          :aria-label="$t('governance.showFilters')"
           class="mr-2"
           data-testid="cert-filter-button"
           variant="link-dark">
           <FrIcon name="filter_list" />
         </BButton>
         <BButton
-          variant="link-dark"
+          @click="openSortModal()"
+          :aria-label="$t('common.customizeColumns')"
           class="mr-2"
-          @click="openSortModal()">
+          variant="link-dark">
           <FrIcon name="view_column" />
         </BButton>
       </div>
