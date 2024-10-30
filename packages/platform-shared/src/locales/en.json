@@ -502,6 +502,7 @@
       "urlDomainOnly": "Must be a valid URL containing only a single domain",
       "urlWithPath": "Please provide a valid URL that contains a path",
       "urlWithoutPath": "Please provide a valid URL that does not contain a path",
+      "validUrl": "Please provide a valid URL",
       "urlPathEsv": "Must be an absolute url, relative url beginning with /, or ESV in the format {'&{esv.url}'}",
       "alphaNumericUnderscoreHyphenOnly": "Can only contain a-z, 0-9, underscores and hyphens",
       "lowerCaseAlphaNumericUnderscoreHyphenOnly": "Can only contain lowercase a-z, 0-9, underscores and hyphens",

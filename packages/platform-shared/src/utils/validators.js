@@ -53,13 +53,22 @@ export const urlWithPath = (value, i18n) => {
 /**
  * validates a text field is a url
  * @param {String} value
+ * @param {Object} i18n
  * @returns {Boolean}
  */
-export const url = (value) => {
+export const url = (value, i18n) => {
+  if (value.length === 0) {
+    return true;
+  }
+
   try {
+    if (isArray(value)) {
+      return value.every((arrayValue) => !!(new URL(arrayValue)));
+    }
+
     return !!(new URL(value));
   } catch (e) {
-    return false;
+    return i18n.global.t('common.policyValidationMessages.validUrl');
   }
 };
 
@@ -94,7 +103,7 @@ export const validBookmarkUrl = (value) => {
   try {
     const relativePathRegex = /^(?:\/[a-zA-Z0-9-_?=#.&{}]+)+\/?$/g;
     const esvRegex = /^&{.+}$/g;
-    return (url(value) || relativePathRegex.test(value) || esvRegex.test(value));
+    return (relativePathRegex.test(value) || esvRegex.test(value) || url(value));
   } catch (e) {
     return false;
   }
