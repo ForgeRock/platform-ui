@@ -37,6 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
             :catalog-items="catalogItems"
             :glossary-schema="glossarySchema"
             :loading="loading"
+            :prevent-request-with-violation="preventRequestWithViolation"
             :sod-error="sodError"
             :total-count="totalCount"
             @add-item-to-cart="addItemToCart"
@@ -218,6 +219,7 @@ export default {
       catalogFilterSchema: [],
       catalogResults: [],
       currentUser: {},
+      preventRequestWithViolation: false,
       previousPayload: {},
       selectedUserAccountsDetails: { result: [] },
       selectedUserEntitlementsDetails: { result: [] },
@@ -318,6 +320,7 @@ export default {
     try {
       const { data } = await getIgaAccessRequest();
       this.requireRequestJustification = data.requireRequestJustification;
+      this.preventRequestWithViolation = data.preventRequestWithViolation;
     } catch {
       // We don't need to show an error here
     }

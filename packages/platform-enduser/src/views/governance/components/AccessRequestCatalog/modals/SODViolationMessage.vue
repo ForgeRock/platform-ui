@@ -20,18 +20,13 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </FrAlert>
     <BModal
-      @cancel="$emit('submit-with-violation')"
-      cancel-variant="link"
       id="sod-violation-modal"
       no-close-on-backdrop
       no-close-on-esc
-      ok-variant="outline-primary"
       size="lg"
       title-class="h5"
       title-tag="h2"
       :static="isTesting"
-      :cancel-title="$t('governance.accessRequest.newRequest.sodViolation.submitWithViolations')"
-      :ok-title="$t('common.close')"
       :title="$t('governance.accessRequest.newRequest.sodViolation.modalTitle')">
       <p>
         {{ $t('governance.accessRequest.newRequest.sodViolation.modalDescription') }}
@@ -57,6 +52,19 @@ of the MIT license. See the LICENSE file for details. -->
           </BMedia>
         </BListGroupItem>
       </BListGroup>
+      <template #modal-footer="{ cancel, ok }">
+        <BButton
+          v-if="!preventRequestWithViolation"
+          variant="link"
+          @click="$emit('submit-with-violation'); cancel()">
+          {{ $t('governance.accessRequest.newRequest.sodViolation.submitWithViolations') }}
+        </BButton>
+        <BButton
+          variant="outline-primary"
+          @click="ok()">
+          {{ $t('common.close') }}
+        </BButton>
+      </template>
     </BModal>
   </div>
 </template>
@@ -87,6 +95,10 @@ defineEmits(['submit-with-violation']);
 // props
 defineProps({
   isTesting: {
+    type: Boolean,
+    default: false,
+  },
+  preventRequestWithViolation: {
     type: Boolean,
     default: false,
   },

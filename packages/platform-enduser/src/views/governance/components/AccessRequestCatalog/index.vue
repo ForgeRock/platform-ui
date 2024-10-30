@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrSODViolationMessage
         v-if="!isEmpty(sodError)"
         @submit-with-violation="$emit('submit-with-violation')"
+        :prevent-request-with-violation="preventRequestWithViolation"
         :sod-error="sodError" />
     </div>
     <BTabs
@@ -375,6 +376,10 @@ export default {
     loading: {
       type: Boolean,
       default: true,
+    },
+    preventRequestWithViolation: {
+      type: Boolean,
+      default: false,
     },
     sodError: {
       type: Object,
