@@ -4147,6 +4147,7 @@
           "daysBeforeExpiration": "days before expiration",
           "defineAScript": "define a script",
           "doNothing": "Do nothing",
+          "emailAddress": "Email Address",
           "emailTemplate": "Email Template",
           "entitlementOwner": "Entitlement Owner",
           "errorGettingFormAssignments": "Error getting form assignments",
@@ -4183,12 +4184,23 @@
           "singleFormDescription": "Chose a form to present to reviewer.",
           "sendEvery": "Send every",
           "sendTo": "Send to",
-          "violationOwner": "Violation Owner"
+          "violationOwner": "Violation Owner",
+          "emailTaskDetail": {
+            "bcc": "Bcc",
+            "cc": "Cc",
+            "emailNode": "Email Node",
+            "messageSubstitution": "Message substitution",
+            "notificationTemplate": "Notification Template",
+            "to": "To"
+          }
         },
         "exclusiveGatewayDefaultDisplayName": "Validation Gateway",
         "exclusiveGatewayDescription": "Evaluate a binary response from a preceding node to select a path the workflow should take.",
         "exclusiveGatewayDisplayName": "If/Else",
         "export": "Export",
+        "emailTaskDefaultDisplayName": "Email Task",
+        "emailTaskDescription": "Add email information to send after a node is completed.",
+        "emailTaskDisplayName": "Email",
         "fulfillPermission": "Fulfill",
         "fulfillmentTaskDefaultDisplayName": "Fulfillment Task",
         "fulfillmentTaskDescription": "Assigns a task to users and roles for manual completion.",
