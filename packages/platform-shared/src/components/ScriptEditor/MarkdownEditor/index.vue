@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -77,7 +77,9 @@ import 'prismjs';
 import 'prismjs/components/prism-markdown';
 import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
-import showdown from 'showdown';
+import MarkdownIt from 'markdown-it';
+import markdownItAnchor from 'markdown-it-anchor';
+import TurndownService from 'turndown';
 import { pd } from 'pretty-data';
 import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 
@@ -195,16 +197,20 @@ export default {
      */
     parseMarkdown() {
       const content = this.getContentChildren(this.markup);
-      const converter = new showdown.Converter();
-      const markdown = converter.makeMarkdown(content);
+      const turndownService = new TurndownService();
+      const markdown = turndownService.turndown(content);
       this.markdownField = markdown ?? '';
     },
     /**
      * Get HTML from markdown
      */
     parseHtml() {
-      const converter = new showdown.Converter({ completeHTMLDocument: false, tables: true });
-      const html = converter.makeHtml(this.markdownField);
+      const md = new MarkdownIt().use(markdownItAnchor, {
+        level: 1, // Minimum header level to apply anchors (default: 1)
+        slugify: (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ''), // Custom ID generator
+      });
+      const html = md.render(this.markdownField);
+
       this.htmlField = html;
       this.parsedHtml = `<style>${this.stylesField}</style>${this.wrapContent(html)}`;
       this.$emit('parsed-html', this.parsedHtml);

@@ -1,11 +1,13 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import showdown from 'showdown';
+import MarkdownIt from 'markdown-it';
+import markdownItAnchor from 'markdown-it-anchor';
+import TurndownService from 'turndown';
 import { pd } from 'pretty-data';
 import { baseSanitizerConfig, sanitize } from './sanitizerConfig';
 
@@ -17,7 +19,7 @@ const cleaningPlaceholder = '{{fr-breakline}}';
 /**
  * Replaces the '<br>' tags in an html string with a placeholder string.
  * The purpose of this function is to avoid undesired behavior with the <br> tag
- * when converting html to markdown using showdown.
+ * when converting html to markdown using Turndown.
  * @param {string} html html to be cleaned
  * @returns {string} cleanedHtml
  */
@@ -27,7 +29,7 @@ function protectSpecialCharacters(html) {
 
 /**
  * Restoring means replacing the placeholder strings introduced in the cleanHtml function with the original values.
- * '\n' is changed to ' ' by the showdown converter; this function reverts that change.
+ * '\n' is changed to ' ' by the markdown converter; this function reverts that change.
  * @param {string} markdown that needs to be restored
  * @returns {string} the restored markdown string
  */
@@ -74,35 +76,33 @@ export function getContentChildren(content) {
 }
 
 /**
- * Converts an HTML document into a markdown document
- * @param {string} html HTML document in string format that can be converted to regular a regular markdown document
- * @returns {string} A markdown document as string
+ * Converts an HTML document into a markdown document.
+ * @param {string} html HTML document in string format that can be converted to regular markdown.
+ * @returns {string} A markdown document as string.
  */
 export function html2Markdown(html) {
   const content = getContentChildren(html);
   const protectedHtml = protectSpecialCharacters(content);
-  const converter = new showdown.Converter();
-  const showdownMd = converter.makeMarkdown(protectedHtml) ?? '';
-  return restoreSpecialCharacters(showdownMd);
+  const turndownService = new TurndownService();
+  const markdown = turndownService.turndown(protectedHtml);
+  return restoreSpecialCharacters(markdown);
 }
 
 /**
- * Converts a markdown content into HTML
- * @param {string} markdown Markdown text to be transformed into HTML
- * @param {boolean} wrapInDivContent If true, the markdown content will be converted to HTML and the HTML will be wraped in a div with class "content"
- * @returns {string} HTML resulted from the convertion of the Markdown document
+ * Converts markdown content into HTML.
+ * @param {string} markdown Markdown text to be transformed into HTML.
+ * @param {boolean} wrapInDivContent If true, the markdown content will be converted to HTML and wrapped in a div with class "content".
+ * @returns {string} HTML resulting from the conversion of the markdown document.
  */
 export function markdown2Html(markdown, wrapInDivContent) {
-  const converter = new showdown.Converter({ completeHTMLDocument: false, tables: true });
-  const html = converter.makeHtml(markdown);
+  const md = new MarkdownIt({ html: true, linkify: true, typographer: true }).use(markdownItAnchor, {
+    level: 1, // Minimum header level to apply anchors (default: 1)
+    slugify: (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ''), // Custom ID generator
+  });
 
-  const sanitizedHtml = sanitize(html, baseSanitizerConfig);
-
-  if (wrapInDivContent) {
-    return wrapContent(sanitizedHtml);
-  }
-
-  return sanitizedHtml;
+  let html = md.render(String(markdown));
+  html = sanitize(html, baseSanitizerConfig);
+  return wrapInDivContent ? wrapContent(html) : html;
 }
 
 /**
