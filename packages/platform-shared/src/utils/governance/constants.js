@@ -22,6 +22,28 @@ export const ADMIN_REVIEWER_PERMISSIONS = {
 };
 
 /**
+ * Permissions for access requests
+ */
+export const ACCESS_REQUEST_PERMISSIONS = {
+  approve: true,
+  comment: true,
+  modify: true,
+  reject: true,
+  reassign: true,
+};
+
+/**
+ * Permissions for fulfillment tasks
+ */
+export const FULFILLMENT_TASK_PERMISSIONS = {
+  comment: true,
+  deny: true,
+  fulfill: true,
+  modify: true,
+  reassign: true,
+};
+
+/**
  * @typedef {string} REQUEST_MODAL_TYPE
  * */
 

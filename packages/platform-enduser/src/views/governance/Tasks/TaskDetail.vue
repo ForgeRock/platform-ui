@@ -46,6 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BCard>
     </template>
     <FrRequestModal
+      is-task
       :type="modalType"
       :item="item"
       @modal-closed="modalType = null"

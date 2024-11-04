@@ -78,7 +78,11 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { Form as VeeForm } from 'vee-validate';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
+import {
+  ACCESS_REQUEST_PERMISSIONS,
+  FULFILLMENT_TASK_PERMISSIONS,
+  REQUEST_MODAL_TYPES,
+} from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrAddComment from './AddComment';
 import FrApproveRequest from './ApproveRequest';
 import FrCancelRequest from './CancelRequest';
@@ -107,6 +111,10 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  isTask: {
+    type: Boolean,
+    default: false,
+  },
   isTesting: {
     type: Boolean,
     default: false,
@@ -121,20 +129,19 @@ const props = defineProps({
   },
 });
 
-const actors = ref({
-  id: null,
-  permissions: {
-    approve: true,
-    comment: true,
-    modify: true,
-    reject: true,
-    reassign: true,
-  },
-});
 const comment = ref('');
 const loading = ref(false);
 const modalId = ref('request_modal');
 const modalType = ref(REQUEST_MODAL_TYPES[props.type]);
+
+const actors = computed(() => (
+  {
+    id: null,
+    permissions: props.isTask
+      ? FULFILLMENT_TASK_PERMISSIONS
+      : ACCESS_REQUEST_PERMISSIONS,
+  }
+));
 
 const componentComputed = computed(() => {
   switch (modalType.value) {

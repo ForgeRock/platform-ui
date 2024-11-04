@@ -9,6 +9,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import Notifications from '@kyvg/vue3-notification';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
@@ -16,6 +17,19 @@ import i18n from '@/i18n';
 import RequestModal from './RequestModal';
 
 const requestActionSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockReturnValue(Promise.resolve({ data: {} }));
+CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+  data: {
+    result: [
+      {
+        givenName: 'Alyson',
+        id: 'd34a9575-c714-4cf3-8b62-f975af04a0b9',
+        mail: 'Alyson@IGATestQA.onmicrosoft.com',
+        sn: 'Skelly',
+        userName: 'Alyson@IGATestQA.onmicrosoft.com',
+      },
+    ],
+  },
+}));
 
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,
@@ -276,5 +290,67 @@ describe('RequestModal', () => {
     rejectButton.trigger('click');
 
     expect(requestActionSpy).toHaveBeenCalledWith(1, 'reject', 'phaseTest', { justification: 'test justification' });
+  });
+  it('will forward a request with the correct permissions', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REASSIGN });
+    await flushPromises();
+    wrapper.findComponent('#request_modal___BV_modal_outer_').vm.$emit('shown');
+    await flushPromises();
+
+    const justificationField = wrapper.find('textarea');
+    justificationField.setValue('test justification');
+    await flushPromises();
+
+    const forwardButton = wrapper.findAllComponents('[type="button"]').filter((x) => x.text().includes('Forward'))[0];
+    forwardButton.trigger('click');
+
+    await flushPromises();
+
+    expect(requestActionSpy).toHaveBeenCalledWith(1, 'reassign', 'phaseTest', {
+      comment: 'test justification',
+      updatedActors: [
+        {
+          id: 'managed/user/d34a9575-c714-4cf3-8b62-f975af04a0b9',
+          permissions: {
+            approve: true,
+            comment: true,
+            modify: true,
+            reject: true,
+            reassign: true,
+          },
+        },
+      ],
+    });
+  });
+  it('will forward a fulfill task with the correct permissions', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REASSIGN, isTask: true });
+    await flushPromises();
+    wrapper.findComponent('#request_modal___BV_modal_outer_').vm.$emit('shown');
+    await flushPromises();
+
+    const justificationField = wrapper.find('textarea');
+    justificationField.setValue('test justification');
+    await flushPromises();
+
+    const forwardButton = wrapper.findAllComponents('[type="button"]').filter((x) => x.text().includes('Forward'))[0];
+    forwardButton.trigger('click');
+
+    await flushPromises();
+
+    expect(requestActionSpy).toHaveBeenCalledWith(1, 'reassign', 'phaseTest', {
+      comment: 'test justification',
+      updatedActors: [
+        {
+          id: 'managed/user/d34a9575-c714-4cf3-8b62-f975af04a0b9',
+          permissions: {
+            comment: true,
+            deny: true,
+            fulfill: true,
+            modify: true,
+            reassign: true,
+          },
+        },
+      ],
+    });
   });
 });
