@@ -13,6 +13,19 @@ import dayjs from 'dayjs';
 import i18n from '@/i18n';
 
 /**
+ * Retrieves the phase name from the request object.
+ * First looks for the first phase from the active phase assigned to user (request.phases)
+ * If that is not present, gets the last phase from all of the phases on the request (request.decision.phases)
+ * @param {Object} request - The request object.
+ * @param {Array} request.phases - These phases represent the current phases assigned to a user on a request.
+ * @param {Array} request.decision.phases - These phases represent all phases on a request.
+ * @returns {string|undefined} - The phase name, or undefined if not found.
+ */
+export function getPhaseName(request) {
+  return request.phases?.[0]?.name || request?.decision?.phases?.pop()?.name;
+}
+
+/**
  * Gets image source for the priority icons based on priority level
  * @param {String} priority access request priority: high, medium, low
  * @returns {String} image src for the given priority

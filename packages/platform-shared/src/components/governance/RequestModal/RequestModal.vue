@@ -74,7 +74,6 @@ import {
 } from 'bootstrap-vue';
 import { computed, ref, watch } from 'vue';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { Form as VeeForm } from 'vee-validate';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
@@ -83,6 +82,7 @@ import {
   FULFILLMENT_TASK_PERMISSIONS,
   REQUEST_MODAL_TYPES,
 } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { getPhaseName } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import FrAddComment from './AddComment';
 import FrApproveRequest from './ApproveRequest';
 import FrCancelRequest from './CancelRequest';
@@ -91,9 +91,6 @@ import FrFulfillTask from './FulfillTask';
 import FrRejectRequest from './RejectRequest';
 import FrRejectTask from './RejectTask';
 import i18n from '@/i18n';
-
-// Composables
-const { adminUser } = useUserStore();
 
 const emit = defineEmits([
   'modal-closed',
@@ -243,9 +240,7 @@ function close(cancel) {
   */
 function modalAction(item, ok) {
   const action = modalType.value.toLowerCase();
-  const phaseName = adminUser
-    ? item.rawData?.decision?.phases?.[0]?.name
-    : item.rawData?.phases?.[0]?.name;
+  const phaseName = getPhaseName(item.rawData);
   loading.value = true;
   const requestPayload = {};
   switch (action) {

@@ -7,11 +7,9 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
-import Notifications from '@kyvg/vue3-notification';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import i18n from '@/i18n';
 import RequestModal from './RequestModal';
@@ -34,8 +32,6 @@ CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,
 });
-
-jest.mock('@forgerock/platform-shared/src/utils/governance/AccessRequestUtils');
 
 describe('RequestModal', () => {
   const typicalPropsData = {
@@ -112,19 +108,14 @@ describe('RequestModal', () => {
     },
   };
 
-  const mountGovernanceRequestModal = (props) => {
-    setupTestPinia({ user: { userId: '1234' } });
-    return mount(RequestModal, {
-      attachTo: document.body,
-      global: {
-        mocks: {
-          $t: (text, prop) => i18n.global.t(text, prop),
-        },
-        plugins: [Notifications],
+  const mountGovernanceRequestModal = (props) => mount(RequestModal, {
+    global: {
+      mocks: {
+        $t: (text, prop) => i18n.global.t(text, prop),
       },
-      props,
-    });
-  };
+    },
+    props,
+  });
 
   it('Approve type should display confirm and cancel buttons', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.APPROVE });
@@ -134,18 +125,6 @@ describe('RequestModal', () => {
 
     expect(confirmButton.exists()).toBeTruthy();
     expect(cancelButton.exists()).toBeTruthy();
-  });
-
-  it('changeModal should change the current component type', async () => {
-    const wrapper = mountGovernanceRequestModal(typicalPropsData);
-    wrapper.vm.modalType = 'APPROVE';
-    expect(wrapper.vm.modalType).toEqual('APPROVE');
-    wrapper.vm.modalType = 'COMMENT';
-    expect(wrapper.vm.modalType).toEqual('COMMENT');
-    wrapper.vm.modalType = 'FORWARD';
-    expect(wrapper.vm.modalType).toEqual('FORWARD');
-    wrapper.vm.modalType = 'REJECT';
-    expect(wrapper.vm.modalType).toEqual('REJECT');
   });
   it('modal got updateActors emition and will update information', () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
@@ -183,98 +162,78 @@ describe('RequestModal', () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
     wrapper.vm.loading = true;
     await flushPromises();
-    const loader = await findByTestId(wrapper, 'loading-modal');
-    await wrapper.vm.$nextTick();
-    const loadingText = await findByTestId(wrapper, 'loading-text');
-    await wrapper.vm.$nextTick();
-    const detailsFooter = await findByTestId(wrapper, 'details-footer');
-    await wrapper.vm.$nextTick();
-    const othersFooter = await findByTestId(wrapper, 'others-footer');
-    await wrapper.vm.$nextTick();
-    expect(detailsFooter.exists()).toBeFalsy();
-    expect(othersFooter.exists()).toBeFalsy();
+
+    const loader = findByTestId(wrapper, 'loading-modal');
     expect(loader.exists()).toBeTruthy();
+    const loadingText = findByTestId(wrapper, 'loading-text');
     expect(loadingText.text()).toEqual('Approving Request...');
+    const detailsFooter = findByTestId(wrapper, 'details-footer');
+    expect(detailsFooter.exists()).toBeFalsy();
+    const othersFooter = findByTestId(wrapper, 'others-footer');
+    expect(othersFooter.exists()).toBeFalsy();
   });
   it('test comment loading modal', async () => {
-    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.COMMENT });
     wrapper.vm.loading = true;
-    wrapper.vm.modalType = 'COMMENT';
-
     await flushPromises();
-    const loader = await findByTestId(wrapper, 'loading-modal');
-    await wrapper.vm.$nextTick();
-    const loadingText = await findByTestId(wrapper, 'loading-text');
-    await wrapper.vm.$nextTick();
+
+    const loader = findByTestId(wrapper, 'loading-modal');
     expect(loader.exists()).toBeTruthy();
+    const loadingText = findByTestId(wrapper, 'loading-text');
     expect(loadingText.text()).toEqual('Adding Comment...');
   });
   it('test reassign loading modal', async () => {
-    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REASSIGN });
     wrapper.vm.loading = true;
-    wrapper.vm.modalType = 'REASSIGN';
-
     await flushPromises();
-    const loader = await findByTestId(wrapper, 'loading-modal');
-    await wrapper.vm.$nextTick();
-    const loadingText = await findByTestId(wrapper, 'loading-text');
-    await wrapper.vm.$nextTick();
+
+    const loader = findByTestId(wrapper, 'loading-modal');
     expect(loader.exists()).toBeTruthy();
+    const loadingText = findByTestId(wrapper, 'loading-text');
     expect(loadingText.text()).toEqual('Forwarding Request...');
   });
   it('test reject loading modal', async () => {
-    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REJECT });
     wrapper.vm.loading = true;
-    wrapper.vm.modalType = 'REJECT';
-
     await flushPromises();
-    const loader = await findByTestId(wrapper, 'loading-modal');
-    await wrapper.vm.$nextTick();
-    const loadingText = await findByTestId(wrapper, 'loading-text');
-    await wrapper.vm.$nextTick();
+
+    const loader = findByTestId(wrapper, 'loading-modal');
     expect(loader.exists()).toBeTruthy();
+    const loadingText = findByTestId(wrapper, 'loading-text');
     expect(loadingText.text()).toEqual('Rejecting Request...');
   });
   it('test deny loading modal', async () => {
-    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.DENY });
     wrapper.vm.loading = true;
-    wrapper.vm.modalType = 'DENY';
-
     await flushPromises();
-    const loader = await findByTestId(wrapper, 'loading-modal');
-    await wrapper.vm.$nextTick();
-    const loadingText = await findByTestId(wrapper, 'loading-text');
-    await wrapper.vm.$nextTick();
+
+    const loader = findByTestId(wrapper, 'loading-modal');
     expect(loader.exists()).toBeTruthy();
+    const loadingText = findByTestId(wrapper, 'loading-text');
     expect(loadingText.text()).toEqual('Rejecting Task...');
   });
   it('test fulfill loading modal', async () => {
-    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.FULFILL });
     wrapper.vm.loading = true;
-    wrapper.vm.modalType = 'FULFILL';
-
     await flushPromises();
-    const loader = await findByTestId(wrapper, 'loading-modal');
-    await wrapper.vm.$nextTick();
-    const loadingText = await findByTestId(wrapper, 'loading-text');
-    await wrapper.vm.$nextTick();
+
+    const loader = findByTestId(wrapper, 'loading-modal');
     expect(loader.exists()).toBeTruthy();
+    const loadingText = findByTestId(wrapper, 'loading-text');
     expect(loadingText.text()).toEqual('Completing Task...');
   });
-  it('close got called with comment and previousModal = DETAILS', async () => {
-    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+  it('closing comment modal should call cancel and emit update-item event', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.COMMENT });
     const cancel = jest.fn();
-    wrapper.vm.modalType = 'COMMENT';
     await flushPromises();
     wrapper.vm.close(cancel);
     await flushPromises();
     expect(cancel).toHaveBeenCalled();
     expect(wrapper.emitted()['update-item'][0]).toEqual([1]);
   });
-  it('close got called with reassign and should update list, after calling Cancel', async () => {
-    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+  it('closing non comment modal should call cancel enad emit update-list event', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REASSIGN });
     const cancel = jest.fn();
-    wrapper.vm.modalType = 'REASSIGN';
     wrapper.vm.close(cancel);
     await flushPromises();
     expect(wrapper.emitted()['update-list']).toBeTruthy();
