@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { cloneDeep } from 'lodash';
 import { flushPromises, shallowMount } from '@vue/test-utils';
 import { createStore } from 'vuex';
 import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
@@ -21,11 +22,48 @@ import App from '@/App';
 
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 
-let store;
+const store = {
+  state: {
+    SharedStore: { workforceEnabled: false },
+    menusFile: 'menus.platform',
+    certificationCount: null,
+    approvalsCount: null,
+    violationsCount: null,
+    fulfillmentTasksCount: null,
+    realm: '',
+  },
+  getters: {
+    menusFile: (state) => state.menusFile,
+  },
+  mutations: {
+    setCertificationCount(state, count) {
+      state.certificationCount = count;
+    },
+    setApprovalsCount(state, count) {
+      state.approvalsCount = count;
+    },
+    setViolationsCount(state, count) {
+      state.violationsCount = count;
+    },
+    setFulfillmentTasksCount(state, count) {
+      state.fulfillmentTasksCount = count;
+    },
+  },
+};
 let wrapper;
 let $route;
 
-function shallowMountComponent(storeMock) {
+const ThemeMixin = {
+  data: {
+    theme: {},
+  },
+  methods: {
+    setTheme() { return Promise.resolve(); },
+  },
+};
+
+async function shallowMountComponent(storeMock) {
+  jest.mock('@forgerock/platform-shared/src/mixins/ThemeMixin', () => ({}));
   $route = {
     meta: { hideSideMenu: true },
   };
@@ -33,15 +71,16 @@ function shallowMountComponent(storeMock) {
   const storePlugin = createStore(storeMock);
 
   wrapper = shallowMount(App, {
+    mixins: [NotificationMixin, ThemeMixin],
     global: {
       plugins: [i18n, storePlugin],
       stubs: ['RouterLink', 'RouterView'],
       mocks: {
         $route,
       },
-      mixins: [NotificationMixin],
     },
   });
+  await flushPromises();
 }
 
 describe('App.vue', () => {
@@ -54,33 +93,6 @@ describe('App.vue', () => {
     ManagedResourceApi.getManagedResourceList = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [] } }));
     ServerinfoApi.getIdmServerInfo = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
     getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
-    store = {
-      state: {
-        SharedStore: { workforceEnabled: false, governanceDevEnabled: true },
-        menusFile: 'menus.platform',
-        certificationCount: null,
-        approvalsCount: null,
-        violationsCount: null,
-        fulfillmentTasksCount: null,
-      },
-      getters: {
-        menusFile: (state) => state.menusFile,
-      },
-      mutations: {
-        setCertificationCount(state, count) {
-          state.certificationCount = count;
-        },
-        setApprovalsCount(state, count) {
-          state.approvalsCount = count;
-        },
-        setViolationsCount(state, count) {
-          state.violationsCount = count;
-        },
-        setFulfillmentTasksCount(state, count) {
-          state.fulfillmentTasksCount = count;
-        },
-      },
-    };
   });
 
   afterAll(() => {
@@ -89,59 +101,53 @@ describe('App.vue', () => {
   });
 
   it('Loaded Menus File should load default items', async () => {
-    shallowMountComponent(store);
-    await wrapper.vm.$nextTick();
+    await shallowMountComponent(store);
     expect(wrapper.vm.menuItems.length).toEqual(9);
-  });
-
-  it('Loaded Menus File with governance', async () => {
-    store.state.SharedStore.governanceEnabled = true;
-    shallowMountComponent(store);
-    await wrapper.vm.$nextTick();
-    const inbox = wrapper.vm.menuItems.find((item) => item.displayName === 'sideMenu.inbox');
-    const approvals = inbox.subItems.find((item) => item.displayName === 'sideMenu.approvals');
-    expect(wrapper.vm.menuItems.length).toEqual(9);
-    expect(inbox).toBeTruthy();
-    expect(approvals).toBeTruthy();
   });
 
   it('shows a regular layout', async () => {
-    store.state.SharedStore.logoutScreen = false;
-    shallowMountComponent(store);
-    await wrapper.vm.$nextTick();
+    await shallowMountComponent(store);
     const logoutText = wrapper.find('fr-layout-stub');
     expect(logoutText.exists()).toBeTruthy();
   });
 
-  it('should set view IDM users privilege as true when the getManagedResourceList call is correct and governance is enabled', async () => {
-    store.state.SharedStore.governanceEnabled = true;
-    shallowMountComponent(store);
-    await flushPromises();
-    expect(wrapper.vm.setIDMUsersViewPrivilege).toHaveBeenCalledWith(true);
+  describe('governance disabled', () => {
+    const governanceDisabled = cloneDeep(store);
+    governanceDisabled.state.SharedStore.governanceEnabled = false;
+
+    it('should not set view IDM users privilege', async () => {
+      await shallowMountComponent(governanceDisabled);
+      expect(wrapper.vm.setIDMUsersViewPrivilege).not.toHaveBeenCalled();
+    });
   });
 
-  it('should set view IDM users privilege as false when the getManagedResourceList call fails and governance is enabled', async () => {
-    ManagedResourceApi.getManagedResourceList = jest.fn().mockRejectedValue({ response: { status: 403 } });
-    store.state.SharedStore.governanceEnabled = true;
-    shallowMountComponent(store);
-    await flushPromises();
-    expect(wrapper.vm.setIDMUsersViewPrivilege).toHaveBeenCalledWith(false);
-  });
+  describe('governance enabled', () => {
+    const governanceEnabled = cloneDeep(store);
+    governanceEnabled.state.SharedStore.governanceEnabled = true;
+    governanceEnabled.state.realm = 'alpha';
 
-  it('should not set view IDM users privilege when governance is disabled', async () => {
-    store.state.SharedStore.governanceEnabled = false;
-    shallowMountComponent(store);
-    await flushPromises();
-    expect(wrapper.vm.setIDMUsersViewPrivilege).not.toHaveBeenCalled();
-  });
+    it('Loaded Menus File with governance', async () => {
+      await shallowMountComponent(governanceEnabled);
+      const inbox = wrapper.vm.menuItems.find((item) => item.displayName === 'sideMenu.inbox');
+      const approvals = inbox.subItems.find((item) => item.displayName === 'sideMenu.approvals');
+      expect(wrapper.vm.menuItems.length).toEqual(9);
+      expect(inbox).toBeTruthy();
+      expect(approvals).toBeTruthy();
+    });
 
-  describe('with wrapper mounted', () => {
-    beforeEach(async () => {
-      shallowMountComponent(store);
-      await flushPromises();
+    it('should set view IDM users privilege as false when the getManagedResourceList call fails', async () => {
+      ManagedResourceApi.getManagedResourceList = jest.fn().mockRejectedValue({ response: { status: 403 } });
+      await shallowMountComponent(governanceEnabled);
+      expect(wrapper.vm.setIDMUsersViewPrivilege).toHaveBeenCalledWith(false);
+    });
+
+    it('should set view IDM users privilege as true when the getManagedResourceList call is correct', async () => {
+      await shallowMountComponent(governanceEnabled);
+      expect(wrapper.vm.setIDMUsersViewPrivilege).toHaveBeenCalledWith(true);
     });
 
     it('should get access reviews count and save it in the store on call getAccessReviewsCount', async () => {
+      await shallowMountComponent(governanceEnabled);
       const getCertificationItemsSpy = jest.spyOn(AccessReviewApi, 'getCertificationItems');
       wrapper.vm.getAccessReviewsCount();
       await flushPromises();
@@ -150,6 +156,7 @@ describe('App.vue', () => {
     });
 
     it('should set a 0 to access reviews count and save it in the store on call getAccessReviewsCount when the call to API fails', async () => {
+      await shallowMountComponent(governanceEnabled);
       const error = new Error('ERROR');
       AccessReviewApi.getCertificationItems = jest.fn().mockImplementation(() => Promise.reject(error));
       const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
@@ -160,6 +167,7 @@ describe('App.vue', () => {
     });
 
     it('should get pending approvals count and save it in the store on call getPendingApprovalsCount', async () => {
+      await shallowMountComponent(governanceEnabled);
       const getUserApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
       wrapper.vm.getPendingApprovalsCount();
       await flushPromises();
@@ -171,6 +179,7 @@ describe('App.vue', () => {
     });
 
     it('should set a 0 to pending approvals count and save it in the store on call getPendingApprovalsCount when the call to API fails', async () => {
+      await shallowMountComponent(governanceEnabled);
       const error = new Error('ERROR');
       AccessRequestApi.getUserApprovals = jest.fn().mockImplementation(() => Promise.reject(error));
       const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
@@ -181,6 +190,7 @@ describe('App.vue', () => {
     });
 
     it('should get pending violations count and save it in the store on call getViolationsCount', async () => {
+      await shallowMountComponent(governanceEnabled);
       const getViolationsSpy = jest.spyOn(ViolationsApi, 'getViolations');
       wrapper.vm.getViolationsCount();
       await flushPromises();
@@ -189,6 +199,7 @@ describe('App.vue', () => {
     });
 
     it('should set a 0 to pending violations count and save it in the store on call getViolationsCount when the call to API fails', async () => {
+      await shallowMountComponent(governanceEnabled);
       const error = new Error('ERROR');
       ViolationsApi.getViolations = jest.fn().mockImplementation(() => Promise.reject(error));
       const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
@@ -199,6 +210,10 @@ describe('App.vue', () => {
     });
 
     it('should get pending fulfillment tasks count and save it in the store on call getFulfillmentTasksCount', async () => {
+      const governanceDevEnabled = cloneDeep(store);
+      governanceDevEnabled.state.SharedStore.governanceDevEnabled = true;
+      governanceDevEnabled.state.realm = 'alpha';
+      await shallowMountComponent(governanceDevEnabled);
       const getUserFulfillmentTasks = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
       wrapper.vm.getFulfillmentTasksCount();
       await flushPromises();

@@ -31,7 +31,7 @@ export default {
     };
   },
   created() {
-    if (this.$store.state.SharedStore.governanceEnabled === true) this.type = types.GOVERNANCE;
+    if (this.$store.state.SharedStore.governanceEnabled === true && this.$store.state.realm === 'alpha') this.type = types.GOVERNANCE;
   },
 };
 </script>

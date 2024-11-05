@@ -78,6 +78,8 @@ export default {
     ...mapState(useUserStore, ['userId', 'setIDMUsersViewPrivilege']),
   },
   data() {
+    const governanceEnabled = (this.$store.state.SharedStore.governanceEnabled === true) && (this.$store.state.realm === 'alpha');
+    const governanceDevEnabled = (this.$store.state.SharedStore.governanceDevEnabled === true) && (this.$store.state.realm === 'alpha');
     const governanceInbox = {
       displayName: 'sideMenu.inbox',
       icon: 'inbox',
@@ -108,7 +110,7 @@ export default {
     };
 
     // move this into the governanceInbox when removing feature flag
-    if (this.$store.state.SharedStore.governanceDevEnabled) {
+    if (governanceDevEnabled) {
       governanceInbox.subItems.splice(1, 0, {
         showBadgeWithContentFromStore: 'fulfillmentTasksCount',
         displayName: 'sideMenu.tasks',
@@ -119,6 +121,8 @@ export default {
     }
 
     return {
+      governanceEnabled,
+      governanceDevEnabled,
       menuItems: [
         {
           routeTo: { name: 'Dashboard' },
@@ -133,7 +137,7 @@ export default {
             showForStoreValues: ['SharedStore.autoReportsEnabled'],
           }
           : {}),
-        (this.$store.state.SharedStore.governanceEnabled === true
+        (governanceEnabled
           ? governanceInbox
           : {}),
         (this.$store.state.SharedStore.workforceEnabled === true
@@ -148,7 +152,7 @@ export default {
             icon: 'apps',
           }
           : {}),
-        (this.$store.state.SharedStore.governanceEnabled === true
+        (governanceEnabled
           ? {
             displayName: 'sideMenu.myAccess',
             icon: 'badge',
@@ -168,7 +172,7 @@ export default {
             ],
           }
           : {}),
-        (this.$store.state.SharedStore.governanceEnabled === true
+        (governanceEnabled
           ? {
             displayName: 'sideMenu.directory',
             icon: 'people',
@@ -184,7 +188,7 @@ export default {
             ],
           }
           : {}),
-        (this.$store.state.SharedStore.governanceEnabled === true
+        (governanceEnabled
           ? {
             routeTo: { name: 'MyRequests' },
             displayName: 'sideMenu.requests',
@@ -231,7 +235,7 @@ export default {
       this.checkAutoAccess();
     }
 
-    if (this.$store.state.SharedStore.governanceEnabled === true) {
+    if (this.governanceEnabled) {
       this.getAccessReviewsCount();
       this.getPendingApprovalsCount();
       this.getFulfillmentTasksCount();
@@ -381,7 +385,7 @@ export default {
      * @returns {void} Does not return a value. The result of the operation is a side-effect (Vuex store update or error message display).
      */
     getFulfillmentTasksCount() {
-      if (!this.$store.state.SharedStore.governanceDevEnabled) return;
+      if (!this.governanceDevEnabled) return;
 
       let count = 0;
       getUserFulfillmentTasks(this.userId, {
