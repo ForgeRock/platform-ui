@@ -16,9 +16,12 @@ export const useUserStore = defineStore('user', () => {
 
   // Privilege based properties
   const idmRoles = ref([]);
-  const adminUser = computed(() => idmRoles.value.includes('internal/role/openidm-admin') || idmRoles.value.includes('openidm-admin'));
+  const idmUIAdminRoles = ref([]);
+
+  // adminUser is actually an IDM admin user which is different from an AM admin user
+  const adminUser = computed(() => idmUIAdminRoles.value.some((role) => idmRoles.value.includes(role)));
   const amRoles = ref([]);
-  const realmAdmin = computed(() => amRoles.value.includes('ui-realm-admin'));
+  const realmAdmin = computed(() => amRoles.value.includes('ui-realm-admin') || amRoles.value.includes('ui-global-admin'));
   const amAdmin = ref(false);
   const privileges = ref({});
   const hasFederationAdminPrivilege = computed(() => privileges.value.FederationAdmin === true);
@@ -105,6 +108,7 @@ export const useUserStore = defineStore('user', () => {
     setInternalUserDetails,
     sn,
     idmRoles,
+    idmUIAdminRoles,
     amRoles,
     effectiveRoles,
     allRoles,

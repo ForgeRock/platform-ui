@@ -8,6 +8,13 @@
 import { setActivePinia, createPinia } from 'pinia';
 import { useUserStore } from './user';
 
+const idmUIAdminRoles = [
+  'internal/role/openidm-admin',
+  'openidm-admin',
+  'super-admins',
+  'tenant-admins',
+];
+
 describe('user store', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -116,6 +123,7 @@ describe('user store', () => {
         userName: 'userName',
       });
       userStore.idmRoles = ['internal/role/openidm-admin', 'openidm-admin'];
+      userStore.idmUIAdminRoles = idmUIAdminRoles;
 
       expect(userStore.userDetails).toStrictEqual({
         name: 'gn sn',
@@ -132,24 +140,28 @@ describe('user store', () => {
       it('returns true if the user has the internal/role/openidm-admin or openidm-admin idm roles', () => {
         const userStore = useUserStore();
         userStore.idmRoles = ['internal/role/openidm-admin', 'openidm-admin'];
+        userStore.idmUIAdminRoles = idmUIAdminRoles;
         expect(userStore.adminUser).toBe(true);
       });
 
       it('returns true if the user only has the internal/role/openidm-admin idm role', () => {
         const userStore = useUserStore();
         userStore.idmRoles = ['internal/role/openidm-admin'];
+        userStore.idmUIAdminRoles = idmUIAdminRoles;
         expect(userStore.adminUser).toBe(true);
       });
 
       it('returns true if the user only has the openidm-admin idm role', () => {
         const userStore = useUserStore();
         userStore.idmRoles = ['openidm-admin'];
+        userStore.idmUIAdminRoles = idmUIAdminRoles;
         expect(userStore.adminUser).toBe(true);
       });
 
       it('returns false if the user does not have the internal/role/openidm-admin or openidm-admin idm roles', () => {
         const userStore = useUserStore();
         userStore.idmRoles = ['internal/role/openidm-user'];
+        userStore.idmUIAdminRoles = idmUIAdminRoles;
         expect(userStore.adminUser).toBe(false);
       });
     });
@@ -172,6 +184,7 @@ describe('user store', () => {
       it('returns an array including adminUser if the user is an idm admin', () => {
         const userStore = useUserStore();
         userStore.idmRoles = ['internal/role/openidm-admin', 'openidm-admin'];
+        userStore.idmUIAdminRoles = idmUIAdminRoles;
         expect(userStore.effectiveRoles).toStrictEqual(['adminUser']);
       });
 
@@ -193,6 +206,7 @@ describe('user store', () => {
         const userStore = useUserStore();
         userStore.amRoles = ['ui-realm-admin'];
         userStore.idmRoles = ['internal/role/openidm-admin', 'openidm-admin'];
+        userStore.idmUIAdminRoles = idmUIAdminRoles;
         userStore.amAdmin = true;
         expect(userStore.allRoles).toStrictEqual(['adminUser', 'realmAdmin', 'amAdmin', 'internal/role/openidm-admin', 'openidm-admin', 'ui-realm-admin']);
       });
