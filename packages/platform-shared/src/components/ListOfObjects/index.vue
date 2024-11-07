@@ -174,6 +174,14 @@ export default {
       type: Boolean,
       default: true,
     },
+    preventLabelCapitalization: {
+      type: Boolean,
+      default: false,
+    },
+    preventOptionalLabelAppend: {
+      type: Boolean,
+      default: false,
+    },
     properties: {
       type: Object,
       default: () => ({}),
@@ -236,10 +244,11 @@ export default {
       return (this.validation?.required || this.validation?.includes('required')) && !filteredListValues.length;
     },
     fieldTitle() {
+      const label = this.preventLabelCapitalization ? this.label : this.capitalizedDescription;
       if (this.validation?.required || this.validation?.includes('required')) {
-        return this.capitalizedDescription;
+        return label;
       }
-      return this.$t('common.optionalFieldTitle', { fieldTitle: this.capitalizedDescription });
+      return this.preventOptionalLabelAppend ? label : this.$t('common.optionalFieldTitle', { fieldTitle: label });
     },
   },
   mounted() {
