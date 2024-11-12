@@ -130,6 +130,7 @@
     "expires": "Expires",
     "expiresSoon": "Expires Soon",
     "export": "Export",
+    "exportObject": "Export {object}",
     "extend": "Extend",
     "fail": "Fail",
     "failed": "Failed",
