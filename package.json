@@ -58,6 +58,7 @@
   },
   "resolutions": {
     "autoprefixer": "10.4.5",
+    "cross-spawn": "7.0.5",
     "elliptic": "6.6.0",
     "istanbul-lib-instrument": "5.2.0",
     "ramda@npm:^0.25.0": "0.27.1",
