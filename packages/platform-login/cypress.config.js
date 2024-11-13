@@ -8,6 +8,8 @@
 const { defineConfig } = require('cypress');
 
 module.exports = defineConfig({
+  experimentalMemoryManagement: true,
+  video: true,
   retries: 3,
   reporter: '../../node_modules/mochawesome',
 
