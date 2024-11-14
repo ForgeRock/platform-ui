@@ -53,10 +53,9 @@ import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
-import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import i18n from '@/i18n';
+import { getResourceDisplayData } from '@forgerock/platform-shared/src/utils/resource';
 
 // data
 const glossaryValues = ref({});
@@ -79,29 +78,6 @@ const isLoaded = computed(() => {
   });
   return allFieldsLoaded;
 });
-
-/**
- * Retrieves the display data for a specific resource.
- *
- * @param {string} resourceType - The type of the resource. application, role, user, org
- * @param {string} id - The ID of the resource.
- * @returns {Promise} - A promise that resolves to the display data of the resource.
- */
-async function getResourceDisplayData(resourceType, id) {
-  try {
-    const { data } = await getResource(resourceType, { queryString: id });
-    if (resourceType === 'user') {
-      const user = data.result[0];
-      return Promise.resolve(i18n.global.t('common.userFullName', {
-        givenName: user.givenName,
-        sn: user.sn,
-      }));
-    }
-    return Promise.resolve(data.result[0].name);
-  } catch {
-    return Promise.resolve(id);
-  }
-}
 
 /**
  * Sets the value of a glossary property.
@@ -130,11 +106,8 @@ async function setGlossaryValues(glossarySchema, values) {
     }
     // look up value for managed object types
     if (glossaryItem.type === 'managedObject') {
-      let ids = glossaryItem.isMultiValue ? values[propertyName] : [values[propertyName]];
-      ids = ids.map((id) => id.split('/').pop());
-      const resourceType = glossaryItem.managedObjectType.split('/').pop();
-      const value = await Promise.all(ids.map((id) => getResourceDisplayData(resourceType, id)));
-      setGlossaryValue(propertyName, value.join(', '));
+      const value = await getResourceDisplayData(glossaryItem.managedObjectType, values[propertyName]);
+      setGlossaryValue(propertyName, value);
     } else {
       // set value for non-managed object types
       setGlossaryValue(propertyName, values[propertyName] || blankValueIndicator);

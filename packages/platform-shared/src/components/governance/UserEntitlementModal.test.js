@@ -6,7 +6,7 @@
  */
 
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import UserEntitlementModal from './UserEntitlementModal';
 
@@ -91,8 +91,9 @@ describe('UserEntitlementModal', () => {
       expect(ownerInfo.text()).toEqual('first lasttest user');
     });
 
-    it('shows glossary values', () => {
+    it('shows glossary values', async () => {
       const wrapper = mountComponent({ grant, glossarySchema });
+      await flushPromises();
       const glossaryInfo = findByTestId(wrapper, 'glossary');
 
       expect(glossaryInfo.text()).toMatch('test 1');
