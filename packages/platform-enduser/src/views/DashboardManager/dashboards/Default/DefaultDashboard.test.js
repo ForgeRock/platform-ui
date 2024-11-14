@@ -19,7 +19,7 @@ let wrapper;
 describe('DefaultDashboard.vue', () => {
   const store = createStore({
     state: {
-      SharedStore: { workforceEnabled: false },
+      SharedStore: { workforceEnabled: false, governanceEnabled: false },
     },
   });
 
@@ -112,5 +112,41 @@ describe('DefaultDashboard.vue', () => {
       await flushPromises();
       expect(notificationSpy).toHaveBeenCalledWith('your applications call failed', 'pages.dashboard.errorGetApplications');
     });
+  });
+});
+
+describe('governanceEnabled', () => {
+  const store = createStore({
+    state: {
+      workflow: true,
+      SharedStore: { governanceEnabled: true },
+    },
+  });
+
+  it('hides the workflow widget when governance is enabled', async () => {
+    wrapper = mount(DefaultDashboard, {
+      global: {
+        plugins: [Notifications, store],
+        mocks: {
+          $t: (key) => (key),
+        },
+      },
+    });
+
+    const widgetResponse = [{ type: 'Welcome' }];
+
+    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({
+      get: () => Promise.resolve({
+        data: {
+          dashboard: {
+            widgets: widgetResponse,
+          },
+        },
+      }),
+    }));
+
+    wrapper.vm.loadWidgets();
+    await flushPromises();
+    expect(wrapper.vm.widgets).toEqual([{ type: 'Welcome' }]);
   });
 });

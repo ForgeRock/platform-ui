@@ -118,8 +118,7 @@ export default {
       this.getRequestService().get('config/ui/dashboard')
         .then(({ data }) => {
           this.widgets = data.dashboard.widgets;
-
-          if (this.workflow) {
+          if (this.workflow && this.$store.state.SharedStore.governanceEnabled === false) {
             this.widgets.push({
               type: 'Workflow',
               size: 'large',
