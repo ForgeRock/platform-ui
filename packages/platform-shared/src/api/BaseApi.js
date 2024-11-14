@@ -278,31 +278,6 @@ export function generateAutoAccessJas(requestOverride = {}) {
 }
 
 /**
-  * Generates a Auto Access API Axios instance
-    * @param {string} context Either 'jas' or 'api' which tells the function which baseURL to use
-  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
-    * on extra information or override default properties https://github.com/axios/axios#request-config
-  *
-  * @returns {AxiosInstance}
-  */
-// export function generateAutoAccessApi(context, requestOverride = {}) {
-// const tenantId = process.env.VUE_APP_AUTO_ACCESS_TENANT_ID;
-//   let baseURL = store.state.SharedStore.autoAccessApiUrl;
-//   if (context === 'jas') {
-//     baseURL = store.state.SharedStore.autoAccessJasUrl;
-//   }
-//   const requestDetails = {
-//     baseURL,
-// headers: {
-//   'X-TENANT-ID': tenantId,
-// },
-//     ...requestOverride,
-//   };
-
-//   return axios.create(requestDetails);
-// }
-
-/**
  * Generates a FRaaS promotion API Axios instance
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
  * on extra information or override default properties https://github.com/axios/axios#request-config

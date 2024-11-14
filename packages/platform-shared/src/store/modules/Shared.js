@@ -66,26 +66,26 @@ const mutations = {
     }
 
     if (env.VUE_APP_ANALYTICS_API_URL) {
-      state.analyticsURL = env.VUE_APP_ANALYTICS_API_URL;
+      state.analyticsURL = getFQDN(env.VUE_APP_ANALYTICS_API_URL);
     }
 
     if (env.VUE_APP_FRAAS === 'true') {
       if (env.VUE_APP_FRAAS_ENV_URL) {
-        state.fraasEnvironmentUrl = env.VUE_APP_FRAAS_ENV_URL;
+        state.fraasEnvironmentUrl = getFQDN(env.VUE_APP_FRAAS_ENV_URL);
       }
       if (env.VUE_APP_FRAAS_LOGGING_URL) {
-        state.fraasLoggingKeyURL = env.VUE_APP_FRAAS_LOGGING_URL;
+        state.fraasLoggingKeyURL = getFQDN(env.VUE_APP_FRAAS_LOGGING_URL);
       }
       if (env.VUE_APP_FRAAS_MONITORING_URL) {
-        state.fraasMonitoringURL = env.VUE_APP_FRAAS_MONITORING_URL;
+        state.fraasMonitoringURL = getFQDN(env.VUE_APP_FRAAS_MONITORING_URL);
       }
       if (env.VUE_APP_ENABLE_AUTO_ACCESS === 'true') {
         state.autoAccessEnabled = true;
         if (env.VUE_APP_AUTO_ACCESS_API_URL) {
-          state.autoAccessApiUrl = env.VUE_APP_AUTO_ACCESS_API_URL;
+          state.autoAccessApiUrl = getFQDN(env.VUE_APP_AUTO_ACCESS_API_URL);
         }
         if (env.VUE_APP_AUTO_ACCESS_JAS_URL) {
-          state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
+          state.autoAccessJasUrl = getFQDN(env.VUE_APP_AUTO_ACCESS_JAS_URL);
         }
         if (env.VUE_APP_AUTO_ACCESS_TENANT_ID) {
           state.autoAccessTenantId = env.VUE_APP_AUTO_ACCESS_TENANT_ID;
@@ -112,7 +112,7 @@ const mutations = {
         }
       }
       if (env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL) {
-        state.fraasFederationUrl = env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL;
+        state.fraasFederationUrl = getFQDN(env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL);
       }
       if (env.VUE_APP_FRAAS_PROMOTION_URL) {
         state.fraasPromotionUrl = env.VUE_APP_FRAAS_PROMOTION_URL;
@@ -196,7 +196,7 @@ const mutations = {
     }
 
     if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
-      state.autoAccessReportsUrl = env.VUE_APP_AUTO_ACCESS_REPORTS_URL;
+      state.autoAccessReportsUrl = getFQDN(env.VUE_APP_AUTO_ACCESS_REPORTS_URL);
     }
   },
   // Needed for Login since setFeatureFlags isn't called there
