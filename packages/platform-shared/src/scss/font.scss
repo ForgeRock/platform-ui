@@ -1,0 +1,93 @@
+/* Open Sans */
+$cdn-font-opensans-path: 'https://cdn.forgerock.com/platform/fonts/opensans';
+
+/* Open Sans Light 300 */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('#{$cdn-font-opensans-path}/opensans-light-webfont.woff2') format('woff2'),
+       url('#{$cdn-font-opensans-path}/opensans-light-webfont.woff') format('woff')
+}
+ 
+/* Open Sans Light 300 Italic */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 300;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('#{$cdn-font-opensans-path}/opensans-lightitalic-webfont.woff2') format('woff2'),
+       url('#{$cdn-font-opensans-path}/opensans-lightitalic-webfont.woff') format('woff')
+}
+ 
+/* Open Sans Regular 400 */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('#{$cdn-font-opensans-path}/opensans-regular-webfont.woff2') format('woff2'),
+       url('#{$cdn-font-opensans-path}/opensans-regular-webfont.woff') format('woff')
+}
+ 
+/* Open Sans Regular 400 Italic */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('#{$cdn-font-opensans-path}/opensans-italic-webfont.woff2') format('woff2'),
+       url('#{$cdn-font-opensans-path}/opensans-italic-webfont.woff') format('woff')
+}
+ 
+ 
+/* Open Sans SemiBold 600 */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('#{$cdn-font-opensans-path}/opensans-semibold-webfont.woff2') format('woff2'),
+       url('#{$cdn-font-opensans-path}/opensans-semibold-webfont.woff') format('woff')
+}
+ 
+/* Open Sans SemiBold 600 Italic */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('#{$cdn-font-opensans-path}/opensans-semibolditalic-webfont.woff2') format('woff2'),
+       url('#{$cdn-font-opensans-path}/opensans-semibolditalic-webfont.woff') format('woff');
+}
+ 
+ 
+/* Open Sans Bold 700 */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('#{$cdn-font-opensans-path}/opensans-bold-webfont.woff2') format('woff2'),
+       url('#{$cdn-font-opensans-path}/opensans-bold-webfont.woff') format('woff');
+}
+ 
+/* Open Sans Bold 700 Italic */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url('#{$cdn-font-opensans-path}/opensans-bolditalic-webfont.woff2') format('woff2'),
+       url('#{$cdn-font-opensans-path}/opensans-bolditalic-webfont.woff') format('woff');
+}
+ 

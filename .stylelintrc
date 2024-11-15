@@ -9,6 +9,7 @@
   "rules": {
     "at-rule-no-vendor-prefix": true,
     "at-rule-allowed-list": [
+      "font-face",
       "import",
       "media",
       "keyframes",
@@ -35,6 +36,7 @@
       "cubic-bezier",
       "darken",
       "fade",
+      "format",
       "hsla",
       "lighten",
       "linear-gradient",
