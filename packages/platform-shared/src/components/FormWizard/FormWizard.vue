@@ -4,16 +4,11 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="h-100">
-    <FrNavbar
-      hide-dropdown
-      hide-toggle
-      :show-docs-link="false"
-      :show-help-link="false"
-      :show-profile-link="false">
+    <FrNavbar>
       <template #center-content>
         <slot name="center-content">
           <h1
-            class="h5 font-weight-bold m-0"
+            class="h4 font-weight-bold m-0"
             data-testid="wizard-title">
             {{ title }}
           </h1>
@@ -24,42 +19,52 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </FrNavbar>
     <BCard
-      class="cert-tabs card-tabs-vertical"
+      class="wizard-tabs card-tabs-vertical"
       no-body>
+      <FrSpinner
+        v-if="isLoading"
+        testid="form-wizard-spinner"
+        class="py-5" />
       <BTabs
+        v-else
         v-model="currentStep"
-        @activate-tab="activateTabHandler"
-        active-nav-item-class="fr-active-nav-item"
-        content-class="fr-wizard-content"
         :lazy="lazy"
-        nav-wrapper-class="fr-wizard"
+        content-class="fr-wizard-content"
+        :active-nav-item-class="progressDots && 'fr-active-nav-item'"
+        :nav-wrapper-class="[progressDots && 'progress-dots-padding', 'fr-wizard pt-3']"
         pills
         vertical>
-        <FrSpinner
-          v-if="isLoading"
-          class="py-5" />
         <VeeForm
-          v-else
           v-slot="{ meta: { valid }}"
           as="span">
           <BTab
             v-for="(tab, index) in tabs"
             :key="tab.title"
             :data-testid="tab.title"
-            class="cert-tab">
+            :class="[tabs[currentStep].hideFooter && 'wizard-footer-hidden', 'wizard-tab']"
+            :title-item-class="(!edit && index > highestVisitedStep) && 'disabled'"
+            no-fade>
             <template #title>
               <div class="position-relative">
                 <div
-                  :class="['circle', index === tabs.length - 1 ? 'fr-step-placeholder' : 'fr-step-bridge', {
-                    completed: index < currentStep,
-                    current: index === currentStep
-                  }]" />
+                  v-if="progressDots"
+                  data-testid="progress-dots"
+                  :class="[
+                    'circle',
+                    index === tabs.length - 1 ? 'fr-step-placeholder' : 'fr-step-bridge',
+                    {
+                      completed: index < currentStep,
+                      current: index === currentStep
+                    }
+                  ]" />
                 {{ tab.title }}
               </div>
             </template>
             <slot :name="tab.title" />
           </BTab>
-          <BCardFooter class="d-flex justify-content-between">
+          <BCardFooter
+            v-if="!tabs[currentStep].hideFooter"
+            class="d-flex justify-content-between">
             <div>
               <BButton
                 v-if="currentStep > 0"
@@ -75,11 +80,20 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ $t('common.cancel') }}
               </BButton>
               <BButton
+                v-if="isFinalStep || forceShowSaveButton"
+                data-testid="saveButton"
+                @click="$emit('save')"
+                :disabled="!valid || !validForm"
+                variant="primary">
+                {{ $t('common.save') }}
+              </BButton>
+              <BButton
+                v-else
                 data-testid="nextButton"
                 @click="changeStep(1)"
                 :disabled="!valid || !validForm"
                 variant="primary">
-                {{ currentStep === tabs.length - 1 ? $t('common.save') : $t('common.next') }}
+                {{ $t('common.next') }}
               </BButton>
             </div>
           </BCardFooter>
@@ -91,8 +105,8 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
-  onMounted,
   ref,
+  computed,
 } from 'vue';
 import {
   BButton,
@@ -107,13 +121,11 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 
 // Composables
-const { setBreadcrumb } = useBreadcrumb();
-
+const {
+  setBreadcrumb,
+} = useBreadcrumb();
 // Events
-const emit = defineEmits([
-  'changeStep',
-  'save',
-]);
+defineEmits(['save']);
 
 // Props
 const props = defineProps({
@@ -149,46 +161,56 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  progressDots: {
+    type: Boolean,
+    default: false,
+  },
+  /*
+   * By default when editting an item, the formWizard will show the Next button.
+   * Different places in the app have different preferences here so this allows
+   * for overriding and forcing the save button to display.
+   */
+  showSaveButtonOnEdit: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-// Data
 const currentStep = ref(0);
-const highestStep = ref(0);
+const highestVisitedStep = ref(0);
+const isFinalStep = computed(() => currentStep.value === (props.tabs.length - 1));
+const forceShowSaveButton = computed(() => props.showSaveButtonOnEdit && props.edit);
 
-onMounted(async () => {
-  setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
-  if (props.edit) highestStep.value = props.tabs.length - 1;
-});
-
-function changeStep(amount) {
-  if (currentStep.value === props.tabs.length - 1 && amount > 0) {
-    emit('save');
-    return;
-  }
+/**
+ * Changes the current step by the given amount. Uses highestVisitedStep to
+ * prevent users skipping steps when not editing
+ *
+ * @param amount to change step by
+ */
+const changeStep = (amount) => {
   currentStep.value += amount;
-  if (highestStep.value < currentStep.value) highestStep.value = currentStep.value;
-}
 
-function activateTabHandler(newIndex, oldIndex, event) {
-  if (newIndex <= highestStep.value) {
-    emit('changeStep', newIndex);
-    return;
+  if (highestVisitedStep.value < currentStep.value) {
+    highestVisitedStep.value = currentStep.value;
   }
-  event.preventDefault();
-}
+};
+
+setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
+
 </script>
 
 <style lang="scss" scoped>
 :deep {
   .fr-wizard {
-    min-width: 220px;
+    min-width: 210px;
+
     .nav-item a {
+      padding: .75rem 1.25rem;
+    }
+
+    &.progress-dots-padding .nav-item a {
       padding: 0.75rem 1.25rem 0.75rem 3rem !important;
     }
-  }
-
-  .fr-wizard-content {
-    width: calc(100% - 220px);
   }
 
   .fr-step-bridge {
@@ -197,7 +219,7 @@ function activateTabHandler(newIndex, oldIndex, event) {
     top: 10px;
     height: 35px;
     width: 1px;
-    border-left: 2px solid rgb(231, 238, 244);
+    border-left: 2px solid $gray-200;
   }
 
   .fr-step-placeholder {
@@ -241,31 +263,45 @@ function activateTabHandler(newIndex, oldIndex, event) {
     border-left-color: $white !important;
   }
 
-  .cert-tab {
-    height: calc(100% - 97.5px)
+  .wizard-tab {
+    height: calc(100% - 97.5px); // 100% minus footer height
+  }
+
+  .wizard-tab.wizard-footer-hidden {
+    height: 100%;
   }
 
   .tab-content {
     max-height: 100%;
   }
 
-  .cert-tabs {
-    height: calc(100% - 72px)
+  .wizard-tabs {
+    height: calc(100% - 81px); // 100% minus nav height
   }
 
   .tabs.row {
     height: 100%;
   }
-}
 
-.completed::after {
-  content: "check_circle";
-  background-color: $white;
-  border: none;
-}
+  nav {
+    padding: 1rem 1.5rem;
+    height: 81px !important;
+    background-color: $white;
+    border-bottom: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,.13);
+  }
 
-.current::after {
-  background-color: $white;
-  border-color: $blue;
+  .card {
+    border: none;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  .nav-item.disabled {
+    cursor: auto;
+    pointer-events: none;
+  }
 }
 </style>

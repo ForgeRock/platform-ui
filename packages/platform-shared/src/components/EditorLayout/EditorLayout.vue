@@ -4,12 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="d-flex flex-column w-100 h-100">
-    <FrNavbar
-      hide-dropdown
-      hide-toggle
-      :show-help-link="false"
-      :show-docs-link="false"
-      :show-profile-link="false">
+    <FrNavbar>
       <template #center-content>
         <slot name="navbar-center-content" />
       </template>

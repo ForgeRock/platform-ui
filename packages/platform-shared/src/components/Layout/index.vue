@@ -29,6 +29,8 @@ of the MIT license. See the LICENSE file for details. -->
         @toggle-menu="toggleMenu"
         :menu-is-expanded="menuExpanded"
         :show-notifications="false"
+        show-toggle
+        show-dropdown
         :show-help-link="!isFraas && !isEnduser"
         :show-docs-link="!isFraas && !isEnduser"
         :show-profile-link="!isInternalUser"

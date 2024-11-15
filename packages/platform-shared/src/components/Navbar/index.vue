@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       toggleable
       :aria-label="$t('sideMenu.headerNavigation')">
       <button
-        v-show="!hideToggle"
+        v-show="showToggle"
         @click="toggleMenu"
         class="navbar-toggler expand-sidebar"
         type="button"
@@ -90,7 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ $t('navbar.docs') }}
               </a>
             </div>
-            <div v-if="!hideDropdown">
+            <div v-if="showDropdown">
               <FrDropdownMenu
                 :dropdown-items="tenantMenuItems"
                 :show-profile-link="showProfileLink"
@@ -244,16 +244,16 @@ export default {
       default: '#',
     },
     /**
-     * Hide the dropdown button and menu.
+     * Show the dropdown button and menu.
      */
-    hideDropdown: {
+    showDropdown: {
       type: Boolean,
       default: false,
     },
     /**
-     * Hide button that emits toggle event to toggle the sidebar. Only visible on mobile.
+     * Show button that emits toggle event to toggle the sidebar. Only visible on mobile.
      */
-    hideToggle: {
+    showToggle: {
       type: Boolean,
       default: false,
     },
@@ -269,14 +269,14 @@ export default {
      */
     showDocsLink: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     /**
      * Show link to Help & Support
      */
     showHelpLink: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     /**
      * Show notifications icon.
@@ -290,7 +290,7 @@ export default {
      */
     showProfileLink: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     /**
      * Whether to show the navbar as it should appear when locked for promotion

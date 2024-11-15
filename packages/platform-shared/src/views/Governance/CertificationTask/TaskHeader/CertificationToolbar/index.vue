@@ -4,12 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <FrNavbar
-      hide-dropdown
-      hide-toggle
-      :show-docs-link="false"
-      :show-help-link="false"
-      :show-profile-link="false">
+    <FrNavbar>
       <template #center-content>
         <h4>
           <span>{{ campaignDetails.name }}</span>

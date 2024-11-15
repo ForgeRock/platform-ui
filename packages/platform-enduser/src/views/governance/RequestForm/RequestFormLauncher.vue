@@ -4,12 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <FrNavbar
-      hide-dropdown
-      hide-toggle
-      :show-help-link="false"
-      :show-docs-link="false"
-      :show-profile-link="false">
+    <FrNavbar>
       <template #center-content>
         <h1 class="h5 mb-0 mr-2 d-inline-block">
           {{ $t('governance.requestForm.title') }}

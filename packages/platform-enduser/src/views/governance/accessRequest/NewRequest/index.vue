@@ -5,12 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="h-100 d-flex w-100">
     <div class="w-100 bg-white">
-      <FrNavbar
-        hide-dropdown
-        hide-toggle
-        :show-help-link="false"
-        :show-docs-link="false"
-        :show-profile-link="false">
+      <FrNavbar>
         <template #right-content>
           <BButton
             id="expandRequestCart"
