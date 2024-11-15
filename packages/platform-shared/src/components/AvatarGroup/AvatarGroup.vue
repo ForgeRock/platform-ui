@@ -22,8 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="avatar-item rounded-circle bg-lightblue color-blue font-weight-bold">
         <BImg
           v-if="!isItemRole(user.id)"
-          height="28"
-          width="28"
+          class="size-28"
           data-testid="avatar-item"
           :alt="$t('common.profilePicture')"
           :id="`user-${user.id}`"
@@ -32,9 +31,8 @@ of the MIT license. See the LICENSE file for details. -->
         <FrIcon
           v-else
           :id="`user-${user.id}`"
-          class="d-flex align-items-center justify-content-center"
-          name="assignment_ind"
-          style="width: 28px; height: 28px;" />
+          class="d-flex align-items-center justify-content-center size-28"
+          name="assignment_ind" />
       </div>
       <BTooltip
         :target="`user-${user.id}`"
@@ -50,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         id="`${id}-overflow-badge`"
         data-testid="overflow-badge"
-        class="avatar-item overflow-badge bg-white border border-primary text-primary rounded-circle d-flex align-items-center justify-content-center font-weight-bold">
+        class="avatar-item overflow-badge bg-white border border-primary text-primary rounded-circle d-flex align-items-center justify-content-center font-weight-bold size-28">
         +{{ remainingUsers }}
       </div>
       <BTooltip
@@ -139,8 +137,6 @@ function tooltipTitle(isRole, item) {
 }
 
 .overflow-badge {
-  height: 28px;
-  width: 28px;
   font-size: 13px;
 }
 </style>

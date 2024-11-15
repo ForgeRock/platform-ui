@@ -176,8 +176,7 @@ of the MIT license. See the LICENSE file for details. -->
                               :src="item.icon">
                             <div
                               v-else
-                              class="rounded-circle bg-lightblue color-blue d-flex align-items-center justify-content-center mb-3"
-                              style="width: 28px; height: 28px;">
+                              class="rounded-circle bg-lightblue color-blue d-flex align-items-center justify-content-center mb-3 size-28">
                               <FrIcon name="assignment_ind" />
                             </div>
                             <h2 class="h5 text-truncate mb-1">

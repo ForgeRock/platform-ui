@@ -109,9 +109,7 @@ of the MIT license. See the LICENSE file for details. -->
               data-testid="application-cell"
               no-body>
               <img
-                class="mr-4"
-                height="28"
-                width="28"
+                class="mr-4 size-28"
                 :alt="$t('common.logo')"
                 :aria-hidden="true"
                 :onerror="onImageError"

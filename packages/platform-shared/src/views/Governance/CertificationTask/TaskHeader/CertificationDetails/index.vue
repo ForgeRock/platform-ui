@@ -91,9 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BImg
           v-if="isCertifierAUser"
           data-testid="certifier-image-user"
-          class="mr-2 rounded-circle"
-          height="28"
-          width="28"
+          class="mr-2 rounded-circle size-28"
           :alt="$t('governance.certificationDetails.ownerNameLabel', { givenName: certifierName().givenName, sn: certifierName().sn })"
           :src="$route.params.certifier.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
           fluid />

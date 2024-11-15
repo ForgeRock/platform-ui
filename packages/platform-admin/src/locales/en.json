@@ -538,6 +538,7 @@
     "journeyDeleteSuccess": "\"{treeId}\" journey successfully deleted.",
     "journeyEditSuccess": "\"{treeId}\" journey successfully updated.",
     "defaultJourneyUpdated": "\"{treeId}\" successfully set as Default Journey.",
+    "nodeDetails": "Node Details",
     "noJourney": "You haven't created any journeys",
     "noJourneySearchResults": "There are no journeys matching the search term.",
     "noJourneySubtitle": "Configure journeys to allow users to sign in, register and perform self-service functions like reset their password or recover their username.",
@@ -1025,6 +1026,11 @@
     "title": "Server Clusters"
   },
   "trees": {
+    "addNodeModal": {
+      "customNode": "Custom Node",
+      "customNodeDescription": "Create a custom node for use across all journeys",
+      "modalTitleImport": "Select a node type to add to the tree."
+    },
     "treeSaveSuccessful": "All Changes Saved",
     "failedToGetNodeType": "Failed to gather node type details",
     "failedToGetNodeData": "Failed to gather node data",
@@ -1072,7 +1078,8 @@
       "description": "Localized questions from which the user can pick when defining security questions."
     },
     "nodeTypeList": {
-      "addNodes": "Nodes",
+      "addNodes": "Add Nodes",
+      "nodes": "Nodes",
       "failedNodeTypeList": "Failed to get available node types",
       "title": "Nodes",
       "toggleNodeList": "Toggle Node List",

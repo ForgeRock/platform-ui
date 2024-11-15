@@ -18,9 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="align-items-center"
             no-body>
             <img
-              class="mr-3 mw-100 h-auto"
-              height="28"
-              width="28"
+              class="mr-3 mw-100 h-auto size-28"
               :alt="item.application.name"
               :onerror="onImageError"
               :src="getLogo(item.application)">

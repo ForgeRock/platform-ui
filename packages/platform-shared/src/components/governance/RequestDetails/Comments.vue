@@ -66,9 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BMedia class="align-items-center mb-2">
               <template #aside>
                 <BImg
-                  class="rounded-circle"
-                  height="28"
-                  width="28"
+                  class="rounded-circle size-28"
                   alt=""
                   :aria-hidden="true"
                   :src="commentObj.user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />

@@ -5,896 +5,940 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
- $material-icons-font-path: '~material-icons/iconfont/';
+$material-icons-font-path: '~material-icons/iconfont/';
 
- @import '~material-icons/iconfont/material-icons.scss';
- @import '~bootstrap/scss/bootstrap';
- @import '~bootstrap-vue/dist/bootstrap-vue.css';
- @import './cardTabsVertical.scss';
- @import './dialog.scss';
- @import './tabsHorizontal.scss';
- @import './form.scss';
- @import './modal.scss';
- @import './analytics.scss';
- @import './font.scss';
- @import './prism/prism-editor.scss';
+@import '~material-icons/iconfont/material-icons.scss';
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-vue/dist/bootstrap-vue.css';
+@import './cardTabsVertical.scss';
+@import './dialog.scss';
+@import './tabsHorizontal.scss';
+@import './form.scss';
+@import './prism/prism-editor.scss';
+@import './modal.scss';
+@import './analytics.scss';
 
- :export {
-   /* stylelint-disable */
-   blue: $blue;
-   green: $green;
-   yellow: $yellow;
-   orchid: $orchid;
-   skyblue: $sky-blue;
-   gray400: $gray-400;
-   whitesmoke: $white-smoke;
-   brightgray: $bright-gray;
-   /* stylelint-enable */
- }
- 
- /* General application styles */
- html,
- body {
-   height: 100%;
-   font-family: $fr-typeface;
-   scroll-padding-top: $fr-navbar-height;
- }
- 
- ::-ms-reveal {
-   display: none;
- }
- 
- /* Missing material design size utilities (not included with outline versions for some reason) */
- .material-icons.md-14,
- .material-icons-outlined.md-14 {
-   font-size: 14px;
-   line-height: 14px;
- }
- 
- .material-icons.md-18,
- .material-icons-outlined.md-18 {
-   font-size: 18px;
-   line-height: 18px;
- }
- 
- .material-icons.md-24,
- .material-icons-outlined.md-24 {
-   font-size: 24px;
-   line-height: 24px;
- }
- 
- .material-icons.md-36,
- .material-icons-outlined.md-36 {
-   font-size: 36px;
-   line-height: 36px;
- }
- 
- .material-icons.md-48,
- .material-icons-outlined.md-48 {
-   font-size: 48px;
-   line-height: 48px;
- }
- 
- .material-icons.md-64,
- .material-icons-outlined.md-64 {
-   font-size: 64px;
-   line-height: 64px;
- }
- 
- .material-icons.md-72,
- .material-icons-outlined.md-72 {
-   font-size: 72px;
-   line-height: 72px;
- }
- 
- .material-icons.md-96,
- .material-icons-outlined.md-96 {
-   font-size: 96px;
-   line-height: 96px;
- }
- 
- .material-icons,
- .material-icons-outlined {
-   font-size: 1.125rem;
-   vertical-align: middle;
-   line-height: 1.244rem;
- }
- 
- .icon-flipped {
-   transform: scaleX(-1);
- }
- 
- .fr-sidebar-nav .dropdown-toggle,
- .navbar-nav .dropdown-toggle,
- .accordion .card-header {
-   &::after {
-     margin: 0;
-     position: absolute;
-     top: 50%;
-     transform: translateY(-50%);
-   }
- }
- 
- .fr-sidebar-nav .dropdown-toggle,
- .accordion .card-header {
-   &::after {
-     right: 0.6875rem;
-   }
- }
- 
- .dropdown-item.active {
-   position: relative;
- 
-   &::after {
-     border: none;
-     content: 'check';
-     position: absolute;
-     right: 10px;
-     top: 14px;
-     font-family: 'Material Icons Outlined', serif;
-     font-size: 1rem;
-     line-height: 1;
-     color: $green;
-     vertical-align: middle;
-   }
- }
- 
- .dropdown-toggle {
-   &::after {
-     border: none;
-     content: 'expand_more';
-     font-family: 'Material Icons Outlined', sans-serif;
-     font-size: 1rem;
-     transition: opacity 0.2s ease-out;
-     vertical-align: middle;
-   }
- 
-   &[aria-expanded='true']::after {
-     content: 'expand_less';
-   }
- }
- 
- 
- @supports (content: 'expand_more' / '') {
-   .dropdown-toggle {
-       &::after {
-         content: 'expand_more' / '';
-       }
- 
-       &[aria-expanded='true']::after {
-         content: 'expand_less' / '';
-       }
-     }
- }
- 
- .dropdown-menu {
-   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
- }
- 
- /**
-  * The class selectors below (.h1, .h2...) fail style lints selector-class-pattern
-  * rule so we are disabling style-lint here temporarily so we can still use
-  * these classes
-  */
- /* stylelint-disable */
- h1,
- .h1 {
-   font-weight: $h1-font-weight;
- }
- 
- h2,
- .h2 {
-   font-weight: $h2-font-weight;
- }
- 
- h3,
- .h3 {
-   font-weight: $h3-font-weight;
- }
- 
- h4,
- .h4 {
-   font-weight: $h4-font-weight;
- }
- 
- h5,
- .h5 {
-   font-weight: $h5-font-weight;
- }
- 
- h6,
- .h6 {
-   font-weight: $h6-font-weight;
-   letter-spacing: 1px;
- }
- /* stylelint-enable */
- 
- hr {
-   color: $gray-300;
- 
-   &.fr-accent {
-     width: 170px;
-     border-color: $green;
-     border-width: 3px;
-   }
- }
- 
- code {
-   background: $gray-100;
-   border-radius: 3px;
-   display: inline-block;
-   padding: 0px 5px;
- }
- 
- small {
-   font-size: $small-font-size;
- }
- 
- legend {
-   font-size: $font-size-base;
- }
- 
- .hover-underline {
-   &:hover {
-     text-decoration: underline;
- 
-     &.color-blue,
-     .color-blue {
-       color: $hover-blue;
-     }
-   }
- }
- 
- .hover-blue-border {
-   transition-property: border-color;
-   transition-duration: .25s;
- 
-   &:hover {
-     border-color: $blue !important;
-   }
- }
- 
- .color-blue {
-   color: $blue;
- }
- 
- .color-indigo {
-   color: $indigo;
- }
- 
- .color-purple {
-   color: $purple;
- }
- 
- .color-pink {
-   color: $pink;
- }
- 
- .color-red {
-   color: $red;
- }
- 
- .color-orange {
-   color: $orange;
- }
- 
- .color-yellow {
-   color: $yellow;
- }
- 
- .color-green {
-   color: $green;
- }
- 
- .color-teal {
-   color: $teal;
- }
- 
- .color-cyan {
-   color: $cyan;
- }
- 
- .bg-lightblue {
-   background-color: $light-blue;
- }
- 
- .bg-lightindigo {
-   background-color: $light-indigo;
- }
- 
- .bg-lightorange {
-   background-color: $light-orange;
- }
- 
- .bg-lightyellow {
-   background-color: $light-yellow;
- }
- 
- .bg-lightgreen {
-   background-color: $light-green;
- }
- 
- .bg-lightred {
-   background-color: $light-red;
- }
- 
- /* text */
- .text-yellow {
-   color: $yellow !important;
- }
+:export {
+  /* stylelint-disable */
+  blue: $blue;
+  green: $green;
+  yellow: $yellow;
+  orchid: $orchid;
+  skyblue: $sky-blue;
+  gray400: $gray-400;
+  whitesmoke: $white-smoke;
+  brightgray: $bright-gray;
+  /* stylelint-enable */
+}
 
- .text-blue {
-   color: $blue !important;
- }
+/* General application styles */
+html,
+body {
+  height: 100%;
+  font-family: $fr-typeface;
+}
 
- .text-darkblue {
-   color: $dark-blue !important;
- }
+::-ms-reveal {
+  display: none;
+}
 
- .text-darkgreen {
-   color: $dark-green !important;
- }
+/* Missing material design size utilities (not included with outline versions for some reason) */
+.material-icons.md-14,
+.material-icons-outlined.md-14 {
+  font-size: 14px;
+  line-height: 14px;
+}
 
- /* opacity */
- .opacity-20 {
-   opacity: 0.2 !important;
- }
- 
- .opacity-50 {
-   opacity: 0.5 !important;
- }
- 
- .opacity-70 {
-   opacity: 0.7 !important;
- }
- 
- .opacity-100 {
-   opacity: 1 !important;
- }
- 
- /* Page transition */
- .fade-enter-active,
- .fade-leave-active {
-   transition-property: opacity;
-   transition-duration: 0.25s;
- }
- 
- .fade-enter-active {
-   transition-delay: 0.25s;
- }
- 
- .fade-enter,
- .fade-leave-active {
-   opacity: 0;
- }
- 
- .badge-success,
- .badge-warning {
-   color: $white;
- }
- 
- /* General card styles */
- .card {
-   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
-   border: $fr-card-border;
- }
- 
- a.card {
-   color: $gray-600;
-   transition-duration: 0.25s;
- 
-   &:hover {
-     text-decoration: none;
-     border-color: $blue;
-   }
- }
- 
- .fr-alert {
-   padding-left: 10px;
- 
-   .material-icons {
-     width: 32px;
-   }
- }
- 
- .opacity-0 {
-   opacity: 0;
- }
- 
- .opacity-30 {
-   opacity: 0.3;
- }
- 
- .table {
-   thead th {
-     border: none;
-     font-weight: $fr-table-head-weight;
-     padding-top: 0.5rem;
-     padding-bottom: 0.5rem;
-   }
- 
-   td {
-     vertical-align: middle;
-   }
- 
-   tr.b-table-row-selected.table-transparent {
-     background-color: $light-blue !important;
-   }
- 
-   tr:focus {
-     outline: none;
-   }
- 
-   td.col-actions,
-   th.col-actions {
-     width: 120px;
-   }
- }
- 
- .w-100px {
-   width: 100px;
- }
- 
- .w-120px {
-   width: 120px;
- }
- 
- .w-150px {
-   width: 150px;
- }
- 
- @media (min-width: 992px) {
-   .table {
-     table-layout: fixed;
-   }
- }
- 
- .hover-gray:hover {
-   background-color: $gray-100;
- }
- 
- .pagination-material-buttons {
-   .page-item {
-     &.active .page-link {
-       background-color: $gray-100;
-     }
- 
-     button[role=menuitem]:focus-visible {
-       outline: none !important;
-     }
- 
-     &.hide-last-number:nth-last-of-type(3) .page-link {
-       pointer-events: none;
-     }
- 
-     &.show-ellipsis {
-       z-index: 3;
- 
-       .page-link::before {
-         content: '...';
-         position: absolute;
-         color: $gray-500;
-         margin-left: -2.95rem;
-         margin-top: -0.7rem;
-         pointer-events: none;
-         cursor: default;
-         background-color: white;
-         padding: 0.7rem 0.75rem;
-       }
-     }
- 
-     .page-link {
-       background-color: transparent;
- 
-       &:focus,
-       &:focus-visible {
-         box-shadow: none;
- 
-         &::after {
-           outline: 2px solid $black;
-         }
-       }
- 
-       &:hover,
-       &:hover::after {
-         background-color: $gray-100;
-       }
- 
-       &::after {
-         color: $gray-500;
-         position: absolute;
-         padding: 0.4rem 0.75rem;
-         top: 0;
-         font-size: 1.125rem;
-       }
-     }
- 
-     &:first-of-type .page-link,
-     &:nth-of-type(2) .page-link,
-     &:nth-last-of-type(2) .page-link,
-     &:last-of-type .page-link {
-       font-family: 'Material Icons Outlined', serif;
-       color: transparent;
-     }
- 
-     &:first-of-type .page-link::after {
-       content: 'first_page';
-       right: 1rem;
-     }
- 
-     &:nth-of-type(2) .page-link::after {
-       content: 'keyboard_arrow_left';
-       right: 0;
-     }
- 
-     &:nth-last-of-type(2) .page-link::after {
-       content: 'keyboard_arrow_right';
-       right: -0.75rem;
-     }
- 
-     &:last-of-type .page-link::after {
-       content: 'last_page';
-       right: -1.75rem;
-     }
- 
-     &[role=separator] {
-       display: none;
-     }
-   }
- }
- 
- .media {
-   .fr-realm-stamp {
-     font-size: 1rem;
-     height: 34px;
-     width: 34px;
-   }
- }
- 
- /* General toolbar styles */
- .btn-toolbar {
-   border-bottom: $fr-table-head-border solid $table-border-color;
-   padding: 12px;
- }
- 
- /* Circle and icon */
- .fr-resource-circle {
-   width: 75px;
-   height: 75px;
-   text-align: center;
- }
- 
- .fr-resource-circle-small {
-   width: 48px;
-   height: 48px;
-   border-radius: 50%;
- }
- 
- .fr-toggle-primary.custom-switch {
-   user-select: none;
-   padding-left: 2rem;
- 
-   .custom-control-input:focus-visible ~ .custom-control-label::before {
-     outline: 2px solid $black;
-   }
- 
-   .custom-control-label {
-     cursor: pointer;
-     color: white;
-     z-index: 0;
- 
-     &::before {
-       background-color: $gray-400;
-       border: none;
-       z-index: -1;
-     }
- 
-     &::after {
-       background-color: $white;
-     }
-   }
- 
-   .custom-control-input:disabled {
-     ~ .custom-control-label {
-       cursor: initial;
-     }
-   }
- 
-   .custom-control-input:checked {
-     &:disabled {
-       ~ .custom-control-label {
-         cursor: initial;
- 
-         &::before {
-           background-color: #79c3f6;
-         }
-       }
-     }
- 
-     ~ .custom-control-label {
-       &::before {
-         background-color: $blue;
-       }
-     }
-   }
- 
-   &.b-custom-control-sm {
-     .custom-control-label {
-       line-height: 1.5rem;
-       font-size: 1rem;
-       padding-left: 0.5rem;
-       font-weight: 400;
-     }
-   }
- 
-   &.b-custom-control-lg {
-     .custom-control-label {
-       font-size: 0.625rem;
-       font-weight: 600;
-       line-height: 3;
-       padding-top: 2rem;
-       padding-left: 2rem;
- 
-       &::before {
-         left: -2rem;
-         height: 2rem;
-         width: 3.5rem;
-         border-radius: 1rem;
-       }
- 
-       &::after {
-         top: 0.5rem;
-         left: calc(-1.9rem + 2px);
-         width: calc(1.875rem - 4px);
-         height: calc(1.875rem - 4px);
-         border-radius: 1rem;
-       }
-     }
- 
-     .custom-control-input:checked {
-       ~ .custom-control-label {
-         &::after {
-           transform: translateX(1.45rem);
-         }
-       }
-     }
- 
-     &.inner-text {
-       .custom-control-input:checked {
-         ~ .custom-control-label {
-           left: -1.45rem;
- 
-           &::before {
-             left: -0.55rem;
-           }
- 
-           &::after {
-             transform: translateX(2.95rem);
-           }
-         }
-       }
-     }
-   }
- }
- 
- .custom-control-input:focus ~ .custom-control-label::before {
-   box-shadow: none;
- }
- 
- .custom-control-input:focus-visible ~ .custom-control-label::before {
-   box-shadow: 0 0 0 0.0625rem $black;
-   border-color: $black;
- }
- 
- /* Letters & Colors */
- .letter-a,
- .letter-g,
- .letter-m,
- .letter-s,
- .letter-y {
-   background-color: $indigo;
- }
- 
- .letter-b,
- .letter-h,
- .letter-n,
- .letter-t,
- .letter-z {
-   background-color: $yellow;
- }
- 
- .letter-c,
- .letter-i,
- .letter-o,
- .letter-u {
-   background-color: $pink;
- }
- 
- .letter-d,
- .letter-j,
- .letter-p,
- .letter-v {
-   background-color: $orange;
- }
- 
- .letter-e,
- .letter-k,
- .letter-q,
- .letter-w {
-   background-color: $green;
- }
- 
- .letter-f,
- .letter-l,
- .letter-r,
- .letter-x {
-   background-color: $cyan;
- }
- 
- .ping-logo-square-footer {
-   background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-square-footer.svg');
-   background-size: contain;
-   background-repeat: no-repeat;
-   background-position: center;
-   height: 100%;
-   width: 100%;
- }
- 
- .ping-logo-horizontal {
-   background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-horizontal.svg');
-   background-size: contain;
-   background-repeat: no-repeat;
-   background-position: center;
-   height: 100%;
-   width: 100%;
- }
- 
- .ping-logo-square {
-   background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-square.svg');
-   background-size: contain;
-   background-repeat: no-repeat;
-   background-position: center;
-   height: 100%;
-   width: 100%;
- }
- 
- .fr-realm-stamp {
-   align-items: center;
-   border-radius: 50%;
-   justify-content: center;
-   display: flex;
- }
- 
- .vh-60 {
-   height: 60vh !important;
- }
- 
- .vh-70 {
-   height: 70vh !important;
- }
- 
- .vh-80 {
-   height: 80vh !important;
- }
- 
- .vh-90 {
-   height: 90vh !important;
- }
- 
- .vh-100 {
-   height: 100vh !important;
- }
- 
- /* Keyboard navigation highlighting */
- button:focus-visible,
- a:focus-visible {
-   outline-offset: -2px;
-   outline: 2px solid $primary !important;
-   background: transparent;
- }
- 
- tr:focus-visible {
-   outline-offset: -2px;
-   outline: 2px solid $black !important;
-   background: transparent;
- }
- 
- button:not(.fr-sidebar-menuitems button):focus-visible {
-   outline-offset: 2px;
- }
- 
- /* Keyboard navigation highlighting custom fix for Safari 10+ */
- @media not all and (min-resolution: 0.001dpcm) {
-   @supports (-webkit-appearance:none) {
-     button:focus,
-     a:focus {
-       outline-offset: -2px;
-       outline: 2px solid $primary !important;
-       background: transparent;
-     }
- 
-     tr:focus-visible {
-       outline-offset: -2px;
-       outline: 2px solid $black !important;
-       background: transparent;
-     }
- 
-     button:focus {
-       outline-offset: 2px;
-     }
-   }
- }
- 
- .border-darkened {
-   border-color: #d2dfea !important;
- }
- 
- dd {
-   color: $gray-900;
- }
- 
- .btn-link a,
- .nav-link a {
-   font-weight: 400;
- }
- 
- /* stylelint-disable */
- .max-lines {
-   box-orient: vertical;
-   -webkit-box-orient: vertical;
-   overflow: hidden;
-   text-overflow: ellipsis;
-   display: -webkit-box !important;
+.material-icons.md-18,
+.material-icons-outlined.md-18 {
+  font-size: 18px;
+  line-height: 18px;
+}
 
-   &.max-lines-1 {
-    line-clamp: 1;
-    -webkit-line-clamp: 1;
+.material-icons.md-24,
+.material-icons-outlined.md-24 {
+  font-size: 24px;
+  line-height: 24px;
+}
+
+.material-icons.md-36,
+.material-icons-outlined.md-36 {
+  font-size: 36px;
+  line-height: 36px;
+}
+
+.material-icons.md-48,
+.material-icons-outlined.md-48 {
+  font-size: 48px;
+  line-height: 48px;
+}
+
+.material-icons.md-64,
+.material-icons-outlined.md-64 {
+  font-size: 64px;
+  line-height: 64px;
+}
+
+.material-icons.md-72,
+.material-icons-outlined.md-72 {
+  font-size: 72px;
+  line-height: 72px;
+}
+
+.material-icons.md-96,
+.material-icons-outlined.md-96 {
+  font-size: 96px;
+  line-height: 96px;
+}
+
+.material-icons,
+.material-icons-outlined {
+  font-size: 1.125rem;
+  vertical-align: middle;
+  line-height: 1.244rem;
+}
+
+.icon-flipped {
+  transform: scaleX(-1);
+}
+
+.fr-sidebar-nav .dropdown-toggle,
+.navbar-nav .dropdown-toggle,
+.accordion .card-header {
+  &::after {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
- 
-   &.max-lines-3 {
-     line-clamp: 3;
-     -webkit-line-clamp: 3;
-   }
+}
 
-   &.max-lines-5 {
-    line-clamp: 5;
-    -webkit-line-clamp: 5;
-   }
+.fr-sidebar-nav .dropdown-toggle,
+.accordion .card-header {
+  &::after {
+    right: 0.6875rem;
+  }
+}
 
-   &.max-lines-10 {
-    line-clamp: 10;
-    -webkit-line-clamp: 10;
-   }
+.dropdown-item.active {
+  position: relative;
 
-   &.max-lines-15 {
-    line-clamp: 15;
-    -webkit-line-clamp: 15;
-   }
- }
- /* stylelint-enable */
+  &::after {
+    border: none;
+    content: 'check';
+    position: absolute;
+    right: 10px;
+    top: 14px;
+    font-family: 'Material Icons Outlined', serif;
+    font-size: 1rem;
+    line-height: 1;
+    color: $green;
+    vertical-align: middle;
+  }
+}
+
+.dropdown-toggle {
+  &::after {
+    border: none;
+    content: 'expand_more';
+    font-family: 'Material Icons Outlined', sans-serif;
+    font-size: 1rem;
+    transition: opacity 0.2s ease-out;
+    vertical-align: middle;
+  }
+
+  &[aria-expanded='true']::after {
+    content: 'expand_less';
+  }
+}
+
+
+@supports (content: 'expand_more' / '') {
+  .dropdown-toggle {
+      &::after {
+        content: 'expand_more' / '';
+      }
+
+      &[aria-expanded='true']::after {
+        content: 'expand_less' / '';
+      }
+    }
+}
+
+.dropdown-menu {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+}
+
+/**
+ * The class selectors below (.h1, .h2...) fail style lints selector-class-pattern
+ * rule so we are disabling style-lint here temporarily so we can still use
+ * these classes
+ */
+/* stylelint-disable */
+h1,
+.h1 {
+  font-weight: $h1-font-weight;
+}
+
+h2,
+.h2 {
+  font-weight: $h2-font-weight;
+}
+
+h3,
+.h3 {
+  font-weight: $h3-font-weight;
+}
+
+h4,
+.h4 {
+  font-weight: $h4-font-weight;
+}
+
+h5,
+.h5 {
+  font-weight: $h5-font-weight;
+}
+
+h6,
+.h6 {
+  font-weight: $h6-font-weight;
+  letter-spacing: 1px;
+}
+/* stylelint-enable */
+
+hr {
+  color: $gray-300;
+
+  &.fr-accent {
+    width: 170px;
+    border-color: $green;
+    border-width: 3px;
+  }
+}
+
+code {
+  background: $gray-100;
+  border-radius: 3px;
+  display: inline-block;
+  padding: 0px 5px;
+}
+
+small {
+  font-size: $small-font-size;
+}
+
+legend {
+  font-size: $font-size-base;
+}
+
+.hover-underline {
+  &:hover {
+    text-decoration: underline;
+
+    &.color-blue,
+    .color-blue {
+      color: $hover-blue;
+    }
+  }
+}
+
+.hover-blue-border {
+  transition-property: border-color;
+  transition-duration: .25s;
+
+  &:hover {
+    border-color: $blue !important;
+  }
+}
+
+.color-blue {
+  color: $blue;
+}
+
+.color-darkblue {
+  color: $dark-blue;
+}
+
+.color-indigo {
+  color: $indigo;
+}
+
+.color-darkindigo {
+  color: $dark-indigo;
+}
+
+.color-purple {
+  color: $purple;
+}
+
+.color-darkpurple {
+  color: $dark-purple;
+}
+
+.color-pink {
+  color: $pink;
+}
+
+.color-darkpink {
+  color: $dark-pink;
+}
+
+.color-red {
+  color: $red;
+}
+
+.color-darkred {
+  color: $dark-red;
+}
+
+.color-orange {
+  color: $orange;
+}
+
+.color-darkorange {
+  color: $dark-orange;
+}
+
+.color-yellow {
+  color: $yellow;
+}
+
+.color-darkyellow {
+  color: $dark-yellow;
+}
+
+.color-green {
+  color: $green;
+}
+
+.color-darkgreen {
+  color: $dark-green;
+}
+
+.color-teal {
+  color: $teal;
+}
+
+.color-darkteal {
+  color: $dark-teal;
+}
+
+.color-cyan {
+  color: $cyan;
+}
+
+.bg-lightblue {
+  background-color: $light-blue;
+}
+
+.bg-lightindigo {
+  background-color: $light-indigo;
+}
+
+.bg-lightorange {
+  background-color: $light-orange;
+}
+
+.bg-lightpink {
+  background-color: $light-pink;
+}
+
+.bg-lightpurple {
+  background-color: $light-purple;
+}
+
+.bg-lightyellow {
+  background-color: $light-yellow;
+}
+
+.bg-lightgreen {
+  background-color: $light-green;
+}
+
+.bg-lightred {
+  background-color: $light-red;
+}
+
+.bg-lightteal {
+  background-color: $light-teal;
+}
+
+/* text */
+.text-yellow {
+  color: $yellow !important;
+}
+
+.text-blue {
+  color: $blue !important;
+}
+
+/* opacity */
+.opacity-20 {
+  opacity: 0.2 !important;
+}
+
+.opacity-50 {
+  opacity: 0.5 !important;
+}
+
+.opacity-70 {
+  opacity: 0.7 !important;
+}
+
+.opacity-100 {
+  opacity: 1 !important;
+}
+
+/* Page transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition-property: opacity;
+  transition-duration: 0.25s;
+}
+
+.fade-enter-active {
+  transition-delay: 0.25s;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+
+.badge-success,
+.badge-warning {
+  color: $white;
+}
+
+/* General card styles */
+.card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+  border: $fr-card-border;
+}
+
+a.card {
+  color: $gray-600;
+  transition-duration: 0.25s;
+
+  &:hover {
+    text-decoration: none;
+    border-color: $blue;
+  }
+}
+
+.fr-alert {
+  padding-left: 10px;
+
+  .material-icons {
+    width: 32px;
+  }
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.opacity-30 {
+  opacity: 0.3;
+}
+
+.table {
+  thead th {
+    border: none;
+    font-weight: $fr-table-head-weight;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  td {
+    vertical-align: middle;
+  }
+
+  tr.b-table-row-selected.table-transparent {
+    background-color: $light-blue !important;
+  }
+
+  tr:focus {
+    outline: none;
+  }
+
+  td.col-actions,
+  th.col-actions {
+    width: 120px;
+  }
+}
+
+.w-100px {
+  width: 100px;
+}
+
+.w-120px {
+  width: 120px;
+}
+
+.w-150px {
+  width: 150px;
+}
+
+@media (min-width: 992px) {
+  .table {
+    table-layout: fixed;
+  }
+}
+
+.hover-gray:hover {
+  background-color: $gray-100;
+}
+
+.pagination-material-buttons {
+  .page-item {
+    &.active .page-link {
+      background-color: $gray-100;
+    }
+
+    button[role=menuitem]:focus-visible {
+      outline: none !important;
+    }
+
+    &.hide-last-number:nth-last-of-type(3) .page-link {
+      pointer-events: none;
+    }
+
+    &.show-ellipsis {
+      z-index: 3;
+
+      .page-link::before {
+        content: '...';
+        position: absolute;
+        color: $gray-500;
+        margin-left: -2.95rem;
+        margin-top: -0.7rem;
+        pointer-events: none;
+        cursor: default;
+        background-color: white;
+        padding: 0.7rem 0.75rem;
+      }
+    }
+
+    .page-link {
+      background-color: transparent;
+
+      &:focus,
+      &:focus-visible {
+        box-shadow: none;
+
+        &::after {
+          outline: 2px solid $black;
+        }
+      }
+
+      &:hover,
+      &:hover::after {
+        background-color: $gray-100;
+      }
+
+      &::after {
+        color: $gray-500;
+        position: absolute;
+        padding: 0.4rem 0.75rem;
+        top: 0;
+        font-size: 1.125rem;
+      }
+    }
+
+    &:first-of-type .page-link,
+    &:nth-of-type(2) .page-link,
+    &:nth-last-of-type(2) .page-link,
+    &:last-of-type .page-link {
+      font-family: 'Material Icons Outlined', serif;
+      color: transparent;
+    }
+
+    &:first-of-type .page-link::after {
+      content: 'first_page';
+      right: 1rem;
+    }
+
+    &:nth-of-type(2) .page-link::after {
+      content: 'keyboard_arrow_left';
+      right: 0;
+    }
+
+    &:nth-last-of-type(2) .page-link::after {
+      content: 'keyboard_arrow_right';
+      right: -0.75rem;
+    }
+
+    &:last-of-type .page-link::after {
+      content: 'last_page';
+      right: -1.75rem;
+    }
+
+    &[role=separator] {
+      display: none;
+    }
+  }
+}
+
+.media {
+  .fr-realm-stamp {
+    font-size: 1rem;
+    height: 34px;
+    width: 34px;
+  }
+}
+
+/* General toolbar styles */
+.btn-toolbar {
+  border-bottom: $fr-table-head-border solid $table-border-color;
+  padding: 12px;
+}
+
+/* Circle and icon */
+.fr-resource-circle {
+  width: 75px;
+  height: 75px;
+  text-align: center;
+}
+
+.fr-resource-circle-small {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.fr-toggle-primary.custom-switch {
+  user-select: none;
+  padding-left: 2rem;
+
+  .custom-control-input:focus-visible ~ .custom-control-label::before {
+    outline: 2px solid $black;
+  }
+
+  .custom-control-label {
+    cursor: pointer;
+    color: white;
+    z-index: 0;
+
+    &::before {
+      background-color: $gray-400;
+      border: none;
+      z-index: -1;
+    }
+
+    &::after {
+      background-color: $white;
+    }
+  }
+
+  .custom-control-input:disabled {
+    ~ .custom-control-label {
+      cursor: initial;
+    }
+  }
+
+  .custom-control-input:checked {
+    &:disabled {
+      ~ .custom-control-label {
+        cursor: initial;
+
+        &::before {
+          background-color: #79c3f6;
+        }
+      }
+    }
+
+    ~ .custom-control-label {
+      &::before {
+        background-color: $blue;
+      }
+    }
+  }
+
+  &.b-custom-control-sm {
+    .custom-control-label {
+      line-height: 1.5rem;
+      font-size: 1rem;
+      padding-left: 0.5rem;
+      font-weight: 400;
+    }
+  }
+
+  &.b-custom-control-lg {
+    .custom-control-label {
+      font-size: 0.625rem;
+      font-weight: 600;
+      line-height: 3;
+      padding-top: 2rem;
+      padding-left: 2rem;
+
+      &::before {
+        left: -2rem;
+        height: 2rem;
+        width: 3.5rem;
+        border-radius: 1rem;
+      }
+
+      &::after {
+        top: 0.5rem;
+        left: calc(-1.9rem + 2px);
+        width: calc(1.875rem - 4px);
+        height: calc(1.875rem - 4px);
+        border-radius: 1rem;
+      }
+    }
+
+    .custom-control-input:checked {
+      ~ .custom-control-label {
+        &::after {
+          transform: translateX(1.45rem);
+        }
+      }
+    }
+
+    &.inner-text {
+      .custom-control-input:checked {
+        ~ .custom-control-label {
+          left: -1.45rem;
+
+          &::before {
+            left: -0.55rem;
+          }
+
+          &::after {
+            transform: translateX(2.95rem);
+          }
+        }
+      }
+    }
+  }
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: none;
+}
+
+.custom-control-input:focus-visible ~ .custom-control-label::before {
+  box-shadow: 0 0 0 0.0625rem $black;
+  border-color: $black;
+}
+
+/* Letters & Colors */
+.letter-a,
+.letter-g,
+.letter-m,
+.letter-s,
+.letter-y {
+  background-color: $indigo;
+}
+
+.letter-b,
+.letter-h,
+.letter-n,
+.letter-t,
+.letter-z {
+  background-color: $yellow;
+}
+
+.letter-c,
+.letter-i,
+.letter-o,
+.letter-u {
+  background-color: $pink;
+}
+
+.letter-d,
+.letter-j,
+.letter-p,
+.letter-v {
+  background-color: $orange;
+}
+
+.letter-e,
+.letter-k,
+.letter-q,
+.letter-w {
+  background-color: $green;
+}
+
+.letter-f,
+.letter-l,
+.letter-r,
+.letter-x {
+  background-color: $cyan;
+}
+
+.ping-logo-square-footer {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-square-footer.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+}
+
+.ping-logo-horizontal {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-horizontal.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+}
+
+.ping-logo-square {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-square.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+}
+
+.fr-realm-stamp {
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  display: flex;
+}
+
+.vh-60 {
+  height: 60vh !important;
+}
+
+.vh-70 {
+  height: 70vh !important;
+}
+
+.vh-80 {
+  height: 80vh !important;
+}
+
+.vh-90 {
+  height: 90vh !important;
+}
+
+.vh-100 {
+  height: 100vh !important;
+}
+
+/* Icon sizing */
+.size-28 {
+  width: 28px;
+  height: 28px;
+}
+
+/* Keyboard navigation highlighting */
+button:focus-visible,
+a:focus-visible {
+  outline-offset: -2px;
+  outline: 2px solid $primary !important;
+  background: transparent;
+}
  
- /* bootstrap 5.0 classes (we can remove these once we migrate to 5.0 */
- .lh-sm {
-   line-height: 1.25rem !important;
+tr:focus-visible {
+  outline-offset: -2px;
+  outline: 2px solid $black !important;
+  background: transparent;
+}
+
+button:not(.fr-sidebar-menuitems button):focus-visible {
+  outline-offset: 2px;
+}
+
+/* Keyboard navigation highlighting custom fix for Safari 10+ */
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance:none) {
+    button:focus,
+    a:focus {
+      outline-offset: -2px;
+      outline: 2px solid $primary !important;
+      background: transparent;
+    }
+
+    tr:focus-visible {
+      outline-offset: -2px;
+      outline: 2px solid $black !important;
+      background: transparent;
+    }
+
+    button:focus {
+      outline-offset: 2px;
+    }
+  }
+}
+
+.border-darkened {
+  border-color: #d2dfea !important;
+}
+
+dd {
+  color: $gray-900;
+}
+
+.btn-link a,
+.nav-link a {
+  font-weight: 400;
+}
+
+/* stylelint-disable */
+.max-lines {
+  box-orient: vertical;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box !important;
+
+  &.max-lines-1 {
+   line-clamp: 1;
+   -webkit-line-clamp: 1;
  }
- 
- .fr-search-focus {
-   box-shadow: 0 0 0 1pt $blue;
-   outline: 0;
-   border-radius: 5px;
- }
- 
- /* unstyled button */
- .btn-unstyled {
-   background: none;
-   border: none;
-   padding: 0;
-   margin: 0;
-   font: inherit;
-   color: inherit;
-   text-align: inherit;
- }
- 
+
+  &.max-lines-3 {
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+  }
+
+  &.max-lines-5 {
+   line-clamp: 5;
+   -webkit-line-clamp: 5;
+  }
+
+  &.max-lines-10 {
+   line-clamp: 10;
+   -webkit-line-clamp: 10;
+  }
+
+  &.max-lines-15 {
+   line-clamp: 15;
+   -webkit-line-clamp: 15;
+  }
+}
+/* stylelint-enable */
+
+/* bootstrap 5.0 classes (we can remove these once we migrate to 5.0 */
+.lh-sm {
+  line-height: 1.25rem !important;
+}
+
+.fr-search-focus {
+  box-shadow: 0 0 0 1pt $blue;
+  outline: 0;
+  border-radius: 5px;
+}
+
+/* unstyled button */
+.btn-unstyled {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+}
+
 .rotate-90 {
   transform: rotate(90deg);
 }

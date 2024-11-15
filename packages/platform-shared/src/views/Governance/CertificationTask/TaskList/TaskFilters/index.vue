@@ -156,9 +156,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="align-items-center"
                   no-body>
                   <img
-                    class="mr-4"
-                    width="28"
-                    height="28"
+                    class="mr-4 size-28"
                     :onerror="onImageError"
                     :src="getLogo(option)"
                     :alt="$t('common.logo')">
@@ -181,9 +179,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="align-items-center"
                   no-body>
                   <img
-                    class="mr-4"
-                    width="28"
-                    height="28"
+                    class="mr-4 size-28"
                     :onerror="onImageError"
                     :src="getLogo(option)"
                     :alt="$t('common.logo')">

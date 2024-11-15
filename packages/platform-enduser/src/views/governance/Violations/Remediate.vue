@@ -60,9 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <BMediaAside>
                       <BImg
                         alt=""
-                        class="rounded-circle"
-                        height="28"
-                        width="28"
+                        class="rounded-circle size-28"
                         :aria-hidden="true"
                         :src="violation?.user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
                     </BMediaAside>

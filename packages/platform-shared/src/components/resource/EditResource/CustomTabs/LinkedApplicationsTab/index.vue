@@ -44,9 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
             #cell(name)="data">
             <BMedia no-body>
               <BImg
-                class="mt-1 mr-4"
-                width="28"
-                height="28"
+                class="mt-1 mr-4 size-28"
                 :src="require(`@forgerock/platform-shared/src/assets/images/connectors/${data.item.image}`)"
                 :alt="$t('common.logo')"
                 fluid />
