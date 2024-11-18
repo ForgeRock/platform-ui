@@ -1868,6 +1868,10 @@
       "title": " Forward Access Review"
     },
     "organizationAdmin": "Organization Admin",
+    "outcomes": {
+      "provisioned": "Provisioned",
+      "notProvisioned": "Not Provisioned"
+    },
     "request": {
       "expiryDate": "Expiry Date",
       "justification": "Justification",
@@ -1896,7 +1900,8 @@
         "requestComplete": "Request Complete",
         "requestId": "Request ID",
         "requestSubmitted": "Request Submitted",
-        "status": "Status"
+        "status": "Status",
+        "outcome": "Outcome"
       },
       "titles": {
         "addComment": "Add a Comment",

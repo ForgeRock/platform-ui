@@ -44,6 +44,7 @@ describe('DetailsTab', () => {
         rawData: {
           decision: {
             decision: 'approved',
+            outcome: 'provisioned',
           },
           request: {
             common: {
@@ -72,6 +73,12 @@ describe('DetailsTab', () => {
     expect(wrapper.vm.details.status.name).toContain('Approved');
   });
 
+  it('initializes with the correct default data structure based on props when outcome is presented', async () => {
+    const wrapper = setup();
+    await wrapper.vm.$nextTick();
+    expect(wrapper.vm.details.outcome.name).toContain('Provisioned');
+  });
+
   it('handles when the request is submitted by the system', async () => {
     const wrapper = setup({
       item: {
@@ -80,12 +87,16 @@ describe('DetailsTab', () => {
             id: 'SYSTEM',
           },
         },
-        rawData: {},
+        rawData: {
+          decision: {
+            outcome: 'provisioned',
+          },
+        },
       },
     });
     await flushPromises();
     const requestedBy = wrapper.find('.row');
-    expect(requestedBy.text()).toBe('StatusPendingPriority--');
+    expect(requestedBy.text()).toBe('StatusPendingRequest ID');
   });
 
   it('shows external request id if present', async () => {

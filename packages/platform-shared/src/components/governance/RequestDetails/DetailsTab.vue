@@ -21,6 +21,26 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
           <BCol lg="6">
             <small class="d-block mb-2">
+              {{ $t(`governance.requestModal.detailsTab.requestId`) }}
+            </small>
+            {{ details.requestId }}
+          </BCol>
+        </BRow>
+        <BRow class="mb-4">
+          <BCol
+            lg="6">
+            <small class="d-block mb-2">
+              {{ $t(`governance.requestModal.detailsTab.outcome`) }}
+            </small>
+            <BBadge
+              v-if="details.outcome"
+              class="px-4 text-dark"
+              :variant="details.outcome.variant">
+              {{ details.outcome.name }}
+            </BBadge>
+          </BCol>
+          <BCol lg="6">
+            <small class="d-block mb-2">
               {{ $t(`governance.requestModal.detailsTab.priority`) }}
             </small>
             <template v-if="details.priority">
@@ -36,12 +56,6 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
         </BRow>
         <BRow class="mb-4">
-          <BCol lg="6">
-            <small class="d-block mb-2">
-              {{ $t(`governance.requestModal.detailsTab.requestId`) }}
-            </small>
-            {{ details.requestId }}
-          </BCol>
           <BCol lg="6">
             <small class="d-block mb-2">
               {{ $t(`governance.requestModal.detailsTab.externalRequestId`) }}
@@ -159,6 +173,43 @@ function setDecisionValue(type) {
   }
 }
 
+function setOutcomeValue(type) {
+  switch (type) {
+    case 'provisioned':
+      return {
+        name: i18n.global.t('governance.outcomes.provisioned'),
+        variant: 'success',
+      };
+    case 'not provisioned':
+      return {
+        name: i18n.global.t('governance.outcomes.notProvisioned'),
+        variant: 'danger',
+      };
+    case 'denied':
+      return {
+        name: i18n.global.t('governance.decisions.denied'),
+        variant: 'danger',
+      };
+    case 'pending':
+      return {
+        name: i18n.global.t('common.pending'),
+        variant: 'warning',
+      };
+    case 'cancelled':
+      return {
+        name: i18n.global.t('governance.decisions.canceled'),
+        variant: 'danger',
+      };
+    case 'fulfilled':
+      return {
+        name: i18n.global.t('governance.decisions.fulfilled'),
+        variant: 'success',
+      };
+    default:
+      return null;
+  }
+}
+
 /**
  * Returns request status
  * @param {Object} decision Request decision object
@@ -181,6 +232,7 @@ function getDetails(item) {
     status: setDecisionValue(getStatus(item.rawData.decision)),
     priority: item.details.priority || null,
     justification: item.rawData.request?.common?.justification,
+    outcome: setOutcomeValue(item.rawData.decision?.outcome),
   };
 
   return newDetails;
