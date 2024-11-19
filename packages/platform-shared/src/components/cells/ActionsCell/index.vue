@@ -18,10 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrIcon
           icon-class="text-dark md-24"
           name="more_horiz" />
-        <!-- IAM-6870 NOTE: please add an appropriate screen reader label/text for the button content if there is no accompanying text -->
-        <p
-          v-if="enableSrOnlyLabel"
-          class="sr-only">
+        <p class="sr-only">
           {{ $t('common.moreActions') }}
         </p>
       </template>
@@ -159,10 +156,6 @@ export default {
      */
     toggleIsActive: {
       default: true,
-      type: Boolean,
-    },
-    enableSrOnlyLabel: {
-      default: false,
       type: Boolean,
     },
     /**

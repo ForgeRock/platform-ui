@@ -67,7 +67,7 @@ export function setThemeAsDefault(themeName) {
   searchForThemes(themeName);
 
   // Find correct theme in the Themes table
-  cy.findByRole('row', { name: `${themeName}` }).should('be.visible').within(() => {
+  cy.findByRole('cell', { name: themeName }).should('be.visible').closest('tr').within(() => {
     // Click on the correct Theme row burger menu
     cy.findByRole('button').click();
     // Non-default theme should have 4 options, check all of them are correctly displayed
@@ -81,11 +81,12 @@ export function setThemeAsDefault(themeName) {
   // Check that Save notification is correctly displayed
   expectAndCloseNotification('Theme successfully saved');
 
-  // Check that the Theme is now the Realm Default
-  cy.findByRole('row', { name: `${themeName} Realm Default` }).should('exist');
+  cy.findByRole('cell', { name: themeName }).should('exist');
 
   // Find correct theme in the Themes table
-  cy.findByRole('row', { name: `${themeName} Realm Default` }).within(() => {
+  cy.findByRole('cell', { name: themeName }).closest('tr').within(() => {
+    // Check that the Theme is now the Realm Default
+    cy.findByRole('cell', { name: 'Realm Default' }).should('exist');
     // Click on the correct Theme row burger menu
     cy.findByRole('button').click();
     // Default theme should have 2 options, check all of them are correctly displayed

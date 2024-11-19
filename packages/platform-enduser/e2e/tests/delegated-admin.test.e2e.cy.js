@@ -227,7 +227,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
         // Ensure that only action available is edit, and no New button exists
         cy.findByRole('searchbox', { name: 'Search' }).type(`${internalRoleName}{enter}`);
-        cy.findByRole('row', { name: `${internalRoleName}` }).within(() => {
+        cy.findByRole('cell', { name: internalRoleName }).should('exist').closest('tr').within(() => {
           cy.findByRole('button').click();
           cy.findAllByRole('menuitem').should('have.length', 1);
           cy.findByRole('menuitem', { name: 'Edit' });
@@ -237,7 +237,7 @@ filterTests(['@forgeops', '@cloud'], () => {
         // navigate to user list to ensure we have add, delete, and edit access
         openDelegatedAdminManagedPage('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user');
         cy.findByRole('searchbox', { name: 'Search' }).type(`${userName}{enter}`);
-        cy.findByRole('row', { name: `${userName} First Last forgerockdemo@example.com` }).within(() => {
+        cy.findByRole('cell', { name: userName }).should('exist').closest('tr').within(() => {
           cy.findByRole('button').click();
           cy.findAllByRole('menuitem').should('have.length', 2);
           cy.findByRole('menuitem', { name: 'Edit' });
@@ -267,7 +267,7 @@ filterTests(['@forgeops', '@cloud'], () => {
           openDelegatedAdminManagedPage('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user');
           cy.findByRole('searchbox', { name: 'Search' }).type('Last{enter}');
           cy.findAllByRole('row').should('have.length', 2);
-          cy.findByRole('row', { name: `${userName}2 First ${testUserLastName} forgerockdemo@example.com` });
+          cy.findByRole('cell', { name: `${userName}2` });
 
           // remove the test user and role
           deleteIDMUser(testUserId);
