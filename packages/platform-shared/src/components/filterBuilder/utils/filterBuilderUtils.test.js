@@ -94,6 +94,14 @@ describe('iga tests', () => {
           },
         ],
       },
+      {
+        equals: {
+          left: 'user.after.num',
+          right: {
+            literal: 10,
+          },
+        },
+      },
     ],
   };
   const componentFilter = {
@@ -132,6 +140,13 @@ describe('iga tests', () => {
         ],
         uniqueIndex: 4,
       },
+      {
+        operator: 'equals',
+        field: 'num',
+        value: 10,
+        temporalValue: 'after',
+        uniqueIndex: 6,
+      },
     ],
     uniqueIndex: 0,
   };
@@ -148,6 +163,10 @@ describe('iga tests', () => {
         type: 'array',
         path: 'user',
       },
+      {
+        value: 'num',
+        type: 'number',
+      },
     ];
     expect(convertToIGAFilter(componentFilter, resourceName, properties)).toStrictEqual(igaFilter);
     const hasChangedFilter = cloneDeep(componentFilter);
@@ -157,7 +176,7 @@ describe('iga tests', () => {
 
   it('converts IGA Filter To component filter', () => {
     const currentUniqueIndex = 0;
-    expect(convertFromIGAFilter(igaFilter, currentUniqueIndex)).toStrictEqual({ convertedFilter: componentFilter, uniqueIndex: 5 });
+    expect(convertFromIGAFilter(igaFilter, currentUniqueIndex)).toStrictEqual({ convertedFilter: componentFilter, uniqueIndex: 6 });
   });
 
   it('checks IGA filter within n layers', () => {

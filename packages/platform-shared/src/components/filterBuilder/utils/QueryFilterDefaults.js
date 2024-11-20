@@ -30,12 +30,16 @@ export const defaultConditionOptions = {
 export const governanceConditionOptions = {
   Contains: { label: i18n.global.t('filters.contains'), value: 'contains', type: ['string', 'array'] },
   DoesNotContain: { label: i18n.global.t('filters.doesNotContain'), value: 'not_contains', type: ['string', 'array'] },
-  Is: { label: i18n.global.t('filters.is'), value: 'equals', type: ['string', 'reference', 'boolean'] },
-  IsNot: { label: i18n.global.t('filters.isNot'), value: 'not_equals', type: ['string', 'reference'] },
+  Is: { label: i18n.global.t('filters.is'), value: 'equals', type: ['string', 'reference', 'boolean', 'number'] },
+  IsNot: { label: i18n.global.t('filters.isNot'), value: 'not_equals', type: ['string', 'reference', 'number'] },
   StartsWith: { label: i18n.global.t('filters.startsWith'), value: 'starts_with', type: ['string'] },
   DoesNotStartsWith: { label: i18n.global.t('filters.endsWith'), value: 'ends_with', type: ['string'] },
   HasChanged: { label: i18n.global.t('filters.hasChanged'), value: 'has_changed', type: ['reference', 'string', 'number'] },
   HasNotChanged: { label: i18n.global.t('filters.hasNotChanged'), value: 'has_not_changed', type: ['reference', 'string', 'number'] },
+  Gte: { label: i18n.global.t('filters.greaterThanEqual'), value: 'gte', type: ['number'] },
+  Gt: { label: i18n.global.t('filters.greaterThan'), value: 'gt', type: ['number'] },
+  Lte: { label: i18n.global.t('filters.lessThanEqual'), value: 'lte', type: ['number'] },
+  Lt: { label: i18n.global.t('filters.lessThan'), value: 'lt', type: ['number'] },
 };
 
 export const temporalValueOptions = [

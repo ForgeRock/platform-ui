@@ -49,7 +49,7 @@ describe('GovernanceFilterBuilder', () => {
       props: {
         disabled: false,
         resourceName: 'user',
-        properties: [{ value: 'sn' }],
+        properties: [{ value: 'sn' }, { value: 'testnumber', type: 'number' }],
         filterValue: {},
         hideGroup: false,
         prefixGroupText: 'prefixGroupText',
@@ -244,6 +244,71 @@ describe('GovernanceFilterBuilder', () => {
       filterBuilderGroup.vm.$emit('rule-change', ruleChange);
       await flushPromises();
       expect(wrapper.find('[role="alert"] .iga-error').exists()).toBe(false);
+    });
+
+    it('Filter operators are properly loaded for numeric condition', async () => {
+      const initialFilter = {
+        filterValue: {
+          or: [{
+            equals: {
+              right: {
+                literal: 10,
+              },
+              left: 'user.after.testnumber',
+            },
+          }],
+        },
+      };
+      // const initialFilter = { filterValue: { or: [{ starts_with: { prefix: { literal: 'name' }, value: 'user.before.sn' } }] } };
+      const wrapper = mountComponent(initialFilter);
+      await flushPromises();
+
+      const ruleCondition = wrapper.find('#ruleCondition_user_1');
+      const operatorList = ruleCondition.findAll('li').filter((element) => !element.attributes('style'));
+
+      expect(operatorList.length).toBe(8);
+      expect(operatorList[0].text()).toBe('is');
+      expect(operatorList[1].text()).toBe('is not');
+      expect(operatorList[2].text()).toBe('has changed');
+      expect(operatorList[3].text()).toBe('has not changed');
+      expect(operatorList[4].text()).toBe('GTE (>=)');
+      expect(operatorList[5].text()).toBe('GT (>)');
+      expect(operatorList[6].text()).toBe('LTE (<=)');
+      expect(operatorList[7].text()).toBe('LT (<)');
+    });
+
+    it('Change numeric condition value should emit properly filter-update event', async () => {
+      const initialFilter = {
+        showTemporalValueField: false,
+        filterValue: {
+          or: [{
+            equals: {
+              right: {
+                literal: 10,
+              },
+              left: 'user.after.testnumber',
+            },
+          }],
+        },
+      };
+      const wrapper = mountComponent(initialFilter);
+      await flushPromises();
+
+      const inputValue = wrapper.find('input[name="inputValue_user_1"]');
+      await inputValue.setValue(20);
+
+      expect(wrapper.emitted('filter-update')).toBeTruthy();
+      expect(wrapper.emitted('filter-update').length).toBe(1);
+      expect(wrapper.emitted('filter-update')[0][0]).toEqual({
+        or: [{
+          equals: {
+            right: {
+              literal: 20,
+            },
+            left: 'user.after.testnumber',
+          },
+        }],
+      });
     });
   });
 });

@@ -84,7 +84,9 @@ export function convertToIGAFilter(filter, resourceName = 'user', properties, ig
         subfilter[operator].left = `${resourceName}.before.${filterRule.field}`;
         subfilter[operator].right = `${resourceName}.after.${filterRule.field}`;
       } else {
-        subfilter[operator][filterValueMap[operator]] = filterRule.value.startsWith(`${resourceName}.`) ? filterRule.value : { literal: filterRule.value };
+        subfilter[operator][filterValueMap[operator]] = typeof filterRule.value === 'string' && filterRule.value.startsWith(`${resourceName}.`)
+          ? filterRule.value
+          : { literal: filterRule.value };
         const selectedProperty = properties.find((property) => property.value === filterRule.field);
 
         // convert boolean values from string to boolean
