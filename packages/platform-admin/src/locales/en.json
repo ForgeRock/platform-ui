@@ -1340,7 +1340,11 @@
         "saveError": "Error saving SAML configuration"
       },
       "enterpriseSso": {
-        "quickStart": "Quick Start"
+        "quickStart": "Quick Start",
+        "connectionExistsHeading": "Microsoft 365 SSO is already in use",
+        "connectionExistsDescription": "Only one Microsoft 365 application can be configured for SSO per tenant.",
+        "viewApplication": "View Application",
+        "errorSettingUpSso": "There was an error setting up SSO. Check your configuration and try again."
       },
       "assignmentsTab": {
         "title": "Users & Roles",

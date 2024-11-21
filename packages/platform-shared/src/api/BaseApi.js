@@ -323,6 +323,8 @@ export function generateFraasPromotionApi(requestOverride = {}) {
 
 /**
  * Generates a PingFederate API Axios instance
+ * Version will not change, safe to hardcode to 1
+ * We will only ever make calls against the Admin APIs, safe to hardcode the path
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
  * on extra information or override default properties https://github.com/axios/axios#request-config
  *
@@ -330,7 +332,7 @@ export function generateFraasPromotionApi(requestOverride = {}) {
  */
 export function generatePingFederateApi(requestOverride = {}) {
   const requestDetails = {
-    baseURL: store.state.SharedStore.pingFederateUrl,
+    baseURL: `${store.state.SharedStore.pingFederateUrl}/pf-admin-api/v1`,
     headers: {
       accept: 'application/json',
       'X-XSRF-Header': 'PingFederate',
