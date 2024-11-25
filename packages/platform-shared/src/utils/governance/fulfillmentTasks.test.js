@@ -115,6 +115,43 @@ describe('buildTaskDisplay', () => {
     expect(buildTaskDisplay(tasks)).toStrictEqual(expectedDisplay);
   });
 
+  it('converts task objects to display format including the actor name', () => {
+    const tasks = [
+      {
+        id: 'task1',
+        phases: [{ name: 'Phase 1' }],
+        decision: {
+          phases: [{ name: 'Phase 1', startDate: '2023-01-01' }],
+          actors: {
+            active: [{
+              phase: 'Phase 1', givenName: 'John', sn: 'Doe', userName: 'jdoe',
+            }],
+            inactive: [],
+          },
+        },
+        request: { common: { priority: 'high' } },
+      },
+    ];
+
+    // i18n.global.t.mockReturnValue('John Doe');
+    dayjs.mockReturnValue({ format: () => 'Jan 1, 2023' });
+
+    const expectedDisplay = [
+      {
+        details: {
+          id: 'task1',
+          assignee: 'John Doe',
+          name: 'Phase 1',
+          priority: 'high',
+          assignedDate: 'Jan 1, 2023',
+        },
+        rawData: tasks[0],
+      },
+    ];
+
+    expect(buildTaskDisplay(tasks)).toStrictEqual(expectedDisplay);
+  });
+
   it('handles tasks with missing phase information', () => {
     const tasks = [
       {

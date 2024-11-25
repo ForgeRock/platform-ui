@@ -50,7 +50,7 @@ export function getTaskFilter({ assignee, priorities, taskName }) {
 function getAssigneeText(assignee) {
   const value = assignee || null;
   if (value?.givenName || value?.sn) return i18n.global.t('common.userFullName', { givenName: value.givenName, sn: value.sn });
-  return value?.userName || '';
+  return value?.userName || value?.name || '';
 }
 
 /**
