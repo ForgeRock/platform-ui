@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,12 +32,8 @@ export default {
     };
   },
   methods: {
-    generateUpdatePatch(original, newForm) {
-      const clonedOriginal = cloneDeep(original);
-      const clonedNew = cloneDeep(newForm);
-
+    findChanges(clonedNew, clonedOriginal) {
       let changes;
-
       if (isArray(clonedNew)) {
         changes = filter(clonedNew, (field, index) => {
           if (isArray(field.value)) {
@@ -61,6 +57,12 @@ export default {
           }
         });
       }
+      return changes;
+    },
+    generateUpdatePatch(original, newForm) {
+      const clonedOriginal = cloneDeep(original);
+      const clonedNew = cloneDeep(newForm);
+      const changes = this.findChanges(clonedNew, clonedOriginal);
 
       return map(changes, (formField) => {
         if (formField.value === '' || formField.value === null || formField.value === undefined) {
