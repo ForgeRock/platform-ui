@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,8 +9,13 @@ import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import apiUtils from './utils/apiUtils';
 
 const apiVersion = 'protocol=2.1,resource=1.0';
-const getTreeApiConfig = () => {
-  const configPath = apiUtils.getCurrentRealmConfigPath();
+const getTreeApiConfig = (realm) => {
+  let configPath;
+  if (!realm) {
+    configPath = apiUtils.getCurrentRealmConfigPath();
+  } else {
+    configPath = apiUtils.getRealmConfigPath(realm);
+  }
   return {
     path: `${configPath}/authentication/authenticationtrees`,
     apiVersion,
@@ -38,15 +43,21 @@ export function actionGetAllTrees(fields, queryFilter = true, pageSize = -1) {
   * Reads an existing tree
   * @param {String} treeId Tree name used for identification
   * @param {Boolean} forExport Flag for telling getTree not to include ?ForUI=true to request
+  * @param {String} realm optional realm parameter if getting tree outside of current realm
+  * @param {String[]} fields Optional list of fields to search
   *
   * @returns {Promise}
   */
-export function getTree(treeId, forExport) {
+export function getTree(treeId, forExport, realm, fields) {
   let treePath = `/trees/${treeId}`;
   if (!forExport) {
     treePath = `${treePath}?forUI=true`;
   }
-  return generateAmApi(getTreeApiConfig()).get(
+  if (fields && fields.length > 0) {
+    treePath += `&_fields=${fields.toString()}`;
+  }
+
+  return generateAmApi(getTreeApiConfig(realm)).get(
     treePath,
     { withCredentials: true },
   );

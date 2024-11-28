@@ -64,6 +64,8 @@
     "Csp": "Content Security Policy",
     "CustomEndpoints": "Custom Endpoints",
     "CustomNodes": "Custom Nodes",
+    "CustomNodesEdit": "Edit Custom Node",
+    "CustomNodesNew": "New Custom Node",
     "Dashboard": "Dashboard",
     "EditApplication": "Edit Application",
     "EditConnectorServer": "Edit Connector Server",
@@ -680,12 +682,78 @@
   "customNodes": {
     "title": "Custom Nodes",
     "subtitle": "Custom nodes you've created.",
+    "customNode": "Custom Node",
     "noNodes": "No custom node types configured",
     "noNodesSubtitle": "Create new node types to place into trees",
     "noSearchResults": "No Custom Nodes found.",
     "noResultsHelp": "Try a new search in the box above.",
-    "errorLoadingInstances": "Error loading instances",
-    "errorLoading": "Error loading Custom Nodes"
+    "addNewNode": "New Custom Node",
+    "cannotDeleteModalTitle": "Cannot Delete Node",
+    "cannotDeleteModalDesc": "To delete <span class='font-weight-bold'>{name}</span>, first remove it from all journeys where it is currently used.", 
+    "viewJourney": "View Journeys",
+    "tabs": {
+      "overview": {
+        "description": "View node usage details.",
+        "jouneysCountTooltip": "Total journeys in which this node is used",
+        "instancesCountTooltip": "Total instances of this node across all journeys",
+        "noJourneysTitle": "You haven't added this node to any journeys yet",
+        "noJourneysSubtitle": "Once you add this node to a journey, the journey will appear here.",
+        "viewJourney": "View Journey"
+      },
+      "details": {
+        "description": "Enter node details.",
+        "descriptionField": "Description (optional)",
+        "nameDesc": "Human-readable name for this node.",
+        "descriptionDesc": "Node description to appear with the node.",
+        "categories": "Categories (optional)",
+        "categoriesDesc": "Categories in the nodes menu in which this node will appear.",
+        "tags": "Tags (optional)",
+        "tagsDesc": "Add tags to enhance searchability."
+      },
+      "properties": {
+        "description": "Properties to make available to node script.",
+        "modals": {
+          "addProperty": "Add Property",
+          "editProperty": "Edit Property",
+          "nameDesc": "Variable name to reference in node script.",
+          "labelDesc": "Human-readable label for this property.",
+          "multiValued": "Multi-Valued",
+          "enumeratedValues": "Enumerated Values",
+          "enumeratedValuesDesc": "Define a list of enumerated string values for this property.",
+          "provideDefaultValue": "Provide Default Value",
+          "provideDefaultValues": "Provide Default Values",
+          "defaultValue": "Default Value",
+          "defaultValues": "Default Values",
+          "provideDefaultValueDesc": "Provide a default value for this property.",
+          "provideDefaultValuesDesc": "Provide a list of default values for this property.",
+          "descriptionFieldDesc": "Description to appear in the property's help popover."
+        }
+      },
+      "settings": {
+        "description": "Settings for this node.",
+        "outcomesDesc": "Outcomes for this node",
+        "requireInputs": "Require Script Inputs",
+        "requireInputsDesc": "A list of variables to be present in the journey state object for use in journey validation.",
+        "inputs": "Required Script Inputs",
+        "requireOutputs": "Require Script Outputs",
+        "requireOutputsDesc": "A list of outputs to the journey state object produced by the script for use in journey validation.",
+        "outputs": "Required Script Outputs",
+        "errorOutcome": "Error Outcome",
+        "errorOutcomeDesc": "Add an extra outcome to the node to use on error."
+      },
+      "script": {
+        "description": "Enter script to evaluate."
+      }
+    },
+    "notifications": {
+      "saveSuccess": "Node successfully saved",
+      "deleted": "Custom Node Deleted",
+      "errorDeleting": "Error deleting Custom Node",
+      "errorLoadingInstances": "Error loading instances",
+      "errorLoading": "Error loading Custom Nodes",
+      "errorLoadingNodeDetails": "Error loading node details",
+      "errorSavingNode": "Error saving custom node"
+    }
   },
   "bulkImport": {
     "title": "Import Identities",
@@ -2492,7 +2560,8 @@
       "noLibrariesFound": "No library scripts found",
       "noSearchResult": "No results found for '{searchString}'",
       "noESVsFound": "No ESVs found",
-      "noBindingsFound": "No Bindings found"
+      "noBindingsFound": "No Bindings found",
+      "noPropertiesFound": "No properties found"
     }
   },
   "events": {

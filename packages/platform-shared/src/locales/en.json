@@ -162,6 +162,7 @@
     "instances": "Instances",
     "invited": "Invited",
     "item": "Item",
+    "javascript": "Javascript",
     "journey": "Journey",
     "journeys": "Journeys",
     "JSON": "JSON",
@@ -212,6 +213,7 @@
     "outcome": "Outcome",
     "outcomes": "Outcomes",
     "output": "Output",
+    "overview": "Overview",
     "owner": "Owner",
     "owners": "Owners",
     "parameter": "Parameter",
@@ -517,7 +519,9 @@
       "whitespace": "Space characters prohibited",
       "srOnlyMet": "Met {policy}",
       "srOnlyNotMet": "Not met {policy}",
-      "formRowOversized": "Row is too large, the total of columns and offsets cannot exceed 12"
+      "formRowOversized": "Row is too large, the total of columns and offsets cannot exceed 12",
+      "validJSVariable": "Must be a valid variable name",
+      "notStartsWithNumber": "Cannot start with a number"
     },
     "user": {
       "accountStatus": "Status",
@@ -2252,5 +2256,12 @@
     "secretsAndVariables": "Secrets & Variables",
     "noVariables": "No variables found",
     "noSecretsOrVariables": "No secrets or variables found"
+  },
+  "orderablePropertiesList": {
+    "addProperty": "Add Property",
+    "noPropertiesDefined": "You haven't added any properties yet",
+    "noPropertiesDefinedSubtitle": "Add properties to make available to your script.",
+    "moveUp": "Move up",
+    "moveDown": "Move down"
   }
 }

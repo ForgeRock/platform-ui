@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -30,6 +30,10 @@ of the MIT license. See the LICENSE file for details. -->
           :is-inline-label="true" />
       </BFormCheckbox>
     </div>
+    <FrValidationError
+      class="error-messages flex-grow-1"
+      :validator-errors="combinedErrors"
+      :field-name="name" />
     <template v-if="description">
       <small
         v-if="isHtml"
@@ -52,6 +56,7 @@ import { BFormCheckbox } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { toRef } from 'vue';
 import uuid from 'uuid/v4';
+import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
@@ -72,6 +77,7 @@ export default {
   ],
   components: {
     BFormCheckbox,
+    FrValidationError,
   },
   inheritAttrs: false,
   props: {
@@ -87,12 +93,16 @@ export default {
   setup(props) {
     const {
       value: inputValue,
+      errors: fieldErrors,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, type: 'checkbox', initialValue: '' });
-    return { inputValue };
+    return { inputValue, fieldErrors };
   },
   computed: {
     switchLabel() {
       return this.label || this.description;
+    },
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
     },
   },
 };

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,7 +32,6 @@ of the MIT license. See the LICENSE file for details. -->
               :item-key="((item) => inputValue.indexOf(item))">
               <template #item="{ element }">
                 <div
-                  v-b-tooltip="{ title: element, delay: { show: 1500, hide: 0 } }"
                   body-class="py-1 pr-2 text-nowrap"
                   class="fr-tag"
                   :key="element"
@@ -52,6 +51,13 @@ of the MIT license. See the LICENSE file for details. -->
                       name="close"
                     />
                   </span>
+                  <BTooltip
+                    :target="`fr-tags-tag_${element.toString().replace(/\s/g, '_')}`"
+                    :title="element"
+                    :delay="{ show: 1500, hide: 0 }"
+                    triggers="hover"
+                    position="top"
+                  />
                 </div>
               </template>
             </Draggable>
@@ -80,7 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { cloneDeep, isEqual } from 'lodash';
-import { BFormTags, VBTooltip } from 'bootstrap-vue';
+import { BFormTags, BTooltip } from 'bootstrap-vue';
 import { useField } from 'vee-validate';
 import uuid from 'uuid/v4';
 import Draggable from 'vuedraggable';
@@ -101,9 +107,7 @@ export default {
     Draggable,
     FrInputLayout,
     FrIcon,
-  },
-  directives: {
-    'b-tooltip': VBTooltip,
+    BTooltip,
   },
   setup(props) {
     const {

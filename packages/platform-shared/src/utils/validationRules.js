@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -155,6 +155,11 @@ export function getRules(i18n) {
   // errors if input starts with same provided prefix value
   const starts_with_case_insensitive = (value, { prefix }) => !value.toLowerCase().startsWith(prefix.toLowerCase()) || i18n.global.t('common.policyValidationMessages.NOT_STARTS_WITH', { prefix });
 
+  const not_starts_with_number = (value) => {
+    const regex = /^[0-9].*$/;
+    return !regex.test(value) || i18n.global.t('common.policyValidationMessages.notStartsWithNumber');
+  };
+
   const uniqueValue = (value, otherValues) => {
     if (!value || !value.value) return true;
     return customValidators.testUniqueness(value.value, { otherValues }) || i18n.global.t('common.policyValidationMessages.UNIQUE');
@@ -226,6 +231,16 @@ export function getRules(i18n) {
     return !regex.test(value) || i18n.global.t('common.policyValidationMessages.whitespace');
   };
 
+  // Rule to check for a valid js variable name declaration
+  const valid_js_variable_name = (value) => {
+    // ^ = Match the beginning
+    // [_$a-zA-Z] = Match either underscore, $ or a-z (ignoring case) at the beginning
+    // \w$* = Match zero or more word or $ characters after the beginning
+    // $ = till the end
+    const regex = /^[_$a-zA-Z][\w$]*$/;
+    return regex.test(value) || i18n.global.t('common.policyValidationMessages.validJSVariable');
+  };
+
   const regex = (value, { pattern, message }) => {
     const customRegex = new RegExp(pattern);
     return customRegex.test(value) || message;
@@ -265,6 +280,7 @@ export function getRules(i18n) {
     max_value,
     min_value,
     minimumRequired,
+    not_starts_with_number,
     numeric,
     oneOf,
     period_required,
@@ -282,6 +298,7 @@ export function getRules(i18n) {
     url_with_path,
     url_without_path,
     validBookmarkUrl,
+    valid_js_variable_name,
     lower_case_alpha_numeric_underscore_hyphen_only,
     whitespace,
   };

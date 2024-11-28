@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -104,6 +104,8 @@ import {
 } from 'bootstrap-vue';
 import {
   isEmpty,
+  isArray,
+  isString,
   cloneDeep,
   xor,
 } from 'lodash';
@@ -214,7 +216,7 @@ export default {
         : [];
     },
     requiredAndEmpty() {
-      return (this.validation?.required || this.validation?.includes('required')) && isEmpty(this.keyValues);
+      return (this.validation?.required || ((isArray(this.validation) || isString(this.validation)) && this.validation?.includes('required'))) && isEmpty(this.keyValues);
     },
     combinedErrors() {
       return this.errors.concat(this.fieldErrors);
@@ -312,7 +314,7 @@ export default {
       const rulesObject = this.availableKeyOptions.length
         ? { uniqueValue: Object.keys(keyValues) }
         : { unique: Object.keys(keyValues) };
-      this.validationRules = { ...rulesObject, required: true };
+      this.validationRules = { ...rulesObject, ...this.validation, required: true };
     },
     /**
      * Displays blank key and value fields to add a new key-value object

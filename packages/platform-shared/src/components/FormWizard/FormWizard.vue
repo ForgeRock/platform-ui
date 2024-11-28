@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template #center-content>
         <slot name="center-content">
           <h1
-            class="h4 font-weight-bold m-0"
+            class="h4 font-weight-bold m-0 pl-3 max-lines max-lines-1"
             data-testid="wizard-title">
             {{ title }}
           </h1>
@@ -84,7 +84,7 @@ of the MIT license. See the LICENSE file for details. -->
                   v-if="isFinalStep || forceShowSaveButton"
                   data-testid="saveButton"
                   @click="$emit('save')"
-                  :disabled="!valid || !validForm"
+                  :disabled="!valid || !validForm || isSaving"
                   variant="primary">
                   {{ $t('common.save') }}
                 </BButton>
@@ -144,6 +144,10 @@ const props = defineProps({
     default: '',
   },
   isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  isSaving: {
     type: Boolean,
     default: false,
   },
@@ -305,5 +309,9 @@ setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
     cursor: auto;
     pointer-events: none;
   }
+}
+
+:deep(.navbar-nav) .dropdown-menu {
+  position: absolute;
 }
 </style>

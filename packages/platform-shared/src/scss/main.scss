@@ -844,11 +844,31 @@
    -webkit-box-orient: vertical;
    overflow: hidden;
    text-overflow: ellipsis;
-   display: -webkit-box;
+   display: -webkit-box !important;
+
+   &.max-lines-1 {
+    line-clamp: 1;
+    -webkit-line-clamp: 1;
+  }
  
    &.max-lines-3 {
      line-clamp: 3;
      -webkit-line-clamp: 3;
+   }
+
+   &.max-lines-5 {
+    line-clamp: 5;
+    -webkit-line-clamp: 5;
+   }
+
+   &.max-lines-10 {
+    line-clamp: 10;
+    -webkit-line-clamp: 10;
+   }
+
+   &.max-lines-15 {
+    line-clamp: 15;
+    -webkit-line-clamp: 15;
    }
  }
  /* stylelint-enable */
