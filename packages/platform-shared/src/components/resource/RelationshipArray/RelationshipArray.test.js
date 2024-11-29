@@ -11,6 +11,7 @@ import { nextTick } from 'vue';
 import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import RelationshipArray from './index';
 import * as SchemaApi from '@/api/SchemaApi';
+import i18n from '@/i18n';
 
 RelationshipArray.mounted = jest.fn();
 
@@ -122,7 +123,7 @@ describe('RelationshipArray', () => {
             commit: () => {},
           },
         },
-        plugins: [Notifications],
+        plugins: [Notifications, i18n],
       },
       props: {
         parentId: 'bjensen',
@@ -387,7 +388,7 @@ describe('RelationshipArray', () => {
     wrapper.vm.onRowSelected([1, 2, 3, 4]);
     expect(wrapper.vm.selected[0]).toEqual(1);
     await wrapper.vm.removeRelationships();
-    expect(notificationSpy).toHaveBeenCalledWith('success', 'pages.access.successRemoved');
+    expect(notificationSpy).toHaveBeenCalledWith('success', 'Reports successfully removed');
 
     const error400 = { response: { status: 400 } };
     jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (

@@ -236,6 +236,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import i18n from '@/i18n';
 
 export default {
   name: 'RelationshipArray',
@@ -320,7 +321,7 @@ export default {
   data() {
     const userStore = useUserStore();
     return {
-      addButtonText: this.addRelationshipButtonText || this.$t('common.addObject', { object: this.getTranslation(this.relationshipArrayProperty.title) }),
+      addButtonText: this.addRelationshipButtonText || i18n.global.t('common.addObject', { object: this.getTranslation(this.relationshipArrayProperty.title) }),
       gridPageSize: 10,
       allRowsSelected: false,
       dataIsUpdating: false,
@@ -335,7 +336,7 @@ export default {
       createModalId: `create_${this.relationshipArrayProperty.propName}_modal`,
       addRelationshipModalTitle: this.modalTitle ? this.modalTitle : `Add ${this.relationshipArrayProperty.title}`,
       removeModalId: `delete_${this.relationshipArrayProperty.propName}_modal`,
-      removeModalMessage: this.$t('pages.access.removeConfirm', { type: this.relationshipArrayProperty.title }),
+      removeModalMessage: i18n.global.t('pages.access.removeConfirm', { type: this.relationshipArrayProperty.title }),
       newRelationships: [],
       relationshipToDelete: {},
       selected: [],
@@ -365,7 +366,7 @@ export default {
   },
   computed: {
     removeRelationshipButtonTextFallback() {
-      return this.removeRelationshipButtonText || this.$t('common.remove');
+      return this.removeRelationshipButtonText || i18n.global.t('common.remove');
     },
   },
   methods: {
@@ -384,7 +385,7 @@ export default {
           this.setColumns(resourceCollectionSchema);
           this.setGridData(resourceData.data.result, this.relationshipArrayProperty);
         }).catch((error) => {
-          this.showErrorMessage(error, this.$t('errors.errorRetrievingRelationships'));
+          this.showErrorMessage(error, i18n.global.t('errors.errorRetrievingRelationships'));
         });
       };
 
@@ -443,7 +444,7 @@ export default {
       if (this.relationshipArrayProperty.relationshipGrantTemporalConstraintsEnforced) {
         this.columns.push({
           key: '_refProperties.temporalConstraints[0].duration',
-          label: this.$t('pages.access.timeConstraint'),
+          label: i18n.global.t('pages.access.timeConstraint'),
           formatter: (value) => {
             if (value) {
               const dates = map(value.split('/'), (date) => {
@@ -689,7 +690,7 @@ export default {
         .patch(`${resourcePath}/${this.parentId}`, patchArray).then((response) => {
           const translation = operation === 'remove' ? 'pages.access.successRemoved' : 'pages.access.successAdded';
           loadAndCloseModal();
-          this.displayNotification('success', this.$t(translation, { resource: this.relationshipArrayProperty.title }));
+          this.displayNotification('success', i18n.global.t(translation, { resource: this.relationshipArrayProperty.title }));
           // _rev property needs updating in the parent component
           // in order for the headers if-match property to work
           // correctly on any subsequent call.
@@ -698,7 +699,7 @@ export default {
         })
         .catch((error) => {
           loadAndCloseModal();
-          this.showErrorMessage(error, this.$t('errors.errorRetrievingRelationships'));
+          this.showErrorMessage(error, i18n.global.t('errors.errorRetrievingRelationships'));
         })
         .finally(() => {
           this.dataIsUpdating = false;

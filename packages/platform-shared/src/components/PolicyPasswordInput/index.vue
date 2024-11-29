@@ -142,7 +142,7 @@ export default {
           }
         })
         .catch((error) => {
-          if (!axios.isCancel(error)) {
+          if (!axios.isCancel(error) && error.message !== 'Outdated password checking cancelled') {
             throw error;
           }
         });
