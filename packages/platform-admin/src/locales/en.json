@@ -2838,7 +2838,8 @@
       "noSyncData": "No synchronized applications yet",
       "tabs": {
         "mapping": {
-          "subtitle": "Define the account types you need to reconcile with {appDisplayName}.",
+          "provisionSubtitle": "Define the mapping rules needed to provision to {target}.",
+          "reconcileSubtitle": "Define the mapping rules needed to reconcile with {source}.",
           "previewMapping": "Preview Mapping"
         }
       }
@@ -3049,8 +3050,8 @@
     "propertyMappingAdded": "Property mapping added",
     "propertyMappingDeleted": "Property mapping deleted",
     "propertyMappingUpdated": "Property mapping updated",
-    "selectInboundPropertyLabel": "{target} User property to provide a value for when reconciling data from {source} account.",
-    "selectOutboundPropertyLabel": "Property to provide a value for when provisioning to {target} account.",
+    "selectReconcilingPropertyLabel": "{target} {objectTypeName} property to provide a value for when reconciling data from {source} account.",
+    "selectProvisioningPropertyLabel": "Property to provide a value for when provisioning to {target} account.",
     "selectPropertyLabel": "Choose {application} property",
     "showScriptEditor": "Show Script Editor",
     "sourceProperty": "source.{prop}",
