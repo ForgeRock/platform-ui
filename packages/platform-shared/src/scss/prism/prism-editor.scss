@@ -1,0 +1,19 @@
+ @import '~vue-prism-editor/dist/prismeditor.min.css';
+ @import 'prismjs/themes/prism-dark.min.css';
+ @import '@forgerock/platform-shared/src/scss/prism/prism-ping.css';
+
+.prism-editor-wrapper {
+  background-color: $gray-900;
+  font-family: Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 1rem;
+
+  .prism-editor__textarea:focus {
+    outline: none !important;
+  }
+  pre {
+    color: $gray-400;
+  }
+}
+

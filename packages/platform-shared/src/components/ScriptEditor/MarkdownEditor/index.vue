@@ -18,24 +18,26 @@ of the MIT license. See the LICENSE file for details. -->
         </h6>
         <VuePrismEditor
           v-if="isMarkdown"
-          role="textbox"
-          language="html"
-          :aria-label="$t('editor.accessibilityHelp')"
-          :line-numbers="true"
           v-model="markdownField"
-          :readonly="disabled"
+          role="textbox"
           :class="{ 'pt-4': wideNavbar}"
-          @keydown="blurOnEscape" />
+          :aria-label="$t('editor.accessibilityHelp')"
+          :highlight="(code) => highlighter(code, 'html')"
+          :line-numbers="true"
+          :readonly="disabled"
+          @keydown="blurOnEscape"
+        />
         <VuePrismEditor
           v-else
-          role="textbox"
-          language="css"
-          :aria-label="$t('editor.accessibilityHelp')"
-          :line-numbers="true"
           v-model="stylesField"
-          :readonly="disabled"
+          role="textbox"
+          :aria-label="$t('editor.accessibilityHelp')"
           :class="{ 'pt-4': wideNavbar}"
-          @keydown="blurOnEscape" />
+          :highlight="(code) => highlighter(code, 'css')"
+          :line-numbers="true"
+          :readonly="disabled"
+          @keydown="blurOnEscape"
+        />
       </div>
     </div>
     <div class="w-50">
@@ -72,16 +74,13 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import VuePrismEditor from 'vue-prism-editor';
-import 'prismjs';
+import { PrismEditor as VuePrismEditor } from 'vue-prism-editor';
+import blurOnEscape, { highlighter } from '@forgerock/platform-shared/src/utils/codeEditor';
 import 'prismjs/components/prism-markdown';
-import 'prismjs/themes/prism.css';
-import 'vue-prism-editor/dist/VuePrismEditor.css';
 import MarkdownIt from 'markdown-it';
 import markdownItAnchor from 'markdown-it-anchor';
 import TurndownService from 'turndown';
 import { pd } from 'pretty-data';
-import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 
 /**
  * Markdown editor.
@@ -165,6 +164,7 @@ export default {
   },
   methods: {
     blurOnEscape,
+    highlighter,
     /**
      * Checks if content is wrapped in a div, and if not, wraps it
      */

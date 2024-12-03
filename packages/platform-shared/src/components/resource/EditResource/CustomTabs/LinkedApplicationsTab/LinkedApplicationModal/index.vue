@@ -61,12 +61,13 @@ of the MIT license. See the LICENSE file for details. -->
             v-else-if="(item.type === 'array' && item.itemsType === 'object') || item.type === 'object'"
             class="py-2">
             <VuePrismEditor
-              readonly
-              language="json"
-              line-numbers
               v-model="item.value"
+              readonly
+              line-numbers
               :aria-label="$t('editor.accessibilityHelp')"
-              @keydown="blurOnEscape" />
+              :highlight="(code) => highlighter(code, 'json')"
+              @keydown="blurOnEscape"
+            />
           </div>
         </li>
       </ul>
@@ -81,9 +82,8 @@ import {
   BMedia,
 } from 'bootstrap-vue';
 
-import VuePrismEditor from 'vue-prism-editor';
-import 'vue-prism-editor/dist/VuePrismEditor.css';
-import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
+import { PrismEditor as VuePrismEditor } from 'vue-prism-editor';
+import blurOnEscape, { highlighter } from '@forgerock/platform-shared/src/utils/codeEditor';
 
 export default {
   name: 'LinkedApplicationModal',
@@ -101,6 +101,7 @@ export default {
   },
   methods: {
     blurOnEscape,
+    highlighter,
   },
 };
 </script>

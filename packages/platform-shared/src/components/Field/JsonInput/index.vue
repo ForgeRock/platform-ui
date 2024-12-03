@@ -15,24 +15,17 @@ of the MIT license. See the LICENSE file for details. -->
       v-model="inputValue"
       v-on="validationListeners"
       class="polyfill-placeholder"
-      :aria-label="$t('editor.accessibilityHelp')"
-      :disabled="disabled"
-      :readonly="readonly"
-      language="json"
       :line-numbers="true"
-      :highlight="highlighter"
-      @change="$emit('input', $event)" />
+      :highlight="(code) => highlighter(code, 'json')"
+      @input="$emit('input', $event)"
+    />
   </FrInputLayout>
 </template>
 
 <script>
-import { highlight, languages } from 'prismjs/components/prism-core';
-import VuePrismEditor from 'vue-prism-editor';
-import 'prismjs';
-import 'prismjs/components/prism-json';
-import 'prismjs/themes/prism.css';
-import 'vue-prism-editor/dist/VuePrismEditor.css';
-import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
+import { PrismEditor as VuePrismEditor } from 'vue-prism-editor';
+import blurOnEscape, { highlighter } from '@forgerock/platform-shared/src/utils/codeEditor';
+
 import { useField } from 'vee-validate';
 import uuid from 'uuid/v4';
 import { toRef } from 'vue';
@@ -74,15 +67,7 @@ export default {
   },
   methods: {
     blurOnEscape,
-    /**
-     * Highlight code
-     *
-     * @param {String} code code to highlight
-     * @returns highlighted code
-     */
-    highlighter(code) {
-      return highlight(code, languages.json);
-    },
+    highlighter,
   },
   computed: {
     combinedErrors() {

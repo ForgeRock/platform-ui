@@ -260,9 +260,6 @@ describe('Field Component', () => {
     const defaultProps = {
       global: {
         plugins: [i18n],
-        mocks: {
-          $t: (key) => key,
-        },
       },
       props: {
         name: 'test',
@@ -364,9 +361,6 @@ describe('Field Component', () => {
           }),
           i18n,
         ],
-        mocks: {
-          $t: (key) => key,
-        },
       },
       props: {
         name: 'test',

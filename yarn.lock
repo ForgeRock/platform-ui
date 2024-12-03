@@ -2786,7 +2786,7 @@ __metadata:
     vue-draggable-resizable: 2.1.0
     vue-i18n: 9.14.2
     vue-multiselect: 2.1.7
-    vue-prism-editor: 0.6.1
+    vue-prism-editor: 1.3.0
     vue-router: 4.2.4
     vue-spinner: 1.0.3
     vuedraggable: 4.0.1
@@ -3008,7 +3008,7 @@ __metadata:
     vue-ellipse-progress: 1.3.1
     vue-i18n: 9.14.2
     vue-multiselect: 2.1.7
-    vue-prism-editor: 0.6.1
+    vue-prism-editor: 1.3.0
     vue-router: 4.2.4
     vue-slider-component: next
     vue-spinner: 1.0.3
@@ -7565,20 +7565,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"component-props@npm:1.1.1":
-  version: 1.1.1
-  resolution: "component-props@npm:1.1.1"
-  checksum: fda496d2cbe0a1de223741cafce1c3dd35214d6ad86b6b1a1c57109d047e0de149d8bbbb9fe4c39e90ad5902f0026da524a6355683c23dc12c552c3d0ddf8dcf
-  languageName: node
-  linkType: hard
-
-"component-xor@npm:0.0.4":
-  version: 0.0.4
-  resolution: "component-xor@npm:0.0.4"
-  checksum: 3ef1bfadbe99a6c1d557fa4b22c49158987dc30177d08d0926f0663185cb154438c6e76e86cf7e30b7f2ee4c4af9e41f9da19b56ba391ab3c773aaa2bf5c1f2a
-  languageName: node
-  linkType: hard
-
 "compressible@npm:~2.0.16":
   version: 2.0.18
   resolution: "compressible@npm:2.0.18"
@@ -9261,16 +9247,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom-iterator@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "dom-iterator@npm:1.0.0"
-  dependencies:
-    component-props: 1.1.1
-    component-xor: 0.0.4
-  checksum: ad02e194985969fbf3c2a73897b667f81c15f28e4e6090d853f2062737b619825dc153744cd3fa7bf71a43305041e72fe2df99bdb80480166593358438a7de75
-  languageName: node
-  linkType: hard
-
 "dom-serializer@npm:0":
   version: 0.2.2
   resolution: "dom-serializer@npm:0.2.2"
@@ -10498,15 +10474,6 @@ __metadata:
     utils-merge: 1.0.1
     vary: ~1.1.2
   checksum: 3c4b9b076879442f6b968fe53d85d9f1eeacbb4f4c41e5f16cc36d77ce39a2b0d81b3f250514982110d815b2f7173f5561367f9110fcc541f9371948e8c8b037
-  languageName: node
-  linkType: hard
-
-"extend-shallow@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "extend-shallow@npm:2.0.1"
-  dependencies:
-    is-extendable: ^0.1.0
-  checksum: 8fb58d9d7a511f4baf78d383e637bd7d2e80843bd9cd0853649108ea835208fb614da502a553acc30208e1325240bb7cc4a68473021612496bb89725483656d8
   languageName: node
   linkType: hard
 
@@ -12683,13 +12650,6 @@ __metadata:
   bin:
     is-docker: cli.js
   checksum: 3fef7ddbf0be25958e8991ad941901bf5922ab2753c46980b60b05c1bf9c9c2402d35e6dc32e4380b980ef5e1970a5d9d5e5aa2e02d77727c3b6b5e918474c56
-  languageName: node
-  linkType: hard
-
-"is-extendable@npm:^0.1.0":
-  version: 0.1.1
-  resolution: "is-extendable@npm:0.1.1"
-  checksum: 3875571d20a7563772ecc7a5f36cb03167e9be31ad259041b4a8f73f33f885441f778cee1f1fe0085eb4bc71679b9d8c923690003a36a6a5fdf8023e6e3f0672
   languageName: node
   linkType: hard
 
@@ -20858,15 +20818,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unescape@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "unescape@npm:1.0.1"
-  dependencies:
-    extend-shallow: ^2.0.1
-  checksum: 0d89b0f55e08a2843e635f1ccf8472a35b367c41d9a8014dd7de5cc3af710a6e988a950b86b6229e143147ade21772f2d72054bc846f4972eb448df472b856ec
-  languageName: node
-  linkType: hard
-
 "unicode-canonical-property-names-ecmascript@npm:^2.0.0":
   version: 2.0.0
   resolution: "unicode-canonical-property-names-ecmascript@npm:2.0.0"
@@ -21508,14 +21459,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-prism-editor@npm:0.6.1":
-  version: 0.6.1
-  resolution: "vue-prism-editor@npm:0.6.1"
-  dependencies:
-    dom-iterator: ^1.0.0
-    escape-html: ^1.0.3
-    unescape: ^1.0.1
-  checksum: d251ac2ab5cca87a079b620f825f38ced7d292153002eaaa90961a8795ac27ddf9952ebabdb8d45b05eeb292898b3ef3dfd66678fc75bdf194c8f69edfae5210
+"vue-prism-editor@npm:1.3.0":
+  version: 1.3.0
+  resolution: "vue-prism-editor@npm:1.3.0"
+  peerDependencies:
+    vue: ^2.6.11
+  checksum: 328b2edb86a68d8d27ac4ed4fe7a631119c15def821855ac7590fe96ebab76e2b73a326996df74cc83ac9dc34c39b7b37d634df640b3e23efdc27c39da7db80f
   languageName: node
   linkType: hard
 

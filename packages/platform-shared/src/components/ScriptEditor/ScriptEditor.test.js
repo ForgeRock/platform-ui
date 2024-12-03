@@ -38,7 +38,7 @@ describe('ScriptEditor', () => {
     expect(wrapper.vm.scriptType.value).toEqual('text/javascript');
     expect(wrapper.vm.value.globals).toEqual({});
     expect(wrapper.vm.value.source).toEqual('');
-    expect(wrapper.vm.code).toEqual('');
+    expect(wrapper.vm.code).toEqual(undefined);
     expect(wrapper.vm.value.file).toEqual(undefined);
 
     await wrapper.setProps({

@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="form-group mb-0 h-100 d-flex flex-column">
     <div
-      v-if="scriptTitle!=='' || showFileUpload || showScriptType || showCopy"
+      v-if="scriptTitle !== '' || showFileUpload || showScriptType || showCopy"
       class="d-flex justify-content-between align-items-center"
       :class="useDarkHeading ? 'rounded-top px-3 dark-heading' : ''">
       <label class="mb-0 mr-2 py-2">
@@ -54,18 +54,19 @@ of the MIT license. See the LICENSE file for details. -->
     <div class="fr-script-editor w-100">
       <div class="d-flex w-100 h-100 fr-script-editor-sidebar-nav position-relative">
         <VuePrismEditor
-          v-if="uploadFileToggle === false"
-          :code="code"
-          @change="code = $event; emitScriptValue()"
+          v-if="uploadFileToggle === false && code !== undefined"
+          v-model="code"
           :aria-label="$t('editor.accessibilityHelp')"
-          :language="scriptType.value.split('/')[1]"
-          :line-numbers="showLineNumbers"
+          :highlight="(code) => highlighter(code, 'javascript')"
+          :line-numbers="true"
           :readonly="readonly"
-          @keydown="blurOnEscape" />
+          @input="code = $event; emitScriptValue()"
+          @keydown="blurOnEscape"
+        />
       </div>
     </div>
     <BFormFile
-      v-show="uploadFileToggle === true"
+      v-show="uploadFileToggle"
       :disabled="disabled"
       @change="onFileChange"
       accept=".js, .groovy"
@@ -84,7 +85,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="fr-script-editor fr-script-editor-vars pb-0 px-3">
       <div class="pb-3">
         <BButton
-          v-if="selectedVariables.length === 0 && !jsonEditToggle"
+          v-if="!selectedVariables.length && !jsonEditToggle"
           class="my-2 float-right"
           :disabled="disabled"
           variant="link"
@@ -116,15 +117,16 @@ of the MIT license. See the LICENSE file for details. -->
               @change="jsonEditorToggle($event)" />
           </div>
           <VuePrismEditor
-            v-if="jsonEditToggle"
-            :code="variablesJsonCode"
-            @change="variablesJsonCode = $event; checkIfCodeIsParsable($event)"
-            language="json"
+            v-if="jsonEditToggle && variablesJsonCode"
+            v-model="variablesJsonCode"
             :aria-label="$t('editor.accessibilityHelp')"
+            :highlight="(code) => highlighter(code, 'json')"
             :line-numbers="true"
             :readonly="readonly"
-            @keydown="blurOnEscape" />
-          <template v-else>
+            @input="variablesJsonCode = $event; checkIfCodeIsParsable($event)"
+            @keydown="blurOnEscape"
+          />
+          <template>
             <BFormRow
               class="pb-1"
               style="padding-right: 90px;">
@@ -202,14 +204,9 @@ import { Form as VeeForm } from 'vee-validate';
 import { copyValueToClipboard } from '@forgerock/platform-shared/src/utils/clipboard';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
-import 'prismjs';
-import 'prismjs/components/prism-groovy';
-import 'prismjs/components/prism-json';
-import 'prismjs/themes/prism-tomorrow.css';
-import VuePrismEditor from 'vue-prism-editor';
+import blurOnEscape, { highlighter } from '@forgerock/platform-shared/src/utils/codeEditor';
+import { PrismEditor as VuePrismEditor } from 'vue-prism-editor';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import 'vue-prism-editor/dist/VuePrismEditor.css';
 
 /**
  * Component that takes both past and new backend data and allows user to add/edit
@@ -222,10 +219,10 @@ export default {
     BCol,
     BFormFile,
     BFormRow,
-    VuePrismEditor,
     FrField,
     FrIcon,
     VeeForm,
+    VuePrismEditor,
   },
   mixins: [NotificationMixin],
   props: {
@@ -272,13 +269,13 @@ export default {
   data() {
     return {
       jsonStructured: true,
-      code: '',
+      code: undefined,
       currentJSONCode: '',
       fileChanged: false,
       fieldPlaceholder: this.$t('scriptEditor.uploadFile'),
       filePathModel: '',
       jsonEditToggle: false,
-      variablesJsonCode: '',
+      variablesJsonCode: undefined,
       scriptType: {
         value: 'text/javascript',
         options: [
@@ -291,11 +288,6 @@ export default {
       uploadFileToggle: false,
       showScriptType: true,
     };
-  },
-  computed: {
-    showLineNumbers() {
-      return this.code.length > 0;
-    },
   },
   mounted() {
     if (this.value) {
@@ -434,7 +426,7 @@ export default {
       }
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.code = e.target.result;
+        this.code = e.target.result || '';
         this.emitScriptValue();
       };
       reader.readAsText(file);
@@ -489,6 +481,8 @@ export default {
         this.fieldPlaceholder = newValue.file;
       } else if (newValue.source) {
         this.code = newValue.source;
+      } else {
+        this.code = '';
       }
     },
     /**
@@ -505,6 +499,7 @@ export default {
         return value;
       }
     },
+    highlighter,
   },
   watch: {
     /**
@@ -580,20 +575,6 @@ export default {
       color: $gray-400;
     }
   }
-  .prism-editor-wrapper,
-  code[class*="language-"],
-  pre[class*="language-"] {
-    background-color: $gray-900 !important;
-    text-shadow: none;
-    line-height: 1.75;
-  }
-  .language-css .token.string,
-  .style .token.string,
-  .token.entity,
-  .token.operator,
-  .token.url {
-    background: transparent;
-  }
 
   .form-control.form-control-dark {
     color: $white;
@@ -612,5 +593,4 @@ export default {
     font-size: 15px;
   }
 }
-
 </style>

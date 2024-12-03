@@ -19,7 +19,8 @@ of the MIT license. See the LICENSE file for details. -->
         :show-file-upload="false"
         :show-variables="false"
         :value="{source: stringifiedValue}"
-        @input="validateCurrentJson($event.source)" />
+        @input="validateCurrentJson($event.source)"
+      />
       <div class="d-flex justify-content-center w-100 position-absolute py-2 code-editor-expander pe-none">
         <button
           v-if="hover"
@@ -44,10 +45,6 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 <script>
-import 'prismjs';
-import 'prismjs/components/prism-json';
-import 'prismjs/themes/prism.css';
-import 'vue-prism-editor/dist/VuePrismEditor.css';
 import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 import FrScriptEditor from '@forgerock/platform-shared/src/components/ScriptEditor';
 
