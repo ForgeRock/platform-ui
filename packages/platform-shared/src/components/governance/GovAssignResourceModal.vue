@@ -56,7 +56,6 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="stepIndex === STEPS.ChooseApplication">
         <FrGovResourceSelect
           v-model="selectedApplication"
-          :query-params="{ authoritative: false }"
           resource-path="application"
           @selected:option="setValuesFromApplicationSelect">
           <template

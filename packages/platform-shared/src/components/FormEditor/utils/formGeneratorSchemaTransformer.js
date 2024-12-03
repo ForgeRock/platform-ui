@@ -54,13 +54,19 @@ function getOptionalPropLabel(propSchema) {
 function setDefaultSchemaFieldValue(field, schemaField) {
   switch (field.type) {
     case 'multiselect':
-      field.defaultValue = schemaField.options
-        ?.filter((option) => (option.selectedByDefault))
-        ?.map((option) => option.value) || [];
+      if (schemaField.options.object) field.defaultValue = [];
+      else {
+        field.defaultValue = schemaField.options
+          ?.filter((option) => (option.selectedByDefault))
+          ?.map((option) => option.value) || [];
+      }
       break;
     case 'select':
-      field.defaultValue = schemaField.options
-        ?.find((option) => (option.selectedByDefault))?.value || '';
+      if (schemaField.options.object) field.defaultValue = '';
+      else {
+        field.defaultValue = schemaField.options
+          ?.find((option) => (option.selectedByDefault))?.value || '';
+      }
       break;
     default:
       break;
@@ -92,10 +98,17 @@ export function transformSchemaToFormGenerator(schema, readOnly = false, include
 
     // the form generator component expects the options to be an array of objects with value and text properties
     if (schemaField.type === 'multiselect' || schemaField.type === 'select') {
-      field.options = schemaField.options?.map((option) => ({
-        value: option.value,
-        text: option.label,
-      })) || [];
+      if (schemaField.options?.object) {
+        field.customSlot = schemaField.type === 'multiselect'
+          ? 'objectMultiselect'
+          : 'objectSelect';
+        field.options = { object: schemaField.options.object };
+      } else {
+        field.options = schemaField.options?.map((option) => ({
+          value: option.value,
+          text: option.label,
+        })) || [];
+      }
     }
 
     if (includeDefaults) setDefaultSchemaFieldValue(field, schemaField);
@@ -128,15 +141,21 @@ export function getInitialModel(schema, includeDefaults = false) {
         set(updatedModel, model, value);
         break;
       case 'select':
-        value = includeDefaults
-          ? field.options?.find((option) => (option.selectedByDefault))?.value || ''
-          : '';
+        if (field.options.object) value = '';
+        else {
+          value = includeDefaults
+            ? field.options?.find((option) => (option.selectedByDefault))?.value || ''
+            : '';
+        }
         set(updatedModel, model, value);
         break;
       case 'multiselect':
-        value = includeDefaults
-          ? field.options?.filter((option) => (option.selectedByDefault))?.map((option) => (option.value))
-          : [];
+        if (field.options.object) value = [];
+        else {
+          value = includeDefaults
+            ? field.options?.filter((option) => (option.selectedByDefault))?.map((option) => (option.value))
+            : [];
+        }
         set(updatedModel, model, value);
         break;
       case 'checkbox':

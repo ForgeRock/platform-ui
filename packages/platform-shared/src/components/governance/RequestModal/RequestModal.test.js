@@ -14,8 +14,10 @@ import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/govern
 import i18n from '@/i18n';
 import RequestModal from './RequestModal';
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
 const requestActionSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockReturnValue(Promise.resolve({ data: {} }));
-CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+CommonsApi.getResource.mockResolvedValue({
   data: {
     result: [
       {
@@ -27,7 +29,7 @@ CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
       },
     ],
   },
-}));
+});
 
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,

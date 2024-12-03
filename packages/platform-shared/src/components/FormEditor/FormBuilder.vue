@@ -14,6 +14,20 @@ of the MIT license. See the LICENSE file for details. -->
         {{ property.formText }}
       </div>
     </template>
+    <template #objectSelect="{ property }">
+      <FrGovObjectSelect
+        v-if="store.state.SharedStore.governanceEnabled"
+        class="pb-1 mb-4"
+        :property="property"
+        @update:model="fieldChanged" />
+    </template>
+    <template #objectMultiselect="{ property }">
+      <FrGovObjectMultiselect
+        v-if="store.state.SharedStore.governanceEnabled"
+        class="pb-1 mb-4"
+        :property="property"
+        @update:model="fieldChanged" />
+    </template>
   </FrFormGenerator>
 </template>
 
@@ -23,6 +37,9 @@ import { cloneDeep, set } from 'lodash';
 import { useForm } from 'vee-validate';
 import { watch, ref } from 'vue';
 import { transformSchemaToFormGenerator } from './utils/formGeneratorSchemaTransformer';
+import FrGovObjectMultiselect from './components/governance/GovObjectMultiselect';
+import FrGovObjectSelect from './components/governance/GovObjectSelect';
+import store from '@/store';
 
 /**
 * Component to build forms based on a schema, It is used to render the FormEditor generated schemas.

@@ -18,6 +18,7 @@ import i18n from '@/i18n';
 import ViolationDetails from './ViolationDetails';
 import * as store from '@/store';
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/ViolationApi');
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('vue-router', () => ({
@@ -115,7 +116,7 @@ describe('Violation Edit', () => {
   ViolationApi.forwardViolation = jest.fn().mockReturnValue(Promise.resolve({
     data: violation,
   }));
-  CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  CommonsApi.getResource.mockReturnValue(Promise.resolve({ data: {} }));
 
   beforeEach(() => {
     jest.clearAllMocks();

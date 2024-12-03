@@ -10,6 +10,8 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import i18n from '@/i18n';
 import GovResourceSelect from './index';
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
 const mountComponent = (propsData = {}) => mount(GovResourceSelect, {
   global: {
     plugins: [i18n],
@@ -36,7 +38,7 @@ const mountComponent = (propsData = {}) => mount(GovResourceSelect, {
   },
 });
 
-const userContext = jest.fn().mockReturnValue(Promise.resolve({
+const userContext = {
   data: {
     result: [
       {
@@ -51,8 +53,8 @@ const userContext = jest.fn().mockReturnValue(Promise.resolve({
       },
     ],
   },
-}));
-const roleContext = jest.fn().mockReturnValue(Promise.resolve({
+};
+const roleContext = {
   data: {
     result: [
       {
@@ -65,10 +67,10 @@ const roleContext = jest.fn().mockReturnValue(Promise.resolve({
       },
     ],
   },
-}));
+};
 
 describe('GovResourceSelect Component', () => {
-  CommonsApi.getResource = userContext;
+  CommonsApi.getResource.mockResolvedValue(userContext);
 
   it('does not duplicate the selected option', async () => {
     const wrapper = mountComponent();
@@ -134,7 +136,7 @@ describe('GovResourceSelect Component', () => {
   });
 
   it('handles input', async () => {
-    CommonsApi.getResource = roleContext;
+    CommonsApi.getResource.mockResolvedValue(roleContext);
 
     const wrapper = mountComponent({
       initialData: {

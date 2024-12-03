@@ -120,6 +120,7 @@
     "endSessions": "End Sessions",
     "entitlement": "Entitlement",
     "entitlements": "Entitlements",
+    "enumerated": "Enumerated",
     "enumeratedValues": "Enumerated Values",
     "error": "Error",
     "events": "Events",
@@ -206,6 +207,7 @@
     "optional": "(optional)",
     "optionalFieldTitle": "{fieldTitle} (optional)",
     "order": "Order",
+    "organization": "Organization",
     "organizations": "Organizations",
     "outcome": "Outcome",
     "outcomes": "Outcomes",
@@ -1490,7 +1492,8 @@
           "description": "Select input to accept a single string from a list of enumerated values.",
           "name": "Select",
           "options": "Options",
-          "optionsDescription": "Specify enumerated values for this field."
+          "optionsDescription": "Specify values for this field.",
+          "selectType": "Select a type"
         },
         "text": {
           "description": "Textfield input to accept a single string.",

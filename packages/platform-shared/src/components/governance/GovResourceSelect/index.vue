@@ -3,42 +3,38 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div
-    v-if="initialSearch"
-    style="height: 50px;">
-    <FrField
-      @close="isOpen = false; isSearching = false;"
-      @input="handleInput"
-      @open="isOpen = true;"
-      @search-change="debouncedSearch"
-      :name="name"
-      open-direction="bottom"
-      type="select"
-      :description="description"
-      :disabled="readOnly"
-      :internal-search="false"
-      :label="fieldLabel"
-      :options="selectOptions"
-      :placeholder="searchText"
-      :validation="validation"
-      :value="selectValue">
-      <template
-        v-for="(slotName, index) in ['singleLabel', 'option']"
-        :key="index"
-        #[slotName]="{ option }">
-        <slot
-          :name="slotName"
-          :option="option">
-          {{ option.text }}
-        </slot>
-      </template>
-      <template #noResult>
-        <slot name="noResult">
-          {{ $t('common.noResultsFound') }}
-        </slot>
-      </template>
-    </FrField>
-  </div>
+  <FrField
+    v-if="initialValuesLoad"
+    @close="isSearching = false;"
+    @input="handleInput"
+    @search-change="debouncedSearch"
+    :name="name"
+    open-direction="bottom"
+    type="select"
+    :description="description"
+    :disabled="readOnly"
+    :internal-search="false"
+    :label="fieldLabel"
+    :options="selectOptions"
+    :placeholder="searchText"
+    :validation="validation"
+    :value="selectValue">
+    <template
+      v-for="(slotName, index) in ['singleLabel', 'option']"
+      :key="index"
+      #[slotName]="{ option }">
+      <slot
+        :name="slotName"
+        :option="option">
+        {{ option.text }}
+      </slot>
+    </template>
+    <template #noResult>
+      <slot name="noResult">
+        {{ $t('common.noResultsFound') }}
+      </slot>
+    </template>
+  </FrField>
 </template>
 
 <script>
@@ -49,6 +45,7 @@ import {
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import { compareRealmSpecificResourceName } from '@forgerock/platform-shared/src/utils/realm';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getDefaultGovOption, getQueryParams } from '@forgerock/platform-shared/src/utils/governance/select';
 
 export default {
   name: 'GovResourceSelect',
@@ -61,7 +58,7 @@ export default {
       default: '',
     },
     validation: {
-      type: String,
+      type: [Object, String],
       default: '',
     },
     initialData: {
@@ -88,38 +85,68 @@ export default {
       type: Boolean,
       default: false,
     },
+    setInitialValue: {
+      type: Boolean,
+      default: true,
+    },
     name: {
       type: String,
       required: true,
     },
-    queryParams: {
-      type: Object,
-      default: () => ({}),
+    /**
+     * Function to containing api call to retrieve resource data
+     */
+    resourceFunction: {
+      type: Function,
+      default: getResource,
+    },
+    /**
+     * Function to format resource data into options
+     */
+    optionFunction: {
+      type: Function,
+      default: getDefaultGovOption,
+    },
+    /**
+     * Function to format query params used for resourceFunction
+     */
+    queryParamFunction: {
+      type: Function,
+      default: getQueryParams,
     },
   },
   data() {
     return {
       debouncedSearch: debounce(this.search, 500),
-      isOpen: false,
       isSearching: false,
       options: [],
       showingInitialOptions: false,
       selectValue: this.initialData?.id,
       savedData: {},
-      initialSearch: false,
+      initialValuesLoad: false,
     };
   },
   async mounted() {
     this.savedData = this.initialData;
-    if (isEmpty(this.initialData) && !isEmpty(this.value)) {
-      const { data } = await getResource(this.resource, { queryString: this.value?.split('/').pop(), ...this.queryParams });
-      this.savedData = data?.result?.[0];
+
+    if (isEmpty(this.initialData)) {
+      if (!isEmpty(this.value)) {
+        try {
+          const { data } = await this.resourceFunction(this.resource, this.queryParamFunction(this.value?.split('/').pop(), this.resource, true));
+          this.savedData = this.optionFunction(data?.result?.[0], this.resource);
+        } catch {
+          this.savedData = this.optionFunction({ id: this.value, name: this.value }, null);
+        }
+      }
+    } else {
+      this.savedData = this.optionFunction(this.savedData, this.resource);
     }
+
     if (!isEmpty(this.savedData)) {
       await this.getResourceList(false);
-      this.handleInput(this.savedData?.id, true);
+      this.handleInput(this.savedData.value, true);
     } else {
-      await this.getResourceList(true);
+      await this.getResourceList(this.setInitialValue);
     }
   },
   computed: {
@@ -131,23 +158,11 @@ export default {
       if (isEmpty(this.savedData)) return this.options;
 
       // initial value supplied
-      const selectedOption = this.savedData.id;
-      const match = this.options.find((option) => option.value === selectedOption);
-
-      const initialOption = (this.resource === 'user' || compareRealmSpecificResourceName(this.resource, 'user'))
-        ? {
-          text: this.$t('common.userFullName', { givenName: match?.userInfo?.givenName || this.savedData.givenName, sn: match?.userInfo?.sn || this.savedData.sn }),
-          userInfo: this.savedData,
-          value: selectedOption,
-        }
-        : {
-          text: this.savedData.name,
-          value: selectedOption,
-        };
+      const match = this.options.find((option) => option.value === this.savedData?.value);
+      const initialOption = match || this.savedData;
 
       // ensures that the selected option is not in the list twice
       if (match || this.isSearching) return [...this.options];
-
       return [initialOption, ...this.options];
     },
     searchText() {
@@ -178,26 +193,16 @@ export default {
     getResourceList(setValue, queryString) {
       if (this.showingInitialOptions && !queryString) return Promise.resolve();
 
-      return getResource(this.resource, { queryString, ...this.queryParams }).then(({ data }) => {
-        this.options = data.result.map((element) => {
-          if (this.resource === 'user' || compareRealmSpecificResourceName(this.resource, 'user')) {
-            return {
-              text: this.$t('common.userFullName', { givenName: element.givenName, sn: element.sn }),
-              userInfo: element,
-              value: element.id,
-            };
-          }
-          return {
-            ...element,
-            text: element.name,
-            value: element.id,
-          };
-        });
-
+      return this.resourceFunction(this.resource, this.queryParamFunction(queryString, this.resource)).then(({ data }) => {
+        this.options = data.result.map((option) => this.optionFunction(option, this.resource));
         this.showingInitialOptions = !queryString;
-        const selectedValue = this.savedData?.id || this.options[0].value;
+        const selectedValue = !isEmpty(this.savedData)
+          ? this.savedData.value
+          : this.options[0]?.value;
         if (setValue) this.handleInput(selectedValue);
-      }).catch(() => {}).finally(() => { this.initialSearch = true; });
+      })
+        .catch(() => {})
+        .finally(() => { this.initialValuesLoad = true; });
     },
     /**
      * emits out request to get user or role info if current resource is either, and emits
@@ -212,8 +217,7 @@ export default {
       if (this.resource === 'role' || compareRealmSpecificResourceName(this.resource, 'role')) {
         this.$emit('get-role-info', { name: selectedOption.text, id: selectedOption.value });
       } else if (this.resource === 'user' || compareRealmSpecificResourceName(this.resource, 'user')) {
-        if (isInitial) selectedOption.userInfo = this.savedData;
-
+        if (isInitial) selectedOption.userInfo = this.initialData;
         this.$emit('get-user-info', selectedOption.userInfo);
       }
 

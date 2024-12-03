@@ -35,8 +35,10 @@ const setup = () => {
   });
 };
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
 describe('RequestFilter', () => {
-  CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+  CommonsApi.getResource.mockReturnValue(Promise.resolve({
     data: {
       result: [
         {

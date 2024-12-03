@@ -7,11 +7,6 @@
 
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
-import {
-  getUsersApplicationsMock,
-  getUsersEntitlementsMock,
-  getUsersRolesMock,
-} from './CatalogApiMock';
 
 export function searchCatalog(params = {}, payload, ignoreRequestable = false) {
   params.action = 'search';
@@ -35,14 +30,61 @@ export function getCatalogFilterSchema(objectType) {
   return generateIgaApi().get(url);
 }
 
-export function getUsersApplications(/* userIds */) {
-  return Promise.resolve({ data: getUsersApplicationsMock() });
-}
+export function searchCatalogEntitlements(resource, params = {}) {
+  const queryParams = {
+    fields: 'descriptor,assignment',
+    pageSize: 10,
+    pagedResultsOffset: 0,
+    sortKeys: '-assignment.name',
+    action: 'search',
+  };
+  const payload = {
+    targetFilter: {
+      operand: {
+        targetName: 'item.type',
+        targetValue: 'entitlementGrant',
+      },
+      operator: 'EQUALS',
+    },
+  };
 
-export function getUsersEntitlements(/* userIds */) {
-  return Promise.resolve({ data: getUsersEntitlementsMock() });
-}
+  if (params.queryString) {
+    payload.targetFilter = {
+      operator: 'AND',
+      operand: [
+        {
+          operator: 'OR',
+          operand: [
+            {
+              operator: 'CONTAINS',
+              operand: {
+                targetName: 'descriptor.idx./entitlement.displayName',
+                targetValue: params.queryString,
+              },
+            },
+            {
+              operator: 'EQUALS',
+              operand: {
+                targetName: 'assignment.id',
+                targetValue: params.queryString,
+              },
+            },
+          ],
+        },
+        {
+          operator: 'EQUALS',
+          operand: {
+            targetName: 'item.type',
+            targetValue: 'entitlementGrant',
+          },
+        },
+      ],
+    };
+  }
 
-export function getUsersRoles(/* userIds */) {
-  return Promise.resolve({ data: getUsersRolesMock() });
+  let queryString = encodeQueryString(queryParams);
+  queryString = `${queryString}`;
+
+  const url = `/governance/catalog${queryString}`;
+  return generateIgaApi().post(url, payload);
 }

@@ -10,7 +10,9 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import ExceptionToolbar from './ExceptionToolbar';
 import i18n from '@/i18n';
 
-CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
+CommonsApi.getResource.mockReturnValue(Promise.resolve({
   data: {
     result: [{ givenName: 'firstName', sn: 'lastName', id: 'userId' }],
   },

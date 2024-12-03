@@ -15,6 +15,8 @@ import i18n from '@/i18n';
 import router from '@/router';
 import Approvals from './index';
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
 CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.resolve({
   data: {
     requireRequestJustification: false,
@@ -196,7 +198,7 @@ const openModalMock = {
 };
 
 describe('Approvals', () => {
-  CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({}));
+  CommonsApi.getResource.mockReturnValue(Promise.resolve({}));
   let wrapper;
 
   it('shows no data component when no requests are found', async () => {

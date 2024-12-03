@@ -16,6 +16,7 @@ import MyRequests from './MyRequests';
 import i18n from '@/i18n';
 
 jest.mock('vue-router');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
 describe('MyRequests', () => {
   function setup(user = { userId: '1234' }) {
@@ -218,7 +219,7 @@ describe('MyRequests', () => {
         displayName: 'Request Display Name',
       },
     }));
-    CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+    CommonsApi.getResource.mockReturnValue(Promise.resolve({
       data: {
         result: [],
       },

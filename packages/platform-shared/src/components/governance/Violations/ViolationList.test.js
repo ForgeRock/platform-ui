@@ -15,7 +15,8 @@ import i18n from '@/i18n';
 import * as store from '@/store';
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
-CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+CommonsApi.getResource.mockReturnValue(Promise.resolve({
   data: {
     result: [{ givenName: 'firstName', sn: 'lastName', id: 'userId' }],
   },

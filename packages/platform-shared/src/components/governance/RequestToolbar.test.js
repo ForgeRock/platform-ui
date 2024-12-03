@@ -10,8 +10,10 @@ import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import RequestToolbar from './RequestToolbar';
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
 describe('RequestToolbar', () => {
-  CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+  CommonsApi.getResource.mockReturnValue(Promise.resolve({
     data: {
       result: [
         {

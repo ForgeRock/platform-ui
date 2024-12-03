@@ -1,0 +1,86 @@
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
+<template>
+  <div class="pb-1 mb-4">
+    <FrGovResourceSelect
+      :description="property.description"
+      :label="property.label"
+      :name="`resourceSelect_${_uid}`"
+      :option-function="optionFunction"
+      :query-param-function="queryParamFunction"
+      :read-only="property.disabled"
+      :resource-function="resourceFunction"
+      :resource-path="resourcePath"
+      :set-initial-value="false"
+      :validation="property.validation"
+      :value="inputValue"
+      @input="updateValue" />
+  </div>
+</template>
+
+<script setup>
+/**
+ * Form custom component used for selecting a single object using an api call
+ */
+import { computed, ref } from 'vue';
+import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
+import {
+  getResourceFunction,
+  getResourcePath,
+  optionFunction,
+  queryParamFunction,
+} from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
+
+const emit = defineEmits(['update:model']);
+
+const props = defineProps({
+  property: {
+    type: Object,
+    default: () => ({}),
+  },
+});
+
+// data
+const inputValue = ref('');
+
+// computed
+const propertyType = computed(() => props.property.options.object);
+const resourceFunction = computed(() => (getResourceFunction(propertyType.value)));
+const resourcePath = computed(() => (getResourcePath(propertyType.value)));
+
+/**
+ * Emits update:model event with the new value.
+ *
+ * @param {String} value - The new value to be set.
+ */
+function updateValue(value) {
+  let propValue;
+  switch (propertyType.value) {
+    case 'entitlement':
+      propValue = `${propertyType.value}/${value.split('/').pop()}`;
+      break;
+    case 'user':
+    case 'role':
+    case 'organization':
+      propValue = `managed/${propertyType.value}/${value.split('/').pop()}`;
+      break;
+    default:
+      propValue = value;
+  }
+  emit('update:model', { path: props.property.model, value: propValue });
+}
+
+/**
+ * Initializes the given value.
+ *
+ * @param {String} value - The value to be initialized.
+ */
+function initializeValue(value) {
+  inputValue.value = value.split('/')?.pop() || '';
+}
+
+initializeValue(props.property.value);
+
+</script>

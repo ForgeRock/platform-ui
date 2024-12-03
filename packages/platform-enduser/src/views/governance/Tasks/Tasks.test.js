@@ -15,6 +15,7 @@ import i18n from '@/i18n';
 import Tasks from './Tasks';
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
 const mountComponent = () => {
   const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
@@ -68,7 +69,7 @@ const mockRequest = {
 };
 
 describe('Approvals', () => {
-  CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({}));
+  CommonsApi.getResource.mockReturnValue(Promise.resolve({}));
   let wrapper;
 
   beforeEach(() => {

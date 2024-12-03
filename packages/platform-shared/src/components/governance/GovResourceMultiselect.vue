@@ -3,19 +3,19 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div
-    v-if="initialValuesLoad && optionsLoad"
-    style="height: 50px;">
+  <div v-if="initialValuesLoad && optionsLoad">
     <FrField
       @input="handleInput"
       @search-change="debouncedSearch"
       open-direction="bottom"
       type="multiselect"
       :description="description"
+      :disabled="readOnly"
       :internal-search="false"
       :label="label"
       :name="name"
       :options="selectOptions"
+      :validation="validation"
       :value="selectValue">
       <template #noResult>
         <slot name="noResult">
@@ -36,6 +36,7 @@ import {
 } from 'lodash';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import { getOption, getQueryParams } from '@forgerock/platform-shared/src/utils/governance/select';
 
 const emit = defineEmits(['input']);
 
@@ -52,13 +53,42 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  value: {
-    type: Array,
-    default: () => [],
+  readOnly: {
+    type: Boolean,
+    default: false,
   },
   resource: {
     type: String,
     default: 'application',
+  },
+  validation: {
+    type: [Object, String],
+    default: '',
+  },
+  value: {
+    type: Array,
+    default: () => [],
+  },
+  /**
+   * Function to containing api call to retrieve resource data
+   */
+  resourceFunction: {
+    type: Function,
+    default: getResource,
+  },
+  /**
+   * Function to format resource data into options
+   */
+  optionFunction: {
+    type: Function,
+    default: getOption,
+  },
+  /**
+   * Function to format query params used for resourceFunction
+   */
+  queryParamFunction: {
+    type: Function,
+    default: getQueryParams,
   },
 });
 
@@ -73,31 +103,19 @@ const selectValue = ref([...props.value]);
 const selectOptions = computed(() => [...initialValues.value, ...options.value]);
 
 /**
- * Parses the query string and returns an object containing the query parameters.
- *
- * @param {string} queryString - The query string to parse.
- * @returns {Object} - An object containing the query parameters as key-value pairs.
- */
-function getQueryParams(queryString) {
-  const queryParams = { queryString };
-  if (props.resource === 'application') {
-    queryParams.authoritative = false;
-  }
-  return queryParams;
-}
-
-/**
  * Retrieves the initial values for the application picker based on the provided resourceIds.
  * @param {Array} resourceIds - An array of application IDs.
  */
 async function getInitialValues(resourceIds) {
-  const initialPromises = resourceIds.map((value) => getResource(props.resource, getQueryParams(value)));
   try {
+    const initialPromises = resourceIds.map((value) => props.resourceFunction(props.resource, props.queryParamFunction(value, props.resource, true)));
     const initialData = await Promise.all(initialPromises);
-    initialValues.value = initialData.map((resourcePromise) => ({
-      text: resourcePromise.data?.result?.[0]?.name,
-      value: resourcePromise.data?.result?.[0]?.id,
-    })) || [];
+    initialValues.value = initialData.map((resourcePromise) => {
+      const resource = resourcePromise.data.result[0];
+      return props.optionFunction(resource, props.resource);
+    }) || [];
+  } catch {
+    initialValues.value = resourceIds.map((value) => props.optionFunction({ id: value, name: value }, null));
   } finally {
     initialValuesLoad.value = true;
   }
@@ -117,11 +135,13 @@ async function getResourceList(queryString) {
     initialValuesLoad.value = true;
   }
   try {
-    const { data } = await getResource(props.resource, getQueryParams(queryString));
-    options.value = data.result?.map((resource) => ({
-      text: resource.name,
-      value: resource.id,
-    })) || [];
+    const { data } = await props.resourceFunction(props.resource, props.queryParamFunction(queryString, props.resource));
+    options.value = data.result
+      ?.map((resource) => props.optionFunction(resource, props.resource))
+      ?.filter((option) => !selectValue.value.includes(option.value))
+      || [];
+  } catch {
+    options.value = [];
   } finally {
     optionsLoad.value = true;
   }

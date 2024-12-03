@@ -9,6 +9,8 @@ import { flushPromises, shallowMount } from '@vue/test-utils';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import GovResourceMultiselect from './GovResourceMultiselect';
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
 describe('GovResourceMultiselect', () => {
   let wrapper;
   function mountComponent(props) {
@@ -32,7 +34,7 @@ describe('GovResourceMultiselect', () => {
     { name: 'App 1', id: 'app1' },
     { name: 'App 2', id: 'app2' },
   ];
-  CommonsApi.getResource = jest.fn().mockImplementation((arg1, arg2) => {
+  CommonsApi.getResource.mockImplementation((arg1, arg2) => {
     let returnValue = initialData;
     if (arg2.queryString === 'app3') returnValue = [{ name: 'App 3', id: 'app3' }];
     return Promise.resolve({ data: { result: returnValue } });

@@ -13,6 +13,7 @@ import i18n from '@/i18n';
 import AccessRequestTable from './AccessRequestTable';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
 const accessRequests = [{
   application: {
@@ -81,7 +82,7 @@ describe('AccessRequestTable', () => {
 
   describe('@Component Tests', () => {
     beforeEach(() => {
-      CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+      CommonsApi.getResource.mockReturnValue(Promise.resolve({
         data: {
           result: [],
         },

@@ -153,6 +153,37 @@ describe('formGeneratorSchemaTransformer', () => {
           },
         ],
       },
+      {
+        id: 'row5',
+        fields: [{
+          type: 'select',
+          model: 'field8',
+          label: 'Field 8',
+          description: 'Field 8 description',
+          options: { object: 'user' },
+          layout: {
+            columns: 6,
+            offset: 0,
+          },
+          validation: {
+            required: true,
+          },
+        },
+        {
+          type: 'multiselect',
+          model: 'field9',
+          label: 'Field 9',
+          description: 'Field 9 description',
+          layout: {
+            columns: 6,
+            offset: 0,
+          },
+          validation: {
+            required: true,
+          },
+          options: { object: 'user' },
+        }],
+      },
     ];
     const expected = [
       [
@@ -171,6 +202,7 @@ describe('formGeneratorSchemaTransformer', () => {
           },
           defaultValue: 'Field 1 default value',
           disabled: false,
+          customSlot: undefined,
         },
         {
           columnClass: 'col-md-6 offset-md-0',
@@ -187,6 +219,7 @@ describe('formGeneratorSchemaTransformer', () => {
           },
           defaultValue: 'Field 2 default value',
           disabled: false,
+          customSlot: undefined,
         },
       ],
       [
@@ -205,6 +238,7 @@ describe('formGeneratorSchemaTransformer', () => {
           },
           defaultValue: true,
           disabled: false,
+          customSlot: undefined,
         },
         {
           columnClass: 'col-md-4 offset-md-0',
@@ -231,6 +265,7 @@ describe('formGeneratorSchemaTransformer', () => {
           ],
           defaultValue: 'option1',
           disabled: false,
+          customSlot: undefined,
         },
         {
           columnClass: 'col-md-4 offset-md-0',
@@ -261,6 +296,7 @@ describe('formGeneratorSchemaTransformer', () => {
           ],
           defaultValue: ['option1'],
           disabled: false,
+          customSlot: undefined,
         },
       ],
       [
@@ -279,6 +315,7 @@ describe('formGeneratorSchemaTransformer', () => {
           },
           defaultValue: '2024-01-01',
           disabled: false,
+          customSlot: undefined,
         },
       ],
       [
@@ -296,6 +333,45 @@ describe('formGeneratorSchemaTransformer', () => {
             required: true,
           },
           disabled: false,
+          customSlot: undefined,
+        },
+      ],
+      [
+        {
+          columnClass: 'col-md-6 offset-md-0',
+          description: 'Field 8 description',
+          label: 'Field 8',
+          layout: {
+            columns: 6,
+            offset: 0,
+          },
+          model: 'field8',
+          type: 'select',
+          validation: {
+            required: true,
+          },
+          defaultValue: '',
+          options: { object: 'user' },
+          disabled: false,
+          customSlot: 'objectSelect',
+        },
+        {
+          columnClass: 'col-md-6 offset-md-0',
+          description: 'Field 9 description',
+          label: 'Field 9',
+          layout: {
+            columns: 6,
+            offset: 0,
+          },
+          model: 'field9',
+          type: 'multiselect',
+          validation: {
+            required: true,
+          },
+          defaultValue: [],
+          options: { object: 'user' },
+          disabled: false,
+          customSlot: 'objectMultiselect',
         },
       ],
     ];
