@@ -14,17 +14,23 @@ jest.mock('dayjs');
 describe('getTaskFilter', () => {
   it('generates filter object with assignee, priorities, and taskName', () => {
     const filter = {
-      assignee: 'user123',
+      query: 'user123',
       priorities: {
         high: true, medium: false, low: true, none: false,
       },
-      taskName: 'task1',
     };
     const expectedFilter = {
       operand: [
-        getBasicFilter('EQUALS', 'decision.actors.active.id', 'user123'),
         getPriorityFilter(filter.priorities),
-        getActivePhaseFilter('task1'),
+        {
+          operator: 'OR',
+          operand: [
+            getActivePhaseFilter('user123'),
+            getBasicFilter('CONTAINS', 'decision.actors.active.userName', 'user123'),
+            getBasicFilter('CONTAINS', 'decision.actors.active.givenName', 'user123'),
+            getBasicFilter('CONTAINS', 'decision.actors.active.sn', 'user123'),
+          ],
+        },
       ],
       operator: 'AND',
     };
@@ -32,10 +38,18 @@ describe('getTaskFilter', () => {
     expect(getTaskFilter(filter)).toStrictEqual(expectedFilter);
   });
 
-  it('generates filter object with only assignee', () => {
-    const filter = { assignee: 'user123' };
+  it('generates filter object with only assignee and taskName', () => {
+    const filter = { query: 'user123' };
     const expectedFilter = {
-      operand: [getBasicFilter('EQUALS', 'decision.actors.active.id', 'user123')],
+      operand: [{
+        operator: 'OR',
+        operand: [
+          getActivePhaseFilter('user123'),
+          getBasicFilter('CONTAINS', 'decision.actors.active.userName', 'user123'),
+          getBasicFilter('CONTAINS', 'decision.actors.active.givenName', 'user123'),
+          getBasicFilter('CONTAINS', 'decision.actors.active.sn', 'user123'),
+        ],
+      }],
       operator: 'AND',
     };
 
@@ -50,16 +64,6 @@ describe('getTaskFilter', () => {
     };
     const expectedFilter = {
       operand: [getPriorityFilter(filter.priorities)],
-      operator: 'AND',
-    };
-
-    expect(getTaskFilter(filter)).toStrictEqual(expectedFilter);
-  });
-
-  it('generates filter object with only taskName', () => {
-    const filter = { taskName: 'task1' };
-    const expectedFilter = {
-      operand: [getActivePhaseFilter('task1')],
       operator: 'AND',
     };
 

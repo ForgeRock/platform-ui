@@ -18,8 +18,7 @@ const baseFilter = {
     low: true,
     none: true,
   },
-  assignee: null,
-  taskName: null,
+  query: null,
 };
 
 let wrapper;
@@ -51,7 +50,7 @@ describe('TaskFilter', () => {
     setup();
   });
 
-  it('changing priority emits events with filter and count', async () => {
+  it('changing priority emits event with filter and count', async () => {
     const highPriority = findByTestId(wrapper, 'priority-high');
     highPriority.setChecked(false);
     await flushPromises();
@@ -59,48 +58,33 @@ describe('TaskFilter', () => {
     const expectedFilter = cloneDeep(baseFilter);
     expectedFilter.priorities.high = false;
 
-    expect(wrapper.emitted()['filter-change'][0]).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'][0]).toEqual([1]);
+    expect(wrapper.emitted()['filter-change'][0]).toEqual([{ count: 1, filter: expectedFilter }]);
 
     const medPriority = findByTestId(wrapper, 'priority-medium');
     medPriority.setChecked(false);
     expectedFilter.priorities.medium = false;
     await flushPromises();
 
-    expect(wrapper.emitted()['filter-change'][1]).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'][1]).toEqual([2]);
+    expect(wrapper.emitted()['filter-change'][1]).toEqual([{ count: 2, filter: expectedFilter }]);
 
     const lowPriority = findByTestId(wrapper, 'priority-low');
     lowPriority.setChecked(false);
     expectedFilter.priorities.low = false;
     await flushPromises();
 
-    expect(wrapper.emitted()['filter-change'][2]).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'][2]).toEqual([3]);
+    expect(wrapper.emitted()['filter-change'][2]).toEqual([{ count: 3, filter: expectedFilter }]);
   });
 
-  it('changing assignee emits events with filter and count', async () => {
+  it('changing task name or assignee emits event with filter and count', async () => {
+    jest.useFakeTimers();
     const expectedFilter = cloneDeep(baseFilter);
-    expectedFilter.assignee = 'managed/user/testId';
-    const assignee = wrapper.find('[label="governance.tasks.assignee"]');
-    assignee
-      .findAll('li')[1]
-      .find('span')
-      .trigger('click');
+    expectedFilter.query = 'testTaskName';
+    const query = wrapper.findComponent('[label="governance.tasks.taskNameOrAssignee"]');
+    query.vm.$emit('input', 'testTaskName');
     await flushPromises();
+    // debounce timer
+    jest.runAllTimers();
 
-    expect(wrapper.emitted()['filter-change'].pop()).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'].pop()).toEqual([1]);
-  });
-
-  it('changing task name emits events with filter and count', async () => {
-    const expectedFilter = cloneDeep(baseFilter);
-    expectedFilter.taskName = 'testTaskName';
-    const taskName = wrapper.findComponent('[label="governance.tasks.taskName"]');
-    taskName.vm.$emit('input', 'testTaskName');
-    await flushPromises();
-
-    expect(wrapper.emitted()['filter-change'].pop()).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'].pop()).toEqual([1]);
+    expect(wrapper.emitted()['filter-change'].pop()).toEqual([{ count: 1, filter: expectedFilter }]);
   });
 });

@@ -72,7 +72,6 @@ of the MIT license. See the LICENSE file for details. -->
         <slot name="filter">
           <FrRequestFilter
             data-testid="request-filter"
-            @filter-count="handleFilterCount"
             @filter-change="handleFilterChange" />
         </slot>
       </div>
@@ -128,19 +127,12 @@ onMounted(() => {
 });
 
 /**
- * Set number of filters and emit event with the count
- * @param {Number} count number of applied filters
- */
-function handleFilterCount(count) {
-  emit('update:num-filters', count);
-}
-
-/**
- * Set number of filters and emit event with the filter
+ * Set number of filters and emit event with the filter and count
  * @param {Object} filter object representing applied filters
  */
-function handleFilterChange(filter) {
-  emit('filter-change', filter);
+function handleFilterChange(event) {
+  emit('filter-change', event.filter);
+  emit('update:num-filters', event.count);
 }
 
 /**

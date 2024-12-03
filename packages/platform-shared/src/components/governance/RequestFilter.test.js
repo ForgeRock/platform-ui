@@ -19,9 +19,7 @@ const baseFilter = {
     none: true,
   },
   requestType: null,
-  requestedFor: null,
-  requester: null,
-  requestId: null,
+  query: null,
 };
 
 let wrapper;
@@ -53,7 +51,7 @@ describe('RequestFilter', () => {
     setup();
   });
 
-  it('changing priority emits events with filter and count', async () => {
+  it('changing priority emits event with filter and count', async () => {
     const highPriority = findByTestId(wrapper, 'priority-high');
     highPriority.setChecked(false);
     await flushPromises();
@@ -61,27 +59,25 @@ describe('RequestFilter', () => {
     const expectedFilter = cloneDeep(baseFilter);
     expectedFilter.priorities.high = false;
 
-    expect(wrapper.emitted()['filter-change'][0]).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'][0]).toEqual([1]);
+    expect(wrapper.emitted()['filter-change'][0]).toEqual([{ count: 1, filter: expectedFilter }]);
 
     const medPriority = findByTestId(wrapper, 'priority-medium');
     medPriority.setChecked(false);
     expectedFilter.priorities.medium = false;
     await flushPromises();
 
-    expect(wrapper.emitted()['filter-change'][1]).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'][1]).toEqual([2]);
+    expect(wrapper.emitted()['filter-change'][1]).toEqual([{ count: 2, filter: expectedFilter }]);
 
     const lowPriority = findByTestId(wrapper, 'priority-low');
     lowPriority.setChecked(false);
     expectedFilter.priorities.low = false;
     await flushPromises();
 
-    expect(wrapper.emitted()['filter-change'][2]).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'][2]).toEqual([3]);
+    expect(wrapper.emitted()['filter-change'][2]).toEqual([{ count: 3, filter: expectedFilter }]);
   });
 
-  it('changing requestType emits events with filter and count', async () => {
+  it('changing requestType emits event with filter and count', async () => {
+    jest.useFakeTimers();
     const expectedFilter = cloneDeep(baseFilter);
     expectedFilter.requestType = wrapper.vm.requestTypeOptions[1].value;
 
@@ -90,47 +86,21 @@ describe('RequestFilter', () => {
       .find('span')
       .trigger('click');
     await flushPromises();
+    // debounce timer
+    jest.runAllTimers();
 
-    expect(wrapper.emitted()['filter-change'].pop()).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'].pop()).toEqual([1]);
+    expect(wrapper.emitted()['filter-change'].pop()).toEqual([{ count: 1, filter: expectedFilter }]);
   });
 
-  it('changing requestedFor emits events with filter and count', async () => {
+  it('changing request query emits event with filter and count', async () => {
+    jest.useFakeTimers();
     const expectedFilter = cloneDeep(baseFilter);
-    expectedFilter.requestedFor = 'managed/user/testId';
-
-    findByTestId(wrapper, 'requested-for')
-      .findAll('li')[1]
-      .find('span')
-      .trigger('click');
+    expectedFilter.query = 'testId';
+    findByTestId(wrapper, 'input-request-query').setValue('testId');
     await flushPromises();
+    // debounce timer
+    jest.runAllTimers();
 
-    expect(wrapper.emitted()['filter-change'].pop()).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'].pop()).toEqual([1]);
-  });
-
-  it('changing requester emits events with filter and count', async () => {
-    const expectedFilter = cloneDeep(baseFilter);
-    expectedFilter.requester = 'managed/user/testId';
-
-    findByTestId(wrapper, 'requester')
-      .findAll('li')[1]
-      .find('span')
-      .trigger('click');
-    await flushPromises();
-
-    expect(wrapper.emitted()['filter-change'].pop()).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'].pop()).toEqual([1]);
-  });
-
-  it('changing request id emits events with filter and count', async () => {
-    const expectedFilter = cloneDeep(baseFilter);
-    expectedFilter.requestId = 'testId';
-
-    findByTestId(wrapper, 'input-request-id').setValue('testId');
-    await flushPromises();
-
-    expect(wrapper.emitted()['filter-change'].pop()).toEqual([expectedFilter]);
-    expect(wrapper.emitted()['filter-count'].pop()).toEqual([1]);
+    expect(wrapper.emitted()['filter-change'].pop()).toEqual([{ count: 1, filter: expectedFilter }]);
   });
 });

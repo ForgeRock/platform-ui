@@ -94,15 +94,15 @@ describe('RequestToolbar', () => {
   it('when the filter changes emit filter-change event with new filter', () => {
     const wrapper = mountComponent();
     const requestFilter = findComponentByTestId(wrapper, 'request-filter');
-    requestFilter.vm.$emit('filter-change', { prop1: 'test value' });
+    requestFilter.vm.$emit('filter-change', { count: 1, filter: 'test value' });
 
-    expect(wrapper.emitted()['filter-change'][0]).toEqual([{ prop1: 'test value' }]);
+    expect(wrapper.emitted()['filter-change'][0]).toEqual(['test value']);
   });
 
   it('when the filter changes emit update:num-filters event with new count', () => {
     const wrapper = mountComponent();
     const requestFilter = findComponentByTestId(wrapper, 'request-filter');
-    requestFilter.vm.$emit('filter-count', 1);
+    requestFilter.vm.$emit('filter-change', { count: 1, filter: 'test value' });
 
     expect(wrapper.emitted()['update:num-filters'][0]).toEqual([1]);
   });

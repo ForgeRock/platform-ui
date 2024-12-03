@@ -108,8 +108,8 @@ export function getActivePhaseFilter(queryString) {
       {
         operator: 'OR',
         operand: [
-          getBasicFilter('EQUALS', 'decision.phases.displayName', queryString),
-          getBasicFilter('EQUALS', 'decision.phases.name', queryString),
+          getBasicFilter('CONTAINS', 'decision.phases.displayName', queryString),
+          getBasicFilter('CONTAINS', 'decision.phases.name', queryString),
         ],
       },
       getBasicFilter('EQUALS', 'decision.phases.status', 'in-progress'),

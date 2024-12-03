@@ -12,15 +12,12 @@ import i18n from '@/i18n';
 /**
  * Generates a filter object for tasks based on the provided criteria.
  * @param {Object} filter - The parameters for filtering tasks.
- * @param {string} filter.assignee - The ID of the assignee to filter tasks by.
+ * @param {string} filter.query - The name of the task or assignee to filter by.
  * @param {Array<string>} filter.priorities - The list of priorities to filter tasks by.
- * @param {string} filter.taskName - The name of the task to filter by.
  * @returns {Object} The filter object containing the filters to be applied.
  */
-export function getTaskFilter({ assignee, priorities, taskName }) {
+export function getTaskFilter({ query, priorities }) {
   const allFilters = [];
-
-  if (assignee) allFilters.push(getBasicFilter('EQUALS', 'decision.actors.active.id', assignee));
 
   if (priorities) {
     const priorityFilters = getPriorityFilter(priorities);
@@ -29,11 +26,16 @@ export function getTaskFilter({ assignee, priorities, taskName }) {
     }
   }
 
-  if (taskName) {
-    const activePhaseFilter = getActivePhaseFilter(taskName);
-    if (activePhaseFilter) {
-      allFilters.push(activePhaseFilter);
-    }
+  if (query) {
+    allFilters.push({
+      operator: 'OR',
+      operand: [
+        getActivePhaseFilter(query),
+        getBasicFilter('CONTAINS', 'decision.actors.active.userName', query),
+        getBasicFilter('CONTAINS', 'decision.actors.active.givenName', query),
+        getBasicFilter('CONTAINS', 'decision.actors.active.sn', query),
+      ],
+    });
   }
 
   return {

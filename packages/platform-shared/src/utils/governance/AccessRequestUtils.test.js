@@ -6,6 +6,7 @@
  */
 
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import {
   getRequestFilter,
   getStatusText,
@@ -25,48 +26,23 @@ AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promis
   },
 }));
 
-const testUser = 'managed/user/testuser';
-
 describe('RequestToolbar', () => {
   describe('getRequestFilter', () => {
-    it('request id', () => {
-      const filter = { requestId: 'testId' };
+    it('request id, requester, and requestee', () => {
+      const filter = { query: 'testId' };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
         operand: [{
-          operator: 'EQUALS',
-          operand: {
-            targetName: 'id',
-            targetValue: 'testId',
-          },
-        }],
-      });
-    });
-
-    it('requested for', () => {
-      const filter = { requestedFor: testUser };
-      expect(getRequestFilter(filter)).toEqual({
-        operator: 'AND',
-        operand: [{
-          operator: 'EQUALS',
-          operand: {
-            targetName: 'user.id',
-            targetValue: 'testuser',
-          },
-        }],
-      });
-    });
-
-    it('requester', () => {
-      const filter = { requester: testUser };
-      expect(getRequestFilter(filter)).toEqual({
-        operator: 'AND',
-        operand: [{
-          operator: 'EQUALS',
-          operand: {
-            targetName: 'requester.id',
-            targetValue: 'managed/user/testuser',
-          },
+          operator: 'OR',
+          operand: [
+            getBasicFilter('CONTAINS', 'user.userName', 'testId'),
+            getBasicFilter('CONTAINS', 'user.givenName', 'testId'),
+            getBasicFilter('CONTAINS', 'user.sn', 'testId'),
+            getBasicFilter('CONTAINS', 'requester.userName', 'testId'),
+            getBasicFilter('CONTAINS', 'requester.givenName', 'testId'),
+            getBasicFilter('CONTAINS', 'requester.sn', 'testId'),
+            getBasicFilter('EQUALS', 'id', 'testId'),
+          ],
         }],
       });
     });

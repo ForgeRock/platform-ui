@@ -10,21 +10,11 @@ of the MIT license. See the LICENSE file for details. -->
           v-model:value="formPriorities"
           class="mb-4 mt-2" />
       </BCol>
-      <BCol lg="6">
-        <FrGovResourceSelect
-          v-model="formFields.assignee"
-          name="Assignee"
-          class="mb-4"
-          :first-option="allAssigneeOption"
-          :initial-data="{ id: 'all' }"
-          :label="$t('governance.tasks.assignee')"
-          resource-path="user" />
-      </BCol>
-      <BCol lg="6">
+      <BCol lg="12">
         <FrField
-          v-model="formFields.taskName"
+          v-model="formFields.query"
           class="mb-4"
-          :label="$t('governance.tasks.taskName')" />
+          :label="$t('governance.tasks.taskNameOrAssignee')" />
       </BCol>
     </BRow>
   </div>
@@ -39,28 +29,22 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import { computed, ref, watch } from 'vue';
+import { debounce } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import FrPriorityFilter from '@forgerock/platform-shared/src/components/governance/PriorityFilter';
-import i18n from '@/i18n';
 
 // emits
 const emit = defineEmits(['filter-change', 'filter-count']);
 
 // data
 const formFields = ref({
-  assignee: 'managed/user/all',
-  taskName: '',
+  query: '',
 });
 const formPriorities = ref({
   high: true,
   medium: true,
   low: true,
   none: true,
-});
-const allAssigneeOption = ref({
-  text: i18n.global.t('governance.tasks.allAssignees'),
-  value: 'all',
 });
 
 const numFilters = computed(() => {
@@ -69,8 +53,7 @@ const numFilters = computed(() => {
   if (!formPriorities.value.medium) filters += 1;
   if (!formPriorities.value.low) filters += 1;
   if (!formPriorities.value.none) filters += 1;
-  if (formFields.value.assignee !== 'managed/user/all') filters += 1;
-  if (formFields.value.taskName.length) filters += 1;
+  if (formFields.value.query.length) filters += 1;
 
   return filters;
 });
@@ -85,27 +68,28 @@ function getFilterPayload() {
     low: formPriorities.value.low,
     none: formPriorities.value.none,
   };
-  const assignee = formFields.value.assignee === 'managed/user/all'
-    ? null
-    : formFields.value.assignee;
-  const taskName = formFields.value.taskName.length
-    ? formFields.value.taskName
+  const query = formFields.value.query.length
+    ? formFields.value.query
     : null;
 
   return {
-    priorities,
-    assignee,
-    taskName,
+    count: numFilters.value,
+    filter: {
+      priorities,
+      query,
+    },
   };
 }
 
+const emitFilterChange = debounce(() => {
+  emit('filter-change', getFilterPayload());
+}, 500);
+
 watch(() => formPriorities.value, () => {
-  emit('filter-count', numFilters.value);
   emit('filter-change', getFilterPayload());
 }, { deep: true });
 
 watch(() => formFields.value, () => {
-  emit('filter-count', numFilters.value);
-  emit('filter-change', getFilterPayload());
+  emitFilterChange();
 }, { deep: true });
 </script>

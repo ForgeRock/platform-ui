@@ -22,8 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
             @status-change="filterHandler({ status: $event })">
             <template #filter>
               <FrTaskFilter
-                @filter-count="numFilters = $event"
-                @filter-change="filterHandler({ filter: $event })" />
+                @filter-change="filterHandler({ filter: $event.filter }); numFilters = $event.count" />
             </template>
           </FrRequestToolbar>
         </template>

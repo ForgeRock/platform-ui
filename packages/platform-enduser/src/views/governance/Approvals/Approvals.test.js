@@ -11,6 +11,7 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import { clone } from 'lodash';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getRequestFilter } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 import router from '@/router';
 import Approvals from './index';
@@ -355,7 +356,7 @@ describe('Approvals', () => {
 
     const toolbar = findComponentByTestId(wrapper, 'approvals-toolbar');
     toolbar.vm.$emit('filter-change', {
-      requestId: 'testId',
+      query: 'testId',
     });
 
     await flushPromises();
@@ -370,18 +371,7 @@ describe('Approvals', () => {
         _sortDir: 'desc',
         actorStatus: 'active',
       },
-      {
-        operator: 'AND',
-        operand: [
-          {
-            operator: 'EQUALS',
-            operand: {
-              targetName: 'id',
-              targetValue: 'testId',
-            },
-          },
-        ],
-      },
+      getRequestFilter({ query: 'testId' }),
     );
   });
 

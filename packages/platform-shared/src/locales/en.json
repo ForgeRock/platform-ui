@@ -1604,7 +1604,6 @@
       "customRequestAltText": "Custom Request",
       "noRequests": "No {status} Access Requests",
       "requestedFor": "Requested For",
-      "requester": "Requester",
       "requestDate": "Request Date",
       "requestedBy": "Requested By",
       "requestId": "Request ID",
@@ -1613,6 +1612,7 @@
       "requestType": "Request Type",
       "requestTypesError": "Error getting request types",
       "requestTypesTabTitle": "Request Types",
+      "searchText": "Request ID, Requested By, Requested For",
       "submittedARequest": "submitted a request",
       "submittedRequest": "submitted this request"
     },

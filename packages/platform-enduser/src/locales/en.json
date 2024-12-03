@@ -421,7 +421,7 @@
       "noTasks": "No Tasks",
       "subtitle": "View and take action on your pending access tasks.",
       "task": "Task",
-      "taskName": "Task Name",
+      "taskNameOrAssignee": "Task Name or Assignee",
       "taskLoadError": "Error getting fulfillment tasks",
       "title": "Tasks"
     }

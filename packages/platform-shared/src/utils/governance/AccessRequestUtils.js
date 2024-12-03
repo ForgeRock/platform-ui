@@ -110,9 +110,21 @@ export const sortByOptions = [
 export function getRequestFilter(filter, status) {
   const allFilters = [];
 
-  if (filter.requestId) allFilters.push(getBasicFilter('EQUALS', 'id', filter.requestId));
-  if (filter.requestedFor) allFilters.push(getBasicFilter('EQUALS', 'user.id', filter.requestedFor.split('/').pop()));
-  if (filter.requester) allFilters.push(getBasicFilter('EQUALS', 'requester.id', filter.requester));
+  if (filter.query) {
+    allFilters.push({
+      operator: 'OR',
+      operand: [
+        getBasicFilter('CONTAINS', 'user.userName', filter.query),
+        getBasicFilter('CONTAINS', 'user.givenName', filter.query),
+        getBasicFilter('CONTAINS', 'user.sn', filter.query),
+        getBasicFilter('CONTAINS', 'requester.userName', filter.query),
+        getBasicFilter('CONTAINS', 'requester.givenName', filter.query),
+        getBasicFilter('CONTAINS', 'requester.sn', filter.query),
+        getBasicFilter('EQUALS', 'id', filter.query),
+      ],
+    });
+  }
+
   if (filter.requestType) allFilters.push(getBasicFilter('EQUALS', 'requestType', filter.requestType));
 
   if (filter.priorities) {
