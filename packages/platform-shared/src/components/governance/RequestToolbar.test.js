@@ -56,10 +56,14 @@ describe('RequestToolbar', () => {
     expect(filterCollapse.attributes('style')).toBe('display: none;');
 
     const toggleBtn = findByTestId(wrapper, 'filter-toggle');
+    expect(toggleBtn.attributes('aria-pressed')).toBe('false');
+
     toggleBtn.trigger('click');
     await flushPromises();
 
     expect(filterCollapse.attributes('style')).toBe('');
+    expect(toggleBtn.attributes('aria-labelledby')).toBe('filter-toggle-label');
+    expect(toggleBtn.attributes('aria-pressed')).toBe('true');
   });
 
   it('the badge is hidden when no filters are applied', () => {

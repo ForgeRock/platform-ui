@@ -44,12 +44,14 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           @click="showFilters = !showFilters"
           class="toolbar-link-text"
+          :pressed="showFilters"
+          aria-labelledby="filter-toggle-label"
           data-testid="filter-toggle"
           variant="link">
           <FrIcon
             icon-class="mr-lg-2"
             name="filter_list">
-            <span class="d-none d-lg-inline">
+            <span class="d-none d-lg-inline" id="filter-toggle-label">
               {{ showFilters ? $t('governance.hideFilters') : $t('governance.showFilters') }}
             </span>
           </FrIcon>
