@@ -207,29 +207,6 @@ describe('EditReviewerModal', () => {
     expect(wrapper.emitted()['delete-reviewer'][0][0]).toBe('managed/user/2cdfc1d4-a206-435b-b22e-a5ed8804f4af');
   });
 
-  it('setSelectedReviewer sets user correctly', () => {
-    const user = {
-      userName: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
-      givenName: 'Barbara',
-      sn: 'Walters',
-      id: 'managed/user/2cdfc1d4-a206-435b-b22e-a5ed8804f4af',
-      mail: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
-    };
-    wrapper.vm.setSelectedReviewer(user);
-
-    expect(wrapper.vm.selectedReviewer).toEqual(user);
-  });
-
-  it('setSelectedReviewer sets role correctly', () => {
-    const role = {
-      name: 'Marketing',
-      id: 'managed/role/2cdfc1d4-a206-435b-b22e-a5ed8804f4af',
-    };
-    wrapper.vm.setSelectedReviewer(role);
-
-    expect(wrapper.vm.selectedReviewer).toEqual(role);
-  });
-
   it('reset should assign right values to data', () => {
     wrapper.vm.reviewerType = ResourceType.ROLE;
     wrapper.vm.reviewerIdSelected = 'managed/role/2cdfc1d4-a206-435b-b22e-a5ed8804f4af';

@@ -87,23 +87,11 @@ of the MIT license. See the LICENSE file for details. -->
         </BCard>
       </div>
       <div v-else>
-        <p class="mb-4">
-          {{ $t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.description') }}
-        </p>
-        <BFormRadioGroup
-          class="mb-4"
-          v-model="reviewerType"
-          :options="reviewerOptions" />
-        <FrGovResourceSelect
-          class="mb-5"
-          v-model="reviewerIdSelected"
-          name="reviewerIdSelected"
-          :resource-path="reviewerType"
-          :label="resourceSelectLabel"
-          :description="resourceSelectDescription"
-          validation="required"
-          @get-user-info="setSelectedReviewer"
-          @get-role-info="setSelectedReviewer" />
+        <FrForwardModalContent
+          :description-text="$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.description')"
+          :show-comment-field="false"
+          @resource-info="selectedReviewer = $event"
+          @request-update-actors="reviewerIdSelected = $event" />
       </div>
       <p class="mb-2">
         {{ $t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.permissionsLabel') }}
@@ -151,24 +139,23 @@ of the MIT license. See the LICENSE file for details. -->
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
-  BButtonClose,
-  BModal,
   BButton,
-  BFormRadioGroup,
+  BButtonClose,
   BCard,
   BCardBody,
+  BImg,
   BMedia,
   BMediaAside,
   BMediaBody,
-  BImg,
+  BModal,
 } from 'bootstrap-vue';
 import {
   includes,
 } from 'lodash';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
+import FrForwardModalContent from '@forgerock/platform-shared/src/views/Governance/ForwardModalContent';
 import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
-import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 
 const DEFAULT_PERMISSIONS = {
@@ -187,20 +174,19 @@ const PERMISSIONS_MAP = {
 export default {
   name: 'EditReviewerModal',
   components: {
-    BButtonClose,
-    BModal,
-    FrIcon,
     BButton,
-    FrButtonWithSpinner,
-    BFormRadioGroup,
-    FrGovResourceSelect,
-    FrField,
+    BButtonClose,
     BCard,
     BCardBody,
+    BImg,
     BMedia,
     BMediaAside,
     BMediaBody,
-    BImg,
+    BModal,
+    FrButtonWithSpinner,
+    FrIcon,
+    FrField,
+    FrForwardModalContent,
   },
   props: {
     reviewer: {
@@ -231,16 +217,10 @@ export default {
   data() {
     return {
       reviewerType: ResourceType.USER,
-      reviewerOptions: [
-        { text: this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.addUserLabel'), value: ResourceType.USER },
-        { text: this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.addRoleLabel'), value: ResourceType.ROLE },
-      ],
       reviewerIdSelected: null,
       ResourceType,
       permissions: { ...DEFAULT_PERMISSIONS },
       selectedReviewer: null,
-      resourceSelectLabel: this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.chooseUserLabel'),
-      resourceSelectDescription: this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.chooseUserDescription'),
       currentUserMappedPermissions: {},
     };
   },
@@ -259,9 +239,6 @@ export default {
     deleteReviewer() {
       if (this.permissionOwnedByCurrentUser) return;
       this.$emit('delete-reviewer', this.reviewer.id, true);
-    },
-    setSelectedReviewer(resource) {
-      this.selectedReviewer = resource;
     },
     reset() {
       this.reviewerType = ResourceType.USER;
@@ -300,10 +277,6 @@ export default {
         this.permissions = this.getMappedPermissions(newReviewer.permissions);
         [, this.reviewerType] = newReviewer.id.split('/');
       }
-    },
-    reviewerType(newReviewerType) {
-      this.resourceSelectLabel = this.$t(`governance.certificationTask.lineItemReviewersModal.editReviewerModal.${newReviewerType === ResourceType.USER ? 'chooseUserLabel' : 'chooseRoleLabel'}`);
-      this.resourceSelectDescription = this.$t(`governance.certificationTask.lineItemReviewersModal.editReviewerModal.${newReviewerType === ResourceType.USER ? 'chooseUserDescription' : 'chooseRoleDescription'}`);
     },
     currentUserPermissions(permissions) {
       if (!this.reviewer) {

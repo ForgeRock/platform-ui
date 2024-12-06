@@ -59,6 +59,7 @@ export function optionFunction(resource, resourceType) {
   switch (resourceType) {
     case 'alpha_user':
       return {
+        userInfo: { ...resource },
         text: i18n.global.t('common.userFullName', { givenName: resource.givenName, sn: resource.sn }),
         value: resource._id,
       };
@@ -112,4 +113,25 @@ export function queryParamFunction(queryString, resourceType, singleResource = f
     queryParams.authoritative = false;
   }
   return queryParams;
+}
+
+/**
+ * Constructs a value path string based on the provided resource type and id.
+ *
+ * @param {string} resourceType - The type of the resource (e.g., 'user', 'role', 'organization', 'application', 'entitlement').
+ * @param {string} id - The unique identifier for the resource.
+ * @returns {string} The constructed value path string.
+ */
+export function getValuePath(resourceType, id) {
+  switch (resourceType) {
+    case 'user':
+    case 'role':
+    case 'organization':
+    case 'application':
+      return `managed/${resourceType}/${id}`;
+    case 'entitlement':
+      return `entitlement/${id}`;
+    default:
+      return `${resourceType}/${id}`;
+  }
 }

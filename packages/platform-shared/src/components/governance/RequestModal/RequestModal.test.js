@@ -8,21 +8,21 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import i18n from '@/i18n';
 import RequestModal from './RequestModal';
 
-jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 
 const requestActionSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockReturnValue(Promise.resolve({ data: {} }));
-CommonsApi.getResource.mockResolvedValue({
+ManagedResourceApi.getManagedResourceList.mockResolvedValue({
   data: {
     result: [
       {
+        _id: 'd34a9575-c714-4cf3-8b62-f975af04a0b9',
         givenName: 'Alyson',
-        id: 'd34a9575-c714-4cf3-8b62-f975af04a0b9',
         mail: 'Alyson@IGATestQA.onmicrosoft.com',
         sn: 'Skelly',
         userName: 'Alyson@IGATestQA.onmicrosoft.com',

@@ -8,7 +8,7 @@ import { getManagedResourceList } from '@forgerock/platform-shared/src/api/Manag
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { searchCatalogEntitlements } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import {
-  getResourceFunction, getResourcePath, optionFunction, queryParamFunction,
+  getResourceFunction, getResourcePath, getValuePath, optionFunction, queryParamFunction,
 } from './govObjectSelect';
 
 describe('objectSelect utils', () => {
@@ -47,7 +47,7 @@ describe('objectSelect utils', () => {
   describe('optionFunction', () => {
     it('returns formatted user option', () => {
       const resource = { givenName: 'John', sn: 'Doe', _id: 'userId1' };
-      expect(optionFunction(resource, 'alpha_user')).toEqual({ text: 'John Doe', value: 'userId1' });
+      expect(optionFunction(resource, 'alpha_user')).toEqual({ userInfo: resource, text: 'John Doe', value: 'userId1' });
     });
 
     it('returns formatted role option', () => {
@@ -112,6 +112,32 @@ describe('objectSelect utils', () => {
         queryString: 'Org1',
       };
       expect(queryParamFunction(queryString, 'organization')).toEqual(expectedParams);
+    });
+
+    describe('getValuePath', () => {
+      it('returns managed path for user', () => {
+        expect(getValuePath('user', 'userId1')).toBe('managed/user/userId1');
+      });
+
+      it('returns managed path for role', () => {
+        expect(getValuePath('role', 'roleId1')).toBe('managed/role/roleId1');
+      });
+
+      it('returns managed path for organization', () => {
+        expect(getValuePath('organization', 'orgId1')).toBe('managed/organization/orgId1');
+      });
+
+      it('returns managed path for application', () => {
+        expect(getValuePath('application', 'appId1')).toBe('managed/application/appId1');
+      });
+
+      it('returns entitlement path for entitlement', () => {
+        expect(getValuePath('entitlement', 'entitlementId1')).toBe('entitlement/entitlementId1');
+      });
+
+      it('returns default path for other types', () => {
+        expect(getValuePath('customType', 'customId1')).toBe('customType/customId1');
+      });
     });
   });
 });

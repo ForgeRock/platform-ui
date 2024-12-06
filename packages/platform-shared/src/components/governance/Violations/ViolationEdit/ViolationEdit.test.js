@@ -9,7 +9,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { cloneDeep } from 'lodash';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
-import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
@@ -18,7 +18,7 @@ import i18n from '@/i18n';
 import ViolationDetails from './ViolationDetails';
 import * as store from '@/store';
 
-jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/ViolationApi');
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('vue-router', () => ({
@@ -116,7 +116,7 @@ describe('Violation Edit', () => {
   ViolationApi.forwardViolation = jest.fn().mockReturnValue(Promise.resolve({
     data: violation,
   }));
-  CommonsApi.getResource.mockReturnValue(Promise.resolve({ data: {} }));
+  ManagedResourceApi.getManagedResourceList.mockReturnValue(Promise.resolve({ data: {} }));
 
   beforeEach(() => {
     jest.clearAllMocks();

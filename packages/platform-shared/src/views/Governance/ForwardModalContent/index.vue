@@ -9,27 +9,31 @@ of the MIT license. See the LICENSE file for details. -->
     </p>
     <div class="mb-4">
       <BFormRadioGroup
+        v-model="forwardToType"
         class="mb-4"
         stacked
-        v-model="forwardToType"
-        :options="forwardToOptions"
-      />
+        :options="forwardToOptions" />
       <FrGovResourceSelect
         v-model="forwardToResource"
         name="forwardToResource"
-        :resource-path="isUserSelected ? 'user' : 'role'"
-        :label="$t('governance.certificationTask.actionsModal.forwardTo')"
         validation="required"
-      />
+        :option-function="optionFunction"
+        :query-param-function="queryParamFunction"
+        :resource-function="getManagedResourceList"
+        :resource-path="resourcePath"
+        :label="$t('governance.certificationTask.actionsModal.forwardTo')"
+        @get-user-info="$emit('resource-info', $event)"
+        @get-role-info="$emit('resource-info', $event)" />
     </div>
 
     <!-- comment -->
     <FrField
-      @input="$emit('request-comment', $event);"
+      v-if="showCommentField"
       class="mb-4"
       type="textarea"
       validation="required"
-      :label="commentLabel" />
+      :label="commentLabel"
+      @input="$emit('request-comment', $event);" />
   </div>
 </template>
 
@@ -37,6 +41,13 @@ of the MIT license. See the LICENSE file for details. -->
 import { BFormRadioGroup } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
+import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import {
+  getResourcePath,
+  getValuePath,
+  optionFunction,
+  queryParamFunction,
+} from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
 
 /**
  * @constant {Object}
@@ -63,6 +74,10 @@ export default {
       type: String,
       default: '',
     },
+    showCommentField: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -77,6 +92,9 @@ export default {
     };
   },
   computed: {
+    resourcePath() {
+      return getResourcePath(this.forwardToType);
+    },
     isUserSelected() {
       return this.forwardToType === 'user';
     },
@@ -86,12 +104,17 @@ export default {
       },
       set(value) {
         if (this.isUserSelected) {
-          this.forwardToUser = value;
+          this.forwardToUser = getValuePath('user', value.split('/').pop());
         } else {
-          this.forwardToRole = value;
+          this.forwardToRole = getValuePath('role', value.split('/').pop());
         }
       },
     },
+  },
+  methods: {
+    optionFunction,
+    queryParamFunction,
+    getManagedResourceList,
   },
   watch: {
     forwardToResource(forwardTo) {
@@ -100,9 +123,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.input-line-height {
-  line-height: 1.2;
-}
-</style>

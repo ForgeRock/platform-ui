@@ -29,6 +29,7 @@ import FrGovResourceSelect from '@forgerock/platform-shared/src/components/gover
 import {
   getResourceFunction,
   getResourcePath,
+  getValuePath,
   optionFunction,
   queryParamFunction,
 } from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
@@ -56,19 +57,7 @@ const resourcePath = computed(() => (getResourcePath(propertyType.value)));
  * @param {String} value - The new value to be set.
  */
 function updateValue(value) {
-  let propValue;
-  switch (propertyType.value) {
-    case 'entitlement':
-      propValue = `${propertyType.value}/${value.split('/').pop()}`;
-      break;
-    case 'user':
-    case 'role':
-    case 'organization':
-      propValue = `managed/${propertyType.value}/${value.split('/').pop()}`;
-      break;
-    default:
-      propValue = value;
-  }
+  const propValue = getValuePath(propertyType.value, value.split('/').pop());
   emit('update:model', { path: props.property.model, value: propValue });
 }
 
