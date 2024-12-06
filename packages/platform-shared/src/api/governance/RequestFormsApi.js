@@ -55,3 +55,13 @@ export function deleteForm(formId) {
 export function saveForm(form) {
   return generateIgaApi().put(`${requestFormsUrl}/${form.id}`, form);
 }
+
+/**
+ * Patch a form
+ * @param {string} formId form id to patch
+ * @param {object} payload form data to patch
+ * @returns The response is a promise that resolves to the patched form.
+ */
+export function patchForm(formId, payload) {
+  return generateIgaApi().patch(`${requestFormsUrl}/${formId}`, payload);
+}

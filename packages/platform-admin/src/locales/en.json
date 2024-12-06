@@ -4115,7 +4115,9 @@
         "requestTypeAlreadyAssigned": "Request type already assigned to a form",
         "requestTypeDescription": "Choose a request type for which this request form applies.",
         "requestTypeLabel": "Request Type",
-        "savingSuccess": "Form created successfully"
+        "savingSuccess": "Form created successfully",
+        "useForRequestCreation": "Use this form for request creation",
+        "useForRequestCreationDescription": "Enable this option to make this form available when creating new requests of this request type. If unchecked, the request type will only be used for suggesting form fields keys during form design."
       },
       "editor": {
         "errorMessage": "Error message",
@@ -4328,11 +4330,11 @@
     "editor": {
       "addApplication": "Add Application",
       "addRequestType": "Add Request Type",
-      "applicationAssigmentAlreadyExist": "The application and object type is already assigned to the form, please choose another.",
-      "applicationAssigmentCreated": "Application added",
-      "applicationAssigmentDeleted": "Application removed",
-      "applicationAssigmentDescription": "Applications for which this form will be used for requests.",
-      "applicationAssigmentsError": "Error getting application assignments",
+      "applicationAssignmentAlreadyExist": "The application and object type is already assigned to the form, please choose another.",
+      "applicationAssignmentCreated": "Application added",
+      "applicationAssignmentDeleted": "Application removed",
+      "applicationAssignmentDescription": "Applications for which this form will be used for requests.",
+      "applicationAssignmentsError": "Error getting application assignments",
       "canvas": {
         "emptyTitle": "You haven't added any fields yet",
         "emptySubtitle": "Drag fields into your form to get started."
@@ -4350,12 +4352,12 @@
         "utilities": "Utilities"
       },
       "closeButtonTooltip": "Toggle Field List",
-      "createApplicationAssigmentError": "Error creating application assignment",
-      "createRequestTypeAssigmentError": "Error creating request type assignment",
-      "deleteApplicationAssigmentError": "Error deleting application assignment",
-      "deleteRequestTypeAssigmentError": "Error deleting request type assignment",
+      "createApplicationAssignmentError": "Error creating application assignment",
+      "createRequestTypeAssignmentError": "Error creating request type assignment",
+      "deleteApplicationAssignmentError": "Error deleting application assignment",
+      "deleteRequestTypeAssignmentError": "Error deleting request type assignment",
       "emptyRequestTypes": "No request types selected",
-      "errorGettingApplicationAssigments": "Error getting application assignments",
+      "errorGettingApplicationAssignments": "Error getting application assignments",
       "field": {
         "columns": {
           "label": "Columns",
@@ -4395,11 +4397,11 @@
       },
       "previewHelp": "Copy and paste into an incognito window to preview form. Form will only be shown if linked to a request type.",
       "requestTypes": "Request Types",
-      "requestTypeAssigmentAlreadyExist": "The request type is already assigned to the form, please choose another.",
-      "requestTypeAssigmentDeleted": "Request type removed",
-      "requestTypeAssigmentDescription": "Request types for which this form will be used.",
-      "requestTypeAssigmentSuccess": "Request type added",
-      "requestTypeAssigmentsError": "Error getting request type assignments",
+      "requestTypeAssignmentAlreadyExist": "The request type is already assigned to the form, please choose another.",
+      "requestTypeAssignmentDeleted": "Request type removed.",
+      "requestTypeAssignmentDescription": "Request types for which this form will be used.",
+      "requestTypeAssignmentSuccess": "Request type added.",
+      "requestTypeAssignmentsError": "Error getting request type assignments",
       "settings": "Form Settings",
       "types": {
         "checkbox": {

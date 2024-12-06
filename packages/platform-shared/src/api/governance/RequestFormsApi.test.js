@@ -13,11 +13,13 @@ const formsUrl = '/governance/requestForms';
 const getMock = jest.fn();
 const deleteMock = jest.fn();
 const putMock = jest.fn();
+const patchMock = jest.fn();
 
 BaseApi.generateIgaApi = jest.fn(() => ({
   get: getMock,
   delete: deleteMock,
   put: putMock,
+  patch: patchMock,
 }));
 describe('FormsApi', () => {
   it('getForm should call api with correct parameters', async () => {
@@ -50,5 +52,14 @@ describe('FormsApi', () => {
     await RequestFormsApi.saveForm(form);
 
     expect(putMock).toBeCalledWith(`${formsUrl}/${form.id}`, form);
+  });
+
+  it('patchForm should call api with correct parameters', async () => {
+    const formId = '123';
+    const payload = { prop: 'value' };
+
+    await RequestFormsApi.patchForm(formId, payload);
+
+    expect(patchMock).toBeCalledWith(`${formsUrl}/${formId}`, payload);
   });
 });
