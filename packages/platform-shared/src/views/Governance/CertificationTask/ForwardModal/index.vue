@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       :id="modalId"
       :title="$t('governance.certificationTask.actionsModal.forwardItem')"
       :static="isTesting"
-      @ok="forwardItem"
+      @hidden="resetModal"
       cancel-variant="link"
       ok-variant="info"
       size="lg">
@@ -132,6 +132,11 @@ export default {
         this.forwardItem();
         ok();
       }
+    },
+    resetModal() {
+      this.step = STEPS.DETAILS;
+      this.comment = '';
+      this.newActorId = '';
     },
     nextStep() {
       this.step = STEPS.CONFIRM;
