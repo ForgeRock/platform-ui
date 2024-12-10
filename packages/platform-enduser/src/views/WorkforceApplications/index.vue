@@ -61,7 +61,7 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import { onImageError, resolveImage } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getDefinedDashboards } from '@forgerock/platform-shared/src/api/DashboardApi';
 import { getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import { getUserSamlApplications } from '@/api/ProfileApi';
+import { getUserSsoApplications } from '@/api/ProfileApi';
 
 export default {
   name: 'WorkforceApplications',
@@ -75,7 +75,7 @@ export default {
       applications: {},
       searchString: '',
       userData: {},
-      userSamlApplications: [],
+      userSsoApplications: [],
     };
   },
   mixins: [
@@ -101,12 +101,15 @@ export default {
         };
       });
 
-      this.userSamlApplications.forEach((samlApp) => {
-        filteredApps.push({
-          name: samlApp.name,
-          icon: samlApp.icon || 'saml.svg',
-          url: samlApp.ssoEntities.idpLoginUrl,
-        });
+      this.userSsoApplications.forEach((ssoApp) => {
+        if (ssoApp.ssoEntities?.idpLoginUrl) {
+          const backupIcon = ssoApp.templateName === 'saml' ? 'saml.svg' : 'custom.svg';
+          filteredApps.push({
+            name: ssoApp.name,
+            icon: ssoApp.icon || backupIcon,
+            url: ssoApp.ssoEntities.idpLoginUrl,
+          });
+        }
       });
 
       return filteredApps;
@@ -123,10 +126,10 @@ export default {
       const userManagedObject = this.$store.state.isFraas ? `${this.$store.state.realm}_user` : 'user';
       Promise.all([
         getManagedResource(userManagedObject, this.userId),
-        getUserSamlApplications(userManagedObject, this.userId),
-      ]).then(([userResult, userSamlApplicationsResult]) => {
+        getUserSsoApplications(userManagedObject, this.userId),
+      ]).then(([userResult, userSsoApplicationsResult]) => {
         this.userData = userResult.data;
-        this.userSamlApplications = userSamlApplicationsResult.data.result;
+        this.userSsoApplications = userSsoApplicationsResult.data.result;
       }).catch((error) => {
         this.showErrorMessage(error, this.$t('pages.profile.failedGettingProfile'));
       });

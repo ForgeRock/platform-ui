@@ -325,7 +325,15 @@
  .text-blue {
    color: $blue !important;
  }
- 
+
+ .text-darkblue {
+   color: $dark-blue !important;
+ }
+
+ .text-darkgreen {
+   color: $dark-green !important;
+ }
+
  /* opacity */
  .opacity-20 {
    opacity: 0.2 !important;

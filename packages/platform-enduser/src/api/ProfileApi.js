@@ -7,13 +7,13 @@
 
 import { generateIdmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 /**
-  * Returns a list of user's saml apps
+  * Returns a list of user's apps
   * @param {String} userManagedObject user object name example: user, alpha_user, or bravo_user
   * @param {String} Id user's _id
   *
   * @returns {Promise}
   */
 // eslint-disable-next-line import/prefer-default-export
-export function getUserSamlApplications(userManagedObject, id) {
-  return generateIdmApi().get(`profile/managed/${userManagedObject}/${id}/applications?_fields=*&_queryFilter=/templateName+eq+"saml"`);
+export function getUserSsoApplications(userManagedObject, id) {
+  return generateIdmApi().get(`profile/managed/${userManagedObject}/${id}/applications?_fields=*&_queryFilter=true`);
 }

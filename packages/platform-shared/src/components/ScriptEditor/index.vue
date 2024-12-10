@@ -5,12 +5,14 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="form-group mb-0 h-100 d-flex flex-column">
     <div
-      v-if="scriptTitle!=='' || showFileUpload || showScriptType"
-      class="d-flex justify-content-between align-items-center">
+      v-if="scriptTitle!=='' || showFileUpload || showScriptType || showCopy"
+      class="d-flex justify-content-between align-items-center"
+      :class="useDarkHeading ? 'rounded-top px-3 dark-heading' : ''">
       <label class="mb-0 mr-2 py-2">
         {{ scriptTitle === null ? $t('scriptEditor.title') : scriptTitle }}
       </label>
-      <div class="d-flex align-items-center py-2">
+      <div
+        class="d-flex align-items-center py-2">
         <label
           v-show="showScriptType"
           class="mr-1 mb-0">
@@ -33,6 +35,20 @@ of the MIT license. See the LICENSE file for details. -->
           type="boolean"
           :label="$t('scriptEditor.uploadFile')"
           size="sm" />
+        <BButton
+          v-if="showCopy"
+          id="buttonCopy"
+          variant="none"
+          class="overflow-hidden d-flex align-items-center btn-sm"
+          :class="useDarkHeading ? 'dark-heading-copy' : ''"
+          :aria-label="label"
+          @click="copyValueToClipboard(value.source)">
+          <FrIcon
+            icon-class="mr-1"
+            name="copy">
+            {{ $t('common.copy') }}
+          </FrIcon>
+        </BButton>
       </div>
     </div>
     <div class="fr-script-editor w-100">
@@ -183,6 +199,7 @@ import {
 } from 'bootstrap-vue';
 import { debounce } from 'lodash';
 import { Form as VeeForm } from 'vee-validate';
+import { copyValueToClipboard } from '@forgerock/platform-shared/src/utils/clipboard';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
@@ -191,6 +208,7 @@ import 'prismjs/components/prism-groovy';
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism-tomorrow.css';
 import VuePrismEditor from 'vue-prism-editor';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
 
 /**
@@ -209,6 +227,7 @@ export default {
     FrIcon,
     VeeForm,
   },
+  mixins: [NotificationMixin],
   props: {
     /**
      * @model Contains all relevant script information
@@ -225,6 +244,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showCopy: {
+      type: Boolean,
+      default: false,
+    },
     showFileUpload: {
       type: Boolean,
       default: true,
@@ -238,6 +261,10 @@ export default {
       default: true,
     },
     readonly: {
+      type: Boolean,
+      default: false,
+    },
+    useDarkHeading: {
       type: Boolean,
       default: false,
     },
@@ -281,6 +308,7 @@ export default {
     }
   },
   methods: {
+    copyValueToClipboard,
     /**
      * Adds new and existing variable to array at bottom of component
      *
@@ -571,6 +599,17 @@ export default {
     color: $white;
     background-color: #30373f;
     border-color: $gray-800;
+  }
+  .dark-heading {
+    background-color: $gray-900;
+    color: $gray-300;
+    border-bottom: 1px solid $gray-800 !important;
+  }
+  .dark-heading-copy {
+    color: $gray-300;
+  }
+  #buttonCopy {
+    font-size: 15px;
   }
 }
 

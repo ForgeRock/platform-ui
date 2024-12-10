@@ -6,19 +6,20 @@
  */
 
 /**
- * Replaces placeholders in a JSON object with the specified replacement strings.
+ * Replaces placeholders in a JSON object or String with the specified replacement strings.
  *
- * @param {Object} jsonObject - The JSON object containing placeholders.
+ * @param {Object|String} val - The JSON object or string containing placeholders.
  * @param {Object} replaceStrings - An object containing the replacement strings.
- * @returns {Object} The JSON object with placeholders replaced.
+ * @returns {Object|String} The JSON object with placeholders replaced.
  */
 // eslint-disable-next-line import/prefer-default-export
-export function replacePlaceholders(jsonObject, replaceStrings) {
-  let strigifiedObject = JSON.stringify(jsonObject);
+export function replacePlaceholders(val, replaceStrings) {
+  const isString = typeof val === 'string';
+  let stringifiedObject = isString ? val : JSON.stringify(val);
   Object.entries(replaceStrings).forEach(([keyToFind, valueToReplace]) => {
     const replaceString = new RegExp(keyToFind, 'g');
-    strigifiedObject = strigifiedObject.replace(replaceString, valueToReplace);
+    stringifiedObject = stringifiedObject.replace(replaceString, valueToReplace);
   });
 
-  return JSON.parse(strigifiedObject);
+  return isString ? stringifiedObject : JSON.parse(stringifiedObject);
 }

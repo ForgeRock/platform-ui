@@ -1340,15 +1340,16 @@
         "saveError": "Error saving SAML configuration"
       },
       "enterpriseSso": {
-        "quickStart": "Quick Start",
-        "connectionExistsHeading": "Microsoft 365 SSO is already in use",
         "connectionExistsDescription": "Only one Microsoft 365 application can be configured for SSO per tenant.",
-        "viewApplication": "View Application",
+        "connectionExistsHeading": "Microsoft 365 SSO is already in use",
+        "createSuccess": "SSO set up successfully",
+        "errorGeneratingPs": "There was an error generating the PowerShell scripts.",
         "errorSettingUpSso": "There was an error setting up SSO. Check your configuration and try again.",
         "errorUpdatingSso": "There was an error updating SSO. Check your configuration and try again.",
         "noChanges": "No changes detected",
+        "quickStart": "Quick Start",
         "saveSuccess": "SSO updated successfully",
-        "createSuccess": "SSO set up successfully"
+        "viewApplication": "View Application"
       },
       "assignmentsTab": {
         "title": "Users & Roles",
