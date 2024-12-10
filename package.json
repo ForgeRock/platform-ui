@@ -61,6 +61,7 @@
     "cross-spawn": "7.0.5",
     "elliptic": "6.6.0",
     "istanbul-lib-instrument": "5.2.0",
+    "nanoid": "3.3.8",
     "ramda@npm:^0.25.0": "0.27.1",
     "tar": "6.2.1",
     "yaml@npm:1.10.0": "1.10.2"
