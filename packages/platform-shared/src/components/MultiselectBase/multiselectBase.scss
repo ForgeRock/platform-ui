@@ -33,6 +33,7 @@ fieldset[disabled] {
   border-style: solid;
   border-width: 2px;
   box-shadow: 0 0 0 1px transparent;
+  border-color: $primary transparent transparent;
 }
 .multiselect__loading-enter-active,
 .multiselect__loading-leave-active {

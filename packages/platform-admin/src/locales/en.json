@@ -4437,5 +4437,10 @@
         }
       }
     }
+  },
+  "formEditor": {
+    "components": {
+      "keyFieldTagPlaceholder": "Press enter to set a custom value"
+    }
   }
 }

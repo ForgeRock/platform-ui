@@ -360,4 +360,10 @@ export default {
   background: transparent !important;
 }
 
+:deep(.multiselect__spinner) {
+  &:before,
+  &:after {
+    border-color: $primary transparent transparent;
+  }
+}
 </style>
