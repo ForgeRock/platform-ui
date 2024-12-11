@@ -87,7 +87,7 @@ const router = createRouter({
     },
     {
       path: '/tasks',
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
       meta: { authenticate: true },
       children: [
         {

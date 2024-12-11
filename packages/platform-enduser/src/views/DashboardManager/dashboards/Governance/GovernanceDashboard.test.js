@@ -31,7 +31,6 @@ describe('GovernanceDashboard', () => {
               approvalsCount: 1,
               violationsCount: 2,
               fulfillmentTasksCount: 3,
-              SharedStore: { governanceDevEnabled: true },
             },
           },
         },

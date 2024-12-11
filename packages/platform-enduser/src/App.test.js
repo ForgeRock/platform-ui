@@ -210,10 +210,7 @@ describe('App.vue', () => {
     });
 
     it('should get pending fulfillment tasks count and save it in the store on call getFulfillmentTasksCount', async () => {
-      const governanceDevEnabled = cloneDeep(store);
-      governanceDevEnabled.state.SharedStore.governanceDevEnabled = true;
-      governanceDevEnabled.state.realm = 'alpha';
-      await shallowMountComponent(governanceDevEnabled);
+      await shallowMountComponent(governanceEnabled);
       const getUserFulfillmentTasks = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
       wrapper.vm.getFulfillmentTasksCount();
       await flushPromises();

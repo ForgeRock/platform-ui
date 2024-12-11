@@ -79,7 +79,6 @@ export default {
   },
   data() {
     const governanceEnabled = (this.$store.state.SharedStore.governanceEnabled === true) && (this.$store.state.realm === 'alpha');
-    const governanceDevEnabled = (this.$store.state.SharedStore.governanceDevEnabled === true) && (this.$store.state.realm === 'alpha');
     const governanceInbox = {
       displayName: 'sideMenu.inbox',
       icon: 'inbox',
@@ -90,6 +89,13 @@ export default {
           displayName: 'sideMenu.approvals',
           routeTo: {
             name: 'Approvals',
+          },
+        },
+        {
+          showBadgeWithContentFromStore: 'fulfillmentTasksCount',
+          displayName: 'sideMenu.tasks',
+          routeTo: {
+            name: 'Tasks',
           },
         },
         {
@@ -109,20 +115,8 @@ export default {
       ],
     };
 
-    // move this into the governanceInbox when removing feature flag
-    if (governanceDevEnabled) {
-      governanceInbox.subItems.splice(1, 0, {
-        showBadgeWithContentFromStore: 'fulfillmentTasksCount',
-        displayName: 'sideMenu.tasks',
-        routeTo: {
-          name: 'Tasks',
-        },
-      });
-    }
-
     return {
       governanceEnabled,
-      governanceDevEnabled,
       menuItems: [
         {
           routeTo: { name: 'Dashboard' },
@@ -385,8 +379,6 @@ export default {
      * @returns {void} Does not return a value. The result of the operation is a side-effect (Vuex store update or error message display).
      */
     getFulfillmentTasksCount() {
-      if (!this.governanceDevEnabled) return;
-
       let count = 0;
       getUserFulfillmentTasks(this.userId, {
         pageSize: 0,
