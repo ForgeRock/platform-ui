@@ -341,7 +341,7 @@ export default {
 .fr-main-navbar {
   background-color: $fr-navbar-bg;
   border-bottom: 1px solid $fr-navbar-border;
-  height: 4.5rem;
+  height: $fr-navbar-height;
 
   .fr-back-link {
     display: inline-block;

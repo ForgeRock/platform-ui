@@ -154,9 +154,11 @@ $modal-title-line-height: 2.25rem;
 $fr-modal-title-font-size: 1.25rem;
 
 /* Navbar */
+$navbar-height:                        4.5rem;
 $navbar-inverse-bg:                    $gray-800;
 $navbar-inverse-border:                $gray-600;
 $navbar-inverse-color:                 $gray-400;
+$fr-navbar-height:                     $navbar-height;
 $fr-navbar-bg:                         $navbar-inverse-bg;
 $fr-navbar-border:                     $navbar-inverse-border;
 $fr-navbar-color:                      $navbar-inverse-color;

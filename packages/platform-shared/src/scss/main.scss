@@ -37,6 +37,7 @@
  body {
    height: 100%;
    font-family: $fr-typeface;
+   scroll-padding-top: $fr-navbar-height;
  }
  
  ::-ms-reveal {
