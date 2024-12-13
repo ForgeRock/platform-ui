@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,6 +17,16 @@ import i18n from '@/i18n';
 
 jest.mock('vue-router');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
+jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
+  getApplicationTemplateList: jest.fn().mockResolvedValue({
+    consumer: {
+      web: {
+        '1_0-web': { id: 'web', displayName: 'Web Application', image: 'web.png' },
+      },
+    },
+  }),
+}));
 
 describe('MyRequests', () => {
   function setup(user = { userId: '1234' }) {

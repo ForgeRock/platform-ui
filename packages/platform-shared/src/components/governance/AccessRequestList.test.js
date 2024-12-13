@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,6 +9,16 @@ import { cloneDeep } from 'lodash';
 import { mount } from '@vue/test-utils';
 import AccessRequestList from './AccessRequestList';
 import i18n from '@/i18n';
+
+jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
+  getApplicationTemplateList: jest.fn().mockResolvedValue({
+    consumer: {
+      web: {
+        '1_0-web': { id: 'web', displayName: 'Web Application', image: 'web.png' },
+      },
+    },
+  }),
+}));
 
 const application = {
   id: 1,

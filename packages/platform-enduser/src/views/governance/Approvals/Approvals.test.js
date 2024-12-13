@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,6 +17,16 @@ import router from '@/router';
 import Approvals from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
+jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
+  getApplicationTemplateList: jest.fn().mockResolvedValue({
+    consumer: {
+      azure: {
+        '2.0-azure': { id: 'azure.ad', displayName: 'azure', image: 'microsoft.svg' },
+      },
+    },
+  }),
+}));
 
 CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.resolve({
   data: {

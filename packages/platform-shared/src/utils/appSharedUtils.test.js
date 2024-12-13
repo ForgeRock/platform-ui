@@ -1,68 +1,84 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { resolveImage } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
-import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { getApplicationDisplayName, getApplicationLogo, setApplicationsTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { createPinia, setActivePinia } from 'pinia';
+import { getApplicationTemplateList } from '@forgerock/platform-shared/src/api/CdnApi';
 
-const logoMap = {
-  'active.directory': 'active-directory.svg',
-};
-
+jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
+  getApplicationTemplateList: jest.fn(),
+  getAppTemplatesByType: jest.fn(),
+}));
+let mockSetApplication;
 describe('AppSharedUtils', () => {
-  describe('getApplicationLogo', () => {
-    it('should return application icon if it exists', () => {
-      const application = {
-        icon: 'path/to/applicationIcon.png',
-        templateName: '',
-      };
-      const result = getApplicationLogo(application);
-      expect(result).toBe(application.icon);
-    });
+  const mockTemplates = {
+    consumer: {
+      Bookmark: {
+        '1_0-bookmark': { id: 'bookmark', displayName: 'bookmark', image: 'bookmark.png' },
+      },
+      web: {
+        '1_0-web': { id: 'web', displayName: 'Web Application', image: 'web.png' },
+      },
+    },
+  };
 
-    it('should return icon based on templateName if it exists in logoMap', () => {
-      const application = {
-        icon: '',
-        templateName: 'active.directory',
-      };
-      const expectedImagePath = logoMap[application.templateName];
-      const result = getApplicationLogo(application);
-      expect(result).toBe(resolveImage(expectedImagePath));
-    });
-
-    it('should return default cdn path string if no icon or templateName provided', () => {
-      const application = {
-        icon: '',
-        templateName: null,
-      };
-      const result = getApplicationLogo(application);
-      expect(result).toBe('https://cdn.forgerock.com/platform/app-templates/images/');
-    });
+  beforeEach(() => {
+    const pinia = createPinia();
+    setActivePinia(pinia);
+    getApplicationTemplateList.mockResolvedValue(mockTemplates);
+    mockSetApplication = jest.fn();
+    jest.clearAllMocks();
   });
 
   describe('getApplicationDisplayName', () => {
-    it('should return displayName based on templateName if it exists in displayNameMap', () => {
-      const application = {
-        templateName: 'workday',
-        name: 'Application 1',
-      };
-      const displayNameMap = {
-        workday: 'Workday',
-      };
+    it('should return the displayName from the template when application.templateName is defined and template is loaded', () => {
+      const application = { templateName: 'web', templateVersion: '1.0' };
+      setApplicationsTemplates({
+        web: {
+          '1.0': { id: 'web', displayName: 'Web Application', image: 'web.png' },
+        },
+      });
+      const mockDisplayName = 'Web Application';
       const result = getApplicationDisplayName(application);
-      expect(result).toBe(displayNameMap[application.templateName]);
+      expect(result).toBe(mockDisplayName);
+      expect(mockSetApplication).not.toHaveBeenCalled();
     });
 
-    it('should return application name if templateName is not provided', () => {
-      const application = {
-        templateName: '',
-        name: 'Application 2',
-      };
+    it('should return application.name when application.templateName is not defined', () => {
+      const application = { name: 'Fallback Application' };
+
       const result = getApplicationDisplayName(application);
+
       expect(result).toBe(application.name);
+      expect(mockSetApplication).not.toHaveBeenCalled();
+    });
+
+    it('should handle cases where application is missing both templateName and name', () => {
+      const application = {};
+
+      const result = getApplicationDisplayName(application);
+
+      expect(result).toBeUndefined();
+      expect(mockSetApplication).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getApplicationLogo', () => {
+    it('should return the logo image from the template when application.templateName is defined and template is loaded', () => {
+      const application = { templateName: 'web', templateVersion: '1.0' };
+      setApplicationsTemplates({
+        web: {
+          '1.0': { id: 'web', displayName: 'Web Application', image: 'web.png' },
+        },
+      });
+      const mockDisplayName = 'https://cdn.forgerock.com/platform/app-templates/images/web.png';
+      const result = getApplicationLogo(application);
+      expect(result).toBe(mockDisplayName);
+      expect(mockSetApplication).not.toHaveBeenCalled();
     });
   });
 });

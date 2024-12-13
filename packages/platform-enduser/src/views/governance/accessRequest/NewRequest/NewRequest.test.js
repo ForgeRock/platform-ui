@@ -22,6 +22,16 @@ import i18n from '@/i18n';
 jest.mock('@forgerock/platform-shared/src/utils/governance/AccessRequestUtils');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
+jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
+  getApplicationTemplateList: jest.fn().mockResolvedValue({
+    consumer: {
+      web: {
+        '1_0-web': { id: 'web', displayName: 'Web Application', image: 'web.png' },
+      },
+    },
+  }),
+}));
+
 CatalogApi.searchCatalog = jest.fn().mockReturnValue({
   data: {
     result: [

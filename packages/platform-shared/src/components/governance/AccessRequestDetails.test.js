@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -19,6 +19,16 @@ jest.mock('vue-router', () => ({
   useRouter: jest.fn(() => ({
     push: jest.fn(),
   })),
+}));
+
+jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
+  getApplicationTemplateList: jest.fn().mockResolvedValue({
+    consumer: {
+      web: {
+        '1_0-web': { id: 'web', displayName: 'Web Application', image: 'web.png' },
+      },
+    },
+  }),
 }));
 
 describe('AccessRequestDetails', () => {
