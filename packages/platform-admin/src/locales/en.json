@@ -2838,9 +2838,12 @@
       "noSyncData": "No synchronized applications yet",
       "tabs": {
         "mapping": {
-          "provisionSubtitle": "Define the mapping rules needed to provision to {target}.",
-          "reconcileSubtitle": "Define the mapping rules needed to reconcile with {source}.",
+          "provisionDescription": "Define the mapping rules needed to provision to {target}.",
+          "reconcileDescription": "Define the mapping rules needed to reconcile with {source}.",
           "previewMapping": "Preview Mapping"
+        },
+        "reconcile": {
+          "description": "Reconcile data with {source}."
         }
       }
     },
@@ -2945,7 +2948,7 @@
   "jobs": {
     "allJobs": "All Jobs",
     "days": "day(s)",
-    "deactivateButton": "Deactivate Job",
+    "deactivateButton": "Deactivate",
     "defaultCronDescription": "Enter a valid cron string.",
     "deleteModal": {
       "title": "Scheduled Job",
@@ -3009,7 +3012,6 @@
     },
     "runNow": "Run Now",
     "saveError": "Error saving scheduled job",
-    "schedule": "Schedule",
     "schedules": "Schedules",
     "scheduleAJob": "Schedule a Job",
     "scheduleError": "Unable to retrieve scheduled jobs",
