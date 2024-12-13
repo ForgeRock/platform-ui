@@ -46,6 +46,9 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import { compareRealmSpecificResourceName } from '@forgerock/platform-shared/src/utils/realm';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getDefaultGovOption, getQueryParams } from '@forgerock/platform-shared/src/utils/governance/select';
+import {
+  getResourceType,
+} from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
 
 export default {
   name: 'GovResourceSelect',
@@ -173,10 +176,11 @@ export default {
       return this.resourcePath.split('/').pop();
     },
     fieldLabel() {
-      return this.label || this.$t('common.selectSelection', { selection: this.resource });
+      return this.label || this.$t('common.selectSelection', { selection: getResourceType(this.resource) });
     },
   },
   methods: {
+    getResourceType,
     /**
      * Searches for managed resources
      * @param {String} query Query for resource select field

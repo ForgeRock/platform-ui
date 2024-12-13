@@ -35,8 +35,11 @@ of the MIT license. See the LICENSE file for details. -->
           <FrGovResourceSelect
             v-if="inputValue.type === 'managedObject'"
             v-model="inputValue.value"
-            @input="ruleChange({ value: $event })"
-            :resource-path="getResourcePath(selectedProp)" />
+            @input="ruleChange({ value: getValuePath(getType(selectedProp), $event.split('/').pop()) })"
+            :option-function="optionFunction"
+            :query-param-function="queryParamFunction"
+            :resource-function="getResourceFunction(getType(selectedProp))"
+            :resource-path="getResourcePath(getType(selectedProp))" />
           <FrEntitlementSelect
             v-else-if="selectedProp === 'entitlement.displayName' && selectedCondition === 'EQUALS'"
             :model-value="inputValue.value"
@@ -63,6 +66,14 @@ import FrFilterBuilderGroup from '@forgerock/platform-shared/src/components/filt
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import FrEntitlementSelect from '@forgerock/platform-shared/src/components/governance/EntitlementSelect';
 import { findGroup } from '@forgerock/platform-shared/src/components/filterBuilder/utils/filterBuilderUtils';
+import {
+  getResourceFunction,
+  getResourcePath,
+  getResourceType,
+  getValuePath,
+  optionFunction,
+  queryParamFunction,
+} from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
 import { operatorOptions, defaultConditionOptions } from './CertFilterDefaults';
 
 const defaultFilterOperator = operatorOptions.Any.delimeter;
@@ -118,12 +129,20 @@ export default {
     this.queryFilter = this.getGroup();
   },
   methods: {
+    getResourceFunction,
+    getResourcePath,
+    getValuePath,
+    optionFunction,
+    queryParamFunction,
     /**
      * Returns resource path from property value passed in
      * @param {String} prop property value to search for
      */
-    getResourcePath(prop) {
-      return find(this.properties, ((x) => x.value === prop)).path;
+    getType(prop) {
+      return getResourceType(find(this.properties, ((x) => x.value === prop)).path);
+    },
+    massageValue(value) {
+      return value;
     },
     /**
      * Generates default group based on values passed in

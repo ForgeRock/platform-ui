@@ -8,7 +8,12 @@ import { getManagedResourceList } from '@forgerock/platform-shared/src/api/Manag
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { searchCatalogEntitlements } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import {
-  getResourceFunction, getResourcePath, getValuePath, optionFunction, queryParamFunction,
+  getResourceFunction,
+  getResourcePath,
+  getResourceType,
+  getValuePath,
+  optionFunction,
+  queryParamFunction,
 } from './govObjectSelect';
 
 describe('objectSelect utils', () => {
@@ -137,6 +142,20 @@ describe('objectSelect utils', () => {
 
       it('returns default path for other types', () => {
         expect(getValuePath('customType', 'customId1')).toBe('customType/customId1');
+      });
+    });
+
+    describe('getResourceType', () => {
+      it('returns user for managed/alpha_user', () => {
+        expect(getResourceType('managed/alpha_user')).toBe('user');
+      });
+
+      it('returns user for user', () => {
+        expect(getResourceType('user')).toBe('user');
+      });
+
+      it('returns application for managed/application', () => {
+        expect(getResourceType('managed/application')).toBe('application');
       });
     });
   });

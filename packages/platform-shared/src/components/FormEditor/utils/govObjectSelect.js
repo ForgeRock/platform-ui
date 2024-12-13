@@ -49,6 +49,20 @@ export function getResourcePath(propertyType) {
 }
 
 /**
+ * Extracts the resource type from a given full resource path.
+ *
+ * The function splits the input path by '/' and takes the last segment.
+ * It then splits this segment by '_' and returns the last part.
+ * For example, 'managed/alpha_user' would return 'user'.
+ *
+ * @param {string} fullResourcePath - The full path to the resource.
+ * @returns {string} - The extracted resource type.
+ */
+export function getResourceType(fullResourcePath) {
+  return fullResourcePath.split('/').pop().split('_').pop();
+}
+
+/**
  * Generates an option object for a given resource and resource type.
  *
  * @param {Object} resource - The resource object containing data.
