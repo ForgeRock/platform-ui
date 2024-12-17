@@ -9,6 +9,22 @@ import { flushPromises, mount } from '@vue/test-utils';
 import GovernanceFilterBuilder from './GovernanceFilterBuilder';
 import i18n from '@/i18n';
 
+jest.mock('@/api/governance/CommonsApi', () => ({
+  getResource: () => Promise.resolve({
+    data: {
+      result: [
+        {
+          givenName: 'Micheal',
+          id: 'da678a7f-7e1f-46bb-841d-768553951b71',
+          mail: 'lamgu@ukpil.edu',
+          sn: 'Cummings',
+          userName: 'AnJOLZHIHy',
+        },
+      ],
+    },
+  }),
+}));
+
 const subFilters1 = {
   operator: 'contains', field: '', value: '', uniqueIndex: 2, temporalValue: 'after',
 };
@@ -308,6 +324,69 @@ describe('GovernanceFilterBuilder', () => {
             left: 'user.after.testnumber',
           },
         }],
+      });
+    });
+
+    it('should add correctly a managed object id to the filter', async () => {
+      const wrapper = mountComponent({
+        properties: [
+          {
+            label: 'manager',
+            value: 'user.manager',
+            type: 'reference',
+            path: '/openidm/managed/alpha_user',
+          },
+        ],
+      });
+      await flushPromises();
+
+      const selectField = wrapper.find('#ruleProperty_selectPropOptions_user_1');
+      await selectField.find('.multiselect__content .multiselect__option').trigger('click');
+
+      expect(wrapper.vm.queryFilter).toEqual({
+        operator: 'or',
+        subfilters: [
+          {
+            operator: 'equals',
+            uniqueIndex: 1,
+            field: 'user.manager',
+            value: 'da678a7f-7e1f-46bb-841d-768553951b71',
+            temporalValue: 'after',
+          },
+        ],
+        uniqueIndex: 0,
+      });
+    });
+
+    it('should add correctly a managed object id for a glossary property to the filter', async () => {
+      const wrapper = mountComponent({
+        resourceName: 'application',
+        properties: [
+          {
+            label: 'owner',
+            value: 'catalog.application.glossary.owner',
+            type: 'reference',
+            path: '/openidm/managed/application',
+          },
+        ],
+      });
+      await flushPromises();
+
+      const selectField = wrapper.find('#ruleProperty_selectPropOptions_application_1');
+      await selectField.find('.multiselect__content .multiselect__option').trigger('click');
+
+      expect(wrapper.vm.queryFilter).toEqual({
+        operator: 'or',
+        subfilters: [
+          {
+            operator: 'equals',
+            uniqueIndex: 1,
+            field: 'catalog.application.glossary.owner',
+            value: 'managed/application/da678a7f-7e1f-46bb-841d-768553951b71',
+            temporalValue: 'after',
+          },
+        ],
+        uniqueIndex: 0,
       });
     });
   });

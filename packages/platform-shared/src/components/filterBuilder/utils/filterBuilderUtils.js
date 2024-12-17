@@ -324,3 +324,15 @@ export function checkIGAFilterMeetsRequirements(filter) {
   const currentLayerValid = Object.values(properties).every((property) => property.beforeFound && property.afterFound);
   return allSubfiltersValid && currentLayerValid;
 }
+
+/**
+ * Checks if a key is a glossary attribute
+ * A glossary attribute is a key that starts with catalog.{resource}.glossary.,
+ * where {resource} is either application, entitlement or role.
+ * @param {String} key The key to check
+ * @returns {Boolean} Whether the key is a glossary attribute
+ */
+export function isGlossaryAttribute(key) {
+  const pattern = /^catalog\.(application|entitlement|role)\.glossary\./;
+  return pattern.test(key);
+}

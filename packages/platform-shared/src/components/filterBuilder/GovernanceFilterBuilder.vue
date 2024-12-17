@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrGovResourceSelect
               v-if="getResourcePath(selectedProp)"
               v-model="inputValue.value"
-              @input="ruleChange({ value: $event.split('/').pop() })"
+              @input="ruleChange({ value: resolveRuleChangeValue(selectedProp, $event) })"
               :resource-path="getResourcePath(selectedProp)"
               :label="getResourceLabel(selectedProp)" />
             <FrField
@@ -133,6 +133,7 @@ import {
   convertToIGAFilter,
   convertFromIGAFilter,
   findGroup,
+  isGlossaryAttribute,
 } from './utils/filterBuilderUtils';
 import i18n from '@/i18n';
 
@@ -331,6 +332,27 @@ async function toggleMode(showBasic) {
     scriptEditorValue.value = JSON.stringify(igaFilter);
     isBasic.value = false;
   }
+}
+
+/**
+ * Resolves the value of a rule change based on the property schema key,
+ * if the schema property is a glossary attribute and the property itself has a type of reference,
+ * that means it is a manged object reference, then return the complete path for the resource,
+ * otherwise return the last segment of the path only that is the specific object id.
+ * This is needed because the filter works different if it is a OOTB property or is a glossary one.
+ *
+ * @param {String} propertySchemaKey - the property schema key
+ * @param {String} value - the value to resolve
+ * @returns {String} the resolved value E.g. /managed/role/role1 or role1
+ */
+function resolveRuleChangeValue(propertySchemaKey, value) {
+  if (isGlossaryAttribute(propertySchemaKey)) {
+    const property = props.properties.find((schemaProperty) => schemaProperty.value === propertySchemaKey);
+    if (property.type === 'reference') {
+      return value;
+    }
+  }
+  return value.split('/').pop();
 }
 
 /**

@@ -13,6 +13,7 @@ import {
   convertFromIGAFilter,
   convertToIGAFilter,
   findGroup,
+  isGlossaryAttribute,
 } from './filterBuilderUtils';
 
 describe('checkIfWithinThreeLayers', () => {
@@ -278,5 +279,15 @@ describe('iga tests', () => {
       const currentUniqueIndex = 0;
       expect(convertFromIGAFilter(igaFilterNoTemporal, currentUniqueIndex, true)).toStrictEqual({ convertedFilter: componentFilterNoTemporal, uniqueIndex: 4 });
     });
+  });
+
+  it('validation if a schema property key is a glossary attribute, should be true', () => {
+    const schemaPropertyKey = 'catalog.application.glossary.owner';
+    expect(isGlossaryAttribute(schemaPropertyKey)).toBe(true);
+  });
+
+  it('validation if a schema property key is a glossary attribute, should be false', () => {
+    const schemaPropertyKey = 'catalog.application.name';
+    expect(isGlossaryAttribute(schemaPropertyKey)).toBe(false);
   });
 });
