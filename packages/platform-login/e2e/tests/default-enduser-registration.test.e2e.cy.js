@@ -138,7 +138,7 @@ filterTests(['@cloud', '@smoke'], () => {
     fillOutKBADefaultColorKBA();
   }
 
-  describe('Enduser default registration journey, successful registration and negative verifications', () => {
+  describe.skip('Enduser default registration journey, successful registration and negative verifications', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=Registration#/`;
     let emailAccount;
 

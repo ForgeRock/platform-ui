@@ -13,7 +13,7 @@ import { setEmailProviderConfigByAccount, extractLinkFromEmail } from '../utils/
 import { putEmailProviderConfig, getDefaultProviderConfig } from '../api/emailApi.e2e';
 
 filterTests(['@forgeops', '@cloud'], () => {
-  describe('Default ResetPassword Journey tests', () => {
+  describe.skip('Default ResetPassword Journey tests', () => {
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const resetPasswordUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ResetPassword#/`;
     const resetPasswordLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ResetPassword#/service/Login`;

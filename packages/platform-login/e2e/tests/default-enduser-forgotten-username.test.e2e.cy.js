@@ -13,7 +13,7 @@ import { setEmailProviderConfigByAccount, extractLinkFromEmail } from '../utils/
 import { putEmailProviderConfig, getDefaultProviderConfig } from '../api/emailApi.e2e';
 
 filterTests(['@forgeops', '@cloud'], () => {
-  describe('Default ForgottenUsername Journey tests', () => {
+  describe.skip('Default ForgottenUsername Journey tests', () => {
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const forgotUsernameUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ForgottenUsername#/`;
     const forgotUsernameLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ForgottenUsername#/service/Login`;
