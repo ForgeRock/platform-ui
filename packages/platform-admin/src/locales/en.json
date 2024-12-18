@@ -2310,7 +2310,7 @@
     "deleteVersionSuccess": "Successfully removed version {version}",
     "copyOf": "Copy of {version}",
     "termsTimeStamp": "{date} at {time}",
-    "draft": "draft",
+    "draft": "Draft",
     "tcVersion": "Version",
     "newVersionModal": {
       "title": "New Version",
