@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -39,6 +39,7 @@ PromisePoly.polyfill();
 
 const pinia = createPinia();
 
+store.commit('SharedStore/setEnvironment', process.env);
 store.commit('SharedStore/setBaseURLs', process.env);
 store.commit('SharedStore/setWebStorageAvailable', isWebStorageAvailable());
 store.commit('SharedStore/setNewMultiselectEnabled', process.env);

@@ -33,7 +33,6 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import createScriptTags from '@forgerock/platform-shared/src/utils/externalScriptUtils';
@@ -47,6 +46,7 @@ import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Share
 import { getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import { mapState } from 'pinia';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
@@ -60,7 +60,6 @@ export default {
   mixins: [
     NotificationMixin,
     RestMixin,
-    ThemeMixin,
     TranslationMixin,
   ],
   components: {
@@ -68,9 +67,21 @@ export default {
     FrSessionTimeoutWarning,
     ThemeInjector,
   },
+  setup() {
+    const {
+      loadTheme,
+      localizedFavicon,
+      theme,
+    } = useTheme();
+    return {
+      loadTheme,
+      localizedFavicon,
+      theme,
+    };
+  },
   computed: {
     accountFooter() {
-      if (this.theme && this.theme.accountFooterEnabled) {
+      if (this.theme?.accountFooterEnabled) {
         return this.$sanitize(this.getLocalizedString(this.theme.accountFooter, i18n.global.locale, i18n.global.fallbackLocale));
       }
       return '';
@@ -215,19 +226,22 @@ export default {
       version: '',
     };
   },
-  created() {
+  async created() {
     // add vee-validate rules
     const rules = ValidationRules.getRules(i18n);
     ValidationRules.extendRules(rules);
 
     // if this is a dns alias making this call will get the true realm when no realm param is provided
-    this.setTheme(this.$store.state.realm, { themeId: localStorage.getItem('theme-id') }).then(() => {
-      if (this.favicon) {
+    const realm = this.$store.state.realm === 'root' ? '/' : this.$store.state.realm;
+    const themeId = this.$store.state.SharedStore.webStorageAvailable ? localStorage.getItem('theme-id') : null;
+    try {
+      await this.loadTheme(realm, themeId);
+      if (this.localizedFavicon) {
         document.getElementById('favicon').href = this.localizedFavicon;
       }
-    }).catch((error) => {
+    } catch (error) {
       this.showErrorMessage(error, this.$t('errors.themeSetError'));
-    });
+    }
 
     getUserPrivileges().then(({ data }) => {
       this.setupDelegatedAdminMenuItems(data);
@@ -259,7 +273,7 @@ export default {
      * Adds the given script tags to the script container
      */
     accountFooterScriptTag(scriptStr) {
-      if (!this.accountFooterScriptTagEnabled || !scriptStr) return;
+      if (!this.theme.accountFooterScriptTagEnabled || !scriptStr) return;
       const scriptContainer = document.getElementById('user-theme-script-container');
 
       try {

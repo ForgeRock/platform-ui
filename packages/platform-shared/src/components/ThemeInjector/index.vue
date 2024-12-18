@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -138,13 +138,13 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       .fr-toggle-primary.custom-switch.b-custom-control-lg .custom-control-input:checked ~ .custom-control-label::before,
-      .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before,
-      .custom-control.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+      <template v-if="mock">.fr-theme-preview</template> .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before,
+      <template v-if="mock">.fr-theme-preview</template> .custom-control.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
         background-color: {{ theme.primaryColor }};
       }
 
-      .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before,
-      .custom-control.custom-checkbox .custom-control-input ~ .custom-control-label::before {
+      <template v-if="mock">.fr-theme-preview</template> .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before,
+      <template v-if="mock">.fr-theme-preview</template> .custom-control.custom-checkbox .custom-control-input ~ .custom-control-label::before {
         border-color: {{ theme.primaryColor }}
       }
 
@@ -384,6 +384,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--highlight {
         background-color: {{ theme.accountCardInputSelectHoverColor || '#f6f8fa' }} !important;
       }
+
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--selected {
         background-color: {{ theme.accountCardInputSelectColor || '#e4f4fd' }} !important;
       }
@@ -477,19 +478,16 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.topBarHeaderColor || '#23282e' }};
       }
 
-      .card-input-element:checked + .card-input {
+      <template v-if="mock">.fr-theme-preview.enduser</template> .card-input-element:checked + .card-input,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .card-input-element + .card-input:hover {
         border-color: {{ theme.primaryColor }} !important;
       }
 
-      .card-input-element:checked + .card-input::before {
+      <template v-if="mock">.fr-theme-preview.enduser</template> .card-input-element:checked + .card-input::before {
         background-color: {{ theme.primaryColor }} !important;
       }
 
-      .card-input-element + .card-input:hover {
-        border-color: {{ theme.primaryColor }} !important;
-      }
-
-      #app .nav-tabs .nav-item .nav-link.active {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .nav-tabs .nav-item .nav-link.active {
         border-bottom-color: {{ theme.primaryColor }};
         color: {{ theme.primaryColor }};
       }
@@ -549,10 +547,11 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.successColor }};
       }
 
-      #app .card-footer > span {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .card-footer > span {
         color: {{ theme.linkColor }};
       }
 
+      #app .text-success,
       #app span:has(> .text-success) {
         color: {{ theme.successColor }};
       }

@@ -56,6 +56,11 @@ const defaultState = {
 };
 
 const mutations = {
+  setEnvironment(state, env) {
+    if (env.VUE_APP_FRAAS === 'true') {
+      state.isFraas = true;
+    }
+  },
   setBaseURLs(state, env) {
     if (env.VUE_APP_AM_URL && env.VUE_APP_AM_URL.length > 0) {
       state.hasAmUrl = true;
