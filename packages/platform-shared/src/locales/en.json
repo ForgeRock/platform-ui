@@ -532,6 +532,13 @@
       "validJSVariable": "Must be a valid variable name",
       "notStartsWithNumber": "Cannot start with a number"
     },
+    "themes": {
+      "errorLinkingTree": "There was an error linking tree to theme",
+      "errorRetrievingList": "There was an error retrieving theme list",
+      "errorRetrievingTheme": "There was an error retrieving theme",
+      "errorRetrievingThemeConfig": "There was an error retrieving theme configuration",
+      "errorSavingTheme": "There was an error saving theme"
+    },
     "user": {
       "accountStatus": "Status",
       "adminOfOrg": "Admin of organization",

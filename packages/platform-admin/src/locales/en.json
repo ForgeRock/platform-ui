@@ -358,6 +358,7 @@
       "errorDeletingTheme": "There was an error deleting a theme",
       "errorRetrievingList": "There was an error retrieving the list of themes.",
       "errorSavingTheme": "There was an error saving a theme",
+      "errorSetDefault": "An error occurred setting the default theme",
       "footer": "Footer",
       "global": {
         "boldLinks": "Bold Links",
@@ -505,7 +506,8 @@
       "setAsRealmDefault": "Set as Realm Default",
       "styles": "Styles",
       "successDelete": "Theme successfully deleted",
-      "successSave": "Theme successfully saved"
+      "successSave": "Theme successfully saved",
+      "successSetDefault": "Theme successfully set as default"
     }
   },
   "journey": {
@@ -556,6 +558,7 @@
     "errorRetrievingJourney": "Error retrieving journey",
     "errorRetrievingJourneys": "Error retrieving journeys",
     "errorRetrievingDefaultJourneys": "Error retrieving default journey information",
+    "errorRetrievingTreeTheme": "Error retrieving tree theme",
     "errorCreatingJourney": "Error creating journey",
     "errorDuplicatingJourney": "Error duplicating journey",
     "errorUpdatingJourney": "Error updating journey",

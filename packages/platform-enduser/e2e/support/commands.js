@@ -75,7 +75,6 @@ Cypress.Commands.add(
     sucessLogin = true,
     loginUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=Login#/` : `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Login#/`,
     givenName = 'First',
-    lastName = 'Last',
   ) => {
     // Clear cookies and local storage
     cy.logout();
@@ -108,7 +107,7 @@ Cypress.Commands.add(
 
     if (sucessLogin) {
       // Check for the Dashboard welcome greeting message
-      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${givenName} ${lastName}`).should('be.visible');
+      cy.findAllByRole('heading', { timeout: 20000 }).contains(givenName).should('be.visible');
     }
   },
 );

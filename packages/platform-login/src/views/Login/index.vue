@@ -38,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
                         {{ header }}
                       </h1>
                       <h1
-                        v-if=" journeyA11yAddFallbackErrorHeading && !header && loginFailure"
+                        v-if="journeyA11yAddFallbackErrorHeading && !header && loginFailure"
                         class="h2">
                         {{ $t('login.errorHeading') }}
                       </h1>

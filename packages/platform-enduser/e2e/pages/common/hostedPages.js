@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -38,6 +38,7 @@ export function createNewTheme(themeName) {
   cy.findByRole('dialog', { name: 'New Theme' }).within(() => {
     cy.findByLabelText('Name').type(themeName);
     cy.intercept('PUT', '/openidm/config/ui/themerealm').as('saveThemes');
+    cy.intercept('GET', '/openidm/config/ui/themerealm').as('getThemes');
     cy.findByRole('button', { name: 'Save' }).click();
     cy.wait('@saveThemes');
   });
@@ -46,6 +47,7 @@ export function createNewTheme(themeName) {
 
   // Check that Save notification is correctly displayed
   expectAndCloseNotification('Theme successfully saved');
+  cy.wait('@getThemes');
 }
 
 /**
@@ -79,7 +81,7 @@ export function setThemeAsDefault(themeName) {
     cy.findByRole('menuitem', { name: 'Set as Realm Default' }).should('exist').click({ force: true });
   });
   // Check that Save notification is correctly displayed
-  expectAndCloseNotification('Theme successfully saved');
+  expectAndCloseNotification('Theme successfully set as default');
 
   cy.findByRole('cell', { name: themeName }).should('exist');
 
