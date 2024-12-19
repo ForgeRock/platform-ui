@@ -1761,7 +1761,6 @@
     "domain": "Domain",
     "domainDescription1": "Use a custom domain to enable a seamless user experience between your domain and Ping Identity. Adding a custom domain to this realm will override any",
     "domainDescription2": "To complete setup, you’ll need access to your Domain Name Registrar so that you can modify Domain Name Server (DNS) records.",
-    "errorRetrievingCircleOfTrust": "There was an error retrieving the circle of trust",
     "errorRetrievingDomains": "There was an error retrieving this realm's custom domains",
     "errorSavingDomains": "There was an error saving the custom domains",
     "noDomainMessage": "You haven't added a custom domain for this realm yet",
