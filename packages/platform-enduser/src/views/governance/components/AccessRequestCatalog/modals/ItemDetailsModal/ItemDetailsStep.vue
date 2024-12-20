@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -55,7 +55,7 @@ import {
 } from 'bootstrap-vue';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import { getResourceDisplayData } from '@forgerock/platform-shared/src/utils/resource';
+import { getResourceDisplayData } from '@forgerock/platform-shared/src/utils/governance/resource';
 
 // data
 const glossaryValues = ref({});

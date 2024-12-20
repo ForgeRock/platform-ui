@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import ItemDetailsStep from './ItemDetailsStep';
 import i18n from '@/i18n';
 
@@ -66,10 +66,10 @@ describe('ItemDetailsStep', () => {
   });
 
   describe('glossary managed objects', () => {
-    CommonsApi.getResource = jest.fn().mockImplementation((resource, queryParams) => {
-      const result = resource === 'user'
-        ? { givenName: `resolved-${resource}-${queryParams.queryString}` }
-        : { name: `resolved-${resource}-${queryParams.queryString}` };
+    ManagedResourceApi.getManagedResourceList = jest.fn().mockImplementation((resource, queryParams) => {
+      const result = resource === 'alpha_user'
+        ? { givenName: `resolved-${resource.split('_').pop()}-${queryParams.queryFilter.match(/"(.*?)"/)[1]}` }
+        : { name: `resolved-${resource.split('_').pop()}-${queryParams.queryFilter.match(/"(.*?)"/)[1]}` };
       return Promise.resolve({ data: { result: [result] } });
     });
 

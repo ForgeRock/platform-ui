@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -132,7 +132,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrGovernanceUserDetailsModal
       :user="currentUser"
       :user-details="currentUserDetails"
-      :only-details="true" />
+      only-details />
   </div>
 </template>
 
@@ -160,6 +160,11 @@ import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { getResource, getGlossarySchema, getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import {
+  getResourceFunction,
+  getResourcePath,
+  queryParamFunction,
+} from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import { getCatalogFilterSchema, searchCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import { scanNewEntitlementAccess } from '@forgerock/platform-shared/src/api/governance/PolicyApi';
@@ -487,7 +492,9 @@ export default {
      */
     openUserDetailsModal(id) {
       // get user details
-      getResource('user', { queryString: id })
+      const resourceFunction = getResourceFunction('user');
+      const resourcePath = getResourcePath('user');
+      resourceFunction(resourcePath, queryParamFunction(id, resourcePath, true))
         .then(({ data }) => {
           const userData = get(data, 'result[0]', {});
           this.currentUser = pick(userData, userRequiredParams);
@@ -496,32 +503,6 @@ export default {
         .catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserError'));
         });
-      // TODO: It is not currently possible to access user grants when requested user is non-current user and non-direct report user.
-      // // get roles details
-      // getUserGrants(id, { grantType: 'role' })
-      //   .then(({ data }) => {
-      //     this.selectedUserRolesDetails = data;
-      //   })
-      //   .catch((error) => {
-      // TODO: update this error to be related to role (make getUserError into a dynamic error that accepts resourceType)
-      //     this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserError'));
-      //   });
-      // // get accounts details
-      // getUserGrants(id, { grantType: 'account' })
-      //   .then(({ data }) => {
-      //     this.selectedUserAccountsDetails = data;
-      //   })
-      //   .catch((error) => {
-      //     this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserError'));
-      //   });
-      // // get entitlements details
-      // getUserGrants(id, { grantType: 'entitlement' })
-      //   .then(({ data }) => {
-      //     this.selectedUserEntitlementsDetails = data;
-      //   })
-      //   .catch((error) => {
-      //     this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserError'));
-      //   });
     },
     /**
      * Removes selected item from request cart

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,6 +16,7 @@ import {
   getEntitlements,
   getGovernanceGrants,
   getManagedResourceWithIGADetails,
+  getResourceDisplayData,
   revokeResourcesFromIDM,
   revokeResourcesFromIGA,
 } from './resource';
@@ -219,6 +220,39 @@ describe('getGovernanceGrants', () => {
       await revokeResourcesFromIGA(revokePayload, 'parentResourceId', 'adminAccess');
 
       expect(errorSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('getResourceDisplayData', () => {
+    it('should return the display name of a resource', async () => {
+      ManagedResourceApi.getManagedResourceList = jest.fn().mockResolvedValue({
+        data: {
+          result: [
+            {
+              givenName: 'John',
+              sn: 'Doe',
+            },
+          ],
+        },
+      });
+      const resourceDisplayData = await getResourceDisplayData('user', 'user/123');
+      expect(resourceDisplayData).toBe('John Doe');
+    });
+
+    it('should return the ID if the resource is not found', async () => {
+      ManagedResourceApi.getManagedResourceList = jest.fn().mockResolvedValue({
+        data: {
+          result: [],
+        },
+      });
+      const resourceDisplayData = await getResourceDisplayData('user', 'user/123');
+      expect(resourceDisplayData).toBe('user/123');
+    });
+
+    it('should return the ID if the resource fetch fails', async () => {
+      ManagedResourceApi.getManagedResourceList = jest.fn().mockRejectedValue();
+      const resourceDisplayData = await getResourceDisplayData('user', 'user/123');
+      expect(resourceDisplayData).toBe('user/123');
     });
   });
 });
