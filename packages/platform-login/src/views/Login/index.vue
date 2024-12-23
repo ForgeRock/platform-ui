@@ -917,14 +917,16 @@ export default {
       if (params.get('arg') === 'newsession') params.delete('arg');
       if (resumingSuspendedTree(this.$route.name, params)) {
         // setting params in vue data then deleting to remove redundant params from URL
-        this.treeId = params.get('authIndexValue');
+        // only set treeId if the authIndexType is 'service'
+        this.treeId = params.get('authIndexType') === 'service' ? params.get('authIndexValue') : undefined;
         params.delete('authIndexValue');
         params.delete('authIndexType');
         this.suspendedId = params.get('suspendedId');
         params.delete('suspendedId');
       } else if (resumingTreeFollowingRedirect(params)) {
         // We can assume the tree id in the URL is always valid
-        this.treeId = params.get('authIndexValue');
+        // only set treeId if the authIndexType is 'service'
+        this.treeId = params.get('authIndexType') === 'service' ? params.get('authIndexValue') : undefined;
 
         // Load tree data to resume the journey, clearing down resumption data
         const { realmAtRedirect, step } = getResumeDataFromStorageAndClear();
