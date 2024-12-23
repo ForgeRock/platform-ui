@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
       :id="internalId"
       :name="name"
       :aria-label="labelTranslation"
-      @context="debounceEmitValidTime" />
+      @input="debounceEmitValidTime" />
   </div>
 </template>
 
@@ -128,7 +128,7 @@ export default {
           selectedSecond = selectedTime.substring(6, 8);
         }
       }
-      if ((selectedTime.hours !== null && selectedTime.minutes !== null) || typeof selectedTime === 'string') {
+      if (selectedTime && ((selectedTime.hours !== null && selectedTime.minutes !== null) || typeof selectedTime === 'string')) {
         const hours = selectedHour || 0;
         const minutes = selectedMinute || 0;
         const seconds = selectedSecond || 0;
@@ -187,11 +187,6 @@ export default {
     },
     combinedErrors() {
       return this.errors.concat(this.fieldErrors);
-    },
-  },
-  watch: {
-    inputValue(newVal) {
-      this.debounceEmitValidTime(newVal);
     },
   },
 };
