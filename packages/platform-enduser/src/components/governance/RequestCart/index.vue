@@ -50,6 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrField
         v-model="selectedPriority"
         type="select"
+        :aria-label="$t('common.priority')"
         name="Priority"
         :options="priorityOptions"
         :preselect-first="true"

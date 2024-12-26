@@ -60,6 +60,9 @@ describe('RequestCart', () => {
     it('disables the submit button if no requested items present', () => {
       const wrapper = setup();
       const submitButton = findByTestId(wrapper, 'submit-request-button');
+      const priority = wrapper.find('div[aria-label="Priority"]');
+
+      expect(priority.attributes(['aria-label'])).toEqual('Priority');
       expect(submitButton.element.disabled).toBeTruthy();
     });
 
