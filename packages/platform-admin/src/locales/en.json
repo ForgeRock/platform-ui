@@ -4107,6 +4107,7 @@
         "applicationRequestTypeDesc": "Create a form for creating or modifying an application object.",
         "customRequestForm": "Custom Request Form",
         "customRequestFormDesc": "Create a form for submitting a custom request.",
+        "duplicatedFormName": "{currentName} - copy",
         "errorSaving": "There was an error saving the form",
         "errorReturningData": "Error returning data",
         "formTypeDescription": "Choose the type of form to create.",
