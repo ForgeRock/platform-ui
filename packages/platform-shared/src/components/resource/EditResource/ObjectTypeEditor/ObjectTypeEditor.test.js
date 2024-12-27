@@ -101,4 +101,18 @@ describe('ObjectTypeEditor', () => {
     wrapper.vm.updateField(index, newValue);
     expect(wrapper.vm.clonedDisplayProperties[0].value).toEqual('newValue');
   });
+
+  it('getFieldType should return the correct field type', () => {
+    const field = {
+      type: 'string',
+    };
+
+    expect(wrapper.vm.getFieldType(field)).toBe('string');
+
+    field.type = 'boolean';
+    expect(wrapper.vm.getFieldType(field)).toBe('checkbox');
+
+    field.format = 'date';
+    expect(wrapper.vm.getFieldType(field)).toBe('date');
+  });
 });

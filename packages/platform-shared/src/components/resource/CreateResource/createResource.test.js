@@ -295,4 +295,18 @@ describe('CreateResource.vue', () => {
     wrapper.vm.setRelationshipValue('testData', 'password');
     expect(wrapper.vm.clonedCreateProperties[1].value).toBe('testData');
   });
+
+  it('getFieldType should return the correct field type', () => {
+    const field = {
+      type: 'string',
+    };
+
+    expect(wrapper.vm.getFieldType(field)).toBe('string');
+
+    field.type = 'boolean';
+    expect(wrapper.vm.getFieldType(field)).toBe('checkbox');
+
+    field.format = 'date';
+    expect(wrapper.vm.getFieldType(field)).toBe('date');
+  });
 });

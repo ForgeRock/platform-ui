@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="personal-info-field"
                   :label="field.title"
                   :name="field.name"
-                  :type="field.format ? field.format : field.type"
+                  :type="getFieldType(field)"
                   :validation="field.validation"
                   :testid="`edit-personal-info-${index}`"
                   :disabled="!field.userEditable"
@@ -259,6 +259,21 @@ export default {
     updateField(index, newValue) {
       this.formFields[index].value = newValue;
       this.$forceUpdate();
+    },
+    /**
+     * Determines the exact field type component to use.
+     * IAM-4692: Brings a change to use checkbox component when the field type is boolean. Earlier it used to use the switch component.
+     * @param {Object} field - The field object for which the type is to be determined.
+     * @returns {String} - The type of the field.
+     */
+    getFieldType(field) {
+      if (field.format) {
+        return field.format;
+      }
+      if (field.type === 'boolean') {
+        return 'checkbox';
+      }
+      return field.type;
     },
   },
 };

@@ -338,7 +338,7 @@ filterTests(['@forgeops', '@cloud'], () => {
           cy.contains('.multiselect__tag', internalRoleName);
           cy.findByRole('button', { name: 'Cancel' }).click();
 
-          cy.get('.custom-checkbox').eq(1).click('left');
+          cy.get('.custom-checkbox').eq(3).click('left');
           cy.findByRole('button', { name: 'Remove' }).click();
           cy.findByRole('dialog').findByRole('button', { name: 'Remove' }).click();
           expectNotification('Authorization Roles successfully removed');

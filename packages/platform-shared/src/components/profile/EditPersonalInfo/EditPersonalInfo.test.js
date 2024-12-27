@@ -171,5 +171,29 @@ describe('EditPersonalInfo', () => {
         });
       });
     });
+
+    describe('getFieldType', () => {
+      it('should return the correct field type', () => {
+        const wrapper = shallowMount(EditPersonalInfo, {
+          global: {
+            plugins: [i18n],
+          },
+          props: {
+            ...defaultProps,
+          },
+        });
+
+        const field = {
+          type: 'string',
+        };
+        expect(wrapper.vm.getFieldType(field)).toBe('string');
+
+        field.type = 'boolean';
+        expect(wrapper.vm.getFieldType(field)).toBe('checkbox');
+
+        field.format = 'date';
+        expect(wrapper.vm.getFieldType(field)).toBe('date');
+      });
+    });
   });
 });
