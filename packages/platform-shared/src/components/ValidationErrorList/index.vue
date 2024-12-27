@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     role="alert"
-    class="fr-validation-requirements text-left"
+    :class="`fr-validation-requirements text-left ${validatorErrors.length ? 'show' : ''}`"
     v-if="validatorErrors">
     <p
       v-for="(error, index) in validatorErrors"
@@ -53,3 +53,17 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.fr-validation-requirements {
+  &.error-messages {
+    max-height: 0px;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+
+    &.show {
+      height: auto;
+      max-height: 1000px;
+    }
+  }
+}
+</style>
