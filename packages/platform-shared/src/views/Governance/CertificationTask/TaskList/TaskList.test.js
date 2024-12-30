@@ -508,6 +508,13 @@ describe('TaskList', () => {
       wrapper.vm.selectTasks(true);
       expect(wrapper.vm.items).toStrictEqual(expectedValue);
     });
+    it('should return the correct selected values, even if there are duplicated tasks', () => {
+      wrapper.vm.selectedItems = [...resource, {
+        id: 'test-id',
+      }];
+      wrapper.vm.selectTasks(true);
+      expect(wrapper.vm.selectedItems.length).toEqual(2);
+    });
     it('should return the task list with all task in selected false', () => {
       const expectedValue = [{
         id: 'test-id',

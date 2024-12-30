@@ -1120,8 +1120,14 @@ export default {
      */
     selectTask(selectValue, item) {
       this.allSelected = false;
-      if (selectValue) this.selectedItems.push(item);
-      else this.selectedItems = this.selectedItems.filter((task) => task.id !== item.id);
+      if (selectValue) {
+        const isAlreadySelected = this.selectedItems.some((task) => task.id === item.id);
+        if (!isAlreadySelected) {
+          this.selectedItems.push(item);
+        }
+      } else {
+        this.selectedItems = this.selectedItems.filter((task) => task.id !== item.id);
+      }
       const tasksListClone = cloneDeep(this.items);
       this.items = tasksListClone.map((task) => {
         if (task.id === item.id) {
