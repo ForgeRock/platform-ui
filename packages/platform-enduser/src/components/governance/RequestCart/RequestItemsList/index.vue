@@ -6,11 +6,15 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <BListGroup
       v-if="requestItems && requestItems.length"
-      class="list-group-flush mb-0">
+      class="list-group-flush mb-0"
+      role="group"
+      :aria-label="listName">
       <template
         v-for="(item, index) in requestItems"
         :key="index">
         <BListGroupItem
+          button
+          :aria-label="item.name"
           class="d-flex align-items-center px-3 "
           data-testid="request-item-list"
           :class="{'cursor-pointer fr-hover-item': frHover}"
@@ -128,6 +132,10 @@ export default {
     frHover: {
       type: Boolean,
       default: false,
+    },
+    listName: {
+      type: String,
+      default: undefined,
     },
     requestItems: {
       type: Array,

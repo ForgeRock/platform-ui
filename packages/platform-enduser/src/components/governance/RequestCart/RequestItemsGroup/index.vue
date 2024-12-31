@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="initial-items-list"
       :context="context"
       :fr-hover="frHover"
+      :list-name="groupName"
       :request-items="initialRequestItems"
       :show-delete-button="showDeleteButton"
       :show-empty-state="showEmptyState"
@@ -19,6 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
         :class="{ 'border-bottom': viewMoreRequestItems.length }"
         :context="context"
         :fr-hover="frHover"
+        :list-name="`${groupName}, ${$t('governance.accessRequest.newRequest.moreItems')}`"
         :request-items="viewMoreRequestItems"
         :show-empty-state="false"
         v-on="$listeners" />
@@ -59,6 +61,10 @@ export default {
     frHover: {
       type: Boolean,
       default: false,
+    },
+    groupName: {
+      type: String,
+      default: undefined,
     },
     requestItems: {
       type: Array,

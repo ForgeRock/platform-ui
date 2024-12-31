@@ -59,10 +59,15 @@ describe('RequestCart', () => {
   describe('@Component Tests', () => {
     it('disables the submit button if no requested items present', () => {
       const wrapper = setup();
-      const submitButton = findByTestId(wrapper, 'submit-request-button');
       const priority = wrapper.find('div[aria-label="Priority"]');
+      const requestingForGroup = wrapper.find('div[role="group"][aria-label="Requesting for"]');
+      const requestingForGroupChild = requestingForGroup.findAll('button');
+      const submitButton = findByTestId(wrapper, 'submit-request-button');
 
       expect(priority.attributes(['aria-label'])).toEqual('Priority');
+      expect(requestingForGroup.attributes(['aria-label'])).toEqual('Requesting for');
+      expect(requestingForGroupChild.length).toEqual(1);
+      expect(requestingForGroupChild[0].attributes(['aria-label'])).toEqual('Barbara Jensen');
       expect(submitButton.element.disabled).toBeTruthy();
     });
 

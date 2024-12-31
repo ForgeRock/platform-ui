@@ -13,6 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
       </h3>
       <div class="mb-3">
         <FrRequestItemsGroup
+          :group-name="$t('governance.accessRequest.newRequest.requestingFor')"
           :fr-hover="true"
           :request-items="requestCartUsers"
           :show-empty-state="false"
@@ -27,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrRequestItemsGroup
         context="accessItem"
         data-testid="request-items-container"
+        :group-name="$t('governance.accessRequest.newRequest.requestedAccess')"
         :request-items="requestCartItems"
         v-on="$listeners" />
     </div>

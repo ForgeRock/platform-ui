@@ -306,6 +306,7 @@
         "justification": "Justification",
         "justificationDescription": "Provide a justification for granting this request.",
         "maximumUsers": "Add a maximum of 10 users.",
+        "moreItems": "more items.",
         "newRequest": "New Request",
         "noFilterResults": "No results found",
         "noFilterResultsSubTitle": "Try adjusting applied filters or search keywords",
