@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { pluralizeValue } from './PluralizeUtils';
+import { pluralizeValue, pluralizeAnyString } from './PluralizeUtils';
 import i18n from '@/i18n';
 
 describe('PluralizeUtils', () => {
@@ -52,5 +52,9 @@ describe('PluralizeUtils', () => {
   it('Does not pluralize if i18n locale is not english', () => {
     i18n.global.locale = 'fr';
     expect(pluralizeValue('test')).toBe('test');
+  });
+
+  it('Pluralizes any string value', () => {
+    expect(pluralizeAnyString('alpha_user')).toBe('alpha_users');
   });
 });
