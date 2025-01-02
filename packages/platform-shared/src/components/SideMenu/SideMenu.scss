@@ -58,7 +58,9 @@
   .ping-logo-square {
     display: block;
   }
+}
 
+@mixin fr-menu-collapsed-hover {
   &:hover {
     width: $fr-sidemenu-width-lg;
 
@@ -124,6 +126,12 @@
       }
     }
 
+    #app.fr-menu-collapsed:not(.fr-hover-disabled) {
+      .fr-sidebar-wrapper {
+        @include fr-menu-collapsed-hover;
+      }
+    }
+
     #app.fr-menu-expanded {
       .fr-sidebar-wrapper {
         @include fr-menu-expanded;
@@ -134,6 +142,7 @@
   @include media-breakpoint-between(sm, md) {
     #app:not(.fr-menu-collapsed):not(.fr-menu-expanded) .fr-sidebar-wrapper {
       @include fr-menu-collapsed;
+      @include fr-menu-collapsed-hover;
     }
   }
 

@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       'fr-menu-collapsed': menuExpanded === false && !hideSideMenu,
       'fr-menu-hidden': hideSideMenu,
       'fr-system-notification-active': systemNotificationActive && !hideNavBar,
+      'fr-hover-disabled': disableHoveredStyling,
     }, 'h-100']">
     <FrSystemNotification
       v-if="(systemNotification && !hideNavBar)"
@@ -19,6 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
       @hide-system-notification="$emit('hide-system-notification')" />
     <FrSideMenu
       @toggle-menu="toggleMenu"
+      @mouse-leave="onMouseLeave"
       :menu-items="menuItems"
       :dropdown-items="realmMenuItems"
       :realm="realm"
@@ -209,6 +211,7 @@ export default {
       useMobileStyleMenu: false,
       hideNavBar: false,
       hideSideMenu: false,
+      disableHoveredStyling: false,
     };
   },
   watch: {
@@ -265,9 +268,22 @@ export default {
     },
     /**
      * Toggle the expanded state of the menu
+     * after toggle, if the menu state is collapsed, setting disableHoveredStyling to true to avoid applying hovered styling
      */
     toggleMenu() {
       this.menuExpanded = !this.menuExpanded;
+      if (!this.menuExpanded) {
+        this.disableHoveredStyling = true;
+      }
+    },
+    /**
+     * Captures the mouse leave event from the sidebar
+     * resets disableHoveredStyling to false, for re-applying hover styling whenever user hover over the element.
+     */
+    onMouseLeave() {
+      if (this.disableHoveredStyling) {
+        this.disableHoveredStyling = false;
+      }
     },
   },
   beforeUnmount() {

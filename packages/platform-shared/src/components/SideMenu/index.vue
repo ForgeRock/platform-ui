@@ -97,6 +97,7 @@ of the MIT license. See the LICENSE file for details. -->
             <li>
               <button
                 @click="toggleMenu"
+                @mouseleave="onMouseLeave"
                 class="d-flex align-items-center"
                 :aria-label="$t('sideMenu.toggleSidebar')">
                 <FrIcon
@@ -182,14 +183,18 @@ export default {
   },
   methods: {
     /**
-     * Toggles the menu
+     * Triggered whenever the toggle button is clicked.
+     * emit custom event 'toggle-menu' to its parent component
      */
     toggleMenu() {
-      /**
-       * Triggered whenever the toggle button is clicked.
-       * Used to indicate the whether menu is expanded or collapsed.
-       */
       this.$emit('toggle-menu');
+    },
+    /**
+     * Triggered whenever the user comes out from the toggle button element
+     * emit custom event 'mouse-leave' to its parent component
+     */
+    onMouseLeave() {
+      this.$emit('mouse-leave');
     },
   },
 };
