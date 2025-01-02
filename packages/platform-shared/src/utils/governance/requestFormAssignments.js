@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,10 +9,7 @@ import {
   capitalize,
   isEmpty,
 } from 'lodash';
-import {
-  getRequestForm,
-  deleteForm,
-} from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
+import { getRequestForm } from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
 import {
   createFormAssignment,
   deleteFormAssignment,
@@ -21,8 +18,6 @@ import {
   getFormAssignmentByFormId,
   getFormAssignmentByRequestType,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
-import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
-import i18n from '@/i18n';
 
 /**
  * Returns an object representing the assignment of a form to a workflow node.
@@ -180,23 +175,5 @@ export async function getCustomRequestForm(requestTypeId) {
     return null;
   } catch (error) {
     return null;
-  }
-}
-
-/*
- * Deletes form using provided form id, it also deletes all form assignments
- */
-export async function deleteFormById(formId) {
-  // Note: the order matters here
-  // first delete form assignments
-  try {
-    await deleteAllFormAssignments(formId);
-    // second delete the form
-    await deleteForm(formId);
-    displayNotification('success', i18n.global.t('governance.forms.listView.actions.deleteFormSuccessfully'));
-    return Promise.resolve();
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.forms.listView.actions.deleteFormError'));
-    return Promise.reject(error);
   }
 }
