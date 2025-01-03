@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -65,37 +65,39 @@ of the MIT license. See the LICENSE file for details. -->
           <BCardFooter
             v-if="!tabs[currentStep].hideFooter"
             class="d-flex justify-content-between">
-            <div>
-              <BButton
-                v-if="currentStep > 0"
-                @click="changeStep(-1)"
-                variant="link">
-                {{ $t('common.previous') }}
-              </BButton>
-            </div>
-            <div>
-              <BButton
-                @click="$router.push({ path: breadcrumbPath })"
-                variant="link">
-                {{ $t('common.cancel') }}
-              </BButton>
-              <BButton
-                v-if="isFinalStep || forceShowSaveButton"
-                data-testid="saveButton"
-                @click="$emit('save')"
-                :disabled="!valid || !validForm"
-                variant="primary">
-                {{ $t('common.save') }}
-              </BButton>
-              <BButton
-                v-else
-                data-testid="nextButton"
-                @click="changeStep(1)"
-                :disabled="!valid || !validForm"
-                variant="primary">
-                {{ $t('common.next') }}
-              </BButton>
-            </div>
+            <slot name="footer-content">
+              <div>
+                <BButton
+                  v-if="currentStep > 0"
+                  @click="changeStep(-1)"
+                  variant="link">
+                  {{ $t('common.previous') }}
+                </BButton>
+              </div>
+              <div>
+                <BButton
+                  @click="$router.push({ path: breadcrumbPath })"
+                  variant="link">
+                  {{ $t('common.cancel') }}
+                </BButton>
+                <BButton
+                  v-if="isFinalStep || forceShowSaveButton"
+                  data-testid="saveButton"
+                  @click="$emit('save')"
+                  :disabled="!valid || !validForm"
+                  variant="primary">
+                  {{ $t('common.save') }}
+                </BButton>
+                <BButton
+                  v-else
+                  data-testid="nextButton"
+                  @click="changeStep(1)"
+                  :disabled="!valid || !validForm"
+                  variant="primary">
+                  {{ $t('common.next') }}
+                </BButton>
+              </div>
+            </slot>
           </BCardFooter>
         </VeeForm>
       </BTabs>
