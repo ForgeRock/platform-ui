@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,7 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
+import dayjs from 'dayjs';
 import ViolationList from './ViolationList';
 import i18n from '@/i18n';
 import * as store from '@/store';
@@ -159,7 +160,7 @@ describe('ViolationList', () => {
     expect(dropdownInSecondViolation.exists()).toBe(true);
   });
 
-  it('emits handle-search when filter is changed', async () => {
+  it('emits handle-search when filter is changed including the endDate one day addition', async () => {
     const wrapper = mountComponent();
     await flushPromises();
     const filter = wrapper.findComponent('[role=toolbar]');
@@ -168,7 +169,7 @@ describe('ViolationList', () => {
       rule: 'testRule',
       user: 'testUser',
       startDate: '',
-      endDate: '',
+      endDate: '12/12/2025',
       searchValue: 'searchValue',
     });
     await flushPromises();
@@ -188,6 +189,10 @@ describe('ViolationList', () => {
       {
         operator: 'EQUALS',
         operand: { targetName: 'user.id', targetValue: 'testUser' },
+      },
+      {
+        operator: 'LTE',
+        operand: { targetName: 'decision.startDate', targetValue: `${dayjs('12/12/2025').add(1, 'day').toISOString().split('.')[0]}+00:00` },
       },
       {
         operator: 'OR',
