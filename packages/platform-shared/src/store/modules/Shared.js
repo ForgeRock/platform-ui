@@ -19,7 +19,6 @@ const defaultState = {
   autoReportsEnabled: false,
   currentPackage: '',
   applicationPolicyEnabled: false,
-  extendedSamlConfigEnabled: false,
   scriptBindingsApiEnabled: false,
   oidcJourneysEnabled: false,
   fraasEnvironmentUrl: null,
@@ -103,9 +102,6 @@ const mutations = {
       }
       if (env.VUE_APP_ENABLE_APPLICATION_POLICY === 'true' || env.VUE_APP_ENABLE_APPLICATION_POLICY === true) {
         state.applicationPolicyEnabled = env.VUE_APP_ENABLE_APPLICATION_POLICY;
-      }
-      if (env.VUE_APP_ENABLE_EXTENDED_SAML_CONFIG === 'true' || env.VUE_APP_ENABLE_EXTENDED_SAML_CONFIG === true) {
-        state.extendedSamlConfigEnabled = env.VUE_APP_ENABLE_EXTENDED_SAML_CONFIG;
       }
       if (env.VUE_APP_ENABLE_OIDC_JOURNEYS === 'true' || env.VUE_APP_ENABLE_OIDC_JOURNEYS === true) {
         state.oidcJourneysEnabled = env.VUE_APP_ENABLE_OIDC_JOURNEYS;
