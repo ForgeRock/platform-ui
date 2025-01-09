@@ -118,3 +118,23 @@ Then('enduser account is deleted via API', () => {
   Cypress.env('endUserPassword', '');
   Cypress.env('endUserId', '');
 });
+
+When('the user clears the {string} field', (field) => {
+  cy.findByLabelText(field)
+    .clear();
+});
+
+Then('{string} modal is displayed/opened', (modal) => {
+  cy.findByRole('dialog', { name: modal })
+    .should('exist');
+});
+
+When('the message {string} should be present', (message) => {
+  cy.findByText(message)
+    .should('be.visible');
+});
+
+When('{string} option should be present', (option) => {
+  cy.findByText(option)
+    .should('be.visible');
+});
