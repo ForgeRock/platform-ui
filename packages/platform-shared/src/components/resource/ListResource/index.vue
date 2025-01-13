@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -113,6 +113,8 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="tableData && tableData.length > 0 && !isLoading"
       :value="paginationPage"
       aria-controls="list-resource-table"
+      :page-sizes="pageSizes"
+      :hide-page-size-selector="hidePageSizeSelector"
       :hide-go-to-first-page-button="hideGoToFirstPageButton"
       :per-page="paginationPageSize"
       :prev-class="prevClass"
@@ -209,6 +211,10 @@ export default {
      * Determines the size of the dataset to change the pagination style, small by default, posible values
      * 'sm' for small, 'lg' for large, 'cm' for custom. See {@link @forgerock/platform-shared/src/components/Pagination}
      */
+    canClearSessions: {
+      type: Boolean,
+      default: false,
+    },
     datasetSize: {
       type: String,
       default: DatasetSize.LARGE,
@@ -225,13 +231,13 @@ export default {
       type: Boolean,
       default: true,
     },
-    canClearSessions: {
+    hidePageSizeSelector: {
       type: Boolean,
       default: false,
     },
     routerParameters: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     tableData: {
       type: Array,
@@ -269,6 +275,13 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * Minimum page size for table
+     */
+    minimumPageSize: {
+      type: Number,
+      default: 10,
+    },
     showDivider: {
       type: Boolean,
       default: false,
@@ -304,7 +317,7 @@ export default {
       sortDesc: false,
       filter: '',
       paginationPage: 1,
-      paginationPageSize: 10,
+      paginationPageSize: this.minimumPageSize,
       resourceToDeleteId: '',
       sortDirection: 'asc',
       showClearSessionsModal: false,
@@ -324,6 +337,9 @@ export default {
     },
     capitalizedResourceName() {
       return pluralize(capitalize(this.resourceTitle || this.resourceName));
+    },
+    pageSizes() {
+      return [...new Set([this.minimumPageSize, ...[10, 20, 50, 100]])].filter((pageSize) => pageSize >= this.minimumPageSize);
     },
   },
   mounted() {
