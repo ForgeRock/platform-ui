@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="suspend-text-output"
       class="text-center text-muted w-100 white-space-pre-line"
       role="alert"
+      aria-live="polite"
       v-html="sanitizedMessage" />
   </div>
 </template>
