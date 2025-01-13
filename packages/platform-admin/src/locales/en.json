@@ -4302,6 +4302,32 @@
         "deleteSchedule": "Delete Schedule"
       }
     },
+    "lcm": {
+      "settings": {
+        "activateError": "Error activating Governance LCM",
+        "activateSuccess": "Governance LCM activated",
+        "deactivateConfirm": "Are you sure you want to deactivate Governance LCM?",
+        "deactivateError": "Error deactivating Governance LCM",
+        "deactivateSuccess": "Governance LCM deactivated",
+        "deactivateTitle": "Deactivate Governance LCM?",
+        "getSettingsError": "Error getting Governance LCM settings",
+        "subtitle": "Initiate request flows for create, update and delete actions when accessed through user self-service.",
+        "title": "Governance LCM",
+        "updateSuccess": "LCM Settings updated successfully",
+        "types": {
+          "entitlement": "Entitlement LCM"
+        },
+        "modal": {
+          "about": "About",
+          "activateFeature": "Activating this feature will:",
+          "addRequestFlows": "Add request and approval flows to selected identity profiles LCM",
+          "description": "Initiate request flows for create, update and delete actions when accessed through user self-service.",
+          "identityProfiles": "Identity Profiles",
+          "identityProfilesDescription": "Activate LCM for selected identity profiles in user self-service.",
+          "removeDirectUpdate": "Remove direct create, update and delete capabilities for selected identity profiles"
+        }
+      }
+    },
     "timespans": {
       "days": "day(s)",
       "weeks": "week(s)",

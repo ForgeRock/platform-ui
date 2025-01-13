@@ -1,33 +1,24 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <label class="h-100 w-100 mb-0 position-relative">
-    <!--
-      triggered on change and focus
-      @event change
-      @property {number|string|boolean} value - selected value
-    -->
+  <label class="w-100 mb-0 position-relative">
     <input
-      type="radio"
-      :checked="isChecked"
-      :aria-checked="isChecked"
+      type="checkbox"
+      role="checkbox"
+      :checked="value"
+      :aria-checked="value"
       :disabled="disabled"
-      :name="name"
       :value="value"
       class="card-input-element"
-      @change="$emit('change', value)"
+      @change="$emit('change', $event.target.checked)"
       @focus="$emit('change', value)">
     <BCard
       class="card-input fr-card-clickable"
       :body-class="cardBodyClass">
       <!-- @slot Provide custom content for card body -->
-      <slot>
-        <div :aria-label="value">
-          {{ value }}
-        </div>
-      </slot>
+      <slot />
     </BCard>
   </label>
 </template>
@@ -38,12 +29,12 @@ import {
 } from 'bootstrap-vue';
 
 /**
- *  Turn cards into large radio buttons for use in wizards and step-by-step flows.
+ *  Turn cards into large checkbox buttons
  */
 export default {
-  name: 'CardRadioInput',
+  name: 'CardCheckboxInput',
   model: {
-    prop: 'selected',
+    prop: 'value',
     event: 'change',
   },
   components: {
@@ -65,30 +56,11 @@ export default {
       default: false,
     },
     /**
-     * Card radio inputs with the same name are grouped together. Only one input in group can be selected at a time.
-     */
-    name: {
-      type: String,
-      default: 'radio-input',
-    },
-    /**
-     * if initial value is equal to the value prop, will initialize as the selected input.
-     */
-    selected: {
-      type: [Number, String, Boolean],
-      default: '',
-    },
-    /**
      * Value that selecting the input will provide
      */
     value: {
-      type: [Number, String, Boolean],
-      default: '',
-    },
-  },
-  computed: {
-    isChecked() {
-      return this.value === this.selected;
+      type: Boolean,
+      default: false,
     },
   },
 };
