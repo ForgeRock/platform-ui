@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -73,6 +73,55 @@ describe('Run History component', () => {
         const firstTableRow = tableRows[0];
         const firstTableRowStatus = firstTableRow.find('[role="status"]');
         expect(firstTableRowStatus.text()).toBe('Loading...');
+      });
+
+      it('displays a "running" state on any report that has a status of "RUNNING" until the report returns a state other than "RUNNING"', async () => {
+        ReportsUtils.requestReportRuns = jest.fn()
+          .mockReturnValueOnce(Promise.resolve([{
+            createDate: '2024-11-22T20:10:21.901960639Z',
+            exportCsvStatus: 'EXPORT_SUCCESS',
+            exportJsonStatus: null,
+            parameters: '{"org_names":["Sales"], "realm": "alpha"}',
+            reportConfig: '{"parameters": {"org_names": {}, "realm": {}}}',
+            runId: 'job_0123',
+            status: 'RUNNING',
+          }]))
+          .mockReturnValue(Promise.resolve([{
+            createDate: '2024-11-22T20:10:21.901960639Z',
+            exportCsvStatus: 'EXPORT_SUCCESS',
+            exportJsonStatus: null,
+            parameters: '{"org_names":["Sales"], "realm": "alpha"}',
+            reportConfig: '{"parameters": {"org_names": {}, "realm": {}}}',
+            runId: 'job_0123',
+            status: 'COMPLETED_SUCCESS',
+          }]));
+        jest.useFakeTimers();
+        wrapper = setup({
+          reportConfig: {},
+          templateName: 'template-name',
+          templateState: 'published',
+        });
+
+        // First time around should show the loading state because the report is still running
+        await nextTick();
+        let table = findByTestId(wrapper, 'run-history-table');
+        let tableRows = table.find('tbody').findAll('tr[role="row"]');
+        let firstTableRow = tableRows[0];
+        const firstTableRowStatus = firstTableRow.find('[role="status"]');
+        expect(firstTableRowStatus.text()).toBe('Loading...');
+
+        // Flush promises and run setTimeout to simulate the polling interval
+        await flushPromises();
+        jest.runAllTimers();
+        await nextTick();
+        await nextTick();
+
+        // Second time around should show the complete state because the report has finished running
+        table = findByTestId(wrapper, 'run-history-table');
+        tableRows = table.find('tbody').findAll('tr[role="row"]');
+        [firstTableRow] = tableRows;
+        const badge = findByTestId(firstTableRow, 'fr-complete-report-badge');
+        expect(badge.text()).toBe('Complete');
       });
 
       it('ensures that on load, table items are sorted by most recently created', () => {

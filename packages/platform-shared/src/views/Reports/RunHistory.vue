@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,7 +9,6 @@ of the MIT license. See the LICENSE file for details. -->
       class="py-5 my-4" />
     <FrRunHistoryTable
       v-else
-      :export-in-progress="exportInProgress"
       :report-runs="reportRuns"
       :template-state="props.templateState"
       :updated-row="updateSingleTableRow"
@@ -85,7 +84,6 @@ const isLoading = ref(true);
 /**
  * GLOBALS
  */
-const exportInProgress = ref(false);
 const exportModalFileType = ref('');
 const exportModalData = ref({});
 const exportModalStatus = ref('exporting');
@@ -274,7 +272,6 @@ async function exportReport({ fileType, item, exportStatus }) {
 
   // updates globals
   updateExportModalState(item, 'exporting', fileType, endTimer);
-  exportInProgress.value = true;
   bvModal.value.show('export-modal');
 
   if (exportStatus !== 'exporting') {
@@ -312,21 +309,43 @@ async function exportReport({ fileType, item, exportStatus }) {
       const currentReportStatus = updateSingleTableRow.value[0].export[fileType];
       updateExportModalState(item, currentReportStatus, fileType, asyncTimer);
     }
-
-    exportInProgress.value = false;
   }
 }
 
 /**
- * Grabs the latest report job ID and intentionally updates the report
- * "status" property to "RUNNING" for 1500ms, to give the user a visual
- * cue as to where the newly created report lives in the table, thereafter
- * setting the report back to the original data.
+ * Continuously polls the API for a report with a status of "RUNNING"
+ * until the status property returns anything other than "RUNNING".
+ * @param {String} runId Run ID of the report
+ * @param {String} templateName template name
+ * @param {Number} interval milliseconds
+ */
+function reportStatusPoll(runId, templateName, interval = 1500) {
+  setTimeout(async () => {
+    const [report] = await requestReportRuns({
+      runId,
+      name: templateName,
+      realm: store.state.realm,
+      templateType: props.templateState,
+    });
+
+    if (report?.status === 'RUNNING') {
+      reportStatusPoll(runId, templateName, 5000);
+    } else if (report) {
+      updateSingleTableRow.value = reportHistoryTableDataGenerator([report]);
+    }
+  }, interval);
+}
+
+/**
+ * Sets a temporary "RUNNING" status on a newly created report for 1.5
+ * seconds to give the user a visual cue as to where the new report lives
+ * in the table. It then continuously polls all reports with a status of
+ * "RUNNING" until the status property returns anything other than "RUNNING".
  * @param {Array} reportRunsData Raw list of all run reports from API.
  * @param {String} templateName template name
  * @param {String} latestReportJobId new report job id
  */
-async function setVanityRunningStateForNewReport(reportRunsData, templateName, latestReportJobId) {
+async function handleRunningStateForNewAndExistingReports(reportRunsData, templateName, latestReportJobId) {
   const newReportFromList = reportRunsData.find((run) => run.runId === latestReportJobId);
 
   if (newReportFromList) {
@@ -334,35 +353,25 @@ async function setVanityRunningStateForNewReport(reportRunsData, templateName, l
     const listExcludingOldReport = reportRunsData.filter((run) => run.runId !== latestReportJobId);
     const vanityRunList = [...listExcludingOldReport, ...newReportWithVanityStatus];
     reportRuns.value = vanityRunList;
-
-    // Sets the real status data back for the new job after 1500ms
-    setTimeout(async () => {
-      const { status, runId } = newReportFromList;
-      let report = [newReportFromList];
-      if (status !== 'COMPLETED_SUCCESS') {
-        report = await requestReportRuns({
-          runId,
-          name: templateName,
-          realm: store.state.realm,
-          templateType: props.templateState,
-        });
-      }
-      updateSingleTableRow.value = reportHistoryTableDataGenerator(report);
-    }, 1500);
   } else {
     // If for some strange reason we can't find the new report, just set
     // the table with the original reports data that we get from the API.
     reportRuns.value = reportRunsData;
   }
+
+  // Polls the API for all reports that have a status of "RUNNING" until the status changes
+  // to a completed, failed or expired state, then updates the table with the new data.
+  reportRuns.value.forEach((report) => {
+    if (report.status === 'RUNNING') {
+      reportStatusPoll(report.runId, templateName);
+    }
+  });
 }
 
 /**
- * INIT
+ * INITIALIZE COMPONENT
  * @decription
- * If there is a new job id, we set it to a loading - or "Running" - state
- * for 1.5 seconds, to give the user a visual cue as to where their newly created
- * report lives within the table.  Since the table is sorted by most recent,
- * the top entry should be the one to visually show the temporary vanity state.
+ * Fetches all report runs and handles the running state for new and existing reports
  */
 async function initialize() {
   const templateName = props.templateName.toUpperCase();
@@ -372,12 +381,7 @@ async function initialize() {
     templateType: props.templateState,
   });
 
-  if (props.newReportJobId) {
-    setVanityRunningStateForNewReport(allReportRuns, templateName, props.newReportJobId);
-  } else {
-    reportRuns.value = allReportRuns;
-  }
-
+  handleRunningStateForNewAndExistingReports(allReportRuns, templateName, props.newReportJobId);
   isLoading.value = false;
 }
 
