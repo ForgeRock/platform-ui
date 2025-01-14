@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
             <section>
               <FrCenterCard
-                :logo-alt-text="logoAltText || $t('common.logo')"
+                :logo-alt-text="logoAltText || $t('login.logoAltDefaultLogin')"
                 :logo-enabled="logoEnabled && !themeLoading"
                 :logo-height="logoHeight"
                 :logo-path="logoPath"
@@ -213,7 +213,7 @@ of the MIT license. See the LICENSE file for details. -->
               <img
                 v-if="logoEnabled"
                 class="ping-logo mt-4"
-                :alt="logoAltText || $t('common.logo')"
+                :alt="logoAltText || $t('login.logoAltDefaultLogin')"
                 :style="{ height: `${logoHeight}px` }"
                 :src="logoPath">
               <div

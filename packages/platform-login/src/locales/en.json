@@ -5,6 +5,7 @@
   "login": {
     "agreeToTerms": "By clicking 'Next' you agree to our ",
     "invalidRealm": "Invalid Realm",
+    "logoAltDefaultLogin": "Company logo displayed on the login page",
     "newHere": "New here?",
     "sessionTimeoutLink": "Start Over",
     "errorHeading": "Error",
