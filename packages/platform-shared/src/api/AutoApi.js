@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,19 @@ import encodeQueryString from '../utils/encodeQueryString';
 import store from '@/store';
 
 const versionedPayload = { version: 'v2' };
+
+const getRealmContext = () => (
+  [
+    {
+      type: 'global',
+      data: [
+        {
+          key: 'realm',
+          value: store.state.realm,
+        },
+      ],
+    },
+  ]);
 
 /**
   * Returns a list of report templates
@@ -77,6 +90,7 @@ export function reportExportRequest(runId, params, appendUnderscores = false) {
 export async function runAnalyticsTemplate(template, state, payload) {
   const { data: res } = await generateAutoAccessReports().post(`templates/${template}?_action=run&templateType=${state}`, {
     parameters: JSON.stringify(payload),
+    context: getRealmContext(),
   });
   return res;
 }
@@ -100,6 +114,7 @@ export function getReportEntities(path) {
 export function getReportFieldOptions(payload) {
   return generateAutoAccessReports().post('fieldoptions', {
     query: JSON.stringify({ ...versionedPayload, ...payload }),
+    context: getRealmContext(),
   });
 }
 
