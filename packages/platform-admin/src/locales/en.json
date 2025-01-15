@@ -3150,7 +3150,7 @@
       "attrMatch": "attributes are matched:"
     },
     "modes": {
-      "allValid": "All valid {sourceAppName} users",
+      "allValid": "All valid {sourceAppName} {objectTypeName}",
       "1to1": "1-to-1 match",
       "noMatch": "No match found",
       "noMatchApp": "No match found for {targetAppName} {objectTypeName} in {sourceAppName}",
@@ -3207,6 +3207,7 @@
     "reconObjectType": "Reconcile {objectTypeName}",
     "reconcileAppNonAccountObject": "Reconcile {applicationName} {nonAccountObject}",
     "reconciled": "Reconciled",
+    "reconciledSuccess": "Reconciliation successfully completed",
     "reconIdentity": "Reconcile Identity",
     "reconNow": "Reconcile Now",
     "refreshAssociations": "Refresh Associations",
