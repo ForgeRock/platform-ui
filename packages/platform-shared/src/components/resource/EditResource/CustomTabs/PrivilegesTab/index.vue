@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -351,6 +351,12 @@ export default {
       });
 
       this.clonedPrivilegesField.value.forEach((privilege) => {
+        // IAM-8048 - _id should be included with readOnly set to true for all privileges
+        const hasIdProperty = Object.keys(this.schemaMap[privilege.path]?.properties || {}).includes('_id');
+        const hasIdPermission = privilege.accessFlags?.length && (privilege.accessFlags.findIndex((accessFlag) => accessFlag.attribute === '_id') !== -1);
+        if (hasIdProperty && !hasIdPermission) {
+          privilege.accessFlags.push({ attribute: '_id', readOnly: true });
+        }
         if (privilege.filter === '') {
           delete privilege.filter;
         }

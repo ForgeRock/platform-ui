@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -162,5 +162,46 @@ describe('CustomStep.vue', () => {
     await wrapper.vm.setConditionOptions(conditionObject);
     await flushPromises();
     expect(showErrorMessageSpy).toHaveBeenCalledWith('error', 'pages.access.invalidEdit');
+  });
+
+  it('does not add _id to privileges if _id is not in schema', async () => {
+    const privilegesField = [
+      {
+        path: 'testPath',
+        accessFlags: [],
+      },
+    ];
+    wrapper.vm.loading = false;
+    await flushPromises();
+    await wrapper.findComponent('fr-add-privileges-stub').vm.$emit('new-privileges-modified', privilegesField);
+    expect(wrapper.emitted().input[0][1]).toEqual(privilegesField);
+  });
+
+  it('adds _id to privileges if _id is in schema', async () => {
+    const privilegesField = [
+      {
+        path: 'testPath',
+        accessFlags: [],
+      },
+    ];
+    wrapper.vm.schemaMap = {
+      testPath: {
+        properties: {
+          _id: {
+            type: 'string',
+            title: 'ID',
+          },
+        },
+      },
+    };
+
+    wrapper.vm.loading = false;
+    await flushPromises();
+    await wrapper.findComponent('fr-add-privileges-stub').vm.$emit('new-privileges-modified', privilegesField);
+    privilegesField[0].accessFlags.push({
+      attribute: '_id',
+      readOnly: true,
+    });
+    expect(wrapper.emitted().input[0][1]).toEqual(privilegesField);
   });
 });

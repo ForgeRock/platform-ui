@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -171,6 +171,44 @@ describe('PrivilegesTab', () => {
     expect(notificationSpy).toHaveBeenCalled();
     expect(wrapper.vm.newPrivileges).toStrictEqual([]);
     expect(wrapper.vm.privileges[0]).toEqual({ name: 'testValue' });
+  });
+
+  it('adds _id to privileges when saving privilege', async () => {
+    wrapper.setData({
+      editIndex: 0,
+      privilegeToEdit: {
+        filter: 'testFilter',
+        accessFlags: [
+          {
+            attribute: 'userName',
+            readOnly: true,
+          },
+        ],
+        name: 'testName',
+        path: 'testPath',
+      },
+      schemaMap: {
+        testPath: {
+          properties: {
+            _id: {
+              type: 'string',
+              title: 'ID',
+            },
+          },
+        },
+      },
+    });
+    await wrapper.vm.savePrivilege();
+    expect(wrapper.vm.privileges[0].accessFlags).toEqual([
+      {
+        attribute: 'userName',
+        readOnly: true,
+      },
+      {
+        attribute: '_id',
+        readOnly: true,
+      },
+    ]);
   });
 
   it('saves new privileges', async () => {

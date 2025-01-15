@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -108,12 +108,20 @@ export default {
       }]);
     },
     newPrivileges(newVal) {
-      newVal.forEach((privilege) => {
-        if (privilege.filter === '') {
-          delete privilege.filter;
+      const updatedPrivileges = newVal.map((privilege) => {
+        const updatedPrivilege = { ...privilege };
+        // IAM-8048 - _id should be included with readOnly set to true for all privileges
+        const hasIdProperty = Object.keys(this.schemaMap[updatedPrivilege.path]?.properties || {}).includes('_id');
+        const hasIdPermission = updatedPrivilege.accessFlags && (updatedPrivilege.accessFlags.findIndex((accessFlag) => accessFlag.attribute === '_id') !== -1);
+        if (hasIdProperty && !hasIdPermission) {
+          updatedPrivilege.accessFlags = [...updatedPrivilege.accessFlags, { attribute: '_id', readOnly: true }];
         }
+        if (updatedPrivilege.filter === '') {
+          delete updatedPrivilege.filter;
+        }
+        return updatedPrivilege;
       });
-      this.emitValue(newVal);
+      this.emitValue(updatedPrivileges);
     },
   },
   methods: {
