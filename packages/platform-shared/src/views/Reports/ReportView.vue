@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -242,10 +242,10 @@ async function setConfigInfo(report) {
   const reportConfigParameters = JSON.parse(report.reportConfig).parameters;
   const [paramsWithoutRealm] = [JSON.parse(report.parameters)].map(({ ...parameter }) => parameter);
   delete paramsWithoutRealm.realm;
-  const { _REPORT_FIELDS_CONTROLLER } = useRunReport();
+  const { _PARAMETERS_CONTROLLER } = useRunReport();
   const parametersWithLabels = Object.keys(paramsWithoutRealm).map((paramKey) => {
     const reportConfigParamLabel = reportConfigParameters[paramKey]?.label;
-    const reportControllerLabel = _REPORT_FIELDS_CONTROLLER[paramKey]?.label;
+    const reportControllerLabel = _PARAMETERS_CONTROLLER[paramKey]?.label;
     const label = reportConfigParamLabel || reportControllerLabel || paramKey;
     const paramValue = paramsWithoutRealm[paramKey];
     const value = Array.isArray(paramValue) ? paramValue.join(', ') : paramValue;

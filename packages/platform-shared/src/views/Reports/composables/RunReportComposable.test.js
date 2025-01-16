@@ -15,56 +15,69 @@ describe('@useRunReport', () => {
   ReportsUtils.requestTrees = jest.fn();
   TreeApi.actionGetAllTrees = jest.fn();
 
-  const { _REPORT_FIELDS_CONTROLLER: controller } = useRunReport();
+  const {
+    _PARAMETERS_CONTROLLER: controller,
+    UnmappedParametersSchema,
+  } = useRunReport();
   const managedResourcePropertyRequestSpy = jest.spyOn(ReportsUtils, 'managedResourcePropertyRequest');
   const requestTreesSpy = jest.spyOn(ReportsUtils, 'requestTrees');
 
   describe('@fetch', () => {
     it('ensures that the applications property fetches with expected config data', async () => {
-      await controller.applications.fetch();
+      await controller.applications.config.fetch();
       expect(managedResourcePropertyRequestSpy).toHaveBeenCalled();
     });
 
     it('ensures that the org_names property fetches with expected config data', async () => {
-      await controller.org_names.fetch();
+      await controller.org_names.config.fetch();
       expect(managedResourcePropertyRequestSpy).toHaveBeenCalled();
     });
 
     it('ensures that the journeyName property fetches with expected config data', async () => {
-      await controller.journeyName.fetch();
+      await controller.journeyName.config.fetch();
       expect(requestTreesSpy).toHaveBeenCalled();
     });
 
     it('ensures that the treeName property fetches with expected config data', async () => {
-      await controller.treeName.fetch();
+      await controller.treeName.config.fetch();
       expect(requestTreesSpy).toHaveBeenCalled();
     });
 
     it('ensures that the user_names property fetches with expected config data', async () => {
-      await controller.user_names.fetch();
+      await controller.user_names.config.fetch();
       expect(managedResourcePropertyRequestSpy).toHaveBeenCalled();
     });
 
     it('ensures that the roles property fetches with expected config data', async () => {
-      await controller.roles.fetch();
+      await controller.roles.config.fetch();
       expect(managedResourcePropertyRequestSpy).toHaveBeenCalled();
     });
   });
 
   describe('@unit', () => {
-    it('ensures that each field in the controller has a label property', () => {
-      // api requires realm for every request but it is not a
-      // field so we filter it out for this assertion.
-      const filterRealmFromFields = Object.keys(controller).filter((field) => field !== 'realm');
-      filterRealmFromFields.forEach((field) => {
-        expect(Object.prototype.hasOwnProperty.call(controller[field], 'label')).toBe(true);
-      });
-    });
-
     it('ensures that each field in the controller has a payload property', () => {
       Object.keys(controller).forEach((field) => {
         expect(Object.prototype.hasOwnProperty.call(controller[field], 'payload')).toBe(true);
       });
+    });
+
+    it('ensures that the unmapped parameters schema has the expected properties', () => {
+      const unmappedParametersSchema = new UnmappedParametersSchema({
+        component: 'FrInput',
+        label: 'Label',
+        placeholder: 'placeholder',
+        type: 'string',
+        payload: '',
+        enums: [{ name: 'enum1', value: 'enum1' }],
+        mutation: (model) => model,
+      });
+      expect(unmappedParametersSchema.component).toBe('FrInput');
+      expect(unmappedParametersSchema.label).toBe('Label');
+      expect(unmappedParametersSchema.placeholder).toBe('placeholder');
+      expect(unmappedParametersSchema.type).toBe('string');
+      expect(unmappedParametersSchema.payload).toBe('');
+      expect(unmappedParametersSchema.enums).toEqual([{ name: 'enum1', value: 'enum1' }]);
+      expect(unmappedParametersSchema.mutation).toBeInstanceOf(Function);
     });
   });
 });

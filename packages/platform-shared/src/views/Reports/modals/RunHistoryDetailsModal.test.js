@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,9 +13,12 @@ import i18n from '@/i18n';
 import RunHistoryDetailsModal from './RunHistoryDetailsModal';
 import useRunReport from '../composables/RunReport';
 
-const { _REPORT_FIELDS_CONTROLLER } = useRunReport();
-const allFieldKeys = Object.keys(_REPORT_FIELDS_CONTROLLER);
-const allFieldKeysObject = allFieldKeys.map((key) => ({ [key]: _REPORT_FIELDS_CONTROLLER[key].fetch ? [key] : key }));
+const { _PARAMETERS_CONTROLLER } = useRunReport();
+const allFieldKeys = Object.keys(_PARAMETERS_CONTROLLER);
+const allFieldKeysObject = allFieldKeys.map((key) => {
+  const hasFetch = _PARAMETERS_CONTROLLER[key]?.config?.fetch;
+  return { [key]: hasFetch ? [key] : key };
+});
 const parameters = {};
 allFieldKeysObject.forEach((obj) => {
   const key = Object.keys(obj);

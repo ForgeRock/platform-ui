@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -75,40 +75,32 @@ describe('Run Report component', () => {
       ['only displays the journeys field when "treeName" parameter received', 'fr-field-journeys', 'treeName'],
       ['only displays the organizations field when "org_names" parameter received', 'fr-field-organizations', 'org_names'],
       ['only displays the roles field when "roles" parameter received', 'fr-field-roles', 'roles'],
-      ['only displays the status field when "accountStatus" parameter received', 'fr-field-status', 'accountStatus'],
+      ['only displays the status field when "accountStatus" parameter received', 'fr-field-account-status', 'accountStatus'],
       ['only displays the status field when "status" parameter received', 'fr-field-status', 'status'],
       ['only displays the outcome field when "treeResult" parameter received', 'fr-field-outcome', 'treeResult'],
       ['only displays the users field when "user_names" parameter received', 'fr-field-users', 'user_names'],
-    ];
-    const timeframeFields = [
       ['only displays the timeframe field when "startDate" parameter received', 'fr-field-timeframe', 'startDate'],
-      ['only displays the timeframe field when "endDate" parameter received', 'fr-field-timeframe', 'endDate'],
     ];
 
     it.each(allKnownFields)('%s', async (_, fieldTestId, parameter) => {
       fieldDataMocks();
-      wrapper = setup({ reportConfig: { parameters: { [parameter]: {} } } });
+      let parameters = { [parameter]: {} };
+      if (parameter === 'startDate') {
+        parameters = { startDate: {}, endDate: {} };
+      }
+      wrapper = setup({ reportConfig: { parameters } });
       await flushPromises();
 
       const fieldsContainer = findByTestId(wrapper, 'fr-run-report-container');
       const fieldRows = fieldsContainer.findAll('.row');
-      expect(fieldRows.length).toBe(1);
 
-      const field = findByTestId(wrapper, fieldTestId);
-      expect(field.exists()).toBe(true);
-      jest.clearAllMocks();
-    });
+      if (parameter === 'startDate') {
+        expect(fieldRows.length).toBe(2);
+      } else {
+        expect(fieldRows.length).toBe(1);
+      }
 
-    it.each(timeframeFields)('%s', async (_, fieldTestId, parameter) => {
-      fieldDataMocks();
-      wrapper = setup({ reportConfig: { parameters: { [parameter]: {} } } });
-      await flushPromises();
-
-      const fieldsContainer = findByTestId(wrapper, 'fr-run-report-container');
-      const fieldRows = fieldsContainer.findAll('.row');
-      expect(fieldRows.length).toBe(1);
-
-      const field = findByRole(wrapper, 'combobox');
+      const field = parameter === 'startDate' ? findByRole(wrapper, 'combobox') : findByTestId(wrapper, fieldTestId);
       expect(field.exists()).toBe(true);
       jest.clearAllMocks();
     });
@@ -118,7 +110,7 @@ describe('Run Report component', () => {
     describe('Timeframe field', () => {
       beforeEach(async () => {
         fieldDataMocks();
-        wrapper = setup({ reportConfig: { parameters: { startDate: {} } } });
+        wrapper = setup({ reportConfig: { parameters: { startDate: {}, endDate: {} } } });
         await flushPromises();
         jest.clearAllMocks();
       });
@@ -140,49 +132,6 @@ describe('Run Report component', () => {
 
         expect(datePickerStart.isVisible()).toBe(true);
         expect(datePickerEnd.isVisible()).toBe(true);
-      });
-
-      it('disables the submit button if there are no values for the datepicker fields', async () => {
-        fieldDataMocks();
-        wrapper = setup({ reportConfig: { parameters: { startDate: {} } } });
-        await flushPromises();
-        // Submit button should be enabled on-load since field has default value
-        const submitButton = findByTestId(wrapper, 'run-report-button');
-        expect(submitButton.attributes('disabled')).toBeFalsy();
-
-        const timeFrameField = findByRole(wrapper, 'combobox');
-        await timeFrameField.trigger('click');
-
-        const customTimeframeOption = timeFrameField.findAll('li')[4].find('span');
-        await customTimeframeOption.trigger('click');
-
-        expect(submitButton.attributes().disabled).toBeDefined();
-
-        // I couldn't find a way to get the DOM to display the datepicker calendar popup to
-        // interact with, so I had to inject the values into the datepicker variable directly.
-        wrapper.vm.startDateModel = '2023-10-10';
-        expect(submitButton.attributes('disabled')).toBeDefined();
-
-        wrapper.vm.endDateModel = '2023-10-11';
-        await nextTick();
-
-        expect(submitButton.attributes().disabled).toBeUndefined();
-      });
-
-      it('displays the expected submit button label and help text if a report contains no parameters', async () => {
-        fieldDataMocks();
-        wrapper = setup({ reportConfig: { parameters: {} } });
-        await flushPromises();
-
-        const runReportContainer = wrapper.find('.card');
-        expect(runReportContainer.attributes('footer-border-variant')).toBe('white');
-        expect(runReportContainer.attributes('no-body')).toBe('true');
-
-        const submitButton = findByTestId(runReportContainer, 'run-report-button');
-        expect(submitButton.attributes('disabled')).toBeUndefined();
-
-        const footerDescription = findByText(runReportContainer, 'p', 'Run Report');
-        expect(footerDescription.exists()).toBe(true);
       });
     });
 
@@ -390,11 +339,6 @@ describe('Run Report component', () => {
         expect(multiSelectEnumInput.attributes('value')).toEqual('enum1-val,enum2-val');
       });
 
-      it('ensures that unexpected parameters disable the submit button if they do not have a value', () => {
-        const submitButton = findByTestId(wrapper, 'run-report-button');
-        expect(submitButton.attributes('disabled')).toBeDefined();
-      });
-
       it('ensures that unexpected parameters enable the submit button if they have a value', async () => {
         const unexpectedParameterInput = findByTestId(wrapper, 'input-my_unexpected_parameter');
         const unexpectedIntegerParameter = findByTestId(wrapper, 'input-my_unexpected_integer_parameter');
@@ -433,43 +377,45 @@ describe('Run Report component', () => {
   describe('@submits', () => {
     const statusDefaultValues = ['active', 'inactive', 'blocked'];
     const fieldDefaultValues = [
-      ['submits a run report for the timeframe field', 'endDate', '2023-12-26', false],
-      ['submits a run report for the applications field', 'applications', ['All applications'], 'applicationsModel'],
-      ['submits a run report for the campaign name field', 'campaign_name', 'my campaign', 'campaignNameModel'],
-      ['submits a run report for the campaign status field', 'campaign_status', 'in-progress', 'campaignStatusFieldValue'],
-      ['submits a run report for the timeframe field', 'startDate', '2023-12-25', false],
-      ['submits a run report for the journeys field', 'journeyName', ['my-selected-journey'], 'journeysModel'],
-      ['submits a run report for the journeys field', 'treeName', ['my-selected-tree'], 'journeysModel'],
-      ['submits a run report for the organizations field', 'org_names', ['my-org-name'], 'organizationsModel'],
+      ['submits a run report for the timeframe field', 'endDate', '2023-12-26'],
+      ['submits a run report for the applications field', 'applications', ['All applications']],
+      ['submits a run report for the campaign name field', 'campaign_name', 'my campaign'],
+      ['submits a run report for the campaign status field', 'campaign_status', 'in-progress'],
+      ['submits a run report for the timeframe field', 'startDate', '2023-12-25'],
+      ['submits a run report for the journeys field', 'journeyName', ['my-selected-journey']],
+      ['submits a run report for the journeys field', 'treeName', ['my-selected-tree']],
+      ['submits a run report for the organizations field', 'org_names', ['my-org-name']],
       ['submits a run report for the roles field', 'roles', ['my-role'], 'rolesModel'],
-      ['submits a run report for the status field', 'accountStatus', statusDefaultValues, false],
-      ['submits a run report for the status field', 'status', statusDefaultValues, false],
-      ['submits a run report for the outcome field', 'treeResult', ['SUCCESSFUL', 'FAILED', 'CONTINUE'], false],
-      ['submits a run report for the users field', 'user_names', ['my-user-name'], 'usersModel'],
+      ['submits a run report for the status field', 'accountStatus', statusDefaultValues],
+      ['submits a run report for the status field', 'status', statusDefaultValues],
+      ['submits a run report for the outcome field', 'treeResult', ['SUCCESSFUL', 'FAILED', 'CONTINUE']],
+      ['submits a run report for the users field', 'user_names', ['my-user-name']],
     ];
 
-    it.each(fieldDefaultValues)('%s', async (_, parameter, defaultValue, model) => {
+    it.each(fieldDefaultValues)('%s', async (_, parameter, defaultValue) => {
       jest.clearAllMocks();
+      let parameters = { [parameter]: {} };
+
+      if (parameter === 'startDate') {
+        parameters = { startDate: {}, endDate: {} };
+      }
       wrapper = setup({
         templateName: 'TEMPLATE-NAME',
         templateState: 'draft',
-        reportConfig: { parameters: { [parameter]: {} } },
+        reportConfig: { parameters },
       });
       await flushPromises();
       const runReportSpy = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockImplementation(() => Promise.resolve({}));
       const successSpy = jest.spyOn(notification, 'displayNotification');
-      const submitButton = findByTestId(wrapper, 'run-report-button');
 
       // Sets default values for required fields so submit button can be enabled
-      if (model) {
-        wrapper.vm[model] = defaultValue;
-      }
+      wrapper.vm.parameters[parameter].payload = defaultValue;
 
       await nextTick();
-      expect(submitButton.attributes().disabled).not.toBeDefined();
+      const submitButton = findByText(wrapper, 'button', 'Run Report');
       await submitButton.trigger('click');
 
-      if (parameter === 'startDate' || parameter === 'endDate') {
+      if (parameter === 'startDate') {
         // we must add this condition since testing for an explicit value with
         // dates is not feasable because milliseconds will never be exact.
         expect(runReportSpy).toHaveBeenCalled();
@@ -509,12 +455,20 @@ describe('Run Report component', () => {
 
       // ensures that out of the box reports show the expected mapped field for accountStatus
       let statusLabel = wrapper.find('label');
-      expect(statusLabel.text()).toEqual('Status');
+      expect(statusLabel.text()).toEqual('Press enter to create a tag');
       let statusDropdownField = findByRole(wrapper, 'listbox');
       const [active, inactive, blocked] = statusDropdownField.findAll('[role="option"]');
       expect(active.text()).toBe('Active');
       expect(inactive.text()).toBe('Inactive');
       expect(blocked.text()).toBe('Blocked');
+
+      await statusDropdownField.trigger('click');
+      await active.find('span').trigger('click');
+
+      await nextTick();
+      expect(statusLabel.text()).toEqual('Account Status');
+
+      statusLabel = wrapper.find('label');
 
       // sets the report to NOT be out-of-the-box
       await wrapper.setProps({
@@ -536,7 +490,7 @@ describe('Run Report component', () => {
       expect(inputTextField.exists()).toBe(true);
     });
 
-    it('ensures that the payload for pre-packaged reports runs through the mapped _REPORT_FIELDS_CONTROLLER payload only', async () => {
+    it('ensures that the payload for pre-packaged reports runs through the mapped _PARAMETERS_CONTROLLER payload only', async () => {
       jest.clearAllMocks();
       wrapper = setup({
         templateName: 'TEMPLATE-NAME',
@@ -563,9 +517,25 @@ describe('Run Report component', () => {
       await inputTextField.setValue(customAccountStatusFieldValue);
 
       // submits report and ensures that the payload is now what the user has input and not the
-      // expected payload that is mapped in the _REPORT_FIELDS_CONTROLLER for pre-packaged reports.
+      // expected payload that is mapped in the _PARAMETERS_CONTROLLER for pre-packaged reports.
       await runReportButton.trigger('click');
       expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { accountStatus: customAccountStatusFieldValue });
+    });
+
+    it('displays the expected submit button label and help text if a report contains no parameters', async () => {
+      fieldDataMocks();
+      wrapper = setup({ reportConfig: { parameters: {} } });
+      await flushPromises();
+
+      const runReportContainer = wrapper.find('.card');
+      expect(runReportContainer.attributes('footer-border-variant')).toBe('white');
+      expect(runReportContainer.attributes('no-body')).toBe('true');
+
+      const submitButton = findByTestId(runReportContainer, 'run-report-button');
+      expect(submitButton.attributes('disabled')).toBeUndefined();
+
+      const footerDescription = findByText(runReportContainer, 'p', 'Run Report');
+      expect(footerDescription.exists()).toBe(true);
     });
   });
 });

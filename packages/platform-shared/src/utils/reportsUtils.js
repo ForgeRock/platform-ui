@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -55,7 +55,7 @@ async function getManagedSchema(resourceName) {
 /**
  * Gets managed object properties
  *
- * @param {String} managedObjectName the managed object name that derives from the _FIELD_MAP config
+ * @param {String} managedObjectName the managed object name used to query the resource
  * @returns {Array} list of managed object property names
  */
 async function getManagedResourceProperties(managedObjectName, queryFilter = true, pageSize = -1, fields = '') {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2023-2024 ForgeRock AS. All Rights Reserved
+ * Copyright 2023-2025 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -105,15 +105,15 @@ describe('Report View component', () => {
     const [usersParam, roleStatusParam, customParam] = reportParametersContainer.findAll('div > small');
 
     // The reason why this outputs 'Users' is because the logic to determine the label first looks at the
-    // _REPORT_FIELDS_CONTROLLER to see if there is a matching key and uses the label property if it exists.
+    // _PARAMETERS_CONTROLLER to see if there is a matching key and uses the label property if it exists.
     expect(usersParam.text()).toBe('Users');
 
-    // The reason why this outputs 'roleStatus' is because there is no matching _REPORT_FIELDS_CONTROLLER
+    // The reason why this outputs 'roleStatus' is because there is no matching _PARAMETERS_CONTROLLER
     // and the reportConfig parameter does not have a label property so it defaults to the parameter key.
     expect(roleStatusParam.text()).toBe('roleStatus');
 
     // The reason why this outputs 'Custom Parameter' is because there is no matching
-    // _REPORT_FIELDS_CONTROLLER and the reportConfig parameter has a label property.
+    // _PARAMETERS_CONTROLLER and the reportConfig parameter has a label property.
     expect(customParam.text()).toBe('Custom Parameter');
   });
 });

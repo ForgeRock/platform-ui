@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,14 +41,6 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </BMediaBody>
       </BMedia>
-    </template>
-    <template
-      v-for="(key, slotName) in $slots"
-      #[slotName]="slotData">
-      <!-- @slot pass-through slot -->
-      <slot
-        :name="slotName"
-        v-bind="slotData" />
     </template>
   </FrField>
 </template>
