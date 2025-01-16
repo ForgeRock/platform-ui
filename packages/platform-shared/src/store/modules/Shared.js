@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -48,7 +48,6 @@ const defaultState = {
   uiConfig: null,
   webStorageAvailable: true,
   workforceEnabled: false,
-  workforceAdvancedSyncEnabled: false,
   wsfedEnabled: false,
   templateBuilderEnabled: false,
 };
@@ -168,10 +167,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
       state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
-    }
-
-    if (env.VUE_APP_ENABLE_WORKFORCE_ADVANCED_SYNC) {
-      state.workforceAdvancedSyncEnabled = env.VUE_APP_ENABLE_WORKFORCE_ADVANCED_SYNC === 'true' || env.VUE_APP_ENABLE_WORKFORCE_ADVANCED_SYNC === true;
     }
 
     if (env.VUE_APP_ENABLE_WSFED === 'true' || env.VUE_APP_ENABLE_WSFED === true) {
