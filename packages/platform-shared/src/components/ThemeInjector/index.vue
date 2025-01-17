@@ -250,6 +250,10 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.login</template> .form-label-group label {
         color: {{ theme.journeyInputLabelColor || '#5e6d82' }} !important;
       }
+
+      #app .recovery-code {
+        color: {{ theme.journeyCardTextColor || '#455469' }} !important;
+      }
     </Component>
 
     <Component

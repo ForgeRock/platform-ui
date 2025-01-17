@@ -36,7 +36,8 @@ of the MIT license. See the LICENSE file for details. -->
               <li
                 v-for="(code, key) in recoveryCodes"
                 :key="key"
-                :data-testid="`recovery-code-${key}`">
+                :data-testid="`recovery-code-${key}`"
+                class="recovery-code">
                 <span
                   class="ml-2 text-monospace">
                   {{ code }}
@@ -136,8 +137,8 @@ export default {
     column-count: 2;
   }
 
-  ::marker {
-    color: $gray-400;
+  .recovery-code {
+    color: $gray-700;
   }
 }
 </style>
