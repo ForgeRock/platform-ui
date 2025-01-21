@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -79,6 +79,7 @@ export default {
   },
   data() {
     const governanceEnabled = (this.$store.state.SharedStore.governanceEnabled === true) && (this.$store.state.realm === 'alpha');
+    const governanceDevEnabled = (this.$store.state.SharedStore.governanceDevEnabled === true) && (this.$store.state.realm === 'alpha');
     const governanceInbox = {
       displayName: 'sideMenu.inbox',
       icon: 'inbox',
@@ -112,6 +113,19 @@ export default {
             name: 'Violations',
           },
         },
+      ],
+    };
+
+    const governanceLcm = {
+      displayName: 'sideMenu.administer',
+      icon: 'manage_accounts',
+      subItems: [
+        (this.$store.state.govLcmEntitlement === true
+          ? {
+            displayName: 'sideMenu.administerEntitlements',
+            routeTo: { name: 'AdministerEntitlements' },
+          }
+          : {}),
       ],
     };
 
@@ -194,6 +208,9 @@ export default {
           displayName: 'sideMenu.profile',
           icon: 'account_circle',
         },
+        (governanceDevEnabled && (this.$store.state.govLcmEnabled === true)
+          ? governanceLcm
+          : {}),
       ],
       version: '',
     };

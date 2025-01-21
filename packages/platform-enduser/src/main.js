@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -24,6 +24,7 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import { getIgaUiConfig } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getSessionTimeoutInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
@@ -115,35 +116,43 @@ const loadApp = () => {
 /*
     We will load the application regardless
  */
-const startApp = () => {
-  const idmInstance = axios.create({
-    baseURL: idmContext,
-    headers: {},
-  });
+const startApp = async () => {
+  try {
+    const idmInstance = axios.create({
+      baseURL: idmContext,
+      headers: {},
+    });
 
-  axios.all([
-    idmInstance.get('/info/uiconfig'),
-    idmInstance.get('info/features?_queryFilter=true')])
-    .then(axios.spread((uiConfig, availability) => {
-      // Get & set locales
-      const { locales } = getAllLocales(uiConfig.data.configuration);
-      setLocales(i18n, locales);
-      document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
+    const [uiConfig, availability] = await Promise.all([
+      idmInstance.get('/info/uiconfig'),
+      idmInstance.get('info/features?_queryFilter=true'),
+    ]);
 
-      store.commit('SharedStore/setUiConfig', uiConfig.data);
+    const { locales } = getAllLocales(uiConfig.data.configuration);
+    setLocales(i18n, locales);
+    document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
 
-      if (uiConfig.data.configuration && uiConfig.data.configuration.platformSettings) {
-        store.commit('setHostedPagesState', uiConfig.data.configuration.platformSettings.hostedPages === undefined ? true : uiConfig.data.configuration.platformSettings.hostedPages);
+    store.commit('SharedStore/setUiConfig', uiConfig.data);
+
+    if (uiConfig.data.configuration && uiConfig.data.configuration.platformSettings) {
+      store.commit('setHostedPagesState', uiConfig.data.configuration.platformSettings.hostedPages === undefined ? true : uiConfig.data.configuration.platformSettings.hostedPages);
+    }
+
+    each(availability.data.result, (feature) => {
+      if (feature.name === 'workflow') {
+        store.commit('setWorkflowState', feature.enabled);
       }
+    });
 
-      each(availability.data.result, (feature) => {
-        if (feature.name === 'workflow') {
-          store.commit('setWorkflowState', feature.enabled);
-        }
-      });
-    }))
-    .then(() => overrideTranslations(idmContext, i18n, 'enduser'))
-    .finally(() => loadApp());
+    if (store.state.SharedStore.governanceDevEnabled) {
+      const { data } = await getIgaUiConfig();
+      store.commit('setGovLcm', data.lcmSettings);
+    }
+
+    overrideTranslations(idmContext, i18n, 'enduser');
+  } finally {
+    loadApp();
+  }
 };
 
 const addAppAuth = (realm) => {

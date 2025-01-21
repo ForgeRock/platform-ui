@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -36,6 +36,20 @@ export function getResource(resource, queryParams = {}) {
  */
 export function getIgaAccessRequest() {
   return generateIgaApi().get('commons/config/iga_access_request');
+}
+
+export async function getIgaUiConfig() {
+  await new Promise((r) => setTimeout(r, 1000));
+  return Promise.resolve({
+    data: {
+      lcmSettings: {
+        user: { enabled: false },
+        role: { enabled: false },
+        organization: { enabled: false },
+        entitlement: { enabled: true },
+      },
+    },
+  });
 }
 
 /**

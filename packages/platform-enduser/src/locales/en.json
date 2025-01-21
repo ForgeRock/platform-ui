@@ -202,6 +202,8 @@
   "sideMenu": {
     "accessReviews":"Access Reviews",
     "accounts": "Accounts",
+    "administer": "Administer",
+    "administerEntitlements": "Entitlements",
     "applications": "My Applications",
     "approvals": "Approvals",
     "delegates": "Delegates",
@@ -219,6 +221,7 @@
   },
   "pageTitles": {
     "AccessReviews": "Access Reviews",
+    "AdministerEntitlements": "Entitlements",
     "Accounts": "Accounts",
     "Applications": "Applications",
     "ApprovalDetails": "Approval Details",
@@ -349,6 +352,12 @@
       "requestedBy": "Requested By",
       "requestId": "Request ID",
       "requestType": "Request Type"
+    },
+    "administer": {
+      "entitlements": {
+        "title": "Entitlements",
+        "subtitle": "Manage and configure user entitlements across all your configured applications."
+      }
     },
     "approval":{
       "subtitle": "View and take action on your pending access requests.",

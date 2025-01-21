@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -102,7 +102,7 @@ describe('App.vue', () => {
 
   it('Loaded Menus File should load default items', async () => {
     await shallowMountComponent(store);
-    expect(wrapper.vm.menuItems.length).toEqual(9);
+    expect(wrapper.vm.menuItems.length).toEqual(10);
   });
 
   it('shows a regular layout', async () => {
@@ -130,7 +130,7 @@ describe('App.vue', () => {
       await shallowMountComponent(governanceEnabled);
       const inbox = wrapper.vm.menuItems.find((item) => item.displayName === 'sideMenu.inbox');
       const approvals = inbox.subItems.find((item) => item.displayName === 'sideMenu.approvals');
-      expect(wrapper.vm.menuItems.length).toEqual(9);
+      expect(wrapper.vm.menuItems.length).toEqual(10);
       expect(inbox).toBeTruthy();
       expect(approvals).toBeTruthy();
     });
@@ -216,6 +216,18 @@ describe('App.vue', () => {
       await flushPromises();
       expect(getUserFulfillmentTasks).toHaveBeenCalled();
       expect(wrapper.vm.$store.state.fulfillmentTasksCount).toBe(1);
+    });
+
+    it('adds entitlement lcm menu item when entitlement lcm is enabled', async () => {
+      const entitlementLcmEnabled = cloneDeep(governanceEnabled);
+      entitlementLcmEnabled.state.SharedStore.governanceDevEnabled = true;
+      entitlementLcmEnabled.state.govLcmEnabled = true;
+      entitlementLcmEnabled.state.govLcmEntitlement = true;
+
+      await shallowMountComponent(entitlementLcmEnabled);
+      const administerMenuGroup = wrapper.vm.menuItems.find((item) => item.displayName === 'sideMenu.administer');
+      expect(administerMenuGroup).toBeTruthy();
+      expect(administerMenuGroup.subItems.find((item) => item.displayName === 'sideMenu.administerEntitlements')).toBeTruthy();
     });
   });
 });
