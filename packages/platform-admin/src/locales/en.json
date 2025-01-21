@@ -1378,7 +1378,8 @@
           "configureManuallyOption": "Configure Manually",
           "instructionsDescription": "To configure single sign-on with {appName} follow these steps before proceeding:",
           "metadataFileLabel": "Metadata file",
-          "metadataFileDescription": "Upload the service provider metadata."
+          "metadataFileDescription": "Upload the service provider metadata.",
+          "updateSigningCertificateLabel": "Update Signing Certificate Only"
         },
         "errors": {
           "creatingIdpFailed": "Creating IDP Failed",

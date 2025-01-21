@@ -52,6 +52,7 @@ const defaultState = {
   workforceAdvancedSyncEnabled: false,
   wsfedEnabled: false,
   templateBuilderEnabled: false,
+  enableSamlSigningCheckbox: false,
 };
 
 const mutations = {
@@ -142,6 +143,10 @@ const mutations = {
 
     if (env.VUE_APP_NODE_DESIGNER_ENABLED === true || env.VUE_APP_NODE_DESIGNER_ENABLED === 'true') {
       state.nodeDesignerEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX === true || env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX === 'true') {
+      state.enableSamlSigningCheckbox = true;
     }
   },
 
