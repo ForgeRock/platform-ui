@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -118,7 +118,7 @@ export default {
       this.getRequestService().get('config/ui/dashboard')
         .then(({ data }) => {
           this.widgets = data.dashboard.widgets;
-          if (this.workflow && this.$store.state.SharedStore.governanceEnabled === false) {
+          if (this.workflow && this.$store.state.isFraas === false) {
             this.widgets.push({
               type: 'Workflow',
               size: 'large',

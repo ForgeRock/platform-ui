@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -115,15 +115,15 @@ describe('DefaultDashboard.vue', () => {
   });
 });
 
-describe('governanceEnabled', () => {
+describe('cloud', () => {
   const store = createStore({
     state: {
       workflow: true,
-      SharedStore: { governanceEnabled: true },
+      isFraas: true,
     },
   });
 
-  it('hides the workflow widget when governance is enabled', async () => {
+  it('hides the workflow widget when isFraas is true', async () => {
     wrapper = mount(DefaultDashboard, {
       global: {
         plugins: [Notifications, store],
