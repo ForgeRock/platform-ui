@@ -40,6 +40,9 @@ describe('Layout', () => {
               isFraas: false,
               promotionTenantInfo: { currentTier: 'dev' },
               tenantInfo: { region: 'europe-west1' },
+              SharedStore: {
+                currentPackage: 'admin',
+              },
             },
           },
         },

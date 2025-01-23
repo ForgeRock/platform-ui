@@ -34,7 +34,9 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="h5 my-0 text-truncate">
             {{ userDetails.name }}
           </div>
-          <div class="text-muted text-truncate">
+          <div
+            class="text-truncate"
+            :class="isEndUser ? 'text-muted' : 'text-gray'">
             <template v-if="userDetails.email.length === 0">
               {{ $t('common.notAvailable') }}
             </template>
@@ -123,6 +125,9 @@ export default {
   computed: {
     ...mapState(useUserStore, ['userDetails']),
     ...mapState(useEnduserStore, ['profileImage']),
+    isEndUser() {
+      return this.$store.state?.SharedStore?.currentPackage === 'enduser';
+    },
   },
 };
 </script>
@@ -154,6 +159,14 @@ export default {
   }
 
   .dropdown-item {
+    .text-gray {
+      color: $text-muted;
+    }
+    &:focus-visible, &:hover {
+      .text-gray {
+        color: $gray-700;
+      }
+    }
     h5,
     span:not(.material-icons-outlined) {
       font-size: 0.875rem;

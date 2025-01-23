@@ -436,9 +436,29 @@ of the MIT license. See the LICENSE file for details. -->
 
       #app .card .table-hover tbody tr:hover,
       #app .card .table tr.b-table-row-selected.table-transparent,
-      #app .dropdown-item:hover,
       #app .nav-pills .nav-link:hover {
         background-color: {{ theme.accountTableRowHoverColor || '#f6f8fa' }} !important;
+      }
+
+      #app .dropdown-item:hover,
+      #app .dropdown-item:focus {
+        background-color: {{ theme.profileMenuHoverColor || '#e4f4fd' }};
+        color: {{ theme.profileMenuHoverTextColor || '#181b20' }};
+      }
+
+      #app .dropdown-item:hover .h5,
+      #app .dropdown-item:focus .h5 {
+        color: {{ theme.profileMenuHoverTextColor || '#181b20' }};
+      }
+
+      #app .dropdown-item:hover .text-muted,
+      #app .dropdown-item:focus .text-muted {
+        color: {{ theme.profileMenuHoverTextColor || '#455469'}} !important;
+      }
+
+      #app .dropdown-item:hover .material-icons-outlined,
+      #app .dropdown-item:focus .material-icons-outlined {
+        color: {{ theme.profileMenuHoverTextColor || 'inherit'}} !important;
       }
 
       #app .fr-main-navbar<template v-if="mock">-mock</template> {
