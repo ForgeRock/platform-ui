@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -258,6 +258,16 @@ export default {
       }
     }
 
+    textarea ~ label {
+      transform: none !important;
+      right: 0;
+      transition: font-size 0.1s ease, padding 0.1s ease;
+      margin: 1px 0.75rem 1px 1px;
+      padding-right: 0;
+      padding-bottom: 3px;
+      background-color: white;
+    }
+
     textarea::placeholder,
     input::placeholder,
     .multiselect__placeholder {
@@ -290,6 +300,20 @@ export default {
 
         ~ label {
           transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+      }
+    }
+
+    textarea.polyfill-placeholder {
+      &:not([placeholder=""]) {
+        padding-top: 1.50rem;
+        padding-bottom: 0;
+
+        ~ label {
+          transition: font-size 0.1s ease, padding 0.1s ease;
+          font-size: 13px;
+          padding-top: 3px;
+          padding-left: 10px;
         }
       }
     }

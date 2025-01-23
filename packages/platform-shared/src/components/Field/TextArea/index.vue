@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
       @input="inputValue = $event.target.value; $emit('input', inputValue)"
       v-on="validationListeners"
       :autofocus="autofocus"
-      :class="[{'polyfill-placeholder': floatLabels }, 'form-control', addClass]"
+      :class="[{'polyfill-placeholder': floatLabels }, 'form-control', 'mh-50px', addClass]"
       :cols="cols"
       :data-vv-as="label"
       :disabled="disabled"
@@ -186,3 +186,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .mh-50px {
+    min-height: 50px;
+  }
+</style>
