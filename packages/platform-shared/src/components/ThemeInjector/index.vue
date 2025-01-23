@@ -123,6 +123,16 @@ of the MIT license. See the LICENSE file for details. -->
         outline: 0 none;
       }
 
+      <!--
+        BUTTON FOCUS STYLES
+         * .btn:focus-visible
+         * a:focus-visible
+      -->
+      <template v-if="mock">.fr-theme-preview</template> .btn:focus-visible,
+      <template v-if="mock">.fr-theme-preview</template> a:focus-visible {
+        outline: 2px solid {{ buttonFocusBorderColor }} !important;
+      }
+
       .fr-toggle-primary.custom-switch.b-custom-control-lg .custom-control-label::before {
         background-color: {{ theme.switchBackgroundColor }};
       }
@@ -643,6 +653,14 @@ export default {
      */
     journeyInputFocusBorderColor() {
       return this.theme.journeyInputFocusBorderColor || this.theme.journeyInputBorderColor || this.theme.primaryColor;
+    },
+    /**
+     * Provides the color used for the focus state of buttons and links
+     *
+     * @returns {String} - Hexadecimal color value
+     */
+    buttonFocusBorderColor() {
+      return this.theme.buttonFocusBorderColor || '#0778d6';
     },
     /**
      * Provides the color used for the focus state of an input in the Account Pages

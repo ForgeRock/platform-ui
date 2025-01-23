@@ -49,6 +49,7 @@ export default {
         backgroundColor: '#324054',
         backgroundImage: '',
         buttonRounded: 5,
+        buttonFocusBorderColor: '#0778d6',
         dangerColor: '#f7685b',
         favicon: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
         fontFamily: 'Open Sans',

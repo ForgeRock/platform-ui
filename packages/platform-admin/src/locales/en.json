@@ -362,6 +362,8 @@
       "global": {
         "boldLinks": "Bold Links",
         "brandColor": "Brand Colors",
+        "buttonFocusBorderColor": "Button Focus Border Color",
+        "buttonFocusBorderColorDescription": "Color used to indicate focus on buttons and links.",
         "buttonRounded": "Button Radius: {radius}px",
         "buttons": "Buttons",
         "dangerColor": "Danger Color",
