@@ -45,6 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
             </small>
             <template v-if="details.priority">
               <BImg
+                alt=""
                 class="mr-1"
                 height="24"
                 :src="getPriorityImageSrc(details.priority)" />
