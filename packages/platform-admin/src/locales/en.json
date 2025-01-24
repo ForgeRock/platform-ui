@@ -3112,6 +3112,7 @@
     "defaultValueLabel": "Default value",
     "editPropertyMapping": "{application} Property Mapping",
     "inbound": "Inbound",
+    "invalidTransformScript": "Invalid transformation script",
     "managedSchemaError": "Error retrieving managed schema",
     "mappingRetrievalError": "Error retrieving mappings",
     "mappingUpdateError": "Error updating mapping",
