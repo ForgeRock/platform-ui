@@ -42,7 +42,7 @@ to such license between the licensee and ForgeRock AS. -->
               md="12">
               <template v-if="rule.operator !== 'is_null' && rule.operator !== 'is_not_null'">
                 <BDropdown
-                  :id="`filter-type-${uniqueName}}`"
+                  :id="`filter-type-${uniqueName}`"
                   :text="rightValueTypes.find((obj) => obj.value === rule.selectedRightValueType).label"
                   class="fr-type-button-styles"
                   toggle-class="text-dark py-2"
@@ -57,7 +57,7 @@ to such license between the licensee and ForgeRock AS. -->
                 </BDropdown>
                 <FrField
                   v-model="rule.value"
-                  :id="`right-value-${uniqueName}}`"
+                  :id="`right-value-${uniqueName}`"
                   :label="$t('common.value')"
                   :name="uniqueName"
                   :options="rule.selectedRightValueType === 'variable' ? variableOptions[rule.operator] || [] : rule.value"
@@ -183,10 +183,10 @@ function getUniqueIndex() {
  */
 function getDefaultRule(
   field = '',
-  fieldType = 'multiselect',
+  fieldType = 'string',
   operator = 'contains',
   selectedRightValueType = 'literal',
-  value = [],
+  value = '',
 ) {
   return {
     field,
@@ -230,7 +230,7 @@ function rightValueTypeUpdate(rule, type) {
     }
     rule.fieldType = 'select';
     rule.value = '';
-  } else if (rule.operator === 'contains' || rule.operator === 'not_contains') {
+  } else if (rule.operator === 'in' || rule.operator === 'not_in') {
     rule.fieldType = 'multiselect';
     rule.value = [];
   } else {
@@ -274,7 +274,7 @@ function updateFilter(eventName, data) {
         group.subfilters[index].selectedRightValueType = 'literal';
       }
 
-      if (value.operator === 'contains' || value.operator === 'not_contains') {
+      if (value.operator === 'in' || value.operator === 'not_in') {
         if (group.subfilters[index].selectedRightValueType === 'literal') {
           group.subfilters[index].fieldType = 'multiselect';
         } else {

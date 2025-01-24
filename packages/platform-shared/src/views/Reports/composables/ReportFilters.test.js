@@ -74,8 +74,8 @@ describe('@useReportFilters', () => {
 
   const reportOperators = [
     {
-      displayName: 'contains',
-      name: 'contains',
+      displayName: 'in',
+      name: 'in',
       schema: [
         {
           left: { value: 'search_string' },
@@ -154,14 +154,14 @@ describe('@useReportFilters', () => {
     const apiDefinitionContainsLiteral = {
       or: [
         {
-          contains: {
+          in: {
             search_string: 'applications.name',
             in_string_array: { literal: ['My literal value'] },
           },
         },
         {
           and: [{
-            contains: {
+            in: {
               search_string: 'applications._id',
               in_string_array: { literal: ['My _id literal value'] },
             },
@@ -202,7 +202,7 @@ describe('@useReportFilters', () => {
           {
             field: 'applications.name',
             fieldType: 'multiselect',
-            operator: 'contains',
+            operator: 'in',
             selectedRightValueType: 'literal',
             uniqueIndex: 0,
             value: ['My literal value'],
@@ -212,7 +212,7 @@ describe('@useReportFilters', () => {
             subfilters: [{
               field: 'applications._id',
               fieldType: 'multiselect',
-              operator: 'contains',
+              operator: 'in',
               selectedRightValueType: 'literal',
               uniqueIndex: 0,
               value: ['My _id literal value'],
@@ -295,7 +295,7 @@ describe('@useReportFilters', () => {
         const apiDefinitionContainsVariable = {
           or: [
             {
-              contains: {
+              in: {
                 search_string: 'applications.name',
                 in_query: { parameter: 'agg2' },
               },
@@ -313,7 +313,7 @@ describe('@useReportFilters', () => {
               },
             },
             {
-              contains: {
+              in: {
                 search_string: 'applications.name',
                 in_query: 'applications._id',
               },

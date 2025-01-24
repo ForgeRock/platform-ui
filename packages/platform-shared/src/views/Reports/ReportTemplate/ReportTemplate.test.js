@@ -688,10 +688,6 @@ describe('Component for creating custom analytics reports', () => {
 
           // Sets the right value literal
           await rightLiteralInput.setValue('My second rule right literal value');
-          const [, secondRuleRedefined] = filtersModal.findAll('.queryfilter-row');
-          const rightFieldContainer = findByTestId(secondRuleRedefined, 'fr-field-inputValue__3');
-          const addAnOptionButton = rightFieldContainer.find('.multiselect__element').find('span');
-          await addAnOptionButton.trigger('click');
 
           // saves filter
           const saveButton = findByText(filtersModal, 'button', 'Save');
@@ -819,8 +815,8 @@ describe('Component for creating custom analytics reports', () => {
 
           // ensures that the first rule does not exist with the 'My Parameter Name' selection by checking
           // for the existence of the right value of the second rule which has now become the first rule.
-          const rightItemInput = findByText(firstRule, 'li', 'My second rule right literal value');
-          expect(rightItemInput.exists()).toBe(true);
+          const [, rightItemInput] = firstRule.findAll('input');
+          expect(rightItemInput.element.value).toBe('My second rule right literal value');
         });
 
         it('deletes the filter definition altogether when there is only one rule that has the right value selected to a parameter that is deleted', async () => {

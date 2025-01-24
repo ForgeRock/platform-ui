@@ -92,11 +92,11 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
 
       if (rightValueExistsInFilterVariables) {
         fieldType = 'select';
-      } else if (ruleOperator !== 'contains' && ruleOperator !== 'not_contains') {
+      } else if (ruleOperator !== 'in' && ruleOperator !== 'not_in') {
         // The API is explicitly asking that we hard-code an exception that makes
-        // the right literal field a multi-value field when the 'contains' and 'not_contains'
+        // the right literal field a multi-value field when the 'in' and 'not_in'
         // operators are selected.  This is because the API expects an array of values
-        // for literal values that use the 'contains' and 'not_contains' operators.
+        // for literal values that use the 'in' and 'not_in' operators.
         fieldType = 'string';
       }
     }
@@ -161,9 +161,9 @@ export default function useReportFilters(entityColumns, entitiesPayload, paramet
       ? filterVariables.value[ruleOperator].find(({ value }) => value.includes(rightValue))
       : {
         class: 'literal',
-        // API requirement to hard-code right value types for 'contains' and 'not_contains'
-        type: ruleOperator === 'contains' || ruleOperator === 'not_contains' ? 'array' : 'string',
-        ...((ruleOperator === 'contains' || ruleOperator === 'not_contains') && { item: { type: 'string' } }),
+        // API requirement to hard-code right value types for 'in' and 'not_in'
+        type: ruleOperator === 'in' || ruleOperator === 'not_in' ? 'array' : 'string',
+        ...((ruleOperator === 'in' || ruleOperator === 'not_in') && { item: { type: 'string' } }),
       };
     const hasMultipleLeftProperties = schema.filter((obj) => obj.left).length > 1;
     const hasMultipleRightProperties = schema.filter((obj) => obj.right).length > 1;
