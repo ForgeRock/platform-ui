@@ -1,0 +1,59 @@
+{
+    "result": [
+        {
+            "_id": "2807696430-1058572628-679980954",
+            "_rev": "1586920726",
+            "identifier": "2807696430-1058572628-679980954",
+            "metadata": {
+                "hardware": {
+                    "cpuClass": null,
+                    "deviceMemory": 8,
+                    "hardwareConcurrency": 6,
+                    "maxTouchPoints": 0,
+                    "oscpu": null,
+                    "display": {
+                        "width": 1920,
+                        "height": 1080,
+                        "pixelDepth": 24,
+                        "angle": 0
+                    }
+                },
+                "browser": {
+                    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                    "appName": "Netscape",
+                    "appCodeName": "Mozilla",
+                    "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                    "appMinorVersion": null,
+                    "buildID": null,
+                    "product": "Gecko",
+                    "productSub": "20030107",
+                    "vendor": "Google Inc.",
+                    "vendorSub": "",
+                    "browserLanguage": null,
+                    "plugins": "internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;internal-pdf-viewer;"
+                },
+                "platform": {
+                    "language": "en",
+                    "platform": "MacIntel",
+                    "userLanguage": null,
+                    "systemLanguage": null,
+                    "deviceName": "Mac (Browser)",
+                    "fonts": "monospace;serif;sans-serif;fantasy;Arial;Arial Black;Arial Narrow;Arial Rounded MT Bold;Comic Sans MS;Courier;Courier New;Georgia;Impact;Papyrus;Tahoma;Times;Times New Roman;Trebuchet MS;Verdana;",
+                    "timezone": 300
+                }
+            },
+            "location": {
+                "latitude": 6.2593346,
+                "longitude": -75.5670909
+            },
+            "lastSelectedDate": 1739491055663,
+            "alias": "Mac (Browser)",
+            "recoveryCodes": []
+        }
+    ],
+    "resultCount": 1,
+    "pagedResultsCookie": null,
+    "totalPagedResultsPolicy": "NONE",
+    "totalPagedResults": -1,
+    "remainingPagedResults": -1
+}

@@ -1,0 +1,625 @@
+{
+  "meta": {
+    "origin": "https://openam-gov-rc-10feb25.forgeblocks.com/platform/?realm=alpha#/journeys",
+    "exportedBy": "Gecko",
+    "exportDate": "2025-02-20T22:52:54.415Z",
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "QA - Default Login with all enduser sections active"
+    ],
+    "innerTreesIncluded": [
+      "QA - ProgressiveProfile for automation"
+    ]
+  },
+  "trees": {
+    "QA - ProgressiveProfile for automation": {
+      "tree": {
+        "_id": "QA - ProgressiveProfile for automation",
+        "_rev": "1548209099",
+        "identityResource": "managed/alpha_user",
+        "uiConfig": {
+          "categories": "[\"Progressive Profile\",\"QA_autotests\"]"
+        },
+        "entryNodeId": "fd910e27-e01a-496a-baff-c47157b367fc",
+        "innerTreeOnly": false,
+        "nodes": {
+          "1556969f-0de6-4324-94e4-532708a75f3e": {
+            "connections": {
+              "FAILURE": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "PATCHED": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "displayName": "Patch Object",
+            "nodeType": "PatchObjectNode",
+            "x": 766,
+            "y": 36
+          },
+          "fd910e27-e01a-496a-baff-c47157b367fc": {
+            "connections": {
+              "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "true": "cc2f3ec5-87ba-4484-b49e-d2a99b1c9204"
+            },
+            "displayName": "Login Count Decision",
+            "nodeType": "LoginCountDecisionNode",
+            "x": 152,
+            "y": 36
+          },
+          "9248cea3-04c5-4e4c-94cf-129e6fd94244": {
+            "connections": {
+              "outcome": "1556969f-0de6-4324-94e4-532708a75f3e"
+            },
+            "displayName": "Page Node",
+            "nodeType": "PageNode",
+            "x": 555,
+            "y": 20
+          },
+          "cc2f3ec5-87ba-4484-b49e-d2a99b1c9204": {
+            "connections": {
+              "false": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0",
+              "true": "9248cea3-04c5-4e4c-94cf-129e6fd94244"
+            },
+            "displayName": "Query Filter Decision",
+            "nodeType": "QueryFilterDecisionNode",
+            "x": 357,
+            "y": 36
+          }
+        },
+        "description": "Prompt for missing preferences on 3rd login",
+        "staticNodes": {
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 802,
+            "y": 312
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 919,
+            "y": 171
+          },
+          "startNode": {
+            "x": 50,
+            "y": 58.5
+          }
+        },
+        "mustRun": false,
+        "enabled": true
+      },
+      "nodes": {
+        "1556969f-0de6-4324-94e4-532708a75f3e": {
+          "_id": "1556969f-0de6-4324-94e4-532708a75f3e",
+          "_rev": "209298271",
+          "identityResource": "managed/alpha_user",
+          "patchAsObject": false,
+          "ignoredFields": [],
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "PatchObjectNode",
+            "name": "Patch Object",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "PATCHED",
+              "displayName": "Patched"
+            },
+            {
+              "id": "FAILURE",
+              "displayName": "Failed"
+            }
+          ]
+        },
+        "fd910e27-e01a-496a-baff-c47157b367fc": {
+          "_id": "fd910e27-e01a-496a-baff-c47157b367fc",
+          "_rev": "278709114",
+          "interval": "AT",
+          "identityAttribute": "userName",
+          "amount": 3,
+          "_type": {
+            "_id": "LoginCountDecisionNode",
+            "name": "Login Count Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "9248cea3-04c5-4e4c-94cf-129e6fd94244": {
+          "_id": "9248cea3-04c5-4e4c-94cf-129e6fd94244",
+          "_rev": "1369575007",
+          "nodes": [
+            {
+              "_id": "efc11ca4-49a6-4275-8a4b-40315efc77e0",
+              "nodeType": "AttributeCollectorNode",
+              "displayName": "Attribute Collector"
+            }
+          ],
+          "pageDescription": {},
+          "pageHeader": {
+            "en": "Please select your preferences"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "cc2f3ec5-87ba-4484-b49e-d2a99b1c9204": {
+          "_id": "cc2f3ec5-87ba-4484-b49e-d2a99b1c9204",
+          "_rev": "-1959196030",
+          "identityAttribute": "userName",
+          "queryFilter": "!(/preferences pr) or /preferences/marketing eq false or /preferences/updates eq false",
+          "_type": {
+            "_id": "QueryFilterDecisionNode",
+            "name": "Query Filter Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "efc11ca4-49a6-4275-8a4b-40315efc77e0": {
+          "_id": "efc11ca4-49a6-4275-8a4b-40315efc77e0",
+          "_rev": "836358943",
+          "attributesToCollect": [
+            "preferences/updates",
+            "preferences/marketing"
+          ],
+          "identityAttribute": "userName",
+          "validateInputs": false,
+          "required": false,
+          "_type": {
+            "_id": "AttributeCollectorNode",
+            "name": "Attribute Collector",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    },
+    "QA - Default Login with all enduser sections active": {
+      "tree": {
+        "_id": "QA - Default Login with all enduser sections active",
+        "_rev": "1791697233",
+        "identityResource": "managed/alpha_user",
+        "uiConfig": {
+          "categories": "[\"Authentication\",\"QA_autotests\"]"
+        },
+        "entryNodeId": "ea76cad1-0046-426d-90e7-6b2fee95178a",
+        "innerTreeOnly": false,
+        "nodes": {
+          "40e86b80-2c9f-4857-a912-c31aeaf5489a": {
+            "x": 352,
+            "y": 40.015625,
+            "connections": {
+              "CANCELLED": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "EXPIRED": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "FALSE": "4df7a21f-4bbd-4479-ac42-e300490415df",
+              "LOCKED": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "TRUE": "044bb5bc-17b5-4193-8c93-461efd58cf39"
+            },
+            "nodeType": "IdentityStoreDecisionNode",
+            "displayName": "Identity Store Decision"
+          },
+          "4ff3e617-ca52-4cda-b18d-c647894cc630": {
+            "x": 827,
+            "y": 13,
+            "connections": {
+              "false": "e301438c-0bd0-429c-ab0c-66126501069a",
+              "true": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "nodeType": "InnerTreeEvaluatorNode",
+            "displayName": "Inner Tree Evaluator"
+          },
+          "e22ede7b-9ace-4951-b901-8e6342578d3d": {
+            "x": 836,
+            "y": 184.015625,
+            "connections": {
+              "outcome": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "AccountLockoutNode",
+            "displayName": "Account Lockout"
+          },
+          "4df7a21f-4bbd-4479-ac42-e300490415df": {
+            "x": 612,
+            "y": 105.015625,
+            "connections": {
+              "Reject": "e22ede7b-9ace-4951-b901-8e6342578d3d",
+              "Retry": "ea76cad1-0046-426d-90e7-6b2fee95178a"
+            },
+            "nodeType": "RetryLimitDecisionNode",
+            "displayName": "Retry Limit Decision"
+          },
+          "ea76cad1-0046-426d-90e7-6b2fee95178a": {
+            "x": 136,
+            "y": 59,
+            "connections": {
+              "outcome": "40e86b80-2c9f-4857-a912-c31aeaf5489a"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          },
+          "044bb5bc-17b5-4193-8c93-461efd58cf39": {
+            "x": 579,
+            "y": 34,
+            "connections": {
+              "outcome": "4ff3e617-ca52-4cda-b18d-c647894cc630"
+            },
+            "nodeType": "IncrementLoginCountNode",
+            "displayName": "Increment Login Count"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 50,
+            "y": 25
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 1073,
+            "y": 30
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 761,
+            "y": 401
+          }
+        },
+        "description": "Platform Login Tree",
+        "mustRun": false,
+        "enabled": true
+      },
+      "nodes": {
+        "40e86b80-2c9f-4857-a912-c31aeaf5489a": {
+          "_id": "40e86b80-2c9f-4857-a912-c31aeaf5489a",
+          "_rev": "-1505278722",
+          "useUniversalIdForUsername": false,
+          "minimumPasswordLength": 8,
+          "mixedCaseForPasswordChangeMessages": false,
+          "_type": {
+            "_id": "IdentityStoreDecisionNode",
+            "name": "Identity Store Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "TRUE",
+              "displayName": "True"
+            },
+            {
+              "id": "FALSE",
+              "displayName": "False"
+            },
+            {
+              "id": "LOCKED",
+              "displayName": "Locked"
+            },
+            {
+              "id": "CANCELLED",
+              "displayName": "Cancelled"
+            },
+            {
+              "id": "EXPIRED",
+              "displayName": "Expired"
+            }
+          ]
+        },
+        "4ff3e617-ca52-4cda-b18d-c647894cc630": {
+          "_id": "4ff3e617-ca52-4cda-b18d-c647894cc630",
+          "_rev": "1156112065",
+          "tree": "QA - ProgressiveProfile for automation",
+          "_type": {
+            "_id": "InnerTreeEvaluatorNode",
+            "name": "Inner Tree Evaluator",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "e22ede7b-9ace-4951-b901-8e6342578d3d": {
+          "_id": "e22ede7b-9ace-4951-b901-8e6342578d3d",
+          "_rev": "-697406685",
+          "lockAction": "LOCK",
+          "_type": {
+            "_id": "AccountLockoutNode",
+            "name": "Account Lockout",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "4df7a21f-4bbd-4479-ac42-e300490415df": {
+          "_id": "4df7a21f-4bbd-4479-ac42-e300490415df",
+          "_rev": "-539170253",
+          "incrementUserAttributeOnFailure": true,
+          "retryLimit": 5,
+          "_type": {
+            "_id": "RetryLimitDecisionNode",
+            "name": "Retry Limit Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "Retry",
+              "displayName": "Retry"
+            },
+            {
+              "id": "Reject",
+              "displayName": "Reject"
+            }
+          ]
+        },
+        "ea76cad1-0046-426d-90e7-6b2fee95178a": {
+          "_id": "ea76cad1-0046-426d-90e7-6b2fee95178a",
+          "_rev": "-1539580471",
+          "nodes": [
+            {
+              "_id": "c8b644d9-02dd-4aab-8920-bf6e9f04f5eb",
+              "nodeType": "ValidatedUsernameNode",
+              "displayName": "Platform Username"
+            },
+            {
+              "_id": "bb41a641-012f-45aa-9d05-2c5868f99ebd",
+              "nodeType": "ValidatedPasswordNode",
+              "displayName": "Platform Password"
+            }
+          ],
+          "pageDescription": {
+            "en": "New here? <a href=\"#/service/Registration\">Create an account</a><br><a href=\"#/service/ForgottenUsername\">Forgot username?</a><a href=\"#/service/ResetPassword\"> Forgot password?</a>"
+          },
+          "pageHeader": {
+            "en": "Sign In"
+          },
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "044bb5bc-17b5-4193-8c93-461efd58cf39": {
+          "_id": "044bb5bc-17b5-4193-8c93-461efd58cf39",
+          "_rev": "-1516892350",
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "IncrementLoginCountNode",
+            "name": "Increment Login Count",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "c8b644d9-02dd-4aab-8920-bf6e9f04f5eb": {
+          "_id": "c8b644d9-02dd-4aab-8920-bf6e9f04f5eb",
+          "_rev": "-1739821851",
+          "usernameAttribute": "userName",
+          "validateInput": false,
+          "_type": {
+            "_id": "ValidatedUsernameNode",
+            "name": "Platform Username",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "bb41a641-012f-45aa-9d05-2c5868f99ebd": {
+          "_id": "bb41a641-012f-45aa-9d05-2c5868f99ebd",
+          "_rev": "-133796728",
+          "passwordAttribute": "password",
+          "validateInput": false,
+          "_type": {
+            "_id": "ValidatedPasswordNode",
+            "name": "Platform Password",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [
+        {
+          "accountCardBackgroundColor": "#ffffff",
+          "accountCardHeaderColor": "#23282e",
+          "accountCardInnerBorderColor": "#e7eef4",
+          "accountCardInputBackgroundColor": "#ffffff",
+          "accountCardInputBorderColor": "#c0c9d5",
+          "accountCardInputFocusBorderColor": "#324054",
+          "accountCardInputLabelColor": "#5e6d82",
+          "accountCardInputSelectColor": "#e4f4fd",
+          "accountCardInputSelectHoverColor": "#f6f8fa",
+          "accountCardInputTextColor": "#23282e",
+          "accountCardOuterBorderColor": "#e7eef4",
+          "accountCardShadow": 3,
+          "accountCardTabActiveColor": "#e4f4fd",
+          "accountCardTabActiveBorderColor": "#109cf1",
+          "accountCardTextColor": "#5e6d82",
+          "accountFooter": "<div class=\"d-flex justify-content-center py-4 w-100\"><span class=\"pr-1\">© 2025</span>\n<a href=\"#\" target=\"_blank\" class=\"text-body\">My Company, Inc</a><a href=\"#\" target=\"_blank\" style=\"color: #0000ee\" class=\"pl-3 text-body\">Privacy Policy</a><a href=\"#\" target=\"_blank\" style=\"color: #0000ee\" class=\"pl-3 text-body\">Terms & Conditions</a></div>",
+          "accountFooterEnabled": false,
+          "accountFooterScriptTag": "",
+          "accountFooterScriptTagEnabled": false,
+          "accountNavigationBackgroundColor": "#ffffff",
+          "accountNavigationTextColor": "#455469",
+          "accountNavigationToggleBorderColor": "#e7eef4",
+          "accountTableRowHoverColor": "#f6f8fa",
+          "backgroundColor": "#324054",
+          "backgroundImage": "",
+          "buttonRounded": 5,
+          "dangerColor": "#f7685b",
+          "favicon": "https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg",
+          "fontFamily": "Open Sans",
+          "journeyCardBackgroundColor": "#ffffff",
+          "journeyCardHeaderBackgroundColor": "#ffffff",
+          "journeyCardShadow": 3,
+          "journeyCardBorderRadius": 4,
+          "journeyCardTextColor": "#5e6d82",
+          "journeyCardTitleColor": "#23282e",
+          "journeyFloatingLabels": true,
+          "journeyFocusElement": "header",
+          "journeyFooter": "<div class=\"d-flex justify-content-center py-4 w-100\"><span class=\"pr-1\">© 2025</span>\n<a href=\"#\" target=\"_blank\" class=\"text-body\">My Company, Inc</a><a href=\"#\" target=\"_blank\" style=\"color: #0000ee\" class=\"pl-3 text-body\">Privacy Policy</a><a href=\"#\" target=\"_blank\" style=\"color: #0000ee\" class=\"pl-3 text-body\">Terms & Conditions</a></div>",
+          "journeyFooterEnabled": false,
+          "journeyFooterScriptTag": "",
+          "journeyFooterScriptTagEnabled": false,
+          "journeyHeader": "<div class=\"d-flex justify-content-center py-4 flex-grow-1\">Header Content</div>",
+          "journeyHeaderEnabled": false,
+          "journeyHeaderSkipLinkEnabled": false,
+          "journeyInputBackgroundColor": "#ffffff",
+          "journeyInputBorderColor": "#c0c9d5",
+          "journeyInputFocusBorderColor": "#324054",
+          "journeyInputLabelColor": "#5e6d82",
+          "journeyInputSelectColor": "#e4f4fd",
+          "journeyInputSelectHoverColor": "#f6f8fa",
+          "journeyInputTextColor": "#23282e",
+          "journeyRememberMeEnabled": false,
+          "journeyRememberMeLabel": "",
+          "journeyTheaterMode": false,
+          "journeyJustifiedContent": "",
+          "journeyJustifiedContentEnabled": false,
+          "journeyJustifiedContentMobileViewEnabled": false,
+          "journeyLayout": "card",
+          "journeySignInButtonPosition": "flex-column",
+          "linkActiveColor": "#004067",
+          "linkColor": "#0070b3",
+          "linkedTrees": [
+            "QA - Default Login with all enduser sections active"
+          ],
+          "logo": "https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg",
+          "logoAltText": "Logo",
+          "logoEnabled": true,
+          "logoHeight": "56",
+          "logoProfile": "https://cdn.forgerock.com/platform/themes/starter/logo-starter-full.svg",
+          "logoProfileAltText": "Logo",
+          "logoProfileCollapsed": "https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg",
+          "logoProfileCollapsedAltText": "Logo",
+          "logoProfileHeight": "24",
+          "primaryColor": "#324054",
+          "primaryOffColor": "#242E3C",
+          "profileBackgroundColor": "#ffffff",
+          "profileMenuHighlightColor": "#f6f8fa",
+          "profileMenuTextHighlightColor": "#455469",
+          "profileMenuHoverColor": "#f6f8fa",
+          "profileMenuHoverTextColor": "#455469",
+          "successColor": "#2ed47a",
+          "textColor": "#ffffff",
+          "topBarBackgroundColor": "#ffffff",
+          "topBarBorderColor": "#e7eef4",
+          "topBarHeaderColor": "#23282e",
+          "topBarTextColor": "#69788b",
+          "_id": "4c666c99-566d-408a-a351-c96ef19efb46",
+          "name": "QA - All enduser UI sections active",
+          "isDefault": false,
+          "secondaryColor": "#69788b",
+          "pageTitle": "#23282e",
+          "bodyText": "#23282e",
+          "switchBackgroundColor": "#c0c9d5",
+          "accountPageSections": {
+            "personalInformation": {
+              "enabled": true
+            },
+            "accountSecurity": {
+              "enabled": true,
+              "subsections": {
+                "username": {
+                  "enabled": true
+                },
+                "password": {
+                  "enabled": true
+                },
+                "twoStepVerification": {
+                  "enabled": true
+                },
+                "securityQuestions": {
+                  "enabled": true
+                }
+              }
+            },
+            "social": {
+              "enabled": true
+            },
+            "trustedDevices": {
+              "enabled": true
+            },
+            "oauthApplications": {
+              "enabled": true
+            },
+            "preferences": {
+              "enabled": true
+            },
+            "consent": {
+              "enabled": true
+            },
+            "accountControls": {
+              "enabled": true
+            }
+          },
+          "boldLinks": false,
+          "journeyA11yAddFallbackErrorHeading": true,
+          "journeyFocusFirstFocusableItemEnabled": false
+        }
+      ],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}

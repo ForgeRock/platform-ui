@@ -1,0 +1,19 @@
+{
+  "_id": "1",
+  "_rev": "1.0",
+  "providers": [
+    {
+      "provider": "google",
+      "uiConfig": {
+        "buttonCustomStyle": "background-color: #fff; color: #757575; border-color: #ddd;",
+        "buttonImage": "images/g-logo.png",
+        "buttonClass": "",
+        "buttonCustomStyleHover": "color: #6d6d6d; background-color: #eee; border-color: #ccc;",
+        "buttonDisplayName": "Google",
+        "iconClass": "fa-google",
+        "iconFontColor": "white",
+        "iconBackground": "#4184f3"
+      }
+    }
+  ]
+}

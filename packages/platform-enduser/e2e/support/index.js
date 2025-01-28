@@ -31,3 +31,8 @@ import './e2e';
 Cypress.on('uncaught:exception', (err, runnable) => { // eslint-disable-line no-unused-vars, arrow-body-style
   return false;
 });
+
+Cypress.on('window:before:load', (window) => {
+  Object.defineProperty(window.navigator, 'language', { value: Cypress.env('LOCALE') });
+  Object.defineProperty(window.navigator, 'languages', { value: Cypress.env('LOCALESLIST') });
+});

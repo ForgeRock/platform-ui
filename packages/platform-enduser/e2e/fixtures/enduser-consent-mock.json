@@ -1,0 +1,17 @@
+{
+  "result": [
+    {
+      "_id": "KangarooMapping",
+      "name": "KangarooMapping",
+      "displayName": "Collected by a Kangaroo",
+      "icon": "https://www.cinema.com/image_lib/6858_k003_thumb.jpg",
+      "accessLevel": "Actual Profile",
+      "fields": []
+    }
+  ],
+  "resultCount": 1,
+  "pagedResultsCookie": null,
+  "totalPagedResultsPolicy": "EXACT",
+  "totalPagedResults": 1,
+  "remainingPagedResults": -1
+}

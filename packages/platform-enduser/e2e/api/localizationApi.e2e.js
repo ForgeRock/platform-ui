@@ -23,8 +23,9 @@ export function addOverrides(locale, body) {
 /**
  * Delete a config translation file
  */
-export function deleteOverrides(locale) {
+export function deleteOverrides(locale, failOnStatusCodeToggle = true) {
   return cy.request({
+    failOnStatusCode: failOnStatusCodeToggle,
     method: 'DELETE',
     url: `https://${Cypress.env('FQDN')}/openidm/config/uilocale/${locale}`,
     headers: {
