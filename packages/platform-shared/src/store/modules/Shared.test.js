@@ -5,7 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { cloneDeep } from 'lodash';
 import shared from './Shared';
+
+const defaultState = cloneDeep(shared.state);
 
 describe('should handle relative paths for FRaaS urls', () => {
   let windowSpy;
@@ -88,5 +91,49 @@ describe('should handle relative paths for FRaaS urls', () => {
     expect(state.igaOrchestrationApiUrl).toBe('https://my.fancy.domain.com/auto');
     expect(state.fraasFederationUrl).toBe('https://my.fancy.domain.com/environment/federation/enforcement');
     expect(state.pingFederateUrl).toBe('https://my.fancy.domain.com/ws/admin');
+  });
+});
+
+describe('should handle Pendo feature flag', () => {
+  let state;
+
+  beforeEach(() => {
+    state = cloneDeep(defaultState);
+  });
+
+  it('should not enable Pendo if VUE_APP_ENABLE_PENDO is false and VUE_APP_FRAAS is false', () => {
+    const testEnv = {
+      VUE_APP_ENABLE_PENDO: 'false',
+      VUE_APP_FRAAS: 'false',
+    };
+    shared.mutations.setFeatureFlags(state, testEnv);
+    expect(state.pendoEnabled).toBe(false);
+  });
+
+  it('should not enable Pendo if VUE_APP_ENABLE_PENDO is false and VUE_APP_FRAAS is true', () => {
+    const testEnv = {
+      VUE_APP_ENABLE_PENDO: 'false',
+      VUE_APP_FRAAS: 'true',
+    };
+    shared.mutations.setFeatureFlags(state, testEnv);
+    expect(state.pendoEnabled).toBe(false);
+  });
+
+  it('should not enable Pendo if VUE_APP_ENABLE_PENDO is true and VUE_APP_FRAAS is false', () => {
+    const testEnv = {
+      VUE_APP_ENABLE_PENDO: 'true',
+      VUE_APP_FRAAS: 'false',
+    };
+    shared.mutations.setFeatureFlags(state, testEnv);
+    expect(state.pendoEnabled).toBe(false);
+  });
+
+  it('should enable Pendo if VUE_APP_ENABLE_PENDO is true and VUE_APP_FRAAS is true', () => {
+    const testEnv = {
+      VUE_APP_ENABLE_PENDO: 'true',
+      VUE_APP_FRAAS: 'true',
+    };
+    shared.mutations.setFeatureFlags(state, testEnv);
+    expect(state.pendoEnabled).toBe(true);
   });
 });
