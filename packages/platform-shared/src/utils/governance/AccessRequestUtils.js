@@ -43,6 +43,21 @@ export function getPriorityImageSrc(priority) {
   }
 }
 
+/** Gets image `alt` attribute text for the given priority.
+ * @param {String} priority - The priority level of the request: high, med, low.
+ * @returns {String} The alt text for a valid priority level, else an empty string.
+*/
+export function getPriorityImageAltText(priority) {
+  try {
+    const priorityText = i18n.global.t(`governance.accessRequest.newRequest.priority.${priority}`);
+    return priority && priorityText
+      ? i18n.global.t('governance.accessRequest.priorityImageAltText', { priority: priorityText })
+      : '';
+  } catch (error) {
+    return '';
+  }
+}
+
 export const detailTypes = {
   APPROVAL: 'approval',
   ADMIN_REQUEST: 'adminRequest',

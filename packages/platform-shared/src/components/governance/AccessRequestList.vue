@@ -47,6 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ $t('governance.accessRequest.idLabel', { id: item.details.id }) }}
               </small>
               <BImg
+                :alt="getPriorityImageAltText(item.details.priority)"
                 class="ml-2"
                 height="24"
                 :src="getPriorityImageSrc(item.details.priority)" />
@@ -87,7 +88,7 @@ import {
 } from 'bootstrap-vue';
 import { ref, watch } from 'vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import { buildRequestDisplay, getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { buildRequestDisplay, getPriorityImageSrc, getPriorityImageAltText } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 
 const prop = defineProps({

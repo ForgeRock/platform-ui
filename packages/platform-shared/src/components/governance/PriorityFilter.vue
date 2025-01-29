@@ -20,6 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
           #prepend
           v-if="priority.image">
           <BImg
+            alt=""
             height="24"
             :src="getPriorityImageSrc(priority.model)" />
         </template>
