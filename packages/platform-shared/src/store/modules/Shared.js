@@ -49,7 +49,6 @@ const defaultState = {
   uiConfig: null,
   webStorageAvailable: true,
   workforceEnabled: false,
-  workforceAdvancedSyncEnabled: false,
   wsfedEnabled: false,
   templateBuilderEnabled: false,
   enableSamlSigningCheckbox: false,
@@ -177,10 +176,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
       state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
-    }
-
-    if (env.VUE_APP_ENABLE_WORKFORCE_ADVANCED_SYNC) {
-      state.workforceAdvancedSyncEnabled = env.VUE_APP_ENABLE_WORKFORCE_ADVANCED_SYNC === 'true' || env.VUE_APP_ENABLE_WORKFORCE_ADVANCED_SYNC === true;
     }
 
     if (env.VUE_APP_ENABLE_WSFED === 'true' || env.VUE_APP_ENABLE_WSFED === true) {
