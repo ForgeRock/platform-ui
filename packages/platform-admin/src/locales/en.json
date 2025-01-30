@@ -3143,7 +3143,6 @@
     "saveMessage": "Settings saved",
     "accountCorrelation": {
       "editModal": {
-        "subTitle": "Choose the attribute(s) to use to match users in {appName} to users in Ping Identity.",
         "selectLabel": "Attribute(s) to match",
         "defaultUsername": "Ping Identity username",
         "defaultName": "Name (First and Last)",
@@ -3157,7 +3156,8 @@
         "editCorrelation": "Edit Correlation"
       },
       "cardHeaderTitle": "Account Correlation",
-      "subTitle": "Choose the attribute(s) to use to match users in {appName} to users in Ping Identity.",
+      "correlationQuery": "Correlation Query",
+      "subTitle": "Choose the attribute(s) to use to match {sourceObjectTypeName} in {sourceApplication} to {targetObjectTypeName} in {targetApplication}.",
       "fieldLabel": "Match using",
       "configure": "Configure"
     },
