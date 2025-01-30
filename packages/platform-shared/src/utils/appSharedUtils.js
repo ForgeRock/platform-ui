@@ -169,7 +169,7 @@ export function getApplicationDisplayName(application) {
 export function getApplicationLogo(application) {
   loadAppTemplates();
   const image = getAppByTypeByVersion(application)?.image;
-  return resolveImage(image || application.icon);
+  return application.icon || resolveImage(image);
 }
 
 export const exportedForTestingSharedUtils = {

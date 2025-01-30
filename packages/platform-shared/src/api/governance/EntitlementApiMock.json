@@ -1,0 +1,690 @@
+{
+  "result": [
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "descriptor": {
+              "idx": {
+                  "/entitlement": {
+                      "displayName": "template_read_global"
+                  }
+              }
+          },
+          "id": "system_TargetApp_Role_1bc156f3771000101ecaff046910619e"
+      },
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "descriptor": {
+              "idx": {
+                  "/entitlement": {
+                      "displayName": "tracked_file_reader"
+                  }
+              }
+          },
+          "entitlementOwner": [
+              {
+                  "id": "bfd816e1-b9fe-4ea9-90f5-45e2e906cdfc",
+                  "userName": "christian.marnell",
+                  "givenName": "Christian",
+                  "sn": "Marnell",
+                  "mail": "christian.marnell@example.com"
+              }
+          ],
+          "id": "system_TargetApp_Role_80b4cd57c3013300daa79624a1d3aea1"
+      },
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "descriptor": {
+              "idx": {
+                  "/entitlement": {
+                      "displayName": "query_no_domain_table_api"
+                  }
+              }
+          },
+          "id": "system_TargetApp_Role_246a29b1e7022300d26dc91c03f6a9fa"
+      },
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "descriptor": {
+              "idx": {
+                  "/entitlement": {
+                      "displayName": "taxonomy_admin"
+                  }
+              }
+          },
+          "id": "system_TargetApp_Role_5dad18b3533200108271ddeeff7b120a"
+      },
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "descriptor": {
+              "idx": {
+                  "/entitlement": {
+                      "displayName": "interaction_agent"
+                  }
+              }
+          },
+          "id": "system_TargetApp_Role_b523f1d037001300a213a7f07e41f15b"
+      },
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "descriptor": {
+              "idx": {
+                  "/entitlement": {
+                      "displayName": "platform_ml_create"
+                  }
+              }
+          },
+          "id": "system_TargetApp_Role_b47151c367113200d109199672415af0"
+      },
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "descriptor": {
+              "idx": {
+                  "/entitlement": {
+                      "displayName": "knowledge_manager"
+                  }
+              }
+          },
+          "id": "system_TargetApp_Role_f8bfbd02eb202100216a87b9d106fe92"
+      },
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "entitlementOwner": [
+              {
+                  "id": "e8e8636e-33ad-4764-8c13-feba9a973bb1",
+                  "userName": "abel.tuter",
+                  "givenName": "Abel",
+                  "sn": "Tuter",
+                  "mail": "abel.tuter@example.com"
+              }
+          ],
+          "id": "system_TargetApp_Role_7dcf695dc3531210a8fc554d050131a3"
+      },
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "descriptor": {
+              "idx": {
+                  "/entitlement": {
+                      "displayName": "snc_platform_rest_api_access"
+                  }
+              }
+          },
+          "id": "system_TargetApp_Role_408934d18733320025fbd1a936cb0b88"
+      },
+      {
+          "application": {
+              "_rev": "ffe3f7ed-1022-425c-845e-210b35f392e8-819546",
+              "authoritative": false,
+              "connectorId": "TargetApp",
+              "description": "Testing 3",
+              "fr": {
+                  "realm": "alpha"
+              },
+              "icon": "https://img.freepik.com/free-vector/vector-logo-unique-letter-e-colorful-gradient-design-illustration_474888-2292.jpg",
+              "id": "825c6e15-b860-4be4-bef9-55d28a0cd2de",
+              "mappingNames": [
+                  "systemTargetappUser_managedAlpha_user",
+                  "systemTargetappRole_managedAlpha_assignment",
+                  "systemTargetappGroup_managedAlpha_assignment",
+                  "managedAlpha_user_systemTargetappUser",
+                  "systemTargetappDepartment_managedAlpha_assignment",
+                  "systemTargetappLocation_managedAlpha_assignment",
+                  "systemTargetappCompany_managedAlpha_assignment",
+                  "systemTargetappCostcenter_managedAlpha_assignment"
+              ],
+              "metadata": {
+                  "entityType": "/openidm/managed/application",
+                  "created": "2025-01-29T14:25:33.323Z"
+              },
+              "name": "TargetApp",
+              "objectTypes": [
+                  {
+                      "name": "Role",
+                      "accountAttribute": "__user_role_ids__"
+                  },
+                  {
+                      "name": "Group",
+                      "accountAttribute": "__user_group_ids__"
+                  },
+                  {
+                      "name": "Department",
+                      "accountAttribute": "department"
+                  },
+                  {
+                      "name": "Company",
+                      "accountAttribute": "company"
+                  },
+                  {
+                      "name": "User"
+                  },
+                  {
+                      "name": "CostCenter",
+                      "accountAttribute": "costCenter"
+                  },
+                  {
+                      "name": "Location",
+                      "accountAttribute": "location"
+                  }
+              ],
+              "templateName": "servicenow",
+              "templateVersion": "3.3"
+          },
+          "descriptor": {
+              "idx": {
+                  "/entitlement": {
+                      "displayName": "personalize_ui"
+                  }
+              }
+          },
+          "id": "system_TargetApp_Role_3014c5baa9fe3dba014dd5a0ad293e8c"
+      }
+  ],
+  "searchAfterKey": [
+      "1c7a721ce5694035e86d1276b26942014c85c815f65bc35fce666eb1f34e632a126157e74790683ef6ccab61d2ff7bf25a82a99ad3b9b0c1462f0c1fbae9d0fc"
+  ],
+  "totalCount": 278,
+  "resultCount": 10
+}

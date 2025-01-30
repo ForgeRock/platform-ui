@@ -221,8 +221,8 @@
   },
   "pageTitles": {
     "AccessReviews": "Access Reviews",
-    "AdministerEntitlements": "Entitlements",
     "Accounts": "Accounts",
+    "AdministerEntitlements": "Entitlements",
     "Applications": "Applications",
     "ApprovalDetails": "Approval Details",
     "Approvals": "Approvals",
