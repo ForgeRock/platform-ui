@@ -193,6 +193,7 @@ export function getField(callback, index) {
     fieldType,
     name: `callback_${index}`,
     value: callback.getInputValue(),
+    defaultText: callback.getOutputByName('defaultText', ''),
   };
 }
 

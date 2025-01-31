@@ -20,12 +20,6 @@ import * as urlUtil from '../../utils/urlUtil';
 import * as authResumptionUtil from '../../utils/authResumptionUtil';
 import Login from './index';
 
-const LoginMixinMock = {
-  methods: {
-    getConfigurationInfo: () => Promise.resolve({ data: { realm: '/' } }),
-  },
-};
-
 describe('Login.vue', () => {
   let wrapper;
   const $route = {
@@ -35,6 +29,7 @@ describe('Login.vue', () => {
   };
 
   beforeEach(() => {
+    jest.spyOn(LoginMixin.methods, 'getConfigurationInfo').mockImplementation(() => Promise.resolve({ data: { realm: '/' } }));
     wrapper = shallowMount(Login, {
       global: {
         stubs: {
@@ -52,7 +47,7 @@ describe('Login.vue', () => {
             },
           },
         },
-        mixins: [LoginMixinMock],
+        mixins: [LoginMixin],
       },
     });
   });
@@ -387,7 +382,7 @@ describe('Component Test', () => {
           $sanitize: (message, config) => sanitize(message, config),
         },
       },
-      mixins: [LoginMixin, LoginMixinMock],
+      mixins: [LoginMixin],
       props,
     });
     await flushPromises();
@@ -412,6 +407,7 @@ describe('Component Test', () => {
     });
 
     beforeEach(() => {
+      jest.spyOn(LoginMixin.methods, 'getConfigurationInfo').mockImplementation(() => Promise.resolve({ data: { realm: '/' } }));
       replaceState = jest.fn();
       Object.defineProperty(global, 'window', {
         writable: true,
@@ -475,7 +471,7 @@ describe('Component Test', () => {
     });
   });
 
-  describe('Theming', () => {
+  describe('Theming and callbacks', () => {
     function setup(props) {
       return mount(Login, {
         global: {
@@ -596,6 +592,31 @@ describe('Component Test', () => {
         await nextBtn.trigger('click');
         await wrapper.vm.$nextTick();
         expect(localStorageSpy).toHaveBeenCalled();
+      });
+    });
+    describe('callbacks', () => {
+      it('ensures that the username field is populated with the defaultText value if a defaultText output object is present', async () => {
+        const authDataWithDefaultText = {
+          authId: '',
+          callbacks: [{
+            type: 'NameCallback',
+            output: [
+              { name: 'prompt', value: 'User Name' },
+              { name: 'defaultText', value: 'User Name default value text' },
+            ],
+            input: [{ name: 'IDToken1', value: '' }],
+          }],
+          header: 'Sign In',
+          description: '',
+        };
+        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataWithDefaultText)));
+
+        const wrapper = setup();
+        jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+        await flushPromises();
+
+        const usernameInput = wrapper.find('div[label="User Name"] input');
+        expect(usernameInput.element.value).toBe('User Name default value text');
       });
     });
   });

@@ -836,13 +836,19 @@ export default {
         if (component.type === 'FrField' || component.type === 'FrPasswordCallback') {
           const policyRequirements = callback.getOutputByName('policies')?.policyRequirements || [];
           const {
-            fieldType, label, name, value,
+            defaultText, fieldType, label, name, value,
           } = this.getField(callback, index);
           const fieldDataType = this.getAlternateFieldType(policyRequirements) || fieldType;
           const errors = this.getTranslatedPolicyFailures(callback);
 
           component.callbackSpecificProps = {
-            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label), validationImmediate: !!errors.length,
+            errors,
+            label,
+            name,
+            type: fieldDataType,
+            value: value || defaultText,
+            autocomplete: getAutocompleteValue(label),
+            validationImmediate: !!errors.length,
           };
 
           component.listeners = this.getListeners({ callback, index }, ['input']);
