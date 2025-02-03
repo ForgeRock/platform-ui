@@ -82,7 +82,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     it('Should change enduser colors', () => {
       // Set the Theme color data for the test
-      changeColorValue(/^Link Color/, '16FF96');
+      changeColorValue(/^Link Color #/, '16FF96');
       changeColorValue(/^Link Hover Color/, '123123');
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('heading', { name: 'Page Styles' }).click();

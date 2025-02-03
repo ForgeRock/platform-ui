@@ -66,6 +66,25 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.linkActiveColor }};
       }
 
+      <!-- Styles floating action bar's text elements in dark bg  -->
+      #app .floating-action-bar.bg-dark {
+        color: {{ theme.lightColor || '#f6f8fa' }};
+        background-color: {{ theme.darkColor || '#23282e' }} !important;
+      }
+
+      #app .floating-action-bar.bg-dark .btn-link {
+        color: {{ theme.linkColorOnDark || '#f6f8fa' }};
+      }
+
+      #app .floating-action-bar.bg-dark .btn-link:hover {
+        color: {{ theme.linkActiveColorOnDark || '#f6f8fa' }};
+      }
+
+      #app .floating-action-bar.bg-dark .btn-dark,
+      #app .floating-action-bar.bg-dark .btn-dark:hover {
+        color: {{ theme.lightColor || '#f6f8fa' }};
+      }
+
       <template v-if="mock">.fr-theme-preview</template> body {
         color: {{ theme.bodyText }};
       }
@@ -559,7 +578,7 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .text-success,
-      #app span:has(> .text-success) {
+      #app span:has(> .text-success):not(.btn-dark > span) {
         color: {{ theme.successColor }};
       }
 
