@@ -461,6 +461,8 @@
           "boldLinks": false,
           "buttonRounded": "50",
           "dangerColor": "#dc3545",
+          "darkColor": "#23282e",
+          "lightColor": "#f6f8fa",
           "favicon": "",
           "fontFamily": "Open Sans",
           "isDefault": false,
