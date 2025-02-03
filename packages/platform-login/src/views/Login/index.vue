@@ -7,14 +7,12 @@ of the MIT license. See the LICENSE file for details. -->
     class="min-vh-100 d-flex flex-column fr-fullscreen-mobile"
     ref="container"
     tabindex="-1">
-    <header
-      v-if="!journeyHeaderSkipLinkEnabled && journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
-      v-html="sanitizedHeader"
-      id="appHeader" />
-    <FrAccessibleHeader
-      v-if="journeyHeaderSkipLinkEnabled && journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
+    <FrLoginHeader
+      v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
+      :custom-html="sanitizedHeader"
+      :is-accessible="journeyHeaderSkipLinkEnabled"
       main-content-id="callbacksPanel"
-      :custom-html="sanitizedHeader" />
+      v-bind="screenReaderHeaderRole" />
     <main
       ref="main"
       id="callbacksPanel"
@@ -82,7 +80,9 @@ of the MIT license. See the LICENSE file for details. -->
                         {{ $t('login.sessionTimeoutLink') }}
                       </a>
                     </div>
-                    <div id="body-append-el">
+                    <div
+                      id="body-append-el"
+                      tabindex="-1">
                       <!-- for backend scripts -->
                       <form
                         @submit.prevent="nextStep"
@@ -219,18 +219,14 @@ of the MIT license. See the LICENSE file for details. -->
                 :style="{ height: `${logoHeight}px` }"
                 :src="logoPath">
               <div
-                v-if="!journeyHeaderSkipLinkEnabled && journeyHeaderEnabled"
+                v-if="journeyHeaderEnabled"
                 class="flex-grow-1"
                 id="appHeader">
-                <header v-html="sanitizedHeader" />
-              </div>
-              <div
-                v-if="journeyHeaderSkipLinkEnabled && journeyHeaderEnabled"
-                class="flex-grow-1"
-                id="appHeader">
-                <FrAccessibleHeader
+                <FrLoginHeader
+                  :custom-html="sanitizedHeader"
+                  :is-accessible="journeyHeaderSkipLinkEnabled"
                   main-content-id="body-append-el"
-                  :custom-html="sanitizedHeader" />
+                  v-bind="screenReaderHeaderRole" />
               </div>
             </div>
           </div>
@@ -289,7 +285,9 @@ of the MIT license. See the LICENSE file for details. -->
                     {{ $t('login.sessionTimeoutLink') }}
                   </a>
                 </div>
-                <div id="body-append-el">
+                <div
+                  id="body-append-el"
+                  tabindex="-1">
                   <!-- for backend scripts -->
                   <form
                     @submit.prevent="nextStep"
@@ -480,7 +478,7 @@ export default {
     FrField: () => import('@forgerock/platform-shared/src/components/Field'),
     FrHiddenValueCallback: () => import('@/components/callbacks/HiddenValueCallback'),
     FrKbaCreateCallback: () => import('@/components/callbacks/KbaCreateCallback'),
-    FrAccessibleHeader: () => import('@/components/display/AccessibleHeader'),
+    FrLoginHeader: () => import('@/components/display/LoginHeader'),
     FrPasswordCallback: () => import('@/components/callbacks/PasswordCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
     FrPingOneProtectCallback: () => import('@/components/callbacks/PingOneProtectCallback/PingOneProtectCallback'),
@@ -627,6 +625,15 @@ export default {
     };
   },
   computed: {
+    /**
+     * IAM-7752 JAWS initial automatic reading says page has no links even when content is present
+     * This approach will notify SR to read header content immediately on page load.
+     */
+    screenReaderHeaderRole() {
+      return this.isFirstStep ? {
+        role: 'alert',
+      } : undefined;
+    },
     buttonTextLocalized() {
       let submitButtonTextOverride = null;
       try {
