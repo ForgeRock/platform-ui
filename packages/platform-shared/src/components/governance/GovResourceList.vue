@@ -31,7 +31,8 @@ of the MIT license. See the LICENSE file for details. -->
       :busy="isLoading"
       :empty-text="$t('common.noObjectFound', { object: pluralizeAnyString(resource)})"
       :fields="columns"
-      :items="items">
+      :items="items"
+      @row-clicked="$emit('row-clicked', $event)">
       <template #table-busy>
         <div class="text-center text-danger p-3">
           <FrSpinner />
@@ -46,9 +47,9 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(actions)="{ item }">
         <FrActionsCell
-          delete-option
+          :delete-option="false"
+          :divider="false"
           edit-option
-          @delete-clicked="$emit('delete-clicked', item)"
           @edit-clicked="$emit('row-clicked', item)" />
       </template>
     </BTable>
@@ -85,6 +86,8 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from '@/i18n';
+
+defineEmits(['row-clicked']);
 
 const props = defineProps({
   columns: {

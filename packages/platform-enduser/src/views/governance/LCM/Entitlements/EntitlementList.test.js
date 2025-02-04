@@ -7,7 +7,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
-import Entitlements from './Entitlements';
+import EntitlementList from './EntitlementList';
 import i18n from '@/i18n';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
@@ -16,10 +16,10 @@ jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
   getApplicationDisplayName: jest.fn().mockReturnValue('app display name'),
 }));
 
-describe('Entitlements', () => {
+describe('EntitlementList', () => {
   let wrapper;
   function mountComponent() {
-    return mount(Entitlements, {
+    return mount(EntitlementList, {
       global: {
         plugins: [i18n],
       },

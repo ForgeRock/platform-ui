@@ -7,8 +7,12 @@
 
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
-import { getEntitlementList, getEntitlementById, getEntitlementUsers } from './EntitlementApi';
-import EntitlementApiMock from './EntitlementApiMock.json';
+import {
+  getEntitlementList,
+  getEntitlementById,
+  getEntitlementUsers,
+  getEntitlementSchema,
+} from './EntitlementApi';
 
 jest.mock('@forgerock/platform-shared/src/api/BaseApi');
 jest.mock('@forgerock/platform-shared/src/utils/encodeQueryString');
@@ -19,9 +23,32 @@ describe('EntitlementApi', () => {
   });
 
   describe('getEntitlementList', () => {
-    it('should return a list of entitlements', async () => {
-      const result = await getEntitlementList();
-      expect(result.data).toEqual(EntitlementApiMock);
+    it('should return a list of entitlements with query parameters', async () => {
+      const mockResponse = { data: [{ id: 'ent1', name: 'Entitlement One' }] };
+      const queryParams = { page: 1, size: 10 };
+      const encodedQueryParams = '?page=1&size=10';
+      encodeQueryString.mockReturnValue(encodedQueryParams);
+      generateIgaApi.mockReturnValue({
+        get: jest.fn().mockResolvedValue(mockResponse),
+      });
+
+      const result = await getEntitlementList('resource', queryParams);
+      expect(result).toEqual(mockResponse);
+      expect(encodeQueryString).toHaveBeenCalledWith(queryParams);
+      expect(generateIgaApi().get).toHaveBeenCalledWith('governance/entitlement?page=1&size=10');
+    });
+
+    it('should return a list of entitlements without query parameters', async () => {
+      const mockResponse = { data: [{ id: 'ent1', name: 'Entitlement One' }] };
+      encodeQueryString.mockReturnValue('');
+      generateIgaApi.mockReturnValue({
+        get: jest.fn().mockResolvedValue(mockResponse),
+      });
+
+      const result = await getEntitlementList('resource');
+      expect(result).toEqual(mockResponse);
+      expect(encodeQueryString).toHaveBeenCalledWith({});
+      expect(generateIgaApi().get).toHaveBeenCalledWith('governance/entitlement');
     });
   });
 
@@ -52,6 +79,21 @@ describe('EntitlementApi', () => {
       expect(result).toEqual(mockResponse);
       expect(encodeQueryString).toHaveBeenCalledWith(queryParams);
       expect(generateIgaApi().get).toHaveBeenCalledWith('governance/entitlement/123/assignments/users?page=1&size=10');
+    });
+
+    describe('getEntitlementSchema', () => {
+      it('should return the entitlement schema for a given application and object type', async () => {
+        const mockResponse = { data: { schema: 'Test Schema' } };
+        generateIgaApi.mockReturnValue({
+          get: jest.fn().mockResolvedValue(mockResponse),
+        });
+
+        const application = 'testApp';
+        const objectType = 'testObject';
+        const result = await getEntitlementSchema(application, objectType);
+        expect(result).toEqual(mockResponse);
+        expect(generateIgaApi().get).toHaveBeenCalledWith(`governance/application/${application}/${objectType}/schema`);
+      });
     });
   });
 });

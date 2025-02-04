@@ -12,7 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-5"
       resource="entitlement"
       :columns="entitlementColumns"
-      :resource-function="getEntitlementList">
+      :resource-function="getEntitlementList"
+      @row-clicked="navigateToEntitlementDetails">
       <template #cell(entitlement)="{ item }">
         <BMedia
           class="align-items-center"
@@ -60,6 +61,7 @@ import {
   BMediaAside,
   BMediaBody,
 } from 'bootstrap-vue';
+import { useRouter } from 'vue-router';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrGovResourceList from '@forgerock/platform-shared/src/components/governance/GovResourceList';
 import { getEntitlementList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
@@ -67,6 +69,8 @@ import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroup
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import i18n from '@/i18n';
+
+const router = useRouter();
 
 const entitlementColumns = [
   {
@@ -87,6 +91,14 @@ const entitlementColumns = [
     class: 'w-80px',
   },
 ];
+
+function navigateToEntitlementDetails(entitlement) {
+  router.push({
+    name: 'EntitlementDetails',
+    params: { entitlementId: entitlement.id },
+  });
+}
+
 </script>
 
 <style lang="scss" scoped>

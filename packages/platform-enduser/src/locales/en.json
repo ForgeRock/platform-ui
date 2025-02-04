@@ -236,6 +236,7 @@
     "DirectReports": "Direct Reports",
     "DirectReportDetail": "Direct Report Details",
     "EditResource": "Edit Resource",
+    "EntitlementDetails": "Entitlement Details",
     "Entitlements": "Entitlements",
     "Exception": "Exception",
     "AccessRequestNew": "New Request",
@@ -356,7 +357,9 @@
     "administer": {
       "entitlements": {
         "title": "Entitlements",
-        "subtitle": "Manage and configure user entitlements across all your configured applications."
+        "subtitle": "Manage and configure user entitlements across all your configured applications.",
+        "generalSettings": "General Settings",
+        "errorGettingEntitlement": "Error getting entitlement"
       }
     },
     "approval":{

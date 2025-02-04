@@ -69,14 +69,24 @@ const router = createRouter({
       meta: { authenticate: true },
     },
     {
-      path: '/administer/',
+      path: '/administer',
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
       meta: { authenticate: true },
       children: [
         {
           path: 'entitlements',
-          name: 'AdministerEntitlements',
-          component: () => import('@/views/governance/LCM/Entitlements'),
+          children: [
+            {
+              path: '',
+              name: 'AdministerEntitlements',
+              component: () => import('@/views/governance/LCM/Entitlements/EntitlementList'),
+            },
+            {
+              path: ':entitlementId',
+              name: 'EntitlementDetails',
+              component: () => import('@/views/governance/LCM/Entitlements/Edit/EntitlementDetails'),
+            },
+          ],
         },
       ],
     },

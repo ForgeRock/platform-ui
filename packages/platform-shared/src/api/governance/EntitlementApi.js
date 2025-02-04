@@ -7,7 +7,6 @@
 
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
-import EntitlementApiMock from '@forgerock/platform-shared/src/api/governance/EntitlementApiMock.json';
 
 const entitlementUrl = 'governance/entitlement';
 
@@ -17,20 +16,9 @@ const entitlementUrl = 'governance/entitlement';
  * @param {Object} queryParams - The query parameters to include in the request.
  * @returns {Promise} - A promise that resolves to a list of entitlements.
  */
-// export async function getEntitlementList(resource, queryParams = {}) {
-//   const encodedQueryParams = encodeQueryString(queryParams);
-//   return generateIgaApi().get(`${entitlementUrl}${encodedQueryParams}`);
-// }
-
-/**
- * Get a list of entitlements.
- *
- * @returns {Promise} A promise that resolves to an object containing the entitlement data.
- */
-export async function getEntitlementList() {
-  return Promise.resolve({
-    data: EntitlementApiMock,
-  });
+export async function getEntitlementList(resource, queryParams = {}) {
+  const encodedQueryParams = encodeQueryString(queryParams);
+  return generateIgaApi().get(`${entitlementUrl}${encodedQueryParams}`);
 }
 
 /**
@@ -53,4 +41,15 @@ export function getEntitlementById(id) {
 export function getEntitlementUsers(id, queryParams = {}) {
   const encodedQueryParams = encodeQueryString(queryParams);
   return generateIgaApi().get(`${entitlementUrl}/${id}/assignments/users${encodedQueryParams}`);
+}
+
+/**
+ * Fetches the entitlement schema for a given application and object type.
+ *
+ * @param {string} application - The name of the application.
+ * @param {string} objectType - The type of the object.
+ * @returns {Promise} A promise that resolves to the entitlement schema.
+ */
+export function getEntitlementSchema(application, objectType) {
+  return generateIgaApi().get(`governance/application/${application}/${objectType}/schema`);
 }
