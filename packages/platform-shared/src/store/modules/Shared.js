@@ -52,6 +52,7 @@ const defaultState = {
   wsfedEnabled: false,
   templateBuilderEnabled: false,
   enableSamlSigningCheckbox: false,
+  enableManagedObjectSchemaEditor: false,
 };
 
 const mutations = {
@@ -125,6 +126,9 @@ const mutations = {
       }
       if (env.VUE_APP_ENABLE_WSFED === 'true' || env.VUE_APP_ENABLE_WSFED === true) {
         state.pingFederateUrl = getFQDN(env.VUE_APP_PINGFEDERATE_URL);
+      }
+      if (env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR === 'true' || env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR === true) {
+        state.enableManagedObjectSchemaEditor = env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR;
       }
     }
 
