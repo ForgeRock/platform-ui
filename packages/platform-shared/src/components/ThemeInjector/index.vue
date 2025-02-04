@@ -812,9 +812,13 @@ export default {
             apiUrl.push(',');
           }
         });
+      } else {
+        // We pass all weights for italics and bold since Bunny fonts doesn't include
+        // ALL of the fonts needed for all languages. It just sends Normal 400.
+        apiUrl.push(':ital,wght@0,100..900;1,100..900');
       }
       // Adds &display=swap param at end of url to ensure that the
-      // fallback font is used before the google font loads
+      // fallback font is used before the bunny font loads
       apiUrl.push('&display=swap');
 
       // Creates one solid string to inject in the theme via import

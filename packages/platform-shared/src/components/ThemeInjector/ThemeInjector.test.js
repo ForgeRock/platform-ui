@@ -10,7 +10,7 @@ import ThemeInjector from './index';
 
 const fontProvider = 'https://fonts.bunny.net';
 describe('Theme Injector Component', () => {
-  it('Constructs google font url from object', () => {
+  it('Constructs Bunny Fonts font url from object', () => {
     const wrapper = shallowMount(ThemeInjector, {
       props: {
         theme: {
@@ -30,7 +30,7 @@ describe('Theme Injector Component', () => {
     expect(wrapper.vm.fontUrl).toEqual(`${fontProvider}/css2?family=Luxurious+Script:regular&display=swap`);
   });
 
-  it('Returns google font url from string', () => {
+  it('Returns Bunny Fonts font url from string', () => {
     const wrapper = shallowMount(ThemeInjector, {
       props: {
         theme: {
@@ -38,7 +38,7 @@ describe('Theme Injector Component', () => {
         },
       },
     });
-    expect(wrapper.vm.fontUrl).toEqual(`${fontProvider}/css2?family=Open+Sans&display=swap`);
+    expect(wrapper.vm.fontUrl).toEqual(`${fontProvider}/css2?family=Open+Sans:ital,wght@0,100..900;1,100..900&display=swap`);
   });
 
   it('Returns null if font is ignored', () => {
