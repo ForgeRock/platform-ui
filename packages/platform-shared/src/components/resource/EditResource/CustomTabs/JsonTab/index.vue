@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -21,6 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
       line-numbers
       v-model="json"
       :aria-label="$t('editor.accessibilityHelp')"
+      :highlight="(code) => highlighter(code, 'json')"
       @keydown="blurOnEscape" />
   </BTab>
 </template>
@@ -30,11 +31,11 @@ import {
   BButton,
   BTab,
 } from 'bootstrap-vue';
-import VuePrismEditor from 'vue-prism-editor';
+import { PrismEditor as VuePrismEditor } from 'vue-prism-editor';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
+import blurOnEscape, { highlighter } from '@forgerock/platform-shared/src/utils/codeEditor';
 
 export default {
   name: 'JsonTab',
@@ -60,6 +61,7 @@ export default {
   },
   methods: {
     blurOnEscape,
+    highlighter,
     copyValueToClipboard(value) {
       clipboard.writeText(value).then(() => {
         this.displayNotification('success', this.$t('common.copySuccess'));
