@@ -13,6 +13,7 @@ import {
   getFormattedRequest,
   getRequestTypeDisplayName,
   getRequestTypeDisplayNames,
+  getPriorityImageAltText,
 } from './AccessRequestUtils';
 
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
@@ -311,5 +312,30 @@ describe('getFormattedRequest', () => {
       const result = await getRequestTypeDisplayName(requestType);
       expect(result).toEqual(expectedResponse);
     });
+  });
+});
+describe('getPriorityImageAltText', () => {
+  it('returns the alt text for a high priority', () => {
+    const priority = 'high';
+    const result = getPriorityImageAltText(priority);
+    expect(result).toEqual('High Priority icon');
+  });
+
+  it('returns the alt text for a medium priority', () => {
+    const priority = 'medium';
+    const result = getPriorityImageAltText(priority);
+    expect(result).toEqual('Medium Priority icon');
+  });
+
+  it('returns the alt text for a low priority', () => {
+    const priority = 'low';
+    const result = getPriorityImageAltText(priority);
+    expect(result).toEqual('Low Priority icon');
+  });
+
+  it('returns an empty string for an invalid priority', () => {
+    const priority = 'invalid';
+    const result = getPriorityImageAltText(priority);
+    expect(result).toEqual('');
   });
 });
