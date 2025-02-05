@@ -10,6 +10,7 @@ import { defineRule } from 'vee-validate';
 import * as rules from '@vee-validate/rules';
 import * as customValidators from '@forgerock/platform-shared/src/utils/validators';
 import dayjs from 'dayjs';
+import { doesValueContainPlaceholder } from './esvUtils';
 
 export function getRules(i18n) {
 /**
@@ -186,7 +187,16 @@ export function getRules(i18n) {
   const url = (value) => (value ? customValidators.url(value, i18n) : i18n.global.t('common.policyValidationMessages.url'));
 
   // Rule to check whether url, relative path or esv is valid in bookmark applications
-  const validBookmarkUrl = (value) => customValidators.validBookmarkUrl(value) || i18n.global.t('common.policyValidationMessages.urlPathEsv');
+  const validBookmarkUrl = async (value) => {
+    if (!value) {
+      return i18n.global.t('common.policyValidationMessages.urlPathEsv');
+    }
+    if (!doesValueContainPlaceholder(value)) {
+      return customValidators.validBookmarkUrl(value) || i18n.global.t('common.policyValidationMessages.urlPathEsv');
+    }
+    const isValidESV = await customValidators.isValidESV(value);
+    return isValidESV || i18n.global.t('common.policyValidationMessages.validEsv');
+  };
 
   // Rule to check for compatibility with ESV naming schema
   const lower_case_alpha_numeric_underscore_hyphen_only = (value) => {

@@ -7,6 +7,8 @@
 
 import { has, isArray } from 'lodash';
 import isEmail from 'validator/lib/isEmail';
+import { getIdfromPlaceholder } from './esvUtils';
+import { getSecret, getVariable } from '../../../platform-admin/src/api/EsvApi';
 
 const urlHasPath = (url) => url.pathname && url.pathname !== '/';
 
@@ -94,6 +96,21 @@ export const urlDomainOnly = (value, i18n) => {
   }
 };
 
+export const isValidESV = async (value) => {
+  const esvId = getIdfromPlaceholder(value);
+  try {
+    const { status } = await getVariable(esvId);
+    return (status === 200);
+  } catch (e) {
+    try {
+      const { status: secretReqStatus } = await getSecret(esvId);
+      return (secretReqStatus === 200);
+    } catch (ex) {
+      return false;
+    }
+  }
+};
+
 /**
  * validates a text field is a url, a relative path or an ESV
  * @param {String} value
@@ -102,8 +119,7 @@ export const urlDomainOnly = (value, i18n) => {
 export const validBookmarkUrl = (value) => {
   try {
     const relativePathRegex = /^(?:\/[a-zA-Z0-9-_?=#.&{}]+)+\/?$/g;
-    const esvRegex = /^&{.+}$/g;
-    return (relativePathRegex.test(value) || esvRegex.test(value) || url(value));
+    return (relativePathRegex.test(value) || url(value));
   } catch (e) {
     return false;
   }

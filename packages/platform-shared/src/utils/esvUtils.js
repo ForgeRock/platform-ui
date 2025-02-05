@@ -216,3 +216,12 @@ export function showEsvSecretsForField(fieldType) {
   if (typeof fieldType !== 'string') return false;
   return FIELDS_ALLOWING_SECRET_INPUT.includes(fieldType);
 }
+
+/**
+ * Convert the provided placeholder value to _id
+ * @param {String} an ESV placeholder
+ * @returns {String} _id of the placeholder
+ */
+export function getIdfromPlaceholder(value) {
+  return `${value.slice(2, -1).replaceAll('.', '-')}`;
+}
