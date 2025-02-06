@@ -752,10 +752,16 @@
       "saveSuccess": "Node successfully saved",
       "deleted": "Custom Node Deleted",
       "errorDeleting": "Error deleting Custom Node",
+      "errorExporting": "Error exporting Custom Node",
       "errorLoadingInstances": "Error loading instances",
       "errorLoading": "Error loading Custom Nodes",
       "errorLoadingNodeDetails": "Error loading node details",
       "errorSavingNode": "Error saving custom node"
+    },
+    "importModal": {
+      "desc": "Choose a JSON file containing the node configuration to import.",
+      "conflictError": "Error importing node - a node with that id already exists",
+      "genericError": "Error importing node"
     }
   },
   "bulkImport": {
@@ -1117,6 +1123,8 @@
     "addNodeModal": {
       "customNode": "Custom Node",
       "customNodeDescription": "Create a custom node for use across all journeys",
+      "importNodes": "Import Nodes",
+      "importNodesDescription": "Import nodes exported from other environments",
       "modalTitleImport": "Select a node type to add to the tree."
     },
     "treeSaveSuccessful": "All Changes Saved",

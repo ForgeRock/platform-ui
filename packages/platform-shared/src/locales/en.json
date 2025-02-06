@@ -190,6 +190,7 @@
     "newObject": "New {object}",
     "next": "Next",
     "no": "No",
+    "node": "Node",
     "none": "None",
     "noObjectFound": "No {object} found",
     "noResultsFound": "No results found.",
@@ -2273,5 +2274,16 @@
     "noPropertiesDefinedSubtitle": "Add properties to make available to your script.",
     "moveUp": "Move up",
     "moveDown": "Move down"
+  },
+  "importModal": {
+    "import": "Import {itemType}",
+    "importingItem": "Importing {itemType}...",
+    "importing": "Importing...",
+    "importComplete": "Import Complete",
+    "successfullyImported": "Successfully imported {itemType}",
+    "viewConfig": "View {itemType} configuration",
+    "jsonFile": "JSON File",
+    "conflicError": "Error importing - item already exists",
+    "genericError": "Error importing item"
   }
 }
