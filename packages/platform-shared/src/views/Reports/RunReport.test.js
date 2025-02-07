@@ -148,13 +148,32 @@ describe('Run Report component', () => {
         const listOptions = combobox.find('.multiselect__option');
         expect(listOptions.text()).toBe('No elements found. Consider changing the search query.');
       });
+
+      it('does not execute a debounced network search if field config has "internalSearch" set to true', async () => {
+        fieldDataMocks();
+        const requestTreesSpy = jest.spyOn(reportUtils, 'requestTrees').mockImplementation(() => Promise.resolve([{ _id: 'Login' }, { _id: 'ResetPassword' }]));
+        store.state.SharedStore.currentPackage = 'admin';
+        jest.useFakeTimers();
+        wrapper = setup({ reportConfig: { parameters: { journeyName: {} } } });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const journeyInputField = findByTestId(wrapper, 'fr-field-journeys');
+        const combobox = findByRole(journeyInputField, 'combobox');
+        const searchField = combobox.find('[type="text"]');
+
+        await searchField.setValue('Login');
+        // Flush promises and run setTimeout to simulate the debounce interval
+        await flushPromises();
+        jest.runAllTimers();
+        expect(requestTreesSpy).not.toHaveBeenCalled();
+      });
     });
 
     describe('oAuth2 Applications field', () => {
       it('only executes a debounced search if field has options and the searchable prop is true', async () => {
         fieldDataMocks();
         reportUtils.getOauth2Clients = jest.fn().mockReturnValue(Promise.resolve([{ _id: 'App1' }, { _id: 'App2' }]));
-        store.state.SharedStore.currentPackage = 'admin';
         wrapper = setup({ reportConfig: { parameters: { oauth2_applications: { type: 'array' } } } });
         await flushPromises();
         jest.clearAllMocks();
@@ -458,9 +477,9 @@ describe('Run Report component', () => {
       expect(statusLabel.text()).toEqual('Press enter to create a tag');
       let statusDropdownField = findByRole(wrapper, 'listbox');
       const [active, inactive, blocked] = statusDropdownField.findAll('[role="option"]');
-      expect(active.text()).toBe('Active');
-      expect(inactive.text()).toBe('Inactive');
-      expect(blocked.text()).toBe('Blocked');
+      expect(active.text()).toBe('active');
+      expect(inactive.text()).toBe('inactive');
+      expect(blocked.text()).toBe('blocked');
 
       await statusDropdownField.trigger('click');
       await active.find('span').trigger('click');

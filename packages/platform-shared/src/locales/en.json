@@ -2156,9 +2156,9 @@
         "status": {
           "label": "User Status",
           "allStatuses": "All statuses",
-          "active": "Active",
-          "inactive": "Inactive",
-          "blocked": "Blocked"
+          "active": "active",
+          "inactive": "inactive",
+          "blocked": "blocked"
         },
         "journeys": {
           "selectJourneys": "Select journeys"

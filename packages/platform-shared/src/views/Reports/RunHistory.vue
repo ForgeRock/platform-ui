@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * @description Displays analytics reports history
  */
-import { ref, watch } from 'vue';
+import { ref, watch, onBeforeUnmount } from 'vue';
 import { BCard } from 'bootstrap-vue';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { requestExport, requestReportRuns } from '@forgerock/platform-shared/src/utils/reportsUtils';
@@ -319,8 +319,9 @@ async function exportReport({ fileType, item, exportStatus }) {
  * @param {String} templateName template name
  * @param {Number} interval milliseconds
  */
+let statusPollTimeout; // used for clearing on component unmount
 function reportStatusPoll(runId, templateName, interval = 1500) {
-  setTimeout(async () => {
+  statusPollTimeout = setTimeout(async () => {
     const [report] = await requestReportRuns({
       runId,
       name: templateName,
@@ -402,4 +403,6 @@ watch(() => props.reportConfig, (config) => {
     initialize();
   }
 })();
+
+onBeforeUnmount(() => clearTimeout(statusPollTimeout));
 </script>

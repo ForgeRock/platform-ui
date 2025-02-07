@@ -189,9 +189,9 @@ const {
  */
 async function handleSearch(term, field) {
   const { config } = parameters.value[field];
-  const isSearchable = config && config.fetch && config.canFetch !== false;
+  const isFetchable = config && config.fetch && config.canFetch !== false && !config.internalSearch;
 
-  if (isSearchable) {
+  if (isFetchable) {
     const queryFilter = `${config.fields} sw "${term}"`;
     const response = await config.fetch(config, queryFilter, 10);
     config.model = config.mutation ? config.mutation(response) : response;

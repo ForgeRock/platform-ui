@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrField
     v-model="selectValue"
-    :internal-search="props.internalSearch"
+    :internal-search="internalSearch"
     :label="taggable && !selectValue.length ? $t('reports.tabs.runReport.pressEnterToCreateATag') : props.label"
     :options="filteredOptions"
     :show-no-options="true"
