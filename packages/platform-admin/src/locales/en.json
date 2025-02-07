@@ -2033,7 +2033,8 @@
       "groupRadioHelp": "Choose a group to assign to invited admins.",
       "superAdmin": "Super Admin",
       "superAdminsText": "Has access to all features in the Admin console and can manage every aspect of this tenant.",
-      "tenantAdminsText": "Has full access to all administrative features, except the ability to add other administrators."
+      "tenantAdminsText": "Has full access to all administrative features, except the ability to add other administrators.",
+      "tenantAuditorText": "Has read only access to all administrative features."
     },
     "templates": {
       "duplicateTemplate": "Duplicate Template",
@@ -2269,6 +2270,7 @@
       "saveProviderSuccess": "Federation provider saved",
       "saveProviderFail": "Unable to save Federation provider configuration",
       "tenantAdmin": "Tenant Admin",
+      "tenantAuditor": "Tenant Auditor",
       "deleteProviderSuccess": "Federation provider deleted",
       "deleteProviderFail": "Unable to delete Federation provider",
       "wellKnownEndpointFail": "Unable to connect to well-known endpoint",

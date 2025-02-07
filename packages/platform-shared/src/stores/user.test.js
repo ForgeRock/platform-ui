@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@ import { useUserStore } from './user';
 const idmUIAdminRoles = [
   'internal/role/openidm-admin',
   'openidm-admin',
+  'managed/teammembergroup/tenant-auditor',
   'super-admins',
   'tenant-admins',
 ];
@@ -158,6 +159,27 @@ describe('user store', () => {
         expect(userStore.adminUser).toBe(true);
       });
 
+      it('returns true if the user only has the managed/teammembergroup/tenant-auditor idm role', () => {
+        const userStore = useUserStore();
+        userStore.idmRoles = ['managed/teammembergroup/tenant-auditor'];
+        userStore.idmUIAdminRoles = idmUIAdminRoles;
+        expect(userStore.adminUser).toBe(true);
+      });
+
+      it('returns true if the user only has the super-admins idm role', () => {
+        const userStore = useUserStore();
+        userStore.idmRoles = ['super-admins'];
+        userStore.idmUIAdminRoles = idmUIAdminRoles;
+        expect(userStore.adminUser).toBe(true);
+      });
+
+      it('returns true if the user only has the tenant-admins idm role', () => {
+        const userStore = useUserStore();
+        userStore.idmRoles = ['tenant-admins'];
+        userStore.idmUIAdminRoles = idmUIAdminRoles;
+        expect(userStore.adminUser).toBe(true);
+      });
+
       it('returns false if the user does not have the internal/role/openidm-admin or openidm-admin idm roles', () => {
         const userStore = useUserStore();
         userStore.idmRoles = ['internal/role/openidm-user'];
@@ -170,6 +192,12 @@ describe('user store', () => {
       it('returns true if the user has the ui-realm-admin am role', () => {
         const userStore = useUserStore();
         userStore.amRoles = ['ui-realm-admin'];
+        expect(userStore.realmAdmin).toBe(true);
+      });
+
+      it('returns true if the user has the ui-global-admin am role', () => {
+        const userStore = useUserStore();
+        userStore.amRoles = ['ui-global-admin'];
         expect(userStore.realmAdmin).toBe(true);
       });
 

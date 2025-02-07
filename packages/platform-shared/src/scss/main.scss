@@ -138,6 +138,34 @@ body {
   }
 }
 
+.ping-read-only {
+  #appContent {
+    .btn:not([id^='color-picker']):not(.btn-link),
+    [data-testid='delete-panel'],
+    .card-footer {
+      display:none;
+    }
+    [type='multiselect'],
+    .multiselect,
+    [type='select'],
+    .color-picker-input,
+    [data-draggable='true'] {
+      pointer-events:none;
+    }
+  }
+  .modal-content {
+    .btn:not(.btn-link),
+    .modal-footer {
+      display:none;
+    }
+    [type='multiselect'],
+    .multiselect,
+    [type='select'] {
+      pointer-events:none;
+    }
+  }
+}
+
 .dropdown-toggle {
   &::after {
     border: none;
