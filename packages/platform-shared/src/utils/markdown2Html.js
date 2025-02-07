@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -97,6 +97,7 @@ export function html2Markdown(html) {
 export function markdown2Html(markdown, wrapInDivContent) {
   const md = new MarkdownIt({ html: true, linkify: true, typographer: true }).use(markdownItAnchor, {
     level: 1, // Minimum header level to apply anchors (default: 1)
+    tabIndex: false, // Disable tabIndex on heading
     slugify: (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ''), // Custom ID generator
   });
 
