@@ -1030,8 +1030,8 @@
   },
   "connectorServers": {
     "activating": "Activating...",
-    "bypassAgent": "Connect directly to Ping Identity",
-    "bypassAgentDescription": "Bypass the recommended agent connection and configure the connector server to connect directly to Ping Identity.",
+    "createOauthClient": "Create a new OAuth Client",
+    "createOauthClientDescription": "This can be used to connect to the Connector Server",
     "connectorName": "Connector Name",
     "connectors": "Connectors",
     "connectorServer": "Connector Server",
@@ -1058,7 +1058,7 @@
     "newServerModal": {
       "alphaNumDashOnly": "Must only contain letters, numbers, hyphens and underscores",
       "clientIdInUse": "That Client ID is already in use, please choose a different ID",
-      "connectorServerApp": "for the connector server application.",
+      "connectorServerApp": "for the OAuth client application.",
       "connectorServerRegistered": "Connector server registered!",
       "downloadRemote": "<a href='{url}' target='_blank'>Download a connector server</a> based on your needs.",
       "editConnectorServer": "Edit Connector Server",
@@ -1067,7 +1067,7 @@
       "newConnectorServer": "New Connector Server",
       "nextSteps": "Next Steps",
       "registerConnectorServer": "Register your connector server by providing a name and connection settings.",
-      "resetSecret": "Reset the client secret",
+      "resetSecret": "View details or reset the client secret",
       "serverDetails": "Server Details",
       "stepByStep": "Follow the <a href='{url}' target='_blank'>step-by-step instructions</a> to install and configure the connector server."
     }
@@ -1080,6 +1080,7 @@
     "agent": "Agent",
     "algorithm": "Algorithm",
     "algorithmDescription": "Failover ensures that if the primary server fails, service falls back to a designated server. Round robin continuously balances the load among two or more servers.",
+    "allServersAdded": "All servers have been added to the cluster",
     "chooseClusterType": "Choose whether you are clustering connector servers that connect through an agent or directly.",
     "chooseLikeServers": "Choose only servers that have the same connectors installed.",
     "chooseServers": "Choose Servers",
@@ -1104,6 +1105,7 @@
     "removingServer": "Removing server...",
     "roundRobin": "Round Robin",
     "selectServers": "Select any connected server to add it to the cluster.",
+    "server": "Server",
     "serverCluster": "Server Cluster",
     "serverClusterDetails": "Server Cluster Details",
     "servers": "Servers",
