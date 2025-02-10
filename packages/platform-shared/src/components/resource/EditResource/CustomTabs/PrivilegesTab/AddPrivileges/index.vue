@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -68,7 +68,7 @@ import {
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
-import IsFraasFilterMixin from '@forgerock/platform-shared/src/mixins/IsFraasFilterMixin';
+import isFraasFilter from '@forgerock/platform-shared/src/utils/fraasUtils';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import PrivilegeEditor from '../PrivilegeEditor';
 
@@ -80,9 +80,6 @@ export default {
     FrPrivilegeEditor: PrivilegeEditor,
     BButton,
   },
-  mixins: [
-    IsFraasFilterMixin,
-  ],
   props: {
     existingNames: {
       type: Array,
@@ -117,6 +114,7 @@ export default {
     },
   },
   methods: {
+    isFraasFilter,
     pluralizeValue,
     /**
     * Adds a new privilege to the newPrivileges array
