@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 const path = require('path');
 const dotenv = require('dotenv');
+const webpack = require('webpack');
 
 function generateTheme() {
   let variableLoad = `
@@ -118,6 +119,13 @@ module.exports = {
         },
         devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
       },
+      plugins: [
+        new webpack.DefinePlugin({
+          // actually false, but we want to use the JIT mode to avoid issues with CSP and vue-i18n
+          // @docs https://vue-i18n.intlify.dev/guide/advanced/optimization#jit-compilation
+          __INTLIFY_JIT_COMPILATION__: true,
+        }),
+      ],
     };
 
     // Disable the use of the 'exports' field in package.json for legacy builds.

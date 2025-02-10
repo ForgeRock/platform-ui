@@ -2909,6 +2909,7 @@ __metadata:
     vue-router: 4.2.4
     vue-spinner: 1.0.3
     vuex: 4.0.2
+    webpack: 5.88.2
     whatwg-fetch: 3.2.0
   languageName: unknown
   linkType: soft
@@ -21819,7 +21820,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.54.0":
+"webpack@npm:5.88.2, webpack@npm:^5.54.0":
   version: 5.88.2
   resolution: "webpack@npm:5.88.2"
   dependencies:
