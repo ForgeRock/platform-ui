@@ -4,6 +4,7 @@
   },
   "login": {
     "agreeToTerms": "By clicking 'Next' you agree to our ",
+    "displayElementsByScripts": "Display elements defined by scripts",
     "invalidRealm": "Invalid Realm",
     "logoAltDefaultLogin": "Company logo displayed on the login page",
     "newHere": "New here?",

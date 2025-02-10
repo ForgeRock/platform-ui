@@ -156,6 +156,7 @@ of the MIT license. See the LICENSE file for details. -->
                         </div>
                         <input
                           v-if="showScriptElms"
+                          :aria-label="$t('login.displayElementsByScripts')"
                           id="loginButton_0"
                           role="button"
                           type="submit"
@@ -362,6 +363,7 @@ of the MIT license. See the LICENSE file for details. -->
                     </div>
                     <input
                       v-if="showScriptElms"
+                      :aria-label="$t('login.displayElementsByScripts')"
                       id="loginButton_0"
                       role="button"
                       type="submit"
