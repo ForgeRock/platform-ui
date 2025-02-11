@@ -127,8 +127,8 @@ export function getReportFieldOptions(payload) {
  *
  * @returns {Promise}
  */
-export function getReportParameterTypes() {
-  return generateAutoAccessReports().get('parameters/types');
+export function getReportParameterTypes(params = '') {
+  return generateAutoAccessReports().get(`parameters/types${params}`);
 }
 
 /**

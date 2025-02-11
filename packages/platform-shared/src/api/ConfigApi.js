@@ -1,12 +1,13 @@
 /**
- * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
-import { generateIdmApi } from './BaseApi';
+import { generateAmApi, generateIdmApi } from './BaseApi';
+import store from '@/store';
 
 /**
   * Returns UI configuration file and additionally includes the server configured language
@@ -24,6 +25,12 @@ export function getUiConfig() {
  */
 export function getConfig(file) {
   return generateIdmApi().get(`config/${file}`);
+}
+
+export function getAMConfig(file) {
+  const path = `realms/root/realms/${store.state.realm}/realm-config`;
+  const apiVersion = 'protocol=2.1,resource=1.1';
+  return generateAmApi({ path }, { apiVersion }).get(`/${file}`);
 }
 
 /**

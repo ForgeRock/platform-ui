@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,9 +8,9 @@
 import { ref } from 'vue';
 import { downloadFile, getFileNameFromContentDisposition } from '@forgerock/platform-shared/src/utils/downloadFile';
 import { exportReport } from '@forgerock/platform-shared/src/api/AutoApi';
-import { requestReportRuns } from '@forgerock/platform-shared/src/utils/reportsUtils';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { requestReportRuns } from '../utils/ReportsApiHelper';
 import store from '@/store';
 import i18n from '@/i18n';
 

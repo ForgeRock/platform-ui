@@ -2210,7 +2210,6 @@
           "eventTypes": "Event Types",
           "startDate": "Report From"
         },
-        "pressEnterToCreateATag": "Press enter to create a tag",
         "roles": "Roles",
         "errors": {
           "couldNotRunReport": "Error running the report.",
@@ -2271,6 +2270,7 @@
       "profileAttribute": "Profile Attribute",
       "parametersSettingDescription": "Define parameters to constrain the results of the report.",
       "parameterType": "Parameter Type",
+      "propertyType": "{property} Property",
       "nameAndValue": "Name and value for each select item.",
       "noColumns": "No columns",
       "noColumnsAdded": "No columns added",

@@ -84,7 +84,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BBadge>
         </template>
         <template #cell(actions)="{ item }">
-          <div class="d-flex justify-content-center align-items-center">
+          <div class="d-flex justify-content-end align-items-center">
             <BButton
               class="pr-3 mr-3"
               variant="outline-primary"

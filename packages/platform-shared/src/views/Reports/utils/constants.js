@@ -8,5 +8,17 @@
 /**
  * Report viewer group name
  */
-// eslint-disable-next-line import/prefer-default-export
 export const REPORT_VIEWER_GROUP = 'report_viewer';
+
+/**
+ * Used for mapping field type names that come from the API,
+ * to the field type names that the <FrField> component consumes.
+ */
+export const FIELD_TYPE_MAP = {
+  array: 'multiselect',
+  boolean: 'boolean',
+  date: 'date',
+  float: 'number',
+  integer: 'number',
+  string: 'string',
+};

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,8 +6,8 @@ of the MIT license. See the LICENSE file for details. -->
   <BContainer>
     <FrHeader
       class="mt-5 mb-4 text-capitalize"
-      :title="reportConfigData ? prettyTemplateName : $t('pageTitles.Reports')"
-      :top-text="reportConfigData ? $t('reports.heading') : $t('common.loadingEtc')" />
+      :title="prettyTemplateName"
+      :top-text="$t('reports.heading')" />
     <BTabs
       content-class="mt-3"
       nav-class="fr-tabs mb-4"

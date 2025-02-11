@@ -10,9 +10,9 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 
-import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
-import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
 import * as Notifications from '@forgerock/platform-shared/src/utils/notification';
+import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
+import * as ReportsApiHelper from './utils/ReportsApiHelper';
 import i18n from '@/i18n';
 import RunHistory from './RunHistory';
 import HistoryStubs from './ReportHistoryStubs';
@@ -52,7 +52,7 @@ describe('Run History component', () => {
 
     describe('on data load initial table view', () => {
       beforeEach(() => {
-        ReportsUtils.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
+        ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
         wrapper = setup({
           newReportJobId: 'job_0123',
           reportConfig: {},
@@ -76,13 +76,13 @@ describe('Run History component', () => {
       });
 
       it('displays a "running" state on any report that has a status of "RUNNING" until the report returns a state other than "RUNNING"', async () => {
-        ReportsUtils.requestReportRuns = jest.fn()
+        ReportsApiHelper.requestReportRuns = jest.fn()
           .mockReturnValueOnce(Promise.resolve([{
             createDate: '2024-11-22T20:10:21.901960639Z',
             exportCsvStatus: 'EXPORT_SUCCESS',
             exportJsonStatus: null,
-            parameters: '{"org_names":["Sales"], "realm": "alpha"}',
-            reportConfig: '{"parameters": {"org_names": {}, "realm": {}}}',
+            parameters: '{"org_names":["Sales"],"startDate":"2024-01-12T00:00:00.000Z","endDate":"2025-01-12T00:00:00.000Z"}',
+            reportConfig: '{"parameters":{"org_names":{label:"Organization Names"},"startDate":{label:"Timeframe"},"endDate":{label:"Timeframe"}}',
             runId: 'job_0123',
             status: 'RUNNING',
           }]))
@@ -90,8 +90,8 @@ describe('Run History component', () => {
             createDate: '2024-11-22T20:10:21.901960639Z',
             exportCsvStatus: 'EXPORT_SUCCESS',
             exportJsonStatus: null,
-            parameters: '{"org_names":["Sales"], "realm": "alpha"}',
-            reportConfig: '{"parameters": {"org_names": {}, "realm": {}}}',
+            parameters: '{"org_names":["Sales"],"startDate":"2024-01-12T00:00:00.000Z","endDate":"2025-01-12T00:00:00.000Z"}',
+            reportConfig: '{"parameters":{"org_names":{label:"Organization Names"},"startDate":{label:"Timeframe"},"endDate":{label:"Timeframe"}}',
             runId: 'job_0123',
             status: 'COMPLETED_SUCCESS',
           }]));
@@ -182,7 +182,7 @@ describe('Run History component', () => {
       });
 
       it('does not display the "vanity" loading state on the first table entry if there is a missing newReportJobId prop value', async () => {
-        ReportsUtils.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
+        ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
         wrapper = setup({
           reportConfig: {},
           templateName: 'template-name',
@@ -201,7 +201,7 @@ describe('Run History component', () => {
 
   describe('@actions', () => {
     beforeEach(() => {
-      ReportsUtils.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
+      ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
       wrapper = setup({
         reportConfig: {},
         templateName: 'template-name',
@@ -228,11 +228,11 @@ describe('Run History component', () => {
         exportJsonStatus: 'EXPORT_SUCCESS',
       }));
 
-      ReportsUtils.requestExport = jest.fn().mockReturnValue(Promise.resolve({ data: { message: '' } }));
-      ReportsUtils.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(requestReportResponseStub));
+      ReportsApiHelper.requestExport = jest.fn().mockReturnValue(Promise.resolve({ data: { message: '' } }));
+      ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(requestReportResponseStub));
       Notifications.displayNotification = jest.fn();
-      const requestExportSpy = jest.spyOn(ReportsUtils, 'requestExport');
-      const requestReportRunsSpy = jest.spyOn(ReportsUtils, 'requestReportRuns');
+      const requestExportSpy = jest.spyOn(ReportsApiHelper, 'requestExport');
+      const requestReportRunsSpy = jest.spyOn(ReportsApiHelper, 'requestReportRuns');
 
       JSONExportButton.trigger('click');
       await nextTick();
@@ -261,8 +261,8 @@ describe('Run History component', () => {
         exportJsonStatus: 'EXPORT_SUCCESS',
       }));
 
-      ReportsUtils.requestExport = jest.fn().mockReturnValue(Promise.resolve({ data: { message: '' } }));
-      ReportsUtils.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(requestReportResponseStub));
+      ReportsApiHelper.requestExport = jest.fn().mockReturnValue(Promise.resolve({ data: { message: '' } }));
+      ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(requestReportResponseStub));
       Notifications.displayNotification = jest.fn();
 
       JSONExportButton.trigger('click');
@@ -323,7 +323,7 @@ describe('Run History component', () => {
       const RunDetailsDropdownOption = firstTableRow.find('[data-testid="view-run-option"]');
 
       await RunDetailsDropdownOption.trigger('click');
-      expect(wrapper.vm.parametersForDetailsModal).toEqual({ org_names: ['Sales'] });
+      expect(wrapper.vm.parametersForDetailsModal).toEqual([{ label: 'org_names', value: 'Sales' }]);
       expect(wrapper.vm.showDetailsModal).toEqual(true);
     });
   });

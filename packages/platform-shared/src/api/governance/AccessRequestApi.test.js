@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -73,6 +73,28 @@ describe('Access Review API', () => {
     await AccessRequestApi.getRequestType(requestTypeId);
     expect(get).toBeCalledWith(`/governance/requestTypes/${requestTypeId}`);
     expect(BaseApi.generateIgaApi).toBeCalled();
+  });
+
+  it('should fetch all request types correctly', async () => {
+    const params = {
+      pageSize: 10,
+      pagedResultsOffset: 0,
+    };
+
+    await AccessRequestApi.getRequestTypes(params);
+
+    expect(get).toBeCalledWith('/governance/requestTypes?_pageSize=10&_pagedResultsOffset=0');
+  });
+
+  it('should fetch all request types whit a query filter correctly', async () => {
+    const params = {
+      pageSize: 10,
+      pagedResultsOffset: 0,
+    };
+
+    await AccessRequestApi.getRequestTypes(params, 'test request');
+
+    expect(get).toBeCalledWith('/governance/requestTypes?_pageSize=10&_pagedResultsOffset=0&_queryFilter=id%20co%20%22test%20request%22%20or%20displayName%20co%20%22test%20request%22');
   });
 
   it('should call submitCustomRequest endpoint with correct payload and url', async () => {

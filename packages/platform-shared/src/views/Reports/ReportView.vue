@@ -189,7 +189,7 @@ import FrReportViewTable from './ReportViewTable';
 import useExportReport from './composables/ExportReport';
 import useViewReportTable from './composables/ViewReportTable';
 import useRunHistoryTable from './composables/RunHistoryTable';
-import useRunReport from './composables/RunReport';
+import ParametersSchema from './utils/ParametersSchema';
 import i18n from '@/i18n';
 import store from '@/store';
 
@@ -239,18 +239,25 @@ async function setConfigInfo(report) {
   csvStatus.value = report.exportCsvStatus === 'EXPORT_SUCCESS';
   jsonStatus.value = report.exportJsonStatus === 'EXPORT_SUCCESS';
 
-  const reportConfigParameters = JSON.parse(report.reportConfig).parameters;
-  const [paramsWithoutRealm] = [JSON.parse(report.parameters)].map(({ ...parameter }) => parameter);
-  delete paramsWithoutRealm.realm;
-  const { _PARAMETERS_CONTROLLER } = useRunReport();
-  const parametersWithLabels = Object.keys(paramsWithoutRealm).map((paramKey) => {
-    const reportConfigParamLabel = reportConfigParameters[paramKey]?.label;
-    const reportControllerLabel = _PARAMETERS_CONTROLLER[paramKey]?.label;
+  const reportConfig = JSON.parse(report.reportConfig);
+  const reportConfigParameters = reportConfig.parameters;
+  const reportParameters = JSON.parse(report.parameters);
+  const Parameters = ParametersSchema(reportConfig);
+  const parametersWithLabels = Object.keys(reportParameters).map((paramKey) => {
+    let reportConfigParamLabel = reportConfigParameters[paramKey]?.label;
+    if (reportConfigParamLabel === 'Timeframe') {
+      if (paramKey === 'startDate') {
+        reportConfigParamLabel = i18n.global.t('reports.tabs.runReport.timeframe.startDate');
+      } else if (paramKey === 'endDate') {
+        reportConfigParamLabel = i18n.global.t('reports.tabs.runReport.timeframe.endDate');
+      }
+    }
+    const reportControllerLabel = Parameters[paramKey]?.label;
     const label = reportConfigParamLabel || reportControllerLabel || paramKey;
-    const paramValue = paramsWithoutRealm[paramKey];
+    const paramValue = reportParameters[paramKey];
     const value = Array.isArray(paramValue) ? paramValue.join(', ') : paramValue;
-    const parameterIsDate = paramKey === 'startDate' || paramKey === 'endDate';
-    return { label, value: parameterIsDate ? dayjs(value).format('YYYY-MM-DD') : value };
+    const parameterIsDate = !!Date.parse(value);
+    return { label, value: parameterIsDate ? dayjs(value).format('MM/DD/YYYY') : value };
   });
 
   params.value = parametersWithLabels;

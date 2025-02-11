@@ -1,9 +1,7 @@
-<!-- Copyright 2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <VeeForm
     v-slot="{ meta: { valid } }"
@@ -22,20 +20,11 @@ to such license between the licensee and ForgeRock AS. -->
         <FrField
           v-model="parameterName"
           name="parameter-name"
-          validation="whitespace|required"
           :label="$t('common.name')"
-          :placeholder="$t('common.name')" />
+          :placeholder="$t('common.name')"
+          :validation="parameterNameValidation" />
       </BFormGroup>
-      <BFormGroup
-        v-slot="{ ariaDescribedby }"
-        :label="$t('reports.template.parameterType')">
-        <BFormRadioGroup
-          v-model="parameterType"
-          :options="parameterTypeOptions"
-          :aria-describedby="ariaDescribedby"
-          name="parameter-type" />
-      </BFormGroup>
-      <BFormGroup v-if="parameterType === 'user_provided'">
+      <BFormGroup>
         <BFormGroup>
           <FrField
             v-model="inputLabel"
@@ -44,7 +33,56 @@ to such license between the licensee and ForgeRock AS. -->
             :label="$t('reports.template.inputLabel')"
             :placeholder="$t('reports.template.inputLabel')" />
         </BFormGroup>
-        <BFormGroup>
+        <BFormGroup
+          v-if="dataSourceParameterTypes.length"
+          v-slot="{ ariaDescribedby }"
+          :label="$t('reports.template.inputType')">
+          <BFormRadioGroup
+            v-model="inputTypeParameter"
+            name="input-type"
+            :options="parameterInputTypeOptions"
+            :aria-describedby="ariaDescribedby"
+            @change="resetInputTypesValues()" />
+        </BFormGroup>
+        <BFormGroup
+          v-if="inputTypeParameter === 'datasource'"
+          class="mb-0">
+          <BFormGroup>
+            <FrField
+              v-model="dataSourceSelection"
+              name="data-source"
+              type="select"
+              :internal-search="true"
+              :label="$t('reports.template.dataSource')"
+              :options="dataSourceParameterTypes"
+              :validation="inputTypeParameter === 'datasource' ? 'required' : ''">
+              <template #singleLabel="{ option }">
+                {{ getTranslation(option.text.label) }}
+              </template>
+              <template #option="{ option }">
+                {{ getTranslation(option.text.label) }}
+              </template>
+            </FrField>
+          </BFormGroup>
+          <BFormGroup v-if="dataSourceSelection">
+            <FrField
+              v-model="dataSourcePropertySelection"
+              name="data-source-property"
+              type="select"
+              :internal-search="true"
+              :label="$t('reports.template.propertyType', { property: getTranslation(dataSourceSelection.label) })"
+              :options="dataSourceSelection.attributes"
+              :validation="dataSourceSelection ? 'required' : ''">
+              <template #singleLabel="{ option }">
+                {{ getTranslation(option.text) }}
+              </template>
+              <template #option="{ option }">
+                {{ getTranslation(option.text) }}
+              </template>
+            </FrField>
+          </BFormGroup>
+        </BFormGroup>
+        <BFormGroup v-else>
           <FrField
             v-model="inputType"
             name="input-type"
@@ -52,7 +90,7 @@ to such license between the licensee and ForgeRock AS. -->
             validation="required"
             :internal-search="true"
             :label="$t('reports.template.inputType')"
-            :options="parameterTypes">
+            :options="basicParameterTypes">
             <template
               v-for="(slotName, index) in ['singleLabel', 'option']"
               :key="index"
@@ -68,7 +106,7 @@ to such license between the licensee and ForgeRock AS. -->
             :label="$t('reports.template.helpText')"
             :placeholder="$t('common.optionalFieldTitle', {fieldTitle: $t('reports.template.helpText')})" />
         </BFormGroup>
-        <BFormGroup v-if="inputType === 'String'">
+        <BFormGroup v-if="showMultivaluedCheckbox">
           <FrField
             v-model="multivalued"
             name="multivalued"
@@ -76,7 +114,7 @@ to such license between the licensee and ForgeRock AS. -->
             :label="$t('common.multivalued')" />
         </BFormGroup>
         <BFormGroup
-          v-if="inputType === 'String'"
+          v-if="showEnumsCheckbox"
           class="mb-0">
           <FrField
             v-model="showEnumeratedValues"
@@ -150,16 +188,6 @@ to such license between the licensee and ForgeRock AS. -->
           </BCollapse>
         </BFormGroup>
       </BFormGroup>
-      <BFormGroup v-else>
-        <FrField
-          v-model="profileAttribute"
-          name="profile-attribute"
-          type="select"
-          validation="required"
-          :internal-search="true"
-          :label="$t('reports.template.profileAttribute')"
-          :options="profileAttributes" />
-      </BFormGroup>
       <template #modal-footer="{ cancel }">
         <div class="d-flex">
           <BButton
@@ -207,6 +235,18 @@ import i18n from '@/i18n';
 // Definitions
 const emit = defineEmits(['update-parameter']);
 const props = defineProps({
+  basicParameterTypes: {
+    type: Array,
+    default: () => [],
+  },
+  dataSourceParameterTypes: {
+    type: Array,
+    default: () => [],
+  },
+  existingParameter: {
+    type: Object,
+    default: () => ({}),
+  },
   isSaving: {
     type: Boolean,
     default: false,
@@ -215,15 +255,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  parameterTypes: {
-    type: Array,
-    default: () => [],
-  },
-  existingParameter: {
-    type: Object,
-    default: () => ({}),
-  },
-  profileAttributes: {
+  parameterKeys: {
     type: Array,
     default: () => [],
   },
@@ -236,25 +268,24 @@ const enumeratedValues = ref([{
 }]);
 const modalId = 'report-parameters-modal';
 const parameterName = ref('');
-const parameterType = ref('user_provided');
-const parameterTypeOptions = [
+const inputTypeParameter = ref('basic');
+const parameterInputTypeOptions = [
   {
-    text: i18n.global.t('reports.template.userProvided'),
-    value: 'user_provided',
+    text: i18n.global.t('common.basic'),
+    value: 'basic',
   },
-  // Purposefully commented out since this functionality is not currently
-  // available to be handled by the API, but will be in the near future.
-  // {
-  //   text: i18n.global.t('reports.template.profileAttribute'),
-  //   value: 'profile_attribute',
-  // },
+  {
+    text: i18n.global.t('reports.template.dataSource'),
+    value: 'datasource',
+  },
 ];
 
+const dataSourcePropertySelection = ref(null);
+const dataSourceSelection = ref('');
 const helpText = ref('');
 const inputLabel = ref('');
 const inputType = ref('');
 const multivalued = ref(false);
-const profileAttribute = ref('');
 const showEnumeratedValues = ref(false);
 
 // Functions
@@ -265,6 +296,12 @@ function addEnumeratedValue(index) {
   });
 }
 
+function resetInputTypesValues() {
+  dataSourceSelection.value = '';
+  dataSourcePropertySelection.value = null;
+  inputType.value = '';
+}
+
 function removeEnumeratedValue(index) {
   if (enumeratedValues.value.length > 1) {
     enumeratedValues.value.splice(index, 1);
@@ -273,9 +310,8 @@ function removeEnumeratedValue(index) {
 
 function resetValues() {
   parameterName.value = '';
-  profileAttribute.value = '';
-  parameterType.value = parameterTypeOptions[0].value;
   inputLabel.value = '';
+  inputTypeParameter.value = 'basic';
   inputType.value = '';
   helpText.value = '';
   multivalued.value = false;
@@ -284,57 +320,93 @@ function resetValues() {
     name: '',
     value: '',
   }];
+  resetInputTypesValues();
   emit('hidden');
 }
 
 // Computed
+
 const enumeratedValuesAreEmpty = computed(() => {
   const enumArray = enumeratedValues.value;
   const [firstValue] = enumArray;
   return enumArray.length === 1 && (!firstValue.name || !firstValue.value);
 });
-const formValues = computed(() => {
-  const sharedBody = {
-    parameterName: parameterName.value,
-    parameterType: parameterType.value,
-  };
-  if (parameterType.value === 'user_provided') {
-    return {
-      ...sharedBody,
-      inputLabel: inputLabel.value,
-      inputType: inputType.value,
-      helpText: helpText.value,
-      multivalued: inputType.value !== 'String' ? false : multivalued.value,
-      enumeratedValues: !enumeratedValuesAreEmpty.value && showEnumeratedValues.value
-        ? enumeratedValues.value
-        : [],
-    };
-  }
-  if (parameterType.value === 'profile_attribute') {
-    return {
-      ...sharedBody,
-      profileAttribute: profileAttribute.value,
-    };
-  }
-  return {};
-});
 const existingDefinitionIndex = computed(() => {
   const existingIndex = props.existingParameter.index;
   return existingIndex !== undefined ? existingIndex : -1;
+});
+const parameterNameValidation = computed(() => ({
+  whitespace: true,
+  required: true,
+  unique: props.parameterKeys,
+}));
+const showMultivaluedCheckbox = computed(() => {
+  if (inputTypeParameter.value === 'basic' || inputTypeParameter.value === 'user_provided') {
+    return inputType.value.type === 'string';
+  }
+  if (inputTypeParameter.value === 'datasource') {
+    const attributeType = dataSourcePropertySelection.value?.type;
+    return attributeType === 'string' || attributeType === 'array';
+  }
+  return false;
+});
+const showEnumsCheckbox = computed(() => {
+  if (inputTypeParameter.value === 'basic' || inputTypeParameter.value === 'user_provided') {
+    return inputType.value.type === 'string';
+  }
+  return false;
+});
+const formValues = computed(() => {
+  const dataSourceInputType = {
+    ...(inputTypeParameter.value === 'datasource' && {
+      dataSource: dataSourceSelection.value.type,
+      dataSourceProperty: dataSourcePropertySelection.value?.name,
+      inputType: dataSourcePropertySelection.value?.type,
+      ...(dataSourcePropertySelection.value?.enum && { enumeratedValues: dataSourcePropertySelection.value.enum }),
+    }),
+  };
+  const enumsCondition = !enumeratedValuesAreEmpty.value && showEnumeratedValues.value;
+  const dataType = inputType.value.type === 'array' ? inputType.value.item.type : inputType.value.type;
+
+  return {
+    parameterName: parameterName.value,
+    inputLabel: inputLabel.value,
+    inputType: dataType,
+    helpText: helpText.value,
+    multivalued: showMultivaluedCheckbox.value && multivalued.value,
+    source: inputTypeParameter.value,
+    ...dataSourceInputType,
+    ...(enumsCondition && { enumeratedValues: enumeratedValues.value }),
+  };
 });
 
 // Watchers
 watch(() => props.existingParameter, (parameter) => {
   const { definition } = parameter;
   if (definition) {
+    if (props.dataSourceParameterTypes.length) {
+      dataSourceSelection.value = props.dataSourceParameterTypes.find((option) => option.type === definition.dataSource);
+      dataSourcePropertySelection.value = dataSourceSelection.value?.attributes.find((option) => option.value.name === definition.dataSourceProperty).value;
+    }
+
+    if (definition.source === 'datasource') {
+      inputType.value = props.dataSourceParameterTypes
+        .find((option) => option.type === definition.dataSource)
+        .attributes
+        .find((attribute) => attribute.value.name === definition.dataSourceProperty).value
+        || 'string';
+    } else {
+      inputType.value = props.basicParameterTypes.find((option) => option.value.type === definition.inputType.toLowerCase()).value;
+    }
+
     parameterName.value = definition.parameterName || '';
-    profileAttribute.value = definition.profileAttribute || '';
-    parameterType.value = definition.parameterType || definition[0].value;
     inputLabel.value = definition.inputLabel || '';
-    inputType.value = definition.inputType || '';
+    // user_provided is the old source value for custom parameters so this needs to be taken
+    // into consideration for old reports created prior to the new parameters rewrite IAM-8085.
+    inputTypeParameter.value = definition.source === 'user_provided' ? 'basic' : definition.source;
     helpText.value = definition.helpText || '';
-    multivalued.value = (definition.multivalued && definition.parameterType === 'user_provided') || false;
-    showEnumeratedValues.value = !!(definition.enumeratedValues?.length && definition.inputType === 'String');
+    multivalued.value = definition.multivalued || false;
+    showEnumeratedValues.value = !!definition.enumeratedValues?.length;
     enumeratedValues.value = definition.enumeratedValues?.length ? definition.enumeratedValues : [{
       name: '',
       value: '',

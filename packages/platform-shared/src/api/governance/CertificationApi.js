@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -110,12 +110,19 @@ export function searchCertificates(searchTerm, params) {
 }
 
 /**
- * Get all template names up to a limit of 10,000
- * This is used for template name uniqueness validation
+ * Gets a list of Certification templates
+ * @param {String} searchTerm search for templates that contain this string
+ * @param {Object} params query parameters
  * @returns {Promise}
  */
-export function searchAllTemplateNames() {
-  return generateIgaApi().get('/governance/certification/template?pageSize=10000&fields=name');
+export function getCertificationTemplates(searchTerm, params) {
+  const defaultParams = {
+    pageSize: 10,
+    pageNumber: 0,
+    queryString: searchTerm,
+    sortBy: 'name',
+  };
+  return generateIgaApi().get('/governance/certification/template', { params: { ...defaultParams, ...params } });
 }
 
 /**

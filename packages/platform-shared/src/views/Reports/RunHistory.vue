@@ -38,12 +38,13 @@ of the MIT license. See the LICENSE file for details. -->
 import { ref, watch, onBeforeUnmount } from 'vue';
 import { BCard } from 'bootstrap-vue';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { requestExport, requestReportRuns } from '@forgerock/platform-shared/src/utils/reportsUtils';
 import { downloadFile, getFileNameFromContentDisposition } from '@forgerock/platform-shared/src/utils/downloadFile';
 import { fetchDownload } from '@forgerock/platform-shared/src/api/AutoApi';
 import { useRouter, useRoute } from 'vue-router';
+import dayjs from 'dayjs';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import { requestExport, requestReportRuns } from './utils/ReportsApiHelper';
 import FrRunHistoryTable from './RunHistoryTable';
 import FrReportExportModal from './modals/ReportExportModal';
 import FrRunHistoryDetailsModal from './modals/RunHistoryDetailsModal';
@@ -133,12 +134,29 @@ function viewReport(runId) {
  * @param {Object} item Table item object
  */
 function viewReportRequestSummary(item) {
-  const findOriginalReportData = reportRuns.value.find((original) => original.runId === item.runId);
-  const reportParameterValues = JSON.parse(findOriginalReportData.parameters);
-  const [parametersCopyWithoutRealm] = [reportParameterValues].map(({ ...report }) => report);
+  const reportRun = reportRuns.value.find((original) => original.runId === item.runId);
+  const reportRunParameters = JSON.parse(reportRun.parameters);
+  const reportConfigParameters = JSON.parse(reportRun.reportConfig).parameters;
+  const parametersNameAndValue = Object.keys(reportRunParameters).map((key) => {
+    let { label } = reportConfigParameters[key];
+    let value = reportRunParameters[key];
 
-  delete parametersCopyWithoutRealm.realm;
-  parametersForDetailsModal.value = parametersCopyWithoutRealm;
+    if (label === 'Timeframe' && key === 'startDate') {
+      label = i18n.global.t('reports.tabs.runReport.timeframe.startDate');
+    }
+    if (label === 'Timeframe' && key === 'endDate') {
+      label = i18n.global.t('reports.tabs.runReport.timeframe.endDate');
+    }
+    if (Date.parse(value)) {
+      value = dayjs(value).format('MM/DD/YYYY');
+    }
+    if (Array.isArray(value)) {
+      value = value.join(', ');
+    }
+
+    return { label: (label || key), value };
+  });
+  parametersForDetailsModal.value = parametersNameAndValue;
   tableItemForDetailsModal.value = item;
   showDetailsModal.value = true;
 }

@@ -1,9 +1,8 @@
 /**
- * Copyright 2023-2024 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
@@ -13,7 +12,7 @@ import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
-import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
+import * as ReportsApiHelper from './utils/ReportsApiHelper';
 import i18n from '@/i18n';
 import Report from './Report';
 import {
@@ -76,7 +75,7 @@ describe('Report component that contains the run and history tabs', () => {
 
   describe('@components', () => {
     it('updates the history.pushState when tabs are clicked', async () => {
-      ReportsUtils.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
+      ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
       onMountFetchMocks({ applications: {} });
       autoApi.getReportRuns = jest.fn().mockReturnValue(Promise.resolve({
         result: [{ name: 'my-report', runId: 'job_123', status: 'COMPLETED_SUCCESS' }],
