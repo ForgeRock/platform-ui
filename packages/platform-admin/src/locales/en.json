@@ -4276,7 +4276,10 @@
         "errorMessage": "Error message",
         "notFound": "Form not found",
         "regex": "Regex",
-        "useValidation": "Use validation"
+        "useValidation": "Use validation",
+        "application": {
+          "delete": "Remove Application"
+        }
       }
     },
     "workflows": {
