@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       :disable-save="disableTemplateSave"
       :report-state="reportState"
       :is-saving="isSavingTemplate"
-      :template-name="templateName"
+      :template-name="reportDetails.name"
       @delete="bvModal.show('deleteModal')"
       @save="saveTemplateFromHeader" />
     <main
@@ -45,11 +45,12 @@ of the MIT license. See the LICENSE file for details. -->
       :is-testing="isTesting"
       @add-data-source="onAddDataSource" />
     <FrReportParametersModal
+      :basic-parameter-types="basicParameterTypeFormat"
+      :data-source-parameter-types="dataSourceParameterTypesFormat"
+      :existing-parameter="definitionBeingEdited.parameters || {}"
       :is-saving="isSavingDefinition"
       :is-testing="isTesting"
-      :parameter-types="parameterTypeLabels"
-      :existing-parameter="definitionBeingEdited.parameters || {}"
-      :profile-attributes="profileAttributeNames"
+      :parameter-keys="parameterUniqueKeys"
       @update-parameter="onUpdateParameter"
       @hidden="delete definitionBeingEdited.parameters" />
     <FrReportFiltersModal
@@ -141,10 +142,10 @@ const {
   fetchReportEntities,
 } = useReportEntities();
 const {
+  basicParameterTypeFormat,
+  dataSourceParameterTypesFormat,
   parameterDefinitions,
-  parameterTypeLabels,
   parametersPayload,
-  profileAttributeNames,
 } = useReportParameters();
 const {
   fetchReportOperators,
@@ -766,6 +767,9 @@ async function onSetRelatedEntityType(joinType, dataSourceName) {
 }
 
 // Computed
+const parameterUniqueKeys = computed(() => findSettingsObject('parameters').definitions
+  .map(({ parameterName }) => parameterName)
+  .filter((key) => key !== definitionBeingEdited.value.parameters?.definition?.parameterName));
 const templateHasAtLeastOneDataSource = computed(() => findSettingsObject('entities').definitions.length);
 
 /**

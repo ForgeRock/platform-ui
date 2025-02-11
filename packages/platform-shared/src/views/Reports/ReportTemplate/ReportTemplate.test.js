@@ -15,7 +15,6 @@ import {
   findByTestId,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
-import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
@@ -26,6 +25,7 @@ ValidationRules.extendRules({
   alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
   whitespace: ValidationRules.getRules(i18n).whitespace,
   required: ValidationRules.getRules(i18n).required,
+  unique: ValidationRules.getRules(i18n).unique,
 });
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
@@ -189,14 +189,6 @@ describe('Component for creating custom analytics reports', () => {
         label: 'String',
         type: 'string',
       }],
-    }));
-
-    ReportsUtils.getManagedObject = jest.fn().mockReturnValue(Promise.resolve({
-      schema: {
-        properties: {
-          _id: { description: 'User ID', type: 'string' },
-        },
-      },
     }));
 
     AutoApi.getAggregateTypes = jest.fn().mockReturnValue(Promise.resolve([{
@@ -581,7 +573,7 @@ describe('Component for creating custom analytics reports', () => {
           await addParameterDefinition();
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter user_provided');
+          const newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter basic');
           expect(newParameterDefinitionHeading.exists()).toBe(true);
         });
 
@@ -593,13 +585,13 @@ describe('Component for creating custom analytics reports', () => {
           const actionsMenu = findByRole(parametersSettingContainer, 'menu');
           const deleteOption = findByText(actionsMenu, 'a', 'deleteDelete');
 
-          let newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter user_provided');
+          let newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter basic');
           expect(newParameterDefinitionHeading.exists()).toBe(true);
 
           await actionsMenu.trigger('click');
           await deleteOption.trigger('click');
 
-          newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter user_provided');
+          newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter basic');
           expect(newParameterDefinitionHeading).toBeUndefined();
         });
 
@@ -608,7 +600,7 @@ describe('Component for creating custom analytics reports', () => {
           await addParameterDefinition();
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter user_provided');
+          const newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter basic');
           expect(newParameterDefinitionHeading.exists()).toBe(true);
 
           const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
@@ -626,7 +618,7 @@ describe('Component for creating custom analytics reports', () => {
           await saveButton.trigger('click');
           await flushPromises();
 
-          const updatedParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'My Updated Parameter user_provided');
+          const updatedParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'My Updated Parameter basic');
           expect(updatedParameterDefinitionHeading.exists()).toBe(true);
         });
       });
@@ -761,6 +753,7 @@ describe('Component for creating custom analytics reports', () => {
 
           // changes the parameter name to a new value
           await nameField.setValue('MyParameterUpdated');
+          await flushPromises();
 
           // saves parameter
           const saveButton = findByText(parametersModal, 'button', 'Save');

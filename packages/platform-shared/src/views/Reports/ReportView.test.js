@@ -1,9 +1,8 @@
 /**
- * Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
@@ -58,7 +57,7 @@ describe('Report View component', () => {
         createDate: '2024-01-12T19:40:36.490Z',
         name: 'my-report',
         parameters: '{"user_names":"reportadmin","roleStatus":["active"],"customParam":"customValue"}',
-        reportConfig: '{"parameters":{"user_names":{"type":"string"},"roleStatus":{"type":"array","items":{"type":"string"}},"customParam":{"type":"string","label":"Custom Parameter"}}}',
+        reportConfig: '{"parameters":{"user_names":{"type":"string","label":"Users"},"roleStatus":{"type":"array","items":{"type":"string"}},"customParam":{"type":"string","label":"Custom Parameter"}}}',
       }],
     }));
   });
@@ -104,16 +103,16 @@ describe('Report View component', () => {
     const reportParametersContainer = reportParameters.find('.flex-row');
     const [usersParam, roleStatusParam, customParam] = reportParametersContainer.findAll('div > small');
 
-    // The reason why this outputs 'Users' is because the logic to determine the label first looks at the
-    // _PARAMETERS_CONTROLLER to see if there is a matching key and uses the label property if it exists.
+    // The reason why this outputs 'Users' is because there is a label
+    // property in the reportConfig parameter.
     expect(usersParam.text()).toBe('Users');
 
-    // The reason why this outputs 'roleStatus' is because there is no matching _PARAMETERS_CONTROLLER
-    // and the reportConfig parameter does not have a label property so it defaults to the parameter key.
+    // The reason why this outputs 'roleStatus' is because the reportConfig parameter
+    // does not have a label property so it defaults to the parameter key.
     expect(roleStatusParam.text()).toBe('roleStatus');
 
-    // The reason why this outputs 'Custom Parameter' is because there is no matching
-    // _PARAMETERS_CONTROLLER and the reportConfig parameter has a label property.
+    // The reason why this outputs 'Custom Parameter' is because there is a label
+    // property in the reportConfig parameter.
     expect(customParam.text()).toBe('Custom Parameter');
   });
 });

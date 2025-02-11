@@ -334,9 +334,8 @@ describe('Report Template Settings component', () => {
         inputType: 'String',
         inputLabel: 'my label',
         multivalued: false,
-        parameterType: 'user_provided',
+        source: 'basic',
         parameterName: 'my parameter',
-        profileAttribute: undefined,
       };
 
       it('ensures that the Parameters definitions only show if the definitions property has items', async () => {
@@ -363,8 +362,8 @@ describe('Report Template Settings component', () => {
         const definitionBody = findByTestId(parametersSettingsContainer, 'definition-body');
         const definitionHeading = definitionBody.find('h4');
         const definitionSubheading = definitionHeading.find('small');
-        expect(definitionHeading.text()).toBe('my parameter user_provided');
-        expect(definitionSubheading.text()).toBe('user_provided');
+        expect(definitionHeading.text()).toBe('my parameter basic');
+        expect(definitionSubheading.text()).toBe('basic');
       });
     });
 

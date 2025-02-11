@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -51,6 +51,21 @@ export function getRequest(requestId) {
  */
 export function getRequestType(requestTypeId) {
   return generateIgaApi().get(`/governance/requestTypes/${requestTypeId}`);
+}
+
+/**
+ * Retrieves request types based on the provided parameters and search text.
+ * @param {object} params - The parameters used to filter the request types.
+ * @param {string} searchText - The search text used to filter the request types.
+ * @returns {Promise} A promise that resolves to the response containing the request types.
+ */
+export function getRequestTypes(params, searchText) {
+  const newParams = { ...params };
+  if (searchText) {
+    newParams.queryFilter = `id co "${searchText}" or displayName co "${searchText}"`;
+  }
+  const queryParams = encodeQueryString(newParams);
+  return generateIgaApi().get(`/governance/requestTypes${queryParams}`);
 }
 
 /**

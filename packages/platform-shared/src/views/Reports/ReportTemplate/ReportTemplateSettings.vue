@@ -156,7 +156,7 @@ const tabItems = [
 
 // Functions
 /**
- * Loads an existing definition if a definitionId is present.
+ * Updates an existing definition
  * @param {String} settingId Setting ID
  * @param {Number} definitionIndex definition index position
  * @param {Object} currentDefinition definition object

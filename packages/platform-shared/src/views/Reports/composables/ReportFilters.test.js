@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,6 @@
 
 import { ref } from 'vue';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
-import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
 import useReportEntities from './ReportEntities';
 import useReportFilters from './ReportFilters';
 import useReportParameters from './ReportParameters';
@@ -28,16 +27,6 @@ describe('@useReportFilters', () => {
     ],
   }));
 
-  ReportsUtils.getManagedObject = jest.fn().mockReturnValue(Promise.resolve({
-    schema: {
-      properties: {
-        _id: { description: 'User ID', type: 'string' },
-        name: { description: 'User Name', type: 'string' },
-        group: { description: 'User Group', type: 'array' },
-      },
-    },
-  }));
-
   AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve({
     data: {
       'applications.name': {
@@ -52,21 +41,21 @@ describe('@useReportFilters', () => {
         class: 'parameter',
         description: 'Help text for my first parameter',
         label: 'My input label',
-        source: 'user_provided',
+        source: 'basic',
         type: 'string',
       },
       agg1: {
         class: 'parameter',
         description: 'Help text for my first parameter',
         label: 'agg1',
-        source: 'user_provided',
+        source: 'basic',
         type: 'multivalued',
       },
       agg2: {
         class: 'parameter',
         description: 'Help text for my first parameter',
         label: 'agg2',
-        source: 'user_provided',
+        source: 'basic',
         type: 'string',
       },
     },
@@ -282,16 +271,6 @@ describe('@useReportFilters', () => {
           ],
         }));
 
-        ReportsUtils.getManagedObject = jest.fn().mockReturnValue(Promise.resolve({
-          schema: {
-            properties: {
-              _id: { description: 'User ID', type: 'string' },
-              name: { description: 'User Name', type: 'string' },
-              group: { description: 'User Group', type: 'array' },
-            },
-          },
-        }));
-
         const apiDefinitionContainsVariable = {
           or: [
             {
@@ -323,14 +302,14 @@ describe('@useReportFilters', () => {
         };
         const paramDefs = {
           agg1: {
-            source: 'user_provided',
+            source: 'basic',
             label: 'agg1',
             description: '',
             type: 'array',
             item: { type: 'string' },
           },
           agg2: {
-            source: 'user_provided',
+            source: 'basic',
             label: 'agg2',
             description: '',
             type: 'string',

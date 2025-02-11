@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -39,17 +39,17 @@ describe('@useReportSettings', () => {
     });
 
     it('generates a new list of definitions with the provided definition object', () => {
-      const newDefinition = { parameterName: 'my parameter name' };
+      const newDefinition = { parameterName: 'MyParameterName' };
       // middle argument is the definition index (if undefined or -1 means it is a new definition)
       const newDefinitionsArray = generateNewDefinitions([], -1, newDefinition);
       expect(newDefinitionsArray.length).toBe(1);
-      expect(newDefinitionsArray[0].parameterName).toBe('my parameter name');
+      expect(newDefinitionsArray[0].parameterName).toBe('MyParameterName');
     });
 
     it('generates a new list of definitions with the provided definition object and existing list', () => {
       const secondDefinition = { parameterName: 'my second parameter' };
       // middle argument is the definition index (if undefined or -1 means it is a new definition)
-      const updatedDefinitionsArray = generateNewDefinitions([{ parameterName: 'my parameter name' }], -1, secondDefinition);
+      const updatedDefinitionsArray = generateNewDefinitions([{ parameterName: 'MyParameterName' }], -1, secondDefinition);
       expect(updatedDefinitionsArray.length).toBe(2);
       expect(updatedDefinitionsArray[1].parameterName).toBe('my second parameter');
     });
@@ -64,17 +64,24 @@ describe('@useReportSettings', () => {
 
     it('outputs an API friendly payload object for parameters', () => {
       const parametersSetting = findSettingsObject('parameters');
-      const newDefinition = { parameterName: 'my parameter name' };
+      const newDefinition = {
+        helpText: 'description text',
+        inputLabel: 'My Parameter Label',
+        inputType: 'string',
+        parameterName: 'MyParameterName',
+        source: 'basic',
+      };
       // middle argument is the definition index (if undefined or -1 means it is a new definition)
       const newDefinitionsArray = generateNewDefinitions([], -1, newDefinition);
 
       parametersSetting.definitions.push(...newDefinitionsArray);
       expect(reportPayload(reportSettings.value)).toEqual({
         parameters: {
-          'my parameter name': {
-            profile_attribute: undefined,
-            source: undefined,
-            type: undefined,
+          MyParameterName: {
+            description: 'description text',
+            label: 'My Parameter Label',
+            source: 'basic',
+            type: 'string',
           },
         },
       });

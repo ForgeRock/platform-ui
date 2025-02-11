@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -19,8 +19,8 @@ describe('@useRunHistoryTable', () => {
     createDate: '2023-10-22T20:10:16.901960639Z',
     exportCsvStatus: 'EXPORT_SUCCESS',
     exportJsonStatus: null,
-    parameters: '{"org_names":["Sales"], "realm": "alpha"}',
-    reportConfig: '{"parameters": {"org_names": {}, "realm": {}}}',
+    parameters: '{"org_names":["Sales"]}',
+    reportConfig: '{"parameters": {"org_names": {}}}',
     runId: 'job_0123',
     status: 'COMPLETED_SUCCESS',
   }];

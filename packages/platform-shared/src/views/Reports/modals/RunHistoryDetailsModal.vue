@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -33,7 +33,9 @@ of the MIT license. See the LICENSE file for details. -->
               <FrRunReportBadges :report-status="tableItem.reportStatus" />
             </BListGroupItem>
           </BListGroup>
-          <FrReportDetails :parameters="props.parameters" />
+          <FrReportDetails
+            v-if="parameters.length"
+            :parameters="parameters" />
         </BCol>
       </BRow>
     </BContainer>
@@ -66,8 +68,8 @@ const props = defineProps({
     default: false,
   },
   parameters: {
-    type: Object,
-    default: () => ({}),
+    type: Array,
+    default: () => [],
   },
   show: {
     type: Boolean,

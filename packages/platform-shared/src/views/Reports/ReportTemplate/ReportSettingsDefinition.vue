@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
               title-tag="h4">
               {{ definition.parameterName }}
               <small class="d-block text-muted">
-                {{ definition.parameterType }}
+                {{ definition.source }}
               </small>
             </BCardTitle>
           </template>

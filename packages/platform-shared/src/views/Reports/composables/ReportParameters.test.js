@@ -1,24 +1,18 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
-import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
 import useReportParameters from './ReportParameters';
 
 describe('@useReportParameters', () => {
-  const {
-    parameterDefinitions,
-    parameterTypeLabels,
-    parametersPayload,
-    profileAttributeNames,
-  } = useReportParameters();
+  const { parameterDefinitions, parametersPayload } = useReportParameters();
 
   const sharedUserProvidedBody = {
-    source: 'user_provided',
+    source: 'basic',
     label: 'paramOne label',
     description: 'param description',
   };
@@ -28,12 +22,11 @@ describe('@useReportParameters', () => {
       value: 'enumVal',
     }],
     helpText: 'param description',
-    inputType: 'String',
+    inputType: 'string',
     inputLabel: 'paramOne label',
     multivalued: true,
     parameterName: 'paramOne',
-    parameterType: 'user_provided',
-    profileAttribute: undefined,
+    source: 'basic',
   };
 
   autoApi.getReportParameterTypes = jest.fn().mockReturnValue(Promise.resolve({
@@ -51,64 +44,47 @@ describe('@useReportParameters', () => {
     ],
   }));
 
-  ReportsUtils.getManagedObject = jest.fn().mockReturnValue(Promise.resolve({
-    schema: {
-      properties: {
-        _id: { description: 'User ID', type: 'string' },
-        name: { description: 'User Name', type: 'string' },
-        group: { description: 'User Group', type: 'array' },
-      },
-    },
-  }));
-
   describe('@unit', () => {
-    const parametersAPIUserProvided = {
+    const parametersAPIBasicEnum = {
       paramOne: {
-        source: 'user_provided',
+        source: 'basic',
         label: 'paramOne label',
         description: 'param description',
-        type: 'string',
+        type: 'array',
+        item: { type: 'string' },
         enum: [{
           name: 'enumName',
           value: 'enumVal',
         }],
-        item: { type: 'string' },
       },
     };
 
-    it('gets the expected parameters data and ensures that parameter types and schema properties output expected lists', async () => {
-      await parameterDefinitions(parametersAPIUserProvided);
-      expect(parameterTypeLabels.value).toEqual(['String', 'Boolean']);
-      expect(profileAttributeNames.value).toEqual(['_id', 'name', 'group']);
-    });
-
     it('outputs a UI friendly data set from an expected API input', async () => {
-      const firstDefinition = await parameterDefinitions(parametersAPIUserProvided);
+      const firstDefinition = await parameterDefinitions(parametersAPIBasicEnum);
       expect(firstDefinition).toEqual([userProvidedEnumeratedMultivalued]);
 
-      const parametersAPIProfileAttribute = {
+      const BasicParameter = {
         mySecondParam: {
+          label: 'My Basic Parameter',
+          description: '',
           type: 'string',
-          source: 'profile_attribute',
-          profile_attribute: '_id',
+          source: 'basic',
         },
       };
 
-      const secondDefinition = await parameterDefinitions(parametersAPIProfileAttribute);
+      const secondDefinition = await parameterDefinitions(BasicParameter);
       expect(secondDefinition).toEqual([{
-        enumeratedValues: [],
-        helpText: undefined,
-        inputType: 'String',
-        inputLabel: undefined,
+        helpText: '',
+        inputType: 'string',
+        inputLabel: 'My Basic Parameter',
         multivalued: false,
         parameterName: 'mySecondParam',
-        parameterType: 'profile_attribute',
-        profileAttribute: '_id',
+        source: 'basic',
       }]);
     });
 
     describe('@payload', () => {
-      describe('parameterType = user_provided', () => {
+      describe('parameterType = basic', () => {
         it('outputs an expected payload with enumerated values and is multivalued', async () => {
           const payload = {
             ...sharedUserProvidedBody,
@@ -185,42 +161,43 @@ describe('@useReportParameters', () => {
         });
       });
 
-      describe('parameterType = profile_attribute', () => {
-        it('outputs an expected payload if the profile_attribute property is a primitive value', () => {
+      describe('parameterType = basic', () => {
+        it('outputs an expected payload if the basic property is a primitive value', () => {
           const profileAttributePrimitive = {
-            id: 'myProfileAttributeParam',
-            parameterType: 'profile_attribute',
-            profileAttribute: '_id',
+            parameterName: 'myProfileAttributeParam',
+            parameterType: 'basic',
           };
           const payload = {
             type: 'string',
-            source: 'profile_attribute',
-            profile_attribute: '_id',
+            source: 'basic',
           };
 
           expect(parametersPayload([profileAttributePrimitive])).toEqual({
             parameters: {
-              [profileAttributePrimitive._id]: payload,
+              [profileAttributePrimitive.parameterName]: payload,
             },
           });
         });
 
-        it('outputs an expected payload if the profile_attribute property has a type of array', () => {
+        it('outputs an expected payload if the basic property has a type of array', () => {
           const profileAttributeArray = {
-            id: 'myProfileAttributeParam',
-            parameterType: 'profile_attribute',
-            profileAttribute: 'group',
+            helpText: '',
+            inputLabel: 'My Basic Parameter',
+            multivalued: true,
+            parameterName: 'MyBasicParam',
+            source: 'basic',
           };
           const payload = {
+            label: 'My Basic Parameter',
+            description: '',
             type: 'array',
-            source: 'profile_attribute',
-            profile_attribute: 'group',
+            source: 'basic',
             item: { type: 'string' },
           };
 
           expect(parametersPayload([profileAttributeArray])).toEqual({
             parameters: {
-              [profileAttributeArray._id]: payload,
+              [profileAttributeArray.parameterName]: payload,
             },
           });
         });

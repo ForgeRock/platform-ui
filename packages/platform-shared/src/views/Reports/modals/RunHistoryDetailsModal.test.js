@@ -11,20 +11,13 @@ import { findByTestId, findByRole } from '@forgerock/platform-shared/src/utils/t
 import dayjs from 'dayjs';
 import i18n from '@/i18n';
 import RunHistoryDetailsModal from './RunHistoryDetailsModal';
-import useRunReport from '../composables/RunReport';
 
-const { _PARAMETERS_CONTROLLER } = useRunReport();
-const allFieldKeys = Object.keys(_PARAMETERS_CONTROLLER);
-const allFieldKeysObject = allFieldKeys.map((key) => {
-  const hasFetch = _PARAMETERS_CONTROLLER[key]?.config?.fetch;
-  return { [key]: hasFetch ? [key] : key };
-});
-const parameters = {};
-allFieldKeysObject.forEach((obj) => {
-  const key = Object.keys(obj);
-  const value = Object.values(obj)[0];
-  parameters[key] = value;
-});
+const parameters = {
+  OAuth2Applications: 'AD1, Adobe 1, AWS 1',
+  Users: 'shin.daniel, joana.baxter, evia.kline, ena.ramos',
+  'Start Date': '02/03/2025 11:59 PM',
+  'End Date': '03/05/2025 11:59 PM',
+};
 
 describe('Run History Details modal component', () => {
   function setup(props) {

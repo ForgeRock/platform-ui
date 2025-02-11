@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,61 +7,58 @@
 
 import { computed, ref } from 'vue';
 import { getReportParameterTypes } from '@forgerock/platform-shared/src/api/AutoApi';
-import { getManagedObject } from '@forgerock/platform-shared/src/utils/reportsUtils';
 
 export default function useReportParameters() {
-  const managedUserSchema = ref({});
-  const parameterTypes = ref([]);
+  const basicParameterTypes = ref([]);
+  const dataSourceParameterTypes = ref([]);
 
   /**
-   * Finds a label for a given parameter type.
-   * @param {String} type parameter type
-   * @returns {String}
-   */
-  function inputTypeLabel(type) {
-    return parameterTypes.value.find((paramType) => paramType.type === type)?.label || '';
-  }
-
-  /**
-   * Gets the required parameters data: parameter types
-   * and the "user" managed object schema properties.
+   * Gets the required parameters data types from the API.
+   * This includes the "basic" and the "datasource" managed object schema properties.
    */
   async function fetchParametersData() {
-    const [paramTypes, userSchema] = await Promise.all([
+    const [basicParamTypes, dataSourceParamTypes] = await Promise.all([
       getReportParameterTypes(),
-      getManagedObject('user'),
+      getReportParameterTypes('?source=datasource'),
     ]);
-    parameterTypes.value = paramTypes.data || [];
-    managedUserSchema.value = userSchema?.schema?.properties || {};
+
+    basicParameterTypes.value = basicParamTypes.data || [];
+    dataSourceParameterTypes.value = dataSourceParamTypes.data || [];
   }
 
   /**
    * Interprets the API data into a UI friendly data set.
-   * @param {Object} definitions list of parameter definitions as they come in from the API
+   * @param {Object} definitions list of parameter definitions as defined by the API
    * @returns {Array}
    */
   async function parameterDefinitions(definitions) {
-    if (!parameterTypes.value.length) {
+    if (!basicParameterTypes.value.length || !dataSourceParameterTypes.value.length) {
       await fetchParametersData();
     }
 
     if (definitions && Object.keys(definitions).length) {
       return Object.entries(definitions).map(([key, val]) => {
-        let inputType = inputTypeLabel(val.type);
+        const dataSourceProperties = {
+          ...(val.source === 'datasource' && {
+            dataSource: val.entity,
+            dataSourceProperty: val.attribute,
+          }),
+        };
+        let inputType = val.type;
 
         if (val.type === 'array') {
-          inputType = inputTypeLabel(val.item.type);
+          inputType = val.item.type;
         }
 
         return {
-          enumeratedValues: val.enum || [],
           helpText: val.description,
           inputType,
           inputLabel: val.label,
           multivalued: !!val.item,
-          parameterType: val.source,
           parameterName: key,
-          profileAttribute: val.profile_attribute,
+          source: val.source || val.parameterType,
+          ...dataSourceProperties,
+          ...(val.enum && { enumeratedValues: val.enum }),
         };
       });
     }
@@ -78,36 +75,33 @@ export default function useReportParameters() {
       return {
         parameters: definitions.map((definition) => {
           const {
-            inputType,
+            dataSource,
+            dataSourceProperty,
+            inputType = 'string',
             parameterName,
             parameterType,
             enumeratedValues,
             inputLabel,
             helpText,
             multivalued,
-            profileAttribute,
+            source,
           } = definition;
+          const dataSourceProperties = {
+            ...(source === 'datasource' && {
+              entity: dataSource,
+              attribute: dataSourceProperty,
+            }),
+          };
 
-          if (parameterType === 'user_provided') {
-            const inputTypeFromLabel = parameterTypes.value.find((paramType) => paramType.label === inputType).type;
-            return {
-              [parameterName]: {
-                source: parameterType,
-                label: inputLabel,
-                description: helpText,
-                type: multivalued ? 'array' : inputTypeFromLabel,
-                ...(multivalued && { item: { type: inputTypeFromLabel } }),
-                ...(enumeratedValues.length && inputType === 'String' && { enum: enumeratedValues }),
-              },
-            };
-          }
-          // profile attribute
           return {
             [parameterName]: {
-              type: managedUserSchema.value[profileAttribute]?.type,
-              source: parameterType,
-              profile_attribute: profileAttribute,
-              ...(managedUserSchema.value[profileAttribute]?.type === 'array' && { item: { type: 'string' } }),
+              source: source || parameterType,
+              label: inputLabel,
+              description: helpText,
+              type: multivalued ? 'array' : inputType,
+              ...dataSourceProperties,
+              ...(multivalued && { item: { type: inputType } }),
+              ...(enumeratedValues?.length && inputType.toLowerCase() === 'string' && { enum: enumeratedValues }),
             },
           };
         }).reduce((a, c) => ({ ...a, ...c }), {}),
@@ -116,13 +110,24 @@ export default function useReportParameters() {
     return {};
   }
 
-  const parameterTypeLabels = computed(() => parameterTypes.value.map(({ label }) => label));
-  const profileAttributeNames = computed(() => Object.keys(managedUserSchema.value).map((key) => key));
+  const basicParameterTypeFormat = computed(() => basicParameterTypes.value.map((param) => ({
+    text: param.label,
+    value: { ...param },
+  })));
+  const dataSourceParameterTypesFormat = computed(() => {
+    if (dataSourceParameterTypes.value.some((obj) => obj.attributes)) {
+      return dataSourceParameterTypes.value.map((obj) => ({
+        ...obj,
+        attributes: obj.attributes?.map((attr) => ({ text: attr.label, value: { ...attr } })),
+      }));
+    }
+    return [];
+  });
 
   return {
+    basicParameterTypeFormat,
+    dataSourceParameterTypesFormat,
     parameterDefinitions,
-    parameterTypeLabels,
     parametersPayload,
-    profileAttributeNames,
   };
 }
