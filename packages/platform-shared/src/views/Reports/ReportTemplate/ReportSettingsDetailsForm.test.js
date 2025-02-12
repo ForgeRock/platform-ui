@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -38,19 +38,17 @@ describe('Report Settings Details Form component', () => {
   let wrapper;
 
   const initialFormData = {
-    value: {
+    'model-value': {
       name: 'Test template',
       description: 'Test template description',
-      report_viewer: false,
       viewers: ['13c0ab62-a072-4e52-ba47-c0ee43d7b9fd'],
     },
   };
 
   const initialFormDataEmpty = {
-    value: {
+    'model-value': {
       name: '',
       description: '',
-      report_viewer: false,
       viewers: [],
     },
   };
@@ -61,48 +59,21 @@ describe('Report Settings Details Form component', () => {
 
   describe('@component empty form', () => {
     beforeEach(async () => {
+      mockAxios(jest.fn().mockResolvedValue(mockedApiResponse));
+
       // Set up wrappers
       wrapper = setup(initialFormDataEmpty);
-      groupReportViewerCheckbox = wrapper.find('input[name="report_viewer"]');
+      await flushPromises();
+
+      groupReportViewerCheckbox = wrapper.find('input[name="reportViewer"]');
       descriptionInput = wrapper.find('textarea[name="description-field"]');
       multiselect = findByRole(wrapper, 'listbox');
       multiselectValues = wrapper.find('.multiselect__tags');
       nameInput = wrapper.find('input[name="name-field"]');
       searchInput = wrapper.find('input[name="data-allowed-viewers"]');
-
-      mockAxios(jest.fn().mockResolvedValue(mockedApiResponse));
-    });
-
-    it('form validity should be false after mount and true after name input filled in', async () => {
-      // Get the emitter
-      const validChange = wrapper.emitted()['valid-change'];
-
-      // False before input added
-      const [isValidStart] = validChange[validChange.length - 1];
-      expect(isValidStart).toBe(false);
-
-      // Set a value into the name input
-      await nameInput.setValue('test');
-
-      await flushPromises();
-
-      // Check the input value
-      expect(nameInput.element.value).toBe('test');
-
-      // True after name input has data
-      const [isValidEnd] = validChange[validChange.length - 1];
-      expect(isValidEnd).toBe(true);
     });
 
     it('correctly loads users', async () => {
-      // Get the dropdown and click on it to open
-      await multiselect.trigger('click');
-
-      // Add a value to the search input to trigger api request
-      searchInput.setValue('test');
-
-      await flushPromises();
-
       // Make sure the options exist in the dropdown
       mockedApiResponse.data.result.forEach((result) => {
         const option = findByText(multiselect, 'div', result.userName);
@@ -111,7 +82,7 @@ describe('Report Settings Details Form component', () => {
     });
 
     it('correctly emits the form data', async () => {
-      const inputChange = wrapper.emitted().input;
+      const inputChange = wrapper.emitted()['update:modelValue'];
       const lastEmittedInputChange = () => inputChange[inputChange.length - 1];
       const nameInputValue = 'test template name';
       const descriptionInputValue = 'test description';
@@ -130,10 +101,10 @@ describe('Report Settings Details Form component', () => {
       const emittedDescription = lastEmittedInputChange()[0].description;
 
       // Check the group checkboxes
-      groupReportViewerCheckbox.setChecked();
+      await groupReportViewerCheckbox.setChecked(true);
       await flushPromises();
 
-      // All checkbox states shouldbe true
+      // All checkbox states should be true
       expect(groupReportViewerCheckbox.element.checked).toBe(true);
 
       // Emitted description should match
@@ -156,13 +127,14 @@ describe('Report Settings Details Form component', () => {
       const emittedOption = lastEmittedInputChange()[0].viewers;
 
       // Emitted description should match
-      expect(emittedOption[0]).toBe(mockedApiResponse.data.result[3]._id);
+      expect(emittedOption[0]).toBe('report_viewer');
+      expect(emittedOption[1]).toBe(mockedApiResponse.data.result[3]._id);
     });
   });
 
   describe('@component data-filled form', () => {
     beforeEach(async () => {
-      mockAxios(jest.fn().mockResolvedValue({
+      mockAxios(jest.fn().mockResolvedValueOnce({
         data: {
           result: [
             {
@@ -174,10 +146,21 @@ describe('Report Settings Details Form component', () => {
             },
           ],
         },
+      }).mockResolvedValueOnce({
+        data: {
+          _id: '13c0ab62-a072-4e52-ba47-c0ee43d7b9fd',
+          profileImage: null,
+          givenName: 'Binni',
+          sn: 'Crinkley',
+          userName: 'Binni@IGATestQA.onmicrosoft.com',
+        },
+
       }));
       // Set up wrappers
       wrapper = setup(initialFormData);
-      groupReportViewerCheckbox = wrapper.find('input[name="report_viewer"]');
+      await flushPromises();
+
+      groupReportViewerCheckbox = wrapper.find('input[name="reportViewer"]');
       descriptionInput = wrapper.find('textarea[name="description-field"]');
       multiselect = findByRole(wrapper, 'listbox');
       multiselectValues = wrapper.find('.multiselect__tags');
@@ -187,16 +170,16 @@ describe('Report Settings Details Form component', () => {
 
     it('fills the correct values into the form', async () => {
       // Name
-      expect(nameInput.element.value).toBe(initialFormData.value.name);
+      expect(nameInput.element.value).toBe(initialFormData['model-value'].name);
 
       // Description
-      expect(descriptionInput.element.value).toBe(initialFormData.value.description);
+      expect(descriptionInput.element.value).toBe(initialFormData['model-value'].description);
 
       // Who Can Run Report Viewer Group checkbox
-      expect(groupReportViewerCheckbox.element.checked).toBe(initialFormData.value.report_viewer);
+      expect(groupReportViewerCheckbox.element.checked).toBe(false);
 
       // Who Can Run Users multiselect
-      const option = findByText(multiselectValues, 'div', 'Binni@IGATestQA.onmicrosoft.com');
+      const option = findByText(multiselectValues, 'div', 'Binni Crinkley');
       expect(option).toBeDefined();
     });
   });

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -85,8 +85,8 @@ of the MIT license. See the LICENSE file for details. -->
         <template v-if="tabItems[index].id === 'detailsTab'">
           <FrReportSettingsDetailsForm
             :is-name-editable="false"
-            :value="value"
-            @input="$emit('input', $event)" />
+            :model-value="reportDetails"
+            @update:modelValue="reportDetails = $event" />
         </template>
       </BTab>
     </BTabs>
@@ -105,7 +105,7 @@ import {
   BTab,
   BTabs,
 } from 'bootstrap-vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrReportDataSourceDefinition from './ReportDataSourceDefinition';
 import FrReportSettingsDefinition from './ReportSettingsDefinition';
@@ -124,7 +124,7 @@ const emit = defineEmits([
   'update-details',
 ]);
 
-defineProps({
+const props = defineProps({
   reportIsLoading: {
     type: Boolean,
     default: false,
@@ -141,6 +141,7 @@ defineProps({
 
 // Globals
 const tabIndex = ref(0);
+const reportDetails = ref(props.value);
 
 const tabItems = [
   {
@@ -203,6 +204,10 @@ function definitionCardStyles(currentIndex, totalItems) {
 
   return classList.join(' ');
 }
+
+watch(reportDetails, (newValue) => {
+  emit('input', newValue);
+}, { deep: true });
 </script>
 
 <style lang="scss" scoped>

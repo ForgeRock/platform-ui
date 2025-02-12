@@ -2061,8 +2061,8 @@
     "exporting": "Exporting...",
     "exportingFile": "Generating {fileType}...",
     "heading": "Reports",
-    "lastRun": "Last run",
     "menu": {
+      "assignReport": "Assign Report",
       "editTemplate": "Edit Template",
       "reportDetails": "Report Details",
       "runHistory": "Run History"
@@ -2082,23 +2082,25 @@
     },
     "newDraft": "A new draft has been created",
     "newReportModal": {
-      "viewersInputLabel": "Search for Users",
-      "usersInputDescription": "Users who can run this report.",
       "descriptionInputLabel": "Description (optional)",
-      "nameInputDescription": "Name for this report.",
       "labelGroups": "Groups",
       "labelViewers": "Who Can Run",
+      "nameInputDescription": "Name for this report.",
+      "reportViewerOption": "Report Viewer Group",
       "title": "New Report",
-      "reportViewerOption": "Report Viewer Group"
+      "usersInputDescription": "Specific users who should be allowed to run this report.",
+      "viewersInputLabel": "Search for Users"
     },
     "newReport": "New Report",
     "noData": "No Report Template found",
     "notAvailable": "Report data not available",
     "noReportData": "Report does not contain any results.",
     "noUserAndGroupData": "There was an error retrieving users Who Can Run",
-    "reportExported": "Report sucessfully exported",
+    "reportExported": "Report successfully exported",
     "run": "Run",
     "saveError": "There was an error saving your new report",
+    "saveViewersError": "Error saving report viewers",
+    "saveViewersSuccess": "Report viewers saved successfully",
     "subtitle": "The following reports are based on pre-configured queries on events and provide insights in an easily understandable format.",
     "search": "Search reports",
     "tableHeadings": {

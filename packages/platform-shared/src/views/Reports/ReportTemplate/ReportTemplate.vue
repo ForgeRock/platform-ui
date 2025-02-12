@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -119,7 +119,6 @@ import FrReportAggregatesModal from '../modals/ReportAggregatesModal';
 import FrReportSortingModal from '../modals/ReportSortingModal';
 import FrRelatedEntitySettingsModal from '../modals/RelatedEntitySettingsModal';
 import i18n from '@/i18n';
-import { defaultGroups } from '../composables/ManagedUsers';
 
 defineProps({
   isTesting: {
@@ -206,7 +205,6 @@ const relatedEntityDefinitionToEdit = ref({});
 const reportDetails = ref({
   name: '',
   description: '',
-  report_viewer: false,
   viewers: [],
 });
 const reportIsLoading = ref(true);
@@ -221,10 +219,9 @@ const templateName = route.params.template.replace(/-/g, ' ');
  */
 async function saveTemplate(settings = reportSettings.value) {
   const payload = reportPayload(settings);
-  const groupViewers = defaultGroups.filter((group) => reportDetails.value[group]);
 
   try {
-    await saveAnalyticsReport(templateId, payload, [...reportDetails.value.viewers, ...groupViewers], reportDetails.value.description);
+    await saveAnalyticsReport(templateId, payload, reportDetails.value.viewers, reportDetails.value.description);
     if (reportState === 'published') {
       router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: templateId.toLowerCase() } });
     }
@@ -715,10 +712,10 @@ const templateHasAtLeastOneDataSource = computed(() => findSettingsObject('entit
  * Check to see if detail settings has changed so we can set the save button disabled status accordingly
  */
 watch(reportDetails, (newVal, oldVal) => {
-  if (!isEqual(newVal, oldVal)) {
+  if (!reportIsLoading.value && !isEqual(newVal, oldVal)) {
     disableTemplateSave.value = false;
   }
-});
+}, { deep: true });
 
 // Start
 (async () => {
@@ -746,10 +743,11 @@ watch(reportDetails, (newVal, oldVal) => {
       } = JSON.parse(reportConfig);
 
       // Sets the Details tab information
-      reportDetails.value.name = startCase(templateName.toLowerCase());
-      reportDetails.value.description = description;
-      reportDetails.value.report_viewer = viewers.includes('report_viewer');
-      reportDetails.value.viewers = viewers ? viewers.filter((item) => !defaultGroups.includes(item)) : [];
+      reportDetails.value = {
+        name: startCase(templateName.toLowerCase()),
+        description,
+        viewers,
+      };
 
       // Populates the settings definitions
       findSettingsObject('entities').definitions.push(...await entityDefinitions(entities, fields));

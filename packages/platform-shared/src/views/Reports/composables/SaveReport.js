@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -30,15 +30,17 @@ export default function useSaveReport() {
   /**
    * Calls the useFetchApi composable to save the report data.
    *
-   * @param {Object} payload - Name, description, and viewers values from New Report modal
+   * @param {Object} payload - Name, description, viewers and report configuration values to be stored
    */
   async function saveReport(payload) {
-    const { description, name, viewers } = payload;
+    const {
+      description, name, viewers, reportConfig,
+    } = payload;
 
     // We replace all spaces with dashes. This is a requirement of the backend.
     const normalName = name.replaceAll(' ', '-').toUpperCase();
 
-    execute(0, normalName, {}, viewers, description);
+    execute(0, normalName, reportConfig ? JSON.parse(reportConfig) : {}, viewers, description);
   }
 
   return {

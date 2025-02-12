@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -56,5 +56,32 @@ describe('@composable', () => {
     expect(saveReportError.value.message).toBe(rejectValue);
     expect(saveReportPending.value).toBe(false);
     expect(saveReportReady.value).toBe(false);
+  });
+
+  it('should save report with the correct payload', async () => {
+    // Mock save report success response
+    axios.create = jest.fn().mockReturnValue({
+      post: jest.fn(() => (successVal)),
+    });
+
+    // Use the composable
+    const {
+      saveReport,
+    } = useSaveReport();
+
+    // Call the save function
+    const reportConfig = '{"version":"v2","entities":[{"entity":"users"}],"fields":[{"label":"Given Name","value":"users.givenName"},{"label":"Account Status","value":"users.accountStatus"},{"label":"City","value":"users.city"}]}';
+    saveReport({
+      name: 'payloadName', description: 'payloadDescription', viewers: [1, 2, 3], reportConfig,
+    });
+    await flushPromises();
+
+    // Get the expected values
+    expect(axios.create).toHaveBeenCalled();
+    expect(axios.create().post).toHaveBeenCalledWith('templates?_action=create&templateType=draft', {
+      reportTemplate: {
+        description: 'payloadDescription', name: 'PAYLOADNAME', reportConfig: '{"version":"v2","entities":[{"entity":"users"}],"fields":[{"label":"Given Name","value":"users.givenName"},{"label":"Account Status","value":"users.accountStatus"},{"label":"City","value":"users.city"}]}', viewers: [1, 2, 3],
+      },
+    });
   });
 });

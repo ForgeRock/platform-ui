@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,8 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
       class="p-0"
       no-caret
       right
-      toggle-class="text-decoration-none p-0"
       variant="link"
+      :toggle-class="`text-decoration-none p-0 ${toggleClass}`"
       :data-testid="`actions-${testId}`">
       <template #button-content>
         <FrIcon
@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrIcon
           icon-class="mr-2"
           name="edit">
-          {{ $t('common.edit') }}
+          {{ editOptionText || $t('common.edit') }}
         </FrIcon>
       </BDropdownItem>
       <!--
@@ -145,11 +145,25 @@ export default {
       type: Boolean,
     },
     /**
+     * Text to display for the edit option
+     */
+    editOptionText: {
+      default: '',
+      type: String,
+    },
+    /**
      * Enables a dropdown option to activate or deactivate the item in the current row
      */
     showActiveToggle: {
       default: false,
       type: Boolean,
+    },
+    /**
+     * Class to apply to the toggle button
+     */
+    toggleClass: {
+      default: '',
+      type: String,
     },
     /**
      * Shows whether the active toggle is currently active or inactive

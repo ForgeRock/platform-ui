@@ -118,7 +118,7 @@ export async function requestExport(runId, action, template, format) {
  * For all runs: { name }
  * For a single run: { runId, name }
  * @param {Object} params query params
- * @returns {Array}
+ * @returns {Promise<Array>}
  */
 export async function requestReportRuns(params) {
   try {

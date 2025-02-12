@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,10 +16,9 @@ of the MIT license. See the LICENSE file for details. -->
     @hidden="handleModalHide"
     @ok="handleNextClick">
     <FrReportSettingsDetailsForm
-      v-model="newReportFormData"
-      :is-testing="isTesting"
+      :model-value="newReportFormData"
       :report-names="reportNames"
-      @valid-change="valid = $event" />
+      @update:modelValue="newReportFormData = $event" />
     <template #modal-footer="{ cancel }">
       <BButton
         variant="link"
@@ -28,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BButton>
       <FrButtonWithSpinner
         :button-text="submitButtonText"
-        :disabled="!valid || reportIsSaving"
+        :disabled="!meta.valid || reportIsSaving"
         :show-spinner="reportIsSaving"
         :spinner-text="submitButtonText"
         @click="handleNextClick" />
@@ -44,9 +43,11 @@ import { startCase } from 'lodash';
 import { BButton, BModal } from 'bootstrap-vue';
 import { computed, ref, watch } from 'vue';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
-import { defaultGroups } from '../composables/ManagedUsers';
+import { useForm } from 'vee-validate';
 import FrReportSettingsDetailsForm from '../ReportTemplate/ReportSettingsDetailsForm';
 import i18n from '@/i18n';
+
+const { meta } = useForm();
 
 // globals
 const emit = defineEmits(['duplicate-report', 'hidden', 'new-report-save']);
@@ -68,11 +69,9 @@ const props = defineProps({
     default: () => [],
   },
 });
-const valid = ref(false);
 const newReportFormData = ref({
   name: '',
   description: '',
-  report_viewer: false,
   viewers: [],
 });
 
@@ -83,7 +82,6 @@ const newReportFormData = ref({
 function resetFormValues() {
   newReportFormData.value.name = '';
   newReportFormData.value.description = '';
-  newReportFormData.value.report_viewer = false;
   newReportFormData.value.viewers = [];
 }
 
@@ -100,15 +98,14 @@ function handleModalHide() {
  */
 function handleNextClick() {
   const { name, description, viewers } = newReportFormData.value;
-  const checkedGroups = defaultGroups.filter((group) => newReportFormData.value[group]);
   const emitType = Object.keys(props.reportDataForDuplication).length ? 'duplicate-report' : 'new-report-save';
 
   emit(emitType, {
     description,
     name,
-    viewers: [...checkedGroups, ...viewers],
+    viewers,
     // conditional properties
-    ...(emitType === 'duplicate-report' && { originalReportName: props.reportDataForDuplication.id }),
+    ...(emitType === 'duplicate-report' && { originalReportName: props.reportDataForDuplication.name }),
     ...(emitType === 'duplicate-report' && { status: props.reportDataForDuplication.status }),
   });
 }
@@ -124,10 +121,9 @@ const submitButtonText = computed(() => (Object.keys(props.reportDataForDuplicat
 // Watchers
 watch(() => props.reportDataForDuplication, (report) => {
   if (report && Object.keys(report).length) {
-    newReportFormData.value.name = report.id ? i18n.global.t('common.copyOfItem', { item: startCase(report.id.toLowerCase()) }) : '';
+    newReportFormData.value.name = report.name ? i18n.global.t('common.copyOfItem', { item: startCase(report.name.toLowerCase()) }) : '';
     newReportFormData.value.description = report.description || '';
-    newReportFormData.value.viewers = report.viewers ? report.viewers.filter((viewer) => !viewer.includes('report_viewer')) : [];
-    newReportFormData.value.report_viewer = report.viewers ? report.viewers.includes('report_viewer') : false;
+    newReportFormData.value.viewers = report.viewers || [];
   } else {
     resetFormValues();
   }

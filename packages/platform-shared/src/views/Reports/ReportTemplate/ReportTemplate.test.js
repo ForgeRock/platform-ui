@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -216,6 +216,17 @@ describe('Component for creating custom analytics reports', () => {
         ],
       },
     }));
+
+    managedResourceApi.getManagedResource = jest.fn().mockResolvedValue({
+      data: {
+        _id: 'reportadmin',
+        sn: 'Doe',
+        givenName: 'John',
+        profileImage: 'image',
+        userName: 'johndoe',
+      },
+    });
+
     jest.useFakeTimers();
     wrapper = setup();
     jest.clearAllMocks();

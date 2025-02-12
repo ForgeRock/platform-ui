@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,7 +9,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { findByText, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import NewReportModal from './NewReportModal';
-import { mockAxios, testData as mockedApiReponse } from '../__mocks__/mocks';
+import { mockAxios, testData as mockedApiResponse } from '../__mocks__/mocks';
 import i18n from '@/i18n';
 
 ValidationRules.extendRules({
@@ -40,7 +40,10 @@ describe('New Report Modal component', () => {
   let wrapper;
 
   beforeEach(async () => {
+    mockAxios(jest.fn().mockResolvedValue(mockedApiResponse));
+
     wrapper = setup();
+    await flushPromises();
 
     descriptionInput = wrapper.find('textarea[name="description-field"]');
     multiselect = findByRole(wrapper, 'listbox');
@@ -49,8 +52,6 @@ describe('New Report Modal component', () => {
     cancelButton = findByText(footer, 'button', 'Cancel');
     saveButton = findByText(footer, 'button', 'Next');
     searchInput = wrapper.find('input[name="data-allowed-viewers"]');
-
-    mockAxios(jest.fn().mockResolvedValue(mockedApiReponse));
   });
 
   afterEach(() => {
@@ -111,11 +112,11 @@ describe('New Report Modal component', () => {
       const [[{ description, name, viewers }]] = wrapper.emitted()['new-report-save'];
       expect(name).toBe(nameInputValue);
       expect(description).toBe(descriptionInputValue);
-      expect(viewers).toStrictEqual([mockedApiReponse.data.result[3]._id]);
+      expect(viewers).toStrictEqual([mockedApiResponse.data.result[3]._id]);
     });
 
     it('correctly emits the form data for a duplicate report', async () => {
-      await wrapper.setProps({ reportDataForDuplication: { id: 'MY-REPORT' } });
+      await wrapper.setProps({ reportDataForDuplication: { name: 'MY-REPORT' } });
 
       const descriptionInputValue = 'test description';
 
@@ -143,7 +144,7 @@ describe('New Report Modal component', () => {
       const [[{ description, name, viewers }]] = wrapper.emitted()['duplicate-report'];
       expect(name).toBe('Copy of My Report');
       expect(description).toBe(descriptionInputValue);
-      expect(viewers).toStrictEqual([mockedApiReponse.data.result[3]._id]);
+      expect(viewers).toStrictEqual([mockedApiResponse.data.result[3]._id]);
     });
 
     it('correctly resets the form data', async () => {
@@ -172,13 +173,14 @@ describe('New Report Modal component', () => {
       // Only way to trigger the @hidden <BModal> event hook
       wrapper.vm.handleModalHide();
       await flushPromises();
+      await wrapper.vm.$nextTick();
 
       // Name & description are cleared
       expect(nameInput.element.value).toBe('');
       expect(descriptionInput.element.value).toBe('');
 
       // Multiselect is cleared
-      const option = findByText(multiselect, 'div', mockedApiReponse.data.result[3].userName);
+      const option = findByText(multiselect, 'div', `${mockedApiResponse.data.result[3].givenName} ${mockedApiResponse.data.result[3].sn}`);
       expect(option).toBeDefined();
     });
 
@@ -235,7 +237,7 @@ describe('New Report Modal component', () => {
       let nameInputValue = nameInput.element.value;
       expect(nameInputValue).toBe('');
 
-      await wrapper.setProps({ reportDataForDuplication: { id: 'MY-REPORT', state: 'published' } });
+      await wrapper.setProps({ reportDataForDuplication: { name: 'MY-REPORT' } });
 
       nameInputValue = nameInput.element.value;
       expect(nameInputValue).toBe('Copy of My Report');

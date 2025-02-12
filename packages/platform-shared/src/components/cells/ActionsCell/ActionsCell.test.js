@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -173,5 +173,35 @@ describe('Actions cell actions and renders', () => {
 
     dropdownActiveToggle.trigger('click');
     expect(wrapper.emitted('toggle-clicked')).toBeTruthy();
+  });
+
+  it('custom edit option text correctly rendered', () => {
+    const wrapper = mount(ActionsCell, {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
+        testId: '0',
+        editOption: true,
+        editOptionText: 'Custom Edit',
+      },
+    });
+    const dropdownEdit = findByTestId(wrapper, 'dropdown-edit-0');
+    expect(dropdownEdit.text()).toContain('Custom Edit');
+  });
+
+  it('custom classes applied to toggle button properly', () => {
+    const wrapper = mount(ActionsCell, {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
+        testId: '0',
+        toggleClass: 'custom-class',
+      },
+    });
+
+    const dropdownToggle = findByTestId(wrapper, 'actions-0').find('.dropdown-toggle');
+    expect(dropdownToggle.classes()).toContain('custom-class');
   });
 });

@@ -482,9 +482,21 @@ a.card {
   width: 150px;
 }
 
+.w-160px {
+  width: 160px;
+}
+
+.w-250px {
+  width: 250px;
+}
+
 @media (min-width: 992px) {
   .table {
     table-layout: fixed;
+  }
+
+  .w-lg-auto {
+    width: auto !important;
   }
 }
 

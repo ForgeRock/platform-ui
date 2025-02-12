@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -216,7 +216,7 @@ const router = createRouter({
         {
           path: '',
           name: 'Reports',
-          component: () => import('@forgerock/platform-shared/src/views/Reports/ReportsGrid.vue'),
+          component: () => import('@forgerock/platform-shared/src/views/Reports/Reports.vue'),
         },
         {
           path: 'run/:state/:template',

@@ -1,18 +1,19 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { nextTick } from 'vue';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { findByText, findAllByTestId, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import ReportTemplateSettings from './ReportTemplateSettings';
 import stubs from './ReportTemplateSettingsStubs';
+import * as ManagedResourceApi from '@/api/ManagedResourceApi';
 
 ValidationRules.extendRules({
   alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
@@ -38,6 +39,27 @@ describe('Report Template Settings component', () => {
 
   describe('@component', () => {
     beforeEach(async () => {
+      ManagedResourceApi.getManagedResourceList = jest.fn().mockResolvedValue({
+        data: {
+          result: [
+            {
+              _id: '1',
+              sn: 'Doe',
+              givenName: 'John',
+              profileImage: 'image',
+              userName: 'johndoe',
+            },
+            {
+              _id: '2',
+              sn: 'Doe',
+              givenName: 'Jane',
+              profileImage: 'image',
+              userName: 'janedoe',
+            },
+          ],
+        },
+      });
+
       wrapper = setup();
     });
 
@@ -376,6 +398,25 @@ describe('Report Template Settings component', () => {
         const sortingSettingsContainer = findByTestId(wrapper, 'sort-settings-container');
         const definitionBody = findByTestId(sortingSettingsContainer, 'definition-body');
         expect(definitionBody.exists()).toBe(false);
+      });
+    });
+
+    describe('@details', () => {
+      it('input event is emitted if details change', async () => {
+        const viewersSelect = wrapper.find('#data-allowed-viewers');
+        const viewersOptions = viewersSelect.findAll('.multiselect__option');
+        await viewersOptions[0].trigger('click');
+
+        await flushPromises();
+
+        expect(wrapper.emitted('input')).toBeTruthy();
+        expect(wrapper.emitted('input')[1][0]).toEqual({
+          description: '',
+          name: '',
+          viewers: [
+            '1',
+          ],
+        });
       });
     });
   });
