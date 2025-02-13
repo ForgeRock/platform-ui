@@ -255,7 +255,7 @@ describe('Report Template Settings component', () => {
           name: 'roles',
           label: 'roles',
         }],
-        selectedColumns: ['applications.name'],
+        selectedColumns: [{ path: 'applications.name', order: 0 }],
         selectedRelatedDataSources: ['roles'],
       };
 

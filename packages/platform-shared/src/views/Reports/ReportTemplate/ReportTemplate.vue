@@ -19,7 +19,9 @@ of the MIT license. See the LICENSE file for details. -->
           :data-sources="findSettingsObject('entities').definitions"
           :aggregates="findSettingsObject('aggregate').definitions"
           @update-table-entry-label="onUpdateTableEntryLabel"
-          @disable-template-save="disableTemplateSave = $event" />
+          @update-table-column-order="onColumnOrderUpdate"
+          @disable-template-save="disableTemplateSave = $event"
+        />
         <FrReportTemplateSettings
           v-model="reportDetails"
           :report-is-loading="reportIsLoading"
@@ -101,7 +103,7 @@ import { displayNotification, showErrorMessage } from '@forgerock/platform-share
 import { deleteAnalyticsReport, getReportTemplates, saveAnalyticsReport } from '@forgerock/platform-shared/src/api/AutoApi';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import { isEqual, startCase } from 'lodash';
+import { isEqual, startCase, cloneDeep } from 'lodash';
 import useReportSettings from '../composables/ReportSettings';
 import useReportParameters from '../composables/ReportParameters';
 import useReportEntities from '../composables/ReportEntities';
@@ -310,14 +312,48 @@ async function saveTemplateAndUpdateSettings(settingsId, definitionIndex, update
 }
 
 /**
- * Updates the list of selected columns.
+ * Updates the list of selected columns. Adds, removes, and reorders the selected columns.
  * @param {Number} defIndex Definition index position
  * @param {Array} columns Selected data source columns
  */
 function onSetColumnSelections(defIndex, columns) {
-  const { selectedColumns } = findSettingsObject('entities').definitions[defIndex];
-  selectedColumns.splice(0);
-  selectedColumns.push(...columns);
+  const entitiesDefs = cloneDeep(findSettingsObject('entities').definitions);
+  const activeDef = entitiesDefs[defIndex];
+  const prevColumns = activeDef.selectedColumns;
+  const currColumns = columns;
+  let columnIndexToDelete;
+
+  // Delete a column
+  if (prevColumns.length > currColumns.length) {
+    const diff = prevColumns.filter((column) => !currColumns.includes(column.path));
+    const remaining = prevColumns.filter((column) => currColumns.includes(column.path));
+    columnIndexToDelete = diff[0].order;
+    activeDef.selectedColumns = remaining;
+  }
+
+  // Add a column
+  if (currColumns.length > prevColumns.length) {
+    // Get the total amount of active columns across all definitions
+    let selectedColumnsLength = 0;
+    entitiesDefs.forEach((item) => {
+      selectedColumnsLength += item.selectedColumns.length;
+    });
+
+    const diff = currColumns.filter((column) => !prevColumns.map((prevColumn) => prevColumn.path).includes(column));
+    activeDef.selectedColumns.push({ path: diff[0], order: selectedColumnsLength });
+  }
+
+  // Reorder the remaining selected columns
+  entitiesDefs.forEach((diff) => {
+    diff.selectedColumns.forEach((column) => {
+      if (column.order > columnIndexToDelete) {
+        column.order -= 1;
+      }
+    });
+  });
+
+  // Update the entities array with the corrected data
+  findSettingsObject('entities').definitions = cloneDeep(entitiesDefs);
   disableTemplateSave.value = false;
 }
 
@@ -380,6 +416,30 @@ function onUpdateTableEntryLabel(settingsId, id, inputText) {
     sortDefinitions.push(...updatedSortDefinitions);
   }
 
+  disableTemplateSave.value = false;
+}
+
+/**
+ * Callback used when a drag-and-drop column header event is completed.
+ * Creates a new array with the new order of column headers based on where the table column was moved to,
+ * and sends that array to the function handling the update logic.
+ * @param {Number} newIndex - Array index where the element being moved will be added to
+ * @param {Number} oldIndex - Array index where the element being moved was previously
+ */
+function onColumnOrderUpdate(newIndex, oldIndex) {
+  const entities = findSettingsObject('entities').definitions;
+  const diff = oldIndex - newIndex;
+  const moveAmt = diff / Math.abs(diff);
+
+  entities.forEach((entity) => {
+    entity.selectedColumns.forEach((column) => {
+      if (column.order === oldIndex) {
+        column.order = newIndex;
+      } else if (column.order >= Math.min(newIndex, oldIndex) && column.order <= Math.max(newIndex, oldIndex)) {
+        column.order += moveAmt;
+      }
+    });
+  });
   disableTemplateSave.value = false;
 }
 

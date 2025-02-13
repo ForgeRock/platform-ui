@@ -25,35 +25,50 @@ to such license between the licensee and ForgeRock AS. -->
         ref="entityColumnSelectionTable"
         responsive>
         <BThead>
-          <BTr>
-            <BTh
-              v-for="(column, index) in tableEntries"
-              :key="index"
-              class="p-0">
-              <FrField
-                :floating-label="false"
-                :input-class="`
-                  ${index !== 0 ? 'px-3' : ''}
-                  border-0
-                  font-weight-bold
-                  rounded-0
-                  py-3
-                  data-source-label-input
-                `"
-                :name="column.label"
-                :placeholder="$t('common.label')"
-                :value="column.context === 'AGGREGATE' ? column.label : column.columnLabel"
-                @input="updateLabel(column, $event)"
-                type="string" />
-            </BTh>
-          </BTr>
+          <Draggable
+            v-model="tableEntries"
+            drag-class="drag-item"
+            handle=".handle"
+            item-key="path"
+            ghost-class="ghost-item"
+            tag="BTr"
+            :force-fallback="true"
+            :move="handleMove"
+            @change="handleColumnOrderUpdate"
+          >
+            <template #item="{ element }">
+              <BTh
+                class="p-0"
+                role="columnheader">
+                <div class="d-flex">
+                  <FrField
+                    class="flex-grow-1"
+                    input-class="th-input border-0 font-weight-bold rounded-0 py-3 data-source-label-input"
+                    :floating-label="false"
+                    :name="element.label"
+                    :placeholder="$t('common.label')"
+                    :value="element.context === 'AGGREGATE' ? element.label : element.columnLabel"
+                    @input="updateLabel(element, $event)"
+                    type="string" />
+                  <BButton
+                    v-if="tableEntries.length > 1 && element.context !== 'AGGREGATE'"
+                    class="cursor-grab handle px-2"
+                    variant="link text-dark"
+                  >
+                    <FrIcon
+                      name="drag_indicator" />
+                  </BButton>
+                </div>
+              </BTh>
+            </template>
+          </Draggable>
         </BThead>
         <BTbody>
           <BTr>
             <BTd
               v-for="(column, index) in tableEntries"
               :key="index"
-              class="px-2 py-4 text-nowrap">
+              class="px-1 py-4">
               <div class="mx-2">
                 &#123;{{ column.context }}&#125;
               </div>
@@ -79,6 +94,7 @@ import {
   watch,
 } from 'vue';
 import {
+  BButton,
   BCard,
   BCardTitle,
   BCardText,
@@ -91,6 +107,8 @@ import {
   BTr,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import Draggable from 'vuedraggable';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
 
 const emit = defineEmits(['update-table-entry-label', 'disable-template-save']);
@@ -114,16 +132,15 @@ const tableEntries = computed(() => {
   let aggregates = [];
 
   props.dataSources.forEach((entity) => {
-    if (entity && entity.selectedColumns?.length) {
-      const columns = entity.selectedColumns.map((source) => {
-        const dataSourceColumnMatch = entity.dataSourceColumns.find((column) => column.path === source);
-        return {
+    if (entity?.selectedColumns?.length) {
+      entity.selectedColumns.forEach((source) => {
+        const dataSourceColumnMatch = entity.dataSourceColumns.find((column) => column.path === source.path);
+        selectedColumns[source.order] = {
           ...dataSourceColumnMatch,
           context: dataSourceColumnMatch.path,
           settingId: 'entities',
         };
       });
-      selectedColumns.push(...columns);
     }
   });
 
@@ -137,6 +154,7 @@ const tableEntries = computed(() => {
   }
   return [...selectedColumns, ...aggregates];
 });
+
 const atLeastOneLabelIsEmpty = computed(() => tableEntries.value.filter(({ context, columnLabel, label }) => {
   if (context === 'AGGREGATE') {
     return !label;
@@ -157,9 +175,33 @@ const atLeastOneLabelIsEmpty = computed(() => tableEntries.value.filter(({ conte
  */
 function updateLabel({ settingId, path, definitionIndex }, inputText) {
   const columnMatch = tableEntries.value.find((entry) => (entry.path || entry.definitionIndex) === (path || definitionIndex));
-  if (columnMatch.columnLabel !== inputText) {
+  if (columnMatch?.columnLabel !== inputText) {
     emit('update-table-entry-label', settingId, (path || definitionIndex), inputText);
   }
+}
+
+/**
+ * Callback used when the table column headers are rearranged and drag-and-drop is complete
+ * @param {Object} changeEvent - Event with drag-and-drop element data
+ * @emits update-table-column-order
+ */
+function handleColumnOrderUpdate(changeEvent) {
+  const { moved } = changeEvent;
+  if (moved) {
+    emit('update-table-column-order', moved.newIndex, moved.oldIndex);
+  }
+}
+
+/**
+ * Callback used when a drag-and-drop element is being moved by the user. The logic
+ * checks to see if the column type is an `Aggregate` and returns false. The false
+ * is used by `vue-draggable` to determine if the item can be moved.
+ * Aggregates are not able to be moved, and will always be at the end of the column list.
+ * @param {Object} moveEvent - Event fired from `vue-draggable` / `SortableJS` - https://github.com/SortableJS/Sortable#move-event-object
+ * @returns {Boolean} false/true if the column is an aggregate or not
+ */
+function handleMove(moveEvent) {
+  return !(moveEvent.relatedContext.element.context === 'AGGREGATE');
 }
 
 // watchers
@@ -186,6 +228,25 @@ watch(atLeastOneLabelIsEmpty, (emptyList) => {
 </script>
 
 <style lang="scss" scoped>
+  .container {
+    max-width: none; /* Remove the max-width requirement to allow table to go full width */
+  }
+
+  .ghost-item {
+    opacity: 0.5;
+    background-color: $light-blue;
+  }
+
+  .drag-item {
+    background: rgba($white, 0.75);
+    border-radius: 4px;
+    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.25);
+  }
+
+  :deep(.th-input) {
+    background: transparent;
+  }
+
   :deep(.table) {
     table-layout: unset;
   }

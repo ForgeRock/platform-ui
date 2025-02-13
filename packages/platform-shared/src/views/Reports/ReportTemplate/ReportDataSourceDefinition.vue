@@ -62,7 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BListGroupItem
               v-for="column in dataSourceColumns"
               class="mb-2 py-2 px-3 border-0 rounded"
-              :class="selectedColumns.find((value) => value === column.path) ? 'bg-lightblue' : 'bg-light'"
+              :class="selectedColumns.find((value) => value.path === column.path) ? 'bg-lightblue' : 'bg-light'"
               :key="column.path">
               <BFormCheckbox :value="column.path">
                 {{ column.label }}
@@ -204,7 +204,7 @@ function addRelatedEntity(dataSourceName) {
 const currentName = computed(() => props.dataSource.split('.').pop());
 const columnsModel = computed({
   get() {
-    return props.selectedColumns;
+    return props.selectedColumns.map((column) => column.path);
   },
   /**
    * complete data source field option column selections

@@ -31,7 +31,7 @@ describe('Report Fields table component', () => {
         path: 'applications._id',
       },
     ],
-    selectedColumns: ['applications.name', 'applications._id'],
+    selectedColumns: [{ path: 'applications.name', order: 0 }, { path: 'applications._id', order: 1 }],
   }];
 
   function setup(props) {
@@ -106,6 +106,82 @@ describe('Report Fields table component', () => {
       const nameInput = nameHeader.find('input');
       await nameInput.setValue('New Name');
       expect(wrapper.emitted('update-table-entry-label')[0]).toEqual(['entities', 'applications.name', 'New Name']);
+    });
+
+    it('Orders the columns correctly based on the selectedColumns data', async () => {
+      // Custom test data
+      const updatedDataSources = [...dataSources];
+      const dataSourceColumns = [{
+        format: 'json', label: 'AppOne', columnLabel: 'AppOne', type: 'string', path: 'appOne.name',
+      }, {
+        format: 'json', label: 'AppTwo', columnLabel: 'AppTwo', type: 'string', path: 'appTwo.name',
+      }, {
+        format: 'json', label: 'AppThree', columnLabel: 'AppThree', type: 'string', path: 'appThree.name',
+      }, {
+        format: 'json', label: 'AppFour', columnLabel: 'AppFour', type: 'string', path: 'appFour.name',
+      }, {
+        format: 'json', label: 'AppFive', columnLabel: 'AppFive', type: 'string', path: 'appFive.name',
+      }];
+      const selectedColumns = [{
+        path: 'appOne.name', order: 0,
+      }, {
+        path: 'appTwo.name', order: 1,
+      }, {
+        path: 'appThree.name', order: 2,
+      }, {
+        path: 'appFour.name', order: 3,
+      }, {
+        path: 'appFive.name', order: 4,
+      }];
+      updatedDataSources[0].dataSourceColumns = dataSourceColumns;
+      updatedDataSources[0].selectedColumns = selectedColumns;
+      wrapper = setup({ updatedDataSources });
+
+      // Get the draggable component
+      const draggableComponent = wrapper.findComponent({ name: 'Draggable' });
+      const tableHeaders = draggableComponent.findAll('[role=columnheader]');
+
+      // Check the order of header columns is correct
+      tableHeaders.forEach((header, index) => {
+        const input = header.find('input[type=text]');
+        expect(input.element.name).toBe(dataSourceColumns[index].label);
+      });
+
+      // // Reorder columns for next test
+      updatedDataSources[0].selectedColumns[0].order = 3;
+      updatedDataSources[0].selectedColumns[1].order = 2;
+      updatedDataSources[0].selectedColumns[2].order = 4;
+      updatedDataSources[0].selectedColumns[3].order = 0;
+      updatedDataSources[0].selectedColumns[4].order = 1;
+
+      // Check the order of header columns is correct
+      tableHeaders.forEach((header, index) => {
+        const input = header.find('input[type=text]');
+        expect(input.element.name).toBe(dataSourceColumns[index].label);
+      });
+    });
+
+    it('emits the column order event with correct new and old indexes', async () => {
+      wrapper = setup({ dataSources });
+      const draggableComponent = wrapper.findComponent({ name: 'Draggable' });
+      const movedEvent = {
+        moved: {
+          element: {
+            format: 'json',
+            label: 'City',
+            columnLabel: 'City',
+            type: 'string',
+            path: 'users.city',
+            context: 'users.city',
+            settingId: 'entities',
+          },
+          oldIndex: 5,
+          newIndex: 1,
+        },
+      };
+      draggableComponent.vm.$emit('change', movedEvent);
+      await nextTick();
+      expect(wrapper.emitted()['update-table-column-order'][0]).toEqual([movedEvent.moved.newIndex, movedEvent.moved.oldIndex]);
     });
   });
 });

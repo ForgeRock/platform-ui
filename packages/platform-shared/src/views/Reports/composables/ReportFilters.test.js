@@ -188,7 +188,7 @@ describe('@useReportFilters', () => {
           },
         ],
         relatedDataSources: [],
-        selectedColumns: ['applications.name'],
+        selectedColumns: [{ path: 'applications.name', order: 0 }],
         selectedRelatedDataSources: [],
       },
     ];

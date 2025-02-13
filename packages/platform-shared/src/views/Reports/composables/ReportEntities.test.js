@@ -85,7 +85,7 @@ describe('@useReportEntities', () => {
         name: 'roles',
         label: 'Roles',
       }],
-      selectedColumns: ['applications.name'],
+      selectedColumns: [{ path: 'applications.name', order: 0 }],
       selectedRelatedDataSources: [],
     },
     {
@@ -101,7 +101,7 @@ describe('@useReportEntities', () => {
       ],
       joinType: 'left',
       relatedDataSources: [{ name: 'groups', label: 'groups' }],
-      selectedColumns: ['applications.roles._id'],
+      selectedColumns: [{ path: 'applications.roles._id', order: 1 }],
       selectedRelatedDataSources: [],
     },
   ];
@@ -193,7 +193,7 @@ describe('@useReportEntities', () => {
             name: 'applications.users',
             label: 'Users',
           }],
-          selectedColumns: ['applications.name'],
+          selectedColumns: [{ path: 'applications.name', order: 0 }],
           selectedRelatedDataSources: [],
         },
       ]);
@@ -260,7 +260,7 @@ describe('@useReportEntities', () => {
           ]),
           joinType: 'left',
           relatedDataSources: [],
-          selectedColumns: ['applications.roles.name'],
+          selectedColumns: [{ path: 'applications.roles.name', order: 0 }],
           selectedRelatedDataSources: [],
         },
       ]);

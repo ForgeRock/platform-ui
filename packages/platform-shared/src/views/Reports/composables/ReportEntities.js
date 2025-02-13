@@ -40,11 +40,11 @@ export default function useReportEntities() {
   /**
    * Creates a list of UI friendly definitions for an API list of entities.
    * @param {Array} entities list entity names
-   * @param {Array} fields entity columns
+   * @param {Array} selectedFields selected entity columns
    * @param {Boolean} add determines if dataSourceColumns should be added to the original list.
    * @returns {Array}
    */
-  async function entityDefinitions(entities, fields, add = false) {
+  async function entityDefinitions(entities, selectedFields, add = false) {
     if (!entities || entities.length === 0 || add === false) {
       allDataSourceColumns.value = [];
     }
@@ -61,7 +61,7 @@ export default function useReportEntities() {
 
         if (dataSourceColumns && Object.keys(dataSourceColumns).length) {
           const entityColumns = Object.keys(dataSourceColumns).map((columnName) => {
-            const entityColumn = fields ? fields.find(({ value }) => value === columnName) : {};
+            const entityColumn = selectedFields ? selectedFields.find(({ value }) => value === columnName) : {};
             return {
               format: dataSourceColumns[columnName].class,
               label: dataSourceColumns[columnName].label || columnName.split('.').pop(),
@@ -75,10 +75,11 @@ export default function useReportEntities() {
           currentDataSourceColumns.value = entityColumns;
         }
 
-        const selectedColumns = fields?.length
-          ? fields
+        const selectedColumns = selectedFields?.length
+          ? selectedFields
+            .map((field, i) => ({ ...field, order: i }))
             .filter((field) => currentDataSourceColumns.value.find(({ path }) => path === field.value))
-            .map(({ value }) => value)
+            .map(({ value, order }) => ({ path: value, order }))
           : [];
         const entityResourceNames = entities.map(({ entity: entityName }) => entityName);
 
@@ -113,10 +114,12 @@ export default function useReportEntities() {
           joinType,
           selectedColumns,
         } = definition;
-        const selectedDataSourceColumns = selectedColumns.map((source) => dataSourceColumns.find((column) => column.path === source));
+        const selectedDataSourceColumns = selectedColumns.map((source) => dataSourceColumns.find((column) => column.path === source.path));
         const selectedColumnsProcessed = selectedDataSourceColumns.map(({ columnLabel, path }) => ({ label: columnLabel, value: path }));
+        selectedColumns.forEach((column, i) => {
+          fields[column.order] = selectedColumnsProcessed[i];
+        });
         entities.push({ entity: dataSource, ...(joinType && { type: joinType }) });
-        fields.push(...selectedColumnsProcessed);
       });
       return { entities, fields };
     }
