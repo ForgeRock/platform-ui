@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
 
                 <template #center-card-body>
                   <BCardBody
-                    aria-live="polite"
+                    aria-live="assertive"
                     tabindex="-1"
                     v-if="!loading && !themeLoading"
                     id="callbacksPanel"
