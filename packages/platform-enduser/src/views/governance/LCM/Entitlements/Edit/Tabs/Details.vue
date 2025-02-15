@@ -4,25 +4,15 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard>
-    <FrSpinner
-      v-if="isLoading"
-      class="py-5" />
-    <template v-else>
-      <h3 class="h5 mb-4">
-        {{ $t('governance.administer.entitlements.generalSettings') }}
-      </h3>
-      <FrGlossaryEditForm
-        class="mb-2"
-        :glossary-schema="glossarySchema"
-        :model-value="glossaryValues"
-        :read-only="readOnly"
-        @update:modelValue="glossaryValues = $event" />
-      <FrEntitlementEditForm
-        :entitlement-schema="entitlementSchema"
-        :model-value="entitlementValues"
-        :read-only="readOnly"
-        @update:modelValue="entitlementValues = $event" />
-    </template>
+    <h3 class="h5 mb-4">
+      {{ $t('governance.administer.entitlements.generalSettings') }}
+    </h3>
+    <FrDefaultEntitlementForm
+      :application-id="applicationId"
+      :object-type="objectType"
+      :entitlement="entitlement"
+      @update:glossaryValues="glossaryValues = $event"
+      @update:entitlementValues="entitlementValues = $event" />
     <template #footer>
       <FrButtonWithSpinner
         class="d-block ml-auto"
@@ -43,13 +33,9 @@ of the MIT license. See the LICENSE file for details. -->
 import { computed, ref } from 'vue';
 import { BCard } from 'bootstrap-vue';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
-import FrEntitlementEditForm from '@forgerock/platform-shared/src/components/governance/EntitlementEditForm';
-import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import { getEntitlementSchema } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
-import { getGlossarySchema } from '@forgerock/platform-shared/src/utils/governance/glossary';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import FrDefaultEntitlementForm from '../../DefaultEntitlementForm';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -59,15 +45,14 @@ const props = defineProps({
   },
 });
 
-const isLoading = ref(null);
 const isSaving = ref(null);
-const entitlementSchema = ref([]);
 const entitlementValues = ref({});
-const glossarySchema = ref([]);
 const glossaryValues = ref({});
 const MODIFY_ENTITLEMENT_REQUEST_TYPE = 'modifyEntitlement';
 
 const readOnly = computed(() => (!props.entitlement?.permissions?.modifyEntitlement));
+const applicationId = computed(() => props.entitlement?.application?.id);
+const objectType = computed(() => props.entitlement?.item?.objectType);
 
 /**
  * Submits a modifyEntitlement request with values from the forms
@@ -93,27 +78,4 @@ async function submitRequest() {
   }
 }
 
-/**
- * Fetches glossary and entitlement schema and values
- */
-async function getGlossaryAndEntitlementDetails() {
-  isLoading.value = true;
-  try {
-    // get glossary schema and values
-    const data = await getGlossarySchema('assignment');
-    glossarySchema.value = data;
-    glossaryValues.value = props.entitlement?.glossary?.idx?.['/entitlement'] || {};
-
-    // get entitlement schema and values
-    const { data: objectTypeSchema } = await getEntitlementSchema(props.entitlement.application.id, props.entitlement.item.objectType);
-    entitlementSchema.value = objectTypeSchema.properties;
-    entitlementValues.value = props.entitlement.entitlement || {};
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.administer.entitlements.errorGettingEntitlement'));
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-getGlossaryAndEntitlementDetails();
 </script>

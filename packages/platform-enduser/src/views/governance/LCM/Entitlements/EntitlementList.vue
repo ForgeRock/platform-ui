@@ -13,6 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
       resource="entitlement"
       :columns="entitlementColumns"
       :resource-function="getEntitlementList"
+      @add-clicked="showAddEntitlementModal"
       @row-clicked="navigateToEntitlementDetails">
       <template #cell(entitlement)="{ item }">
         <BMedia
@@ -46,6 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </template>
     </FrGovResourceList>
+    <FrAddEntitlementModal />
   </BContainer>
 </template>
 
@@ -68,9 +70,12 @@ import { getEntitlementList } from '@forgerock/platform-shared/src/api/governanc
 import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroupList/UserBasicInfo';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import FrAddEntitlementModal from './Add/AddEntitlementModal';
 import i18n from '@/i18n';
 
 const router = useRouter();
+const { bvModal } = useBvModal();
 
 const entitlementColumns = [
   {
@@ -97,6 +102,10 @@ function navigateToEntitlementDetails(entitlement) {
     name: 'EntitlementDetails',
     params: { entitlementId: entitlement.id },
   });
+}
+
+function showAddEntitlementModal() {
+  bvModal.value.show('add-entitlement-modal');
 }
 
 </script>

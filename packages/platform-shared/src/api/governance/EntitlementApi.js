@@ -9,6 +9,7 @@ import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
 const entitlementUrl = 'governance/entitlement';
+const applicationUrl = 'governance/application';
 
 /**
  * Get a list of entitlements.
@@ -51,5 +52,17 @@ export function getEntitlementUsers(id, queryParams = {}) {
  * @returns {Promise} A promise that resolves to the entitlement schema.
  */
 export function getEntitlementSchema(application, objectType) {
-  return generateIgaApi().get(`governance/application/${application}/${objectType}/schema`);
+  return generateIgaApi().get(`${applicationUrl}/${application}/${objectType}/schema`);
+}
+
+/**
+ * Fetches the list of applications based on the provided resource and query parameters.
+ *
+ * @param {string} resource - The resource identifier for the application list.
+ * @param {Object} [queryParams={}] - An optional object containing query parameters to filter the application list.
+ * @returns {Promise} - A promise that resolves to the list of applications.
+ */
+export function getApplicationList(resource, queryParams = {}) {
+  const encodedQueryParams = encodeQueryString(queryParams);
+  return generateIgaApi().get(`${applicationUrl}${encodedQueryParams}`);
 }

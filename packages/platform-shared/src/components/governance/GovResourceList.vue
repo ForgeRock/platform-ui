@@ -7,11 +7,12 @@ of the MIT license. See the LICENSE file for details. -->
     <BCardHeader class="p-0 border-bottom-0 flex-column flex-lg-row">
       <BButtonToolbar class="justify-content-between">
         <div class="mb-lg-0 mr-lg-1">
-          <BButton variant="primary">
+          <BButton
+            variant="primary"
+            @click="$emit('add-clicked')">
             <FrIcon
               icon-class="mr-2"
-              name="add"
-              @click="$emit('add-clicked')">
+              name="add">
               {{ $t('common.addObject', { object: capitalize(resource)}) }}
             </FrIcon>
           </BButton>
@@ -19,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrSearchInput
           v-model="searchValue"
           @clear="search('')"
-          @search="search($event)" />
+          @search="search(searchValue)" />
       </BButtonToolbar>
     </BCardHeader>
     <BTable

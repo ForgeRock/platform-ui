@@ -44,6 +44,24 @@ function updateModel({ path, value }) {
 }
 
 /**
+ * Returns the default value based on the provided type.
+ * @param {any} value - The initial value to be processed.
+ * @param {string} type - The type that determines the default value.
+ * @returns {any} - The default value based on the type.
+ */
+function getDefaultValue(value, type) {
+  switch (type) {
+    case 'array':
+      return value ?? [];
+    case 'string':
+    case 'integer':
+    case 'boolean':
+    default:
+      return value ?? null;
+  }
+}
+
+/**
  * Retrieves the type from the given schema type.
  *
  * @param {Object} schemaType - The schema type object to extract the type from.
@@ -53,6 +71,7 @@ function getType(schemaType) {
   switch (schemaType) {
     case 'string':
     case 'boolean':
+    case 'array':
       return schemaType;
     case 'number':
       return 'integer';
@@ -71,11 +90,12 @@ function getType(schemaType) {
 function buildSchemaForFormGenerator(entitlementSchema, modelValue) {
   schema.value = Object.keys(entitlementSchema).map((key) => {
     const propertySchema = entitlementSchema[key];
+    const type = getType(propertySchema.type);
     return [{
       label: propertySchema.displayName,
       model: key,
-      type: getType(propertySchema.type),
-      value: modelValue[key] ?? null,
+      type,
+      value: getDefaultValue(modelValue[key], type),
       disabled: props.readOnly,
     }];
   }).sort((a, b) => (entitlementSchema[a[0].model].order - entitlementSchema[b[0].model].order));

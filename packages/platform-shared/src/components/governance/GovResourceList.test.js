@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import GovResourceMultiselect from './GovResourceList';
@@ -79,7 +79,9 @@ describe('GovResourceList', () => {
 
     it('searching calls api with correct query params', async () => {
       const search = wrapper.findComponent(FrSearchInput);
-      await search.vm.$emit('search', 'test');
+      await search.vm.$emit('input', 'test');
+      await flushPromises();
+      await search.vm.$emit('search');
 
       expect(entitlementResourceFunction).toHaveBeenCalledWith(
         'entitlement',

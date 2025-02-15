@@ -201,6 +201,7 @@
     "number": "Number",
     "object": "Object",
     "objectCopy": "{object} copy",
+    "objectType": "Object Type",
     "off": "Off",
     "ok": "Ok",
     "okay": "Okay",
@@ -251,6 +252,7 @@
     "remove": "Remove",
     "removed": "Removed",
     "report": "Report",
+    "requestSubmitted": "Request Submitted",
     "require": "require",
     "required": "Required",
     "reset": "Reset",
@@ -349,6 +351,7 @@
     "viewLess": "View less",
     "viewMore": "View {count} more",
     "viewDetails": "View Details",
+    "viewRequest": "View Request",
     "violation": "Violation",
     "yes": "Yes",
     "validation": {

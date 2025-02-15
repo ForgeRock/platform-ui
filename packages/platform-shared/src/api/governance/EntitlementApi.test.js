@@ -8,6 +8,7 @@
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 import {
+  getApplicationList,
   getEntitlementList,
   getEntitlementById,
   getEntitlementUsers,
@@ -93,6 +94,36 @@ describe('EntitlementApi', () => {
         const result = await getEntitlementSchema(application, objectType);
         expect(result).toEqual(mockResponse);
         expect(generateIgaApi().get).toHaveBeenCalledWith(`governance/application/${application}/${objectType}/schema`);
+      });
+
+      describe('getApplicationList', () => {
+        it('should return a list of applications with query parameters', async () => {
+          const mockResponse = { data: [{ id: 'app1', name: 'Application One' }] };
+          const queryParams = { page: 1, size: 10 };
+          const encodedQueryParams = '?page=1&size=10';
+          encodeQueryString.mockReturnValue(encodedQueryParams);
+          generateIgaApi.mockReturnValue({
+            get: jest.fn().mockResolvedValue(mockResponse),
+          });
+
+          const result = await getApplicationList('resource', queryParams);
+          expect(result).toEqual(mockResponse);
+          expect(encodeQueryString).toHaveBeenCalledWith(queryParams);
+          expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application?page=1&size=10');
+        });
+
+        it('should return a list of applications without query parameters', async () => {
+          const mockResponse = { data: [{ id: 'app1', name: 'Application One' }] };
+          encodeQueryString.mockReturnValue('');
+          generateIgaApi.mockReturnValue({
+            get: jest.fn().mockResolvedValue(mockResponse),
+          });
+
+          const result = await getApplicationList('resource');
+          expect(result).toEqual(mockResponse);
+          expect(encodeQueryString).toHaveBeenCalledWith({});
+          expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application');
+        });
       });
     });
   });
