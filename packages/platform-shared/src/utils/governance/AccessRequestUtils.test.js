@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -256,6 +256,42 @@ describe('getFormattedRequest', () => {
         requestedBy: 'test Requester',
         requestedFor: '',
         isCustom: true,
+      },
+      rawData: request,
+    });
+  });
+
+  it('returns a create entitlement request correctly', () => {
+    const request = {
+      id: 'testId',
+      requestType: 'createEntitlement',
+      application: { name: 'app' },
+      request: {
+        common: {
+          priority: 'high',
+        },
+        entitlement: { objectType: 'objectType' },
+      },
+      decision: {
+        startDate: '2021-01-01',
+      },
+      requester: {
+        givenName: 'test',
+        sn: 'Requester',
+      },
+    };
+    const result = getFormattedRequest(request);
+    expect(result).toEqual({
+      details: {
+        id: 'testId',
+        type: 'Create Entitlement',
+        name: 'app - objectType',
+        description: undefined,
+        priority: 'high',
+        date: 'Jan 1, 2021',
+        requestedBy: 'test Requester',
+        requestedFor: '',
+        icon: 'app_logo.png',
       },
       rawData: request,
     });

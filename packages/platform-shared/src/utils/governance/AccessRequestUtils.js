@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -84,6 +84,14 @@ export const requestTypes = {
   ENTITLEMENT_GRANT: {
     label: 'governance.accessRequest.requestTypes.entitlementGrant',
     value: 'entitlementGrant',
+  },
+  CREATE_ENTITLEMENT: {
+    label: 'governance.accessRequest.requestTypes.createEntitlement',
+    value: 'createEntitlement',
+  },
+  MODIFY_ENTITLEMENT: {
+    label: 'governance.accessRequest.requestTypes.modifyEntitlement',
+    value: 'modifyEntitlement',
   },
   ENTITLEMENT_REVOKE: {
     label: 'governance.accessRequest.requestTypes.entitlementRemove',
@@ -190,7 +198,7 @@ export function getStatusText(statusOptions, status) {
  */
 export function getRequestObjectType(requestType) {
   if (requestType.includes('application')) return 'application';
-  if (requestType.includes('entitlement')) return 'entitlement';
+  if (requestType.toLowerCase().includes('entitlement')) return 'entitlement';
   if (requestType.includes('role')) return 'role';
   return '';
 }
@@ -312,11 +320,17 @@ function getBasicRequestDisplay(request) {
  * @returns {Object} - An object containing the advanced request display details.
  */
 function getAdvancedRequestDisplay(request, objectType) {
+  let name = objectType === 'entitlement'
+    ? request.descriptor?.idx?.['/entitlement']?.displayName || request[objectType]?.displayName
+    : request[objectType]?.name;
+  if (request.requestType === requestTypes.CREATE_ENTITLEMENT.value) {
+    name = `${request.application.name} - ${request.request?.entitlement?.objectType}`;
+  }
   return {
     details: {
       id: request.id,
       type: getTypeString(request.requestType),
-      name: objectType === 'entitlement' ? request.descriptor?.idx?.['/entitlement']?.displayName || request[objectType]?.displayName : request[objectType]?.name,
+      name,
       description: objectType === 'entitlement' ? request.glossary?.idx?.['/entitlement']?.description || request[objectType]?.description : request[objectType]?.description,
       priority: request.request?.common?.priority,
       date: getRequestedDateText(request.decision?.startDate),

@@ -1540,6 +1540,8 @@
         "applicationRemove": "Remove Application",
         "entitlementGrant": "Grant Entitlement",
         "entitlementRemove": "Remove Entitlement",
+        "createEntitlement": "Create Entitlement",
+        "modifyEntitlement": "Modify Entitlement",
         "roleGrant": "Grant Role",
         "roleRemove": "Remove Role"
       },

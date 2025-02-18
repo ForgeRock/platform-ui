@@ -10,7 +10,7 @@ import ValidationRules from '@forgerock/platform-shared/src/utils/validationRule
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import FrDefaultEntitlementForm from '@/views/governance/LCM/Entitlements/DefaultEntitlementForm';
+import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
 import AddEntitlementModal from './AddEntitlementModal';
 import i18n from '@/i18n';
 

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -81,9 +81,18 @@ of the MIT license. See the LICENSE file for details. -->
         :model-value="formValue"
         :read-only="readOnly"
         :schema="form.form?.fields" />
+      <FrDefaultEntitlementForm
+        v-if="showEntitlementForm"
+        :application-id="applicationId"
+        :entitlement="entitlement"
+        :object-type="objectType"
+        :read-only="readOnly"
+        :type="requestType === requestTypes.CREATE_ENTITLEMENT.value ? 'CREATE' : 'MODIFY'"
+        @update:glossaryValues="glossaryValues = $event"
+        @update:entitlementValues="entitlementValues = $event" />
     </div>
     <div
-      v-if="form?.form?.fields && !readOnly"
+      v-if="showSaveButton"
       class="border-top p-4 d-flex justify-content-end">
       <FrButtonWithSpinner
         @click="modifyRequest(formValue)"
@@ -120,9 +129,10 @@ import {
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { getPriorityImageSrc, isSupportedRequestType } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { getPriorityImageSrc, isSupportedRequestType, requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
+import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -146,8 +156,21 @@ const formValue = ref({});
 const savingRequest = ref(false);
 const isValidForm = ref(false);
 
+const entitlement = ref({});
+const entitlementValues = ref({});
+const glossaryValues = ref({});
+const showEntitlementForm = ref(false);
+const applicationId = ref('');
+const objectType = ref('');
+
 const phaseId = computed(() => props.item.rawData.phases?.[0]?.name);
 const isCustom = computed(() => !isSupportedRequestType(props.item.rawData.requestType));
+const requestType = computed(() => props.item?.rawData?.requestType || '');
+const showSaveButton = computed(() => (
+  (form?.value?.form?.fields
+    || requestType.value === requestTypes.MODIFY_ENTITLEMENT.value
+    || requestType.value === requestTypes.CREATE_ENTITLEMENT.value
+  ) && !props.readOnly));
 
 function setDecisionValue(type) {
   switch (type) {
@@ -245,7 +268,7 @@ function getDetails(item) {
  * @param {Object} item - The item for which to retrieve the form.
  */
 async function getForm(item) {
-  const request = item.rawData;
+  const request = cloneDeep(item.rawData);
   const workflowId = request.workflow?.id;
   let formDefinition;
 
@@ -262,18 +285,55 @@ async function getForm(item) {
 
   // when viewing a custom request outside of approvals, show the form assocated with the request type
   if (isCustom.value && !props.isApproval) {
-    formDefinition = await getCustomRequestForm(request.requestType);
+    formDefinition = await getCustomRequestForm(requestType.value);
     form.value = formDefinition;
     formValue.value = request.request || {};
     return;
   }
 
   // fallback to the default form if the workflow request form is not available
-  if (request.requestType === 'applicationGrant') {
+  if (requestType.value === requestTypes.ACCOUNT_GRANT.value) {
     formDefinition = await getApplicationRequestForm(request.application, request.application.id);
     form.value = formDefinition;
     formValue.value = request.request?.common?.blob?.form || {};
+    return;
   }
+
+  if (requestType.value === requestTypes.MODIFY_ENTITLEMENT.value || requestType.value === requestTypes.CREATE_ENTITLEMENT.value) {
+    entitlement.value = {
+      entitlement: { ...request.request?.entitlement?.object || {} },
+      glossary: { idx: { '/entitlement': request.request?.entitlement?.glossary || {} } },
+    };
+    applicationId.value = request.application.id;
+    objectType.value = requestType.value === requestTypes.CREATE_ENTITLEMENT.value
+      ? request.request?.entitlement?.objectType
+      : request.application?.objectTypes?.find((type) => type.accountAttribute === request.assignment?.attributes?.[0]?.name)?.name || '';
+    showEntitlementForm.value = true;
+    isValidForm.value = true;
+  }
+}
+
+/**
+ * Generates the entitlement request payload.
+ *
+ * @param {Object} requestPayload - The initial request payload object.
+ * @param {Object} glossary - A glossary object containing relevant terms and definitions.
+ * @param {Object} object - An object containing additional data required for the request.
+ * @returns {Object} - The modified request payload with entitlement details.
+ */
+function getEntitlementRequestPayload(requestPayload, glossary, object) {
+  requestPayload.entitlement = {
+    ...requestPayload.entitlement,
+    object: {
+      ...requestPayload.entitlement.object,
+      ...object,
+    },
+    glossary: {
+      ...requestPayload.entitlement.glossary,
+      ...glossary,
+    },
+  };
+  return requestPayload;
 }
 
 /**
@@ -289,6 +349,8 @@ async function modifyRequest(values) {
 
     if (isCustom.value) {
       requestPayload = values;
+    } else if (requestType.value === requestTypes.MODIFY_ENTITLEMENT.value || requestType.value === requestTypes.CREATE_ENTITLEMENT.value) {
+      requestPayload = getEntitlementRequestPayload(requestPayload, glossaryValues.value, entitlementValues.value);
     } else {
       if (!requestPayload.common.blob) requestPayload.common.blob = {};
       requestPayload.common.blob.form = {

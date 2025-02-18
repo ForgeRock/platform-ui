@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -80,6 +80,14 @@ const requestTypeOptions = ref([
   {
     text: i18n.global.t(requestTypes.ENTITLEMENT_REVOKE.label),
     value: requestTypes.ENTITLEMENT_REVOKE.value,
+  },
+  {
+    text: i18n.global.t(requestTypes.CREATE_ENTITLEMENT.label),
+    value: requestTypes.CREATE_ENTITLEMENT.value,
+  },
+  {
+    text: i18n.global.t(requestTypes.MODIFY_ENTITLEMENT.label),
+    value: requestTypes.MODIFY_ENTITLEMENT.value,
   },
   {
     text: i18n.global.t(requestTypes.ROLE_GRANT.label),

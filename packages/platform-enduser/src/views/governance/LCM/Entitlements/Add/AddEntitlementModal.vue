@@ -107,9 +107,9 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
+import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrAppAndObjectType from '@/views/governance/LCM/Entitlements/Add/Steps/AppAndObjectType';
-import FrDefaultEntitlementForm from '@/views/governance/LCM/Entitlements/DefaultEntitlementForm';
 import FrRequestSubmitSuccess from '@/views/governance/LCM/RequestSubmitSuccess';
 import i18n from '@/i18n';
 

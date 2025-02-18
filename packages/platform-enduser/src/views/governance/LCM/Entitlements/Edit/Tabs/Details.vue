@@ -35,7 +35,7 @@ import { BCard } from 'bootstrap-vue';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import FrDefaultEntitlementForm from '../../DefaultEntitlementForm';
+import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
 import i18n from '@/i18n';
 
 const props = defineProps({
