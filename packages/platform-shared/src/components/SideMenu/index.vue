@@ -99,6 +99,7 @@ of the MIT license. See the LICENSE file for details. -->
                 @click="toggleMenu"
                 @mouseleave="onMouseLeave"
                 class="d-flex align-items-center"
+                :aria-expanded="(menuIsExpanded).toString()"
                 :aria-label="$t('sideMenu.toggleSidebar')">
                 <FrIcon
                   icon-class="icon-flipped mr-3 toggle-side-menu"
@@ -158,6 +159,13 @@ export default {
     dropdownItems: {
       type: Array,
       default: () => [],
+    },
+    /**
+     * State from Layout about if the menu is open (true) or closed (false)
+     */
+    menuIsExpanded: {
+      default: false,
+      type: Boolean,
     },
     /**
      * Links in the main navigation area.

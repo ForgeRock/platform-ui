@@ -21,6 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrSideMenu
       @toggle-menu="toggleMenu"
       @mouse-leave="onMouseLeave"
+      :menu-is-expanded="menuExpanded"
       :menu-items="menuItems"
       :dropdown-items="realmMenuItems"
       :realm="realm"
