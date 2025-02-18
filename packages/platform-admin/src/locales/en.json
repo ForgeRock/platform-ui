@@ -692,7 +692,7 @@
     "noResultsHelp": "Try a new search in the box above.",
     "addNewNode": "New Custom Node",
     "cannotDeleteModalTitle": "Cannot Delete Node",
-    "cannotDeleteModalDesc": "To delete <span class='font-weight-bold'>{name}</span>, first remove it from all journeys where it is currently used.", 
+    "cannotDeleteModalDesc": "To delete <span class='font-weight-bold'>{name}</span>, first remove it from all journeys where it is currently used.",
     "viewJourney": "View Journeys",
     "tabs": {
       "overview": {
@@ -3009,6 +3009,11 @@
         },
         "reconcile": {
           "description": "Reconcile data with {source}."
+        },
+        "advancedSettings": {
+          "filterSourceDescription": "Restrict reconciliation to specific records by defining an explicit source query.",
+          "filterTargetDescription": "Restrict reconciliation to specific records in the target system by defining an explicit target query.",
+          "validScriptDescription": "Filter the records that are included in reconciliation using a script."
         }
       }
     },
