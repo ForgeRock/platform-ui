@@ -3003,8 +3003,13 @@
         "deleteSuccess": "Advanced sync data deleted successfully",
         "deleteError": "There was an error deleting the sync data"
       },
-      "noSyncDataSubtitle": "Synchronize data between {appDisplayName} {objectTypeName} and other applications.",
-      "noSyncData": "No synchronized applications yet",
+      "noSyncData": {
+        "appTitle": "No synchronized applications yet",
+        "appSubtitle": "Synchronize data between {displayName} {objectTypeName} and other applications.",
+        "identityTitle": "No synchronized data for {displayName}",
+        "identitySubtitle": "Synchronize data between {displayName} and other entities."
+      },
+
       "tabs": {
         "mapping": {
           "provisionDescription": "Define the mapping rules needed to provision to {target}.",
