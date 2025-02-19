@@ -217,7 +217,7 @@ async function loadData() {
     items.value = data.result;
     totalRows.value = data[totalResultsPath.value];
   } catch (error) {
-    showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources'));
+    showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: props.resource }));
     items.value = [];
     totalRows.value = 0;
   } finally {

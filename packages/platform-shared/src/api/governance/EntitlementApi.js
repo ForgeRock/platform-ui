@@ -41,7 +41,7 @@ export function getEntitlementById(id) {
  */
 export function getEntitlementUsers(id, queryParams = {}) {
   const encodedQueryParams = encodeQueryString(queryParams);
-  return generateIgaApi().get(`${entitlementUrl}/${id}/assignments/users${encodedQueryParams}`);
+  return generateIgaApi().get(`${entitlementUrl}/${id}/grants${encodedQueryParams}`);
 }
 
 /**

@@ -36,7 +36,8 @@ of the MIT license. See the LICENSE file for details. -->
         <BTab
           class="mt-4"
           :title="$t('common.users')">
-          <FrUsers />
+          <FrUsers
+            :entitlement-id="entitlementId" />
         </BTab>
       </BTabs>
     </div>

@@ -79,7 +79,7 @@ describe('EntitlementApi', () => {
       const result = await getEntitlementUsers('123', queryParams);
       expect(result).toEqual(mockResponse);
       expect(encodeQueryString).toHaveBeenCalledWith(queryParams);
-      expect(generateIgaApi().get).toHaveBeenCalledWith('governance/entitlement/123/assignments/users?page=1&size=10');
+      expect(generateIgaApi().get).toHaveBeenCalledWith('governance/entitlement/123/grants?page=1&size=10');
     });
 
     describe('getEntitlementSchema', () => {
