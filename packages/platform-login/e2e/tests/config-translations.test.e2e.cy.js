@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -359,8 +359,14 @@ filterTests(['@forgeops', '@cloud'], () => {
     });
 
     it('Should override the text of the next button, username placeholder, and password placeholder', () => {
+      // Set up intercept
+      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
       // Visit base page of our Login Journey with default locale
       cy.visit(`${loginBaseUrl}#/`);
+
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
 
       // Check override translations are applied correctly for default locale
       cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible');
@@ -369,27 +375,40 @@ filterTests(['@forgeops', '@cloud'], () => {
     });
 
     it('Should override the text of the login failure message', () => {
-      cy.intercept('/openidm/config/ui/themerealm').as('themeRealConfig');
+      // Set up how many times we should click on the Next button to trigger the 'Loginfailure' message
+      const timesClicked = Cypress.env('IS_FRAAS') ? 6 : 1;
+
+      // Set up intercept
+      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
 
       // Visit base page of our Login Journey with default locale
       cy.visit(`${loginBaseUrl}#/`);
 
-      // Check override translations are applied correctly for default locale
-      cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible').click();
-      cy.wait('@themeRealConfig');
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
 
-      if (!Cypress.env('IS_FRAAS')) {
-        // Error is now only displayed for the ForgeOps Tenant
-        cy.findAllByRole('alert').should('be.visible').contains('Login Failure Override');
-      } else {
-        // Cloud Tenant does not show any error
-        cy.findAllByRole('alert').should('not.exist');
+      // Click on the Next button to trigger the 'Loginfailure' message
+      for (let i = 0; i < timesClicked; i += 1) {
+        // Check override translations are applied correctly for default locale
+        cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible').click();
+
+        // Wait for a Journey page to fully load
+        cy.wait('@themerealmConfig', { timeout: 10000 });
       }
+
+      // Check override translations are applied correctly for default locale
+      cy.findAllByRole('alert').should('be.visible').contains('Login Failure Override');
     });
 
     it('Should display French overrides when locale query parameter is "fr"', () => {
+      // Set up intercept
+      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
       // Visit base page of our Login Journey with added locale
       cy.visit(`${loginBaseUrl}&locale=fr#/`);
+
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
 
       // Check override translations are applied correctly for added locale
       cy.findByRole('button', { name: 'Suivant Test', timeout: 10000 }).should('be.visible');
@@ -400,8 +419,14 @@ filterTests(['@forgeops', '@cloud'], () => {
     });
 
     it('Should fallback to a general locale when a specific one is not present', () => {
+      // Set up intercept
+      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
       // Visit base page of our Login Journey with added locale
       cy.visit(`${loginBaseUrl}&locale=fr-ca#/`);
+
+      // Wait for a Journey page to fully load
+      cy.wait('@themerealmConfig', { timeout: 10000 });
 
       // Check override translations are applied correctly for added locale and fallback locale
       // fr-ca

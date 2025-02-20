@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -86,7 +86,7 @@ Then('User should see {string} error message', (errorMessage) => {
  * Verifies that the user is redirected to the user dashboard.
  */
 Then('User should be redirected to User dashboard', () => {
-  cy.findByRole('heading', { name: `avatar Hello, ${Cypress.env('endUserFirstName')} ${Cypress.env('endUserLastName')}` }).should('be.visible');
+  cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${Cypress.env('endUserFirstName')} ${Cypress.env('endUserLastName')}`).should('be.visible');
 });
 
 When('Cleanup {string} Journey with all dependencies', (journeyName) => {

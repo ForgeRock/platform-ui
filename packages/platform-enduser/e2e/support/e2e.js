@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -19,7 +19,9 @@ before(() => {
 
 // eslint-disable-next-line func-names
 afterEach(function () {
-  testFailed = this.currentTest.state === 'failed';
+  if (this.currentTest.state === 'failed') {
+    testFailed = true;
+  }
 });
 
 after(() => {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -40,10 +40,10 @@ Given('There is an end user account created', () => {
 When('User enters a(n) {string} username', (scenario) => {
   switch (scenario) {
     case 'valid':
-      cy.findByLabelText(/User Name/i, { timeout: 20000 }).type(Cypress.env('endUserName'));
+      cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type(Cypress.env('endUserName'), { force: true });
       break;
     default:
-      cy.findByLabelText(/User Name/i, { timeout: 20000 }).type('random');
+      cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type('random', { force: true });
       break;
   }
 });
@@ -55,10 +55,10 @@ When('User enters a(n) {string} username', (scenario) => {
 When('User enters a(n) {string} password', (scenario) => {
   switch (scenario) {
     case 'valid':
-      cy.findAllByLabelText(/Password/i).first().type(Cypress.env('endUserPassword'));
+      cy.findAllByLabelText(/Password/i).first().should('be.visible').type(Cypress.env('endUserPassword'), { force: true });
       break;
     default:
-      cy.findAllByLabelText(/Password/i).first().type('random');
+      cy.findAllByLabelText(/Password/i).first().should('be.visible').type('random', { force: true });
       break;
   }
 });
