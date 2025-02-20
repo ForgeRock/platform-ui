@@ -68,23 +68,23 @@ const mainPageTranslations = {
   messageNodeLinks: {
     en: [{
       name: 'Español',
-      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es`,
+      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration - Translated&locale=es`,
     }, {
       name: 'Čeština',
-      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=cs`,
+      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration - Translated&locale=cs`,
     }, {
       name: 'Undefined locale',
-      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong`,
+      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration - Translated&locale=wrong`,
     }],
     cs: [{
       name: 'Español',
-      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=es`,
+      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration - Translated&locale=es`,
     }, {
       name: 'English',
-      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=en`,
+      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration - Translated&locale=en`,
     }, {
       name: 'Undefined locale',
-      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated&locale=wrong`,
+      link: `?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration - Translated&locale=wrong`,
     }],
   },
   messageNodeMessages: {

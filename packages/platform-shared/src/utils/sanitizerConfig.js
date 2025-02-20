@@ -41,6 +41,17 @@ export const baseSanitizerConfig = {
     ...sanitizeHtml.defaults.allowedSchemesByTag,
     img: [...sanitizeHtml.defaults.allowedSchemes, 'data'],
   },
+  transformTags: {
+    a: (tagName, attribs) => {
+      const element = { tagName, attribs };
+      try {
+        element.attribs.href = decodeURIComponent(attribs.href);
+      } catch (e) {
+        element.attribs.href = attribs.href;
+      }
+      return element;
+    },
+  },
 };
 
 export const svgShapesSanitizerConfig = {
