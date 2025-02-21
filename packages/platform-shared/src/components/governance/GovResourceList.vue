@@ -5,8 +5,8 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard no-body>
     <BCardHeader class="p-0 border-bottom-0 flex-column flex-lg-row">
-      <BButtonToolbar class="justify-content-between">
-        <div class="mb-lg-0 mr-lg-1">
+      <BButtonToolbar>
+        <div class="mb-lg-0 mr-lg-1 ">
           <BButton
             variant="primary"
             @click="$emit('add-clicked')">
@@ -18,11 +18,14 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
         </div>
         <FrSearchInput
+          class="ml-auto"
           v-model="searchValue"
           @clear="search('')"
           @search="search(searchValue)" />
+        <slot name="toolbar-right" />
       </BButtonToolbar>
     </BCardHeader>
+    <slot name="toolbar-expanded" />
     <BTable
       class="mb-0"
       hover
@@ -77,6 +80,7 @@ import {
 import {
   computed,
   ref,
+  watch,
 } from 'vue';
 import { capitalize } from 'lodash';
 import { pluralizeAnyString } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
@@ -102,6 +106,10 @@ const props = defineProps({
   resourceFunction: {
     type: Function,
     required: true,
+  },
+  additionalQueryParams: {
+    type: String,
+    default: '',
   },
 });
 
@@ -171,13 +179,7 @@ function getQueryStringFields(resourceType) {
     case 'organization':
       return getQueryFields(resourceType).map((field) => `/${field}`);
     case 'entitlement':
-      return [
-        'application.name',
-        'descriptor.idx./entitlement.displayName',
-        'entitlementOwner.userName',
-        'entitlementOwner.givenName',
-        'entitlementOwner.sn',
-      ];
+      return ['descriptor.idx./entitlement.displayName'];
     default:
       return ['*'];
   }
@@ -197,9 +199,21 @@ function queryParamFunction(resourceType, queryString, page, pageSize) {
   queryParams.fields = getQueryFields(resourceType).join(',');
   queryParams.pageSize = pageSize;
   queryParams.pagedResultsOffset = (page - 1) * pageSize;
-  queryParams.queryFilter = queryString
-    ? getQueryStringFields(resourceType).map((field) => `${field} sw "${queryString}"`).join(' or ')
-    : true;
+
+  // handle query string and additional query params
+  let queryFilter;
+  if (queryString) {
+    const tempQuery = getQueryStringFields(resourceType).map((field) => `${field} co "${queryString}"`).join(' or ');
+    queryFilter = props.additionalQueryParams
+      ? [`(${tempQuery})`, `(${props.additionalQueryParams})`].join(' and ')
+      : tempQuery;
+  } else {
+    queryFilter = props.additionalQueryParams
+      ? props.additionalQueryParams
+      : true;
+  }
+  queryParams.queryFilter = queryFilter;
+
   if (resourceType !== 'entitlement') queryParams.totalPagedResultsPolicy = 'EXACT';
 
   return queryParams;
@@ -256,5 +270,7 @@ function pageSizeChange(size) {
 }
 
 loadData();
+
+watch(() => props.additionalQueryParams, loadData);
 
 </script>

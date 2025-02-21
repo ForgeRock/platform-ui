@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -19,7 +19,7 @@ describe('Select Utils', () => {
   describe('getQueryParams', () => {
     it('should return an empty object if queryString is not provided', () => {
       const result = getQueryParams(null, 'application');
-      expect(result).toEqual({});
+      expect(result).toEqual({ authoritative: false });
     });
 
     it('should return queryParams with queryString if queryString is provided', () => {

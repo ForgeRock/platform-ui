@@ -89,7 +89,7 @@ describe('GovResourceList', () => {
           fields: 'application,descriptor,entitlementOwner,item',
           pageSize: 10,
           pagedResultsOffset: 0,
-          queryFilter: 'application.name sw "test" or descriptor.idx./entitlement.displayName sw "test" or entitlementOwner.userName sw "test" or entitlementOwner.givenName sw "test" or entitlementOwner.sn sw "test"',
+          queryFilter: 'descriptor.idx./entitlement.displayName co "test"',
         },
       );
     });

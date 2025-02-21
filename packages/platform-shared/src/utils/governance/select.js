@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -32,12 +32,8 @@ export function getOption(resource) {
  */
 export function getQueryParams(queryString, resourceType) {
   const queryParams = {};
-  if (queryString) {
-    queryParams.queryString = queryString;
-    if (resourceType === 'application') {
-      queryParams.authoritative = false;
-    }
-  }
+  if (queryString) queryParams.queryString = queryString;
+  if (resourceType === 'application') queryParams.authoritative = false;
   return queryParams;
 }
 

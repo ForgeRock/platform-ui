@@ -6,10 +6,13 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import EntitlementList from './EntitlementList';
 import i18n from '@/i18n';
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
   getApplicationLogo: jest.fn().mockReturnValue('app_logo.png'),
@@ -56,6 +59,17 @@ describe('EntitlementList', () => {
     },
   }));
 
+  CommonsApi.getResource.mockImplementation(() => Promise.resolve({
+    data: {
+      result: [
+        {
+          id: 'appId',
+          name: 'appName',
+        },
+      ],
+    },
+  }));
+
   it('has columns for entitlement, display name, owner', async () => {
     wrapper = mountComponent();
     await flushPromises();
@@ -82,5 +96,64 @@ describe('EntitlementList', () => {
     const entitlementRow = wrapper.find('tbody tr');
     expect(entitlementRow.text()).toMatch('Christian Marnell');
     expect(entitlementRow.text()).toMatch('christian.marnell');
+  });
+
+  it('can filter by application', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    wrapper.findComponent('[label="Select application"]').vm.$emit('input', 'managed/resource/appId');
+    await flushPromises();
+
+    expect(EntitlementApi.getEntitlementList).toHaveBeenLastCalledWith(
+      'entitlement',
+      {
+        fields: 'application,descriptor,entitlementOwner,item',
+        pageSize: 10,
+        pagedResultsOffset: 0,
+        queryFilter: 'application.id eq "appId"',
+      },
+    );
+  });
+
+  it('can filter by entitlement owner', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    wrapper.findComponent('[label="Entitlement Owner"]').vm.$emit('input', 'userQuery');
+    await flushPromises();
+
+    expect(EntitlementApi.getEntitlementList).toHaveBeenLastCalledWith(
+      'entitlement',
+      {
+        fields: 'application,descriptor,entitlementOwner,item',
+        pageSize: 10,
+        pagedResultsOffset: 0,
+        queryFilter: '(entitlementOwner.userName co "userQuery" or entitlementOwner.givenName co "userQuery" or entitlementOwner.sn co "userQuery")',
+      },
+    );
+  });
+
+  it('can filter by entitlement owner, app, and entitlement name at the same time', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    const search = wrapper.findComponent(FrSearchInput);
+    search.vm.$emit('input', 'test');
+    await flushPromises();
+    search.vm.$emit('search');
+    wrapper.findComponent('[label="Select application"]').vm.$emit('input', 'managed/resource/appId');
+    wrapper.findComponent('[label="Entitlement Owner"]').vm.$emit('input', 'userQuery');
+    await flushPromises();
+
+    expect(EntitlementApi.getEntitlementList).toHaveBeenLastCalledWith(
+      'entitlement',
+      {
+        fields: 'application,descriptor,entitlementOwner,item',
+        pageSize: 10,
+        pagedResultsOffset: 0,
+        queryFilter: '(descriptor.idx./entitlement.displayName co "test") and (application.id eq "appId" and (entitlementOwner.userName co "userQuery" or entitlementOwner.givenName co "userQuery" or entitlementOwner.sn co "userQuery"))',
+      },
+    );
   });
 });
