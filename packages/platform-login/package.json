@@ -28,7 +28,7 @@
     "@hcaptcha/vue-hcaptcha": "0.3.2",
     "@kyvg/vue3-notification": "3.0.2",
     "@vue/compat": "3.3.4",
-    "axios": "1.7.4",
+    "axios": "1.7.8",
     "bootstrap": "4.6.2",
     "bootstrap-vue": "2.23.1",
     "clipboard-polyfill": "3.0.1",
