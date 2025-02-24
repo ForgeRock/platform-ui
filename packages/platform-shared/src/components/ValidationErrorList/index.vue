@@ -58,11 +58,11 @@ export default {
   &.error-messages {
     max-height: 0px;
     overflow: hidden;
-    transition: max-height 0.5s ease;
+    transition: max-height 0.8s ease-in;
 
     &.show {
       height: auto;
-      max-height: 1000px;
+      max-height: 30vh;
     }
   }
 }
