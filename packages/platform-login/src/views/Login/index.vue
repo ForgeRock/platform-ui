@@ -1109,9 +1109,6 @@ export default {
       // some parts of am like SAML (see FRAAS-6573).
       delete stepParams.query.realm;
 
-      // locale is set by the request header through sdk config. Sending this query param causes unexpected responses from AM
-      // with differences between chains and trees. More consistent to just rely on the request header (see IAM-1440)
-      delete stepParams.query.locale;
       return stepParams;
     },
     /**
