@@ -819,11 +819,15 @@
   },
   "configure": {
     "managedListView": {
+      "deleteModal": {
+        "title": "Identity Profile",
+        "message": "Are you sure you want to delete the {profile} identity profile?"
+      },
       "id": "Id",
       "title": "Configure Identities",
       "description": "Define the properties and settings for each identity profile",
       "profile": "Profile",
-      "tableEmpty": "No identity profiles created",
+      "tableEmpty": "No identity profiles found",
       "getTableDataFail": "Failed to load identity profiles"
     },
     "managedObjectSettings": {
@@ -834,7 +838,11 @@
       "minimumFilterDescription": "Minimum number of characters required to search.",
       "properties": "Properties",
       "property": "Property",
-      "profileName": "Profile Name",
+      "profileName": "Identity Profile Name",
+      "deleteFail": "Unable to delete identity profile",
+      "deleteProfile": "Delete Identity Profile",
+      "deleteSuccess": "Identity Profile successfully deleted",
+      "deleteWarning": "Warning this cannot be undone!",
       "displayName": "Display Name",
       "descriptionOptional": "Description (optional)",
       "addProperty": "Add Property",
