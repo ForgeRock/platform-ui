@@ -2789,14 +2789,16 @@
   "cookie": {
     "calloutText": "If you change the name of the cookie on a production system, you are invalidating the sessions of any user that still had a valid cookie.",
     "cancelButtonText": "Cancel",
-    "getCookieFail": "Error getting the Cookie Name",
+    "getCookieFail": "Error getting Cookie Configuration",
     "inputLabel": "Cookie Name",
+    "domainInputLabel": "Additional Cookie Domains",
+    "domainInputDescription": "Specify additional domains which can access the cookie in addition to tenant default domain.",
     "resetCookieFail": "Error resetting the Cookie Name",
     "resetting": "Resetting",
     "resetToDefault": "Reset to Default",
     "subTitle": "Update the cookie name for this tenant.",
     "title": "Cookie",
-    "updateCookieFail": "Error updating the Cookie Name"
+    "updateCookieFail": "Error updating Cookie Configuration"
   },
   "csp": {
     "title": "Content Security Policy",
