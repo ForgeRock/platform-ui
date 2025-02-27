@@ -10,6 +10,7 @@ import { defineRule } from 'vee-validate';
 import * as rules from '@vee-validate/rules';
 import * as customValidators from '@forgerock/platform-shared/src/utils/validators';
 import dayjs from 'dayjs';
+import { has } from 'lodash';
 import { doesValueContainPlaceholder } from './esvUtils';
 
 export function getRules(i18n) {
@@ -250,6 +251,22 @@ export function getRules(i18n) {
 
   const whitespace = (value) => {
     const regex = /(.*)(\s+)(.*)/g;
+    if (Array.isArray(value)) {
+      let valid = true;
+      value.forEach((arrayValue) => {
+        // Checks if value is a Vue Ref
+        if (has(arrayValue, 'value')) {
+          valid = valid && !regex.test(arrayValue.value);
+        } else {
+          valid = valid && !regex.test(arrayValue);
+        }
+      });
+      return valid || i18n.global.t('common.policyValidationMessages.whitespace');
+    }
+    // Checks if value is a Vue Ref
+    if (has(value, 'value')) {
+      return !regex.test(value.value) || i18n.global.t('common.policyValidationMessages.whitespace');
+    }
     return !regex.test(value) || i18n.global.t('common.policyValidationMessages.whitespace');
   };
 
