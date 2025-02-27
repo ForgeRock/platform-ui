@@ -163,7 +163,10 @@ export function getRules(i18n) {
 
   // Starts with rule
   // errors if input starts with same provided prefix value
-  const starts_with_case_insensitive = (value, { prefix }) => !value.toLowerCase().startsWith(prefix.toLowerCase()) || i18n.global.t('common.policyValidationMessages.NOT_STARTS_WITH', { prefix });
+  const not_starts_with_case_insensitive = (value, { prefix }) => !value.toLowerCase().startsWith(prefix.toLowerCase()) || i18n.global.t('common.policyValidationMessages.NOT_STARTS_WITH', { prefix });
+
+  // errors if the input does NOT start with the provided prefix
+  const starts_with_case_insensitive = (value, { prefix }) => value.toLowerCase().startsWith(prefix.toLowerCase()) || i18n.global.t('common.policyValidationMessages.STARTS_WITH', { prefix });
 
   const not_starts_with_number = (value) => {
     const regex = /^[0-9].*$/;
@@ -273,16 +276,15 @@ export function getRules(i18n) {
 
   const validationRules = {
     allowedRules,
-    alpha,
-    alpha_dash,
     alpha_dash_spaces,
-    alpha_num,
+    alpha_dash,
     alpha_num_lower,
     alpha_num_spaces,
     alpha_num_under_comma,
-    connector_bundle_version,
+    alpha_num,
+    alpha,
     check_form_row_width,
-    regex,
+    connector_bundle_version,
     date_format,
     email,
     email_from,
@@ -290,36 +292,38 @@ export function getRules(i18n) {
     errorIfMatch,
     excluded,
     google_cloud_platform_certificate_validation,
-    is_after_date,
     integer,
+    is_after_date,
+    is_before_date,
     isList,
     isNumber,
-    is_before_date,
     json,
-    max,
+    lower_case_alpha_numeric_underscore_hyphen_only,
     max_value,
+    max,
     min_value,
     minimumRequired,
+    not_starts_with_case_insensitive,
     not_starts_with_number,
     numeric,
     oneOf,
     period_required,
+    regex,
     required,
+    secret_label_identifier,
     single_spaces,
     start_end_space,
     starts_with_case_insensitive,
-    secret_label_identifier,
     text_without_fragment,
-    unique,
     unique_email_template_id,
+    unique,
     uniqueValue,
-    url,
     url_domain_only,
     url_with_path,
     url_without_path,
-    validBookmarkUrl,
+    url,
     valid_js_variable_name,
-    lower_case_alpha_numeric_underscore_hyphen_only,
+    validBookmarkUrl,
     whitespace,
   };
   return validationRules;

@@ -413,6 +413,7 @@
     },
     "policyValidationMessages": {
       "NOT_STARTS_WITH": "Prefix {prefix} is not allowed",
+      "STARTS_WITH": "Prefix {prefix} is required",
       "GENERIC_FIELD_REQUIRED": "{_field_} is required",
       "VALID_PHONE_FORMAT": "Must be a valid phone number",
       "VALID_NAME_FORMAT": "Must have valid name characters",

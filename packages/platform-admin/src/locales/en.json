@@ -1523,6 +1523,7 @@
         "noChanges": "No changes detected",
         "quickStart": "Quick Start",
         "saveSuccess": "SSO updated successfully",
+        "validationErrors": "Validation error(s) occurred, please try again.",
         "viewApplication": "View Application"
       },
       "assignmentsTab": {
