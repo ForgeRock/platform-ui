@@ -848,6 +848,7 @@
       "deleteWarning": "Warning this cannot be undone!",
       "displayName": "Display Name",
       "descriptionOptional": "Description (optional)",
+      "orderTooltip": "Define the order in which fields are displayed in forms",
       "addProperty": "Add Property",
       "editProperty": "Edit {objectTitle} Property",
       "readableTitle": "Readable Title",
@@ -875,6 +876,7 @@
       "toUseForThisManagedObject": "to use for this managed object",
       "requireUISearchFilter": "Require UI Search Filter",
       "typeMultiValued": "{type} (multivalued)",
+      "typeVirtual": "{type} (virtual)",
       "propertyTypes": {
         "string": "String",
         "boolean": "Boolean",
