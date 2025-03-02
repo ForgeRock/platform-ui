@@ -517,6 +517,22 @@ of the MIT license. See the LICENSE file for details. -->
         border-color: {{ `color-mix(in srgb, ${theme.dangerColor} 80%, black)` }};
       }
 
+      <!-- Calendar's current day styles -->
+      .b-calendar .btn-outline-primary {
+        color: {{ buttonFocusBorderColor }};
+      }
+
+      .b-calendar .btn-outline-primary:focus {
+        color: {{ buttonFocusBorderColor }};
+        border-color: {{ buttonFocusBorderColor }} !important;
+      }
+
+      .b-calendar .btn-outline-primary:hover {
+        color: {{ theme.textColor || '#ffffff' }};
+        background-color: {{ buttonFocusBorderColor }};
+        border-color: {{ buttonFocusBorderColor }} !important;
+      }
+
       #app .text-success {
         color: {{ theme.successColor }};
       }
