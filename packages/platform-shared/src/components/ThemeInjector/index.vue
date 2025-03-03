@@ -505,6 +505,18 @@ of the MIT license. See the LICENSE file for details. -->
         border-color: {{ theme.primaryColor }};
       }
 
+      <!-- Styles btn with danger variant and its focus/ hover state using theme vars  -->
+      #app .btn-danger {
+        color: {{ theme.textColor || '#ffffff' }};
+        background-color: {{ theme.dangerColor }};
+        border-color: {{ theme.dangerColor }};
+      }
+
+      #app .btn-danger:focus, #app .btn-danger:hover {
+        background-color: {{ `color-mix(in srgb, ${theme.dangerColor} 80%, black)` }};
+        border-color: {{ `color-mix(in srgb, ${theme.dangerColor} 80%, black)` }};
+      }
+
       #app .text-success {
         color: {{ theme.successColor }};
       }
