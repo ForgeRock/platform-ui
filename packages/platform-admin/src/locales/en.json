@@ -791,7 +791,9 @@
       "errorLoadingInstances": "Error loading instances",
       "errorLoading": "Error loading Custom Nodes",
       "errorLoadingNodeDetails": "Error loading node details",
-      "errorSavingNode": "Error saving custom node"
+      "errorSavingNode": "Error saving custom node",
+      "propertyAdded": "Property added successfully",
+      "propertyEdited": "Property edited successfully"
     },
     "importModal": {
       "desc": "Choose a JSON file containing the node configuration to import.",
