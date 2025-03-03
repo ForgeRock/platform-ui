@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       class="code-editor position-relative"
       :class="{
-        expanded: expanded,
+        expanded: expanded || alwaysExpand,
         'error-state': !isValidJason
       }"
       @mouseover="hover = true"
@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
       />
       <div class="d-flex justify-content-center w-100 position-absolute py-2 code-editor-expander pe-none">
         <button
-          v-if="hover"
+          v-if="hover && !alwaysExpand"
           class="btn btn-outline-secondary btn-sm pe-initial"
           @click.prevent="expanded = !expanded">
           <span v-if="expanded">
@@ -77,6 +77,10 @@ export default {
     readOnly: {
       type: Boolean,
       default: () => true,
+    },
+    alwaysExpand: {
+      type: Boolean,
+      default: () => false,
     },
   },
   data() {

@@ -103,6 +103,7 @@
     "JourneyTree": "Journey Tree",
     "LockTenant": "Lock Tenant",
     "LogApiKeys": "Log API Keys",
+    "Monitoring": "Monitoring",
     "ManagedIdentities": "Managed Identities",
     "ManagedObjectSettings": "Managed Object Settings",
     "NormalView": "Normal View",
@@ -165,6 +166,7 @@
     "jobs": "Jobs",
     "journeys": "Journeys",
     "managed": "Manage",
+    "monitoring": "Monitoring",
     "nativeConsoles": "Native Consoles",
     "oauthClients": "OAuth2 Clients",
     "pipelines": "Pipelines",
@@ -4679,5 +4681,33 @@
     "components": {
       "keyFieldTagPlaceholder": "Press enter to set a custom value"
     }
+  },
+  "monitoring": {
+    "title": "Monitoring",
+    "description": "Monitor system behavior and troubleshoot issues in this tenant.",
+    "advancedSearch": "Advanced search",
+    "dateRange": "Date range",
+    "liveTail": "Live tail",
+    "pauseLogging": "Pause logging",
+    "newestOnTop": "Newest on top",
+    "newestOnBottom": "Newest on bottom",
+    "numResults": "{ resultCount } results",
+    "sources": "Sources",
+    "saveSources": "Save Sources",
+    "chooseSources": "Choose sources",
+    "accessManagement": "Access Management",
+    "identityManagement": "Identity Management",
+    "customizeSummaryFields": "Customize Summary Fields",
+    "viewSettings": "View Settings",
+    "timeframe": "Last { duration } { part }",
+    "dateSelection": {
+      "description": "Display up to 24 hours worth of logs."
+    },
+    "showSimilar": "Show Similar",
+    "copyValue": "Copy Value",
+    "level": "Level",
+    "timestamp": "Timestamp",
+    "errorGettingLogs": "There was an error retrieving logs",
+    "queryFilterDocs": "See payload queryFilter documentation."
   }
 }

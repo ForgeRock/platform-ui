@@ -139,7 +139,7 @@ body {
 }
 
 .ping-read-only {
-  #appContent {
+  #appContent>:not(#monitoringContainer) {
     .btn:not([id^='color-picker']):not(.btn-link),
     [data-testid='delete-panel'],
     .card-footer {
