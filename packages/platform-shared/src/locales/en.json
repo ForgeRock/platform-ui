@@ -277,6 +277,7 @@
     "script": "Script",
     "scripts": "Scripts",
     "search": "Search",
+    "searchAllFields": "Search all fields",
     "searchPlaceholder": "Search {searchItem}",
     "secretLower": "secret",
     "select": "Select",

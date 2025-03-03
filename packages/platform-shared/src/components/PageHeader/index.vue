@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
     </h1>
     <BBadge
       v-if="isBeta"
-      class="beta-badge align-top"
+      class="beta-badge align-top ml-2 mt-4"
       pill
       variant="primary">
       {{ $t('common.beta') }}
