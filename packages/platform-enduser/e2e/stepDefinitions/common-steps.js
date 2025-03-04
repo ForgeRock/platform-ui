@@ -6,23 +6,14 @@
  */
 
 import { Given, When } from '@badeball/cypress-cucumber-preprocessor';
+import generateJourneyURL from '../../../../e2e/utils/journeyUtils';
 
 Given('{string} is logged in', (username) => {
   cy.loginAsEnduser(username === 'Enduser' ? Cypress.env('endUserName') : username);
 });
 
-Given('{string} is logged in to {string} journey', (username, journey) => {
-  let journeyPath;
-  switch (journey) {
-    case 'All sections active':
-      journeyPath = 'QA%20-%20Default%20Login%20with%20all%20enduser%20sections%20active';
-      break;
-    default:
-      break;
-  }
-
-  const loginUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=${journeyPath}#/` : `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=${journeyPath}#/`;
-
+Given('{string} logs into {journey} journey', (username, journeyName) => {
+  const loginUrl = generateJourneyURL(journeyName);
   cy.loginAsEnduser(username === 'Enduser' ? Cypress.env('endUserName') : username, 'Rg_GRg9k&e', true, loginUrl);
 });
 

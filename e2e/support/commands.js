@@ -8,6 +8,7 @@
 import '@testing-library/cypress/add-commands';
 import 'cypress-file-upload';
 import '@neuralegion/cypress-har-generator/commands';
+import generatePageURL from '../utils/adminUtils';
 
 // Method that fills in the Admin Login form and sends it
 function fillAndSendLoginForm() {
@@ -153,4 +154,13 @@ Cypress.Commands.add('readFixtureFile', (fileName) => {
       if (!data) throw new Error(`File not found in: ${globalFile} or ${projectFile}`);
       return data;
     });
+});
+
+/**
+* navigateToPage command navigates to a page indicating the page name or the URL of the page based on the ADMIN_PAGES constants file
+* @param {page} page This can be either the page name or the page URL
+* @param {isUrl} isUrl Indicates if the value of the page param is an URL or the name of the page. By default it uses the page name.
+*/
+Cypress.Commands.add('navigateToPage', (page, isUrl = false) => {
+  cy.visit(generatePageURL(page, isUrl));
 });

@@ -9,7 +9,7 @@ Feature: Enduser Login
   Background:
     Given enduser account is created via API
     And admin is logged out
-    And user navigates to "end user login" page
+    And user navigates to "Login" journey
 
   # Test Cases: C20237
   Scenario: Correct Login credentials
