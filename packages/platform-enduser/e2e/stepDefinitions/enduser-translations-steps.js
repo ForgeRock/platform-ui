@@ -2,8 +2,8 @@ import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
 import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
 import { addOverrides, deleteOverrides } from '../../../../e2e/api/localizationApi.e2e';
-import { frTranslations, jaTranslations, enTranslations } from '../fixtures/enduser-locales-translations';
 import { importJourneysViaAPI, deleteJourneysViaAPI } from '../../../../e2e/utils/manageJourneys';
+import LOCALES from '../support/constants';
 
 // TODO: Delete Features and env conditionals when https://pingidentity.atlassian.net/browse/IAM-8259 is resolved
 
@@ -43,9 +43,9 @@ after(() => {
     cy.logout();
     cy.loginAsAdmin().then(() => {
       // Delete locale overrides for all languages added on the test
-      deleteOverrides('ja');
-      deleteOverrides('fr', false);
-      deleteOverrides('en', false);
+      deleteOverrides(LOCALES.ja.code);
+      deleteOverrides(LOCALES.fr.code, false);
+      deleteOverrides(LOCALES.en.code, false);
 
       if (Cypress.env('IS_FRAAS')) {
         // Delete all dependencies added tot he tenant and restore default Login journey
@@ -55,31 +55,20 @@ after(() => {
       deleteIDMUser(Cypress.env('endUserID'));
 
       // Restore 'en' language on the Cypress browser
-      Cypress.env('LOCALE', 'en');
+      Cypress.env('LOCALE', LOCALES.en.code);
 
       cy.logout();
     });
   }
 });
 
-Given('language override for {string} is added', (locale) => {
-  switch (locale) {
-    case 'fr':
-      addOverrides('fr', frTranslations);
-      break;
-    case 'ja':
-      addOverrides('ja', jaTranslations);
-      break;
-    case 'en':
-      addOverrides('en', enTranslations);
-      break;
-    default:
-      break;
-  }
+Given('{string} language is set via API', (localeCode) => {
+  const locale = Object.values(LOCALES).find((localeObject) => localeObject.code === localeCode);
+  addOverrides(locale.code, locale.translations);
 });
 
-When('language override for {string} is deleted', (locale) => {
-  deleteOverrides(locale);
+When('{string} language set is deleted via API', (localeCode) => {
+  deleteOverrides(localeCode);
 });
 
 Then('sidebar translations are in {string}', (language) => {

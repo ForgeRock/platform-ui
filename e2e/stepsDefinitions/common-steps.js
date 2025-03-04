@@ -41,6 +41,20 @@ Given('admin/enduser is logged out', () => {
   cy.logout();
 });
 
+Given('admin navigates to {page} page', (page) => {
+  cy.navigateToPage(page);
+});
+
+Given('admin navigates to login page', () => {
+  cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
+});
+
+Given('admin navigates to {string} page url', (page) => {
+  cy.intercept('GET', '/am/json/serverinfo/*').as('getServerInfo');
+  cy.visit(`${Cypress.config().baseUrl}${page}`);
+  cy.wait('@getServerInfo');
+});
+
 When('user reloads the page', () => {
   cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
   cy.reload();

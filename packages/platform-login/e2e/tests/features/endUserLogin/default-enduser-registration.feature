@@ -3,7 +3,7 @@
 Feature: Enduser Registration
 
   Background:
-    Given user navigates to "registration" page
+    Given user navigates to "Registration" journey
 
   # Test Cases: C19752
   @cloud

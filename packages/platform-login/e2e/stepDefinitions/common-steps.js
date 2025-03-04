@@ -6,44 +6,13 @@
  */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
+import generateJourneyURL from '../../../../e2e/utils/journeyUtils';
 
-function visitJourneyPage(journeyPageUrl) {
-  // Set up intercept
+Given('user navigates to {journey} journey', (journeyName) => {
+  const url = generateJourneyURL(journeyName);
   cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
-
-  // Load base Journey URL
-  cy.visit(journeyPageUrl);
-
-  // Wait for a Journey page to fully load
+  cy.visit(url);
   cy.wait('@themerealmConfig', { timeout: 10000 });
-}
-
-/**
- * Navigates the user to the specified page and clears any stored data.
- * This step definition allows navigation to a page that uses the base URL specified in the default block.
- * @param {string} pageName - The page to navigate to ('admin login', 'end user login', 'registration', or any other path relative to the base URL).
- */
-Given('admin/user navigates to {string} page', (page) => {
-  const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
-  switch (page) {
-    case 'admin login':
-      cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
-      break;
-    case 'end user login':
-      visitJourneyPage(`${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login`);
-      break;
-    case 'registration':
-      visitJourneyPage(`${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration`);
-      break;
-    case 'Scripted ConfirmationCallbacks':
-      visitJourneyPage(`${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=QA%20-%20Scripted%20Decision%20Node%20with%20ConfirmationCallbacks#/`);
-      break;
-    default:
-      cy.intercept('GET', '/am/json/serverinfo/*').as('getServerInfo');
-      cy.visit(`${Cypress.config().baseUrl}${page}`);
-      cy.wait('@getServerInfo');
-      break;
-  }
 });
 
 When('cleanup {string} Journey with all dependencies', (journeyName) => {

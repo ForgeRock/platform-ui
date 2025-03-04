@@ -8,13 +8,13 @@ Feature: Check scripted ConfirmationCallbacks correctly handle translation
 
   Scenario: Scripted ConfirmationCallbacks translations are handled correctly with the "Legacy" Journey Decision Node Script
     Given journey template "QA-Scripted_Decision_Node_with_ConfirmationCallbacks" is imported with "Legacy" Decision Node Script
-    When user navigates to "Scripted ConfirmationCallbacks" page
+    When user navigates to "Scripted Confirmation Callbacks" journey
     Then translations for Scripted ConfirmationCallbacks for "en" locale are correct
     And cleanup "QA-Scripted_Decision_Node_with_ConfirmationCallbacks" Journey with all dependencies
 
   Scenario: Scripted ConfirmationCallbacks translations are handled correctly with the "Next Generation" Journey Decision Node Script
     Given journey template "QA-Scripted_Decision_Node_with_ConfirmationCallbacks" is imported with "Next Generation" Decision Node Script
-    When user navigates to "Scripted ConfirmationCallbacks" page
+    When user navigates to "Scripted Confirmation Callbacks" journey
     Then translations for Scripted ConfirmationCallbacks for "en" locale are correct
     And cleanup "QA-Scripted_Decision_Node_with_ConfirmationCallbacks" Journey with all dependencies
 

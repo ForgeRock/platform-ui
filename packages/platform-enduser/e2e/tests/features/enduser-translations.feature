@@ -2,9 +2,9 @@
 Feature: Enduser UI Translations
 
   Scenario: Full translation: French translation
-    Given language override for 'fr' is added
+    Given "fr" language is set via API
     And browser locale is set to 'fr'
-    And 'Enduser' is logged in to 'All sections active' journey
+    And "Enduser" logs into "All sections active" journey
     Then sidebar translations are in 'french'
     When dashboard translations are in 'french'
     And user clicks on 'Éditer le profil en français' button
@@ -20,14 +20,14 @@ Feature: Enduser UI Translations
     When browser locale is set to 'xw'
     And user reloads the page
     Then dashboard translations are in 'english'
-    When language override for 'fr' is added
+    When "fr" language is set via API
     And browser locale is set to 'fr,it,mn'
     And user reloads the page
     Then dashboard translations are in 'french'
     When browser locale is set to 'mn,it,fr'
     And user reloads the page
     Then dashboard translations are in 'french'
-    When language override for 'fr' is deleted
+    When "fr" language set is deleted via API
     And user reloads the page
     Then dashboard translations are in 'english'
 
@@ -35,16 +35,16 @@ Feature: Enduser UI Translations
   Scenario: Default locale override: Override English locale
     When 'Enduser' is logged in
     Then dashboard translations are in 'english'
-    When language override for 'en' is added
+    When "en" language is set via API
     And user reloads the page
     Then dashboard translations are in 'overriden english'
-    When language override for 'en' is deleted
+    When "en" language set is deleted via API
     And user reloads the page
     Then dashboard translations are in 'english'
 
   @forgeops
   Scenario: Special characters: Japanese translation
-    Given language override for 'ja' is added
+    Given "ja" language is set via API
     And browser locale is set to 'ja'
     When 'Enduser' is logged in
     Then sidebar translations are in 'japanese'
