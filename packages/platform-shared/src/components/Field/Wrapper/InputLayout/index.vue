@@ -11,7 +11,6 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         v-if="floatingLabel"
         class="form-label-group-input">
-        <slot :label-height="labelHeight" />
         <label
           v-if="label && isHtml"
           v-html="labelTranslation"
@@ -27,6 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
           :class="['pe-none', {'overflow-hidden text-nowrap': !labelHeight, 'readonly-label': readonlyLabel}]">
           {{ labelTranslation }}
         </label>
+        <slot :label-height="labelHeight" />
       </div>
       <div
         v-else
@@ -238,6 +238,7 @@ export default {
 
   &.floating-label {
     label {
+      z-index: 1;
       padding: $input-btn-padding-y;
       position: absolute;
       top: 0;
@@ -258,7 +259,7 @@ export default {
       }
     }
 
-    textarea ~ label {
+    label:has(~ textarea) {
       transform: none !important;
       right: 0;
       transition: font-size 0.1s ease, padding 0.1s ease;
@@ -274,8 +275,12 @@ export default {
       color: transparent !important;
     }
 
-    .multiselect--disabled ~ label {
+    label:has(~ .multiselect--disabled) {
       background-color: transparent !important;
+    }
+
+    label:has(~ .multiselect--active) {
+      z-index: 51;
     }
   }
   .form-label-group-input {
@@ -297,24 +302,28 @@ export default {
       &:not([placeholder=""]) {
         padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
         padding-bottom: calc($input-btn-padding-y / 3);
+      }
+    }
 
-        ~ label {
+    label:has(~ .polyfill-placeholder,
+      ~ input:not(:placeholder-shown) input:focus,
+      ~ input:autofill) {
+        &:not([placeholder=""]) {
           transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
         }
-      }
+    }
+
+    label:has(~ textarea.polyfill-placeholder:not([placeholder=""])) {
+      transition: font-size 0.1s ease, padding 0.1s ease;
+      font-size: 13px;
+      padding-top: 3px;
+      padding-left: 10px;
     }
 
     textarea.polyfill-placeholder {
       &:not([placeholder=""]) {
         padding-top: 1.50rem;
         padding-bottom: 0;
-
-        ~ label {
-          transition: font-size 0.1s ease, padding 0.1s ease;
-          font-size: 13px;
-          padding-top: 3px;
-          padding-left: 10px;
-        }
       }
     }
     /* stylelint-enable */
@@ -326,7 +335,7 @@ export default {
       color: $label-color;
     }
 
-    .white-label-background ~ label {
+    label:has(~ .white-label-background) {
       background-color: $fr-toolbar-background;
       margin: 1px;
     }

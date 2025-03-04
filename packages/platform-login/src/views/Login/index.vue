@@ -11,11 +11,11 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
       :custom-html="sanitizedHeader"
       :is-accessible="journeyHeaderSkipLinkEnabled"
-      main-content-id="callbacksPanel"
+      main-content-id="mainContent"
       v-bind="screenReaderHeaderRole" />
     <main
       ref="main"
-      id="callbacksPanel"
+      id="mainContent"
       tabindex="-1"
       v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode"
       class="px-0 flex-grow-1 d-flex container focus-ring-none">
