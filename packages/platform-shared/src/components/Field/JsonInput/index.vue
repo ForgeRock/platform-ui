@@ -28,7 +28,8 @@ import blurOnEscape, { highlighter } from '@forgerock/platform-shared/src/utils/
 
 import { useField } from 'vee-validate';
 import uuid from 'uuid/v4';
-import { toRef } from 'vue';
+import { ref, toRef, watch } from 'vue';
+import { debounce } from 'lodash';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -53,17 +54,49 @@ export default {
   },
   setup(props) {
     const {
-      value: inputValue, errors: fieldErrors, handleBlur,
-    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+      value: inputValue,
+      errors: fieldErrors,
+      meta,
+      handleBlur,
+      validate,
+    } = useField(
+      () => `${props.name}-id-${uuid()}`,
+      toRef(props, 'validation'),
+      {
+        validateOnMount: props.validationImmediate,
+        initialValue: '',
+        bails: false,
+        validateOnValueUpdate: false,
+      },
+    );
 
-    // validationListeners: Contains custom event listeners for validation.
-    // Since vee-validate +4 removes the interaction modes, this custom listener is added
-    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const wasInvalid = ref(false);
+    const debouncedValidate = debounce(validate, 250);
+
+    // Eager validation on input if previously invalid
+    watch(inputValue, () => {
+      if (wasInvalid.value) {
+        debouncedValidate();
+      }
+    });
+
+    // Track when field becomes valid again
+    watch(fieldErrors, (newErrors) => {
+      wasInvalid.value = newErrors.length > 0;
+    });
+
+    // Blur validation — triggers immediate validation on blur
     const validationListeners = {
-      blur: (evt) => handleBlur(evt, true),
+      blur: async (evt) => {
+        handleBlur(evt, true);
+        await validate();
+        wasInvalid.value = fieldErrors.value.length > 0; // Reset tracking
+      },
     };
 
-    return { inputValue, fieldErrors, validationListeners };
+    return {
+      inputValue, fieldErrors, meta, validationListeners,
+    };
   },
   methods: {
     blurOnEscape,

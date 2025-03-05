@@ -272,6 +272,7 @@ describe('BasicInput', () => {
           expect(input.attributes('aria-describedby')).toBe('stub-name0-error');
 
           await input.setValue('');
+          await input.trigger('blur'); // Emit a blur event to trigger validation
           await flushPromises();
 
           expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['parent error.', 'Please provide a value']);
@@ -488,7 +489,7 @@ describe('BasicInput', () => {
 
         const input = findByTestId(wrapper, 'input-stub-testid');
         await input.setValue(value);
-        await input.trigger('blur');
+        await input.trigger('blur'); // Emit a blur event to trigger validation
         await flushPromises();
 
         expect(input.element.value).toBe(expectedValue);

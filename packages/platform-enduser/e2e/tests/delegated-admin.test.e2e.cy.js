@@ -374,10 +374,10 @@ filterTests(['@forgeops', '@cloud'], () => {
         cy.findByLabelText('First Name').type('First');
         cy.findByLabelText('Last Name').type('Last');
         cy.findByRole('button', { name: 'Save' }).should('be.disabled');
-        cy.findByLabelText('Email Address').type('badEmail@email');
+        cy.findByLabelText('Email Address').type('badEmail@email').blur();
         cy.findByRole('button', { name: 'Save' }).should('be.disabled');
         cy.findAllByRole('alert').contains('Invalid email format (example@example.com)');
-        cy.findByLabelText('Email Address').type('.com');
+        cy.findByLabelText('Email Address').type('.com').blur();
         cy.findByRole('button', { name: 'Save' }).click();
         cy.wait('@saveManagedUser').then(({ response }) => {
           testUserId = response.body._id;

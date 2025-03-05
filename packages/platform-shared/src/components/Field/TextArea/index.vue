@@ -55,11 +55,12 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { useField } from 'vee-validate';
 import uuid from 'uuid/v4';
-import { toRef } from 'vue';
+import { ref, toRef, watch } from 'vue';
 import * as clipboard from 'clipboard-polyfill/text';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import { BInputGroupAppend, BTooltip } from 'bootstrap-vue';
+import { debounce } from 'lodash';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -135,14 +136,38 @@ export default {
   },
   setup(props) {
     const {
-      value: inputValue, errors: fieldErrors, handleBlur,
-    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+      value: inputValue, errors: fieldErrors, handleBlur, validate,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
+      validateOnMount: props.validationImmediate, initialValue: '', bails: false, validateOnValueUpdate: false,
+    });
+    const wasInvalid = ref(false); // Track invalid state
+    const debouncedValidate = debounce(validate, 250);
+
+    // Watch input changes: Validate aggressively if previously invalid
+    watch(inputValue, () => {
+      if (wasInvalid.value) {
+        debouncedValidate();
+      }
+    });
+
+    // Watch errors to transition between validation modes
+    watch(fieldErrors, (newErrors) => {
+      if (newErrors.length === 0) {
+        wasInvalid.value = false; // Reset to eager validation
+      } else {
+        wasInvalid.value = true; // Stay aggressive while invalid
+      }
+    });
 
     // validationListeners: Contains custom event listeners for validation.
     // Since vee-validate +4 removes the interaction modes, this custom listener is added
     // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
     const validationListeners = {
-      blur: (evt) => handleBlur(evt, true),
+      blur: (evt) => {
+        handleBlur(evt, true);
+        validate(); // Validate immediately on blur
+        wasInvalid.value = fieldErrors.value.length > 0;
+      },
     };
 
     return { inputValue, fieldErrors, validationListeners };

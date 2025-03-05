@@ -119,14 +119,14 @@ import {
   BInputGroupAppend,
   BTooltip,
 } from 'bootstrap-vue';
-import { delay } from 'lodash';
+import { delay, debounce } from 'lodash';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import { useField } from 'vee-validate';
-import { toRef } from 'vue';
+import { ref, toRef, watch } from 'vue';
 import uuid from 'uuid/v4';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
@@ -215,13 +215,39 @@ export default {
   },
   setup(props) {
     const {
-      value: inputValue, errors: fieldErrors, meta, handleBlur,
-    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+      value: inputValue, errors: fieldErrors, meta, handleBlur, validate,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
+      validateOnMount: props.validationImmediate, initialValue: '', bails: false, validateOnValueUpdate: false,
+    });
+    const wasInvalid = ref(false);
+    // Debounced validation to prevent validation on every keypress
+    const debouncedValidate = debounce(validate, 250);
+    // Watch input changes, and validate eagerly if the field has been touched
+    watch(inputValue, () => {
+      if (wasInvalid.value) {
+        debouncedValidate();
+      }
+    });
+
+    watch(fieldErrors, (newErrors) => {
+      if (newErrors.length === 0) {
+        // switch back to eager validation
+        wasInvalid.value = false;
+      } else {
+        // keep aggressive validation
+        wasInvalid.value = true;
+      }
+    });
+
     // validationListeners: Contains custom event listeners for validation.
     // Since vee-validate +4 removes the interaction modes, this custom listener is added
     // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
     const validationListeners = {
-      blur: (evt) => handleBlur(evt, true),
+      blur: (evt) => {
+        handleBlur(evt, true); // Validate on blur
+        validate(); // Run validation immediately on blur
+        wasInvalid.value = fieldErrors.value.length > 0;
+      },
     };
 
     return {
