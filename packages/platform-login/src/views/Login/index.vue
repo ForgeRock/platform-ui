@@ -1208,13 +1208,17 @@ export default {
       FRAuth.next(this.step, stepParams)
         .then((step) => {
           let initialStep;
+          const previousStep = this.step;
+          this.isFirstStep = !previousStep;
+
           // Check if web storage exists before trying to use it - see IAM-1873
           if (this.$store.state.SharedStore.webStorageAvailable) {
             const realmAndTreeInitialStep = JSON.parse(sessionStorage.getItem('initialStep')) || '';
             const realmAndTreeKey = `${stepParams.realmPath}/${stepParams.tree || ''}`;
             if (realmAndTreeInitialStep && realmAndTreeInitialStep.key === realmAndTreeKey) {
               initialStep = new FRStep(realmAndTreeInitialStep.step.payload);
-            } else if (step.type !== 'LoginFailure') {
+            }
+            if (this.isFirstStep && step.type !== 'LoginFailure') {
               sessionStorage.setItem('initialStep', JSON.stringify(
                 {
                   key: realmAndTreeKey,
@@ -1223,8 +1227,6 @@ export default {
               ));
             }
           }
-          const previousStep = this.step;
-          this.isFirstStep = !previousStep;
           this.step = step;
 
           // Tree resumption parameters should generally only be supplied once, so we remove them from memory after we've sent them to the SDK (see IAM-492)
