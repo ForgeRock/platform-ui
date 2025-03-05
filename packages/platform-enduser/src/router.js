@@ -80,11 +80,13 @@ const router = createRouter({
               path: '',
               name: 'AdministerEntitlements',
               component: () => import('@/views/governance/LCM/Entitlements/EntitlementList'),
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.govLcmEntitlement]),
             },
             {
               path: ':entitlementId',
               name: 'EntitlementDetails',
               component: () => import('@/views/governance/LCM/Entitlements/Edit/EntitlementDetails'),
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.govLcmEntitlement]),
             },
           ],
         },

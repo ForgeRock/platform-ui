@@ -64,5 +64,5 @@ export function getEntitlementSchema(application, objectType) {
  */
 export function getApplicationList(resource, queryParams = {}) {
   const encodedQueryParams = encodeQueryString(queryParams);
-  return generateIgaApi().get(`${applicationUrl}${encodedQueryParams}`);
+  return generateIgaApi().get(`${applicationUrl}${encodedQueryParams}&scopePermission=createEntitlement`);
 }

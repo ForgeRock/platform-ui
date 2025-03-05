@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       :application-id="applicationId"
       :object-type="objectType"
       :entitlement="entitlement"
+      :read-only="readOnly"
       @update:glossaryValues="glossaryValues = $event"
       @update:entitlementValues="entitlementValues = $event" />
     <template #footer>

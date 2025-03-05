@@ -109,7 +109,7 @@ describe('EntitlementApi', () => {
           const result = await getApplicationList('resource', queryParams);
           expect(result).toEqual(mockResponse);
           expect(encodeQueryString).toHaveBeenCalledWith(queryParams);
-          expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application?page=1&size=10');
+          expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application?page=1&size=10&scopePermission=createEntitlement');
         });
 
         it('should return a list of applications without query parameters', async () => {
@@ -122,7 +122,7 @@ describe('EntitlementApi', () => {
           const result = await getApplicationList('resource');
           expect(result).toEqual(mockResponse);
           expect(encodeQueryString).toHaveBeenCalledWith({});
-          expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application');
+          expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application&scopePermission=createEntitlement');
         });
       });
     });

@@ -14,6 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
       :additional-query-params="queryFilter"
       :columns="entitlementColumns"
       :resource-function="getEntitlementList"
+      :show-add-button="showAddButton"
+      :show-errors="false"
       @add-clicked="showAddEntitlementModal"
       @row-clicked="navigateToEntitlementDetails">
       <template #toolbar-right>
@@ -104,7 +106,7 @@ of the MIT license. See the LICENSE file for details. -->
  * This component is used to display the entitlements list.
  * Supports searching and pagination
  */
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import {
   BButton,
   BCol,
@@ -123,7 +125,7 @@ import FrGovResourceSelect from '@forgerock/platform-shared/src/components/gover
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroupList/UserBasicInfo';
-import { getEntitlementList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import { getEntitlementList, getApplicationList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
@@ -140,6 +142,7 @@ const applicationFilter = ref('');
 const ownerFilter = ref('');
 const queryFilter = ref('');
 const showFilters = ref(false);
+const showAddButton = ref(false);
 
 const allApplicationsOption = {
   text: i18n.global.t('common.allApplications'),
@@ -203,6 +206,19 @@ watch(() => applicationFilter.value, (newVal) => {
 
 watch(() => ownerFilter.value, (newVal) => {
   queryFilter.value = buildFilterQueryParams(applicationFilter.value, newVal);
+});
+
+onMounted(async () => {
+  try {
+    const queryParams = {
+      pageSize: 10,
+      queryFilter: 'application.objectTypes.accountAttribute co ""',
+    };
+    const { data } = await getApplicationList(null, queryParams);
+    showAddButton.value = data.totalCount > 0;
+  } catch {
+    showAddButton.value = false;
+  }
 });
 
 </script>

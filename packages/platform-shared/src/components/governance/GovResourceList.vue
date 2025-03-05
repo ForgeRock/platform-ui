@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BButtonToolbar>
         <div class="mb-lg-0 mr-lg-1 ">
           <BButton
+            v-if="showAddButton"
             variant="primary"
             @click="$emit('add-clicked')">
             <FrIcon
@@ -110,6 +111,14 @@ const props = defineProps({
   additionalQueryParams: {
     type: String,
     default: '',
+  },
+  showAddButton: {
+    type: Boolean,
+    default: true,
+  },
+  showErrors: {
+    type: Boolean,
+    default: true,
   },
 });
 
@@ -231,7 +240,7 @@ async function loadData() {
     items.value = data.result;
     totalRows.value = data[totalResultsPath.value];
   } catch (error) {
-    showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: props.resource }));
+    if (props.showErrors) showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: props.resource }));
     items.value = [];
     totalRows.value = 0;
   } finally {

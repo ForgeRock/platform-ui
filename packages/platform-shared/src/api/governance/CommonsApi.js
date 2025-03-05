@@ -38,18 +38,12 @@ export function getIgaAccessRequest() {
   return generateIgaApi().get('commons/config/iga_access_request');
 }
 
+/**
+ * Fetches the IGA UI configuration
+ * @returns {Promise} A promise that resolves to the IGA UI configuration object.
+ */
 export async function getIgaUiConfig() {
-  await new Promise((r) => setTimeout(r, 1000));
-  return Promise.resolve({
-    data: {
-      lcmSettings: {
-        user: { enabled: false },
-        role: { enabled: false },
-        organization: { enabled: false },
-        entitlement: { enabled: true },
-      },
-    },
-  });
+  return generateIgaApi().get('commons/config/iga_ui_config');
 }
 
 /**

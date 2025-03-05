@@ -4233,9 +4233,9 @@
           "scopeAppliesTo": "Scope applies to users where"
         },
         "access": {
-          "title": "Access",
-          "description": "Choose what applicable users should be allowed access.",
           "allowIf": "Allow if",
+          "description": "Choose what applicable users should be allowed access.",
+          "title": "Access",
           "accessToOptions": {
             "application": "Applications",
             "all": "All {option}",
@@ -4248,6 +4248,14 @@
             "role": "Roles",
             "rolesMatchingFilter": "Roles matching a filter",
             "roleProperty": "Role Property"
+          },
+          "permissions": {
+            "createEntitlements": "Create Entitlements",
+            "modifyEntitlements": "Modify Entitlements",
+            "viewApplications": "View Applications",
+            "viewEntitlements": "View Entitlements",
+            "viewGrants": "View Grants",
+            "viewRoles": "View Roles"
           }
         },
         "saveError": "There was an error saving this scope",

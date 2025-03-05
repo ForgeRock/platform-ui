@@ -34,6 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
             :entitlement="entitlement" />
         </BTab>
         <BTab
+          v-if="viewGrants"
           class="mt-4"
           :title="$t('common.users')">
           <FrUsers
@@ -45,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import {
   BContainer,
   BMedia,
@@ -68,6 +69,7 @@ const { setBreadcrumb } = useBreadcrumb();
 
 const entitlementId = ref(route.params.entitlementId);
 const entitlement = ref(null);
+const viewGrants = computed(() => (entitlement.value?.permissions?.viewGrants));
 
 /**
  * Get the entitlement details by ID.
