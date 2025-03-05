@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t(`governance.requestModal.detailsTab.status`) }}
             </small>
             <BBadge
-              class="px-4 text-dark"
+              class="px-4"
               :variant="details.status.variant">
               {{ details.status.name }}
             </BBadge>
@@ -34,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
             </small>
             <BBadge
               v-if="details.outcome"
-              class="px-4 text-dark"
+              class="px-4"
               :variant="details.outcome.variant">
               {{ details.outcome.name }}
             </BBadge>

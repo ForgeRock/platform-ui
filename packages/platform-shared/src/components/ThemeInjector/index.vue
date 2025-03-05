@@ -453,12 +453,12 @@ of the MIT license. See the LICENSE file for details. -->
 
       #app .dropdown-item:hover .text-muted,
       #app .dropdown-item:focus .text-muted {
-        color: {{ theme.profileMenuHoverTextColor || '#455469'}} !important;
+        color: {{ theme.profileMenuHoverTextColor || '#455469' }} !important;
       }
 
       #app .dropdown-item:hover .material-icons-outlined,
       #app .dropdown-item:focus .material-icons-outlined {
-        color: {{ theme.profileMenuHoverTextColor || 'inherit'}} !important;
+        color: {{ theme.profileMenuHoverTextColor || 'inherit' }} !important;
       }
 
       #app .fr-main-navbar<template v-if="mock">-mock</template> {
@@ -518,6 +518,7 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app a.nav-link.router-link-active .badge {
+        color: {{ getContrastColor(theme.primaryColor) }};
         background-color: {{ theme.primaryColor }};
       }
 
@@ -542,6 +543,51 @@ of the MIT license. See the LICENSE file for details. -->
         -webkit-box-shadow: 0 0 0 0.0625rem {{ accountCardInputFocusBorderColor }} !important;
         box-shadow: 0 0 0 0.0625rem {{ accountCardInputFocusBorderColor }} !important;
         outline: 0 none;
+      }
+
+      <!--
+        Styles badges and their variants to be themeable
+      -->
+      #app .badge.badge-primary {
+        color: {{ getContrastColor(theme.primaryColor) }};
+        background-color: {{ theme.primaryColor }};
+      }
+
+      <!-- if no variant is specified, secondary style is default style -->
+      #app .badge,
+      #app .badge.badge-secondary {
+        color: {{ getContrastColor(theme.secondaryColor) }};
+        background-color: {{ theme.secondaryColor }};
+      }
+
+      #app .badge.badge-success {
+        color: {{ getContrastColor(theme.successColor) }};
+        background-color: {{ theme.successColor }};
+      }
+
+      #app .badge.badge-danger {
+        color: {{ getContrastColor(theme.dangerColor) }};
+        background-color: {{ theme.dangerColor }};
+      }
+
+      #app .badge.badge-warning {
+        color: {{ getContrastColor(theme.warningColor) }};
+        background-color: {{ theme.warningColor }};
+      }
+
+      #app .badge.badge-info {
+        color: {{ getContrastColor(theme.infoColor) }};
+        background-color: {{ theme.infoColor }};
+      }
+
+      #app .badge.badge-light {
+        color: {{ getContrastColor(theme.lightColor) }};
+        background-color: {{ theme.lightColor }};
+      }
+
+      #app .badge.badge-dark {
+        color: {{ getContrastColor(theme.darkColor) }};
+        background-color: {{ theme.darkColor }};
       }
     </Component>
   </div>
@@ -728,6 +774,82 @@ export default {
       // Creates one solid string to inject in the theme via import
       // (e.g. https://fonts.bunny.net/css2?family=Open+Sans:200,300,regular&display=swap)
       return apiUrl.length ? apiUrl.join('') : null;
+    },
+  },
+  methods: {
+    /**
+     * Calculates the contrast color (either dark or light color) for a given hex color based on the specified target contrast ratio.
+     *
+     * @param {string} hexColor - The hex color code to determine the contrast color for.
+     * @param {number} [targetRatio=4.5] - The target contrast ratio to achieve. Default is 4.5 as per WCAG AA Compliance.
+     * @param {string} [darkColor='#000000'] - The dark color to use if the contrast ratio is met. Default is black.
+     * @param {string} [lightColor='#ffffff'] - The light color to use if the contrast ratio is met. Default is white.
+     * @returns {string} - The hex color code of the contrast color (either dark or light).
+     */
+    getContrastColor(hexColor, targetRatio = 4.5, lightColor = '#ffffff', darkColor = '#000000') {
+      // Helper functions
+      function hexToRgb(hex) {
+        let tempHex = hex.replace(/^#/, '');
+        if (tempHex.length === 3) {
+          tempHex = tempHex[0] + tempHex[0] + tempHex[1] + tempHex[1] + tempHex[2] + tempHex[2];
+        }
+        const r = parseInt(tempHex.substring(0, 2), 16) / 255;
+        const g = parseInt(tempHex.substring(2, 4), 16) / 255;
+        const b = parseInt(tempHex.substring(4, 6), 16) / 255;
+        return { r, g, b };
+      }
+
+      function calculateLuminance(rgb) {
+        // WCAG 2.0 luminance calculation - linearized RGB
+
+        // From sRGB gamma correction, these constants are based on IEC standard
+        const linearThreshold = 0.03928;
+        const linearCoefficient = 12.92;
+        const nonLinearCoefficient = 1.055;
+        const nonLinearExponent = 2.4;
+        const nonLinearOffset = 0.055;
+
+        const r = rgb.r <= linearThreshold ? rgb.r / linearCoefficient : ((rgb.r + nonLinearOffset) / nonLinearCoefficient) ** nonLinearExponent;
+        const g = rgb.g <= linearThreshold ? rgb.g / linearCoefficient : ((rgb.g + nonLinearOffset) / nonLinearCoefficient) ** nonLinearExponent;
+        const b = rgb.b <= linearThreshold ? rgb.b / linearCoefficient : ((rgb.b + nonLinearOffset) / nonLinearCoefficient) ** nonLinearExponent;
+
+        // Weights derived from CIE 1931 color space and psychophysical studies
+        const redWeight = 0.2126; // Relative contribution of red to luminance
+        const greenWeight = 0.7152; // Relative contribution of green to luminance
+        const blueWeight = 0.0722; // Relative contribution of blue to luminance
+
+        return redWeight * r + greenWeight * g + blueWeight * b;
+      }
+
+      function calculateContrastRatio(lum1, lum2) {
+        // WCAG 2.0 contrast ratio calculation
+        const offset = 0.05; // Prevents division by zero and ensures minimum contrast
+        const brighter = Math.max(lum1, lum2);
+        const darker = Math.min(lum1, lum2);
+        return (brighter + offset) / (darker + offset);
+      }
+
+      // Main logic
+      if (typeof hexColor !== 'string' || !/^#([0-9A-Fa-f]{3}){1,2}$/.test(hexColor)) {
+        return 'inherit'; // Return 'inherit' for invalid hex color
+      }
+
+      const rgb = hexToRgb(hexColor);
+      const luminance = calculateLuminance(rgb);
+
+      const whiteContrast = calculateContrastRatio(luminance, 1); // Use 1 for white luminance
+      const blackContrast = calculateContrastRatio(luminance, 0); // Use 0 for black luminance
+
+      if (whiteContrast >= targetRatio) {
+        return lightColor; // Return the provided light color
+      }
+
+      if (blackContrast >= targetRatio) {
+        return darkColor; // Return the provided dark color
+      }
+      // If neither white nor black meet the contrast ratio, this section can be expanded to find more suitable colors.
+      // For now, return the best of the two.
+      return whiteContrast > blackContrast ? lightColor : darkColor;
     },
   },
 };
