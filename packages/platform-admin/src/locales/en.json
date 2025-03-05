@@ -2063,7 +2063,8 @@
   "ipAddresses": {
     "title": "IP Addresses",
     "subtitle": "Outbound source IP addresses for this tenant.",
-    "loadingError": "Unable to load tenant info."
+    "loadingError": "Unable to load tenant info.",
+    "noIpAddresses": "No static IP addresses have been configured for this tenant."
   },
   "email": {
     "inviteAdmin": {
@@ -3072,7 +3073,6 @@
         "identityTitle": "No synchronized data for {displayName}",
         "identitySubtitle": "Synchronize data between {displayName} and other entities."
       },
-
       "tabs": {
         "mapping": {
           "provisionDescription": "Define the mapping rules needed to provision to {target}.",
