@@ -86,6 +86,15 @@ export function getRules(i18n) {
   // Errors if not valid email. Checks for array of emails and array of objects with value: email
   const email = (value) => customValidators.validEmail(value) || i18n.global.t('common.policyValidationMessages.VALID_EMAIL_ADDRESS_FORMAT');
 
+  // Rule to check whether email address or esv is valid
+  const email_or_esv = async (value) => {
+    if (!doesValueContainPlaceholder(value)) {
+      return customValidators.validEmail(value) || i18n.global.t('common.policyValidationMessages.VALID_EMAIL_ADDRESS_FORMAT');
+    }
+    const isValidESV = await customValidators.isValidESV(value);
+    return isValidESV || i18n.global.t('common.policyValidationMessages.validEsv');
+  };
+
   // Email from field rule
   // errors if input value contains characters not of
   // alpha, numeric, dashes, spaces, periods, single/double quotes
@@ -277,6 +286,7 @@ export function getRules(i18n) {
     date_format,
     email,
     email_from,
+    email_or_esv,
     errorIfMatch,
     excluded,
     google_cloud_platform_certificate_validation,
