@@ -212,6 +212,7 @@ describe('New Report Modal component', () => {
 
       const nameInputValue = 'another report';
       await nameInput.setValue(nameInputValue);
+      await nameInput.trigger('blur');
       await flushPromises();
 
       // Check the validation error
@@ -223,6 +224,7 @@ describe('New Report Modal component', () => {
 
       // Changes the report name value to a unique name
       await nameInput.setValue('unique report');
+      await nameInput.trigger('blur');
       await flushPromises();
 
       // Ensures that the validation error does not exist
