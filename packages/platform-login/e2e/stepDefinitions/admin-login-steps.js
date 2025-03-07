@@ -5,9 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import {
-  When,
-} from '@badeball/cypress-cucumber-preprocessor';
+import { When } from '@badeball/cypress-cucumber-preprocessor';
 
 /**
  * Logs in the user with valid or invalid credentials.
@@ -27,11 +25,4 @@ When('Admin logs in with {string} credentials', (scenario) => {
       console.error('Invalid step');
       break;
   }
-});
-
-/**
- * The user clicks the Next button.
- */
-When('clicks the Next button', () => {
-  cy.findByRole('button', { name: 'Next' }).click();
 });

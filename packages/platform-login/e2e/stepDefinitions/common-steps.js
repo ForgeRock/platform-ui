@@ -46,21 +46,29 @@ Given('Admin/User navigates to {string} page', (page) => {
   }
 });
 
-/**
- * Checks if the current URL path matches or not matches the expected path, based on the scenario.
- * @param {string} scenario - The scenario type ('should' or 'should not').
- * @param {string} expectedPath - The expected URL path.
- */
-When('The URL path {string} contain {string}', (scenario, expectedPath) => {
-  const shouldContain = scenario === 'should';
+When('Cleanup {string} Journey with all dependencies', (journeyName) => {
+  const fullJourneyName = `${journeyName}.json`;
 
-  cy.url({ timeout: 10000 }).should((actualUrl) => {
-    if (shouldContain) {
-      expect(actualUrl).to.contain(expectedPath);
-    } else {
-      expect(actualUrl).to.not.contain(expectedPath);
-    }
-  });
+  // Delete Imported Journey with all dependencies
+  cy.deleteTreesViaAPI([fullJourneyName]);
+});
+
+When('user reloads the page', () => {
+  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.reload();
+  cy.wait('@themerealmConfig', { timeout: 10000 });
+});
+
+When('user clicks on {string} link', (link) => {
+  cy.findByRole('link', { name: link }).click();
+});
+
+When('user clicks on {string} button', (button) => {
+  cy.findByRole('button', { name: button }).click();
+});
+
+When('user navigates back', () => {
+  cy.go('back');
 });
 
 /**
@@ -89,9 +97,34 @@ Then('User should be redirected to User dashboard', () => {
   cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${Cypress.env('endUserFirstName')} ${Cypress.env('endUserLastName')}`).should('be.visible');
 });
 
-When('Cleanup {string} Journey with all dependencies', (journeyName) => {
-  const fullJourneyName = `${journeyName}.json`;
+Then('page title is {string}', (title) => {
+  cy.findByRole('heading', { name: title }).should('be.visible');
+});
 
-  // Delete Imported Journey with all dependencies
-  cy.deleteTreesViaAPI([fullJourneyName]);
+Then('text {string} is displayed', (message) => {
+  cy.findByText(message).should('be.visible');
+});
+
+Then('page url contains {string}', (url) => {
+  cy.url().should('include', url);
+});
+
+Then('page url does not contain {string}', (url) => {
+  cy.url().should('not.include', url);
+});
+
+Then('link {string} is displayed', (link) => {
+  cy.findByRole('link', { name: link }).should('be.visible');
+});
+
+Then('{string} button is enabled', (button) => {
+  cy.findByRole('button', { name: button }).should('be.enabled');
+});
+
+Then('{string} button is disabled', (button) => {
+  cy.findByRole('button', { name: button }).should('be.disabled');
+});
+
+Then('{string} field has {string} validation error', (field, validationError) => {
+  cy.findByLabelText(field).get('.error-message').should('have.text', validationError);
 });

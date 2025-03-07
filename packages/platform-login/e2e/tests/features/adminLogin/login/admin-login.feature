@@ -14,11 +14,11 @@ Feature:Admin Login
 
   Scenario: Succeed login with valid credentials and logout using /am/XUI/logout URL
     When Admin logs in with "valid" credentials
-    Then The URL path "should not" contain "/am/XUI/?realm=/#/"
+    Then page url does not contain "/am/XUI/?realm=/#/"
     When Admin navigates to "/am/XUI/?realm=/#/logout" page
-    Then The URL path "should" contain "/am/XUI/?realm=/#/"
+    Then page url contains "/am/XUI/?realm=/#/"
 
   Scenario: Logout using /am/UI/Logout URL with goto query param
     When Admin logs in with "valid" credentials
     And  Admin navigates to "/am/UI/Logout?realm=/&goto=www.google.com" page
-    Then The URL path "should" contain "/am/XUI/?realm=/&goto=www.google.com#/"
+    Then page url contains "/am/XUI/?realm=/&goto=www.google.com#/"

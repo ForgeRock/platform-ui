@@ -5,10 +5,26 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import {
-  Then, When,
-} from '@badeball/cypress-cucumber-preprocessor';
+import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
+
+When('user fills registration form with following data', (dataTable) => {
+  dataTable.hashes().forEach((row) => {
+    cy.findByLabelText(row.Field).clear().type(row.Value);
+  });
+});
+
+When('user fills security question {string} with answer {string}', (question, answer) => {
+  cy.findAllByRole('combobox', { name: 'Select a security question' }).first().type(`${question}{enter}`);
+  cy.findByLabelText(`Answer for: ${question}`).clear().type(answer);
+});
+
+When('user fills security question {string} with answer {string} if present', (question, answer) => {
+  if (!Cypress.env('IS_FRAAS')) {
+    cy.findAllByRole('combobox', { name: 'Select a security question' }).last().type(`${question}{enter}`);
+    cy.findByLabelText(`Answer for: ${question}`).clear().type(answer);
+  }
+});
 
 /**
  * Fills out the registration form with specified credentials.
@@ -88,21 +104,4 @@ Then('User should see an error indicating password should be at least {int} char
  */
 Then('The registration confirmation email is sent', () => {
   cy.findByText('An email has been sent to the address you entered. Click the link in that email to proceed.').should('exist');
-});
-
-/**
- * Verifies the state of the next button.
- * @param {string} scenario - The state of the button ('enabled' or 'disabled').
- */
-Then('The next button should be {string}', (scenario) => {
-  switch (scenario) {
-    case 'enabled':
-      cy.findByRole('button', { name: 'Next' }).should('be.enabled');
-      break;
-    case 'disabled':
-      cy.findByRole('button', { name: 'Next' }).should('be.disabled');
-      break;
-    default:
-      console.error('invalid step');
-  }
 });
