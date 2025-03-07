@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { searchCatalogEntitlements } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
@@ -117,6 +118,17 @@ describe('objectSelect utils', () => {
         queryString: 'Org1',
       };
       expect(queryParamFunction(queryString, 'organization')).toEqual(expectedParams);
+    });
+
+    it('returns query params with custom query filter', () => {
+      const queryString = 'John';
+      const customQueryFilter = '/mail co "test"';
+      const expectedParams = {
+        pageSize: 10,
+        fields: 'givenName,sn,userName',
+        queryFilter: '(/givenName sw "John" or /sn sw "John" or /userName sw "John") and (/mail co "test")',
+      };
+      expect(queryParamFunction(queryString, 'alpha_user', false, customQueryFilter)).toEqual(expectedParams);
     });
 
     describe('getValuePath', () => {

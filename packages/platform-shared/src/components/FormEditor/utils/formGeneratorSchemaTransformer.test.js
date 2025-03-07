@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -182,6 +182,23 @@ describe('formGeneratorSchemaTransformer', () => {
             required: true,
           },
           options: { object: 'user' },
+        }],
+      },
+      {
+        id: 'row6',
+        fields: [{
+          type: 'select',
+          model: 'field10',
+          label: 'Field 10',
+          description: 'Field 10 description',
+          options: { object: 'user', queryFilter: 'testFilter' },
+          layout: {
+            columns: 6,
+            offset: 0,
+          },
+          validation: {
+            required: true,
+          },
         }],
       },
     ];
@@ -372,6 +389,26 @@ describe('formGeneratorSchemaTransformer', () => {
           options: { object: 'user' },
           disabled: false,
           customSlot: 'objectMultiselect',
+        },
+      ],
+      [
+        {
+          columnClass: 'col-md-6 offset-md-0',
+          description: 'Field 10 description',
+          label: 'Field 10',
+          layout: {
+            columns: 6,
+            offset: 0,
+          },
+          model: 'field10',
+          type: 'select',
+          validation: {
+            required: true,
+          },
+          defaultValue: '',
+          options: { object: 'user', queryFilter: 'testFilter' },
+          disabled: false,
+          customSlot: 'objectSelect',
         },
       ],
     ];

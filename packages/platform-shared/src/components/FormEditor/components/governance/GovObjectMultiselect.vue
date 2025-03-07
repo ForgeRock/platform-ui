@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       :description="property.description"
       :label="property.label"
       :name="`resourceSelect_${_uid}`"
+      :custom-query="queryFilter"
       :option-function="optionFunction"
       :query-param-function="queryParamFunction"
       :read-only="property.disabled"
@@ -46,6 +47,7 @@ const inputValue = ref([]);
 
 // computed
 const propertyType = computed(() => props.property.options.object);
+const queryFilter = computed(() => props.property.options.queryFilter || '');
 const resourceFunction = computed(() => (getResourceFunction(propertyType.value)));
 const resourcePath = computed(() => (getResourcePath(propertyType.value)));
 

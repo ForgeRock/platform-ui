@@ -1513,7 +1513,9 @@
           "name": "Select",
           "options": "Options",
           "optionsDescription": "Specify values for this field.",
-          "selectType": "Select a type"
+          "selectType": "Select a type",
+          "useQueryFilter": "Use Query Filter",
+          "queryFilter": "Query Filter"
         },
         "text": {
           "description": "Textfield input to accept a single string.",

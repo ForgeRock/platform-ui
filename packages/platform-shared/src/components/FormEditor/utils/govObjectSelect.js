@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -97,14 +97,36 @@ export function optionFunction(resource, resourceType) {
 }
 
 /**
+ * Generates a query filter string based on the provided query string, fields, and custom query filter.
+ *
+ * @param {string} queryString - The query string to search for within the fields.
+ * @param {string[]} fields - An array of field names to search within.
+ * @param {string} [customQueryFilter] - An optional custom query filter to be combined with the generated query filter.
+ * @returns {string|boolean} - The generated query filter string or true if no query string is provided and no custom query filter is provided.
+ */
+function getQueryFilterWithCustomFilter(queryString, fields, customQueryFilter) {
+  let queryFilter;
+  if (queryString) {
+    const tempQuery = fields.map((field) => `/${field} sw "${queryString}"`).join(' or ');
+    queryFilter = customQueryFilter
+      ? `(${tempQuery}) and (${customQueryFilter})`
+      : tempQuery;
+  } else {
+    queryFilter = customQueryFilter || true;
+  }
+  return queryFilter;
+}
+
+/**
  * Generates query parameters for different resource types.
  *
  * @param {string} queryString - The query string to filter resources.
  * @param {string} resourceType - The type of resource to query. Can be 'alpha_user', 'alpha_role', or 'application'.
  * @param {boolean} [singleResource=false] - Whether to query for a single resource by ID.
+ * @param {string} [customQueryFilter=''] - A custom query filter to apply to the query.
  * @returns {Object} The query parameters object.
  */
-export function queryParamFunction(queryString, resourceType, singleResource = false) {
+export function queryParamFunction(queryString, resourceType, singleResource = false, customQueryFilter = '') {
   const queryParams = {};
   if (resourceType === 'alpha_user' || resourceType === 'alpha_role' || resourceType === 'alpha_organization') {
     const fields = resourceType === 'alpha_user'
@@ -115,9 +137,7 @@ export function queryParamFunction(queryString, resourceType, singleResource = f
     if (singleResource) {
       queryParams.queryFilter = `_id eq "${queryString}"`;
     } else {
-      queryParams.queryFilter = queryString
-        ? fields.map((field) => `/${field} sw "${queryString}"`).join(' or ')
-        : true;
+      queryParams.queryFilter = getQueryFilterWithCustomFilter(queryString, fields, customQueryFilter);
     }
     return queryParams;
   }
