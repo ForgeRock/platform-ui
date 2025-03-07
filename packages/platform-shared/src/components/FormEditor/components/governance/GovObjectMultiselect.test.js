@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -78,6 +78,20 @@ describe('ObjectMultiselect', () => {
       await flushPromises();
 
       expect(userApiSpy).toHaveBeenCalledWith('alpha_user', { fields: 'givenName,sn,userName', pageSize: 10, queryFilter: '_id eq "userId1"' });
+    });
+
+    it('uses a custom queryFilter when provided', async () => {
+      const propertyWithQueryFilter = {
+        options: {
+          object: 'user',
+          queryFilter: '/mail co "test"',
+        },
+        value: [],
+      };
+      mountComponent({ property: propertyWithQueryFilter });
+      await flushPromises();
+
+      expect(userApiSpy).toHaveBeenCalledWith('alpha_user', { fields: 'givenName,sn,userName', pageSize: 10, queryFilter: '/mail co "test"' });
     });
   });
 

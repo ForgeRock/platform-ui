@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,6 +41,10 @@ import { getOption, getQueryParams } from '@forgerock/platform-shared/src/utils/
 const emit = defineEmits(['input']);
 
 const props = defineProps({
+  customQuery: {
+    type: String,
+    default: '',
+  },
   description: {
     type: String,
     default: '',
@@ -108,7 +112,11 @@ const selectOptions = computed(() => [...initialValues.value, ...options.value])
  */
 async function getInitialValues(resourceIds) {
   try {
-    const initialPromises = resourceIds.map((value) => props.resourceFunction(props.resource, props.queryParamFunction(value, props.resource, true)));
+    const initialPromises = resourceIds
+      .map((value) => props.resourceFunction(
+        props.resource,
+        props.queryParamFunction(value, props.resource, true, props.customQuery),
+      ));
     const initialData = await Promise.all(initialPromises);
     initialValues.value = initialData.map((resourcePromise) => {
       const resource = resourcePromise.data.result[0];
@@ -135,7 +143,10 @@ async function getResourceList(queryString) {
     initialValuesLoad.value = true;
   }
   try {
-    const { data } = await props.resourceFunction(props.resource, props.queryParamFunction(queryString, props.resource));
+    const { data } = await props.resourceFunction(
+      props.resource,
+      props.queryParamFunction(queryString, props.resource, false, props.customQuery),
+    );
     options.value = data.result
       ?.map((resource) => props.optionFunction(resource, props.resource))
       ?.filter((option) => !selectValue.value.includes(option.value))

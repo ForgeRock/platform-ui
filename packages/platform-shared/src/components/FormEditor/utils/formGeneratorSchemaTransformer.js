@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -102,7 +102,10 @@ export function transformSchemaToFormGenerator(schema, readOnly = false, include
         field.customSlot = schemaField.type === 'multiselect'
           ? 'objectMultiselect'
           : 'objectSelect';
-        field.options = { object: schemaField.options.object };
+        field.options = {
+          object: schemaField.options.object,
+          queryFilter: schemaField.options.queryFilter,
+        };
       } else {
         field.options = schemaField.options?.map((option) => ({
           value: option.value,

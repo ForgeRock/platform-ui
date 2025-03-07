@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -56,6 +56,10 @@ export default {
     FrField,
   },
   props: {
+    customQuery: {
+      type: String,
+      default: '',
+    },
     label: {
       type: String,
       default: '',
@@ -135,7 +139,7 @@ export default {
     if (isEmpty(this.initialData)) {
       if (!isEmpty(this.value)) {
         try {
-          const { data } = await this.resourceFunction(this.resource, this.queryParamFunction(this.value?.split('/').pop(), this.resource, true));
+          const { data } = await this.resourceFunction(this.resource, this.queryParamFunction(this.value?.split('/').pop(), this.resource, true, this.customQuery));
           this.savedData = this.optionFunction(data?.result?.[0], this.resource);
         } catch {
           this.savedData = this.optionFunction({ id: this.value, name: this.value }, null);
@@ -197,7 +201,7 @@ export default {
     getResourceList(setValue, queryString) {
       if (this.showingInitialOptions && !queryString) return Promise.resolve();
 
-      return this.resourceFunction(this.resource, this.queryParamFunction(queryString, this.resource)).then(({ data }) => {
+      return this.resourceFunction(this.resource, this.queryParamFunction(queryString, this.resource, false, this.customQuery)).then(({ data }) => {
         this.options = data.result.map((option) => this.optionFunction(option, this.resource));
         this.showingInitialOptions = !queryString;
         const selectedValue = !isEmpty(this.savedData)
