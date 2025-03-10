@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -236,7 +236,7 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
   const componentPropsAndEvents = {
     ChoiceCallback: () => {
       let stage;
-      if (currentStage.ChoiceCallback) {
+      if (currentStage?.ChoiceCallback) {
         stage = currentStage.ChoiceCallback.shift();
       }
       return { callbackSpecificProps: { stage } };
@@ -244,10 +244,10 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
     ConfirmationCallback: () => {
       // when the current auth step is showing a push challenge, we want to display the button as a link with the PushChallengeNumber view.
       const authStepIsShowingPushChallenge = currentStep.getCallbacksOfType(FrCallbackType.HiddenValueCallback)?.[0]?.getInputValue() === 'pushChallengeNumber';
-      const stage = currentStage.ConfirmationCallback?.shift();
+      const stage = currentStage?.ConfirmationCallback?.shift();
       const showButtonsAsLinks = stage?.showButtonsAsLinks;
       const callbackSpecificProps = {
-        stage,
+        stage: stage || {},
         variant: existsInComponentList(FrCallbackType.WebAuthnComponent) || authStepIsShowingPushChallenge || showButtonsAsLinks ? 'link' : 'primary',
       };
       return {
@@ -297,7 +297,7 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
     },
     ValidatedCreatePasswordCallback: () => {
       let stage;
-      if (currentStage.ValidatedCreatePasswordCallback) {
+      if (currentStage?.ValidatedCreatePasswordCallback) {
         stage = currentStage.ValidatedCreatePasswordCallback.shift();
       }
       return {

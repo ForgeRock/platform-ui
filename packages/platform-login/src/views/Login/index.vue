@@ -906,7 +906,7 @@ export default {
     checkNodeForThemeOverride(stage) {
       if (isString(stage)) {
         this.nodeThemeId = getThemeIdFromStageString(stage);
-      } else if (stage.themeId) {
+      } else if (stage?.themeId) {
         this.nodeThemeId = stage.themeId;
       }
     },
