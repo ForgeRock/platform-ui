@@ -330,6 +330,13 @@ const router = createRouter({
       path: '/forbidden',
       name: 'Forbidden',
       component: () => import(/* webpackChunkName: "forbidden" */ '@/components/forbidden'),
+      beforeEnter: (to, from, next) => {
+        if (store.state.hostedPages === false) {
+          to.meta.hideSideMenu = true;
+          to.meta.hideNavBar = true;
+        }
+        next();
+      },
     },
     {
       path: '/:pathMatch(.*)*',
