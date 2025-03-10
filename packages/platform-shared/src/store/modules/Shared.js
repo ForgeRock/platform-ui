@@ -54,6 +54,7 @@ const defaultState = {
   enableSamlSigningCheckbox: false,
   enableThemeMigration: false,
   enableManagedObjectSchemaEditor: false,
+  overrideSessionTimeoutsEnabled: false,
 };
 
 const mutations = {
@@ -211,6 +212,10 @@ const mutations = {
 
     if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
       state.autoAccessReportsUrl = getFQDN(env.VUE_APP_AUTO_ACCESS_REPORTS_URL);
+    }
+
+    if (env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS) {
+      state.overrideSessionTimeoutsEnabled = env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS === 'true' || env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS === true;
     }
   },
   // Needed for Login since setFeatureFlags isn't called there
