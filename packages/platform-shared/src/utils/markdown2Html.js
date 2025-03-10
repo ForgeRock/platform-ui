@@ -95,7 +95,7 @@ export function html2Markdown(html) {
  * @returns {string} HTML resulting from the conversion of the markdown document.
  */
 export function markdown2Html(markdown, wrapInDivContent) {
-  const md = new MarkdownIt({ html: true, linkify: true, typographer: true }).use(markdownItAnchor, {
+  const md = new MarkdownIt({ html: true, typographer: true }).use(markdownItAnchor, {
     level: 1, // Minimum header level to apply anchors (default: 1)
     tabIndex: false, // Disable tabIndex on heading
     slugify: (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, ''), // Custom ID generator
