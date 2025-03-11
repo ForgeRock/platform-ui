@@ -517,6 +517,18 @@ of the MIT license. See the LICENSE file for details. -->
         border-color: {{ `color-mix(in srgb, ${theme.dangerColor} 80%, black)` }};
       }
 
+      <!-- Styles btn with outline-danger variant and its hover state using theme vars  -->
+      #app .btn-outline-danger {
+        color: {{ theme.dangerColor }};
+        border-color: {{ theme.dangerColor }};
+      }
+
+      #app .btn-outline-danger:hover {
+        color: {{ theme.textColor || '#ffffff' }};
+        background-color: {{ theme.dangerColor }};
+        border-color: {{ theme.dangerColor }} !important;
+      }
+
       <!-- Calendar's current day styles -->
       .b-calendar .btn-outline-primary {
         color: {{ buttonFocusBorderColor }};
