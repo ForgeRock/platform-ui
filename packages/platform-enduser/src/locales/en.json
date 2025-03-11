@@ -444,7 +444,8 @@
       "newEntitlement": "New Entitlement",
       "newEntitlementTitle": "{appName} {objectType} Entitlement",
       "createSuccess": "Your request to create an entitlement has been submitted.",
-      "title": "Entitlements"
+      "title": "Entitlements",
+      "accountAttribute": "Account Attribute"
     }
   }
 }

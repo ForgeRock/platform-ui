@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer class="my-5">
+  <BContainer class="my-5 p-0">
     <FrHeader
       class="mb-4"
       :title="$t('governance.administer.entitlements.title')"
@@ -71,7 +71,6 @@ of the MIT license. See the LICENSE file for details. -->
           no-body>
           <BMediaAside class="align-self-center">
             <BImg
-              class="mr-2"
               height="24"
               :src="getApplicationLogo(item.application)"
               :alt="$t('common.logo')" />
@@ -80,12 +79,18 @@ of the MIT license. See the LICENSE file for details. -->
             <p class="h5 mb-0">
               {{ item.application?.name }}
             </p>
-            {{ getApplicationDisplayName(item.application) }} {{ item.item?.objectType }}
+            {{ getApplicationDisplayName(item.application) }}
           </BMediaBody>
         </BMedia>
       </template>
       <template #cell(displayName)="{ item }">
         {{ item.descriptor?.idx?.['/entitlement']?.displayName || blankValueIndicator }}
+      </template>
+      <template #cell(objectType)="{ item }">
+        {{ item.item?.objectType || blankValueIndicator }}
+      </template>
+      <template #cell(accountAttribute)="{ item }">
+        {{ item.application?.objectTypes?.find((x) => (x.name === item.item?.objectType))?.accountAttribute || blankValueIndicator }}
       </template>
       <template #cell(owner)="{ item }">
         <FrUserBasicInfo
@@ -158,13 +163,21 @@ const entitlementColumns = [
     label: i18n.global.t('common.displayName'),
   },
   {
+    key: 'objectType',
+    label: i18n.global.t('common.objectType'),
+  },
+  {
+    key: 'accountAttribute',
+    label: i18n.global.t('governance.entitlements.accountAttribute'),
+  },
+  {
     key: 'owner',
     label: i18n.global.t('common.owner'),
   },
   {
     key: 'actions',
     label: '',
-    class: 'w-80px',
+    class: 'w-70px',
   },
 ];
 
@@ -225,8 +238,8 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 :deep {
-  .w-80px {
-    width: 80px;
+  .w-70px {
+    width: 70px;
   }
 
   .tr-gov-resource-list {
