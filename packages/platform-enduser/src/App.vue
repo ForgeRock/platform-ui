@@ -90,7 +90,6 @@ export default {
   },
   data() {
     const governanceEnabled = (this.$store.state.SharedStore.governanceEnabled === true) && (this.$store.state.realm === 'alpha');
-    const governanceDevEnabled = (this.$store.state.SharedStore.governanceDevEnabled === true) && (this.$store.state.realm === 'alpha');
     const governanceInbox = {
       displayName: 'sideMenu.inbox',
       icon: 'inbox',
@@ -219,7 +218,7 @@ export default {
           displayName: 'sideMenu.profile',
           icon: 'account_circle',
         },
-        (governanceDevEnabled && (this.$store.state.govLcmEnabled === true)
+        (governanceEnabled && (this.$store.state.govLcmEnabled === true)
           ? governanceLcm
           : {}),
       ],
