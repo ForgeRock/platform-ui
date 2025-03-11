@@ -2689,6 +2689,38 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@forgerock/idm-enduser@workspace:packages/idm-enduser":
+  version: 0.0.0-use.local
+  resolution: "@forgerock/idm-enduser@workspace:packages/idm-enduser"
+  dependencies:
+    "@forgerock/platform-shared": 1.0.0
+    "@kyvg/vue3-notification": 3.0.2
+    "@pinia/testing": 0.1.3
+    "@vue/cli-plugin-babel": 5.0.8
+    "@vue/cli-service": 5.0.8
+    "@vue/compat": 3.3.4
+    "@vue/compiler-sfc": 3.3.4
+    "@vue/test-utils": 2.4.1
+    "@vue/vue3-jest": 29.2.6
+    axios: 1.7.8
+    babel-core: 7.0.0-bridge.0
+    bootstrap: 4.6.2
+    bootstrap-vue: 2.23.1
+    jest: 29.6.3
+    jest-html-reporters: 1.2.0
+    lodash: 4.17.21
+    pinia: 2.1.6
+    sass: 1.52.1
+    sass-loader: 8.0.2
+    vee-validate: 4.11.8
+    vue: 3.3.4
+    vue-cli-plugin-i18n: 2.3.2
+    vue-i18n: 9.14.2
+    vue-router: 4.2.4
+    vuex: 4.0.2
+  languageName: unknown
+  linkType: soft
+
 "@forgerock/javascript-sdk@npm:4.4.2":
   version: 4.4.2
   resolution: "@forgerock/javascript-sdk@npm:4.4.2"
@@ -6810,31 +6842,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001135":
-  version: 1.0.30001280
-  resolution: "caniuse-lite@npm:1.0.30001280"
-  checksum: 5794b22f4254927f095e83c65e89ddfc63065c7ed16e6544555a3252ee3d16e48f8a7846713dc64869c52e1abe9a2a93161804b40c2097d1abc9aaa0155a0b65
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001332, caniuse-lite@npm:^1.0.30001517":
-  version: 1.0.30001534
-  resolution: "caniuse-lite@npm:1.0.30001534"
-  checksum: 8e8b63c1ce0d5b944ee2d8223955b33f3d4f60c33fed394ff6353b5c7106b2dc55219fd07d80c79e66ed1f82ed9367cee17bda96789cbd2ab57c8d30b1b5c510
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001503":
-  version: 1.0.30001517
-  resolution: "caniuse-lite@npm:1.0.30001517"
-  checksum: e4e87436ae1c4408cf4438aac22902b31eb03f3f5bad7f33bc518d12ffb35f3fd9395ccf7efc608ee046f90ce324ec6f7f26f8a8172b8c43c26a06ecee612a29
-  languageName: node
-  linkType: hard
-
-"caniuse-lite@npm:^1.0.30001580":
-  version: 1.0.30001585
-  resolution: "caniuse-lite@npm:1.0.30001585"
-  checksum: c5994f0b5de857349ae0c157a3c61883e800ed154bbeab339aecf01a0a0fd24f67d23ebb48bc995c4c9cde2a281a51b682d1b14bbf2f832f6b2261119f450af4
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001135, caniuse-lite@npm:^1.0.30001332, caniuse-lite@npm:^1.0.30001503, caniuse-lite@npm:^1.0.30001517, caniuse-lite@npm:^1.0.30001580":
+  version: 1.0.30001703
+  resolution: "caniuse-lite@npm:1.0.30001703"
+  checksum: f3c19e357df7f5ff480a8a24a61213d1442bf3df9e2f9563a47f4c95e9c08ea7d3c8faa965bc84dcc57c569542584c965b30d552d9b35e421f352c974980de17
   languageName: node
   linkType: hard
 
