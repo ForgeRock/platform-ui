@@ -52,6 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(actions)="{ item }">
         <FrActionsCell
+          wrapper-class="pr-2"
           :delete-option="false"
           :divider="false"
           edit-option
