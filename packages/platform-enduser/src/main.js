@@ -145,7 +145,7 @@ const startApp = async () => {
       }
     });
 
-    if (store.state.SharedStore.governanceDevEnabled) {
+    if (store.state.SharedStore.governanceEnabled) {
       const { data } = await getIgaUiConfig();
       if (data.lcmSettings?.entitlement?.enabled) {
         // check if user can see any entitlements or create for any app

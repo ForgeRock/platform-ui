@@ -233,7 +233,6 @@ describe('App.vue', () => {
 
     it('adds entitlement lcm menu item when entitlement lcm is enabled', async () => {
       const entitlementLcmEnabled = cloneDeep(governanceEnabledStore);
-      entitlementLcmEnabled.state.SharedStore.governanceDevEnabled = true;
       entitlementLcmEnabled.state.govLcmEnabled = true;
       entitlementLcmEnabled.state.govLcmEntitlement = true;
 
