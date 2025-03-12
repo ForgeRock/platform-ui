@@ -1514,12 +1514,18 @@
         },
         "select": {
           "description": "Select input to accept a single string from a list of enumerated values.",
+          "displayProperty": "Display Property",
+          "displayPropertyDescription": "Property that contains user friendly text to display as the input and option values",
+          "errorGettingSchema": "There was an error retrieving managed object schema",
           "name": "Select",
           "options": "Options",
           "optionsDescription": "Specify values for this field.",
           "selectType": "Select a type",
           "useQueryFilter": "Use Query Filter",
-          "queryFilter": "Query Filter"
+          "queryFilter": "Query Filter",
+          "queryFilterDescription": "A custom query filter to filter select options",
+          "queryProperties": "Query Properties",
+          "queryPropertiesDescription": "Properties to query from when typing in the input"
         },
         "text": {
           "description": "Textfield input to accept a single string.",

@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       :custom-query="queryFilter"
       :option-function="optionFunction"
       :query-param-function="queryParamFunction"
+      :query-properties="queryProperties"
       :read-only="property.disabled"
       :resource-function="resourceFunction"
       :resource-path="resourcePath"
@@ -28,11 +29,11 @@ of the MIT license. See the LICENSE file for details. -->
 import { computed, ref } from 'vue';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import {
+  optionFunctionWithCustom,
+  queryParamFunctionWithCustom,
   getResourceFunction,
   getResourcePath,
   getValuePath,
-  optionFunction,
-  queryParamFunction,
 } from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
 
 const emit = defineEmits(['update:model']);
@@ -48,7 +49,14 @@ const props = defineProps({
 const inputValue = ref('');
 
 // computed
-const propertyType = computed(() => props.property.options.object);
+const isCustom = computed(() => props.property.options.object === 'custom');
+const propertyType = computed(() => (isCustom.value
+  ? props.property.options.customObject
+  : props.property.options.object
+));
+const queryParamFunction = computed(() => (queryParamFunctionWithCustom(isCustom.value, props.property.options.queryProperties)));
+const optionFunction = computed(() => (optionFunctionWithCustom(isCustom.value, props.property.options.displayProperty)));
+
 const queryFilter = computed(() => props.property.options.queryFilter || '');
 const resourceFunction = computed(() => (getResourceFunction(propertyType.value)));
 const resourcePath = computed(() => (getResourcePath(propertyType.value)));
