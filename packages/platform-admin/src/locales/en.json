@@ -1538,6 +1538,7 @@
         "createSuccess": "SSO set up successfully",
         "errorGeneratingPs": "There was an error generating the PowerShell scripts.",
         "errorSettingUpSso": "There was an error setting up SSO. Check your configuration and try again.",
+        "errorUpdatingCookie": "There was an error updating the cookie name for the Microsoft 365 application. Please try again.",
         "errorUpdatingSso": "There was an error updating SSO. Check your configuration and try again.",
         "noChanges": "No changes detected",
         "quickStart": "Quick Start",
