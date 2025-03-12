@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -70,6 +70,7 @@ import {
   toRef,
 } from 'vue';
 import {
+  cloneDeep,
   find,
 } from 'lodash';
 import vueMultiSelectOverrides from '@forgerock/platform-shared/src/composables/vueMultiSelectOverrides';
@@ -265,6 +266,7 @@ export default {
         const optionBeingSet = find(this.selectOptions, { value: newVal });
         if (optionBeingSet || this.valueIsDifferent(newVal)) {
           this.inputValue = optionBeingSet;
+          this.oldValue = cloneDeep(optionBeingSet);
         }
       }
     },

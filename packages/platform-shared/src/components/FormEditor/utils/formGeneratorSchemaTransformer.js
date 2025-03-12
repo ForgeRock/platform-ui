@@ -104,6 +104,9 @@ export function transformSchemaToFormGenerator(schema, readOnly = false, include
           : 'objectSelect';
         field.options = {
           object: schemaField.options.object,
+          customObject: schemaField.options.customObject,
+          queryProperties: schemaField.options.queryProperties,
+          displayProperty: schemaField.options.displayProperty,
           queryFilter: schemaField.options.queryFilter,
         };
       } else {

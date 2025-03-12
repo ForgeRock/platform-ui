@@ -26,10 +26,10 @@ of the MIT license. See the LICENSE file for details. -->
  */
 import { computed, ref } from 'vue';
 import {
+  optionFunctionWithCustom,
+  queryParamFunctionWithCustom,
   getResourceFunction,
   getResourcePath,
-  optionFunction,
-  queryParamFunction,
 } from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
 import FrGovResourceMultiselect from '@forgerock/platform-shared/src/components/governance/GovResourceMultiselect';
 
@@ -46,7 +46,14 @@ const props = defineProps({
 const inputValue = ref([]);
 
 // computed
-const propertyType = computed(() => props.property.options.object);
+const isCustom = computed(() => props.property.options.object === 'custom');
+const propertyType = computed(() => (isCustom.value
+  ? props.property.options.customObject
+  : props.property.options.object
+));
+const queryParamFunction = computed(() => (queryParamFunctionWithCustom(isCustom.value, props.property.options.queryProperties)));
+const optionFunction = computed(() => (optionFunctionWithCustom(isCustom.value, props.property.options.displayProperty)));
+
 const queryFilter = computed(() => props.property.options.queryFilter || '');
 const resourceFunction = computed(() => (getResourceFunction(propertyType.value)));
 const resourcePath = computed(() => (getResourcePath(propertyType.value)));

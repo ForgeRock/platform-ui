@@ -24,8 +24,10 @@ export function getResourceFunction(propertyType) {
       return getManagedResourceList;
     case 'entitlement':
       return searchCatalogEntitlements;
-    default:
+    case 'application':
       return getResource;
+    default:
+      return getManagedResourceList;
   }
 }
 
@@ -97,6 +99,36 @@ export function optionFunction(resource, resourceType) {
 }
 
 /**
+ * Creates a function that generates a custom option object for a given resource.
+ *
+ * @param {string} displayProperty - The property of the resource to use for the `text` field in the option object.
+ * @returns {function(Object): {value: string, text: string}} - A function that takes a resource object and returns an option object
+ * with `value` set to the resource's `_id` and `text` set to the value of the specified `displayProperty`.
+ */
+export function getCustomOptionFunction(displayProperty) {
+  function returnFunction(resource) {
+    return {
+      value: resource._id,
+      text: resource[displayProperty],
+    };
+  }
+  return returnFunction;
+}
+
+/**
+ * Returns a function to handle options based on whether the option is for a custom managed object.
+ *
+ * @param {boolean} isCustom - Is the option for a custom managed object
+ * @param {string} displayProperty - The property to display for custom object.
+ * @returns {Function} A function to handle options
+ */
+export function optionFunctionWithCustom(isCustom, displayProperty) {
+  return isCustom
+    ? getCustomOptionFunction(displayProperty)
+    : optionFunction;
+}
+
+/**
  * Generates a query filter string based on the provided query string, fields, and custom query filter.
  *
  * @param {string} queryString - The query string to search for within the fields.
@@ -104,7 +136,7 @@ export function optionFunction(resource, resourceType) {
  * @param {string} [customQueryFilter] - An optional custom query filter to be combined with the generated query filter.
  * @returns {string|boolean} - The generated query filter string or true if no query string is provided and no custom query filter is provided.
  */
-function getQueryFilterWithCustomFilter(queryString, fields, customQueryFilter) {
+export function getQueryFilterWithCustomFilter(queryString, fields, customQueryFilter) {
   let queryFilter;
   if (queryString) {
     const tempQuery = fields.map((field) => `/${field} sw "${queryString}"`).join(' or ');
@@ -150,6 +182,40 @@ export function queryParamFunction(queryString, resourceType, singleResource = f
 }
 
 /**
+ * Generates a custom query parameter function based on the provided query properties.
+ *
+ * @param {Array<string>} queryProperties - An array of property names to be used for constructing query filters.
+ * @returns {Function} A function that generates query parameters for API requests.
+ */
+export function getCustomQueryParamFunction(queryProperties) {
+  function returnFunction(queryString, resourceType, singleResource = false, customQueryFilter = '') {
+    const queryParams = {};
+    queryParams.pageSize = 10;
+    queryParams.fields = '*';
+
+    queryParams.queryFilter = singleResource
+      ? `_id eq "${queryString}"`
+      : getQueryFilterWithCustomFilter(queryString, queryProperties, customQueryFilter);
+    return queryParams;
+  }
+  return returnFunction;
+}
+
+/**
+ * Determines the appropriate query parameter function to use based on whether
+ * the input is custom or not.
+ *
+ * @param {Boolean} isCustom - Flag indicating if query parameter function is for custom managed object
+ * @param {Array<string>} queryProperties - An array of property names to be used for constructing query filters.
+ * @returns {Function} - function that generates query parameters for API requests.
+ */
+export function queryParamFunctionWithCustom(isCustom, queryProperties) {
+  return isCustom
+    ? getCustomQueryParamFunction(queryProperties)
+    : queryParamFunction;
+}
+
+/**
  * Constructs a value path string based on the provided resource type and id.
  *
  * @param {string} resourceType - The type of the resource (e.g., 'user', 'role', 'organization', 'application', 'entitlement').
@@ -166,6 +232,6 @@ export function getValuePath(resourceType, id) {
     case 'entitlement':
       return `entitlement/${id}`;
     default:
-      return `${resourceType}/${id}`;
+      return `managed/${resourceType}/${id}`;
   }
 }
