@@ -30,7 +30,7 @@ const defaultThemeParams = {
   accountFooterEnabled: false,
   accountTableRowHoverColor: '#f6f8fa',
   buttonRounded: 5,
-  dangerColor: '#f7685b',
+  dangerColor: '#dc3545',
   favicon: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
   journeyHeader: '<div class="d-flex justify-content-center py-4 flex-grow-1">Header Content</div>',
   journeyHeaderEnabled: false,

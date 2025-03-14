@@ -53,7 +53,7 @@ const DEFAULT_THEME_PARAMS = {
   boldLinks: false,
   buttonFocusBorderColor: '#0778d6',
   buttonRounded: 5,
-  dangerColor: '#f7685b',
+  dangerColor: '#dc3545',
   darkColor: '#23282e',
   favicon: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
   fontFamily: 'Open Sans',
