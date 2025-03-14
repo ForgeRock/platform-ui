@@ -10,14 +10,15 @@ of the MIT license. See the LICENSE file for details. -->
       :description="description"
       :errors="combinedErrors"
       :is-html="isHtml"
-      :label="label">
+      :label="label"
+      :floating-label="floatingLabel">
       <input
         :value="inputValue"
         @input="inputValue = $event.target.value; debounceEmitValidTime(inputValue)"
         v-on="validationListeners"
         ref="input"
         type="time"
-        :class="[{'is-invalid': errorMessages && errorMessages.length, 'polyfill-placeholder': label }, 'form-control']"
+        :class="[{'is-invalid': errorMessages && errorMessages.length, 'py-0': !floatingLabel, 'polyfill-placeholder': label && floatingLabel }, 'form-control']"
         :data-vv-as="label"
         :disabled="disabled"
         :id="internalId"
@@ -197,8 +198,7 @@ export default {
     width: 46.5px;
     border: none;
     right: 1px;
-    top: 1px;
-    height: calc(100% - 2px);
+    bottom: 1px;
 
     :deep(button) {
       background-color: initial;
