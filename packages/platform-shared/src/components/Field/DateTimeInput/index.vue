@@ -3,16 +3,16 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
+  <div class="text-left">
     <label
       v-if="label && isHtml"
       v-html="label"
       :for="`${internalId}-date`"
-      class="pe-none overflow-hidden text-nowrap" />
+      class="pe-none overflow-hidden text-nowrap d-block" />
     <label
       v-else-if="label"
       :for="`${internalId}-date`"
-      class="pe-none overflow-hidden text-nowrap">
+      class="pe-none overflow-hidden text-nowrap d-block">
       {{ labelTranslation }}
     </label>
     <BRow class="form-row">
