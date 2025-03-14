@@ -26,6 +26,7 @@ export default createStore({
     hostedPages: true,
 
     // user
+    privileges: [],
     approvalsCount: null,
     certificationCount: null,
     fulfillmentTasksCount: null,
@@ -34,8 +35,10 @@ export default createStore({
     requestCartUsers: [],
 
     // governance lcm settings
+    govLcmSettings: {},
     govLcmEnabled: false,
     govLcmEntitlement: false,
+    govLcmUser: false,
   },
   mutations: {
     setEnvironment(state, env) {
@@ -69,6 +72,10 @@ export default createStore({
       state.hostedPages = enabled;
     },
 
+    setPrivileges(state, privileges) {
+      state.privileges = privileges;
+    },
+
     setCertificationCount(state, count) {
       state.certificationCount = count;
       state.inboxTotalCount = state.approvalsCount + state.certificationCount + state.violationsCount + state.fulfillmentTasksCount;
@@ -93,9 +100,18 @@ export default createStore({
       state.requestCartUsers = users;
     },
 
-    setGovLcm(state, { lcmSettings, createEntitlement, viewEntitlement }) {
-      state.govLcmEntitlement = lcmSettings?.entitlement?.enabled && (createEntitlement || viewEntitlement);
-      state.govLcmEnabled = state.govLcmEntitlement;
+    setGovLcmSettings(state, lcmSettings) {
+      state.govLcmSettings = lcmSettings;
+    },
+
+    setGovLcmEntitlement(state, { createEntitlement, viewEntitlement }) {
+      state.govLcmEntitlement = (createEntitlement || viewEntitlement);
+      if (state.govLcmEntitlement) state.govLcmEnabled = true;
+    },
+
+    setGovLcmUser(state, { viewUser }) {
+      state.govLcmUser = viewUser;
+      if (state.govLcmUser) state.govLcmEnabled = true;
     },
   },
   modules: {
