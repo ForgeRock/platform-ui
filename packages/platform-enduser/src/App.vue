@@ -39,7 +39,6 @@ import createScriptTags from '@forgerock/platform-shared/src/utils/externalScrip
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import FrSessionTimeoutWarning from '@forgerock/platform-shared/src/components/SessionTimeoutWarning/SessionTimeoutWarning';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
-import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
 import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
@@ -49,10 +48,12 @@ import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import { mapState } from 'pinia';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { getGovMenuItems } from '@/utils/governance/menuItems';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';
 import { getViolations } from '@/api/governance/ViolationsApi';
 import i18n from '@/i18n';
+import store from '@/store';
 import './scss/main.scss';
 
 export default {
@@ -90,55 +91,9 @@ export default {
   },
   data() {
     const governanceEnabled = (this.$store.state.SharedStore.governanceEnabled === true) && (this.$store.state.realm === 'alpha');
-    const governanceInbox = {
-      displayName: 'sideMenu.inbox',
-      icon: 'inbox',
-      showBadgeWithContentFromStore: 'inboxTotalCount',
-      subItems: [
-        {
-          showBadgeWithContentFromStore: 'approvalsCount',
-          displayName: 'sideMenu.approvals',
-          routeTo: {
-            name: 'Approvals',
-          },
-        },
-        {
-          showBadgeWithContentFromStore: 'fulfillmentTasksCount',
-          displayName: 'sideMenu.tasks',
-          routeTo: {
-            name: 'Tasks',
-          },
-        },
-        {
-          showBadgeWithContentFromStore: 'certificationCount',
-          displayName: 'sideMenu.accessReviews',
-          routeTo: {
-            name: 'AccessReviews',
-          },
-        },
-        {
-          showBadgeWithContentFromStore: 'violationsCount',
-          displayName: 'sideMenu.violations',
-          routeTo: {
-            name: 'Violations',
-          },
-        },
-      ],
-    };
-
-    const governanceLcm = {
-      displayName: 'sideMenu.administer',
-      icon: 'manage_accounts',
-      subItems: [
-        (this.$store.state.govLcmEntitlement === true
-          ? {
-            displayName: 'sideMenu.administerEntitlements',
-            routeTo: { name: 'AdministerEntitlements' },
-          }
-          : {}),
-      ],
-    };
-
+    const govMenuItems = governanceEnabled
+      ? getGovMenuItems(this.$store)
+      : {};
     return {
       governanceEnabled,
       menuItems: [
@@ -156,7 +111,7 @@ export default {
           }
           : {}),
         (governanceEnabled
-          ? governanceInbox
+          ? govMenuItems.inboxMenuItem
           : {}),
         (this.$store.state.SharedStore.workforceEnabled === true
           ? {
@@ -171,55 +126,21 @@ export default {
           }
           : {}),
         (governanceEnabled
-          ? {
-            displayName: 'sideMenu.myAccess',
-            icon: 'badge',
-            subItems: [
-              {
-                displayName: 'sideMenu.accounts',
-                routeTo: { name: 'Accounts' },
-              },
-              {
-                displayName: 'sideMenu.roles',
-                routeTo: { name: 'Roles' },
-              },
-              {
-                displayName: 'sideMenu.entitlements',
-                routeTo: { name: 'Entitlements' },
-              },
-            ],
-          }
+          ? govMenuItems.myAccessMenuItem
           : {}),
         (governanceEnabled
-          ? {
-            displayName: 'sideMenu.directory',
-            icon: 'people',
-            subItems: [
-              {
-                displayName: 'sideMenu.delegates',
-                routeTo: { name: 'Delegates' },
-              },
-              {
-                displayName: 'sideMenu.directReports',
-                routeTo: { name: 'DirectReports' },
-              },
-            ],
-          }
+          ? govMenuItems.directoryMenuItem
           : {}),
         (governanceEnabled
-          ? {
-            routeTo: { name: 'MyRequests' },
-            displayName: 'sideMenu.requests',
-            icon: 'person_add',
-          }
+          ? govMenuItems.myRequestsMenuItem
           : {}),
         {
           routeTo: { name: 'Profile' },
           displayName: 'sideMenu.profile',
           icon: 'account_circle',
         },
-        (governanceEnabled && (this.$store.state.govLcmEnabled === true)
-          ? governanceLcm
+        (governanceEnabled
+          ? govMenuItems.lcmMenuItem
           : {}),
       ],
       version: '',
@@ -242,9 +163,7 @@ export default {
       this.showErrorMessage(error, this.$t('errors.themeSetError'));
     }
 
-    getUserPrivileges().then(({ data }) => {
-      this.setupDelegatedAdminMenuItems(data);
-    });
+    this.setupDelegatedAdminMenuItems(store.state.privileges);
   },
   mounted() {
     getIdmServerInfo().then((results) => {
@@ -303,6 +222,9 @@ export default {
         return 0;
       });
       privileges.forEach((obj) => {
+        // if governance user lcm is enabled, we hide the standard DA menu item for alpha users
+        if (this.$store.state.govLcmUser && obj.privilegePath === 'managed/alpha_user') return;
+
         const splitObj = obj.privilegePath.split('/');
         this.menuItems.push({
           displayName: this.getTranslation(obj.title),

@@ -4548,7 +4548,8 @@
         "title": "Governance LCM",
         "updateSuccess": "LCM Settings updated successfully",
         "types": {
-          "entitlement": "Entitlement LCM"
+          "entitlement": "Entitlement LCM",
+          "user": "User LCM"
         },
         "modal": {
           "about": "About",

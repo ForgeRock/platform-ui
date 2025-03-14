@@ -90,6 +90,17 @@ const router = createRouter({
             },
           ],
         },
+        {
+          path: 'users',
+          children: [
+            {
+              path: '',
+              name: 'AdministerUsers',
+              component: () => import('@/views/governance/LCM/Users/UserList'),
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.govLcmUser]),
+            },
+          ],
+        },
       ],
     },
     {

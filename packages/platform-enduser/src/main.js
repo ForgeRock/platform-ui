@@ -35,6 +35,7 @@ import BootstrapVue from 'bootstrap-vue';
 import createRealmPath from '@forgerock/platform-shared/src/utils/createRealmPath';
 import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
 import { getEntitlementList, getApplicationList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
@@ -145,8 +146,24 @@ const startApp = async () => {
       }
     });
 
+    // get delegated admin permissions
+    const { data: privilegesData } = await getUserPrivileges();
+    store.commit('setPrivileges', privilegesData);
+
+    // governance lcm
     if (store.state.SharedStore.governanceEnabled) {
       const { data } = await getIgaUiConfig();
+      store.commit('setGovLcmSettings', data.lcmSettings);
+
+      // user lcm
+      if (data.lcmSettings?.user?.enabled) {
+        // check if user can see any users
+        if (privilegesData.find((privilege) => privilege.privilegePath === 'managed/alpha_user')) {
+          store.commit('setGovLcmUser', { viewUser: true });
+        }
+      }
+
+      // entitlement lcm
       if (data.lcmSettings?.entitlement?.enabled) {
         // check if user can see any entitlements or create for any app
         const [applications, entitlements] = await Promise.all([
@@ -156,16 +173,9 @@ const startApp = async () => {
           }),
           getEntitlementList(null, { pageSize: 1 }),
         ]);
-        store.commit('setGovLcm', {
-          lcmSettings: data.lcmSettings,
+        store.commit('setGovLcmEntitlement', {
           createEntitlement: applications.data?.totalCount > 0,
           viewEntitlement: entitlements.data?.totalCount > 0,
-        });
-      } else {
-        store.commit('setGovLcm', {
-          lcmSettings: data.lcmSettings,
-          createEntitlement: false,
-          viewEntitlement: false,
         });
       }
     }
