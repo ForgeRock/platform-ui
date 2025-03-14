@@ -527,19 +527,26 @@ of the MIT license. See the LICENSE file for details. -->
         border-color: {{ theme.dangerColor }} !important;
       }
 
-      <!-- Calendar's current day styles -->
+      <!--
+        calendar's current day styles,
+        .b-calendar is also part of user details Modal which is teleported to the body
+        and is not under #app
+      -->
+      #app .b-calendar .btn-outline-primary,
       .b-calendar .btn-outline-primary {
-        color: {{ buttonFocusBorderColor }};
+        color: {{ buttonFocusBorderColor }} !important;
       }
 
+      #app .b-calendar .btn-outline-primary:focus,
       .b-calendar .btn-outline-primary:focus {
-        color: {{ buttonFocusBorderColor }};
+        color: {{ buttonFocusBorderColor }} !important;
         border-color: {{ buttonFocusBorderColor }} !important;
       }
 
+      #app .b-calendar .btn-outline-primary:hover,
       .b-calendar .btn-outline-primary:hover {
-        color: {{ theme.textColor || '#ffffff' }};
-        background-color: {{ buttonFocusBorderColor }};
+        color: {{ theme.textColor || '#ffffff' }} !important;
+        background-color: {{ buttonFocusBorderColor }} !important;
         border-color: {{ buttonFocusBorderColor }} !important;
       }
 
