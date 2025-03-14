@@ -36,6 +36,7 @@
     "Reports": "Reports",
     "Scopes": "Scopes",
     "SyncDataEditor": "Advanced Sync Editor",
+    "SyncIdentityProfileEditor": "Advanced Sync Editor",
     "TemplateBuilder": "Application Templates",
     "TermsAndConditions": "Terms & Conditions",
     "Workflows": "Workflows"
@@ -131,6 +132,7 @@
     "ServiceAccounts": "Service Accounts",
     "SSLConfigurations": "SSL Configurations",
     "SyncDataEditor": "Advanced Sync Editor",
+    "SyncIdentityProfileEditor": "Advanced Sync Editor",
     "TemplateBuilder": "Application Templates",
     "TenantAdmins": "Tenant Admins",
     "TenantSettings": "Tenant Settings",
