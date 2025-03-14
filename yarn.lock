@@ -2702,7 +2702,7 @@ __metadata:
     "@vue/compiler-sfc": 3.3.4
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
-    axios: 1.7.8
+    axios: 1.8.2
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -2770,7 +2770,7 @@ __metadata:
     "@vueuse/core": 10.9.0
     appauthhelper: 1.0.0-alpha.0
     assert: 2.0.0
-    axios: 1.7.8
+    axios: 1.8.2
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -2848,7 +2848,7 @@ __metadata:
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
     appauthhelper-enduser: "npm:appauthhelper@0.5.0"
-    axios: 1.7.8
+    axios: 1.8.2
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -2904,7 +2904,7 @@ __metadata:
     "@vue/compiler-sfc": 3.3.4
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
-    axios: 1.7.8
+    axios: 1.8.2
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -2958,7 +2958,7 @@ __metadata:
     "@vue/compiler-sfc": 3.3.4
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
-    axios: 1.7.8
+    axios: 1.8.2
     axios-mock-adapter: 1.17.0
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
@@ -3004,7 +3004,7 @@ __metadata:
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
     "@vueuse/core": 10.9.0
-    axios: 1.7.8
+    axios: 1.8.2
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -6210,14 +6210,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.7.8":
-  version: 1.7.8
-  resolution: "axios@npm:1.7.8"
+"axios@npm:1.8.2":
+  version: 1.8.2
+  resolution: "axios@npm:1.8.2"
   dependencies:
     follow-redirects: ^1.15.6
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
-  checksum: 3d21652faf8e29fb36c47517d2872bb5e2285127a24f5c53ce23082c4eac7f5a88de84dd49d4a1a83068e5301dcfd9067b41e5fbd00b0d20ab7b0a843559273d
+  checksum: c47a43b79a058aa9e53a65bec9ade35c9f6e76a3999c795a79a2d205fb5f803fd4245497a0209a9727cbbe4f558791dd852ad2c168c5fc030259c11598ed8fd7
   languageName: node
   linkType: hard
 
