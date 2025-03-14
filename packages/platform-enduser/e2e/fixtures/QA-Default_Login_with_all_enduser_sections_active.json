@@ -506,7 +506,7 @@
           "backgroundColor": "#324054",
           "backgroundImage": "",
           "buttonRounded": 5,
-          "dangerColor": "#f7685b",
+          "dangerColor": "#dc3545",
           "favicon": "https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg",
           "fontFamily": "Open Sans",
           "journeyCardBackgroundColor": "#ffffff",
