@@ -826,6 +826,9 @@
   },
   "configure": {
     "managedListView": {
+      "createModal": {
+        "title": "New Identity Profile"
+      },
       "deleteModal": {
         "title": "Identity Profile",
         "message": "Are you sure you want to delete the {profile} identity profile?"
@@ -939,7 +942,11 @@
         "deleteQueryConfiguration": "Delete Query Configuration",
         "validate": "Validate",
         "validateHelp": "Add validation properties for this property."
-      }
+      },
+      "saveProfile": "Save Profile",
+      "savingProfile": "Saving Profile",
+      "saveSuccess": "Identity Profile saved",
+      "saveFail": "Error creating identity profile"
     }
   },
   "dashboard": {
