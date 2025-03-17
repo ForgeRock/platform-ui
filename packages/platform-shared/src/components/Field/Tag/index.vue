@@ -18,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
       :autofocus="autofocus"
       :class="{'polyfill-placeholder': floatLabels}"
       :disabled="disabled"
+      @focus="onTagFieldFocus()"
       :id="internalId">
       <template #default="{ tags, inputAttrs, inputHandlers, removeTag }">
         <ul
@@ -70,6 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
           :data-testid="`inp-${name}`"
           :class="[{'has-values': tags.length}, 'fr-tag-input']"
           :placeholder="label"
+          @blur="onBlur($event)"
           @input="inputValueHandler(inputValue, $event.target.value)"
           :aria-describedby="`fr-tags-list_${internalId}`">
       </template>
@@ -135,8 +137,29 @@ export default {
     },
   },
   methods: {
+    /**
+     * Toggles floating label state depending on input values
+     * @param inputValue The current input value
+     * @param toggle Whether there was a value added
+     */
     inputValueHandler(inputValue, toggle) {
       this.floatLabels = (toggle || inputValue.toString().length > 0) && !!this.label;
+    },
+    /**
+    * onBlur event handler
+    */
+    onBlur() {
+      if (this.floatingLabel && this.label) {
+        this.floatLabels = this.inputValue?.toString().length > 0;
+      }
+    },
+    /**
+     * Sets the floatLabels to true when the tag field is focused
+     */
+    onTagFieldFocus() {
+      if (this.floatingLabel && this.label) {
+        this.floatLabels = true;
+      }
     },
     /**
     * Default setInputValue method. Overrides possible in components
@@ -159,6 +182,25 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.form-label-group:not(.fr-field-error) {
+  .form-control {
+    &:focus-within {
+      border-color: $primary;
+      -webkit-box-shadow: 0 0 0 0.0625rem $primary;
+      box-shadow: 0 0 0 0.0625rem $primary;
+    }
+  }
+}
+.form-label-group.fr-field-error {
+  .form-control {
+    &:focus-within {
+      border-color: $danger !important;
+      -webkit-box-shadow: 0 0 0 0.0625rem $danger !important;
+      box-shadow: 0 0 0 0.0625rem $danger !important;
+    }
+  }
+}
+
 .b-form-tags {
   display: flex;
   flex-wrap: wrap;
@@ -213,14 +255,6 @@ export default {
 
     &.has-values {
       transition: all 0.15s;
-    }
-
-    &:focus-visible {
-      outline: solid 2px $primary;
-      outline-offset: -1px;
-      -webkit-transition: none;
-      transition: none;
-      padding-top: 0 !important;
     }
   }
 
