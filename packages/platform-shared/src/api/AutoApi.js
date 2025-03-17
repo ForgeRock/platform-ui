@@ -102,7 +102,11 @@ export async function runAnalyticsTemplate(template, state, payload) {
  * @returns {Promise<Object>}
  */
 export function getReportEntities(path) {
-  return generateAutoAccessReports().get(`entities${path ? `?path=${path}` : ''}`);
+  const queryParams = new URLSearchParams({ realm: store.state.realm });
+  if (path) {
+    queryParams.set('path', path);
+  }
+  return generateAutoAccessReports().get(`entities?${queryParams.toString()}`);
 }
 
 /**
