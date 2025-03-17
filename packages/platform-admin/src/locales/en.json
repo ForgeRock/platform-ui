@@ -3248,7 +3248,8 @@
     "titleFullOnly": "Schedule Job",
     "untilDate": "Until specific date",
     "useCron": "Use cron",
-    "weeks": "week(s)"
+    "weeks": "week(s)",
+    "maxDurationError": "Duration must not exceed 15 years."
   },
   "mapping": {
     "addProperty": "Add a property",

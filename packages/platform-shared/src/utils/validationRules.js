@@ -285,6 +285,15 @@ export function getRules(i18n) {
     return customRegex.test(value) || message;
   };
 
+  /**
+   *
+   * @param {*} computedVal - a numeric value to compare
+   * @param {*} maxVal - a numeric value to compare
+   * @param {*} message - custom message to display
+   * @returns {boolean|string} - Returns true if the value passes the validation, otherwise returns a descriptive message.
+   */
+  const max_value_comparison = (_, { computedVal, maxVal, message }) => computedVal <= maxVal || message;
+
   // Secret label identifiers must only contain a-z, A-Z, 0-9 and ., they cannot
   // start or end with .
   const secret_label_identifier = (value) => /^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*$/.test(value) || i18n.global.t('common.policyValidationMessages.secretLabelIdentifier');
@@ -342,6 +351,7 @@ export function getRules(i18n) {
     valid_js_variable_name,
     validBookmarkUrl,
     whitespace,
+    max_value_comparison,
   };
   return validationRules;
 }
