@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
           :placeholder="floatingLabel ? false : placeholder"
           :readonly="readonly"
           :style="labelHeight && {height: `${labelHeight}px`, 'padding-top': `${labelHeight - 27}px`}"
-          @input="event => inputValue = removeNonNumericChars(event)"
+          @input="removeNonNumericChars($event)"
           :autocomplete="$attrs.autocomplete"
           :aria-describedby="ariaDescribedBy"
           :aria-required="isRequiredAria"
@@ -357,6 +357,18 @@ export default {
       if (this.floatingLabel && this.label) {
         this.floatLabels = this.inputValue?.toString().length > 0;
       }
+      if (this.fieldType === 'number') {
+        this.inputValue = this.stringToNumber(event.target.value);
+      }
+    },
+    /**
+     * Converts a number string to a number value
+     * @param {String} value number string
+     * @returns {Number} number value
+     */
+    stringToNumber(value) {
+      const numberVal = Number(value);
+      return Number.isNaN(numberVal) ? '' : numberVal;
     },
     /**
      * Formats the number input by removing any characters that aren't 0-9, -, .
@@ -364,31 +376,9 @@ export default {
      *       Accessibility changes implemented as part of this work:
      *       https://bugster.forgerock.org/jira/browse/IAM-3677
      */
-    removeNonNumericChars({ target }) {
-      const newVal = target?.value;
-      // Passing - or . to parseFloat returns NaN
-      // This allows negatives and decimals to be entered
-      const justHyphen = newVal.length === 1 && newVal.startsWith('-');
-      const justPeriod = newVal.length === 1 && newVal.startsWith('.');
-
-      if (newVal && (typeof newVal === 'string') && !justHyphen && !justPeriod) {
-        const numericString = newVal.replace(/[^0-9-.]/g, '');
-        const parsedVal = parseFloat(numericString);
-        let returnedVal = Number.isNaN(parsedVal) ? '' : parsedVal;
-        // If a number with just a period at the end is passed to parseFloat, it removes the period
-        // this allows decimals to be entered
-        if (numericString.endsWith('.') && !parsedVal.toString().endsWith('.')) {
-          returnedVal = numericString.length === 1 ? '.' : `${parsedVal}.`;
-        }
-        if (numericString === '-' && returnedVal === '') {
-          returnedVal = '-';
-        }
-        if (numericString === '-.') {
-          returnedVal = '.';
-        }
-        return returnedVal;
-      }
-      return newVal;
+    removeNonNumericChars(event) {
+      const newVal = event.target?.value;
+      this.inputValue = newVal ? newVal.replace(/[^0-9.-]/g, '') : '';
     },
   },
 };

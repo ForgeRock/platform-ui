@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -475,20 +475,20 @@ describe('BasicInput', () => {
       const testCases = [
         ['should allow input given numeric value', '583', '583'],
         ['should prevent input given non-numeric value', 'text', ''],
-        ['should prevent input given non-numeric value after .', '.text', '.'],
+        ['should prevent input given non-numeric value after .', '.text', ''],
         ['should allow negative numbers', '-1', '-1'],
         ['should allow decimals', '1.1', '1.1'],
         ['should allow decimals with no leading number', '.1', '0.1'],
-        ['should leave trailing decimal', '1.', '1.'],
-        ['should leave hyphen to allow negative number', '-', '-'],
-        ['should adjust -. to a valid state', '-.', '.'],
+        ['should not leave trailing decimal', '1.', '1'],
+        ['should clear out a single hyphen', '-', ''],
+        ['should clear out an invalid input of -.', '-.', ''],
       ];
       it.each(testCases)('%s', async (name, value, expectedValue) => {
         const wrapper = setup({ type: 'number' });
 
         const input = findByTestId(wrapper, 'input-stub-testid');
         await input.setValue(value);
-
+        await input.trigger('blur');
         await flushPromises();
 
         expect(input.element.value).toBe(expectedValue);
