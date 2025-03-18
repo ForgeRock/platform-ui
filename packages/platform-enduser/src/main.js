@@ -34,6 +34,7 @@ import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/saniti
 import BootstrapVue from 'bootstrap-vue';
 import createRealmPath from '@forgerock/platform-shared/src/utils/createRealmPath';
 import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
+import { getEntitlementList, getApplicationList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
@@ -146,7 +147,27 @@ const startApp = async () => {
 
     if (store.state.SharedStore.governanceDevEnabled) {
       const { data } = await getIgaUiConfig();
-      store.commit('setGovLcm', data.lcmSettings);
+      if (data.lcmSettings?.entitlement?.enabled) {
+        // check if user can see any entitlements or create for any app
+        const [applications, entitlements] = await Promise.all([
+          getApplicationList(null, {
+            pageSize: 1,
+            queryFilter: 'application.objectTypes.accountAttribute co ""',
+          }),
+          getEntitlementList(null, { pageSize: 1 }),
+        ]);
+        store.commit('setGovLcm', {
+          lcmSettings: data.lcmSettings,
+          createEntitlement: applications.data?.totalCount > 0,
+          viewEntitlement: entitlements.data?.totalCount > 0,
+        });
+      } else {
+        store.commit('setGovLcm', {
+          lcmSettings: data.lcmSettings,
+          createEntitlement: false,
+          viewEntitlement: false,
+        });
+      }
     }
 
     overrideTranslations(idmContext, i18n, 'enduser');

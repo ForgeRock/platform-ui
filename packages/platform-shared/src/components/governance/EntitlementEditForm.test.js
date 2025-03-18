@@ -32,7 +32,6 @@ describe('EntitlementEditForm', () => {
 
   const modelValue = {
     testString: 'some value',
-    testBoolean: true,
     testNumber: 42,
   };
 
@@ -60,5 +59,16 @@ describe('EntitlementEditForm', () => {
 
     const testNumber = wrapper.find('[label="Test Number Property"]');
     expect(testNumber.exists()).toBe(true);
+  });
+
+  it('sets default value for booleans and emits event', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    expect(wrapper.emitted()['update:modelValue'][0]).toEqual([{
+      testString: 'some value',
+      testBoolean: false,
+      testNumber: 42,
+    }]);
   });
 });

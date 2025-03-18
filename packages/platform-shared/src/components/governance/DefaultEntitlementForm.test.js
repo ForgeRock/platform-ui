@@ -154,7 +154,7 @@ describe('DefaultEntitlementForm', () => {
       testObjectProperty2: 'some other value2',
     });
     await flushPromises();
-    expect(wrapper.emitted('update:entitlementValues')[2]).toEqual([
+    expect(wrapper.emitted('update:entitlementValues')[3]).toEqual([
       {
         testObjectProperty: 'new value',
         testObjectProperty2: 'some other value2',

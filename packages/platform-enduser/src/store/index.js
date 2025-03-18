@@ -93,9 +93,9 @@ export default createStore({
       state.requestCartUsers = users;
     },
 
-    setGovLcm(state, lcmSettings) {
-      state.govLcmEnabled = Object.values(lcmSettings).some((setting) => setting.enabled);
-      state.govLcmEntitlement = lcmSettings?.entitlement?.enabled;
+    setGovLcm(state, { lcmSettings, createEntitlement, viewEntitlement }) {
+      state.govLcmEntitlement = lcmSettings?.entitlement?.enabled && (createEntitlement || viewEntitlement);
+      state.govLcmEnabled = state.govLcmEntitlement;
     },
   },
   modules: {
