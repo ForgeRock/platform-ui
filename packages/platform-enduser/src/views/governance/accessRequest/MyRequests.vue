@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -33,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrAccessRequestTable
             :access-requests="accessRequests"
             :is-loading="isLoading"
+            :title="$t('pageTitles.MyRequests')"
             :total-rows="totalAccessRequests"
             @load-requests="loadRequests"
             @navigate-to-details="$router.push({

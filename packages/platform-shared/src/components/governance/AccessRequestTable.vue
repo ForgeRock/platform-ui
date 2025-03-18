@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BCard no-body>
     <FrAccessRequestList
       :is-loading="isLoading"
+      :list-name="title"
       :requests="accessRequests"
       @open-detail="$emit('navigate-to-details', $event)">
       <template #header>
@@ -92,6 +93,10 @@ const props = defineProps({
   allowForwarding: {
     type: Boolean,
     default: false,
+  },
+  title: {
+    type: String,
+    default: '',
   },
 });
 
