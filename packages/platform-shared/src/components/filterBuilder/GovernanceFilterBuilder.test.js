@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -312,10 +312,13 @@ describe('GovernanceFilterBuilder', () => {
 
       const inputValue = wrapper.find('input[name="inputValue_user_1"]');
       await inputValue.setValue(20);
+      await inputValue.trigger('blur');
 
       expect(wrapper.emitted('filter-update')).toBeTruthy();
-      expect(wrapper.emitted('filter-update').length).toBe(1);
-      expect(wrapper.emitted('filter-update')[0][0]).toEqual({
+      // Initial emit is the string representation that happens on keypress (setValue).
+      // Second emit is the blur event which updates the string number value to an integer.
+      expect(wrapper.emitted('filter-update').length).toBe(2);
+      expect(wrapper.emitted('filter-update')[1][0]).toEqual({
         or: [{
           equals: {
             right: {

@@ -379,7 +379,9 @@ describe('Run Report component', () => {
 
         await unexpectedParameterInput.setValue('My unexpected parameter input value');
         await unexpectedIntegerParameter.setValue(123);
+        await unexpectedIntegerParameter.trigger('blur');
         await unexpectedFloatParameter.setValue(123.456);
+        await unexpectedFloatParameter.trigger('blur');
         const submitButton = findByTestId(wrapper, 'run-report-button');
         await submitButton.trigger('click');
 
