@@ -14,7 +14,7 @@ import generateUserData from '../utils/endUserData';
 /**
  * Creates an end user account with random credentials.
  */
-Given('There is an end user account created', () => {
+Given('there is an end user account created', () => {
   const { userName, userPassword, userSN } = generateUserData();
   cy.loginAsAdmin().then(() => {
     createIDMUser({
@@ -37,7 +37,7 @@ Given('There is an end user account created', () => {
  * Enters the username based on the given scenario.
  * @param {string} scenario - The type of scenario ('valid' for a correct username, anything else for typing 'random' as username).
  */
-When('User enters a(n) {string} username', (scenario) => {
+When('user enters a(n) {string} username', (scenario) => {
   switch (scenario) {
     case 'valid':
       cy.findByLabelText(/User Name/i, { timeout: 20000 }).should('be.visible').type(Cypress.env('endUserName'), { force: true });
@@ -52,7 +52,7 @@ When('User enters a(n) {string} username', (scenario) => {
  * Enters the password based on the given scenario.
  * @param {string} scenario - The type of scenario ('valid' for a correct password, anything else for typing 'random' as password).
  */
-When('User enters a(n) {string} password', (scenario) => {
+When('user enters a(n) {string} password', (scenario) => {
   switch (scenario) {
     case 'valid':
       cy.findAllByLabelText(/Password/i).first().should('be.visible').type(Cypress.env('endUserPassword'), { force: true });
@@ -66,7 +66,7 @@ When('User enters a(n) {string} password', (scenario) => {
 /**
  * The user clicks the Login button.
  */
-Then('Clicks on the Login button {int} time(s)', (numberOfAttempts) => {
+Then('clicks on the Login button {int} time(s)', (numberOfAttempts) => {
   for (let i = 0; i < numberOfAttempts; i += 1) {
     cy.findByRole('button', { name: 'Next' }).click();
   }

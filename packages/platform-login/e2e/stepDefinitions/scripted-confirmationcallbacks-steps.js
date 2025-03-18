@@ -61,7 +61,7 @@ after(() => {
   });
 });
 
-Given('Journey template {string} is imported with {string} Decision Node Script', (journeyName, scriptType) => {
+Given('journey template {string} is imported with {string} Decision Node Script', (journeyName, scriptType) => {
   const journeyTemplate = `${journeyName}_template.json`;
 
   // Prepare Journey template with correct Script version
@@ -77,7 +77,7 @@ Given('Journey template {string} is imported with {string} Decision Node Script'
   cy.importTreesViaAPI([preparedJourney]);
 });
 
-Then('Translations for Scripted ConfirmationCallbacks for {string} locale are correct', () => {
+Then('translations for Scripted ConfirmationCallbacks for {string} locale are correct', () => {
   // Check translations are correctly applied for messages
   cy.findByRole('heading').contains(translations.login.loginText).should('be.visible');
 

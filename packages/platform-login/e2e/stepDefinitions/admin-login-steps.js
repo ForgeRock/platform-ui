@@ -11,7 +11,7 @@ import { When } from '@badeball/cypress-cucumber-preprocessor';
  * Logs in the user with valid or invalid credentials.
  * @param {string} scenario - The type of credentials to use ('valid' or 'invalid').
  */
-When('Admin logs in with {string} credentials', (scenario) => {
+When('admin logs in with {string} credentials', (scenario) => {
   switch (scenario) {
     case 'invalid':
       cy.findByLabelText(/User Name/i, { timeout: 20000 }).type('invalidUsername');

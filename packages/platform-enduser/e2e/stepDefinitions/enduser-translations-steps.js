@@ -62,7 +62,7 @@ after(() => {
   }
 });
 
-Given('Language override for {string} is added', (locale) => {
+Given('language override for {string} is added', (locale) => {
   switch (locale) {
     case 'fr':
       addOverrides('fr', frTranslations);
@@ -78,11 +78,11 @@ Given('Language override for {string} is added', (locale) => {
   }
 });
 
-When('Language override for {string} is deleted', (locale) => {
+When('language override for {string} is deleted', (locale) => {
   deleteOverrides(locale);
 });
 
-Then('Sidebar translations are in {string}', (language) => {
+Then('sidebar translations are in {string}', (language) => {
   switch (language) {
     case 'french':
       cy.findByRole('link', { name: 'Mes applications en français' }).should('be.visible');
@@ -99,7 +99,7 @@ Then('Sidebar translations are in {string}', (language) => {
   }
 });
 
-Then('Dashboard translations are in {string}', (language) => {
+Then('dashboard translations are in {string}', (language) => {
   switch (language) {
     case 'french':
       cy.findByRole('button', { name: 'Éditer le profil en français' }).should('be.visible');
@@ -118,7 +118,7 @@ Then('Dashboard translations are in {string}', (language) => {
   }
 });
 
-Then('Profile translations are in {string}', (language) => {
+Then('profile translations are in {string}', (language) => {
   switch (language) {
     case 'french':
       cy.findByRole('heading', { name: 'Sécurité du compte en français' }).should('be.visible');
