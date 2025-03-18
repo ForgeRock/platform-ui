@@ -1,3 +1,7 @@
+<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="d-flex align-items-center justify-content-end text-right dropdown-padding">
     <BDropdown
@@ -12,7 +16,7 @@
           icon-class="text-muted md-24"
           name="more_horiz" />
         <p class="sr-only">
-          {{ $t('common.moreActions') }}
+          {{ $t('common.accessibleMoreActions') }}
         </p>
       </template>
       <template

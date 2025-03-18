@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="py-5" />
     <BTable
       v-else-if="items.length"
+      :aria-label="listName"
       class="border-top mb-0"
       hover
       tbody-tr-class="cursor-pointer"
@@ -99,6 +100,10 @@ const prop = defineProps({
   requests: {
     type: Array,
     default: () => [],
+  },
+  listName: {
+    type: String,
+    default: '',
   },
 });
 
