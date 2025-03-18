@@ -19,22 +19,22 @@ Given('{string} is logged in to {string} journey', (username, journey) => {
   cy.loginAsEnduser(username === 'Enduser' ? Cypress.env('endUserName') : username, 'Welcome1!', true, loginUrl);
 });
 
-Given('Browser locale is set to {string}', (locale) => {
+Given('browser locale is set to {string}', (locale) => {
   const localesList = locale.split(',');
   Cypress.env('LOCALESLIST', localesList);
   Cypress.env('LOCALE', localesList[0]);
 });
 
-When('User clicks on {string} tab', (page) => {
+When('user clicks on {string} tab', (page) => {
   cy.findByRole('link', { name: page }).click();
 });
 
-When('User reloads the page', () => {
+When('user reloads the page', () => {
   cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
   cy.reload();
   cy.wait('@themerealmConfig', { timeout: 10000 });
 });
 
-When('User clicks on {string} button', (button) => {
+When('user clicks on {string} button', (button) => {
   cy.findByRole('button', { name: button }).click();
 });

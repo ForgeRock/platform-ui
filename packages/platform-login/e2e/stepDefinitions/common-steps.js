@@ -23,7 +23,7 @@ function visitJourneyPage(journeyPageUrl) {
  * This step definition allows navigation to a page that uses the base URL specified in the default block.
  * @param {string} pageName - The page to navigate to ('admin login', 'end user login', 'registration', or any other path relative to the base URL).
  */
-Given('Admin/User navigates to {string} page', (page) => {
+Given('admin/user navigates to {string} page', (page) => {
   const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
   switch (page) {
     case 'admin login':
@@ -46,7 +46,7 @@ Given('Admin/User navigates to {string} page', (page) => {
   }
 });
 
-When('Cleanup {string} Journey with all dependencies', (journeyName) => {
+When('cleanup {string} Journey with all dependencies', (journeyName) => {
   const fullJourneyName = `${journeyName}.json`;
 
   // Delete Imported Journey with all dependencies
@@ -74,7 +74,7 @@ When('user navigates back', () => {
 /**
  * Verifies that the user sees the login failure message.
  */
-Then('Admin should see a login failure message', () => {
+Then('admin should see a login failure message', () => {
   const loginFailedErrorMessage = Cypress.env('IS_FRAAS') ? 'Login failure' : 'Authentication Failed';
   cy.findAllByRole('alert').contains(loginFailedErrorMessage);
 });
@@ -86,14 +86,14 @@ Then('Admin should see a login failure message', () => {
  *                            'should' means the user should be redirected to the dashboard.
  *                            'should not' means the user should not be redirected to the dashboard.
  */
-Then('User should see {string} error message', (errorMessage) => {
+Then('user should see {string} error message', (errorMessage) => {
   cy.findAllByRole('alert').contains(errorMessage).should('be.visible');
 });
 
 /**
  * Verifies that the user is redirected to the user dashboard.
  */
-Then('User should be redirected to User dashboard', () => {
+Then('user should be redirected to User dashboard', () => {
   cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${Cypress.env('endUserFirstName')} ${Cypress.env('endUserLastName')}`).should('be.visible');
 });
 

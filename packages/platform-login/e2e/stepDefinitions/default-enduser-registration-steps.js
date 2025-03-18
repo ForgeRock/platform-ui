@@ -30,7 +30,7 @@ When('user fills security question {string} with answer {string} if present', (q
  * Fills out the registration form with specified credentials.
  * @param {string} scenario - The type of credentials to use ('valid' or 'invalid').
  */
-When('User fills out the default registration form with {string} credentials', (scenario) => {
+When('user fills out the default registration form with {string} credentials', (scenario) => {
   const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
   const fieldData = [
     {
@@ -85,7 +85,7 @@ When('User fills out the default registration form with {string} credentials', (
 /**
  * Submits the registration form.
  */
-When('User submits the registration form', () => {
+When('user submits the registration form', () => {
   cy.findByRole('button', { name: 'Next' }).click({ force: true });
 });
 
@@ -94,7 +94,7 @@ When('User submits the registration form', () => {
  * Message displayed on UI says "Must be at least n characters long", being n the number provided here
  * @param {int} charactersExpected The number of characters expected, displayed by UI error message
  */
-Then('User should see an error indicating password should be at least {int} characters long', (charactersExpected) => {
+Then('user should see an error indicating password should be at least {int} characters long', (charactersExpected) => {
   cy.get(`li:contains("Must be at least ${charactersExpected} characters long")`)
     .should('have.class', 'fr-valid');
 });
@@ -102,6 +102,6 @@ Then('User should see an error indicating password should be at least {int} char
 /**
  * Verifies that the registration confirmation email is sent.
  */
-Then('The registration confirmation email is sent', () => {
+Then('the registration confirmation email is sent', () => {
   cy.findByText('An email has been sent to the address you entered. Click the link in that email to proceed.').should('exist');
 });
