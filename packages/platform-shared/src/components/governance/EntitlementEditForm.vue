@@ -15,6 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * Displays a form for editing the object properties of an entitlement.
  */
+import { cloneDeep } from 'lodash';
 import { ref, onMounted } from 'vue';
 import FrFormGenerator from '@forgerock/platform-shared/src/components/FormGenerator';
 
@@ -38,11 +39,6 @@ const emit = defineEmits(['update:modelValue']);
 const model = ref({});
 const schema = ref([]);
 
-function updateModel({ path, value }) {
-  model.value[path] = value;
-  emit('update:modelValue', model.value);
-}
-
 /**
  * Returns the default value based on the provided type.
  * @param {any} value - The initial value to be processed.
@@ -53,12 +49,30 @@ function getDefaultValue(value, type) {
   switch (type) {
     case 'array':
       return value ?? [];
+    case 'boolean':
+      return value ?? false;
     case 'string':
     case 'integer':
-    case 'boolean':
     default:
       return value ?? null;
   }
+}
+
+function cleanup(value) {
+  const booleanKeys = Object.keys(props.entitlementSchema).filter((key) => props.entitlementSchema[key].type === 'boolean');
+  booleanKeys.forEach((key) => {
+    value[key] = getDefaultValue(value[key], 'boolean');
+  });
+  return value;
+}
+
+function updateModel({ path, value }) {
+  let updateValue = cloneDeep(model.value);
+  updateValue[path] = value;
+  updateValue = cleanup(updateValue);
+  model.value = updateValue;
+
+  emit('update:modelValue', model.value);
 }
 
 /**
@@ -103,6 +117,7 @@ function buildSchemaForFormGenerator(entitlementSchema, modelValue) {
 
 onMounted(() => {
   buildSchemaForFormGenerator(props.entitlementSchema, props.modelValue);
-  model.value = props.modelValue;
+  model.value = cleanup(props.modelValue);
+  emit('update:modelValue', model.value);
 });
 </script>
