@@ -74,7 +74,7 @@ function getLocales(locale) {
  *   1) Query String (checkQueryString === true)
  *   2) Browser `Accept-Languages` via `navigator.languages`
  *   3) IDM UI Config API (`lang` and/or `defaultLocale` fields)
- *   4) English `en` - This will ALWAYS be set in the return balue. If the value
+ *   4) English `en` - This will ALWAYS be set in the return value. If the value
  *      doesn't come from above, then it will be the final fallback
  *
  * @param {Object} uiConfig - config data result from IDM config API reponse

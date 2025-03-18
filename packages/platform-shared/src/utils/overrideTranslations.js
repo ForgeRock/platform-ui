@@ -109,15 +109,20 @@ export function overrideTranslations(idmContext, i18n, packageName) {
   // i18n fallback locale can be an array of strings or a single string
   // we reconcile that here to make it simpler to handle
   const fallbackLocales = Array.isArray(fallbackLocale) ? fallbackLocale : [fallbackLocale];
+  let fallbackLocalesToUse = [];
+  if (locale !== 'en') {
+    const enIndex = fallbackLocales.indexOf('en');
+    if (enIndex > -1) {
+      fallbackLocalesToUse = fallbackLocales.slice(0, enIndex + 1);
+    } else {
+      fallbackLocalesToUse = fallbackLocales;
+    }
+  }
 
-  return new Promise((resolve) => {
-    getTranslationOverrides(idmContext, locale, fallbackLocales, packageName).then((res) => {
-      // for each override, override the existing i18n messages
-      res.forEach((override) => {
-        if (override.messages.shared) mergeMessages(i18n, override.locale, override.messages.shared);
-        if (override.messages[packageName]) mergeMessages(i18n, override.locale, override.messages[packageName]);
-      });
-      resolve();
+  return getTranslationOverrides(idmContext, locale, fallbackLocalesToUse, packageName).then((res) => {
+    res.forEach((override) => {
+      if (override.messages.shared) mergeMessages(i18n, override.locale, override.messages.shared);
+      if (override.messages[packageName]) mergeMessages(i18n, override.locale, override.messages[packageName]);
     });
   });
 }
