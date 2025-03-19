@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -28,7 +28,14 @@ export function translationExists(path) {
  * @returns {String} text with all non-alphanumeric characters removed
  */
 export function toTranslationKey(text) {
-  const key = text.replace(/[\W_]/g, '');
+  const letterAndNumbersRegex = /[^\p{L}\p{N}\p{M}]+/gu;
+  /**
+   * \p{L}: Matches any kind of letter from any language.
+   * \p{N}: Matches any kind of numeric character.
+   * \p{M}: Matches combining marks (e.g., accents or diacritics).
+   * The accent marks allows for NFC and NFD unicode normalizations. https://unicode.org/reports/tr15/#Norm_Forms
+   */
+  const key = text.replace(letterAndNumbersRegex, '');
   return key;
 }
 
