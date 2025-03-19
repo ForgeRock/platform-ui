@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -52,6 +52,11 @@ describe('translation util', () => {
       const textWithHtml = 'Make this application an authoritative source of identity data. <a target="_blank" href="https://backstage.forgerock.com/docs/idcloud/latest/app-management/applications.html#target_and_authoritative_applications">Learn more</a>';
       const htmlTextWithSpecialCharactersAndSpacesRemoved = 'MakethisapplicationanauthoritativesourceofidentitydataatargetblankhrefhttpsbackstageforgerockcomdocsidcloudlatestappmanagementapplicationshtmltargetandauthoritativeapplicationsLearnmorea';
       expect(toTranslationKey(textWithHtml)).toEqual(htmlTextWithSpecialCharactersAndSpacesRemoved);
+    });
+
+    it('handles other languages with non-english characters', () => {
+      const textWithNonEnglishCharacters = 'Hi! мир! 你好，世界! こんにちは@, 안녕하세요! 会话已超时 üéé';
+      expect(toTranslationKey(textWithNonEnglishCharacters)).toEqual('Hiмир你好世界こんにちは안녕하세요会话已超时üéé');
     });
   });
 
