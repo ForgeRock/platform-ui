@@ -2678,6 +2678,10 @@
       "SAML2_IDP_ATTRIBUTE_MAPPER": {
         "name": "SAML2 IDP Attribute Mapper",
         "description": "Script to map user-configured attributes to SAML attributes into the generated SAML assertion."
+      },
+      "PINGONE_VERIFY_COMPLETION_DECISION_NODE": {
+        "name": "PingOne Verify Completion Decision Node",
+        "description": "Scripts to be used to process the JSON from the user's identity verification transaction with PingOne Verify."
       }
     },
     "languages": {
