@@ -5,13 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
+import { When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { generateJourneyURL } from '@e2e/utils/journeyUtils';
-
-Given('user navigates to {journey} journey', (journeyName) => {
-  const journeyUrl = generateJourneyURL(journeyName);
-  cy.visitJourneyUrl(journeyUrl);
-});
 
 When('user navigates to journey {journey} url with param {string} and value {string}', (journeyName, param, paramValue) => {
   const journeyUrl = generateJourneyURL(journeyName);
@@ -36,8 +31,4 @@ Then('user should be redirected to User dashboard', () => {
 Then('page title is {string}', (title) => {
   // TODO: Remove this big timeout after Themes performance is resolved (default 5s should be enough)
   cy.findByRole('heading', { name: title, timeout: 10000 }).should('be.visible');
-});
-
-Then('{string} field has {string} validation error', (field, validationError) => {
-  cy.findByLabelText(field).get('.error-message').should('have.text', validationError);
 });

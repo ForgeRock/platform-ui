@@ -44,4 +44,7 @@ export const JOURNEYS = {
   SCRIPTED_CONFIRMATION_CALLBACKS: { name: 'Scripted Confirmation Callbacks', path: 'QA%20-%20Scripted%20Decision%20Node%20with%20ConfirmationCallbacks#/' },
   ALL_SECTIONS_ACTIVE: { name: 'All sections active', path: 'QA%20-%20Default%20Login%20with%20all%20enduser%20sections%20active' },
   GO_TO_ON_FAIL_URL_VALIDATION: { name: 'gotoOnFail URL validation', path: 'QA%20-%20gotoOnFail%20URL%20validation', fileName: 'QA-gotoOnFail_URL_validation_template' },
+  REGISTRATION_WITHOUT_EMAIL: { name: 'Registration without email', path: 'QA%20-%20Registration%20without%20email', fileName: 'QA-Registration_without_email_template' },
+  PASSWORD_RESET_BY_KBA: { name: 'Password reset by KBA', path: 'QA%20-%20Password%20reset%20by%20KBA', fileName: 'QA-Password_reset_by_KBA_template' },
+  REGISTRATION_WITH_ES_LOCALE: { name: 'Registration with ES locale', path: 'Registration&locale=es#' },
 };

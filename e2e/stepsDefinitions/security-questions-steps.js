@@ -6,11 +6,26 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-import { When } from '@badeball/cypress-cucumber-preprocessor';
-import { createSecurityQuestion, deleteAllSecurityQuestions, setSecurityQuestionsObject } from '../utils/manageSecurityQuestions';
+import { Given, When } from '@badeball/cypress-cucumber-preprocessor';
+import {
+  createSecurityQuestion, deleteAllSecurityQuestions, setSecurityQuestionsObject, setSecurityQuestionsSettings,
+} from '../utils/manageSecurityQuestions';
 import { getSecurityQuestions } from '../api/securityQuestionsApi.e2e';
 
 let defaultSecurityQuestions;
+
+Given('security questions {string} settings is set to {int} via API', (settingsName, settingsValue) => {
+  setSecurityQuestionsSettings(settingsName, settingsValue);
+});
+
+When('admin creates a question with different text on different locales via API', (dataTable) => {
+  const questionObject = {};
+  dataTable.hashes().forEach((row) => {
+    questionObject[row.locale] = row.text;
+  });
+  const questionCreationObject = { 0: questionObject };
+  createSecurityQuestion(questionCreationObject);
+});
 
 When('admin creates the following questions via API', (dataTable) => {
   const questions = {};
@@ -29,6 +44,9 @@ When('the admin deletes all the security questions via API', () => {
 });
 
 before(() => {
+  if (Cypress.spec.relative.includes('enduser-security-questions.feature' && !Cypress.env('IS_FRAAS'))) {
+    setSecurityQuestionsSettings('must define', 1);
+  }
   if (Cypress.spec.relative.includes('security-questions')) {
     cy.loginAsAdmin()
       .then(() => getSecurityQuestions())

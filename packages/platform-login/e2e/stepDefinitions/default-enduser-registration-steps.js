@@ -7,12 +7,6 @@
 
 import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
 
-When('user fills registration form with following data', (dataTable) => {
-  dataTable.hashes().forEach((row) => {
-    cy.findByLabelText(row.Field).clear().type(row.Value);
-  });
-});
-
 When('user fills security question {string} with answer {string}', (question, answer) => {
   cy.findAllByRole('combobox', { name: 'Select a security question' }).first().type(`${question}{enter}`);
   cy.findByLabelText(`Answer for: ${question}`).clear().type(answer);
