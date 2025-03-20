@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -146,6 +146,7 @@ export default {
       this.getItems({
         status: this.statusSort.param,
         pageNumber: this.currentPage - 1,
+        pageSize: this.pageSize,
         queryString: this.searchQuery,
         sortBy: this.sortBy === 'formattedDeadline' ? 'deadline' : this.sortBy,
         sortDesc: this.sortDesc,
