@@ -1652,6 +1652,7 @@
       "noAccessReview": "No {type} Access Reviews",
       "backLink": "Access Reviews",
       "signOff": "Sign Off",
+      "signOffTooltip": "Complete your Access Review. If partial sign-off is enabled, only items with decisions will be signed off",
       "decisions": "Decisions",
       "defaultCertifierText": "<strong>{name}</strong> is the certifier for this access",
       "viewCampaignDetails": "View campaign details",

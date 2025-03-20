@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
               <BDropdown
                 id="dropdown-status"
                 variant="link"
-                class="m-md-2 text-decoration-none">
+                class="ml-2 text-decoration-none">
                 <template #button-content>
                   <span
                     class="font-weight-bold mr-1"
@@ -44,11 +44,6 @@ of the MIT license. See the LICENSE file for details. -->
                 </template>
               </BDropdown>
             </div>
-            <!-- <FrSearchInput
-              v-model="searchQuery"
-              :placeholder="$t('common.search')"
-              @clear="clear"
-              @search="search" /> -->
           </div>
         </BCardHeader>
         <BTable
@@ -119,13 +114,13 @@ of the MIT license. See the LICENSE file for details. -->
           data-testid="access-review-no-data"
           icon="inbox"
           :subtitle="$t('governance.certificationTask.noAccessReview', { type: statusSort.text })" />
-        <BPagination
-          v-if="totalRows > 10"
+        <FrPagination
+          v-if="totalRows"
           :value="currentPage"
-          class="pt-3 justify-content-center pagination-material-buttons border-top"
-          per-page="10"
           :total-rows="totalRows"
-          @input="paginationChange" />
+          :per-page="pageSize"
+          @input="paginationChange"
+          @on-page-size-change="pageSizeChange" />
       </BCard>
     </div>
   </BContainer>
@@ -142,7 +137,6 @@ import {
   BDropdown,
   BDropdownItem,
   BMedia,
-  BPagination,
   BPopover,
   BTable,
 } from 'bootstrap-vue';
@@ -154,8 +148,8 @@ import {
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
-// import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
 import styles from '@/scss/main.scss';
@@ -170,17 +164,17 @@ export default {
     BDropdown,
     BDropdownItem,
     BMedia,
-    BPagination,
     BPopover,
     BTable,
     FrCircleProgressBar,
     FrHeader,
     FrNoData,
-    // FrSearchInput,
+    FrPagination,
     FrSpinner,
   },
   data() {
     return {
+      pageSize: 10,
       currentPage: 1,
       totalRows: 0,
       tableLoading: true,
@@ -223,6 +217,11 @@ export default {
     },
   },
   methods: {
+    pageSizeChange(newPageSize) {
+      this.pageSize = newPageSize;
+      this.currentPage = 1;
+      this.getList();
+    },
     paginationChange(pageNumber) {
       this.currentPage = pageNumber;
       this.getList();

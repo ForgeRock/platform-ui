@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -61,7 +61,7 @@ describe('AccessReviews', () => {
     });
     expect(CertificationApi.searchCertificates).not.toHaveBeenCalled();
     expect(CertificationApi.getCertificationItems).toHaveBeenCalledWith({
-      pageNumber: 0, sortBy: 'deadline', sortDesc: false, status: 'active',
+      pageNumber: 0, pageSize: 10, sortBy: 'deadline', sortDesc: false, status: 'active',
     });
   });
 
@@ -85,7 +85,7 @@ describe('AccessReviews', () => {
     });
     expect(CertificationApi.getCertificationItems).not.toHaveBeenCalled();
     expect(CertificationApi.searchCertificates).toHaveBeenCalledWith('test search', {
-      pageNumber: 0, sortBy: 'deadline', sortDesc: false, status: 'active',
+      pageNumber: 0, pageSize: 10, sortBy: 'deadline', sortDesc: false, status: 'active',
     });
   });
 });

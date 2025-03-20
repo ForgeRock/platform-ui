@@ -3932,7 +3932,6 @@
         "activateButtonText": "Activate Campaign",
         "activateButtonSpinnerText": "Activating"
       },
-      "actorsMissingEmailLabel": "Certifiers with no email address",
       "cancelCampaignButtonText": "Cancel Campaign",
       "cancelCampaignModal": {
         "text": "Are you sure you want to cancel this campaign?",
@@ -4005,7 +4004,6 @@
       },
       "usersChartLabel": "Users",
       "usersChartTooltip": "Never certified users vs previously certified users",
-      "usersMissingEmailLabel": "Users with no email address",
       "showDescriptionModal": {
         "closeButtonText": "Done",
         "title": "About This Campaign"

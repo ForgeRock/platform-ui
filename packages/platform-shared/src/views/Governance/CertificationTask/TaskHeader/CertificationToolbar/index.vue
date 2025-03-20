@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
         #right-content>
         <div
           v-if="!isSaving && !firstLoad"
-          class="d-flex m-2">
+          class="d-flex m-2 mt-3">
           <FrIcon
             icon-class="mr-2 color-green"
             name="check">
@@ -28,19 +28,25 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="isSaving"
           :button-spinner="isSaving"
           :name="$t('governance.certificationTask.isSaving')"
-          class="mr-3 text-primary"
+          class="mr-3 mt-3 text-primary"
           size="sm" />
         <div
           v-if="isSaving"
-          class="media-body mr-3"
+          class="media-body mr-3 mt-3"
           v-html="$t('governance.certificationTask.isSaving')" />
         <BButton
           data-testid="signoff-button"
+          id="signoff-button"
           variant="primary"
           :disabled="disableSignoff"
           @click="$emit('sign-off')">
           {{ $t('governance.certificationTask.signOff') }}
         </BButton>
+        <BTooltip
+          placement="bottom"
+          triggers="hover"
+          target="signoff-button"
+          :title="$t('governance.certificationTask.signOffTooltip')" />
         <BDropdown
           v-if="campaignDetails.enableForward && campaignDetails.allowBulkCertify"
           class="ml-2"
@@ -79,6 +85,7 @@ import {
   BButton,
   BDropdown,
   BDropdownItem,
+  BTooltip,
 } from 'bootstrap-vue';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -94,9 +101,10 @@ export default {
     FrIcon,
     FrSpinner,
     FrNavbar,
+    BButton,
     BDropdown,
     BDropdownItem,
-    BButton,
+    BTooltip,
   },
   mixins: [NotificationMixin],
   data() {
