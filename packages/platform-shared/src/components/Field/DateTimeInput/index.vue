@@ -31,6 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
           :is-html="isHtml"
           :name="`${name}-date`"
           :validation="validation"
+          :minDate="minDate"
           :validation-immediate="validationImmediate" />
       </BCol>
       <BCol>
@@ -92,6 +93,10 @@ export default {
     showSeconds: {
       default: true,
       type: Boolean,
+    },
+    minDate: {
+      default: '',
+      type: String,
     },
   },
   data() {

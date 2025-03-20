@@ -34,6 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       :id="internalId"
       :name="name"
+      :min="minDate"
       :aria-label="labelTranslation" />
   </div>
 </template>
@@ -67,6 +68,10 @@ export default {
     dropleft: {
       default: true,
       type: Boolean,
+    },
+    minDate: {
+      default: '',
+      type: String,
     },
   },
   setup(props) {
