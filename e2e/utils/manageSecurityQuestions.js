@@ -32,3 +32,15 @@ export function deleteAllSecurityQuestions() {
     putSecurityQuestions(patchedObject);
   });
 }
+
+export function setSecurityQuestionsSettings(settingsName, settingsValue) {
+  const objectSettingsName = {
+    'must define': 'minimumAnswersToDefine',
+    'must answer': 'minimumAnswersToVerify',
+  };
+  getSecurityQuestions().then((response) => {
+    const patchedObject = response.body;
+    patchedObject[objectSettingsName[settingsName]] = settingsValue;
+    putSecurityQuestions(patchedObject);
+  });
+}

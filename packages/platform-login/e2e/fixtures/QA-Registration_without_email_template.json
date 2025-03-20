@@ -1,0 +1,402 @@
+{
+  "meta": {
+    "origin": "https://openam-pangea-9.forgeblocks.com/platform/?realm=alpha#/journeys",
+    "exportedBy": "Gecko",
+    "exportDate": "2025-04-29T22:53:07.145Z",
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "QA - Registration without email"
+    ],
+    "innerTreesIncluded": []
+  },
+  "trees": {
+    "QA - Registration without email": {
+      "tree": {
+        "_id": "QA - Registration without email",
+        "_rev": "507972992",
+        "identityResource": "identity_resource",
+        "uiConfig": {
+          "categories": "[\"QA\",\"QA_autotests\"]"
+        },
+        "entryNodeId": "eeba6a61-a510-4770-97d9-c241f90dd725",
+        "innerTreeOnly": false,
+        "nodes": {
+          "08eaaff4-2284-44e0-ac61-5e832a90c1f1": {
+            "connections": {
+              "CREATED": "1c25fb2b-96c9-4d0b-b054-da2744335895",
+              "FAILURE": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "displayName": "Create Object",
+            "nodeType": "CreateObjectNode",
+            "x": 555,
+            "y": 185.015625
+          },
+          "1c25fb2b-96c9-4d0b-b054-da2744335895": {
+            "connections": {
+              "outcome": "70e691a5-1e33-4ac3-a356-e7b6d60d92e0"
+            },
+            "displayName": "Increment Login Count",
+            "nodeType": "IncrementLoginCountNode",
+            "x": 801,
+            "y": 228.015625
+          },
+          "eeba6a61-a510-4770-97d9-c241f90dd725": {
+            "connections": {
+              "outcome": "08eaaff4-2284-44e0-ac61-5e832a90c1f1"
+            },
+            "displayName": "Page Node",
+            "nodeType": "PageNode",
+            "x": 252,
+            "y": 27.015625
+          }
+        },
+        "staticNodes": {
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 1086,
+            "y": 231
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 853,
+            "y": 410
+          },
+          "startNode": {
+            "x": 50,
+            "y": 250
+          }
+        },
+        "mustRun": false,
+        "enabled": true
+      },
+      "nodes": {
+        "08eaaff4-2284-44e0-ac61-5e832a90c1f1": {
+          "_id": "08eaaff4-2284-44e0-ac61-5e832a90c1f1",
+          "_rev": "-1940749889",
+          "identityResource": "identity_resource",
+          "_type": {
+            "_id": "CreateObjectNode",
+            "name": "Create Object",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "CREATED",
+              "displayName": "Created"
+            },
+            {
+              "id": "FAILURE",
+              "displayName": "Failed"
+            }
+          ]
+        },
+        "1c25fb2b-96c9-4d0b-b054-da2744335895": {
+          "_id": "1c25fb2b-96c9-4d0b-b054-da2744335895",
+          "_rev": "-1804682085",
+          "identityAttribute": "userName",
+          "_type": {
+            "_id": "IncrementLoginCountNode",
+            "name": "Increment Login Count",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "eeba6a61-a510-4770-97d9-c241f90dd725": {
+          "_id": "eeba6a61-a510-4770-97d9-c241f90dd725",
+          "_rev": "19998577",
+          "nodes": [
+            {
+              "_id": "a4ba88e9-df37-4cc3-8c67-77bb1f034c66",
+              "nodeType": "ValidatedUsernameNode",
+              "displayName": "Platform Username"
+            },
+            {
+              "_id": "2080abc4-a18a-4404-b3f3-a117505a4fc5",
+              "nodeType": "AttributeCollectorNode",
+              "displayName": "Attribute Collector"
+            },
+            {
+              "_id": "afdfb056-8cba-4408-80c6-0180f060fff9",
+              "nodeType": "ValidatedPasswordNode",
+              "displayName": "Platform Password"
+            },
+            {
+              "_id": "a1b9d3b5-9a9b-4f0f-ae32-1823db6890c5",
+              "nodeType": "KbaCreateNode",
+              "displayName": "KBA Definition"
+            },
+            {
+              "_id": "12d47807-8057-4655-bd99-1584f7b911d1",
+              "nodeType": "AcceptTermsAndConditionsNode",
+              "displayName": "Accept Terms and Conditions"
+            }
+          ],
+          "pageDescription": {},
+          "pageHeader": {},
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "a4ba88e9-df37-4cc3-8c67-77bb1f034c66": {
+          "_id": "a4ba88e9-df37-4cc3-8c67-77bb1f034c66",
+          "_rev": "876404446",
+          "usernameAttribute": "userName",
+          "validateInput": true,
+          "_type": {
+            "_id": "ValidatedUsernameNode",
+            "name": "Platform Username",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "2080abc4-a18a-4404-b3f3-a117505a4fc5": {
+          "_id": "2080abc4-a18a-4404-b3f3-a117505a4fc5",
+          "_rev": "-84763130",
+          "attributesToCollect": [
+            "givenName",
+            "sn",
+            "mail",
+            "preferences/marketing",
+            "preferences/updates"
+          ],
+          "identityAttribute": "userName",
+          "validateInputs": true,
+          "required": true,
+          "_type": {
+            "_id": "AttributeCollectorNode",
+            "name": "Attribute Collector",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "afdfb056-8cba-4408-80c6-0180f060fff9": {
+          "_id": "afdfb056-8cba-4408-80c6-0180f060fff9",
+          "_rev": "1804352077",
+          "passwordAttribute": "password",
+          "validateInput": true,
+          "_type": {
+            "_id": "ValidatedPasswordNode",
+            "name": "Platform Password",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "a1b9d3b5-9a9b-4f0f-ae32-1823db6890c5": {
+          "_id": "a1b9d3b5-9a9b-4f0f-ae32-1823db6890c5",
+          "_rev": "-925146253",
+          "message": {
+            "en": "Select a security question"
+          },
+          "allowUserDefinedQuestions": true,
+          "_type": {
+            "_id": "KbaCreateNode",
+            "name": "KBA Definition",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "12d47807-8057-4655-bd99-1584f7b911d1": {
+          "_id": "12d47807-8057-4655-bd99-1584f7b911d1",
+          "_rev": "2133492671",
+          "_type": {
+            "_id": "AcceptTermsAndConditionsNode",
+            "name": "Accept Terms and Conditions",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [
+        {
+          "_id": "19d92aff-a3d0-4a3f-b18a-683b5253ce1d",
+          "accountCardBackgroundColor": "#ffffff",
+          "accountCardHeaderColor": "#23282e",
+          "accountCardInnerBorderColor": "#e7eef4",
+          "accountCardInputBackgroundColor": "#ffffff",
+          "accountCardInputBorderColor": "#c0c9d5",
+          "accountCardInputFocusBorderColor": "#324054",
+          "accountCardInputLabelColor": "#5e6d82",
+          "accountCardInputSelectColor": "#e4f4fd",
+          "accountCardInputSelectHoverColor": "#f6f8fa",
+          "accountCardInputTextColor": "#23282e",
+          "accountCardOuterBorderColor": "#e7eef4",
+          "accountCardShadow": 3,
+          "accountCardTabActiveBorderColor": "#109cf1",
+          "accountCardTabActiveColor": "#e4f4fd",
+          "accountCardTextColor": "#5e6d82",
+          "accountFooter": "<div class=\"d-flex justify-content-center py-4 w-100\"><span class=\"pr-1\">© 2025</span>\n<a href=\"#\" target=\"_blank\" class=\"text-body\">My Company, Inc</a><a href=\"#\" target=\"_blank\" style=\"color: #0000ee\" class=\"pl-3 text-body\">Privacy Policy</a><a href=\"#\" target=\"_blank\" style=\"color: #0000ee\" class=\"pl-3 text-body\">Terms & Conditions</a></div>",
+          "accountFooterEnabled": false,
+          "accountFooterScriptTag": "",
+          "accountFooterScriptTagEnabled": false,
+          "accountNavigationBackgroundColor": "#ffffff",
+          "accountNavigationTextColor": "#455469",
+          "accountNavigationToggleBorderColor": "#e7eef4",
+          "accountPageSections": {
+            "accountControls": {
+              "enabled": false
+            },
+            "accountSecurity": {
+              "enabled": true,
+              "subsections": {
+                "password": {
+                  "enabled": true
+                },
+                "securityQuestions": {
+                  "enabled": true
+                },
+                "twoStepVerification": {
+                  "enabled": true
+                },
+                "username": {
+                  "enabled": true
+                }
+              }
+            },
+            "consent": {
+              "enabled": false
+            },
+            "oauthApplications": {
+              "enabled": false
+            },
+            "personalInformation": {
+              "enabled": true
+            },
+            "preferences": {
+              "enabled": false
+            },
+            "social": {
+              "enabled": false
+            },
+            "trustedDevices": {
+              "enabled": true
+            }
+          },
+          "accountTableRowHoverColor": "#f6f8fa",
+          "backgroundColor": "#ffffff",
+          "backgroundImage": "",
+          "bodyText": "#23282e",
+          "boldLinks": false,
+          "buttonFocusBorderColor": "#0778d6",
+          "buttonRounded": 5,
+          "dangerColor": "#dc3545",
+          "darkColor": "#23282e",
+          "favicon": "https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg",
+          "fontFamily": "Open Sans",
+          "infoColor": "#109cf1",
+          "isDefault": false,
+          "journeyA11yAddFallbackErrorHeading": true,
+          "journeyCardBackgroundColor": "#ffffff",
+          "journeyCardBorderRadius": 4,
+          "journeyCardHeaderBackgroundColor": "#ffffff",
+          "journeyCardShadow": 3,
+          "journeyCardTextColor": "#5e6d82",
+          "journeyCardTitleColor": "#23282e",
+          "journeyFloatingLabels": true,
+          "journeyFocusElement": "header",
+          "journeyFocusFirstFocusableItemEnabled": false,
+          "journeyFooter": "<div class=\"d-flex justify-content-center py-4 w-100\"><span class=\"pr-1\">© 2025</span>\n<a href=\"#\" target=\"_blank\" class=\"text-body\">My Company, Inc</a><a href=\"#\" target=\"_blank\" style=\"color: #0000ee\" class=\"pl-3 text-body\">Privacy Policy</a><a href=\"#\" target=\"_blank\" style=\"color: #0000ee\" class=\"pl-3 text-body\">Terms & Conditions</a></div>",
+          "journeyFooterEnabled": false,
+          "journeyFooterScriptTag": "",
+          "journeyFooterScriptTagEnabled": false,
+          "journeyHeader": "<div class=\"d-flex justify-content-center py-4 flex-grow-1\">Header Content</div>",
+          "journeyHeaderEnabled": false,
+          "journeyHeaderSkipLinkEnabled": false,
+          "journeyInputBackgroundColor": "#ffffff",
+          "journeyInputBorderColor": "#c0c9d5",
+          "journeyInputFocusBorderColor": "#324054",
+          "journeyInputLabelColor": "#5e6d82",
+          "journeyInputSelectColor": "#e4f4fd",
+          "journeyInputSelectHoverColor": "#f6f8fa",
+          "journeyInputTextColor": "#23282e",
+          "journeyJustifiedContent": "",
+          "journeyJustifiedContentEnabled": false,
+          "journeyJustifiedContentMobileViewEnabled": false,
+          "journeyLayout": "card",
+          "journeyRememberMeEnabled": false,
+          "journeyRememberMeLabel": "",
+          "journeySignInButtonPosition": "flex-column",
+          "journeyTheaterMode": false,
+          "lightColor": "#f6f8fa",
+          "linkActiveColor": "#0a6eab",
+          "linkActiveColorOnDark": "#0a6eab",
+          "linkColor": "#109cf1",
+          "linkColorOnDark": "#109cf1",
+          "linkedTrees": [
+            "QA - Registration without email"
+          ],
+          "logo": "https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg",
+          "logoAltText": "Logo",
+          "logoEnabled": true,
+          "logoHeight": "43",
+          "logoProfile": "https://cdn.forgerock.com/platform/themes/starter/logo-starter-full.svg",
+          "logoProfileAltText": "Logo",
+          "logoProfileCollapsed": "https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg",
+          "logoProfileCollapsedAltText": "Logo",
+          "logoProfileHeight": "24",
+          "name": "QA - Security questions ON",
+          "pageTitle": "#23282e",
+          "primaryColor": "#324054",
+          "primaryOffColor": "#242E3C",
+          "profileBackgroundColor": "#ffffff",
+          "profileMenuHighlightColor": "#f3f5f8",
+          "profileMenuHoverColor": "#f3f5f8",
+          "profileMenuHoverTextColor": "#455469",
+          "profileMenuTextHighlightColor": "#455469",
+          "secondaryColor": "#69788b",
+          "successColor": "#2ed47a",
+          "switchBackgroundColor": "#c0c9d5",
+          "textColor": "#ffffff",
+          "topBarBackgroundColor": "#ffffff",
+          "topBarBorderColor": "#e7eef4",
+          "topBarHeaderColor": "#23282e",
+          "topBarTextColor": "#69788b",
+          "warningColor": "#ffb946"
+        }
+      ],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}
