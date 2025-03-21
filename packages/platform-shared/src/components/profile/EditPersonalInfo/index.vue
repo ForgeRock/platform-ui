@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -25,15 +25,16 @@ of the MIT license. See the LICENSE file for details. -->
               :key="index">
               <div @keydown.enter="saveForm()">
                 <FrField
+                  v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'"
                   v-model="field.value"
                   class="personal-info-field"
                   :label="field.title"
                   :name="field.name"
+                  :options="field.enum || []"
                   :type="getFieldType(field)"
                   :validation="field.validation"
                   :testid="`edit-personal-info-${index}`"
-                  :disabled="!field.userEditable"
-                  v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'" />
+                  :disabled="!field.userEditable" />
                 <FrListField
                   v-else-if="field.type === 'array' && field.name !== 'privileges'"
                   v-model="field.value"
@@ -82,6 +83,7 @@ import {
   cloneDeep,
   each,
   filter,
+  has,
   map,
   reject,
 } from 'lodash';
@@ -177,17 +179,22 @@ export default {
       const filteredOrder = filter(order, (propName) => properties[propName].viewable
                             && properties[propName].scope !== 'private'
                             && properties[propName].type !== 'object');
-      const formFields = map(filteredOrder, (name) => ({
-        name,
-        title: `${properties[name].title} ${required.includes(name) ? '' : this.$t('common.optional')}`.trim(),
-        value: this.profile[name] || null,
-        type: properties[name].type,
-        description: properties[name].description,
-        items: properties[name].items,
-        format: properties[name].format,
-        validation: required.includes(name) ? 'required' : '',
-        userEditable: properties[name].userEditable,
-      }));
+      const formFields = map(filteredOrder, (name) => {
+        const property = properties[name];
+        const formField = {
+          name,
+          title: `${property.title} ${required.includes(name) ? '' : this.$t('common.optional')}`.trim(),
+          value: this.profile[name] || null,
+          type: property.type,
+          description: property.description,
+          ...(property.enum && { enum: property.enum }),
+          items: property.items,
+          format: property.format,
+          validation: required.includes(name) ? 'required' : '',
+          userEditable: property.userEditable,
+        };
+        return formField;
+      });
 
       return formFields;
     },
@@ -272,6 +279,9 @@ export default {
       }
       if (field.type === 'boolean') {
         return 'checkbox';
+      }
+      if (has(field, 'enum')) {
+        return 'select';
       }
       return field.type;
     },
