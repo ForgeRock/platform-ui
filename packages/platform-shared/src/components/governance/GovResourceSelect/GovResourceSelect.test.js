@@ -45,11 +45,13 @@ const userContext = {
         givenName: 'test1',
         sn: 'user',
         id: 'userId1',
+        userName: 'test.user1',
       },
       {
         givenName: 'test2',
         sn: 'user',
         id: 'userId2',
+        userName: 'test.user2',
       },
     ],
   },
@@ -78,7 +80,7 @@ describe('GovResourceSelect Component', () => {
 
     expect(wrapper.vm.selectOptions).toEqual([
       {
-        text: 'test1 user',
+        text: 'test1 user (test.user1)',
         userInfo: {
           givenName: 'test1',
           sn: 'user',
@@ -87,11 +89,12 @@ describe('GovResourceSelect Component', () => {
         value: 'userId1',
       },
       {
-        text: 'test2 user',
+        text: 'test2 user (test.user2)',
         userInfo: {
           givenName: 'test2',
           sn: 'user',
           id: 'userId2',
+          userName: 'test.user2',
         },
         value: 'userId2',
       },
@@ -115,7 +118,7 @@ describe('GovResourceSelect Component', () => {
         value: 'all',
       },
       {
-        text: 'test1 user',
+        text: 'test1 user (test.user1)',
         userInfo: {
           givenName: 'test1',
           sn: 'user',
@@ -124,11 +127,12 @@ describe('GovResourceSelect Component', () => {
         value: 'userId1',
       },
       {
-        text: 'test2 user',
+        text: 'test2 user (test.user2)',
         userInfo: {
           givenName: 'test2',
           sn: 'user',
           id: 'userId2',
+          userName: 'test.user2',
         },
         value: 'userId2',
       },

@@ -5,7 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { getOption, getQueryParams, getDefaultGovOption } from '@/utils/governance/select';
+import {
+  getOption, getQueryParams, getDefaultGovOption,
+} from '@/utils/governance/select';
 
 describe('Select Utils', () => {
   describe('getOption', () => {
@@ -35,20 +37,24 @@ describe('Select Utils', () => {
 
   describe('getDefaultGovOption', () => {
     it('should return user option with full name for user resourceType', () => {
-      const resource = { givenName: 'John', sn: 'Doe', id: 'user-id' };
+      const resource = {
+        givenName: 'John', sn: 'Doe', id: 'user-id', userName: 'jane.doe',
+      };
       const result = getDefaultGovOption(resource, 'user');
       expect(result).toEqual({
-        text: 'John Doe',
+        text: 'John Doe (jane.doe)',
         userInfo: resource,
         value: 'user-id',
       });
     });
 
     it('should return user option with full name for realm-specific user resourceType', () => {
-      const resource = { givenName: 'Jane', sn: 'Doe', id: 'user-id' };
+      const resource = {
+        givenName: 'Jane', sn: 'Doe', id: 'user-id', userName: 'jane.doe',
+      };
       const result = getDefaultGovOption(resource, 'realm/user');
       expect(result).toEqual({
-        text: 'Jane Doe',
+        text: 'Jane Doe (jane.doe)',
         userInfo: resource,
         value: 'user-id',
       });

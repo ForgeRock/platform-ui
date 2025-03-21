@@ -69,8 +69,8 @@ describe('ObjectSelect', () => {
       const wrapper = mountComponent({ property });
       await flushPromises();
 
-      expect(wrapper.findAll('[role="option"]')[0].text()).toBe('test1 user1');
-      expect(wrapper.findAll('[role="option"]')[1].text()).toBe('test2 user2');
+      expect(wrapper.findAll('[role="option"]')[0].text()).toBe('test1 user1 ()');
+      expect(wrapper.findAll('[role="option"]')[1].text()).toBe('test2 user2 ()');
     });
 
     it('calls to get a user when an initial value is provided', async () => {
