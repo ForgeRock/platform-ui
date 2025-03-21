@@ -1964,6 +1964,7 @@
       "secondStageDescription2": "Sign in to your Domain Name Registrar.",
       "secondStageDescription3": "Find the option to modify your DNS Records.",
       "secondStageDescription4": "Create a <code>CNAME</code> record with the following values for <code>Host</code> and <code>Data</code>:",
+      "secondStageDescriptionOptionalMtls": "Alternatively the <code>MTLS</code> domain may also be used for the <code>Data</code> value if desired:",
       "secondStageDescription5": "Once you have added the <code>CNAME</code> record, click 'Verify' to continue",
       "thirdStageDescription1": "<span class=\"font-weight-bold\">It may take up to 48 hours for these changes to propagate.</span> Warning notices may appear on your custom URL domain until propagation is finished completely.",
       "thirdStageDescription1Cloud": "We will now start the process of generating your certificate. Once the certificate has been generated you have completed setting up a Custom Domain Name for your realm. ",
