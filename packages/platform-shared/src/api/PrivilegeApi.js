@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -30,8 +30,9 @@ export function getResourcePrivilege(resourcePath, id) {
 
 /**
  * Gets privileges for the currently authenticated user
+ * options {Object} - options object to generate the API, used by IDM Enduser to pass additional headers required
  * @returns {Promise} a Promise resolving to the current users privilege object
  */
-export function getUserPrivileges() {
-  return generateIdmApi().post('privilege?_action=listPrivileges');
+export function getUserPrivileges(options) {
+  return generateIdmApi(options).post('privilege?_action=listPrivileges');
 }

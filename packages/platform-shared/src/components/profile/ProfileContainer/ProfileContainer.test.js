@@ -1,14 +1,15 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright 2025 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import i18n from '@/i18n';
-import Profile from '@/components/profile';
+import Profile from '.';
 
 Profile.components['fr-consent'] = jest.fn();
 Profile.components['fr-account-controls'] = jest.fn();
@@ -42,7 +43,20 @@ describe('Profile.vue', () => {
     });
   });
 
-  it('sets the default theme prop correctly', () => {
-    expect(wrapper.props('theme')).toEqual({});
+  it('Sets fullName properly', () => {
+    wrapper.vm.profile = {
+      givenName: 'Stan',
+      sn: 'Marsh',
+    };
+
+    expect(wrapper.vm.fullName).toBe('Stan Marsh');
+    wrapper.vm.profile.givenName = null;
+    expect(wrapper.vm.fullName).toBe(' Marsh');
+    wrapper.vm.profile.givenName = 'Stan';
+    wrapper.vm.profile.sn = null;
+    expect(wrapper.vm.fullName).toBe('Stan ');
+    wrapper.vm.profile.givenName = null;
+    wrapper.vm.profile.sn = null;
+    expect(wrapper.vm.fullName).toBe('0123456789');
   });
 });

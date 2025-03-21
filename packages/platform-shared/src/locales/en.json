@@ -586,6 +586,12 @@
       "rawJson": "Raw JSON",
       "copyJson": "Copy JSON",
       "invalidJson": "Invalid JSON"
+    },
+    "profile": {
+      "authorizedApplications": {
+        "never": "Never"
+      },
+      "updateSuccess": "Updated your profile."
     }
   },
   "dashboard": {
@@ -905,6 +911,19 @@
       "unableToDeleteModalTitle": "Unable to Delete Device",
       "unableToDeleteModalText": "Unable to delete this device. Please sign in with this device in order to delete it."
     },
+    "dashboard": {
+      "widgets": {
+        "welcome": {
+          "greeting": "Hello",
+          "greetingMorning": "Good Morning {name}!",
+          "greetingAfternoon": "Good Afternoon {name}!",
+          "greetingEvening": "Good Evening {name}!",
+          "welcomeMessage": "The End User UI helps users manage their account data, consent, and shared resources.",
+          "welcomeMessageCompact": "Here's a look at what's going on.",
+          "editProfile": "Edit Your Profile"
+        }
+      }
+    },
     "forbidden": {
       "forbidden": "forbidden",
       "returnToDashboard": "Return to Dashboard",
@@ -1101,6 +1120,7 @@
     "dataSources": "Data Sources",
     "headerNavigation": "Header navigation",
     "pipelines": "Pipelines",
+    "profile": "Profile",
     "reports": "Reports",
     "risk": "Risk",
     "riskConfig": "Risk Config",

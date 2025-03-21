@@ -1,17 +1,18 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright 2025 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import FallbackImage from '@/components/utils/FallbackImage';
+import FallbackImage from '@forgerock/platform-shared/src/components/FallbackImage';
 
 jest.spyOn(FallbackImage, 'mounted');
 
-describe('utils/FallbackImage.vue', () => {
+describe('/FallbackImage.vue', () => {
   let wrapper;
 
   beforeEach(() => {

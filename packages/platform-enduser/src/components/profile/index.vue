@@ -3,24 +3,8 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer>
-    <BRow
-      v-if="theme"
-      class="my-5">
-      <BCol
-        v-if="!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled"
-        class="profileCol mb-4"
-        lg="4">
-        <FrEditProfile
-          @updateProfile="updateProfile"
-          :header="fullName"
-          :profile-image="profileImage"
-          :secondary-header="profile.mail"
-          :schema="managedResourceSchema"
-          :profile="profile"
-          :show-edit="profile._id !== undefined && isInternalUser === false"
-          :show-image-upload="managedResourceSchema.properties && managedResourceSchema.properties.profileImage !== undefined" />
-      </BCol>
+  <FrProfileContainer :theme="theme">
+    <template #settings>
       <BCol :lg="(!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled) ? 8 : 12">
         <FrAccountSecurity
           v-if="(!theme?.accountPageSections || theme?.accountPageSections.accountSecurity.enabled) && isInternalUser === false"
@@ -50,21 +34,21 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="!theme?.accountPageSections || theme?.accountPageSections.accountControls.enabled"
           class="mb-5" />
       </BCol>
-    </BRow>
-  </BContainer>
+    </template>
+  </FrProfileContainer>
 </template>
 
 <script>
 import FrAccordionTrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices/AccordionTrustedDevices';
-import { BCol, BContainer, BRow } from 'bootstrap-vue';
+import { BCol } from 'bootstrap-vue';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrAccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
-import FrEditProfile from '@forgerock/platform-shared/src/components/profile/EditProfile';
-import FrAccountControls from '@/components/profile/AccountControls';
+import FrProfileContainer from '@forgerock/platform-shared/src/components/profile/ProfileContainer';
+import FrAccountControls from '@forgerock/platform-shared/src/components/profile/AccountControls';
 import FrAuthorizedApplications from '@/components/profile/AuthorizedApplications';
 import FrPreferences from '@/components/profile/Preferences';
 import FrConsent from '@/components/profile/Consent';
@@ -92,14 +76,12 @@ export default {
   },
   components: {
     BCol,
-    BContainer,
-    BRow,
     FrAccountControls,
     FrAccountSecurity,
     FrAuthorizedApplications,
-    FrEditProfile,
     FrPreferences,
     FrAccordionTrustedDevices,
+    FrProfileContainer,
     FrConsent,
     FrSocial,
   },
@@ -112,28 +94,6 @@ export default {
   computed: {
     ...mapState(useUserStore, ['userId', 'managedResource']),
     ...mapState(useEnduserStore, ['isInternalUser', 'managedResourceSchema']),
-    fullName() {
-      let fullName = '';
-
-      if (this.profile.givenName?.length > 0 || this.profile.sn?.length > 0) {
-        const givenName = this.profile.givenName || '';
-        const sn = this.profile.sn || '';
-        fullName = this.$t('common.userFullName', { givenName, sn });
-      } else {
-        fullName = this.userId;
-      }
-
-      return fullName;
-    },
-    profileImage() {
-      let profileImage = '';
-
-      if (this.profile.profileImage && this.profile.profileImage.length > 0) {
-        profileImage = this.profile.profileImage;
-      }
-
-      return profileImage;
-    },
   },
   mounted() {
     this.getUserProfile();

@@ -126,8 +126,8 @@ import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FallbackImage from '@forgerock/platform-shared/src/components/FallbackImage';
 import AccessLevel from '@/components/profile/AccessLevel';
-import FallbackImage from '@/components/utils/FallbackImage';
 
 dayjs.extend(advancedFormat);
 
