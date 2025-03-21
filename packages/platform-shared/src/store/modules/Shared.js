@@ -41,6 +41,8 @@ const defaultState = {
   maxIdleExpirationTime: null,
   maxSessionExpirationTime: null,
   newMultiselectEnabled: false,
+  mtlsEnabled: false,
+  fraasMtlsFqdn: null,
   pendoEnabled: false,
   pingFederateUrl: null,
   nodeDesignerEnabled: false,
@@ -185,6 +187,11 @@ const mutations = {
       }
       if (env.VUE_APP_ENABLE_PENDO === 'true' || env.VUE_APP_ENABLE_PENDO === true) {
         state.pendoEnabled = true;
+      }
+
+      if (env.VUE_APP_ENABLE_MTLS === 'true' || env.VUE_APP_ENABLE_MTLS === true) {
+        state.mtlsEnabled = env.VUE_APP_ENABLE_MTLS;
+        state.fraasMtlsFqdn = env.VUE_APP_MTLS_FQDN;
       }
     }
 
