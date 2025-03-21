@@ -57,6 +57,7 @@
     "vue-demi": "0.14.5"
   },
   "resolutions": {
+    "@babel/runtime": "7.26.10",
     "autoprefixer": "10.4.5",
     "cross-spawn": "7.0.5",
     "elliptic": "6.6.0",
