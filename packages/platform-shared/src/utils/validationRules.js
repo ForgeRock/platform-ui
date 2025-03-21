@@ -132,7 +132,20 @@ export function getRules(i18n) {
   // errors if input value's length is less than the input minimum number
   const minimumRequired = (value, params) => customValidators.minimumItems(value, params) || i18n.global.t('common.policyValidationMessages.MIN_ITEMS', { minItems: params.minItems });
 
-  const numeric = (value) => rules.numeric(value) || i18n.global.t('common.policyValidationMessages.VALID_INT');
+  const numeric = (value) => {
+    let valid = true;
+    if (Array.isArray(value)) {
+      value.forEach((singleValue) => {
+        // validates { value: 123 } or 123
+        if (singleValue.value ? !rules.numeric(singleValue.value) : !rules.numeric(singleValue)) {
+          valid = false;
+        }
+      });
+    } else {
+      valid = rules.numeric(value);
+    }
+    return valid || i18n.global.t('common.policyValidationMessages.VALID_INT');
+  };
 
   const integer = (value) => rules.integer(value) || i18n.global.t('common.validation.int');
 

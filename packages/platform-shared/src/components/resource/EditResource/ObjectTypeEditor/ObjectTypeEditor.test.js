@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -108,6 +108,9 @@ describe('ObjectTypeEditor', () => {
     };
 
     expect(wrapper.vm.getFieldType(field)).toBe('string');
+
+    field.enum = ['one', 'two'];
+    expect(wrapper.vm.getFieldType(field)).toBe('select');
 
     field.type = 'boolean';
     expect(wrapper.vm.getFieldType(field)).toBe('checkbox');
