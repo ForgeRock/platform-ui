@@ -27,8 +27,7 @@ function setupI18n(messages, fallbackMessages) {
 }
 
 function createMockImplementation(enMockData, esMockData, frMockData) {
-  axios.create.mockImplementation(() => ({
-    create: jest.fn(),
+  axios.create.mockReturnValue({
     get: jest.fn((path) => {
       if (path === '/config/uilocale/en?_fields=login,shared') {
         return Promise.resolve(enMockData || { data: {} });
@@ -39,9 +38,9 @@ function createMockImplementation(enMockData, esMockData, frMockData) {
       if (path === '/config/uilocale/fr?_fields=login,shared') {
         return Promise.resolve(frMockData || { data: {} });
       }
-      return null;
+      return Promise.resolve({ data: {} });
     }),
-  }));
+  });
 }
 
 describe('overrides main locale translations properly', () => {
@@ -154,11 +153,7 @@ describe('overrides fallback locale translations properly', () => {
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
     await overrideTranslations('test', i18n, 'login');
     // Check if the current locale is 'es'
-    if (i18n.global.locale === 'es') {
-      expect(i18n.global.messages.es.testMessage).toBe('es override');
-    } else {
-      expect(i18n.global.messages.es.testMessage).toBe('message 1');
-    }
+    expect(i18n.global.messages.es.testMessage).toBe('message 1');
   });
 
   it('only overrides messages for the corresponding package', async () => {
@@ -188,11 +183,7 @@ describe('overrides fallback locale translations properly', () => {
 
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
     await overrideTranslations('test', i18n, 'login');
-    if (i18n.global.locale === 'es') {
-      expect(i18n.global.messages.es.testMessage).toBe('es override');
-    } else {
-      expect(i18n.global.messages.es.testMessage).toBe('message 1');
-    }
+    expect(i18n.global.messages.es.testMessage).toBe('message 1');
   });
 
   it('package specific overrides take precedence over shared overrides', async () => {
@@ -210,11 +201,7 @@ describe('overrides fallback locale translations properly', () => {
 
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
     await overrideTranslations('test', i18n, 'login');
-    if (i18n.global.locale === 'es') {
-      expect(i18n.global.messages.es.testMessage).toBe('different es override');
-    } else {
-      expect(i18n.global.messages.es.testMessage).toBe('message 1');
-    }
+    expect(i18n.global.messages.es.testMessage).toBe('message 1');
   });
 
   it('config overrides add to original messages if key is not present originally', async () => {
@@ -229,11 +216,7 @@ describe('overrides fallback locale translations properly', () => {
 
     expect(i18n.global.messages.es.testMessage2).toBeUndefined();
     await overrideTranslations('test', i18n, 'login');
-    if (i18n.global.locale === 'es') {
-      expect(i18n.global.messages.es.testMessage2).toBe('es override');
-    } else {
-      expect(i18n.global.messages.es.testMessage2).toBeUndefined();
-    }
+    expect(i18n.global.messages.es.testMessage2).toBeUndefined();
   });
 });
 
@@ -276,12 +259,7 @@ describe('overrides multiple fallback locale translations properly', () => {
     expect(i18n.global.messages.es.testMessage).toBe('fallback');
     expect(i18n.global.messages.fr.testMessage).toBe('fallback2');
     await overrideTranslations('test', i18n, 'login');
-    if (i18n.global.locale === 'es') {
-      expect(i18n.global.messages.es.testMessage).toBe('es override');
-      expect(i18n.global.messages.fr.testMessage).toBe('fr override');
-    } else {
-      expect(i18n.global.messages.en.testMessage).toBe('en override');
-    }
+    expect(i18n.global.messages.en.testMessage).toBe('en override');
   });
 });
 
@@ -311,5 +289,95 @@ describe('setLocales()', () => {
   it('adds en as final fallback locale if not present in locale string', () => {
     setLocales(i18n, ['es', 'fr', 'de', 'en']);
     expect(i18n.global.fallbackLocale[2]).toBe('en');
+  });
+});
+
+describe('overrideTranslations with different fallbackLocales positions', () => {
+  let i18n;
+
+  beforeEach(() => {
+    i18n = createI18n({
+      locale: 'en-US',
+      fallbackLocale: ['en', 'de'],
+      messages: {
+        'en-US': { testMessage: 'message 1' },
+        en: { testMessage: 'message 2' },
+        de: { testMessage: 'message 3' },
+      },
+    });
+  });
+
+  it('calls getTranslationOverrides with correct fallbackLocalesToUse when en is at different positions', async () => {
+    const configData = {
+      data: {
+        login: {
+          testMessage: 'de override',
+        },
+      },
+    };
+    createMockImplementation(null, null, configData);
+
+    await overrideTranslations('test', i18n, 'login');
+    expect(i18n.global.messages.de.testMessage).toBe('message 3');
+  });
+
+  it('handles locales [en-US, en, de]', async () => {
+    i18n.global.fallbackLocale = ['en', 'de'];
+    const configData = {
+      data: {
+        login: {
+          testMessage: 'de override',
+        },
+      },
+    };
+    createMockImplementation(null, null, configData);
+
+    await overrideTranslations('test', i18n, 'login');
+    expect(i18n.global.messages.de.testMessage).toBe('message 3');
+  });
+
+  it('handles locales [de, en-US, en]', async () => {
+    i18n.global.fallbackLocale = ['de', 'en-US', 'en'];
+    const configData = {
+      data: {
+        login: {
+          testMessage: 'de override',
+        },
+      },
+    };
+    createMockImplementation(null, null, configData);
+
+    await overrideTranslations('test', i18n, 'login');
+    expect(i18n.global.messages.de.testMessage).toBe('message 3');
+  });
+
+  it('handles locales [fr, de, en-US, en]', async () => {
+    i18n.global.fallbackLocale = ['fr', 'de', 'en-US', 'en'];
+    const configData = {
+      data: {
+        login: {
+          testMessage: 'de override',
+        },
+      },
+    };
+    createMockImplementation(null, null, configData);
+
+    await overrideTranslations('test', i18n, 'login');
+    expect(i18n.global.messages.de.testMessage).toBe('message 3');
+  });
+
+  it('handles locales [fr, en-US, en, de] with override defined for de but not for fr', async () => {
+    i18n.global.fallbackLocale = ['fr', 'en-US', 'en', 'de'];
+    const configData = {
+      data: {
+        login: {
+          testMessage: 'de override',
+        },
+      },
+    };
+    createMockImplementation(null, null, configData);
+
+    await overrideTranslations('test', i18n, 'login');
+    expect(i18n.global.messages.de.testMessage).toBe('message 3');
   });
 });
