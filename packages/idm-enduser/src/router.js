@@ -36,7 +36,14 @@ const routes = [
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('@/views/Dashboard'),
+    component: () => import('@forgerock/platform-shared/src/components/Dashboard/DefaultDashboard'),
+    meta: { authenticate: true },
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    props: true,
+    component: () => import('@/views/profile'),
     meta: { authenticate: true },
   },
   {

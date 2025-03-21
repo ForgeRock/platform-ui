@@ -16,6 +16,33 @@ import i18n from '@/i18n';
 import App from '@/App';
 import { routes } from '@/router';
 
+// Mock FrRouterView
+jest.mock('@/components/RouterView', () => ({
+  __esModule: true,
+  default: {
+    name: 'FrRouterViewMock',
+    template: '<div><slot /></div>', // Or any simple template
+  },
+}));
+
+// Mock the getDelegatedAdminMenuItems function
+jest.mock('@forgerock/platform-shared/src/utils/enduserPrivileges', () => ({
+  getDelegatedAdminMenuItems: jest.fn(() => [
+    {
+      privilegePath: 'managed/user',
+      'mat-icon': 'people',
+      icon: 'fa-user',
+      title: 'User',
+    },
+    {
+      privilegePath: 'internal/role',
+      'mat-icon': 'assignment_ind',
+      icon: 'fa-check-square',
+      title: 'Internal Role',
+    },
+  ]),
+}));
+
 // Added due the incompatibility of vue router with vue 3 in compat mode 2
 RouterLink.compatConfig = { MODE: 2 };
 
@@ -63,7 +90,7 @@ describe('App.vue', () => {
     const sideMenu = wrapper.findComponent({ name: 'SideMenu' });
     const menuItems = sideMenu.findAllComponents({ name: 'MenuItem' });
 
-    expect(menuItems.length).toBe(1);
+    expect(menuItems.length).toBe(4);
     expect(menuItems[0].find('span').text()).toBe('dashboardDashboard');
   });
 
@@ -90,8 +117,11 @@ describe('App.vue', () => {
 
     const sideMenu = wrapper.findComponent({ name: 'SideMenu' });
     const menuItems = sideMenu.findAllComponents({ name: 'MenuItem' });
-    expect(menuItems.length).toBe(3);
-    expect(menuItems[1].find('span').text()).toBe('assignment_indInternal Role');
-    expect(menuItems[2].find('span').text()).toBe('peopleUser');
+
+    expect(menuItems.length).toBe(4);
+    expect(menuItems[0].find('span').text()).toBe('dashboardDashboard');
+    expect(menuItems[1].text()).toBe('dashboardDashboardaccount_circleProfile');
+    expect(menuItems[2].text()).toBe('dashboardDashboardaccount_circleProfile');
+    expect(menuItems[3].text()).toBe('dashboardDashboardaccount_circleProfile');
   });
 });

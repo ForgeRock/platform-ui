@@ -9,8 +9,8 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { createStore } from 'vuex';
 import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import Welcome from '@forgerock/platform-shared/src/components/Dashboard/widgets/WelcomeWidget';
 import DefaultDashboard from './index';
-import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
 
 DefaultDashboard.mounted = jest.fn();
 

@@ -39,6 +39,11 @@ const baseMenuItems = [
     displayName: 'sideMenu.dashboard',
     icon: 'dashboard',
   },
+  {
+    routeTo: { name: 'Profile' },
+    displayName: 'sideMenu.profile',
+    icon: 'account_circle',
+  },
 ];
 
 // Calculated value of menu items that adds the ones related with enduser admin permissions

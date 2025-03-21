@@ -65,9 +65,9 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrConsumerApplications from '@/views/DashboardManager/dashboards/Default/ConsumerApplications';
-import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
-import Workflow from '@/views/DashboardManager/dashboards/widgets/WorkflowControlWidget';
+import Welcome from '@forgerock/platform-shared/src/components/Dashboard/widgets/WelcomeWidget';
+import Workflow from '@forgerock/platform-shared/src/components/Dashboard/widgets/WorkflowControlWidget';
+import FrConsumerApplications from '@forgerock/platform-shared/src/components/Dashboard/ConsumerApplications';
 
 /**
  * @description Controlling component for the dashboard
@@ -96,6 +96,12 @@ export default {
       widgets: [],
     };
   },
+  props: {
+    consumerApplication: {
+      type: Boolean,
+      default: null,
+    },
+  },
   computed: {
     ...mapState({
       workflow: (state) => state.workflow,
@@ -104,7 +110,7 @@ export default {
   },
   mounted() {
     this.loadWidgets();
-    if (this.$store.state.SharedStore.workforceEnabled === false) {
+    if (this.$store.state.SharedStore?.workforceEnabled === false && this.consumerApplication) {
       this.loadConsumerApplications();
     }
   },

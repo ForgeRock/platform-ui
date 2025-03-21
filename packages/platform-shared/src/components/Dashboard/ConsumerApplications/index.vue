@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
-import FallbackImage from '@/components/utils/FallbackImage';
+import FallbackImage from '@forgerock/platform-shared/src/components/FallbackImage';
 /**
  * @description Widget that provides a welcome message for the managed resource, also provides a button to directly access editing the resources profile.
  * */
@@ -55,7 +55,7 @@ export default {
       // the default set of logos built in to our app
       // else we are assuming iconPath is a FQDN
       if (iconPath.indexOf('images/logos/') === 0) {
-        return require(`@/assets/${iconPath}`);// eslint-disable-line
+        return require(`@forgerock/platform-shared/src/assets/${iconPath}`);// eslint-disable-line
       }
 
       return iconPath;

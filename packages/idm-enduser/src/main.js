@@ -10,6 +10,7 @@ import Notifications from '@kyvg/vue3-notification';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import axios from 'axios';
+import BootstrapVue from 'bootstrap-vue';
 import App from './App';
 import i18n from './i18n';
 import router from './router';
@@ -40,6 +41,7 @@ initializeLogout();
 
 function loadApp() {
   const app = createApp(App);
+  app.use(BootstrapVue);
   app.use(router);
   app.use(i18n);
   app.use(store);

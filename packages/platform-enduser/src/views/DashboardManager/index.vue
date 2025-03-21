@@ -4,13 +4,15 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <FrDashboard v-if="type === types.DEFAULT" />
+    <FrDashboard
+      v-if="type === types.DEFAULT"
+      :consumer-application="true" />
     <FrGovDashboard v-if="type === types.GOVERNANCE" />
   </div>
 </template>
 
 <script>
-import FrDashboard from '@/views/DashboardManager/dashboards/Default';
+import FrDashboard from '@forgerock/platform-shared/src/components/Dashboard/DefaultDashboard';
 import FrGovDashboard from '@/views/DashboardManager/dashboards/Governance';
 
 const types = {
