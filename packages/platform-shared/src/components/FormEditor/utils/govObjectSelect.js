@@ -74,7 +74,7 @@ export function optionFunction(resource, resourceType) {
     case 'alpha_user':
       return {
         userInfo: { ...resource },
-        text: i18n.global.t('common.userFullName', { givenName: resource.givenName, sn: resource.sn }),
+        text: i18n.global.t('common.userFullNameUserName', { givenName: resource.givenName, sn: resource.sn, userName: resource.userName }),
         value: resource._id,
       };
     case 'alpha_role':

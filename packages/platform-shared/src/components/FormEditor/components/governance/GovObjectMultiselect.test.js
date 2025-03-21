@@ -35,11 +35,13 @@ describe('ObjectMultiselect', () => {
               givenName: 'test1',
               sn: 'user1',
               _id: 'userId1',
+              userName: 'test.user1',
             },
             {
               givenName: 'test2',
               sn: 'user2',
               _id: 'userId2',
+              userName: 'test.user2',
             },
           ],
         },
@@ -69,8 +71,8 @@ describe('ObjectMultiselect', () => {
       const wrapper = mountComponent({ property });
       await flushPromises();
 
-      expect(wrapper.findAll('[role="option"]')[0].text()).toBe('test1 user1');
-      expect(wrapper.findAll('[role="option"]')[1].text()).toBe('test2 user2');
+      expect(wrapper.findAll('[role="option"]')[0].text()).toBe('test1 user1 (test.user1)');
+      expect(wrapper.findAll('[role="option"]')[1].text()).toBe('test2 user2 (test.user2)');
     });
 
     it('calls to get a user when an initial value is provided', async () => {

@@ -50,7 +50,7 @@ export function getQueryParams(queryString, resourceType) {
 export function getDefaultGovOption(resource, resourceType) {
   if (resourceType === 'user' || compareRealmSpecificResourceName(resourceType, 'user')) {
     return {
-      text: i18n.global.t('common.userFullName', { givenName: resource.givenName, sn: resource.sn }),
+      text: i18n.global.t('common.userFullNameUserName', { givenName: resource.givenName, sn: resource.sn, userName: resource.userName }),
       userInfo: resource,
       value: resource.id,
     };

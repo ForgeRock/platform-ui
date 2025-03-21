@@ -52,8 +52,10 @@ describe('objectSelect utils', () => {
 
   describe('optionFunction', () => {
     it('returns formatted user option', () => {
-      const resource = { givenName: 'John', sn: 'Doe', _id: 'userId1' };
-      expect(optionFunction(resource, 'alpha_user')).toEqual({ userInfo: resource, text: 'John Doe', value: 'userId1' });
+      const resource = {
+        givenName: 'John', sn: 'Doe', _id: 'userId1', userName: 'jane.doe',
+      };
+      expect(optionFunction(resource, 'alpha_user')).toEqual({ userInfo: resource, text: 'John Doe (jane.doe)', value: 'userId1' });
     });
 
     it('returns formatted role option', () => {

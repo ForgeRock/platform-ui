@@ -344,6 +344,7 @@
     "updating": "Updating",
     "updatedObject": "{object} Updated",
     "userFullName": "{givenName} {sn}",
+    "userFullNameUserName": "{givenName} {sn} ({userName})",
     "users": "Users",
     "validFrom": "Valid From",
     "value": "Value",
