@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     duration="1000">
     <div
       v-if="count > 0"
+      role="alert"
       class="floating-action-bar bg-dark rounded position-fixed px-4 py-2">
       <div class="w-100">
         <div class="d-flex justify-content-between align-items-center">
