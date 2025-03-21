@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,21 +13,19 @@ of the MIT license. See the LICENSE file for details. -->
           :key="'editResource' + index">
           <div
             v-if="(field.type === 'string' || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined"
-            class="mb-4"
-          >
+            class="mb-4">
             <FrField
               v-model="field.value"
               :disabled="field.disabled"
               :description="field.type !== 'boolean' ? field.description : ''"
               :label="field.title"
               :name="field.key"
-              :options="field.options"
+              :options="field.options || field.enum"
               :type="getFieldType(field)"
               :validation="field.validation" />
           </div>
-
           <FrListField
-            v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.items.isRelationship"
+            v-else-if="field.type === 'array' && field.items?.type && field.key !== 'privileges' && !field.items.isRelationship"
             v-model="field.value"
             v-on="$listeners"
             :description="field.description"
@@ -37,9 +35,8 @@ of the MIT license. See the LICENSE file for details. -->
             :name="field.key"
             :required="field.required"
             @input="updateField(index, $event)" />
-
           <div
-            v-if="field.type === 'relationship'"
+            v-else-if="field.type === 'relationship'"
             class="mb-4">
             <FrRelationshipEdit
               class="mb-4"
@@ -248,6 +245,9 @@ export default {
       }
       if (field.type === 'boolean') {
         return 'checkbox';
+      }
+      if (has(field, 'enum')) {
+        return 'select';
       }
       return field.type;
     },

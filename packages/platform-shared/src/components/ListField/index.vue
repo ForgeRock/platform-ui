@@ -1,45 +1,35 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div
-      v-if="items && items.type && (items.type === 'string' || items.type === 'number' || items.type === 'boolean')"
       class="mb-4"
       :key="`managedResource${index}`">
       <FrField
+        v-if="items.type === 'string' || items.type === 'number' || items.type === 'boolean' || isEnumFormat"
         v-bind="$attrs"
         v-on="$listeners"
-        type="tag"
+        :type="isEnumFormat ? 'multiselect' : 'tag'"
         :disabled="disabled"
         :label="label"
-        :options="items"
+        :options="isEnumFormat ? items.enum : items"
         :validation="validation" />
-    </div>
-    <div
-      v-else-if="items && items.type && items.type === 'object'"
-      class="mb-4"
-      :key="`managedResource${index}`">
       <FrListOfObjects
+        v-else-if="items.type === 'object'"
         v-bind="$attrs"
         v-on="$listeners"
         :disabled="disabled"
         :properties="items.properties"
-        :label="label"
-      />
-    </div>
-    <div
-      v-else-if="items && items.type && items.type === 'array'"
-      class="mb-4"
-      :key="`managedResource${index}`">
+        :label="label" />
       <FrListOfLists
+        v-else-if="items.type === 'array'"
         v-bind="$attrs"
         v-on="$listeners"
         :disabled="disabled"
         :items="items"
-        :label="label"
-      />
+        :label="label" />
     </div>
   </div>
 </template>
@@ -64,7 +54,7 @@ export default {
     },
     index: {
       type: Number,
-      default: () => 0,
+      default: 0,
     },
     items: {
       type: [Array, Object],
@@ -84,6 +74,9 @@ export default {
         return [];
       }
       return this.$attrs.value;
+    },
+    isEnumFormat() {
+      return this.items.enum?.length;
     },
     validation() {
       if (this.items.type === 'boolean') {
