@@ -855,7 +855,10 @@ export default {
             autocomplete: getAutocompleteValue(label),
             validationImmediate: !!errors.length,
           };
-
+          if (policyRequirements.includes('VALID_ENUM_VALUE')) {
+            const policyDetails = callback.getOutputByName('policies')?.policies?.find((policy) => policy.policyId === 'valid-enum-value');
+            component.callbackSpecificProps.options = policyDetails?.params.enum || [];
+          }
           component.listeners = this.getListeners({ callback, index }, ['input']);
         }
 
@@ -1471,6 +1474,8 @@ export default {
         dataType = 'date';
       } else if (policyRequirements.includes('VALID_TIME_FORMAT')) {
         dataType = 'time';
+      } else if (policyRequirements.includes('VALID_ENUM_VALUE')) {
+        dataType = 'select';
       }
       return dataType;
     },

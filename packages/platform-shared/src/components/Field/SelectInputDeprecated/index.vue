@@ -74,6 +74,7 @@ import {
   find,
 } from 'lodash';
 import vueMultiSelectOverrides from '@forgerock/platform-shared/src/composables/vueMultiSelectOverrides';
+import { getTranslation } from '@forgerock/platform-shared/src/utils/translations';
 
 import { useField } from 'vee-validate';
 import uuid from 'uuid/v4';
@@ -215,7 +216,7 @@ export default {
         formattedOptions = this.options.map((option) => {
           const formattedOption = typeof (option) === 'string' ? option.trim() : option;
           return {
-            text: formattedOption,
+            text: getTranslation(formattedOption),
             value: formattedOption,
           };
         });

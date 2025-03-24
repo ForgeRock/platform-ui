@@ -10,9 +10,8 @@ import Notifications from '@kyvg/vue3-notification';
 import ObjectTypeEditor from './index';
 
 describe('ObjectTypeEditor', () => {
-  let wrapper;
-  beforeEach(() => {
-    wrapper = mount(ObjectTypeEditor, {
+  function mountComponent(propsData) {
+    const wrapper = mount(ObjectTypeEditor, {
       global: {
         mocks: {
           $t: () => {},
@@ -33,15 +32,14 @@ describe('ObjectTypeEditor', () => {
           testKey: '',
         },
         subPropertyName: 'subPropertyName',
+        ...propsData,
       },
     });
-  });
-
-  afterEach(() => {
-    wrapper.unmount();
-  });
+    return wrapper;
+  }
 
   it('loads data', async () => {
+    const wrapper = mountComponent();
     expect(wrapper.vm.clonedDisplayProperties[0].title).toEqual('description');
 
     await wrapper.setProps({
@@ -54,17 +52,21 @@ describe('ObjectTypeEditor', () => {
       ],
     });
     expect(wrapper.vm.clonedDisplayProperties[0].title).toEqual('Test Key');
+    wrapper.unmount();
   });
 
   it('sets singleton relationship value', () => {
+    const wrapper = mountComponent();
     const field = {
       value: 'initial',
     };
     wrapper.vm.setSingletonRelationshipValue('final', field);
     expect(field.value).toEqual('final');
+    wrapper.unmount();
   });
 
   it('saves resource', async () => {
+    const wrapper = mountComponent();
     jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
       {
         patch: () => Promise.resolve(),
@@ -92,17 +94,21 @@ describe('ObjectTypeEditor', () => {
     expect(mockCalls.length).toBe(1);
     expect(mockCalls[0][0].startsWith('testKey')).toBe(true);
     expect(mockCalls[0][1]).toBe('errorMessage');
+    wrapper.unmount();
   });
 
   it('updates field', () => {
+    const wrapper = mountComponent();
     const index = 0;
     const newValue = 'newValue';
     expect(wrapper.vm.clonedDisplayProperties[0].value).toEqual('initialValue');
     wrapper.vm.updateField(index, newValue);
     expect(wrapper.vm.clonedDisplayProperties[0].value).toEqual('newValue');
+    wrapper.unmount();
   });
 
   it('getFieldType should return the correct field type', () => {
+    const wrapper = mountComponent();
     const field = {
       type: 'string',
     };
@@ -117,5 +123,54 @@ describe('ObjectTypeEditor', () => {
 
     field.format = 'date';
     expect(wrapper.vm.getFieldType(field)).toBe('date');
+    wrapper.unmount();
+  });
+
+  it('should show select field for field that has enum property', () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'Enum Field',
+          value: 'one',
+          enum: ['one', 'two'],
+          key: 'enum_test',
+          type: 'string',
+        },
+      ],
+    });
+
+    const enumValueOne = wrapper.findAll('.multiselect__element').at(0);
+    expect(enumValueOne.text()).toBe('one');
+    const enumValueTwo = wrapper.findAll('.multiselect__element').at(1);
+    expect(enumValueTwo.text()).toBe('two');
+    wrapper.unmount();
+  });
+
+  it('should show multiselect field for field that has enum property', () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'Enum Multiselect String Field',
+          type: 'array',
+          description: '',
+          viewable: true,
+          searchable: false,
+          userEditable: true,
+          items: {
+            value: 'red',
+            type: 'string',
+            enum: ['red', 'blue'],
+          },
+          key: 'enum_test',
+          isVirtual: false,
+        },
+      ],
+    });
+
+    const enumValueOne = wrapper.findAll('.multiselect__element').at(0);
+    expect(enumValueOne.text()).toBe('red');
+    const enumValueTwo = wrapper.findAll('.multiselect__element').at(1);
+    expect(enumValueTwo.text()).toBe('blue');
+    wrapper.unmount();
   });
 });
