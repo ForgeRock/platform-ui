@@ -96,19 +96,51 @@ export const urlDomainOnly = (value, i18n) => {
   }
 };
 
-export const isValidESV = async (value) => {
-  const esvId = getIdfromPlaceholder(value);
+/**
+ * validates if the input params is present in the ESV variable lists or not
+ * @param {String} esvId
+ * @returns {boolean}
+ */
+const validateESVForVariable = async (esvId) => {
   try {
     const { status } = await getVariable(esvId);
     return (status === 200);
   } catch (e) {
-    try {
-      const { status: secretReqStatus } = await getSecret(esvId);
-      return (secretReqStatus === 200);
-    } catch (ex) {
-      return false;
-    }
+    return false;
   }
+};
+
+/**
+ * validates if the input params is present in the ESV secret lists or not
+ * @param {String} esvId
+ * @returns {boolean}
+ */
+const validateESVForSecret = async (esvId) => {
+  try {
+    const { status: secretReqStatus } = await getSecret(esvId);
+    return (secretReqStatus === 200);
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
+ * validates If the input params is a valid ESV or not
+ * @param {String} value
+ * @param {boolean} onlyCheckForVariable
+ * @returns {boolean}
+ */
+export const isValidESV = async (value, onlyCheckForVariable) => {
+  const esvId = getIdfromPlaceholder(value);
+  const isValidESVVariable = await validateESVForVariable(esvId);
+  if (onlyCheckForVariable) {
+    return isValidESVVariable;
+  }
+  if (isValidESVVariable) {
+    return true;
+  }
+  const isValidESVSecret = await validateESVForSecret(esvId);
+  return isValidESVSecret;
 };
 
 /**

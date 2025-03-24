@@ -5,8 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { urlDomainOnly, validEmail } from './validators';
 import i18n from '@/i18n';
+import {
+  urlDomainOnly, validEmail, urlWithoutPath, urlWithPath, isValidESV, minimumItems, validBookmarkUrl,
+} from './validators';
+import * as esvApi from '../../../platform-admin/src/api/EsvApi';
 
 const nonEnglishEmailAddresses = [
   '用户@例子.广告',
@@ -132,6 +135,83 @@ describe('url validators', () => {
   it('should pass urlDomainOnly when url is valid single domain', () => {
     const testVar = 'test.com';
     const result = urlDomainOnly(testVar, i18n);
+    expect(result).toBe(true);
+  });
+
+  it('should pass urlWithoutPath when url does not include path', () => {
+    const testVar = 'https://test.com';
+    const result = urlWithoutPath(testVar, i18n);
+    expect(result).toBe(true);
+  });
+
+  it('should return error message for urlWithoutPath when url includes path', () => {
+    const testVar = 'https://test.com/xyz';
+    const result = urlWithoutPath(testVar, i18n);
+    expect(result).toBe('Please provide a valid URL that does not contain a path');
+  });
+
+  it('should pass urlWithPath when url does not includes path', () => {
+    const testVar = 'https://test.com/path';
+    const result = urlWithPath(testVar, i18n);
+    expect(result).toBe(true);
+  });
+
+  it('should fail with error message for urlWithPath when url includes path', () => {
+    const testVar = 'https://test.com';
+    const result = urlWithPath(testVar, i18n);
+    expect(result).toBe('Please provide a valid URL that contains a path');
+  });
+
+  it('should pass urlWithPath when url does not includes path', () => {
+    const testVarArray = ['https://test.com/path1', 'https://test.com/path2', 'https://test.com/path3'];
+    const result = urlWithPath(testVarArray, i18n);
+    expect(result).toBe(true);
+  });
+
+  it('validBookmarkUrl should return true for valid bookmark url', () => {
+    const testVar = 'https://test.com';
+    const result = validBookmarkUrl(testVar);
+    expect(result).toBe(true);
+  });
+});
+
+describe('ESV validators', () => {
+  it('isValidESV should return true when getVariable returns success response', async () => {
+    const getVariableSpy = jest.spyOn(esvApi, 'getVariable').mockResolvedValue({ data: true, status: 200 });
+    const result = await isValidESV('&{esv.test.success}');
+    expect(getVariableSpy).toHaveBeenCalled();
+    expect(result).toBe(true);
+  });
+
+  it('isValidESV should trigger getSecret when getVariable returns failure response', async () => {
+    const getVariableSpy = jest.spyOn(esvApi, 'getVariable').mockResolvedValue({ data: false, status: 401 });
+    const getSecretSpy = jest.spyOn(esvApi, 'getSecret').mockResolvedValue({ data: true, status: 200 });
+    const result = await isValidESV('&{esv.test.failure}');
+    expect(getVariableSpy).toHaveBeenCalled();
+    expect(getSecretSpy).toHaveBeenCalled();
+    expect(result).toBe(true);
+  });
+});
+
+describe('minimumItems validators', () => {
+  it('minimumItems should return true when array length is greater than the minItems', () => {
+    const result = minimumItems([
+      'test1', 'test2', 'test3',
+    ], {
+      minItems: 2,
+    });
+    expect(result).toBe(true);
+  });
+
+  it('minimumItems should return true when params object propertieslength is greater than the minItems', () => {
+    const result = minimumItems({
+      val1: 2,
+      val2: 4,
+      val3: 6,
+      val4: 8,
+    }, {
+      minItems: 3,
+    });
     expect(result).toBe(true);
   });
 });
