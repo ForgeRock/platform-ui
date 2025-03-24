@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
           <img
             class="d-flex justify-content-center align-items-center m-4"
             height="48"
+            :onerror="onImageError"
             :src="getApplicationLogo(entitlement.application)"
             :alt="$t('common.logo')">
         </BMediaAside>
@@ -58,6 +59,7 @@ import {
 import { useRoute } from 'vue-router';
 import { getEntitlementById } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrDetails from './Tabs/Details';
 import FrUsers from './Tabs/Users';

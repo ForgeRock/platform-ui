@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer class="my-5">
+  <BContainer class="my-5 p-2">
     <FrHeader
       class="mb-4"
       :title="$t('governance.administer.entitlements.title')"
@@ -70,10 +70,11 @@ of the MIT license. See the LICENSE file for details. -->
           class="align-items-center"
           no-body>
           <BMediaAside class="align-self-center">
-            <BImg
-              height="24"
+            <img
+              class="size-24"
+              :onerror="onImageError"
               :src="getApplicationLogo(item.application)"
-              :alt="$t('common.logo')" />
+              :alt="$t('common.logo')">
           </BMediaAside>
           <BMediaBody class="align-self-center overflow-hidden text-nowrap">
             <p class="h5 mb-0">
@@ -117,7 +118,6 @@ import {
   BCol,
   BCollapse,
   BContainer,
-  BImg,
   BMedia,
   BMediaAside,
   BMediaBody,
