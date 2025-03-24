@@ -226,6 +226,9 @@ export function getRules(i18n) {
 
   // Rule to check for compatibility with ESV naming schema
   const lower_case_alpha_numeric_underscore_hyphen_only = (value) => {
+    if (!value) {
+      return true;
+    }
     const regex = /^([a-z0-9_-])+$/g;
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.lowerCaseAlphaNumericUnderscoreHyphenOnly');
   };
@@ -313,6 +316,15 @@ export function getRules(i18n) {
 
   const check_form_row_width = (fields) => fields.reduce((acc, field) => acc + field.columns + field.offset, 0) <= 12 || i18n.global.t('common.policyValidationMessages.formRowOversized');
 
+  // Rules to check whether the value matches the regex pattern for ESV and the ESV value present in the variable list
+  const is_valid_esv_variable = async (value) => {
+    if (doesValueContainPlaceholder(value)) {
+      const isvalidESV = await customValidators.isValidESV(value, true);
+      return isvalidESV || i18n.global.t('common.policyValidationMessages.validEsv');
+    }
+    return lower_case_alpha_numeric_underscore_hyphen_only(value);
+  };
+
   const validationRules = {
     allowedRules,
     alpha_dash_spaces,
@@ -365,6 +377,7 @@ export function getRules(i18n) {
     validBookmarkUrl,
     whitespace,
     max_value_comparison,
+    is_valid_esv_variable,
   };
   return validationRules;
 }
