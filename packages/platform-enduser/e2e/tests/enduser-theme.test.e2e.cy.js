@@ -7,7 +7,7 @@
 
 import { random } from 'lodash';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
-import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
+import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
 import {
   navigateToHostedPagesViaSidebar,
   createNewTheme,

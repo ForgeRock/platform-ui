@@ -13,6 +13,13 @@
     "copyright-bot": "yarn g:copyright-bot",
     "coverage-diff": "yarn g:coverage-diff"
   },
+  "dependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "21.0.2",
+    "@neuralegion/cypress-har-generator": "5.16.4",
+    "@testing-library/cypress": "10.0.1",
+    "cypress-file-upload": "5.0.8",
+    "lodash": "4.17.21"
+  },
   "devDependencies": {
     "@babel/eslint-parser": "7.22.9",
     "@testing-library/dom": "9.3.1",

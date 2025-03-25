@@ -7,7 +7,7 @@
 
 import { random } from 'lodash';
 import { filterTests } from '../../../../e2e/util';
-import { createIDMUser, deleteIDMUser } from '../../../platform-admin/e2e/api/managedApi.e2e';
+import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
 
 filterTests(['@forgeops', '@cloud'], () => {
   describe('End-user update password flow', () => {

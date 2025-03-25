@@ -1,9 +1,9 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
-import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
-import { addOverrides, deleteOverrides } from '../api/localizationApi.e2e';
+import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
+import { addOverrides, deleteOverrides } from '../../../../e2e/api/localizationApi.e2e';
 import { frTranslations, jaTranslations, enTranslations } from '../fixtures/enduser-locales-translations';
-import { importJourneysViaAPI, deleteJourneysViaAPI } from '../utils/manageJourneys';
+import { importJourneysViaAPI, deleteJourneysViaAPI } from '../../../../e2e/utils/manageJourneys';
 
 // TODO: Delete Features and env conditionals when https://pingidentity.atlassian.net/browse/IAM-8259 is resolved
 

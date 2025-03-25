@@ -10945,6 +10945,9 @@ __metadata:
   resolution: "forgerock-platform-ui@workspace:."
   dependencies:
     "@babel/eslint-parser": 7.22.9
+    "@badeball/cypress-cucumber-preprocessor": 21.0.2
+    "@neuralegion/cypress-har-generator": 5.16.4
+    "@testing-library/cypress": 10.0.1
     "@testing-library/dom": 9.3.1
     "@testing-library/jest-dom": 6.1.2
     "@testing-library/user-event": 13.0.1
@@ -10954,6 +10957,7 @@ __metadata:
     "@vue/test-utils": 2.4.1
     babel-jest: 29.6.3
     babel-plugin-require-context-hook: 1.0.0
+    cypress-file-upload: 5.0.8
     dotenv: 8.2.0
     eslint: 5.16.0
     eslint-config-airbnb-base: 14.2.0
@@ -10970,6 +10974,7 @@ __metadata:
     jest-runner-eslint: 0.10.0
     jest-runner-stylelint: 2.3.7
     jest-transform-stub: 2.0.0
+    lodash: 4.17.21
     mocha: 8.4.0
     mochawesome: 6.1.1
     mochawesome-merge: 4.1.0

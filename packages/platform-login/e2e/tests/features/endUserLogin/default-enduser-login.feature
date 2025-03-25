@@ -7,8 +7,8 @@ Feature: Enduser Login
   So that I can ensure the application handles login and logout correctly
 
   Background:
-    Given Enduser account is created via API
-    Then Admin is logged out
+    Given enduser account is created via API
+    And admin is logged out
     And user navigates to "end user login" page
 
   # Test Cases: C20237

@@ -8,8 +8,8 @@
 import {
   Given, When, Then,
 } from '@badeball/cypress-cucumber-preprocessor';
-import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
-import generateEnduserData from '../utils/endUserData';
+import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
+import generateEndUserData from '../../../../e2e/utils/endUserData';
 
 let locationUrl;
 
@@ -53,7 +53,7 @@ function setLocationUrl(journey) {
 before(() => {
   if (Cypress.spec.relative.includes('google-captcha-login.feature')) {
     cy.importTreesViaAPI(['QA-Google_Captcha_Login_Default.json', 'QA-Google_Captcha_Login_Theatre_mode.json']).then(() => {
-      const { userName, userPassword, userSN } = generateEnduserData();
+      const { userName, userPassword, userSN } = generateEndUserData();
 
       createIDMUser({
         userName,

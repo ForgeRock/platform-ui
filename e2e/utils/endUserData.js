@@ -9,7 +9,7 @@
  * This method creates a user data object with set credentials.
  * @returns {Object} - user data
  */
-export default function generateUserData() {
+export default function generateEndUserData() {
   const userName = `testUser${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
   const userPassword = 'Rg_GRg9k&e';
   const userSN = 'test';

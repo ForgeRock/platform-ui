@@ -8,12 +8,12 @@
 import { random, capitalize } from 'lodash';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import {
-  addRoleMember,
   createIDMResource,
   deleteIDMResource,
   createIDMUser,
   deleteIDMUser,
-} from '../api/managedApi.e2e';
+} from '../../../../e2e/api/managedApi.e2e';
+import { addRoleMember } from '../api/managedApi.e2e';
 import { expectNotification } from '../pages/common/notification';
 
 const realm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';

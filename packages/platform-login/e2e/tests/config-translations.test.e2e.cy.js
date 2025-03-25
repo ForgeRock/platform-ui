@@ -7,8 +7,8 @@
 
 import { random } from 'lodash';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
-import { addOverrides, deleteOverrides } from '../api/localizationApi.e2e';
-import { prepareJourneyTemplate } from '../utils/manageJourneys';
+import { addOverrides, deleteOverrides } from '../../../../e2e/api/localizationApi.e2e';
+import { prepareJourneyTemplate } from '../../../../e2e/utils/manageJourneys';
 
 // Login config translations
 const enTranslations = {

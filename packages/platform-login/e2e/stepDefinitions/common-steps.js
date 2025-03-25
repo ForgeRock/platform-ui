@@ -6,8 +6,6 @@
  */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
-import generateEnduserData from '../utils/endUserData';
 
 function visitJourneyPage(journeyPageUrl) {
   // Set up intercept
@@ -53,20 +51,6 @@ When('cleanup {string} Journey with all dependencies', (journeyName) => {
 
   // Delete Imported Journey with all dependencies
   cy.deleteTreesViaAPI([fullJourneyName]);
-});
-
-When('user reloads the page', () => {
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
-  cy.reload();
-  cy.wait('@themerealmConfig', { timeout: 10000 });
-});
-
-When('user clicks on {string} link', (link) => {
-  cy.findByRole('link', { name: link }).click();
-});
-
-When('user clicks on {string} button', (button) => {
-  cy.findByRole('button', { name: button }).click();
 });
 
 When('user navigates back', () => {
@@ -118,56 +102,6 @@ Then('link {string} is displayed', (link) => {
   cy.findByRole('link', { name: link }).should('be.visible');
 });
 
-Then('{string} button is enabled', (button) => {
-  cy.findByRole('button', { name: button }).should('be.enabled');
-});
-
-Then('{string} button is disabled', (button) => {
-  cy.findByRole('button', { name: button }).should('be.disabled');
-});
-
 Then('{string} field has {string} validation error', (field, validationError) => {
   cy.findByLabelText(field).get('.error-message').should('have.text', validationError);
-});
-
-/**
- * Creates an end user account with random credentials, stores the credentials in the environment variables
- */
-Given('Enduser account is created via API', () => {
-  const { userName, userPassword, userSN } = generateEnduserData();
-
-  if (!Cypress.env('ACCESS_TOKEN')) {
-    cy.loginAsAdmin();
-  }
-
-  cy.log(`Creating new IDM Enduser ${userName}...`).then(() => {
-    createIDMUser({
-      userName,
-      password: userPassword,
-      givenName: userName,
-      sn: userSN,
-    }).then((result) => {
-      expect(result.status).to.equal(201);
-      Cypress.env('endUserName', userName);
-      Cypress.env('endUserFirstName', userName);
-      Cypress.env('endUserLastName', userSN);
-      Cypress.env('endUserPassword', userPassword);
-      Cypress.env('endUserId', result.body._id);
-    });
-  });
-});
-
-/**
- * Deletes the end user account created in the previous step
- */
-Then('Enduser account is deleted via API', () => {
-  if (!Cypress.env('ACCESS_TOKEN')) {
-    cy.loginAsAdmin();
-  }
-
-  deleteIDMUser(Cypress.env('endUserId'));
-});
-
-Then('Admin/Enduser is logged out', () => {
-  cy.logout();
 });
