@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -44,6 +44,7 @@ import { BModal } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import { ref, onBeforeUnmount, onMounted } from 'vue';
 import store from '@/store';
+import { getSessionTimeoutInfo } from '../../api/SessionsApi';
 
 const showIdleTimeout = ref(false);
 const showSessionExpired = ref(null);
@@ -66,7 +67,7 @@ function startImminentLogoutTimeout(timeout) {
   * @param {Date} maxIdleDate date for maxIdleExpirationTime as returned by AM getSessionInfo request
   * @param {Date} maxSessionDate date for maxSessionExpirationTime as returned by AM getSessionInfo request
   */
-function checkSessionAndIdleExpiration(maxIdleDate, maxSessionDate) {
+async function checkSessionAndIdleExpiration(maxIdleDate, maxSessionDate) {
   if (maxIdleDate) {
     const now = dayjs();
     const idleDate = dayjs(maxIdleDate);
@@ -79,9 +80,19 @@ function checkSessionAndIdleExpiration(maxIdleDate, maxSessionDate) {
       startImminentLogoutTimeout(120000);
     }
     // show the idle timeout modal if no modal is shown and session times out within 1.5 minutes.
-    if (!showSessionExpired.value && !showIdleTimeout.value && !sessionTimeLeft <= 210000 && idleTimeLeft <= 90000) {
-      showIdleTimeout.value = true;
-      startImminentLogoutTimeout(60000);
+    if (!showSessionExpired.value && !showIdleTimeout.value && sessionTimeLeft > 210000 && idleTimeLeft <= 90000) {
+      try {
+        const { data } = await getSessionTimeoutInfo();
+        const newMaxIdleExpirationTime = dayjs(data.maxIdleExpirationTime);
+        if (newMaxIdleExpirationTime.isAfter(idleDate)) {
+          store.commit('SharedStore/setMaxIdleExpirationTime', data.maxIdleExpirationTime);
+        } else {
+          showIdleTimeout.value = true;
+          startImminentLogoutTimeout(60000);
+        }
+      } catch (error) {
+        // handle error
+      }
     }
   }
 }
