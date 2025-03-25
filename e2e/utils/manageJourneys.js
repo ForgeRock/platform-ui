@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -155,16 +155,15 @@ function deleteScript(id) {
 }
 
 /**
- * This function goes through every fixture file parsing it and importing all Journeys ant it's dependencies using the API
+ * This function goes through every fixture file parsing it and importing all Journeys and it's dependencies using the API
  * @param {Array} fixtureArray an array containing the name of test fixture files to parse and import all dependencies
  */
 export function importJourneysViaAPI(fixtureArray) {
   fixtureArray.forEach((fixtureName) => {
-    const fixture = `e2e/fixtures/${fixtureName}`;
-    // Read Fixture file
-    cy.readFile(fixture).then((fixtureData) => {
+    cy.readFixtureFile(fixtureName).then((data) => {
+      const fixtureData = JSON.parse(data);
       // Import each Journey from the fixture file
-      for (const [fixtureKey, fixtureObj] of Object.entries(fixtureData.trees)) {
+      Object.entries(fixtureData.trees).forEach(([fixtureKey, fixtureObj]) => {
         // Import all Scripts
         Object.values(fixtureObj.scripts).forEach((script) => {
           const scriptContent = JSON.parse(script.script);
@@ -205,7 +204,7 @@ export function importJourneysViaAPI(fixtureArray) {
         const journey = fixtureObj.tree;
         delete journey._rev;
         createJourney(journeyName, journey);
-      }
+      });
     });
   });
 }
@@ -216,11 +215,10 @@ export function importJourneysViaAPI(fixtureArray) {
  */
 export function deleteJourneysViaAPI(fixtureArray) {
   fixtureArray.forEach((fixtureName) => {
-    const fixture = `e2e/fixtures/${fixtureName}`;
-    // Read Fixture file
-    cy.readFile(fixture).then((fixtureData) => {
+    cy.readFixtureFile(fixtureName).then((data) => {
+      const fixtureData = JSON.parse(data);
       // Import each Journey from the fixture file
-      for (const [fixtureKey, fixtureObj] of Object.entries(fixtureData.trees)) {
+      Object.entries(fixtureData.trees).forEach(([fixtureKey, fixtureObj]) => {
         // Delete Journey itself first
         const journeyName = fixtureKey.replaceAll(' ', '%20');
         deleteJourney([journeyName]);
@@ -255,7 +253,7 @@ export function deleteJourneysViaAPI(fixtureArray) {
         Object.keys(fixtureObj.scripts).forEach((scriptID) => {
           deleteScript(scriptID);
         });
-      }
+      });
     });
   });
 }
@@ -269,20 +267,19 @@ export function deleteJourneysViaAPI(fixtureArray) {
 export function prepareJourneyTemplate(templateName, replaceDict) {
   // Prepare Journey template path
   const preparedJourneyName = templateName.replace('_template', '');
-  const templatePath = `e2e/fixtures/${templateName}`;
-  const preparedJourneyPath = `e2e/fixtures/${preparedJourneyName}`;
+  const preparedJourneyPath = `../../e2e/fixtures/${preparedJourneyName}`;
 
   // Read template file
-  cy.readFile(templatePath).then((data) => {
-    let updatedTemplate = JSON.stringify(data);
+  cy.readFixtureFile(templateName).then((data) => {
+    let updatedTemplate = data;
 
     // Replace all requested key with correct testing values
-    for (const [key, value] of Object.entries(replaceDict)) {
+    Object.entries(replaceDict).forEach(([key, value]) => {
       // console.log(`Replacing ${key} with ${value}`);
       const regex = new RegExp(key, 'g');
       const escapedValue = value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
       updatedTemplate = updatedTemplate.replace(regex, escapedValue);
-    }
+    });
     // console.log(`Updated Template: ${updatedTemplate}`);
     // Write moditied data back to the template file
     cy.writeFile(preparedJourneyPath, JSON.parse(updatedTemplate));

@@ -6,8 +6,8 @@
  */
 
 import { Given, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { addOverrides, deleteOverrides } from '../api/localizationApi.e2e';
-import { prepareJourneyTemplate } from '../utils/manageJourneys';
+import { addOverrides, deleteOverrides } from '../../../../e2e/api/localizationApi.e2e';
+import { prepareJourneyTemplate } from '../../../../e2e/utils/manageJourneys';
 
 const legacyScriptContent = '"var javaImports = JavaImporter(\\n    org.forgerock.openam.auth.node.api.Action,\\n    javax.security.auth.callback.ConfirmationCallback,\\n    javax.security.auth.callback.TextOutputCallback\\n)\\nvar NodeOutcome = {\\n    LOGIN: \\"login\\",\\n    CANCEL: \\"cancel\\"\\n}\\nvar config = {\\n    MESSAGE_PROMPT: \\"loginText\\",\\n    BUTTONS: [\\"block1.block1Nested\\", \\"block1.block2.block2Nested\\", \\"loginOverrideText\\", \\n             \\"reallyLongOverridesTestToCheckIfTranslationsCanHandleSuchALongKeyAndStillLoadCorrectTranslationAndDisplayItCorrectlyOnTheLoginPage\\",\\n             \\"sharedText\\", \\"sharedOverrideText\\",\\n             \\"adminText\\", \\"enduserText\\"],\\n    LOGIN_ACTION_PRESSED: 0,\\n    CANCEL_ACTION_PRESSED: 1\\n}\\nif (callbacks.isEmpty()) {\\n  action = javaImports.Action.send(\\n    javaImports.TextOutputCallback(javaImports.TextOutputCallback.INFORMATION, config.MESSAGE_PROMPT),\\n    javaImports.ConfirmationCallback(javaImports.ConfirmationCallback.INFORMATION, config.BUTTONS, 1)\\n  ).build();\\n} else {\\n    var userSelection = callbacks[0].getSelectedIndex();\\n    if (userSelection === config.LOGIN_ACTION_PRESSED) {\\n        action = fr.Action.goTo(NodeOutcome.LOGIN).build();\\n    } else {\\n        action = fr.Action.goTo(NodeOutcome.CANCEL).build();\\n    }\\n}\\n"';
 const legacyScriptVersion = '1.0';

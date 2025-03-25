@@ -20,9 +20,8 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
+import '../../../../e2e/support';
 import './commands';
-import './e2e';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

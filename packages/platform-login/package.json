@@ -90,7 +90,10 @@
   ],
   "cypress-cucumber-preprocessor": {
     "e2e": {
-      "stepDefinitions": "e2e/stepDefinitions/*.js"
+      "stepDefinitions": [
+        "e2e/stepDefinitions/*.js",
+        "../../e2e/stepsDefinitions/*.js"
+      ]
     }
   }
 }

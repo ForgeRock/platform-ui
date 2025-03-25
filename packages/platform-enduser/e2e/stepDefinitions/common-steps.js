@@ -35,13 +35,3 @@ Given('browser locale is set to {string}', (locale) => {
 When('user clicks on {string} tab', (page) => {
   cy.findByRole('link', { name: page }).click();
 });
-
-When('user reloads the page', () => {
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
-  cy.reload();
-  cy.wait('@themerealmConfig', { timeout: 10000 });
-});
-
-When('user clicks on {string} button', (button) => {
-  cy.findByRole('button', { name: button }).click();
-});

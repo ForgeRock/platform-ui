@@ -8,7 +8,7 @@
 import { random } from 'lodash';
 import { recurse } from 'cypress-recurse';
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
-import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
+import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
 import { setEmailProviderConfigByAccount, extractLinkFromEmail } from '../utils/emailUtils';
 import { putEmailProviderConfig, getDefaultProviderConfig } from '../api/emailApi.e2e';
 

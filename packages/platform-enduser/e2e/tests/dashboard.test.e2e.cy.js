@@ -6,7 +6,8 @@
  */
 
 import { filterTests } from '../../../../e2e/util';
-import { createIDMUser, deleteIDMUser, assignUserDashboard } from '../api/managedApi.e2e';
+import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
+import { assignUserDashboard } from '../api/managedApi.e2e';
 
 filterTests(['@forgeops', '@cloud'], () => {
   describe('Enduser Dashboard View', () => {
