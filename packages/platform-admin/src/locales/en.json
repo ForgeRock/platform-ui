@@ -2814,7 +2814,7 @@
     }
   },
   "cookie": {
-    "calloutText": "If you change the name of the cookie on a production system, you are invalidating the sessions of any user that still had a valid cookie.",
+    "calloutText": "Any changes to cookie settings on a production system will invalidate the sessions of any user that still has a valid cookie.",
     "cancelButtonText": "Cancel",
     "getCookieFail": "Error getting Cookie Configuration",
     "inputLabel": "Cookie Name",
@@ -2826,7 +2826,8 @@
     "subTitle": "Update the cookie name for this tenant.",
     "title": "Cookie",
     "updateCookieFail": "Error updating Cookie Configuration",
-    "updateCookieSuccess": "Cookie name successfully updated"
+    "updateCookieNameSuccess": "Successfully updated Cookie Name",
+    "updateCookieDomainsSuccess": "Successfully updated Cookie Domains"
   },
   "csp": {
     "title": "Content Security Policy",
