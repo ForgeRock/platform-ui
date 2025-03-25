@@ -27,6 +27,16 @@ const svgShapeAttributes = {
   image: ['href', 'height', 'width', 'x', 'y'],
 };
 
+function docodeLinks(tagName, attribs) {
+  const element = { tagName, attribs };
+  try {
+    element.attribs.href = decodeURIComponent(attribs.href);
+  } catch (e) {
+    element.attribs.href = attribs.href;
+  }
+  return element;
+}
+
 export const baseSanitizerConfig = {
   ...sanitizeHtml.defaults,
   allowedAttributes: {
@@ -42,15 +52,8 @@ export const baseSanitizerConfig = {
     img: [...sanitizeHtml.defaults.allowedSchemes, 'data'],
   },
   transformTags: {
-    a: (tagName, attribs) => {
-      const element = { tagName, attribs };
-      try {
-        element.attribs.href = decodeURIComponent(attribs.href);
-      } catch (e) {
-        element.attribs.href = attribs.href;
-      }
-      return element;
-    },
+    a: (tagName, attribs) => docodeLinks(tagName, attribs),
+    link: (tagName, attribs) => docodeLinks(tagName, attribs),
   },
 };
 
@@ -60,6 +63,27 @@ export const svgShapesSanitizerConfig = {
   allowedAttributes: {
     ...baseSanitizerConfig.allowedAttributes,
     ...svgShapeAttributes,
+  },
+};
+
+export const emailTemplateSanitizerConfig = {
+  ...baseSanitizerConfig,
+  allowedTags: [
+    ...baseSanitizerConfig.allowedTags,
+    'title', 'meta', 'link',
+  ],
+  allowedAttributes: {
+    ...baseSanitizerConfig.allowedAttributes,
+    '*': [
+      ...baseSanitizerConfig.allowedAttributes['*'],
+      'lang', 'dir', 'style', 'align', 'border',
+      'cellpadding', 'cellspacing', 'bgcolor',
+      'width', 'height', 'valign',
+    ],
+    html: ['xmlns*'],
+    link: ['rel', 'href', 'type'],
+    meta: ['name', 'content', 'http-equiv'],
+    style: ['type'],
   },
 };
 
