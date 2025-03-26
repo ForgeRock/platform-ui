@@ -1,1 +1,4 @@
-{}
+{
+  "loginAuthError": "Invalid username or password",
+  "loginFailure": "Login failure"
+}

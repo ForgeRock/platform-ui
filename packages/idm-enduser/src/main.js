@@ -9,25 +9,31 @@
 import Notifications from '@kyvg/vue3-notification';
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+import axios from 'axios';
 import App from './App';
 import i18n from './i18n';
 import router from './router';
 import store from './store';
-import { useApplicationStore } from './stores/application';
+import { useAuth } from './composables/useAuth';
+
+// header required for openidm requests configured globally to affect all requests
+axios.defaults.headers.common['x-requested-with'] = 'XMLHttpRequest';
 
 function loadApp() {
-  const pinia = createPinia();
   const app = createApp(App);
   app.use(router);
   app.use(i18n);
   app.use(store);
-  app.use(pinia);
+  app.use(createPinia());
   app.use(Notifications);
   router.isReady().then(() => app.mount('#appRoot'));
 }
 
 loadApp();
 
-// Set application store from env
-const applicationStore = useApplicationStore();
-applicationStore.idmUrl = process.env.VUE_APP_IDM_URL;
+// Set the stores data
+store.commit('SharedStore/setBaseURLs', process.env);
+
+// Create the logout method
+const { initializeLogout } = useAuth();
+initializeLogout();

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -23,6 +23,26 @@ describe('enduser store', () => {
     expect(enduserStore.aliasList).toStrictEqual([]);
     expect(enduserStore.consentedMappings).toBe(null);
     expect(enduserStore.isInternalUser).toBe(false);
+  });
+
+  it('should reset the store to its initial state', () => {
+    const enduserStore = useEnduserStore();
+    enduserStore.setProfile({
+      aliasList: ['aliasList'],
+      consentedMappings: 'consentedMappings',
+      preferences: {
+        pref1: 'fine',
+      },
+      profileImage: 'profileImage',
+    });
+
+    enduserStore.$reset();
+
+    expect(enduserStore.managedResourceSchema).toStrictEqual({});
+    expect(enduserStore.preferences).toStrictEqual({});
+    expect(enduserStore.profileImage).toBe('');
+    expect(enduserStore.aliasList).toStrictEqual([]);
+    expect(enduserStore.consentedMappings).toBe(null);
   });
 
   describe('computing if the user is an internal enduser', () => {

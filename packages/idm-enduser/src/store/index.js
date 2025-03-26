@@ -15,6 +15,7 @@ export default createStore({
     SharedStore: {
       namespaced: true,
       state: Shared.state,
+      mutations: Shared.mutations,
     },
   },
 });

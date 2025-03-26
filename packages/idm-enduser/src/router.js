@@ -7,6 +7,9 @@
  */
 
 import { createRouter, createWebHashHistory } from 'vue-router';
+import { useAuth } from './composables/useAuth';
+
+const { isAuthenticated, restoreIdmEnduserSession } = useAuth();
 
 /**
  * Available routes configuration
@@ -19,22 +22,50 @@ const routes = [
     redirect: '/dashboard',
   },
   {
+    path: '/login',
+    name: 'Login',
+    beforeEnter: async () => {
+      if (isAuthenticated()) {
+        return { path: '/dashboard' };
+      }
+      return true;
+    },
+    component: () => import('@/views/Login'),
+    meta: { hideLayout: true },
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/Dashboard'),
+    meta: { authenticate: true },
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@forgerock/platform-shared/src/views/NotFound'),
+    meta: { authenticate: true },
   },
 ];
 
+// Initialize router
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
 
 export { routes };
+
+// Guards
+async function authenticate(to) {
+  if (to.meta.authenticate && !isAuthenticated()) {
+    try {
+      await restoreIdmEnduserSession();
+    } catch {
+      return { name: 'Login' };
+    }
+  }
+  return true;
+}
+router.beforeEach(authenticate);
 
 export default router;

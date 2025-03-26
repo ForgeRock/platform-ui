@@ -5,16 +5,12 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
+    <FrRouterView v-if="$route.meta.hideLayout" />
     <FrLayout
+      v-else
       is-enduser
       :menu-items="menuItems">
-      <router-view v-slot="{ Component }">
-        <transition
-          name="fade"
-          mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+      <FrRouterView />
     </FrLayout>
   </div>
 </template>
@@ -24,6 +20,7 @@ import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import '@/scss/main.scss';
+import FrRouterView from './components/RouterView';
 
 // Initialize vee-validate rules
 const rules = ValidationRules.getRules(i18n);
