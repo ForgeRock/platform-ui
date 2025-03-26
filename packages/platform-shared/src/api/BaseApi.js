@@ -32,13 +32,13 @@ export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
 
   request.interceptors.response.use(null, (error) => {
     // The journeys page is accessible to users with realm-admin priviledges,
-    // however as is makes a call to openidm in order to access the Identities
-    // Objects this causes a 403 if the user doesn't also have openidm-admin
+    // however as it makes a call to openidm in order to access the Identities
+    // Objects, this causes a 403 if the user doesn't also have openidm-admin
     // priviledges. This is a temporary check to stop the redirect to forbidden
     // in that scenario. This check should be removed when a workaround has been found.
-    const resUrl = new URL(getFQDN(error.response.config.url));
+    const resUrl = new URL(getFQDN(error.response?.config.url));
     if (resUrl.pathname !== '/openidm/config/managed' && window.location.hash !== '#/journeys' && store.state.SharedStore.currentPackage !== 'enduser') {
-      if (routeToForbidden && error.response.status === 403) {
+      if (routeToForbidden && error.response?.status === 403) {
         window.location.hash = '#/forbidden';
         window.location.replace(window.location);
       }
