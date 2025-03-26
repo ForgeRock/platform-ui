@@ -157,10 +157,15 @@ const entitlementColumns = [
   {
     key: 'entitlement',
     label: i18n.global.t('common.entitlement'),
+    initialSort: true,
+    sortKey: 'application.name',
+    sortable: true,
   },
   {
     key: 'displayName',
     label: i18n.global.t('common.displayName'),
+    sortKey: 'descriptor.idx./entitlement.displayName',
+    sortable: true,
   },
   {
     key: 'objectType',
@@ -173,6 +178,8 @@ const entitlementColumns = [
   {
     key: 'owner',
     label: i18n.global.t('common.owner'),
+    sortKey: 'entitlementOwner.givenName',
+    sortable: true,
   },
   {
     key: 'actions',

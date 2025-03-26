@@ -112,6 +112,7 @@ describe('EntitlementList', () => {
         pageSize: 10,
         pagedResultsOffset: 0,
         queryFilter: 'application.id eq "appId"',
+        sortKeys: 'application.name',
       },
     );
   });
@@ -130,6 +131,7 @@ describe('EntitlementList', () => {
         pageSize: 10,
         pagedResultsOffset: 0,
         queryFilter: '(entitlementOwner.userName co "userQuery" or entitlementOwner.givenName co "userQuery" or entitlementOwner.sn co "userQuery")',
+        sortKeys: 'application.name',
       },
     );
   });
@@ -153,6 +155,7 @@ describe('EntitlementList', () => {
         pageSize: 10,
         pagedResultsOffset: 0,
         queryFilter: '(descriptor.idx./entitlement.displayName co "test") and (application.id eq "appId" and (entitlementOwner.userName co "userQuery" or entitlementOwner.givenName co "userQuery" or entitlementOwner.sn co "userQuery"))',
+        sortKeys: 'application.name',
       },
     );
   });
