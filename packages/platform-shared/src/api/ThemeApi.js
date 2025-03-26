@@ -1,9 +1,8 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 /**
@@ -106,6 +105,15 @@ export function saveThemeConfig(themeConfigPayload) {
  */
 export function saveLegacyThemes(themeRealmPayload) {
   return generateIdmApi().put(`${themeRealmEndpoint}`, themeRealmPayload);
+}
+
+/**
+ * Deletes all legacy themes on all realms in the tenant
+ * @param {Object} themeRealmPayload Object containing all legacy themes data to save
+ * @returns {Promise} A promise that resolves with the saved legacy themes
+ */
+export function deleteLegacyThemes() {
+  return generateIdmApi().delete(`${themeRealmEndpoint}`);
 }
 
 /**

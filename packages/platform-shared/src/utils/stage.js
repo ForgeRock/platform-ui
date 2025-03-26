@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -54,6 +54,13 @@ export function getThemeId(stage) {
  * @param {String} value Actual value we want to set on this property
  */
 export function setStageValue(pageNode, id, key, value) {
+  let cleanValue = value;
+  // For new theme id format, we want to strip off the ui/theme-<realm>- prefix to ensure that imported journeys
+  // do not used an incorrect realm from the id
+  if (key === 'themeId' && value.startsWith('ui/theme-')) {
+    const removeIndex = value.indexOf('-', value.indexOf('-') + 1);
+    cleanValue = value.substring(removeIndex + 1);
+  }
   let stage = parseStage(pageNode.template.stage);
 
   if (!stage) {
@@ -72,16 +79,16 @@ export function setStageValue(pageNode, id, key, value) {
   // as there can be multiple of the same type of subnode within a pagenode.
   if (key.includes('.')) {
     const [callbackName, propertyName] = key.split('.');
-    if (!stage[callbackName] && value !== undefined) {
+    if (!stage[callbackName] && cleanValue !== undefined) {
       stage[callbackName] = [];
     }
     if (stage[callbackName]) {
       const callbackIndex = stage[callbackName].findIndex((callback) => callback.id === id);
       if (callbackIndex > -1) {
         // Modify config if it exists for this node
-        if (value) {
-          stage[callbackName][callbackIndex][propertyName] = value;
-        } else if (value === false && Object.keys(stage[callbackName][callbackIndex]).length > 2) {
+        if (cleanValue) {
+          stage[callbackName][callbackIndex][propertyName] = cleanValue;
+        } else if (cleanValue === false && Object.keys(stage[callbackName][callbackIndex]).length > 2) {
           // If there is more than one property on the current node, we only want to set value to new value
           delete stage[callbackName][callbackIndex][propertyName];
         } else {
@@ -91,20 +98,20 @@ export function setStageValue(pageNode, id, key, value) {
             delete stage[callbackName];
           }
         }
-      } else if (value !== undefined) {
+      } else if (cleanValue !== undefined) {
         // Add new config
         stage[callbackName].push({
           id,
-          [propertyName]: value,
+          [propertyName]: cleanValue,
         });
       }
     }
   // We are setting values on the page node
-  } else if (value) {
-    if (typeof value === 'object' && !Object.keys(value).length) {
+  } else if (cleanValue) {
+    if (typeof cleanValue === 'object' && !Object.keys(cleanValue).length) {
       delete stage[key];
     } else {
-      stage[key] = value;
+      stage[key] = cleanValue;
     }
   } else {
     delete stage[key];
