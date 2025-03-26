@@ -99,6 +99,12 @@ const router = createRouter({
               component: () => import('@/views/governance/LCM/Users/UserList'),
               beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.govLcmUser]),
             },
+            {
+              path: ':userId',
+              name: 'UserDetails',
+              component: () => import('@/views/governance/LCM/Users/Edit/UserDetails'),
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.govLcmUser]),
+            },
           ],
         },
       ],
