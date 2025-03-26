@@ -7,16 +7,14 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   cloneDeep,
   each,
-  filter,
   find,
   has,
-  isArray,
   map,
-  isEqual,
 } from 'lodash';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import { getManagedResourceCount } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { findChanges } from '@forgerock/platform-shared/src/utils/object';
 
 /**
  * @description Resource management mixin used for generating an update patch and handling policy errors
@@ -32,33 +30,7 @@ export default {
     };
   },
   methods: {
-    findChanges(clonedNew, clonedOriginal) {
-      let changes;
-      if (isArray(clonedNew)) {
-        changes = filter(clonedNew, (field, index) => {
-          if (isArray(field.value)) {
-            if (JSON.stringify(field.value) !== JSON.stringify(clonedOriginal[index].value)) {
-              return true;
-            }
-          } else if (field.value !== clonedOriginal[index].value) {
-            return true;
-          }
-          return false;
-        });
-      } else {
-        changes = [];
-
-        each(clonedNew, (value, key) => {
-          if (!isEqual(clonedOriginal[key], clonedNew[key])) {
-            changes.push({
-              value: clonedNew[key],
-              name: key,
-            });
-          }
-        });
-      }
-      return changes;
-    },
+    findChanges,
     generateUpdatePatch(original, newForm) {
       const clonedOriginal = cloneDeep(original);
       const clonedNew = cloneDeep(newForm);

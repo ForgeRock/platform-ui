@@ -250,6 +250,7 @@
     "Sharing": "Sharing",
     "TaskDetails": "Task Details",
     "Tasks": "Tasks",
+    "UserDetails": "User Details",
     "Violations": "Violations",
     "Violation": "Violation",
     "ViolationRemediate": "Fix Violation"
@@ -446,7 +447,10 @@
       "accountAttribute": "Account Attribute"
     },
     "user": {
-      "errorGettingPrivileges": "Error getting user privileges"
+      "errorGettingPrivileges": "Error getting user privileges",
+      "errorGettingSchema": "Error getting user schema",
+      "errorGettingUser": "Error getting user",
+      "profile": "Profile"
     }
   }
 }

@@ -14,7 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
       resource="user"
       :columns="userColumns"
       :query-fields="queryFields"
-      :resource-function="getManagedResourceList">
+      :resource-function="getManagedResourceList"
+      @row-clicked="navigateToUserDetails">
       <template #cell(name)="{ item }">
         <FrUserBasicInfo
           :pic-dimension="28"
@@ -39,8 +40,8 @@ of the MIT license. See the LICENSE file for details. -->
  * This component is used to display the entitlements list.
  * Supports searching and pagination
  */
-// import { useRouter } from 'vue-router';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   BBadge,
   BContainer,
@@ -54,7 +55,7 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import i18n from '@/i18n';
 
 // composables
-// const router = useRouter();
+const router = useRouter();
 
 // data
 const userViewPrivileges = ref([]);
@@ -91,15 +92,15 @@ const availableColumns = [
 ];
 
 /**
- * Navigates to the details page of the specified entitlement.
- * @param {Object} entitlement - The entitlement object containing details to navigate to.
+ * Navigates to the details page of the specified user.
+ * @param {Object} user - The user object containing details to navigate to.
  */
-// function navigateToUserDetails(user) {
-//   router.push({
-//     name: 'UserDetails',
-//     params: { userId: user._id },
-//   });
-// }
+function navigateToUserDetails(user) {
+  router.push({
+    name: 'UserDetails',
+    params: { userId: user._id },
+  });
+}
 
 /**
  * Checks if the current user has the required privilege for a specific field.
