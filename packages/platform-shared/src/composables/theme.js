@@ -102,7 +102,7 @@ export default function useTheme() {
       if (isLegacyTheme.value) {
         themeStore.realmThemes = await deleteLegacyTheme(realm, themeId, realmThemes.value);
       } else {
-        await deleteRealmTheme(themeId);
+        await deleteRealmTheme(`ui/${encodeURIComponent(themeId.substring(3))}`);
         if (themeConfig.value.linkedTrees?.[realm]) {
           Object.entries(themeConfig.value.linkedTrees[realm]).forEach(([treeId, linkedTreeThemeId]) => {
             if (linkedTreeThemeId === themeId) {
