@@ -50,6 +50,39 @@ describe('user store', () => {
     });
   });
 
+  it('should reset the user store', () => {
+    const userStore = useUserStore();
+    userStore.managedResource = 'managedResource';
+    userStore.userSearchAttribute = 'userSearchAttribute';
+    userStore.idmRoles = ['idmRoles'];
+    userStore.idmUIAdminRoles = idmUIAdminRoles;
+    userStore.amRoles = ['amRoles'];
+    userStore.amAdmin = true;
+    userStore.privileges = { privileges: 'privileges' };
+    userStore.email = 'email';
+    userStore.givenName = 'givenName';
+    userStore.sn = 'sn';
+    userStore.userId = 'userId';
+    userStore.userName = 'userName';
+
+    userStore.$reset();
+
+    expect(userStore.managedResource).toBe('');
+    expect(userStore.userSearchAttribute).toBe('');
+    expect(userStore.idmRoles).toStrictEqual([]);
+    expect(userStore.adminUser).toBe(false);
+    expect(userStore.amRoles).toStrictEqual([]);
+    expect(userStore.realmAdmin).toBe(false);
+    expect(userStore.amAdmin).toBe(false);
+    expect(userStore.privileges).toStrictEqual({});
+    expect(userStore.hasFederationAdminPrivilege).toBe(false);
+    expect(userStore.email).toBe('');
+    expect(userStore.givenName).toBe('');
+    expect(userStore.sn).toBe('');
+    expect(userStore.userId).toBe('');
+    expect(userStore.userName).toBe('');
+  });
+
   describe('setting user details', () => {
     it('should set user details with passed data', () => {
       const userStore = useUserStore();

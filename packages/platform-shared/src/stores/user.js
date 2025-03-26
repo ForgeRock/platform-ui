@@ -90,6 +90,22 @@ export const useUserStore = defineStore('user', () => {
     };
   }
 
+  function $reset() {
+    managedResource.value = '';
+    userSearchAttribute.value = '';
+    idmRoles.value = [];
+    idmUIAdminRoles.value = [];
+    amRoles.value = [];
+    privileges.value = {};
+    company.value = '';
+    email.value = '';
+    givenName.value = '';
+    sn.value = '';
+    userId.value = '';
+    userName.value = '';
+    amAdmin.value = false;
+  }
+
   return {
     managedResource,
     userSearchAttribute,
@@ -115,5 +131,6 @@ export const useUserStore = defineStore('user', () => {
     effectiveRoles,
     allRoles,
     setIDMUsersViewPrivilege,
+    $reset,
   };
 });
