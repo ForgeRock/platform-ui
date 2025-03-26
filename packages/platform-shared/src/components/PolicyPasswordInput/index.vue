@@ -36,7 +36,6 @@ import FrPolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import { generateIdmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import axios from 'axios';
 
 const ignoredPolicies = [
@@ -98,16 +97,11 @@ export default {
     return {
       policyEndpoint: `/policy/${this.resourceType}/${this.resourceName}`,
       policyFailures: [],
-      policyService: null,
       policies: [],
-      checkPasswordAbortController: null,
+      checkPasswordCancelTokenSource: null,
     };
   },
   mounted() {
-    // Initiate the Policy Service & Token Source
-    const headers = this.getAnonymousHeaders();
-    this.policyService = generateIdmApi({ headers });
-
     this.getDsPolicies(this.resourceName).then((res) => {
       this.policies = res.data;
       this.getIdmPolicies().then(() => {
@@ -122,14 +116,17 @@ export default {
      */
     checkPassword(value) {
       // Make sure only one request is active at a time
-      if (!this.checkPasswordAbortController) {
-        this.checkPasswordAbortController = new AbortController();
-      } else {
-        this.checkPasswordAbortController.abort();
+      if (this.checkPasswordCancelTokenSource) {
+        this.checkPasswordCancelTokenSource.cancel('Outdated password checking cancelled');
       }
 
+      this.checkPasswordCancelTokenSource = axios.CancelToken.source();
+
+      const headers = this.getAnonymousHeaders();
+      const policyService = this.getRequestService({ headers });
+
       // validate value and update failed policies
-      this.policyService.post(`${this.policyEndpoint}/policy/?_action=validateObject`, { password: value }, { signal: this.checkPasswordAbortController.signal })
+      policyService.post(`${this.policyEndpoint}/policy/?_action=validateObject`, { password: value }, { cancelToken: this.checkPasswordCancelTokenSource.token })
         .then((res) => {
           if (res.data.failedPolicyRequirements) {
             const failedPolicies = [];
@@ -148,8 +145,6 @@ export default {
           if (!axios.isCancel(error) && error.message !== 'Outdated password checking cancelled') {
             throw error;
           }
-        }).finally(() => {
-          this.checkPasswordAbortController = null;
         });
     },
     /**
@@ -157,7 +152,10 @@ export default {
      * Merge these with the DS policies for a complete list of policies.
      */
     getIdmPolicies() {
-      return this.policyService.get(this.policyEndpoint).then((res) => {
+      const headers = this.getAnonymousHeaders();
+      const policyService = this.getRequestService({ headers });
+
+      return policyService.get(this.policyEndpoint).then((res) => {
         const passwordPolicies = res.data.properties.find((pol) => (pol.name === 'password')).policies;
         const filteredPolicies = passwordPolicies.filter((pol) => (ignoredPolicies.indexOf(pol.policyRequirements[0]) === -1));
         const policyObjects = filteredPolicies.map((pol) => ({ policyRequirement: pol.policyRequirements[0], params: pol.params }));
