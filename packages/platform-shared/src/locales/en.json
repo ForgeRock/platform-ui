@@ -542,6 +542,7 @@
       "notStartsWithNumber": "Cannot start with a number"
     },
     "themes": {
+      "errorConvertingThemes": "There was an error converting themes",
       "errorLinkingTree": "There was an error linking tree to theme",
       "errorRetrievingList": "There was an error retrieving theme list",
       "errorRetrievingTheme": "There was an error retrieving theme",

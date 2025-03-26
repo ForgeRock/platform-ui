@@ -7,6 +7,7 @@
 
 import { cloneDeep, each, pickBy } from 'lodash';
 import { computed, watch } from 'vue';
+import uuid from 'uuid/v4';
 import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
 import {
   deleteRealmTheme,
@@ -28,7 +29,7 @@ import {
   saveLegacyTheme,
   setLegacyThemeAsDefault,
 } from '../utils/legacyThemes';
-import { decodeThemeScripts, encodeThemeScripts } from '../utils/themeUtils';
+import { decodeThemeScripts, encodeThemeScripts, getUniqueThemeId } from '../utils/themeUtils';
 
 /**
  * Composable for integrating theme into views that will be used within
@@ -77,18 +78,16 @@ export default function useTheme() {
    * Retrieves the theme config and sets it in the store
    */
   async function loadThemeConfig() {
-    if (!isLegacyTheme.value) {
-      try {
-        const { data } = await getThemeMetadata();
-        themeStore.themeConfig = data;
-        if (!data.defaultRealmThemeId) {
-          themeStore.isLegacyTheme = true;
-        }
-      } catch (error) {
+    try {
+      const { data } = await getThemeMetadata();
+      themeStore.themeConfig = data;
+      if (!data.defaultRealmThemeId) {
         themeStore.isLegacyTheme = true;
-        showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingThemeConfig'));
-        throw error;
       }
+    } catch (error) {
+      themeStore.isLegacyTheme = true;
+      showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingThemeConfig'));
+      throw error;
     }
   }
 
@@ -424,25 +423,11 @@ export default function useTheme() {
    * @param {Number} additionalNumber Additional number to append to the id if needed for uniqueness
    * @returns {String} A unique id
    */
-  async function getUniqueId(realm, idToTest, additionalNumber = 0) {
-    const incrementedNumber = additionalNumber + 1;
-    const uniqueId = `${idToTest}${additionalNumber ? `-${incrementedNumber}` : ''}`;
+  async function getUniqueId(realm, idToTest) {
     if (isLegacyTheme.value) {
-      const decodedTheme = await getLegacyTheme(realm, uniqueId);
-      if (!decodedTheme.backgroundColor) {
-        return uniqueId;
-      }
-      return getUniqueId(realm, idToTest, incrementedNumber);
+      return uuid();
     }
-    try {
-      await getRealmTheme(uniqueId);
-      return await getUniqueId(realm, idToTest, incrementedNumber);
-    } catch (error) {
-      if (error.response?.status === 404) {
-        return uniqueId;
-      }
-      throw error;
-    }
+    return getUniqueThemeId(realm, idToTest);
   }
 
   watch(themeStore.theme, (newTheme) => {

@@ -6,6 +6,7 @@
  */
 
 import { cloneDeep } from 'lodash';
+import uuid from 'uuid/v4';
 import {
   getLegacyThemes,
   saveLegacyThemes,
@@ -91,6 +92,9 @@ export async function getLegacyTheme(realm, themeIdentifier) {
  * @param {Boolean} silentError Whether to show toast error message
  */
 export async function saveLegacyTheme(realm, themeToSave, linkedTrees) {
+  if (!themeToSave._id) {
+    themeToSave._id = uuid();
+  }
   const themeStore = useThemeStore();
   themeToSave.linkedTrees = linkedTrees;
   // For legacy, get all themes, update the one that matches the id, and save all themes
