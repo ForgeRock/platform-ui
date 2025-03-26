@@ -224,6 +224,7 @@
     "AccessReviews": "Access Reviews",
     "Accounts": "Accounts",
     "AdministerEntitlements": "Entitlements",
+    "AdministerUsers": "Users",
     "Applications": "Applications",
     "ApprovalDetails": "Approval Details",
     "Approvals": "Approvals",
@@ -361,6 +362,10 @@
         "subtitle": "Manage and configure user entitlements across all your configured applications.",
         "generalSettings": "General Settings",
         "errorGettingEntitlement": "Error getting entitlement"
+      },
+      "users": {
+        "title": "Users",
+        "subtitle": "Create and manage your ForgeRock-hosted user identities."
       }
     },
     "approval":{

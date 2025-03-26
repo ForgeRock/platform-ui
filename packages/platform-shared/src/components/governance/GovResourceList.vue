@@ -37,7 +37,8 @@ of the MIT license. See the LICENSE file for details. -->
       :empty-text="$t('common.noObjectFound', { object: pluralizeAnyString(resource)})"
       :fields="columns"
       :items="items"
-      @row-clicked="$emit('row-clicked', $event)">
+      @row-clicked="$emit('row-clicked', $event)"
+      @sort-changed="handleSort($event)">
       <template #table-busy>
         <div class="text-center text-danger p-3">
           <FrSpinner />
@@ -129,6 +130,8 @@ const currentPage = ref(1);
 const currentPageSize = ref(10);
 const searchValue = ref('');
 const totalRows = ref(0);
+const sortBy = ref('');
+const sortDesc = ref(null);
 
 const resourcePath = computed(() => {
   switch (props.resource) {
@@ -222,6 +225,13 @@ function queryParamFunction(resourceType, queryString, page, pageSize) {
       ? props.additionalQueryParams
       : true;
   }
+
+  // handle sorting
+  if (sortBy.value) {
+    queryParams.sortKeys = sortDesc.value
+      ? `-${sortBy.value}`
+      : sortBy.value;
+  }
   queryParams.queryFilter = queryFilter;
 
   if (resourceType !== 'entitlement') queryParams.totalPagedResultsPolicy = 'EXACT';
@@ -256,6 +266,7 @@ async function loadData() {
  */
 function search(query) {
   searchValue.value = query;
+  currentPage.value = 1;
   loadData();
 }
 
@@ -276,11 +287,46 @@ function pageChange(pageNum) {
  */
 function pageSizeChange(size) {
   currentPageSize.value = size;
+  currentPage.value = 1;
   loadData();
 }
 
+/**
+ * Handles the sorting logic for the resource list.
+ *
+ * @param {Object} params - The sorting parameters.
+ * @param {string} params.sortBy - The new field to sort by.
+ * @param {boolean} params.sortDesc - Indicates whether the sorting is in descending order.
+ */
+function handleSort({ sortBy: newSortBy, sortDesc: newSortDesc }) {
+  sortBy.value = props.columns.find((column) => column.key === newSortBy)?.sortKey || newSortBy;
+  sortDesc.value = newSortDesc;
+  currentPage.value = 1;
+  loadData();
+}
+
+/**
+ * Sets the initial sorting configuration for the resource list.
+ * This function is responsible for defining the default sorting
+ * behavior when the component is initialized.
+ */
+function setInitialSort() {
+  const initialSort = props.columns.find((column) => column.initialSort);
+  if (initialSort) {
+    sortBy.value = initialSort.sortKey || initialSort.key;
+    sortDesc.value = false;
+  }
+}
+
+setInitialSort();
 loadData();
 
-watch(() => props.additionalQueryParams, loadData);
+watch(
+  () => props.additionalQueryParams,
+  () => {
+    currentPage.value = 1;
+    loadData();
+  },
+);
 
 </script>
