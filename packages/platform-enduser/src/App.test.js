@@ -20,6 +20,7 @@ import * as ViolationsApi from '@/api/governance/ViolationsApi';
 import * as TasksApi from '@/api/governance/TasksApi';
 import i18n from '@/i18n';
 import App from '@/App';
+import globalStore from '@/store';
 
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 
@@ -56,6 +57,7 @@ const store = {
     violationsCount: null,
     fulfillmentTasksCount: null,
     realm: '',
+    privileges: [],
   },
   getters: {
     menusFile: (state) => state.menusFile,
@@ -72,6 +74,9 @@ const store = {
     },
     setFulfillmentTasksCount(state, count) {
       state.fulfillmentTasksCount = count;
+    },
+    setPrivileges(state, privileges) {
+      state.privileges = privileges;
     },
   },
 };
@@ -120,6 +125,28 @@ describe('App.vue', () => {
   it('Loaded Menus File should load default items', async () => {
     await shallowMountComponent(store);
     expect(wrapper.vm.menuItems.length).toEqual(10);
+  });
+
+  it('should load dynamic menu items depending on the enduser privileges', async () => {
+    globalStore.commit('setPrivileges', [
+      {
+        privilegePath: 'managed/user',
+        'mat-icon': 'people',
+        icon: 'fa-user',
+        title: 'User',
+      },
+      {
+        privilegePath: 'internal/role',
+        'mat-icon': 'assignment_ind',
+        icon: 'fa-check-square',
+        title: 'Internal Role',
+      },
+    ]);
+    await shallowMountComponent(store);
+
+    expect(wrapper.vm.menuItems.length).toEqual(12);
+
+    globalStore.commit('setPrivileges', []);
   });
 
   it('shows a regular layout', async () => {

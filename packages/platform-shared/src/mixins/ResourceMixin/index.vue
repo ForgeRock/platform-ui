@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -147,7 +147,7 @@ export default {
       const userStore = useUserStore();
       let minimumUIFilterLength = 0;
       // check the SharedStore first to see if the minimumUIFilterLength value has already been set for this managed object
-      if (has(uiConfig.configuration?.platformSettings?.managedObjectsSettings, `${managedObjectName}.minimumUIFilterLength`)) {
+      if (uiConfig && has(uiConfig.configuration?.platformSettings?.managedObjectsSettings, `${managedObjectName}.minimumUIFilterLength`)) {
         // the setting exists in uiConfig so it takes precedence
         minimumUIFilterLength = uiConfig.configuration.platformSettings.managedObjectsSettings[managedObjectName].minimumUIFilterLength;
       } else if (has(managedObjectMinimumUIFilterLength, managedObjectName)) {

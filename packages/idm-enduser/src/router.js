@@ -40,6 +40,18 @@ const routes = [
     meta: { authenticate: true },
   },
   {
+    path: '/list/:resourceType/:resourceName',
+    name: 'ListResource',
+    component: () => import(/* webpackChunkName: "listResource" */ '@forgerock/platform-shared/src/views/ListResourceView'),
+    meta: { columns: true, authenticate: true },
+  },
+  {
+    path: '/edit/:resourceType/:resourceName/:resourceId',
+    name: 'EditResource',
+    component: () => import('@forgerock/platform-shared/src/views/EditResourceView'),
+    meta: { authenticate: true, listRoute: 'list' },
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@forgerock/platform-shared/src/views/NotFound'),

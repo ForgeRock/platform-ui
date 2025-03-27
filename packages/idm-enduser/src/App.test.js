@@ -6,11 +6,12 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { createStore } from 'vuex';
 import { createRouter, createWebHistory, RouterLink } from 'vue-router';
 import { createTestingPinia } from '@pinia/testing';
 import notifications from '@kyvg/vue3-notification';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import i18n from '@/i18n';
 import App from '@/App';
 import { routes } from '@/router';
@@ -63,6 +64,34 @@ describe('App.vue', () => {
     const menuItems = sideMenu.findAllComponents({ name: 'MenuItem' });
 
     expect(menuItems.length).toBe(1);
-    expect(menuItems[0].text()).toBe('dashboardDashboard');
+    expect(menuItems[0].find('span').text()).toBe('dashboardDashboard');
+  });
+
+  it('should add dynamic menu items if the enduser has admin privileges over resources', async () => {
+    const wrapper = await setup();
+
+    const userStore = useUserStore();
+    userStore.privileges = [
+      {
+        privilegePath: 'managed/user',
+        'mat-icon': 'people',
+        icon: 'fa-user',
+        title: 'User',
+      },
+      {
+        privilegePath: 'internal/role',
+        'mat-icon': 'assignment_ind',
+        icon: 'fa-check-square',
+        title: 'Internal Role',
+      },
+    ];
+
+    await flushPromises();
+
+    const sideMenu = wrapper.findComponent({ name: 'SideMenu' });
+    const menuItems = sideMenu.findAllComponents({ name: 'MenuItem' });
+    expect(menuItems.length).toBe(3);
+    expect(menuItems[1].find('span').text()).toBe('assignment_indInternal Role');
+    expect(menuItems[2].find('span').text()).toBe('peopleUser');
   });
 });
