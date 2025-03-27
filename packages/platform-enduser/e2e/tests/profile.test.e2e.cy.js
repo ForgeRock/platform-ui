@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -126,8 +126,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.wait('@deleteUser').its('response.statusCode').should('eq', 200);
 
       // Check the browser has been directed to the login page
-      const loginHeading = Cypress.env('IS_FRAAS') ? 'Sign In' : 'Sign in';
-      cy.findByRole('heading', { name: loginHeading, timeout: 10000 }).should('exist').should('be.visible');
+      cy.findByRole('heading', { name: 'Sign In', timeout: 10000 }).should('be.visible');
     });
   });
 });

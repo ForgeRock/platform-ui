@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,12 +8,9 @@
 import {
   Given, When, Then,
 } from '@badeball/cypress-cucumber-preprocessor';
-import { random } from 'lodash';
-import { createIDMUser } from '../api/managedApi.e2e';
+import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
+import generateEnduserData from '../utils/endUserData';
 
-let userName;
-const userPassword = 'Test1234!';
-let journeyName;
 let locationUrl;
 
 const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
@@ -30,23 +27,6 @@ function resolveCaptcha() {
         .should('be.visible')
         .click();
     });
-}
-
-function createUser() {
-  // Create a random username
-  userName = `e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`;
-  // Create testing IDM enduser
-  cy.log('Create new IDM Enduser').then(() => {
-    createIDMUser({
-      userName,
-      password: userPassword,
-      givenName: userName,
-      sn: 'test',
-    }).then((result) => {
-      expect(result.status).to.equal(201);
-      cy.logout();
-    });
-  });
 }
 
 // fill login form
@@ -69,24 +49,47 @@ function setLocationUrl(journey) {
   return `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=${journey}`;
 }
 
-// Cucumber steps
+// Setup before running Feature file
+before(() => {
+  if (Cypress.spec.relative.includes('google-captcha-login.feature')) {
+    cy.importTreesViaAPI(['QA-Google_Captcha_Login_Default.json', 'QA-Google_Captcha_Login_Theatre_mode.json']).then(() => {
+      const { userName, userPassword, userSN } = generateEnduserData();
 
-Given('the user has created a new End User with correct credentials', () => {
-  journeyName = 'QA-Google_Captcha_Login_Default';
-  const journey = `${journeyName}.json`;
-  // Import testing Journey
-  cy.importTreesViaAPI([journey]);
-  createUser();
+      createIDMUser({
+        userName,
+        password: userPassword,
+        givenName: userName,
+        sn: userSN,
+      }).then((result) => {
+        expect(result.status).to.equal(201);
+        Cypress.env('endUserName', userName);
+        Cypress.env('endUserFirstName', userName);
+        Cypress.env('endUserLastName', userSN);
+        Cypress.env('endUserPassword', userPassword);
+        Cypress.env('endUserId', result.body._id);
+      });
+    });
+  }
 });
 
+// Cleanup after running Feature file
+after(() => {
+  // Login as admin
+  if (Cypress.spec.relative.includes('google-captcha-login.feature')) {
+    cy.deleteTreesViaAPI(['QA-Google_Captcha_Login_Default.json', 'QA-Google_Captcha_Login_Theatre_mode.json']).then(() => {
+      deleteIDMUser(Cypress.env('endUserId'));
+    });
+  }
+});
+
+// Cucumber steps
 Given('the user navigates to the captcha End User login page', () => {
-  journeyName = 'QA-Google_Captcha_Login_Default';
-  locationUrl = setLocationUrl(journeyName);
+  locationUrl = setLocationUrl('QA-Google_Captcha_Login_Default');
   cy.visit(locationUrl);
 });
 
 When('the user fills in the login form with correct credentials', () => {
-  fillLoginForm(userName, userPassword);
+  fillLoginForm(Cypress.env('endUserName'), Cypress.env('endUserPassword'));
 });
 
 When('the user does not solve the captcha', () => {
@@ -94,11 +97,11 @@ When('the user does not solve the captcha', () => {
 });
 
 When('the user fills in the login form with an incorrect username', () => {
-  fillLoginForm('wrongUsername', userPassword);
+  fillLoginForm('wrongUsername', Cypress.env('endUserPassword'));
 });
 
 When('the user fills in the login form with an incorrect password', () => {
-  fillLoginForm(userName, 'wrongPassword');
+  fillLoginForm(Cypress.env('endUserName'), 'wrongPassword');
 });
 
 When('the user solves the captcha', () => {
@@ -116,15 +119,7 @@ Then('the "Next" button should be enabled', () => {
 
 Then('the user should be logged in and see the dashboard', () => {
   cy.findByTestId('dashboard-welcome-greeting', { timeout: 15000 })
-    .should('contain', userName);
-});
-
-Given('the user has created a new End User in Theatre Mode', () => {
-  journeyName = 'QA-Google_Captcha_Login_Theatre_mode';
-  const journey = `${journeyName}.json`;
-  // Import testing Journey
-  cy.importTreesViaAPI([journey]);
-  createUser();
+    .should('contain', Cypress.env('endUserName'));
 });
 
 Given('the user navigates to the login page in Theatre Mode', () => {

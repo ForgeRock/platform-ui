@@ -1,13 +1,11 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
-
-const loginFailedErrorMessage = Cypress.env('IS_FRAAS') ? 'Login failure' : 'Authentication Failed';
 
 filterTests(['@forgeops', '@cloud'], () => {
   describe('Login View', () => {
@@ -39,7 +37,7 @@ filterTests(['@forgeops', '@cloud'], () => {
         .type(userName, { force: true })
         .should('have.value', userName);
       cy.findByRole('button', { name: 'Next' }).click();
-      cy.findAllByRole('alert').contains(loginFailedErrorMessage);
+      cy.findAllByRole('alert').contains('Login failure').should('be.visible');
     });
 
     it('should succeed login with valid credentials', () => {

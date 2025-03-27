@@ -6,6 +6,8 @@
  */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
+import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
+import generateEnduserData from '../utils/endUserData';
 
 function visitJourneyPage(journeyPageUrl) {
   // Set up intercept
@@ -75,8 +77,7 @@ When('user navigates back', () => {
  * Verifies that the user sees the login failure message.
  */
 Then('admin should see a login failure message', () => {
-  const loginFailedErrorMessage = Cypress.env('IS_FRAAS') ? 'Login failure' : 'Authentication Failed';
-  cy.findAllByRole('alert').contains(loginFailedErrorMessage);
+  cy.findAllByRole('alert').contains('Login failure').should('be.visible');
 });
 
 /**
@@ -127,4 +128,46 @@ Then('{string} button is disabled', (button) => {
 
 Then('{string} field has {string} validation error', (field, validationError) => {
   cy.findByLabelText(field).get('.error-message').should('have.text', validationError);
+});
+
+/**
+ * Creates an end user account with random credentials, stores the credentials in the environment variables
+ */
+Given('Enduser account is created via API', () => {
+  const { userName, userPassword, userSN } = generateEnduserData();
+
+  if (!Cypress.env('ACCESS_TOKEN')) {
+    cy.loginAsAdmin();
+  }
+
+  cy.log(`Creating new IDM Enduser ${userName}...`).then(() => {
+    createIDMUser({
+      userName,
+      password: userPassword,
+      givenName: userName,
+      sn: userSN,
+    }).then((result) => {
+      expect(result.status).to.equal(201);
+      Cypress.env('endUserName', userName);
+      Cypress.env('endUserFirstName', userName);
+      Cypress.env('endUserLastName', userSN);
+      Cypress.env('endUserPassword', userPassword);
+      Cypress.env('endUserId', result.body._id);
+    });
+  });
+});
+
+/**
+ * Deletes the end user account created in the previous step
+ */
+Then('Enduser account is deleted via API', () => {
+  if (!Cypress.env('ACCESS_TOKEN')) {
+    cy.loginAsAdmin();
+  }
+
+  deleteIDMUser(Cypress.env('endUserId'));
+});
+
+Then('Admin/Enduser is logged out', () => {
+  cy.logout();
 });

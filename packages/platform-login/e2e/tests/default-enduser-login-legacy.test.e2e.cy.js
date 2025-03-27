@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@ import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 
 filterTests(['@forgeops', '@cloud', '@smoke'], () => {
   xdescribe('EndUser Login Journey', () => {
-    const loginFailedErrorMessage = Cypress.env('IS_FRAAS') ? 'Login failure' : 'Authentication Failed';
+    const loginFailedErrorMessage = 'Login failure';
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const defaultLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
@@ -83,13 +83,13 @@ filterTests(['@forgeops', '@cloud', '@smoke'], () => {
     /** This scenario is locked by bug https://bugster.forgerock.org/jira/browse/IAM-1930 waiting for resolution */
     xit('C20211 - Login with wrong username and correct password', () => {
       loginEnduser(incorrectUserName, defaultPassword);
-      cy.findByRole('alert').contains(loginFailedErrorMessage);
+      cy.findByRole('alert').contains(loginFailedErrorMessage).should('be.visible');
     });
 
     /** This scenario is locked by bug https://bugster.forgerock.org/jira/browse/IAM-1930 waiting for resolution */
     xit('C20210 - Login with existing user and wrong password', () => {
       loginEnduser(userName, incorrectPassword);
-      cy.findByRole('alert').contains(loginFailedErrorMessage);
+      cy.findByRole('alert').contains(loginFailedErrorMessage).should('be.visible');
     });
 
     /** This scenario is locked by bug https://bugster.forgerock.org/jira/browse/IAM-6739 */
