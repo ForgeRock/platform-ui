@@ -516,7 +516,19 @@
       "successDelete": "Theme successfully deleted",
       "successSave": "Theme successfully saved",
       "successSetDefault": "Theme successfully set as default"
-    }
+    },
+    "updateModal": {
+      "title": "Update Themes",
+      "body": "Updating your configuration helps ensure your application runs more smoothly and takes advantage of the latest improvements in our theming system. The new implementation reduces overhead and enables faster rendering--making it easier to build consistent, high-performing UIs.",
+      "body2": "Benefits of Updating",
+      "body3": "Improved performance with more efficient theme parsing and loading",
+      "body4": "Faster rendering through optimized style application and reduced reflows",
+      "body5": "Easier maintenance with a cleaner, more modular configuration structure",
+      "body6": "Future ready foundation for upcoming theming features and enhancements",
+      "updatingThemes": "Updating themes"
+    },
+    "updateTitle": "Performance Update Available",
+    "updateSubtitle": "Improve theme performance and capabilities. "
   },
   "journey": {
     "allJourneysCategory": "All Journeys",
