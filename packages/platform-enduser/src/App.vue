@@ -48,6 +48,7 @@ import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import { mapState } from 'pinia';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { getDelegatedAdminMenuItems } from '@forgerock/platform-shared/src/utils/enduserPrivileges';
 import { getGovMenuItems } from '@/utils/governance/menuItems';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';
@@ -212,37 +213,9 @@ export default {
      * @param {Array} privileges - the privileges that dictate the additional mentu items to be shown
      */
     setupDelegatedAdminMenuItems(privileges) {
-      privileges.sort((a, b) => {
-        if (a.title > b.title) {
-          return 1;
-        }
-        if (a.title < b.title) {
-          return -1;
-        }
-        return 0;
-      });
-      privileges.forEach((obj) => {
-        // if governance user lcm is enabled, we hide the standard DA menu item for alpha users
-        if (this.$store.state.govLcmUser && obj.privilegePath === 'managed/alpha_user') return;
-
-        const splitObj = obj.privilegePath.split('/');
-        this.menuItems.push({
-          displayName: this.getTranslation(obj.title),
-          icon: this.getMenuItemIcon(obj),
-          routeTo: {
-            name: 'ListResource',
-            params: { resourceName: splitObj[1], resourceType: splitObj[0] },
-          },
-        });
-      });
-    },
-    getMenuItemIcon(accessObject) {
-      let matIcon = 'check_box_outline_blank';
-      if (accessObject['mat-icon'] && accessObject['mat-icon'].length && accessObject['mat-icon'].substring(0, 3) !== 'fa-') {
-        matIcon = accessObject['mat-icon'];
-      }
-
-      return matIcon;
+      // if governance user lcm is enabled, we hide the standard da menu item for alpha users
+      const hideAlphaUsersMenuItem = this.$store.state.govlcmuser;
+      this.menuItems.push(...getDelegatedAdminMenuItems(privileges, hideAlphaUsersMenuItem, true));
     },
     /**
       * Tries to get Auto access info and if found adds menu items for Data_Analyst and/or Fraud_Analyst.

@@ -913,6 +913,9 @@
       "notAuthorized": "You are not authorized to view this site. Please sign out and try again",
       "notAuthorizedLogin": "You are not authorized to view this site."
     },
+    "identities": {
+      "subTitle": "Hosted identity resources"
+    },
     "profile": {
       "editPersonalInfo": "Edit Personal Info",
       "updateSuccess": "Updated your profile.",
