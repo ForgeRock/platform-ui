@@ -5,33 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import {
-  Then, When, Given,
-} from '@badeball/cypress-cucumber-preprocessor';
-import { createIDMUser } from '../api/managedApi.e2e';
-import generateUserData from '../utils/endUserData';
-
-/**
- * Creates an end user account with random credentials.
- */
-Given('there is an end user account created', () => {
-  const { userName, userPassword, userSN } = generateUserData();
-  cy.loginAsAdmin().then(() => {
-    createIDMUser({
-      userName,
-      password: userPassword,
-      givenName: userName,
-      sn: userSN,
-    }).then((result) => {
-      expect(result.status).to.equal(201);
-      Cypress.env('endUserName', userName);
-      Cypress.env('endUserFirstName', userName);
-      Cypress.env('endUserLastName', userSN);
-      Cypress.env('endUserPassword', userPassword);
-      cy.logout();
-    });
-  });
-});
+import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
 
 /**
  * Enters the username based on the given scenario.

@@ -46,19 +46,25 @@ const translations = {
 // Setup before running Feature file
 before(() => {
   // Login as admin
-  cy.loginAsAdmin().then(() => {
-    // Add translation override config for 'en' locale
-    addOverrides('en', translations);
-  });
+  if (Cypress.spec.relative.includes('scripted-confirmationcallbacks.feature')) {
+    // Login as admin
+    cy.loginAsAdmin().then(() => {
+      // Add translation override config for 'en' locale
+      addOverrides('en', translations);
+    });
+  }
 });
 
 // Cleanup after running Feature file
 after(() => {
   // Login as admin
-  cy.loginAsAdmin().then(() => {
-    // Delete translation override config for 'en' locale
-    deleteOverrides('en');
-  });
+  if (Cypress.spec.relative.includes('scripted-confirmationcallbacks.feature')) {
+    // Login as admin
+    cy.loginAsAdmin().then(() => {
+      // Delete translation override config for 'en' locale
+      deleteOverrides('en');
+    });
+  }
 });
 
 Given('journey template {string} is imported with {string} Decision Node Script', (journeyName, scriptType) => {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -370,7 +370,7 @@ filterTests(['@forgeops', '@cloud'], () => {
         cy.findByRole('button', { name: `New ${Cypress.env('IS_FRAAS') ? 'Alpha realm - User' : 'User'}` }).click();
 
         // fill in fields, ensuring that Save button only enabled when all fields filled in with no errors
-        cy.findByLabelText('Username').type(`e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`);
+        cy.findByLabelText('Username').should('be.visible').should('be.focused').type(`e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`);
         cy.findByLabelText('First Name').type('First');
         cy.findByLabelText('Last Name').type('Last');
         cy.findByRole('button', { name: 'Save' }).should('be.disabled');
