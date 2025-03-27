@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template
         v-for="(action, key) in availableActions"
         :key="key">
-        <BDropdownDivider v-if="key === 'divider'" />
+        <BDropdownDivider v-if="key === 'divider'" aria-hidden="true"/>
         <BDropdownItem
           v-else
           :data-testid="key === 'details' ? 'view-details-button' : `dropdown-action-${key}`"
