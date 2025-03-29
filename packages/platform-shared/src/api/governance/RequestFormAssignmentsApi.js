@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -68,6 +68,28 @@ export function getFormAssignmentByRequestType(requestTypeId) {
  */
 export function getFormRequestTypes(formId) {
   return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId co "requestType/" and formId eq "${formId}"`);
+}
+
+/**
+ * Retrieves a form assignment based on the specified LCM type and operation.
+ *
+ * @param {string} lcmType - The lifecycle management (LCM) type to filter the form assignment.
+ * @param {string} operation - The operation associated with the LCM type to filter the form assignment.
+ * @returns {Promise} A promise that resolves to the form assignment.
+ */
+export function getFormAssignmentByLcmTypeAndOperation(lcmType, operation) {
+  return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId eq "lcm/${lcmType}/${operation}"`);
+}
+
+/**
+ * Fetches the form assignments of a form based on the provided form ID and LCM type.
+ *
+ * @param {string} formId - The unique identifier of the form.
+ * @param {string} lcmType - The lifecycle management type to filter by.
+ * @returns {Promise} A promise that resolves to the form assignments.
+ */
+export function getFormLcmType(formId, lcmType) {
+  return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId co "lcm/${lcmType}/" and formId eq "${formId}"`);
 }
 
 /**
