@@ -4325,6 +4325,7 @@
         },
         "associatedApplications": "Associated Applications:",
         "associatedRequestTypes": "Associated Request Types:",
+        "associatedLcms": "Associated LCM Operations:",
         "associatedWorkflows": "Associated Workflows:",
         "errorGetData": "There was an error retrieving forms",
         "forms": "Forms",
@@ -4346,6 +4347,12 @@
         "formType": "Form Type",
         "formDetails": "Form Details",
         "formName": "Form Name",
+        "identityProfile": "Identity Profile",
+        "identityProfileDesc": "Choose an identity profile for which this request form applies.",
+        "lcmForm": "LCM form",
+        "lcmFormDesc": "Create a form for LCM (Lifecycle Management)",
+        "operation": "Operation",
+        "operationDescription": "Select the operation that you want this form to be associated with.",
         "optionalDescription": "Description (optional)",
         "objectType": "Object type",
         "requestTypeAlreadyAssigned": "Request type already assigned to a form",
@@ -4353,7 +4360,26 @@
         "requestTypeLabel": "Request Type",
         "savingSuccess": "Form created successfully",
         "useForRequestCreation": "Use this form for request creation",
-        "useForRequestCreationDescription": "Enable this option to make this form available when creating new requests of this request type. If unchecked, the request type will only be used for suggesting form fields keys during form design."
+        "useForRequestCreationDescription": "Enable this option to make this form available when creating new requests of this request type. If unchecked, the request type will only be used for suggesting form fields keys during form design.",
+        "useForRequestCreationDescriptionLcm": "Enable this option to use this form when performing LCM operations. If unchecked, the LCM type will only be used for suggesting form fields keys during form design."
+      },
+      "lcmTypes": {
+        "user": "User",
+        "typeLcm": "{type} LCM",
+        "typeOperations": "{type} Operations"
+      },
+      "lcmAssignments": {
+        "title": "Operations for which this form will be used",
+        "noOperations": "No operations selected",
+        "modalTitle": "Add LCM Operation",
+        "errorGettingOperations": "Error getting operations",
+        "errorUpdatingOperations": "Error updating operations",
+        "operationsSaved": "Operations udpated successfully"
+      },
+      "operations": {
+        "create": "Create",
+        "delete": "Delete",
+        "update": "Update"
       },
       "editor": {
         "errorMessage": "Error message",
