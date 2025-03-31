@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,7 +18,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     const forgotUsernameUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ForgottenUsername#/`;
     const forgotUsernameLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=ForgottenUsername#/service/Login`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-    const userPassword = 'Pass1234!';
+    const userPassword = 'Rg_GRg9k&e';
     let userId;
     let emailAccount;
     let defaulEmailConfig;

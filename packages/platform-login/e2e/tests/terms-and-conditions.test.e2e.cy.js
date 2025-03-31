@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -40,7 +40,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=QA%20-%20Accept%20Terms%20and%20Conditions#/`;
     const journey = `QA-Accept_Terms_and_Conditions_${Cypress.env('IS_FRAAS') ? 'Cloud' : 'ForgeOps'}.json`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-    const userPassword = 'Pass1234!';
+    const userPassword = 'Rg_GRg9k&e';
     let userId;
 
     function loadJourney() {

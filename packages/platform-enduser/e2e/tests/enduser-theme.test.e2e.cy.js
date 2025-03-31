@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -23,7 +23,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     const enduserRealm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
     const enduserProfileUrl = `${Cypress.config().baseUrl}/enduser/?realm=${enduserRealm}#/profile`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-    const userPassword = 'Pass1234!';
+    const userPassword = 'Rg_GRg9k&e';
     const defaultTheme = Cypress.env('IS_FRAAS') ? 'Starter Theme' : 'ForgeRock Theme';
     let userId;
     let testThemeName = '';

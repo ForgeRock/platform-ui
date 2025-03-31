@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -71,7 +71,7 @@ When('user fills out the default registration form with {string} credentials', (
 
   switch (scenario) {
     case 'valid':
-      cy.findAllByLabelText(/Password/i).first().type('Welcome1*');
+      cy.findAllByLabelText(/Password/i).first().type('Rg_GRg9k&e');
       break;
     case 'invalid':
       // set long passwords - check policy

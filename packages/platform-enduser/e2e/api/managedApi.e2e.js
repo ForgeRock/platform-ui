@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -49,14 +49,14 @@ export function createIDMResource(resourceType = 'managed', resourceName, body, 
  * Use idm provisioning token to create super-user
  * Creates a user with
  * username: 'e2eTestUser<RandomNumber>',
- * password: 'Welcome1!',
+ * password: 'Rg_GRg9k&e',
  * First Name: 'First'
  * Last Name: 'Last'
  */
 export function createIDMUser(userBody) {
   const body = {
     userName: `e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`,
-    password: 'Welcome1!',
+    password: 'Rg_GRg9k&e',
     givenName: 'First',
     sn: 'Last',
     mail: 'forgerockdemo@example.com',
