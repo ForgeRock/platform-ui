@@ -73,7 +73,7 @@ Cypress.Commands.add(
   'loginAsEnduser',
   (
     userName,
-    password = 'Welcome1!',
+    password = 'Rg_GRg9k&e',
     sucessLogin = true,
     loginUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=Login#/` : `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Login#/`,
   ) => {

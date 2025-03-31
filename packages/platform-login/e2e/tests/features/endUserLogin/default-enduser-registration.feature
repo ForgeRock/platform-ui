@@ -49,7 +49,7 @@ Feature: Enduser Registration
       | First Name    | testFirstName |
       | Last Name     | testLastName  |
       | Email Address | invalid_email |
-      | Password      | PassworD_123  |
+      | Password      | Rg_GRg9k&e    |
     And user fills security question "What's your favorite color?" with answer "Red"
     And user fills security question "Who was your first employer?" with answer "Ping" if present
     Then 'Next' button is enabled
@@ -58,7 +58,7 @@ Feature: Enduser Registration
     When user fills registration form with following data
       | Field         | Value                  |
       | Email Address | valid_email@domain.com |
-      | Password      | PassworD_123           |
+      | Password      | Rg_GRg9k&e             |
     And user fills security question "What's your favorite color?" with answer "Red"
     And user fills security question "Who was your first employer?" with answer "Ping" if present
     Then 'Next' button is enabled

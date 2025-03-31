@@ -46,7 +46,7 @@ const frcaTranslations = {
 // Theme/Journey config translations and functions
 const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
 const userRealm = Cypress.env('IS_FRAAS') ? 'alpha_' : '';
-const userPassword = 'Pass1234!';
+const userPassword = 'Rg_GRg9k&e';
 
 const mainPageTranslations = {
   headerLinks: {

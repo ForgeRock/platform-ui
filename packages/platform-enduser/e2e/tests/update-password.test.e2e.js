@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,8 +17,8 @@ filterTests(['@forgeops', '@cloud'], () => {
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const defaultLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-    const defaultPassword = 'Pass1234!';
-    const updatedUserPassword = 'Test4321!';
+    const defaultPassword = 'Rg_GRg9k&e';
+    const updatedUserPassword = defaultPassword.split('').reverse().join('');
     let userId;
 
     before(() => {

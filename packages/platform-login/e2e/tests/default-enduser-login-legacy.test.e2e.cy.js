@@ -15,7 +15,7 @@ filterTests(['@forgeops', '@cloud', '@smoke'], () => {
     const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
     const defaultLoginUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-    const defaultPassword = 'Pass1234!';
+    const defaultPassword = 'Rg_GRg9k&e';
     let userId;
     const incorrectPassword = 'incorrectPassword';
     const incorrectUserName = 'incorrectUsername';

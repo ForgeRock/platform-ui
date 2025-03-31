@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@ import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 
 filterTests(['@forgeops', '@cloud'], () => {
   const loginFailedErrorMessage = 'Login failure';
-  const userPassword = 'Test1234!';
+  const userPassword = 'Rg_GRg9k&e';
   const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
   let journeyName;
   let userName;

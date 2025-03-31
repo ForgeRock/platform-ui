@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 import { Given, When } from '@badeball/cypress-cucumber-preprocessor';
 
 Given('{string} is logged in', (username) => {
@@ -16,7 +23,7 @@ Given('{string} is logged in to {string} journey', (username, journey) => {
 
   const loginUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=${journeyPath}#/` : `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=${journeyPath}#/`;
 
-  cy.loginAsEnduser(username === 'Enduser' ? Cypress.env('endUserName') : username, 'Welcome1!', true, loginUrl);
+  cy.loginAsEnduser(username === 'Enduser' ? Cypress.env('endUserName') : username, 'Rg_GRg9k&e', true, loginUrl);
 });
 
 Given('browser locale is set to {string}', (locale) => {

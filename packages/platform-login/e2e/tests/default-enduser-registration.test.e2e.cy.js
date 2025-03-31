@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -37,6 +37,7 @@ filterTests(['@forgeops', '@smoke'], () => {
   describe('Registration form', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Registration#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
+    const userPassword = 'Rg_GRg9k&e';
     const fieldData = [
       {
         placeholder: 'Username',
@@ -80,7 +81,7 @@ filterTests(['@forgeops', '@smoke'], () => {
       fillOutRegistrationForm(fieldData);
       // set valid password - submit form
       cy.findByLabelText('Password')
-        .type('Welcome1')
+        .type(userPassword)
         .get('[type="submit"]')
         .click();
 
@@ -107,7 +108,7 @@ filterTests(['@forgeops', '@smoke'], () => {
       cy.findByRole('button', { name: 'Next' })
         .should('be.disabled');
       cy.findByLabelText('Password')
-        .type('Welcome1');
+        .type(userPassword);
       cy.findByRole('button', { name: 'Next' })
         .should('be.enabled')
         .click();
@@ -140,6 +141,7 @@ filterTests(['@cloud', '@smoke'], () => {
 
   describe.skip('Enduser default registration journey, successful registration and negative verifications', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=Registration#/`;
+    const userPassword = 'Rg_GRg9k&e';
     let emailAccount;
 
     const invalidFieldData = [
@@ -209,7 +211,7 @@ filterTests(['@cloud', '@smoke'], () => {
         },
         {
           placeholder: 'Password',
-          text: 'Password_1',
+          text: userPassword,
         },
         {
           placeholder: 'First Name',
@@ -313,7 +315,7 @@ filterTests(['@cloud', '@smoke'], () => {
       cy.get('[type="submit"]').should('be.disabled');
 
       // Validate that the form correctly shows policies and Submit button is enabled when the password meets all requirements
-      cy.findByLabelText('Password').type('LongAndValidOne1.');
+      cy.findByLabelText('Password').type(userPassword);
       cy.get('li:contains("Must be at least 8 characters long")')
         .should('have.class', 'fr-valid').and('be.visible');
       cy.get('li:contains("One lowercase character, one uppercase character, one number, one special character")')
