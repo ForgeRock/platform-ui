@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
               @click="$refs[removeModalId].show()"
               :id="'delete_' + relationshipArrayProperty.key"
               block>
-              {{ removeRelationshipButtonTextFallback }}
+              {{ $t('common.remove') }}
             </BButton>
           </div>
         </BCol>
@@ -67,9 +67,11 @@ of the MIT license. See the LICENSE file for details. -->
       </BRow>
     </div>
     <BTable
+      class="mb-0"
       hover
       ref="relationshipArrayGrid"
       responsive
+      selected-variant="transparent"
       show-empty
       :empty-text="$t('common.noRecordsToShow')"
       :fields="columns"
@@ -79,9 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
-      class="mb-0"
-      :selectable="(!relationshipArrayProperty.readOnly || isOpenidmAdmin) && rowSelect"
-      selected-variant="transparent"
+      :selectable="!relationshipArrayProperty.readOnly || isOpenidmAdmin"
       @row-clicked="resourceClicked"
       @row-selected="onRowSelected"
       @sort-changed="sortingChanged">
@@ -187,10 +187,10 @@ of the MIT license. See the LICENSE file for details. -->
             </BButton>
             <FrButtonWithSpinner
               variant="danger"
-              :button-text="removeModalButtonText || $t('common.remove')"
+              :button-text="$t('common.remove')"
               :disabled="dataIsUpdating"
               :show-spinner="dataIsUpdating"
-              :spinner-text="removeModalButtonText || $t('common.remove')"
+              :spinner-text="$t('common.remove')"
               @click="removeRelationships" />
           </div>
         </div>
@@ -261,29 +261,9 @@ export default {
     TranslationMixin,
   ],
   props: {
-    additionalColumns: {
-      type: Array,
-      default: () => [],
-    },
-    addRelationshipButtonText: {
-      type: String,
-      default: '',
-    },
     additionalQueryFilter: {
       type: String,
       default: '',
-    },
-    incomingFields: {
-      type: Array,
-      default: () => [],
-    },
-    modalTitle: {
-      type: String,
-      default: '',
-    },
-    overrideResourceEvent: {
-      type: Boolean,
-      default: false,
     },
     parentId: {
       type: String,
@@ -297,14 +277,6 @@ export default {
       type: String,
       default: '',
     },
-    removeModalButtonText: {
-      type: String,
-      default: '',
-    },
-    removeRelationshipButtonText: {
-      type: String,
-      default: '',
-    },
     revision: {
       type: String,
       default: '',
@@ -313,15 +285,11 @@ export default {
       type: Object,
       required: true,
     },
-    rowSelect: {
-      type: Boolean,
-      default: true,
-    },
   },
   data() {
     const userStore = useUserStore();
     return {
-      addButtonText: this.addRelationshipButtonText || i18n.global.t('common.addObject', { object: this.getTranslation(this.relationshipArrayProperty.title) }),
+      addButtonText: i18n.global.t('common.addObject', { object: this.getTranslation(this.relationshipArrayProperty.title) }),
       gridPageSize: 10,
       allRowsSelected: false,
       dataIsUpdating: false,
@@ -334,7 +302,7 @@ export default {
       lastPage: false,
       sortDirection: 'asc',
       createModalId: `create_${this.relationshipArrayProperty.propName}_modal`,
-      addRelationshipModalTitle: this.modalTitle ? this.modalTitle : `Add ${this.relationshipArrayProperty.title}`,
+      addRelationshipModalTitle: i18n.global.t('common.addObject', { object: this.relationshipArrayProperty.title }),
       removeModalId: `delete_${this.relationshipArrayProperty.propName}_modal`,
       removeModalMessage: i18n.global.t('pages.access.removeConfirm', { type: this.relationshipArrayProperty.title }),
       newRelationships: [],
@@ -362,11 +330,6 @@ export default {
     },
     filter() {
       this.setColumnSorting();
-    },
-  },
-  computed: {
-    removeRelationshipButtonTextFallback() {
-      return this.removeRelationshipButtonText || i18n.global.t('common.remove');
     },
   },
   methods: {
@@ -416,7 +379,7 @@ export default {
       this.queryThreshold = await this.getMinimumUIFilterLength(resourceName);
     },
     setColumns(resourceCollectionSchema) {
-      if ((!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin) && this.rowSelect) {
+      if ((!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin)) {
         this.columns.push({
           key: 'selected',
           label: '',
@@ -458,15 +421,6 @@ export default {
 
             return value;
           },
-        });
-      }
-
-      if (this.additionalColumns.length) {
-        /*
-         * Inject additional column data from prop
-         */
-        this.additionalColumns.forEach((columnData) => {
-          this.columns.push(columnData);
         });
       }
     },
@@ -540,10 +494,7 @@ export default {
         if (currentResourceCollection) {
           const requiredProps = this.requiredProps.join(',');
           const resourceCollectionFields = currentResourceCollection.query.fields.join(',');
-          const incomingFields = this.incomingFields.length
-            ? `,${this.incomingFields.join(',')}`
-            : '';
-          resourceUrl = `${resourceUrl}&_fields=${requiredProps},${resourceCollectionFields}${incomingFields}`;
+          resourceUrl = `${resourceUrl}&_fields=${requiredProps},${resourceCollectionFields}`;
         } else {
           resourceUrl = `${resourceUrl}&_fields=*`;
         }
@@ -577,9 +528,7 @@ export default {
         ? event.target.classList.value.indexOf('checkbox') === -1
         : false;
 
-      if (this.overrideResourceEvent) {
-        this.$emit('resource-event', item);
-      } else if (noEvent || noClassList || noCheckboxClass) {
+      if (noEvent || noClassList || noCheckboxClass) {
         this.$router.push({
           name: 'EditResource',
           params: {
@@ -591,12 +540,8 @@ export default {
       }
     },
     openCreateModal() {
-      if (this.overrideResourceEvent) {
-        this.$emit('relationship-new-event');
-      } else {
-        this.$refs[this.createModalId].show();
-        this.newRelationships = [];
-      }
+      this.$refs[this.createModalId].show();
+      this.newRelationships = [];
     },
     addNewRelationship(data) {
       if (data) {
@@ -612,7 +557,6 @@ export default {
     },
     onRowSelected(items) {
       this.selected = items;
-
       this.allRowsSelected = items.length === Math.min(this.gridData.length, this.gridPageSize);
     },
     onRelationshipDelete(data) {

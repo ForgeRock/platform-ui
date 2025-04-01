@@ -347,13 +347,6 @@ const router = createRouter({
       path: '/forbidden',
       name: 'Forbidden',
       component: () => import(/* webpackChunkName: "forbidden" */ '@/components/forbidden'),
-      beforeEnter: (to, from, next) => {
-        if (store.state.hostedPages === false) {
-          to.meta.hideSideMenu = true;
-          to.meta.hideNavBar = true;
-        }
-        next();
-      },
     },
     {
       path: '/:pathMatch(.*)*',
@@ -371,6 +364,11 @@ router.beforeEach((to, from, next) => {
 
   if (realm && realm !== '/' && realm.startsWith('/')) {
     realm = realm.substring(1);
+  }
+
+  if (store.state.hostedPages === false) {
+    to.meta.hideSideMenu = true;
+    to.meta.hideNavBar = true;
   }
 
   if (store.state.hostedPages === false && to.name !== 'Forbidden') {
