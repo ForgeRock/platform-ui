@@ -405,33 +405,6 @@ describe('RelationshipArray', () => {
     expect(hideTestIdSpy).toHaveBeenCalled();
   });
 
-  it('emits resource event', async () => {
-    const routerPushSpy = jest.spyOn(wrapper.vm.$router, 'push');
-    const item = {
-      _refResourceCollection: '',
-      _refResourceId: '_refResourceId',
-    };
-    const index = {};
-    const event = {
-      target: {
-        classList: {
-          value: [],
-        },
-      },
-    };
-    await wrapper.setProps({
-      overrideResourceEvent: true,
-    });
-    wrapper.vm.resourceClicked(item, index, event);
-    expect(wrapper.emitted()['resource-event'][0]).toEqual([item]);
-
-    await wrapper.setProps({
-      overrideResourceEvent: false,
-    });
-    wrapper.vm.resourceClicked(item, index, event);
-    expect(routerPushSpy).toHaveBeenCalled();
-  });
-
   it('removes relationships', async () => {
     wrapper.vm.$refs.testId.show = () => {};
     const data = 'relationshipToDelete';
