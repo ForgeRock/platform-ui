@@ -15,6 +15,8 @@ import {
   saveRealmTheme,
   saveThemeConfig,
 } from '@forgerock/platform-shared/src/api/ThemeApi';
+import { getAllNodesOfType, putNode } from '@forgerock/platform-shared/src/api/TreeApi';
+import { setStageValue } from '@forgerock/platform-shared/src/utils/stage';
 import i18n from '@/i18n';
 
 /**
@@ -104,6 +106,16 @@ export async function convertLegacyThemesToNewFormat(legacyThemes, themeConfig) 
   if (!themeConfig.linkedTrees) {
     themeConfig.linkedTrees = {};
   }
+  let pageNodes = [];
+
+  try {
+    // get all pageNodes (endpoint doesn't seem to support querying by fields) to allow
+    // us to convert the legacy theme ids to the new format
+    const { data } = await getAllNodesOfType('PageNode');
+    pageNodes = data?.result?.filter((pageNode) => pageNode.stage?.includes('themeId":"'));
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('common.themes.errorFetchingPageNodes'));
+  }
 
   Object.entries(legacyThemes).forEach(([realm, realmThemes]) => {
     if (!themeConfig.linkedTrees[realm]) {
@@ -119,10 +131,26 @@ export async function convertLegacyThemesToNewFormat(legacyThemes, themeConfig) 
       }
       const encodedRealm = encodeURIComponent(cleanRealm);
       const themeIdentifier = (legacyTheme._id || legacyTheme.name).replace(/[^\w-]/g, '');
-      const themeId = `ui/theme-${encodedRealm}-${encodeURIComponent(themeIdentifier)}`;
+      let themeId = themeIdentifier;
+      if (!themeId.startsWith('ui/theme-')) {
+        themeId = `ui/theme-${encodedRealm}-${encodeURIComponent(themeIdentifier)}`;
+      }
 
       // Add theme to save requests
       saveRequests.push(convertIndividualLegacyTheme(realm, themeId, legacyTheme, themeConfig));
+
+      const pageNodesWithCurrentTheme = pageNodes.filter((pageNode) => !pageNode.stage.startsWith('ui/theme-') && pageNode.stage.includes(themeIdentifier));
+      if (pageNodesWithCurrentTheme.length) {
+        // Update the theme id in the stage
+        pageNodesWithCurrentTheme.forEach((pageNode) => {
+          if (typeof pageNode.stage === 'string') {
+            const newPageNode = { template: pageNode };
+            setStageValue(newPageNode, pageNode._id, 'themeId', themeId);
+            delete pageNode._rev;
+            saveRequests.push(putNode(pageNode._id, 'PageNode', pageNode));
+          }
+        });
+      }
     });
   });
 
