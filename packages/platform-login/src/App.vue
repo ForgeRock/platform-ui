@@ -153,12 +153,7 @@ export default {
       let themeId = this.$store.state.SharedStore.webStorageAvailable ? localStorage.getItem('theme-id') : null;
       if (nodeThemeId) {
         // Prioritize node themes over tree themes
-        if (this.themeConfig?.linkedTrees) {
-          // If we are using new theme format, change the id to the proper format
-          themeId = `ui/theme-${cleanRealm}-${nodeThemeId}`;
-        } else {
-          themeId = nodeThemeId;
-        }
+        themeId = nodeThemeId;
       } else if (this.themeConfig?.linkedTrees) {
         // Next priority is theme assigned to tree
         if (this.themeConfig.linkedTrees[cleanRealm]?.[treeId]) {
