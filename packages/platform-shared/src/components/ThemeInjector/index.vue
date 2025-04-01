@@ -80,6 +80,10 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.linkActiveColorOnDark || '#f6f8fa' }};
       }
 
+      #app .floating-action-bar.bg-dark .text-light {
+        color: {{ theme.lightColor || '#f6f8fa' }} !important;
+      }
+
       #app .floating-action-bar.bg-dark .btn-dark,
       #app .floating-action-bar.bg-dark .btn-dark:hover {
         color: {{ theme.lightColor || '#f6f8fa' }};
