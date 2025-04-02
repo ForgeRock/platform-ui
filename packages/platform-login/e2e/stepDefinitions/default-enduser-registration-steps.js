@@ -71,11 +71,11 @@ When('user fills out the default registration form with {string} credentials', (
 
   switch (scenario) {
     case 'valid':
-      cy.findAllByLabelText(/Password/i).first().type('Rg_GRg9k&e');
+      cy.findAllByLabelText(/Password/i).first().clear().type('Rg_GRg9k&e');
       break;
     case 'invalid':
       // set long passwords - check policy
-      cy.findAllByLabelText(/Password/i).first().type('longenoughtopass');
+      cy.findAllByLabelText(/Password/i).first().clear().type('longenoughtopass');
       break;
     default:
       console.error('invalid step');
