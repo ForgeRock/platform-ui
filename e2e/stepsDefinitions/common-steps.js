@@ -11,34 +11,37 @@ import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import generateEndUserData from '../utils/endUserData';
 
 /**
- * Creates an end user account with random credentials, stores the credentials in the environment variables
+ * Creates an end user account if does not exist with random credentials, stores the credentials in the environment variables
  */
 Given('enduser account is created via API', () => {
-  const { userName, userPassword, userSN } = generateEndUserData();
+  if (!Cypress.env('endUserId')) {
+    const { userName, userPassword, userSN } = generateEndUserData();
 
-  if (!Cypress.env('ACCESS_TOKEN')) {
-    cy.loginAsAdmin();
-  }
+    if (!Cypress.env('ACCESS_TOKEN')) {
+      cy.loginAsAdmin();
+    }
 
-  cy.log(`Creating new IDM Enduser ${userName}...`).then(() => {
-    createIDMUser({
-      userName,
-      password: userPassword,
-      givenName: userName,
-      sn: userSN,
-    }).then((result) => {
-      expect(result.status).to.equal(201);
-      Cypress.env('endUserName', userName);
-      Cypress.env('endUserFirstName', userName);
-      Cypress.env('endUserLastName', userSN);
-      Cypress.env('endUserPassword', userPassword);
-      Cypress.env('endUserId', result.body._id);
+    cy.log(`Creating new IDM enduser ${userName}`).then(() => {
+      createIDMUser({
+        userName,
+        password: userPassword,
+        givenName: userName,
+        sn: userSN,
+      }).then((result) => {
+        expect(result.status).to.equal(201);
+        Cypress.env('endUserName', userName);
+        Cypress.env('endUserFirstName', userName);
+        Cypress.env('endUserLastName', userSN);
+        Cypress.env('endUserPassword', userPassword);
+        Cypress.env('endUserId', result.body._id);
+      });
     });
-  });
+  }
 });
 
 Given('admin/enduser is logged out', () => {
   cy.logout();
+  Cypress.env('ACCESS_TOKEN', '');
 });
 
 Given('admin navigates to {page} page', (page) => {
@@ -53,6 +56,10 @@ Given('admin navigates to {string} page url', (page) => {
   cy.intercept('GET', '/am/json/serverinfo/*').as('getServerInfo');
   cy.visit(`${Cypress.config().baseUrl}${page}`);
   cy.wait('@getServerInfo');
+});
+
+When('user types the stored value of {string} in {string} field', (envName, field) => {
+  cy.findByLabelText(field).clear().type(Cypress.env(envName));
 });
 
 When('user reloads the page', () => {
@@ -92,6 +99,10 @@ Then('notification is displayed with text {string}', (message) => {
   cy.findByRole('alert', { name: message }).should('be.visible');
 });
 
+Then('{string} error message is displayed', (message) => {
+  cy.findAllByRole('alert').contains(message).should('be.visible');
+});
+
 /**
  * Deletes the end user account created in the previous step
  */
@@ -101,28 +112,9 @@ Then('enduser account is deleted via API', () => {
   }
 
   deleteIDMUser(Cypress.env('endUserId'));
-});
-
-When('user clicks on {string} Journey redirect link', (link) => {
-  // Set up intercept
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
-
-  // Click on the Journey redirect link
-  cy.findByRole('link', { name: link }).click();
-
-  // TODO: Lower this big timeout after Themes performance is resolved (10s should be more than enough even for bigger Journeys)
-  // Wait for the Journey page to be properly loaded
-  cy.wait('@themerealmConfig', { timeout: 20000 });
-});
-
-When('user navigates back to previous Journey page', () => {
-  // Set up intercept
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
-
-  // Go back to the previous page
-  cy.go('back');
-
-  // TODO: Lower this big timeout after Themes performance is resolved (10s should be more than enough even for bigger Journeys)
-  // Wait for the Journey page to be properly loaded
-  cy.wait('@themerealmConfig', { timeout: 20000 });
+  Cypress.env('endUserName', '');
+  Cypress.env('endUserFirstName', '');
+  Cypress.env('endUserLastName', '');
+  Cypress.env('endUserPassword', '');
+  Cypress.env('endUserId', '');
 });

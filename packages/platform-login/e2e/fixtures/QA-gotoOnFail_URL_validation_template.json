@@ -1,0 +1,106 @@
+{
+  "meta": {
+    "origin": "https://openam-ui-rc-23sep24.forgeblocks.com/platform/?realm=alpha#/journeys",
+    "exportedBy": "petr.bahr@pingidentity.com",
+    "exportDate": "2024-09-26T09:19:11.343Z",
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "QA - gotoOnFail URL validation"
+    ],
+    "innerTreesIncluded": []
+  },
+  "trees": {
+    "QA - gotoOnFail URL validation": {
+      "tree": {
+        "_id": "QA - gotoOnFail URL validation",
+        "_rev": "634080792",
+        "identityResource": "identity_resource",
+        "uiConfig": {
+          "categories": "[\"QA_autotests\"]"
+        },
+        "entryNodeId": "ad767ed2-fa85-439a-be3a-d0975d33b21c",
+        "innerTreeOnly": false,
+        "nodes": {
+          "ad767ed2-fa85-439a-be3a-d0975d33b21c": {
+            "x": 288,
+            "y": 119.015625,
+            "connections": {
+              "outcome": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "PageNode",
+            "displayName": "Page Node"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 50,
+            "y": 25
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 543,
+            "y": 34
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 624,
+            "y": 267
+          }
+        },
+        "description": "QA - gotoOnFail URL validation",
+        "mustRun": false,
+        "enabled": true
+      },
+      "nodes": {
+        "ad767ed2-fa85-439a-be3a-d0975d33b21c": {
+          "_id": "ad767ed2-fa85-439a-be3a-d0975d33b21c",
+          "_rev": "1400588354",
+          "nodes": [
+            {
+              "_id": "580e305c-b16a-4e2f-bdd9-31b998325d44",
+              "nodeType": "UsernameCollectorNode",
+              "displayName": "Username Collector"
+            }
+          ],
+          "pageDescription": {
+            "en": "-Navigate to AM native console\n-Services\n-Validation service\n-Add your URL (must have http or https!!) for example https://www.google.com\n-Add this into your URL<br>\n\n{-YourJourneyURl}&gotoOnFail=https://www.google.com\n\n\n-Type something into field and click next\nYou should be redirected to google.com"
+          },
+          "pageHeader": {},
+          "_type": {
+            "_id": "PageNode",
+            "name": "Page Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "innerNodes": {
+        "580e305c-b16a-4e2f-bdd9-31b998325d44": {
+          "_id": "580e305c-b16a-4e2f-bdd9-31b998325d44",
+          "_rev": "-931500640",
+          "_type": {
+            "_id": "UsernameCollectorNode",
+            "name": "Username Collector",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        }
+      },
+      "scripts": {},
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}

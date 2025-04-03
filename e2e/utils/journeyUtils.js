@@ -7,16 +7,30 @@
  */
 
 import { JOURNEYS } from '../support/constants';
+import { prepareJourneyTemplate } from './manageJourneys';
 
 /**
  * Generates the enduser journey url
- * @param {String} journeyName the journey name based on the ADMIN_PAGES constants file
+ * @param {String} journeyName the journey name based on the JOURNEYS constants file
  * @returns {String} enduser journey url
  */
-function generateJourneyURL(journeyName) {
+export function generateJourneyURL(journeyName) {
   const journeyPath = Object.values(JOURNEYS).find((journey) => journey.name === journeyName).path;
   const loginRealm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
-  return `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=${journeyPath}#/`;
+  return `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=${journeyPath}`;
 }
 
-export default generateJourneyURL;
+/**
+ * Generates the journey file name based on the enviroment.
+ * It validates if the journey name is a template file or there are two different files for each enviroment.
+ * @param {String} journeyName the journey name based on the JOURNEYS constants file
+ * @returns {String} journey filename based on the environment
+ */
+export function generateJourneyFileName(journeyName) {
+  const journeyFileName = Object.values(JOURNEYS).find((journey) => journey.name === journeyName).fileName;
+  if (journeyFileName.includes('_template')) {
+    const identityResourceValue = Cypress.env('IS_FRAAS') ? 'managed/alpha_user' : 'managed/user';
+    return prepareJourneyTemplate(`${journeyFileName}.json`, { identity_resource: identityResourceValue });
+  }
+  return `${journeyFileName}_${Cypress.env('IS_FRAAS') ? 'Cloud' : 'ForgeOps'}.json`;
+}
