@@ -13,7 +13,12 @@ import i18n from '@forgerock/platform-shared/src/i18n';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
 import { getLocalizedString } from '@forgerock/platform-shared/src/utils/translations';
-import { decodeThemes, encodeThemes, updateThemerealmObject } from '../utils/themeUtils';
+import {
+  decodeThemes,
+  encodeThemes,
+  updateThemerealmObject,
+  removeThemeIdFromLocalStorage,
+} from '../utils/themeUtils';
 
 /**
  * Composable for integrating theme into views that will be used within
@@ -40,7 +45,7 @@ export default function useTheme() {
   }
 
   /**
-   * Deletes a theme from the realm
+   * Deletes a theme from the realm and clears the localStorage if theme-id is a match
    * @param {String} realm The realm that the theme is located in
    * @param {String} themeId The id of the theme to delete
    */
@@ -55,6 +60,8 @@ export default function useTheme() {
     } catch (error) {
       showErrorMessage(error, i18n.global.t('hostedPages.theme.errorDeletingTheme'));
       throw error;
+    } finally {
+      removeThemeIdFromLocalStorage(themeId);
     }
   }
 
@@ -74,6 +81,7 @@ export default function useTheme() {
 
   /**
    * Retrieves a theme within the specified realm from IDM
+   * if the theme is not found, it will return the default theme and remove the themeId from localStorage
    * @param {String} realm The realm that the theme is located in
    * @param {String} themeIdentifier The id or name of the theme to retrieve
    */
@@ -82,7 +90,7 @@ export default function useTheme() {
     try {
       // Only query for all themes if we don't already have it stored in theme store
       if (themeStore.realmThemes[realm]) {
-        decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme._id === themeIdentifier || realmTheme.name === themeIdentifier) || {};
+        decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme._id === themeIdentifier || realmTheme.name === themeIdentifier);
       } else {
         const { data: themes } = await getThemes();
         if (themes.backgroundColor) {
@@ -91,12 +99,17 @@ export default function useTheme() {
         } else {
           // themes are stored in an object with realm keys
           themeStore.realmThemes = decodeThemes(themes).realm;
-          decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme._id === themeIdentifier || realmTheme.name === themeIdentifier) || {};
+          decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme._id === themeIdentifier || realmTheme.name === themeIdentifier);
         }
       }
     } catch (error) {
       showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingTheme'));
       throw error;
+    }
+    if (!decodedTheme) {
+      removeThemeIdFromLocalStorage(themeIdentifier);
+      // If we don't have a theme, set the default theme
+      decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme.isDefault) ?? {};
     }
     // Add in defaults for any missing values
     each(themeConstants.DEFAULT_THEME_PARAMS, (value, key) => {

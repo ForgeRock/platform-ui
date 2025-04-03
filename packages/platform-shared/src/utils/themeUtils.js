@@ -10,6 +10,7 @@ import { convertBase64ToString, convertStringToBase64 } from '@forgerock/platfor
 import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
 import uuid from 'uuid/v4';
 
+import store from '@/store';
 /**
  * Base64 decode any script content in the passed theme
  * @param {Object} themeToDecode - details of theme
@@ -78,7 +79,7 @@ export function encodeThemes(themes) {
   return encodedThemes;
 }
 
-/**
+/*
  * Adds a provided theme to the themerealm endpoint object, or updates an existing theme
  * @param {Object} decodedThemes The themerealm endpoint object in a decoded state
  * @param {Object} themeToSave Individual theme object to add/update
@@ -118,5 +119,19 @@ export function updateThemerealmObject(decodedThemes, themeToSave, realm) {
         });
       }
     });
+  }
+}
+
+/*
+* Remove the theme id from local storage if it matches the provided theme id
+* @param {String} themeId - The theme id to check
+* @returns void
+*/
+export function removeThemeIdFromLocalStorage(themeId) {
+  if (store.state.SharedStore.webStorageAvailable) {
+    const storedThemeId = localStorage.getItem('theme-id');
+    if (storedThemeId === themeId) {
+      localStorage.removeItem('theme-id');
+    }
   }
 }

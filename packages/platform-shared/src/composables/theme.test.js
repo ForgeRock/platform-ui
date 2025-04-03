@@ -6,6 +6,8 @@
  */
 
 import * as ThemeApi from '@forgerock/platform-shared/src/api/ThemeApi';
+import { flushPromises } from '@vue/test-utils';
+import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
 import { setupTestPinia } from '../utils/testPiniaHelpers';
 import useTheme from './theme';
 
@@ -31,6 +33,26 @@ describe('theme composable', () => {
       await loadTheme('testRealm', 'ui/theme-testTheme');
       expect(theme.value._id).toBe('ui/theme-testTheme');
     });
+
+    it('Should return the default theme when the requested theme is not found', async () => {
+      const realmThemes = {
+        realm: {
+          testRealm: [
+            {
+              _id: 'ui/theme-defaultTheme',
+              isDefault: true,
+              primaryColor: '#aaaaaa',
+            },
+            { _id: 'ui/theme-otherTheme', primaryColor: '#bbbbbb' },
+          ],
+        },
+      };
+      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: realmThemes }));
+      setupTestStore('testRealm', realmThemes);
+      const { theme, loadTheme } = useTheme();
+      await loadTheme('testRealm', 'ui/theme-nonExistentTheme');
+      expect(theme.value._id).toBe('ui/theme-defaultTheme');
+    });
   });
 
   describe('saveTheme', () => {
@@ -43,5 +65,67 @@ describe('theme composable', () => {
       await saveTheme('testRealm', { _id: 'ui/theme-testTheme' });
       expect(saveSpy).toHaveBeenCalled();
     });
+  });
+});
+
+describe('deleteTheme', () => {
+  const mockRemoveItem = jest.fn();
+  const mockGetItem = jest.fn();
+
+  beforeEach(() => {
+    setupTestPinia();
+
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        getItem: mockGetItem,
+        removeItem: mockRemoveItem,
+      },
+      writable: true,
+    });
+
+    mockRemoveItem.mockReset();
+    mockGetItem.mockReset();
+  });
+
+  it('should delete a theme, call saveThemes, and remove from localStorage', async () => {
+    const testRealm = 'testRealm';
+    const testThemeId = 'ui/theme-testTheme';
+    const otherTheme = { _id: 'ui/theme-otherTheme' };
+
+    const themeStore = useThemeStore();
+
+    // Initial state with two themes
+    themeStore.realmThemes = {
+      [testRealm]: [
+        { _id: testThemeId },
+        otherTheme,
+      ],
+    };
+
+    // Mock return value of saveThemes
+    ThemeApi.saveThemes.mockResolvedValue({
+      data: {
+        realm: {
+          [testRealm]: [otherTheme], // Only one theme should remain
+        },
+      },
+    });
+
+    // Simulate localStorage containing the full theme ID
+    mockGetItem.mockReturnValue(testThemeId);
+
+    const { deleteTheme } = useTheme();
+    await deleteTheme(testRealm, testThemeId);
+    await flushPromises();
+
+    // Assertions
+    expect(ThemeApi.saveThemes).toHaveBeenCalledWith(expect.objectContaining({
+      _id: 'ui/themerealm',
+      realm: {
+        [testRealm]: [otherTheme],
+      },
+    }));
+    expect(themeStore.realmThemes[testRealm]).toEqual([otherTheme]);
+    expect(mockRemoveItem).toHaveBeenCalledWith('theme-id');
   });
 });
