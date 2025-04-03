@@ -368,7 +368,9 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .card h4,
+      #app .card .h4,
       #app .card h5,
+      #app .card .h5,
       #app .card .table.b-table > thead > tr {
         color: {{ theme.accountCardHeaderColor || '#23282e' }};
       }
