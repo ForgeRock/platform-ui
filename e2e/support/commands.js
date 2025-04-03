@@ -1,14 +1,16 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright 2025 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 import '@testing-library/cypress/add-commands';
 import 'cypress-file-upload';
 import '@neuralegion/cypress-har-generator/commands';
 import generatePageURL from '../utils/adminUtils';
+import { importJourneysViaAPI, deleteJourneysViaAPI } from '../utils/manageJourneys';
 
 // Method that fills in the Admin Login form and sends it
 function fillAndSendLoginForm() {
@@ -163,4 +165,38 @@ Cypress.Commands.add('readFixtureFile', (fileName) => {
 */
 Cypress.Commands.add('navigateToPage', (page, isUrl = false) => {
   cy.visit(generatePageURL(page, isUrl));
+});
+
+Cypress.Commands.add('visitJourneyUrl', (journeyUrl) => {
+  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.visit(journeyUrl);
+  cy.wait('@themerealmConfig', { timeout: 10000 });
+});
+
+/**
+ * !!! BEWARE !!! Use this ONLY on fixtures that do not replace any base values, scripts, Journeys, etc
+ * This function overrides EVERY imported Journey including ALL dependencies using the API parsing fixtures in the passed array
+ * @param {Array} fixtureArray an array containing the name of test fixture files to parse and import all dependencies
+ * @param {Boolean} login a boolean to tell if tests should authenticate (in case admin is not already logged in)
+ */
+Cypress.Commands.add('importTreesViaAPI', (fixtureArray) => {
+  // Login as admin first
+  cy.loginAsAdmin();
+
+  // Use API to import all Journeys & required data
+  importJourneysViaAPI(fixtureArray);
+});
+
+/**
+ * !!! BEWARE !!! Use this ONLY on fixtures that do not replace any base values, scripts, Journeys, etc
+ * This function deletes EVERY imported Journey including ALL dependencies using the API parsing fixtures in the passed array
+ * @param {Array} fixtureArray an array containing the name of test fixture files to parse and remove all dependencies
+ * @param {Boolean} login a boolean to tell if tests should authenticate (in case admin is not already logged in)
+ */
+Cypress.Commands.add('deleteTreesViaAPI', (fixtureArray) => {
+  // Login as admin first
+  cy.loginAsAdmin();
+
+  // Use API to delete all Journeys & required data
+  deleteJourneysViaAPI(fixtureArray);
 });

@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright 2025 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 /**
@@ -42,4 +43,5 @@ export const JOURNEYS = {
   DEFAULT_LOGIN: { name: 'Login', path: 'Login' },
   SCRIPTED_CONFIRMATION_CALLBACKS: { name: 'Scripted Confirmation Callbacks', path: 'QA%20-%20Scripted%20Decision%20Node%20with%20ConfirmationCallbacks#/' },
   ALL_SECTIONS_ACTIVE: { name: 'All sections active', path: 'QA%20-%20Default%20Login%20with%20all%20enduser%20sections%20active' },
+  GO_TO_ON_FAIL_URL_VALIDATION: { name: 'gotoOnFail URL validation', path: 'QA%20-%20gotoOnFail%20URL%20validation', fileName: 'QA-gotoOnFail_URL_validation_template' },
 };

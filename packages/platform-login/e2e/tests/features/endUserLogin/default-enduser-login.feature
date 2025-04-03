@@ -24,7 +24,7 @@ Feature: Enduser Login
     When user enters a <usernameType> username
     And user enters a <passwordType> password
     And clicks on the Login button 1 time
-    # Then User should see "Login failure" error message // This scenario is locked by bug https://bugster.forgerock.org/jira/browse/IAM-1930 waiting for resolution (same as old code)
+    # Then "Login failure" error message is displayed // This scenario is locked by bug https://bugster.forgerock.org/jira/browse/IAM-1930 waiting for resolution (same as old code)
     Then page url does not contain "/dashboard"
     Examples:
       | usernameType | passwordType |
@@ -34,4 +34,4 @@ Feature: Enduser Login
   # Test cases: C20746
   Scenario: Login with empty username and password
     When clicks on the Login button 6 times
-    Then user should see "Login failure" error message
+    Then "Login failure" error message is displayed

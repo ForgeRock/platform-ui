@@ -6,13 +6,17 @@
  */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import generateJourneyURL from '../../../../e2e/utils/journeyUtils';
+import { generateJourneyURL } from '../../../../e2e/utils/journeyUtils';
 
 Given('user navigates to {journey} journey', (journeyName) => {
-  const url = generateJourneyURL(journeyName);
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
-  cy.visit(url);
-  cy.wait('@themerealmConfig', { timeout: 10000 });
+  const journeyUrl = generateJourneyURL(journeyName);
+  cy.visitJourneyUrl(journeyUrl);
+});
+
+When('user navigates to journey {journey} url with param {string} and value {string}', (journeyName, param, paramValue) => {
+  const journeyUrl = generateJourneyURL(journeyName);
+  const joureyUrlWithParams = `${journeyUrl}&${param}=${paramValue}`;
+  cy.visitJourneyUrl(joureyUrlWithParams);
 });
 
 When('cleanup {string} Journey with all dependencies', (journeyName) => {
@@ -31,17 +35,6 @@ When('user navigates back', () => {
  */
 Then('admin should see a login failure message', () => {
   cy.findAllByRole('alert').contains('Login failure').should('be.visible');
-});
-
-/**
- * Verifies that the user is redirected to the user dashboard based on the scenario.
- *
- * @param {string} scenario - The scenario which can be 'should' or 'should not'.
- *                            'should' means the user should be redirected to the dashboard.
- *                            'should not' means the user should not be redirected to the dashboard.
- */
-Then('user should see {string} error message', (errorMessage) => {
-  cy.findAllByRole('alert').contains(errorMessage).should('be.visible');
 });
 
 /**

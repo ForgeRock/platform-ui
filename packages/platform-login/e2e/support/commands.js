@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { importJourneysViaAPI, deleteJourneysViaAPI } from '../../../../e2e/utils/manageJourneys';
-
 /**
  * Use the admin UI tree import feature to import all trees in the passed array
  * @param {Array} fixtureArray an array containing the name of test fixture files to import as trees
@@ -32,32 +30,4 @@ Cypress.Commands.add('importTrees', (fixtureArray) => {
     cy.contains('Import Complete', { timeout: 10000 }).should('be.visible');
     cy.findByRole('button', { name: 'Done' }).click();
   });
-});
-
-/**
- * !!! BEWARE !!! Use this ONLY on fixtures that do not replace any base values, scripts, Journeys, etc
- * This function overrides EVERY imported Journey including ALL dependencies using the API parsing fixtures in the passed array
- * @param {Array} fixtureArray an array containing the name of test fixture files to parse and import all dependencies
- * @param {Boolean} login a boolean to tell if tests should authenticate (in case admin is not already logged in)
- */
-Cypress.Commands.add('importTreesViaAPI', (fixtureArray) => {
-  // Login as admin first
-  cy.loginAsAdmin();
-
-  // Use API to import all Journeys & required data
-  importJourneysViaAPI(fixtureArray);
-});
-
-/**
- * !!! BEWARE !!! Use this ONLY on fixtures that do not replace any base values, scripts, Journeys, etc
- * This function deletes EVERY imported Journey including ALL dependencies using the API parsing fixtures in the passed array
- * @param {Array} fixtureArray an array containing the name of test fixture files to parse and remove all dependencies
- * @param {Boolean} login a boolean to tell if tests should authenticate (in case admin is not already logged in)
- */
-Cypress.Commands.add('deleteTreesViaAPI', (fixtureArray) => {
-  // Login as admin first
-  cy.loginAsAdmin();
-
-  // Use API to delete all Journeys & required data
-  deleteJourneysViaAPI(fixtureArray);
 });

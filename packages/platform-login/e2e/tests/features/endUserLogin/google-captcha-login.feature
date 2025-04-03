@@ -18,7 +18,7 @@ Feature: Google Captcha Login
     And the user solves the captcha
     Then the "Next" button should be enabled
     When clicks on the Login button 1 time
-    Then user should see "Login failure" error message
+    Then "Login failure" error message is displayed
 
   # Test Cases: C25107
   Scenario: Can't login with wrong password and Captcha resolved
@@ -27,7 +27,7 @@ Feature: Google Captcha Login
     And the user solves the captcha
     Then the "Next" button should be enabled
     When clicks on the Login button 1 time
-    Then user should see "Login failure" error message
+    Then "Login failure" error message is displayed
 
   # Test Cases: C25108
   Scenario: Login with correct credentials and captcha resolved
