@@ -55,6 +55,7 @@ const defaultState = {
   enableThemeMigration: false,
   enableManagedObjectSchemaEditor: false,
   overrideSessionTimeoutsEnabled: false,
+  enableMonitoringUI: false,
 };
 
 const mutations = {
@@ -136,6 +137,9 @@ const mutations = {
       }
       if (env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR === 'true' || env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR === true) {
         state.enableManagedObjectSchemaEditor = env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR;
+      }
+      if (env.VUE_APP_ENABLE_MONITORING_UI === 'true' || env.VUE_APP_ENABLE_MONITORING_UI === true) {
+        state.enableMonitoringUI = env.VUE_APP_ENABLE_MONITORING_UI;
       }
     }
 
