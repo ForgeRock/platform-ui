@@ -15,7 +15,8 @@ of the MIT license. See the LICENSE file for details. -->
       :columns="userColumns"
       :query-fields="queryFields"
       :resource-function="getManagedResourceList"
-      @row-clicked="navigateToUserDetails">
+      @row-clicked="navigateToUserDetails"
+      @add-clicked="showAddUserModal">
       <template #cell(name)="{ item }">
         <FrUserBasicInfo
           :pic-dimension="28"
@@ -32,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BBadge>
       </template>
     </FrGovResourceList>
+    <FrAddUserModal />
   </BContainer>
 </template>
 
@@ -52,10 +54,13 @@ import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroup
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getResourceTypePrivilege } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import FrAddUserModal from './Add/AddUserModal';
 import i18n from '@/i18n';
 
 // composables
 const router = useRouter();
+const { bvModal } = useBvModal();
 
 // data
 const userViewPrivileges = ref([]);
@@ -90,6 +95,13 @@ const availableColumns = [
     permissions: ['accountStatus'],
   },
 ];
+
+/**
+ * Displays the modal for adding a new user.
+ */
+function showAddUserModal() {
+  bvModal.value.show('add-user-modal');
+}
 
 /**
  * Navigates to the details page of the specified user.

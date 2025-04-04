@@ -109,8 +109,8 @@ describe('AddEntitlementModal', () => {
 
     expect(nextButton.attributes('class')).not.toMatch('disabled');
     nextButton.trigger('click');
-    expect(wrapper.vm.step).toBe(1);
     await flushPromises();
+    expect(wrapper.vm.step).toBe(1);
   });
 
   it('second step shows default entitlement form and can calls to submit request', async () => {
