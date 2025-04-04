@@ -231,16 +231,3 @@ export function actionNodeListOutcomes(nodeType, nodeTypeConfig = {}) {
     { withCredentials: true },
   );
 }
-
-/**
-  * Returns a specific node types outcomes
-  * @param {String} nodeType Id specifiying a specific node type
-  *
-  * @returns {Promise}
-  */
-export function getAllNodesOfType(nodeType) {
-  return generateAmApi(getTreeApiConfig()).get(
-    `/nodes/${nodeType}?_queryFilter=true`,
-    { withCredentials: true },
-  );
-}

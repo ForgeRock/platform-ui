@@ -24,27 +24,6 @@ import globalStore from '@/store';
 
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 
-const defaultThemeParams = {
-  accountCardBackgroundColor: '#ffffff',
-  accountCardShadow: 3,
-  accountFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
-  accountFooterEnabled: false,
-  accountTableRowHoverColor: '#f6f8fa',
-  buttonRounded: 5,
-  dangerColor: '#dc3545',
-  favicon: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
-  journeyHeader: '<div class="d-flex justify-content-center py-4 flex-grow-1">Header Content</div>',
-  journeyHeaderEnabled: false,
-  journeyLayout: 'card',
-  linkedTrees: [],
-  logo: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
-  logoProfileCollapsed: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
-  name: '',
-  primaryColor: '#324054',
-  primaryOffColor: '#242E3C',
-  textColor: '#ffffff',
-};
-
 const store = {
   state: {
     SharedStore: {
@@ -111,9 +90,7 @@ describe('App.vue', () => {
     TasksApi.getUserFulfillmentTasks = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     ManagedResourceApi.getManagedResourceList = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [] } }));
     ServerinfoApi.getIdmServerInfo = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
-    ThemeApi.getRealmThemes = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [defaultThemeParams] } }));
-    ThemeApi.getLegacyThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { '/': [] } } }));
-    ThemeApi.getThemeMetadata = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+    ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { '/': [] } } }));
     getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
   });
 

@@ -150,7 +150,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.loginAsEnduser(userName, userPassword);
 
       // Check that the Theme is correctly applied
-      cy.get('div.ping-logo:visible')
+      cy.get('div.ping-logo')
         .should('have.css', 'background-image', 'url("https://mods.vorondesign.com/files/FDqscS50BRdqtEhUK1U9hA/%2FVPlainL%2F1ColorLayer%2FVDesignPlainLorig.png")');
     });
 
