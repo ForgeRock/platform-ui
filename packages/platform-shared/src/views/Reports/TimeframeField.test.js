@@ -22,6 +22,14 @@ describe('Timeframe field for running reports', () => {
         plugins: [i18n],
       },
       props: {
+        validation: 'required',
+        validationRef: {
+          getMeta() {
+            return {
+              valid: true,
+            };
+          },
+        },
         ...props,
       },
     });
@@ -103,8 +111,8 @@ describe('Timeframe field for running reports', () => {
 
         const startDateUpdateEmit = wrapper.emitted('start-date-update');
         const endDateUpdateEmit = wrapper.emitted('end-date-update');
-        const emittedStartLastIndex = startDateUpdateEmit.length - 1;
-        const emittedEndLastIndex = endDateUpdateEmit.length - 1;
+        const emittedStartLastIndex = startDateUpdateEmit.length - 2;
+        const emittedEndLastIndex = endDateUpdateEmit.length - 2;
 
         // we only want to check for the last emitted values in the event loop
         expect(startDateUpdateEmit[emittedStartLastIndex]).toEqual([false]);

@@ -3,104 +3,112 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BCard v-if="isLoading">
-    <FrSpinner class="py-5" />
-  </BCard>
-  <BCard
-    v-else
-    :class="reportHasNoParameters ? '' : 'fr-run-report-card'"
-    :footer-border-variant="reportHasNoParameters ? 'white' : 'default'"
-    :no-body="reportHasNoParameters">
-    <BContainer
-      v-if="Object.keys(parameters).length"
-      class="p-0"
-      data-testid="fr-run-report-container">
-      <template
-        v-for="(field, fieldKey) in parameters"
-        :key="fieldKey">
-        <BRow
-          v-if="field.component"
-          class="mb-3">
-          <BCol
-            class="d-none d-md-flex align-items-center fr-run-report-label "
-            md="3"
-            :data-testid="`label-${field.label}`">
-            {{ field.label }}
-          </BCol>
-          <BCol md="9">
-            <FrTimeframeField
-              v-if="field.component === 'FrTimeframeField'"
-              :label="field.label"
-              @end-date-update="parameters.endDate.model = $event"
-              @start-date-update="parameters.startDate.model = $event" />
-            <FrField
-              v-else-if="field.component === 'FrField'"
-              v-model="field.model"
-              :description="field.description"
-              :internal-search="field.internalSearch"
-              :label="field.label"
-              :name="field.label"
-              :options="field.enums || field.request?.data || field.options || []"
-              :show-no-results="true"
-              :taggable="field.taggable"
-              :testid="field.testId"
-              :type="field.type"
-              @search-change="searchDebounce($event, fieldKey)"
-              @tag="field.selectOptionsSetter($event)"
-              open-direction="bottom">
-              <template
-                v-if="field.type === 'multiselect'"
-                #tag="{ option, remove }">
-                <span class="multiselect__tag">
-                  <BMedia
-                    no-body
-                    class="d-flex align-items-center">
+  <VeeForm
+    ref="validation"
+    v-slot="{ meta: { valid } }"
+    as="span">
+    <BCard v-if="isLoading">
+      <FrSpinner class="py-5" />
+    </BCard>
+    <BCard
+      v-else
+      :class="reportHasNoParameters ? '' : 'fr-run-report-card'"
+      :footer-border-variant="reportHasNoParameters ? 'white' : 'default'"
+      :no-body="reportHasNoParameters">
+      <BContainer
+        v-if="Object.keys(parameters).length"
+        class="p-0"
+        data-testid="fr-run-report-container">
+        <template
+          v-for="(field, fieldKey) in parameters"
+          :key="fieldKey">
+          <BRow
+            v-if="field.component"
+            class="mb-3">
+            <BCol
+              class="d-none d-md-flex align-items-center fr-run-report-label "
+              md="3"
+              :data-testid="`label-${field.label}`">
+              {{ field.label }}
+            </BCol>
+            <BCol md="9">
+              <FrTimeframeField
+                v-if="field.component === 'FrTimeframeField'"
+                :label="field.label"
+                :validation-ref="$refs.validation"
+                @end-date-update="parameters.endDate.model = $event"
+                @start-date-update="parameters.startDate.model = $event"
+                validation="required" />
+              <FrField
+                v-else-if="field.component === 'FrField'"
+                v-model="field.model"
+                :description="field.description"
+                :internal-search="field.internalSearch"
+                :label="field.label"
+                :name="field.label"
+                :options="field.enums || field.request?.data || field.options || []"
+                :show-no-results="true"
+                :taggable="field.taggable"
+                :testid="field.testId"
+                :type="field.type"
+                @search-change="searchDebounce($event, fieldKey)"
+                @tag="field.selectOptionsSetter($event)"
+                open-direction="bottom"
+                validation="required">
+                <template
+                  v-if="field.type === 'multiselect'"
+                  #tag="{ option, remove }">
+                  <span class="multiselect__tag">
+                    <BMedia
+                      no-body
+                      class="d-flex align-items-center">
+                      <BMediaBody class="pl-1">
+                        <div class="text-dark">
+                          {{ option.text }}
+                        </div>
+                      </BMediaBody>
+                    </BMedia>
+                    <BButton
+                      class="border-0 p-0 bg-transparent fr-close-icon"
+                      @click="remove(option)">
+                      <FrIcon name="close" />
+                    </BButton>
+                  </span>
+                </template>
+                <template #option="{ option }">
+                  <BMedia no-body>
                     <BMediaBody class="pl-1">
-                      <div class="text-dark">
+                      <div class="mb-1 text-dark">
                         {{ option.text }}
                       </div>
                     </BMediaBody>
                   </BMedia>
-                  <BButton
-                    class="border-0 p-0 bg-transparent fr-close-icon"
-                    @click="remove(option)">
-                    <FrIcon name="close" />
-                  </BButton>
-                </span>
-              </template>
-              <template #option="{ option }">
-                <BMedia no-body>
-                  <BMediaBody class="pl-1">
-                    <div class="mb-1 text-dark">
-                      {{ option.text }}
-                    </div>
-                  </BMediaBody>
-                </BMedia>
-              </template>
-            </FrField>
-          </BCol>
-        </BRow>
-      </template>
-    </BContainer>
+                </template>
+              </FrField>
+            </BCol>
+          </BRow>
+        </template>
+      </BContainer>
 
-    <template #footer>
-      <div :class="`d-flex justify-content-${reportHasNoParameters ? 'between' : 'end'} align-items-center`">
-        <p
-          v-if="reportHasNoParameters"
-          class="text-dark m-0 text-capitalize">
-          <strong>{{ $t('reports.tabs.runReport.title') }}</strong>
-        </p>
-        <FrButtonWithSpinner
-          data-testid="run-report-button"
-          variant="primary"
-          :button-text="reportHasNoParameters ? $t('reports.tabs.runReport.runNow') : $t('reports.tabs.runReport.title')"
-          :disabled="isSubmitting"
-          :spinner-text="$t('common.submitting')"
-          :show-spinner="isSubmitting"
-          @click="submitRunReport" />
-      </div>
-    </template>
-  </BCard>
+      <template #footer>
+        <div :class="`d-flex justify-content-${reportHasNoParameters ? 'between' : 'end'} align-items-center`">
+          <p
+            v-if="reportHasNoParameters"
+            class="text-dark m-0 text-capitalize">
+            <strong>{{ $t('reports.tabs.runReport.title') }}</strong>
+          </p>
+          <FrButtonWithSpinner
+            data-testid="run-report-button"
+            variant="primary"
+            :button-text="reportHasNoParameters ? $t('reports.tabs.runReport.runNow') : $t('reports.tabs.runReport.title')"
+            :disabled="isSubmitting || !valid"
+            :spinner-text="$t('common.submitting')"
+            :show-spinner="isSubmitting"
+            @click="submitRunReport" />
+        </div>
+      </template>
+    </BCard>
+  </VeeForm>
 </template>
 
 <script setup>
@@ -131,6 +139,7 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import { debounce } from 'lodash';
+import { Form as VeeForm } from 'vee-validate';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { runAnalyticsTemplate } from '@forgerock/platform-shared/src/api/AutoApi';
 import FrField from '@forgerock/platform-shared/src/components/Field';

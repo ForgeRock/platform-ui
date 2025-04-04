@@ -273,7 +273,7 @@ describe('Run Report component', () => {
         } else if (schema.type === 'date') {
           await parameterElement.find('input[type="date"]').setValue('2025-01-12');
         }
-
+        await flushPromises();
         const submitButton = findByText(wrapper, 'button', 'Run Report');
         await submitButton.trigger('click');
 
@@ -287,13 +287,15 @@ describe('Run Report component', () => {
     it('submits the Run Report with a rejected response', async () => {
       jest.clearAllMocks();
       // We do not need to loop through all fields to check the catch block since
-      // it is the same logic for all fields so hard-coding applications here is fine.
-      wrapper = setup({ reportConfig: { parameters: { accountStatus: {} } } });
+      // it is the same logic for all fields so hard-coding accountStatus here is fine.
+      wrapper = setup({ reportConfig: { parameters: { accountStatus: { type: 'string', source: 'basic' } } } });
       await flushPromises();
 
       const mockError = new Error();
       const runReportSpyReject = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockRejectedValue(mockError);
       const errorSpy = jest.spyOn(notification, 'showErrorMessage');
+      await findByTestId(wrapper, 'input-fr-field-accountStatus').setValue('enabled');
+      await flushPromises();
       const submitButton = findByTestId(wrapper, 'run-report-button');
 
       expect(submitButton.attributes().disabled).toBeUndefined();
@@ -327,6 +329,7 @@ describe('Run Report component', () => {
       const runReportSpy = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockImplementation(() => Promise.resolve({}));
       const runReportButton = findByText(wrapper, 'button', 'Run Report');
       await wrapper.find('input[type="text"]').setValue('Parameter Value');
+      await flushPromises();
       await runReportButton.trigger('click');
       expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { ParameterID: 'Parameter Value' });
     });
