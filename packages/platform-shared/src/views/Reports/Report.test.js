@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { createTooltipContainer, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
@@ -21,6 +22,9 @@ import {
   getManagedResourceListStub,
 } from './RunReportStubs';
 import HistoryStubs from './ReportHistoryStubs';
+
+const rules = ValidationRules.getRules(i18n);
+ValidationRules.extendRules(rules);
 
 jest.mock('vue-router', () => ({
   useRoute: jest.fn(() => ({ params: { template: 'template-name' } })),
