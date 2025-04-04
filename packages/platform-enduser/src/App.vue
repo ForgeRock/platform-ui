@@ -217,7 +217,7 @@ export default {
      */
     setupDelegatedAdminMenuItems(privileges) {
       // if governance user lcm is enabled, we hide the standard da menu item for alpha users
-      const hideAlphaUsersMenuItem = this.$store.state.govlcmuser;
+      const hideAlphaUsersMenuItem = this.$store.state.govLcmUser;
       this.menuItems.push(...getDelegatedAdminMenuItems(privileges, hideAlphaUsersMenuItem, true));
     },
     /**

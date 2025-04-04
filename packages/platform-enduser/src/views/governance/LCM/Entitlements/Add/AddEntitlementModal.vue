@@ -29,6 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
               <img
                 class="d-flex justify-content-center align-items-center"
                 height="36"
+                :onerror="onImageError"
                 :src="getApplicationLogo(application)"
                 :alt="$t('common.logo')">
             </BMediaAside>
@@ -106,6 +107,7 @@ import {
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
