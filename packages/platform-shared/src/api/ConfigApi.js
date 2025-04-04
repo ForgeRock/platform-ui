@@ -19,6 +19,21 @@ export function getUiConfig() {
 }
 
 /**
+ * Returns UI configuration file and additionally includes the server configured language
+ * without authentication
+ * @returns {Promise}
+ */
+export function getUiConfigNoSession() {
+  return generateIdmApi({
+    headers: {
+      'X-OpenIDM-NoSession': true,
+      'X-OpenIDM-Username': 'anonymous',
+      'X-OpenIDM-Password': 'anonymous',
+    },
+  }).get('/info/uiconfig');
+}
+
+/**
  * Retrieves a config file from the config store
  *
  * @returns {Promise} API promise with return config file
