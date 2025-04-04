@@ -43,21 +43,32 @@ describe('App.vue', () => {
   }
 
   describe('@unit', () => {
-    const testThemeResponse = {
-      _id: 'ui/theme-testTheme',
-      primaryColor: '#ffffff',
-      secondaryColor: '#eeeeee',
-      pageTitle: '#cccccc',
+    const themerealmResponse = {
+      data: {
+        realm: {
+          testRealm: [
+            {
+              _id: 'themeId',
+              linkedTrees: ['treeId'],
+              primaryColor: '#ffffff',
+              secondaryColor: '#eeeeee',
+              pageTitle: '#cccccc',
+            },
+            {
+              _id: 'nodeThemeId',
+              linkedTrees: [],
+              primaryColor: '#ffffff',
+              secondaryColor: '#eeeeee',
+              pageTitle: '#cccccc',
+            },
+          ],
+        },
+      },
     };
     window.document.getElementById = () => ({ href: '' });
-    ThemeApi.getThemeMetadata = jest.fn().mockReturnValue(Promise.resolve({ data: { defaultRealmThemeId: { testRealm: 'ui/theme-testTheme' } } }));
-    ThemeApi.getRealmTheme = jest.fn().mockReturnValue(Promise.resolve({ data: { _id: 'ui/theme-testTheme' } }));
-    ThemeApi.getRealmThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [{ _id: 'ui/theme-defaultThemeId' }, { _id: 'ui/theme-treeThemeId' }] } }));
-    ThemeApi.getLegacyThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { '/': [] } } }));
-    ThemeApi.getRealmThemeByName = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [{ _id: 'ui/theme-defaultThemeId' }] } }));
+    ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { '/': [] } } }));
     describe('theme tests for single config file theme storage', () => {
       it('sets up theme using default realm theme, but doesn\'t store in localStorage when no node theme id or tree id is specified', async () => {
-        ThemeApi.getThemeMetadata.mockReturnValue(Promise.resolve({ data: { defaultRealmThemeId: { testRealm: 'ui/theme-defaultThemeId' } } }));
         const wrapper = shallowMountComponent();
         await flushPromises();
 
@@ -70,50 +81,34 @@ describe('App.vue', () => {
       });
 
       it('sets up theme using node theme id when specified', async () => {
-        ThemeApi.getRealmTheme.mockReturnValue(Promise.resolve({ data: testThemeResponse }));
+        ThemeApi.getThemes.mockReturnValue(Promise.resolve(themerealmResponse));
         const wrapper = shallowMountComponent();
         await flushPromises();
 
-        await wrapper.vm.setupTheme('/testRealm', null, 'ui/theme-nodeThemeId');
+        await wrapper.vm.setupTheme('/testRealm', null, 'nodeThemeId');
         await flushPromises();
-        expect(localStorage.getItem('theme-id')).toBe('ui/theme-nodeThemeId');
+        expect(localStorage.getItem('theme-id')).toBe('nodeThemeId');
         expect(wrapper.vm.theme.primaryColor).toBe('#ffffff');
         expect(wrapper.vm.theme.secondaryColor).toBe('#eeeeee');
         expect(wrapper.vm.theme.pageTitle).toBe('#cccccc');
       });
 
       it('sets up theme using tree id when specified', async () => {
-        ThemeApi.getRealmTheme.mockReturnValue(Promise.resolve({ data: testThemeResponse }));
-        ThemeApi.getThemeMetadata.mockReturnValue(Promise.resolve({ data: { linkedTrees: { testRealm: { treeId: 'ui/theme-treeThemeId' } }, defaultRealmThemeId: { testRealm: 'ui/theme-testTheme' } } }));
+        ThemeApi.getThemes.mockReturnValue(Promise.resolve(themerealmResponse));
         const wrapper = shallowMountComponent();
         await flushPromises();
 
         await wrapper.vm.setupTheme('/testRealm', 'treeId', null);
-        expect(localStorage.getItem('theme-id')).toBe('ui/theme-treeThemeId');
+        expect(localStorage.getItem('theme-id')).toBe('themeId');
         expect(wrapper.vm.theme.primaryColor).toBe('#ffffff');
         expect(wrapper.vm.theme.secondaryColor).toBe('#eeeeee');
         expect(wrapper.vm.theme.pageTitle).toBe('#cccccc');
       });
-
-      it('gracefully continues when ThemeApi.getThemeMetadata fails', async () => {
-        ThemeApi.getRealmTheme.mockReturnValue(Promise.resolve({ data: { _id: 'ui/theme-defaultTheme' } }));
-        const spy = jest.spyOn(ThemeApi, 'getThemeMetadata').mockImplementation(() => Promise.reject(new Error('API Error')));
-        const wrapper = shallowMountComponent();
-        await flushPromises();
-
-        await wrapper.vm.setupTheme('/testRealm', null, null);
-        await expect(spy).rejects.toThrow('API Error');
-        expect(wrapper.vm.theme.primaryColor).toBe('#324054');
-        expect(wrapper.vm.theme.secondaryColor).toBe('#69788b');
-        expect(wrapper.vm.theme.pageTitle).toBe('#23282e');
-      });
     });
 
-    describe('theme tests for legacy theme storage', () => {
-      it('sets up theme using legacy themes', async () => {
-        ThemeApi.getThemeMetadata.mockReturnValue(Promise.resolve({ data: {} }));
-        ThemeApi.getRealmThemes.mockReturnValue(Promise.resolve({ data: { testRealm: [{ _id: 'legacyThemeId', linkedTrees: ['treeId'] }] } }));
-        ThemeApi.getLegacyThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [{ _id: 'ui/theme-testTheme', linkedTrees: ['treeId'] }] } } }));
+    describe('theme tests for theme storage', () => {
+      it('sets up theme', async () => {
+        ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [{ _id: 'ui/theme-testTheme', linkedTrees: ['treeId'] }] } } }));
 
         const wrapper = shallowMountComponent();
         await flushPromises();
@@ -122,16 +117,16 @@ describe('App.vue', () => {
         expect(localStorage.getItem('theme-id')).toBe('ui/theme-testTheme');
       });
 
-      it('sets up theme using default theme from legacy themes', async () => {
+      it('sets up theme using default theme', async () => {
         localStorage.clear();
-        ThemeApi.getThemeMetadata.mockReturnValue(Promise.resolve({ data: {} }));
-        ThemeApi.getRealmThemes.mockReturnValue(Promise.resolve({ data: { testRealm: [{ _id: 'defaultLegacyThemeId', isDefault: true }] } }));
-        ThemeApi.getLegacyThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [{ _id: 'defaultLegacyThemeId', isDefault: true }] } } }));
+        ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [{ _id: 'defaultLegacyThemeId', isDefault: true }] } } }));
 
         const wrapper = shallowMountComponent();
         await flushPromises();
 
         await wrapper.vm.setupTheme('/testRealm', null, null);
+        await flushPromises();
+
         // Does not save to localStorage unless a tree or node theme id is specified
         expect(localStorage.getItem('theme-id')).toBeNull();
         expect(wrapper.vm.theme.primaryColor).toBe('#324054');

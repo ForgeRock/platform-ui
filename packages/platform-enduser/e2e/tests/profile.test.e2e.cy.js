@@ -90,7 +90,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.loginAsEnduser(userName);
 
       // Redirect to Enduser profile page
-      cy.findByRole('link', { name: 'Profile' }).should('be.visible').click();
+      cy.findByRole('link', { name: 'Profile' }).click();
 
       // Check link in the side menu is active
       cy.findByRole('link', { name: 'Profile' }).should('have.class', 'router-link-active');

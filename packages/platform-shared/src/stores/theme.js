@@ -15,17 +15,13 @@ import { ref } from 'vue';
  */
 // eslint-disable-next-line import/prefer-default-export
 export const useThemeStore = defineStore('theme', () => {
-  const isLegacyTheme = ref(false);
   const lastQueriedRealm = ref('');
   const realmThemes = ref({});
   const theme = ref(null);
-  const themeConfig = ref(null);
 
   return {
-    isLegacyTheme,
     lastQueriedRealm,
     realmThemes,
     theme,
-    themeConfig,
   };
 });

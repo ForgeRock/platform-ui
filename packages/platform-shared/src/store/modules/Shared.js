@@ -52,7 +52,6 @@ const defaultState = {
   wsfedEnabled: false,
   templateBuilderEnabled: false,
   enableSamlSigningCheckbox: false,
-  enableThemeMigration: false,
   enableManagedObjectSchemaEditor: false,
   overrideSessionTimeoutsEnabled: false,
   enableMonitoringUI: false,
@@ -161,10 +160,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX === true || env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX === 'true') {
       state.enableSamlSigningCheckbox = true;
-    }
-
-    if (env.VUE_APP_ENABLE_THEME_MIGRATION === true || env.VUE_APP_ENABLE_THEME_MIGRATION === 'true') {
-      state.enableThemeMigration = true;
     }
   },
 

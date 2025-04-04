@@ -90,18 +90,14 @@ export default {
       loadTheme,
       localizedFavicon,
       realmThemes,
-      loadThemeConfig,
       theme,
-      themeConfig,
     } = useTheme();
     return {
       getAllThemes,
       loadTheme,
       localizedFavicon,
       realmThemes,
-      loadThemeConfig,
       theme,
-      themeConfig,
     };
   },
   data() {
@@ -144,23 +140,12 @@ export default {
         cleanRealm = cleanRealm.substring(1);
       }
       this.journeyFocusElement = undefined;
-      try {
-        await this.loadThemeConfig();
-      } catch {
-        // If we can't load the theme config, it just means we won't be able to access the themes linked
-        // to a tree, but we can continue without it
-      }
       let themeId = this.$store.state.SharedStore.webStorageAvailable ? localStorage.getItem('theme-id') : null;
       if (nodeThemeId) {
         // Prioritize node themes over tree themes
         themeId = nodeThemeId;
-      } else if (this.themeConfig?.linkedTrees) {
-        // Next priority is theme assigned to tree
-        if (this.themeConfig.linkedTrees[cleanRealm]?.[treeId]) {
-          themeId = this.themeConfig.linkedTrees[cleanRealm][treeId];
-        }
-      } else {
-        // We have legacy themes, so we need to check if the tree is linked to a theme in the legacy object
+      } else if (treeId) {
+        // Next priority is theme assigned to tree, so we need to check if the tree is linked to a theme
         await this.getAllThemes();
         const treeTheme = this.realmThemes[cleanRealm]?.find((realmTheme) => (realmTheme.linkedTrees?.includes(treeId)));
         if (treeTheme) {
@@ -170,14 +155,6 @@ export default {
       if (themeId) {
         // A theme was set by a node or tree, so save it to local storage
         this.saveToLocalStorage(themeId);
-      } else if (this.themeConfig?.defaultRealmThemeId) {
-        // else use the default theme for the realm
-        themeId = this.themeConfig.defaultRealmThemeId[cleanRealm];
-      } else {
-        if (!this.realmThemes) {
-          await this.getAllThemes();
-        }
-        themeId = this.realmThemes[cleanRealm]?.find((realmTheme) => realmTheme.isDefault)?._id;
       }
 
       const useStaticTheme = this.$store.state.SharedStore.isFraas && cleanRealm === '/';
