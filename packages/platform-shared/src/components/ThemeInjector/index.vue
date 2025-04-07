@@ -171,6 +171,12 @@ of the MIT license. See the LICENSE file for details. -->
         border-color: {{ theme.primaryColor }}
       }
 
+      .rounded-pill:has(.custom-control.custom-checkbox .custom-control-input:active),
+      .rounded-pill:has(.custom-control.custom-checkbox .custom-control-input:focus),
+      .rounded-pill:has(.custom-control.custom-checkbox .custom-control-input:focus-visible) {
+        box-shadow: 0 0 0 2px {{ buttonFocusBorderColor }} !important;
+      }
+
       .spinner-primary {
         color: {{ theme.primaryColor }};
       }
