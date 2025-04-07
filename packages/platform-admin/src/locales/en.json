@@ -2836,7 +2836,8 @@
     "resetToDefault": "Reset to Default",
     "subTitle": "Update the cookie name for this tenant.",
     "title": "Cookie",
-    "updateCookieFail": "Error updating Cookie Configuration"
+    "updateCookieFail": "Error updating Cookie Configuration",
+    "updateCookieSuccess": "Cookie name successfully updated"
   },
   "csp": {
     "title": "Content Security Policy",
