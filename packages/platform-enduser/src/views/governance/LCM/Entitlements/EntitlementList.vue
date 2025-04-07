@@ -91,7 +91,11 @@ of the MIT license. See the LICENSE file for details. -->
         {{ item.item?.objectType || blankValueIndicator }}
       </template>
       <template #cell(accountAttribute)="{ item }">
-        {{ item.application?.objectTypes?.find((x) => (x.name === item.item?.objectType))?.accountAttribute || blankValueIndicator }}
+        {{
+          item.item?.accountAttribute
+            || item.application?.objectTypes?.find((x) => (x.name === item.item?.objectType))?.accountAttribute
+            || blankValueIndicator
+        }}
       </template>
       <template #cell(owner)="{ item }">
         <FrUserBasicInfo

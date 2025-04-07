@@ -54,6 +54,10 @@ describe('EntitlementList', () => {
               mail: 'christian.marnell@example.com',
             },
           ],
+          item: {
+            accountAttribute: '__user_group_ids__',
+            objectType: 'Group',
+          },
         },
       ],
     },
@@ -70,7 +74,7 @@ describe('EntitlementList', () => {
     },
   }));
 
-  it('has columns for entitlement, display name, owner', async () => {
+  it('has columns for entitlement, display name, owner, object type, and account attribute', async () => {
     wrapper = mountComponent();
     await flushPromises();
 
@@ -78,6 +82,8 @@ describe('EntitlementList', () => {
     expect(entitlementRow.text()).toMatch('Entitlement');
     expect(entitlementRow.text()).toMatch('Display Name');
     expect(entitlementRow.text()).toMatch('Owner');
+    expect(entitlementRow.text()).toMatch('Object Type');
+    expect(entitlementRow.text()).toMatch('Account Attribute');
   });
 
   it('shows the entitlement app name and type', async () => {
@@ -96,6 +102,20 @@ describe('EntitlementList', () => {
     const entitlementRow = wrapper.find('tbody tr');
     expect(entitlementRow.text()).toMatch('Christian Marnell');
     expect(entitlementRow.text()).toMatch('christian.marnell');
+  });
+
+  it('shows account attribute', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+    const entitlementRow = wrapper.find('tbody tr');
+    expect(entitlementRow.text()).toMatch('__user_group_ids__');
+  });
+
+  it('shows object type', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+    const entitlementRow = wrapper.find('tbody tr');
+    expect(entitlementRow.text()).toMatch('Group');
   });
 
   it('can filter by application', async () => {
