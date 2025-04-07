@@ -731,8 +731,8 @@
         "descriptionField": "Description (optional)",
         "nameDesc": "Human-readable name for this node.",
         "descriptionDesc": "Node description to appear with the node.",
-        "categories": "Categories (optional)",
-        "categoriesDesc": "Categories in the nodes menu in which this node will appear.",
+        "category": "Category (optional)",
+        "categoryDesc": "Category in the nodes menu in which this node will appear.",
         "tags": "Tags (optional)",
         "tagsDesc": "Add tags to enhance searchability."
       },
