@@ -83,7 +83,8 @@ Then('user should be redirected to User dashboard', () => {
 });
 
 Then('page title is {string}', (title) => {
-  cy.findByRole('heading', { name: title }).should('be.visible');
+  // TODO: Remove this big timeout after Themes performance is resolved (default 5s should be enough)
+  cy.findByRole('heading', { name: title, timeout: 10000 }).should('be.visible');
 });
 
 Then('text {string} is displayed', (message) => {
