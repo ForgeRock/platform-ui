@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright 2025 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
@@ -86,4 +87,28 @@ Then('enduser account is deleted via API', () => {
   }
 
   deleteIDMUser(Cypress.env('endUserId'));
+});
+
+When('user clicks on {string} Journey redirect link', (link) => {
+  // Set up intercept
+  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
+  // Click on the Journey redirect link
+  cy.findByRole('link', { name: link }).click();
+
+  // TODO: Lower this big timeout after Themes performance is resolved (10s should be more than enough even for bigger Journeys)
+  // Wait for the Journey page to be properly loaded
+  cy.wait('@themerealmConfig', { timeout: 20000 });
+});
+
+When('user navigates back to previous Journey page', () => {
+  // Set up intercept
+  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+
+  // Go back to the previous page
+  cy.go('back');
+
+  // TODO: Lower this big timeout after Themes performance is resolved (10s should be more than enough even for bigger Journeys)
+  // Wait for the Journey page to be properly loaded
+  cy.wait('@themerealmConfig', { timeout: 20000 });
 });

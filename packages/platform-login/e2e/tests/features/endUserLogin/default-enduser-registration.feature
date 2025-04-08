@@ -33,10 +33,10 @@ Feature: Enduser Registration
   # Test Case: C19748
   @cloud
   Scenario: User can navigate to a Sign In from login journey
-    When user clicks on 'Sign In' link
+    When user clicks on 'Sign In' Journey redirect link
     Then page title is 'Sign In'
     And page url contains '/Login'
-    When user navigates back
+    When user navigates back to previous Journey page
     Then page title is 'Sign Up'
     And page url contains 'Registration'
 

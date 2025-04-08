@@ -15,9 +15,15 @@ filterTests(['@cloud'], () => {
         .siblings('input')
         .clear()
         .type(field.text);
+
+      // Wait for the password field to be validated
+      if (field.placeholder === 'Password') {
+        cy.wait('@authenticate', { timeout: 5000 });
+      }
     });
   }
 
+  // TODO: Add a test that will check for the proper password validation after https://pingidentity.atlassian.net/browse/IAM-8550 gets fixed
   describe('Enduser extended registration journey without suspend node and with all nodes options on', () => {
     const realmUrl = Cypress.env('IS_FRAAS') ? '/realms/alpha' : '';
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=alpha&authIndexType=service&authIndexValue=QA%20-%20Extended%20Registration`;
@@ -25,10 +31,6 @@ filterTests(['@cloud'], () => {
       {
         placeholder: 'Username',
         text: random(Number.MAX_SAFE_INTEGER),
-      },
-      {
-        placeholder: 'Password',
-        text: 'Valid.1Pass',
       },
       {
         placeholder: 'First Name',
@@ -71,8 +73,12 @@ filterTests(['@cloud'], () => {
         text: '1999-03-06',
       },
       {
+        placeholder: 'Password',
+        text: 'Rg_GRg9k&e',
+      },
+      {
         placeholder: 'Confirm Password',
-        text: 'Valid.1Pass',
+        text: 'Rg_GRg9k&e',
       },
     ];
 
@@ -109,21 +115,21 @@ filterTests(['@cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
 
       // Successful registration and login
-      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${validFieldData[2].text}`).should('be.visible');
+      cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${validFieldData[1].text}`).should('be.visible');
 
       // Used data is displayed in the user profile
       cy.findByRole('link', { name: 'Profile' }).click();
       cy.findByRole('button', { name: 'Edit Personal Info' }).click();
       cy.findByRole('textbox', { name: 'Username' }).should('have.value', validFieldData[0].text);
-      cy.findByRole('textbox', { name: 'First Name' }).should('have.value', validFieldData[2].text);
-      cy.findByRole('textbox', { name: 'Last Name' }).should('have.value', validFieldData[3].text);
-      cy.findByRole('textbox', { name: 'Email Address' }).should('have.value', validFieldData[4].text);
-      cy.findByRole('textbox', { name: 'Description (optional)' }).should('have.value', validFieldData[5].text);
-      cy.findByRole('textbox', { name: 'Telephone Number (optional)' }).should('have.value', validFieldData[6].text);
-      cy.findByRole('textbox', { name: 'Address 1 (optional)' }).should('have.value', validFieldData[7].text);
-      cy.findByRole('textbox', { name: 'Postal Code (optional)' }).should('have.value', validFieldData[8].text);
-      cy.findByRole('textbox', { name: 'City (optional)' }).should('have.value', validFieldData[9].text);
-      cy.findByRole('textbox', { name: 'Country (optional)' }).should('have.value', validFieldData[10].text);
+      cy.findByRole('textbox', { name: 'First Name' }).should('have.value', validFieldData[1].text);
+      cy.findByRole('textbox', { name: 'Last Name' }).should('have.value', validFieldData[2].text);
+      cy.findByRole('textbox', { name: 'Email Address' }).should('have.value', validFieldData[3].text);
+      cy.findByRole('textbox', { name: 'Description (optional)' }).should('have.value', validFieldData[4].text);
+      cy.findByRole('textbox', { name: 'Telephone Number (optional)' }).should('have.value', validFieldData[5].text);
+      cy.findByRole('textbox', { name: 'Address 1 (optional)' }).should('have.value', validFieldData[6].text);
+      cy.findByRole('textbox', { name: 'Postal Code (optional)' }).should('have.value', validFieldData[7].text);
+      cy.findByRole('textbox', { name: 'City (optional)' }).should('have.value', validFieldData[8].text);
+      cy.findByRole('textbox', { name: 'Country (optional)' }).should('have.value', validFieldData[9].text);
 
       // The registered username can not be used again
       cy.logout();
