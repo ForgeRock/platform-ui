@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,17 +10,15 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdown
         data-testid="status-dropdown"
         variant="link"
-        toggle-class="px-0">
+        toggle-class="text-dark px-0 d-flex">
         <template #button-content>
-          <BButton
-            class="p-0 toolbar-link-text"
-            data-testid="status-dropdown-button"
-            variant="link">
+          <div class="p-0 toolbar-link-text"
+            data-testid="status-dropdown-button">
             <span class="font-weight-bold mr-1">
               {{ `${$t('common.status')}:` }}
             </span>
             {{ selectedStatus.text }}
-          </BButton>
+          </div>
         </template>
 
         <template #default>
