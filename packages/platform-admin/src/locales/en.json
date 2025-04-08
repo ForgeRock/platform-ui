@@ -3240,7 +3240,7 @@
     "noJobsSubtitle": "Any scheduled jobs will appear here.",
     "noSearchResults": "No scheduled jobs found",
     "notScheduled": "Not scheduled",
-    "reconEdit": "Edit in Application",
+    "reconEdit": "Edit in {buttonText}",
     "repeat": "Repeat",
     "runError": "Error starting scheduled job",
     "runEvery": "Run every",
