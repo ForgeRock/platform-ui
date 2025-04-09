@@ -66,6 +66,9 @@ export default function useTheme() {
    * @returns
    */
   async function getTreeTheme(realm = '/', treeId) {
+    if (!realmThemes.value[realm]) {
+      await getAllThemes();
+    }
     const linkedTree = realmThemes.value[realm].find((realmTheme) => realmTheme.linkedTrees.includes(treeId));
     return linkedTree?._id || '';
   }
