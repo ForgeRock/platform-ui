@@ -7,10 +7,12 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import UserList from './UserList';
 import i18n from '@/i18n';
 
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
+jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 
 describe('UserList', () => {
   let wrapper;
@@ -30,8 +32,24 @@ describe('UserList', () => {
           givenName: 'Mike',
           sn: 'Test',
           mail: 'test@test.com',
+          accountStatus: 'active',
         },
       ],
+    },
+  }));
+
+  PrivilegeApi.getResourceTypePrivilege.mockImplementation(() => Promise.resolve({
+    data: {
+      VIEW: {
+        allowed: true,
+        properties: [
+          'userName',
+          'givenName',
+          'sn',
+          'mail',
+          'accountStatus',
+        ],
+      },
     },
   }));
 
@@ -42,6 +60,7 @@ describe('UserList', () => {
     const userRow = wrapper.find('thead tr');
     expect(userRow.text()).toMatch('Name');
     expect(userRow.text()).toMatch('Email');
+    expect(userRow.text()).toMatch('Status');
   });
 
   it('shows the first name, last name, and userName', async () => {
@@ -60,5 +79,37 @@ describe('UserList', () => {
 
     const userRow = wrapper.find('tbody tr');
     expect(userRow.text()).toMatch('test@test.com');
+  });
+
+  it('shows account status', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    const userRow = wrapper.find('tbody tr');
+    expect(userRow.text()).toMatch('Active');
+  });
+
+  it('hides the account status column if no privileges', async () => {
+    PrivilegeApi.getResourceTypePrivilege.mockImplementationOnce(() => Promise.resolve({
+      data: {
+        VIEW: {
+          allowed: true,
+          properties: [
+            'userName',
+            'givenName',
+            'sn',
+            'mail',
+          ],
+        },
+      },
+    }));
+
+    wrapper = mountComponent();
+    await flushPromises();
+
+    const userRow = wrapper.find('thead tr');
+    expect(userRow.text()).toMatch('Name');
+    expect(userRow.text()).toMatch('Email');
+    expect(userRow.text()).not.toMatch('Status');
   });
 });

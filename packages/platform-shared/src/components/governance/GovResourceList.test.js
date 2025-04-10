@@ -25,6 +25,28 @@ describe('GovResourceList', () => {
     });
   }
 
+  describe('queryFields props', () => {
+    it('calls resource function with correct query fields', () => {
+      const mockResourceFunction = jest.fn();
+      wrapper = mountComponent({
+        resource: 'user',
+        resourceFunction: mockResourceFunction,
+        queryFields: ['test1', 'test2'],
+      });
+
+      expect(mockResourceFunction).toHaveBeenCalledWith(
+        'alpha_user',
+        {
+          fields: 'test1,test2',
+          pageSize: 10,
+          pagedResultsOffset: 0,
+          queryFilter: true,
+          totalPagedResultsPolicy: 'EXACT',
+        },
+      );
+    });
+  });
+
   describe('sorting', () => {
     const mockResourceFunction = jest.fn();
     const columns = [
