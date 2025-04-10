@@ -162,6 +162,7 @@ export default {
       if (this.localizedFavicon) {
         document.getElementById('favicon').href = this.localizedFavicon;
       }
+      this.hideAppOnTransition = false;
     },
     themeTransitionHandler(val) {
       if (val === 'error') {
@@ -175,7 +176,6 @@ export default {
     theme: {
       deep: true,
       handler() {
-        this.hideAppOnTransition = false;
         this.localizedFooter = this.getLocalizedString(this.theme.journeyFooter, i18n.global.locale, i18n.global.fallbackLocale);
         this.localizedHeader = this.getLocalizedString(this.theme.journeyHeader, i18n.global.locale, i18n.global.fallbackLocale);
         this.localizedJustifiedContent = this.getLocalizedString(this.theme.journeyJustifiedContent, i18n.global.locale, i18n.global.fallbackLocale);
