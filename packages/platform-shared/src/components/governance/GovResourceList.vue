@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrIcon
               icon-class="mr-2"
               name="add">
-              {{ $t('common.addObject', { object: capitalize(resource)}) }}
+              {{ $t('common.newObject', { object: capitalize(resource)}) }}
             </FrIcon>
           </BButton>
         </div>
@@ -102,6 +102,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  queryFields: {
+    type: Array,
+    default: () => [],
+  },
   resource: {
     type: String,
     required: true,
@@ -166,6 +170,10 @@ const totalResultsPath = computed(() => {
  * @returns {Array} An array of query fields corresponding to the specified resource type.
  */
 function getQueryFields(resourceType) {
+  if (props.queryFields.length > 0) {
+    return props.queryFields;
+  }
+
   switch (resourceType) {
     case 'user':
       return ['userName', 'givenName', 'sn', 'mail'];

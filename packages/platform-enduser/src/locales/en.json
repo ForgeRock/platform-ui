@@ -444,6 +444,9 @@
       "createSuccess": "Your request to create an entitlement has been submitted.",
       "title": "Entitlements",
       "accountAttribute": "Account Attribute"
+    },
+    "user": {
+      "errorGettingPrivileges": "Error getting user privileges"
     }
   }
 }
