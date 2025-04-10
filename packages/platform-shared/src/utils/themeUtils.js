@@ -5,8 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { cloneDeep } from 'lodash';
+import { cloneDeep, each } from 'lodash';
 import { convertBase64ToString, convertStringToBase64 } from '@forgerock/platform-shared/src/utils/encodeUtils';
+import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
+import uuid from 'uuid/v4';
 
 /**
  * Base64 decode any script content in the passed theme
@@ -74,4 +76,47 @@ export function encodeThemes(themes) {
     }
   });
   return encodedThemes;
+}
+
+/**
+ * Adds a provided theme to the themerealm endpoint object, or updates an existing theme
+ * @param {Object} decodedThemes The themerealm endpoint object in a decoded state
+ * @param {Object} themeToSave Individual theme object to add/update
+ * @param {String} realm The current realm theme belongs to
+ */
+export function updateThemerealmObject(decodedThemes, themeToSave, realm) {
+  // Add in defaults for any missing values
+  each(themeConstants.DEFAULT_THEME_PARAMS, (value, key) => {
+    if (themeToSave[key] === undefined) {
+      themeToSave[key] = themeConstants.DEFAULT_THEME_PARAMS[key];
+    }
+  });
+  const themeIndex = decodedThemes[realm].findIndex((decodedTheme) => {
+    if (decodedTheme._id) {
+      return decodedTheme._id === themeToSave._id;
+    }
+    return decodedTheme.name === themeToSave.name;
+  });
+  if (!themeToSave._id) {
+    themeToSave._id = uuid();
+  }
+  if (themeIndex === -1) {
+    themeToSave.isDefault = false;
+    decodedThemes[realm].push(themeToSave);
+  } else {
+    decodedThemes[realm][themeIndex] = themeToSave;
+    // if new tree was linked to this theme, we need to remove that tree from other themes
+    decodedThemes[realm].forEach((decodedTheme, index) => {
+      if (index !== themeIndex && themeToSave.linkedTrees) {
+        themeToSave.linkedTrees.forEach((treeName) => {
+          if (decodedTheme.linkedTrees) {
+            const treeIndex = decodedTheme.linkedTrees.indexOf(treeName);
+            if (treeIndex > -1) {
+              decodedTheme.linkedTrees.splice(treeIndex, 1);
+            }
+          }
+        });
+      }
+    });
+  }
 }
