@@ -7,14 +7,13 @@
 
 import { cloneDeep, each } from 'lodash';
 import { computed, watch } from 'vue';
-import uuid from 'uuid/v4';
 import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
 import { getThemes, saveThemes } from '@forgerock/platform-shared/src/api/ThemeApi';
 import i18n from '@forgerock/platform-shared/src/i18n';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
 import { getLocalizedString } from '@forgerock/platform-shared/src/utils/translations';
-import { decodeThemes, encodeThemes } from '../utils/themeUtils';
+import { decodeThemes, encodeThemes, updateThemerealmObject } from '../utils/themeUtils';
 
 /**
  * Composable for integrating theme into views that will be used within
@@ -175,44 +174,11 @@ export default function useTheme() {
    */
   async function saveTheme(realm, themeData) {
     const themeToSave = cloneDeep(themeData);
-    // Add in defaults for any missing values
-    each(themeConstants.DEFAULT_THEME_PARAMS, (value, key) => {
-      if (themeToSave[key] === undefined) {
-        themeToSave[key] = themeConstants.DEFAULT_THEME_PARAMS[key];
-      }
-    });
     try {
       // Get all themes, update the one that matches the id, and save all themes
       const { data: themes } = await getThemes();
       const decodedThemes = decodeThemes(themes);
-      const themeIndex = decodedThemes.realm[realm].findIndex((decodedTheme) => {
-        if (decodedTheme._id) {
-          return decodedTheme._id === themeToSave._id;
-        }
-        return decodedTheme.name === themeToSave.name;
-      });
-      if (!themeToSave._id) {
-        themeToSave._id = uuid();
-      }
-      if (themeIndex === -1) {
-        themeToSave.isDefault = false;
-        decodedThemes.realm[realm].push(themeToSave);
-      } else {
-        decodedThemes.realm[realm][themeIndex] = themeToSave;
-        // if new tree was linked to this theme, we need to remove that tree from other themes
-        decodedThemes.realm[realm].forEach((decodedTheme, index) => {
-          if (index !== themeIndex && themeToSave.linkedTrees) {
-            themeToSave.linkedTrees.forEach((treeName) => {
-              if (decodedTheme.linkedTrees) {
-                const treeIndex = decodedTheme.linkedTrees.indexOf(treeName);
-                if (treeIndex > -1) {
-                  decodedTheme.linkedTrees.splice(treeIndex, 1);
-                }
-              }
-            });
-          }
-        });
-      }
+      updateThemerealmObject(decodedThemes.realm, themeToSave, realm);
       await saveThemes(encodeThemes(decodedThemes));
       themeStore.realmThemes = decodedThemes.realm;
     } catch (error) {
