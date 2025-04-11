@@ -159,15 +159,6 @@ export default function useTheme() {
   }
 
   /**
-   * Retrieves the trees linked to a theme
-   * @returns {Array} Array of tree ids linked to the theme
-   */
-  async function getTreesLinkedToTheme() {
-    theme.value.linkedTrees = theme.value.linkedTrees.filter((linkedTree) => this.linkedTreesOptions.find((option) => option.value === linkedTree));
-    return theme.value.linkedTrees;
-  }
-
-  /**
    * Saves a theme into themerealm endpoint
    * @param {String} realm The realm that the theme is located in
    * @param {Object} themeData Data of theme to save
@@ -249,7 +240,6 @@ export default function useTheme() {
     deleteTheme,
     getAllThemes,
     getTheme,
-    getTreesLinkedToTheme,
     getTreeTheme,
     loadTheme,
     localizedFavicon,
