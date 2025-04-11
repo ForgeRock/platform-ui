@@ -175,31 +175,27 @@ export default {
   watch: {
     theme: {
       deep: true,
-      handler() {
-        this.localizedFooter = this.getLocalizedString(this.theme.journeyFooter, i18n.global.locale, i18n.global.fallbackLocale);
-        this.localizedHeader = this.getLocalizedString(this.theme.journeyHeader, i18n.global.locale, i18n.global.fallbackLocale);
-        this.localizedJustifiedContent = this.getLocalizedString(this.theme.journeyJustifiedContent, i18n.global.locale, i18n.global.fallbackLocale);
-        this.localizedLogo = this.getLocalizedString(this.theme.logo, i18n.global.locale, i18n.global.fallbackLocale);
-        this.localizedLogoAltText = this.getLocalizedString(this.theme.logoAltText, i18n.global.locale, i18n.global.fallbackLocale);
+      handler(theme) {
+        this.localizedFooter = this.getLocalizedString(theme.journeyFooter, i18n.global.locale, i18n.global.fallbackLocale);
+        this.localizedHeader = this.getLocalizedString(theme.journeyHeader, i18n.global.locale, i18n.global.fallbackLocale);
+        this.localizedJustifiedContent = this.getLocalizedString(theme.journeyJustifiedContent, i18n.global.locale, i18n.global.fallbackLocale);
+        this.localizedLogo = this.getLocalizedString(theme.logo, i18n.global.locale, i18n.global.fallbackLocale);
+        this.localizedLogoAltText = this.getLocalizedString(theme.logoAltText, i18n.global.locale, i18n.global.fallbackLocale);
+        // Adds the given script tags to the script container
+        if (!theme.journeyFooterScriptTagEnabled || !theme.journeyFooterScriptTag) return;
+        const scriptContainer = document.getElementById('user-theme-script-container');
+
+        try {
+          // Note: if the user provides invalid html that is unable to be parsed, this could cause an error which we need to catch
+          const scripts = createScriptTags(theme.journeyFooterScriptTag);
+
+          scripts.forEach((scriptTag) => {
+            scriptContainer.appendChild(scriptTag);
+          });
+        } catch (error) {
+          this.showErrorMessage(error, this.$t('errors.userScriptError'));
+        }
       },
-    },
-    /**
-     * Adds the given script tags to the script container
-     */
-    journeyFooterScriptTag(scriptStr) {
-      if (!this.theme.journeyFooterScriptTagEnabled || !scriptStr) return;
-      const scriptContainer = document.getElementById('user-theme-script-container');
-
-      try {
-        // Note: if the user provides invalid html that is unable to be parsed, this could cause an error which we need to catch
-        const scripts = createScriptTags(scriptStr);
-
-        scripts.forEach((scriptTag) => {
-          scriptContainer.appendChild(scriptTag);
-        });
-      } catch (error) {
-        this.showErrorMessage(error, this.$t('errors.userScriptError'));
-      }
     },
   },
 };
