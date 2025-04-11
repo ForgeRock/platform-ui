@@ -489,6 +489,7 @@ export default {
     FrPingOneProtectCallback: () => import('@/components/callbacks/PingOneProtectCallback/PingOneProtectCallback'),
     FrPushChallengeNumber: () => import('@/components/display/PushChallengeNumber'),
     FrReCaptchaCallback: () => import('@/components/callbacks/ReCaptchaCallback'),
+    FrReCaptchaEnterpriseCallback: () => import('@/components/callbacks/ReCaptchaEnterpriseCallback/ReCaptchaEnterprise'),
     FrRecoveryCodesComponent: () => import('@/components/display/RecoveryCodes'),
     FrSelectIdPCallback: () => import('@/components/callbacks/SelectIdPCallback'),
     FrSuspendedTextOutputCallback: () => import('@/components/callbacks/SuspendedTextOutputCallback'),
