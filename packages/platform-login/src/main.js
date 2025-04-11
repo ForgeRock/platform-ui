@@ -178,17 +178,27 @@ const startApp = () => {
     .finally(() => loadApp());
 };
 
-// Checks if the window has been opened by a related config promotion ingress environment and stores this in session storage
-const checkIfOpenedByIngressEnv = () => {
+// Checks if the window has been opened by a related config promotion ingress environment. There is a possibility that
+// the ingress could be coming from one of several possible domains. For example when the customers is using mtls. We
+// need to check all the URLs white-listed server side specified either in the list env var or the legacy single ingress
+// env var and store the corresponding URL in local storage if a match is found
+const checkIfOpenedByIngressEnv = (referrer, opener) => {
   // Check if web storage exists before trying to use it - see IAM-1873
   if (store.state.SharedStore.webStorageAvailable) {
-    if (!sessionStorage.getItem('parentIsPromotionIngressEnvironment') && window.opener && store.state.SharedStore.fraasPromotionIngressUrl) {
+    if (!sessionStorage.getItem('parentIsPromotionIngressEnvironment') && opener && store.state.SharedStore.fraasPromotionIngressUrl) {
       try {
-        const openerOrigin = new URL(document.referrer).origin;
-        const promotionIngressOrigin = new URL(store.state.SharedStore.fraasPromotionIngressUrl).origin;
-        if (openerOrigin === promotionIngressOrigin) {
-          sessionStorage.setItem('parentIsPromotionIngressEnvironment', true);
-        }
+        const openerOrigin = new URL(referrer).origin;
+        const allowableUrls = store.state.SharedStore.fraasPromotionAllowableIngressUrls;
+        const allowableIngressUrls = [
+          ...(allowableUrls ? allowableUrls.split(',') : [store.state.SharedStore.fraasPromotionIngressUrl]),
+        ];
+        allowableIngressUrls.forEach((url) => {
+          const promotionIngressOrigin = new URL(url).origin;
+          if (openerOrigin === promotionIngressOrigin) {
+            sessionStorage.setItem('parentIsPromotionIngressEnvironment', true);
+            sessionStorage.setItem('fraasPromotionIngressUrl', promotionIngressOrigin);
+          }
+        });
       } catch {
         // Window has been opened in some other way, do nothing
       }
@@ -196,5 +206,9 @@ const checkIfOpenedByIngressEnv = () => {
   }
 };
 
-checkIfOpenedByIngressEnv();
+checkIfOpenedByIngressEnv(document.referrer, window.opener);
 startApp();
+
+module.exports = {
+  checkIfOpenedByIngressEnv,
+};

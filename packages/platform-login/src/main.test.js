@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,7 @@ import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as overrideTranslations from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import * as sdk from '@forgerock/javascript-sdk';
 import { flushPromises } from '@vue/test-utils';
+import store from '@/store';
 import router from '@/router';
 
 describe('main.js', () => {
@@ -29,7 +30,7 @@ describe('main.js', () => {
   });
 
   document.body.innerHTML = '<div id="appRoot"></div>';
-  require('./main');
+  const { checkIfOpenedByIngressEnv } = require('./main');
 
   describe('/logout url flow', () => {
     const sdkSpy = jest.spyOn(sdk.SessionManager, 'logout').mockImplementation(() => Promise.resolve());
@@ -68,6 +69,43 @@ describe('main.js', () => {
       await flushPromises();
 
       expect(sdkSpy).toHaveBeenCalledWith({ realmPath: 'delta' });
+    });
+  });
+
+  describe('checkIfOpenedByIngressEnv', () => {
+    beforeEach(() => {
+      sessionStorage.clear();
+    });
+
+    it('defaults to fraasPromotionIngressUrl in shared state if fraasPromotionAllowableIngressUrls not present', () => {
+      store.state.SharedStore.fraasPromotionIngressUrl = 'https://openam-test-dev.forgeblocks.com';
+      checkIfOpenedByIngressEnv('https://openam-test-dev.forgeblocks.com', true);
+      expect(sessionStorage.getItem('parentIsPromotionIngressEnvironment')).toBe('true');
+      expect(sessionStorage.getItem('fraasPromotionIngressUrl')).toBe('https://openam-test-dev.forgeblocks.com');
+    });
+
+    it('selects matching origin url from fraasPromotionAllowableIngressUrls if present', () => {
+      store.state.SharedStore.fraasPromotionAllowableIngressUrls = 'https://openam-test-dev.forgeblocks.com,https://openam-test-dev2.forgeblocks.com';
+      store.state.SharedStore.fraasPromotionIngressUrl = 'https://openam-test-dev3.forgeblocks.com';
+      checkIfOpenedByIngressEnv('https://openam-test-dev.forgeblocks.com', true);
+      expect(sessionStorage.getItem('parentIsPromotionIngressEnvironment')).toBe('true');
+      expect(sessionStorage.getItem('fraasPromotionIngressUrl')).toBe('https://openam-test-dev.forgeblocks.com');
+    });
+
+    it('sets variables if fraasPromotionAllowableIngressUrls has only a single value', () => {
+      store.state.SharedStore.fraasPromotionAllowableIngressUrls = 'https://openam-test-dev.forgeblocks.com';
+      store.state.SharedStore.fraasPromotionIngressUrl = 'https://openam-test-dev3.forgeblocks.com';
+      checkIfOpenedByIngressEnv('https://openam-test-dev.forgeblocks.com', true);
+      expect(sessionStorage.getItem('parentIsPromotionIngressEnvironment')).toBe('true');
+      expect(sessionStorage.getItem('fraasPromotionIngressUrl')).toBe('https://openam-test-dev.forgeblocks.com');
+    });
+
+    it('sets no session variables if ingress urls present but not matched', () => {
+      store.state.SharedStore.fraasPromotionAllowableIngressUrls = 'https://openam-test-dev.forgeblocks.com,https://openam-test-dev2.forgeblocks.com';
+      store.state.SharedStore.fraasPromotionIngressUrl = 'https://openam-test-dev3.forgeblocks.com';
+      checkIfOpenedByIngressEnv('https://openam-test-dev1234.forgeblocks.com', true);
+      expect(sessionStorage.getItem('parentIsPromotionIngressEnvironment')).toBe(null);
+      expect(sessionStorage.getItem('fraasPromotionIngressUrl')).toBe(null);
     });
   });
 });
