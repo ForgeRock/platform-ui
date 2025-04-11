@@ -7,12 +7,16 @@ of the MIT license. See the LICENSE file for details. -->
     class="min-vh-100 d-flex flex-column fr-fullscreen-mobile"
     ref="container"
     tabindex="-1">
-    <FrLoginHeader
-      v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
-      :custom-html="sanitizedHeader"
-      :is-accessible="journeyHeaderSkipLinkEnabled"
-      main-content-id="mainContent"
-      v-bind="screenReaderHeaderRole" />
+    <div
+      tabindex="-1"
+      ref="callbackAppHeaderContainer"
+      v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)">
+      <FrLoginHeader
+        :custom-html="sanitizedHeader"
+        :is-accessible="journeyHeaderSkipLinkEnabled"
+        main-content-id="mainContent"
+        v-bind="screenReaderHeaderRole" />
+    </div>
     <main
       ref="main"
       id="mainContent"
@@ -210,6 +214,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="pb-4 px-4 px-md-5 w-100"
             data-testid="in-situ-logo-preview">
             <div
+              tabindex="-1"
               class="d-flex"
               ref="callbackAppHeaderContainer">
               <img
@@ -701,12 +706,19 @@ export default {
     journeyRememberMeEnabled() {
       this.setRememberedUsername();
     },
-
+    isFirstStep() {
+      this.handleFocus();
+    },
+    journeyFocusElement() {
+      this.handleFocus();
+    },
+  },
+  methods: {
     /*
     * Set timeout to focus on a tag according to the selected theme of the current Step (journey node)
     * Time out is set to focus after the set-theme was called and established to avoid slow rendering or vue reloads
     */
-    journeyFocusElement() {
+    handleFocus() {
       setTimeout(() => {
         // refresh accessibility between steps by focusing on the body before the next focus to avoid the application from keeping the same activeElement
         this.$refs.container.focus();
@@ -724,8 +736,6 @@ export default {
         }
       }, 200);
     },
-  },
-  methods: {
     /**
      * Decodes a JWT token
      */
@@ -1335,6 +1345,7 @@ export default {
           this.loading = false;
         }).finally(() => {
           this.$emit('set-theme', this.realm, this.treeId, this.nodeThemeId);
+          this.handleFocus();
         });
     },
     /**
