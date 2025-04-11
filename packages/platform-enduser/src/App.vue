@@ -191,20 +191,23 @@ export default {
     /**
      * Adds the given script tags to the script container
      */
-    accountFooterScriptTag(scriptStr) {
-      if (!this.theme.accountFooterScriptTagEnabled || !scriptStr) return;
-      const scriptContainer = document.getElementById('user-theme-script-container');
+    theme: {
+      deep: true,
+      handler(theme) {
+        if (!this.theme.accountFooterScriptTagEnabled || !theme.accountFooterScriptTag) return;
+        const scriptContainer = document.getElementById('user-theme-script-container');
 
-      try {
-        // Note: if the user provides invalid html that is unable to be parsed, this could cause an error which we need to catch
-        const scripts = createScriptTags(scriptStr);
+        try {
+          // Note: if the user provides invalid html that is unable to be parsed, this could cause an error which we need to catch
+          const scripts = createScriptTags(theme.accountFooterScriptTag);
 
-        scripts.forEach((scriptTag) => {
-          scriptContainer.appendChild(scriptTag);
-        });
-      } catch (error) {
-        this.showErrorMessage(error, this.$t('errors.userScriptError'));
-      }
+          scripts.forEach((scriptTag) => {
+            scriptContainer.appendChild(scriptTag);
+          });
+        } catch (error) {
+          this.showErrorMessage(error, this.$t('errors.userScriptError'));
+        }
+      },
     },
   },
   methods: {
