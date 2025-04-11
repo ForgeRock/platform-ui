@@ -2666,19 +2666,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/javascript-sdk@npm:4.4.2":
-  version: 4.4.2
-  resolution: "@forgerock/javascript-sdk@npm:4.4.2"
-  checksum: 8bb9dea76c3e7cc93c0548e70b703fe18cbb81dee58f89455cfa6d689909da77fb59aa19aa1e58fa480890d676657e37cdb1d6228e71eaf72ddb01197cf3131a
+"@forgerock/javascript-sdk@npm:4.6.0":
+  version: 4.6.0
+  resolution: "@forgerock/javascript-sdk@npm:4.6.0"
+  checksum: ce6be77fbb3b8223b7b9d0f50382e27df7d22e215f5b03ef937f935630d472b971449da04344be64ed3dcaf5d30f272c836d5099cbea4386d2ed9f64fcab3f0e
   languageName: node
   linkType: hard
 
-"@forgerock/ping-protect@npm:4.4.2":
-  version: 4.4.2
-  resolution: "@forgerock/ping-protect@npm:4.4.2"
+"@forgerock/ping-protect@npm:4.6.0":
+  version: 4.6.0
+  resolution: "@forgerock/ping-protect@npm:4.6.0"
   peerDependencies:
-    "@forgerock/javascript-sdk": 4.4.2
-  checksum: 912a6f2f69be8e9015ef4e44dc0ca21a8c7b0d3b94e836d74faa2393de9cfa0f85fa92b0e985e10aad0793909a6b1bcb20eeeac52e7e3e654e42a490c947981f
+    "@forgerock/javascript-sdk": 4.6.0
+  checksum: 4bd3ec19561768362b470bc081d5e7391c428d048e3e91f91ab05141beb5e147a62a2d78e02a59ae63292a76a4d49c7c5ff2a8eae767dc70b02e1de79af0da41
   languageName: node
   linkType: hard
 
@@ -2697,7 +2697,7 @@ __metadata:
     "@codemirror/lint": 6.4.2
     "@codemirror/theme-one-dark": 6.1.2
     "@codemirror/view": 6.22.1
-    "@forgerock/javascript-sdk": 4.4.2
+    "@forgerock/javascript-sdk": 4.6.0
     "@forgerock/platform-login": 1.0.0
     "@forgerock/platform-shared": 1.0.0
     "@kyvg/vue3-notification": 3.0.2
@@ -2835,8 +2835,8 @@ __metadata:
   dependencies:
     "@badeball/cypress-cucumber-preprocessor": 21.0.2
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
-    "@forgerock/javascript-sdk": 4.4.2
-    "@forgerock/ping-protect": 4.4.2
+    "@forgerock/javascript-sdk": 4.6.0
+    "@forgerock/ping-protect": 4.6.0
     "@forgerock/platform-shared": 1.0.0
     "@hcaptcha/vue-hcaptcha": 0.3.2
     "@kyvg/vue3-notification": 3.0.2
@@ -2934,7 +2934,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@forgerock/platform-shared@workspace:packages/platform-shared"
   dependencies:
-    "@forgerock/javascript-sdk": 4.4.2
+    "@forgerock/javascript-sdk": 4.6.0
     "@forgerock/platform-shared": 1.0.0
     "@googlemaps/js-api-loader": 1.16.2
     "@googlemaps/markerclusterer": 2.5.2
