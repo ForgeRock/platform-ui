@@ -25,6 +25,7 @@ const defaultState = {
   fraasFederationUrl: null,
   fraasLoggingKeyURL: null,
   fraasMonitoringURL: null,
+  fraasPromotionAllowableIngressUrls: null,
   fraasPromotionUrl: null,
   fraasPromotionIngressUrl: null,
   fraasPromotionEgressUrl: null,
@@ -118,7 +119,10 @@ const mutations = {
         state.fraasFederationUrl = getFQDN(env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL);
       }
       if (env.VUE_APP_FRAAS_PROMOTION_URL) {
-        state.fraasPromotionUrl = env.VUE_APP_FRAAS_PROMOTION_URL;
+        state.fraasPromotionUrl = getFQDN(env.VUE_APP_FRAAS_PROMOTION_URL);
+      }
+      if (env.VUE_APP_FRAAS_ALLOWABLE_CONFIG_PROMOTION_INGRESS_URLS) {
+        state.fraasPromotionAllowableIngressUrls = env.VUE_APP_FRAAS_ALLOWABLE_CONFIG_PROMOTION_INGRESS_URLS;
       }
       if (env.VUE_APP_FRAAS_PROMOTION_CONFIG_INGRESS_URL) {
         state.fraasPromotionIngressUrl = env.VUE_APP_FRAAS_PROMOTION_CONFIG_INGRESS_URL;

@@ -1466,7 +1466,7 @@ export default {
       // Check if web storage exists before trying to use it - see IAM-1873
       if (this.$store.state.SharedStore.webStorageAvailable) {
         if (sessionStorage.getItem('parentIsPromotionIngressEnvironment') === 'true') {
-          window.opener.postMessage('loginSuccess', this.$store.state.SharedStore.fraasPromotionIngressUrl);
+          window.opener.postMessage('loginSuccess', sessionStorage.getItem('fraasPromotionIngressUrl'));
         }
       }
     },
