@@ -118,7 +118,7 @@ describe('is_valid_esv_variable validators', () => {
     const getVariableSpy = jest.spyOn(esvApi, 'getVariable').mockResolvedValue({ data: false, status: 401 });
     const result = await rules.is_valid_esv_variable('&{esv.test.failure}');
     expect(getVariableSpy).toHaveBeenCalled();
-    expect(result).toBe('Please provide a valid ESV');
+    expect(result).toBe('Please provide a valid ESV variable');
   });
 });
 
@@ -318,6 +318,15 @@ describe('validBookmarkUrl validators', () => {
     const result = await rules.validBookmarkUrl('&{esv.test.success}');
     expect(getVariableSpy).toHaveBeenCalled();
     expect(result).toBe(true);
+  });
+
+  it('should not trigger getSecret even when value is not present in the ESV variable list', async () => {
+    const getVariableSpy = jest.spyOn(esvApi, 'getVariable').mockResolvedValue({ data: false, status: 401 });
+    const getSecretSpy = jest.spyOn(esvApi, 'getSecret').mockResolvedValue({ data: true, status: 200 });
+    const result = await rules.validBookmarkUrl('&{esv.test.secret}');
+    expect(getVariableSpy).toHaveBeenCalled();
+    expect(getSecretSpy).not.toHaveBeenCalled();
+    expect(result).toBe('Please provide a valid ESV variable');
   });
 
   it('should return error message when the passed in value is not in correct format', async () => {
