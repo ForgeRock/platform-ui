@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -199,4 +199,38 @@ Cypress.Commands.add('deleteTreesViaAPI', (fixtureArray) => {
 
   // Use API to delete all Journeys & required data
   deleteJourneysViaAPI(fixtureArray);
+});
+
+Cypress.Commands.add('reloadUI', () => {
+  // Set up intercepts
+  cy.intercept('GET', 'am/json/global-config/realms/?_queryFilter=true').as('getRealms');
+  cy.intercept('GET', 'environment/release').as('getRelease');
+
+  // Reload the UI
+  cy.reload();
+
+  // Wait for the Realms to be fetched
+  cy.wait('@getRealms', { timeout: 10000 });
+
+  if (Cypress.env('IS_FRAAS')) {
+    // Wait for the Cloud to properly load
+    cy.wait('@getRelease', { timeout: 10000 });
+  } else {
+    // For some reason ForgeOps fetches the Realms twice
+    cy.wait('@getRealms', { timeout: 10000 });
+  }
+});
+
+Cypress.Commands.add('openApplicationListPage', () => {
+  const realm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
+  cy.visit(`${Cypress.config().baseUrl}/platform/?realm=${realm}#/applications`);
+  cy.findByTestId('spinner-is-loading-application').should('not.exist');
+  cy.findByRole('button', { name: 'Browse App Catalog', timeout: 10000 }).should('be.visible');
+});
+
+Cypress.Commands.add('openJobListPage', () => {
+  const realm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
+  cy.visit(`${Cypress.config().baseUrl}/platform/?realm=${realm}#/jobs`);
+  cy.findByTestId('spinner-is-loading-jobs').should('not.exist');
+  cy.findByRole('button', { name: 'Schedule a Job', timeout: 10000 }).should('be.visible');
 });

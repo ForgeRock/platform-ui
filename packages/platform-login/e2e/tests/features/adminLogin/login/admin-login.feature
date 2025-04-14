@@ -10,7 +10,7 @@ Feature:Admin Login
 
   Scenario: Fail login with incorrect credentials
     When admin logs in with "invalid" credentials
-    Then admin should see a login failure message
+    Then "Login failure" error message is displayed
 
   Scenario: Succeed login with valid credentials and logout using /am/XUI/logout URL
     When admin logs in with "valid" credentials

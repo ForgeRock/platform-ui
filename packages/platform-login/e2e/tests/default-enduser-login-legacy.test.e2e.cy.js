@@ -6,8 +6,8 @@
  */
 
 import { random } from 'lodash';
-import { filterTests } from '../../../../e2e/util';
-import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
+import { filterTests } from '@e2e/util';
+import { createIDMUser, deleteIDMUser } from '@e2e/api/managedApi.e2e';
 
 filterTests(['@forgeops', '@cloud', '@smoke'], () => {
   xdescribe('EndUser Login Journey', () => {

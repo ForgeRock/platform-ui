@@ -6,8 +6,8 @@
  */
 
 import { random } from 'lodash';
-import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
-import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
+import { filterTests, retryableBeforeEach } from '@e2e/util';
+import { createIDMUser, deleteIDMUser } from '@e2e/api/managedApi.e2e';
 
 filterTests(['@forgeops', '@cloud'], () => {
   describe('Tests for Journey Choice collector', () => {

@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 const baseBody = {

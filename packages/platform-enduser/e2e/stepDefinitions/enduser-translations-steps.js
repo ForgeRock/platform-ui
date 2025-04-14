@@ -1,8 +1,15 @@
+/**
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
-import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
-import { addOverrides, deleteOverrides } from '../../../../e2e/api/localizationApi.e2e';
-import { importJourneysViaAPI, deleteJourneysViaAPI } from '../../../../e2e/utils/manageJourneys';
+import { createIDMUser, deleteIDMUser } from '@e2e/api/managedApi.e2e';
+import { addOverrides, deleteOverrides } from '@e2e/api/localizationApi.e2e';
+import { importJourneysViaAPI, deleteJourneysViaAPI } from '@e2e/utils/manageJourneys';
 import LOCALES from '../support/constants';
 
 // TODO: Delete Features and env conditionals when https://pingidentity.atlassian.net/browse/IAM-8259 is resolved

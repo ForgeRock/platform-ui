@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { filterTests } from '../../../../e2e/util';
-import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
+import { filterTests } from '@e2e/util';
+import { createIDMUser, deleteIDMUser } from '@e2e/api/managedApi.e2e';
 
 filterTests(['@forgeops', '@cloud'], () => {
   describe('Enduser Dashboard View', () => {

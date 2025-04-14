@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -20,13 +20,4 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import '../../../../e2e/support';
-import './commands';
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
-// This configuration is designed to handle uncaught exceptions in the application code,
-// and prevent these exceptions from stopping the test execution.
-Cypress.on('uncaught:exception', (err, runnable) => { // eslint-disable-line no-unused-vars, arrow-body-style
-  return false;
-});
+import '@e2e/support';

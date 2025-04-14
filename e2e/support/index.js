@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -23,3 +23,9 @@
 
 import './commands';
 import './e2e';
+
+// This configuration is designed to handle uncaught exceptions in the application code,
+// and prevent these exceptions from stopping the test execution.
+Cypress.on('uncaught:exception', (err, runnable) => { // eslint-disable-line no-unused-vars, arrow-body-style
+  return false;
+});
