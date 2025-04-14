@@ -220,8 +220,8 @@ export function getRules(i18n) {
     if (!doesValueContainPlaceholder(value)) {
       return customValidators.validBookmarkUrl(value) || i18n.global.t('common.policyValidationMessages.urlPathEsv');
     }
-    const isValidESV = await customValidators.isValidESV(value);
-    return isValidESV || i18n.global.t('common.policyValidationMessages.validEsv');
+    const isValidESV = await customValidators.isValidESV(value, true); // Passing 2nd params as true, indicating only check for ESV variable
+    return isValidESV || i18n.global.t('common.policyValidationMessages.validEsvVariable');
   };
 
   // Rule to check for compatibility with ESV naming schema
@@ -320,7 +320,7 @@ export function getRules(i18n) {
   const is_valid_esv_variable = async (value) => {
     if (doesValueContainPlaceholder(value)) {
       const isvalidESV = await customValidators.isValidESV(value, true);
-      return isvalidESV || i18n.global.t('common.policyValidationMessages.validEsv');
+      return isvalidESV || i18n.global.t('common.policyValidationMessages.validEsvVariable');
     }
     return lower_case_alpha_numeric_underscore_hyphen_only(value);
   };

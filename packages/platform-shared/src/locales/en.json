@@ -528,6 +528,7 @@
       "validUrl": "Please provide a valid URL",
       "urlPathEsv": "Must be an absolute url, relative url beginning with /, or a valid ESV in the format {'&{esv.url}'}",
       "validEsv": "Please provide a valid ESV",
+      "validEsvVariable": "Please provide a valid ESV variable",
       "alphaNumericUnderscoreHyphenOnly": "Can only contain a-z, 0-9, underscores and hyphens",
       "lowerCaseAlphaNumericUnderscoreHyphenOnly": "Can only contain lowercase a-z, 0-9, underscores and hyphens",
       "lowerCaseAlphaNumericUnderscoreHyphenOnlyWithHtml": "Can only contain lowercase <code>a-z</code>, <code>0-9</code>, <code>underscores</code> and <code>hyphens</code>",
