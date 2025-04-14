@@ -15,7 +15,7 @@ import {
   saveThemeEdit,
   searchForThemes,
   deleteAllThemesFromList,
-} from '../pages/common/hostedPages';
+} from '@e2e/pages/common/hostedPages';
 
 const path = require('path');
 
