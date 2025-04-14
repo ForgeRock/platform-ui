@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
+import { filterTests, retryableBeforeEach } from '@e2e/util';
 
 filterTests(['@forgeops', '@cloud'], () => {
   describe('Login View', () => {

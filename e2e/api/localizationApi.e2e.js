@@ -8,12 +8,12 @@
 /**
  * Add a config translation file
  */
-export function addOverrides(locale, body) {
+export function addOverrides(locale, body, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
   return cy.request({
     method: 'PUT',
     url: `https://${Cypress.env('FQDN')}/openidm/config/uilocale/${locale}`,
     headers: {
-      authorization: `Bearer ${Cypress.env('ACCESS_TOKEN').access_token}`,
+      authorization: `Bearer ${accessToken}`,
       'content-type': 'application/json',
     },
     body,

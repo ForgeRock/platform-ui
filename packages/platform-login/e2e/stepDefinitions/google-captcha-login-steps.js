@@ -8,8 +8,8 @@
 import {
   Given, When, Then,
 } from '@badeball/cypress-cucumber-preprocessor';
-import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
-import generateEndUserData from '../../../../e2e/utils/endUserData';
+import { createIDMUser, deleteIDMUser } from '@e2e/api/managedApi.e2e';
+import generateEndUserData from '@e2e/utils/endUserData';
 
 let locationUrl;
 

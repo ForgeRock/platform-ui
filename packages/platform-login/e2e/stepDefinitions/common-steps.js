@@ -6,7 +6,7 @@
  */
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
-import { generateJourneyURL } from '../../../../e2e/utils/journeyUtils';
+import { generateJourneyURL } from '@e2e/utils/journeyUtils';
 
 Given('user navigates to {journey} journey', (journeyName) => {
   const journeyUrl = generateJourneyURL(journeyName);
@@ -26,17 +26,6 @@ When('cleanup {string} Journey with all dependencies', (journeyName) => {
   cy.deleteTreesViaAPI([fullJourneyName]);
 });
 
-When('user navigates back', () => {
-  cy.go('back');
-});
-
-/**
- * Verifies that the user sees the login failure message.
- */
-Then('admin should see a login failure message', () => {
-  cy.findAllByRole('alert').contains('Login failure').should('be.visible');
-});
-
 /**
  * Verifies that the user is redirected to the user dashboard.
  */
@@ -47,22 +36,6 @@ Then('user should be redirected to User dashboard', () => {
 Then('page title is {string}', (title) => {
   // TODO: Remove this big timeout after Themes performance is resolved (default 5s should be enough)
   cy.findByRole('heading', { name: title, timeout: 10000 }).should('be.visible');
-});
-
-Then('text {string} is displayed', (message) => {
-  cy.findByText(message).should('be.visible');
-});
-
-Then('page url contains {string}', (url) => {
-  cy.url().should('include', url);
-});
-
-Then('page url does not contain {string}', (url) => {
-  cy.url().should('not.include', url);
-});
-
-Then('link {string} is displayed', (link) => {
-  cy.findByRole('link', { name: link }).should('be.visible');
 });
 
 Then('{string} field has {string} validation error', (field, validationError) => {

@@ -1,0 +1,97 @@
+{
+  "result": [
+    {
+      "identifier": "4277711276-879396747-2395113975",
+      "metadata": {
+        "hardware": {
+          "cpuClass": null,
+          "deviceMemory": 2,
+          "hardwareConcurrency": 9,
+          "maxTouchPoints": 0,
+          "oscpu": null,
+          "display": {
+            "width": 1792,
+            "height": 1120,
+            "pixelDepth": 30,
+            "angle": 0
+          }
+        },
+        "browser": {
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.152 Safari/537.36",
+          "appName": "Netscape",
+          "appCodeName": "Mozilla",
+          "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.152 Safari/537.36",
+          "appMinorVersion": null,
+          "buildID": null,
+          "product": "Gecko",
+          "productSub": "20030107",
+          "vendor": "Google Inc.",
+          "vendorSub": "",
+          "browserLanguage": null,
+          "plugins": "HDBgQIEChQIkSp06;u3bNmTJkSp069.f;lSJEiRo0atWLlSJkyZs279.fPnTJkSJk;zZsWLlyZMGDhQIEChQIEixYMmTJky58.;"
+        },
+        "platform": {
+          "language": "en-GB",
+          "platform": "MacIntel",
+          "userLanguage": null,
+          "systemLanguage": null,
+          "deviceName": "Mac (Browser)",
+          "fonts": "cursive;monospace;sans-serif;fantasy;Arial;Arial Black;Arial Narrow;Arial Rounded MT Bold;Comic Sans MS;Courier;Courier New;Georgia;Impact;Papyrus;Tahoma;Trebuchet MS;Verdana;",
+          "timezone": 0
+        }
+      },
+      "lastSelectedDate": 1615306396529,
+      "alias": "Mac (Browser)",
+      "recoveryCodes": []
+    },
+    {
+      "identifier": "1515169963-1902130247-1393639592",
+      "metadata": {
+        "hardware": {
+          "cpuClass": null,
+          "deviceMemory": 8,
+          "hardwareConcurrency": 16,
+          "maxTouchPoints": 0,
+          "oscpu": null,
+          "display": {
+            "width": 1792,
+            "height": 1120,
+            "pixelDepth": 30,
+            "angle": 0
+          }
+        },
+        "browser": {
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36",
+          "appName": "Netscape",
+          "appCodeName": "Mozilla",
+          "appVersion": "5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36",
+          "appMinorVersion": null,
+          "buildID": null,
+          "product": "Gecko",
+          "productSub": "20030107",
+          "vendor": "Google Inc.",
+          "vendorSub": "",
+          "browserLanguage": null,
+          "plugins": "internal-pdf-viewer;mhjfbmdgcfjbbpaeojofohoefgiehjai;internal-nacl-plugin;"
+        },
+        "platform": {
+          "language": "en-GB",
+          "platform": "MacIntel",
+          "userLanguage": null,
+          "systemLanguage": null,
+          "deviceName": "Mac (Browser)",
+          "fonts": "cursive;monospace;sans-serif;fantasy;Arial;Arial Black;Arial Narrow;Arial Rounded MT Bold;Comic Sans MS;Courier;Courier New;Georgia;Impact;Papyrus;Tahoma;Trebuchet MS;Verdana;",
+          "timezone": 0
+        }
+      },
+      "lastSelectedDate": 1613130937000,
+      "alias": "Mac (Browser)",
+      "recoveryCodes": []
+    }
+  ],
+  "resultCount": 2,
+  "pagedResultsCookie": null,
+  "totalPagedResultsPolicy": "NONE",
+  "totalPagedResults": -1,
+  "remainingPagedResults": -1
+}

@@ -6,9 +6,9 @@
  */
 
 import { random } from 'lodash';
-import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
-import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
-import setTerms from '../api/consentApi.e2e';
+import { filterTests, retryableBeforeEach } from '@e2e/util';
+import { createIDMUser, deleteIDMUser } from '@e2e/api/managedApi.e2e';
+import setTerms from '@e2e/api/consentApi.e2e';
 
 filterTests(['@forgeops', '@cloud'], () => {
   describe('Login tests for Terms and Conditions', () => {

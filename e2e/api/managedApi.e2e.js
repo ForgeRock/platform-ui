@@ -52,3 +52,106 @@ export function deleteIDMResource(resourceType = 'managed', resourceName, id, ac
 export function deleteIDMUser(id) {
   return deleteIDMResource('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user', id);
 }
+
+export function addRoleMember(roleId, userId, resourceType = 'internal') {
+  const accessToken = Cypress.env('ACCESS_TOKEN').access_token;
+  let requestResourceType;
+  if (resourceType === 'internal') {
+    requestResourceType = 'role';
+  } else {
+    requestResourceType = Cypress.env('IS_FRAAS') ? 'alpha_role' : 'role';
+  }
+  return cy.request({
+    method: 'PATCH',
+    url: `https://${Cypress.env('FQDN')}/openidm/${resourceType}/${requestResourceType}/${roleId}`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body: [{
+      field: `/${resourceType === 'internal' ? 'authzMembers' : 'members'}/-`,
+      operation: 'add',
+      value: {
+        _ref: `managed/${Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user'}/${userId}`,
+        _refProperties: {},
+      },
+    }],
+  });
+}
+
+/**
+ * Assigns dashboard apps to a user in AM
+ * @param {*} userId
+ */
+export function assignUserDashboard(userId, dashboards) {
+  const userRealm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
+  return cy.request({
+    method: 'PUT',
+    url: `https://${Cypress.env('FQDN')}/am/json/realms/${userRealm}/users/${userId}/services/dashboard`,
+    body: {
+      assignedDashboard: dashboards,
+    },
+    headers: {
+      'content-type': 'application/json',
+      'x-requested-with': 'XMLHttpRequest',
+      'accept-api-version': 'protocol=1.0,resource=1.0',
+    },
+  });
+}
+
+export function getIDMResource(resourceType = 'config', resourceName = 'managed', accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/openidm/${resourceType}/${resourceName}`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+  });
+}
+
+export function putIDMResource(resourceType = 'config', resourceName = 'managed', body, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return cy.request({
+    method: 'PUT',
+    url: `https://${Cypress.env('FQDN')}/openidm/${resourceType}/${resourceName}`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body,
+  });
+}
+
+export function getMappings(accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return cy.request({
+    method: 'GET',
+    url: `https://${Cypress.env('FQDN')}/openidm/sync/mappings?_queryFilter=/source%20sw%20"managed/"`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+  });
+}
+
+export function saveMappings(mappings, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return cy.request({
+    method: 'PUT',
+    url: `https://${Cypress.env('FQDN')}/openidm/config/sync`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body: {
+      mappings,
+    },
+  });
+}
+
+export function deleteMapping(mappingId, mappings, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  const removalIndex = mappings.findIndex((mapping) => mapping._id === mappingId);
+  if (removalIndex > -1) {
+    mappings.splice(removalIndex, 1);
+    return saveMappings(mappings, accessToken);
+  }
+  return false;
+}

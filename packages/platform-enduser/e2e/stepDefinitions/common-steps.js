@@ -6,7 +6,7 @@
  */
 
 import { Given, When } from '@badeball/cypress-cucumber-preprocessor';
-import { generateJourneyURL } from '../../../../e2e/utils/journeyUtils';
+import { generateJourneyURL } from '@e2e/utils/journeyUtils';
 
 Given('{string} is logged in', (username) => {
   cy.loginAsEnduser(username === 'Enduser' ? Cypress.env('endUserName') : username);

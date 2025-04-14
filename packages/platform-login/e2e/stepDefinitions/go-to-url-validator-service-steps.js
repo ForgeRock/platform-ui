@@ -6,8 +6,8 @@
  */
 
 import { Given } from '@badeball/cypress-cucumber-preprocessor';
-import { getValidTogoDestinations, putValidTogoDestinations } from '../api/amConsoleServicesApi.e2e';
-import { deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
+import { deleteIDMUser } from '@e2e/api/managedApi.e2e';
+import { getValidTogoDestinations, putValidTogoDestinations } from '@e2e/api/amConsoleServicesApi.e2e';
 
 this.definedValidGotoDestinations = [];
 

@@ -6,8 +6,8 @@
  */
 
 import { random } from 'lodash';
-import { createIDMUser, deleteIDMUser } from '../../../../e2e/api/managedApi.e2e';
-import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
+import { createIDMUser, deleteIDMUser } from '@e2e/api/managedApi.e2e';
+import { filterTests, retryableBeforeEach } from '@e2e/util';
 
 const loginRealm = Cypress.env('IS_FRAAS') ? '/alpha' : '/';
 

@@ -138,3 +138,11 @@ When('{string} option should be present', (option) => {
   cy.findByText(option)
     .should('be.visible');
 });
+
+Then('page url contains {string}', (url) => {
+  cy.url().should('include', url);
+});
+
+Then('page url does not contain {string}', (url) => {
+  cy.url().should('not.include', url);
+});

@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { putEmailProviderConfig } from '../api/emailApi.e2e';
+import { putEmailProviderConfig } from '@e2e/api/emailApi.e2e';
 
 /**
  * Sets the idm email provider using the details of the test email account passed
