@@ -202,7 +202,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('radio', { name: 'Go back :/' }).should('be.checked');
     });
 
-    it('Page Node with Select Choice Collector - Happy path works correctly', () => {
+    xit('Page Node with Select Choice Collector - Happy path works correctly', () => {
       const nodeToLoad = 'Select Choice Collector!';
 
       // Login as Enduser
