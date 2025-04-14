@@ -275,6 +275,7 @@
     "saveChanges": "Save changes",
     "saveObject": "Save {object}",
     "saving": "Saving...",
+    "validating": "Validating...",
     "script": "Script",
     "scripts": "Scripts",
     "search": "Search",
