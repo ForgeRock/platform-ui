@@ -16,7 +16,7 @@ import {
   changeColorValue,
   searchForThemes,
   deleteAllThemesFromList,
-} from '../pages/common/hostedPages';
+} from '@e2e/pages/common/hostedPages';
 
 filterTests(['@forgeops', '@cloud'], () => {
   describe('Enduser Theming', () => {

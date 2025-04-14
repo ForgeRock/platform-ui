@@ -14,7 +14,7 @@ import {
   deleteIDMUser,
   addRoleMember,
 } from '@e2e/api/managedApi.e2e';
-import { expectNotification } from '../pages/common/notification';
+import { expectNotification } from '@e2e/pages/common/notification';
 
 const realm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
 

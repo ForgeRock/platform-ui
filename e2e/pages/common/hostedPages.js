@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 import { expectAndCloseNotification } from './notification';
@@ -69,7 +70,7 @@ export function setThemeAsDefault(themeName) {
   searchForThemes(themeName);
 
   // Find correct theme in the Themes table
-  cy.findByRole('cell', { name: themeName }).should('be.visible').closest('tr').within(() => {
+  cy.findByRole('cell', { name: themeName }).should('exist').closest('tr').within(() => {
     // Click on the correct Theme row burger menu
     cy.findByRole('button').click();
     // Non-default theme should have 4 options, check all of them are correctly displayed
@@ -83,10 +84,8 @@ export function setThemeAsDefault(themeName) {
   // Check that Save notification is correctly displayed
   expectAndCloseNotification('Theme successfully set as default');
 
-  cy.findByRole('cell', { name: themeName }).should('exist');
-
   // Find correct theme in the Themes table
-  cy.findByRole('cell', { name: themeName }).closest('tr').within(() => {
+  cy.findByRole('cell', { name: themeName }).should('exist').closest('tr').within(() => {
     // Check that the Theme is now the Realm Default
     cy.findByRole('cell', { name: 'Realm Default' }).should('exist');
     // Click on the correct Theme row burger menu
