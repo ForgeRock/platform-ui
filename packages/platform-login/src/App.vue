@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div id="app">
     <ThemeInjector
       :theme="theme"
-      v-if="theme !== null && Object.keys(theme).length > 0" />
+      v-if="validTheme" />
     <div
       id="appContentWrapper"
       class="h-100">
@@ -79,6 +79,7 @@ import createScriptTags from '@forgerock/platform-shared/src/utils/externalScrip
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { removeThemeIdFromLocalStorage } from '@forgerock/platform-shared/src/utils/themeUtils';
+import { computed } from 'vue';
 import i18n from './i18n';
 import './scss/main.scss';
 
@@ -101,12 +102,16 @@ export default {
       localizedFavicon,
       theme,
     } = useTheme();
+
+    const validTheme = computed(() => theme.value !== null && theme.value !== undefined && Object.keys(theme.value).length > 0);
+
     return {
       loadStaticTheme,
       loadTheme,
       loadTreeTheme,
       localizedFavicon,
       theme,
+      validTheme,
     };
   },
   data() {

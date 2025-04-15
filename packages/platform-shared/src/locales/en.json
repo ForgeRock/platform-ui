@@ -26,6 +26,7 @@
     "alertIconAltText": "Alert icon",
     "allApplications": "All Applications",
     "allow": "Allow",
+    "and": "and",
     "answer": "Answer",
     "applications": "Applications",
     "application": "Application",
@@ -643,6 +644,9 @@
     "yearAgo": "a year ago",
     "yearsAgo": "{elapsed} years ago"
   },
+  "draggableList": {
+    "itemMoved": "Moved item from position {fromIndex} to {toIndex}."
+  },
   "editor": {
     "accessibilityHelp": "Press ESC followed by tab for keyboard navigation out of editor"
   },
@@ -1132,8 +1136,42 @@
     "dropdownMenuOptions": "Dropdown Menu Options"
   },
   "sideMenu": {
+    "authorizationRole": "Internal Role",
     "dashboard": "Dashboard",
     "dataSources": "Data Sources",
+    "endUser": {
+      "accessReviews": "Access Reviews",
+      "applications": "My Applications",
+      "approvals": "Approvals",
+      "custom": "Custom Link",
+      "dataSources": "Data Sources",
+      "dashboard": "Dashboard",
+      "delegates": "My Delegates",
+      "directory": "My Directory",
+      "directReports": "Direct Reports",
+      "divider": "Divider",
+      "errorRetrievingManagedObjects": "There was an error retrieving the list of managed objects.",
+      "inbox": "My Inbox",
+      "lcm": "Administer",
+      "lcmUsers": "Users",
+      "lcmEntitlements": "Entitlements",
+      "myAccess": "My Access",
+      "myAccounts": "My Accounts",
+      "myEntitlements": "My Entitlements",
+      "myRoles": "My Roles",
+      "pipelines": "Pipelines",
+      "profile": "My Profile",
+      "reports": "My Reports",
+      "requests": "My Requests",
+      "realmOrganizations": "Realm - Organizations",
+      "realmRoles": "Realm - Roles",
+      "realmUsers": "Realm - Users",
+      "riskAdministration": "Risk Administration",
+      "riskConfig": "Risk Config",
+      "riskDashboard": "Risk Dashboard",
+      "tasks": "Tasks",
+      "violations": "Violations"
+    },
     "headerNavigation": "Header navigation",
     "pipelines": "Pipelines",
     "profile": "Profile",
