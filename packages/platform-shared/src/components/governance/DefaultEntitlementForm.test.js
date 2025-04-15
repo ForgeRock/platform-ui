@@ -20,6 +20,11 @@ describe('DefaultEntitlementForm', () => {
   let wrapper;
 
   const entitlement = {
+    application: { name: 'testApp' },
+    item: {
+      objectType: 'testObjectType',
+      accountAttribute: 'testAccountAttribute',
+    },
     glossary: {
       idx: {
         '/entitlement': {
@@ -160,5 +165,17 @@ describe('DefaultEntitlementForm', () => {
         testObjectProperty2: 'some other value2',
       },
     ]);
+  });
+
+  it('shows app name, object type, and account attribute if showDetails is true', async () => {
+    wrapper = mountComponent({ showDetails: true });
+    await flushPromises();
+
+    expect(wrapper.find('[label="Application"]').exists()).toBe(true);
+    expect(wrapper.find('[label="Application"]').attributes('value')).toBe('testApp');
+    expect(wrapper.find('[label="Object Type"]').exists()).toBe(true);
+    expect(wrapper.find('[label="Object Type"]').attributes('value')).toBe('testObjectType');
+    expect(wrapper.find('[label="Account Attribute"]').exists()).toBe(true);
+    expect(wrapper.find('[label="Account Attribute"]').attributes('value')).toBe('testAccountAttribute');
   });
 });
