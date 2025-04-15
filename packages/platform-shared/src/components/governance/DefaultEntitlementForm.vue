@@ -8,17 +8,49 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="isLoading"
       class="py-5" />
     <template v-else>
-      <FrGlossaryEditForm
-        class="mb-2"
-        :glossary-schema="glossarySchema"
-        :model-value="glossaryValues"
-        :read-only="readOnly"
-        @update:modelValue="updateGlossaryAndEmit" />
-      <FrEntitlementEditForm
-        :entitlement-schema="entitlementSchema"
-        :model-value="entitlementValues"
-        :read-only="readOnly"
-        @update:modelValue="updateEntitlementAndEmit" />
+      <BCard
+        v-if="showDetails"
+        class="mb-4 form-section">
+        <h3 class="h5 mb-4">
+          {{ $t('common.details') }}
+        </h3>
+        <FrField
+          :value="entitlement.application?.name"
+          class="mb-3"
+          :label="$t('common.application')"
+          disabled />
+        <FrField
+          :value="entitlement.item?.objectType"
+          class="mb-3"
+          :label="$t('common.objectType')"
+          disabled />
+        <FrField
+          :value="getAccountAttribute(entitlement)"
+          class="mb-3"
+          :label="$t('common.accountAttribute')"
+          disabled />
+      </BCard>
+      <BCard class="mb-4 form-section">
+        <h3 class="h5 mb-4">
+          {{ $t('governance.entitlements.entitlementSourceAttributes') }}
+        </h3>
+        <FrEntitlementEditForm
+          :entitlement-schema="entitlementSchema"
+          :model-value="entitlementValues"
+          :read-only="readOnly"
+          @update:modelValue="updateEntitlementAndEmit" />
+      </BCard>
+      <BCard class="form-section">
+        <h3 class="h5 mb-4">
+          {{ $t('governance.entitlements.glossaryAttributes') }}
+        </h3>
+        <FrGlossaryEditForm
+          class="mb-2"
+          :glossary-schema="glossarySchema"
+          :model-value="glossaryValues"
+          :read-only="readOnly"
+          @update:modelValue="updateGlossaryAndEmit" />
+      </BCard>
     </template>
   </div>
 </template>
@@ -29,11 +61,14 @@ of the MIT license. See the LICENSE file for details. -->
  * Allows the user to edit the glossary and entitlement values.
  * Saving submits a request to modify the entitlement.
  */
-import { intersection, pickBy } from 'lodash';
 import { ref } from 'vue';
+import { BCard } from 'bootstrap-vue';
+import { intersection, pickBy } from 'lodash';
 import FrEntitlementEditForm from '@forgerock/platform-shared/src/components/governance/EntitlementEditForm';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
+import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import { getEntitlementSchema } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/utils/governance/glossary';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
@@ -61,6 +96,10 @@ const props = defineProps({
   type: {
     type: String,
     default: 'UPDATE',
+  },
+  showDetails: {
+    type: Boolean,
+    default: false,
   },
 });
 

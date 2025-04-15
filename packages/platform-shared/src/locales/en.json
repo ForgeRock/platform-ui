@@ -2,6 +2,7 @@
   "common": {
     "accessibleMoreActions": "More Actions, press Enter to activate selected item",
     "account": "Account",
+    "accountAttribute": "Account Attribute",
     "accounts": "Accounts",
     "action": "Action",
     "actions": "Actions",
@@ -1910,7 +1911,9 @@
     "entitlementDetails": "Entitlement Details",
     "entitlements": {
       "failedToLoad": "Failed to load entitlements",
-      "notFound": "Entitlement {entitlement} not found"
+      "notFound": "Entitlement {entitlement} not found",
+      "entitlementSourceAttributes": "Entitlement Source Attributes",
+      "glossaryAttributes": "Glossary Attributes"
     },
     "errors": {
       "getUsers": "Users cannot be obtained at the moment"

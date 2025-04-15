@@ -348,7 +348,7 @@ of the MIT license. See the LICENSE file for details. -->
         border-top-color: {{ theme.accountNavigationToggleBorderColor || '#e7eef4' }} !important;
       }
 
-      #app <template v-if="mock">.fr-theme-preview.enduser</template> .card,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .card:not(.form-section),
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content,
       .modal-content .card,
         #app .dropdown-menu {

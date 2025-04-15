@@ -91,11 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ item.item?.objectType || blankValueIndicator }}
       </template>
       <template #cell(accountAttribute)="{ item }">
-        {{
-          item.item?.accountAttribute
-            || item.application?.objectTypes?.find((x) => (x.name === item.item?.objectType))?.accountAttribute
-            || blankValueIndicator
-        }}
+        {{ getAccountAttribute(item) || blankValueIndicator }}
       </template>
       <template #cell(owner)="{ item }">
         <FrUserBasicInfo
@@ -139,6 +135,7 @@ import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/govern
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import FrAddEntitlementModal from './Add/AddEntitlementModal';
 import i18n from '@/i18n';
 
@@ -177,7 +174,7 @@ const entitlementColumns = [
   },
   {
     key: 'accountAttribute',
-    label: i18n.global.t('governance.entitlements.accountAttribute'),
+    label: i18n.global.t('common.accountAttribute'),
   },
   {
     key: 'owner',
