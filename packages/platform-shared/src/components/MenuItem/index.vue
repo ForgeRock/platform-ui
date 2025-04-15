@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
     </li>
     <!-- Item will change route or open a new tab -->
     <Component
-      v-else-if="(url || routeTo && routeTo.name)"
+      v-else-if="(url || (routeTo && routeTo.name))"
       :aria-label="$t(displayName)"
       :href="url"
       :is="bootstrapComponent"
@@ -290,7 +290,7 @@ export default {
   data() {
     return {
       bootstrapComponent: this.isNav ? BNavItem : BDropdownItem,
-      isExpanded: !!this.shouldBeExpanded(this.$route.name),
+      isExpanded: !!this.shouldBeExpanded(this.$route?.name),
     };
   },
   computed: {
