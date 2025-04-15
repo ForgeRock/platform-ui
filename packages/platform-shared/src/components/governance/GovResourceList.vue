@@ -54,10 +54,11 @@ of the MIT license. See the LICENSE file for details. -->
       <template #cell(actions)="{ item }">
         <FrActionsCell
           wrapper-class="pr-2"
-          :delete-option="false"
-          :divider="false"
+          :delete-option="showDeleteOption"
+          :divider="showDeleteOption"
           edit-option
-          @edit-clicked="$emit('row-clicked', item)" />
+          @edit-clicked="$emit('row-clicked', item)"
+          @delete-clicked="$emit('delete-clicked', item)" />
       </template>
     </BTable>
     <FrPagination
@@ -95,7 +96,7 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from '@/i18n';
 
-defineEmits(['row-clicked']);
+defineEmits(['add-clicked', 'delete-clicked', 'row-clicked']);
 
 const props = defineProps({
   columns: {
@@ -121,6 +122,10 @@ const props = defineProps({
   showAddButton: {
     type: Boolean,
     default: true,
+  },
+  showDeleteOption: {
+    type: Boolean,
+    default: false,
   },
   showErrors: {
     type: Boolean,

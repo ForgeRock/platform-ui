@@ -448,6 +448,7 @@
     },
     "user": {
       "createSuccess": "Your request to create user has been submitted.",
+      "deleteSuccess": "Your request to delete this user has been submitted.",
       "email": "Email Address",
       "errorGettingPrivileges": "Error getting user privileges",
       "errorGettingSchema": "Error getting user schema",

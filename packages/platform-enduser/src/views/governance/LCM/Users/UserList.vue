@@ -10,13 +10,15 @@ of the MIT license. See the LICENSE file for details. -->
       :subtitle="$t('governance.administer.users.subtitle')" />
     <FrGovResourceList
       v-if="userColumns.length && queryFields.length"
+      show-delete-option
       class="mb-5"
       resource="user"
       :columns="userColumns"
       :query-fields="queryFields"
       :resource-function="getManagedResourceList"
       @row-clicked="navigateToUserDetails"
-      @add-clicked="showAddUserModal">
+      @add-clicked="showAddUserModal"
+      @delete-clicked="showDeleteModal">
       <template #cell(name)="{ item }">
         <FrUserBasicInfo
           :pic-dimension="28"
@@ -34,6 +36,8 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </FrGovResourceList>
     <FrAddUserModal />
+    <FrDeleteUserModal
+      :user-id="deleteUserId" />
   </BContainer>
 </template>
 
@@ -56,11 +60,13 @@ import { getResourceTypePrivilege } from '@forgerock/platform-shared/src/api/Pri
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrAddUserModal from './Add/AddUserModal';
+import FrDeleteUserModal from './Delete/DeleteUserModal';
 import i18n from '@/i18n';
 
 // composables
 const router = useRouter();
 const { bvModal } = useBvModal();
+const deleteUserId = ref(null);
 
 // data
 const userViewPrivileges = ref([]);
@@ -95,6 +101,15 @@ const availableColumns = [
     permissions: ['accountStatus'],
   },
 ];
+
+/**
+ * Displays a modal dialog to confirm the deletion of a user.
+ * @param {Object} user - The user object containing details of the user to be deleted.
+ */
+function showDeleteModal(user) {
+  deleteUserId.value = user._id;
+  bvModal.value.show('delete-user-modal');
+}
 
 /**
  * Displays the modal for adding a new user.
