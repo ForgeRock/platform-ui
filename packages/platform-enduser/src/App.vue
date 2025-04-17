@@ -46,6 +46,7 @@ import { getUserApprovals } from '@forgerock/platform-shared/src/api/governance/
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
+import { removeThemeIdFromLocalStorage } from '@forgerock/platform-shared/src/utils/themeUtils';
 import { mapState } from 'pinia';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getDelegatedAdminMenuItems } from '@forgerock/platform-shared/src/enduser/utils/enduserPrivileges';
@@ -157,6 +158,10 @@ export default {
     const themeId = this.$store.state.SharedStore.webStorageAvailable ? localStorage.getItem('theme-id') : null;
     try {
       await this.loadTheme(realm, themeId);
+      if (!this.theme?.name) {
+        removeThemeIdFromLocalStorage(themeId);
+        await this.loadTheme(realm);
+      }
       if (this.localizedFavicon) {
         document.getElementById('favicon').href = this.localizedFavicon;
       }

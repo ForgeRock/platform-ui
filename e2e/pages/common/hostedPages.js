@@ -13,7 +13,7 @@ import { expectAndCloseNotification } from './notification';
  */
 export function navigateToHostedPagesViaSidebar() {
   // Set up intercept
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('getThemes');
+  cy.intercept('GET', '/openidm/ui/theme/**').as('getThemes');
 
   cy.findByRole('link', { name: 'Hosted Pages' }).scrollIntoView().click();
 
@@ -39,7 +39,6 @@ export function createNewTheme(themeName) {
   cy.findByRole('dialog', { name: 'New Theme' }).within(() => {
     cy.findByLabelText('Name').type(themeName);
     cy.intercept('PUT', '/openidm/config/ui/themerealm').as('saveThemes');
-    cy.intercept('GET', '/openidm/config/ui/themerealm').as('getThemes');
     cy.findByRole('button', { name: 'Save' }).click();
     cy.wait('@saveThemes');
   });

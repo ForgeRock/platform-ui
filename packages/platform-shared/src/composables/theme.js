@@ -5,20 +5,26 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { cloneDeep, each } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { computed, watch } from 'vue';
 import uuid from 'uuid/v4';
 import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
-import { getThemes, saveThemes } from '@forgerock/platform-shared/src/api/ThemeApi';
+import {
+  getThemerealm,
+  getThemes,
+  saveThemes,
+} from '@forgerock/platform-shared/src/api/ThemeApi';
 import i18n from '@forgerock/platform-shared/src/i18n';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
 import { getLocalizedString } from '@forgerock/platform-shared/src/utils/translations';
 import {
+  addDefaultsToTheme,
   decodeThemes,
+  decodeThemeScripts,
   encodeThemes,
-  updateThemerealmObject,
   removeThemeIdFromLocalStorage,
+  updateThemerealmObject,
 } from '../utils/themeUtils';
 
 /**
@@ -29,48 +35,73 @@ export default function useTheme() {
   const themeStore = useThemeStore();
   const theme = computed(() => themeStore.theme || themeConstants.DEFAULT_THEME_PARAMS);
   const realmThemes = computed(() => themeStore.realmThemes);
-  const lastQueriedRealm = computed(() => themeStore.lastQueriedRealm);
   const localizedFavicon = computed(() => getLocalizedString(theme.value.favicon, i18n.global.locale, i18n.global.fallbackLocale));
 
   /**
-   * Addes defaults to all themes and brings old formats to current format
+   * Addes defaults to all themes on current realm and brings old formats to current format
    * @param {Object} themes Object containing all themes
+   * @param {String} realm The current realm
+   * @param {Array} existingThemes The existing themes in the store
    * @returns themes with defaults
    */
-  function addDefaultsToAllThemes(themes) {
-    Object.entries(themes.realm).forEach(([realm, realmThemeArray]) => {
-      if (!realmThemeArray) { // Empty theme config
-        const starterTheme = {
-          ...themeConstants.DEFAULT_THEME_PARAMS, _id: uuid(), isDefault: true, name: 'Starter Theme',
-        };
-        themes.realm[realm] = [starterTheme];
+  function addDefaultsToAllThemes(themes, realm, existingThemes) {
+    if (!themes.realm[realm]) {
+      themes.realm[realm] = [];
+    }
+    Object.entries(themes.realm).forEach(([themeRealm, realmThemeArray]) => {
+      if (!realmThemeArray || (Array.isArray(realmThemeArray) && !realmThemeArray.length)) { // Empty theme config
+        themes.realm[themeRealm] = [{
+          isDefault: true, name: 'Starter Theme',
+        }];
       } else if (realmThemeArray.backgroundColor) {
         // This is an original theme where there is only a single theme per realm
-        themes.realm[realm] = [{
-          ...themeConstants.DEFAULT_THEME_PARAMS, ...realmThemeArray, _id: uuid(), isDefault: true, name: 'Starter Theme',
+        themes.realm[themeRealm] = [{
+          ...realmThemeArray, isDefault: true, name: 'Starter Theme',
         }];
       }
-      themes.realm[realm].forEach((individualTheme) => {
-        if (!individualTheme._id) {
-          individualTheme._id = uuid();
+      themes.realm[themeRealm].forEach((individualTheme) => {
+        if (realm === themeRealm && existingThemes && individualTheme._id === undefined) {
+          // For old themes that did not have an id, but one was generated, we need to make sure to use that same id
+          individualTheme._id = existingThemes.find((existingTheme) => existingTheme.name === individualTheme.name)?._id || uuid();
         }
-        each(themeConstants.DEFAULT_THEME_PARAMS, (value, key) => {
-          if (individualTheme[key] === undefined) {
-            individualTheme[key] = themeConstants.DEFAULT_THEME_PARAMS[key];
-          }
-        });
+        addDefaultsToTheme(individualTheme);
       });
     });
     return themes;
   }
 
-  /**
-   * Gets all themes and sets them in the store
-   */
-  async function getAllThemes() {
+  async function getAllThemes(realm, existingThemes) {
     try {
-      const { data: themes } = await getThemes();
-      themeStore.realmThemes = decodeThemes(addDefaultsToAllThemes(themes)).realm;
+      const { data: allThemes } = await getThemerealm();
+      return decodeThemes(addDefaultsToAllThemes(allThemes, realm, existingThemes));
+    } catch (error) {
+      showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingList'));
+      throw error;
+    }
+  }
+  /**
+   * Gets all themes from current realm and sets them in the store
+   * @param {String} realm The realm that the theme is located in
+   * @param {Array} fields The fields to include in the query response
+   */
+  async function getRealmThemes(realm, fields = '*') {
+    try {
+      let decodedThemesWithDefaults;
+      const { data: { result: themes } } = await getThemes({ realm, _queryFilter: 'true', _fields: fields });
+      if (themes?.length) {
+        decodedThemesWithDefaults = themes.map((individualTheme) => decodeThemeScripts(addDefaultsToTheme(individualTheme)));
+      } else {
+        const allThemes = await getAllThemes(realm);
+        decodedThemesWithDefaults = allThemes?.realm[realm] || [];
+      }
+      themeStore.realmThemes = decodedThemesWithDefaults.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        } if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
     } catch (error) {
       showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingList'));
       throw error;
@@ -84,12 +115,19 @@ export default function useTheme() {
    */
   async function deleteTheme(realm, themeId) {
     try {
-      const themesToSave = cloneDeep(realmThemes.value);
-      const index = themesToSave[realm].findIndex((searchTheme) => searchTheme._id === themeId);
-      themesToSave[realm].splice(index, 1);
+      const decodedThemes = await getAllThemes(realm, themeStore.realmThemes);
+      const index = decodedThemes.realm[realm].findIndex((searchTheme) => searchTheme._id === themeId);
+      decodedThemes.realm[realm].splice(index, 1);
 
-      const { data: themes } = await saveThemes(encodeThemes({ _id: 'ui/themerealm', realm: themesToSave }));
-      themeStore.realmThemes = themes.realm;
+      const { data: themes } = await saveThemes(encodeThemes(decodedThemes));
+      themeStore.realmThemes = themes.realm[realm].sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        } if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
     } catch (error) {
       showErrorMessage(error, i18n.global.t('hostedPages.theme.errorDeletingTheme'));
       throw error;
@@ -104,93 +142,90 @@ export default function useTheme() {
    * @param {String} treeId The id of the tree to get the theme for
    * @returns
    */
-  async function getTreeTheme(realm = '/', treeId) {
-    if (!realmThemes.value[realm]) {
-      await getAllThemes();
-    }
-    const linkedTree = realmThemes.value[realm].find((realmTheme) => realmTheme.linkedTrees.includes(treeId));
-    return linkedTree?._id || '';
+  async function getTreeThemeId(realm = '/', treeId) {
+    const params = { realm, _queryFilter: `linkedTrees eq "${treeId}"`, _fields: '_id' };
+    const { data: { result } } = await getThemes(params);
+    return result[0]?._id || result[0]?.name;
   }
 
   /**
    * Retrieves a theme within the specified realm from IDM
-   * if the theme is not found, it will return the default theme and remove the themeId from localStorage
    * @param {String} realm The realm that the theme is located in
-   * @param {String} themeIdentifier The id or name of the theme to retrieve
+   * @param {String} _queryFilter The query filter to use when retrieving the theme
+   * @param {Boolean} bailOnError Whether to show an error message if the theme cannot be retrieved
+   * @param {String} themeIdentifier The id or name of the theme
+   * @returns {Object} The theme object with defaults added
    */
-  async function getTheme(realm = '/', themeIdentifier) {
+  async function getTheme(realm = '/', _queryFilter, themeIdentifier, existingThemes) {
     let decodedTheme = {};
     try {
-      // Only query for all themes if we don't already have it stored in theme store
-      if (!themeStore.realmThemes[realm]) {
-        await getAllThemes();
+      const { data: { result } } = await getThemes({ realm, _queryFilter });
+      if (result[0]) {
+        decodedTheme = decodeThemeScripts(result[0]);
+      } else {
+        const allThemes = await getAllThemes(realm, existingThemes);
+        themeStore.realmThemes = allThemes?.realm[realm] || [];
+        if (_queryFilter.startsWith('isDefault')) {
+          decodedTheme = themeStore.realmThemes.find((t) => t.isDefault);
+        } else if (themeIdentifier) {
+          decodedTheme = themeStore.realmThemes.find((t) => t._id === themeIdentifier || t.name === themeIdentifier);
+          if (!decodedTheme) {
+            removeThemeIdFromLocalStorage(themeIdentifier);
+          }
+        }
       }
-      decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme._id === themeIdentifier || realmTheme.name === themeIdentifier);
     } catch (error) {
       showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingTheme'));
-      throw error;
     }
-    if (!decodedTheme) {
-      removeThemeIdFromLocalStorage(themeIdentifier);
-      // If we don't have a theme, set the default theme
-      decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme.isDefault) ?? {};
-    }
-    // Add in defaults for any missing values
-    each(themeConstants.DEFAULT_THEME_PARAMS, (value, key) => {
-      if (decodedTheme[key] === undefined) {
-        decodedTheme[key] = themeConstants.DEFAULT_THEME_PARAMS[key];
+    return addDefaultsToTheme(decodedTheme);
+  }
+
+  /**
+   * Gets the theme linked to a specific tree
+   * @param {String} realm The realm that the theme is located in
+   * @param {String} treeId The id of the tree to get the theme for
+   * @returns
+   */
+  async function loadTreeTheme(realm = '/', treeId) {
+    let decodedTheme = {};
+    try {
+      const { data: { result } } = await getThemes({ realm, _queryFilter: `linkedTrees eq "${treeId}"` });
+      if (result[0]) {
+        decodedTheme = decodeThemeScripts(result[0]);
       }
-    });
-    if (!decodedTheme.journeyInputFocusBorderColor) {
-      decodedTheme.journeyInputFocusBorderColor = decodedTheme.primaryColor;
+    } finally {
+      if (decodedTheme) {
+        themeStore.theme = addDefaultsToTheme(decodedTheme);
+      } else {
+        themeStore.theme = null;
+      }
     }
-    if (!decodedTheme.accountCardInputFocusBorderColor) {
-      decodedTheme.accountCardInputFocusBorderColor = decodedTheme.primaryColor;
-    }
-    return decodedTheme;
+  }
+
+  /**
+   * Loads the static theme into the store
+   */
+  function loadStaticTheme() {
+    themeStore.theme = {
+      logo: `${process.env.BASE_URL}images/ping-logo-square-color.svg`,
+      logoHeight: 72,
+      favicon: 'favicon.ico',
+    };
   }
 
   /**
    * Gets specified theme and saves it to store
    * @param {String} realm The realm that the theme is located in
-   * @param {String} themeId The id of the theme to get
-   * @param {Boolean} queryByName Whether we need to query for theme by name
-   * @param {Boolean} useStaticTheme Whether to use the static theme (FRaaS only)
+   * @param {String} themeIdentifier The id or name of the theme to get
    */
-  async function loadTheme(realm = '/', themeId, queryByName = false, useStaticTheme) {
+  async function loadTheme(realm = '/', themeIdentifier) {
     let loadedTheme = {};
-    themeStore.lastQueriedRealm = realm;
-    if (useStaticTheme) {
-      // Root realm on cloud tenants (Fraas) should always have static theme
-      themeStore.theme = {
-        logo: `${process.env.BASE_URL}images/ping-logo-square-color.svg`,
-        logoHeight: 72,
-        favicon: 'favicon.ico',
-      };
-      return;
-    }
-    if (!themeId) {
-      // if no theme id is provided, use the realm's default theme
-      if (!Object.keys(realmThemes.value).length) {
-        // If we don't have themes, query for them
-        await getAllThemes();
-      }
-      loadedTheme = realmThemes.value[realm]?.find((realmTheme) => realmTheme.isDefault) || {};
+    if (!themeIdentifier) {
+      loadedTheme = await getTheme(realm, 'isDefault eq true') || {};
     } else {
-      // If the theme is already loaded from the specified realm, don't query again
-      if (themeId === theme.value._id && realm === lastQueriedRealm.value) {
-        return;
-      }
-      loadedTheme = await getTheme(realm, themeId, queryByName) || {};
+      const returnedTheme = await getTheme(realm, `_id eq "${themeIdentifier}" or name eq "${themeIdentifier}"`, themeIdentifier);
+      loadedTheme = returnedTheme || {};
     }
-    each(themeConstants.DEFAULT_THEME_PARAMS, (value, key) => {
-      if (loadedTheme[key] === undefined) {
-        loadedTheme[key] = themeConstants.DEFAULT_THEME_PARAMS[key];
-      }
-    });
-    // eslint-disable-next-line global-require
-    const placeholderImage = require('@forgerock/platform-shared/src/assets/images/placeholder.svg');
-    loadedTheme.logo = loadedTheme.logo || placeholderImage;
 
     themeStore.theme = loadedTheme;
   }
@@ -204,14 +239,10 @@ export default function useTheme() {
     const themeToSave = cloneDeep(themeData);
     try {
       // Get all themes, update the one that matches the id, and save all themes
-      if (!themeStore.realmThemes[realm]) {
-        await getAllThemes();
-      }
-      const themes = { realm: themeStore.realmThemes };
-      const decodedThemes = decodeThemes(themes);
+      const decodedThemes = await getAllThemes(realm, themeStore.realmThemes);
       updateThemerealmObject(decodedThemes.realm, themeToSave, realm);
       await saveThemes(encodeThemes(decodedThemes));
-      themeStore.realmThemes = decodedThemes.realm;
+      themeStore.realmThemes = decodedThemes.realm[realm];
     } catch (error) {
       showErrorMessage(error, i18n.global.t('common.themes.errorSavingTheme'));
       throw error;
@@ -225,7 +256,7 @@ export default function useTheme() {
    * @param {String} realm The realm that the theme is located in
    */
   async function addTreeTheme(themeId, treeId, realm) {
-    const themeToSave = await getTheme(realm, themeId);
+    const themeToSave = await getTheme(realm, `_id eq "${themeId}" or name eq "${themeId}"`, themeId, [{ _id: themeId, name: 'Starter Theme' }]);
     // only continue if theme does not have treeId already
     if (!themeToSave.linkedTrees.includes(treeId)) {
       // add treeId to this theme
@@ -241,7 +272,7 @@ export default function useTheme() {
    * @param {String} realm The realm that the theme is located in
    */
   async function removeTreeTheme(themeId, treeId, realm) {
-    const themeToSave = await getTheme(realm, themeId);
+    const themeToSave = await getTheme(realm, `_id eq "${themeId}" or name eq "${themeId}"`);
     themeToSave.linkedTrees = themeToSave.linkedTrees.filter((tree) => tree !== treeId);
     await saveTheme(realm, themeToSave);
   }
@@ -254,10 +285,7 @@ export default function useTheme() {
   async function setThemeAsDefault(realm, themeIdentifier) {
     try {
       // Get all themes, update the one that matches the id, and save all themes
-      if (!themeStore.realmThemes[realm]) {
-        await getAllThemes();
-      }
-      const decodedThemes = { realm: themeStore.realmThemes };
+      const decodedThemes = await getAllThemes(realm, themeStore.realmThemes);
       // Remove isDefault from any other themes
       const currentDefaultTheme = decodedThemes.realm[realm].find((realmTheme) => realmTheme.isDefault === true);
       if (currentDefaultTheme) {
@@ -266,7 +294,14 @@ export default function useTheme() {
       const themeIndex = decodedThemes.realm[realm].findIndex((decodedTheme) => decodedTheme._id === themeIdentifier || decodedTheme.name === themeIdentifier);
       decodedThemes.realm[realm][themeIndex].isDefault = true;
       await saveThemes(encodeThemes(decodedThemes));
-      themeStore.realmThemes = decodedThemes.realm;
+      themeStore.realmThemes = decodedThemes.realm[realm].sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        } if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
     } catch (error) {
       showErrorMessage(error, i18n.global.t('hostedPages.theme.errorSetDefault'));
       throw error;
@@ -280,10 +315,13 @@ export default function useTheme() {
   return {
     addTreeTheme,
     deleteTheme,
+    getRealmThemes,
     getAllThemes,
     getTheme,
-    getTreeTheme,
+    getTreeThemeId,
+    loadStaticTheme,
     loadTheme,
+    loadTreeTheme,
     localizedFavicon,
     realmThemes,
     removeTreeTheme,

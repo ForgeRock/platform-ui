@@ -48,7 +48,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.visit(locationUrl);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check correct Journey has loaded
       cy.findByRole('heading', { name: 'Terms & Conditions UI Journey', level: 1 }).should('be.visible');
@@ -89,7 +89,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     retryableBeforeEach(() => {
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Redirect to the start of T&C Journey
       loadJourney();
@@ -114,7 +114,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.reload();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Again Login as Enduser
       loginEnduser();

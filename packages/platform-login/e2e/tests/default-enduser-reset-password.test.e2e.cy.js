@@ -74,13 +74,13 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     retryableBeforeEach(() => {
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Load base Journey URL
       cy.visit(resetPasswordUrl);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Wait for a Journey page to fully load
       cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');
@@ -106,7 +106,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('link', { name: 'Sign in' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check the browser has been directed to the default Login page
       cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible');
@@ -116,7 +116,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.go('back');
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Wait for a Journey page to fully load
       cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');
@@ -126,7 +126,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('link', { name: 'Sign in' }).should('be.visible').click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Login as Enduser with password used during creation
       cy.loginAsEnduser(userName, defaultPassword, true, resetPasswordLoginUrl);
@@ -163,7 +163,7 @@ filterTests(['@forgeops', '@cloud'], () => {
         cy.visit(resetLink);
 
         // Wait for a Journey page to fully load
-        cy.wait('@themerealmConfig', { timeout: 10000 });
+        cy.wait('@getTheme', { timeout: 10000 });
         cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');
 
         // We landed on a correct page where user can reset its password
@@ -230,7 +230,7 @@ filterTests(['@forgeops', '@cloud'], () => {
         cy.visit(resetLink);
 
         // Wait for a Journey page to fully load
-        cy.wait('@themerealmConfig', { timeout: 10000 });
+        cy.wait('@getTheme', { timeout: 10000 });
 
         // We landed on a correct page where user can reset its password
         cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');
@@ -243,7 +243,7 @@ filterTests(['@forgeops', '@cloud'], () => {
         cy.visit(resetLink);
 
         // Wait for a Journey page to fully load
-        cy.wait('@themerealmConfig', { timeout: 10000 });
+        cy.wait('@getTheme', { timeout: 10000 });
 
         // Link should no longer be working, check correct Error page is shown and we are able to start over
         cy.findByRole('heading', { name: 'Error', level: 1, timeout: 5000 }).should('be.visible');
@@ -251,7 +251,7 @@ filterTests(['@forgeops', '@cloud'], () => {
         cy.findByRole('link', { name: 'Start Over' }).should('be.visible').click();
 
         // Wait for a Journey page to fully load
-        cy.wait('@themerealmConfig', { timeout: 10000 });
+        cy.wait('@getTheme', { timeout: 10000 });
 
         // Check the browser has been directed to the ResetPassword page
         cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.disabled');

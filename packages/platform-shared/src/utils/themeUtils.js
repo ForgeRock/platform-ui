@@ -75,41 +75,59 @@ export function encodeThemes(themes) {
   return encodedThemes;
 }
 
+/**
+ * Adds default values to the theme object if they are not present
+ * @param {Object} decodedTheme The theme object to add defaults to
+ * @returns The theme object with defaults added
+ */
+export function addDefaultsToTheme(decodedTheme = {}) {
+  if (decodedTheme._id === undefined) {
+    decodedTheme._id = uuid();
+  }
+  // eslint-disable-next-line global-require
+  const placeholderImage = require('@forgerock/platform-shared/src/assets/images/placeholder.svg');
+  decodedTheme.logo = decodedTheme.logo || placeholderImage;
+  // Add in defaults for any missing values
+  each(themeConstants.DEFAULT_THEME_PARAMS, (value, key) => {
+    if (decodedTheme[key] === undefined) {
+      decodedTheme[key] = themeConstants.DEFAULT_THEME_PARAMS[key];
+    }
+  });
+  decodedTheme.journeyInputFocusBorderColor = decodedTheme.journeyInputFocusBorderColor || decodedTheme.primaryColor;
+  decodedTheme.accountCardInputFocusBorderColor = decodedTheme.accountCardInputFocusBorderColor || decodedTheme.primaryColor;
+  return decodedTheme;
+}
+
 /*
  * Adds a provided theme to the themerealm endpoint object, or updates an existing theme
- * @param {Object} decodedThemes The themerealm endpoint object in a decoded state
+ * @param {Object} themes The themerealm endpoint object
  * @param {Object} themeToSave Individual theme object to add/update
  * @param {String} realm The current realm theme belongs to
  */
-export function updateThemerealmObject(decodedThemes, themeToSave, realm) {
-  // Add in defaults for any missing values
-  each(themeConstants.DEFAULT_THEME_PARAMS, (value, key) => {
-    if (themeToSave[key] === undefined) {
-      themeToSave[key] = themeConstants.DEFAULT_THEME_PARAMS[key];
+export function updateThemerealmObject(themes, themeToSave, realm) {
+  const themeIndex = themes[realm].findIndex((theme) => {
+    if (theme._id !== undefined && themeToSave._id !== undefined) {
+      return theme._id === themeToSave._id;
     }
+    return theme.name === themeToSave.name;
   });
-  const themeIndex = decodedThemes[realm].findIndex((decodedTheme) => {
-    if (decodedTheme._id) {
-      return decodedTheme._id === themeToSave._id;
-    }
-    return decodedTheme.name === themeToSave.name;
-  });
-  if (!themeToSave._id) {
-    themeToSave._id = uuid();
-  }
+
   if (themeIndex === -1) {
     themeToSave.isDefault = false;
-    decodedThemes[realm].push(themeToSave);
+    themes[realm].push(addDefaultsToTheme(themeToSave));
   } else {
-    decodedThemes[realm][themeIndex] = themeToSave;
+    Object.entries(themeToSave).forEach(([key, value]) => {
+      themes[realm][themeIndex][key] = value;
+    });
+    themes[realm][themeIndex] = addDefaultsToTheme(themes[realm][themeIndex]);
     // if new tree was linked to this theme, we need to remove that tree from other themes
-    decodedThemes[realm].forEach((decodedTheme, index) => {
+    themes[realm].forEach((theme, index) => {
       if (index !== themeIndex && themeToSave.linkedTrees) {
         themeToSave.linkedTrees.forEach((treeName) => {
-          if (decodedTheme.linkedTrees) {
-            const treeIndex = decodedTheme.linkedTrees.indexOf(treeName);
+          if (theme.linkedTrees) {
+            const treeIndex = theme.linkedTrees.indexOf(treeName);
             if (treeIndex > -1) {
-              decodedTheme.linkedTrees.splice(treeIndex, 1);
+              theme.linkedTrees.splice(treeIndex, 1);
             }
           }
         });
@@ -129,5 +147,28 @@ export function removeThemeIdFromLocalStorage(themeId) {
     if (storedThemeId === themeId) {
       localStorage.removeItem('theme-id');
     }
+  }
+}
+
+/**
+ * If theme with the same name but different _id is found, create unique name
+ * @param {Object} themeData The theme data to check for uniqueness
+ * @param {Object} themes The themes object containing all themes
+ * @param {String} realm The current realm where the theme belongs
+ */
+export function setUniqueThemeName(themeData, themes, realm) {
+  let finalNameFound = false;
+  let iterationCount = 0; // Track the number of iterations
+  while (!finalNameFound && iterationCount < 100) {
+    const duplicateNameTheme = themes.realm[realm].find((theme) => theme.name === themeData.name);
+    if (duplicateNameTheme && duplicateNameTheme?._id !== themeData._id) {
+      themeData.name = `${themeData.name}(2)`;
+      if (!themes.realm[realm].find((theme) => theme.name === themeData.name)) {
+        finalNameFound = true;
+      }
+    } else {
+      finalNameFound = true;
+    }
+    iterationCount += 1;
   }
 }

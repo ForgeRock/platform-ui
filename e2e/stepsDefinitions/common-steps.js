@@ -19,10 +19,10 @@ Given('admin logs into the tenant', () => {
 
 Given('user navigates to {journey} journey', (journeyName) => {
   const url = generateJourneyURL(journeyName);
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
   cy.visit(url);
-  cy.wait('@themerealmConfig', { timeout: 10000 });
-  // Added for tests stability, looks like themerealm endpoint wait is not enough to ensure UI is completely loaded
+  cy.wait('@getTheme', { timeout: 10000 });
+  // Added for tests stability
   // TODO: Review a better way to improve stability
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
@@ -96,8 +96,8 @@ When('user types the stored value of {string} in {string} field', (storedDataNam
 });
 
 When('user waits for themerealm request', () => {
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealm');
-  cy.wait('@themerealm', { timeout: 10000 });
+  cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
+  cy.wait('@getTheme', { timeout: 10000 });
 });
 
 When('user fills registration form with following data', (dataTable) => {
@@ -124,9 +124,9 @@ When('clicks on {string} tab', (page) => {
 });
 
 When('user reloads the page', () => {
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
   cy.reload();
-  cy.wait('@themerealmConfig', { timeout: 10000 });
+  cy.wait('@getTheme', { timeout: 10000 });
 });
 
 When('user clicks on {string} button in {string} modal', (button, modal) => {

@@ -84,14 +84,14 @@ filterTests(['@cloud'], () => {
 
     function openExtendedRegistrationJourneyPage() {
       // Set up intercepts
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
       cy.intercept('POST', `/am/json/realms/root${realmUrl}/authenticate`).as('authenticate');
 
       // Redirect to the Extended Registration Journey page
       cy.visit(locationUrl);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
       cy.wait('@authenticate', { timeout: 5000 });
       cy.wait('@authenticate', { timeout: 5000 });
     }
