@@ -90,7 +90,8 @@ describe('App.vue', () => {
     TasksApi.getUserFulfillmentTasks = jest.fn().mockImplementation(() => Promise.resolve({ data: { totalCount: 1 } }));
     ManagedResourceApi.getManagedResourceList = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [] } }));
     ServerinfoApi.getIdmServerInfo = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
-    ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { '/': [] } } }));
+    ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    ThemeApi.getThemerealm = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [] } } }));
     getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
   });
 

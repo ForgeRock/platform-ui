@@ -106,13 +106,13 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.loginAsEnduser(userName, userPassword);
 
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Visit Enduser Profile page
       cy.visit(enduserProfileUrl);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check that the Theme is correctly applied
       cy.get('body').should('have.css', 'background-color', 'rgb(255, 255, 255)');
@@ -172,13 +172,13 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.loginAsEnduser(userName, userPassword);
 
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Visit Enduser Profile page
       cy.visit(enduserProfileUrl);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check that the Theme is correctly applied
       // Verify personal information, password row, and 2-step verification row do not appear
@@ -212,13 +212,13 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.logout();
 
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Visit Default Journey
       cy.visit(Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha#/` : `${Cypress.config().baseUrl}/enduser/`);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check Login page has proper favicon
       cy.findByTestId('favicon').should('have.attr', 'href').and('include', 'https://www.favicon.cc/logo3d/850851.png');

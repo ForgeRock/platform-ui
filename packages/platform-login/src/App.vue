@@ -78,6 +78,7 @@ import ValidationRules from '@forgerock/platform-shared/src/utils/validationRule
 import createScriptTags from '@forgerock/platform-shared/src/utils/externalScriptUtils';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
+import { removeThemeIdFromLocalStorage } from '@forgerock/platform-shared/src/utils/themeUtils';
 import i18n from './i18n';
 import './scss/main.scss';
 
@@ -94,17 +95,17 @@ export default {
   ],
   setup() {
     const {
-      getAllThemes,
+      loadStaticTheme,
       loadTheme,
+      loadTreeTheme,
       localizedFavicon,
-      realmThemes,
       theme,
     } = useTheme();
     return {
-      getAllThemes,
+      loadStaticTheme,
       loadTheme,
+      loadTreeTheme,
       localizedFavicon,
-      realmThemes,
       theme,
     };
   },
@@ -147,26 +148,35 @@ export default {
       if (cleanRealm.length > 1 && cleanRealm.charAt(0) === '/') {
         cleanRealm = cleanRealm.substring(1);
       }
-      this.journeyFocusElement = undefined;
-      let themeId = this.$store.state.SharedStore.webStorageAvailable ? localStorage.getItem('theme-id') : null;
-      if (nodeThemeId) {
-        // Prioritize node themes over tree themes
-        themeId = nodeThemeId;
-      } else if (treeId) {
-        // Next priority is theme assigned to tree, so we need to check if the tree is linked to a theme
-        await this.getAllThemes();
-        const treeTheme = this.realmThemes[cleanRealm]?.find((realmTheme) => (realmTheme.linkedTrees?.includes(treeId)));
-        if (treeTheme) {
-          themeId = treeTheme._id;
+      if (this.$store.state.SharedStore.isFraas && cleanRealm === '/') {
+        this.loadStaticTheme();
+      } else {
+        if (nodeThemeId) {
+          // First choice is setting theme from page node theme
+          await this.loadTheme(cleanRealm, nodeThemeId);
+        } else if (treeId) {
+          // Second choice is theme assigned to tree, so we need to check if the tree is linked to a theme
+          await this.loadTreeTheme(cleanRealm, treeId);
+        }
+        if (this.theme?.name) {
+          // A theme was set by a node or tree, so save it to local storage
+          this.saveToLocalStorage(this.theme._id || this.theme.name);
+        } else if (this.$store.state.SharedStore.webStorageAvailable) {
+          // Third choice is a theme saved in local storage
+          const localStorageThemeId = localStorage.getItem('theme-id');
+          if (localStorageThemeId) {
+            await this.loadTheme(cleanRealm, localStorageThemeId);
+            if (!this.theme?.name) {
+              removeThemeIdFromLocalStorage(localStorageThemeId);
+            }
+          }
+        }
+        if (!this.theme?.name) {
+          // Fourth and final choice is default theme
+          await this.loadTheme(cleanRealm);
         }
       }
-      if (themeId) {
-        // A theme was set by a node or tree, so save it to local storage
-        this.saveToLocalStorage(themeId);
-      }
 
-      const useStaticTheme = this.$store.state.SharedStore.isFraas && cleanRealm === '/';
-      await this.loadTheme(cleanRealm, themeId, false, useStaticTheme);
       if (this.localizedFavicon) {
         document.getElementById('favicon').href = this.localizedFavicon;
       }
@@ -175,9 +185,9 @@ export default {
     themeTransitionHandler(val) {
       if (val === 'error') {
         this.hideAppOnTransition = false;
-        return;
+      } else {
+        this.hideAppOnTransition = true;
       }
-      this.hideAppOnTransition = true;
     },
   },
   watch: {

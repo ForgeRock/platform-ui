@@ -12,77 +12,61 @@ import { setupTestPinia } from '../utils/testPiniaHelpers';
 import useTheme from './theme';
 
 describe('theme composable', () => {
-  ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { '/': [] } } }));
+  ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
+  ThemeApi.getThemerealm = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [{ _id: 'testTheme', primaryColor: '#dddddd' }] } } }));
   function setupTestStore(theme = null, realmThemes = {}) {
     setupTestPinia({ theme, realmThemes });
   }
 
   describe('retrieving themes - getTheme', () => {
     it('Should retrieve a theme', async () => {
-      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } } }));
+      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: { result: [{ _id: 'testTheme', primaryColor: '#dddddd' }] } }));
       setupTestStore();
       const { theme, loadTheme } = useTheme();
-      await loadTheme('testRealm', 'ui/theme-testTheme');
-      expect(theme.value._id).toBe('ui/theme-testTheme');
+      await loadTheme('testRealm', 'testTheme');
+      expect(theme.value._id).toBe('testTheme');
     });
 
     it('should convert original theme config to current config', async () => {
-      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: { realm: { alpha: { backgroundColor: '#324054' }, testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } } }));
+      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: [] }));
+      ThemeApi.getThemerealm.mockReturnValue(Promise.resolve({ data: { realm: { alpha: { backgroundColor: '#324054' }, testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } } }));
       setupTestStore();
-      const { getAllThemes, realmThemes } = useTheme();
-      await getAllThemes();
-      expect(realmThemes.value.alpha[0].accountCardBackgroundColor).toBe('#ffffff');
-      expect(realmThemes.value.alpha[0].accountCardShadow).toBe(3);
-      expect(realmThemes.value.alpha[0].favicon).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg');
+      const { getRealmThemes, realmThemes } = useTheme();
+      await getRealmThemes('alpha');
+      expect(realmThemes.value[0].accountCardBackgroundColor).toBe('#ffffff');
+      expect(realmThemes.value[0].accountCardShadow).toBe(3);
+      expect(realmThemes.value[0].favicon).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg');
     });
 
     it('should convert missing theme config to current config', async () => {
-      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: { realm: { alpha: undefined, testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } } }));
+      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: [] }));
+      ThemeApi.getThemerealm.mockReturnValue(Promise.resolve({ data: { realm: { alpha: undefined, testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } } }));
       setupTestStore();
-      const { getAllThemes, realmThemes } = useTheme();
-      await getAllThemes();
-      expect(realmThemes.value.alpha[0].accountCardBackgroundColor).toBe('#ffffff');
-      expect(realmThemes.value.alpha[0].accountCardShadow).toBe(3);
-      expect(realmThemes.value.alpha[0].favicon).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg');
-    });
-
-    it('Should retrieve a theme from a cached store', async () => {
-      const realmThemes = { realm: { testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } };
-      setupTestStore(null, realmThemes);
-      const { theme, loadTheme } = useTheme();
-      await loadTheme('testRealm', 'ui/theme-testTheme');
-      expect(theme.value._id).toBe('ui/theme-testTheme');
+      const { getRealmThemes, realmThemes } = useTheme();
+      await getRealmThemes('alpha');
+      expect(realmThemes.value[0].accountCardBackgroundColor).toBe('#ffffff');
+      expect(realmThemes.value[0].accountCardShadow).toBe(3);
+      expect(realmThemes.value[0].favicon).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg');
     });
 
     it('Should return the default theme when the requested theme is not found', async () => {
-      const realmThemes = {
-        realm: {
-          testRealm: [
-            {
-              _id: 'ui/theme-defaultTheme',
-              isDefault: true,
-              primaryColor: '#aaaaaa',
-            },
-            { _id: 'ui/theme-otherTheme', primaryColor: '#bbbbbb' },
-          ],
-        },
-      };
-      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: realmThemes }));
+      const realmThemes = [{ _id: 'defaultTheme', isDefault: true, primaryColor: '#aaaaaa' }, { _id: 'otherTheme', primaryColor: '#bbbbbb' }];
+      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: { result: realmThemes } }));
       setupTestStore('testRealm', realmThemes);
       const { theme, loadTheme } = useTheme();
-      await loadTheme('testRealm', 'ui/theme-nonExistentTheme');
-      expect(theme.value._id).toBe('ui/theme-defaultTheme');
+      await loadTheme('testRealm', 'nonExistentTheme');
+      await flushPromises();
+      expect(theme.value._id).toBe('defaultTheme');
     });
   });
 
   describe('saveTheme', () => {
     it('should save theme', async () => {
-      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } } }));
-      const saveSpy = jest.spyOn(ThemeApi, 'saveThemes').mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [{ _id: 'ui/theme-testTheme' }] } } }));
+      const saveSpy = jest.spyOn(ThemeApi, 'saveThemes').mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [{ _id: 'testTheme' }] } } }));
       setupTestStore();
       const { loadTheme, saveTheme } = useTheme();
-      await loadTheme('testRealm', 'ui/theme-testTheme');
-      await saveTheme('testRealm', { _id: 'ui/theme-testTheme' });
+      await loadTheme('testRealm', 'testTheme');
+      await saveTheme('testRealm', { _id: 'testTheme' });
       expect(saveSpy).toHaveBeenCalled();
     });
   });
@@ -109,8 +93,8 @@ describe('deleteTheme', () => {
 
   it('should delete a theme, call saveThemes, and remove from localStorage', async () => {
     const testRealm = 'testRealm';
-    const testThemeId = 'ui/theme-testTheme';
-    const otherTheme = { _id: 'ui/theme-otherTheme' };
+    const testThemeId = 'testTheme';
+    const otherTheme = { _id: 'otherTheme' };
 
     const themeStore = useThemeStore();
 
@@ -123,7 +107,7 @@ describe('deleteTheme', () => {
     };
 
     // Mock return value of saveThemes
-    ThemeApi.saveThemes.mockResolvedValue({
+    ThemeApi.saveThemes = jest.fn().mockResolvedValue({
       data: {
         realm: {
           [testRealm]: [otherTheme], // Only one theme should remain
@@ -140,12 +124,11 @@ describe('deleteTheme', () => {
 
     // Assertions
     expect(ThemeApi.saveThemes).toHaveBeenCalledWith(expect.objectContaining({
-      _id: 'ui/themerealm',
-      realm: {
-        [testRealm]: [otherTheme],
-      },
+      realm: expect.objectContaining({
+        [testRealm]: [],
+      }),
     }));
-    expect(themeStore.realmThemes[testRealm]).toEqual([otherTheme]);
+    expect(themeStore.realmThemes).toEqual([otherTheme]);
     expect(mockRemoveItem).toHaveBeenCalledWith('theme-id');
   });
 });

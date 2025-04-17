@@ -15,12 +15,10 @@ import { ref } from 'vue';
  */
 // eslint-disable-next-line import/prefer-default-export
 export const useThemeStore = defineStore('theme', () => {
-  const lastQueriedRealm = ref('');
-  const realmThemes = ref({});
+  const realmThemes = ref([]);
   const theme = ref(null);
 
   return {
-    lastQueriedRealm,
     realmThemes,
     theme,
   };

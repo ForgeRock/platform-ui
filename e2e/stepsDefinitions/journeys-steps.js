@@ -31,15 +31,13 @@ Given('journey {journey} is imported via API', (name) => {
 });
 
 When('user clicks on {string} Journey redirect link', (link) => {
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
   cy.findByRole('link', { name: link }).click();
-  // TODO: Lower this big timeout after Themes performance is resolved (10s should be more than enough even for bigger Journeys)
-  cy.wait('@themerealmConfig', { timeout: 20000 });
+  cy.wait('@getTheme', { timeout: 10000 });
 });
 
 When('user navigates back to previous Journey page', () => {
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
   cy.go('back');
-  // TODO: Lower this big timeout after Themes performance is resolved (10s should be more than enough even for bigger Journeys)
-  cy.wait('@themerealmConfig', { timeout: 20000 });
+  cy.wait('@getTheme', { timeout: 10000 });
 });

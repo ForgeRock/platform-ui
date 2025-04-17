@@ -48,7 +48,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.loginAsEnduser(userName, defaultPassword);
 
       // Set up intercepts
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
       cy.intercept('GET', `/openidm/managed/${realmUser}/${userId}`).as('getNewUser');
       cy.intercept('GET', `/am/json${userInfoRealm}/users/${userId}`).as('getUserInfo');
       cy.intercept('POST', `/am/json/realms/root${authenticateRealm}/authenticate`).as('authenticate');
@@ -64,7 +64,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('link', { name: 'Reset Password' }).should('be.visible').click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check the browser has been directed to the Verify Existing Password page
       cy.findByRole('button', { name: 'Next', timeout: 5000 }).should('be.visible').should('be.enabled');
@@ -75,7 +75,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
       cy.findByTestId('FrAlert').should('be.visible').contains('Login failure');
 
       // Filling in wrong password should result in an error
@@ -87,7 +87,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
       cy.findByTestId('FrAlert').should('be.visible').contains('Login failure');
 
       // Fill in correct password and proceed to the next step
@@ -99,7 +99,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
       cy.wait('@authenticate', { timeout: 5000 });
       cy.wait('@authenticate', { timeout: 5000 });
 
@@ -139,7 +139,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.loginAsEnduser(userName, defaultPassword, false);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
       if (!Cypress.env('IS_FRAAS')) {
         cy.findByTestId('FrAlert').should('exist').contains('Login failure').should('be.visible');
       }

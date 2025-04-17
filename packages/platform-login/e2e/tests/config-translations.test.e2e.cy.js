@@ -360,13 +360,13 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     it('Should override the text of the next button, username placeholder, and password placeholder', () => {
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Visit base page of our Login Journey with default locale
       cy.visit(`${loginBaseUrl}#/`);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check override translations are applied correctly for default locale
       cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible');
@@ -379,13 +379,13 @@ filterTests(['@forgeops', '@cloud'], () => {
       const timesClicked = Cypress.env('IS_FRAAS') ? 6 : 1;
 
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Visit base page of our Login Journey with default locale
       cy.visit(`${loginBaseUrl}#/`);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Click on the Next button to trigger the 'Loginfailure' message
       for (let i = 0; i < timesClicked; i += 1) {
@@ -393,7 +393,7 @@ filterTests(['@forgeops', '@cloud'], () => {
         cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible').click();
 
         // Wait for a Journey page to fully load
-        cy.wait('@themerealmConfig', { timeout: 10000 });
+        cy.wait('@getTheme', { timeout: 10000 });
       }
 
       // Check override translations are applied correctly for default locale
@@ -402,13 +402,13 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     it('Should display French overrides when locale query parameter is "fr"', () => {
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Visit base page of our Login Journey with added locale
       cy.visit(`${loginBaseUrl}&locale=fr#/`);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check override translations are applied correctly for added locale
       cy.findByRole('button', { name: 'Suivant Test', timeout: 10000 }).should('be.visible');
@@ -420,13 +420,13 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     it('Should fallback to a general locale when a specific one is not present', () => {
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Visit base page of our Login Journey with added locale
       cy.visit(`${loginBaseUrl}&locale=fr-ca#/`);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check override translations are applied correctly for added locale and fallback locale
       // fr-ca

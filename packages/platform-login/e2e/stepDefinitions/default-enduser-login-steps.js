@@ -9,10 +9,10 @@ import { When } from '@badeball/cypress-cucumber-preprocessor';
 
 When('user tries to login {int} times with {string} username and {string} password', (numberOfAttempts, userName, password) => {
   for (let i = 0; i < numberOfAttempts; i += 1) {
-    cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+    cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
     if (userName !== 'empty') { cy.findByLabelText('User Name').clear().type(Cypress.env(userName) ? Cypress.env(userName) : userName); }
     if (password !== 'empty') { cy.findByLabelText('Password').clear().type(Cypress.env(password) ? Cypress.env(password) : password); }
     cy.findByRole('button', { name: 'Next' }).click();
-    cy.wait('@themerealmConfig', { timeout: 10000 });
+    cy.wait('@getTheme', { timeout: 10000 });
   }
 });

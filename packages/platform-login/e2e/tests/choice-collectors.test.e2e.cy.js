@@ -40,13 +40,13 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     retryableBeforeEach(() => {
       // Set up intercept
-      cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
       // Load base Journey URL
       cy.visit(locationUrl);
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Check correct Journey has loaded
       cy.findByRole('heading', { name: 'Choices UI Journey' }).should('be.visible');
@@ -67,7 +67,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Make sure we are on a correct Page Node
       cy.findByRole('heading', { name: 'Radio Choice Collector!' }).should('be.visible');
@@ -80,7 +80,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
     }
 
     it('Page Node with Radio Choice Collector - default value is checked and working', () => {
@@ -93,7 +93,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Journey returns back to Default page
       cy.findByRole('heading', { name: 'Choices UI Journey' }).should('be.visible');
@@ -151,7 +151,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('button', { name: 'No!' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Journey returns back to Choice Collector page
       cy.findByRole('heading', { name: 'Radio Choice Collector!' }).should('be.visible');
@@ -194,7 +194,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('button', { name: 'NOT OK!' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Journey returns back to Choice Collector page
       cy.findByRole('heading', { name: 'Radio Choice Collector!' }).should('be.visible');
@@ -242,7 +242,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('button', { name: 'Next' }).click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@themerealmConfig', { timeout: 10000 });
+      cy.wait('@getTheme', { timeout: 10000 });
 
       // Journey returns back to Choice Collector page
       cy.findByRole('heading', { name: 'Radio Choice Collector!' }).should('be.visible');

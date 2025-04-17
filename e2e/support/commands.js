@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright 2021-2025 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -115,13 +115,13 @@ Cypress.Commands.add(
     cy.logout();
 
     // Set up intercept
-    cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+    cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
     // Visit enduser URL
     cy.visit(loginUrl);
 
     // Wait for a Journey page to fully load
-    cy.wait('@themerealmConfig', { timeout: 10000 });
+    cy.wait('@getTheme', { timeout: 10000 });
 
     // Fill in Enduser name and password
     cy.findByLabelText(/User Name/i, { timeout: 10000 }).should('be.visible').type(userName, { force: true });
@@ -167,9 +167,9 @@ Cypress.Commands.add('navigateToPage', (page, isUrl = false) => {
 });
 
 Cypress.Commands.add('visitJourneyUrl', (journeyUrl) => {
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
   cy.visit(journeyUrl);
-  cy.wait('@themerealmConfig', { timeout: 10000 });
+  cy.wait('@getTheme', { timeout: 10000 });
 });
 
 /**
