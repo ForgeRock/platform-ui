@@ -180,6 +180,16 @@ of the MIT license. See the LICENSE file for details. -->
       .spinner-primary {
         color: {{ theme.primaryColor }};
       }
+
+      #app <template v-if="mock">.fr-theme-preview</template> .form-label-group.fr-field-error input:not(.multiselect__input):not(.fr-tag-input),
+      #app <template v-if="mock">.fr-theme-preview</template> .form-label-group.fr-field-error .btn {
+        border-color: {{ theme.dangerColor }} !important;
+      }
+
+      #app <template v-if="mock">.fr-theme-preview</template> .form-label-group.fr-field-error .form-control:focus,
+      #app <template v-if="mock">.fr-theme-preview</template> .form-label-group:focus-within.fr-field-error .input-buttons:not(:focus-within) .within-input-button .btn {
+        box-shadow: 0 0 0 0.0625rem {{ theme.dangerColor }} !important;
+      }
     </Component>
 
     <Component
