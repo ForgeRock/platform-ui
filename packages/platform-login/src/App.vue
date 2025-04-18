@@ -3,16 +3,22 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div
-    id="app"
-    :class="{ invisible: hideAppOnTransition }">
+  <div id="app">
     <ThemeInjector
       :theme="theme"
       v-if="theme !== null && Object.keys(theme).length > 0" />
     <div
       id="appContentWrapper"
       class="h-100">
-      <RouterView v-slot="{ Component }">
+      <div
+        class="min-vh-100 d-flex flex-column"
+        v-if="hideAppOnTransition"
+      >
+        <FrSpinner class="mb-4 flex-grow-1 align-content-center" />
+      </div>
+      <RouterView
+        v-slot="{ Component }"
+        :class="{ invisible: hideAppOnTransition }">
         <Transition
           name="fade"
           mode="out-in">
@@ -71,6 +77,7 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import createScriptTags from '@forgerock/platform-shared/src/utils/externalScriptUtils';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from './i18n';
 import './scss/main.scss';
 
@@ -79,6 +86,7 @@ export default {
   components: {
     FrAlert: Alert,
     ThemeInjector,
+    FrSpinner,
   },
   mixins: [
     RestMixin,
