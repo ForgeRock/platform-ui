@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,7 +19,9 @@ of the MIT license. See the LICENSE file for details. -->
           :show-edit="profile._id !== undefined && isInternalUser === false"
           :show-image-upload="managedResourceSchema.properties && managedResourceSchema.properties.profileImage !== undefined" />
       </BCol>
-      <slot name="settings" />
+      <slot
+        name="settings"
+        :update-profile="updateProfile" />
     </BRow>
   </BContainer>
 </template>
@@ -58,12 +60,6 @@ export default {
     BContainer,
     BRow,
     FrEditProfile,
-  },
-  props: {
-    theme: {
-      type: Object,
-      default: () => {},
-    },
   },
   computed: {
     ...mapState(useUserStore, ['userId', 'managedResource']),
