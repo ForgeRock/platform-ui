@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,12 +10,17 @@ of the MIT license. See the LICENSE file for details. -->
       <BRow
         v-for="(row, index) in populatedUISchema"
         class="m-lg-0"
+        :class="fieldGroupClasses(row)"
         :key="`row_${index}`">
         <BCol
           v-for="(property, columnIndex) in row"
-          :class="[{'pl-lg-0': columnIndex === 0, 'pr-lg-0': columnIndex === row.length - 1}, property.columnClass]"
+          :class="[
+            property.columnClass,
+            conditionalColumnClasses(property, columnIndex, row.length),
+          ]"
           :key="`${property.model}_${columnIndex}`"
-          :lg="property.columns">
+          :lg="property.columns"
+          :title="property.groupTitle">
           <Component
             :is="getVisibilityComponent(property.collapsible)"
             v-model="sectionExpanded[property.label]">
@@ -312,6 +317,59 @@ export default {
           [nextField[0].label]: false,
         }), {});
     },
+    /**
+     * Returns class names for a group of fields.
+     * @param {Array} row - The row used for injecting group css classes.
+     * @returns {String} - The class names for the field group.
+     */
+    fieldGroupClasses(row) {
+      const hasColumnClass = (_row, className) => _row.some((property) => property.columnClass?.includes(className));
+      const isGroupStart = hasColumnClass(row, 'group-start');
+      const isGroupEnd = hasColumnClass(row, 'group-end');
+      const isNested = hasColumnClass(row, 'nested');
+      const rowShowing = this.model[row[0]?.show];
+      const classes = [];
+
+      if (rowShowing) {
+        classes.push('px-2 px-lg-4 bg-light');
+        if (isGroupStart && !isNested) classes.push('rounded-top pt-4');
+        if (isGroupEnd && !isNested) classes.push('mb-4 mb-lg-4 rounded-bottom');
+        if (isNested) classes.push('pl-3 pl-lg-5');
+      }
+      return classes.join(' ');
+    },
+    /**
+     * Returns conditional class names for a column of fields.
+     * @param {Object} property - The property object used for injecting column css classes.
+     * @param {Number} columnIndex - The index of the column in the row.
+     * @param {Number} rowLength - The amount of rows.
+     * @returns {String} - The class names for the column.
+     */
+    conditionalColumnClasses(property, columnIndex, rowLength) {
+      const isGroupStart = property.columnClass?.includes('group-start');
+      const classes = [];
+
+      if (columnIndex === 0) {
+        classes.push('pl-lg-0');
+      }
+      if (columnIndex === rowLength - 1) {
+        classes.push('pr-lg-0');
+      }
+      if (isGroupStart && property.groupTitle && this.model[property.show]) {
+        classes.push('group-title');
+      }
+      return classes.join(' ');
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.group-start.group-title:before {
+  content: attr(title);
+  display: block;
+  font-weight: $font-weight-bold;
+  color: $headings-color;
+  padding-bottom: 1.5rem;
+}
+</style>
