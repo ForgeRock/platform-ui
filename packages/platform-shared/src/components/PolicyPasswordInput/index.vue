@@ -96,6 +96,14 @@ export default {
       type: Object,
       default: null,
     },
+    /**
+    * Use only IDM policies for validation, useful for password reset flows in
+    * the IDM end-user UI where DS policies are not present.
+    */
+    useIdmPoliciesOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -106,12 +114,18 @@ export default {
     };
   },
   mounted() {
-    this.getDsPolicies(this.resourceName).then((res) => {
-      this.policies = res.data;
+    if (this.useIdmPoliciesOnly) {
       this.getIdmPolicies().then(() => {
         this.checkPassword(this.$attrs.value);
       });
-    });
+    } else {
+      this.getDsPolicies(this.resourceName).then((res) => {
+        this.policies = res.data;
+        this.getIdmPolicies().then(() => {
+          this.checkPassword(this.$attrs.value);
+        });
+      });
+    }
   },
   methods: {
     /**
