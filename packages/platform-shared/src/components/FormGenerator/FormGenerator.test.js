@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -35,6 +35,7 @@ const uiSchema = [
       label: 'StringLabel',
       type: 'string',
       model: 'core.testString',
+      groupTitle: 'testGroupTitle',
     },
     {
       columns: 6,
@@ -326,6 +327,13 @@ describe('Form Generator', () => {
       const indexCollapsibleFieldsSpy = jest.spyOn(wrapper.vm, 'indexCollapsibleFields').mockReturnValue({});
       expect(wrapper.vm.$data.sectionExpanded).toStrictEqual({});
       expect(indexCollapsibleFieldsSpy).not.toHaveBeenCalled();
+    });
+
+    it('injects a "title" attribute to the column element when a schema object contains a "groupTitle" property', async () => {
+      const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
+      const groupTitle = wrapper.find('[title="testGroupTitle"]');
+      expect(groupTitle.exists()).toBe(true);
     });
   });
 
