@@ -1551,6 +1551,7 @@
         "setupInstructions": "Setup Instructions",
         "title": "Sign On",
         "tryItOut": "Try it out",
+        "tryItOutDescription": "Copy and paste into an incognito window to preview sign on.",
         "viewMetadata": "View IdP Metadata",
         "updateMetadata": "Update Metadata",
         "saveSuccess": "Successfully saved SAML configuration.",
