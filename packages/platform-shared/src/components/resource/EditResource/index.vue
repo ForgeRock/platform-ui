@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -197,7 +197,8 @@ of the MIT license. See the LICENSE file for details. -->
       :resource-type="resourceType"
       :resource-name="resourceName"
       :resource-id="id"
-      @refresh-data="refreshData" />
+      @refresh-data="refreshData"
+      :resource-data="formFields" />
     <FrClearResourceSessions
       :show="showClearSessionsModal"
       :resource-name="clearSessionsName"
@@ -614,6 +615,8 @@ export default {
           if (isUndefined(this.formFields[createPriv.attribute])) {
             if (tempProp.type === 'boolean') {
               this.$set(this.formFields, createPriv.attribute, false);
+            } else if (tempProp.type === 'array') {
+              this.$set(this.formFields, createPriv.attribute, []);
             } else {
               this.$set(this.formFields, createPriv.attribute, '');
             }
