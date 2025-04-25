@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -47,7 +47,8 @@ of the MIT license. See the LICENSE file for details. -->
                     :failures-on-submit="passwordFailures"
                     :resource-name="resourceName"
                     :resource-type="resourceType"
-                    :validation="field.validation" />
+                    :validation="field.validation"
+                    :payload-data="clonedCreateProperties.reduce((obj, item) => Object.assign(obj, { [item.key]: item.value }), {})" />
                 </BFormGroup>
                 <!-- for relationship values -->
                 <BFormGroup v-else-if="field.type === 'relationship' || (field.type === 'array' && field.items.type === 'relationship')">

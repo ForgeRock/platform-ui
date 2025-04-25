@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -119,6 +119,19 @@ export default {
                   if (this.getPoliciesFromCharacterSet(validator.characterSet, validator.minCharacterSets)) {
                     policies.push(this.getPoliciesFromCharacterSet(validator.characterSet, validator.minCharacterSets));
                   }
+                  break;
+                case this.getValidatorIdForType(resourceName, 'attribute-value'):
+                  policies.push({
+                    policyRequirement: 'ATTRIBUTE_VALUE',
+                    params: {
+                      disallowedFields: validator.matchAttribute.map((attribute) => {
+                        if (this.translationExists(`common.policyValidationMessages.attributes.${attribute}`)) {
+                          return this.$t(`common.policyValidationMessages.attributes.${attribute}`);
+                        }
+                        return attribute;
+                      }).join(', '),
+                    },
+                  });
                   break;
                 default:
                   break;

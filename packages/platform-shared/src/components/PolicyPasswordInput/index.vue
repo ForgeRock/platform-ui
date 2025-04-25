@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -92,6 +92,10 @@ export default {
       type: [String, Object],
       default: '',
     },
+    payloadData: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
@@ -124,9 +128,10 @@ export default {
 
       const headers = this.getAnonymousHeaders();
       const policyService = this.getRequestService({ headers });
+      const payload = { ...this.payloadData, password: value };
 
       // validate value and update failed policies
-      policyService.post(`${this.policyEndpoint}/policy/?_action=validateObject`, { password: value }, { cancelToken: this.checkPasswordCancelTokenSource.token })
+      policyService.post(`${this.policyEndpoint}/policy/?_action=validateObject`, payload, { cancelToken: this.checkPasswordCancelTokenSource.token })
         .then((res) => {
           if (res.data.failedPolicyRequirements) {
             const failedPolicies = [];

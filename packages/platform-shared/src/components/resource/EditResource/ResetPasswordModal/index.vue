@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,7 +17,8 @@ of the MIT license. See the LICENSE file for details. -->
       :resource-type="resourceType"
       :resource-name="resourceName"
       :failures-on-submit="failures"
-      validation="required" />
+      validation="required"
+      :payload-data="resourceData" />
     <template #modal-footer="{ ok, cancel }">
       <BButton
         variant="link"
@@ -82,6 +83,13 @@ export default {
     resourceId: {
       type: String,
       required: true,
+    },
+    /**
+     * Supplement data of resource to be used in the modal
+     */
+    resourceData: {
+      type: Object,
+      default: null,
     },
   },
   data() {
