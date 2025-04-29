@@ -709,6 +709,7 @@
     "title": "Custom Nodes",
     "subtitle": "Custom nodes you've created.",
     "customNode": "Custom Node",
+    "customNodesExport": "custom-nodes",
     "noNodes": "No custom node types configured",
     "noNodesSubtitle": "Create new node types to place into trees",
     "noSearchResults": "No Custom Nodes found.",
@@ -785,9 +786,10 @@
       "propertyEdited": "Property edited successfully"
     },
     "importModal": {
-      "desc": "Choose a JSON file containing the node configuration to import.",
-      "conflictError": "Error importing node - a node with that id already exists",
-      "genericError": "Error importing node"
+      "desc": "Choose a JSON file containing node configurations to import.",
+      "conflictError": "Error importing nodes - nodes with the following ids already exist: <br/>{ids}",
+      "genericConflictError": "Error importing nodes - one or more nodes have ids that already exists",
+      "genericError": "Error importing nodes"
     }
   },
   "bulkImport": {

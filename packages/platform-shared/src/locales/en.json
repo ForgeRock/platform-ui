@@ -193,6 +193,8 @@
     "next": "Next",
     "no": "No",
     "node": "Node",
+    "nodeLower": "node",
+    "nodes": "Nodes",
     "none": "None",
     "noObjectFound": "No {object} found",
     "noResultsFound": "No results found.",
@@ -2352,7 +2354,8 @@
     "successfullyImported": "Successfully imported {itemType}",
     "viewConfig": "View {itemType} configuration",
     "jsonFile": "JSON File",
-    "conflicError": "Error importing - item already exists",
-    "genericError": "Error importing item"
+    "conflictError": "Error importing - items with the following ids already exist: <br/>{ids}",
+    "genericConflictError": "Error importing - item already exists",
+    "genericError": "Error importing items"
   }
 }
