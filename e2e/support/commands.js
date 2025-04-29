@@ -24,7 +24,6 @@ function fillAndSendLoginForm() {
 
   // Skip 2FA on Cloud Tenants
   if (Cypress.env('IS_FRAAS')) {
-    cy.wait('@themerealmConfig');
     cy.findByRole('status', { timeout: 3000 }).should('not.exist');
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.findByRole('button', { name: /Skip for now/i }).should('be.visible').wait(100).click();
@@ -78,7 +77,7 @@ Cypress.Commands.add('loginAsAdmin', () => {
   cy.logout();
 
   // Set up intercept
-  cy.intercept('GET', '/openidm/config/ui/themerealm').as('themerealmConfig');
+  cy.intercept('GET', '/openidm/info/uiconfig').as('uiconfig');
   cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
   cy.intercept('GET', 'environment/release').as('getRelease');
 
@@ -86,7 +85,7 @@ Cypress.Commands.add('loginAsAdmin', () => {
   cy.visit(loginUrl);
 
   // Wait for the Login form to load
-  cy.wait('@themerealmConfig', { timeout: 15000 });
+  cy.wait('@uiconfig', { timeout: 15000 });
 
   // Fill in Admin name and password and Login
   fillAndSendLoginForm();
