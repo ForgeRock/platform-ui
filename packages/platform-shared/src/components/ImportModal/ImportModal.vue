@@ -43,9 +43,8 @@ of the MIT license. See the LICENSE file for details. -->
       </BFormFile>
       <p
         v-if="importError.length"
-        class="text-danger mb-0 error-message">
-        {{ importError }}
-      </p>
+        class="text-danger mb-0 error-message"
+        v-html="importError" />
     </template>
 
     <template v-else-if="step === 1">
@@ -150,9 +149,17 @@ const props = defineProps({
   /**
    * Error message shown if api call errors with a 409 conflict
    */
-  conflictErrorMessage: {
+  conflictErrorMessageKey: {
     type: String,
-    default: i18n.global.t('importModal.conflictError'),
+    default: 'importModal.conflictError',
+  },
+  /**
+   * Error message shown if api call errors with a 409 conflict and it is not
+   * possible to display the specific items that conflict
+   */
+  genericConflictErrorMessage: {
+    type: String,
+    default: i18n.global.t('importModal.genericConflictError'),
   },
   /**
    * Error message shown if api call errors with anything but a 409
@@ -186,9 +193,16 @@ defineEmits(['success']);
  * import file field
  * @param {String} http status of failure if failed on api call
  */
-const showErrorMessage = (status) => {
+const showErrorMessage = (status, errorMessage) => {
   if (status && status === 409) {
-    importError.value = props.conflictErrorMessage;
+    try {
+      // attempt to display error message with listed ids of items that conflict
+      const conflicts = JSON.parse(`{${errorMessage}}`).conflicting;
+      importError.value = i18n.global.t(props.conflictErrorMessageKey, { ids: conflicts.join('<br/>') });
+    } catch {
+      // fallback to generic conflict error message
+      importError.value = props.genericConflictErrorMessage;
+    }
   } else {
     importError.value = props.genericErrorMessage;
   }
@@ -216,7 +230,8 @@ const handleImportClicked = () => {
           step.value = 2;
         }).catch((error) => {
           const { status } = error.response || '';
-          showErrorMessage(status);
+
+          showErrorMessage(status, error?.response?.data?.message);
         });
     } catch {
       showErrorMessage();
