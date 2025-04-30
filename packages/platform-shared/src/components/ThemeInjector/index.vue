@@ -133,13 +133,14 @@ of the MIT license. See the LICENSE file for details. -->
          * .uneditable-input
       -->
       textarea:focus,
-      <template v-if="mock">.fr-theme-preview</template> input:focus:not(.multiselect__input),
+      <template v-if="mock">.fr-theme-preview</template> input:focus:not(.multiselect__input, .fr-tag-input),
       <template v-if="mock">.fr-theme-preview</template> input[type]:focus:not(.multiselect__input),
       .uneditable-input:focus,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
-      <template v-if="mock">.fr-theme-preview</template> .form-control .multiselect:focus .multiselect__tags {
+      <template v-if="mock">.fr-theme-preview</template> .form-control .multiselect:focus .multiselect__tags,
+      <template v-if="mock">.fr-theme-preview</template> .form-label-group:not(.fr-field-error) .form-control:focus-within {
         border-color: {{ theme.primaryColor }} !important;
         -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;
         box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }} !important;
@@ -619,7 +620,7 @@ of the MIT license. See the LICENSE file for details. -->
          * .uneditable-input
       -->
       textarea:focus,
-      <template v-if="mock">.fr-theme-preview</template> input:focus:not(.multiselect__input),
+      <template v-if="mock">.fr-theme-preview</template> input:focus:not(.multiselect__input, .fr-tag-input),
       <template v-if="mock">.fr-theme-preview</template> input[type]:focus:not(.multiselect__input),
       .uneditable-input:focus,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
