@@ -37,6 +37,7 @@ const defaultState = {
   idmBaseURL: '',
   igaApiUrl: null,
   igaOrchestrationApiUrl: null,
+  journeyAIEnabled: false,
   managedObjectMinimumUIFilterLength: {},
   maxIdleExpirationTime: null,
   maxSessionExpirationTime: null,
@@ -103,6 +104,9 @@ const mutations = {
       }
       if (env.VUE_APP_ENABLE_APPLICATION_POLICY === 'true' || env.VUE_APP_ENABLE_APPLICATION_POLICY === true) {
         state.applicationPolicyEnabled = env.VUE_APP_ENABLE_APPLICATION_POLICY;
+      }
+      if (env.VUE_APP_ENABLE_JOURNEY_AI === 'true' || env.VUE_APP_ENABLE_JOURNEY_AI === true) {
+        state.journeyAIEnabled = true;
       }
       if (env.VUE_APP_ENABLE_OIDC_JOURNEYS === 'true' || env.VUE_APP_ENABLE_OIDC_JOURNEYS === true) {
         state.oidcJourneysEnabled = env.VUE_APP_ENABLE_OIDC_JOURNEYS;
