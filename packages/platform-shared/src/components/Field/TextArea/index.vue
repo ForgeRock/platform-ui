@@ -12,7 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
     :label="label"
     :show-length-count="showLengthCount"
     :current-length="inputValue?.length"
-    :max-length="maxLength">
+    :max-length="maxLength"
+    :hide-label="!showFloatLabels && inputValue?.length">
     <textarea
       :value="inputValue"
       @input="inputValue = $event.target.value; $emit('input', inputValue)"
@@ -133,6 +134,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showFloatLabels: {
+      type: Boolean,
+      default: true,
+    },
   },
   setup(props) {
     const {
@@ -177,7 +182,7 @@ export default {
      * Handler for clicking the text area. Floats the label if possible
      */
     onClick() {
-      if (this.label && !this.readonly) {
+      if (this.label && !this.readonly && this.showFloatLabels) {
         this.floatLabels = true;
       }
     },
@@ -187,7 +192,7 @@ export default {
     * @param {Array|Object|Number|String} inputValue value to be set for internal model
     */
     inputValueHandler(inputValue) {
-      if (inputValue !== null) {
+      if (inputValue !== null && this.showFloatLabels) {
         this.floatLabels = inputValue.toString().length > 0 && !!this.label;
       }
     },

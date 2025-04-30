@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -109,6 +109,18 @@ export function generateFraasLogApiKeyApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasLoggingKeyURL,
     headers: {},
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
+
+export function generateHelixApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: store.state.SharedStore.helixEnvironmentUrl,
+    headers: {
+      'Content-Type': 'application/json',
+    },
     ...requestOverride,
   };
 

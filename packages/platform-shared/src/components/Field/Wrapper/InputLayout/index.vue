@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
           <slot name="prependButton" />
         </div>
         <slot name="defaultButtons" />
-        <!-- slot appends  buttons or elements to the input -->
+        <!-- slot appends buttons or elements to the input -->
         <slot name="append" />
       </span>
     </div>

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -21,22 +21,27 @@ of the MIT license. See the LICENSE file for details. -->
             {{ option.badgeText }}
           </BBadge>
         </div>
-        <!--
-          Triggered on click, indicates user would like to view or edit this select list item
-          @event edit-item-clicked
-          @property {string} the value (id) of the item to view/edit
-        -->
-        <BButton
-          @mousedown.stop
-          @click.stop="$emit('edit-item-clicked', option.value)"
-          v-if="showEdit(option)"
-          :aria-label="editLabelOrFallback"
-          :title="editLabelOrFallback"
-          size="sm"
-          variant="light"
-          data-testid="labelEditItemButton">
-          <FrIcon name="edit" />
-        </BButton>
+        <div class="d-flex action-buttons">
+          <slot
+            name="additionalActions"
+            :option="option" />
+          <!--
+            Triggered on click, indicates user would like to view or edit this select list item
+            @event edit-item-clicked
+            @property {string} the value (id) of the item to view/edit
+          -->
+          <BButton
+            @mousedown.stop
+            @click.stop="$emit('edit-item-clicked', option.value)"
+            v-if="showEdit(option)"
+            :aria-label="editLabelOrFallback"
+            :title="editLabelOrFallback"
+            size="sm"
+            variant="light"
+            data-testid="labelEditItemButton">
+            <FrIcon name="edit" />
+          </BButton>
+        </div>
       </div>
     </template>
     <template #beforeList>
@@ -76,22 +81,28 @@ of the MIT license. See the LICENSE file for details. -->
             {{ option.badgeText }}
           </BBadge>
         </div>
-        <!--
-          Triggered on click, indicates user would like to view or edit this select list item
-          @event edit-item-clicked
-          @property {string} the value (id) of the item to view/edit
-        -->
-        <BButton
-          @mouseup.stop
-          @click.stop="$emit('edit-item-clicked', option.value)"
-          v-if="option.value !== '[Empty]'"
-          :aria-label="editLabelOrFallback"
-          :title="editLabelOrFallback"
-          size="sm"
-          variant="light"
-          data-testid="editItemButton">
-          <FrIcon name="edit" />
-        </BButton>
+        <div class="d-flex action-buttons">
+          <slot
+            name="additionalActions"
+            :option="option" />
+          <!--
+            Triggered on click, indicates user would like to view or edit this select list item
+            @event edit-item-clicked
+            @property {string} the value (id) of the item to view/edit
+          -->
+          <BButton
+            @mousedown.stop
+            @mouseup.stop
+            @click.stop="$emit('edit-item-clicked', option.value)"
+            v-if="option.value !== '[Empty]'"
+            :aria-label="editLabelOrFallback"
+            :title="editLabelOrFallback"
+            size="sm"
+            variant="light"
+            data-testid="editItemButton">
+            <FrIcon name="edit" />
+          </BButton>
+        </div>
       </div>
     </template>
     <template
@@ -172,6 +183,21 @@ export default {
   },
 };
 </script>
+
+<!-- non-scoped slot to allow button css to apply to all slot usage -->
+<style lang="scss">
+.multiselect__single > .collapsed-option .action-buttons button {
+  display: none;
+  padding: 0.22rem 0.5rem;
+}
+
+.multiselect__single:hover,
+.esv-input-wrapper:hover .multiselect__single {
+  > .collapsed-option.can-edit .action-buttons button {
+    display: block;
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 .cursor-default {

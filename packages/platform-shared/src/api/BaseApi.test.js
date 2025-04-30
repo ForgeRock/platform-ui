@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,7 +8,7 @@
 import axios from 'axios';
 import { flushPromises } from '@vue/test-utils';
 import store from '../store';
-import { generateIgaApi, generateIdmApi } from './BaseApi';
+import { generateHelixApi, generateIgaApi, generateIdmApi } from './BaseApi';
 
 jest.mock('axios');
 
@@ -186,5 +186,27 @@ describe('BaseApi', () => {
     generateIdmApi();
 
     expect(errorRejected).toBe(false);
+  });
+
+  describe('generateHelixApi', () => {
+    const requestDetails = {
+      baseURL: store.state.SharedStore.helixEnvironmentUrl,
+      headers: { 'Content-Type': 'application/json' },
+    };
+    const requestOverride = {
+      headers: 'overrideHeader',
+    };
+    it('should genearte a new HelixApi instance', () => {
+      axios.create = jest.fn();
+      generateHelixApi();
+      expect(axios.create).toBeCalledWith(requestDetails);
+    });
+    it('should genearte a new HelixApi instance with the requestOverride param', () => {
+      generateHelixApi(requestOverride);
+      expect(axios.create).toBeCalledWith({
+        baseURL: store.state.SharedStore.helixEnvironmentUrl,
+        headers: 'overrideHeader',
+      });
+    });
   });
 });
