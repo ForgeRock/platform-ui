@@ -188,6 +188,27 @@
     "templateBuilder": "Template Builder",
     "workflows": "Workflows"
   },
+  "ai": {
+    "addToChat": "Add to chat",
+    "errors": {
+      "messageFromWrongAgent": "Received a message that was not from the agent following Post of a user message - this is not expected",
+      "tooManyResponses": "Received more than one new message following Post of a user message - this is not expected"
+    },
+    "explain": "Explain",
+    "journey": {
+      "aiAssistant": "AI Assistant",
+      "aiAssistantWelcome": "POWERED BY",
+      "aiAssistantDescription": "The Ping AI assistant is designed to help you work more efficiently. Use it to build orchestrations, troubleshoot issues, or ask questions in natural language to quickly find solutions for your use case.<br/><br/>Enter a prompt below to get started!",
+      "explain": {
+        "aboutThis": "About this {item}",
+        "innerTree": "Inner Tree"
+      },
+      "helixChatAi": "Helix Chat AI",
+      "suggestion1": "Help me build a journey that captures username and password to log users in",
+      "suggestion2": "What does this Journey do?",
+      "suggestion3": "What kind of security threats might exist for this Journey?"
+    }
+  },
   "connect": {
     "connectIdentities": "Connect Identities",
     "subtitle": "Connect to identity sources by installing connector servers.",

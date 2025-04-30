@@ -173,6 +173,7 @@ describe('UserDetails', () => {
               application: { name: 'testApp' },
             },
           ],
+          totalCount: 1,
         },
       }));
       wrapper = mountComponent();
@@ -191,6 +192,7 @@ describe('UserDetails', () => {
       CommonsApi.getUserGrants.mockImplementation(() => Promise.resolve({
         data: {
           result: [],
+          totalCount: 0,
         },
       }));
       wrapper = mountComponent();
@@ -220,6 +222,7 @@ describe('UserDetails', () => {
               },
             },
           ],
+          totalCount: 1,
         },
       }));
       wrapper = mountComponent();
@@ -241,6 +244,7 @@ describe('UserDetails', () => {
       CommonsApi.getUserGrants.mockImplementation(() => Promise.resolve({
         data: {
           result: [],
+          totalCount: 0,
         },
       }));
       wrapper = mountComponent();
@@ -263,8 +267,10 @@ describe('UserDetails', () => {
             {
               role: { name: 'testRole' },
               relationship: { conditional: false },
+              application: { name: 'testApp', templateName: 'testTemplate', templateVersion: '1_0-web' },
             },
           ],
+          totalCount: 1,
         },
       }));
       wrapper = mountComponent();
@@ -288,8 +294,10 @@ describe('UserDetails', () => {
             {
               role: { name: 'testRole' },
               relationship: { conditional: false },
+              application: { name: 'testApp', templateName: 'testTemplate', templateVersion: '1_0-web' },
             },
           ],
+          totalCount: 1,
         },
       }));
       wrapper = mountComponent();
