@@ -116,7 +116,7 @@ describe('GovResourceTable', () => {
     expect(myAccessTable.exists()).toBeTruthy();
   });
 
-  it('should have an input to search my access review table', async () => {
+  it('should have an input to search my access review table if items are return', async () => {
     const wrapper = await mountComponent();
     const searchMyAccessReviewTable = findByTestId(wrapper, 'search-gov-resource-table');
     expect(searchMyAccessReviewTable.exists()).toBeTruthy();

@@ -389,6 +389,10 @@ export default {
       type: Number,
       default: 0,
     },
+    initialTab: {
+      type: String,
+      default: 'application',
+    },
   },
   data() {
     return {
@@ -484,6 +488,7 @@ export default {
     },
   },
   mounted() {
+    this.selectedTab = Object.keys(this.catalogTabs).indexOf(this.initialTab);
     this.searchCatalog();
   },
   methods: {
