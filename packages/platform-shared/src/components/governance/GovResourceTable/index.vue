@@ -7,14 +7,12 @@ of the MIT license. See the LICENSE file for details. -->
     <BCard
       class="border-0 shadow-none"
       no-body>
-      <BCardHeader
-        v-if="!isNoResultsFirstLoad"
-        class="p-0">
+      <BCardHeader class="p-0">
         <BButtonToolbar class="justify-content-between p-3 border-bottom-0">
           <BButton
             v-if="allowAdd"
             variant="primary"
-            @click="$bvModal.show('govCreateResourceModal')">
+            @click="addEvent ? this.$emit(addEvent) : $bvModal.show('govCreateResourceModal')">
             <FrIcon
               icon-class="mr-2"
               name="add">
@@ -52,18 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
         body-class="mb-5"
         data-testid="gov-resource-table-no-results-first-load"
         :title="$t('governance.access.noRecordFound', { grantType: pluralizedGrantType })"
-        :subtitle="isNoResultsFirstLoad ? $t('governance.access.noResultsUser', { grantType: pluralizedGrantType }) : $t('common.noResultsHelp')">
-        <BButton
-          v-if="allowAdd"
-          variant="primary"
-          @click="$bvModal.show('govCreateResourceModal')">
-          <FrIcon
-            icon-class="mr-2"
-            name="add">
-            {{ $t('common.addObject', { object: capitalizedPluralGrantType }) }}
-          </FrIcon>
-        </BButton>
-      </FrNoData>
+        :subtitle="isNoResultsFirstLoad ? $t('governance.access.noResultsUser', { grantType: pluralizedGrantType }) : $t('common.noResultsHelp')" />
       <BTable
         v-else
         v-model:sort-by="sortBy"
@@ -227,7 +214,7 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </BTable>
       <FrPagination
-        v-if="totalCount > 10"
+        v-if="totalCount"
         v-model="paginationPage"
         aria-controls="gov-resource-table"
         :per-page="paginationPageSize"
@@ -348,15 +335,15 @@ export default {
     NotificationMixin,
   ],
   props: {
+    addEvent: {
+      type: String,
+      default: '',
+    },
     allowAdd: {
       type: Boolean,
       default: false,
     },
     allowSelect: {
-      type: Boolean,
-      default: false,
-    },
-    awaitingApi: {
       type: Boolean,
       default: false,
     },

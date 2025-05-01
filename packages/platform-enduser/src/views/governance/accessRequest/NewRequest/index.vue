@@ -31,6 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
             :catalog-filter-schema="catalogFilterSchema"
             :catalog-items="catalogItems"
             :glossary-schema="glossarySchema"
+            :initial-tab="catalogTab ? catalogTab : 'application'"
             :loading="loading"
             :prevent-request-with-violation="preventRequestWithViolation"
             :sod-error="sodError"
@@ -209,6 +210,16 @@ export default {
     MediaMixin,
     NotificationMixin,
   ],
+  props: {
+    catalogTab: {
+      type: String,
+      default: '',
+    },
+    returnPath: {
+      type: String,
+      default: '',
+    },
+  },
   setup() {
     const { setBreadcrumb } = useBreadcrumb();
     return { setBreadcrumb };
@@ -306,7 +317,12 @@ export default {
     this.handleResize();
     // Add resize listener to determine whether side request cart should appear
     window.addEventListener('resize', this.handleResize);
-    this.setBreadcrumb('/my-requests', this.$t('pageTitles.MyRequests'));
+
+    if (this.returnPath) {
+      this.setBreadcrumb(this.returnPath, this.$t('common.back'));
+    } else {
+      this.setBreadcrumb('/my-requests', this.$t('pageTitles.MyRequests'));
+    }
     try {
       const { data } = await getGlossarySchema();
       this.glossarySchema = {

@@ -202,10 +202,11 @@ const router = createRouter({
       ],
     },
     {
-      path: '/my-requests/new-request',
+      path: '/my-requests/new-request/:catalogTab?/:returnPath?',
       name: 'AccessRequestNew',
       component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/accessRequest/NewRequest'),
       meta: { hideNavBar: true, hideSideMenu: true },
+      props: true,
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.requestCartUsers.length > 0], { path: '/my-requests' }),
     },
     {

@@ -40,7 +40,6 @@ import { findChanges } from '@forgerock/platform-shared/src/utils/object';
 import { convertRelationshipPropertiesToFormBuilder, convertRelationshipPropertiesToRef } from '@forgerock/platform-shared/src/components/FormEditor/utils/formGeneratorSchemaTransformer';
 import { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { useGovernanceStore } from '@forgerock/platform-shared/src/stores/governance';
-import { getPermissionsForUser } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import useForm from '@forgerock/platform-shared/src/composables/governance/forms';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
@@ -52,6 +51,10 @@ const props = defineProps({
   user: {
     type: Object,
     required: true,
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -67,7 +70,6 @@ const {
 
 const isSaving = ref(false);
 const originalUser = ref({});
-const readOnly = ref(false);
 
 /**
  * Generates the payload for a request using a custom form.
@@ -127,8 +129,7 @@ async function submitRequest() {
 async function initializeForm() {
   // get user schema
   await setSchema('managed/alpha_user');
-  const { data: permissionsData } = await getPermissionsForUser(props.user._id, 'modifyUser');
-  readOnly.value = !permissionsData.result?.[0]?.permissions?.modifyUser;
+
   // get form definition
   const options = {
     lcmType: 'user',
