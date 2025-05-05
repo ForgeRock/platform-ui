@@ -9,12 +9,16 @@ import { flushPromises, mount } from '@vue/test-utils';
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
+import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
 import Profile from './Profile';
 import i18n from '@/i18n';
 
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 jest.mock('@forgerock/platform-shared/src/api/SchemaApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormsApi');
 
 SchemaApi.getSchema.mockImplementation(() => Promise.resolve({
   data: {
@@ -60,8 +64,11 @@ PrivilegeApi.getResourceTypePrivilege.mockImplementation(() => Promise.resolve({
         'mail',
       ],
     },
+    UPDATE: { allowed: true },
   },
 }));
+
+RequestFormAssignmentsApi.getFormAssignmentByLcmOperation.mockImplementation(() => Promise.resolve({ data: { result: [] } }));
 
 describe('Profile', () => {
   let wrapper;
@@ -95,7 +102,7 @@ describe('Profile', () => {
         custom: {},
         user: {
           userId: '12345',
-          user: {},
+          object: {},
         },
       },
     );
@@ -115,11 +122,72 @@ describe('Profile', () => {
         custom: {},
         user: {
           userId: '12345',
-          user: {
+          object: {
             userName: 'newUserName',
           },
         },
       },
     );
+  });
+
+  describe('custom form', () => {
+    beforeEach(() => {
+      RequestFormAssignmentsApi.getFormAssignmentByLcmOperation.mockImplementationOnce(() => Promise.resolve({
+        data: {
+          result: [{
+            formId: '123',
+            objectId: 'lcm/user/create',
+          }],
+        },
+      }));
+
+      RequestFormsApi.getRequestForm.mockImplementationOnce(() => Promise.resolve({
+        data: {
+          form: {
+            fields: [{
+              fields: [
+                {
+                  type: 'string',
+                  label: 'Test Custom Form',
+                  layout: {
+                    rows: 1,
+                    columns: 1,
+                  },
+                  model: 'user.userName',
+                },
+              ],
+            }],
+          },
+        },
+      }));
+    });
+
+    it('shows a custom form if available', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      expect(RequestFormAssignmentsApi.getFormAssignmentByLcmOperation).toHaveBeenCalledWith('user', 'update');
+      expect(RequestFormsApi.getRequestForm).toHaveBeenCalledWith('123');
+      expect(wrapper.find('[label="Test Custom Form (optional)"]').exists()).toBe(true);
+    });
+
+    it('submits payload from a custom form', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      wrapper.findComponent({ name: 'FormBuilder' }).vm.$emit('update:modelValue', {
+        custom: { aCustomProp: 'test' },
+        common: { aCommonProp: 'test' },
+        user: { userName: 'test' },
+      });
+      await wrapper.find('[type="button"]').trigger('click');
+      await flushPromises();
+
+      expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith('modifyUser', {
+        custom: { aCustomProp: 'test' },
+        common: { aCommonProp: 'test' },
+        user: { userId: '12345', object: { userName: 'test' } },
+      });
+    });
   });
 });

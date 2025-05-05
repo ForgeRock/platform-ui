@@ -445,19 +445,6 @@
       "createSuccess": "Your request to create an entitlement has been submitted.",
       "title": "Entitlements",
       "accountAttribute": "Account Attribute"
-    },
-    "user": {
-      "createSuccess": "Your request to create user has been submitted.",
-      "deleteSuccess": "Your request to delete this user has been submitted.",
-      "email": "Email Address",
-      "errorGettingPrivileges": "Error getting user privileges",
-      "errorGettingSchema": "Error getting user schema",
-      "errorGettingUser": "Error getting user",
-      "firstName": "First Name",
-      "lastName": "Last Name",
-      "newUser": "New user",
-      "profile": "Profile",
-      "username": "Username"
     }
   }
 }

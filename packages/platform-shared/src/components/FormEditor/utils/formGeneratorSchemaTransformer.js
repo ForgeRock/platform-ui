@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { set } from 'lodash';
+import { cloneDeep, pickBy, set } from 'lodash';
 import i18n from '@/i18n';
 
 /**
@@ -175,4 +175,58 @@ export function getInitialModel(schema, includeDefaults = false) {
     }
   }));
   return updatedModel;
+}
+
+/**
+ * Converts the relationship properties to match the format the form builder expects.
+ *
+ * @param {Object} objValues - The values of the object.
+ * @param {Object} objPropertySchema - The schema defining the property structure of the object.
+ * @returns {Object} - The transformed user properties with relationships converted as per the schema.
+ */
+export function convertRelationshipPropertiesToFormBuilder(objValues, objPropertySchema) {
+  const convertedValues = cloneDeep(objValues);
+  const relationshipProperties = pickBy(objPropertySchema, (property) => property.type === 'relationship');
+
+  Object.keys(relationshipProperties).forEach((property) => {
+    const supportedTypes = ['user', 'group', 'role', 'application'];
+    const path = relationshipProperties[property].resourceCollection?.[0]?.path;
+    if (path.startsWith('managed/alpha_')) {
+      const typeIndex = supportedTypes.findIndex((type) => path.endsWith(type));
+      const resourceId = convertedValues[property]?._ref?.split('/')?.pop();
+      if (typeIndex !== -1 && resourceId) {
+        const type = supportedTypes[typeIndex];
+        convertedValues[property] = `managed/${type}/${resourceId}`;
+      }
+    }
+  });
+  return convertedValues;
+}
+
+/**
+ * Converts relationship properties in an object to reference objects with `_ref` and `_refProperties`.
+ * This is the format needed by IDM when creating/patching a user
+ *
+ * @param {Object} objValues - The object containing the values to be transformed.
+ * @param {Object} objPropertySchema - The schema object describing the properties of `objValues`.
+ * @returns {Object} A new object with relationship properties converted to reference objects.
+ */
+export function convertRelationshipPropertiesToRef(objValues, objPropertySchema) {
+  const convertedValues = cloneDeep(objValues);
+
+  Object.keys(convertedValues).forEach((property) => {
+    const propertySchema = objPropertySchema[property];
+    if (propertySchema && propertySchema.type === 'relationship') {
+      const resourcePath = propertySchema.resourceCollection?.[0]?.path;
+      const resourceId = convertedValues[property]?.split('/')?.pop();
+      if (resourcePath && resourceId) {
+        convertedValues[property] = {
+          _ref: `${resourcePath}/${resourceId}`,
+          _refProperties: {},
+        };
+      }
+    }
+  });
+
+  return convertedValues;
 }

@@ -90,4 +90,12 @@ describe('RequestFormAssignments Api', () => {
     await RequestFormAssignmentsApi.getFormLcmType(formId, lcmType);
     expect(getMock).toBeCalledWith(`${formAssignmentUrl}?_queryFilter=objectId co "lcm/${lcmType}/" and formId eq "${formId}"`);
   });
+
+  it('getFormAssignmentByLcmOperation should call api with the correct query', async () => {
+    const lcmType = 'user';
+    const operation = 'create';
+
+    await RequestFormAssignmentsApi.getFormAssignmentByLcmOperation(lcmType, operation);
+    expect(getMock).toBeCalledWith(`${formAssignmentUrl}?_queryFilter=objectId eq "lcm/${lcmType}/${operation}"`);
+  });
 });

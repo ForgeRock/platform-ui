@@ -10,6 +10,7 @@ import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHe
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import UserDetails from './UserDetails';
 import i18n from '@/i18n';
 
@@ -20,6 +21,7 @@ jest.mock('vue-router', () => ({
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 jest.mock('@forgerock/platform-shared/src/api/SchemaApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi');
 
 ManagedResourceApi.getManagedResource.mockImplementation(() => Promise.resolve({
   data: {
@@ -72,6 +74,8 @@ PrivilegeApi.getResourceTypePrivilege.mockImplementation(() => Promise.resolve({
     },
   },
 }));
+
+RequestFormAssignmentsApi.getFormAssignmentByLcmOperation.mockImplementation(() => Promise.resolve({ data: { result: [] } }));
 
 describe('UserDetails', () => {
   let wrapper;

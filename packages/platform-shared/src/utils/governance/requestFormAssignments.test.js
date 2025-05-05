@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,12 +11,14 @@ import {
   getFormAssignmentByFormId,
   getFormAssignmentByRequestType,
   getFormAssignmentByWorkflowNode,
+  getFormAssignmentByLcmOperation,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import { getRequestForm } from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
 import {
   buildFormAssignmentPromises,
   deleteAllFormAssignments,
   getCustomRequestForm,
+  getLcmForm,
 } from './requestFormAssignments';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi', () => ({
@@ -25,6 +27,7 @@ jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsA
   createFormAssignment: jest.fn(),
   getFormAssignmentByFormId: jest.fn(),
   getFormAssignmentByRequestType: jest.fn(),
+  getFormAssignmentByLcmOperation: jest.fn(),
 }));
 
 jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormsApi', () => ({
@@ -166,5 +169,59 @@ describe('getCustomRequestForm', () => {
     expect(getFormAssignmentByRequestType).toHaveBeenCalledWith(requestTypeId);
     expect(getRequestForm).not.toHaveBeenCalled();
     expect(result).toBeNull();
+  });
+
+  describe('getLcmForm', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should return the LCM form data if found', async () => {
+      const lcmType = 'lcmType1';
+      const operation = 'operation1';
+      const formId = 'form1';
+      const formData = { id: formId, name: 'LCM Form' };
+
+      const formAssignment = { formId };
+      const formAssignmentResponse = { data: { result: [formAssignment] } };
+      const getRequestFormResponse = { data: formData };
+
+      getFormAssignmentByLcmOperation.mockResolvedValue(formAssignmentResponse);
+      getRequestForm.mockResolvedValue(getRequestFormResponse);
+
+      const result = await getLcmForm(lcmType, operation);
+
+      expect(getFormAssignmentByLcmOperation).toHaveBeenCalledWith(lcmType, operation);
+      expect(getRequestForm).toHaveBeenCalledWith(formId);
+      expect(result).toEqual(formData);
+    });
+
+    it('should return null if no LCM form is found', async () => {
+      const lcmType = 'lcmType1';
+      const operation = 'operation1';
+
+      const formAssignmentResponse = { data: { result: [] } };
+
+      getFormAssignmentByLcmOperation.mockResolvedValue(formAssignmentResponse);
+
+      const result = await getLcmForm(lcmType, operation);
+
+      expect(getFormAssignmentByLcmOperation).toHaveBeenCalledWith(lcmType, operation);
+      expect(getRequestForm).not.toHaveBeenCalled();
+      expect(result).toBeNull();
+    });
+
+    it('should return null if an error occurs', async () => {
+      const lcmType = 'lcmType1';
+      const operation = 'operation1';
+
+      getFormAssignmentByLcmOperation.mockRejectedValue(new Error('Error fetching LCM form assignment'));
+
+      const result = await getLcmForm(lcmType, operation);
+
+      expect(getFormAssignmentByLcmOperation).toHaveBeenCalledWith(lcmType, operation);
+      expect(getRequestForm).not.toHaveBeenCalled();
+      expect(result).toBeNull();
+    });
   });
 });

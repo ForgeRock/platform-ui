@@ -6,71 +6,56 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
-import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
-import DefaultUserForm from './DefaultUserForm';
+import ModifyUserForm from './ModifyUserForm';
 import i18n from '@/i18n';
 
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
-jest.mock('@forgerock/platform-shared/src/api/SchemaApi');
 
-SchemaApi.getSchema.mockImplementation(() => Promise.resolve({
-  data: {
-    order: [
-      'userName',
-      'givenName',
-      'sn',
-      'mail',
-    ],
-    properties: {
-      userName: {
-        title: 'User Name',
-        type: 'string',
-        viewable: true,
-      },
-      givenName: {
-        title: 'First Name',
-        type: 'string',
-        viewable: true,
-      },
-      sn: {
-        title: 'Last Name',
-        type: 'string',
-        viewable: true,
-      },
-      mail: {
-        title: 'Email Address',
-        type: 'string',
-        viewable: true,
-      },
-    },
-  },
-}));
-
-PrivilegeApi.getResourceTypePrivilege.mockImplementation(() => Promise.resolve({
-  data: {
-    VIEW: {
-      allowed: true,
-      properties: [
-        'userName',
-        'givenName',
-        'sn',
-        'mail',
-      ],
-    },
-  },
-}));
-
-describe('DefaultUserForm', () => {
+describe('ModifyUserForm', () => {
   let wrapper;
   function mountComponent() {
-    return mount(DefaultUserForm, {
+    return mount(ModifyUserForm, {
       props: {
         user: {
           userName: 'mikeTest',
           givenName: 'Mike',
           sn: 'Test',
           mail: 'test@test.com',
+        },
+        userSchema: {
+          properties: {
+            userName: {
+              title: 'User Name',
+              type: 'string',
+              viewable: true,
+            },
+            givenName: {
+              title: 'First Name',
+              type: 'string',
+              viewable: true,
+            },
+            sn: {
+              title: 'Last Name',
+              type: 'string',
+              viewable: true,
+            },
+            mail: {
+              title: 'Email Address',
+              type: 'string',
+              viewable: true,
+            },
+          },
+        },
+        privilegeData: {
+          VIEW: {
+            allowed: true,
+            properties: [
+              'userName',
+              'givenName',
+              'sn',
+              'mail',
+            ],
+          },
         },
       },
       global: {

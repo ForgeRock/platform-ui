@@ -13,15 +13,11 @@ of the MIT license. See the LICENSE file for details. -->
       :schema="schemaFormGenerator"
       :model="modelValue"
       @update:model="fieldChanged">
-      <template #relationshipField="{ index, property }">
-        <FrRelationshipEdit
-          v-model="property.value"
+      <template #objectSelect="{ property }">
+        <FrGovObjectSelect
           class="pb-1 mb-4"
-          :close-on-select="!property.isMultiValue"
-          :index="index"
-          :key="property.key"
-          :relationship-property="property.property"
-          @setValue="fieldChanged({ path: property.model, value: $event })" />
+          :property="property"
+          @update:model="fieldChanged" />
       </template>
     </FrFormGenerator>
   </div>
@@ -29,16 +25,31 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import { ref } from 'vue';
-import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
-import { getResourceTypePrivilege } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrFormGenerator from '@forgerock/platform-shared/src/components/FormGenerator';
-import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
+import { convertRelationshipPropertiesToFormBuilder } from '@forgerock/platform-shared/src/components/FormEditor/utils/formGeneratorSchemaTransformer';
+import FrGovObjectSelect from '@forgerock/platform-shared/src/components/FormEditor/components/governance/GovObjectSelect';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from '@/i18n';
 
 const props = defineProps({
+  allowAllProperties: {
+    type: Boolean,
+    default: false,
+  },
+  privilegeData: {
+    type: Object,
+    default: () => ({}),
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
+  },
   user: {
+    type: Object,
+    required: true,
+  },
+  userSchema: {
     type: Object,
     required: true,
   },
@@ -47,7 +58,6 @@ const props = defineProps({
 const loading = ref(true);
 const modelValue = ref({});
 const schemaFormGenerator = ref([]);
-const userSchema = ref({});
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -92,13 +102,24 @@ function getFilteredSchema(schemaData, privilegeData, userObject) {
     if (hideFields.includes(key)) return null;
     if (property.type === 'array' && property.items?.type === 'relationship') return null;
 
-    return {
+    const formProperty = {
       type: getType(property),
       label: property.title,
       model: key,
       property,
       value: userObject[key],
+      disabled: props.readOnly,
     };
+
+    // need to check for alpha_user only
+    if (property.type === 'relationship') {
+      // Handle object relationships
+      formProperty.type = 'select';
+      formProperty.customSlot = 'objectSelect';
+      formProperty.options = { object: 'user' };
+    }
+
+    return formProperty;
   }).filter((property) => property !== null);
 
   // split into two columns
@@ -113,10 +134,11 @@ function getFilteredSchema(schemaData, privilegeData, userObject) {
  */
 async function loadSchema() {
   try {
-    const { data: schemaData } = await getSchema('/managed/alpha_user');
-    const { data: privilegeData } = await getResourceTypePrivilege(`managed/alpha_user/${props.user._id}`);
-    userSchema.value = schemaData;
-    schemaFormGenerator.value = getFilteredSchema(schemaData, privilegeData, props.user);
+    const privilegeData = props.allowAllProperties
+      ? { VIEW: { allowed: true, properties: props.userSchema.order } }
+      : props.privilegeData;
+    const convertedUser = convertRelationshipPropertiesToFormBuilder(props.user, props.userSchema.properties);
+    schemaFormGenerator.value = getFilteredSchema(props.userSchema, privilegeData, convertedUser);
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.user.errorGettingSchema'));
   } finally {
@@ -130,7 +152,7 @@ async function loadSchema() {
  * @param {Event} event - The event object containing details about the field change.
  */
 function fieldChanged(event) {
-  if (userSchema.value.properties[event.path].type === 'number' && event.value === 0) {
+  if (props.userSchema.properties[event.path].type === 'number' && event.value === 0) {
     modelValue.value[event.path] = null;
     return;
   }
