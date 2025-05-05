@@ -129,7 +129,7 @@ const fields = [
 watch(() => prop.requests, (newRequests) => {
   items.value = buildRequestDisplay(newRequests).map((item) => ({
     ...item,
-    itemName: item.details?.isCustom
+    itemName: item.details?.isCustom || !item.details.name
       ? item.details.type
       : `${item.details.type}: ${item.details.name}`,
   }));

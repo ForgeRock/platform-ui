@@ -97,6 +97,18 @@ const requestTypeOptions = ref([
     text: i18n.global.t(requestTypes.ROLE_REVOKE.label),
     value: requestTypes.ROLE_REVOKE.value,
   },
+  {
+    text: i18n.global.t(requestTypes.CREATE_USER.label),
+    value: requestTypes.CREATE_USER.value,
+  },
+  {
+    text: i18n.global.t(requestTypes.MODIFY_USER.label),
+    value: requestTypes.MODIFY_USER.value,
+  },
+  {
+    text: i18n.global.t(requestTypes.DELETE_USER.label),
+    value: requestTypes.DELETE_USER.value,
+  },
 ]);
 
 const numFilters = computed(() => {

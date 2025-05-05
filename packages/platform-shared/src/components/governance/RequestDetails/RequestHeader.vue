@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
           width="48"
           height="48" />
         <FrIcon
-          v-else-if="isTypeRole(item.rawData.requestType)"
+          v-else-if="isTypeRole(item.rawData.requestType) || isTypeLcm(item.rawData.requestType)"
           icon-class="mr-1 md-48 rounded-circle"
           :name="item.details.icon" />
         <img
@@ -68,7 +68,7 @@ import {
   BMediaBody,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { isTypeRole } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { isTypeRole, isTypeLcm } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 
 defineProps({
