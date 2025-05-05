@@ -11,6 +11,7 @@ import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedR
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
+import * as PermissionsApi from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import UserDetails from './UserDetails';
 import i18n from '@/i18n';
 
@@ -22,6 +23,7 @@ jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 jest.mock('@forgerock/platform-shared/src/api/SchemaApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/PermissionsApi');
 
 ManagedResourceApi.getManagedResource.mockImplementation(() => Promise.resolve({
   data: {
@@ -75,12 +77,20 @@ PrivilegeApi.getResourceTypePrivilege.mockImplementation(() => Promise.resolve({
   },
 }));
 
+PermissionsApi.getPermissionsForUser.mockImplementation(() => Promise.resolve({
+  data: {
+    result: [
+      { permissions: { modifyUser: true } },
+    ],
+  },
+}));
+
 RequestFormAssignmentsApi.getFormAssignmentByLcmOperation.mockImplementation(() => Promise.resolve({ data: { result: [] } }));
 
 describe('UserDetails', () => {
   let wrapper;
   function mountComponent() {
-    setupTestPinia();
+    setupTestPinia(undefined, false);
     return mount(UserDetails, {
       global: {
         plugins: [i18n],

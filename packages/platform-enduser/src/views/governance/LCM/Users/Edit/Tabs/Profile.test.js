@@ -6,8 +6,10 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import * as PermissionsApi from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
@@ -19,6 +21,15 @@ jest.mock('@forgerock/platform-shared/src/api/SchemaApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/PermissionsApi');
+
+PermissionsApi.getPermissionsForUser.mockImplementation(() => Promise.resolve({
+  data: {
+    result: [
+      { permissions: { modifyUser: true } },
+    ],
+  },
+}));
 
 SchemaApi.getSchema.mockImplementation(() => Promise.resolve({
   data: {
@@ -64,7 +75,15 @@ PrivilegeApi.getResourceTypePrivilege.mockImplementation(() => Promise.resolve({
         'mail',
       ],
     },
-    UPDATE: { allowed: true },
+    UPDATE: {
+      allowed: true,
+      properties: [
+        'userName',
+        'givenName',
+        'sn',
+        'mail',
+      ],
+    },
   },
 }));
 
@@ -73,6 +92,7 @@ RequestFormAssignmentsApi.getFormAssignmentByLcmOperation.mockImplementation(() 
 describe('Profile', () => {
   let wrapper;
   function mountComponent() {
+    setupTestPinia(undefined, false);
     return mount(Profile, {
       props: {
         user: {

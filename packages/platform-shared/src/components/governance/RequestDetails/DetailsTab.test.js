@@ -8,6 +8,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { defineRule } from 'vee-validate';
 import { required } from '@vee-validate/rules';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
@@ -91,6 +92,7 @@ describe('DetailsTab', () => {
       },
       ...propsData,
     };
+    setupTestPinia(undefined, false);
 
     return mount(DetailsTab, {
       global: {

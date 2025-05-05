@@ -65,10 +65,10 @@ import {
   BModal,
 } from 'bootstrap-vue';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { convertRelationshipPropertiesToRef } from '@forgerock/platform-shared/src/components/FormEditor/utils/formGeneratorSchemaTransformer';
 import { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { useGovernanceStore } from '@forgerock/platform-shared/src/stores/governance';
 import useForm from '@forgerock/platform-shared/src/composables/governance/forms';
 import FrAddUserForm from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/User/AddUserForm';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
@@ -84,6 +84,7 @@ defineProps({
   },
 });
 
+const { schema, setSchema } = useGovernanceStore();
 const {
   isLoadingForm,
   isValidForm,
@@ -136,8 +137,7 @@ async function submitRequest() {
   };
 
   if (form.value) {
-    const { data: schemaData } = await getSchema('/managed/alpha_user');
-    const userPayload = convertRelationshipPropertiesToRef(formValue.value?.user, schemaData.properties);
+    const userPayload = convertRelationshipPropertiesToRef(formValue.value?.user, schema['managed/alpha_user'].properties);
     requestPayload = {
       common: { ...formValue.value?.common },
       custom: { ...formValue.value?.custom },
@@ -180,6 +180,7 @@ async function initializeModal() {
     setInitialModel: true,
   };
   await getFormDefinitionByType(formTypes.LCM, options);
+  await setSchema('managed/alpha_user');
   isLoadingForm.value = false;
 }
 </script>

@@ -13,7 +13,6 @@ of the MIT license. See the LICENSE file for details. -->
       v-else-if="currentFormComponent === defaultForms.modifyUser"
       allow-all-properties
       :user-id="options.userId"
-      :user-schema="options.userSchema"
       :read-only="readOnly"
       :user="options.userValues"
       @update:modelValue="handleInput($event)" />

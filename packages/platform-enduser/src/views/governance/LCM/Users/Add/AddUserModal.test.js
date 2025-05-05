@@ -6,6 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
@@ -62,6 +63,7 @@ describe('AddUserModal', () => {
   RequestFormAssignmentsApi.getFormAssignmentByLcmOperation.mockImplementation(() => Promise.resolve({ data: { result: [] } }));
 
   function mountComponent() {
+    setupTestPinia(undefined, false);
     return mount(AddUserModal, {
       global: {
         plugins: [i18n],

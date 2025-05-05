@@ -10,12 +10,12 @@ of the MIT license. See the LICENSE file for details. -->
       :subtitle="$t('governance.administer.users.subtitle')" />
     <FrGovResourceList
       v-if="userColumns.length && queryFields.length"
-      show-delete-option
       class="mb-5"
       resource="user"
       :columns="userColumns"
       :query-fields="queryFields"
       :resource-function="getManagedResourceList"
+      :show-add-button="allowCreate"
       @row-clicked="navigateToUserDetails"
       @add-clicked="showAddUserModal"
       @delete-clicked="showDeleteModal">
@@ -56,8 +56,10 @@ import FrGovResourceList from '@forgerock/platform-shared/src/components/governa
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroupList/UserBasicInfo';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import { getResourceTypePrivilege } from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import { getPrivileges } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useGovernanceStore } from '@forgerock/platform-shared/src/stores/governance';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrAddUserModal from './Add/AddUserModal';
 import FrDeleteUserModal from './Delete/DeleteUserModal';
@@ -66,9 +68,12 @@ import i18n from '@/i18n';
 // composables
 const router = useRouter();
 const { bvModal } = useBvModal();
-const deleteUserId = ref(null);
+const { userId } = useUserStore();
+const { setPrivileges, privileges } = useGovernanceStore();
 
 // data
+const allowCreate = ref(false);
+const deleteUserId = ref(null);
 const userViewPrivileges = ref([]);
 const availableColumns = [
   {
@@ -171,21 +176,24 @@ const queryFields = computed(() => {
 });
 
 /**
- * Fetches the list of privileges for the user.
- * This function is asynchronous and retrieves data related to user permissions.
+ * Fetches the list of privileges for the user from IDA and IGA.
+ * IDM permissions are used to determine the columns to be displayed in the user list.
+ * IGA permissions are used to determine if the user can create a new user.
  */
-async function getPrivileges() {
+async function getIdmAndIgaPrivileges() {
   try {
-    const { data } = await getResourceTypePrivilege('managed/alpha_user');
-    userViewPrivileges.value = data.VIEW?.allowed
-      ? data.VIEW.properties || []
+    await setPrivileges('managed/alpha_user');
+    userViewPrivileges.value = privileges['managed/alpha_user'].VIEW?.allowed
+      ? privileges['managed/alpha_user'].VIEW.properties || []
       : [];
+    const { data: privilegesData } = await getPrivileges(userId);
+    if (privilegesData.permissions.includes('createUser')) allowCreate.value = true;
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.user.errorGettingPrivileges'));
   }
 }
 
-getPrivileges();
+getIdmAndIgaPrivileges();
 
 </script>
 

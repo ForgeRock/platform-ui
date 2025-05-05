@@ -54,11 +54,23 @@ of the MIT license. See the LICENSE file for details. -->
       <template #cell(actions)="{ item }">
         <FrActionsCell
           wrapper-class="pr-2"
-          :delete-option="showDeleteOption"
-          :divider="showDeleteOption"
+          :delete-option="false"
+          :divider="false"
           edit-option
           @edit-clicked="$emit('row-clicked', item)"
-          @delete-clicked="$emit('delete-clicked', item)" />
+          @delete-clicked="$emit('delete-clicked', item)">
+          <template #custom-bottom-actions>
+            <BDropdownItem
+              v-if="item.canDelete"
+              @click="$emit('delete-clicked', item)">
+              <FrIcon
+                icon-class="mr-2"
+                name="delete">
+                {{ $t('common.delete') }}
+              </FrIcon>
+            </BDropdownitem>
+          </template>
+        </FrActionsCell>
       </template>
     </BTable>
     <FrPagination
@@ -79,6 +91,7 @@ import {
   BButtonToolbar,
   BCard,
   BCardHeader,
+  BDropdownItem,
   BTable,
 } from 'bootstrap-vue';
 import {
@@ -89,6 +102,7 @@ import {
 import { capitalize } from 'lodash';
 import { pluralizeAnyString } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { getPermissionsForUsers } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -122,10 +136,6 @@ const props = defineProps({
   showAddButton: {
     type: Boolean,
     default: true,
-  },
-  showDeleteOption: {
-    type: Boolean,
-    default: false,
   },
   showErrors: {
     type: Boolean,
@@ -261,7 +271,20 @@ async function loadData() {
   try {
     const queryParams = queryParamFunction(props.resource, searchValue.value, currentPage.value, currentPageSize.value);
     const { data } = await props.resourceFunction(resourcePath.value, queryParams);
-    items.value = data.result;
+
+    if (props.resource === 'user') {
+      const userIds = data.result.map((user) => user._id);
+      const { data: permissionsData } = await getPermissionsForUsers(userIds, 'deleteUser');
+      items.value = data.result.map((user) => {
+        const userPermissions = permissionsData.result.find((permission) => permission.id === user._id);
+        return {
+          ...user,
+          canDelete: userPermissions?.permissions?.deleteUser,
+        };
+      });
+    } else {
+      items.value = data.result;
+    }
     totalRows.value = data[totalResultsPath.value];
   } catch (error) {
     if (props.showErrors) showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: props.resource }));

@@ -40,12 +40,13 @@ import { cloneDeep, pickBy } from 'lodash';
 import { isSupportedRequestType, requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { convertRelationshipPropertiesToFormBuilder, convertRelationshipPropertiesToRef } from '@forgerock/platform-shared/src/components/FormEditor/utils/formGeneratorSchemaTransformer';
 import { findChanges } from '@forgerock/platform-shared/src/utils/object';
-import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import { useGovernanceStore } from '@forgerock/platform-shared/src/stores/governance';
 import useForm from '@forgerock/platform-shared/src/composables/governance/forms';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrDefaultFormManager from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/DefaultFormManager';
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
 
+const { schema, setSchema } = useGovernanceStore();
 const emit = defineEmits(['save']);
 
 const props = defineProps({
@@ -153,7 +154,6 @@ async function setFormValues(request) {
   }
 
   // OOTB request types
-  let schemaData;
   let userValues;
   switch (requestType.value) {
     case requestTypes.ACCOUNT_GRANT.value:
@@ -161,8 +161,8 @@ async function setFormValues(request) {
       return;
     case requestTypes.CREATE_USER.value:
     case requestTypes.MODIFY_USER.value:
-      schemaData = await getSchema('/managed/alpha_user');
-      propertySchema.value = schemaData.data.properties;
+      await setSchema('managed/alpha_user');
+      propertySchema.value = schema['managed/alpha_user'].properties;
       userValues = requestType.value === requestTypes.CREATE_USER.value
         ? request.request?.user?.object
         : {
@@ -174,7 +174,6 @@ async function setFormValues(request) {
       } else {
         defaultFormOptions.value = {
           userValues: userValues || {},
-          userSchema: schemaData.data,
         };
         if (requestType.value === requestTypes.MODIFY_USER.value) {
           defaultFormOptions.value.userId = request.request.user?.userId;

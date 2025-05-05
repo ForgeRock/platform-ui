@@ -6,17 +6,21 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import * as PermissionsApi from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import UserList from './UserList';
 import i18n from '@/i18n';
 
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/PermissionsApi');
 
 describe('UserList', () => {
   let wrapper;
   function mountComponent() {
+    setupTestPinia({ user: { userId: 'testId' } }, false);
     return mount(UserList, {
       global: {
         plugins: [i18n],
@@ -33,6 +37,7 @@ describe('UserList', () => {
           sn: 'Test',
           mail: 'test@test.com',
           accountStatus: 'active',
+          _id: 'testId',
         },
       ],
     },
@@ -50,6 +55,25 @@ describe('UserList', () => {
           'accountStatus',
         ],
       },
+    },
+  }));
+
+  PermissionsApi.getPermissionsForUser.mockImplementation(() => Promise.resolve({
+    data: {
+      result: [
+        { permissions: { createUser: true } },
+      ],
+    },
+  }));
+
+  PermissionsApi.getPermissionsForUsers.mockImplementation(() => Promise.resolve({
+    data: {
+      result: [
+        {
+          id: 'testId',
+          permissions: { deleteUser: true },
+        },
+      ],
     },
   }));
 
