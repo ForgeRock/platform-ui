@@ -357,7 +357,7 @@
       },
       "users": {
         "title": "Users",
-        "subtitle": "Create and manage your ForgeRock-hosted user identities."
+        "subtitle": "Create and manage your user identities."
       }
     },
     "approval":{

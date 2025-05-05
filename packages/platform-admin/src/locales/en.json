@@ -4290,11 +4290,15 @@
           },
           "permissions": {
             "createEntitlements": "Create Entitlements",
+            "createUsers": "Create Users",
+            "deleteUser": "Delete User",
             "modifyEntitlements": "Modify Entitlements",
+            "modifyUser": "Modify User",
             "viewApplications": "View Applications",
             "viewEntitlements": "View Entitlements",
             "viewGrants": "View Grants",
-            "viewRoles": "View Roles"
+            "viewRoles": "View Roles",
+            "viewUsers": "View Users"
           }
         },
         "saveError": "There was an error saving this scope",

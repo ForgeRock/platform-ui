@@ -4,7 +4,10 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer class="my-5 p-3">
-    <template v-if="user">
+    <FrSpinner
+      v-if="isEmpty(user)"
+      class="py-5" />
+    <template v-else>
       <BMedia
         class="align-items-center mb-4"
         no-body>
@@ -49,6 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
+import { isEmpty } from 'lodash';
 import { ref, onMounted } from 'vue';
 import {
   BContainer,
@@ -62,6 +66,7 @@ import { useRoute } from 'vue-router';
 import { getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrProfile from './Tabs/Profile';
 import i18n from '@/i18n';
 

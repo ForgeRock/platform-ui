@@ -6,6 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
@@ -89,6 +90,7 @@ describe('RequestFormManager', () => {
       ...propsData,
     };
 
+    setupTestPinia(undefined, false);
     return mount(RequestFormManager, {
       global: {
         plugins: [i18n],

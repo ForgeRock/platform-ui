@@ -17,10 +17,8 @@ of the MIT license. See the LICENSE file for details. -->
       <FrModifyUserForm
         v-else
         @update:modelValue="formValue = $event"
-        :privilege-data="userPrivilegeData"
         :read-only="readOnly"
-        :user="props.user"
-        :user-schema="userSchema" />
+        :user="props.user" />
     </template>
   </div>
   <div class="p-4 border-top">
@@ -38,11 +36,11 @@ import { ref } from 'vue';
 import { cloneDeep } from 'lodash';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { getResourceTypePrivilege } from '@forgerock/platform-shared/src/api/PrivilegeApi';
-import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { findChanges } from '@forgerock/platform-shared/src/utils/object';
 import { convertRelationshipPropertiesToFormBuilder, convertRelationshipPropertiesToRef } from '@forgerock/platform-shared/src/components/FormEditor/utils/formGeneratorSchemaTransformer';
 import { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { useGovernanceStore } from '@forgerock/platform-shared/src/stores/governance';
+import { getPermissionsForUser } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import useForm from '@forgerock/platform-shared/src/composables/governance/forms';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
@@ -57,6 +55,7 @@ const props = defineProps({
   },
 });
 
+const { schema, setSchema } = useGovernanceStore();
 const {
   isLoadingForm,
   isValidForm,
@@ -68,8 +67,6 @@ const {
 
 const isSaving = ref(false);
 const originalUser = ref({});
-const userSchema = ref({});
-const userPrivilegeData = ref({});
 const readOnly = ref(false);
 
 /**
@@ -91,7 +88,7 @@ function getFormRequestPayload(newValues, oldValues) {
     userPayload[change.name] = change.value;
   });
 
-  userPayload = convertRelationshipPropertiesToRef(userPayload, userSchema.value.properties);
+  userPayload = convertRelationshipPropertiesToRef(userPayload, schema['managed/alpha_user'].properties);
 
   return {
     common: { ...commonValues },
@@ -129,11 +126,9 @@ async function submitRequest() {
  */
 async function initializeForm() {
   // get user schema
-  const { data: schemaData } = await getSchema('/managed/alpha_user');
-  userSchema.value = schemaData;
-  const { data: privilegeData } = await getResourceTypePrivilege(`managed/alpha_user/${props.user._id}`);
-  userPrivilegeData.value = privilegeData;
-  readOnly.value = !privilegeData?.UPDATE?.allowed;
+  await setSchema('managed/alpha_user');
+  const { data: permissionsData } = await getPermissionsForUser(props.user._id, 'modifyUser');
+  readOnly.value = !permissionsData.result?.[0]?.permissions?.modifyUser;
   // get form definition
   const options = {
     lcmType: 'user',
@@ -143,7 +138,7 @@ async function initializeForm() {
   await getFormDefinitionByType(formTypes.LCM, options);
 
   // initialize user values
-  const convertedUser = convertRelationshipPropertiesToFormBuilder(props.user, userSchema.value?.properties);
+  const convertedUser = convertRelationshipPropertiesToFormBuilder(props.user, schema['managed/alpha_user'].properties);
   formValue.value = { user: convertedUser };
   originalUser.value = cloneDeep(convertedUser);
   isLoadingForm.value = false;
