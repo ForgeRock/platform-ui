@@ -141,7 +141,6 @@ const openModalMock = {
   itemName: 'Remove Application: My Azure App',
   details: {
     date: 'Jun 22, 2023',
-    description: 'My Azure App',
     icon: 'https://cdn.forgerock.com/platform/app-templates/images/microsoft.svg',
     id: 3,
     name: 'My Azure App',

@@ -11,9 +11,12 @@ import {
   getRequestFilter,
   getStatusText,
   getFormattedRequest,
+  getNameString,
   getRequestTypeDisplayName,
   getRequestTypeDisplayNames,
   getPriorityImageAltText,
+  isTypeLcm,
+  requestTypes,
 } from './AccessRequestUtils';
 
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
@@ -218,7 +221,6 @@ describe('getFormattedRequest', () => {
         id: 'id test',
         type: 'Grant Entitlement',
         name: 'display name test',
-        description: 'desc test',
         priority: 'priority',
         date: 'Jan 1, 2021',
         requestedFor: 'user test',
@@ -373,5 +375,81 @@ describe('getPriorityImageAltText', () => {
     const priority = 'invalid';
     const result = getPriorityImageAltText(priority);
     expect(result).toEqual('');
+  });
+
+  describe('getNameString', () => {
+    it('returns the correct name for CREATE_ENTITLEMENT request type', () => {
+      const request = {
+        requestType: requestTypes.CREATE_ENTITLEMENT.value,
+        application: { name: 'TestApp' },
+        request: { entitlement: { objectType: 'TestObjectType' } },
+      };
+      const result = getNameString(request, 'application');
+      expect(result).toBe('TestApp - TestObjectType');
+    });
+
+    it('returns the display name for entitlement object type', () => {
+      const request = {
+        descriptor: {
+          idx: {
+            '/entitlement': { displayName: 'EntitlementDisplayName' },
+          },
+        },
+      };
+      const result = getNameString(request, 'entitlement');
+      expect(result).toBe('EntitlementDisplayName');
+    });
+
+    it('returns the object type display name if descriptor is not available', () => {
+      const request = {
+        entitlement: { displayName: 'FallbackDisplayName' },
+      };
+      const result = getNameString(request, 'entitlement');
+      expect(result).toBe('FallbackDisplayName');
+    });
+
+    it('returns the full name with username for lcmUser object type', () => {
+      const request = {
+        user: { givenName: 'John', sn: 'Doe', userName: 'jdoe' },
+      };
+      const result = getNameString(request, 'lcmUser');
+      expect(result).toBe('John Doe (jdoe)');
+    });
+
+    it('returns an empty string if lcmUser details are incomplete', () => {
+      const request = {
+        user: { givenName: 'John', sn: 'Doe' },
+      };
+      const result = getNameString(request, 'lcmUser');
+      expect(result).toBe('');
+    });
+
+    it('returns the name for other object types', () => {
+      const request = {
+        application: { name: 'TestApplication' },
+      };
+      const result = getNameString(request, 'application');
+      expect(result).toBe('TestApplication');
+    });
+
+    it('returns undefined if no matching object type is found', () => {
+      const request = {};
+      const result = getNameString(request, 'unknownType');
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('isTypeLcm', () => {
+    it('returns true for request types related to lcmUser', () => {
+      expect(isTypeLcm('createUser')).toBe(true);
+      expect(isTypeLcm('modifyUser')).toBe(true);
+      expect(isTypeLcm('deleteUser')).toBe(true);
+    });
+
+    it('returns false for request types not related to lcmUser', () => {
+      expect(isTypeLcm('applicationGrant')).toBe(false);
+      expect(isTypeLcm('entitlementGrant')).toBe(false);
+      expect(isTypeLcm('roleGrant')).toBe(false);
+    });
   });
 });

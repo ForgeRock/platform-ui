@@ -1594,6 +1594,9 @@
         "entitlementRemove": "Remove Entitlement",
         "createEntitlement": "Create Entitlement",
         "modifyEntitlement": "Modify Entitlement",
+        "createUser": "Create User",
+        "deleteUser": "Delete User",
+        "modifyUser": "Modify User",
         "roleGrant": "Grant Role",
         "roleRemove": "Remove Role"
       },

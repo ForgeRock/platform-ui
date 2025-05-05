@@ -212,6 +212,7 @@ export function getRequestObjectType(requestType) {
   if (requestType.includes('application')) return 'application';
   if (requestType.toLowerCase().includes('entitlement')) return 'entitlement';
   if (requestType.includes('role')) return 'role';
+  if (requestType === 'createUser' || requestType === 'deleteUser' || requestType === 'modifyUser') return 'lcmUser';
   return '';
 }
 
@@ -324,6 +325,37 @@ function getBasicRequestDisplay(request) {
 }
 
 /**
+ * Generates a name string based on the provided request and object type.
+ *
+ * @param {Object} request - The request object containing details for generating the name string.
+ * @param {string} objectType - The type of request object to retrieve the name for (e.g., 'entitlement', 'lcmUser').
+ * @returns {string} The generated name string based on the request and object type. Returns an empty string if required data is missing.
+ */
+export function getNameString(request, objectType) {
+  if (request.requestType === requestTypes.CREATE_ENTITLEMENT.value) {
+    return `${request.application.name} - ${request.request?.entitlement?.objectType}`;
+  }
+
+  if (objectType === 'entitlement') {
+    return request.descriptor?.idx?.['/entitlement']?.displayName || request[objectType]?.displayName;
+  }
+
+  if (objectType === 'lcmUser') {
+    const user = request.user || request.request?.user?.object;
+    if (!(user?.givenName && user?.sn && user?.userName)) return '';
+    return i18n.global.t('common.userFullNameUserName', { givenName: user.givenName, sn: user.sn, userName: user.userName });
+  }
+
+  return request[objectType]?.name;
+}
+
+function getIcon(request, objectType) {
+  if (objectType === 'role') return 'assignment_ind';
+  if (objectType === 'lcmUser') return 'group';
+  return getApplicationLogo(request.application);
+}
+
+/**
  * Returns an object containing the advanced request display details.
  * This is used for requests that are for applications, entitlements, or roles.
  *
@@ -332,23 +364,16 @@ function getBasicRequestDisplay(request) {
  * @returns {Object} - An object containing the advanced request display details.
  */
 function getAdvancedRequestDisplay(request, objectType) {
-  let name = objectType === 'entitlement'
-    ? request.descriptor?.idx?.['/entitlement']?.displayName || request[objectType]?.displayName
-    : request[objectType]?.name;
-  if (request.requestType === requestTypes.CREATE_ENTITLEMENT.value) {
-    name = `${request.application.name} - ${request.request?.entitlement?.objectType}`;
-  }
   return {
     details: {
       id: request.id,
       type: getTypeString(request.requestType),
-      name,
-      description: objectType === 'entitlement' ? request.glossary?.idx?.['/entitlement']?.description || request[objectType]?.description : request[objectType]?.description,
+      name: getNameString(request, objectType),
       priority: request.request?.common?.priority,
       date: getRequestedDateText(request.decision?.startDate),
       requestedFor: getRequestedForText(request.user),
       requestedBy: getRequestedByText(request.requester),
-      icon: objectType === 'role' ? 'assignment_ind' : getApplicationLogo(request.application),
+      icon: getIcon(request, objectType),
     },
     rawData: request,
   };
@@ -385,4 +410,8 @@ export function buildRequestDisplay(requests) {
  */
 export function isTypeRole(requestType) {
   return getRequestObjectType(requestType) === 'role';
+}
+
+export function isTypeLcm(requestType) {
+  return getRequestObjectType(requestType) === 'lcmUser';
 }
