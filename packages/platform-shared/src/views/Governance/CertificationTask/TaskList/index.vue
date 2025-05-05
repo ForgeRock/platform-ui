@@ -166,12 +166,15 @@ of the MIT license. See the LICENSE file for details. -->
             :key="`flags-${item.id}-${index}`"
             class="cursor-default">
             <FrIcon
-              :id="`flags-${item.id}-${index}`"
+              :aria-label="$t(`governance.flags.${flag}`)"
               icon-class="md-24 mr-3"
-              :name="flagIcons[flag]" />
+              :id="`flags-${item.id}-${index}`"
+              :name="flagIcons[flag]"
+              role="img"
+              tabindex="-1" />
             <BTooltip
               :target="`flags-${item.id}-${index}`"
-              triggers="hover"
+              triggers="focus hover"
               placement="top">
               {{ $t(`governance.flags.${flag}`) }}
             </BTooltip>
