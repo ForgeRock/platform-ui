@@ -97,6 +97,18 @@ export const requestTypes = {
     label: 'governance.accessRequest.requestTypes.entitlementRemove',
     value: 'entitlementRemove',
   },
+  CREATE_USER: {
+    label: 'governance.accessRequest.requestTypes.createUser',
+    value: 'createUser',
+  },
+  MODIFY_USER: {
+    label: 'governance.accessRequest.requestTypes.modifyUser',
+    value: 'modifyUser',
+  },
+  DELETE_USER: {
+    label: 'governance.accessRequest.requestTypes.deleteUser',
+    value: 'deleteUser',
+  },
   ROLE_GRANT: {
     label: 'governance.accessRequest.requestTypes.roleGrant',
     value: 'roleGrant',

@@ -5,7 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { transformSchemaToFormGenerator } from './formGeneratorSchemaTransformer';
+import {
+  transformSchemaToFormGenerator,
+  convertRelationshipPropertiesToFormBuilder,
+  convertRelationshipPropertiesToRef,
+} from './formGeneratorSchemaTransformer';
 
 describe('formGeneratorSchemaTransformer', () => {
   it('should transform form editor schema to form generator schema', () => {
@@ -852,5 +856,192 @@ describe('formGeneratorSchemaTransformer', () => {
 
     const result = transformSchemaToFormGenerator(schema);
     expect(result).toEqual(expected);
+  });
+
+  describe('convertRelationshipPropertiesToFormBuilder', () => {
+    it('should convert relationship properties to the expected format', () => {
+      const objValues = {
+        userProperty: { _ref: 'managed/alpha_user/12345' },
+        groupProperty: { _ref: 'managed/alpha_group/67890' },
+        unrelatedProperty: 'someValue',
+      };
+
+      const objPropertySchema = {
+        userProperty: {
+          type: 'relationship',
+          resourceCollection: [{ path: 'managed/alpha_user' }],
+        },
+        groupProperty: {
+          type: 'relationship',
+          resourceCollection: [{ path: 'managed/alpha_group' }],
+        },
+        unrelatedProperty: {
+          type: 'string',
+        },
+      };
+
+      const expected = {
+        userProperty: 'managed/user/12345',
+        groupProperty: 'managed/group/67890',
+        unrelatedProperty: 'someValue',
+      };
+
+      const result = convertRelationshipPropertiesToFormBuilder(objValues, objPropertySchema);
+      expect(result).toEqual(expected);
+    });
+
+    it('should not modify properties that are not relationships', () => {
+      const objValues = {
+        stringProperty: 'someValue',
+        numberProperty: 42,
+      };
+
+      const objPropertySchema = {
+        stringProperty: { type: 'string' },
+        numberProperty: { type: 'number' },
+      };
+
+      const result = convertRelationshipPropertiesToFormBuilder(objValues, objPropertySchema);
+      expect(result).toEqual(objValues);
+    });
+
+    it('should handle missing _ref in relationship properties gracefully', () => {
+      const objValues = {
+        userProperty: {},
+      };
+
+      const objPropertySchema = {
+        userProperty: {
+          type: 'relationship',
+          resourceCollection: [{ path: 'managed/alpha_user' }],
+        },
+      };
+
+      const result = convertRelationshipPropertiesToFormBuilder(objValues, objPropertySchema);
+      expect(result).toEqual(objValues);
+    });
+
+    it('should skip unsupported relationship types', () => {
+      const objValues = {
+        unsupportedProperty: { _ref: 'managed/alpha_unsupported/12345' },
+      };
+
+      const objPropertySchema = {
+        unsupportedProperty: {
+          type: 'relationship',
+          resourceCollection: [{ path: 'managed/alpha_unsupported' }],
+        },
+      };
+
+      const result = convertRelationshipPropertiesToFormBuilder(objValues, objPropertySchema);
+      expect(result).toEqual(objValues);
+    });
+
+    it('should handle empty input objects', () => {
+      const objValues = {};
+      const objPropertySchema = {};
+
+      const result = convertRelationshipPropertiesToFormBuilder(objValues, objPropertySchema);
+      expect(result).toEqual({});
+    });
+
+    describe('convertRelationshipPropertiesToRef', () => {
+      it('should convert relationship properties to reference objects with _ref and _refProperties', () => {
+        const objValues = {
+          userProperty: 'managed/user/12345',
+          groupProperty: 'managed/group/67890',
+        };
+
+        const objPropertySchema = {
+          userProperty: {
+            type: 'relationship',
+            resourceCollection: [{ path: 'managed/user' }],
+          },
+          groupProperty: {
+            type: 'relationship',
+            resourceCollection: [{ path: 'managed/group' }],
+          },
+        };
+
+        const expected = {
+          userProperty: {
+            _ref: 'managed/user/12345',
+            _refProperties: {},
+          },
+          groupProperty: {
+            _ref: 'managed/group/67890',
+            _refProperties: {},
+          },
+        };
+
+        const result = convertRelationshipPropertiesToRef(objValues, objPropertySchema);
+        expect(result).toEqual(expected);
+      });
+
+      it('should handle properties that are not relationships', () => {
+        const objValues = {
+          stringProperty: 'someValue',
+          numberProperty: 42,
+        };
+
+        const objPropertySchema = {
+          stringProperty: { type: 'string' },
+          numberProperty: { type: 'number' },
+        };
+
+        const result = convertRelationshipPropertiesToRef(objValues, objPropertySchema);
+        expect(result).toEqual(objValues);
+      });
+
+      it('should handle missing resourceCollection in relationship properties gracefully', () => {
+        const objValues = {
+          userProperty: 'managed/user/12345',
+        };
+
+        const objPropertySchema = {
+          userProperty: {
+            type: 'relationship',
+          },
+        };
+
+        const result = convertRelationshipPropertiesToRef(objValues, objPropertySchema);
+        expect(result).toEqual(objValues);
+      });
+
+      it('should handle missing property schema gracefully', () => {
+        const objValues = {
+          userProperty: 'managed/user/12345',
+        };
+
+        const objPropertySchema = {};
+
+        const result = convertRelationshipPropertiesToRef(objValues, objPropertySchema);
+        expect(result).toEqual(objValues);
+      });
+
+      it('should handle empty input objects', () => {
+        const objValues = {};
+        const objPropertySchema = {};
+
+        const result = convertRelationshipPropertiesToRef(objValues, objPropertySchema);
+        expect(result).toEqual({});
+      });
+
+      it('should handle properties with invalid values gracefully', () => {
+        const objValues = {
+          userProperty: null,
+        };
+
+        const objPropertySchema = {
+          userProperty: {
+            type: 'relationship',
+            resourceCollection: [{ path: 'managed/user' }],
+          },
+        };
+
+        const result = convertRelationshipPropertiesToRef(objValues, objPropertySchema);
+        expect(result).toEqual(objValues);
+      });
+    });
   });
 });

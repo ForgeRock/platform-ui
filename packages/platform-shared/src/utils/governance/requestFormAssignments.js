@@ -17,6 +17,7 @@ import {
   getFormAssignmentByWorkflowNode,
   getFormAssignmentByFormId,
   getFormAssignmentByRequestType,
+  getFormAssignmentByLcmOperation,
 } from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 
 /**
@@ -167,6 +168,26 @@ export async function getWorkflowRequestForm(workflow, phaseId) {
 export async function getCustomRequestForm(requestTypeId) {
   try {
     const { data } = await getFormAssignmentByRequestType(requestTypeId);
+    if (data?.result?.length) {
+      const { formId } = data.result[0];
+      const { data: formData } = await getRequestForm(formId);
+      return formData;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+}
+
+/**
+ * Retrieves the custom request form for a given request type ID.
+ *
+ * @param {string} requestTypeId - The ID of the request type.
+ * @returns {Promise<object|null>} - A promise that resolves to the custom request form data, or null if not found.
+ */
+export async function getLcmForm(lcmType, operation) {
+  try {
+    const { data } = await getFormAssignmentByLcmOperation(lcmType, operation);
     if (data?.result?.length) {
       const { formId } = data.result[0];
       const { data: formData } = await getRequestForm(formId);

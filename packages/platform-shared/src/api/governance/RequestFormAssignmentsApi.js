@@ -61,6 +61,18 @@ export function getFormAssignmentByRequestType(requestTypeId) {
 }
 
 /**
+ * Retrieves a form assignment based on the specified LCM (Lifecycle Management) type and operation.
+ *
+ * @param {string} lcmType - The type of the lifecycle management (e.g., "user").
+ * @param {string} operation - The specific operation within the lifecycle management type (e.g. "create", "update").
+ * @returns {Promise<Object>} A promise that resolves to the form assignment.
+ */
+export function getFormAssignmentByLcmOperation(lcmType, operation) {
+  const objectId = `lcm/${lcmType}/${operation}`;
+  return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId eq "${objectId}"`);
+}
+
+/**
  * Retrieves the request types for a given form ID.
  *
  * @param {string} formId - The ID of the form.

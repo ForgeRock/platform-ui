@@ -7,21 +7,25 @@ of the MIT license. See the LICENSE file for details. -->
     <FrField
       v-model="formFields.userName"
       class="mb-4"
+      :disabled="props.readOnly"
       validation="required"
       :label="$t('governance.user.username')" />
     <FrField
       v-model="formFields.givenName"
       class="mb-4"
+      :disabled="props.readOnly"
       validation="required"
       :label="$t('governance.user.firstName')" />
     <FrField
       v-model="formFields.sn"
       class="mb-4"
+      :disabled="props.readOnly"
       validation="required"
       :label="$t('governance.user.lastName')" />
     <FrField
       v-model="formFields.mail"
       class="mb-4"
+      :disabled="props.readOnly"
       :label="$t('governance.user.email')"
       :validation="{ required: true, email: true }" />
   </div>
@@ -30,10 +34,14 @@ of the MIT license. See the LICENSE file for details. -->
 import { ref, watch } from 'vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 
-defineProps({
+const props = defineProps({
   modelValue: {
     type: Object,
     default: () => ({}),
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -49,5 +57,12 @@ const formFields = ref({
 watch(formFields.value, (newValue) => {
   emit('update:modelValue', newValue);
 }, { deep: true });
+
+watch(() => props.modelValue, (newValue) => {
+  formFields.value.userName = newValue.userName || '';
+  formFields.value.givenName = newValue.givenName || '';
+  formFields.value.sn = newValue.sn || '';
+  formFields.value.mail = newValue.mail || '';
+}, { immediate: true });
 
 </script>

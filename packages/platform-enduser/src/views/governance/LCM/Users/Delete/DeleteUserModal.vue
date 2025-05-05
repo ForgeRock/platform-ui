@@ -12,15 +12,28 @@ of the MIT license. See the LICENSE file for details. -->
     title-tag="h2"
     :static="isTesting"
     :title="$t('deletePanel.deleteTypeQuestion', { type: $t('common.user.user') })"
+    @show="initializeModal"
     @hidden="resetModal">
     <!-- body -->
-    <div v-if="step === 0">
-      {{ $t('deletePanel.body', { type: $t('common.user.user').toLowerCase() }) }}
-    </div>
-    <FrRequestSubmitSuccess
-      v-else-if="step === 1"
-      :request-id="requestId"
-      :success-text="$t('governance.user.deleteSuccess')" />
+    <FrSpinner
+      v-if="isLoadingForm"
+      class="py-5" />
+    <template v-else>
+      <template v-if="step === 0">
+        <FrFormBuilder
+          v-if="form"
+          v-model:model-value="formValue"
+          @is-valid="isValidForm = $event"
+          :schema="form.form?.fields" />
+        <div v-else>
+          {{ $t('deletePanel.body', { type: $t('common.user.user').toLowerCase() }) }}
+        </div>
+      </template>
+      <FrRequestSubmitSuccess
+        v-else-if="step === 1"
+        :request-id="requestId"
+        :success-text="$t('governance.user.deleteSuccess')" />
+    </template>
     <!-- footer -->
     <template #modal-footer="{ cancel, ok }">
       <BButton
@@ -31,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.cancel') }}
       </BButton>
       <FrButtonWithSpinner
-        :disabled="isSaving"
+        :disabled="isSaving || !isValidForm"
         :variant="modalProperties.buttonVariant"
         :button-text="modalProperties.buttonText"
         :spinner-text="$t('common.submitting')"
@@ -48,7 +61,11 @@ import {
 } from 'bootstrap-vue';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import useForm from '@forgerock/platform-shared/src/composables/governance/forms';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
+import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrRequestSubmitSuccess from '@/views/governance/LCM/RequestSubmitSuccess';
 import i18n from '@/i18n';
 
@@ -63,11 +80,19 @@ const props = defineProps({
   },
 });
 
+const {
+  isLoadingForm,
+  isValidForm,
+  form,
+  formTypes,
+  formValue,
+  getFormDefinitionByType,
+  setDefaultFormValues,
+} = useForm();
+
 const isSaving = ref(false);
 const requestId = ref('');
 const step = ref(0);
-
-const DELETE_USER_REQUEST_TYPE = 'deleteUser';
 
 const modalProperties = computed(() => {
   if (step.value === 0) {
@@ -86,6 +111,7 @@ const modalProperties = computed(() => {
  * Resets the state of the modal.
  */
 function resetModal() {
+  setDefaultFormValues();
   isSaving.value = false;
   requestId.value = '';
   step.value = 0;
@@ -98,12 +124,25 @@ function resetModal() {
  * @returns {Promise<void>} A promise that resolves when the request has been submitted.
  */
 async function submitRequest(userId) {
-  const requestPayload = {
-    common: {},
-    custom: {},
-    user: { userId },
-  };
-  return submitCustomRequest(DELETE_USER_REQUEST_TYPE, requestPayload);
+  let requestPayload = {};
+
+  if (form.value) {
+    requestPayload = {
+      common: { ...formValue.value?.common },
+      custom: { ...formValue.value?.custom },
+      user: {
+        userId,
+        ...formValue.value?.user,
+      },
+    };
+  } else {
+    requestPayload = {
+      common: {},
+      custom: {},
+      user: { userId },
+    };
+  }
+  return submitCustomRequest(requestTypes.DELETE_USER.value, requestPayload);
 }
 
 /**
@@ -131,4 +170,15 @@ async function nextStep(ok) {
       break;
   }
 }
+
+async function initializeModal() {
+  const options = {
+    lcmType: 'user',
+    operation: 'delete',
+    setInitialModel: true,
+  };
+  await getFormDefinitionByType(formTypes.LCM, options);
+  isLoadingForm.value = false;
+}
+
 </script>
