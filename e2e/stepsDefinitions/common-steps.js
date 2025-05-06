@@ -58,6 +58,10 @@ Given('admin navigates to {string} page url', (page) => {
   cy.wait('@getServerInfo');
 });
 
+When('user types {string} in the field {string}', (value, field) => {
+  cy.findByLabelText(field).clear().type(value);
+});
+
 When('user types the stored value of {string} in {string} field', (envName, field) => {
   cy.findByLabelText(field).clear().type(Cypress.env(envName));
 });

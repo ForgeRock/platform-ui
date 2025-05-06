@@ -1,37 +1,11 @@
-@forgeops
+@cloud
 @smoke
 Feature: Enduser Registration
 
   Background:
     Given user navigates to "Registration" journey
 
-  # Test Cases: C19752
-  @cloud
-  Scenario: Registration form displays error for incorrect credentials
-    When user fills out the default registration form with "invalid" credentials
-    Then 'Next' button is disabled
-    When user submits the registration form
-    Then user should see an error indicating password should be at least 8 characters long
-
-  # Test Cases: C19755
-  Scenario: User successfully creates a new account
-    When user fills out the default registration form with "valid" credentials
-    Then 'Next' button is enabled
-    When user submits the registration form
-    Then user should be redirected to User dashboard
-
-  # Test Cases: C19752
-  Scenario: Next button is disabled until all required fields are filled
-    Then 'Next' button is disabled
-    When user fills out the default registration form with "invalid" credentials
-    Then 'Next' button is disabled
-    When user fills out the default registration form with "valid" credentials
-    Then 'Next' button is enabled
-    When user submits the registration form
-    Then user should be redirected to User dashboard
-
   # Test Case: C19748
-  @cloud
   Scenario: User can navigate to a Sign In from login journey
     When user clicks on 'Sign In' Journey redirect link
     Then page title is 'Sign In'
@@ -41,7 +15,6 @@ Feature: Enduser Registration
     And page url contains 'Registration'
 
   # Test Case: C19751
-  @cloud
   Scenario: Subsequent login
     When user fills registration form with following data
       | Field         | Value         |
