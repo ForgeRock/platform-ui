@@ -282,6 +282,15 @@ export default {
     label:has(~ .multiselect--active) {
       z-index: 51;
     }
+
+    label:has(~ .polyfill-placeholder,
+      ~ input:not(:placeholder-shown) input:focus,
+      ~ input:autofill,
+      ~ input:-webkit-autofill) {
+        &:not([placeholder=""]) {
+          transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+    }
   }
   .form-label-group-input {
     position: relative;
@@ -303,14 +312,6 @@ export default {
         padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
         padding-bottom: calc($input-btn-padding-y / 3);
       }
-    }
-
-    label:has(~ .polyfill-placeholder,
-      ~ input:not(:placeholder-shown) input:focus,
-      ~ input:autofill) {
-        &:not([placeholder=""]) {
-          transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
-        }
     }
 
     label:has(~ textarea.polyfill-placeholder:not([placeholder=""])) {
