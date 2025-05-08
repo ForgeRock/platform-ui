@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,6 +17,15 @@ of the MIT license. See the LICENSE file for details. -->
             />
           </BCol>
         </BRow>
+      </div>
+      <!-- Visually hidden live region for screen readers -->
+      <div
+        v-if="searchString"
+        role="alert"
+        aria-live="assertive"
+        class="sr-only"
+      >
+        {{ resultCountMessage }}
       </div>
       <BRow>
         <BCol
@@ -113,6 +122,21 @@ export default {
       });
 
       return filteredApps;
+    },
+    /**
+     * Internationalized message indicating the number of filtered applications found
+     * - If no applications match the current search, it returns a localized "no results found" message
+     * - If there are matches, it returns a localized message like "X Application found"
+     * @returns {string} A localized message describing the number of filtered applications found
+     */
+    resultCountMessage() {
+      const filteredApplicationsLength = this.filteredApplications.length;
+      return !filteredApplicationsLength
+        ? this.$t('common.noResultsFound')
+        : this.$t('common.numberElementsFound', {
+          number: filteredApplicationsLength,
+          element: filteredApplicationsLength === 1 ? this.$t('common.application') : this.$t('common.applications'),
+        });
     },
   },
   mounted() {

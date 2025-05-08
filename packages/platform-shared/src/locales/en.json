@@ -204,6 +204,7 @@
     "notAvailable": "n/a",
     "notConfigured": "Not Configured",
     "number": "Number",
+    "numberElementsFound": "{number} {element} found.",
     "object": "Object",
     "objectCopy": "{object} copy",
     "objectType": "Object Type",
