@@ -7,8 +7,8 @@
 
 import { has, isArray } from 'lodash';
 import isEmail from 'validator/lib/isEmail';
+import { getSecret, getVariable } from '@forgerock/platform-shared/src/api/EsvApi';
 import { getIdfromPlaceholder } from './esvUtils';
-import { getSecret, getVariable } from '../../../platform-admin/src/api/EsvApi';
 
 const urlHasPath = (url) => url.pathname && url.pathname !== '/';
 

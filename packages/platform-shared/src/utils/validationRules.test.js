@@ -5,9 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import * as esvApi from '@forgerock/platform-shared/src/api/EsvApi';
 import i18n from '@/i18n';
 import { getRules } from './validationRules';
-import * as esvApi from '../../../platform-admin/src/api/EsvApi';
 
 let rules;
 beforeEach(() => {
