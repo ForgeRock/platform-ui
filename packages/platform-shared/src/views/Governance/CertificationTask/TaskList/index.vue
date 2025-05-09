@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,7 +18,9 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           v-if="!entitlementUserId"
           @click="showFiltersSection = !showFiltersSection"
-          :aria-label="$t('governance.showFilters')"
+          aria-controls="filters-section"
+          :aria-expanded="showFiltersSection"
+          :aria-label="filterButtonLabel"
           class="mr-2"
           data-testid="cert-filter-button"
           variant="link-dark">
@@ -36,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div v-show="showFiltersSection">
       <FrTaskFilters
         v-if="!entitlementUserId"
+        id="filters-section"
         @filter-certification-items="filterItems"
         :actor-id="actorId"
         :cert-id="campaignId" />
@@ -880,6 +883,11 @@ export default {
         columns.splice(accountColumnIndex, 1);
       }
       return columns;
+    },
+    filterButtonLabel() {
+      return this.showFiltersSection
+        ? this.$t('governance.hideFilters')
+        : this.$t('governance.showFilters');
     },
   },
   async mounted() {
