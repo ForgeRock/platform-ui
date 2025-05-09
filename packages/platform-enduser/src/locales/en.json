@@ -7,8 +7,7 @@
     "profile": {
       "authorizedApplications": {
         "never": "Never"
-      },
-      "updateSuccess": "Updated your profile."
+      }
     },
     "sharing": {
       "shareError": "There was an error sharing resource.",

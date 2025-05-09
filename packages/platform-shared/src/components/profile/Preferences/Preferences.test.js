@@ -7,7 +7,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import Preferences from '@/components/profile/Preferences';
+import Preferences from '@forgerock/platform-shared/src/components/profile/Preferences';
 import i18n from '@/i18n';
 
 describe('Preferences.vue', () => {

@@ -1,10 +1,12 @@
+/**
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 export const frTranslations = {
   enduser: {
-    user: {
-      profile: {
-        updateSuccess: 'Votre profil a été mis à jour.',
-      },
-    },
     sideMenu: {
       profile: 'Profil',
       applications: 'Mes applications en français',
@@ -38,6 +40,9 @@ export const frTranslations = {
       placeholders: {
         username: 'Nom d\'utilisateur',
         password: 'Mot de passe',
+      },
+      profile: {
+        updateSuccess: 'Votre profil a été mis à jour.',
       },
     },
     sideMenu: {
