@@ -12,6 +12,9 @@ to such license between the licensee and ForgeRock AS. -->
           v-model:close-reset-password="closeResetPassword"
           @reset-password="(currentPassword, newPassword) => updateProfile(...getResetPasswordPayload(currentPassword, newPassword))" />
         <FrAccountControls class="mb-5" />
+        <FrPreferences
+          class="mb-5"
+          @updateProfile="updateProfile" />
       </BCol>
     </template>
   </FrProfileContainer>
@@ -22,6 +25,7 @@ to such license between the licensee and ForgeRock AS. -->
 import { BCol } from 'bootstrap-vue';
 import FrProfileContainer from '@forgerock/platform-shared/src/components/profile/ProfileContainer';
 import FrAccountControls from '@forgerock/platform-shared/src/components/profile/AccountControls';
+import FrPreferences from '@forgerock/platform-shared/src/components/profile/Preferences';
 import { ref } from 'vue';
 import FrAccountSecurity from '@/components/AccountSecurity';
 

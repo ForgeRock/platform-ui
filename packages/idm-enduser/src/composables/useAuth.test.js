@@ -20,7 +20,7 @@ describe('useAuth composable', () => {
     setupTestPinia();
   });
 
-  it('should login idm enduser correct;y', async () => {
+  it('should login idm enduser correctly', async () => {
     AuthenticationApi.login = jest.fn().mockResolvedValue({
       data: {
         authorization: {
@@ -65,16 +65,16 @@ describe('useAuth composable', () => {
     await flushPromises();
 
     const userStore = useUserStore();
+    const enduserStore = useEnduserStore();
     expect(userStore.userId).toBe('test');
     expect(userStore.managedResource).toBe('managed/user');
-    expect(userStore.setUserDetails).toBeCalledWith({
+    expect(enduserStore.setProfile).toBeCalledWith({
       userName: 'john.doe',
       givenName: 'John',
       sn: 'Doe',
       mail: 'test@mail.com',
     });
     expect(userStore.privileges).toEqual(['idm-admin']);
-    const enduserStore = useEnduserStore();
     expect(enduserStore.managedResourceSchema).toEqual({
       properties: {
         userName: {
@@ -161,16 +161,16 @@ describe('useAuth composable', () => {
     await flushPromises();
 
     const userStore = useUserStore();
+    const enduserStore = useEnduserStore();
     expect(userStore.userId).toBe('test');
     expect(userStore.managedResource).toBe('managed/user');
-    expect(userStore.setUserDetails).toBeCalledWith({
+    expect(enduserStore.setProfile).toBeCalledWith({
       userName: 'john.doe',
       givenName: 'John',
       sn: 'Doe',
       mail: 'test@mail.com',
     });
     expect(userStore.privileges).toEqual(['idm-admin']);
-    const enduserStore = useEnduserStore();
     expect(enduserStore.managedResourceSchema).toEqual({
       properties: {
         userName: {

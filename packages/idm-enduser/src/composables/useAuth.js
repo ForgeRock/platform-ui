@@ -86,10 +86,10 @@ export function useAuth() {
       getUserPrivileges(),
       getSchema(userStore.managedResource, { baseURL: idmContext }),
     ]);
-    userStore.setUserDetails(userInfo.data);
     userStore.privileges = privileges.data;
 
     const enduserStore = getEnduserStore();
+    enduserStore.setProfile(userInfo.data);
     enduserStore.managedResourceSchema = schema.data;
   }
 

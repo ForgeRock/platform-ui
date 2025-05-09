@@ -21,6 +21,8 @@ of the MIT license. See the LICENSE file for details. -->
       </BCol>
       <slot
         name="settings"
+        :profile="profile"
+        :processing-request="processingRequest"
         :update-profile="updateProfile" />
     </BRow>
   </BContainer>
@@ -101,11 +103,8 @@ export default {
     updateProfile(payload, config) {
       this.makeUpdateRequest(this.managedResource, payload, config);
     },
-    updateKBA(payload, config) {
-      this.processingRequest = true;
-      this.makeUpdateRequest(this.managedResource, payload, config);
-    },
     makeUpdateRequest(endpoint, payload, config = {}) {
+      this.processingRequest = true;
       const successMsg = config.successMsg || this.$t('common.profile.updateSuccess');
       const selfServiceInstance = this.getRequestService({
         headers: config.headers,
