@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -26,8 +26,17 @@ of the MIT license. See the LICENSE file for details. -->
             class="col-12 col-lg-auto p-0"
             data-testid="search-gov-resource-table"
             :placeholder="$t('common.search')"
-            @clear="loadData({ paginationPage: 1, searchQuery: '' })"
-            @search="loadData({ paginationPage: 1 })" />
+            @clear="loadData({ paginationPage: 1, searchQuery: '' }, true)"
+            @search="loadData({ paginationPage: 1 }, true)" />
+          <!-- Visually hidden live region for screen readers -->
+          <div
+            v-if="activeQuery && isAccount"
+            role="alert"
+            aria-live="assertive"
+            class="sr-only"
+          >
+            {{ resultCountMessage }}
+          </div>
         </BButtonToolbar>
       </BCardHeader>
       <div v-if="isLoading">
@@ -400,6 +409,7 @@ export default {
         iconClass: 'text-danger',
         label: i18n.global.t('common.revoke'),
       }],
+      activeQuery: false,
       allRowsSelected: false,
       blankValueIndicator,
       directAssignment: this.$t('common.direct'),
@@ -465,6 +475,23 @@ export default {
     revokeModalId() {
       return `${this.modalId}-revoke`;
     },
+    isAccount() {
+      return this.grantType === 'account';
+    },
+    /**
+     * Internationalized message indicating the number of filtered accounts found
+     * - If no accounts match the current search, it returns a localized "no results found" message
+     * - If there are matches, it returns a localized message like "X Account found"
+     * @returns {string} A localized message describing the number of filtered Accounts found
+     */
+    resultCountMessage() {
+      return !this.totalCount
+        ? this.$t('common.noResultsFound')
+        : this.$t('common.numberElementsFound', {
+          number: this.totalCount,
+          element: this.totalCount === 1 ? this.$t('common.account') : this.$t('common.accounts'),
+        });
+    },
   },
   methods: {
     assignmentHandler(membership) {
@@ -525,8 +552,9 @@ export default {
     /**
      * Obtains a list of resources to display
      * @param {Object} updatedParams - Optional (default {}) any params that need to be updated for new query
+     * @param {Boolean} loadFromQuery - Optional flag (default false) to indicate if the load is triggered by a search query in the component
      */
-    loadData(updatedParams = {}) {
+    loadData(updatedParams = {}, loadFromQuery = false) {
       Object.keys(updatedParams).forEach((key) => {
         this[key] = updatedParams[key];
       });
@@ -542,6 +570,7 @@ export default {
         params.queryString = this.searchQuery;
       }
       this.$emit('load-data', params);
+      this.activeQuery = loadFromQuery;
     },
     /**
      * Selects or unselects  specific table row
