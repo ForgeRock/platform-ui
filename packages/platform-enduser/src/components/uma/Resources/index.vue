@@ -246,7 +246,7 @@ import {
 } from 'bootstrap-vue';
 import { filter } from 'lodash';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FallbackImage from '@forgerock/platform-shared/src/components/FallbackImage';
+import FallbackImage from '@forgerock/platform-shared/src/enduser/components/FallbackImage';
 
 /**
 * @description Component for displaying a resource

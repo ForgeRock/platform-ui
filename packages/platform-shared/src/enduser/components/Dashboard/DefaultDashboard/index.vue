@@ -65,9 +65,9 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import Welcome from '@forgerock/platform-shared/src/components/Dashboard/widgets/WelcomeWidget';
-import Workflow from '@forgerock/platform-shared/src/components/Dashboard/widgets/WorkflowControlWidget';
-import FrConsumerApplications from '@forgerock/platform-shared/src/components/Dashboard/ConsumerApplications';
+import Welcome from '@forgerock/platform-shared/src/enduser/components/Dashboard/widgets/WelcomeWidget';
+import Workflow from '@forgerock/platform-shared/src/enduser/components/Dashboard/widgets/WorkflowControlWidget';
+import FrConsumerApplications from '@forgerock/platform-shared/src/enduser/components/Dashboard/ConsumerApplications';
 
 /**
  * @description Controlling component for the dashboard
