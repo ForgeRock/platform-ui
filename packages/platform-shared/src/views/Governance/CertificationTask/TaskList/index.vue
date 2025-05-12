@@ -35,14 +35,14 @@ of the MIT license. See the LICENSE file for details. -->
         </BButton>
       </div>
     </div>
-    <div v-show="showFiltersSection">
+    <BCollapse :visible="showFiltersSection">
       <FrTaskFilters
         v-if="!entitlementUserId"
         id="filters-section"
         @filter-certification-items="filterItems"
         :actor-id="actorId"
         :cert-id="campaignId" />
-    </div>
+    </BCollapse>
     <FrSpinner
       v-if="isLoading"
       class="py-5" />
@@ -203,7 +203,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
       <template #cell()="data">
-        {{ getColumnData(data) }}
+        {{ getCellData(data) }}
       </template>
       <template #cell(actions)="{ item }">
         <template v-if="item.decision.certification.status === 'signed-off'">
@@ -352,19 +352,18 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BBadge,
   BButton,
+  BCollapse,
   BImg,
   BMedia,
   BTable,
   BTooltip,
 } from 'bootstrap-vue';
 import {
-  capitalize,
   cloneDeep,
   countBy,
   filter,
   get,
   isEmpty,
-  isNil,
   pick,
   sortBy as lodashSortBy,
   startCase,
@@ -395,7 +394,8 @@ import {
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import { getGlossarySchema, getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import { ADMIN_REVIEWER_PERMISSIONS, blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { getCellData, getFieldCategories, getInitialColumns } from '@forgerock/platform-shared/src/utils/governance/certificationColumns';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
@@ -454,6 +454,7 @@ export default {
   components: {
     BBadge,
     BButton,
+    BCollapse,
     BImg,
     BMedia,
     BTable,
@@ -599,6 +600,7 @@ export default {
       bulkExceptionModalProps,
       bulkRevokeModalProps,
       certificationListColumns: [],
+      columnCategories: [],
       confirmActionModalProps: {},
       contentAccountSelectedModal: {},
       currentAccountSelectedModal: null,
@@ -621,7 +623,7 @@ export default {
       enableAddComments: true,
       flagIcons: icons,
       isBulk: false,
-      isLoading: false,
+      isLoading: true,
       isDeletingReviewer: false,
       isSavingReviewer: false,
       isStaged: false,
@@ -642,7 +644,6 @@ export default {
         entitlement: [],
         role: [],
       },
-      filterProperties: {},
       revokeModalProps: {
         ...bulkRevokeModalProps,
         description: 'revokeInlineItemDescription',
@@ -663,98 +664,7 @@ export default {
       return this.showGroupBy && this.certificationGrantType === 'accounts';
     },
     tasksFields() {
-      const fields = [
-        {
-          key: 'user',
-          label: this.$t('governance.certificationTask.user'),
-          sortable: true,
-          category: 'user',
-          class: 'text-truncate fr-access-cell',
-          show: true,
-        },
-        {
-          key: 'application',
-          label: this.$t('governance.certificationTask.application'),
-          sortable: true,
-          category: 'application',
-          class: 'text-truncate fr-access-cell',
-          show: true,
-        },
-        {
-          key: 'entitlement',
-          label: this.$t('governance.certificationTask.entitlement'),
-          sortable: false,
-          category: 'entitlement',
-          class: 'text-truncate fr-access-cell',
-          show: true,
-        },
-        {
-          key: 'account',
-          label: this.$t('governance.certificationTask.account'),
-          sortable: false,
-          category: 'account',
-          class: 'text-truncate fr-access-cell',
-          show: true,
-        },
-        {
-          key: 'flags',
-          label: this.$t('governance.certificationTask.flags'),
-          sortable: false,
-          category: 'review',
-          class: 'w-175px text-truncate fr-access-cell',
-          show: true,
-        },
-        {
-          key: 'comments',
-          label: this.$t('governance.certificationTask.comments'),
-          sortable: false,
-          category: 'review',
-          class: 'w-140px fr-access-cell',
-          show: true,
-        },
-        {
-          key: 'actions',
-          class: this.showAccountDrilldown
-            ? 'w-230px cert-actions border-left fr-access-cell'
-            : 'w-200px cert-actions border-left fr-access-cell',
-          label: '',
-          sortable: false,
-          show: true,
-        },
-      ];
-
-      if (this.certificationGrantType !== 'entitlements') {
-        const entitlementColumnIndex = fields.findIndex((column) => (column.key === 'entitlement'));
-        fields.splice(entitlementColumnIndex, 1);
-      }
-
-      if (this.entitlementUserId) {
-        const userColumnIndex = fields.findIndex((column) => (column.key === 'user'));
-        fields.splice(userColumnIndex, 1);
-        const applicationColumnIndex = fields.findIndex((column) => (column.key === 'application'));
-        fields.splice(applicationColumnIndex, 1);
-        const accountColumnIndex = fields.findIndex((column) => (column.key === 'account'));
-        fields.splice(accountColumnIndex, 1);
-      }
-
-      // Role Membership Access review
-      if (this.certificationGrantType === 'roles') {
-        fields.unshift({
-          key: 'role',
-          label: this.$t('common.role'),
-          sortable: true,
-          class: 'text-truncate fr-access-cell',
-          show: true,
-        });
-
-        // remove application, account columns
-        const applicationColumnIndex = fields.findIndex((column) => (column.key === 'application'));
-        fields.splice(applicationColumnIndex, 1);
-        const accountColumnIndex = fields.findIndex((column) => (column.key === 'account'));
-        fields.splice(accountColumnIndex, 1);
-      }
-
-      return fields;
+      return getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, this.columnCategories);
     },
     isSelectable() {
       return this.showGroupBy && this.certificationGrantType === 'accounts';
@@ -771,121 +681,6 @@ export default {
     },
     selectedCount() {
       return this.allSelected ? this.totalRows : this.selectedItems.length;
-    },
-    columnCategories() {
-      const costumizedColumns = this.formatColumns(this.filterProperties);
-      const columns = [
-        {
-          name: 'review',
-          header: this.$t('governance.certificationTask.columns.review'),
-          items: [
-            {
-              key: 'flags',
-              label: this.$t('governance.certificationTask.flags'),
-              sortable: false,
-              category: 'review',
-              class: 'w-175px text-truncate fr-access-cell',
-              show: true,
-            },
-            {
-              key: 'comments',
-              label: this.$t('governance.certificationTask.comments'),
-              sortable: false,
-              category: 'review',
-              class: 'w-140px fr-access-cell',
-              show: true,
-            },
-          ],
-        },
-        {
-          name: 'user',
-          header: this.$t('governance.certificationTask.columns.user'),
-          items: [
-            {
-              key: 'user',
-              label: this.$t('governance.certificationTask.user'),
-              sortable: true,
-              category: 'user',
-              class: 'text-truncate fr-access-cell',
-              show: true,
-            },
-            ...costumizedColumns.user,
-          ],
-        },
-        {
-          name: 'application',
-          header: this.$t('governance.certificationTask.columns.application'),
-          items: [
-            {
-              key: 'application',
-              label: this.$t('governance.certificationTask.application'),
-              sortable: true,
-              category: 'application',
-              class: 'text-truncate fr-access-cell',
-              show: true,
-            },
-            ...costumizedColumns.application,
-          ],
-        },
-        {
-          name: 'entitlement',
-          header: this.$t('governance.certificationTask.columns.entitlement'),
-          items: [
-            {
-              key: 'entitlement',
-              label: this.$t('governance.certificationTask.entitlement'),
-              sortable: false,
-              category: 'entitlement',
-              class: 'text-truncate fr-access-cell',
-              show: true,
-            },
-            ...costumizedColumns.entitlement,
-          ],
-        },
-        {
-          name: 'account',
-          header: this.$t('governance.certificationTask.columns.account'),
-          items: [
-            {
-              key: 'account',
-              label: this.$t('governance.certificationTask.account'),
-              sortable: false,
-              category: 'account',
-              class: 'text-truncate fr-access-cell',
-              show: true,
-            },
-            ...costumizedColumns.account,
-          ],
-        },
-      ];
-      if (this.certificationGrantType !== 'entitlements') {
-        const entitlementColumnIndex = columns.findIndex((category) => (category.name === 'entitlement'));
-        columns.splice(entitlementColumnIndex, 1);
-      }
-      if (this.certificationGrantType === 'roles') {
-        columns.push({
-          name: 'role',
-          header: this.$t('common.role'),
-          items: [
-            {
-              key: 'role',
-              label: this.$t('common.role'),
-              sortable: true,
-              class: 'text-truncate fr-access-cell',
-              show: true,
-              category: 'role',
-            },
-            ...costumizedColumns.role,
-          ],
-        });
-
-        // remove application and account columns
-        const applicationColumnIndex = columns.findIndex((category) => (category.name === 'application'));
-        columns.splice(applicationColumnIndex, 1);
-        const accountColumnIndex = columns.findIndex((category) => (category.name === 'account'));
-        columns.splice(accountColumnIndex, 1);
-      }
-      return columns;
     },
     filterButtonLabel() {
       return this.showFiltersSection
@@ -906,7 +701,18 @@ export default {
     }
 
     this.isStaged = this.campaignDetails.status === 'staging';
-    this.updateColumns({});
+
+    // build column categories using the filter schema
+    let filterProperties;
+    try {
+      const { data } = await getFilterSchema();
+      filterProperties = data;
+    } catch {
+      filterProperties = {};
+    } finally {
+      this.columnCategories = getFieldCategories(this.certificationGrantType, filterProperties);
+      this.updateColumns({});
+    }
 
     try {
       await this.getItems(this.paginationPage);
@@ -916,15 +722,11 @@ export default {
     } catch (error) {
       this.showErrorMessage(error, this.$t('governance.certificationTask.errors.certificationListError'));
     }
-
-    try {
-      const { data } = await getFilterSchema();
-      this.filterProperties = data;
-    } catch {
-      this.filterProperties = {};
-    }
   },
   methods: {
+    getCellData,
+    getFieldCategories,
+    getInitialColumns,
     startCase,
     toggleSaving() {
       this.$emit('change-saving');
@@ -1682,83 +1484,6 @@ export default {
         roleOwner: item.roleOwner,
       };
       this.$bvModal.show(this.getModalId('role'));
-    },
-    /**
-     * Parse the column information to a format to be rendered by the component.
-     * @param {Object} columnItem all column information
-     * @param {String} category category name
-     * @returns {Object} parsed column object
-     */
-    parseColumn(columnItem, category) {
-      return {
-        ...columnItem,
-        category,
-        class: 'text-truncate fr-access-cell',
-        label: `${capitalize(category)} ${columnItem.displayName}`,
-        noCategoryLabel: columnItem.displayName,
-        show: false,
-        sortable: false,
-      };
-    },
-    /**
-     * Returns all columns by category in the format to be rendered in the component
-     * @param {Object} rawColumns All column information in the format returned by the backend
-     * @returns {Object} object with all comuns by category
-     */
-    formatColumns(rawColumns) {
-      if (isEmpty(rawColumns)) {
-        return {
-          user: [],
-          application: [],
-          entitlement: [],
-          account: [],
-          role: [],
-        };
-      }
-      const {
-        user,
-        application,
-        entitlement,
-        account,
-        role,
-      } = rawColumns;
-
-      return {
-        user: user.map((column) => this.parseColumn(column, 'user'))
-          .filter((column) => !column.label.includes('Generic')),
-        application: application.map((column) => this.parseColumn(column, 'application')),
-        entitlement: entitlement.map((column) => this.parseColumn(column, 'entitlement')),
-        account: account.map((column) => this.parseColumn(column, 'account')),
-        role: role.map((column) => this.parseColumn(column, 'role')),
-      };
-    },
-    /**
-     * Obtains and parses the information from the column
-     * @param {Object} data object with all the information in the column
-     * @returns {String} parsed column data
-     */
-    getColumnData(data) {
-      if (isEmpty(data)) {
-        return blankValueIndicator;
-      }
-      const {
-        field: {
-          category,
-          key,
-        },
-        item,
-      } = data;
-      const isGlossaryAttribute = key.includes('glossary');
-      const sanitizedKey = isGlossaryAttribute
-        ? key.split('.')[1]
-        : key;
-      // if it is a glossary attribute the correct path is used
-      const attributePath = isGlossaryAttribute
-        ? `glossary.idx./${category}.${sanitizedKey}`
-        : `${category}.${sanitizedKey}`;
-      const columnData = get(item, attributePath);
-      // only returns blank value indicator if the column data is null or undefined
-      return isNil(columnData) ? blankValueIndicator : columnData;
     },
   },
   watch: {
