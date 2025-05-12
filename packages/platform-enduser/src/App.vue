@@ -48,7 +48,7 @@ import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import { mapState } from 'pinia';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import { getDelegatedAdminMenuItems } from '@forgerock/platform-shared/src/utils/enduserPrivileges';
+import { getDelegatedAdminMenuItems } from '@forgerock/platform-shared/src/enduser/utils/enduserPrivileges';
 import { getGovMenuItems } from '@/utils/governance/menuItems';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';

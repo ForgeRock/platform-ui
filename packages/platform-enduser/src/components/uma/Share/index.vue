@@ -201,7 +201,7 @@ import {
 } from 'lodash';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FallbackImage from '@forgerock/platform-shared/src/components/FallbackImage';
+import FallbackImage from '@forgerock/platform-shared/src/enduser/components/FallbackImage';
 
 /**
  * @description Dialog for sharing a resource with users

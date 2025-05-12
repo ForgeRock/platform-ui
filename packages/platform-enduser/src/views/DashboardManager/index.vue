@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import FrDashboard from '@forgerock/platform-shared/src/components/Dashboard/DefaultDashboard';
+import FrDashboard from '@forgerock/platform-shared/src/enduser/components/Dashboard/DefaultDashboard';
 import FrGovDashboard from '@/views/DashboardManager/dashboards/Governance';
 
 const types = {

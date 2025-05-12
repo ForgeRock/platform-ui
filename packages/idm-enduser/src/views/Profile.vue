@@ -23,9 +23,9 @@ to such license between the licensee and ForgeRock AS. -->
 <script setup>
 
 import { BCol } from 'bootstrap-vue';
-import FrProfileContainer from '@forgerock/platform-shared/src/components/profile/ProfileContainer';
-import FrAccountControls from '@forgerock/platform-shared/src/components/profile/AccountControls';
-import FrPreferences from '@forgerock/platform-shared/src/components/profile/Preferences';
+import FrProfileContainer from '@forgerock/platform-shared/src/enduser/components/profile/ProfileContainer';
+import FrAccountControls from '@forgerock/platform-shared/src/enduser/components/profile/AccountControls';
+import FrPreferences from '@forgerock/platform-shared/src/enduser/components/profile/Preferences';
 import { ref } from 'vue';
 import FrAccountSecurity from '@/components/AccountSecurity';
 

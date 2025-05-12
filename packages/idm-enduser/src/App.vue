@@ -21,7 +21,7 @@ import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import { computed } from 'vue';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import { getDelegatedAdminMenuItems } from '@forgerock/platform-shared/src/utils/enduserPrivileges';
+import { getDelegatedAdminMenuItems } from '@forgerock/platform-shared/src/enduser/utils/enduserPrivileges';
 import i18n from '@/i18n';
 import '@/scss/main.scss';
 import FrRouterView from './components/RouterView';

@@ -8,7 +8,7 @@
 
 import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import FallbackImage from '@forgerock/platform-shared/src/components/FallbackImage';
+import FallbackImage from '@forgerock/platform-shared/src/enduser/components/FallbackImage';
 
 jest.spyOn(FallbackImage, 'mounted');
 

@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
-import FallbackImage from '@forgerock/platform-shared/src/components/FallbackImage';
+import FallbackImage from '@forgerock/platform-shared/src/enduser/components/FallbackImage';
 /**
  * @description Widget that provides a welcome message for the managed resource, also provides a button to directly access editing the resources profile.
  * */

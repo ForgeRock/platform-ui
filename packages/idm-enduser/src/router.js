@@ -36,7 +36,7 @@ const routes = [
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('@forgerock/platform-shared/src/components/Dashboard/DefaultDashboard'),
+    component: () => import('@forgerock/platform-shared/src/enduser/components/Dashboard/DefaultDashboard'),
     meta: { authenticate: true },
   },
   {
@@ -49,13 +49,13 @@ const routes = [
   {
     path: '/list/:resourceType/:resourceName',
     name: 'ListResource',
-    component: () => import(/* webpackChunkName: "listResource" */ '@forgerock/platform-shared/src/views/ListResourceView'),
+    component: () => import(/* webpackChunkName: "listResource" */ '@forgerock/platform-shared/src/enduser/views/ListResourceView'),
     meta: { columns: true, authenticate: true },
   },
   {
     path: '/edit/:resourceType/:resourceName/:resourceId',
     name: 'EditResource',
-    component: () => import('@forgerock/platform-shared/src/views/EditResourceView'),
+    component: () => import('@forgerock/platform-shared/src/enduser/views/EditResourceView'),
     meta: { authenticate: true, listRoute: 'list' },
   },
   {

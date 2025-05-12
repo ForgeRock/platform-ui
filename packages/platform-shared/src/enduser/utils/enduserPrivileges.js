@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { getTranslation } from './translations';
+import { getTranslation } from '../../utils/translations';
 
 /**
  * Get the menu item icon

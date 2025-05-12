@@ -60,7 +60,7 @@ import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin/';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
-import FallbackImage from '@forgerock/platform-shared/src/components/FallbackImage';
+import FallbackImage from '@forgerock/platform-shared/src/enduser/components/FallbackImage';
 
 dayjs.extend(LocalizedFormat);
 

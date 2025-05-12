@@ -73,7 +73,7 @@ import FrCountCard from '@forgerock/platform-shared/src/components/CountCard';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getUserRequests } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getRequestFilter } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
-import Welcome from '@forgerock/platform-shared/src/components/Dashboard/widgets/WelcomeWidget';
+import Welcome from '@forgerock/platform-shared/src/enduser/components/Dashboard/widgets/WelcomeWidget';
 
 /**
  * @description Controlling component for the governance dashboard

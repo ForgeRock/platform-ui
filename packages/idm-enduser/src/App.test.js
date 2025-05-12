@@ -26,7 +26,7 @@ jest.mock('@/components/RouterView', () => ({
 }));
 
 // Mock the getDelegatedAdminMenuItems function
-jest.mock('@forgerock/platform-shared/src/utils/enduserPrivileges', () => ({
+jest.mock('@forgerock/platform-shared/src/enduser/utils/enduserPrivileges', () => ({
   getDelegatedAdminMenuItems: jest.fn(() => [
     {
       privilegePath: 'managed/user',

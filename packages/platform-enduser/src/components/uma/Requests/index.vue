@@ -88,7 +88,7 @@ import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrFallbackImage from '@forgerock/platform-shared/src/components/FallbackImage';
+import FrFallbackImage from '@forgerock/platform-shared/src/enduser/components/FallbackImage';
 
 dayjs.extend(LocalizedFormat);
 
