@@ -13,6 +13,7 @@ import * as CertificationApi from '@forgerock/platform-shared/src/api/governance
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import TaskList from './index';
+import i18n from '@/i18n';
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
@@ -25,6 +26,7 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
 }));
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
 let wrapper;
 const resourceDataMock = {
@@ -66,13 +68,12 @@ function mountComponent(propOverrides = {}) {
     global: {
       attachTo: document.body,
       mocks: {
-        $t: (t) => t,
         $bvModal: {
           show: jest.fn(),
           hide: jest.fn(),
         },
       },
-      plugins: [Notifications],
+      plugins: [Notifications, i18n],
       stubs: ['BTooltip'],
       renderStubDefaultSlot: true,
     },
@@ -745,7 +746,7 @@ describe('TaskList', () => {
 
       const revoke = findByTestId(wrapper, 'tooltip-certify-testId');
       expect(revoke.exists()).toBe(true);
-      expect(revoke.text()).toBe('governance.certificationTask.actions.acknowledge');
+      expect(revoke.text()).toBe('Acknowledge');
     });
   });
 
@@ -1466,19 +1467,19 @@ describe('TaskList', () => {
       await flushPromises();
       expect(loadItemsListSpy).toHaveBeenCalled();
     });
-    it('should show the right columns for entilements tab', () => {
+    it('should show the right columns for entitlements tab', () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'user', category: 'user', label: 'governance.certificationTask.user', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'application', category: 'application', label: 'governance.certificationTask.application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'entitlement', category: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'account', category: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'flags', category: 'review', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+        key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {
-        key: 'comments', category: 'review', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+        key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
         key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell', label: '', sortable: false, show: true,
       }]);
@@ -1714,15 +1715,15 @@ describe('TaskList', () => {
     });
     it('should display correct account columns', async () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'user', category: 'user', label: 'governance.certificationTask.user', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'application', category: 'application', label: 'governance.certificationTask.application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'account', category: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'flags', category: 'review', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+        key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {
-        key: 'comments', category: 'review', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+        key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
         key: 'actions', class: 'w-230px cert-actions border-left fr-access-cell', label: '', sortable: false, show: true,
       }]);
@@ -1840,11 +1841,11 @@ describe('TaskList', () => {
     });
     it('should display correct entitlement columns', async () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'entitlement', category: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'flags', category: 'review', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+        key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {
-        key: 'comments', category: 'review', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+        key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
         key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell', label: '', sortable: false, show: true,
       }]);
@@ -1936,7 +1937,7 @@ describe('TaskList', () => {
         }],
       },
     };
-    it('are disabled and do not exist if is in staging with showGroupBy and test certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
+    it('are disabled and do not exist if is in staging with showGroupBy and accounts certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
       mountComponent({
         campaignDetails: {
           allowBulkCertify: true,
@@ -1944,7 +1945,7 @@ describe('TaskList', () => {
           exceptionDuration: 1,
           enableForward: true,
         },
-        certificationGrantType: 'test',
+        certificationGrantType: 'accounts',
         showGroupBy: true,
       });
       wrapper.vm.loadItemsList(resource, 1);
@@ -1965,10 +1966,10 @@ describe('TaskList', () => {
       expect(forwardBtn.classes()).toContain('disabled');
       const addCommentBtn = findByTestId(wrapper, 'add-comment-button-test-id-0');
       expect(addCommentBtn.classes()).toContain('disabled');
-      const cartReviewersBtn = findByTestId(wrapper, 'cert-reviewers-button-test');
+      const cartReviewersBtn = findByTestId(wrapper, 'cert-reviewers-button-accounts');
       expect(cartReviewersBtn.classes()).toContain('disabled');
     });
-    it('are enabled and do exist if is not in staging with showGroupBy and test certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
+    it('are enabled and do exist if is not in staging with showGroupBy and accounts certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
       mountComponent({
         campaignDetails: {
           allowBulkCertify: true,
@@ -1976,7 +1977,7 @@ describe('TaskList', () => {
           exceptionDuration: 1,
           enableForward: true,
         },
-        certificationGrantType: 'test',
+        certificationGrantType: 'accounts',
         showGroupBy: true,
       });
       wrapper.vm.loadItemsList(resource, 1);
@@ -1997,7 +1998,7 @@ describe('TaskList', () => {
       expect(forwardBtn.classes()).not.toContain('disabled');
       const addCommentBtn = findByTestId(wrapper, 'add-comment-button-test-id-0');
       expect(addCommentBtn.classes()).not.toContain('disabled');
-      const cartReviewersBtn = findByTestId(wrapper, 'cert-reviewers-button-test');
+      const cartReviewersBtn = findByTestId(wrapper, 'cert-reviewers-button-accounts');
       expect(cartReviewersBtn.classes()).not.toContain('disabled');
     });
     it('does exist if it not in staging with showGroupBy and accounts certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
