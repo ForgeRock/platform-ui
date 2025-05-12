@@ -1,6 +1,7 @@
 @cloud
 Feature: Enduser UI Translations
 
+  @C26987
   Scenario: Full translation: French translation
     Given "fr" language is set via API
     And browser locale is set to 'fr'
@@ -12,6 +13,7 @@ Feature: Enduser UI Translations
     When user clicks on 'Mes applications en français' tab
     Then Applications page translations are in 'french'
 
+  @C26990
   @forgeops
   Scenario: Locale fallback: Locales without an override added and non existing locale codes should fallback to english
     Given browser locale is set to 'en'
@@ -31,6 +33,7 @@ Feature: Enduser UI Translations
     And user reloads the page
     Then dashboard translations are in 'english'
 
+  @C26991
   @forgeops
   Scenario: Default locale override: Override English locale
     When 'Enduser' is logged in
@@ -42,6 +45,7 @@ Feature: Enduser UI Translations
     And user reloads the page
     Then dashboard translations are in 'english'
 
+  @C26988
   @forgeops
   Scenario: Special characters: Japanese translation
     Given "ja" language is set via API
