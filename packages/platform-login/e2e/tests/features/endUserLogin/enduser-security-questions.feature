@@ -7,6 +7,7 @@ Feature: Enduser Security Questions
     Given journey "Registration without email" is imported via API
     And journey "Password reset by KBA" is imported via API
 
+  @C3336
   @forgeops
   Scenario: Default color question
     Given user navigates to "Registration" journey
@@ -14,6 +15,7 @@ Feature: Enduser Security Questions
     Then the option "What's your favorite color?" is visible
     And the option "Provide your own:" is visible
 
+  @C23867
   @forgeops
   Scenario: SQ created by Admin are visible
     Given admin creates the following questions via API
@@ -25,6 +27,7 @@ Feature: Enduser Security Questions
     Then the option "Pet name?" is visible
     And the option "Favorite character?" is visible
 
+  @C24637
   Scenario: User should create his own questions
     Given the admin deletes all the security questions via API
     When user navigates to "Registration" journey
@@ -44,6 +47,7 @@ Feature: Enduser Security Questions
     Then the option "Pet name?" is visible
     And the option "Provide your own:" is visible
 
+  @C24635
   @forgeops
   Scenario: Security questions are not repeated in dropdowns
     Given security questions "must define" settings is set to 2 via API
@@ -64,6 +68,7 @@ Feature: Enduser Security Questions
     And the option "Favorite character?" is visible
     And the option "What's your favorite color?" does not exist
 
+  @C27025
   @forgeops
   Scenario: Special characters on Security Question
     Given security questions "must define" settings is set to 2 via API
@@ -94,6 +99,7 @@ Feature: Enduser Security Questions
     | 日本語の質問            |
     | ؤال باللغة العربية    |
 
+  @C24641
   @forgeops
   Scenario: Error messages
     When user navigates to "Registration" journey
@@ -112,6 +118,7 @@ Feature: Enduser Security Questions
     When user selects "What's your favorite color?" option for the Security Question no. 1
     Then "Must be unique" validation error doesn't exist
 
+  @C27024
   @forgeops
   Scenario: Must define and Must Answer combinations
     Given security questions "must define" settings is set to 100 via API
@@ -140,6 +147,7 @@ Feature: Enduser Security Questions
     And user clicks on "Next" button
     Then fields for answering to the created security questions are visible 4 times
 
+  @C26984
   @forgeops
   Scenario: Long security question 
     Given admin creates the following questions via API
@@ -151,6 +159,7 @@ Feature: Enduser Security Questions
     When user selects "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong" option for the Security Question no. 1
     Then the security question no. 1 has "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong" option selected
 
+  @C27005
   Scenario: Security questions locale
     Given admin creates a question with different text on different locales via API
     | locale | text                   |
@@ -165,6 +174,7 @@ Feature: Enduser Security Questions
     Then the option "¿Nombre de tu mascota?" is visible
     And the option "Pet name?" does not exist
   
+  @C27004
   Scenario: Enduser can reset password by entering correct Security Questions answers
     When user navigates to "Registration without email" journey
     And user fills registration form with following data
@@ -192,6 +202,7 @@ Feature: Enduser Security Questions
     When user clicks on "Next" button
     Then enduser dashboard is loaded
 
+  @C27003
   Scenario: Enduser can reset security questions from profile view
     When user navigates to "Registration without email" journey
     And user fills registration form with following data
@@ -219,6 +230,7 @@ Feature: Enduser Security Questions
     | Question                    |
     | Answer                      |
 
+  @C27001
   Scenario: Enduser created without defined Security Questions
     Given enduser account is created via API
     When user navigates to "Password reset by KBA" journey

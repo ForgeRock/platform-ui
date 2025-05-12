@@ -11,7 +11,7 @@ Feature: Enduser Login
     And admin is logged out
     And user navigates to "Login" journey
 
-  # Test Cases: C20237
+  @C20237
   Scenario: Correct Login credentials
     When user enters a "valid" username
     And user enters a "valid" password
@@ -19,7 +19,7 @@ Feature: Enduser Login
     Then user should be redirected to User dashboard
     And page url contains "/dashboard"
 
-  # Test cases: C20211, C20210
+  @C20211 @C20210
   Scenario Outline: Login with <usernameType> username and <passwordType> password
     When user enters a <usernameType> username
     And user enters a <passwordType> password
@@ -31,7 +31,7 @@ Feature: Enduser Login
       | "invalid"    | "valid"      |
       | "valid"      | "invalid"    |
 
-  # Test cases: C20746
+  @C20746
   Scenario: Login with empty username and password
     When clicks on the Login button 6 times
     Then "Login failure" error message is displayed
