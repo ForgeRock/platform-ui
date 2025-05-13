@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -36,11 +36,11 @@ of the MIT license. See the LICENSE file for details. -->
           <p>{{ accountValue(item.descriptor) }}</p>
         </template>
       </BTable>
-      <BPagination
+      <FrPagination
         v-model="paginationPage"
-        class="py-3 justify-content-center pagination-material-buttons"
         :per-page="pageSize"
-        :total-rows="totalRows" />
+        :total-rows="totalRows"
+        @on-page-size-change="pageSizeChange" />
     </template>
     <FrNoData
       v-else
@@ -58,10 +58,10 @@ import { onImageError } from '@forgerock/platform-shared/src/utils/applicationIm
 import { get } from 'lodash';
 import {
   BMedia,
-  BPagination,
   BTable,
 } from 'bootstrap-vue';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 
 /**
  * Tab that allows to visualize the entitlements of the selected user
@@ -70,9 +70,9 @@ export default {
   name: 'EntitlementsTab',
   components: {
     BMedia,
-    BPagination,
     BTable,
     FrNoData,
+    FrPagination,
   },
   props: {
     entitlements: {
@@ -127,6 +127,9 @@ export default {
     },
     getLogo(item) {
       return getApplicationLogo(item);
+    },
+    pageSizeChange(pageSize) {
+      this.pageSize = pageSize;
     },
     onImageError,
   },

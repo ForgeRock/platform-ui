@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -34,11 +34,11 @@ of the MIT license. See the LICENSE file for details. -->
           <p>{{ nameValue(item.descriptor) }}</p>
         </template>
       </BTable>
-      <BPagination
+      <FrPagination
         v-model="paginationPage"
-        class="py-3 justify-content-center pagination-material-buttons"
         :per-page="pageSize"
-        :total-rows="totalRows" />
+        :total-rows="totalRows"
+        @on-page-size-change="pageSizeChange" />
     </template>
     <FrNoData
       v-else
@@ -57,9 +57,9 @@ import { get } from 'lodash';
 import {
   BMedia,
   BMediaBody,
-  BPagination,
   BTable,
 } from 'bootstrap-vue';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 
 /**
@@ -70,9 +70,9 @@ export default {
   components: {
     BMedia,
     BMediaBody,
-    BPagination,
     BTable,
     FrNoData,
+    FrPagination,
   },
   props: {
     accounts: {
@@ -112,6 +112,9 @@ export default {
      */
     nameValue(descriptor) {
       return get(descriptor, 'idx./account.displayName', this.blankValueIndicator);
+    },
+    pageSizeChange(pageSize) {
+      this.pageSize = pageSize;
     },
     onImageError,
   },
