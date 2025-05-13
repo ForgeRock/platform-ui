@@ -20,10 +20,19 @@ of the MIT license. See the LICENSE file for details. -->
               v-model:num-filters="numFilters"
               :sort-by-options="sortByOptions"
               :status-options="statusOptions"
-              @filter-change="filterHandler({ filter: $event })"
+              @filter-change="filterHandler({ filter: $event }, true)"
               @sort-change="filterHandler({ sortKeys: $event })"
               @sort-direction-change="filterHandler({ sortDir: $event })"
-              @status-change="filterHandler({ status: $event })" />
+              @status-change="filterHandler({ status: $event }, true)" />
+            <!-- Visually hidden live region for screen readers -->
+            <div
+              v-if="activeQuery"
+              role="alert"
+              aria-live="assertive"
+              class="sr-only"
+            >
+              {{ resultCountMessage }}
+            </div>
           </template>
           <template #no-data>
             <FrNoData
@@ -31,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="mb-4 border-top"
               data-testid="approvals-no-data"
               icon="inbox"
-              :subtitle="$t('governance.accessRequest.noRequests', { status: getStatusText(statusOptions, status) })" />
+              :subtitle="noDataMessage" />
           </template>
           <template #actions="{ item }">
             <FrRequestActionsCell
@@ -114,6 +123,7 @@ export default {
       REQUEST_MODAL_TYPES,
       detailTypes,
       accessRequests: [],
+      activeQuery: false,
       currentPage: 1,
       filter: {},
       isLoading: false,
@@ -143,6 +153,17 @@ export default {
   },
   computed: {
     ...mapState(useUserStore, ['userId']),
+    noDataMessage() {
+      return this.$t('governance.accessRequest.noRequests', { status: getStatusText(this.statusOptions, this.status) });
+    },
+    resultCountMessage() {
+      return !this.totalCount
+        ? this.noDataMessage
+        : this.$t('common.numberElementsFound', {
+          number: this.totalCount,
+          element: this.totalCount === 1 ? this.$t('common.approval') : this.$t('common.approvals'),
+        });
+    },
   },
   async mounted() {
     this.loadRequestAndUpdateBadge();
@@ -191,9 +212,12 @@ export default {
       }
     },
     /**
-     * Get access requests based on query params and target filter
+     * Loads access requests for the current user based on active filters, pagination, and sort settings.
+     * Optionally resets the current page and marks the query as being loaded from the URL.
+     * @param {boolean} goToFirstPage If true, resets pagination to the first page before loading requests.
+     * @param {boolean} loadFromFilter If true, indicates the data is being loaded from a flter change.
      */
-    async loadRequests(goToFirstPage) {
+    async loadRequests(goToFirstPage, loadFromFilter) {
       this.isLoading = true;
 
       if (goToFirstPage) this.currentPage = 1;
@@ -219,6 +243,7 @@ export default {
         this.showErrorMessage(error, this.$t('governance.approval.errorGettingApprovals'));
       } finally {
         this.isLoading = false;
+        this.activeQuery = loadFromFilter;
       }
     },
     /**
@@ -229,14 +254,6 @@ export default {
     handleAction(action, item) {
       if (action === 'DETAILS') this.viewDetails(item);
       else this.openModal(item, action);
-    },
-    /**
-     * Update status and reload requests
-     * @param {Object} status status of requests to load
-     */
-    handleStatusChange(status) {
-      this.status = status;
-      this.loadRequests();
     },
     /**
      * Opens the request / cancel modals
@@ -258,12 +275,13 @@ export default {
     /**
      * Handles filtering requests as well as updates to pagination
      * @param {Object} property updated property
+     * @param {Boolean} loadFromFilter - Optional flag (default false) to indicate if the load is triggered by a search filter in the component
      */
-    filterHandler(property) {
+    filterHandler(property, loadFromFilter = false) {
       const [key, value] = Object.entries(property)[0];
       this[key] = value;
       const resetPaging = (key !== 'currentPage');
-      this.loadRequests(resetPaging);
+      this.loadRequests(resetPaging, loadFromFilter);
     },
   },
 };
