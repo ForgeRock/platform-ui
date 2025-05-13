@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -23,11 +23,11 @@ of the MIT license. See the LICENSE file for details. -->
           </p>
         </template>
       </BTable>
-      <BPagination
+      <FrPagination
         v-model="paginationPage"
-        class="py-3 justify-content-center pagination-material-buttons"
         :per-page="pageSize"
-        :total-rows="totalRows" />
+        :total-rows="totalRows"
+        @on-page-size-change="pageSizeChange" />
     </template>
     <FrNoData
       v-else
@@ -42,8 +42,9 @@ of the MIT license. See the LICENSE file for details. -->
 import { get } from 'lodash';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import formatConstraintDate from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
-import { BPagination, BTable } from 'bootstrap-vue';
+import { BTable } from 'bootstrap-vue';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 
 /**
  * Tab that allows to visualize the roles of the selected user
@@ -51,9 +52,9 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 export default {
   name: 'RolesTab',
   components: {
-    BPagination,
     BTable,
     FrNoData,
+    FrPagination,
   },
   props: {
     roles: {
@@ -88,6 +89,9 @@ export default {
      */
     nameValue(roleObject) {
       return get(roleObject, 'name', this.blankValueIndicator);
+    },
+    pageSizeChange(pageSize) {
+      this.pageSize = pageSize;
     },
   },
   computed: {

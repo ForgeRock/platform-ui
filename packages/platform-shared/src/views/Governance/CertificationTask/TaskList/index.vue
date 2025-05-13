@@ -254,13 +254,13 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="cert-task-list-no-data"
       icon="inbox"
       :subtitle="$t('governance.certificationTask.noItems')" />
-    <BPagination
+    <FrPagination
       v-if="totalRows > pageSize"
       :value="paginationPage"
-      :class="`py-3 justify-content-center pagination-material-buttons ${selectedCount > 0 ? 'action-bar-visible' : ''}`"
       :per-page="pageSize"
       :total-rows="totalRows"
-      @input="paginationChange" />
+      @input="paginationChange"
+      @on-page-size-change="pageSizeChange" />
     <FrFloatingActionBar
       :buttons="actionBarButtons"
       :count="selectedCount"
@@ -354,7 +354,6 @@ import {
   BButton,
   BImg,
   BMedia,
-  BPagination,
   BTable,
   BTooltip,
 } from 'bootstrap-vue';
@@ -401,6 +400,7 @@ import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrForwardModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/ForwardModal';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -456,9 +456,9 @@ export default {
     BButton,
     BImg,
     BMedia,
-    BPagination,
     BTable,
     BTooltip,
+    FrPagination,
     FrActivityModal,
     FrForwardModal,
     FrAccountModal,
@@ -957,6 +957,10 @@ export default {
           this.selectAllTasks();
         }
       });
+    },
+    pageSizeChange(pageSize) {
+      this.pageSize = pageSize;
+      this.paginationChange(1); // When page size changes, resets the current page number to 1
     },
     sortChange({ sortBy, sortDesc }) {
       this.sortDir = sortDesc ? 'desc' : 'asc';
