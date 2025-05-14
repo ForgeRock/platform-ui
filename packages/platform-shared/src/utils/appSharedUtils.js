@@ -158,6 +158,7 @@ export async function loadAppTemplates() {
 }
 
 export function getApplicationDisplayName(application) {
+  if (!application) return null;
   if (application.templateName) {
     loadAppTemplates();
     const displayName = getAppByTypeByVersion(application)?.displayName;
@@ -167,6 +168,7 @@ export function getApplicationDisplayName(application) {
 }
 
 export function getApplicationLogo(application) {
+  if (!application) return null;
   loadAppTemplates();
   const image = getAppByTypeByVersion(application)?.image;
   return application.icon || resolveImage(image);
