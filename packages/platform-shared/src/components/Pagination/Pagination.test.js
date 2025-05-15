@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -55,6 +55,7 @@ describe('Pagination Component', () => {
     const wrapper = mountPagination();
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
+    expect(pagination.attributes(['tabindex'])).toBe(undefined);
     const buttons = pagination.findAll('.page-item');
     expect(buttons[0].classes('disabled')).toBe(true);
     expect(buttons[1].classes('disabled')).toBe(true);
@@ -70,6 +71,7 @@ describe('Pagination Component', () => {
     });
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
+    expect(pagination.attributes(['tabindex'])).toBe('0');
     const buttons = pagination.findAll('.page-item');
     expect(buttons[0].classes('disabled')).toBe(true);
     expect(buttons[1].classes('disabled')).toBe(true);
@@ -215,6 +217,7 @@ describe('Pagination Component', () => {
         },
       });
       const pagination = wrapper.find('#pagination');
+      expect(pagination.attributes(['tabindex'])).toBe(undefined);
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
       expect(buttons[4].classes('d-none')).toBe(true);
