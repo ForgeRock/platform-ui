@@ -151,7 +151,7 @@ const startApp = async () => {
     store.commit('setPrivileges', privilegesData);
 
     // governance lcm
-    if (store.state.SharedStore.governanceEnabled) {
+    if (store.state.SharedStore.governanceEnabled && store.state.realm === 'alpha') {
       const { data } = await getIgaUiConfig();
       store.commit('setGovLcmSettings', data.lcmSettings);
 
