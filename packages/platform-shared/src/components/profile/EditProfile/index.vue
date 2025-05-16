@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,23 +7,25 @@ of the MIT license. See the LICENSE file for details. -->
     <BCard class="text-center mb-4">
       <div
         class="d-flex justify-content-center">
-        <div class="fr-profile-image position-relative mb-3 p-0 within-input-button">
+        <component
+          :is="showImageUpload ? 'button' : 'div'"
+          :aria-hidden="!showImageUpload"
+          class="fr-profile-image position-relative mb-3 p-0 within-input-button"
+          v-on="profileButtonHandlers"
+          :aria-label="$t('pages.profile.editProfile.profileImageModal.title')">
           <BAvatar
-            @click="$bvModal.show('frProfileImageModal')"
-            :button="showImageUpload"
             size="112px"
-            :src="profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-            :aria-label="showImageUpload ? $t('pages.profile.editProfile.profileImageModal.title') : $t('pages.profile.editProfile.profilePicture')" />
-          <BButton
+            aria-hidden="true"
+            :src="profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+          <div
             v-if="showImageUpload"
-            class="fr-edit-icon"
-            variant="dark"
-            @click="$bvModal.show('frProfileImageModal')">
+            aria-hidden="true"
+            class="btn btn-dark fr-edit-icon">
             <FrIcon
               icon-class="md-18"
               name="camera_alt" />
-          </BButton>
-        </div>
+          </div>
+        </component>
       </div>
       <h1 class="text-truncate h4">
         {{ header }}
@@ -134,12 +136,21 @@ export default {
       this.$emit('updateProfile', payload, config);
     },
   },
+  computed: {
+    profileButtonHandlers() {
+      return this.showImageUpload ? { click: () => this.$bvModal.show('frProfileImageModal') } : {};
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 :deep {
   .fr-profile-image {
+    border: none;
+    background: none;
+    border-radius: 57px;
+
     .fr-edit-icon {
       position: absolute;
       bottom: 0;
@@ -147,9 +158,11 @@ export default {
       height: 2rem;
       width: 2rem;
       border-radius: 1rem;
+      padding-left: 0.4rem;
+      padding-top: 0.2rem;
     }
 
-    .btn.b-avatar {
+    .b-avatar {
       overflow: hidden;
 
       img {
@@ -158,18 +171,22 @@ export default {
         transition: transform 0.15s ease-in-out;
       }
 
-      &:hover {
-        img {
-          transform: scale(1.15);
-        }
-      }
-
       .b-avatar-badge {
         width: 2rem;
         height: 2rem;
         padding: 0 0 4px 0;
         min-height: inherit;
         min-width: inherit;
+      }
+    }
+  }
+
+  button.fr-profile-image {
+    .b-avatar {
+      &:hover {
+        img {
+          transform: scale(1.15);
+        }
       }
     }
   }
