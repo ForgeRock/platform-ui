@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       v-if="count > 0"
       role="alert"
-      class="floating-action-bar bg-dark rounded position-fixed px-4 py-2">
+      :class="[barSize === 'sm' ? 'w-500px' : '', 'floating-action-bar bg-dark rounded position-fixed px-4 py-2']">
       <div class="w-100">
         <div class="d-flex justify-content-between align-items-center">
           <div class="mr-3 d-flex">
@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
               </BButton>
             </template>
             <BDropdown
-              v-if="menuItems.length"
+              v-if="menuItems.length || (width < 768 && buttons.length)"
               class="ml-1"
               no-caret
               right
@@ -100,11 +100,16 @@ import {
   BDropdownItem,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { useWindowSize } from '@vueuse/core';
 
 defineProps({
   count: {
     type: Number,
     required: true,
+  },
+  barSize: {
+    type: String,
+    default: 'lg',
   },
   buttons: {
     type: Array,
@@ -115,6 +120,9 @@ defineProps({
     default: () => [],
   },
 });
+
+// Track width of the window to determine if we need to show the dropdown even when there are no menu items
+const { width } = useWindowSize();
 </script>
 
 <style lang="scss" scoped>
@@ -135,6 +143,11 @@ defineProps({
     transform: translateY(20px);
     opacity: 0;
   }
+}
+
+.w-500px {
+  width: 500px;
+  margin-left: -250px;
 }
 
 @media (max-width: 767px) {
