@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer class="my-5">
+  <BContainer
+    fluid
+    class="my-5">
     <div v-if="entitlement">
       <BMedia
         class="align-items-center mb-2"

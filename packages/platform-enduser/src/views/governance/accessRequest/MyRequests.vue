@@ -4,7 +4,8 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <BContainer>
+    <BContainer
+      fluid>
       <!-- Header -->
       <BRow class="mt-5 pb-4 pb-lg-0 align-items-center">
         <BCol lg="8">

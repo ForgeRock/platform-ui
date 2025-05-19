@@ -1,10 +1,12 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <BContainer class="mt-5">
+    <BContainer
+      fluid
+      class="mt-5">
       <BMedia
         no-body
         data-testid="detail-report-header">

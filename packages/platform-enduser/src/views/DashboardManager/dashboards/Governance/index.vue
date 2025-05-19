@@ -1,10 +1,11 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <BContainer fluid="true">
+    <BContainer
+      fluid="true">
       <BRow class="mx-4">
         <BCol
           class="mt-4"
@@ -13,7 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
       </BRow>
     </BContainer>
-    <BContainer>
+    <BContainer
+      fluid>
       <BRow>
         <BCol lg="4">
           <FrCountCard

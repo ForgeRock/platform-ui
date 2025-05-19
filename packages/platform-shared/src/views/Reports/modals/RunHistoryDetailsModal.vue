@@ -12,7 +12,9 @@ of the MIT license. See the LICENSE file for details. -->
     :ok-title="$t('common.close')"
     :static="isTesting"
     :title="$t('reports.tabs.runHistory.table.runDetails')">
-    <BContainer class="p-0 text-dark">
+    <BContainer
+      fluid
+      class="p-0 text-dark">
       <BRow no-gutters>
         <BCol md="12">
           <BListGroup horizontal>

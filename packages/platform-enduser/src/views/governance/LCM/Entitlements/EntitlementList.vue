@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer class="my-5 p-2">
+  <BContainer
+    fluid
+    class="my-5 p-2">
     <FrHeader
       class="mb-4"
       :title="$t('governance.administer.entitlements.title')"

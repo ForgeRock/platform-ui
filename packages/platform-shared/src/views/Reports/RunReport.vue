@@ -16,6 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       :footer-border-variant="reportHasNoParameters ? 'white' : 'default'"
       :no-body="reportHasNoParameters">
       <BContainer
+        fluid
         v-if="Object.keys(parameters).length"
         class="p-0"
         data-testid="fr-run-report-container">
