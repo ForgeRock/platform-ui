@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
     :show-length-count="showLengthCount"
     :current-length="inputValue?.length"
     :max-length="maxLength"
-    :hide-label="!showFloatLabels && inputValue?.length">
+    :floating-label="floatingLabel">
     <textarea
       :value="inputValue"
       @input="inputValue = $event.target.value; $emit('input', inputValue)"
@@ -25,15 +25,14 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       :id="internalId"
       :name="name"
-      :placeholder="label"
+      :placeholder="floatingLabel ? false : placeholder"
       :rows="rows"
       :max-rows="maxRows"
       :readonly="readonly"
       :data-testid="testid"
       @click="onClick"
       @blur="inputValueHandler(inputValue)" />
-    <template
-      #defaultButtons>
+    <template #defaultButtons>
       <BInputGroupAppend v-if="copy">
         <button
           :id="`copyButton-${value}`"
@@ -49,6 +48,14 @@ of the MIT license. See the LICENSE file for details. -->
           triggers="hover"
           :title="$t('common.copy')" />
       </BInputGroupAppend>
+    </template>
+    <template
+      v-for="(key, slotName) in $slots"
+      #[slotName]="slotData">
+      <!-- @slot passthrough slot -->
+      <slot
+        :name="slotName"
+        v-bind="slotData" />
     </template>
   </FrInputLayout>
 </template>
@@ -134,10 +141,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    showFloatLabels: {
-      type: Boolean,
-      default: true,
-    },
   },
   setup(props) {
     const {
@@ -182,7 +185,7 @@ export default {
      * Handler for clicking the text area. Floats the label if possible
      */
     onClick() {
-      if (this.label && !this.readonly && this.showFloatLabels) {
+      if (this.label && !this.readonly && this.floatingLabel) {
         this.floatLabels = true;
       }
     },
@@ -192,7 +195,7 @@ export default {
     * @param {Array|Object|Number|String} inputValue value to be set for internal model
     */
     inputValueHandler(inputValue) {
-      if (inputValue !== null && this.showFloatLabels) {
+      if (inputValue !== null && this.floatingLabel) {
         this.floatLabels = inputValue.toString().length > 0 && !!this.label;
       }
     },

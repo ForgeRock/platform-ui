@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
   * Manages showing a panel containing provided buttons/actions.
   */
 import { onBeforeUnmount } from 'vue';
-import { BDropdownItem } from 'bootstrap-vue';
+import { BDropdownDivider, BDropdownItem } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
 
