@@ -297,6 +297,10 @@ legend {
   color: $dark-indigo;
 }
 
+.color-gray {
+  color: $gray;
+}
+
 .color-purple {
   color: $purple;
 }
@@ -881,6 +885,11 @@ a.card {
 .size-28 {
   width: 28px;
   height: 28px;
+}
+
+.size-36 {
+  width: 36px;
+  height: 36px;
 }
 
 /* Keyboard navigation highlighting */

@@ -26,11 +26,15 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t('common.deselect') }}
             </BButton>
           </div>
-          <div>
+          <div class="d-flex">
             <template
               v-for="button in buttons"
               :key="button.event">
+              <div
+                v-if="button.divider"
+                class="d-none d-md-inline-block vertical-divider" />
               <BButton
+                v-else
                 class="d-none d-md-inline-block"
                 variant="dark"
                 @click="$emit(button.event, $event)">
@@ -42,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
               </BButton>
             </template>
             <BDropdown
-              v-if="menuItems.length || (width < 768 && buttons.length)"
+              v-if="menuItems.length || (buttons.length && width < 768)"
               class="ml-1"
               no-caret
               right
@@ -70,7 +74,9 @@ of the MIT license. See the LICENSE file for details. -->
               <template
                 v-for="button in buttons"
                 :key="button.event">
+                <BDropdownDivider v-if="button.divider" />
                 <BDropdownItem
+                  v-else
                   class="d-md-none d-block"
                   @click="$emit(button.event, $event)">
                   <FrIcon
@@ -148,6 +154,13 @@ const { width } = useWindowSize();
 .w-500px {
   width: 500px;
   margin-left: -250px;
+}
+
+.vertical-divider {
+  width: 2px;
+  height: 48px;
+  background-color: $gray-700;
+  margin: 0 8px;
 }
 
 @media (max-width: 767px) {

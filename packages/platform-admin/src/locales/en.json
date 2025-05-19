@@ -189,7 +189,7 @@
     "workflows": "Workflows"
   },
   "ai": {
-    "addToChat": "Add to chat",
+    "askAi": "Ask AI",
     "errors": {
       "messageFromWrongAgent": "Received a message that was not from the agent following Post of a user message - this is not expected",
       "tooManyResponses": "Received more than one new message following Post of a user message - this is not expected"
@@ -198,15 +198,21 @@
     "journey": {
       "aiAssistant": "AI Assistant",
       "aiAssistantWelcome": "POWERED BY",
-      "aiAssistantDescription": "The Ping AI assistant is designed to help you work more efficiently. Use it to build orchestrations, troubleshoot issues, or ask questions in natural language to quickly find solutions for your use case.<br/><br/>Enter a prompt below to get started!",
-      "explain": {
-        "aboutThis": "About this {item}",
-        "innerTree": "Inner Tree"
-      },
+      "aiAssistantDescription": "The Ping AI assistant is designed to help you work more efficiently. Use it to troubleshoot issues, or ask questions in natural language to quickly find solutions for your use case.<br/><br/>Enter a prompt below to get started!",
+      "aiDisclaimer": "Generative AI is experimental and may contain errors.",
+      "enterPrompt": "Enter a prompt here",
       "helixChatAi": "Helix Chat AI",
-      "suggestion1": "Help me build a journey that captures username and password to log users in",
-      "suggestion2": "What does this Journey do?",
-      "suggestion3": "What kind of security threats might exist for this Journey?"
+      "innerTreeSuggestion": "What does this Inner Journey do?",
+      "nodeContextMultipleName": "{nodeCount} Nodes",
+      "nodeContextMultipleDisplayName": "Journey Segment",
+      "nodeSuggestion": "What does this node do? | What do these nodes do?",
+      "privacyInfo": "Privacy Info",
+      "scriptSuggestion": "What does this Script do?",
+      "startNewConversation": "Start New Conversation",
+      "suggestions": "Suggestions",
+      "suggestion1": "What does this Journey do?",
+      "suggestion2": "Describe the user flows within this Journey",
+      "suggestion3": "At what point in this Journey is the user's identity established?"
     }
   },
   "connect": {
@@ -1265,8 +1271,7 @@
       "nodes": "Nodes",
       "failedNodeTypeList": "Failed to get available node types",
       "title": "Nodes",
-      "toggleNodeList": "Toggle Node List",
-      "deleteSelectedNode": "Delete Selected Node"
+      "toggleNodeList": "Toggle Node List"
     },
     "toolbar": {
       "autoLayout": "Auto Layout",

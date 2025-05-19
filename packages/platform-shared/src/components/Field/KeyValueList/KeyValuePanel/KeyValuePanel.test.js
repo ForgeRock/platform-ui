@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -45,13 +45,13 @@ describe('KeyValuePanel', () => {
     await flushPromises();
 
     expect(wrapper.find('label').text()).toBe('test key label');
-    expect(wrapper.find('textarea').attributes('placeholder')).toBe('test value label');
+    expect(wrapper.find('textarea').attributes('data-vv-as')).toBe('test value label');
   });
 
   it('Falls back to default labels when no labels in value prop', () => {
     setup();
     expect(wrapper.find('label').text()).toBe('Key');
-    expect(wrapper.find('textarea').attributes('placeholder')).toBe('Value');
+    expect(wrapper.find('textarea').attributes('data-vv-as')).toBe('Value');
   });
 
   it('Will have a select with options when keyOptions prop is provided', async () => {
