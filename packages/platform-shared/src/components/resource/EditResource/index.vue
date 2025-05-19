@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-if="isLoading"
     class="py-5" />
   <BContainer
+    fluid
     v-else
     class="my-5">
     <div class="mb-4 media">

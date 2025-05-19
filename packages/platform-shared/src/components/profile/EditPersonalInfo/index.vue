@@ -13,7 +13,8 @@ of the MIT license. See the LICENSE file for details. -->
     @show="setModal"
     :static="isTesting">
     <!-- Editing profile currently only supports String, Number and Boolean-->
-    <BContainer>
+    <BContainer
+      fluid>
       <BRow>
         <template v-if="formFields.length">
           <BFormGroup

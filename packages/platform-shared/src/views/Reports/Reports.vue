@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer class="fr-reports mt-5">
+  <BContainer
+    fluid
+    class="fr-reports mt-5">
     <FrHeader
       class="mt-5 mb-4"
       :title="$t('pageTitles.Reports')"

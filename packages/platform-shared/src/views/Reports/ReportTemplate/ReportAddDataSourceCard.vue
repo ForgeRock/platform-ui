@@ -1,9 +1,11 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer class="d-flex justify-content-center align-self-start">
+  <BContainer
+    fluid
+    class="d-flex justify-content-center align-self-start">
     <BCard class="fr-add-data-source-card text-center my-5 py-4">
       <FrIcon
         icon-class="opacity-20 md-96 mb-3"

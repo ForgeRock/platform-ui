@@ -1,9 +1,7 @@
-  <!-- Copyright 2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     id="report-filters-modal"
@@ -34,6 +32,7 @@ to such license between the licensee and ForgeRock AS. -->
       @rule-change="updateFilter('rule-change', $event)">
       <template #valueField="{ rule, uniqueName }">
         <BContainer
+          fluid
           class="p-0"
           data-testid="filter-builder-values">
           <BRow no-gutters>
