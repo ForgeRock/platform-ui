@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -22,6 +22,7 @@ When('admin logs in with {string} credentials', (scenario) => {
       cy.loginAsAdmin();
       break;
     default:
+      // eslint-disable-next-line no-console
       console.error('Invalid step');
       break;
   }
