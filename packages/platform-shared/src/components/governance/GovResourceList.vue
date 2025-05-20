@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrIcon
               icon-class="mr-2"
               name="add">
-              {{ $t('common.newObject', { object: capitalize(resource)}) }}
+              {{ $t('common.newObject', { object: resourceName}) }}
             </FrIcon>
           </BButton>
         </div>
@@ -99,7 +99,6 @@ import {
   ref,
   watch,
 } from 'vue';
-import { capitalize } from 'lodash';
 import { pluralizeAnyString } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getPermissionsForUsers } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
@@ -151,6 +150,21 @@ const searchValue = ref('');
 const totalRows = ref(0);
 const sortBy = ref('');
 const sortDesc = ref(null);
+
+const resourceName = computed(() => {
+  switch (props.resource) {
+    case 'user':
+      return i18n.global.t('common.user.user');
+    case 'role':
+      return i18n.global.t('common.role');
+    case 'organization':
+      return i18n.global.t('common.organization');
+    case 'entitlement':
+      return i18n.global.t('common.entitlement');
+    default:
+      return props.resource;
+  }
+});
 
 const resourcePath = computed(() => {
   switch (props.resource) {
