@@ -167,10 +167,19 @@ export function getApplicationDisplayName(application) {
   return application.name;
 }
 
-export function getApplicationLogo(application) {
+export function getApplicationLogo(application, templateData) {
   if (!application) return null;
-  loadAppTemplates();
-  const image = getAppByTypeByVersion(application)?.image;
+  if (templateData) {
+    setApplicationsTemplates(templateData);
+  } else {
+    loadAppTemplates();
+  }
+  let { templateName } = application;
+  const indexofOverride = templateName?.lastIndexOf('-override');
+  if (indexofOverride > -1) {
+    templateName = templateName.slice(0, indexofOverride);
+  }
+  const image = getAppByTypeByVersion({ ...application, templateName })?.image;
   return application.icon || resolveImage(image);
 }
 
