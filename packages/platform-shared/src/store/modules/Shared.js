@@ -38,10 +38,8 @@ const defaultState = {
   igaOrchestrationApiUrl: null,
   helixEnvironmentId: '',
   helixEnvironmentUrl: '',
+  journeyAIAgentVersion: null,
   journeyAIEnabled: false,
-  journeyAIAgentName: '',
-  journeyAIApiKey: '', // TODO: Can likely delete as part of IAM-8623
-  journeyAIAgentVersion: '',
   managedObjectMinimumUIFilterLength: {},
   maxIdleExpirationTime: null,
   maxSessionExpirationTime: null,
@@ -115,11 +113,9 @@ const mutations = {
       }
       if (env.VUE_APP_ENABLE_JOURNEY_AI === 'true' || env.VUE_APP_ENABLE_JOURNEY_AI === true) {
         state.journeyAIEnabled = true;
-        state.helixEnvironmentUrl = 'https://openam-helix.forgeblocks.com/dpc/jas/helix/v1';
-        state.journeyAIApiKey = 'ODNmMzYwZWEtMzY3OC00M2E0LTk3YjgtZjFlZWNiMGY0NzNlOk4yVTJZekF3T0dNdFkySXdOUzAwTW1SaUxUazRZV1F0WlRaa1lqWmhOemxqT0RsaA=='; // TODO: Can likely delete as part of IAM-8623
-        state.helixEnvironmentId = 'c0102fb8-871b-4ad5-afdd-8093fe0d09d5';
-        state.journeyAIAgentVersion = 'draft'; // 'draft'
-        state.journeyAIAgentName = 'ExplainJourneyAI';
+        state.journeyAIAgentVersion = env.VUE_APP_HELIX_JOURNEY_AGENT_VERSION;
+        state.helixEnvironmentUrl = env.VUE_APP_HELIX_ENVIRONMENT_URL;
+        state.helixEnvironmentId = env.VUE_APP_HELIX_ENVIRONMENT_ID;
       }
       if (env.VUE_APP_ENABLE_OIDC_JOURNEYS === 'true' || env.VUE_APP_ENABLE_OIDC_JOURNEYS === true) {
         state.oidcJourneysEnabled = env.VUE_APP_ENABLE_OIDC_JOURNEYS;
