@@ -11,6 +11,7 @@ import store from '../store';
 import { generateHelixApi, generateIgaApi, generateIdmApi } from './BaseApi';
 
 jest.mock('axios');
+jest.mock('dayjs');
 
 describe('BaseApi', () => {
   describe('generateIgaApi', () => {
@@ -36,22 +37,22 @@ describe('BaseApi', () => {
       expect(axios.create).toBeCalledWith(expectedValue);
     });
 
-    it('should throw 403 error when the managed/alpha_user request is forbidden for governance end users', async () => {
+    it('should throw 403 error when the managed/alpha_user request is forbidden for end users', async () => {
       let errorRejected;
+      store.state.realm = 'alpha';
       store.state.SharedStore.currentPackage = 'enduser';
-      store.state.SharedStore.governanceEnabled = true;
       axios.create = jest.fn().mockReturnValue({
         interceptors: {
           response: {
             use: jest.fn().mockImplementation((success, error) => {
               const errorResponse = {
                 config: {
-                  url: 'managed/alpha_user',
+                  url: '/enduser/managed/alpha_user/',
                 },
                 response: {
                   status: 403,
                   config: {
-                    url: 'managed/alpha_user',
+                    url: '/enduser/managed/alpha_user/',
                   },
                 },
               };
@@ -68,22 +69,21 @@ describe('BaseApi', () => {
     });
   });
 
-  it('should not throw 403 error when the error is not related with managed/alpha_user', () => {
+  it('should not throw 403 error when the error is not related with managed/alpha_user', async () => {
     let errorRejected;
     store.state.SharedStore.currentPackage = 'enduser';
-    store.state.SharedStore.governanceEnabled = true;
     axios.create = jest.fn().mockReturnValue({
       interceptors: {
         response: {
           use: jest.fn().mockImplementation((success, error) => {
             const errorResponse = {
               config: {
-                url: 'managed/alpha_role',
+                url: '/enduser/managed/alpha_role/',
               },
               response: {
                 status: 403,
                 config: {
-                  url: 'managed/alpha_role',
+                  url: '/enduser/managed/alpha_role/',
                 },
               },
             };
@@ -94,56 +94,25 @@ describe('BaseApi', () => {
     });
 
     generateIdmApi();
-
+    await flushPromises();
     expect(errorRejected).toBe(false);
   });
 
-  it('should not throw 403 error when the error is not in enduser', () => {
-    let errorRejected;
-    store.state.SharedStore.currentPackage = 'admin';
-    store.state.SharedStore.governanceEnabled = true;
-    axios.create = jest.fn().mockReturnValue({
-      interceptors: {
-        response: {
-          use: jest.fn().mockImplementation((success, error) => {
-            const errorResponse = {
-              config: {
-                url: '/openidm/config/managed',
-              },
-              response: {
-                status: 403,
-                config: {
-                  url: '/openidm/config/managed',
-                },
-              },
-            };
-            errorRejected = error(errorResponse);
-          }),
-        },
-      },
-    });
-
-    generateIdmApi();
-
-    expect(errorRejected).toBe(false);
-  });
-
-  it('should not throw 403 error when the error is not a 403', () => {
+  it('should not throw 403 error when the error is not a 403', async () => {
     let errorRejected;
     store.state.SharedStore.currentPackage = 'enduser';
-    store.state.SharedStore.governanceEnabled = true;
     axios.create = jest.fn().mockReturnValue({
       interceptors: {
         response: {
           use: jest.fn().mockImplementation((success, error) => {
             const errorResponse = {
               config: {
-                url: 'managed/alpha_user',
+                url: '/enduser/managed/alpha_user/',
               },
               response: {
                 status: 404,
                 config: {
-                  url: 'managed/alpha_user',
+                  url: '/enduser/managed/alpha_user/',
                 },
               },
             };
@@ -154,37 +123,7 @@ describe('BaseApi', () => {
     });
 
     generateIdmApi();
-
-    expect(errorRejected).toBe(false);
-  });
-
-  it('should not throw 403 error when is not governance enabled', () => {
-    let errorRejected;
-    store.state.SharedStore.currentPackage = 'enduser';
-    store.state.SharedStore.governanceEnabled = false;
-    axios.create = jest.fn().mockReturnValue({
-      interceptors: {
-        response: {
-          use: jest.fn().mockImplementation((success, error) => {
-            const errorResponse = {
-              config: {
-                url: 'managed/alpha_user',
-              },
-              response: {
-                status: 403,
-                config: {
-                  url: 'managed/alpha_user',
-                },
-              },
-            };
-            errorRejected = error(errorResponse);
-          }),
-        },
-      },
-    });
-
-    generateIdmApi();
-
+    await flushPromises();
     expect(errorRejected).toBe(false);
   });
 

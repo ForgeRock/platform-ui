@@ -255,6 +255,7 @@ import FrSettingsTab from './CustomTabs/SettingsTab';
 import FrPrivilegesTab from './CustomTabs/PrivilegesTab';
 import FrJsonTab from './CustomTabs/JsonTab';
 import FrUserDevicesTab from './CustomTabs/UserDevices';
+import store from '@/store';
 
 /**
  * @description Full page that provides view/edit of a specific resource for delegated admin. Auto generates fields based on backend return.
@@ -650,13 +651,15 @@ export default {
             path: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`,
           });
         }).catch((error) => {
-          /**
-           * Special case to handle AIC proxy timeouts that respond to the request before IDM finishes processing data.
-           * For this 502 Bad Gateway or 504 Gateway Timeout we will issue the user a warning that their request is still be processed by IDM
-           * and will eventually complete - being visible in the UI.
-           */
           if (error.response.status === 502 || error.response.status === 504) {
+            // Special case to handle AIC proxy timeouts that respond to the request before
+            // IDM finishes processing data. For this 502 Bad Gateway or 504 Gateway Timeout
+            // we will issue the user a warning that their request is still be processed by
+            // IDM and will eventually complete - being visible in the UI.
             this.displayNotification('warning', this.$t('pages.access.gatewayWarning'), 10000);
+          } else if (error.response.status === 403 && this.resourceName === `${store.state.realm}_user`) {
+            // Necessary condition for enduser to capture a 403 error
+            this.showErrorMessage(error, error.response.data.message, 8000);
           } else {
             this.showErrorMessage(error, this.$t('errors.deleteObject', { object: this.resourceName }));
           }
