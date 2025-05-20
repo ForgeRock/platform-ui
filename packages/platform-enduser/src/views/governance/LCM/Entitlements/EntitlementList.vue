@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer
     fluid
-    class="my-5 p-2">
+    class="my-5">
     <FrHeader
       class="mb-4"
       :title="$t('governance.administer.entitlements.title')"

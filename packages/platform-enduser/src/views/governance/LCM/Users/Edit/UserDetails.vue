@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer
     fluid
-    class="my-5 p-3">
+    class="my-5">
     <FrSpinner
       v-if="isEmpty(user)"
       class="py-5" />
