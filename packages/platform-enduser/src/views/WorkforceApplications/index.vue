@@ -72,6 +72,7 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import { onImageError, resolveImage } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getDefinedDashboards } from '@forgerock/platform-shared/src/api/DashboardApi';
 import { getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { getApplicationLogo, getAppTemplatesByType } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { getUserSsoApplications } from '@/api/ProfileApi';
 
 export default {
@@ -87,6 +88,7 @@ export default {
       searchString: '',
       userData: {},
       userSsoApplications: [],
+      templates: {},
     };
   },
   mixins: [
@@ -114,10 +116,10 @@ export default {
 
       this.userSsoApplications.forEach((ssoApp) => {
         if (ssoApp.ssoEntities?.idpLoginUrl) {
-          const backupIcon = ssoApp.templateName === 'saml' ? 'saml.svg' : 'custom.svg';
+          const icon = ssoApp.icon || getApplicationLogo(ssoApp, this.templates);
           filteredApps.push({
             name: ssoApp.name,
-            icon: ssoApp.icon || backupIcon,
+            icon,
             url: ssoApp.ssoEntities.idpLoginUrl,
           });
         }
@@ -141,11 +143,12 @@ export default {
         });
     },
   },
-  mounted() {
+  async mounted() {
     getDefinedDashboards(this.$store.state.realm).then(({ data }) => {
       this.applications = data;
     });
     this.getUserProfile();
+    this.templates = await getAppTemplatesByType();
   },
   methods: {
     getUserProfile() {
