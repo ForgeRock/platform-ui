@@ -282,6 +282,7 @@
   },
   "filters": {
     "authorizationPolicyFilters": {
+      "addCondition": "Add Condition",
       "authLevel": "Minimum Authentication Level",
       "condition": "Condition",
       "dnsName": "DNS Name",

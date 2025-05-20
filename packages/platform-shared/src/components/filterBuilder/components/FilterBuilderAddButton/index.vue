@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
         name="add" />
     </template>
     <BDropdownItem @click="$emit('add-rule', 'row')">
-      {{ $t('queryFilterBuilder.addRuleButton') }}
+      {{ addRuleText }}
     </BDropdownItem>
     <BDropdownItem @click="$emit('add-rule', 'group')">
       {{ $t('queryFilterBuilder.addGroupButton') }}
@@ -29,6 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BDropdown, BDropdownItem } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import i18n from '@/i18n';
 
 export default {
   name: 'FilterBuilderAddButton',
@@ -38,6 +39,10 @@ export default {
     FrIcon,
   },
   props: {
+    addRuleText: {
+      type: String,
+      default: i18n.global.t('queryFilterBuilder.addRuleButton'),
+    },
     hideGroup: {
       default: false,
       type: Boolean,

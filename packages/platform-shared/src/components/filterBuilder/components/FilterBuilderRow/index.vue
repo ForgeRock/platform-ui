@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -88,6 +88,7 @@ of the MIT license. See the LICENSE file for details. -->
           :disabled="disabled"
           @click="removeRule" />
         <FrFilterBuilderAddButton
+          :add-rule-text="addRuleText || $t('queryFilterBuilder.addRuleButton')"
           class="add-button"
           :disabled="disabled"
           :hide-group="groupIsHidden"
@@ -158,6 +159,10 @@ export default {
     };
   },
   props: {
+    addRuleText: {
+      type: String,
+      default: '',
+    },
     disabled: {
       type: Boolean,
       default: false,

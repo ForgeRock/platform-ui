@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,6 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrFilterBuilderAddButton
           v-if="!rules.disableAdd"
           class="mr-1"
+          :add-rule-text="addRuleText || $t('queryFilterBuilder.addRuleButton')"
           :disabled="disabled"
           :hide-group="isMaxDepth"
           @add-rule="addRuleHandler" />
@@ -51,6 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
       :key="subfilter.uniqueIndex">
       <FrFilterBuilderRow
         v-if="isRow(subfilter)"
+        :add-rule-text="addRuleText || $t('queryFilterBuilder.addRuleButton')"
         :operator-options="conditionOptions"
         :disabled="disabled"
         :rule="subfilter"
@@ -79,6 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
       </FrFilterBuilderRow>
       <FilterBuilderGroup
         v-else
+        :add-rule-text="addRuleText || $t('queryFilterBuilder.addRuleButton')"
         :condition-options="conditionOptions"
         :disabled="disabled"
         :rules="subfilter"
@@ -160,6 +163,10 @@ export default {
     },
   },
   props: {
+    addRuleText: {
+      type: String,
+      default: '',
+    },
     conditionOptions: {
       type: Object,
       required: true,
