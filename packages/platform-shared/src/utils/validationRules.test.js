@@ -407,6 +407,37 @@ describe('is_before_date validator', () => {
   });
 });
 
+describe('ip validators', () => {
+  it('should return true when the value is a valid ipv4 address', () => {
+    expect(rules.ipv4_ipv6('1.1.1.1')).toBe(true);
+    expect(rules.ipv4_ipv6('12.12.12.12')).toBe(true);
+    expect(rules.ipv4_ipv6('123.123.123.123')).toBe(true);
+    expect(rules.ipv4_ipv6('1.12.123.1')).toBe(true);
+    expect(rules.ipv4_ipv6('')).toBe(true); // validation should not trigger if empty
+  });
+
+  it('should return true when the value is a valid ipv6 address', () => {
+    expect(rules.ipv4_ipv6('2001:db8:3333:4444:5555:6666:7777:8888')).toBe(true);
+    expect(rules.ipv4_ipv6('2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF')).toBe(true);
+    expect(rules.ipv4_ipv6('::')).toBe(true);
+    expect(rules.ipv4_ipv6('2001:db8::')).toBe(true);
+    expect(rules.ipv4_ipv6('::1234:5678')).toBe(true);
+    expect(rules.ipv4_ipv6('2001:db8::1234:5678')).toBe(true);
+    expect(rules.ipv4_ipv6('2001:0db8:0001:0000:0000:0ab9:C0A8:0102')).toBe(true);
+    expect(rules.ipv4_ipv6('2001:db8:1::ab9:C0A8:102')).toBe(true);
+    expect(rules.ipv4_ipv6('')).toBe(true); // validation should not trigger if empty
+  });
+
+  it('should return corresponding error message when the value is an invalid ipv4 address', () => {
+    expect(rules.ipv4_ipv6('1')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6('a')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6('1.1.1.1.1.1.1')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6('2001:db8')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6('2001:db82:2001:db82')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6(':::')).toBe('Please provide a valid IPv4 or IPv6 address');
+  });
+});
+
 describe('other validation Rules', () => {
   it('should validate required single value', () => {
     expect(rules.required('test')).toBe(true);

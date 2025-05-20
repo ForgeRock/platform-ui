@@ -6,6 +6,7 @@
  */
 
 /* eslint-disable camelcase */
+// eslint-disable-next-line import/extensions
 import { defineRule } from 'vee-validate';
 import * as rules from '@vee-validate/rules';
 import * as customValidators from '@forgerock/platform-shared/src/utils/validators';
@@ -207,6 +208,11 @@ export function getRules(i18n) {
   // Errors if is not a valid url or contains any element beyond the basic domain name
   const url_domain_only = (value) => customValidators.urlDomainOnly(value, i18n);
 
+  // Rule to check whether value is a valid IPv4 or IPv6 address
+  function ipv4_ipv6(value) {
+    return value === '' || customValidators.ipv4(value) || customValidators.ipv6(value) || i18n.global.t('common.policyValidationMessages.validIp');
+  }
+
   const text_without_fragment = (value) => (Array.isArray(value) ? !value.some((element) => element.includes('#')) : !value.includes('#')) || i18n.global.t('common.policyValidationMessages.url_with_fragment');
 
   // Rule to check whether url is valid
@@ -350,6 +356,7 @@ export function getRules(i18n) {
     is_before_date,
     isList,
     isNumber,
+    ipv4_ipv6,
     json,
     lower_case_alpha_numeric_underscore_hyphen_only,
     max_value,
