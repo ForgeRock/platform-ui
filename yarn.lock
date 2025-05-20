@@ -2713,7 +2713,7 @@ __metadata:
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
     "@vueuse/core": 10.9.0
-    appauthhelper: 1.0.0-alpha.0
+    appauthhelper: 1.0.0-alpha.3
     assert: 2.0.0
     axios: 1.8.2
     babel-core: 7.0.0-bridge.0
@@ -5811,16 +5811,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"appauthhelper@npm:1.0.0-alpha.0":
-  version: 1.0.0-alpha.0
-  resolution: "appauthhelper@npm:1.0.0-alpha.0"
+"appauthhelper@npm:1.0.0-alpha.3":
+  version: 1.0.0-alpha.3
+  resolution: "appauthhelper@npm:1.0.0-alpha.3"
   dependencies:
     "@openid/appauth": ^1.2.8
     promise-polyfill: 8.1.3
     url-polyfill: ^1.1.10
     webcrypto-shim: ^0.1.6
     whatwg-fetch: ^3.2.0
-  checksum: 3178702aa0b08310609b097970f7bab50b6d38bfbaba960418141b84bed74ed2d78c48a75adc24fb3360226ca3475094c7151093aa789f0b3207859a895afd62
+  checksum: 481666402705fd597d92ebc378b0505faea933d8f43a98666cd76b1fe4e1ff144a1e5b3b885761fde745048abbf7be62df37d6f1282e4d3d719bb7805e615333
   languageName: node
   linkType: hard
 
