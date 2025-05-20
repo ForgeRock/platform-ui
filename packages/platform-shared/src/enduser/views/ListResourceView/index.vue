@@ -255,17 +255,18 @@ export default {
       const resourceFunction = resourceType === 'managed' ? deleteManagedResource : deleteInternalResource;
 
       resourceFunction(resourceName, id)
+        .then(() => {
+          if (this.tableData.length === 1 && this.lastPage) {
+            this.currentTableParams.page -= 1;
+          }
+          this.getTableData(this.currentTableParams);
+          this.displayNotification('success', this.$t('pages.access.deleteResource', { resource: resourceName }));
+        })
         .catch((err) => {
           this.showErrorMessage(
             err,
             this.$t('application.errors.errorDeletingResource'),
           );
-        })
-        .finally(() => {
-          if (this.tableData.length === 1 && this.lastPage) {
-            this.currentTableParams.page -= 1;
-          }
-          this.getTableData(this.currentTableParams);
         });
     },
     resetTableData() {

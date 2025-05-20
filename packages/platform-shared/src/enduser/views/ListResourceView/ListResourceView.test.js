@@ -126,6 +126,26 @@ describe('ListResource.vue', () => {
 
       expect(deleteManagedResourceSpy).toHaveBeenCalled();
     });
+
+    it('displays the success message only on a successful delete call', async () => {
+      await wrapper.setData({ routerParameters: { resourceName: 'bob', resourceType: 'managed' } });
+      const showNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+
+      await wrapper.vm.deleteResource('blah');
+
+      expect(showNotificationSpy).toHaveBeenCalledWith('success', 'Successfully deleted bob');
+    });
+
+    it('does not display a success message if the delete call fails', async () => {
+      jest.spyOn(ManagedResourceApi, 'deleteManagedResource').mockImplementation(() => Promise.reject(new Error()));
+      await wrapper.setData({ routerParameters: { resourceName: 'bob', resourceType: 'managed' } });
+
+      const showNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+
+      await wrapper.vm.deleteResource('blah');
+      await flushPromises();
+      expect(showNotificationSpy).toHaveBeenCalledWith('danger', 'application.errors.errorDeletingResource');
+    });
   });
 
   it('Sets Privileges', () => {

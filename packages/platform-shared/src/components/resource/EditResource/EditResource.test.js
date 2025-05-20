@@ -75,32 +75,6 @@ describe('EditResource.vue', () => {
     beforeEach(() => {
       wrapper = mountComponent();
       InternalResourceApi.deleteInternalResource = jest.fn().mockImplementation(() => Promise.resolve({}));
-      // jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
-      //   {
-      //     get: () => Promise.resolve({
-      //       data: {
-      //         DELETE: {
-      //           allowed: true,
-      //           properties: [
-      //             'test',
-      //           ],
-      //         },
-      //         VIEW: {
-      //           allowed: true,
-      //           properties: [
-      //             'test',
-      //           ],
-      //         },
-      //         UPDATE: {
-      //           allowed: true,
-      //           properties: [
-      //           ],
-      //         },
-      //       },
-      //     }),
-      //     delete: () => Promise.resolve({}),
-      //   }
-      // ));
       jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve({
         data: {
           result: [{
