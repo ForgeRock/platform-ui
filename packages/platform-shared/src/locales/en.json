@@ -532,6 +532,7 @@
       "urlWithPath": "Please provide a valid URL that contains a path",
       "urlWithoutPath": "Please provide a valid URL that does not contain a path",
       "validUrl": "Please provide a valid URL",
+      "validIp": "Please provide a valid IPv4 or IPv6 address",
       "urlPathEsv": "Must be an absolute url, relative url beginning with /, or a valid ESV in the format {'&{esv.url}'}",
       "validEsv": "Please provide a valid ESV",
       "validEsvVariable": "Please provide a valid ESV variable",
