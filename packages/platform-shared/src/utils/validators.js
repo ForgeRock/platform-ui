@@ -5,7 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable camelcase */
 /**
  * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *

@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
           </slot>
         </template>
       </div>
-      <template v-if="!isBaseGroup">
+      <template v-if="!isBaseGroup && allowAdd">
         <FrFilterBuilderRemoveButton
           v-if="hasSiblings"
           class="mr-1"
@@ -166,6 +166,10 @@ export default {
     addRuleText: {
       type: String,
       default: '',
+    },
+    allowAdd: {
+      type: Boolean,
+      default: true,
     },
     conditionOptions: {
       type: Object,

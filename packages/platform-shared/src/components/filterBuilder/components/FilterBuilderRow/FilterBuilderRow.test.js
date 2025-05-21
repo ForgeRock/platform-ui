@@ -1,15 +1,23 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import FilterBuilderRow from './index';
 import { defaultConditionOptions } from '../../utils/QueryFilterDefaults';
 import * as CertFilterDefaults from '../../CertificationFilter/CertFilterDefaults';
 import i18n from '@/i18n';
+
+const {
+  required,
+} = ValidationRules.getRules(i18n);
+ValidationRules.extendRules({
+  required,
+});
 
 const mountProps = {
   global: {

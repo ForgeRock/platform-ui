@@ -89,6 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
           :disabled="disabled"
           @click="removeRule" />
         <FrFilterBuilderAddButton
+          v-if="!rule.disableAdd"
           :add-rule-text="addRuleText || $t('queryFilterBuilder.addRuleButton')"
           class="add-button"
           :disabled="disabled"
