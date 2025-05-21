@@ -229,7 +229,8 @@ export default {
   },
   watch: {
     operatorSelectOptions(options) {
-      if (options.findIndex((option) => option.value === this.rule.operator) === -1) {
+      if (!this.$slots.operatorField && options.findIndex((option) => option.value === this.rule.operator) === -1) {
+        // We don't want to set the operator if we have a slot for it
         this.ruleOperator = options[0].value;
         this.ruleChange({ operator: this.ruleOperator });
       }
