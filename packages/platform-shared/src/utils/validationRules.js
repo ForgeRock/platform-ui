@@ -325,6 +325,8 @@ export function getRules(i18n) {
     return lower_case_alpha_numeric_underscore_hyphen_only(value);
   };
 
+  const noMicrosoftRealm = (value) => value !== 'urn:federation:MicrosoftOnline' || i18n.global.t('common.policyValidationMessages.noMicrosoftRealm');
+
   const validationRules = {
     allowedRules,
     alpha_dash_spaces,
@@ -354,6 +356,7 @@ export function getRules(i18n) {
     max,
     min_value,
     minimumRequired,
+    noMicrosoftRealm,
     not_starts_with_case_insensitive,
     not_starts_with_number,
     numeric,

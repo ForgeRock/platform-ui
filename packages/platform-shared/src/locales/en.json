@@ -547,7 +547,8 @@
       "srOnlyNotMet": "Not met {policy}",
       "formRowOversized": "Row is too large, the total of columns and offsets cannot exceed 12",
       "validJSVariable": "Must be a valid variable name",
-      "notStartsWithNumber": "Cannot start with a number"
+      "notStartsWithNumber": "Cannot start with a number",
+      "noMicrosoftRealm": "Cannot be Microsoft 365 realm. Use the Microsoft 365 catalog application instead."
     },
     "themes": {
       "errorLinkingTree": "There was an error linking tree to theme",

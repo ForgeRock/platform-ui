@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -64,6 +64,9 @@ export default {
       height: auto;
       max-height: 30vh;
     }
+  }
+  .error-message {
+    font-size: .8125rem;
   }
 }
 </style>

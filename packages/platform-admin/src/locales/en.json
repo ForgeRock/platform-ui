@@ -1398,7 +1398,9 @@
       "serviceDescription": "Interact with Ping Identity APIs using the scoped OAuth 2.0 access tokens for machine-to-machine authentication.",
       "descriptionFieldLabel": "Description",
       "errorCreatingApp": "Could not create application",
-      "clientSecretWarning": "Make sure you copy <small class=\"text-monospace alert-link\">Client Secret</small> as it won't be shown again."
+      "clientSecretWarning": "Make sure you copy <small class=\"text-monospace alert-link\">Client Secret</small> as it won't be shown again.",
+      "wsfed": "WS-Federation",
+      "wsfedDescription": "Protocol used for Single Sign-On (SSO) with applications supporting the Web Services standards."
     },
     "edit": {
       "authoritative": "Authoritative",
@@ -1586,6 +1588,7 @@
         "connectionExistsHeading": "Microsoft 365 SSO is already in use",
         "createSuccess": "SSO set up successfully",
         "errorGeneratingPs": "There was an error generating the PowerShell scripts.",
+        "errorGettingEntityIds": "Error retrieving partner realms. Ensure your partner realm is unique.",
         "errorSettingUpSso": "There was an error setting up SSO. Check your configuration and try again.",
         "errorUpdatingCookie": "There was an error updating the cookie name for the Microsoft 365 application. Please try again.",
         "errorUpdatingPfVirtualHosts": "There was an error updating the PingFederate virtual hostnames. Check your configuration and try again.",
