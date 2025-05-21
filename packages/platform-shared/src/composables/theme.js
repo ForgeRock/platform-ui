@@ -37,7 +37,7 @@ export default function useTheme() {
   async function getAllThemes() {
     try {
       const { data: themes } = await getThemes();
-      themeStore.realmThemes = themes.realm;
+      themeStore.realmThemes = decodeThemes(themes).realm;
     } catch (error) {
       showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingList'));
       throw error;
