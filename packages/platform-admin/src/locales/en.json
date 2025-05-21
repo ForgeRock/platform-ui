@@ -1593,6 +1593,27 @@
         "noChanges": "No changes detected",
         "quickStart": "Quick Start",
         "saveSuccess": "SSO updated successfully",
+        "signingCertificate": {
+          "downloadCertificate": "Download Certificate",
+          "errorGettingSigningCert": "There was an error getting signing certificates.",
+          "newCertificate": "Generate New Certificate",
+          "tableEmpty": "No signing certificates found",
+          "tableHeaders": {
+            "type": "Type",
+            "created": "Created",
+            "expires": "Expires",
+            "status": "Status"
+          },
+          "title": "Signing Certificate",
+          "tooltipCertificate": "To generate another certificate you need to first delete the existing inactive certificate.",
+          "status": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "expired": "Expired",
+            "expiring": "Expiring"
+          },
+          "viewPowershellCmdlets": "View PowerShell Cmdlets"
+        },
         "validationErrors": "Validation error(s) occurred, please try again.",
         "viewApplication": "View Application"
       },
