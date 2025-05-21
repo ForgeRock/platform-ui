@@ -428,7 +428,7 @@ describe('ip validators', () => {
     expect(rules.ipv4_ipv6('')).toBe(true); // validation should not trigger if empty
   });
 
-  it('should return corresponding error message when the value is an invalid ipv4 address', () => {
+  it('should return corresponding error message when the value is an invalid ipv4 or ipv6 address', () => {
     expect(rules.ipv4_ipv6('1')).toBe('Please provide a valid IPv4 or IPv6 address');
     expect(rules.ipv4_ipv6('a')).toBe('Please provide a valid IPv4 or IPv6 address');
     expect(rules.ipv4_ipv6('1.1.1.1.1.1.1')).toBe('Please provide a valid IPv4 or IPv6 address');

@@ -6,8 +6,16 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import GovernanceFilterBuilder from './GovernanceFilterBuilder';
 import i18n from '@/i18n';
+
+const {
+  required,
+} = ValidationRules.getRules(i18n);
+ValidationRules.extendRules({
+  required,
+});
 
 jest.mock('@/api/governance/CommonsApi', () => ({
   getResource: () => Promise.resolve({

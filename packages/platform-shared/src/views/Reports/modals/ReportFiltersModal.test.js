@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,8 +13,16 @@ import {
   findAllByTestId,
   findByRole,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import ReportFiltersModal from './ReportFiltersModal';
+
+const {
+  required,
+} = ValidationRules.getRules(i18n);
+ValidationRules.extendRules({
+  required,
+});
 
 describe('Report Filter Modal component', () => {
   function setup(props) {
