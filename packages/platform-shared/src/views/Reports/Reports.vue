@@ -29,12 +29,11 @@ of the MIT license. See the LICENSE file for details. -->
         <FrSearchInput
           class="w-100 pl-lg-2 fr-search"
           v-model="searchTerm"
-          :class="{ 'flex-grow-1' : hasFocus, 'w-lg-auto': isCustomReportEnabled }"
+          :class="{ 'flex-grow-1': hasFocus, 'w-lg-auto': isCustomReportEnabled }"
           :placeholder="$t('common.search')"
           @clear="searchTerm = ''"
           @search-input-blur="hasFocus = false"
-          @search-input-focus="hasFocus = true"
-        />
+          @search-input-focus="hasFocus = true" />
       </BButtonToolbar>
       <BTable
         class="mb-0"
@@ -113,9 +112,9 @@ of the MIT license. See the LICENSE file for details. -->
                 wrapper-class="pr-0"
                 :delete-option="isCustomReportEnabled && !item.ootb"
                 :divider="isCustomReportEnabled && !item.ootb"
-                :edit-option="isCustomReportEnabled && !item.ootb"
+                :edit-option="isCustomReportEnabled && item.editable"
                 :edit-option-text="$t('reports.menu.editTemplate')"
-                :duplicate-option="isCustomReportEnabled && !item.ootb"
+                :duplicate-option="isCustomReportEnabled && item.duplicatable"
                 @edit-clicked="editTemplate(item.name, item.type)"
                 @duplicate-clicked="openDuplicateModal(item)"
                 @delete-clicked="confirmDeleteTemplate(item.name, item.type)">
@@ -364,10 +363,11 @@ async function deleteTemplate(name, status) {
 async function duplicateTemplate(payload) {
   reportIsDuplicating.value = true;
   try {
-    await duplicateAnalyticsReport(payload);
-    retrieveReportTemplates();
-    displayNotification('success', i18n.global.t('common.duplicateSuccess', { object: i18n.global.t('common.report').toLowerCase() }));
+    const report = await duplicateAnalyticsReport(payload);
     bvModal.value.hide('new-report-modal');
+
+    // redirect to edit page
+    router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: report.data.name.toLowerCase() } });
   } catch (err) {
     showErrorMessage(err, i18n.global.t('reports.errorDuplicating'));
   } finally {
@@ -499,9 +499,11 @@ retrieveReportTemplates();
   .w-42 {
     width: 42px;
   }
+
   .h-42 {
     height: 42px;
   }
+
   .table-hover tbody tr {
     cursor: pointer;
   }
