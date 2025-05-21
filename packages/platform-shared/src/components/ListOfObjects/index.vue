@@ -1,10 +1,10 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="pt-2">
-    <div :class="{ 'border-bottom': isValidJSONString(listValues) && isValidField() && showBorders}">
+    <div :class="{ 'border-bottom': isValidJSONString(listValues) && isValidField() && showBorders && showLastBorder}">
       <div
         v-if="showTitle"
         class="d-flex justify-content-between align-items-center">
@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
           <button
             :class="buttonClass"
-            class="btn mr-1 mb-2 mb-lg-0"
+            class="btn mr-1 mb-2 mb-lg-0 text-dark"
             data-testid="list-objects-none-add"
             :disabled="disabled"
             @click.prevent="addObjectToList(-1)">
@@ -39,7 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <div
                     v-if="key !== 'listUniqueIndex' && properties[key] && !properties[key].hidden"
                     :key="key"
-                    :class="fill ? 'col-lg-6' : 'col-lg-4'"
+                    :class="`col-lg-${columnWidth}`"
                     class="pb-2">
                     <div v-if="properties[key].type === 'boolean'">
                       <BFormCheckbox
@@ -73,6 +73,10 @@ of the MIT license. See the LICENSE file for details. -->
                         :validation="required && required.length && required.includes(properties[key].title) ? 'required' : ''"
                       />
                     </div>
+                    <small
+                      v-if="properties[key].description"
+                      class="form-text text-muted pb-4"
+                      v-html="properties[key].description" />
                   </div>
                 </template>
               </div>
@@ -85,7 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
                   v-if="listValues.length > 0"
                   :data-testid="`list-objects-remove-${index}`"
                   :class="buttonClass"
-                  class="btn mr-1 mb-2 mb-lg-0"
+                  class="btn mr-1 mb-2 mb-lg-0 text-dark"
                   :disabled="disabled"
                   @click.prevent="removeElementFromList(index)">
                   <FrIcon name="remove" />
@@ -94,7 +98,7 @@ of the MIT license. See the LICENSE file for details. -->
                   v-if="multiValued || listValues.length === 0"
                   :data-testid="`list-objects-add-${index}`"
                   :class="buttonClass"
-                  class="btn mr-1 mb-2 mb-lg-0"
+                  class="btn mr-1 mb-2 mb-lg-0 text-dark"
                   :disabled="disabled"
                   @click.prevent="addObjectToList(index)">
                   <FrIcon name="add" />
@@ -156,13 +160,13 @@ export default {
   props: {
     buttonClass: {
       type: String,
-      default: 'btn-outline-secondary',
+      default: '',
+    },
+    columnWidth: {
+      type: String,
+      default: '4',
     },
     disabled: {
-      type: Boolean,
-      default: false,
-    },
-    fill: {
       type: Boolean,
       default: false,
     },
@@ -191,6 +195,10 @@ export default {
       default: () => [],
     },
     showBorders: {
+      type: Boolean,
+      default: true,
+    },
+    showLastBorder: {
       type: Boolean,
       default: true,
     },
