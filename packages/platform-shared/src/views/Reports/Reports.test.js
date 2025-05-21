@@ -62,6 +62,8 @@ describe('Reports', () => {
         createDate: '2025-02-10T10:30:50.049221962Z',
         updateDate: '2025-02-10T10:30:50.049239299Z',
         ootb: true,
+        duplicatable: false,
+        editable: false,
       },
       {
         name: 'DRAFT-TEMPLATE',
@@ -82,6 +84,8 @@ describe('Reports', () => {
         createDate: '2025-02-11T15:38:42.150209479Z',
         updateDate: '2025-02-11T15:38:42.150216547Z',
         ootb: false,
+        duplicatable: true,
+        editable: true,
       },
       {
         name: 'PUBLISHED-TEMPLATE',
@@ -102,6 +106,26 @@ describe('Reports', () => {
         createDate: '2025-02-11T15:38:42.150209479Z',
         updateDate: '2025-02-11T15:39:40.022730318Z',
         ootb: false,
+        duplicatable: true,
+        editable: true,
+      },
+      {
+        name: 'OOTB-TEMPLATE-DUPLICATABLE',
+        description: 'Duplicatable template that provides the history of when the provided user(s) accessed the provided app integration in the realm for a given period of time',
+        version: 0,
+        reportConfig: '{"version":"v2"}',
+        viewers: [],
+        owner: '',
+        type: 'published',
+        parentName: '',
+        parentVersion: -1,
+        failureReason: '',
+        parameters: '',
+        createDate: '2025-02-10T10:30:50.049221962Z',
+        updateDate: '2025-02-10T10:30:50.049239299Z',
+        ootb: true,
+        duplicatable: true,
+        editable: false,
       },
     ],
   };
@@ -118,7 +142,7 @@ describe('Reports', () => {
     expect(table.exists()).toBe(true);
 
     const rows = table.findAll('tbody tr');
-    expect(rows.length).toBe(3);
+    expect(rows.length).toBe(4);
     expect(rows[0].text()).toContain('Draft Template');
     expect(rows[0].text()).toContain('Draft Report');
     expect(rows[0].find('.badge').text()).toBe('Draft');
@@ -126,9 +150,11 @@ describe('Reports', () => {
     expect(rows[1].text()).toContain('Provides the history of when the provided user(s) accessed the provided app integration in the realm for a given period of time');
     expect(rows[1].find('.badge').exists()).toBe(false);
     expect(rows[1].text()).toContain('--');
-    expect(rows[2].text()).toContain('Published Template');
-    expect(rows[2].text()).toContain('Published Report');
-    expect(rows[2].find('.badge').text()).toBe('Published');
+    expect(rows[2].text()).toContain('Ootb Template Duplicatable');
+    expect(rows[2].text()).toContain('Duplicatable template that provides the history of when the provided user(s) accessed the provided app integration in the realm for a given period of time');
+    expect(rows[3].text()).toContain('Published Template');
+    expect(rows[3].text()).toContain('Published Report');
+    expect(rows[3].find('.badge').text()).toBe('Published');
 
     const noData = findByTestId(wrapper, 'no-data');
     expect(noData.exists()).toBe(false);
@@ -164,12 +190,23 @@ describe('Reports', () => {
     await flushPromises();
 
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[2].findAll('a[role="menuitem"]');
+    const actions = rows[3].findAll('a[role="menuitem"]');
     expect(actions.length).toBe(4);
     expect(actions[0].text()).toBe('list_altRun History');
     expect(actions[1].text()).toBe('editEdit Template');
     expect(actions[2].text()).toBe('control_point_duplicateDuplicate');
     expect(actions[3].text()).toBe('deleteDelete');
+  });
+
+  it('should show correct actions for ootb duplicatable templates', async () => {
+    const wrapper = setup();
+    await flushPromises();
+
+    const rows = wrapper.findAll('table tbody tr');
+    const actions = rows[2].findAll('a[role="menuitem"]');
+    expect(actions.length).toBe(2);
+    expect(actions[0].text()).toBe('list_altRun History');
+    expect(actions[1].text()).toBe('control_point_duplicateDuplicate');
   });
 
   it('No data div displayed when error', async () => {
@@ -238,7 +275,7 @@ describe('Reports', () => {
 
     const routerPushSpy = jest.spyOn(wrapper.vm.router, 'push');
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[2].findAll('a[role="menuitem"]');
+    const actions = rows[3].findAll('a[role="menuitem"]');
     const editButton = actions[1];
     await editButton.trigger('click');
 
