@@ -9,8 +9,8 @@ import { cloneDeep, each } from 'lodash';
 import { convertBase64ToString, convertStringToBase64 } from '@forgerock/platform-shared/src/utils/encodeUtils';
 import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
 import uuid from 'uuid/v4';
-
 import store from '@/store';
+
 /**
  * Base64 decode any script content in the passed theme
  * @param {Object} themeToDecode - details of theme
@@ -52,11 +52,9 @@ export function encodeThemeScripts(themeToEncode) {
  */
 export function decodeThemes(themes) {
   const decodedThemes = cloneDeep(themes);
-  Object.keys(decodedThemes.realm).forEach((key) => {
-    if (Array.isArray(decodedThemes.realm[key])) {
-      decodedThemes.realm[key].forEach((decodedTheme) => {
-        decodeThemeScripts(decodedTheme);
-      });
+  Object.keys(decodedThemes.realm).forEach((realm) => {
+    if (Array.isArray(decodedThemes.realm[realm])) {
+      decodedThemes.realm[realm] = decodedThemes.realm[realm].map((decodedTheme) => decodeThemeScripts(decodedTheme));
     }
   });
   return decodedThemes;
@@ -69,11 +67,9 @@ export function decodeThemes(themes) {
  */
 export function encodeThemes(themes) {
   const encodedThemes = cloneDeep(themes);
-  Object.keys(encodedThemes.realm).forEach((key) => {
-    if (Array.isArray(encodedThemes.realm[key])) {
-      encodedThemes.realm[key].forEach((encodedTheme) => {
-        encodeThemeScripts(encodedTheme);
-      });
+  Object.keys(encodedThemes.realm).forEach((realm) => {
+    if (Array.isArray(encodedThemes.realm[realm])) {
+      encodedThemes.realm[realm] = encodedThemes.realm[realm].map((encodedTheme) => encodeThemeScripts(encodedTheme));
     }
   });
   return encodedThemes;
