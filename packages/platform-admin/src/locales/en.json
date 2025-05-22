@@ -4712,6 +4712,12 @@
       "deleteRequestTypeAssignmentError": "Error deleting request type assignment",
       "emptyRequestTypes": "No request types selected",
       "errorGettingApplicationAssignments": "Error getting application assignments",
+      "events": {
+        "onLoad": "On Load Event",
+        "onLoadLabelSr": "On Load Event",
+        "onLoadDescription": "Add a script to be executed when the form loads.",
+        "scriptHelp": "// This will contain help text eventually."
+      },
       "field": {
         "columns": {
           "label": "Columns",
