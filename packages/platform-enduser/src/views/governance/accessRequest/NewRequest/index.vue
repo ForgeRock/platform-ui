@@ -6,11 +6,13 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="h-100 d-flex w-100">
     <div class="w-100 bg-white">
       <FrNavbar>
-        <template #right-content>
+        <template
+          v-if="requestCartMenuButtonEnabled"
+          #right-content>
           <BButton
             id="expandRequestCart"
             variant="none"
-            class="ml-auto d-lg-none"
+            class="ml-auto"
             aria-controls="expandableRequestCart"
             :aria-expanded="requestCartExpanded"
             :aria-label="$t('governance.accessRequest.newRequest.expandRequestCart')"
@@ -241,6 +243,7 @@ export default {
       loading: true,
       requestCartExpanded: false,
       requestCartItems: [],
+      requestCartMenuButtonEnabled: false,
       requestCartUsers: this.$store.state.requestCartUsers || [],
       requestErrorFields: [{ key: 'user' }, { key: 'error' }],
       requestErrors: [],
@@ -393,7 +396,9 @@ export default {
      * Ensures access request cart is always expanded when screen resolution is above 992px
      */
     handleResize() {
-      this.requestCartExpanded = !this.media('lt-lg').matches;
+      const matchMedia = !this.media('lt-lg').matches;
+      this.requestCartExpanded = matchMedia;
+      this.requestCartMenuButtonEnabled = !matchMedia;
     },
     /**
      * Determines if catalog item is in request cart

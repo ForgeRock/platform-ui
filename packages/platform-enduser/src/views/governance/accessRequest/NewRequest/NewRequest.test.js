@@ -65,7 +65,7 @@ describe('NewRequest', () => {
       getRequestService: jest.fn().mockImplementation({ post: () => Promise.resolve() }),
     },
   };
-  window.matchMedia = jest.fn((param) => param);
+
   async function mountComponent(overrideParams = {}, overrideData = {}) {
     setupTestPinia();
     const wrapper = mount(NewRequest, {
@@ -95,9 +95,11 @@ describe('NewRequest', () => {
     return wrapper;
   }
 
-  window.matchMedia = jest.fn((param) => param);
-
   beforeEach(() => {
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+    }));
     getPriorityImageSrc.mockClear();
 
     AccessRequestApi.validateRequest = jest.fn().mockReturnValue({
@@ -117,19 +119,34 @@ describe('NewRequest', () => {
     expect(breadcrumb.attributes().to).toBe('/my-requests');
   });
 
-  it('should expand side panel when cart is clicked', async () => {
+  it('should expand side panel when cart is clicked on mediaMatch true', async () => {
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+      matches: true,
+      media: query,
+    }));
     const wrapper = await mountComponent();
     await flushPromises();
 
-    let shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 overflow-auto"]');
-    expect(shoppingCartSidePanel.exists()).toBe(true);
+    let shoppingCartSidePanel = wrapper.find('div[id="expandableRequestCart"]');
+    expect(shoppingCartSidePanel.exists()).toBe(false);
 
     const shoppingCartButton = wrapper.find('#expandRequestCart');
     shoppingCartButton.trigger('click');
     await flushPromises();
 
-    shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 overflow-auto"]');
-    expect(shoppingCartSidePanel.exists()).toBe(false);
+    shoppingCartSidePanel = wrapper.find('div[id="expandableRequestCart"]');
+    expect(shoppingCartSidePanel.exists()).toBe(true);
+  });
+
+  it('should not find cart on mediaMatch false', async () => {
+    const wrapper = await mountComponent();
+    await flushPromises();
+
+    const shoppingCartSidePanel = wrapper.find('div[id="expandableRequestCart"]');
+    expect(shoppingCartSidePanel.exists()).toBe(true);
+
+    const shoppingCartButton = wrapper.find('#expandRequestCart');
+    expect(shoppingCartButton.exists()).toBe(false);
   });
 
   it('should open error modal when user already has access', async () => {

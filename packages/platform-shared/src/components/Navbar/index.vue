@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -46,10 +46,9 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-flex align-items-center"
           @click="$emit('clicked')">
           <RouterLink
-            :aria-label="$t('common.breadcrumb')"
+            :aria-label="$t('common.breadcrumb') + `, ${returnRouteText}`"
             active-class=""
             class="fr-back-link overflow-hidden pl-4 pl-lg-0 mt-0"
-            role="navigation"
             v-show="hasBreadcrumb"
             :to="!checkChangesOnNavigate ? returnRoute : ''">
             <div class="text-truncate h5 d-flex align-items-center font-weight-normal mb-0">
@@ -63,11 +62,14 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
           </RouterLink>
         </li>
-        <li class="d-flex align-items-center">
-          <!-- Content displayed in center of navbar -->
+        <li
+          :aria-hidden="!hasSlot('center-content')"
+          class="d-flex align-items-center">
           <slot name="center-content" />
         </li>
-        <li class="flex-row d-flex">
+        <li
+          :aria-hidden="!hasSlot('right-content')"
+          class="flex-row d-flex">
           <slot name="right-content">
             <FrNotification v-if="showNotifications" />
             <div
@@ -332,6 +334,13 @@ export default {
        * Triggered when the toggle button is clicked
        */
       this.$emit('toggle-menu');
+    },
+    /**
+     * Check if slot has content
+     * @param slotName
+     */
+    hasSlot(slotName) {
+      return !!this.$slots[slotName] && this.$slots[slotName]().length > 0;
     },
   },
 };
