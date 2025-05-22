@@ -26,6 +26,26 @@ describe('theme composable', () => {
       expect(theme.value._id).toBe('ui/theme-testTheme');
     });
 
+    it('should convert original theme config to current config', async () => {
+      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: { realm: { alpha: { backgroundColor: '#324054' }, testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } } }));
+      setupTestStore();
+      const { getAllThemes, realmThemes } = useTheme();
+      await getAllThemes();
+      expect(realmThemes.value.alpha[0].accountCardBackgroundColor).toBe('#ffffff');
+      expect(realmThemes.value.alpha[0].accountCardShadow).toBe(3);
+      expect(realmThemes.value.alpha[0].favicon).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg');
+    });
+
+    it('should convert missing theme config to current config', async () => {
+      ThemeApi.getThemes.mockReturnValue(Promise.resolve({ data: { realm: { alpha: undefined, testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } } }));
+      setupTestStore();
+      const { getAllThemes, realmThemes } = useTheme();
+      await getAllThemes();
+      expect(realmThemes.value.alpha[0].accountCardBackgroundColor).toBe('#ffffff');
+      expect(realmThemes.value.alpha[0].accountCardShadow).toBe(3);
+      expect(realmThemes.value.alpha[0].favicon).toBe('https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg');
+    });
+
     it('Should retrieve a theme from a cached store', async () => {
       const realmThemes = { realm: { testRealm: [{ _id: 'ui/theme-testTheme', primaryColor: '#dddddd' }] } };
       setupTestStore(null, realmThemes);

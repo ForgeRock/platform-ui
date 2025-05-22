@@ -48,7 +48,6 @@ export function createNewTheme(themeName) {
 
   // Check that Save notification is correctly displayed
   expectAndCloseNotification('Theme successfully saved');
-  cy.wait('@getThemes');
 }
 
 /**
