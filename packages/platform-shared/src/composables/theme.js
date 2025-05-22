@@ -7,6 +7,7 @@
 
 import { cloneDeep, each } from 'lodash';
 import { computed, watch } from 'vue';
+import uuid from 'uuid/v4';
 import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
 import { getThemes, saveThemes } from '@forgerock/platform-shared/src/api/ThemeApi';
 import i18n from '@forgerock/platform-shared/src/i18n';
@@ -32,12 +33,44 @@ export default function useTheme() {
   const localizedFavicon = computed(() => getLocalizedString(theme.value.favicon, i18n.global.locale, i18n.global.fallbackLocale));
 
   /**
-   * Gets all themes from current realm and sets them in the store
+   * Addes defaults to all themes and brings old formats to current format
+   * @param {Object} themes Object containing all themes
+   * @returns themes with defaults
+   */
+  function addDefaultsToAllThemes(themes) {
+    Object.entries(themes.realm).forEach(([realm, realmThemeArray]) => {
+      if (!realmThemeArray) { // Empty theme config
+        const starterTheme = {
+          ...themeConstants.DEFAULT_THEME_PARAMS, _id: uuid(), isDefault: true, name: 'Starter Theme',
+        };
+        themes.realm[realm] = [starterTheme];
+      } else if (realmThemeArray.backgroundColor) {
+        // This is an original theme where there is only a single theme per realm
+        themes.realm[realm] = [{
+          ...themeConstants.DEFAULT_THEME_PARAMS, ...realmThemeArray, _id: uuid(), isDefault: true, name: 'Starter Theme',
+        }];
+      }
+      themes.realm[realm].forEach((individualTheme) => {
+        if (!individualTheme._id) {
+          individualTheme._id = uuid();
+        }
+        each(themeConstants.DEFAULT_THEME_PARAMS, (value, key) => {
+          if (individualTheme[key] === undefined) {
+            individualTheme[key] = themeConstants.DEFAULT_THEME_PARAMS[key];
+          }
+        });
+      });
+    });
+    return themes;
+  }
+
+  /**
+   * Gets all themes and sets them in the store
    */
   async function getAllThemes() {
     try {
       const { data: themes } = await getThemes();
-      themeStore.realmThemes = decodeThemes(themes).realm;
+      themeStore.realmThemes = decodeThemes(addDefaultsToAllThemes(themes)).realm;
     } catch (error) {
       showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingList'));
       throw error;
@@ -89,19 +122,10 @@ export default function useTheme() {
     let decodedTheme = {};
     try {
       // Only query for all themes if we don't already have it stored in theme store
-      if (themeStore.realmThemes[realm]) {
-        decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme._id === themeIdentifier || realmTheme.name === themeIdentifier);
-      } else {
-        const { data: themes } = await getThemes();
-        if (themes.backgroundColor) {
-          // This is an original theme where there is only a single theme
-          decodedTheme = themes;
-        } else {
-          // themes are stored in an object with realm keys
-          themeStore.realmThemes = decodeThemes(themes).realm;
-          decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme._id === themeIdentifier || realmTheme.name === themeIdentifier);
-        }
+      if (!themeStore.realmThemes[realm]) {
+        await getAllThemes();
       }
+      decodedTheme = themeStore.realmThemes[realm]?.find((realmTheme) => realmTheme._id === themeIdentifier || realmTheme.name === themeIdentifier);
     } catch (error) {
       showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingTheme'));
       throw error;
@@ -180,7 +204,10 @@ export default function useTheme() {
     const themeToSave = cloneDeep(themeData);
     try {
       // Get all themes, update the one that matches the id, and save all themes
-      const { data: themes } = await getThemes();
+      if (!themeStore.realmThemes[realm]) {
+        await getAllThemes();
+      }
+      const themes = { realm: themeStore.realmThemes };
       const decodedThemes = decodeThemes(themes);
       updateThemerealmObject(decodedThemes.realm, themeToSave, realm);
       await saveThemes(encodeThemes(decodedThemes));
@@ -227,8 +254,10 @@ export default function useTheme() {
   async function setThemeAsDefault(realm, themeIdentifier) {
     try {
       // Get all themes, update the one that matches the id, and save all themes
-      const { data: themes } = await getThemes();
-      const decodedThemes = decodeThemes(themes);
+      if (!themeStore.realmThemes[realm]) {
+        await getAllThemes();
+      }
+      const decodedThemes = { realm: themeStore.realmThemes };
       // Remove isDefault from any other themes
       const currentDefaultTheme = decodedThemes.realm[realm].find((realmTheme) => realmTheme.isDefault === true);
       if (currentDefaultTheme) {
