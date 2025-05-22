@@ -295,6 +295,7 @@
         "errorGettingCatalogFilterSchema": "There was an error getting catalog filter schema",
         "errorValidatingAccessRequests": "There was an error validating this request",
         "EXISTING_ACCESS": "Access Already Granted",
+        "expandRequestCart": "New request menu options",
         "expiryDate": "Expiry Date",
         "filterByApplications": "Filter by applications",
         "filters": "Filters",

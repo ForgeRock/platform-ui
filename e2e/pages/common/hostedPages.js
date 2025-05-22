@@ -131,8 +131,10 @@ export function deleteTheme(themeName) {
  * Saves the changes made to the Theme.
  */
 export function saveThemeEdit() {
-  // Click on the Breadcrumb to leave the editor
-  cy.findByRole('navigation', { name: 'Breadcrumb' }).click();
+  cy.findByRole('navigation', { name: 'Header navigation' })
+    .should('be.visible')
+    .find('[aria-label^="Breadcrumb"]')
+    .click();
 
   // Fill in the Theme name, save the Theme and wait for the save to complete
   cy.findByRole('dialog', { name: 'Really Leave?' }).within(() => {
