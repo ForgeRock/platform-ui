@@ -9,7 +9,7 @@ import {
   Given, When, Then,
 } from '@badeball/cypress-cucumber-preprocessor';
 import { createIDMUser, deleteIDMUser } from '@e2e/api/managedApi.e2e';
-import generateEndUserData from '@e2e/utils/endUserData';
+import generateRandomEndUser from '@e2e/utils/endUserData';
 
 let locationUrl;
 
@@ -53,19 +53,19 @@ function setLocationUrl(journey) {
 before(() => {
   if (Cypress.spec.relative.includes('google-captcha-login.feature')) {
     cy.importTreesViaAPI(['QA-Google_Captcha_Login_Default.json', 'QA-Google_Captcha_Login_Theatre_mode.json']).then(() => {
-      const { userName, userPassword, userSN } = generateEndUserData();
-
+      const endUser = generateRandomEndUser();
       createIDMUser({
-        userName,
-        password: userPassword,
-        givenName: userName,
-        sn: userSN,
+        userName: endUser.username,
+        password: endUser.password,
+        givenName: endUser.username,
+        sn: endUser.lastName,
+        mail: endUser.emailAddress,
       }).then((result) => {
         expect(result.status).to.equal(201);
-        Cypress.env('endUserName', userName);
-        Cypress.env('endUserFirstName', userName);
-        Cypress.env('endUserLastName', userSN);
-        Cypress.env('endUserPassword', userPassword);
+        Cypress.env('endUserName', endUser.username);
+        Cypress.env('endUserFirstName', endUser.username);
+        Cypress.env('endUserLastName', endUser.lastName);
+        Cypress.env('endUserPassword', endUser.password);
         Cypress.env('endUserId', result.body._id);
       });
     });

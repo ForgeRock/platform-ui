@@ -1,21 +1,24 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
+import { faker } from '@faker-js/faker';
+
 /**
- * This method creates a user data object with set credentials.
- * @returns {Object} - user data
+ * This method generates an enduser object with random data provided from faker-js library.
+ * @returns {Object} - enduser data
  */
-export default function generateEndUserData() {
-  const userName = `testUser${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
-  const userPassword = 'Rg_GRg9k&e';
-  const userSN = 'test';
-  return {
-    userName,
-    userPassword,
-    userSN,
+export default function generateRandomEndUser() {
+  const endUser = {
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    password: `${faker.internet.password({ pattern: /^[a-zA-Z0-9!@#$%^&*()+=._-]$/ })}aZ9+`,
   };
+  endUser.emailAddress = faker.internet.email({ firstName: endUser.firstName, lastName: endUser.lastName, provider: 'example.pingidentity.com' }).toLowerCase();
+  endUser.username = faker.internet.username({ firstName: endUser.firstName, lastName: endUser.lastName }).toLowerCase();
+  return endUser;
 }

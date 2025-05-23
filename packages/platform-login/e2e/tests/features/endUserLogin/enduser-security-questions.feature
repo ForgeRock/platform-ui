@@ -90,7 +90,7 @@ Feature: Enduser Security Questions
     And user types "ؤال باللغة العربية" in the field "Question"
     And user types "randomString" in the field "Answer for: ؤال باللغة العربية"
     And user clicks on "Next" button
-    Then enduser dashboard is loaded
+    Then enduser dashboard is loaded with enduser data
     And user navigates to "Password reset by KBA" journey
     And user types the stored value of "endUserName" in "User Name" field
     And user clicks on "Next" button
@@ -136,7 +136,7 @@ Feature: Enduser Security Questions
     | Password      | Rg_GRg9k&e                        |
     And user fills all 4 custom security questions with answers
     And user clicks on "Next" button
-    Then enduser dashboard is loaded
+    Then enduser dashboard is loaded with enduser data
     When user navigates to "Password reset by KBA" journey
     And user types the stored value of "endUserName" in "User Name" field
     And user clicks on "Next" button
@@ -187,7 +187,7 @@ Feature: Enduser Security Questions
     And user selects "What's your favorite color?" option for the Security Question no. 1
     And user types "answer" in the field "Answer for: What's your favorite color?"
     And user clicks on "Next" button
-    Then enduser dashboard is loaded
+    Then enduser dashboard is loaded with enduser data
     When user navigates to "Password reset by KBA" journey
     And user types the stored value of "endUserName" in "User Name" field
     And user clicks on "Next" button
@@ -200,7 +200,7 @@ Feature: Enduser Security Questions
     And user types "Passw0rd!" in the field "Confirm Password"
     Then "Next" button is enabled
     When user clicks on "Next" button
-    Then enduser dashboard is loaded
+    Then enduser dashboard is loaded with enduser data
 
   @C27003
   Scenario: Enduser can reset security questions from profile view
@@ -215,7 +215,7 @@ Feature: Enduser Security Questions
     And user selects "What's your favorite color?" option for the Security Question no. 1
     And user types "answer" in the field "Answer for: What's your favorite color?"
     And user clicks on "Next" button
-    Then enduser dashboard is loaded
+    Then enduser dashboard is loaded with enduser data
     When user clicks on "Edit Your Profile" button
     And user clicks on "Reset Security Questions" link
     Then security question dropdown and answer fields are visible 1 time

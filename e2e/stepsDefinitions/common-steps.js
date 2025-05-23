@@ -9,9 +9,13 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
-import generateEndUserData from '../utils/endUserData';
+import generateRandomEndUser from '../utils/endUserData';
 import { selectDropdownOption } from '../utils/uiUtils';
 import { generateJourneyURL } from '../utils/journeyUtils';
+
+Given('admin logs into the tenant', () => {
+  cy.loginAsAdmin();
+});
 
 Given('user navigates to {journey} journey', (journeyName) => {
   const url = generateJourneyURL(journeyName);
@@ -33,24 +37,23 @@ Given('admin Login into the tenant', () => {
  */
 Given('enduser account is created via API', () => {
   if (!Cypress.env('endUserId')) {
-    const { userName, userPassword, userSN } = generateEndUserData();
-
+    const endUser = generateRandomEndUser();
     if (!Cypress.env('ACCESS_TOKEN')) {
       cy.loginAsAdmin();
     }
-
-    cy.log(`Creating new IDM enduser ${userName}`).then(() => {
+    cy.log(`Creating new IDM enduser ${endUser.userName}`).then(() => {
       createIDMUser({
-        userName,
-        password: userPassword,
-        givenName: userName,
-        sn: userSN,
+        userName: endUser.username,
+        password: endUser.password,
+        givenName: endUser.firstName,
+        sn: endUser.lastName,
+        mail: endUser.emailAddress,
       }).then((result) => {
         expect(result.status).to.equal(201);
-        Cypress.env('endUserName', userName);
-        Cypress.env('endUserFirstName', userName);
-        Cypress.env('endUserLastName', userSN);
-        Cypress.env('endUserPassword', userPassword);
+        Cypress.env('endUserName', endUser.username);
+        Cypress.env('endUserFirstName', endUser.firstName);
+        Cypress.env('endUserLastName', endUser.lastName);
+        Cypress.env('endUserPassword', endUser.password);
         Cypress.env('endUserId', result.body._id);
       });
     });
@@ -100,13 +103,14 @@ When('user waits for themerealm request', () => {
 When('user fills registration form with following data', (dataTable) => {
   dataTable.hashes().forEach((row) => {
     const stringToType = row.Value.replace('RandomNumberReplace', random(Number.MAX_SAFE_INTEGER));
-    switch (row.Field) {
-      case 'Username':
-        Cypress.env('endUserName', stringToType);
-        break;
-      default:
-        break;
+    let endUserProperty = '';
+    if (row.Field === 'Username') {
+      endUserProperty = 'endUserName';
+    } else {
+      const fieldWithoutSpaces = row.Field.replace(/\s/g, '');
+      endUserProperty = `endUser${fieldWithoutSpaces.charAt(0).toUpperCase()}${fieldWithoutSpaces.slice(1)}`;
     }
+    Cypress.env(endUserProperty, stringToType);
     cy.findByLabelText(row.Field).clear().type(stringToType);
   });
 });
@@ -147,7 +151,7 @@ Then('{string} button is disabled', (button) => {
   cy.findByRole('button', { name: button }).should('be.disabled');
 });
 
-Then('{string} modal is closed', (modal) => {
+Then('{string} modal no longer exists', (modal) => {
   cy.findByRole('dialog', { name: modal })
     .should('not.exist');
 });
@@ -184,6 +188,11 @@ When('the user clears the {string} field', (field) => {
 Then('{string} modal is displayed/opened', (modal) => {
   cy.findByRole('dialog', { name: modal })
     .should('exist');
+});
+
+Then('{string} modal is displayed after user is iddle for {int} seconds', (modal, seconds) => {
+  cy.findByRole('dialog', { name: modal, timeout: seconds * 1000 })
+    .should('be.visible');
 });
 
 When('the message {string} should be present', (message) => {
@@ -227,12 +236,8 @@ Then('enduser account is deleted via API', () => {
   deleteIDMUser(Cypress.env('endUserId'));
 });
 
-Then('enduser dashboard is loaded', () => {
-  cy.findAllByRole('heading', { timeout: 10000 }).contains('Hello').should('be.visible');
-});
-
 Then('enduser dashboard is loaded with enduser data', () => {
-  cy.findAllByRole('heading', { timeout: 10000 }).contains(`Hello, ${Cypress.env('endUserName')} ${Cypress.env('endUserLastName')}`).should('be.visible');
+  cy.findAllByRole('heading', { timeout: 10000 }).contains(`Hello, ${Cypress.env('endUserFirstName')} ${Cypress.env('endUserLastName')}`).should('be.visible');
 });
 
 Then('the option {string} is visible', (optionName) => {
@@ -261,4 +266,15 @@ Then('text {string} does not exist', (text) => {
 
 Then('the value of the {string} field is {string}', (fieldName, expectedValue) => {
   cy.findByLabelText(fieldName).should('have.value', expectedValue);
+});
+
+Then('page title is {string}', (title) => {
+  // TODO: Remove this big timeout after Themes performance is resolved (default 5s should be enough)
+  cy.findByRole('heading', { name: title, timeout: 10000 })
+    .should('be.visible');
+});
+
+Then('page title is {string} after user is idle for {int} seconds', (title, seconds) => {
+  cy.findByRole('heading', { name: title, timeout: seconds * 1000 })
+    .should('be.visible');
 });
