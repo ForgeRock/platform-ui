@@ -17,7 +17,7 @@ module.exports = {
       retainLines: true,
     },
     test: {
-      plugins: ['require-context-hook'],
+      plugins: ['require-context-hook', 'babel-plugin-transform-import-meta'],
     },
   },
   presets: [

@@ -8,8 +8,8 @@ of the MIT license. See the LICENSE file for details. -->
       <FrFormBuilder
         v-if="form && !isLoadingForm"
         v-model:model-value="formValue"
+        :form="form.form"
         :read-only="readOnly"
-        :schema="form.form?.fields"
         @is-valid="isValidForm = $event" />
       <FrDefaultFormManager
         v-if="showDefaultForm"

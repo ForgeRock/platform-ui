@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="form"
           v-model:model-value="formValue"
           @is-valid="isValidForm = $event"
-          :schema="form.form?.fields" />
+          :form="form.form" />
         <div v-else>
           {{ $t('deletePanel.body', { type: $t('common.user.user').toLowerCase() }) }}
         </div>

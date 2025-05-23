@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,12 +7,15 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import * as formEvents from './utils/formEvents';
 import FormBuilder from './FormBuilder';
 import i18n from '@/i18n';
 
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,
 });
+
+jest.mock('./utils/formEvents');
 
 describe('FormBuilder', () => {
   function setup(modelValue = {}, schema = [
@@ -105,7 +108,7 @@ describe('FormBuilder', () => {
         plugins: [i18n],
       },
       props: {
-        schema,
+        form: { fields: schema },
         'model-value': modelValue,
         includeDefaults: true,
         ...propsData,
@@ -1094,34 +1097,36 @@ describe('FormBuilder', () => {
     expect(rows.length).toBe(1);
 
     wrapper.setProps({
-      schema: [
-        {
-          id: 'row1',
-          fields: [
-            {
-              type: 'string',
-              model: 'field1',
-              defaultValue: 'Field 1 default value',
-              label: 'Text 1',
-              description: 'This is a text field',
-              layout: { columns: 12, offset: 0 },
-            },
-          ],
-        },
-        {
-          id: 'row2',
-          fields: [
-            {
-              type: 'string',
-              model: 'field2',
-              defaultValue: 'Field 2 default value',
-              label: 'Text 2',
-              description: 'This is a text field',
-              layout: { columns: 12, offset: 0 },
-            },
-          ],
-        },
-      ],
+      form: {
+        fields: [
+          {
+            id: 'row1',
+            fields: [
+              {
+                type: 'string',
+                model: 'field1',
+                defaultValue: 'Field 1 default value',
+                label: 'Text 1',
+                description: 'This is a text field',
+                layout: { columns: 12, offset: 0 },
+              },
+            ],
+          },
+          {
+            id: 'row2',
+            fields: [
+              {
+                type: 'string',
+                model: 'field2',
+                defaultValue: 'Field 2 default value',
+                label: 'Text 2',
+                description: 'This is a text field',
+                layout: { columns: 12, offset: 0 },
+              },
+            ],
+          },
+        ],
+      },
     });
 
     await wrapper.vm.$nextTick();
@@ -1190,5 +1195,51 @@ describe('FormBuilder', () => {
 
     const field = wrapper.findComponent({ name: 'StringDisplay' }).find('.fr-field');
     expect(field.attributes('disabled')).toBe('true');
+  });
+
+  it('should execute the on load event when the form is loaded', async () => {
+    const webWorkerSpy = jest.spyOn(formEvents, 'useWebWorker');
+
+    const wrapper = setup({}, [], {
+      'model-value': { field1: 'value1' },
+      form: {
+        events: {
+          onLoad: {
+            script: 'console.log("test")',
+          },
+        },
+        fields: [
+          {
+            id: 'row1',
+            fields: [
+              {
+                type: 'string',
+                model: 'field1',
+                label: 'Text 1',
+                description: 'This is a text field',
+                layout: { columns: 12, offset: 0 },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    expect(webWorkerSpy).toHaveBeenCalledWith(
+      'console.log("test")',
+      { field1: 'value1' },
+      [[{
+        columnClass: 'col-md-12 offset-md-0',
+        customSlot: undefined,
+        description: 'This is a text field',
+        disabled: false,
+        label: 'Text 1 (optional)',
+        layout: { columns: 12, offset: 0 },
+        model: 'field1',
+        type: 'string',
+      }]],
+    );
   });
 });
