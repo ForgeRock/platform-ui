@@ -1,11 +1,11 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrFormGenerator
     :schema="schemaFormGenerator"
-    :model="modelValue"
+    :model="updatedModelValue"
     @update:model="fieldChanged">
     <template #formText="{ property }">
       <div
@@ -36,7 +36,9 @@ import FrFormGenerator from '@forgerock/platform-shared/src/components/FormGener
 import { cloneDeep, set } from 'lodash';
 import { useForm } from 'vee-validate';
 import { watch, ref } from 'vue';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { transformSchemaToFormGenerator } from './utils/formGeneratorSchemaTransformer';
+import { useWebWorker } from './utils/formEvents';
 import FrGovObjectMultiselect from './components/governance/GovObjectMultiselect';
 import FrGovObjectSelect from './components/governance/GovObjectSelect';
 import store from '@/store';
@@ -54,9 +56,12 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  schema: {
-    type: Array,
-    default: () => [],
+  form: {
+    type: Object,
+    default: () => ({
+      events: {},
+      fields: [],
+    }),
   },
   includeDefaults: {
     type: Boolean,
@@ -68,17 +73,29 @@ const emit = defineEmits(['update:modelValue', 'is-valid']);
 
 const schemaFormGenerator = ref([]);
 const { meta } = useForm();
+const updatedModelValue = ref(props.modelValue);
 
-watch(() => props.schema, (newVal) => {
-  schemaFormGenerator.value = transformSchemaToFormGenerator(newVal, props.readOnly, props.includeDefaults);
-}, { immediate: true });
+watch(() => props.form, async (newVal) => {
+  schemaFormGenerator.value = transformSchemaToFormGenerator(newVal?.fields, props.readOnly, props.includeDefaults);
+  if (props.form?.events?.onLoad?.script) {
+    try {
+      await useWebWorker(props.form.events.onLoad.script, updatedModelValue.value, schemaFormGenerator.value);
+    } catch (error) {
+      showErrorMessage(null, error);
+    }
+  }
+}, { immediate: true, deep: true });
 
 watch(meta, (newVal) => {
   emit('is-valid', newVal.valid);
 });
 
+watch(() => props.modelValue, (newVal) => {
+  updatedModelValue.value = cloneDeep(newVal);
+}, { immediate: true, deep: true });
+
 function fieldChanged({ path, value }) {
-  const emitValue = cloneDeep(props.modelValue);
+  const emitValue = cloneDeep(updatedModelValue.value);
   set(emitValue, path, value);
   emit('update:modelValue', emitValue);
 }

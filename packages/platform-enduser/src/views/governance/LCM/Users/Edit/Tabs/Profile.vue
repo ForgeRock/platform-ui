@@ -11,8 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
       <FrFormBuilder
         v-if="form"
         v-model:model-value="formValue"
+        :form="form.form"
         :read-only="readOnly"
-        :schema="form.form?.fields"
         @is-valid="isValidForm = $event" />
       <FrModifyUserForm
         v-else

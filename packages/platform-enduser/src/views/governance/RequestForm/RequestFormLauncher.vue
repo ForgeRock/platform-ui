@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
           <template v-else>
             <FrFormBuilder
               v-model:model-value="formValue"
-              :schema="form.form?.fields"
+              :form="form.form"
               @is-valid="isValid = $event"
               include-defaults />
             <div class="d-flex justify-content-end">
