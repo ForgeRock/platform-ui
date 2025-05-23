@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.22.9",
+    "@faker-js/faker": "9.8.0",
     "@testing-library/dom": "9.3.1",
     "@testing-library/jest-dom": "6.1.2",
     "@testing-library/user-event": "13.0.1",

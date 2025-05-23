@@ -16,7 +16,7 @@ after(() => {
     const journeysToDelete = this.importedJourneys.map((journey) => journey.fileName);
     cy.log(`Deleting imported journey(s) ${journeysToDelete} via API`).then(() => {
       cy.deleteTreesViaAPI(journeysToDelete);
-      this.importedJourney = [];
+      this.importedJourneys = [];
     });
   }
 });

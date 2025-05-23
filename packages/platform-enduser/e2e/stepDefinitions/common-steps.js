@@ -8,13 +8,20 @@
 import { Given, When } from '@badeball/cypress-cucumber-preprocessor';
 import { generateJourneyURL } from '@e2e/utils/journeyUtils';
 
-Given('{string} is logged in', (username) => {
-  cy.loginAsEnduser(username === 'Enduser' ? Cypress.env('endUserName') : username);
-});
-
-Given('{string} logs into {journey} journey', (username, journeyName) => {
+Given('enduser logs into {journey} journey', (journeyName) => {
+  const userName = Cypress.env('endUserName');
+  const password = Cypress.env('endUserPassword');
+  const successLogin = true;
   const loginUrl = generateJourneyURL(journeyName);
-  cy.loginAsEnduser(username === 'Enduser' ? Cypress.env('endUserName') : username, 'Rg_GRg9k&e', true, loginUrl);
+  const givenName = Cypress.env('endUserFirstName');
+
+  cy.loginAsEnduser(
+    userName,
+    password,
+    successLogin,
+    loginUrl,
+    givenName,
+  );
 });
 
 Given('browser locale is set to {string}', (locale) => {

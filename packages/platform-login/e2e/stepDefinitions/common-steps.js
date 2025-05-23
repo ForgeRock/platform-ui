@@ -27,8 +27,3 @@ When('cleanup {string} Journey with all dependencies', (journeyName) => {
 Then('user should be redirected to User dashboard', () => {
   cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${Cypress.env('endUserFirstName')} ${Cypress.env('endUserLastName')}`).should('be.visible');
 });
-
-Then('page title is {string}', (title) => {
-  // TODO: Remove this big timeout after Themes performance is resolved (default 5s should be enough)
-  cy.findByRole('heading', { name: title, timeout: 10000 }).should('be.visible');
-});
