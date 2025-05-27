@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -33,13 +33,20 @@ export const governanceConditionOptions = {
   Is: { label: i18n.global.t('filters.is'), value: 'equals', type: ['string', 'reference', 'boolean', 'number'] },
   IsNot: { label: i18n.global.t('filters.isNot'), value: 'not_equals', type: ['string', 'reference', 'number'] },
   StartsWith: { label: i18n.global.t('filters.startsWith'), value: 'starts_with', type: ['string'] },
-  DoesNotStartsWith: { label: i18n.global.t('filters.endsWith'), value: 'ends_with', type: ['string'] },
+  EndsWith: { label: i18n.global.t('filters.endsWith'), value: 'ends_with', type: ['string'] },
   HasChanged: { label: i18n.global.t('filters.hasChanged'), value: 'has_changed', type: ['reference', 'string', 'number'] },
   HasNotChanged: { label: i18n.global.t('filters.hasNotChanged'), value: 'has_not_changed', type: ['reference', 'string', 'number'] },
   Gte: { label: i18n.global.t('filters.greaterThanEqual'), value: 'gte', type: ['number'] },
   Gt: { label: i18n.global.t('filters.greaterThan'), value: 'gt', type: ['number'] },
   Lte: { label: i18n.global.t('filters.lessThanEqual'), value: 'lte', type: ['number'] },
   Lt: { label: i18n.global.t('filters.lessThan'), value: 'lt', type: ['number'] },
+};
+
+export const accessPolicyConditionOptions = {
+  Contains: { label: i18n.global.t('filters.contains'), value: 'CONTAINS', type: ['string', 'array'] },
+  Equals: { label: i18n.global.t('filters.equals'), value: 'EQUALS', type: ['string', 'boolean', 'number'] },
+  StartsWith: { label: i18n.global.t('filters.startsWith'), value: 'STARTS_WITH', type: ['string'] },
+  EndsWith: { label: i18n.global.t('filters.endsWith'), value: 'ENDS_WITH', type: ['string'] },
 };
 
 export const temporalValueOptions = [
