@@ -681,6 +681,7 @@
     "doesNotStartWith": "does not start with",
     "dontInclude": "don't include",
     "endsWith": "ends with",
+    "equals": "equals",
     "exists": "exists",
     "greaterThan": "GT (>)",
     "greaterThanEqual": "GTE (>=)",
