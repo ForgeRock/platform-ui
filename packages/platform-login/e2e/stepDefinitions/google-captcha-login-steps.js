@@ -88,6 +88,11 @@ Given('the user navigates to the captcha End User login page', () => {
   cy.visit(locationUrl);
 });
 
+Given('the user navigates to the login page in Theatre Mode', () => {
+  locationUrl = setLocationUrl('QA-Google_Captcha_Login_Theatre_mode');
+  cy.visit(locationUrl);
+});
+
 When('the user fills in the login form with correct credentials', () => {
   fillLoginForm(Cypress.env('endUserName'), Cypress.env('endUserPassword'));
 });
@@ -122,7 +127,8 @@ Then('the user should be logged in and see the dashboard', () => {
     .should('contain', Cypress.env('endUserName'));
 });
 
-Given('the user navigates to the login page in Theatre Mode', () => {
-  locationUrl = setLocationUrl('QA-Google_Captcha_Login_Theatre_mode');
-  cy.visit(locationUrl);
+Then('clicks on the Login button {int} time(s)', (numberOfAttempts) => {
+  for (let i = 0; i < numberOfAttempts; i += 1) {
+    cy.findByRole('button', { name: 'Next' }).click();
+  }
 });
