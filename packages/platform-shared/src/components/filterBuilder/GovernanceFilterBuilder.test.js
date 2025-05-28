@@ -323,10 +323,8 @@ describe('GovernanceFilterBuilder', () => {
       await inputValue.trigger('blur');
 
       expect(wrapper.emitted('filter-update')).toBeTruthy();
-      // Initial emit is the string representation that happens on keypress (setValue).
-      // Second emit is the blur event which updates the string number value to an integer.
-      expect(wrapper.emitted('filter-update').length).toBe(2);
-      expect(wrapper.emitted('filter-update')[1][0]).toEqual({
+      expect(wrapper.emitted('filter-update').length).toBe(1);
+      expect(wrapper.emitted('filter-update')[0][0]).toEqual({
         or: [{
           equals: {
             right: {

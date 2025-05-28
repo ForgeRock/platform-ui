@@ -380,11 +380,12 @@ export default {
     */
     onBlur(event) {
       this.$emit('blur', event);
+      const newVal = event.target?.value || '';
       if (this.floatingLabel && this.label) {
         this.floatLabels = this.inputValue?.toString().length > 0;
       }
       if (this.fieldType === 'number') {
-        this.inputValue = this.stringToNumber(event.target.value);
+        this.inputValue = this.stringToNumber(newVal);
       }
     },
     /**
@@ -393,7 +394,8 @@ export default {
      * @returns {Number} number value
      */
     stringToNumber(value) {
-      const numberVal = Number(value);
+      const newVal = value.replace(/[^0-9.-]/g, '');
+      const numberVal = Number(newVal);
       return Number.isNaN(numberVal) ? '' : numberVal;
     },
     /**
@@ -403,8 +405,8 @@ export default {
      *       https://bugster.forgerock.org/jira/browse/IAM-3677
      */
     removeNonNumericChars(event) {
-      const newVal = event.target?.value;
-      this.inputValue = newVal ? newVal.replace(/[^0-9.-]/g, '') : '';
+      const newVal = event.target?.value || '';
+      this.inputValue = newVal ? this.stringToNumber(newVal) : '';
     },
   },
 };

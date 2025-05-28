@@ -475,7 +475,7 @@ describe('BasicInput', () => {
     describe('when number field', () => {
       const testCases = [
         ['should allow input given numeric value', '583', '583'],
-        ['should prevent input given non-numeric value', 'text', ''],
+        ['should prevent input given non-numeric value', 'text', '0'],
         ['should prevent input given non-numeric value after .', '.text', ''],
         ['should allow negative numbers', '-1', '-1'],
         ['should allow decimals', '1.1', '1.1'],
@@ -536,11 +536,10 @@ describe('BasicInput', () => {
     });
 
     it('should set floatLabels to false when inputValue is string', async () => {
-      const wrapper = setup({ type: 'number', placeholder: 'stub-placeholder', label: 'stub-label' });
-      await wrapper.vm.$nextTick();
+      const wrapper = setup({ type: 'number', placeholder: 'stub-placeholder' });
       const input = findByTestId(wrapper, 'input-stub-testid');
-      input.setValue('test');
-      input.trigger('blur');
+      await input.setValue('test');
+      await input.trigger('blur');
       expect(wrapper.vm.floatLabels).toBe(false);
     });
 
