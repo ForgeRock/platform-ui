@@ -50,8 +50,15 @@ export function getSyncMapping(mappingName) {
   return generateIdmApi().get(url);
 }
 
-export function previewMapping(payload) {
-  return generateIdmApi().post('script?_action=eval', payload);
+/**
+ * Sends a script payload to the IDM API for a script evaluation.
+ *
+ * @param {Object} payload - The script or mapping data to be evaluated.
+ * @param {string} [action='eval'] - The action to perform (e.g., 'eval', 'compile').
+ * @returns {Promise} Promise resolving with the API response.
+ */
+export function previewMapping(payload, action = 'eval') {
+  return generateIdmApi().post(`script?_action=${action}`, payload);
 }
 
 /**
