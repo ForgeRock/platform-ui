@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -30,7 +30,9 @@ of the MIT license. See the LICENSE file for details. -->
         data-testid="report-table"
         :empty-text="$t('reports.noReportData')"
         :fixed="false"
+        :no-local-sorting="true"
         v-bind="$attrs"
+        @sort-changed="$emit('sort-changed', $event)"
       >
         <template #cell(user)="data">
           <p class="text-dark m-0">

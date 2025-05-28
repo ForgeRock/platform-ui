@@ -212,6 +212,98 @@ export const testUserResponseTransformed = [
   },
 ];
 
+export const reportTableData = {
+  result: [
+    {
+      'Common Name': 'zion Peterson',
+      Country: null,
+      'Email Address': 'zionPeterson@pingidentity.com',
+      'First Name': 'zion',
+      'Last Name': 'Peterson',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'solomon Rogers',
+      Country: null,
+      'Email Address': 'solomonRogers@pingidentity.com',
+      'First Name': 'solomon',
+      'Last Name': 'Rogers',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'sofia Hopkins',
+      Country: null,
+      'Email Address': 'sofiaHopkins@pingidentity.com',
+      'First Name': 'sofia',
+      'Last Name': 'Hopkins',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'rylee Meyer',
+      Country: null,
+      'Email Address': 'ryleeMeyer@pingidentity.com',
+      'First Name': 'rylee',
+      'Last Name': 'Meyer',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'ronan Watkins',
+      Country: null,
+      'Email Address': 'ronanWatkins@pingidentity.com',
+      'First Name': 'ronan',
+      'Last Name': 'Watkins',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'nova Morris',
+      Country: null,
+      'Email Address': 'novaMorris@pingidentity.com',
+      'First Name': 'nova',
+      'Last Name': 'Morris',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'nova Fleming',
+      Country: null,
+      'Email Address': 'novaFleming@pingidentity.com',
+      'First Name': 'nova',
+      'Last Name': 'Fleming',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'noel Williams',
+      Country: null,
+      'Email Address': 'noelWilliams@pingidentity.com',
+      'First Name': 'noel',
+      'Last Name': 'Williams',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'max Turner',
+      Country: null,
+      'Email Address': 'maxTurner@pingidentity.com',
+      'First Name': 'max',
+      'Last Name': 'Turner',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'madelyn Wood',
+      Country: null,
+      'Email Address': 'madelynWood@pingidentity.com',
+      'First Name': 'madelyn',
+      'Last Name': 'Wood',
+      'Consented Mappings': [],
+    },
+  ],
+  total: 20,
+  currentCount: 10,
+  sortable: true,
+  filterable: true,
+  nonSortableColumns: [
+    'Consented Mappings',
+  ],
+};
+
 export function mockAxios(getFn) {
   return jest.spyOn(axios, 'create').mockReturnValue({
     get: getFn,
