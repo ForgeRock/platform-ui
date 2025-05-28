@@ -77,9 +77,14 @@ const updatedModelValue = ref(props.modelValue);
 
 watch(() => props.form, async (newVal) => {
   schemaFormGenerator.value = transformSchemaToFormGenerator(newVal?.fields, props.readOnly, props.includeDefaults);
+
+  // check for onLoad event script in the form
   if (props.form?.events?.onLoad?.script) {
     try {
-      await useWebWorker(props.form.events.onLoad.script, updatedModelValue.value, schemaFormGenerator.value);
+      const { formValues, formSchema } = await useWebWorker(props.form?.events?.onLoad?.script, updatedModelValue.value, schemaFormGenerator.value);
+      schemaFormGenerator.value = formSchema;
+      updatedModelValue.value = formValues;
+      emit('update:modelValue', updatedModelValue.value);
     } catch (error) {
       showErrorMessage(null, error);
     }

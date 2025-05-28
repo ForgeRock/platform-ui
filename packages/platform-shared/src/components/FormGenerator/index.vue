@@ -241,6 +241,11 @@ export default {
      * @param property - Current field property
      */
     showField(property) {
+      if (property?.showAlways !== undefined) {
+        this.sectionExpanded[property.label] = property.showAlways;
+        return property.showAlways;
+      }
+
       if (property?.show) {
         const modelProp = get(this.model, property.show);
         let currentVal;
