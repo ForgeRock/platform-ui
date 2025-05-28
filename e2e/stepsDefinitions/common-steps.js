@@ -24,6 +24,10 @@ Given('user navigates to {journey} journey', (journeyName) => {
   cy.wait(1000);
 });
 
+Given('admin Login into the tenant', () => {
+  cy.loginAsAdmin();
+});
+
 /**
  * Creates an end user account if does not exist with random credentials, stores the credentials in the environment variables
  */
@@ -70,6 +74,14 @@ Given('admin navigates to {string} page url', (page) => {
   cy.intercept('GET', '/am/json/serverinfo/*').as('getServerInfo');
   cy.visit(`${Cypress.config().baseUrl}${page}`);
   cy.wait('@getServerInfo');
+});
+
+When('user clicks on {string} cell on table', (cellToClick) => {
+  cy.findAllByRole('cell', { name: Cypress.env(cellToClick) ? Cypress.env(cellToClick) : cellToClick }).eq(0).click();
+});
+
+When('user searches {string} on search box', (searchString) => {
+  cy.findByRole('searchbox', { name: 'Search' }).clear().type(`${Cypress.env(searchString) ? Cypress.env(searchString) : searchString}{enter}`);
 });
 
 When('user types {string} in the field {string}', (value, field) => {
@@ -219,6 +231,10 @@ Then('enduser dashboard is loaded', () => {
   cy.findAllByRole('heading', { timeout: 10000 }).contains('Hello').should('be.visible');
 });
 
+Then('enduser dashboard is loaded with enduser data', () => {
+  cy.findAllByRole('heading', { timeout: 10000 }).contains(`Hello, ${Cypress.env('endUserName')} ${Cypress.env('endUserLastName')}`).should('be.visible');
+});
+
 Then('the option {string} is visible', (optionName) => {
   cy.findByRole('option', { name: optionName }).should('be.visible');
 });
@@ -237,4 +253,12 @@ Then('fields are not visible', (datatable) => {
   datatable.hashes().forEach((row) => {
     cy.findByLabelText(row.fieldName).should('not.exist');
   });
+});
+
+Then('text {string} does not exist', (text) => {
+  cy.findByText(text).should('not.exist');
+});
+
+Then('the value of the {string} field is {string}', (fieldName, expectedValue) => {
+  cy.findByLabelText(fieldName).should('have.value', expectedValue);
 });
