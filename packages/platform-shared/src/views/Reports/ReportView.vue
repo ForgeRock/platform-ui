@@ -140,10 +140,15 @@ of the MIT license. See the LICENSE file for details. -->
           id="viewTable"
           testid="report-table"
           :current-page="!runDataLoadingComplete ? 0 : currentPage"
+          :fields="tableFields"
           :is-empty="!tableItems.length"
           :items="tableItems"
           :loading="tableLoading || !runDataLoadingComplete"
-          :per-page="perPage" />
+          :per-page="perPage"
+          :sort-by="sortBy"
+          :sort-desc="sortDirection === 'desc'"
+          @sort-changed="onSortChanged"
+        />
         <FrPagination
           :value="currentPage"
           @input="currentPage = $event;"
@@ -202,6 +207,8 @@ const {
   fetchViewReport,
   expiredMessage,
   isExpired,
+  nonSortableColumns,
+  sortable,
   tableLoading,
   totalRows,
 } = useViewReportTable();
@@ -224,6 +231,9 @@ const perPage = ref(10);
 const reportName = ref('');
 const reportDate = ref('');
 const reportTime = ref('');
+const sortBy = ref(null);
+const sortDirection = ref('desc');
+const tableFields = ref([]);
 const tableItems = ref([]);
 const modalData = ref({});
 
@@ -267,12 +277,27 @@ async function setConfigInfo(report) {
 
 /**
  * Calls the endpoint to get the data of the Report Run.
+ * @param {Object} sortData Contains field to sort by and sort direction (asc or desc)
  */
-async function getRunInfo() {
+async function getRunInfo(sortData) {
   try {
     const pagedResultOffset = (currentPage.value - 1) * perPage.value;
-    const reportResults = await fetchViewReport(id, template, state, perPage.value, pagedResultOffset);
+    const reportResults = await fetchViewReport(id, template, state, perPage.value, pagedResultOffset, sortData);
     reportResults.forEach((item) => tableItems.value.push(item));
+
+    // No results, so don't handle sorting
+    if (reportResults.length) {
+      tableFields.value = Object.keys(reportResults[0]).map((field) => {
+        const isSortable = sortable.value && !nonSortableColumns.value.includes(field);
+        return { key: field, sortable: isSortable };
+      });
+
+      // Default sorted column to the first item
+      if (!sortData.sortBy) {
+        sortBy.value = tableFields.value[0].key;
+        sortDirection.value = sortData.sortDirection || 'desc';
+      }
+    }
   } catch (err) {
     showErrorMessage(err, i18n.global.t('common.error'));
   }
@@ -281,6 +306,7 @@ async function getRunInfo() {
 /**
  * Exports or downloads the report in CSV or JSON format.
  * @param {String} fileType Format to be exported or downloaded.
+ * @param {Object} bvModal Modal
  */
 async function generateReport(fileType, bvModal) {
   await fetchExport(template, id, getExportFormatType(fileType), bvModal);
@@ -294,7 +320,7 @@ function pageSizeChange(pageSize) {
   perPage.value = pageSize;
   tableItems.value = [];
   if (currentPage.value === 1) {
-    getRunInfo();
+    getRunInfo({ sortBy: sortBy.value, sortDirection: sortDirection.value });
   }
   currentPage.value = 1;
 }
@@ -307,13 +333,29 @@ function returnToTemplate() {
 }
 
 /**
+ * Callback from clicking the sort icon in BTable
+ * @param {Object} sortDetails Contains field to sort by and sort direction (asc or desc) from BTable
+ */
+function onSortChanged(sortDetails) {
+  // This catches when a user clicks on a non-sortable column. Unfortunately bootstrap-vue allows this to happen.
+  if (!sortDetails.sortBy.length) {
+    return;
+  }
+  sortBy.value = sortDetails.sortBy;
+  sortDirection.value = sortDetails.sortDesc ? 'desc' : 'asc';
+  tableItems.value = [];
+  currentPage.value = 1;
+  getRunInfo({ sortBy: sortBy.value, sortDirection: sortDirection.value });
+}
+
+/**
  * Watchers
  */
 watch(currentPage, (page) => {
   const expectedTotals = page * perPage.value;
   const remainder = expectedTotals - tableItems.value.length;
   if (expectedTotals > tableItems.value.length && remainder === perPage.value) {
-    getRunInfo();
+    getRunInfo({ sortBy: sortBy.value, sortDirection: sortDirection.value });
   }
 });
 
@@ -330,7 +372,7 @@ watch(currentPage, (page) => {
   });
   const [report] = result;
   setConfigInfo(report);
-  getRunInfo();
+  getRunInfo({ sortBy: sortBy.value, sortDirection: sortDirection.value });
   runDataLoading.value = false;
   runDataLoadingComplete.value = true;
 })();

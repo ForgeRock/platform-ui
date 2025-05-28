@@ -140,7 +140,7 @@ export function getReportParameterTypes(params = '') {
   * @param {Number} pageResultsOffset How many results to offset by.
   * @returns {Object} Contains count of results and array of results.
   */
-export async function getReportResult(id, template, state, pageSize = 20, pagedResultsOffset = 0) {
+export async function getReportResult(id, template, state, pageSize = 20, pagedResultsOffset = 0, reqData) {
   const params = {
     _action: 'view',
     _pageSize: pageSize,
@@ -148,7 +148,7 @@ export async function getReportResult(id, template, state, pageSize = 20, pagedR
     name: template,
     templateType: state,
   };
-  const { data } = await generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`);
+  const { data } = await generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`, reqData);
   return data;
 }
 

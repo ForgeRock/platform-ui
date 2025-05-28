@@ -10,6 +10,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as Notifications from '@forgerock/platform-shared/src/utils/notification';
 import ReportView from './ReportView';
+import { reportTableData } from './__mocks__/mocks';
 
 jest.mock('@forgerock/platform-shared/src/utils/notification');
 jest.mock('vue-router', () => ({
@@ -144,8 +145,44 @@ describe('Report View component', () => {
 
     const [, reportParameters] = wrapper.findAll('.row');
     const reportParametersContainer = reportParameters.find('.flex-row');
-    const [,,, numberParam] = reportParametersContainer.findAll('div > small + div');
+    const [, , , numberParam] = reportParametersContainer.findAll('div > small + div');
     // The number parameter should be displayed as is
     expect(numberParam.text()).toBe('42');
+  });
+
+  it('shows the sort icons in the headers when the data comes back sortable', async () => {
+    AutoApi.getReportResult = jest.fn().mockReturnValue(Promise.resolve(reportTableData));
+    wrapper = setup();
+    await flushPromises();
+
+    // Find the column headers and make sure the sorting markup exists
+    const columnHeaders = wrapper.findAll('[role="columnheader"]');
+    columnHeaders.forEach((col) => {
+      const columnName = col.find('div');
+      const sortSpan = col.find('span.sr-only');
+      if (!reportTableData.nonSortableColumns.includes(columnName.text())) {
+        expect(sortSpan).toBeDefined();
+      }
+    });
+  });
+
+  it('updates the sort direction when sort button is clicked', async () => {
+    AutoApi.getReportResult = jest.fn().mockReturnValue(Promise.resolve(reportTableData));
+    wrapper = setup();
+    await flushPromises();
+
+    // Get the initial sort order
+    let columnHeaders = wrapper.findAll('[role="columnheader"]');
+    let columnToClick = columnHeaders[0];
+    expect(columnToClick.attributes('aria-sort')).toBe('descending');
+
+    // Click the sort button
+    columnToClick.trigger('click');
+    await flushPromises();
+
+    // Get the next sort order
+    columnHeaders = wrapper.findAll('[role="columnheader"]');
+    [columnToClick] = columnHeaders;
+    expect(columnToClick.attributes('aria-sort')).toBe('ascending');
   });
 });

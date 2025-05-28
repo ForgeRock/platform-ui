@@ -1,11 +1,10 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { camelCase } from 'lodash';
 import dayjs from 'dayjs';
 import { getReportResult } from '@forgerock/platform-shared/src/api/AutoApi';
 import { ref } from 'vue';
@@ -14,7 +13,9 @@ import i18n from '@/i18n';
 export default function useViewReportTable() {
   const expiredMessage = ref('');
   const isExpired = ref(false);
+  const nonSortableColumns = ref([]);
   const pageToken = ref('');
+  const sortable = ref(false);
   const tableLoading = ref(false);
   const totalRows = ref(0);
 
@@ -43,10 +44,10 @@ export default function useViewReportTable() {
             rearrangedObj.userName = obj[heading];
             break;
           case ('timestamp'):
-            rearrangedObj[camelCase(heading)] = dayjs(obj[heading]).format('MM/D/YYYY h:mm A');
+            rearrangedObj[heading] = dayjs(obj[heading]).format('MM/D/YYYY h:mm A');
             break;
           default:
-            rearrangedObj[camelCase(heading)] = formatTableCellValueFromArray(obj[heading]);
+            rearrangedObj[heading] = formatTableCellValueFromArray(obj[heading]);
         }
       });
       return rearrangedObj;
@@ -77,10 +78,12 @@ export default function useViewReportTable() {
    * @param {String} pagedResultsOffset The results batch to fetch.
    * @returns {Array}
    */
-  const fetchViewReport = async (id, template, state, pageSize, pagedResultsOffset) => {
+  const fetchViewReport = async (id, template, state, pageSize, pagedResultsOffset, reqData) => {
     tableLoading.value = true;
     try {
-      const tableItems = await getReportResult(id, template, state, pageSize, pagedResultsOffset);
+      const tableItems = await getReportResult(id, template, state, pageSize, pagedResultsOffset, reqData);
+      nonSortableColumns.value = tableItems.nonSortableColumns;
+      sortable.value = tableItems.sortable;
       totalRows.value = tableItems.total;
       pageToken.value = tableItems.pageToken;
       return arrangeTable(tableItems);
@@ -97,7 +100,9 @@ export default function useViewReportTable() {
     fetchViewReport,
     expiredMessage,
     isExpired,
+    nonSortableColumns,
     pageToken,
+    sortable,
     tableLoading,
     totalRows,
   };
