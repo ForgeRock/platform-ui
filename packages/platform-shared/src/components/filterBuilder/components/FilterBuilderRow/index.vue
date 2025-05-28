@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :name="`selectPropOptions_${uniqueName}`"
                 :options="ruleProperty.options"
                 :placeholder="propertyPlaceholder"
-                validation="required"
+                :validation="validation"
                 @input="ruleProperty.value = $event; ruleChange({ field: $event })" />
               <FrField
                 v-else
@@ -220,6 +220,10 @@ export default {
     booleanValueType: {
       type: String,
       default: 'string',
+    },
+    validation: {
+      type: String,
+      default: '',
     },
   },
   inject: {

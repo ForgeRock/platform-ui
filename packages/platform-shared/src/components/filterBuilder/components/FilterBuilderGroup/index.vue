@@ -67,6 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
         :properties="properties"
         :property-select-label="propertySelectLabel"
         :boolean-value-type="booleanValueType"
+        :validation="rowValidation"
         @add-rule="addRule"
         @remove-rule="removeRule"
         @rule-change="ruleChange">
@@ -237,6 +238,10 @@ export default {
     booleanValueType: {
       default: 'string',
       type: String,
+    },
+    rowValidation: {
+      type: String,
+      default: '',
     },
   },
   methods: {
