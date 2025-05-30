@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -23,19 +23,19 @@ of the MIT license. See the LICENSE file for details. -->
         :id="internalId"
         :name="name"
         :readonly="readonly">
+      <BFormDatepicker
+        v-model="inputValue"
+        :dropleft="dropleft"
+        button-only
+        label-help=""
+        ref="datePicker"
+        :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control date-button position-absolute']"
+        :disabled="disabled"
+        :id="internalId"
+        :name="name"
+        :min="minDate"
+        :aria-label="labelTranslation" />
     </FrInputLayout>
-    <BFormDatepicker
-      v-model="inputValue"
-      :dropleft="dropleft"
-      button-only
-      label-help=""
-      ref="datePicker"
-      :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control date-button position-absolute']"
-      :disabled="disabled"
-      :id="internalId"
-      :name="name"
-      :min="minDate"
-      :aria-label="labelTranslation" />
   </div>
 </template>
 
@@ -165,6 +165,14 @@ export default {
       background-color: initial;
       color: $gray-500;
       padding: 0.85rem 0.5rem;
+    }
+  }
+  .form-label-group.fr-field-error {
+    .date-button {
+      :deep(button) {
+        border-width: 0 !important;
+        border-radius: 0.25rem !important;
+      }
     }
   }
 
