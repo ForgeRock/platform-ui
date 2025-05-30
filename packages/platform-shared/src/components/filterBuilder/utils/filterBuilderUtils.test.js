@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -211,6 +211,14 @@ describe('iga tests', () => {
           },
         },
         {
+          contains: {
+            in_string_array: 'user.stringArray',
+            search_string: {
+              literal: 'test',
+            },
+          },
+        },
+        {
           and: [
             {
               equals: {
@@ -243,6 +251,13 @@ describe('iga tests', () => {
           uniqueIndex: 2,
         },
         {
+          operator: 'contains',
+          field: 'user.stringArray',
+          value: 'test',
+          temporalValue: 'after',
+          uniqueIndex: 3,
+        },
+        {
           operator: 'and',
           subfilters: [
             {
@@ -250,10 +265,10 @@ describe('iga tests', () => {
               field: 'user.members',
               value: 'snValue',
               temporalValue: 'after',
-              uniqueIndex: 4,
+              uniqueIndex: 5,
             },
           ],
-          uniqueIndex: 3,
+          uniqueIndex: 4,
         },
       ],
       uniqueIndex: 0,
@@ -271,13 +286,18 @@ describe('iga tests', () => {
           type: 'array',
           path: 'user',
         },
+        {
+          value: 'user.stringArray',
+          type: 'array',
+          itemType: 'string',
+        },
       ];
       expect(convertToIGAFilter(componentFilterNoTemporal, resourceName, properties, true)).toStrictEqual(igaFilterNoTemporal);
     });
 
     it('ignores temporals when converting from iga filter', () => {
       const currentUniqueIndex = 0;
-      expect(convertFromIGAFilter(igaFilterNoTemporal, currentUniqueIndex, true)).toStrictEqual({ convertedFilter: componentFilterNoTemporal, uniqueIndex: 4 });
+      expect(convertFromIGAFilter(igaFilterNoTemporal, currentUniqueIndex, true)).toStrictEqual({ convertedFilter: componentFilterNoTemporal, uniqueIndex: 5 });
     });
   });
 

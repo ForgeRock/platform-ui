@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -65,7 +65,7 @@ of the MIT license. See the LICENSE file for details. -->
               :disabled="disabled"
               :name="uniqueName"
               :options="inputValue.options"
-              :type="inputValue.type"
+              :type="getInputType(inputValue.type, selectedProp)"
               @input="ruleChange({ value: $event })" />
           </template>
         </template>
@@ -210,6 +210,21 @@ provide('fieldWidth', props.rowPosition ? 4 : 12);
 function getUniqueIndex() {
   uniqueIndex += 1;
   return uniqueIndex;
+}
+
+/**
+ * Determines the appropriate input type for a given property based on its type and additional property metadata.
+ *
+ * @param {string} type - The data type of the property (e.g., 'string', 'array', 'boolean').
+ * @param {Object} prop - The propertyobject
+ * @returns {string} The input type to be used in the UI
+ */
+function getInputType(type, prop) {
+  // If the property is an array of strings, we want to use a regular string input
+  if ((type === 'array' && find(props.properties, ((x) => x.value === prop))?.itemType === 'string')) {
+    return 'string';
+  }
+  return type;
 }
 
 /**

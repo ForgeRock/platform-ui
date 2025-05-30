@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -94,7 +94,7 @@ export function convertToIGAFilter(filter, resourceName = 'user', properties, ig
           subfilter[operator][filterValueMap[operator]] = { literal: filterRule.value === 'True' };
         }
 
-        if (selectedProperty?.type === 'array' && selectedProperty.path) {
+        if (selectedProperty?.type === 'array' && (selectedProperty?.path || selectedProperty?.itemType === 'string')) {
           // We need to set arrays of relationships back to in_string_array instead of in_string
           subfilter[operator].in_string_array = ignoreTemporals
             ? filterRule.field

@@ -398,5 +398,56 @@ describe('GovernanceFilterBuilder', () => {
         uniqueIndex: 0,
       });
     });
+
+    it('generate a correct filter for a string array property', async () => {
+      const wrapper = mountComponent({
+        resourceName: 'user',
+        properties: [
+          {
+            label: 'String Array Property',
+            value: 'user.stringArray',
+            type: 'array',
+            itemType: 'string',
+          },
+        ],
+      });
+      await flushPromises();
+
+      const selectField = wrapper.find('#ruleProperty_selectPropOptions_user_1');
+      await selectField.find('.multiselect__content .multiselect__option').trigger('click');
+
+      expect(wrapper.vm.queryFilter).toEqual({
+        operator: 'or',
+        subfilters: [
+          {
+            operator: 'contains',
+            uniqueIndex: 1,
+            field: 'user.stringArray',
+            value: '',
+            temporalValue: 'after',
+          },
+        ],
+        uniqueIndex: 0,
+      });
+    });
+
+    it('shows a text input for a string array component', async () => {
+      const wrapper = mountComponent({
+        resourceName: 'user',
+        properties: [
+          {
+            label: 'String Array Property',
+            value: 'user.stringArray',
+            type: 'array',
+            itemType: 'string',
+          },
+        ],
+      });
+      await flushPromises();
+
+      const valueInput = wrapper.find('#inputValue_user_1');
+      expect(valueInput.exists()).toBe(true);
+      expect(valueInput.find('input[type="text"]').exists()).toBe(true);
+    });
   });
 });
