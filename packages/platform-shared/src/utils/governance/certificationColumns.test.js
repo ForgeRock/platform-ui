@@ -10,7 +10,7 @@ import {
   formatColumns,
   getCellData,
   getInitialColumns,
-  getFieldCategories,
+  getAllColumnCategories,
 } from './certificationColumns';
 
 describe('getCellData', () => {
@@ -203,9 +203,9 @@ describe('getInitialColumns', () => {
   });
 });
 
-describe('getFieldCategories', () => {
+describe('getAllColumnCategories', () => {
   it('returns only categories relevant to the grantType', () => {
-    const categories = getFieldCategories('accounts', {});
+    const categories = getAllColumnCategories('accounts', {});
     const categoryNames = categories.map((cat) => cat.name);
     expect(categoryNames).toEqual(expect.arrayContaining(['review', 'user', 'application', 'account']));
     expect(categoryNames).not.toContain('role');
@@ -213,7 +213,7 @@ describe('getFieldCategories', () => {
   });
 
   it('removes showFor property from returned categories', () => {
-    const categories = getFieldCategories('accounts', {});
+    const categories = getAllColumnCategories('accounts', {});
     categories.forEach((cat) => {
       expect(cat.showFor).toBeUndefined();
     });
@@ -224,7 +224,7 @@ describe('getFieldCategories', () => {
       user: [{ key: 'customUser', displayName: 'Custom User' }],
       account: [{ key: 'customAccount', displayName: 'Custom Account' }],
     };
-    const categories = getFieldCategories('accounts', filterProperties);
+    const categories = getAllColumnCategories('accounts', filterProperties);
     const userCategory = categories.find((cat) => cat.name === 'user');
     const accountCategory = categories.find((cat) => cat.name === 'account');
     expect(userCategory.items.some((item) => item.key === 'customUser')).toBe(true);
@@ -233,18 +233,18 @@ describe('getFieldCategories', () => {
 
   it('returns empty array if no categories match the grantType', () => {
     // Use a grantType that is not in any showFor
-    const categories = getFieldCategories('nonexistentType', {});
+    const categories = getAllColumnCategories('nonexistentType', {});
     expect(categories).toEqual([]);
   });
 
   it('defaults grantType to "accounts" if not provided', () => {
-    const categories = getFieldCategories(undefined, {});
+    const categories = getAllColumnCategories(undefined, {});
     const categoryNames = categories.map((cat) => cat.name);
     expect(categoryNames).toEqual(expect.arrayContaining(['review', 'user', 'application', 'account']));
   });
 
   it('handles empty filterProperties gracefully', () => {
-    const categories = getFieldCategories('accounts', undefined);
+    const categories = getAllColumnCategories('accounts', undefined);
     expect(Array.isArray(categories)).toBe(true);
     expect(categories.length).toBeGreaterThan(0);
   });
