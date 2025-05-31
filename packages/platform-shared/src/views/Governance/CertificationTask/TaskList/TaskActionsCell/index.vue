@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -38,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="$emit('action', 'revoke', item)"
         class="mr-1 p-0"
         style="height: 30px; width: 35px;"
-        variant="outline-danger">
+        :variant="pressedButton(item, 'revoke') ? 'danger' : 'outline-danger'">
         <FrIcon name="block" />
       </BButton>
       <BTooltip

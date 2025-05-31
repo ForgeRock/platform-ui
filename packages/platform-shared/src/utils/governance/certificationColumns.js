@@ -189,10 +189,11 @@ function getOOTBColumn(category, key) {
  * @param {string} key - The key of the column to find within the specified category.
  * @returns {Object|null} A shallow copy of the found column object, or null if not found.
  */
-function getFilterPropertyColumn(columnCategories, category, key) {
+function getFilterPropertyColumn(columnCategories, category, key, glossaryAttribute) {
+  const name = glossaryAttribute ? `glossary.${glossaryAttribute}` : key;
   const columnData = columnCategories
     ?.find((group) => (group.name === category))?.items
-    ?.find((col) => (col.key === key));
+    ?.find((col) => (col.key === name));
   return columnData ? { ...columnData } : null;
 }
 
@@ -209,10 +210,10 @@ function getFilterPropertyColumn(columnCategories, category, key) {
  */
 function getCustomColumns(columns, columnCategories) {
   const customColumns = columns.map((column) => {
-    const [category, key] = column.split('.');
+    const [category, key, glossaryAttribute] = column.split('.');
 
     // Get column if it is an OOTB column or Filter Property column
-    const colData = getOOTBColumn(category, key) || getFilterPropertyColumn(columnCategories, category, key);
+    const colData = getOOTBColumn(category, key) || getFilterPropertyColumn(columnCategories, category, key, glossaryAttribute);
 
     // If the column is not found in OOTB or custom columns, return a default column
     return colData || {
@@ -342,7 +343,7 @@ const categories = [
  * @param {Object} filterProperties - An object containing properties to format into additional columns.
  * @returns {Array<Object>} - An array of category objects customized for the specified grant type.
  */
-export function getFieldCategories(grantType = 'accounts', filterProperties) {
+export function getAllColumnCategories(grantType = 'accounts', filterProperties) {
   const filterPropertyColumns = formatColumns(filterProperties);
   const clonedCategories = cloneDeep(categories);
 
@@ -361,4 +362,21 @@ export function getFieldCategories(grantType = 'accounts', filterProperties) {
   });
 
   return categoriesForGrantType;
+}
+
+/**
+ * Updates the `show` property of items in each category based on selected columns.
+ *
+ * @param {Array<Object>} columnCategories - The array of category objects, each containing an `items` array.
+ * @param {Array<Object>} selectedColumns - The array of selected column objects, each with a `key` property.
+ * @returns {Array<Object>} A deep-cloned array of categories with updated `show` properties for each item.
+ */
+export function setSelectedCategories(columnCategories, selectedColumns) {
+  const clonedCategories = cloneDeep(columnCategories);
+  clonedCategories.forEach((category) => {
+    category.items.forEach((item) => {
+      item.show = selectedColumns.findIndex((col) => col.key === item.key) !== -1;
+    });
+  });
+  return clonedCategories;
 }

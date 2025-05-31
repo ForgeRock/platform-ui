@@ -395,7 +395,12 @@ import {
 import { getGlossarySchema, getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { getCellData, getFieldCategories, getInitialColumns } from '@forgerock/platform-shared/src/utils/governance/certificationColumns';
+import {
+  getCellData,
+  getAllColumnCategories,
+  getInitialColumns,
+  setSelectedCategories,
+} from '@forgerock/platform-shared/src/utils/governance/certificationColumns';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
@@ -601,6 +606,7 @@ export default {
       bulkRevokeModalProps,
       certificationListColumns: [],
       columnCategories: [],
+      tasksFields: [],
       confirmActionModalProps: {},
       contentAccountSelectedModal: {},
       currentAccountSelectedModal: null,
@@ -663,9 +669,6 @@ export default {
     isGroupByAccounts() {
       return this.showGroupBy && this.certificationGrantType === 'accounts';
     },
-    tasksFields() {
-      return getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, this.columnCategories);
-    },
     isSelectable() {
       return this.showGroupBy && this.certificationGrantType === 'accounts';
     },
@@ -710,7 +713,9 @@ export default {
     } catch {
       filterProperties = {};
     } finally {
-      this.columnCategories = getFieldCategories(this.certificationGrantType, filterProperties);
+      const allColumnCategories = getAllColumnCategories(this.certificationGrantType, filterProperties);
+      this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories);
+      this.columnCategories = setSelectedCategories(allColumnCategories, this.tasksFields);
       this.updateColumns({});
     }
 
@@ -725,8 +730,9 @@ export default {
   },
   methods: {
     getCellData,
-    getFieldCategories,
+    getAllColumnCategories,
     getInitialColumns,
+    setSelectedCategories,
     startCase,
     toggleSaving() {
       this.$emit('change-saving');
