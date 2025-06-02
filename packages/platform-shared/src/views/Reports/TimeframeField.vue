@@ -54,7 +54,7 @@ import dayjs from 'dayjs';
 import i18n from '@/i18n';
 
 const emit = defineEmits(['start-date-update', 'end-date-update']);
-const props = defineProps({
+defineProps({
   label: {
     type: String,
     default: '',
@@ -103,14 +103,13 @@ const timeframeComputedValue = computed(() => {
   const validDateMap = dateMap[timeframeSelection.value];
   const customStartValue = startDateCustomValue.value;
   const customEndValue = endDateCustomValue.value;
-  const validEndDate = props.validationRef.getMeta;
 
   if (validDateMap && !showCustomTimeframe.value) {
-    return dateRanges()[validDateMap];
+    return dateRanges()[validDateMap].map((date) => dayjs(date).toISOString());
   }
 
-  if (customStartValue && customEndValue && validEndDate().valid) {
-    return [dayjs(customStartValue).toISOString(), dayjs(customEndValue).toISOString()];
+  if (customStartValue && customEndValue) {
+    return [dayjs(customStartValue).toISOString(), dayjs(customEndValue).endOf('day').toDate().toISOString()];
   }
 
   return [false, false];

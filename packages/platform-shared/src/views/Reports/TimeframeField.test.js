@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import { findByTestId, findByRole, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
+import dayjs from 'dayjs';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import TimeframeField from './TimeframeField';
 import i18n from '@/i18n';
@@ -72,7 +73,7 @@ describe('Timeframe field for running reports', () => {
       const startDateCustomValue = '05/25/1984';
       const endDateCustomValue = '05/23/1984';
       const startDateISO = new Date(startDateCustomValue).toISOString();
-      const endDateISO = new Date(endDateCustomValue).toISOString();
+      const endDateISO = dayjs(endDateCustomValue).endOf('day').toISOString();
 
       async function setCustomTimeframeVariables() {
         wrapper = setup();
@@ -101,6 +102,27 @@ describe('Timeframe field for running reports', () => {
         // we only want to check for the last emitted values in the event loop
         expect(startDateUpdateEmit[emittedStartLastIndex]).toEqual([startDateISO]);
         expect(endDateUpdateEmit[emittedEndLastIndex]).toEqual([endDateISO]);
+      });
+
+      it('ensures that the endDate value outputs the "end of the day" zulu time for the given date', async () => {
+        // sets validation rule to true
+        ValidationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(true) });
+
+        wrapper = setup();
+
+        const endOfDayZulu = dayjs().add(1, 'day').endOf('day').toISOString();
+        const timeframeSelect = findByRole(wrapper, 'listbox');
+        const customFieldOption = findByText(timeframeSelect, 'li', 'Last 7 days');
+
+        await timeframeSelect.trigger('click');
+        await customFieldOption.find('span').trigger('click');
+
+        await flushPromises();
+
+        const endDateUpdateEmit = wrapper.emitted('end-date-update');
+        const emittedEndLastIndex = endDateUpdateEmit.length - 1;
+
+        expect(endDateUpdateEmit[emittedEndLastIndex]).toEqual([endOfDayZulu]);
       });
 
       it('emits "false" values if the end-date datepicker is invalid', async () => {
