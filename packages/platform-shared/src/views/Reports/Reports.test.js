@@ -10,6 +10,7 @@ import { findByText, findByTestId } from '@forgerock/platform-shared/src/utils/t
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import { mount, flushPromises } from '@vue/test-utils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { cloneDeep } from 'lodash';
 import i18n from '@/i18n';
 import Reports from './Reports';
 import store from '../../store';
@@ -64,6 +65,7 @@ describe('Reports', () => {
         ootb: true,
         duplicatable: false,
         editable: false,
+        visible: true,
       },
       {
         name: 'DRAFT-TEMPLATE',
@@ -86,6 +88,7 @@ describe('Reports', () => {
         ootb: false,
         duplicatable: true,
         editable: true,
+        visible: true,
       },
       {
         name: 'PUBLISHED-TEMPLATE',
@@ -108,6 +111,7 @@ describe('Reports', () => {
         ootb: false,
         duplicatable: true,
         editable: true,
+        visible: true,
       },
       {
         name: 'OOTB-TEMPLATE-DUPLICATABLE',
@@ -126,6 +130,26 @@ describe('Reports', () => {
         ootb: true,
         duplicatable: true,
         editable: false,
+        visible: true,
+      },
+      {
+        name: 'TEMPLATE-VISIBLE-NOT-VISIBLE',
+        description: 'Not visible template that should not be shown in the Report table',
+        version: 0,
+        reportConfig: '{"version":"v2"}',
+        viewers: [],
+        owner: '',
+        type: 'published',
+        parentName: '',
+        parentVersion: -1,
+        failureReason: '',
+        parameters: '',
+        createDate: '2025-02-10T10:30:50.049221962Z',
+        updateDate: '2025-02-10T10:30:50.049239299Z',
+        ootb: true,
+        duplicatable: true,
+        editable: false,
+        visible: true,
       },
     ],
   };
@@ -142,7 +166,7 @@ describe('Reports', () => {
     expect(table.exists()).toBe(true);
 
     const rows = table.findAll('tbody tr');
-    expect(rows.length).toBe(4);
+    expect(rows.length).toBe(5);
     expect(rows[0].text()).toContain('Draft Template');
     expect(rows[0].text()).toContain('Draft Report');
     expect(rows[0].find('.badge').text()).toBe('Draft');
@@ -155,9 +179,27 @@ describe('Reports', () => {
     expect(rows[3].text()).toContain('Published Template');
     expect(rows[3].text()).toContain('Published Report');
     expect(rows[3].find('.badge').text()).toBe('Published');
+    expect(rows[4].text()).toContain('Template Visible Not Visible');
+    expect(rows[4].text()).toContain('Not visible template that should not be shown in the Report table');
 
     const noData = findByTestId(wrapper, 'no-data');
     expect(noData.exists()).toBe(false);
+  });
+
+  it('should not show the report template that is set to visible = false', async () => {
+    // Set template to not visible
+    const clonedTemplates = cloneDeep(templates);
+    clonedTemplates.result[4].visible = false;
+    AutoApi.getReportTemplates = jest.fn().mockResolvedValue(clonedTemplates);
+
+    const wrapper = setup();
+    await flushPromises();
+
+    const table = wrapper.find('table');
+    const rows = table.findAll('tbody tr');
+
+    // One fewer row
+    expect(rows.length).toBe(4);
   });
 
   it('should show correct actions for out of the box templates', async () => {
