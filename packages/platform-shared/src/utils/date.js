@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,38 +7,33 @@
 
 import dayjs from 'dayjs';
 
-const utc = require('dayjs/plugin/utc');
-
-dayjs.extend(utc);
-
 /**
   * Sets array used by vue2-date-range-picker for hard-coded intervals
   *
   * @returns {DateRange[]} array of DateRange objects
   */
-export default function dateRanges(dateFormat) {
-  const formatDate = (dayjsDate) => (dateFormat
-    ? dayjsDate.format(dateFormat)
-    : dayjsDate.toISOString());
+export default function dateRanges() {
+  const formatStart = (dayjsDate) => dayjsDate.startOf('day').toDate();
+  const formatEnd = (dayjsDate) => dayjsDate.endOf('day').toDate();
 
   // Today
-  const startOfDay = dayjs().startOf('day');
-  const startOfDayFormat = formatDate(startOfDay);
-  const endOfDay = formatDate(dayjs().endOf('day'));
+  const startOfDay = formatStart(dayjs());
+  const now = formatEnd(dayjs().add(1, 'day'));
 
   // Yesterday
-  const yesterdayStart = formatDate(startOfDay.subtract(1, 'day'));
+  const yesterdayStart = formatStart(dayjs().subtract(1, 'day'));
+  const yesterdayEnd = formatEnd(dayjs().subtract(1, 'day'));
 
   // Last 7 days
-  const last7DaysStart = formatDate(dayjs().endOf('day').subtract(7, 'day'));
+  const last7DaysStart = formatStart(dayjs().subtract(7, 'day'));
 
   // Last 30 days
-  const last30DaysStart = formatDate(dayjs().endOf('day').subtract(30, 'day'));
+  const last30DaysStart = formatStart(dayjs().subtract(30, 'day'));
 
   return {
-    Today: [startOfDayFormat, endOfDay],
-    Yesterday: [yesterdayStart, startOfDayFormat],
-    'Last 7 Days': [last7DaysStart, endOfDay],
-    'Last 30 Days': [last30DaysStart, endOfDay],
+    Today: [startOfDay, now],
+    Yesterday: [yesterdayStart, yesterdayEnd],
+    'Last 7 Days': [last7DaysStart, now],
+    'Last 30 Days': [last30DaysStart, now],
   };
 }
