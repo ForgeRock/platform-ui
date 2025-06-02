@@ -1683,6 +1683,17 @@
         "quickStart": "Quick Start",
         "saveSuccess": "SSO updated successfully",
         "signingCertificate": {
+          "createModal": {
+            "ms365Applications": "Microsoft 365 Applications",
+            "nextSteps": "Next steps",
+            "powershellCmdlets": "PowerShell Cmdlets",
+            "powershellCmdletsDescription": "Use PowerShell Cmdlets to update Microsoft 365 apps to trust this certificate.",
+            "powershellCmdletsScriptTitle": "Update SSO Settings PowerShell Cmdlet",
+            "signingCertCreated": "Certificate created!",
+            "stepOneDescription": "Run PowerShell Cmdlets for all configured Microsoft 365 apps before activating this certificate.",
+            "stepTwoDescription": "Once all Microsoft 365 apps have been updated to trust this certificate activate this certificate.",
+            "viewPowershellCmdlets": "View PowerShell Cmdlets"
+          },
           "downloadCertificate": "Download Certificate",
           "errorGettingSigningCert": "There was an error getting signing certificates.",
           "newCertificate": "Generate New Certificate",
@@ -1700,8 +1711,7 @@
             "inactive": "Inactive",
             "expired": "Expired",
             "expiring": "Expiring"
-          },
-          "viewPowershellCmdlets": "View PowerShell Cmdlets"
+          }
         },
         "validationErrors": "Validation error(s) occurred, please try again.",
         "viewApplication": "View Application"
