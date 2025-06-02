@@ -290,7 +290,7 @@ async function retrieveReportTemplates(params = null) {
   loading.value = true;
   try {
     const { result } = await getReportTemplates(params);
-    reports.value = result;
+    reports.value = result.filter((item) => item.visible); // Only show items that have visible = true
     totalRows.value = result.length;
   } catch (error) {
     showErrorMessage(error, i18n.global.t('reports.noData'));
