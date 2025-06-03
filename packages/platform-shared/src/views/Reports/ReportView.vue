@@ -256,7 +256,7 @@ async function setConfigInfo(report) {
     const label = reportConfigParamLabel || reportControllerLabel || paramKey;
     const paramValue = reportParameters[paramKey];
     const value = Array.isArray(paramValue) ? paramValue.join(', ') : paramValue;
-    const parameterIsDate = !!Date.parse(value);
+    const parameterIsDate = !!Date.parse(value) && Parameters[paramKey].type !== 'number';
     return { label, value: parameterIsDate ? dayjs(value).format('MM/DD/YYYY') : value };
   });
 
