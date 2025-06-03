@@ -1684,6 +1684,8 @@
         "saveSuccess": "SSO updated successfully",
         "signingCertificate": {
           "createModal": {
+            "creatingSigningCert": "Generating certificate...",
+            "errorCreatingSigningCert": "There was an error generating the signing certificate.",
             "ms365Applications": "Microsoft 365 Applications",
             "nextSteps": "Next steps",
             "powershellCmdlets": "PowerShell Cmdlets",
