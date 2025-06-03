@@ -68,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
           <slot name="center-content" />
         </li>
         <li
-          :aria-hidden="!hasSlot('right-content')"
+          :aria-hidden="!hasRightContent"
           class="flex-row d-flex">
           <slot name="right-content">
             <FrNotification v-if="showNotifications" />
@@ -324,6 +324,9 @@ export default {
       hasTenantInfo: 'hasTenantInfo',
       tenantRegionInfo: 'tenantRegionInfo',
     }),
+    hasRightContent() {
+      return this.hasSlot('right-content') || this.showNotifications || this.showHelpLink || this.showDocsLink || this.showDropdown;
+    },
   },
   methods: {
     /**
