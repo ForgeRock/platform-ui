@@ -56,8 +56,30 @@ describe('Report View component', () => {
         exportCsvStatus: 'EXPORT_SUCCESS',
         createDate: '2024-01-12T19:40:36.490Z',
         name: 'my-report',
-        parameters: '{"user_names":"reportadmin","roleStatus":["active"],"customParam":"customValue"}',
-        reportConfig: '{"parameters":{"user_names":{"type":"string","label":"Users"},"roleStatus":{"type":"array","items":{"type":"string"}},"customParam":{"type":"string","label":"Custom Parameter"}}}',
+        parameters: '{"user_names":"reportadmin","roleStatus":["active"],"customParam":"customValue","integerParam":42}',
+        reportConfig: `{
+          "parameters":{
+            "user_names":{
+              "type":"string",
+              "label":"Users"
+            },
+            "roleStatus":{
+              "type":"array",
+              "items":{
+                "type":"string"
+              }
+            },
+            "integerParam":{
+              "type":"integer",
+              "label":"Integer Parameter"
+            },
+            "customParam":{
+              "type":"string",
+              "label":
+              "Custom Parameter"
+            }
+          }
+        }`,
       }],
     }));
   });
@@ -114,5 +136,16 @@ describe('Report View component', () => {
     // The reason why this outputs 'Custom Parameter' is because there is a label
     // property in the reportConfig parameter.
     expect(customParam.text()).toBe('Custom Parameter');
+  });
+
+  it('Ensures that a date is not shown when the parameter is an integer', async () => {
+    wrapper = setup();
+    await flushPromises();
+
+    const [, reportParameters] = wrapper.findAll('.row');
+    const reportParametersContainer = reportParameters.find('.flex-row');
+    const [,,, numberParam] = reportParametersContainer.findAll('div > small + div');
+    // The number parameter should be displayed as is
+    expect(numberParam.text()).toBe('42');
   });
 });
