@@ -82,9 +82,7 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
             </div>
             <div v-if="multiValued || noListValuesOnMount">
-              <div
-                class="position-relative d-inline-flex justify-content-end"
-                style="width: 128px;">
+              <div class="position-relative d-inline-flex justify-content-end">
                 <button
                   v-if="listValues.length > 0"
                   :data-testid="`list-objects-remove-${index}`"
@@ -198,6 +196,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    showEmptyList: {
+      type: Boolean,
+      default: false,
+    },
     showLastBorder: {
       type: Boolean,
       default: true,
@@ -269,9 +271,12 @@ export default {
     },
   },
   mounted() {
+    let listValues = cloneDeep(this.value);
+    const hasValue = this.value?.length || (this.value && Object.keys(this.value).length);
     this.objectProperties = cloneDeep(this.properties);
-    if (this.value) {
-      let listValues = cloneDeep(this.value);
+    this.noListValuesOnMount = !listValues?.length;
+
+    if (hasValue) {
       if (!this.multiValued || !Array.isArray(listValues)) {
         listValues = [listValues];
       }
@@ -280,8 +285,9 @@ export default {
       });
       this.listValues = listValues;
       this.showEditor = !!listValues.length;
-      this.noListValuesOnMount = !listValues.length;
       this.validateField();
+    } else if (this.showEmptyList) {
+      this.addObjectToList(-1);
     }
   },
   methods: {

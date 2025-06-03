@@ -82,6 +82,7 @@ import FrRadioDisplay from './renderers/RadioDisplay';
 import FrStringDisplay from './renderers/StringDisplay';
 import FrTextAreaDisplay from './renderers/TextAreaDisplay';
 import FrDateDisplay from './renderers/DateDisplay';
+import FrScriptDisplay from './renderers/ScriptDisplay';
 
 /**
  * @description FormGenerator component is a dynamic form generator that takes a schema and model object and
@@ -104,6 +105,7 @@ export default {
     FrStringDisplay,
     FrTextAreaDisplay,
     FrDateDisplay,
+    FrScriptDisplay,
   },
   props: {
     /**
@@ -248,6 +250,8 @@ export default {
           return true;
         case 'date':
           return true;
+        case 'json':
+          return true;
         default:
           return false;
       }
@@ -301,6 +305,7 @@ export default {
           radio: 'FrRadioDisplay',
           password: 'FrPasswordDisplay',
           date: 'FrDateDisplay',
+          json: 'FrScriptDisplay',
         };
 
         return componentNames[property.type] ? componentNames[property.type] : null;
