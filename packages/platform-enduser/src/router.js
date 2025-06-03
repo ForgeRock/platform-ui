@@ -34,21 +34,25 @@ const router = createRouter({
     {
       path: '/risk-dashboard',
       name: 'RiskDashboard',
+      meta: { authenticate: true },
       component: () => import('@forgerock/platform-shared/src/views/AutoAccess/Activity'),
     },
     {
       path: '/autoaccess/data-sources',
       name: 'AutoAccessDataSources',
+      meta: { authenticate: true },
       component: () => import('@forgerock/platform-shared/src/views/AutoAccess/DataSources'),
     },
     {
       path: '/autoaccess/pipelines',
       name: 'AutoAccessPipelines',
+      meta: { authenticate: true },
       component: () => import('@forgerock/platform-shared/src/views/AutoAccess/Pipelines'),
     },
     {
       path: '/autoaccess/risk-config',
       name: 'AutoAccessRiskConfig',
+      meta: { authenticate: true },
       component: () => import('@forgerock/platform-shared/src/views/AutoAccess/RiskConfig'),
     },
     {
@@ -232,6 +236,7 @@ const router = createRouter({
     {
       path: '/reports',
       beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
+      meta: { authenticate: true },
       children: [
         {
           path: '',
@@ -332,17 +337,12 @@ const router = createRouter({
       path: '/sharing',
       name: 'Sharing',
       component: () => import('@/components/uma'),
-      meta: {
-        authenticate: true,
-      },
+      meta: { authenticate: true },
     },
     {
       path: '/auth-devices',
       component: () => import('@forgerock/platform-shared/src/components/profile/AuthenticationDevices'),
-      meta: {
-        authenticate: true,
-        hideSideMenu: true,
-      },
+      meta: { authenticate: true, hideSideMenu: true },
     },
     {
       path: '/forbidden',
