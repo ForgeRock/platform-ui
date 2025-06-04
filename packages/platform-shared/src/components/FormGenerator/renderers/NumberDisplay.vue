@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     :disabled="uiSchema.disabled"
     :description="uiSchema.description"
     :label="uiSchema.label"
-    :name="uiSchema.label || uiSchema.id"
+    :name="nameProp ? uiSchema[nameProp] : uiSchema.label || uiSchema.id"
     :validation="uiSchema.validation"
     :value="uiSchema.value"
     @input="updateValue" />
@@ -34,6 +34,14 @@ export default {
      * Path to property in model
      */
     path: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Name property to use for the field
+     * If not provided, it will default to uiSchema.label or uiSchema.id
+     */
+    nameProp: {
       type: String,
       default: '',
     },

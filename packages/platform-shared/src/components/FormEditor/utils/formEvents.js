@@ -15,11 +15,12 @@ import { cloneDeep } from 'lodash';
  * @param {string} script - The JavaScript code to execute inside the Web Worker.
  * @param {Object} formValues - The current form values to be passed to the worker.
  * @param {Object} formSchema - The form schema to be passed to the worker.
+ * @param {Object} [options] - Additional options to pass to the worker.
  * @returns {Promise<{formValues: Object, formSchema: Object}>} Resolves with the potentially updated form values and schema.
  * @throws {Error} If the worker encounters an error during script execution.
  */
 // eslint-disable-next-line import/prefer-default-export
-export async function useWebWorker(script, formValues, formSchema) {
+export async function useWebWorker(script, formValues, formSchema, options = {}) {
   return new Promise((resolve, reject) => {
     const worker = new Worker(new URL('./formEventsWorker.js', import.meta.url));
 
@@ -43,6 +44,11 @@ export async function useWebWorker(script, formValues, formSchema) {
       formSchema: cloneDeep(formSchema),
       windowSearch: window.location.search,
     };
+
+    // use this for onChange events to pass the new field value
+    if (options.newFieldValue) {
+      scriptVariables.newFieldValue = options.newFieldValue;
+    }
 
     worker.postMessage({
       script, scriptVariables,
