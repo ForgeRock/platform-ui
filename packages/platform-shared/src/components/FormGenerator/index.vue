@@ -41,6 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :type="property.type"
                 :ui-schema="property"
                 :path="property.model"
+                :name-prop="fieldNameProp"
               />
             </template>
             <slot
@@ -125,6 +126,10 @@ export default {
     schema: {
       type: Array,
       default: () => [],
+    },
+    fieldNameProp: {
+      type: String,
+      default: undefined,
     },
   },
   data() {

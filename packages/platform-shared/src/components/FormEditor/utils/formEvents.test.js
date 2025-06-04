@@ -84,5 +84,22 @@ describe('useWebWorker', () => {
     await useWebWorker(script, formValues, formSchema);
     const { scriptVariables } = MockWorker.instance._lastMsg;
     expect(scriptVariables.windowSearch).toBe('?test=123');
+
+    Object.defineProperty(window, 'location', {
+      value: { search: '' },
+      writable: true,
+    });
+  });
+
+  it('should include newFieldValue', async () => {
+    await useWebWorker(script, formValues, formSchema, { newFieldValue: 'newValue' });
+    const { script: postedScript, scriptVariables } = MockWorker.instance._lastMsg;
+    expect(postedScript).toBe(script);
+    expect(scriptVariables).toEqual({
+      formValues: { a: 1 },
+      formSchema: { type: 'object' },
+      newFieldValue: 'newValue',
+      windowSearch: '',
+    });
   });
 });

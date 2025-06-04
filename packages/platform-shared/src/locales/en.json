@@ -1532,6 +1532,10 @@
             "label": "Offset",
             "description": "Columns this field should be offset from the previous column on a 12 column grid."
           },
+          "onChangeEvent": {
+            "description": "Add a script to be executed when the input value changes.",
+            "label": "On Change Event"
+          },
           "required": {
             "label": "Required"
           },

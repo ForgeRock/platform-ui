@@ -1242,4 +1242,54 @@ describe('FormBuilder', () => {
       }]],
     );
   });
+
+  it('should execute on change event when the form is updated', async () => {
+    const webWorkerSpy = jest.spyOn(formEvents, 'useWebWorker');
+
+    const wrapper = setup({}, [], {
+      'model-value': { field1: 'value1' },
+      form: {
+        fields: [
+          {
+            id: 'row1',
+            fields: [
+              {
+                type: 'string',
+                model: 'field1',
+                label: 'Text 1',
+                description: 'This is a text field',
+                layout: { columns: 12, offset: 0 },
+                onChangeEvent: {
+                  type: 'script',
+                  script: 'console.log("onChange")',
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    await wrapper.vm.$nextTick();
+
+    await wrapper.findComponent({ name: 'FormGenerator' }).vm.$emit('update:model', { path: 'field1', value: 'newValue' });
+    wrapper.vm.debounceHandleOnChangeEvent.flush();
+    await flushPromises();
+    expect(webWorkerSpy).toHaveBeenCalledWith(
+      'console.log("onChange")',
+      { field1: 'value1' },
+      [[{
+        columnClass: 'col-md-12 offset-md-0',
+        customSlot: undefined,
+        description: 'This is a text field',
+        disabled: false,
+        label: 'Text 1 (optional)',
+        layout: { columns: 12, offset: 0 },
+        model: 'field1',
+        onChangeEvent: { script: 'console.log("onChange")', type: 'script' },
+        type: 'string',
+      }]],
+      { newFieldValue: 'newValue' },
+    );
+  });
 });
