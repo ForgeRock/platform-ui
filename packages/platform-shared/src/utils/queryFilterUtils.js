@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
+/**
  * Builds API URL using a search value
  *
  * @param {string} filterString - Required current search value
@@ -48,4 +55,15 @@ export function generateSearchQuery(filterString, displayFields, schemaProps) {
   }
 
   return filterUrl;
+}
+
+/**
+ * Filters out fields that are causing API failures when used in search queries.
+ * Removes fields related to password management, date, and integer fields
+ * @param {Array} displayFields - Array containing available display fields for the resource.
+ * @returns {Array} The Filtered display fields array.
+ */
+export function filterFieldsForSearchQuery(displayFields) {
+  const passwordFields = ['passwordLastChangedTime', 'passwordExpirationTime'];
+  return displayFields.filter((field) => !passwordFields.includes(field) && !field.startsWith('frIndexedDate') && !field.startsWith('frUnindexedDate') && !field.startsWith('frIndexedInteger') && !field.startsWith('frUnindexedInteger'));
 }

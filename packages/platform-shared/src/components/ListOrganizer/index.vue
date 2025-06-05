@@ -8,7 +8,8 @@ of the MIT license. See the LICENSE file for details. -->
       name="button"
       :show-modal="showModal">
       <BButton
-        variant="outline-secondary"
+        :variant="columnOrganizerKey ? 'link' : 'outline-secondary'"
+        :class="columnOrganizerKey ? 'text-dark' : ''"
         @click="showModal.value = true">
         <FrIcon
           icon-class="md-24"
@@ -24,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
         :title="modalTitle || $t('common.customizeObject', { object: $t('common.columns') })"
         :static="isTesting"
         :ok-title="$t('common.apply')"
+        :ok-disabled="allColumnsDisabled"
         @hidden="resetList"
         @ok="applyChanges">
         <BListGroup flush>
@@ -58,6 +60,17 @@ of the MIT license. See the LICENSE file for details. -->
             </template>
           </Draggable>
         </BListGroup>
+        <slot
+          name="error-message"
+          v-if="allColumnsDisabled">
+          <p class="text-danger text-center my-3 error-message">
+            <FrIcon
+              icon-class="text-danger mr-2"
+              name="error_outline">
+              {{ $t('common.SelectColumnErrorMessage') }}
+            </FrIcon>
+          </p>
+        </slot>
       </BModal>
     </slot>
   </div>
@@ -126,6 +139,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    columnOrganizerKey: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -136,6 +153,20 @@ export default {
       searching: false,
       searchList: null,
     };
+  },
+  computed: {
+    /**
+     * Returns true if columnOrganizerKey prop has a truthy value and all columns are unchecked, which disables the apply button and shows an error message
+     */
+    allColumnsDisabled() {
+      if (this.columnOrganizerKey) {
+        const enabledItems = this.list.filter((column) => column.enabled);
+        if (!enabledItems || enabledItems.length === 0) {
+          return true;
+        }
+      }
+      return false;
+    },
   },
   methods: {
     applyChanges() {

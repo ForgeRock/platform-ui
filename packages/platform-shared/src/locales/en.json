@@ -83,6 +83,7 @@
     "custom": "Custom",
     "customizeColumns": "Customize Columns",
     "customizeObject": "Customize {object}",
+    "SelectColumnErrorMessage": "Select at least one column to continue",
     "data": "Data",
     "date": "Date",
     "deactivate": "Deactivate",
