@@ -6,7 +6,7 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-import { generateSearchQuery } from './queryFilterUtils';
+import { generateSearchQuery, filterFieldsForSearchQuery } from './queryFilterUtils';
 
 describe('Generating Search URLs', () => {
   const schemaProps = {
@@ -29,5 +29,22 @@ describe('Generating Search URLs', () => {
   it('Generates a filter url for a boolean', () => {
     const filterUrl = generateSearchQuery('true', ['isAdmin'], schemaProps);
     expect(filterUrl).toStrictEqual('isAdmin eq true');
+  });
+});
+
+describe('Filtering Fields for Search Queries', () => {
+  it('Filters out password fields', () => {
+    const filteredFields = filterFieldsForSearchQuery(['userName', 'sn', 'passwordLastChangedTime']);
+    expect(filteredFields).toStrictEqual(['userName', 'sn']);
+  });
+
+  it('Filters out date fields', () => {
+    const filteredFields = filterFieldsForSearchQuery(['userName', 'givenName', 'frIndexedDate3', 'frUnindexedDate7']);
+    expect(filteredFields).toStrictEqual(['userName', 'givenName']);
+  });
+
+  it('Filters out integer fields', () => {
+    const filteredFields = filterFieldsForSearchQuery(['userName', 'mail', 'frIndexedInteger', 'frUnindexedInteger8']);
+    expect(filteredFields).toStrictEqual(['userName', 'mail']);
   });
 });

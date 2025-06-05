@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import generateIDMAPI from './__mocks__/generateIDMAPI';
@@ -366,6 +366,35 @@ describe('ListResource Component', () => {
       await wrapper.setProps({ currentPage: 3 });
 
       expect(wrapper.vm.paginationPage).toBe(3);
+    });
+  });
+
+  describe('Table column visibility', () => {
+    it('should display icon for customizing column if columnOrganizerKey is present', async () => {
+      await wrapper.setProps({
+        columnOrganizerKey: 'test-key',
+      });
+      await flushPromises();
+      const columnOrganizerIcon = wrapper.find('button[type="button"]');
+      expect(columnOrganizerIcon.text()).toBe('view_column');
+    });
+
+    it('fetchSearchQueryString should include all displayFields if columnOrganizerKey is not present', () => {
+      wrapper.vm.displayFields = ['userName', 'email', 'phone'];
+      wrapper.vm.filter = 'test';
+      const results = wrapper.vm.fetchSearchQueryString();
+      expect(results).toBe('userName sw "test" OR email sw "test" OR phone sw "test"');
+    });
+
+    it('fetchSearchQueryString should filter displayFields if columnOrganizerKey is present', async () => {
+      await wrapper.setProps({
+        columnOrganizerKey: 'test-key',
+      });
+      await flushPromises();
+      wrapper.vm.displayFields = ['userName', 'passwordLastChangedTime', 'frIndexedInteger', 'frIndexedDate1', 'email', 'phone'];
+      wrapper.vm.filter = 'test';
+      const results = wrapper.vm.fetchSearchQueryString();
+      expect(results).toBe('userName sw "test" OR email sw "test" OR phone sw "test"');
     });
   });
 });

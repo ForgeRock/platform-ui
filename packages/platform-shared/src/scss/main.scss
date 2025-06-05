@@ -510,7 +510,7 @@ a.card {
     white-space: nowrap;
   }
 
-  td {
+  td:not(.sticky-column-right) {
     max-width: 300px;
     text-overflow: ellipsis;
     overflow: hidden;

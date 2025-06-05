@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,38 +8,39 @@
 import { mount } from '@vue/test-utils';
 import ListOrganizer from './index';
 
+const defaultProps = {
+  global: {
+    mocks: {
+      $t: () => {},
+    },
+    renderStubDefaultSlot: true,
+  },
+  props: {
+    value: [
+      {
+        key: 1,
+        label: '1',
+        enabled: true,
+      },
+      {
+        key: 2,
+        label: '2',
+        enabled: true,
+      },
+      {
+        key: 3,
+        label: '3',
+        enabled: true,
+      },
+    ],
+    isTesting: true,
+  },
+};
+
 describe('ListOrganizer Component', () => {
   let wrapper;
-
   beforeEach(() => {
-    wrapper = mount(ListOrganizer, {
-      global: {
-        mocks: {
-          $t: () => {},
-        },
-        renderStubDefaultSlot: true,
-      },
-      props: {
-        value: [
-          {
-            key: 1,
-            label: '1',
-            enabled: true,
-          },
-          {
-            key: 2,
-            label: '2',
-            enabled: true,
-          },
-          {
-            key: 3,
-            label: '3',
-            enabled: true,
-          },
-        ],
-        isTesting: true,
-      },
-    });
+    wrapper = mount(ListOrganizer, defaultProps);
   });
 
   it('has a list of fields for each element in value prop', async () => {
@@ -177,5 +178,53 @@ describe('ListOrganizer Component', () => {
         enabled: false,
       },
     ]]);
+  });
+});
+
+describe('ListOrganizer Component with columnOrganizerKey', () => {
+  let wrapper;
+  beforeEach(() => {
+    wrapper = mount(ListOrganizer, {
+      ...defaultProps,
+      props: {
+        ...defaultProps.props,
+        columnOrganizerKey: 'test-key',
+      },
+    });
+  });
+
+  it('view column icon should have correct classes', async () => {
+    const buttonList = wrapper.findAll('button');
+    expect(buttonList[0].attributes('class')).toContain('btn btn-link text-dark');
+  });
+
+  it('allColumnsDisabled should update to true when all columns are unchecked', async () => {
+    expect(wrapper.vm.allColumnsDisabled).toBe(false); // should return false on page load
+    let errorMessageDOM = wrapper.findAll('.error-message');
+    expect(errorMessageDOM.length).toBe(0);
+
+    await wrapper.setProps({
+      value: [
+        {
+          key: 1,
+          label: '1',
+          enabled: false,
+        },
+        {
+          key: 2,
+          label: '2',
+          enabled: false,
+        },
+        {
+          key: 3,
+          label: '3',
+          enabled: false,
+        },
+      ],
+    });
+
+    expect(wrapper.vm.allColumnsDisabled).toBe(true); // should return true when all columns are unchecked
+    errorMessageDOM = wrapper.findAll('.error-message'); // should show error message when all columns are unchecked
+    expect(errorMessageDOM.length).toBe(1);
   });
 });

@@ -35,6 +35,12 @@ of the MIT license. See the LICENSE file for details. -->
           </BInputGroupText>
         </template>
       </FrSearchInput>
+      <FrListOrganizer
+        class="d-flex justify-content-end flex-grow-1"
+        v-if="columnOrganizerKey"
+        :column-organizer-key="columnOrganizerKey"
+        v-model="availableColumnList"
+        @list-reordered="updateColumnList" />
     </div>
     <div
       v-if="isLoading"
@@ -63,6 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BTable
       v-show="tableData.length && !isLoading"
       class="mb-0"
+      :tbody-tr-class="rowClass"
       hover
       id="list-resource-table"
       responsive
@@ -83,6 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
             :delete-option="deleteAccess"
             :divider="editAccess || hasClearSessionAccess(item)"
             :edit-option="editAccess"
+            @shown="setActiveRow(item)"
             @delete-clicked="showDeleteResourceModal(item._id)"
             @edit-clicked="$emit('row-clicked', item)">
             <template
@@ -165,8 +173,10 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
+import { generateSearchQuery, filterFieldsForSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
+import FrListOrganizer from '@forgerock/platform-shared/src/components/ListOrganizer';
+import { setLocalStorageValue } from '@forgerock/platform-shared/src/utils/localStorageUtils';
 import FrClearResourceSessions from '../ClearResourceSessions';
 
 Vue.directive('b-modal', VBModal);
@@ -194,6 +204,7 @@ export default {
     FrSpinner,
     FrClearResourceSessions,
     FrPagination,
+    FrListOrganizer,
   },
   directives: {
     'b-modal': VBModal,
@@ -255,6 +266,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    columnOrganizerList: {
+      type: Array,
+      default: () => [],
+    },
     lastPage: {
       type: Boolean,
       default: true,
@@ -272,6 +287,10 @@ export default {
       default: '',
     },
     managedIcon: {
+      type: String,
+      default: '',
+    },
+    columnOrganizerKey: {
       type: String,
       default: '',
     },
@@ -324,6 +343,8 @@ export default {
       resourceToClearSessionsForId: '',
       resourceToClearSessionsForName: '',
       searchHasFocus: true,
+      availableColumnList: [],
+      selectedRowId: '',
     };
   },
   computed: {
@@ -342,24 +363,22 @@ export default {
       return [...new Set([this.minimumPageSize, ...[10, 20, 50, 100]])].filter((pageSize) => pageSize >= this.minimumPageSize);
     },
   },
+  /**
+   * Sets the displayFields and columns based on the provided props to the component.
+   * If propColumns are provided, displayFields is derived by using the keys from propColumns and the columns are set to propColumns.
+   * If columnOrganizerKey is provided, it fetches the default column list using the utils method based on the key and router parameters.
+   * If neither propColumns nor columnOrganizerKey is provided, it loads the table definitions using the loadTableDefs method.
+   * Finally, it appends the action column if actionsEnabled is true and loads the data with default parameters.
+   */
   mounted() {
     this.resourceName = this.getResourceName(this.routerParameters.resourceName);
     if (this.propColumns.length) {
       this.displayFields = this.propColumns.map((obj) => obj.key);
       this.columns = this.propColumns;
-    } else {
+    } else if (!this.columnOrganizerList || this.columnOrganizerList.length === 0) {
       this.loadTableDefs();
     }
-    if (this.actionsEnabled) {
-      /*
-        * Push a final column for the "actions" menu.
-        * Empty label is intended.
-        */
-      this.columns.push({
-        key: 'actions',
-        label: '',
-      });
-    }
+    this.appendActionColumn();
     this.loadData('true', this.displayFields, this.defaultSort, 1, this.paginationPageSize);
   },
   watch: {
@@ -384,13 +403,38 @@ export default {
         this.displayFields = newVal.map((obj) => obj.key);
         this.columns = newVal;
         if (oldVal.length) {
-          this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
+          this.loadData(this.fetchSearchQueryString(), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
         }
       }
+    },
+    columnOrganizerList: {
+      handler(newValue, oldValue) {
+        if (newValue.length && newValue !== oldValue) {
+          this.availableColumnList = newValue;
+          this.columns = newValue.filter((column) => column.enabled);
+          this.displayFields = newValue.map((obj) => obj.key);
+          this.appendActionColumn();
+        }
+      },
+      immediate: true,
     },
   },
   methods: {
     pluralizeValue,
+    appendActionColumn() {
+      if (this.actionsEnabled && !this.columns.find((col) => col.key === 'actions')) {
+        /*
+          * Push a final column for the "actions" menu.
+          * Empty label is intended.
+          */
+        this.columns.push({
+          key: 'actions',
+          label: '',
+          stickyColumn: true,
+          class: 'sticky-column-right',
+        });
+      }
+    },
     filterChange(filter) {
       this.filter = filter;
       this.setHelpTextFromSearchLength();
@@ -494,7 +538,7 @@ export default {
      */
     paginationChange(page) {
       this.paginationPage = page;
-      this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
+      this.loadData(this.fetchSearchQueryString(), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
     },
     cancelDelete() {
       this.resourceToDeleteId = '';
@@ -509,6 +553,14 @@ export default {
       this.resourceToDeleteId = '';
     },
     /**
+     * fetch and return the search query string based on the current filter, display fields, managed properties and column organizer key
+     * @returns {string} the search query string to be used in the API call
+     */
+    fetchSearchQueryString() {
+      const searchQueryFields = this.columnOrganizerKey ? filterFieldsForSearchQuery(this.displayFields) : this.displayFields;
+      return generateSearchQuery(this.filter, searchQueryFields, this.routerParameters.managedProperties, this.columnOrganizerKey);
+    },
+    /**
      * Repulls data based on input search box text
      */
     search() {
@@ -520,7 +572,7 @@ export default {
       this.paginationPage = 1;
       if (this.filter.length >= this.queryThreshold) {
         this.submitBeforeLengthValid = false;
-        this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
+        this.loadData(this.fetchSearchQueryString(), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
       } else {
         this.submitBeforeLengthValid = true;
       }
@@ -535,7 +587,7 @@ export default {
       const sortUrl = this.calculateSort(sort.sortDesc, sort.sortBy);
       this.$emit('sort', sortUrl);
 
-      this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, sortUrl, this.paginationPage, this.paginationPageSize);
+      this.loadData(this.fetchSearchQueryString(), this.displayFields, sortUrl, this.paginationPage, this.paginationPageSize);
     },
     hasClearSessionAccess(item) {
       return this.canClearSessions && item.hasActiveSessions === true;
@@ -565,7 +617,37 @@ export default {
     clearSessionsAndCloseModal() {
       this.$emit('clear-resource-sessions', this.resourceToClearSessionsForId);
       this.closeClearSessionsModal();
-      this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
+      this.loadData(this.fetchSearchQueryString(), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
+    },
+    /**
+     * Handler method for the ListOrganizer reordered event.
+     * Updates the local storage with the new column list for the corresponding columnOrganizerKey.
+     * updates the availableColumnList which is used to render the column organizer modal,
+     * updates the columns based on the enabled columns from updatedColumnList which are used to render the table,
+     * Finally append the action column to the columns list for the table view.
+     * @param {Object[]} updatedColumnList - The updated list of columns from the ListOrganizer component.
+     */
+    updateColumnList(updatedColumnList) {
+      setLocalStorageValue(this.columnOrganizerKey, updatedColumnList);
+      this.availableColumnList = updatedColumnList;
+      this.columns = updatedColumnList.filter((column) => column.enabled);
+      this.appendActionColumn();
+    },
+    /**
+     * Sets the row class based on the selectedRowId
+     * The currently selected row will have a class of 'selected z-index-1000',
+     * This styling ensures the action dialog box child element is positioned correctly with respect to the sticky columns.
+     */
+    rowClass(item) {
+      return item?._id === this.selectedRowId ? 'selected z-index-1000' : '';
+    },
+    /**
+     * Listener method when the action cell is shown
+     * Sets selectedRowId based on the current item's Id, Which is used to apply the selected row class.
+     * This is used to ensure the action dialog box child element is positioned correctly with respect to the sticky columns.
+     */
+    setActiveRow(item) {
+      this.selectedRowId = item._id;
     },
   },
 };
@@ -573,6 +655,17 @@ export default {
 <style lang="scss" scoped>
   :deep(.table tr:not(.b-table-empty-row) td) {
     cursor: pointer;
+  }
+
+  :deep(.table tr td.sticky-column-right) {
+    width: 80px;
+    position: sticky;
+    right: 0;
+  }
+
+  :deep(.table tr:hover td.sticky-column-right) {
+    background-image: none !important;
+    background-color: $gray-100 !important;
   }
 
   .toolbar-divider {
@@ -617,4 +710,14 @@ export default {
       transform: translate3d(4px, 0, 0);
     }
   }
+
+:deep() .z-index-1000 {
+  .sticky-column-right {
+    z-index: 1000!important;
+  }
+}
+
+:deep(.btn-link.text-dark:hover) {
+  background-color: #f6f8fa;
+}
 </style>
