@@ -1683,20 +1683,27 @@
         "quickStart": "Quick Start",
         "saveSuccess": "SSO updated successfully",
         "signingCertificate": {
-          "createModal": {
+          "modal": {
+            "certificateDetails": "Certificate Details",
             "creatingSigningCert": "Generating certificate...",
             "errorCreatingSigningCert": "There was an error generating the signing certificate.",
+            "expiresDate": "Expires (Valid Until)",
+            "issuedDate": "Issued Date (Valid From)",
+            "issuerDN": "Issuer DN",
             "ms365Applications": "Microsoft 365 Applications",
             "nextSteps": "Next steps",
             "powershellCmdlets": "PowerShell Cmdlets",
             "powershellCmdletsDescription": "Use PowerShell Cmdlets to update Microsoft 365 apps to trust this certificate.",
             "powershellCmdletsScriptTitle": "Update SSO Settings PowerShell Cmdlet",
+            "serial": "Serial",
             "signingCertCreated": "Certificate created!",
             "stepOneDescription": "Run PowerShell Cmdlets for all configured Microsoft 365 apps before activating this certificate.",
             "stepTwoDescription": "Once all Microsoft 365 apps have been updated to trust this certificate activate this certificate.",
+            "subjectDN": "Subject DN",
             "viewPowershellCmdlets": "View PowerShell Cmdlets"
           },
           "downloadCertificate": "Download Certificate",
+          "errorDownloadingSigningCert": "There was an error downloading the signing certificate.",
           "errorGettingSigningCert": "There was an error getting signing certificates.",
           "newCertificate": "Generate New Certificate",
           "tableEmpty": "No signing certificates found",
