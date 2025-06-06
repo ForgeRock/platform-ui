@@ -1426,7 +1426,11 @@
       "errorCreatingApp": "Could not create application",
       "clientSecretWarning": "Make sure you copy <small class=\"text-monospace alert-link\">Client Secret</small> as it won't be shown again.",
       "wsfed": "WS-Federation",
-      "wsfedDescription": "Protocol used for Single Sign-On (SSO) with applications supporting the Web Services standards."
+      "wsfedDescription": "Protocol used for Single Sign-On (SSO) with applications supporting the Web Services standards.",
+      "configureSDKSampleAppsLabel": "Configure for SDK Sample Apps",
+      "configureSDKSampleAppsDescription": "Configure application with additional URLs and scopes for use with <a target='_blank' href='https://github.com/ForgeRock/sdk-sample-apps'>Ping SDK sample applications</a>.",
+      "configureSDKSampleAppsWarning": "Enabling the Ping SDK sample configurations adds redirect URIs, scopes, and other configurations. Do not use this client for production use. To use your own configurations with the Ping SDKs, modify accordingly.",
+      "errorConfiguringSDKSampleApps": "Error configuring client for SDK sample apps"
     },
     "edit": {
       "authoritative": "Authoritative",
