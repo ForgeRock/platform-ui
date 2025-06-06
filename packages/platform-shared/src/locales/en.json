@@ -2026,6 +2026,11 @@
       "forward": {
         "description": "Forward this request to"
       },
+      "comments": {
+        "all": "All Comments",
+        "user": "User Comments",
+        "viewType": "View: {type}"
+      },
       "addComment": "Add Comment",
       "cancelRequest": "Cancel Request",
       "confirmCompleteTask": "Are you sure you want to mark this task as complete?",
