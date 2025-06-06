@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -41,16 +41,25 @@ const violation = {
         action: 'assignment',
         comment: 'testAssignment',
         timeStamp: '2024-05-08T16:33:24+00:00',
+        user: {
+          mail: 'mariotest@test.com', givenName: 'Mario', id: 'managed/user/e2477644-00a4-438b-86ff-4308c56f80e1', sn: 'Test', userName: 'mariotest',
+        },
       },
       {
-        action: 'reasign',
+        action: 'reassign',
         comment: 'testReassign',
         timeStamp: '2024-05-08T16:33:24+00:00',
+        user: {
+          mail: 'mariotest@test.com', givenName: 'Mario', id: 'managed/user/e2477644-00a4-438b-86ff-4308c56f80e1', sn: 'Test', userName: 'mariotest',
+        },
       },
       {
         action: 'allow',
         comment: 'testAllow',
         timeStamp: '2024-05-08T16:33:24+00:00',
+        user: {
+          mail: 'mariotest@test.com', givenName: 'Mario', id: 'managed/user/e2477644-00a4-438b-86ff-4308c56f80e1', sn: 'Test', userName: 'mariotest',
+        },
       },
     ],
     phases: [
