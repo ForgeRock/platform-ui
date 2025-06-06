@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -176,7 +176,9 @@ async function handleDeleteItem() {
 async function handleEditItem(newName) {
   await editData(realm, userSearchAttribute, { alias: newName }, deviceId.value);
   bvModal.value.hide('edit-trusted-device-modal');
-  devices.value = await fetchData(realm, userSearchAttribute);
+  const newDevices = await fetchData(realm, userSearchAttribute);
+  newDevices[selectedIndex.value].open$ = true;
+  devices.value = newDevices;
 }
 
 /**

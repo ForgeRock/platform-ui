@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -27,7 +27,8 @@ of the MIT license. See the LICENSE file for details. -->
           :class="`border-top ${data.accordionItemClass ? data.accordionItemClass : ''}`"
           data-testid="accordion-item-wrapper"
           no-body
-          @click="$emit('section-expanded', {key, data})">
+          @click="handleSectionExpanded($event, key, data)"
+          @keydown="handleSectionExpanded($event, key, data)">
           <BCardHeader
             :class="`pr-4 border-0 position-relative cursor-pointer ${headerClasses}`"
             role="tab"
@@ -118,6 +119,19 @@ export default {
     this.emitAccordionState();
   },
   methods: {
+    /**
+     * Handles events for expandable sections.
+     *
+     * @param {Event} e event object
+     * @param {String} key item index
+     * @param {Object} data item data
+     */
+    handleSectionExpanded(e, key, data) {
+      if (e.type === 'click' || e.key === 'Enter' || e.key === ' ') {
+        this.$emit('section-expanded', { key, data });
+      }
+    },
+
     /**
      * Calculate padding based on position of item and open state
      *
