@@ -5,6 +5,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+const CONSTANTS = Object.freeze({
+  CUSTOM: 'custom',
+  DIVIDER: 'divider',
+  INTERNAL_ROLE: 'internal/role',
+  LCM_USERS: 'lcmUsers',
+  LCM_ENTITLEMENTS: 'lcmEntitlements',
+  MENU_ITEM_LABEL_LOCALE_PREFIX: 'sideMenu.endUser.',
+});
+
+export { CONSTANTS };
+
 export const CUSTOM_MENU_ITEM = {
   id: 'custom',
   icon: 'link',
@@ -16,7 +27,15 @@ export const DIVIDER_MENU_ITEM = {
   isDivider: true,
 };
 
-// enduser hosted default menu items, any new menu item should be added here.
+/** Enduser hosted default menu items, any new menu item should be added here.
+ *
+ * Each item should have an `id`, and optionally an `icon` and `routeTo`.
+ * `icon` is optional only when its `id` is a valid icon name.
+ * The `available` function can be used to conditionally display the item based on feature flags.
+ * The `subItems` array can be used to define nested menu items.
+ * The `showBadgeWithContentFromStore` property can be used to display a badge with content from the store.
+ * If `available` is not defined, the item will always be displayed.
+ */
 export const DEFAULT_MENU_ITEMS = [
   {
     id: 'dashboard',
@@ -26,7 +45,7 @@ export const DEFAULT_MENU_ITEMS = [
     id: 'riskDashboard',
     routeTo: { name: 'RiskDashboard' },
     icon: 'show_chart',
-    available: (flag) => flag.autoAccessEnabled,
+    available: (flag) => flag.autoAccessEnabled && flag.riskDashboardEnabled,
   },
   {
     id: 'reports',
@@ -111,7 +130,7 @@ export const DEFAULT_MENU_ITEMS = [
   {
     id: 'riskAdministration',
     icon: 'settings',
-    available: (flag) => flag.autoAccessEnabled,
+    available: (flag) => flag.autoAccessEnabled && flag.riskAdminEnabled,
     subItems: [
       {
         id: 'dataSources',
@@ -141,18 +160,24 @@ export const DEFAULT_MENU_ITEMS = [
   {
     id: 'lcm',
     icon: 'manage_accounts',
-    available: (flag) => (flag.ifGovernance && flag.govLcmEnabled),
+    available: (flag) => flag.ifGovernance,
     subItems: [
       {
-        id: 'lcmUsers',
-        available: (flag) => flag.govLcmUser,
+        id: CONSTANTS.LCM_USERS,
         routeTo: { name: 'AdministerUsers' },
       },
       {
-        id: 'lcmEntitlements',
-        available: (flag) => flag.govLcmEntitlement,
+        id: CONSTANTS.LCM_ENTITLEMENTS,
         routeTo: { name: 'AdministerEntitlements' },
       },
     ],
   },
 ];
+
+/** Map of LCM sub-items ID to their corresponding feature flags
+ *  on which they depend for their visibility.
+*/
+export const LCM_SUBITEMS_ID_FLAG_MAP = {
+  [CONSTANTS.LCM_USERS]: 'govLcmUser',
+  [CONSTANTS.LCM_ENTITLEMENTS]: 'govLcmEntitlement',
+};

@@ -12,7 +12,7 @@ import { getTranslation } from '../../utils/translations';
  * @param {Object} accessObject The access object
  * @returns {String} The icon
  */
-function getMenuItemIcon(accessObject) {
+export function getMenuItemIcon(accessObject) {
   let matIcon = 'check_box_outline_blank';
   if (accessObject['mat-icon'] && accessObject['mat-icon'].length && accessObject['mat-icon'].substring(0, 3) !== 'fa-') {
     matIcon = accessObject['mat-icon'];
@@ -29,7 +29,6 @@ function getMenuItemIcon(accessObject) {
  * @param {boolean} useTranslation determine if translation should be used or not
  * @returns {Array} The menu items
  */
-// eslint-disable-next-line import/prefer-default-export
 export function getDelegatedAdminMenuItems(privileges, hideAlphaUsersMenuItem = false, useTranslation = false) {
   let formattedPrivileges = [...privileges];
   if (hideAlphaUsersMenuItem) {

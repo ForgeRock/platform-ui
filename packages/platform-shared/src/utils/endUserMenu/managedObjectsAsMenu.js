@@ -8,7 +8,9 @@
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import isFraasFilter from '@forgerock/platform-shared/src/utils/fraasUtils';
+import { getMenuItemIcon } from '@forgerock/platform-shared/src/enduser/utils/enduserPrivileges';
 import i18n from '@/i18n';
+import { getValidManagedObjectMenuId } from './menuItemUtils';
 
 /* eslint-disable import/prefer-default-export */
 /**
@@ -25,9 +27,9 @@ export async function fetchManagedObjectsAsMenuItems(store = {}) {
     const managedObjects = await getConfig('managed');
     if (managedObjects.data?.objects) {
       managedObjectMenuItems = managedObjects.data.objects.map((object) => ({
-        id: object.name,
-        label: object.schema.title,
-        icon: object.schema['mat-icon'] || 'check_box_outline_blank',
+        id: getValidManagedObjectMenuId(object.name),
+        label: { en: object.schema.title },
+        icon: getMenuItemIcon(object.schema),
         isManagedObject: true,
         routeTo: {
           name: 'ListResource',
@@ -40,7 +42,7 @@ export async function fetchManagedObjectsAsMenuItems(store = {}) {
     managedObjectMenuItems.push({
       id: 'internal/role',
       icon: 'people',
-      label: i18n.global.t('sideMenu.authorizationRole'),
+      label: { en: i18n.global.t('sideMenu.authorizationRole') },
       isManagedObject: true,
       routeTo: {
         name: 'ListResource',
@@ -64,7 +66,7 @@ export async function fetchManagedObjectsAsMenuItems(store = {}) {
     }
 
     // sort the menu items by labels in alphabetical order
-    managedObjectMenuItems = managedObjectMenuItems.sort((a, b) => a.label.localeCompare(b.label));
+    managedObjectMenuItems = managedObjectMenuItems.sort((a, b) => a.id.localeCompare(b.id));
   } catch (error) {
     showErrorMessage(error, i18n.global.t('sideMenu.endUser.errorRetrievingManagedObjects'));
   }

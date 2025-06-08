@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { filterAvailableEndUserMenuItems } from './endUserMenuFilter';
+import { filterAvailableEndUserMenuItems } from './menuFilter';
 
 describe('endUserMenuFilter', () => {
   describe('filterAvailableEndUserMenuItems', () => {

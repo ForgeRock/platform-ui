@@ -15,14 +15,17 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as ThemeApi from '@forgerock/platform-shared/src/api/ThemeApi';
+import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
+import * as menuItemTranslations from '@forgerock/platform-shared/src/utils/endUserMenu/menuItemTranslations';
 import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
 import * as ViolationsApi from '@/api/governance/ViolationsApi';
 import * as TasksApi from '@/api/governance/TasksApi';
 import i18n from '@/i18n';
 import App from '@/App';
-import globalStore from '@/store';
 
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
+jest.mock('@forgerock/platform-shared/src/utils/endUserMenu/menuItemTranslations');
+jest.mock('axios');
 
 const store = {
   state: {
@@ -93,6 +96,7 @@ describe('App.vue', () => {
     ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
     ThemeApi.getThemerealm = jest.fn().mockReturnValue(Promise.resolve({ data: { realm: { testRealm: [] } } }));
     getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
+    menuItemTranslations.updateMenuItemsWithTranslations.mockImplementation(() => Promise.resolve());
   });
 
   afterAll(() => {
@@ -102,13 +106,20 @@ describe('App.vue', () => {
 
   it('Loaded Menus File should load default items', async () => {
     await shallowMountComponent(store);
-    expect(wrapper.vm.menuItems.length).toEqual(10);
+    expect(wrapper.vm.menuItems.length).toEqual(2);
   });
 
   it('should load dynamic menu items depending on the enduser privileges', async () => {
-    globalStore.commit('setPrivileges', [
+    ConfigApi.getConfig = jest.fn().mockResolvedValue({
+      data: {
+        objects: [
+          { name: 'users', schema: { 'mat-icon': 'users', title: 'Alpha Users' } },
+        ],
+      },
+    });
+    store.state.privileges = [
       {
-        privilegePath: 'managed/user',
+        privilegePath: 'managed/users',
         'mat-icon': 'people',
         icon: 'fa-user',
         title: 'User',
@@ -119,12 +130,12 @@ describe('App.vue', () => {
         icon: 'fa-check-square',
         title: 'Internal Role',
       },
-    ]);
+    ];
     await shallowMountComponent(store);
 
-    expect(wrapper.vm.menuItems.length).toEqual(12);
+    expect(wrapper.vm.menuItems.length).toEqual(4);
 
-    globalStore.commit('setPrivileges', []);
+    store.state.privileges = [];
   });
 
   it('shows a regular layout', async () => {
@@ -146,9 +157,9 @@ describe('App.vue', () => {
   describe('governance enabled', () => {
     it('Loaded Menus File with governance', async () => {
       await shallowMountComponent(governanceEnabledStore);
-      const inbox = wrapper.vm.menuItems.find((item) => item.displayName === 'sideMenu.inbox');
-      const approvals = inbox.subItems.find((item) => item.displayName === 'sideMenu.approvals');
-      expect(wrapper.vm.menuItems.length).toEqual(10);
+      const inbox = wrapper.vm.menuItems.find((item) => item.id === 'inbox');
+      const approvals = inbox.subItems.find((item) => item.id === 'approvals');
+      expect(wrapper.vm.menuItems.length).toEqual(6);
       expect(inbox).toBeTruthy();
       expect(approvals).toBeTruthy();
     });
@@ -242,9 +253,9 @@ describe('App.vue', () => {
       entitlementLcmEnabled.state.govLcmEntitlement = true;
 
       await shallowMountComponent(entitlementLcmEnabled);
-      const administerMenuGroup = wrapper.vm.menuItems.find((item) => item.displayName === 'sideMenu.administer');
+      const administerMenuGroup = wrapper.vm.menuItems.find((item) => item.id === 'lcm');
       expect(administerMenuGroup).toBeTruthy();
-      expect(administerMenuGroup.subItems.find((item) => item.displayName === 'sideMenu.administerEntitlements')).toBeTruthy();
+      expect(administerMenuGroup.subItems.find((item) => item.id === 'lcmEntitlements')).toBeTruthy();
     });
   });
 });

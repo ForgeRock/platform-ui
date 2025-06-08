@@ -49,6 +49,8 @@ const defaultState = {
   pingFederateUrl: null,
   nodeDesignerEnabled: false,
   promoteAppsViaApi: false,
+  riskAdminEnabled: false,
+  riskDashboardEnabled: false,
   showEsvUi: false,
   uiConfig: null,
   webStorageAvailable: true,
@@ -246,6 +248,12 @@ const mutations = {
   },
   setMaxSessionExpirationTime(state, val) {
     state.maxSessionExpirationTime = val;
+  },
+  setRiskAdminEnabled(state, val) {
+    state.riskAdminEnabled = val;
+  },
+  setRiskDashboardEnabled(state, val) {
+    state.riskDashboardEnabled = val;
   },
 };
 
