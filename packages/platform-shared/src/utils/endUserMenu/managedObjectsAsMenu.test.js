@@ -50,40 +50,40 @@ describe('fetchManagedObjectsAsMenuItems', () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: 'application',
-          label: 'Application',
+          label: { en: 'Application' },
           icon: 'check_box_outline_blank',
           isManagedObject: true,
           routeTo: expect.objectContaining({ name: 'ListResource', params: { resourceType: 'managed', resourceName: 'application' } }),
         }),
         expect.objectContaining({
           id: 'assignment',
-          label: 'Assignment',
+          label: { en: 'Assignment' },
           icon: 'check_box_outline_blank',
           isManagedObject: true,
           routeTo: expect.objectContaining({ name: 'ListResource', params: { resourceType: 'managed', resourceName: 'assignment' } }),
         }),
         expect.objectContaining({
           id: 'internal/role',
-          label: 'sideMenu.authorizationRole',
+          label: { en: 'sideMenu.authorizationRole' },
           icon: 'people',
           isManagedObject: true,
           routeTo: expect.objectContaining({ name: 'ListResource', params: { resourceType: 'internal', resourceName: 'role' } }),
         }),
         expect.objectContaining({
           id: 'user',
-          label: 'User',
+          label: { en: 'User' },
           icon: 'person',
           isManagedObject: true,
           routeTo: expect.objectContaining({ name: 'ListResource', params: { resourceType: 'managed', resourceName: 'user' } }),
         }),
       ]),
     );
-    // Sorted by label
-    expect(result.map((i) => i.label)).toEqual([
-      'Application',
-      'Assignment',
-      'sideMenu.authorizationRole',
-      'User',
+    // Sorted by id
+    expect(result.map((i) => i.id)).toEqual([
+      'application',
+      'assignment',
+      'internal/role',
+      'user',
     ]);
   });
 

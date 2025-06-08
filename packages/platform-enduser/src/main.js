@@ -36,6 +36,8 @@ import createRealmPath from '@forgerock/platform-shared/src/utils/createRealmPat
 import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
 import { getEntitlementList, getApplicationList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
+import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
@@ -115,6 +117,35 @@ const loadApp = () => {
   app.use(Vue3Sanitize, baseSanitizerConfig);
   router.isReady().then(() => app.mount('#appRoot'));
 };
+
+/**
+ * Initializes analytics-related feature flags in the application's store.
+ *
+ * This function checks if the `autoAccessEnabled` flag is set in the `SharedStore` state.
+ * If enabled, it asynchronously determines the availability of the Risk Dashboard and
+ * Risk Administration features by calling `getConfig` and `getDefaultProcess` respectively.
+ * The results are committed to the store to enable or disable the corresponding features.
+ *
+ * @function
+ * @returns {void}
+ */
+function initializeAnalyticsFlags() {
+  if (store.state.SharedStore && store.state.SharedStore.autoAccessEnabled) {
+    // Risk Dashboard / Fraud Analyst
+    getConfig().then(() => {
+      store.commit('SharedStore/setRiskDashboardEnabled', true);
+    }).catch(() => {
+      store.commit('SharedStore/setRiskDashboardEnabled', false);
+    });
+    // Risk Administration / Data Analyst
+    getDefaultProcess().then(() => {
+      store.commit('SharedStore/setRiskAdminEnabled', true);
+    }).catch(() => {
+      store.commit('SharedStore/setRiskAdminEnabled', false);
+    });
+  }
+}
+
 /*
     We will load the application regardless
  */
@@ -184,6 +215,8 @@ const startApp = async () => {
       store.commit('setGovAutoIdSettings', autoIdData);
     }
 
+    // Analytics flags initialization
+    initializeAnalyticsFlags();
     overrideTranslations(i18n, 'enduser');
   } finally {
     loadApp();

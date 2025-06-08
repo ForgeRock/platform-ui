@@ -1,4 +1,8 @@
 {
+
+  "errors": {
+    "errorLoadingMenuItems": "There was an error loading menu items."
+  },
   "routeNames": {
     "AccessRequestNew": "New Access Request",
     "Reports": "Reports"

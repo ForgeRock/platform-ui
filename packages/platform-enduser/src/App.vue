@@ -40,22 +40,22 @@ import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import FrSessionTimeoutWarning from '@forgerock/platform-shared/src/components/SessionTimeoutWarning/SessionTimeoutWarning';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
-import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
-import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
 import { getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import { removeThemeIdFromLocalStorage } from '@forgerock/platform-shared/src/utils/themeUtils';
-import { mapState } from 'pinia';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import { getDelegatedAdminMenuItems } from '@forgerock/platform-shared/src/enduser/utils/enduserPrivileges';
-import { getGovMenuItems } from '@/utils/governance/menuItems';
+import {
+  buildMenuItemsFromTheme,
+  generateEndUserMenuItems,
+  getAllEndUserMenuItems,
+} from '@forgerock/platform-shared/src/utils/endUserMenu/endUserMenu';
+import { mapState } from 'pinia';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';
 import { getViolations } from '@/api/governance/ViolationsApi';
 import i18n from '@/i18n';
-import store from '@/store';
 import './scss/main.scss';
 
 export default {
@@ -76,6 +76,7 @@ export default {
       localizedFavicon,
       theme,
     } = useTheme();
+
     return {
       loadTheme,
       localizedFavicon,
@@ -93,59 +94,10 @@ export default {
   },
   data() {
     const governanceEnabled = (this.$store.state.SharedStore.governanceEnabled === true) && (this.$store.state.realm === 'alpha');
-    const govMenuItems = governanceEnabled
-      ? getGovMenuItems(this.$store)
-      : {};
     return {
       governanceEnabled,
-      menuItems: [
-        {
-          routeTo: { name: 'Dashboard' },
-          displayName: 'sideMenu.dashboard',
-          icon: 'dashboard',
-        },
-        (this.$store.state.SharedStore.autoReportsEnabled === true
-          ? {
-            routeTo: { name: 'Reports' },
-            displayName: 'sideMenu.reports',
-            icon: 'analytics',
-            showForStoreValues: ['SharedStore.autoReportsEnabled'],
-          }
-          : {}),
-        (governanceEnabled
-          ? govMenuItems.inboxMenuItem
-          : {}),
-        (this.$store.state.SharedStore.workforceEnabled === true
-          ? {
-            isDivider: true,
-          }
-          : {}),
-        (this.$store.state.SharedStore.workforceEnabled === true
-          ? {
-            routeTo: { name: 'Applications' },
-            displayName: 'sideMenu.applications',
-            icon: 'apps',
-          }
-          : {}),
-        (governanceEnabled
-          ? govMenuItems.myAccessMenuItem
-          : {}),
-        (governanceEnabled
-          ? govMenuItems.directoryMenuItem
-          : {}),
-        (governanceEnabled
-          ? govMenuItems.myRequestsMenuItem
-          : {}),
-        {
-          routeTo: { name: 'Profile' },
-          displayName: 'sideMenu.profile',
-          icon: 'account_circle',
-        },
-        (governanceEnabled
-          ? govMenuItems.lcmMenuItem
-          : {}),
-      ],
       version: '',
+      menuItems: [],
     };
   },
   async created() {
@@ -169,7 +121,8 @@ export default {
       this.showErrorMessage(error, this.$t('errors.themeSetError'));
     }
 
-    this.setupDelegatedAdminMenuItems(store.state.privileges);
+    // Generate the end user menu items
+    await this.loadMenuItems();
   },
   mounted() {
     getIdmServerInfo().then((results) => {
@@ -179,10 +132,6 @@ export default {
     }, (error) => {
       this.showErrorMessage(error, this.$t('errors.couldNotRetrieveVersion'));
     });
-
-    if (this.$store.state.SharedStore && this.$store.state.SharedStore.autoAccessEnabled) {
-      this.checkAutoAccess();
-    }
 
     if (this.governanceEnabled) {
       this.getAccessReviewsCount();
@@ -217,61 +166,6 @@ export default {
   },
   methods: {
     /**
-     * Uses the passed privileges to extend the menu items (Mainly used for Delegated Admin)
-     * @param {Array} privileges - the privileges that dictate the additional mentu items to be shown
-     */
-    setupDelegatedAdminMenuItems(privileges) {
-      // if governance user lcm is enabled, we hide the standard da menu item for alpha users
-      const hideAlphaUsersMenuItem = this.$store.state.govLcmUser;
-      this.menuItems.push(...getDelegatedAdminMenuItems(privileges, hideAlphaUsersMenuItem, true));
-    },
-    /**
-      * Tries to get Auto access info and if found adds menu items for Data_Analyst and/or Fraud_Analyst.
-      */
-    checkAutoAccess() {
-      // Risk Dashboard / Fraud Analyst
-      getConfig().then(() => {
-        this.showRiskDashboad();
-      }).catch(() => {});
-      // Risk Administration / Data Analyst
-      getDefaultProcess().then(() => {
-        this.showRiskAdministration();
-      }).catch(() => {});
-    },
-    showRiskAdministration() {
-      const autoAccessAdminMenu = [
-        {
-          displayName: 'sideMenu.riskAdministration',
-          icon: 'settings',
-          subItems: [
-            {
-              displayName: 'sideMenu.dataSources',
-              routeTo: { name: 'AutoAccessDataSources' },
-            },
-            {
-              displayName: 'sideMenu.pipelines',
-              routeTo: { name: 'AutoAccessPipelines' },
-            },
-            {
-              displayName: 'sideMenu.riskConfig',
-              routeTo: { name: 'AutoAccessRiskConfig' },
-            },
-          ],
-        },
-      ];
-      this.menuItems.splice(6, 0, ...autoAccessAdminMenu);
-    },
-    showRiskDashboad() {
-      const autoAccessDashboardMenu = [
-        {
-          displayName: 'sideMenu.riskDashboard',
-          routeTo: { name: 'RiskDashboard' },
-          icon: 'show_chart',
-        },
-      ];
-      this.menuItems.splice(1, 0, ...autoAccessDashboardMenu);
-    },
-    /**
      * Retrieves the count of active access reviews and commits the count to the Vuex store.
      * The value stored here is used in the side bar panel and in the Governance dashboard
      *
@@ -286,6 +180,41 @@ export default {
       }).finally(() => {
         this.$store.commit('setCertificationCount', count);
       });
+    },
+    /**
+     * Fetches and sets the application's side navigation menu items asynchronously.
+     * This function is responsible for obtaining the menu data from theme configuration.
+     * It checks if the theme has predefined end user menu items; if not, it fetches them
+     * from the default menu items based on current environment and user privileges.
+     *
+     * @returns {Promise<void>} Resolves when the menu items have been successfully loaded and set.
+     */
+    async loadMenuItems() {
+      let configuredMenuItems;
+      try {
+        const allEndUserMenuItems = await getAllEndUserMenuItems({ store: this.$store, getTranslations: true });
+        if (!('endUserMenuItems' in this.theme)) {
+          // If the theme does not have endUserMenuItems, use allEndUserMenuItems
+          configuredMenuItems = allEndUserMenuItems;
+        } else {
+          // If the theme has endUserMenuItems, build menu items from the theme intersecting with allEndUserMenuItems
+          configuredMenuItems = buildMenuItemsFromTheme(this.theme.endUserMenuItems, allEndUserMenuItems);
+        }
+      } catch (error) {
+        configuredMenuItems = [];
+        this.showErrorMessage(error, this.$t('errors.errorLoadingMenuItems'));
+      }
+
+      // if governance user lcm is enabled, we hide the standard menu item for alpha users
+      const hideAlphaUsersMenuItem = this.$store.state.govLcmUser;
+      const endUserMenuItems = generateEndUserMenuItems({
+        configuredMenuItems,
+        hideAlphaUsersMenuItem,
+        isEndUserUI: true,
+        privileges: this.$store.state.privileges,
+        store: this.$store,
+      });
+      this.menuItems = endUserMenuItems;
     },
     /**
      * Retrieves the count of pending approvals and commits the count to the Vuex store.

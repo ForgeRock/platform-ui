@@ -9,7 +9,6 @@
 /**
  * Generates and returns the list of available end user menu items only based on the provided store state.
  * Menu items are filtered according to feature flags.
- * The result is cached for subsequent calls to avoid recomputation.
  *
  * @param {Object} flags - The feature flags can be any arbitrary objects or simply an array of strings
  * on which some or all menu items depends conditionally.

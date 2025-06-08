@@ -115,7 +115,8 @@ describe('ImportModal', () => {
       const importBtn = wrapper.find('.btn-primary');
       await importBtn.trigger('click');
 
-      // both flushPromises are required here
+      // all flushPromises are required here
+      await flushPromises();
       await flushPromises();
       await flushPromises();
       expect(mockImportFunctionGenericError).toHaveBeenCalled();
