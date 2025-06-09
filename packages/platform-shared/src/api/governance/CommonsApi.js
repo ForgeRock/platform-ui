@@ -39,6 +39,14 @@ export function getIgaAccessRequest() {
 }
 
 /**
+ * Fetches the IGA Auto ID configuration
+ * @returns {Promise} A promise that resolves to the IGA Auto ID configuration object.
+ */
+export async function getIgaAutoIdConfig() {
+  return generateIgaApi().get('commons/config/iga_autoid_integration');
+}
+
+/**
  * Fetches the IGA UI configuration
  * @returns {Promise} A promise that resolves to the IGA UI configuration object.
  */

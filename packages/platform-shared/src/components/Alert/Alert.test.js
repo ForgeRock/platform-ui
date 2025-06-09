@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -33,5 +33,15 @@ describe('Alert Component', () => {
       },
     });
     expect(wrapper.vm.alertIcon).toBe('warning_amber');
+  });
+
+  it('warning variant will have an info icon when passed in directly', () => {
+    wrapper = shallowMount(Alert, {
+      props: {
+        variant: 'warning',
+        icon: 'info',
+      },
+    });
+    expect(wrapper.vm.alertIcon).toBe('info');
   });
 });

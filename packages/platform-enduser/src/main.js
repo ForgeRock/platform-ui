@@ -24,7 +24,7 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
-import { getIgaUiConfig } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getIgaUiConfig, getIgaAutoIdConfig } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getSessionTimeoutInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
@@ -150,7 +150,7 @@ const startApp = async () => {
     const { data: privilegesData } = await getUserPrivileges();
     store.commit('setPrivileges', privilegesData);
 
-    // governance lcm
+    // governance lcm and recommendations
     if (store.state.SharedStore.governanceEnabled && store.state.realm === 'alpha') {
       const { data } = await getIgaUiConfig();
       store.commit('setGovLcmSettings', data.lcmSettings);
@@ -177,6 +177,12 @@ const startApp = async () => {
           createEntitlement: applications.data?.totalCount > 0,
           viewEntitlement: entitlements.data?.totalCount > 0,
         });
+      }
+
+      // User recommendations and predictions
+      if (store.state.SharedStore.governanceDevEnabled) {
+        const { data: autoIdData } = await getIgaAutoIdConfig();
+        store.commit('setGovAutoIdSettings', autoIdData);
       }
     }
 

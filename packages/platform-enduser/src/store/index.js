@@ -39,6 +39,10 @@ export default createStore({
     govLcmEnabled: false,
     govLcmEntitlement: false,
     govLcmUser: false,
+
+    // governance autoid settings
+    govAutoIdSettings: {},
+    govAutoIdEnabled: false,
   },
   mutations: {
     setEnvironment(state, env) {
@@ -102,6 +106,15 @@ export default createStore({
 
     setGovLcmSettings(state, lcmSettings) {
       state.govLcmSettings = lcmSettings;
+    },
+
+    setGovAutoIdSettings(state, autoIdSettings) {
+      state.govAutoIdSettings = autoIdSettings;
+      if (autoIdSettings.enableAutoId) {
+        state.govAutoIdEnabled = true;
+      } else {
+        state.govAutoIdEnabled = false;
+      }
     },
 
     setGovLcmEntitlement(state, { createEntitlement, viewEntitlement }) {

@@ -75,6 +75,13 @@ describe('Commons API', () => {
     expect(res).toEqual(data);
   });
 
+  it('should call getIgaAutoIdConfig', async () => {
+    const res = await CommonsApi.getIgaAutoIdConfig();
+    expect(get).toBeCalledWith('commons/config/iga_autoid_integration');
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
   it('should call getIgaUiConfig', async () => {
     const res = await CommonsApi.getIgaUiConfig();
     expect(get).toBeCalledWith('commons/config/iga_ui_config');

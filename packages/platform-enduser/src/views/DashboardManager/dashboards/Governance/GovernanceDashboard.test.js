@@ -1,18 +1,21 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, mount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import Notifications from '@kyvg/vue3-notification';
+import i18n from '@/i18n';
 import GovernanceDashboard from '.';
+import * as RecommendationsApi from '@/api/governance/RecommendationsApi';
 
 jest.mock('@/api/governance/AccessReviewApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
+const push = jest.fn();
 
 describe('GovernanceDashboard', () => {
   let wrapper;
@@ -42,6 +45,42 @@ describe('GovernanceDashboard', () => {
     jest.clearAllMocks();
   });
 
+  const defaultRecommendationsState = {
+    certificationCount: 1,
+    approvalsCount: 1,
+    violationsCount: 2,
+    fulfillmentTasksCount: 3,
+    govAutoIdEnabled: true,
+  };
+
+  const defaultRecommendationsData = {
+    recommendationsCount: 4,
+  };
+
+  function mountComponent(stateObj = defaultRecommendationsState, dataObj = defaultRecommendationsData) {
+    setupTestPinia({ user: { userId: '123' } });
+    wrapper = mount(GovernanceDashboard, {
+      global: {
+        mocks: {
+          $store: {
+            state: stateObj,
+            commit: jest.fn(),
+          },
+          $router: {
+            push,
+          },
+        },
+        plugins: [Notifications, i18n],
+      },
+      data() {
+        return dataObj;
+      },
+    });
+  }
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('getPendingRequestsCount', () => {
     shallowMountComponent();
     it('should call getUserRequests', async () => {
@@ -57,6 +96,23 @@ describe('GovernanceDashboard', () => {
             status: 'in-progress',
           },
           { operand: [{ operand: { targetName: 'decision.status', targetValue: 'in-progress' }, operator: 'EQUALS' }], operator: 'AND' },
+        );
+    });
+  });
+
+  describe('getRecommendationsCount', () => {
+    mountComponent();
+    it('should call getUserRecommendations', async () => {
+      const getRecommendationSpy = jest.spyOn(RecommendationsApi, 'getUserRecommendations').mockImplementation(() => Promise.resolve({ data: {} }));
+      wrapper.vm.getRecommendationsCount();
+
+      await wrapper.vm.$nextTick();
+      expect(getRecommendationSpy)
+        .toHaveBeenCalledWith(
+          '123',
+          {
+            _pageSize: 0,
+          },
         );
     });
   });
@@ -83,5 +139,27 @@ describe('GovernanceDashboard', () => {
     shallowMountComponent();
     const card = wrapper.findComponent('[linkpath="tasks"]');
     expect(card.vm.count).toBe(3);
+  });
+
+  it('Recommendations count properly rendered', () => {
+    mountComponent();
+    const link = wrapper.find('.alert-link');
+    expect(link.text()).toContain('View 4 recommendations');
+  });
+
+  it('Recommendations click navigates to catalog with the correct initial tab', async () => {
+    mountComponent();
+    const link = wrapper.find('.alert-link');
+    await link.trigger('click');
+    expect(push).toHaveBeenCalledWith({ name: 'AccessRequestNew', params: { returnPath: '/dashboard' } });
+  });
+
+  it('Recommendations count not rendered with zero recommendations present', () => {
+    const zeroRecommendationsData = {
+      recommendationsCount: 0,
+    };
+    mountComponent(defaultRecommendationsState, zeroRecommendationsData);
+    const link = wrapper.find('.alert-link');
+    expect(link.exists()).toBe(false);
   });
 });
