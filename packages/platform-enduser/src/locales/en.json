@@ -66,6 +66,10 @@
         "heading": "My Applications",
         "listItemBrandIconAltText": "{appName} icon."
       },
+      "recommendations": {
+        "title": "You have recommended entitlements.",
+        "view": "View {number} recommendations | View {number} recommendation | View {number} recommendations"
+      },
       "cardCount": {
         "accessReviews": "Access Reviews",
         "complianceViolations": "Compliance Violations",
@@ -85,6 +89,7 @@
       "errorRetrievingPendingRequests": "There was an error retrieving pending requests",
       "errorRetrievingPendingFulfillmentTasks": "There was an error retrieving pending fulfillment tasks",
       "errorRetrievingPendingViolations": "There was an error retrieving pending violations",
+      "errorRetrievingRecommendations": "There was an error retrieving recommended access",
       "loadingWidgetError": "There was an error loading dashboard widgets.",
       "noWidget": "No Widgets Available",
       "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>.",

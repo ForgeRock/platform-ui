@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -73,6 +73,10 @@ export default {
       type: String,
       default: 'primary',
     },
+    icon: {
+      type: String,
+      default: null,
+    },
     /**
      * Should the Alert component render an icon
      */
@@ -108,7 +112,7 @@ export default {
           icon = 'message';
       }
 
-      return icon;
+      return this.icon || icon;
     },
   },
 };
