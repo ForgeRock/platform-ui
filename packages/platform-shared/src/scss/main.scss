@@ -504,8 +504,16 @@ a.card {
     padding-bottom: 0.5rem;
   }
 
-  td {
+  thead th,
+  tbody td {
     vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  td {
+    max-width: 300px;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   tr.b-table-row-selected.table-transparent {
@@ -548,7 +556,8 @@ a.card {
 
 @media (min-width: 992px) {
   .table {
-    table-layout: fixed;
+    table-layout: auto;
+    width: 100%;
   }
 
   .w-lg-auto {
