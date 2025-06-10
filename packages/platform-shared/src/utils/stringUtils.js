@@ -38,3 +38,14 @@ export function formatThousands(num) {
   }
   return num.toString();
 }
+
+/**
+ * Helper to clean a PEM formatted certificate string.
+ * @param {string} pem - The PEM formatted certificate.
+ * @returns {string} The cleaned certificate string without headers, footers, and newlines.
+ */
+export function stripPemCertificateHeaders(pem) {
+  return pem?.replace('-----BEGIN CERTIFICATE-----', '')
+    .replace('-----END CERTIFICATE-----', '')
+    .replaceAll('\n', '') || '';
+}
