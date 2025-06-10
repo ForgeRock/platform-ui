@@ -1489,6 +1489,62 @@
         "subTitle": "Manage legacy and API-configured OAuth2 Clients",
         "title": "OAuth2 Clients"
       },
+      "tryInSDK": {
+        "title": "Generate App Configuration",
+        "buttonLabel": "Try in SDKs",
+        "description": "Use the Ping Identity SDK to test your application.",
+        "getCookieFail": "Unable to retrieve cookie for the application",
+        "SDKSelection": {
+          "title": "Application Framework",
+          "description": "To generate the configuration files and code snippets needed to initialize your <a href='https://docs.pingidentity.com/sdks' target='_blank'>Ping SDKs</a> sample apps, first choose your application framework."
+        },
+        "SDKCode": {
+          "title": "Sample App Configuration Created",
+          "label": "Sample App Configuration",
+          "trySampleApps": "Try out in the Ping SDK Sample apps:",
+          "checkOutRepo": "Check out the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>",
+          "copyCodeSnippet": "Copy the code snippet and place it into the sample app.",
+          "runSampleApp": "Run the sample app.",
+          "moreInfo": "For more information, see the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
+          "useInOwnApp": "Use in your own {label} app:",
+          "setConfig": "Dynamically set the configuration in your {label} app. For example, in a <code>{file}</code> file. Copy the code snippet.",
+          "moreConfigInfo":  "For more configuration info, click <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
+          "generalIntegration": "For general integration with {label}, see the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
+          "undefinedFieldsError": "Some required fields are not configured. Please ensure {fields} are set in the OIDC Client.",
+          "ios": {
+            "switchToFolder": "Switch to the <code>iOS/swiftui-quickstart</code> folder and open the <code>QuickStart.xcodeproj</code> file.",
+            "openCodeFile": "Open the <code>{file}</code>",
+            "replaceOptions": "Copy the code snippet and replace the <code>let options = FROptions(...)</code> values.",
+            "runSampleApp": "Run the sample app and click <code>Login</code>. The app will connect to the configured tenant and run the <code>Login</code> journey.",
+            "dynamicConfig": "Dynamically set the configuration in your iOS app.",
+            "dynamicConfigExample": "For example, in a Configuration file. Copy the code snippet and initialize the SDK calling <code>try FRAuth.start(options: options)</code>.",
+            "createPlist": "Create an <code>FRAuthConfig.plist</code> and place it into your iOS app with the Ping SDK for iOS. Initialize the SDK calling <code>try FRAuth.start()</code>."
+          },
+          "android": {
+            "openAndroidStudio": "Using Android Studio open the <code>android/kotlin-ui-prototype</code> folder. Wait for the gradle build to finish.",
+            "openCodeFile": "Open the <code>{file}</code> file.",
+            "replaceOptions": "Copy the code snippet and replace the <code>val PingAdvancedIdentityCloud = FROptionsBuilder.build &#123; ... &#125;</code> values. Notice that the app supports multiple configurations. Edit based on your needs.",
+            "runSampleApp": "Run the sample app and select your environment. From the top left burger menu select <code>Launch Journey</code> and click <code>Submit</code>. The app will connect to the configured tenant and run the Login journey.",
+            "dynamicConfig": "Dynamically set the configuration in your Android app. For example, in a configuration file.",
+            "copyCodeSnippet": "Copy the code snippet and initialize the SDK calling <code>FRAuth.start(context, options)</code>.",
+            "createStringsXml": "Create a <code>strings.xml</code> file and place it into your Android app with the Ping SDK for Android. Initialize the SDK calling <code>try FRAuth.start(context)</code>."
+          },
+          "js": {
+            "cdToSampleApp": "In a terminal window, <code>cd</code> to <code>sdk-sample-apps/javascript</code>.",
+            "npmInstall": "Run <code>npm install</code>.",
+            "openMainJs": "Open <code>embedded-login/src/{file}</code> in your IDE.",
+            "copySnippet": "Copy the code snippet and paste into the <code>Config.setAsync</code> method.",
+            "cdBackToSampleApp": "Navigate back to the <code>/javascript</code> folder in the <code>sdk-sample-apps</code> project.",
+            "runSampleApp": "Run the sample app by entering <code>npm run start:embedded-login</code> in the terminal.",
+            "openBrowser": "Open the URL provided in a browser to test the sample app.",
+            "locateConfig": "Locate an appropriate part of your app to set the SDK config (the earlier in your code is recommended).",
+            "importConfig": "Within your chosen file, import <code>Config</code> from the SDK.",
+            "setAsyncSnippet": "Use the <code>Config.setAsync</code> method and use the code snippet on left as its argument.",
+            "addConfig": "Add additional configurations as required.",
+            "callbackHtml": "Make sure your app has a <code>callback.html</code> that’s publicly available."
+          }
+        }
+      },
       "nativeApp": {
         "alt": "Native App",
         "super": "Native / SPA",
