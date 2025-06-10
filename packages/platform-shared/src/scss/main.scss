@@ -931,7 +931,7 @@ tr:focus-visible {
   background: transparent;
 }
 
-button:not(.fr-sidebar-menuitems button):focus-visible {
+button:not(.fr-sidebar-menuitems button, .skip-to-content-popover):focus-visible {
   outline-offset: 2px;
 }
 

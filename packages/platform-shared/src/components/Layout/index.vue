@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,6 +13,9 @@ of the MIT license. See the LICENSE file for details. -->
       'fr-system-notification-active': systemNotificationActive && !hideNavBar,
       'fr-hover-disabled': disableHoveredStyling,
     }, 'h-100']">
+    <FrSkipToMainContent
+      type="popover"
+      mainContentId="appContent" />
     <FrSystemNotification
       v-if="(systemNotification && !hideNavBar)"
       :data="systemNotification"
@@ -43,6 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-show="!hideNavBar" />
       <div
         id="appContent"
+        tabindex="-1"
         :class="{'show-navbar': !hideNavBar}">
         <!-- slot for router -->
         <slot />
@@ -112,6 +116,7 @@ import Navbar from '@forgerock/platform-shared/src/components/Navbar/';
 import SideMenu from '@forgerock/platform-shared/src/components/SideMenu/';
 import SystemNotification from '@forgerock/platform-shared/src/components/SystemNotification/';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
+import FrSkipToMainContent from '@forgerock/platform-shared/src/components/SkipToMainContent';
 
 /**
  * Layout component for any packages that use the same sidemenu, navbar, and app content UX
@@ -122,6 +127,7 @@ export default {
     FrNavBar: Navbar,
     FrSideMenu: SideMenu,
     FrAlert: Alert,
+    FrSkipToMainContent,
     FrSystemNotification: SystemNotification,
   },
   mixins: [MediaMixin],
