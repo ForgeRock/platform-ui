@@ -39,7 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <FrListField
                   v-else-if="field.type === 'array' && field.name !== 'privileges'"
                   v-model="field.value"
-                  class="w-100 personal-info-field"
+                  class="w-100 personal-info-field mb-4"
                   :description="field.description"
                   :items="field.items"
                   :label="field.title"
