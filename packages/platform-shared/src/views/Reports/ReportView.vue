@@ -139,14 +139,13 @@ of the MIT license. See the LICENSE file for details. -->
         <FrReportViewTable
           id="viewTable"
           testid="report-table"
-          :current-page="!runDataLoadingComplete ? 0 : currentPage"
           :fields="tableFields"
           :is-empty="!tableItems.length"
           :items="tableItems"
           :loading="tableLoading || !runDataLoadingComplete"
           :per-page="perPage"
-          :sort-by="sortBy"
-          :sort-desc="sortDirection === 'desc'"
+          :sort-by="sortDetails.sortBy"
+          :sort-desc="sortDetails.sortDirection === 'desc'"
           @sort-changed="onSortChanged"
         />
         <FrPagination
@@ -158,7 +157,7 @@ of the MIT license. See the LICENSE file for details. -->
           :disabled="tableLoading"
           :per-page="perPage"
           :total-rows="totalRows"
-          @on-page-size-change="pageSizeChange" />
+          @on-page-size-change="onPageSizeChange" />
       </BCol>
     </BRow>
     <FrReportExportModal
@@ -181,7 +180,7 @@ import { ref, watch } from 'vue'; import {
 } from 'bootstrap-vue';
 import { getReportRuns } from '@forgerock/platform-shared/src/api/AutoApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { startCase } from 'lodash';
+import { cloneDeep, startCase } from 'lodash';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -231,8 +230,7 @@ const perPage = ref(10);
 const reportName = ref('');
 const reportDate = ref('');
 const reportTime = ref('');
-const sortBy = ref(null);
-const sortDirection = ref('desc');
+const sortDetails = ref({ sortBy: null, sortDirection: 'desc' });
 const tableFields = ref([]);
 const tableItems = ref([]);
 const modalData = ref({});
@@ -277,13 +275,12 @@ async function setConfigInfo(report) {
 
 /**
  * Calls the endpoint to get the data of the Report Run.
- * @param {Object} sortData Contains field to sort by and sort direction (asc or desc)
  */
-async function getRunInfo(sortData) {
+async function getRunInfo() {
   try {
     const pagedResultOffset = (currentPage.value - 1) * perPage.value;
-    const reportResults = await fetchViewReport(id, template, state, perPage.value, pagedResultOffset, sortData);
-    reportResults.forEach((item) => tableItems.value.push(item));
+    const reportResults = await fetchViewReport(id, template, state, perPage.value, pagedResultOffset, sortDetails.value);
+    tableItems.value = cloneDeep(reportResults);
 
     // No results, so don't handle sorting
     if (reportResults.length) {
@@ -293,9 +290,8 @@ async function getRunInfo(sortData) {
       });
 
       // Default sorted column to the first item
-      if (!sortData.sortBy) {
-        sortBy.value = tableFields.value[0].key;
-        sortDirection.value = sortData.sortDirection || 'desc';
+      if (!sortDetails.value.sortBy) {
+        sortDetails.value = { sortBy: tableFields.value[0].key, sortDirection: sortDetails.value.sortDirection || 'desc' };
       }
     }
   } catch (err) {
@@ -313,19 +309,6 @@ async function generateReport(fileType, bvModal) {
 }
 
 /**
- * Changes the number of rows per page n the table.
- * @param {Number} pageSize The number of rows to show in the table.
- */
-function pageSizeChange(pageSize) {
-  perPage.value = pageSize;
-  tableItems.value = [];
-  if (currentPage.value === 1) {
-    getRunInfo({ sortBy: sortBy.value, sortDirection: sortDirection.value });
-  }
-  currentPage.value = 1;
-}
-
-/**
  * Routes to the Report History page.
  */
 function returnToTemplate() {
@@ -333,31 +316,46 @@ function returnToTemplate() {
 }
 
 /**
- * Callback from clicking the sort icon in BTable
- * @param {Object} sortDetails Contains field to sort by and sort direction (asc or desc) from BTable
+ * Changes the number of rows per page in the table.
+ * @param {Number} pageSize The number of rows to show in the table.
  */
-function onSortChanged(sortDetails) {
+function onPageSizeChange(pageSize) {
+  perPage.value = pageSize;
+}
+
+/**
+ * Callback from clicking the sort icon in BTable
+ * @param {Object} sortData Contains field to sort by and sort direction (asc or desc) from BTable
+ */
+function onSortChanged(sortData) {
   // This catches when a user clicks on a non-sortable column. Unfortunately bootstrap-vue allows this to happen.
-  if (!sortDetails.sortBy.length) {
+  if (!sortData.sortBy.length) {
     return;
   }
-  sortBy.value = sortDetails.sortBy;
-  sortDirection.value = sortDetails.sortDesc ? 'desc' : 'asc';
-  tableItems.value = [];
-  currentPage.value = 1;
-  getRunInfo({ sortBy: sortBy.value, sortDirection: sortDirection.value });
+  sortDetails.value = { sortBy: sortData.sortBy, sortDirection: sortData.sortDesc ? 'desc' : 'asc' };
 }
 
 /**
  * Watchers
  */
-watch(currentPage, (page) => {
-  const expectedTotals = page * perPage.value;
-  const remainder = expectedTotals - tableItems.value.length;
-  if (expectedTotals > tableItems.value.length && remainder === perPage.value) {
-    getRunInfo({ sortBy: sortBy.value, sortDirection: sortDirection.value });
-  }
+watch(currentPage, () => {
+  getRunInfo();
 });
+
+watch(perPage, () => {
+  currentPage.value = 1;
+  getRunInfo();
+});
+
+watch(sortDetails, (_newVal, oldVal) => {
+  // We don't want to get new run info when sortBy is set for the first time since we can only get the sortBy field
+  // after the initial response returns all of the columns.
+  if (currentPage.value === 1 && oldVal.sortBy !== null) {
+    getRunInfo();
+  } else {
+    currentPage.value = 1;
+  }
+}, { deep: true });
 
 /**
  * Start
@@ -372,7 +370,7 @@ watch(currentPage, (page) => {
   });
   const [report] = result;
   setConfigInfo(report);
-  getRunInfo({ sortBy: sortBy.value, sortDirection: sortDirection.value });
+  getRunInfo();
   runDataLoading.value = false;
   runDataLoadingComplete.value = true;
 })();

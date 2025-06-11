@@ -5,12 +5,12 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mount, flushPromises } from '@vue/test-utils';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as Notifications from '@forgerock/platform-shared/src/utils/notification';
 import ReportView from './ReportView';
-import { reportTableData } from './__mocks__/mocks';
+import { reportTableData, reportTableDataPage2 } from './__mocks__/mocks';
 
 jest.mock('@forgerock/platform-shared/src/utils/notification');
 jest.mock('vue-router', () => ({
@@ -164,6 +164,61 @@ describe('Report View component', () => {
         expect(sortSpan).toBeDefined();
       }
     });
+  });
+
+  it('shows the correct initial state when the data is loaded', async () => {
+    AutoApi.getReportResult = jest.fn().mockReturnValue(Promise.resolve(reportTableData));
+    wrapper = setup();
+    await flushPromises();
+
+    // Expect the table to contain the correct amount of rows
+    let body = wrapper.find('tbody[role="rowgroup"]');
+    let rows = body.findAll('tr[role="row"]');
+    expect(rows.length).toBe(reportTableData.result.length);
+
+    // Expect the first item and last item to be correct
+    const firstRow = findByText(rows[0], 'td[role="cell"]', reportTableData.result[0]['Common Name']);
+    const lastRow = findByText(rows[rows.length - 1], 'td[role="cell"]', reportTableData.result[reportTableData.result.length - 1]['Common Name']);
+    expect(firstRow.exists()).toBe(true);
+    expect(lastRow.exists()).toBe(true);
+
+    // Click the next page button
+    let paginationNextButton = wrapper.find('button[aria-label="Go to next page"]');
+    let paginationPrevButton = wrapper.find('button[aria-label="Go to previous page"]');
+    paginationNextButton.trigger('click');
+    await flushPromises();
+
+    // On page 2 so next button should not exist, previous page button should exist
+    paginationPrevButton = wrapper.find('button[aria-label="Go to previous page"]');
+    paginationNextButton = wrapper.find('button[aria-label="Go to next page"]');
+    expect(paginationNextButton.exists()).toBe(false);
+    expect(paginationPrevButton.exists()).toBe(true);
+
+    // Setup page 2 data
+    AutoApi.getReportResult = jest.fn().mockReturnValue(Promise.resolve(reportTableDataPage2));
+    await flushPromises();
+
+    wrapper = setup();
+    await flushPromises();
+    body = wrapper.find('tbody[role="rowgroup"]');
+    rows = body.findAll('tr[role="row"]');
+    expect(rows.length).toBe(reportTableDataPage2.result.length);
+
+    // Get and click the column header to sort the data
+    const columnHeaders = wrapper.findAll('[role="columnheader"]');
+    const columnToClick = columnHeaders[0];
+    expect(columnToClick.attributes('aria-sort')).toBe('descending');
+
+    // Click the sort button
+    AutoApi.getReportResult = jest.fn().mockReturnValue(Promise.resolve(reportTableData));
+    columnToClick.trigger('click');
+    await flushPromises();
+
+    // Back on page 1
+    paginationPrevButton = wrapper.find('button[aria-label="Go to previous page"]');
+    paginationNextButton = wrapper.find('button[aria-label="Go to next page"]');
+    expect(paginationNextButton.exists()).toBe(true);
+    expect(paginationPrevButton.exists()).toBe(false);
   });
 
   it('updates the sort direction when sort button is clicked', async () => {
