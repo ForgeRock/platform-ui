@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :autofocus="index === 0"
                     :label="field.title"
                     :name="field.key"
-                    :options="field.options"
+                    :options="field.options || field.enum"
                     :type="getFieldType(field)"
                     :validation="field.validation" />
                 </BFormGroup>
@@ -456,6 +456,9 @@ export default {
       }
       if (field.type === 'boolean') {
         return 'checkbox';
+      }
+      if (has(field, 'enum')) {
+        return 'select';
       }
       return field.type;
     },

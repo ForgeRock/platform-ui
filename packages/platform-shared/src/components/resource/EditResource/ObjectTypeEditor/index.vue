@@ -28,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-else-if="field.type === 'array' && field.items?.type && field.key !== 'privileges' && !field.items.isRelationship"
             v-model="field.value"
             v-on="$listeners"
+            class="mb-4"
             :description="field.description"
             :index="index"
             :items="field.items"

@@ -4,9 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <div
-      class="mb-4"
-      :key="`managedResource${index}`">
+    <div :key="`managedResource${index}`">
       <FrField
         v-if="items.type === 'string' || items.type === 'number' || items.type === 'boolean' || isEnumFormat"
         v-bind="$attrs"
