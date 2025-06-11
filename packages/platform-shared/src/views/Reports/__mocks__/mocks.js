@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -295,7 +295,35 @@ export const reportTableData = {
       'Consented Mappings': [],
     },
   ],
-  total: 20,
+  total: 12,
+  currentCount: 10,
+  sortable: true,
+  filterable: true,
+  nonSortableColumns: [
+    'Consented Mappings',
+  ],
+};
+
+export const reportTableDataPage2 = {
+  result: [
+    {
+      'Common Name': 'alden Oakley',
+      Country: null,
+      'Email Address': 'aldenOakley@pingidentity.com',
+      'First Name': 'zion',
+      'Last Name': 'Peterson',
+      'Consented Mappings': [],
+    },
+    {
+      'Common Name': 'matt Carpenter',
+      Country: null,
+      'Email Address': 'mattCarpenter@pingidentity.com',
+      'First Name': 'solomon',
+      'Last Name': 'Rogers',
+      'Consented Mappings': [],
+    },
+  ],
+  total: 12,
   currentCount: 10,
   sortable: true,
   filterable: true,
