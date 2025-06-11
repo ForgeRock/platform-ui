@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -247,5 +247,22 @@ describe('Multiselect', () => {
     wrapper.vm.setInputValue(['existingValue', 'selectOption']);
     expect(wrapper.vm.inputValue.length).toEqual(2);
     expect(wrapper.vm.inputValue).toEqual([existingValue, selectOption]);
+  });
+
+  it('MultiSelect input does not set inputValue if falsey value is passed instead of expected array', () => {
+    const selectOption = {
+      value: 'selectOption',
+      multiselectId: 0,
+      text: 'selectOption',
+    };
+    const existingValue = { value: 'existingValue' };
+    const wrapper = setup({
+      options: [selectOption],
+    });
+    wrapper.vm.inputValue = [existingValue];
+    wrapper.vm.setInputValue(['selectOption']);
+    expect(wrapper.vm.inputValue).toEqual([selectOption]);
+    wrapper.vm.setInputValue(null);
+    expect(wrapper.vm.inputValue).toEqual([selectOption]);
   });
 });
