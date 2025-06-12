@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,14 +14,14 @@ of the MIT license. See the LICENSE file for details. -->
         class="h5 m-0 d-flex align-items-start flex-column justify-content-center text-left text-break"
         title-tag="h4">
         <small
-          v-if="entityNamePath"
+          v-if="dataSourceIsRelated"
           class="d-block text-muted">
-          {{ entityNamePath }}
+          {{ parentDataSourcePathLabel }}
         </small>
         {{ currentName }}
       </BCardTitle>
       <FrSpinner
-        v-if="reportIsLoading"
+        v-if="reportIsLoading || dataSourceBeingDeleted === dataSource"
         class="ml-auto"
         size="sm" />
       <FrActionsCell
@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
         @delete-clicked.stop="$emit('delete-data-source')">
         <template #custom-top-actions>
           <BDropdownItem
-            v-if="entityNamePath"
+            v-if="dataSourceIsRelated"
             @click.stop="$emit('related-entity-settings')">
             <FrIcon
               icon-class="mr-2"
@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BButton>
     <BCollapse
       class="px-3 mb-3"
-      :class="{'margin-top-offset': !entityNamePath.length}"
+      :class="{'margin-top-offset': !dataSourcePathLabel.length}"
       :visible="showAccordion">
       <BFormGroup
         v-slot="{ ariaDescribedby }"
@@ -85,17 +85,17 @@ of the MIT license. See the LICENSE file for details. -->
             v-for="({ label, name }) in relatedDataSources"
             class="d-flex align-items-center mb-2 py-2 px-3 border-0 rounded justify-content-between"
             data-testid="related-entity-list-item"
-            :class="selectedRelatedDataSources.includes(name) ? 'bg-lightblue' : 'bg-light'"
+            :class="selectedRelatedDataSourcePaths.includes(name) ? 'bg-lightblue' : 'bg-light'"
             :key="name">
             <p class="m-0">
               {{ label }}
             </p>
             <FrSpinner
-              v-if="currentEntityBeingFetched === name && !selectedRelatedDataSources.includes(name)"
+              v-if="currentEntityBeingFetched === name && !selectedRelatedDataSourcePaths.includes(name)"
               class="ml-auto opacity-50"
               size="sm" />
             <BDropdown
-              v-else-if="!selectedRelatedDataSources.includes(name)"
+              v-else-if="!selectedRelatedDataSourcePaths.includes(name)"
               class="p-0 ml-auto"
               no-caret
               right
@@ -106,7 +106,7 @@ of the MIT license. See the LICENSE file for details. -->
                   icon-class="text-dark md-18"
                   name="add" />
               </template>
-              <BDropdownItem @click="addRelatedEntity(name)">
+              <BDropdownItem @click="addRelatedEntity(name, label)">
                 <FrIcon
                   icon-class="mr-2"
                   name="add">
@@ -160,9 +160,17 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  dataSourceBeingDeleted: {
+    type: String,
+    default: '',
+  },
   dataSourceColumns: {
     type: Array,
     default: () => [],
+  },
+  dataSourcePathLabel: {
+    type: String,
+    default: '',
   },
   relatedDataSources: {
     type: Array,
@@ -184,24 +192,15 @@ const props = defineProps({
 
 // Globals
 const currentEntityBeingFetched = ref('');
-const entityNamePath = computed(() => {
-  const nameArray = props.dataSource.split('.');
-  nameArray.pop();
-  if (nameArray.length) {
-    return `${nameArray.join(' / ')} /`;
-  }
-  return '';
-});
 const showAccordion = ref(false);
 
 // Functions
-function addRelatedEntity(dataSourceName) {
+function addRelatedEntity(dataSourceName, label) {
   currentEntityBeingFetched.value = dataSourceName;
-  emit('set-related-data-source', dataSourceName);
+  emit('set-related-data-source', { path: dataSourceName, label });
 }
 
 // Computed
-const currentName = computed(() => props.dataSource.split('.').pop());
 const columnsModel = computed({
   get() {
     return props.selectedColumns.map((column) => column.path);
@@ -214,10 +213,19 @@ const columnsModel = computed({
     emit('set-column-selections', values);
   },
 });
+const parentDataSourcePathLabel = computed(() => {
+  const arr = props.dataSourcePathLabel.split(' / ');
+  arr.pop(); // Remove the last element which is the current name which is not needed here
+  return `${arr.join(' / ')} /`;
+});
+const dataSourceIsRelated = computed(() => props.dataSourcePathLabel.split(' / ').length > 1);
+const currentName = computed(() => props.dataSourcePathLabel.split(' / ').pop());
+const selectedRelatedDataSourcePaths = computed(() => props.selectedRelatedDataSources.map(({ path }) => path));
 
 // Watchers
-watch(() => props.selectedRelatedDataSources, (entities) => {
-  if (entities.includes(currentEntityBeingFetched.value)) {
+watch(() => props.selectedRelatedDataSources, (entityPath) => {
+  const paths = entityPath.map(({ path }) => path);
+  if (paths.includes(currentEntityBeingFetched.value)) {
     currentEntityBeingFetched.value = '';
   }
 });

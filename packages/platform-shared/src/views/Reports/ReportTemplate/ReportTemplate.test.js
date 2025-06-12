@@ -354,8 +354,8 @@ describe('Component for creating custom analytics reports', () => {
       // verifies that the related entities were added
       const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
       const [, ownersHeading, rolesHeading] = dataSourceContainer.findAll('h4');
-      expect(ownersHeading.text()).toBe('applications / owners');
-      expect(rolesHeading.text()).toBe('applications / roles');
+      expect(ownersHeading.text()).toBe('Applications / Owners');
+      expect(rolesHeading.text()).toBe('Applications / Roles');
     });
 
     it('deletes a related data source', async () => {
@@ -370,12 +370,15 @@ describe('Component for creating custom analytics reports', () => {
       const [, applicationOwners] = dataSourceContainer.findAll('.card');
       const deleteMenu = applicationOwners.find('[role="menu"]');
       await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
+      await flushPromises();
+      jest.runAllTimers();
+      await nextTick();
 
       // should now only show the parent "applications" entity and "applications / roles" related entity.
       allDataSourceHeadings = dataSourceContainer.findAll('h4');
       expect(allDataSourceHeadings.length).toBe(2);
-      expect(allDataSourceHeadings[0].text()).toBe('applications');
-      expect(allDataSourceHeadings[1].text()).toBe('applications / roles');
+      expect(allDataSourceHeadings[0].text()).toBe('Applications');
+      expect(allDataSourceHeadings[1].text()).toBe('Applications / Roles');
     });
 
     it('deletes a data source', async () => {
@@ -444,6 +447,9 @@ describe('Component for creating custom analytics reports', () => {
 
       // delete current entity
       await findByText(entitiesSettingContainer, 'a', 'deleteDelete').trigger('click');
+      await flushPromises();
+      jest.runAllTimers();
+      await nextTick();
 
       // add users related entity
       await addDataSource('users');

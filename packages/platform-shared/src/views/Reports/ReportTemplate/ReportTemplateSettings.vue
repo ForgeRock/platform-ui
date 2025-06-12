@@ -52,7 +52,9 @@ of the MIT license. See the LICENSE file for details. -->
                 <FrReportDataSourceDefinition
                   v-for="(definition, defIndex) in setting.definitions"
                   :data-source="definition.dataSource"
+                  :data-source-being-deleted="dataSourceBeingDeleted"
                   :data-source-columns="definition.dataSourceColumns"
+                  :data-source-path-label="definition.dataSourcePathLabel"
                   :key="definition.dataSource"
                   :related-data-sources="definition.relatedDataSources"
                   :report-is-loading="reportIsLoading"
@@ -125,6 +127,10 @@ const emit = defineEmits([
 ]);
 
 const props = defineProps({
+  dataSourceBeingDeleted: {
+    type: String,
+    default: '',
+  },
   reportIsLoading: {
     type: Boolean,
     default: false,
