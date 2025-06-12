@@ -402,6 +402,7 @@
       "hours": "hour(s)",
       "last7Days": "Last 7 days",
       "last30Days": "Last 30 days",
+      "minutes": "minute(s)",
       "months": "month(s)",
       "today": "Today",
       "weeks": "week(s)",
