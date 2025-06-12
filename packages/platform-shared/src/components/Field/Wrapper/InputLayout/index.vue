@@ -10,7 +10,8 @@ of the MIT license. See the LICENSE file for details. -->
       <slot name="prepend" />
       <div
         v-if="floatingLabel"
-        class="form-label-group-input">
+        class="form-label-group-input"
+        :title="showHoverTitle ? labelTranslation : ''">
         <label
           v-if="label && isHtml"
           v-html="labelTranslation"
@@ -158,6 +159,13 @@ export default {
      * Boolean to apply readonly styles to labels.
      */
     readonlyLabel: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Boolean to show a hover title on the label.
+     */
+    showHoverTitle: {
       type: Boolean,
       default: false,
     },

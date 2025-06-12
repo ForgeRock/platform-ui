@@ -11,7 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
     :is-html="isHtml"
     :label="label"
     :floating-label="floatingLabel"
-    :readonly-label="disabled">
+    :readonly-label="disabled"
+    :show-hover-title="showHoverTitle">
     <VueMultiSelect
       :id="internalId"
       ref="vms"
