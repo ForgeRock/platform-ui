@@ -407,6 +407,7 @@ describe('BasicInput', () => {
       it('aria-invalid attribute is true string if the component is not touched, the field is validated immediatly and the field has internal validation issues', async () => {
         const wrapper = setup({ validationImmediate: true, validation: 'required' });
         const input = findByTestId(wrapper, 'input-stub-testid');
+        await input.trigger('blur');
         await flushPromises();
         expect(input.attributes('aria-invalid')).toBe('true');
       });
@@ -559,6 +560,15 @@ describe('BasicInput', () => {
       input.setValue('');
       input.trigger('blur');
       expect(wrapper.vm.floatLabels).toBe(false);
+    });
+  });
+
+  describe('validation immediate with required rule and value is provided', () => {
+    it('should not show validation error', async () => {
+      const wrapper = setup({ validationImmediate: true, validation: { required: true }, value: 'test' });
+      await flushPromises();
+      expect(wrapper.vm.inputValue).toBe('test');
+      expect(wrapper.vm.errorMessages).toEqual([]);
     });
   });
 });
