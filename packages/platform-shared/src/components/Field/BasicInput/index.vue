@@ -126,7 +126,13 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import { useField } from 'vee-validate';
-import { ref, toRef, watch } from 'vue';
+import {
+  onMounted,
+  ref,
+  toRef,
+  watch,
+  getCurrentInstance,
+} from 'vue';
 import uuid from 'uuid/v4';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
@@ -217,9 +223,10 @@ export default {
     const {
       value: inputValue, errors: fieldErrors, meta, handleBlur, validate,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
-      validateOnMount: props.validationImmediate, initialValue: '', bails: false, validateOnValueUpdate: false,
+      validateOnMount: false, initialValue: '', bails: false, validateOnValueUpdate: false,
     });
     const wasInvalid = ref(false);
+    const input = ref(null);
     // Debounced validation to prevent validation on every keypress
     const debouncedValidate = debounce(validate, 250);
     // Watch input changes, and validate eagerly if the field has been touched
@@ -239,6 +246,21 @@ export default {
       }
     });
 
+    onMounted(async () => {
+      // If the field has an initial value and validation is immediate, validate the field
+      if (props.validationImmediate) {
+        await debouncedValidate();
+      }
+      // Browser consistent focus
+      const instance = getCurrentInstance();
+      input.value = instance?.proxy?.$refs.input;
+      if (props.autofocus && input.value) {
+        delay(() => {
+          input.value.focus();
+        }, 600);
+      }
+    });
+
     // validationListeners: Contains custom event listeners for validation.
     // Since vee-validate +4 removes the interaction modes, this custom listener is added
     // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
@@ -251,18 +273,8 @@ export default {
     };
 
     return {
-      inputValue, fieldErrors, meta, validationListeners,
+      inputValue, fieldErrors, meta, validationListeners, input,
     };
-  },
-  mounted() {
-    // Browser consistent focus
-    if (this.autofocus) {
-      delay(() => {
-        if (this.$refs.input) {
-          this.$refs.input.focus();
-        }
-      }, 600);
-    }
   },
   computed: {
     showText() {
