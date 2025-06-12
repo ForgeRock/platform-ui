@@ -24,6 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
         />
         <FrReportTemplateSettings
           v-model="reportDetails"
+          :data-source-being-deleted="dataSourceBeingDeleted"
           :report-is-loading="reportIsLoading"
           :report-settings="reportSettings"
           @delete-data-source="onDeleteDataSource"
@@ -197,6 +198,7 @@ const {
 );
 
 // Globals
+const dataSourceBeingDeleted = ref('');
 const definitionBeingEdited = ref({});
 const disableTemplateSave = ref(true);
 const isDeletingTemplate = ref(false);
@@ -361,11 +363,11 @@ function onSetColumnSelections(defIndex, columns) {
 /**
  * Adds a related data source
  * @param {Number} parentIndex Parent entity definition index position
- * @param {String} relatedDataSource Related data source path
+ * @param {Object} relatedDataSource Related data source path / label
  */
 async function onSetRelatedDataSource(parentIndex, relatedDataSource) {
   const { selectedRelatedDataSources } = findSettingsObject('entities').definitions[parentIndex];
-  await onAddDataSource(relatedDataSource);
+  await onAddDataSource(relatedDataSource.path);
   selectedRelatedDataSources.push(relatedDataSource);
 }
 
@@ -485,17 +487,18 @@ function removeAssociatedDefinitions(deleteList) {
  * Deletes the current Data source entity
  * @param {Number} defIndex Definition index position
  */
-function onDeleteDataSource(defIndex) {
+async function onDeleteDataSource(defIndex) {
   const definitionsList = findSettingsObject('entities').definitions;
   const targetPath = definitionsList[defIndex].dataSource;
   const definitionPathArray = targetPath.split('.');
   definitionPathArray.pop();
   const parentDefinitionName = definitionPathArray.join('.');
   const parentDefinition = definitionsList.find((def) => def.dataSource === parentDefinitionName);
+  dataSourceBeingDeleted.value = targetPath;
 
   if (parentDefinition) {
     // Remove the selected related data source item from the parent data source definition
-    parentDefinition.selectedRelatedDataSources = parentDefinition.selectedRelatedDataSources.filter((definitionPath) => definitionPath !== targetPath);
+    parentDefinition.selectedRelatedDataSources = parentDefinition.selectedRelatedDataSources.filter(({ path }) => path !== targetPath);
   }
 
   const deleteQueue = [];
@@ -516,14 +519,11 @@ function onDeleteDataSource(defIndex) {
 
   // Remove any nested related data sources from the delete queue and update the definition list.
   const filteredDefinitions = definitionsList.filter((def) => !deleteQueue.includes(def.dataSource));
-  definitionsList.splice(0);
-  definitionsList.push(...filteredDefinitions);
-  disableTemplateSave.value = false;
 
-  if (Object.keys(definitionsList).length) {
-    const { entities } = entitiesPayload(definitionsList);
-    removeAssociatedDefinitions(deleteQueue);
-    entityDefinitions(entities);
+  if (Object.keys(filteredDefinitions).length) {
+    const { entities } = entitiesPayload(filteredDefinitions);
+
+    await entityDefinitions(entities);
   } else {
     // If the last data source is deleted we must clear any previously
     // defined entity columns, parameters, filters, aggregates and sorting definitions.
@@ -532,7 +532,14 @@ function onDeleteDataSource(defIndex) {
     findSettingsObject('filter').definitions.splice(0);
     findSettingsObject('aggregate').definitions.splice(0);
     findSettingsObject('sort').definitions.splice(0);
+    fetchReportEntities();
   }
+
+  definitionsList.splice(0);
+  definitionsList.push(...filteredDefinitions);
+  disableTemplateSave.value = false;
+  removeAssociatedDefinitions(deleteQueue);
+  dataSourceBeingDeleted.value = '';
 }
 
 /**

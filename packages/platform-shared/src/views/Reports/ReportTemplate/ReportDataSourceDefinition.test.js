@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -22,6 +22,7 @@ describe('Report Data Source Definition component', () => {
       },
       props: {
         dataSource: 'applications',
+        dataSourcePathLabel: 'applications',
         ...props,
       },
     });
@@ -49,7 +50,7 @@ describe('Report Data Source Definition component', () => {
     name: 'applications.roles',
     label: 'Roles',
   }];
-  const selectedRelatedDataSources = ['applications.assignments'];
+  const selectedRelatedDataSources = [{ path: 'applications.assignments', label: 'Assignments' }];
 
   let wrapper;
 
@@ -119,10 +120,10 @@ describe('Report Data Source Definition component', () => {
     });
 
     it('shows a specific title path that includes the parent data source name for related data source definitions', () => {
-      wrapper = setup({ dataSource: 'applications.assignments' });
+      wrapper = setup({ dataSource: 'applications.assignments', dataSourcePathLabel: 'Applications / Assignments' });
 
       const dataSourceDefinitionHeading = wrapper.find('h4');
-      expect(dataSourceDefinitionHeading.text()).toBe('applications / assignments');
+      expect(dataSourceDefinitionHeading.text()).toBe('Applications / Assignments');
     });
 
     it('emits the data source columns array when a column checkbox is selected', async () => {
@@ -149,7 +150,7 @@ describe('Report Data Source Definition component', () => {
 
       await assignmentsRelatedDataSourceButton.trigger('click');
       await addAssignmentsRelatedDataSourceOption.trigger('click');
-      expect(wrapper.emitted()['set-related-data-source'][0]).toEqual(['applications.assignments']);
+      expect(wrapper.emitted()['set-related-data-source'][0]).toEqual([{ path: 'applications.assignments', label: 'Assignments' }]);
     });
 
     it('emits "delete-data-source" when a data source definition card is deleted', async () => {
@@ -167,7 +168,7 @@ describe('Report Data Source Definition component', () => {
       expect(deleteOption.text()).toBe('deleteDelete');
 
       // sets a related entity
-      wrapper = setup({ dataSource: 'applications.roles' });
+      wrapper = setup({ dataSource: 'applications.roles', dataSourcePathLabel: 'Applications / Roles' });
 
       const ellipseMenuForRelatedEntities = wrapper.find('[role="menu"]');
       const allMenuItemOptionsForRelatedEntities = ellipseMenuForRelatedEntities.findAll('[role="menuitem"]');
@@ -180,7 +181,7 @@ describe('Report Data Source Definition component', () => {
 
     it('emits "related-entity-settings" when the related entity "settings" ellipse menu option is selected.', async () => {
       // sets a related entity
-      wrapper = setup({ dataSource: 'applications.roles' });
+      wrapper = setup({ dataSource: 'applications.roles', dataSourcePathLabel: 'Applications / Roles' });
 
       const ellipseMenu = wrapper.find('[role="menu"]');
       const allMenuItemOptions = ellipseMenu.findAll('[role="menuitem"]');

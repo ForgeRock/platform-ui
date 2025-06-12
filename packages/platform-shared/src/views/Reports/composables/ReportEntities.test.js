@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -22,14 +22,14 @@ describe('@useReportEntities', () => {
       result: [
         {
           name: 'applications',
-          label: 'applications',
+          label: 'Applications',
           relatedEntities: [{
-            name: 'roles',
-            label: 'roles',
+            name: 'applications.roles',
+            label: 'Roles',
           },
           {
-            name: 'assignments',
-            label: 'assignments',
+            name: 'applications.assignments',
+            label: 'Assignments',
           }],
         },
         {
@@ -111,12 +111,12 @@ describe('@useReportEntities', () => {
       await fetchReportEntities();
       expect(dataSources.value).toEqual([
         {
-          text: 'Users',
-          value: 'Users',
+          text: 'Applications',
+          value: 'applications',
         },
         {
-          text: 'applications',
-          value: 'applications',
+          text: 'Users',
+          value: 'Users',
         },
       ]);
     });
@@ -185,6 +185,7 @@ describe('@useReportEntities', () => {
               type: 'string',
             },
           ]),
+          dataSourcePathLabel: 'Applications',
           relatedDataSources: [{
             name: 'applications.owners',
             label: 'Owners',
@@ -258,6 +259,7 @@ describe('@useReportEntities', () => {
               type: 'string',
             },
           ]),
+          dataSourcePathLabel: 'Applications / roles',
           joinType: 'left',
           relatedDataSources: [],
           selectedColumns: [{ path: 'applications.roles.name', order: 0 }],

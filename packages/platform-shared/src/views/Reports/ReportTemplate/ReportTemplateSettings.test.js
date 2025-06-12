@@ -199,11 +199,11 @@ describe('Report Template Settings component', () => {
             {
               name: 'applications',
               relatedEntities: [{
-                name: 'roles',
+                name: 'applications.roles',
                 label: 'roles',
               },
               {
-                name: 'assignments',
+                name: 'applications.assignments',
                 label: 'assignments',
               }],
             },
@@ -248,15 +248,15 @@ describe('Report Template Settings component', () => {
           },
         ],
         relatedDataSources: [{
-          name: 'assignments',
+          name: 'applications.assignments',
           label: 'assignments',
         },
         {
-          name: 'roles',
+          name: 'applications.roles',
           label: 'roles',
         }],
         selectedColumns: [{ path: 'applications.name', order: 0 }],
-        selectedRelatedDataSources: ['roles'],
+        selectedRelatedDataSources: [{ path: 'applications.roles', label: 'roles' }],
       };
 
       it('ensures that the dataSources definitions only show if the definitions property has items', async () => {
@@ -323,7 +323,7 @@ describe('Report Template Settings component', () => {
         await assignmentsRelatedEntityAddOption.trigger('click');
         const [[definitionIndex, entityValue]] = wrapper.emitted()['set-related-data-source'];
         expect(definitionIndex).toEqual(0);
-        expect(entityValue).toBe('assignments');
+        expect(entityValue).toEqual({ label: 'assignments', path: 'applications.assignments' });
       });
     });
 
