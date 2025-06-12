@@ -73,12 +73,6 @@ Given('admin navigates to login page', () => {
   cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
 });
 
-Given('admin navigates to {string} page url', (page) => {
-  cy.intercept('GET', '/am/json/serverinfo/*').as('getServerInfo');
-  cy.visit(`${Cypress.config().baseUrl}${page}`);
-  cy.wait('@getServerInfo');
-});
-
 When('user clicks on {string} cell on table', (cellToClick) => {
   cy.findAllByRole('cell', { name: Cypress.env(cellToClick) ? Cypress.env(cellToClick) : cellToClick }).eq(0).click();
 });
@@ -129,6 +123,12 @@ When('user reloads the page', () => {
   cy.wait('@getTheme', { timeout: 10000 });
 });
 
+When('user reloads journey page', () => {
+  cy.intercept('GET', '/openidm/info/uiconfig').as('uiconfig');
+  cy.reload();
+  cy.wait('@uiconfig', { timeout: 15000 });
+});
+
 When('user clicks on {string} button in {string} modal', (button, modal) => {
   cy.findByRole('dialog', { name: modal }).within(() => {
     cy.findByRole('button', { name: button }).click();
@@ -137,6 +137,10 @@ When('user clicks on {string} button in {string} modal', (button, modal) => {
 
 When('user clicks on {string} button', (button) => {
   cy.findByRole('button', { name: button }).click();
+});
+
+When('user clicks on {string} button after waiting for {double} seconds', (button, seconds) => {
+  cy.findByRole('button', { name: button }).wait(seconds * 1000).click();
 });
 
 When('user clicks on {string} link', (link) => {
@@ -162,6 +166,10 @@ Then('notification is displayed with text {string}', (message) => {
 
 Then('{string} error message is displayed', (message) => {
   cy.findAllByRole('alert').contains(message).should('be.visible');
+});
+
+Then('{string} error message does not exists', (message) => {
+  cy.findAllByRole('alert').contains(message).should('not.exist');
 });
 
 /**
@@ -203,6 +211,13 @@ When('the message {string} should be present', (message) => {
 When('{string} option should be present', (option) => {
   cy.findByText(option)
     .should('be.visible');
+});
+
+When('user clicks on {string} menu item from top right user menu', (menuItem) => {
+  cy.findByTestId('fr-main-navbar').within(() => {
+    cy.findByRole('button').click();
+    cy.findByRole('menuitem', { name: menuItem }).click();
+  });
 });
 
 Then('page url contains {string}', (url) => {
@@ -268,6 +283,10 @@ Then('the value of the {string} field is {string}', (fieldName, expectedValue) =
   cy.findByLabelText(fieldName).should('have.value', expectedValue);
 });
 
+Then('the value of the {string} field is the stored value of {string}', (fieldName, expectedValue) => {
+  cy.findByLabelText(fieldName).should('have.value', Cypress.env(expectedValue));
+});
+
 Then('page title is {string}', (title) => {
   // TODO: Remove this big timeout after Themes performance is resolved (default 5s should be enough)
   cy.findByRole('heading', { name: title, timeout: 10000 })
@@ -277,4 +296,10 @@ Then('page title is {string}', (title) => {
 Then('page title is {string} after user is idle for {int} seconds', (title, seconds) => {
   cy.findByRole('heading', { name: title, timeout: seconds * 1000 })
     .should('be.visible');
+});
+
+Then('admin dashboard is loaded', () => {
+  cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
+  const username = Cypress.env('IS_FRAAS') ? Cypress.env('AM_USERNAME') : 'Platform Admin';
+  cy.findAllByText(username).should('exist');
 });
