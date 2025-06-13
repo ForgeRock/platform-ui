@@ -15,9 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
     @ok="$emit('success')"
     @show="initialize">
     <template #modal-title>
-      <h2
-        v-if="step === 0"
-        class="h5 modal-title">
+      <h2 class="h5 modal-title">
         {{ importModalTitle }}
       </h2>
     </template>
@@ -66,13 +64,25 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('importModal.importComplete') }}
         </h3>
         <p>
-          {{ $t('importModal.successfullyImported', { itemType: itemLowerCase }) }}
+          {{ $t('importModal.successfullyImported', { count: successfulImports.length, itemTypeSingular: singularItemLowerCase, itemTypePlural: pluralItemLowerCase }) }}
         </p>
         <BButton
+          v-if="successfulImports.length === 1"
           variant="link"
-          @click="$emit('viewConfiguration', importedId);">
-          {{ $t('importModal.viewConfig', { itemType: itemLowerCase }) }}
+          @click="$emit('viewConfiguration', successfulImports[0]);">
+          {{ $t('importModal.viewConfig', { itemTypeSingular: singularItemLowerCase }) }}
         </BButton>
+        <p
+          v-if="unsuccessfulImports.length"
+          class="text-danger font-weight-bold text-center">
+          {{ $t('importModal.unsuccessfullyImported', { itemTypePlural: pluralItemLowerCase }) }}
+          <span
+            class="d-block"
+            v-for="nodeName in unsuccessfulImports"
+            :key="nodeName">
+            - {{ nodeName }}
+          </span>
+        </p>
       </div>
     </template>
 
@@ -89,7 +99,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="handleImportClicked();"
         variant="primary"
         :disabled="!fileToImport">
-        {{ $t('importModal.import', { itemType }) }}
+        {{ $t('importModal.import', { itemTypePlural }) }}
       </BButton>
       <BButton
         v-else-if="step === 2"
@@ -133,9 +143,16 @@ const props = defineProps({
     required: true,
   },
   /**
-   * Type of item being imported
+   * Singular of the type of item being imported
    */
-  itemType: {
+  itemTypeSingular: {
+    type: String,
+    required: true,
+  },
+  /**
+   * Plural of the type of item being imported
+   */
+  itemTypePlural: {
     type: String,
     required: true,
   },
@@ -173,14 +190,16 @@ const props = defineProps({
 const fileToImport = ref(null);
 const importError = ref('');
 const step = ref(0);
-const itemLowerCase = computed(() => props.itemType.toLowerCase());
-const importedId = ref('');
+const successfulImports = ref([]);
+const unsuccessfulImports = ref([]);
+const singularItemLowerCase = computed(() => props.itemTypeSingular.toLowerCase());
+const pluralItemLowerCase = computed(() => props.itemTypePlural.toLowerCase());
 const importModalTitle = computed(() => {
   if (step.value === 0) {
-    return i18n.global.t('importModal.import', { itemType: props.itemType });
+    return i18n.global.t('importModal.import', { itemTypePlural: props.itemTypePlural });
   }
   if (step.value === 1) {
-    return i18n.global.t('importModal.importingItem', { itemType: props.itemType });
+    return i18n.global.t('importModal.importingItem', { itemTypePlural: props.itemTypePlural });
   }
   // if step === 2
   return i18n.global.t('importModal.importComplete');
@@ -198,7 +217,7 @@ const showErrorMessage = (status, errorMessage) => {
     try {
       // attempt to display error message with listed ids of items that conflict
       const conflicts = JSON.parse(`{${errorMessage}}`).conflicting;
-      importError.value = i18n.global.t(props.conflictErrorMessageKey, { ids: conflicts.join('<br/>') });
+      importError.value = i18n.global.t(props.conflictErrorMessageKey, { ids: conflicts.join('<br/>'), itemTypePlural: props.itemTypePlural });
     } catch {
       // fallback to generic conflict error message
       importError.value = props.genericConflictErrorMessage;
@@ -226,7 +245,18 @@ const handleImportClicked = () => {
 
       props.importFunction(json)
         .then((res) => {
-          [importedId.value] = Object.keys(res.data.created);
+          successfulImports.value = Object.keys(res.data.created);
+          if (res.data.failed) {
+            const failures = Object.keys(res.data.failed);
+            unsuccessfulImports.value = [];
+            for (let i = 0; i < failures.length; i += 1) {
+              let nodeName = failures[i];
+              if (json.nodeTypes && json.nodeTypes[failures[i]]) {
+                nodeName = json.nodeTypes[failures[i]].displayName;
+              }
+              unsuccessfulImports.value.push(nodeName);
+            }
+          }
           step.value = 2;
         }).catch((error) => {
           const { status } = error.response || '';
@@ -253,7 +283,8 @@ const initialize = () => {
   fileToImport.value = null;
   importError.value = '';
   step.value = 0;
-  importedId.value = '';
+  successfulImports.value = [];
+  unsuccessfulImports.value = [];
 };
 
 </script>

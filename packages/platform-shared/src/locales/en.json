@@ -2367,14 +2367,15 @@
     "moveDown": "Move down"
   },
   "importModal": {
-    "import": "Import {itemType}",
-    "importingItem": "Importing {itemType}...",
+    "import": "Import {itemTypePlural}",
+    "importingItem": "Importing {itemTypePlural}...",
     "importing": "Importing...",
     "importComplete": "Import Complete",
-    "successfullyImported": "Successfully imported {itemType}",
-    "viewConfig": "View {itemType} configuration",
+    "successfullyImported": "Successfully imported {count} {itemTypeSingular} | Successfully imported {count} {itemTypePlural}",
+    "unsuccessfullyImported": "The following {itemTypePlural} had one or more failures during import:",
+    "viewConfig": "View {itemTypeSingular} configuration",
     "jsonFile": "JSON File",
-    "conflictError": "Error importing - items with the following ids already exist: <br/>{ids}",
+    "conflictError": "Error importing - {itemTypePlural} with the following ids already exist: <br/>{ids}",
     "genericConflictError": "Error importing - item already exists",
     "genericError": "Error importing items"
   }

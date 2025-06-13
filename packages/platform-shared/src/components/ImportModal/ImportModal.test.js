@@ -13,8 +13,10 @@ import ImportModal from './ImportModal';
 const mockImportFunctionSuccess = jest.fn(() => Promise.resolve({ data: { created: { test: {} } } }));
 const genericError = { response: { status: 400 } };
 const conflictError = { response: { status: 409, data: { message: '"conflicting": ["0b3a96bf7af34783bb0d7cc76b03d6ab-1"], "non-conflicting": []' } } };
+const successWithGeneralError = { data: { failed: { '0b3a96bf7af34783bb0d7cc76b03d6ab-1': {} }, created: { '2c212b2254334a22991704ff6df7c61c-1': {} } } };
 const mockImportFunctionGenericError = jest.fn(() => Promise.reject(genericError));
 const mockImportFunctionConflictError = jest.fn(() => Promise.reject(conflictError));
+const mockImportFunctionSuccessGeneralError = jest.fn(() => Promise.resolve(successWithGeneralError));
 
 describe('ImportModal', () => {
   function setup(props) {
@@ -25,7 +27,8 @@ describe('ImportModal', () => {
       props: {
         isTesting: true,
         modalDesc: 'Test modal description.',
-        itemType: 'TestType',
+        itemTypeSingular: 'TestType',
+        itemTypePlural: 'TestTypes',
         importFunction: mockImportFunctionSuccess,
         ...props,
       },
@@ -43,7 +46,7 @@ describe('ImportModal', () => {
       const fieldType = field.find('input').attributes('type');
       const fieldLabel = field.find('label');
 
-      expect(title.text()).toBe('Import TestType');
+      expect(title.text()).toBe('Import TestTypes');
       expect(description.text()).toBe('Test modal description.');
       expect(fieldType).toBe('file');
       expect(fieldLabel.text()).toBe('JSON File');
@@ -148,7 +151,38 @@ describe('ImportModal', () => {
 
       const errorMessage = wrapper.find('.error-message');
 
-      expect(errorMessage.text()).toBe('Error importing - items with the following ids already exist: 0b3a96bf7af34783bb0d7cc76b03d6ab-1');
+      expect(errorMessage.text()).toBe('Error importing - TestTypes with the following ids already exist: 0b3a96bf7af34783bb0d7cc76b03d6ab-1');
+    });
+
+    it('Should display success with general node errors', async () => {
+      const wrapper = setup({ importFunction: mockImportFunctionSuccessGeneralError });
+      await wrapper.vm.$nextTick();
+
+      const input = wrapper.find('input[type="file"]');
+
+      const mockFile = new File(['{ "nodeTypes": { "0b3a96bf7af34783bb0d7cc76b03d6ab-1": { "displayName": "FailNode"} } }'], 'mock.json', { type: 'application/json' });
+      // Input files are not normally writable, so override them
+      Object.defineProperty(input.element, 'files', {
+        get: () => [mockFile],
+        set: (files) => files,
+      });
+      // Set value of file input
+      input.element.files = [mockFile];
+      await input.trigger('change');
+
+      const importBtn = wrapper.find('.btn-primary');
+      await importBtn.trigger('click');
+
+      // both flushPromises are required here
+      await flushPromises();
+      await flushPromises();
+      expect(mockImportFunctionSuccessGeneralError).toHaveBeenCalled();
+
+      const importComplete = wrapper.find('h3');
+      const errorMessage = wrapper.find('.text-danger');
+
+      expect(importComplete.text()).toBe('Import Complete');
+      expect(errorMessage.text()).toBe('The following testtypes had one or more failures during import:  - FailNode');
     });
   });
 });
