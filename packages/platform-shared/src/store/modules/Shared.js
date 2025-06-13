@@ -55,7 +55,6 @@ const defaultState = {
   webStorageAvailable: true,
   workforceEnabled: false,
   wsfedEnabled: false,
-  wsfedSigningCertEnabled: false,
   customWsfedEnabled: false,
   templateBuilderEnabled: false,
   enableSamlSigningCheckbox: false,
@@ -212,9 +211,6 @@ const mutations = {
       state.wsfedEnabled = true;
     }
 
-    if (env.VUE_APP_ENABLE_WSFED_SIGNING_CERT === 'true' || env.VUE_APP_ENABLE_WSFED_SIGNING_CERT === true) {
-      state.wsfedSigningCertEnabled = true;
-    }
     if (env.VUE_APP_ENABLE_CUSTOM_WSFED === 'true' || env.VUE_APP_ENABLE_CUSTOM_WSFED === true) {
       state.customWsfedEnabled = true;
     }
