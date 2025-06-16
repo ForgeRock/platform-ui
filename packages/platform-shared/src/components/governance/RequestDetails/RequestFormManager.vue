@@ -78,8 +78,6 @@ const {
 } = useForm();
 
 // data
-const isWorkflowForm = ref(false);
-
 const propertySchema = ref({});
 
 // default form data
@@ -110,10 +108,7 @@ async function setFormDefinition(request) {
   // workflow form
   if (props.isApproval && request.workflow?.id) {
     await getFormDefinitionByType(formTypes.WORKFLOW, { workflowId: request.workflow?.id, phaseId: phaseId.value });
-    if (form.value) {
-      isWorkflowForm.value = true;
-      return;
-    }
+    if (form.value) return;
   }
 
   switch (requestType.value) {
@@ -139,21 +134,11 @@ async function setFormDefinition(request) {
 }
 
 /**
- * Sets the form values based on the request type and whether a custom form is configured
+ * Sets the form values based on the request type
  *
  * @param {Object} request - The request object containing details about the request.
  */
 async function setFormValues(request) {
-  // workflow form
-  if (props.isApproval && request.workflow?.id) {
-    if (isWorkflowForm.value) {
-      if (isCustomRequestType.value) formValue.value = request.request || {};
-      else formValue.value = request.request?.common?.blob?.form || {};
-      return;
-    }
-  }
-
-  // OOTB request types
   let userValues;
   switch (requestType.value) {
     case requestTypes.ACCOUNT_GRANT.value:

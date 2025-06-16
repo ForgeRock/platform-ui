@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             class="text-truncate"
             :class="isEndUser ? 'text-muted' : 'text-gray'">
-            <template v-if="userDetails.email.length === 0">
+            <template v-if="userDetails.email?.length === 0">
               {{ $t('common.notAvailable') }}
             </template>
             <template v-else>
