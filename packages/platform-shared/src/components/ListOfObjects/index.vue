@@ -37,46 +37,46 @@ of the MIT license. See the LICENSE file for details. -->
               <div class="form-row align-items-center">
                 <template v-for="(objValue, key) in obj">
                   <div
-                    v-if="key !== 'listUniqueIndex' && properties[key] && !properties[key].hidden"
+                    v-if="key !== 'listUniqueIndex' && objectProperties[key] && !objectProperties[key].hidden"
                     :key="key"
                     :class="`col-lg-${columnWidth}`"
                     class="pb-2">
-                    <div v-if="properties[key].type === 'boolean'">
+                    <div v-if="objectProperties[key].type === 'boolean'">
                       <BFormCheckbox
                         v-model="obj[key]"
-                        :disabled="disabled || properties[key].disabled"
+                        :disabled="disabled || objectProperties[key].disabled"
                         :name="`${key}_${index}_${_uid}`"
                         @change="emitInput(listValues)">
-                        {{ properties[key].title || key }}
+                        {{ objectProperties[key].title || key }}
                       </BFormCheckbox>
                     </div>
-                    <div v-else-if="properties[key].type === 'number'">
+                    <div v-else-if="objectProperties[key].type === 'number'">
                       <FrField
                         :value="obj[key]"
                         @input="obj[key] = $event; emitInput(listValues)"
-                        :disabled="disabled || properties[key].disabled"
+                        :disabled="disabled || objectProperties[key].disabled"
                         type="number"
                         validation="required|isNumber"
-                        :label="properties[key].title || key"
+                        :label="objectProperties[key].title || key"
                         :name="`${key}_${index}_${_uid}`"
                       />
                     </div>
                     <div v-else>
                       <FrField
-                        :value="obj[key] || properties[key].value"
+                        :value="obj[key] || objectProperties[key].value"
                         @input="obj[key] = $event; emitInput(listValues)"
-                        :disabled="disabled || properties[key].disabled"
-                        :label="properties[key].title || key"
+                        :disabled="disabled || objectProperties[key].disabled"
+                        :label="objectProperties[key].title || key"
                         :name="`${key}_${index}_${_uid}`"
-                        :options="properties[key].options"
-                        :type="properties[key].type"
-                        :validation="required && required.length && required.includes(properties[key].title) ? 'required' : ''"
+                        :options="objectProperties[key].options"
+                        :type="objectProperties[key].type"
+                        :validation="setFieldValidation(objectProperties[key])"
                       />
                     </div>
                     <small
-                      v-if="properties[key].description"
+                      v-if="objectProperties[key].description"
                       class="form-text text-muted pb-4"
-                      v-html="properties[key].description" />
+                      v-html="objectProperties[key].description" />
                   </div>
                 </template>
               </div>
@@ -237,6 +237,7 @@ export default {
     return {
       noListValuesOnMount: true,
       listUniqueIndex: 0,
+      objectProperties: {},
       showEditor: false,
     };
   },
@@ -259,7 +260,16 @@ export default {
       return this.preventOptionalLabelAppend ? label : this.$t('common.optionalFieldTitle', { fieldTitle: label });
     },
   },
+  watch: {
+    properties: {
+      handler(newVal) {
+        this.objectProperties = cloneDeep(newVal);
+      },
+      deep: true,
+    },
+  },
   mounted() {
+    this.objectProperties = cloneDeep(this.properties);
     if (this.value) {
       let listValues = cloneDeep(this.value);
       if (!this.multiValued || !Array.isArray(listValues)) {
@@ -280,7 +290,7 @@ export default {
      */
     addObjectToList(valueIndex) {
       this.showEditor = true;
-      const emptyObjectWithKeys = this.createObject(this.properties);
+      const emptyObjectWithKeys = this.createObject(this.objectProperties);
       this.listValues.splice(valueIndex + 1, 0, { ...emptyObjectWithKeys });
       this.updateListKey();
       this.$emit('list-updated', 'add', valueIndex + 1);
@@ -333,7 +343,7 @@ export default {
      * are too complex to render (i.e. objects with sub object or array properties)
      */
     isValidField() {
-      const values = Object.values(this.properties) || [];
+      const values = Object.values(this.objectProperties) || [];
       const results = [];
 
       values.forEach((val) => {
@@ -356,6 +366,13 @@ export default {
     },
     validateField() {
       this.setErrors(this.requiredAndEmpty ? [this.$t('common.policyValidationMessages.REQUIRED')] : []);
+    },
+    setFieldValidation(field) {
+      const rules = field.validation || {};
+      if (this.required && this.required.length && this.required.includes(field.title)) {
+        rules.required = true;
+      }
+      return rules;
     },
   },
 };
