@@ -314,9 +314,11 @@ describe('RequestFormManager', () => {
         requestType: 'createUser',
         request: {
           user: {
-            userName: 'testUser',
-            givenName: 'Test',
-            sn: 'User',
+            object: {
+              userName: 'testUser',
+              givenName: 'Test',
+              sn: 'User',
+            },
           },
         },
       },
@@ -349,6 +351,33 @@ describe('RequestFormManager', () => {
       expect(formSpy).toHaveBeenCalledWith('someForm');
       expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
     });
+
+    it('shows a workflow form if present and is an approval', async () => {
+      const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm')
+        .mockResolvedValue({ data: userFormSchema });
+
+      const wrapper = setup({ isApproval: true, ...createUserRequest });
+      await flushPromises();
+
+      expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
+      expect(formSpy).toHaveBeenCalledWith('someForm');
+      expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
+    });
+
+    it('workflow form has values populated from the request data', async () => {
+      jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      jest.spyOn(RequestFormsApi, 'getRequestForm')
+        .mockResolvedValue({ data: userFormSchema });
+
+      const wrapper = setup({ isApproval: true, ...createUserRequest });
+      await flushPromises();
+
+      expect(wrapper.find('.fr-field').exists()).toBe(true);
+      expect(wrapper.find('.fr-field').attributes('value')).toBe('testUser');
+    });
   });
 
   describe('modify user request', () => {
@@ -360,9 +389,11 @@ describe('RequestFormManager', () => {
         requestType: 'modifyUser',
         request: {
           user: {
-            userName: 'testUser',
-            givenName: 'Test',
-            sn: 'User',
+            object: {
+              userName: 'testUser',
+              givenName: 'Test',
+              sn: 'User',
+            },
           },
         },
       },
@@ -391,6 +422,33 @@ describe('RequestFormManager', () => {
       expect(userAssignmentSpy).toHaveBeenCalledWith('user', 'update');
       expect(formSpy).toHaveBeenCalledWith('someForm');
       expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
+    });
+
+    it('shows a workflow form if present and is an approval', async () => {
+      const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      const formSpy = jest.spyOn(RequestFormsApi, 'getRequestForm')
+        .mockResolvedValue({ data: userFormSchema });
+
+      const wrapper = setup({ isApproval: true, ...modifyUserRequest });
+      await flushPromises();
+
+      expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
+      expect(formSpy).toHaveBeenCalledWith('someForm');
+      expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
+    });
+
+    it('workflow form has values populated from the request data', async () => {
+      jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+        .mockResolvedValue({ data: { result: [{ formId: 'someForm' }] } });
+      jest.spyOn(RequestFormsApi, 'getRequestForm')
+        .mockResolvedValue({ data: userFormSchema });
+
+      const wrapper = setup({ isApproval: true, ...modifyUserRequest });
+      await flushPromises();
+
+      expect(wrapper.find('.fr-field').exists()).toBe(true);
+      expect(wrapper.find('.fr-field').attributes('value')).toBe('testUser');
     });
   });
 });
