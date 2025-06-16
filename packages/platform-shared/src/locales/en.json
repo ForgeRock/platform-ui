@@ -734,7 +734,9 @@
     "tokyo": "Tokyo",
     "osaka": "Osaka",
     "mumbai": "Mumbai",
-    "delhi": "Delhi"
+    "delhi": "Delhi",
+    "doha": "Doha",
+    "dammam": "Dammam"
   },
   "login": {
     "createAccount": "Create an account",
