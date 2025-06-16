@@ -1,0 +1,61 @@
+.resizable-table {
+  .resizer {
+    position: absolute;
+    right: -4px;
+    top: 4px;
+    bottom: 4px;
+    width: 8px;
+    cursor: col-resize;
+    user-select: none;
+    z-index: 2;
+    background: transparent;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: #d3d8e0;
+    }
+
+    &:focus-visible {
+      background: #d3d8e0;
+      outline: 2px solid #1976d2;
+      outline-offset: 2px;
+    }
+  }
+
+  th {
+    &:hover .resizer {
+      background: #d3d8e0;
+    }
+
+    &:focus {
+      z-index: 1;
+    }
+  }
+  &.resizable-table--nowrap th,
+  &.resizable-table--nowrap td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .resizable-table--resizing {
+    background: #d3d8e0;
+  }
+}
+
+.resizable-table__shared-measure-container {
+  position: absolute;
+  visibility: hidden;
+  white-space: nowrap;
+  font: inherit;
+  pointer-events: none;
+}
+
+.resizable-table__live-region {
+  position: absolute;
+  left: -9999px;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
