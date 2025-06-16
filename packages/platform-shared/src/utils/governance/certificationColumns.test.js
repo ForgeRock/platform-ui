@@ -201,6 +201,11 @@ describe('getInitialColumns', () => {
     const result = getInitialColumns(undefined, null, false, null, null);
     expect(result.map((c) => c.key)).toEqual(['user', 'application', 'account', 'flags', 'comments', 'actions']);
   });
+
+  it('handles an empty array as customColumnConfig', () => {
+    const result = getInitialColumns('accounts', null, false, { accounts: [] }, null);
+    expect(result.map((c) => c.key)).toEqual(['user', 'application', 'account', 'flags', 'comments', 'actions']);
+  });
 });
 
 describe('getAllColumnCategories', () => {

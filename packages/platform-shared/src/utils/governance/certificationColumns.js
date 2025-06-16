@@ -251,7 +251,7 @@ function getCustomColumns(columns, columnCategories) {
 export function getInitialColumns(grantType, entitlementUserId, showAccountDrilldown, customColumnConfig, columnCategories) {
   const accountEntitlement = !!entitlementUserId;
 
-  if (!showAccountDrilldown && !accountEntitlement && customColumnConfig?.[grantType]) {
+  if (!showAccountDrilldown && !accountEntitlement && customColumnConfig?.[grantType]?.length) {
     return getCustomColumns(customColumnConfig[grantType], columnCategories);
   }
 
