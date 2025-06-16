@@ -426,6 +426,8 @@ of the MIT license. See the LICENSE file for details. -->
 
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--highlight {
         background-color: {{ theme.accountCardInputSelectHoverColor || '#f6f8fa' }} !important;
+        outline-offset: -2px;
+        outline: 2px solid {{ buttonFocusBorderColor }};
       }
 
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--selected {
