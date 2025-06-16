@@ -68,6 +68,12 @@ export function getRules(i18n) {
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.ALPHA_NUM_SPACES');
   };
 
+  // Allows alphanumeric, spaces
+  const alpha_num_spaces_colon = (value) => {
+    const regex = /^([A-Z]|[0-9]|:| )+$/ig;
+    return regex.test(value) || i18n.global.t('common.policyValidationMessages.ALPHA_NUM_SPACES_COLON');
+  };
+
   // Allows alphanumeric, underscores and commas
   const alpha_num_under_comma = (value) => {
     const regex = /^([A-Z]|[0-9]|,|_)+$/ig;
@@ -106,7 +112,7 @@ export function getRules(i18n) {
 
   // Excluded rule
   // errors if input value matches the array of excluded strings
-  const excluded = (value, list) => rules.not_one_of(value, list) || i18n.global.t('common.policyValidationMessages.excluded');
+  const excluded = (value, { list, message }) => rules.not_one_of(value, list) || message || i18n.global.t('common.policyValidationMessages.excluded');
 
   /**
    * GCP managed certificate API rule
@@ -171,6 +177,11 @@ export function getRules(i18n) {
   // errors if input value matches any of provided array of values
   const unique = (value, otherValues) => customValidators.testUniqueness(value, { otherValues }) || i18n.global.t('common.policyValidationMessages.UNIQUE');
 
+  // Unique rule
+  // errors if input value matches any of provided array of values
+  //  const excluded = (value, { list, message }) => rules.not_one_of(value, list) || message || i18n.global.t('common.policyValidationMessages.excluded');
+  const uniqueCustomMsg = (value, { otherValues, message }) => customValidators.testUniqueness(value, { otherValues }) || message || i18n.global.t('common.policyValidationMessages.UNIQUE');
+
   // Error Match rule
   // errors if input value matches any of provided array of values
   const errorIfMatch = (value, otherValues) => customValidators.testUniqueness(value, { otherValues }) || i18n.global.t('common.policyValidationMessages.NOT_ALLOWED_VALUE');
@@ -180,7 +191,10 @@ export function getRules(i18n) {
   const not_starts_with_case_insensitive = (value, { prefix }) => !value.toLowerCase().startsWith(prefix.toLowerCase()) || i18n.global.t('common.policyValidationMessages.NOT_STARTS_WITH', { prefix });
 
   // errors if the input does NOT start with the provided prefix
-  const starts_with_case_insensitive = (value, { prefix }) => value.toLowerCase().startsWith(prefix.toLowerCase()) || i18n.global.t('common.policyValidationMessages.STARTS_WITH', { prefix });
+  const starts_with_case_insensitive = (value, { prefix }) => {
+    if (!value) return true;
+    return value.toLowerCase().startsWith(prefix.toLowerCase()) || i18n.global.t('common.policyValidationMessages.STARTS_WITH', { prefix });
+  };
 
   const not_starts_with_number = (value) => {
     const regex = /^[0-9].*$/;
@@ -206,6 +220,16 @@ export function getRules(i18n) {
   // URL domain only rule
   // Errors if is not a valid url or contains any element beyond the basic domain name
   const url_domain_only = (value) => customValidators.urlDomainOnly(value, i18n);
+
+  // URL domain only plus wildcard rule
+  // Errors if is not a valid url or contains any element beyond the basic domain name. Allows wildcard at the beginning of the domain
+  const url_domain_only_plus_wildcard = (value) => {
+    let domainOnlyValue = value;
+    if (value.startsWith('*.')) {
+      domainOnlyValue = value.substring(2);
+    }
+    return customValidators.urlDomainOnly(domainOnlyValue, i18n) || i18n.global.t('common.policyValidationMessages.urlDomainOnlyPlusWildcard');
+  };
 
   // Rule to check whether value is a valid IPv4 or IPv6 address
   function ipv4_ipv6(value) {
@@ -341,6 +365,7 @@ export function getRules(i18n) {
     alpha_dash,
     alpha_num_lower,
     alpha_num_spaces,
+    alpha_num_spaces_colon,
     alpha_num_under_comma,
     alpha_num,
     alpha,
@@ -380,8 +405,10 @@ export function getRules(i18n) {
     text_without_fragment,
     unique_email_template_id,
     unique,
+    uniqueCustomMsg,
     uniqueValue,
     url_domain_only,
+    url_domain_only_plus_wildcard,
     url_with_path,
     url_without_path,
     url,
