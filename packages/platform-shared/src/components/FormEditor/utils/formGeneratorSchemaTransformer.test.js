@@ -858,6 +858,41 @@ describe('formGeneratorSchemaTransformer', () => {
     expect(result).toEqual(expected);
   });
 
+  it('handles section type recursively', () => {
+    const schema = [
+      {
+        id: 'row1',
+        fields: [
+          {
+            type: 'section',
+            label: 'Section',
+            layout: { columns: 12, offset: 0 },
+            fields: [
+              {
+                id: 'nestedRow',
+                fields: [
+                  {
+                    label: 'Field 1',
+                    model: 'field1',
+                    type: 'string',
+                    layout: {
+                      columns: 12,
+                      offset: 0,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+    const result = transformSchemaToFormGenerator(schema);
+    expect(result[0][0].customSlot).toBe('section');
+    expect(result[0][0].fields[0][0].type).toBe('string');
+    expect(result[0][0].fields[0][0].model).toBe('field1');
+  });
+
   describe('convertRelationshipPropertiesToFormBuilder', () => {
     it('should convert relationship properties to the expected format', () => {
       const objValues = {

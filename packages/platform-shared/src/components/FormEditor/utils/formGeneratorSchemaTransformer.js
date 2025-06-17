@@ -83,7 +83,6 @@ function setDefaultSchemaFieldValue(field, schemaField) {
  * @see FormEditor
  * @see FormGenerator
  */
-// eslint-disable-next-line import/prefer-default-export
 export function transformSchemaToFormGenerator(schema, readOnly = false, includeDefaults = false) {
   return schema.map((row) => row.fields.map((schemaField) => {
     // create field object with the properties required by the form generator component
@@ -121,6 +120,11 @@ export function transformSchemaToFormGenerator(schema, readOnly = false, include
     else if (field.type === 'multiselect') field.defaultValue = [];
     else delete field.defaultValue;
 
+    if (field.type === 'section') {
+      field.customSlot = 'section';
+      field.fields = transformSchemaToFormGenerator(field.fields, readOnly, includeDefaults);
+    }
+
     return field;
   }));
 }
@@ -134,7 +138,7 @@ export function transformSchemaToFormGenerator(schema, readOnly = false, include
  * @returns {Object} - The initial model object for the form.
  */
 export function getInitialModel(schema, includeDefaults = false) {
-  const updatedModel = {};
+  let updatedModel = {};
   schema.forEach((row) => row.fields.forEach((field) => {
     let value;
     const model = field.model || '';
@@ -169,6 +173,9 @@ export function getInitialModel(schema, includeDefaults = false) {
           ? field.defaultValue || false
           : false;
         set(updatedModel, model, value);
+        break;
+      case 'section':
+        updatedModel = { ...updatedModel, ...getInitialModel(field.fields, includeDefaults) };
         break;
       default:
         break;
