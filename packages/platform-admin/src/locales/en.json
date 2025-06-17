@@ -4840,8 +4840,7 @@
       "events": {
         "onLoad": "On Load Event",
         "onLoadLabelSr": "On Load Event",
-        "onLoadDescription": "Add a script to be executed when the form loads.",
-        "scriptHelp": "// This will contain help text eventually."
+        "onLoadDescription": "Add a script to be executed when the form loads."
       },
       "field": {
         "columns": {
