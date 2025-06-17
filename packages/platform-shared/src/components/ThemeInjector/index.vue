@@ -595,6 +595,11 @@ of the MIT license. See the LICENSE file for details. -->
         border-color: {{ buttonFocusBorderColor }} !important;
       }
 
+      .b-calendar .btn-light,
+      .b-calendar .btn-outline-primary.focus {
+        box-shadow: 0 0 0 2px {{ buttonFocusBorderColor }} !important;
+      }
+
       #app .text-success {
         color: {{ theme.successColor }};
       }
