@@ -142,13 +142,22 @@ export default {
       this.sortDesc = sort.sortDesc;
       this.getList();
     },
+    getSortBy() {
+      if (this.sortBy === 'formattedDeadline') {
+        return 'deadline';
+      }
+      if (this.sortBy === 'formattedStartDate') {
+        return 'startDate';
+      }
+      return this.sortBy;
+    },
     getList() {
       this.getItems({
         status: this.statusSort.param,
         pageNumber: this.currentPage - 1,
         pageSize: this.pageSize,
         queryString: this.searchQuery,
-        sortBy: this.sortBy === 'formattedDeadline' ? 'deadline' : this.sortBy,
+        sortBy: this.getSortBy(),
         sortDesc: this.sortDesc,
       })
         .then(({ data }) => {
@@ -180,6 +189,7 @@ export default {
         const reviewItem = {
           ...item,
           ...newItem,
+          formattedStartDate: item.startDate ? dayjs(item.startDate).format('MMM D, YYYY').toString() : '–',
           formattedDeadline: item.deadline ? dayjs(item.deadline).format('MMM D, YYYY').toString() : '–',
         };
 

@@ -56,6 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
           primary-key="id"
           :fields="fields"
           :items="accessReviewList"
+          @sort-changed="sortingChanged"
           @row-clicked="viewApplicationDetails">
           <template #cell(name)="{ item }">
             <BMedia
@@ -185,6 +186,12 @@ export default {
         {
           key: 'name',
           label: this.$t('common.name'),
+          sortable: true,
+        },
+        {
+          key: 'formattedStartDate',
+          label: this.$t('common.startDate'),
+          sortable: true,
         },
         {
           key: 'formattedDeadline',
