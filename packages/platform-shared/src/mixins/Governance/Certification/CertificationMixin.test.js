@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -186,6 +186,7 @@ describe('CertificationMixin', () => {
           a: 'a',
           deadline: '2022-12-19T22:51:51+00:00',
           formattedDeadline: 'Dec 19, 2022',
+          formattedStartDate: '–',
           totals: {
             total: 10,
             'in-progress': 3,
@@ -196,6 +197,7 @@ describe('CertificationMixin', () => {
           b: 'b',
           deadline: '2022-12-19T22:51:51+00:00',
           formattedDeadline: 'Dec 19, 2022',
+          formattedStartDate: '–',
           totals: {
             total: 20,
             'in-progress': 5,
@@ -212,12 +214,14 @@ describe('CertificationMixin', () => {
         result: [
           {
             a: 'a',
+            startDate: '2022-12-19T22:51:51+00:00',
             deadline: '2022-12-19T22:51:51+00:00',
             total: 10,
             inProgress: 3,
           },
           {
             b: 'b',
+            startDate: '2022-12-19T22:51:51+00:00',
             deadline: '2022-12-19T22:51:51+00:00',
             total: 20,
             inProgress: 5,
@@ -231,6 +235,8 @@ describe('CertificationMixin', () => {
       expect(wrapper.vm.accessReviewList).toEqual([
         {
           a: 'a',
+          startDate: '2022-12-19T22:51:51+00:00',
+          formattedStartDate: 'Dec 19, 2022',
           deadline: '2022-12-19T22:51:51+00:00',
           formattedDeadline: 'Dec 19, 2022',
           total: 10,
@@ -238,6 +244,8 @@ describe('CertificationMixin', () => {
         },
         {
           b: 'b',
+          startDate: '2022-12-19T22:51:51+00:00',
+          formattedStartDate: 'Dec 19, 2022',
           deadline: '2022-12-19T22:51:51+00:00',
           formattedDeadline: 'Dec 19, 2022',
           total: 20,
@@ -259,6 +267,20 @@ describe('CertificationMixin', () => {
         pageNumber: 0,
         queryString: '',
         sortBy: 'deadline',
+        sortDesc: true,
+        status: 'test',
+      });
+    });
+
+    it('should normalize sort by when is formattedStartDate', () => {
+      wrapper.vm.sortingChanged({ sortBy: 'formattedStartDate', sortDesc: true });
+
+      expect(wrapper.vm.sortBy).toEqual('formattedStartDate');
+      expect(wrapper.vm.sortDesc).toEqual(true);
+      expect(wrapper.vm.getItems).toHaveBeenCalledWith({
+        pageNumber: 0,
+        queryString: '',
+        sortBy: 'startDate',
         sortDesc: true,
         status: 'test',
       });
