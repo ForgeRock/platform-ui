@@ -1585,6 +1585,16 @@
         "textarea": {
           "description": "Text area to accept a multiline string input.",
           "name": "Textarea"
+        },
+        "section": {
+          "header": {
+            "description": "Header text to display at the top of the section.",
+            "label": "Header"
+          },
+          "footer": {
+            "description": "Footer text to display at the bottom of the section.",
+            "label": "Footer"
+          }
         }
       }
     }

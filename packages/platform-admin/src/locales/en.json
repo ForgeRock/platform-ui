@@ -4842,7 +4842,8 @@
       "applicationAssignmentsError": "Error getting application assignments",
       "canvas": {
         "emptyTitle": "You haven't added any fields yet",
-        "emptySubtitle": "Drag fields into your form to get started."
+        "emptySubtitle": "Drag fields into your form to get started.",
+        "emptySectionSubtitle": "Drag fields into this section to get started."
       },
       "objectVisualizer": {
         "formValue": "Form Value"
@@ -4944,6 +4945,10 @@
         "textarea": {
           "description": "Text area to accept a multiline string input.",
           "name": "Textarea"
+        },
+        "section": {
+          "description": "A section is used to group fields together visually.",
+          "name": "Section"
         }
       }
     }

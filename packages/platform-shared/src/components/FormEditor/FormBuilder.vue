@@ -29,11 +29,20 @@ of the MIT license. See the LICENSE file for details. -->
         :property="property"
         @update:model="fieldChanged" />
     </template>
+    <template #section="{ property }">
+      <FrSectionDisplay
+        class="pb-1 mb-4"
+        :property="property"
+        :model="modelValue"
+        @update:model="fieldChanged"
+        @is-valid="setValidSection" />
+    </template>
   </FrFormGenerator>
 </template>
 
 <script setup>
 import {
+  computed,
   onBeforeUnmount,
   nextTick,
   ref,
@@ -42,6 +51,7 @@ import {
 import {
   cloneDeep,
   debounce,
+  isEmpty,
   isEqual,
   get,
   set,
@@ -53,6 +63,7 @@ import { transformSchemaToFormGenerator } from './utils/formGeneratorSchemaTrans
 import { useWebWorker } from './utils/formEvents';
 import FrGovObjectMultiselect from './components/governance/GovObjectMultiselect';
 import FrGovObjectSelect from './components/governance/GovObjectSelect';
+import FrSectionDisplay from './components/SectionDisplay';
 import store from '@/store';
 
 /**
@@ -82,11 +93,17 @@ const props = defineProps({
 });
 
 const { meta } = useForm();
-const emit = defineEmits(['update:modelValue', 'is-valid']);
+const emit = defineEmits(['field-changed', 'update:modelValue', 'is-valid']);
 
 const schemaFormGenerator = ref([]);
 const updatedModelValue = ref(props.modelValue);
+const sectionsValid = ref({});
 let isEventUpdate = false;
+
+const allSectionsValid = computed(() => {
+  if (isEmpty(sectionsValid.value)) return true;
+  return Object.values(sectionsValid.value).every(Boolean);
+});
 
 /**
  * Handles the change event for a form input.
@@ -157,7 +174,18 @@ async function fieldChanged({ path, value }) {
 
   const emitValue = cloneDeep(updatedModelValue.value);
   set(emitValue, path, value);
+  emit('field-changed', { path, value });
   emit('update:modelValue', emitValue);
+}
+
+/**
+ * Sets the validity state of a specific section in the form editor.
+ *
+ * @param {string} sectionId - The unique identifier of the section to update.
+ * @param {boolean} isValid - Indicates whether the section is valid.
+ */
+function setValidSection({ sectionId, isValid }) {
+  sectionsValid.value[sectionId] = isValid;
 }
 
 watch(() => props.form, async (newVal) => {
@@ -177,7 +205,11 @@ watch(() => props.form, async (newVal) => {
 }, { immediate: true, deep: true });
 
 watch(meta, (newVal) => {
-  emit('is-valid', newVal.valid);
+  emit('is-valid', !!(newVal.valid && allSectionsValid));
+});
+
+watch(() => allSectionsValid.value, (newVal) => {
+  emit('is-valid', !!(meta.value.valid && newVal));
 });
 
 watch(() => props.modelValue, (newVal, oldVal) => {
@@ -188,4 +220,5 @@ watch(() => props.modelValue, (newVal, oldVal) => {
 onBeforeUnmount(() => {
   debounceHandleOnChangeEvent.cancel();
 });
+
 </script>

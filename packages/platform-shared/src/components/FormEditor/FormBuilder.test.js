@@ -1292,4 +1292,50 @@ describe('FormBuilder', () => {
       { newFieldValue: 'newValue' },
     );
   });
+
+  it('should should show a section field', async () => {
+    const wrapper = setup({}, [
+      {
+        id: 'row1',
+        fields: [
+          {
+            type: 'section',
+            model: 'section1',
+            layout: { columns: 12, offset: 0 },
+            fields: [
+              {
+                id: 'row1',
+                fields: [
+                  {
+                    type: 'string',
+                    model: 'field1',
+                    label: 'Text 1',
+                    description: 'This is a text field',
+                    layout: { columns: 12, offset: 0 },
+                    validation: {
+                      required: true,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ]);
+
+    await wrapper.vm.$nextTick();
+    const sectionField = wrapper.findComponent({ name: 'SectionDisplay' });
+    expect(sectionField.exists()).toBe(true);
+    expect(sectionField.find('.form-section').exists()).toBe(true);
+    expect(sectionField.find('.form-section').text()).toContain('Text 1');
+
+    const textField = sectionField.findComponent({ name: 'StringDisplay' });
+    const label = textField.find('label');
+    expect(label.text()).toBe('Text 1');
+    const description = textField.find('small');
+    expect(description.text()).toBe('This is a text field');
+    const input = textField.find('input');
+    expect(input.attributes('type')).toBe('text');
+  });
 });
