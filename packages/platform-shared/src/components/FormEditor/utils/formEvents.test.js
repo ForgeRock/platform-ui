@@ -71,6 +71,18 @@ describe('useWebWorker', () => {
     expect(scriptVariables).toEqual({
       formValues: { a: 1 },
       formSchema: { type: 'object' },
+      windowSearch: '',
     });
+  });
+
+  it('sends the current window search params', async () => {
+    Object.defineProperty(window, 'location', {
+      value: { search: '?test=123' },
+      writable: true,
+    });
+
+    await useWebWorker(script, formValues, formSchema);
+    const { scriptVariables } = MockWorker.instance._lastMsg;
+    expect(scriptVariables.windowSearch).toBe('?test=123');
   });
 });
