@@ -41,6 +41,7 @@ export async function useWebWorker(script, formValues, formSchema) {
     const scriptVariables = {
       formValues: cloneDeep(formValues),
       formSchema: cloneDeep(formSchema),
+      windowSearch: window.location.search,
     };
 
     worker.postMessage({

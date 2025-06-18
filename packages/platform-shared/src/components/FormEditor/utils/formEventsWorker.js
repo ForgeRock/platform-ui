@@ -124,6 +124,7 @@ export const form = {
   setLabel,
   setValue,
   currentFieldValue: null,
+  urlParams: null,
 };
 
 /**
@@ -139,6 +140,7 @@ export function onmessage(e) {
     _setTempFormSchema(scriptVariables.formSchema);
     _setTempFormValues(scriptVariables.formValues);
     form.currentFieldValue = scriptVariables.newFieldValue;
+    form.urlParams = new URLSearchParams(scriptVariables.windowSearch);
 
     // eslint-disable-next-line no-new-func
     const func = new Function('form', script);
