@@ -10,7 +10,7 @@ import { defineRule } from 'vee-validate';
 import * as rules from '@vee-validate/rules';
 import * as customValidators from '@forgerock/platform-shared/src/utils/validators';
 import dayjs from 'dayjs';
-import { has } from 'lodash';
+import { has, isPlainObject } from 'lodash';
 import { doesValueContainPlaceholder } from './esvUtils';
 
 export function getRules(i18n) {
@@ -38,6 +38,14 @@ export function getRules(i18n) {
     if (names.length > 1) {
       const lastName = names.pop();
       ruleNames = `${names.join(', ')}, and ${lastName}`;
+    }
+    // On initial load, an object type field will pass the whole object as the
+    // value to this rule instead of the individual key/value strings. In that
+    // case we want to pass this validation so the form stays valid. When the
+    // user clicks to add or edit the object field, it will pass the key/value
+    // strings and we can continue and perform the validation
+    if (isPlainObject(value)) {
+      return true;
     }
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.customValidation.message', { ruleNames });
   };
