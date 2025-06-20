@@ -1718,6 +1718,7 @@
             "subjectDN": "Subject DN",
             "viewPowershellCmdlets": "View PowerShell Cmdlets"
           },
+          "deleteSuccess": "Certificate successfully deleted",
           "downloadCertificate": "Download Certificate",
           "errorDeletingSigningCert": "There was an error deleting the signing certificate.",
           "errorDownloadingSigningCert": "There was an error downloading the signing certificate.",
