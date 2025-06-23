@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
               :name="field.key"
               :options="field.options || field.enum"
               :type="getFieldType(field)"
-              :validation="field.validation" />
+              :validation="field.type === 'boolean' ? {} : field.validation" />
           </div>
           <FrListField
             v-else-if="field.type === 'array' && field.items?.type && field.key !== 'privileges' && !field.items.isRelationship"
