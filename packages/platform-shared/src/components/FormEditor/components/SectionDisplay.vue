@@ -14,8 +14,11 @@ of the MIT license. See the LICENSE file for details. -->
       </BCardHeader>
       <BCardBody class="px-4 pb-0">
         <FrFormBuilder
+          field-name-prop="id"
+          :transform-schema="false"
+          :form="{ fields: property.fields }"
           :model-value="model"
-          :schema="property.fields"
+          :read-only="readOnly"
           @field-changed="emit('update:model', $event);"
           @is-valid="emit('is-valid', { sectionId: property.id, isValid: $event })" />
       </BCardBody>
@@ -48,6 +51,10 @@ defineProps({
   model: {
     type: Object,
     default: () => ({}),
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
   },
 });
 

@@ -3,41 +3,48 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrFormGenerator
-    field-name-prop="id"
-    :schema="schemaFormGenerator"
-    :model="updatedModelValue"
-    @update:model="fieldChanged">
-    <template #formText="{ property }">
-      <div
-        class="pb-1 mb-4"
-        tab-index="0">
-        {{ property.formText }}
-      </div>
-    </template>
-    <template #objectSelect="{ property }">
-      <FrGovObjectSelect
-        v-if="store.state.SharedStore.governanceEnabled"
-        class="pb-1 mb-4"
-        :property="property"
-        @update:model="fieldChanged" />
-    </template>
-    <template #objectMultiselect="{ property }">
-      <FrGovObjectMultiselect
-        v-if="store.state.SharedStore.governanceEnabled"
-        class="pb-1 mb-4"
-        :property="property"
-        @update:model="fieldChanged" />
-    </template>
-    <template #section="{ property }">
-      <FrSectionDisplay
-        class="pb-1 mb-4"
-        :property="property"
-        :model="modelValue"
-        @update:model="fieldChanged"
-        @is-valid="setValidSection" />
-    </template>
-  </FrFormGenerator>
+  <div>
+    <FrSpinner
+      v-if="loading"
+      class="py-5" />
+    <FrFormGenerator
+      v-else
+      field-name-prop="id"
+      :schema="schemaFormGenerator"
+      :model="updatedModelValue"
+      @update:model="fieldChanged">
+      <template #formText="{ property }">
+        <div
+          class="pb-1 mb-4"
+          tab-index="0">
+          {{ property.formText }}
+        </div>
+      </template>
+      <template #objectSelect="{ property }">
+        <FrGovObjectSelect
+          v-if="store.state.SharedStore.governanceEnabled"
+          class="pb-1 mb-4"
+          :property="property"
+          @update:model="fieldChanged" />
+      </template>
+      <template #objectMultiselect="{ property }">
+        <FrGovObjectMultiselect
+          v-if="store.state.SharedStore.governanceEnabled"
+          class="pb-1 mb-4"
+          :property="property"
+          @update:model="fieldChanged" />
+      </template>
+      <template #section="{ property, visibility }">
+        <FrSectionDisplay
+          v-if="visibility"
+          class="pb-1 mb-4"
+          :property="property"
+          :model="updatedModelValue"
+          @update:model="fieldChanged"
+          @is-valid="setValidSection" />
+      </template>
+    </FrFormGenerator>
+  </div>
 </template>
 
 <script setup>
@@ -51,13 +58,13 @@ import {
 import {
   cloneDeep,
   debounce,
-  isEmpty,
   isEqual,
   get,
   set,
 } from 'lodash';
 import { useForm } from 'vee-validate';
 import FrFormGenerator from '@forgerock/platform-shared/src/components/FormGenerator';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { transformSchemaToFormGenerator } from './utils/formGeneratorSchemaTransformer';
 import { useWebWorker } from './utils/formEvents';
@@ -90,6 +97,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  transformSchema: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const { meta } = useForm();
@@ -98,11 +109,19 @@ const emit = defineEmits(['field-changed', 'update:modelValue', 'is-valid']);
 const schemaFormGenerator = ref([]);
 const updatedModelValue = ref(props.modelValue);
 const sectionsValid = ref({});
+const loading = ref(true);
 let isEventUpdate = false;
 
 const allSectionsValid = computed(() => {
-  if (isEmpty(sectionsValid.value)) return true;
-  return Object.values(sectionsValid.value).every(Boolean);
+  if (!schemaFormGenerator.value.length) return true;
+  const sections = [];
+  schemaFormGenerator.value.forEach((field) => {
+    if (field.length === 1 && field[0].type === 'section' && field[0].showAlways !== false) {
+      sections.push(field[0].id);
+    }
+  });
+  if (sections.length === 0) return true;
+  return sections.every((id) => sectionsValid.value[id]);
 });
 
 /**
@@ -152,9 +171,15 @@ const debounceHandleOnChangeEvent = debounce(handleOnChangeEvent, 200);
  */
 function getFieldOnChangeEvent(key, formFields) {
   let event = null;
-  formFields.forEach((field) => {
-    const changedField = field.fields.find((f) => f.model === key);
-    if (changedField?.onChangeEvent) event = changedField.onChangeEvent;
+  formFields.find((row) => {
+    // if field is a sections, recursively check its fields
+    if (row.fields?.length === 1 && row.fields[0].type === 'section') {
+      event = getFieldOnChangeEvent(key, row.fields[0].fields);
+    } else {
+      const changedField = row.fields?.find((f) => f.model === key);
+      if (changedField?.onChangeEvent) event = changedField.onChangeEvent;
+    }
+    return !!event; // stop searching if we found the event
   });
   return event;
 }
@@ -189,18 +214,25 @@ function setValidSection({ sectionId, isValid }) {
 }
 
 watch(() => props.form, async (newVal) => {
-  schemaFormGenerator.value = transformSchemaToFormGenerator(newVal?.fields, props.readOnly, props.includeDefaults);
+  const schema = props.transformSchema
+    ? transformSchemaToFormGenerator(newVal?.fields, props.readOnly, props.includeDefaults)
+    : newVal?.fields || [];
 
   // check for onLoad event script in the form
   if (props.form?.events?.onLoad?.script) {
     try {
-      const { formValues, formSchema } = await useWebWorker(props.form?.events?.onLoad?.script, updatedModelValue.value, schemaFormGenerator.value);
+      const { formValues, formSchema } = await useWebWorker(props.form?.events?.onLoad?.script, updatedModelValue.value, schema);
       schemaFormGenerator.value = formSchema;
       updatedModelValue.value = formValues;
       emit('update:modelValue', updatedModelValue.value);
     } catch (error) {
       showErrorMessage(null, error);
+    } finally {
+      loading.value = false;
     }
+  } else {
+    schemaFormGenerator.value = schema;
+    loading.value = false;
   }
 }, { immediate: true, deep: true });
 

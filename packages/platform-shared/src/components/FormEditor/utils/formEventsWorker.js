@@ -9,12 +9,18 @@ import { get, set } from 'lodash';
 
 let _tempFormValues = {};
 let _tempFormSchema = [];
+let _allFields = [];
 
 export function _setTempFormValues(values) {
   _tempFormValues = values;
 }
 export function _setTempFormSchema(schema) {
   _tempFormSchema = schema;
+  // flatten the schema and extract all fields, including those in sections
+  // to ensure all fields are accessible for manipulation
+  const flatSchema = _tempFormSchema.flat();
+  const sectionFields = flatSchema.filter((f) => f.type === 'section');
+  _allFields = [...flatSchema, ...sectionFields.flatMap((s) => s.fields || [])].flat();
 }
 
 /**
@@ -24,7 +30,7 @@ export function _setTempFormSchema(schema) {
  * @returns {Object|null} The field object if found, otherwise null.
  */
 export function _getFieldByKey(key) {
-  return _tempFormSchema.flat().find((f) => f.model === key) || null;
+  return _allFields.find((f) => f.model === key) || null;
 }
 
 /**
