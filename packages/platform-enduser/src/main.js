@@ -180,10 +180,8 @@ const startApp = async () => {
       }
 
       // User recommendations and predictions
-      if (store.state.SharedStore.governanceDevEnabled) {
-        const { data: autoIdData } = await getIgaAutoIdConfig();
-        store.commit('setGovAutoIdSettings', autoIdData);
-      }
+      const { data: autoIdData } = await getIgaAutoIdConfig();
+      store.commit('setGovAutoIdSettings', autoIdData);
     }
 
     overrideTranslations(i18n, 'enduser');

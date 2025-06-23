@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,7 @@ import {
   getBasicFilter,
   getPriorityFilter,
   getActivePhaseFilter,
+  convertTargetFilterToQueryFilter,
 } from './filters';
 
 it('gets governance filter', () => {
@@ -106,5 +107,119 @@ describe('getActivePhaseFilter', () => {
     expect(getActivePhaseFilter('')).toBeNull();
     expect(getActivePhaseFilter(null)).toBeNull();
     expect(getActivePhaseFilter(undefined)).toBeNull();
+  });
+});
+
+describe('convertTargetFilterToQueryFilter', () => {
+  it('returns a query string with the correct format', () => {
+    const filter = {
+      operator: 'AND',
+      operand: [
+        getBasicFilter('EQUALS', 'field1', 'value1'),
+        getBasicFilter('CONTAINS', 'field2', 'value2'),
+      ],
+    };
+    const expectedQueryString = "(field1 eq 'value1') and (field2 co 'value2')";
+    expect(convertTargetFilterToQueryFilter(filter)).toBe(expectedQueryString);
+  });
+
+  it('returns a correct query string for a complex filter', () => {
+    const filter = {
+      operator: 'AND',
+      operand: [
+        {
+          operator: 'EQUALS',
+          operand: { targetName: 'userName', targetValue: 'jdoe' },
+        },
+        {
+          operator: 'GT',
+          operand: { targetName: 'loginCount', targetValue: 5 },
+        },
+        {
+          operator: 'NOT',
+          operand: [
+            {
+              operator: 'CONTAINS',
+              operand: { targetName: 'email', targetValue: '@test.com' },
+            },
+          ],
+        },
+      ],
+    };
+    const expectedQueryString = "(userName eq 'jdoe') and (loginCount gt '5') and (!(email co '@test.com'))";
+    expect(convertTargetFilterToQueryFilter(filter)).toBe(expectedQueryString);
+  });
+
+  it('returns a correct query string for a more complex filter', () => {
+    const filter = {
+      operator: 'OR',
+      operand: [
+        {
+          operator: 'AND',
+          operand: [
+            {
+              operator: 'EQUALS',
+              operand: {
+                targetName: 'userName',
+                targetValue: 'jdoe',
+              },
+            },
+            {
+              operator: 'GT',
+              operand: {
+                targetName: 'loginCount',
+                targetValue: 5,
+              },
+            },
+          ],
+        },
+        {
+          operator: 'AND',
+          operand: [
+            {
+              operator: 'STARTS_WITH',
+              operand: {
+                targetName: 'email',
+                targetValue: 'admin@',
+              },
+            },
+            {
+              operator: 'EQUALS',
+              operand: {
+                targetName: 'status',
+                targetValue: 'active',
+              },
+            },
+          ],
+        },
+      ],
+    };
+    const expectedQueryString = "((userName eq 'jdoe') and (loginCount gt '5')) or ((email sw 'admin@') and (status eq 'active'))";
+    expect(convertTargetFilterToQueryFilter(filter)).toBe(expectedQueryString);
+  });
+
+  it('returns a correct query string with an improper empty boolean', () => {
+    const filter = {
+      operator: 'OR',
+      operand: [
+        {
+          operator: 'AND',
+          operand: [],
+        },
+        {
+          operator: 'EQUALS',
+          operand: {
+            targetName: 'status',
+            targetValue: 'active',
+          },
+        },
+      ],
+    };
+    const expectedQueryString = "(status eq 'active')";
+    expect(convertTargetFilterToQueryFilter(filter)).toBe(expectedQueryString);
+  });
+
+  it('returns an empty string if no filter is provided', () => {
+    expect(convertTargetFilterToQueryFilter()).toBe('true');
   });
 });

@@ -13,13 +13,13 @@ import {
 const predictionIcons = {
   HIGH: 'thumb_up_off_alt',
   LOW: 'thumb_down_off_alt',
-  MEDIUM: 'horizontal_rule',
+  MEDIUM: 'thumbs_up_down',
 };
 
 const predictionColors = {
   HIGH: 'green',
   LOW: 'red',
-  MEDIUM: 'black',
+  MEDIUM: 'yellow',
 };
 
 export const confidenceLevels = {

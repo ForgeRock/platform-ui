@@ -8,8 +8,8 @@ of the MIT license. See the LICENSE file for details. -->
     class="my-5">
     <div class="mb-4">
       <FrPageHeader
-        :title="$t('governance.accessRequest.newRequest.catalogTitle')"
-        :subtitle="$t('governance.accessRequest.newRequest.catalogSubtitle')" />
+        :title="pageHeaders.title"
+        :subtitle="pageHeaders.subtitle" />
       <FrSODViolationMessage
         v-if="!isEmpty(sodError)"
         @submit-with-violation="$emit('submit-with-violation')"
@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
       lazy
       @input="selectedTab = $event; tabChange()">
       <template
-        v-for="(catalogCategory, key) in catalogTabs"
+        v-for="(catalogCategory, key) in availableTabs"
         :key="key">
         <BTab
           class="p-0"
@@ -38,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
             :subtitle="$t('governance.accessRequest.newRequest.noResultsSubTitle', { item: catalogTabs[tabType].capitalizedTitle })" />
           <template v-else>
             <BButtonToolbar
-              v-if="selectedTab === 1"
+              v-if="tabType === 'entitlement'"
               class="pb-3 pt-0 px-0 border-0">
               <FrField
                 v-model="applicationToFilterBy"
@@ -171,7 +171,7 @@ of the MIT license. See the LICENSE file for details. -->
                             body-class="overflow-hidden"
                             class="overflow-hidden">
                             <img
-                              v-if="selectedTab < 2"
+                              v-if="tabType === 'entitlement' || tabType === 'application'"
                               height="28"
                               class="mb-3"
                               :alt="item.appType || $t('governance.accessRequest.newRequest.role')"
@@ -291,6 +291,7 @@ import {
   cloneDeep,
   debounce,
   isEmpty,
+  pickBy,
 } from 'lodash';
 import {
   BBadge,
@@ -395,6 +396,10 @@ export default {
       type: String,
       default: 'application',
     },
+    requestType: {
+      type: String,
+      default: 'catalog',
+    },
   },
   data() {
     return {
@@ -441,6 +446,17 @@ export default {
         icon: getApplicationLogo(application),
       }));
     },
+    availableTabs() {
+      const tabMappings = {
+        catalog: ['application', 'entitlement', 'role'],
+        recommendations: ['entitlement'],
+      };
+      return pickBy(this.catalogTabs, (value, tab) => {
+        // Filter out tabs that are not enabled in the request type
+        const tabMapping = tabMappings[this.requestType] || tabMappings.catalog;
+        return tabMapping.includes(tab);
+      });
+    },
     currentGlossarySchema() {
       return this.glossarySchema[this.tabType];
     },
@@ -457,23 +473,38 @@ export default {
         return filterOption;
       });
     },
+    pageHeaders() {
+      if (this.requestType === 'recommendations') {
+        return {
+          title: this.$t('governance.accessRequest.newRequest.recommendationTitle'),
+          subtitle: this.$t('governance.accessRequest.newRequest.recommendationSubtitle'),
+        };
+      }
+      return {
+        title: this.$t('governance.accessRequest.newRequest.catalogTitle'),
+        subtitle: this.$t('governance.accessRequest.newRequest.catalogSubtitle'),
+      };
+    },
     quantityFilters() {
       return this.filter.operand?.length || 0;
     },
     sortByOptions() {
-      if (this.selectedTab === 0) {
+      if (this.tabType === 'application') {
         return [
           { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'application.name' },
           { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'applicationOwner.userName' },
         ];
       }
-      if (this.selectedTab === 1) {
-        return [
+      if (this.tabType === 'entitlement') {
+        const sortOptions = [
           { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'assignment.name' },
           { text: this.catalogTabs.application.capitalizedSingularTitle, value: 'application.name' },
-          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'applicationOwner.userName' },
-          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'entitlementOwner.userName' },
         ];
+        if (this.requestType !== 'recommendations') {
+          sortOptions.push({ text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'applicationOwner.userName' });
+          sortOptions.push({ text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'entitlementOwner.userName' });
+        }
+        return sortOptions;
       }
       return [{ text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.role.capitalizedSingularTitle }), value: 'role.name' }];
     },
@@ -486,11 +517,11 @@ export default {
       return tabIconMap[this.tabType];
     },
     tabType() {
-      return Object.keys(this.catalogTabs)[this.selectedTab];
+      return Object.keys(this.availableTabs)[this.selectedTab];
     },
   },
   mounted() {
-    this.selectedTab = Object.keys(this.catalogTabs).indexOf(this.initialTab);
+    this.selectedTab = Object.keys(this.availableTabs).indexOf(this.initialTab);
     this.searchCatalog();
   },
   methods: {
@@ -553,7 +584,7 @@ export default {
         applicationFilter: this.applicationFilter,
         filter: this.filter,
       };
-      const { itemType } = Object.values(this.catalogTabs)[this.selectedTab];
+      const { itemType } = Object.values(this.availableTabs)[this.selectedTab];
       this.$emit('search:catalog', itemType, searchParams);
     },
     /**
