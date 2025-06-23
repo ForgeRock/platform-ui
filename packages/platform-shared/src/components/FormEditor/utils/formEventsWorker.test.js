@@ -15,6 +15,7 @@ describe('formEventsWorker module', () => {
     // Reset form values and schema after each test
     workerModule._setTempFormValues({});
     workerModule._setTempFormSchema([]);
+    workerModule._allFields = [];
     jest.clearAllMocks();
   });
 
@@ -263,6 +264,132 @@ describe('formEventsWorker module', () => {
             ],
           ],
         });
+      });
+    });
+  });
+
+  describe('section', () => {
+    let formValuesSection;
+    let formSchemaSection;
+
+    beforeEach(() => {
+      formValuesSection = { field1: 'value1', field2: 42, field3: true };
+      formSchemaSection = [
+        [
+          {
+            key: 'section1',
+            type: 'section',
+            fields: [
+              [
+                {
+                  key: 'field1', type: 'text', label: 'Field 1', model: 'field1',
+                },
+                {
+                  key: 'field2', type: 'number', label: 'Field 2', model: 'field2',
+                },
+              ],
+            ],
+          },
+          { key: 'field4', type: 'text' },
+        ],
+      ];
+    });
+
+    it('can disable fields in a section', () => {
+      const script = 'form.disableField("field1");';
+
+      global.onmessage({ data: { script, scriptVariables: { formValues: formValuesSection, formSchema: formSchemaSection } } });
+
+      expect(mockPostMessage).toHaveBeenCalledWith({
+        formValues: formValuesSection,
+        formSchema: [
+          [
+            {
+              key: 'section1',
+              type: 'section',
+              fields: [
+                [
+                  {
+                    key: 'field1', type: 'text', label: 'Field 1', model: 'field1', disabled: true,
+                  },
+                  {
+                    key: 'field2', type: 'number', label: 'Field 2', model: 'field2',
+                  },
+                ],
+              ],
+            },
+            { key: 'field4', type: 'text' },
+          ],
+        ],
+      });
+    });
+
+    it('can set value of a field in a section', () => {
+      const script = 'form.setValue("field2", 100);';
+
+      global.onmessage({ data: { script, scriptVariables: { formValues: formValuesSection, formSchema: formSchemaSection } } });
+
+      expect(mockPostMessage).toHaveBeenCalledWith({
+        formValues: { ...formValuesSection, field2: 100 },
+        formSchema: formSchemaSection,
+      });
+    });
+
+    it('hides a field in a section', () => {
+      const script = 'form.hideField("field1");';
+
+      global.onmessage({ data: { script, scriptVariables: { formValues: formValuesSection, formSchema: formSchemaSection } } });
+
+      expect(mockPostMessage).toHaveBeenCalledWith({
+        formValues: formValuesSection,
+        formSchema: [
+          [
+            {
+              key: 'section1',
+              type: 'section',
+              fields: [
+                [
+                  {
+                    key: 'field1', type: 'text', label: 'Field 1', model: 'field1', showAlways: false,
+                  },
+                  {
+                    key: 'field2', type: 'number', label: 'Field 2', model: 'field2',
+                  },
+                ],
+              ],
+            },
+            { key: 'field4', type: 'text' },
+          ],
+        ],
+      });
+    });
+
+    it('sets a label for a field in a section', () => {
+      const script = 'form.setLabel("field1", "New Field 1 Label");';
+
+      global.onmessage({ data: { script, scriptVariables: { formValues: formValuesSection, formSchema: formSchemaSection } } });
+
+      expect(mockPostMessage).toHaveBeenCalledWith({
+        formValues: formValuesSection,
+        formSchema: [
+          [
+            {
+              key: 'section1',
+              type: 'section',
+              fields: [
+                [
+                  {
+                    key: 'field1', type: 'text', label: 'New Field 1 Label', model: 'field1',
+                  },
+                  {
+                    key: 'field2', type: 'number', label: 'Field 2', model: 'field2',
+                  },
+                ],
+              ],
+            },
+            { key: 'field4', type: 'text' },
+          ],
+        ],
       });
     });
   });

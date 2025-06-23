@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import SectionDisplay from './SectionDisplay';
+import i18n from '@/i18n';
 
 const property = {
   id: 'section1',
@@ -29,6 +30,9 @@ const model = { field1: 'value1' };
 describe('SectionDisplay.vue', () => {
   function mountComponent(props) {
     return mount(SectionDisplay, {
+      global: {
+        plugins: [i18n],
+      },
       props: {
         ...props,
       },
@@ -59,7 +63,7 @@ describe('SectionDisplay.vue', () => {
   });
 
   it('does not render header or footer if not provided', () => {
-    const wrapper = mount(SectionDisplay, {
+    const wrapper = mountComponent({
       property: { id: 'section2', fields: [] },
     });
     expect(wrapper.text()).not.toContain('Section Header');

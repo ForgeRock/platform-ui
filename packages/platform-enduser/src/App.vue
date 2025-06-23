@@ -353,8 +353,9 @@ export default {
         queryFilter: true,
         pageSize: 1,
         fields: '_id',
-      }).then(() => {
-        this.setIDMUsersViewPrivilege(true);
+      }).then((res) => {
+        if (res === false) this.setIDMUsersViewPrivilege(false);
+        else this.setIDMUsersViewPrivilege(true);
       }).catch((error) => {
         if (error.response?.status === 403) {
           this.setIDMUsersViewPrivilege(false);
