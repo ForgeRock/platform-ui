@@ -19,6 +19,14 @@ of the MIT license. See the LICENSE file for details. -->
         @action="openModal($event)"
         class="mb-4" />
 
+      <!-- Recommendation Banner -->
+      <FrRecommendationBanner
+        v-if="showRecommendationBanner(item, autoIdSettings)"
+        :prediction="item.details.prediction"
+        :auto-id-settings="autoIdSettings"
+        :object-display-name="item.details.name"
+        :user-display-name="item.details.requestedFor" />
+
       <!-- Request details -->
       <BCard
         data-testId="request-detail"
@@ -73,12 +81,14 @@ import {
   detailTypes,
   getFormattedRequest,
   getRequestTypeDisplayName,
+  showRecommendationBanner,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestDetails';
 import FrRequestHeader from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestHeader';
 import FrRequestActions from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActions';
+import FrRecommendationBanner from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationBanner';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -89,6 +99,10 @@ const props = defineProps({
   type: {
     type: String,
     default: '',
+  },
+  autoIdSettings: {
+    type: Object,
+    default: () => ({}),
   },
 });
 
@@ -110,7 +124,7 @@ async function getRequestData() {
     const { data } = await getRequest(props.requestId);
     const { data: requestTypeData } = await getRequestTypeDisplayName(data.requestType);
     data.requestTypeDisplayName = requestTypeData.displayName;
-    item.value = getFormattedRequest(data);
+    item.value = getFormattedRequest(data, props.autoIdSettings);
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.accessRequest.myRequests.errorGettingRequests'));
   } finally {

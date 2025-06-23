@@ -14,6 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
           :list-name="$t('pageTitles.Approvals')"
           :is-loading="isLoading"
           :requests="accessRequests"
+          :auto-id-settings="autoIdSettings"
+          :schema="schema"
           @open-detail="viewDetails">
           <template #header>
             <FrRequestToolbar
@@ -87,7 +89,7 @@ import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { getUserApprovals, getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getIgaAccessRequest, getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import {
   detailTypes,
   getRequestFilter,
@@ -135,6 +137,9 @@ export default {
       requireApproveJustification: false,
       requireRejectJustification: false,
       allowSelfApproval: false,
+      schema: {
+        user: [],
+      },
       sortByOptions,
       sortDir: 'desc',
       sortKeys: 'date',
@@ -165,6 +170,9 @@ export default {
           element: this.totalCount === 1 ? this.$t('common.approval') : this.$t('common.approvals'),
         });
     },
+    autoIdSettings() {
+      return this.$store.state.govAutoIdSettings;
+    },
   },
   async mounted() {
     this.loadRequestAndUpdateBadge();
@@ -173,6 +181,13 @@ export default {
       this.requireApproveJustification = data.requireApproveJustification;
       this.requireRejectJustification = data.requireRejectJustification;
       this.allowSelfApproval = data.allowSelfApproval;
+    } catch {
+      // We don't need to show an error here
+    }
+
+    try {
+      const { data } = await getFilterSchema();
+      this.schema.user = data.user;
     } catch {
       // We don't need to show an error here
     }

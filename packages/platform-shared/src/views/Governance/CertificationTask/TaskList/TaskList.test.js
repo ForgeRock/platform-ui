@@ -210,6 +210,7 @@ describe('TaskList', () => {
         flags: [
           'NEW_ACCESS',
         ],
+        prediction: {},
       }];
       wrapper.vm.loadItemsList(resource, 1);
       expect(wrapper.vm.items).toEqual(expectedValue);

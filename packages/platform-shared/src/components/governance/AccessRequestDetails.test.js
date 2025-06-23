@@ -179,5 +179,53 @@ describe('AccessRequestDetails', () => {
       const forwardButton = findByText(wrapper, 'button', 'Forward');
       expect(forwardButton.exists()).toBe(true);
     });
+
+    it('shows recommendation banner', async () => {
+      const autoIdSettings = {
+        enableAutoId: true,
+        highScorePercentThreshold: 81.3,
+        lowScorePercentThreshold: 24,
+      };
+
+      const recReq = mockRequest();
+      recReq.requestType = 'entitlementGrant';
+      recReq.prediction = {
+        confidence: 1,
+        confidenceLevel: 'HIGH',
+        confidencePercentage: 100,
+      };
+      AccessRequestApi.getRequest = jest.fn().mockReturnValue(Promise.resolve({
+        data: recReq,
+      }));
+      const wrapper = setup({ autoIdSettings });
+      await flushPromises();
+      const strongText = wrapper.find('strong');
+      expect(strongText.text()).toContain('Access recommended');
+      const icons = wrapper.findAll('.material-icons-outlined');
+      expect(icons[0].text()).toContain('thumb_up_off_alt');
+    });
+
+    it('shows no recommendation banner', async () => {
+      const autoIdSettings = {
+        enableAutoId: false,
+        highScorePercentThreshold: 81.3,
+        lowScorePercentThreshold: 24,
+      };
+
+      const recReq = mockRequest();
+      recReq.requestType = 'entitlementGrant';
+      recReq.prediction = {
+        confidence: 1,
+        confidenceLevel: 'HIGH',
+        confidencePercentage: 100,
+      };
+      AccessRequestApi.getRequest = jest.fn().mockReturnValue(Promise.resolve({
+        data: recReq,
+      }));
+      const wrapper = setup({ autoIdSettings });
+      await flushPromises();
+      const strongText = wrapper.find('strong');
+      expect(strongText.exists()).toBeFalsy();
+    });
   });
 });

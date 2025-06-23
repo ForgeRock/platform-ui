@@ -144,6 +144,7 @@ describe('Glossary', () => {
   beforeEach(() => {
     setupTestPinia({ user: { userId: '1234' } });
     jest.spyOn(CommonsApi, 'getGlossarySchema').mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    jest.spyOn(CommonsApi, 'getIgaAutoIdConfig').mockReturnValue(Promise.resolve({ data: { result: [] } }));
     jest.spyOn(CertificationApi, 'getCertificationCounts').mockReturnValue(Promise.resolve({
       data: {
         result: [],

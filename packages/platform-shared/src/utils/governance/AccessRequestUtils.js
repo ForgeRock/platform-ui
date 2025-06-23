@@ -7,6 +7,7 @@
 
 import { cloneDeep, uniq } from 'lodash';
 import { getBasicFilter, getPriorityFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { getPredictionDisplayInfo, isHighConfidence, isLowConfidence } from '@forgerock/platform-shared/src/utils/governance/prediction';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { getRequestType } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import dayjs from 'dayjs';
@@ -383,14 +384,55 @@ function getAdvancedRequestDisplay(request, objectType) {
 }
 
 /**
+ * Checks if a request type qualifies for recommendations.
+ * @param {string} requestType The type of request
+ * @returns Whether or not the request type is one that qualifies for recommendations
+ */
+export function isRecommendationRequestType(requestType) {
+  const recommendationRequestTypes = [
+    requestTypes.ENTITLEMENT_GRANT.value,
+    requestTypes.ENTITLEMENT_REVOKE.value,
+  ];
+  return recommendationRequestTypes.includes(requestType);
+}
+
+/**
+ * Determines if the recommendation banner should be shown based on the request type and prediction confidence.
+ * @param {object} request Request object
+ * @param {object} autoIdSettings Auto ID configuration
+ * @returns should the recommendation banner be shown
+ */
+export function showRecommendationBanner(request, autoIdSettings) {
+  return Boolean(autoIdSettings.enableAutoId
+    && isRecommendationRequestType(request.rawData.requestType)
+    && (isHighConfidence(request.details.prediction, autoIdSettings) || isLowConfidence(request.details.prediction, autoIdSettings)));
+}
+
+/**
+ * Adds prediction display data to the request display object
+ * @param {Object} request access request
+ * @param {Object} autoIdSettings Auto ID configuration
+ * @param {Object} userSchema User schema properties
+ */
+export function addPredictionDataToRequest(request, autoIdSettings, userSchema) {
+  if (autoIdSettings?.enableAutoId && isRecommendationRequestType(request.rawData.requestType)) {
+    request.details.prediction = getPredictionDisplayInfo(request.rawData, autoIdSettings, userSchema);
+  }
+}
+
+/**
  * Given any access request, return the object for displaying in the table
  * @param {Object} request access request
+ * @param {Object} autoIdSettings Auto ID configuration
+ * @param {Object} userSchema User schema properties
  * @returns {Object} access request that is formatted for display
  */
-export function getFormattedRequest(request) {
+export function getFormattedRequest(request, autoIdSettings, userSchema) {
   if (isSupportedRequestType(request.requestType)) {
     const objectType = getRequestObjectType(request.requestType);
-    return getAdvancedRequestDisplay(request, objectType);
+    const advancedRequest = getAdvancedRequestDisplay(request, objectType);
+    addPredictionDataToRequest(advancedRequest, autoIdSettings, userSchema);
+    return advancedRequest;
   }
   return getBasicRequestDisplay(request);
 }
@@ -399,10 +441,12 @@ export function getFormattedRequest(request) {
  * Converts access request objects to have information at the top level
  * that is necessary for the table display
  * @param {Object[]} requests Access request objects
+ * @param {Object} autoIdSettings Auto ID configuration
+ * @param {Object} userSchema User schema properties
  * @returns {Object[]} request objects
  */
-export function buildRequestDisplay(requests) {
-  return requests.map((request) => getFormattedRequest(request));
+export function buildRequestDisplay(requests, autoIdSettings, userSchema) {
+  return requests.map((request) => getFormattedRequest(request, autoIdSettings, userSchema));
 }
 
 /**
