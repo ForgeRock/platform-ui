@@ -214,6 +214,18 @@ const router = createRouter({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.requestCartUsers.length > 0], { path: '/my-requests' }),
     },
     {
+      path: '/my-requests/recommended-request/:catalogTab?/:returnPath?',
+      name: 'AccessRequestRecommendedNew',
+      component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/accessRequest/NewRequest'),
+      meta: { hideNavBar: true, hideSideMenu: true },
+      props: (route) => ({
+        catalogTab: route.params.catalogTab,
+        returnPath: route.params.returnPath,
+        requestType: 'recommendations',
+      }),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.requestCartUsers.length > 0], { path: '/dashboard' }),
+    },
+    {
       path: '/requestForm/:formId',
       name: 'RequestFormLauncher',
       component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/RequestForm/RequestFormLauncher'),

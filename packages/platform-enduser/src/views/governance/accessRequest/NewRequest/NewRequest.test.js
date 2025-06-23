@@ -32,7 +32,7 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   }),
 }));
 
-CatalogApi.searchCatalog = jest.fn().mockReturnValue({
+CatalogApi.queryCatalog = jest.fn().mockReturnValue({
   data: {
     result: [
       {

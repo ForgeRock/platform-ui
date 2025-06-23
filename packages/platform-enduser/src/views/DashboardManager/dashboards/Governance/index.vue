@@ -99,7 +99,7 @@ import { getRequestFilter } from '@forgerock/platform-shared/src/utils/governanc
 import Welcome from '@forgerock/platform-shared/src/enduser/components/Dashboard/widgets/WelcomeWidget';
 import FrAlert from '@forgerock/platform-shared/src/components/Alert/';
 import { BButton } from 'bootstrap-vue';
-import { getUserRecommendations } from '@/api/governance/RecommendationsApi';
+import { getUserRecommendations } from '@forgerock/platform-shared/src/api/governance/RecommendationsApi';
 
 /**
  * @description Controlling component for the governance dashboard
@@ -180,7 +180,7 @@ export default {
         userName: this.userName,
       };
       this.$store.commit('setRequestCartUsers', [currentUser]);
-      this.$router.push({ name: 'AccessRequestNew', params: { returnPath: '/dashboard' } });
+      this.$router.push({ name: 'AccessRequestRecommendedNew', params: { catalogTab: 'entitlement', returnPath: '/dashboard' } });
     },
   },
 };

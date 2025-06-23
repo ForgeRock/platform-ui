@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -115,4 +115,65 @@ export function getActivePhaseFilter(queryString) {
       getBasicFilter('EQUALS', 'decision.phases.status', 'in-progress'),
     ],
   };
+}
+
+/**
+ * Convert a targetFilter object to a queryFilter string.
+ * @param {object} node Target filter search object
+ */
+export function convertTargetFilterToQueryFilter(targetFilter) {
+  function buildQuery(node) {
+    if (!node || typeof node !== 'object' || (Object.keys(node).length === 0)) return '';
+
+    const op = node.operator;
+    const { operand } = node;
+
+    const leaf = ({ targetName, targetValue }, opSymbol) => `${targetName} ${opSymbol} '${targetValue}'`;
+
+    const operatorMap = {
+      EQUALS: 'eq',
+      CONTAINS: 'co',
+      STARTS_WITH: 'sw',
+      ENDS_WITH: 'ew',
+      GT: 'gt',
+      GTE: 'ge',
+      LT: 'lt',
+      LTE: 'le',
+      EXISTS: 'pr',
+    };
+
+    switch (op) {
+      case 'ALL':
+        return 'true';
+
+      case 'AND':
+      case 'OR': {
+        if (!Array.isArray(operand) || operand.length === 0) return '';
+        const childFilters = operand
+          .map((child) => buildQuery(child))
+          .filter((f) => f.trim());
+
+        if (childFilters.length === 0) return '';// Remove empty/invalid children
+
+        return childFilters
+          .map((f) => `(${f})`)
+          .join(` ${op.toLowerCase()} `);
+      }
+      case 'NOT':
+        return `!(${buildQuery(operand[0])})`;
+
+      case 'EXISTS':
+        return `${operand.targetName} pr`;
+
+      case 'IN':
+        return operand.targetValue
+          .map((val) => `(${operand.targetName} eq '${val})'`)
+          .join(' or ');
+
+      default:
+        return leaf(operand, operatorMap[op] || '');
+    }
+  }
+  const result = buildQuery(targetFilter).trim();
+  return result === '' ? 'true' : result;
 }

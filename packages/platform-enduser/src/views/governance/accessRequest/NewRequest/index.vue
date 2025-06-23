@@ -36,6 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
             :initial-tab="catalogTab ? catalogTab : 'application'"
             :loading="loading"
             :prevent-request-with-violation="preventRequestWithViolation"
+            :request-type="requestType"
             :sod-error="sodError"
             :total-count="totalCount"
             @add-item-to-cart="addItemToCart"
@@ -169,9 +170,10 @@ import {
   queryParamFunction,
 } from '@forgerock/platform-shared/src/components/FormEditor/utils/govObjectSelect';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
-import { getCatalogFilterSchema, searchCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
+import { getCatalogFilterSchema, queryCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import { scanNewEntitlementAccess } from '@forgerock/platform-shared/src/api/governance/PolicyApi';
 import { saveNewRequest, validateRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getUserRecommendations } from '@forgerock/platform-shared/src/api/governance/RecommendationsApi';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
 import FrRequestCart from '@/components/governance/RequestCart';
 
@@ -220,6 +222,10 @@ export default {
     returnPath: {
       type: String,
       default: '',
+    },
+    requestType: {
+      type: String,
+      default: 'catalog',
     },
   },
   setup() {
@@ -408,6 +414,24 @@ export default {
       return !!this.requestCartItems.find((requestCartItem) => requestCartItem.id === catalogItemId);
     },
     /**
+     * Gets the initial starting target filter value
+     * @param catalogType Type of catalog search
+     */
+    getInitialTargetFilter(catalogType) {
+      switch (this.requestType) {
+        case 'recommendations':
+          return {};
+        default:
+          return {
+            operator: 'EQUALS',
+            operand: {
+              targetName: 'item.type',
+              targetValue: catalogType,
+            },
+          };
+      }
+    },
+    /**
      * Search the request catalog using the provided filter, sort, and page details
      * @param {String} catalogType accountGrant, entitlementGrant, or roleMembership
      * @param {Object} params query parameters including pageSize, page, sortKeys, and sort direction
@@ -418,7 +442,7 @@ export default {
         this.loading = true;
         const fieldsMap = {
           accountGrant: 'application,id,glossary',
-          entitlementGrant: 'application,entitlement,id,descriptor,glossary,assignment',
+          entitlementGrant: 'application,entitlement,id,descriptor,glossary,assignment,prediction,catalog',
           roleMembership: 'role,id,glossary',
         };
         const searchParams = {
@@ -429,19 +453,11 @@ export default {
         if (params.sortKeys) {
           searchParams.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortKeys}`;
         }
-        const payload = {
-          targetFilter: {
-            operator: 'EQUALS',
-            operand: {
-              targetName: 'item.type',
-              targetValue: catalogType,
-            },
-          },
-        };
+        const targetFilter = this.getInitialTargetFilter(catalogType);
 
         if (params.applicationFilter || params.filter?.operand || params.searchValue) {
-          payload.targetFilter.operand = [cloneDeep(payload.targetFilter)];
-          payload.targetFilter.operator = 'AND';
+          targetFilter.operand = [cloneDeep(targetFilter)];
+          targetFilter.operator = 'AND';
           if (params.applicationFilter) {
             const applicationFilterOperand = {
               operator: 'OR',
@@ -456,10 +472,10 @@ export default {
                 },
               });
             });
-            payload.targetFilter.operand.push(applicationFilterOperand);
+            targetFilter.operand.push(applicationFilterOperand);
           }
           if (params.filter?.operand) {
-            payload.targetFilter.operand.push(params.filter);
+            targetFilter.operand.push(params.filter);
           }
           if (params.searchValue) {
             const nameMap = {
@@ -467,7 +483,7 @@ export default {
               entitlementGrant: 'assignment.name',
               roleMembership: 'role.name',
             };
-            payload.targetFilter.operand.push({
+            targetFilter.operand.push({
               operator: 'CONTAINS',
               operand: {
                 targetName: nameMap[catalogType],
@@ -476,10 +492,19 @@ export default {
             });
           }
         }
-
-        const { data } = await searchCatalog(searchParams, payload);
-        this.catalogResults = data?.result || [];
-        this.totalCount = data?.totalCount || 0;
+        if (this.requestType === 'recommendations') {
+          const userId = this.requestCartUsers[0].id;
+          const { data } = await getUserRecommendations(userId, searchParams, targetFilter);
+          data.result.forEach((item) => {
+            item.id = item.catalog?.id;
+          });
+          this.catalogResults = data?.result || [];
+          this.totalCount = data?.totalCount || 0;
+        } else {
+          const { data } = await queryCatalog(searchParams, targetFilter);
+          this.catalogResults = data?.result || [];
+          this.totalCount = data?.totalCount || 0;
+        }
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.resource.errors.errorSearchingCatalog'));
       }

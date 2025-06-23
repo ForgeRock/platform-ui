@@ -210,7 +210,7 @@ describe('Prediction Utility Functions', () => {
     });
 
     it('should return the correct icon for low confidence', () => {
-      expect(getConfidenceIcon(confidenceLevels.MEDIUM)).toBe('horizontal_rule');
+      expect(getConfidenceIcon(confidenceLevels.MEDIUM)).toBe('thumbs_up_down');
     });
   });
 

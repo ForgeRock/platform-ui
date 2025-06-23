@@ -8,10 +8,10 @@
 import { shallowMount, mount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as RecommendationsApi from '@forgerock/platform-shared/src/api/governance/RecommendationsApi';
 import Notifications from '@kyvg/vue3-notification';
 import i18n from '@/i18n';
 import GovernanceDashboard from '.';
-import * as RecommendationsApi from '@/api/governance/RecommendationsApi';
 
 jest.mock('@/api/governance/AccessReviewApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
@@ -151,7 +151,7 @@ describe('GovernanceDashboard', () => {
     mountComponent();
     const link = wrapper.find('.alert-link');
     await link.trigger('click');
-    expect(push).toHaveBeenCalledWith({ name: 'AccessRequestNew', params: { returnPath: '/dashboard' } });
+    expect(push).toHaveBeenCalledWith({ name: 'AccessRequestRecommendedNew', params: { catalogTab: 'entitlement', returnPath: '/dashboard' } });
   });
 
   it('Recommendations count not rendered with zero recommendations present', () => {
