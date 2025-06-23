@@ -473,7 +473,6 @@
       "IS_BEFORE_DATE": "Must be before {date}",
       "ALPHA_DASH": "Must only contain letters, numbers, spaces, hyphens and underscores",
       "ALPHA_NUM_SPACES": "Must only contain letters, numbers, or spaces",
-      "ALPHA_NUM_SPACES_COLON": "Must only contain letters, numbers, spaces, or colons",
       "ALPHA_NUM_UNDER_COMMA": "Must only contain letters, numbers, commas and underscores",
       "PERIOD_REQUIRED": "Must contain at least one period character",
       "NO_REPEAT": "Cannot contain more than {numRepeat} repeated characters",

@@ -68,12 +68,6 @@ export function getRules(i18n) {
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.ALPHA_NUM_SPACES');
   };
 
-  // Allows alphanumeric, spaces
-  const alpha_num_spaces_colon = (value) => {
-    const regex = /^([A-Z]|[0-9]|:| )+$/ig;
-    return regex.test(value) || i18n.global.t('common.policyValidationMessages.ALPHA_NUM_SPACES_COLON');
-  };
-
   // Allows alphanumeric, underscores and commas
   const alpha_num_under_comma = (value) => {
     const regex = /^([A-Z]|[0-9]|,|_)+$/ig;
@@ -365,7 +359,6 @@ export function getRules(i18n) {
     alpha_dash,
     alpha_num_lower,
     alpha_num_spaces,
-    alpha_num_spaces_colon,
     alpha_num_under_comma,
     alpha_num,
     alpha,
