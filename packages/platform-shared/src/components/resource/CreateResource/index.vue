@@ -38,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :name="field.key"
                     :options="field.options || field.enum"
                     :type="getFieldType(field)"
-                    :validation="field.validation" />
+                    :validation="field.type === 'boolean' ? {} : field.validation" />
                 </BFormGroup>
                 <BFormGroup v-else-if="field.type === 'password' && field.encryption === undefined">
                   <FrPolicyPasswordInput
