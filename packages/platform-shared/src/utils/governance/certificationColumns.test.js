@@ -197,6 +197,11 @@ describe('getInitialColumns', () => {
     });
   });
 
+  it('returns OOTB columns filtered by grantType "entitlements" with Auto ID enabled', () => {
+    const result = getInitialColumns('entitlements', null, false, null, null, { enableAutoId: true });
+    expect(result.map((c) => c.key)).toEqual(['user', 'application', 'entitlement', 'account', 'prediction', 'flags', 'comments', 'actions']);
+  });
+
   it('defaults grantType to "accounts" if not provided', () => {
     const result = getInitialColumns(undefined, null, false, null, null);
     expect(result.map((c) => c.key)).toEqual(['user', 'application', 'account', 'flags', 'comments', 'actions']);
@@ -232,8 +237,17 @@ describe('getAllColumnCategories', () => {
     const categories = getAllColumnCategories('accounts', filterProperties);
     const userCategory = categories.find((cat) => cat.name === 'user');
     const accountCategory = categories.find((cat) => cat.name === 'account');
+    const reviewCategory = categories.find((cat) => cat.name === 'review');
     expect(userCategory.items.some((item) => item.key === 'customUser')).toBe(true);
     expect(accountCategory.items.some((item) => item.key === 'customAccount')).toBe(true);
+    expect(reviewCategory.items.some((item) => item.key === 'prediction')).toBe(false);
+  });
+
+  it('appends filterPropertyColumns to matching category items with Auto ID', () => {
+    const filterProperties = {};
+    const categories = getAllColumnCategories('accounts', filterProperties, { enableAutoId: true });
+    const reviewCategory = categories.find((cat) => cat.name === 'review');
+    expect(reviewCategory.items.some((item) => item.key === 'prediction')).toBe(true);
   });
 
   it('returns empty array if no categories match the grantType', () => {

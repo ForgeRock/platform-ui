@@ -1741,6 +1741,7 @@
       },
       "customRequestAltText": "Custom Request",
       "noRequests": "No {status} Access Requests",
+      "recommended": "Recommended",
       "requestedFor": "Requested For",
       "requestDate": "Request Date",
       "requestedBy": "Requested By",
@@ -1769,6 +1770,7 @@
       "select": "Select",
       "user": "User",
       "application": "Application",
+      "recommended": "Recommended",
       "account": "Account",
       "flags": "Flags",
       "comments": "Comments",
@@ -1870,6 +1872,7 @@
       "errors": {
         "addCommentErrorDefaultMessage": "There was an error adding the comment",
         "allowExceptionError": "There was an error trying to defer this item",
+        "autoIdError": "There was an error getting certification configuration",
         "certificationDetailError": "There was an error getting the certification details",
         "certificationListError": "There was an error getting the list of certifications",
         "certifyError": "There was an error certifying this item",
@@ -2003,6 +2006,31 @@
       "ROLEBASED": "Role-based",
       "NEW_ACCESS": "New Access",
       "TEMPORAL": "Temporal Constraints"
+    },
+    "prediction": {
+      "HIGH": "High Confidence",
+      "LOW": "Not Recommended"
+    },
+    "recommendation": {
+      "popover": {
+        "recommended": "High Confidence",
+        "notRecommended": "Not Recommended",
+        "noRecommendation": "No Recommendation",
+        "highRecommendation": "This {object} is recommended for this user with high confidence.  Of the similar users who currently have the below listed attributes, {percentage}% also have this {object}.",
+        "lowRecommendation": "This {object} is NOT recommended for this user.  Of the similar users who currently have the below listed attributes, only {percentage}% also have this {object}.",
+        "noStrongRecommendation": "There is no strong recommendation for this user to have this {object}.  Of the similar users who currently have the below listed attributes, {percentage}% also have this {object}.",
+        "noRecommendationAvailable": "There is no recommendation currently available for this {object}."
+      },
+      "banner": {
+        "recommended": "Access recommended",
+        "notRecommended": "Access not recommended",
+        "noRecommendation": "No recommendation",
+        "highRecommendation": "{percentage}% of people similar to {userDisplayName} have been provisioned {objectDisplayName}.",
+        "lowRecommendation": "Only {percentage}% of people similar to {userDisplayName} have been provisioned {objectDisplayName}.",
+        "noStrongRecommendation": "{percentage}% of people similar to {userDisplayName} have been provisioned {objectDisplayName}."
+      },
+      "genericObject": "object",
+      "entitlement": "entitlement"
     },
     "forwardReviewModal": {
       "chooseRole": "Choose a role",

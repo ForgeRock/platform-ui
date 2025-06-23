@@ -17,6 +17,9 @@ import {
   getPriorityImageAltText,
   isTypeLcm,
   requestTypes,
+  addPredictionDataToRequest,
+  isRecommendationRequestType,
+  showRecommendationBanner,
 } from './AccessRequestUtils';
 
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
@@ -450,6 +453,96 @@ describe('getPriorityImageAltText', () => {
       expect(isTypeLcm('applicationGrant')).toBe(false);
       expect(isTypeLcm('entitlementGrant')).toBe(false);
       expect(isTypeLcm('roleGrant')).toBe(false);
+    });
+  });
+
+  describe('addPredictionDataToRequest', () => {
+    const request = {
+      id: '123',
+      requestType: 'entitlementGrant',
+      prediction: {
+        user_id: 'c35cb4ff-94eb-43a7-99bd-6a4a0d8b2c66',
+        ent_id: '06_ENT_ID_system_ShowcaseAD___GROUP___tildeNon-Union_Power',
+        CONF: 0.8,
+        RULE: [
+          '11_FRINDEXEDSTRING10_Operations_ SUP',
+        ],
+        freq: 5,
+        freqUnion: 4,
+      },
+    };
+
+    it('adds prediction data to a request', () => {
+      const result = getFormattedRequest(request);
+      addPredictionDataToRequest(result, { enableAutoId: true }, [{ key: 'frIndexedString10', displayName: 'TEST' }]);
+      const expectedRule = [
+        {
+          key: 'frIndexedString10',
+          displayName: 'TEST',
+          value: 'Operations_ SUP',
+        },
+      ];
+      expect(result.details.prediction.rule).toEqual(expectedRule);
+      expect(result.details.prediction.confidence).toEqual(0.8);
+    });
+
+    it('does not add prediction data to a request when disabled', () => {
+      const result = getFormattedRequest(request);
+      addPredictionDataToRequest(result, { enableAutoId: false }, [{ key: 'frIndexedString10', displayName: 'TEST' }]);
+      expect(result.details.prediction).toBeUndefined();
+    });
+
+    it('adds prediction data to a request from getFormattedRequest', () => {
+      const result = getFormattedRequest(request, { enableAutoId: true }, [{ key: 'frIndexedString10', displayName: 'TEST' }]);
+      const expectedRule = [
+        {
+          key: 'frIndexedString10',
+          displayName: 'TEST',
+          value: 'Operations_ SUP',
+        },
+      ];
+      expect(result.details.prediction.rule).toEqual(expectedRule);
+      expect(result.details.prediction.confidence).toEqual(0.8);
+    });
+  });
+
+  describe('isRecommendationRequestType', () => {
+    it('returns true for recommendation request types', () => {
+      expect(isRecommendationRequestType('entitlementGrant')).toBe(true);
+      expect(isRecommendationRequestType('entitlementRemove')).toBe(true);
+    });
+
+    it('returns false for non-recommendation request types', () => {
+      expect(isRecommendationRequestType('createUser')).toBe(false);
+      expect(isRecommendationRequestType('accountGrant')).toBe(false);
+      expect(isRecommendationRequestType('roleRemove')).toBe(false);
+    });
+  });
+
+  describe('showRecommendationBanner', () => {
+    const autoIdSettings = {
+      enableAutoId: true,
+      highScorePercentThreshold: 81.3,
+      lowScorePercentThreshold: 24,
+    };
+    it('returns true for a request that should show banner', () => {
+      const shouldShow = { rawData: { requestType: 'entitlementGrant' }, details: { prediction: { confidence: 0.9 } } };
+      expect(showRecommendationBanner(shouldShow, autoIdSettings)).toBe(true);
+    });
+
+    it('returns false for invalid request type', () => {
+      const shouldShow = { rawData: { requestType: 'roleGrant' }, details: { prediction: { confidence: 0.9 } } };
+      expect(showRecommendationBanner(shouldShow, autoIdSettings)).toBe(false);
+    });
+
+    it('returns false for not high of low confidence', () => {
+      const shouldShow = { rawData: { requestType: 'entitlementGrant' }, details: { prediction: { confidence: 0.5 } } };
+      expect(showRecommendationBanner(shouldShow, autoIdSettings)).toBe(false);
+    });
+
+    it('returns false for no prediction present', () => {
+      const shouldShow = { rawData: { requestType: 'entitlementGrant' }, details: { prediction: undefined } };
+      expect(showRecommendationBanner(shouldShow, autoIdSettings)).toBe(false);
     });
   });
 });

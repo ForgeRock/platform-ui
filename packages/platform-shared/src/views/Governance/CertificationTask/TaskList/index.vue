@@ -159,6 +159,14 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
         </div>
       </template>
+      <template #cell(prediction)="{ item }">
+        <FrRecommendationIcon
+          v-if="Boolean(item.prediction)"
+          :prediction="item.prediction"
+          :id="item.id"
+          type="certification"
+          :auto-id-settings="autoIdSettings" />
+      </template>
       <template #cell(flags)="{ item }">
         <div class="d-flex align-items-center">
           <div
@@ -392,7 +400,7 @@ import {
   saveComment,
   updateActors,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
-import { getGlossarySchema, getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getGlossarySchema, getFilterSchema, getIgaAutoIdConfig } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
 import {
@@ -403,6 +411,7 @@ import {
 } from '@forgerock/platform-shared/src/utils/governance/certificationColumns';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
+import { getPredictionDisplayInfo } from '@forgerock/platform-shared/src/utils/governance/prediction';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -415,6 +424,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
 import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
+import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
 import FrAccountModal from './modals/AccountModal';
 import FrActivityModal from './modals/ActivityModal';
 import FrAddCommentModal from './modals/AddCommentModal';
@@ -487,6 +497,7 @@ export default {
     FrTaskActionsCell,
     FrTaskFilters,
     FrTaskMultiSelect,
+    FrRecommendationIcon,
   },
   mixins: [NotificationMixin],
   props: {
@@ -600,6 +611,7 @@ export default {
       }],
       allSelected: false,
       bulkCertifyModalProps,
+      autoIdSettings: {},
       availableColumns: [],
       updatedColumCategories: [],
       bulkExceptionModalProps,
@@ -649,6 +661,9 @@ export default {
         application: [],
         entitlement: [],
         role: [],
+      },
+      filterSchema: {
+        user: [],
       },
       revokeModalProps: {
         ...bulkRevokeModalProps,
@@ -705,16 +720,25 @@ export default {
 
     this.isStaged = this.campaignDetails.status === 'staging';
 
+    try {
+      // User recommendations and predictions
+      const { data: autoIdData } = await getIgaAutoIdConfig();
+      this.autoIdSettings = autoIdData;
+    } catch (error) {
+      this.showErrorMessage(error, this.$t('governance.certificationTask.errors.autoIdError'));
+    }
+
     // build column categories using the filter schema
     let filterProperties;
     try {
       const { data } = await getFilterSchema();
       filterProperties = data;
+      this.filterSchema.user = data.user;
     } catch {
       filterProperties = {};
     } finally {
-      const allColumnCategories = getAllColumnCategories(this.certificationGrantType, filterProperties);
-      this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories);
+      const allColumnCategories = getAllColumnCategories(this.certificationGrantType, filterProperties, this.autoIdSettings);
+      this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories, this.autoIdSettings);
       this.columnCategories = setSelectedCategories(allColumnCategories, this.tasksFields);
       this.updateColumns({});
     }
@@ -802,8 +826,8 @@ export default {
         selected: this.isItemSelected(item.id),
         isAcknowledge: isAcknowledgeType(item) || false,
         flags: getGrantFlags(item),
+        prediction: getPredictionDisplayInfo(item, this.autoIdSettings, this.filterSchema.user),
       }));
-
       this.$emit('check-progress');
 
       if (this.totalRows === 0) {
@@ -913,6 +937,11 @@ export default {
         sortDir,
       };
 
+      const sortType = this.getSortType(sortBy);
+      if (sortType) {
+        params.sortType = sortType;
+      }
+
       // staged campaigns grab all tasks, status is not important
       if (this.taskStatus !== CampaignStates.STAGING) params.taskStatus = this.taskStatus;
 
@@ -930,8 +959,18 @@ export default {
           return 'user.givenName';
         case 'role':
           return 'role.name';
+        case 'prediction':
+          return 'prediction.confidence';
         default:
           return sortBy;
+      }
+    },
+    getSortType(sortBy) {
+      switch (sortBy) {
+        case 'prediction':
+          return 'int';
+        default:
+          return null;
       }
     },
     /**

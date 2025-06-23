@@ -20,6 +20,14 @@ of the MIT license. See the LICENSE file for details. -->
         @action="openModal($event)"
         class="mb-4" />
 
+      <!-- Recommendation Banner -->
+      <FrRecommendationBanner
+        v-if="showRecommendationBanner(item, autoIdSettings)"
+        :prediction="item.details.prediction"
+        :auto-id-settings="autoIdSettings"
+        :object-display-name="item.details.name"
+        :user-display-name="item.details.requestedFor" />
+
       <!-- Request details -->
       <BCard
         data-testId="approval-detail"
@@ -61,14 +69,21 @@ import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getRequest, getUserApprovals } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getIgaAccessRequest } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { detailTypes, getFormattedRequest, getRequestTypeDisplayName } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import {
+  detailTypes,
+  getFormattedRequest,
+  getRequestTypeDisplayName,
+  showRecommendationBanner,
+} from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { useRoute, useRouter } from 'vue-router';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestDetails';
 import FrRequestHeader from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestHeader';
 import FrRequestActions from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActions';
+import FrRecommendationBanner from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationBanner';
 import i18n from '@/i18n';
+import store from '@/store';
 
 // Composables
 const router = useRouter();
@@ -86,6 +101,7 @@ const requireRejectJustification = ref(false);
 const allowSelfApproval = ref(false);
 
 const userId = computed(() => useUserStore().userId);
+const autoIdSettings = store.state.govAutoIdSettings;
 
 const actionPermissions = computed(() => {
   const permissions = item.value?.rawData?.phases?.[0]?.permissions || {};
@@ -106,7 +122,7 @@ async function getBaseRequest() {
     const { data } = await getRequest(requestId);
     const { data: requestTypeData } = await getRequestTypeDisplayName(data.requestType);
     data.requestTypeDisplayName = requestTypeData.displayName;
-    item.value = getFormattedRequest(data);
+    item.value = getFormattedRequest(data, autoIdSettings);
     isActive.value = false;
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.approval.errorGettingApprovals'));
@@ -125,7 +141,7 @@ async function getApproval() {
       const request = data.result[0];
       const { data: requestTypeData } = await getRequestTypeDisplayName(request.requestType);
       request.requestTypeDisplayName = requestTypeData.displayName;
-      item.value = getFormattedRequest(request);
+      item.value = getFormattedRequest(request, autoIdSettings);
       isActive.value = true;
     }
   } catch (error) {

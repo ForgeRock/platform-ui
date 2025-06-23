@@ -141,6 +141,16 @@ const OOTBColumns = {
     show: true,
     showFor: ['accounts', 'entitlements'],
   },
+  prediction: {
+    key: 'prediction',
+    label: i18n.global.t('governance.certificationTask.recommended'),
+    sortable: true,
+    category: 'review',
+    class: 'w-175px text-truncate fr-access-cell',
+    show: true,
+    showFor: ['entitlements', 'accountEntitlement'],
+    autoId: true,
+  },
   flags: {
     key: 'flags',
     label: i18n.global.t('governance.certificationTask.flags'),
@@ -246,9 +256,10 @@ function getCustomColumns(columns, columnCategories) {
  * @param {boolean} showAccountDrilldown - Flag indicating whether account drilldown is enabled.
  * @param {Object} customColumnConfig - Custom column configuration object keyed by grant type.
  * @param {Object} columnCategories - Categories of columns used for custom column filtering.
+ * @param {Object} autoIdSettings - IGA Config for auto id recommendations
  * @returns {Array<Object>} An array of field objects representing the initial columns for the certification table.
  */
-export function getInitialColumns(grantType, entitlementUserId, showAccountDrilldown, customColumnConfig, columnCategories) {
+export function getInitialColumns(grantType, entitlementUserId, showAccountDrilldown, customColumnConfig, columnCategories, autoIdSettings) {
   const accountEntitlement = !!entitlementUserId;
 
   if (!showAccountDrilldown && !accountEntitlement && customColumnConfig?.[grantType]?.length) {
@@ -261,6 +272,7 @@ export function getInitialColumns(grantType, entitlementUserId, showAccountDrill
     { ...OOTBColumns.application },
     { ...OOTBColumns.entitlement },
     { ...OOTBColumns.account },
+    { ...OOTBColumns.prediction },
     { ...OOTBColumns.flags },
     { ...OOTBColumns.comments },
     {
@@ -276,9 +288,11 @@ export function getInitialColumns(grantType, entitlementUserId, showAccountDrill
   ];
 
   const type = accountEntitlement ? 'accountEntitlement' : grantType || 'accounts';
-  const filteredFields = fields.filter((field) => field.showFor.includes(type));
+  const autoIdEnabled = autoIdSettings?.enableAutoId;
+  const filteredFields = fields.filter((field) => field.showFor.includes(type) && (autoIdEnabled || !field.autoId));
   filteredFields.forEach((field) => {
     delete field.showFor;
+    delete field.autoId;
   });
 
   return filteredFields;
@@ -290,6 +304,7 @@ const categories = [
     header: i18n.global.t('governance.certificationTask.columns.review'),
     showFor: ['accounts', 'entitlements', 'roles'],
     items: [
+      { ...OOTBColumns.prediction },
       { ...OOTBColumns.flags },
       { ...OOTBColumns.comments },
     ],
@@ -341,11 +356,13 @@ const categories = [
  *
  * @param {string} grantType - The type of grant used to filter relevant categories.
  * @param {Object} filterProperties - An object containing properties to format into additional columns.
+ * @param {Object} autoIdSettings - IGA Config for auto id recommendations
  * @returns {Array<Object>} - An array of category objects customized for the specified grant type.
  */
-export function getAllColumnCategories(grantType = 'accounts', filterProperties) {
+export function getAllColumnCategories(grantType = 'accounts', filterProperties, autoIdSettings) {
   const filterPropertyColumns = formatColumns(filterProperties);
   const clonedCategories = cloneDeep(categories);
+  const autoIdEnabled = autoIdSettings?.enableAutoId;
 
   // only include columns relevant to the grant type
   const categoriesForGrantType = clonedCategories.filter((category) => category.showFor.includes(grantType));
@@ -358,6 +375,10 @@ export function getAllColumnCategories(grantType = 'accounts', filterProperties)
         ...filterPropertyColumns[category.name],
       ];
     }
+    category.items = category.items.filter((item) => autoIdEnabled || !item.autoId);
+    category.items.forEach((item) => {
+      delete item.autoId;
+    });
     delete category.showFor;
   });
 

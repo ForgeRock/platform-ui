@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -20,6 +20,7 @@ describe('CertificationTask', () => {
 
   CommonsApi.getGlossarySchema = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
   CommonsApi.getFilterSchema = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
+  CommonsApi.getIgaAutoIdConfig = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
   CertificationApi.getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: {} }));
   CertificationApi.certifyItem.mockImplementation(() => Promise.resolve({ data: {} }));
   CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: {} }));

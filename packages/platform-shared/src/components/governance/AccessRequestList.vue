@@ -56,6 +56,14 @@ of the MIT license. See the LICENSE file for details. -->
           </BMediaBody>
         </BMedia>
       </template>
+      <template #cell(prediction)="{ item }">
+        <FrRecommendationIcon
+          v-if="Boolean(item.details.prediction)"
+          :prediction="item.details.prediction"
+          :auto-id-settings="autoIdSettings"
+          type="approval"
+          :id="item.details.id" />
+      </template>
       <template #cell(date)="{ item }">
         <small class="text-muted">
           {{ item.details.date }}
@@ -87,9 +95,10 @@ import {
   BMedia,
   BMediaBody,
 } from 'bootstrap-vue';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { buildRequestDisplay, getPriorityImageSrc, getPriorityImageAltText } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
 import i18n from '@/i18n';
 
 const prop = defineProps({
@@ -105,29 +114,51 @@ const prop = defineProps({
     type: String,
     default: '',
   },
+  autoIdSettings: {
+    type: Object,
+    default: () => ({}),
+  },
+  schema: {
+    type: Object,
+    default: () => ({
+      user: [],
+    }),
+  },
 });
 
 defineEmits(['open-detail']);
 
 const items = ref([]);
-const fields = [
-  {
-    key: 'details',
-    label: i18n.global.t('governance.accessRequest.newRequest.request'),
-    class: 'w-65',
-  },
-  {
-    key: 'date',
-    label: i18n.global.t('governance.accessRequest.requestDate'),
-  },
-  {
-    key: 'actions',
-    label: '',
-  },
-];
+const isAutoIdEnabled = computed(() => prop.autoIdSettings?.enableAutoId);
+const fields = computed(() => {
+  const fieldList = [
+    {
+      key: 'details',
+      label: i18n.global.t('governance.accessRequest.newRequest.request'),
+      class: 'w-65',
+    },
+    {
+      key: 'date',
+      label: i18n.global.t('governance.accessRequest.requestDate'),
+    },
+    {
+      key: 'actions',
+      label: '',
+    },
+  ];
+
+  if (isAutoIdEnabled.value) {
+    fieldList.splice(1, 0, {
+      key: 'prediction',
+      label: i18n.global.t('governance.accessRequest.recommended'),
+    });
+  }
+
+  return fieldList;
+});
 
 watch(() => prop.requests, (newRequests) => {
-  items.value = buildRequestDisplay(newRequests).map((item) => ({
+  items.value = buildRequestDisplay(newRequests, prop.autoIdSettings, prop.schema.user).map((item) => ({
     ...item,
     itemName: item.details?.isCustom || !item.details.name
       ? item.details.type
