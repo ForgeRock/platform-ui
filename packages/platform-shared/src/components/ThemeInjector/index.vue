@@ -175,7 +175,7 @@ of the MIT license. See the LICENSE file for details. -->
       .rounded-pill:has(.custom-control.custom-checkbox .custom-control-input:active),
       .rounded-pill:has(.custom-control.custom-checkbox .custom-control-input:focus),
       .rounded-pill:has(.custom-control.custom-checkbox .custom-control-input:focus-visible),
-      .custom-control:has(input[type="checkbox"]:focus-visible) {
+      .custom-control:not(.rounded-pill .custom-control):has(input[type="checkbox"]:focus-visible) {
         box-shadow: 0 0 0 2px {{ buttonFocusBorderColor }} !important;
       }
 
