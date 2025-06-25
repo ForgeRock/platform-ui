@@ -150,7 +150,7 @@ describe('AccessRequestDetails', () => {
       const detail = findByTestId(wrapper, 'request-detail-cancel');
       expect(detail.exists()).toBeFalsy();
     });
-    it('shows cancel panel for canceled request', async () => {
+    it('hides cancel panel for canceled request', async () => {
       const canceledReq = mockRequest();
       canceledReq.decision.status = 'cancelled';
       AccessRequestApi.getRequest = jest.fn().mockReturnValue(Promise.resolve({

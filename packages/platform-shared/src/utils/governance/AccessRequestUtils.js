@@ -183,6 +183,9 @@ export function getRequestFilter(filter, status) {
       case 'in-progress':
         allFilters.push(getBasicFilter('EQUALS', 'decision.status', status));
         break;
+      case 'suspended':
+        allFilters.push(getBasicFilter('EQUALS', 'decision.status', 'suspended'));
+        break;
       case 'cancelled':
         allFilters.push(getBasicFilter('EQUALS', 'decision.status', 'cancelled'));
         break;

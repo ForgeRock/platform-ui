@@ -126,6 +126,10 @@ const statusOptions = ref([
     value: 'complete',
   },
   {
+    text: i18n.global.t('governance.status.suspend'),
+    value: 'suspended',
+  },
+  {
     text: i18n.global.t('governance.status.canceled'),
     value: 'cancelled',
   },

@@ -128,3 +128,15 @@ export function validateRequest(payload) {
 export function submitCustomRequest(requestTypeId, request) {
   return generateIgaApi().post(`/governance/requests/${requestTypeId}?_action=publish`, request);
 }
+
+/**
+ * Update a suspended request's resume date
+ * @param {String} requestId ID of request
+ * @param {String} phaseName Phase name in which the request is
+ * @param {Object} requestPayload request payload details
+ * @returns {Promise}
+ */
+export function updateRequestResumeDate(requestId, phaseName, requestPayload) {
+  const url = `/governance/requests/${requestId}/phases/${phaseName}`;
+  return generateIgaApi().patch(url, requestPayload);
+}

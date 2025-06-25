@@ -1939,7 +1939,8 @@
       "denied": "Denied",
       "fulfilled": "Fulfilled",
       "pending": "Pending",
-      "rejected": "Rejected"
+      "rejected": "Rejected",
+      "suspended": "Suspended"
     },
     "entitlementDetails": "Entitlement Details",
     "entitlements": {
@@ -1997,10 +1998,13 @@
       },
       "detailsTab": {
         "awaitingApproval": "Awaiting Approval",
+        "changeResumeDate": "Change resume date",
+        "changeResumeDateJustification": "Provide a justification for the date change",
         "externalRequestId": "External Request ID",
         "justification": "Justification",
         "priority": "Priority",
         "provisioning": "Provisioning",
+        "resumeDate": "Resume Date",
         "requestComplete": "Request Complete",
         "requestId": "Request ID",
         "requestSubmitted": "Request Submitted",
@@ -2096,8 +2100,9 @@
       "expiring": "Expiring",
       "in-progress": "In-Progress",
       "pending": "Pending",
-      "overdue": "Overdue",
-      "staging": "Staged"
+      "staging": "Staged",
+      "suspend": "Suspended",
+      "overdue": "Overdue"
     },
     "user": {
       "createSuccess": "Your request to create user has been submitted.",
