@@ -456,4 +456,38 @@ describe('Form Generator', () => {
       expect(wrapper.vm.getFieldValue(undefined, 'date', false)).toBe('');
     });
   });
+
+  describe('populatedUISchema computed', () => {
+    it('assigns value from modelValue when formField.value is empty array and modelValue is defined', async () => {
+      const testSchema = [[{ model: 'form.testString', value: [], type: 'string' }]];
+      const testModel = { form: { testString: { value: 'bar' } } };
+      await wrapper.setProps({ schema: testSchema, model: testModel });
+      const result = wrapper.vm.populatedUISchema;
+      expect(result[0][0].value).toBe('bar');
+    });
+
+    it('assigns empty array when formField.value is empty array and modelValue is undefined', async () => {
+      const testSchema = [[{ model: 'form.testString', value: [], type: 'string' }]];
+      const testModel = { form: {} };
+      await wrapper.setProps({ schema: testSchema, model: testModel });
+      const result = wrapper.vm.populatedUISchema;
+      expect(result[0][0].value).toEqual([]);
+    });
+
+    it('keeps formField.value if it is not empty array', async () => {
+      const testSchema = [[{ model: 'form.testArray', value: ['baz'], type: 'array' }]];
+      const testModel = { form: { testArray: { value: ['bar'] } } };
+      await wrapper.setProps({ schema: testSchema, model: testModel });
+      const result = wrapper.vm.populatedUISchema;
+      expect(result[0][0].value).toEqual(['baz']);
+    });
+
+    it('assigns value using getFieldValue if formField.value is undefined', async () => {
+      const testSchema = [[{ model: 'form.testString', type: 'string' }]];
+      const testModel = { form: { testString: { value: 'bar' } } };
+      await wrapper.setProps({ schema: testSchema, model: testModel });
+      const result = wrapper.vm.populatedUISchema;
+      expect(result[0][0].value).toBe('bar');
+    });
+  });
 });
