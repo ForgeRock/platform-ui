@@ -4979,6 +4979,7 @@
     "level": "Level",
     "timestamp": "Timestamp",
     "errorGettingLogs": "There was an error retrieving logs",
-    "queryFilterDocs": "See payload queryFilter documentation."
+    "queryFilterDocs": "See payload queryFilter documentation.",
+    "rateLimitError": "Monitoring api has hit it's rate limit. Retrying request in { retrySeconds } seconds..."
   }
 }

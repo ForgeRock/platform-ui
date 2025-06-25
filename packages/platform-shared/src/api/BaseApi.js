@@ -207,7 +207,16 @@ export function generateFraasMonitoringApi(requestOverride = {}) {
     ...requestOverride,
   };
 
-  return axios.create(requestDetails);
+  const request = axios.create(requestDetails);
+
+  request.interceptors.response.use(null, (error) => {
+    if (error?.response?.status === 401) {
+      window.logout();
+    }
+    return Promise.reject(error);
+  });
+
+  return request;
 }
 
 /**
