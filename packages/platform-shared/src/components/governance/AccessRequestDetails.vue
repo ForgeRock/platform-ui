@@ -26,7 +26,9 @@ of the MIT license. See the LICENSE file for details. -->
         no-body>
         <FrRequestDetails
           @add-comment="openModal('COMMENT')"
+          @update-item="getRequestData"
           :hide-actions="{ modify: true }"
+          :type="type"
           :item="item" />
       </BCard>
 

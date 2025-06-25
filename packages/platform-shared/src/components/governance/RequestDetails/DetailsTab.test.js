@@ -8,6 +8,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { defineRule } from 'vee-validate';
 import { required } from '@vee-validate/rules';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
@@ -20,6 +21,7 @@ import i18n from '@/i18n';
 
 defineRule('required', () => required);
 
+jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
 
@@ -90,10 +92,12 @@ describe('DetailsTab', () => {
           requestType: 'requestType test',
         },
       },
+      type: 'adminRequest',
       ...propsData,
     };
     setupTestPinia(undefined, false);
-
+    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
+    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
     return mount(DetailsTab, {
       global: {
         plugins: [i18n],
@@ -147,6 +151,89 @@ describe('DetailsTab', () => {
     });
     await flushPromises();
     expect(wrapper.text()).toContain('externalId');
+  });
+
+  it('shows resume date if request has suspended status', async () => {
+    const wrapper = setup({
+      item: {
+        details: {},
+        rawData: {
+          decision: {
+            status: 'suspended',
+            phases: [{
+              name: 'waitTask-1',
+              events: {
+                scheduled: {
+                  date: '2000-07-01T00:00:00-04:00',
+                },
+              },
+            }],
+          },
+        },
+      },
+    });
+    await flushPromises();
+    expect(wrapper.text()).toContain('Resume Date');
+  });
+
+  it('triggers the "Update Resume Date" modal to open ', async () => {
+    const wrapper = setup({
+      item: {
+        details: {},
+        rawData: {
+          decision: {
+            status: 'suspended',
+            phases: [{
+              name: 'waitTask-1',
+              events: {
+                scheduled: {
+                  date: '2000-07-01T00:00:00-04:00',
+                },
+              },
+            }],
+          },
+        },
+        statusRaw: 'suspended',
+      },
+    });
+    await flushPromises();
+    const editResumeDateButton = wrapper.find('.btn.btn-link');
+    expect(editResumeDateButton.exists()).toBe(true);
+    await editResumeDateButton.trigger('click');
+
+    expect(wrapper.vm.bvModal.show).toHaveBeenCalledWith('UpdateResumeDateModal');
+  });
+
+  it('hides resume date if request does not have suspended status', async () => {
+    const wrapper = setup();
+    await flushPromises();
+    expect(wrapper.text()).not.toContain('Resume Date');
+    expect(wrapper.find('.btn.btn-link').exists()).toBe(false);
+  });
+
+  it('show resume date but hide edit button if user is not an admin', async () => {
+    const wrapper = setup({
+      item: {
+        details: {},
+        rawData: {
+          decision: {
+            status: 'suspended',
+            phases: [{
+              name: 'waitTask-1',
+              events: {
+                scheduled: {
+                  date: '2000-07-01T00:00:00-04:00',
+                },
+              },
+            }],
+          },
+        },
+      },
+      type: '',
+    });
+    await flushPromises();
+    expect(wrapper.text()).toContain('Resume Date');
+    expect(wrapper.find('.btn.btn-link').exists()).toBe(false);
   });
 
   it('hides requested if is not present', async () => {
