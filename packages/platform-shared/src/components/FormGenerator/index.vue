@@ -184,7 +184,14 @@ export default {
           }
 
           // assign current values
-          formField.value = formField.value ? formField.value : this.getFieldValue(modelValue, formField.type);
+          const isEmptyArray = Array.isArray(formField.value) && formField.value.length === 0;
+          if (isEmptyArray) {
+            formField.value = modelValue !== undefined
+              ? this.getFieldValue(modelValue, formField.type)
+              : [];
+          } else {
+            formField.value = formField.value ?? this.getFieldValue(modelValue, formField.type);
+          }
 
           // set options for array and radio fields
           if (formField.type === 'array' && formField.arrayType === 'addMany') {
