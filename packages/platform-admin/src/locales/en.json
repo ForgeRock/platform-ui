@@ -1504,35 +1504,44 @@
         "SDKCode": {
           "title": "Sample App Configuration Created",
           "label": "Sample App Configuration",
-          "trySampleApps": "Try out in the Ping SDK Sample apps:",
-          "checkOutRepo": "Check out the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>",
+          "trySampleApps": "Try out in the Ping SDK sample apps:",
+          "checkOutRepo": "Check out the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
           "copyCodeSnippet": "Copy the code snippet and place it into the sample app.",
           "runSampleApp": "Run the sample app.",
-          "moreInfo": "For more information, see the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
+          "moreInfo": "For more information, refer to the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
           "useInOwnApp": "Use in your own {label} app:",
           "setConfig": "Dynamically set the configuration in your {label} app. For example, in a <code>{file}</code> file. Copy the code snippet.",
-          "moreConfigInfo":  "For more configuration info, click <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
-          "generalIntegration": "For general integration with {label}, see the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
+          "moreConfigInfo":  "For more information on setting the configuration in your app, refer <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
+          "generalIntegration": "For general information on how to integrate your own {label} application with the Ping SDK for {label}, refer to the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
           "undefinedFieldsError": "Some required fields are not configured. Please ensure {fields} are set in the OIDC Client.",
           "ios": {
+            "label":"iOS",
             "switchToFolder": "Switch to the <code>iOS/swiftui-quickstart</code> folder and open the <code>QuickStart.xcodeproj</code> file.",
-            "openCodeFile": "Open the <code>{file}</code>",
+            "openCodeFile": "Open the <code>{file}</code>.",
             "replaceOptions": "Copy the code snippet and replace the <code>let options = FROptions(...)</code> values.",
             "runSampleApp": "Run the sample app and click <code>Login</code>. The app will connect to the configured tenant and run the <code>Login</code> journey.",
-            "dynamicConfig": "Dynamically set the configuration in your iOS app.",
-            "dynamicConfigExample": "For example, in a Configuration file. Copy the code snippet and initialize the SDK calling <code>try FRAuth.start(options: options)</code>.",
-            "createPlist": "Create an <code>FRAuthConfig.plist</code> and place it into your iOS app with the Ping SDK for iOS. Initialize the SDK calling <code>try FRAuth.start()</code>."
+            "dynamicConfig": "Option A: Dynamically set the configuration in your iOS app.",
+            "dynamicConfigExample": "For example, in a configuration file.",
+            "dynamicConfigSnippet": "Copy the code snippet and initialize the SDK by calling <code>try FRAuth.start(options: options)</code>.",
+            "createPlist": "Option B: Create a static <code>FRAuthConfig.plist</code> file.",
+            "createPlistExample": "Place the file into your iOS app with the Ping SDK for iOS.",
+            "createPlistDescription": "Initialize the SDK by calling <code>try FRAuth.start()</code>."
           },
           "android": {
+            "label":"Android",
             "openAndroidStudio": "Using Android Studio open the <code>android/kotlin-ui-prototype</code> folder. Wait for the gradle build to finish.",
             "openCodeFile": "Open the <code>{file}</code> file.",
             "replaceOptions": "Copy the code snippet and replace the <code>val PingAdvancedIdentityCloud = FROptionsBuilder.build &#123; ... &#125;</code> values. Notice that the app supports multiple configurations. Edit based on your needs.",
             "runSampleApp": "Run the sample app and select your environment. From the top left burger menu select <code>Launch Journey</code> and click <code>Submit</code>. The app will connect to the configured tenant and run the Login journey.",
-            "dynamicConfig": "Dynamically set the configuration in your Android app. For example, in a configuration file.",
-            "copyCodeSnippet": "Copy the code snippet and initialize the SDK calling <code>FRAuth.start(context, options)</code>.",
-            "createStringsXml": "Create a <code>strings.xml</code> file and place it into your Android app with the Ping SDK for Android. Initialize the SDK calling <code>try FRAuth.start(context)</code>."
+            "dynamicConfig": "Option A: Dynamically set the configuration in your Android app.",
+            "dynamicConfigExample": "For example, in a configuration file.",
+            "copyCodeSnippet": "Copy the code snippet and initialize the SDK by calling <code>FRAuth.start(context, options)</code>.",
+            "createStringsXml": "Option B: Create a <code>strings.xml</code> file.",
+            "createStringsXmlDescription": "Place the file into your Android app with the Ping SDK for Android.",
+            "createStringsXmlExample": "Initialize the SDK by calling <code>try FRAuth.start(context)</code>."
           },
           "js": {
+            "label":"Javascript single-page",
             "cdToSampleApp": "In a terminal window, <code>cd</code> to <code>sdk-sample-apps/javascript</code>.",
             "npmInstall": "Run <code>npm install</code>.",
             "openMainJs": "Open <code>embedded-login/src/{file}</code> in your IDE.",
@@ -1541,10 +1550,12 @@
             "runSampleApp": "Run the sample app by entering <code>npm run start:embedded-login</code> in the terminal.",
             "openBrowser": "Open the URL provided in a browser to test the sample app.",
             "locateConfig": "Locate an appropriate part of your app to set the SDK config (the earlier in your code is recommended).",
-            "importConfig": "Within your chosen file, import <code>Config</code> from the SDK.",
+            "importConfig": "In a file you create or select, import <code>Config</code> from the SDK.",
             "setAsyncSnippet": "Use the <code>Config.setAsync</code> method and use the code snippet on left as its argument.",
             "addConfig": "Add additional configurations as required.",
-            "callbackHtml": "Make sure your app has a <code>callback.html</code> that’s publicly available."
+            "callbackHtml": "Make sure your app has a <code>callback.html</code> that’s publicly available.",
+            "browserAlert": "The sample app uses third-party domains and some browsers will display an error. If an error displays, try a different browser.",
+            "generalIntegration": "For general information on how to integrate your own single-page web app with the Ping SDK for JavaScript, refer to the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>."
           }
         }
       },

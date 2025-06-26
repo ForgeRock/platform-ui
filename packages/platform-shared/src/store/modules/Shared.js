@@ -61,7 +61,6 @@ const defaultState = {
   enableManagedObjectSchemaEditor: false,
   overrideSessionTimeoutsEnabled: false,
   enableMonitoringUI: false,
-  enableSdkFeature: false,
 };
 
 const mutations = {
@@ -234,10 +233,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS) {
       state.overrideSessionTimeoutsEnabled = env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS === 'true' || env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS === true;
-    }
-
-    if (env.VUE_APP_ENABLE_SDK_FEATURE) {
-      state.enableSdkFeature = env.VUE_APP_ENABLE_SDK_FEATURE === 'true' || env.VUE_APP_ENABLE_SDK_FEATURE === true;
     }
   },
   // Needed for Login since setFeatureFlags isn't called there
