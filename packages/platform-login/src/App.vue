@@ -141,43 +141,46 @@ export default {
      * @param nodeThemeId unique id of the theme attached to the current node
      */
     async setupTheme(realm, treeId, nodeThemeId) {
-      let cleanRealm = realm === 'root' ? '/' : realm;
-      if (cleanRealm.length > 1 && cleanRealm.charAt(0) === '/') {
-        cleanRealm = cleanRealm.substring(1);
-      }
-      if (this.$store.state.SharedStore.isFraas && cleanRealm === '/') {
-        this.loadStaticTheme();
-      } else {
-        if (nodeThemeId) {
-          // First choice is setting theme from page node theme
-          await this.loadTheme(cleanRealm, nodeThemeId);
-        } else if (treeId) {
-          // Second choice is theme assigned to tree, so we need to check if the tree is linked to a theme
-          await this.loadTreeTheme(cleanRealm, treeId);
+      try {
+        let cleanRealm = realm === 'root' ? '/' : realm;
+        if (cleanRealm.length > 1 && cleanRealm.charAt(0) === '/') {
+          cleanRealm = cleanRealm.substring(1);
         }
-        if (this.theme?.name) {
-          // A theme was set by a node or tree, so save it to local storage
-          this.saveToLocalStorage(this.theme._id || this.theme.name);
-        } else if (this.$store.state.SharedStore.webStorageAvailable) {
-          // Third choice is a theme saved in local storage
-          const localStorageThemeId = localStorage.getItem('theme-id');
-          if (localStorageThemeId) {
-            await this.loadTheme(cleanRealm, localStorageThemeId);
-            if (!this.theme?.name) {
-              removeThemeIdFromLocalStorage(localStorageThemeId);
+        if (this.$store.state.SharedStore.isFraas && cleanRealm === '/') {
+          this.loadStaticTheme();
+        } else {
+          if (nodeThemeId) {
+            // First choice is setting theme from page node theme
+            await this.loadTheme(cleanRealm, nodeThemeId);
+          } else if (treeId) {
+            // Second choice is theme assigned to tree, so we need to check if the tree is linked to a theme
+            await this.loadTreeTheme(cleanRealm, treeId);
+          }
+          if (this.theme?.name) {
+            // A theme was set by a node or tree, so save it to local storage
+            this.saveToLocalStorage(this.theme._id || this.theme.name);
+          } else if (this.$store.state.SharedStore.webStorageAvailable) {
+            // Third choice is a theme saved in local storage
+            const localStorageThemeId = localStorage.getItem('theme-id');
+            if (localStorageThemeId) {
+              await this.loadTheme(cleanRealm, localStorageThemeId);
+              if (!this.theme?.name) {
+                removeThemeIdFromLocalStorage(localStorageThemeId);
+              }
             }
           }
+          if (!this.theme?.name) {
+            // Fourth and final choice is default theme
+            await this.loadTheme(cleanRealm);
+          }
         }
-        if (!this.theme?.name) {
-          // Fourth and final choice is default theme
-          await this.loadTheme(cleanRealm);
-        }
-      }
 
-      if (this.localizedFavicon) {
-        document.getElementById('favicon').href = this.localizedFavicon;
+        if (this.localizedFavicon) {
+          document.getElementById('favicon').href = this.localizedFavicon;
+        }
+      } finally {
+        this.hideAppOnTransition = false;
       }
-      this.hideAppOnTransition = false;
     },
     themeTransitionHandler(val) {
       if (val === 'error') {

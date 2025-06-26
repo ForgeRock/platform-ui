@@ -70,12 +70,12 @@ export default function useTheme() {
     return themes;
   }
 
-  async function getAllThemes(realm, existingThemes) {
+  async function getAllThemes(realm, existingThemes, showError = false) {
     try {
       const { data: allThemes } = await getThemerealm();
       return decodeThemes(addDefaultsToAllThemes(allThemes, realm, existingThemes));
     } catch (error) {
-      showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingList'));
+      if (showError) showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingList'));
       throw error;
     }
   }
@@ -91,7 +91,7 @@ export default function useTheme() {
       if (themes?.length) {
         decodedThemesWithDefaults = themes.map((individualTheme) => decodeThemeScripts(addDefaultsToTheme(individualTheme)));
       } else {
-        const allThemes = await getAllThemes(realm);
+        const allThemes = await getAllThemes(realm, null, true);
         decodedThemesWithDefaults = allThemes?.realm[realm] || [];
       }
       themeStore.realmThemes = decodedThemesWithDefaults.sort((a, b) => {
@@ -156,14 +156,14 @@ export default function useTheme() {
    * @param {String} themeIdentifier The id or name of the theme
    * @returns {Object} The theme object with defaults added
    */
-  async function getTheme(realm = '/', _queryFilter, themeIdentifier, existingThemes) {
+  async function getTheme(realm = '/', _queryFilter, themeIdentifier, existingThemes, showError = false) {
     let decodedTheme = {};
     try {
       const { data: { result } } = await getThemes({ realm, _queryFilter });
       if (result[0]) {
         decodedTheme = decodeThemeScripts(result[0]);
       } else {
-        const allThemes = await getAllThemes(realm, existingThemes);
+        const allThemes = await getAllThemes(realm, existingThemes, showError);
         themeStore.realmThemes = allThemes?.realm[realm] || [];
         if (_queryFilter.startsWith('isDefault')) {
           decodedTheme = themeStore.realmThemes.find((t) => t.isDefault);
@@ -175,7 +175,7 @@ export default function useTheme() {
         }
       }
     } catch (error) {
-      showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingTheme'));
+      if (showError) showErrorMessage(error, i18n.global.t('common.themes.errorRetrievingTheme'));
     }
     return addDefaultsToTheme(decodedTheme);
   }
@@ -217,12 +217,12 @@ export default function useTheme() {
    * @param {String} realm The realm that the theme is located in
    * @param {String} themeIdentifier The id or name of the theme to get
    */
-  async function loadTheme(realm = '/', themeIdentifier) {
+  async function loadTheme(realm = '/', themeIdentifier, showError = false) {
     let loadedTheme = {};
     if (!themeIdentifier) {
-      loadedTheme = await getTheme(realm, 'isDefault eq true') || {};
+      loadedTheme = await getTheme(realm, 'isDefault eq true', null, [], showError) || {};
     } else {
-      const returnedTheme = await getTheme(realm, `_id eq "${themeIdentifier}" or name eq "${themeIdentifier}"`, themeIdentifier);
+      const returnedTheme = await getTheme(realm, `_id eq "${themeIdentifier}" or name eq "${themeIdentifier}"`, themeIdentifier, [], showError);
       loadedTheme = returnedTheme || {};
     }
 
@@ -255,7 +255,7 @@ export default function useTheme() {
    * @param {String} realm The realm that the theme is located in
    */
   async function addTreeTheme(themeId, treeId, realm) {
-    const themeToSave = await getTheme(realm, `_id eq "${themeId}" or name eq "${themeId}"`, themeId, [{ _id: themeId, name: 'Starter Theme' }]);
+    const themeToSave = await getTheme(realm, `_id eq "${themeId}" or name eq "${themeId}"`, themeId, [{ _id: themeId, name: 'Starter Theme' }], true);
     // only continue if theme does not have treeId already
     if (!themeToSave.linkedTrees.includes(treeId)) {
       // add treeId to this theme
@@ -271,7 +271,7 @@ export default function useTheme() {
    * @param {String} realm The realm that the theme is located in
    */
   async function removeTreeTheme(themeId, treeId, realm) {
-    const themeToSave = await getTheme(realm, `_id eq "${themeId}" or name eq "${themeId}"`);
+    const themeToSave = await getTheme(realm, `_id eq "${themeId}" or name eq "${themeId}"`, null, [], true);
     themeToSave.linkedTrees = themeToSave.linkedTrees.filter((tree) => tree !== treeId);
     await saveTheme(realm, themeToSave);
   }
