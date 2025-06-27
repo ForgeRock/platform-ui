@@ -1600,6 +1600,7 @@
         "settingsTitle": "Settings",
         "federationMetadataUrlLabel": "Federation Metadata URL",
         "idpLoginEndpointLabel": "IDP-Initiated Login Endpoint",
+        "idpLoginEndpointDescription": "Select a domain from the dropdown above to preview the endpoint URL. Changing the domain here does not update your application's default domains.",
         "singleSignOnUrl": "Single Sign On URL",
         "singleSignOnUrlDescription": "The location where the SAML assertion is sent with a HTTP POST. This is often referred to as the SAML Assertion Consumer Service (ACS) URL for your application.",
         "audienceUri": "Audience URI (SP Entity ID)",
