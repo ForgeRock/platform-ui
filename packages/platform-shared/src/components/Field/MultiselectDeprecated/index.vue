@@ -91,6 +91,7 @@ import {
 } from 'lodash';
 import { useField } from 'vee-validate';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import { getEnumTranslation } from '@forgerock/platform-shared/src/utils/translations';
 import { toRef } from 'vue';
 import uuid from 'uuid/v4';
 import FrInputLayout from '../Wrapper/InputLayout';
@@ -196,14 +197,14 @@ export default {
       if (this.options.length) {
         if (has(this.options[0], 'value')) {
           mapOptions = map(this.options, (option) => ({
-            text: option.text,
+            text: getEnumTranslation(option.text, this.name),
             value: option.value,
             multiselectId: option.multiselectId !== undefined ? option.multiselectId : this.generateTagId(),
             ...option,
           }));
         } else {
           mapOptions = map(this.options, (option) => ({
-            text: option,
+            text: getEnumTranslation(option, this.name),
             value: option,
             multiselectId: this.generateTagId(),
           }));

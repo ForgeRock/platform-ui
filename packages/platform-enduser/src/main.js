@@ -186,7 +186,7 @@ const startApp = async () => {
       }
     }
 
-    overrideTranslations(idmContext, i18n, 'enduser');
+    overrideTranslations(i18n, 'enduser');
   } finally {
     loadApp();
   }

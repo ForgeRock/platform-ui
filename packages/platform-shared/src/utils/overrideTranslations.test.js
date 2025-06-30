@@ -1,15 +1,13 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import axios from 'axios';
 import { createI18n } from 'vue-i18n';
 import { overrideTranslations, setLocales } from './overrideTranslations';
-
-jest.mock('axios');
+import * as UilocaleApi from '../api/UilocaleApi';
 
 const mainLocale = 'en';
 const fallbackLocale = 'es';
@@ -27,19 +25,17 @@ function setupI18n(messages, fallbackMessages) {
 }
 
 function createMockImplementation(enMockData, esMockData, frMockData) {
-  axios.create.mockReturnValue({
-    get: jest.fn((path) => {
-      if (path === '/config/uilocale/en?_fields=login,shared') {
-        return Promise.resolve(enMockData || { data: {} });
-      }
-      if (path === '/config/uilocale/es?_fields=login,shared') {
-        return Promise.resolve(esMockData || { data: {} });
-      }
-      if (path === '/config/uilocale/fr?_fields=login,shared') {
-        return Promise.resolve(frMockData || { data: {} });
-      }
-      return Promise.resolve({ data: {} });
-    }),
+  UilocaleApi.getTranslationOverrideByLocale = jest.fn().mockImplementation((locale) => {
+    if (locale === 'en') {
+      return Promise.resolve(enMockData || { data: {} });
+    }
+    if (locale === 'es') {
+      return Promise.resolve(esMockData || { data: {} });
+    }
+    if (locale === 'fr') {
+      return Promise.resolve(frMockData || { data: {} });
+    }
+    return Promise.resolve({ data: {} });
   });
 }
 
@@ -63,7 +59,7 @@ describe('overrides main locale translations properly', () => {
     createMockImplementation(configData);
 
     expect(i18n.global.messages.en.testMessage).toBe('message 1');
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.en.testMessage).toBe('en override');
   });
 
@@ -78,7 +74,7 @@ describe('overrides main locale translations properly', () => {
     createMockImplementation(configData);
 
     expect(i18n.global.messages.en.testMessage).toBe('message 1');
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.en.testMessage).toBe('message 1');
   });
 
@@ -93,7 +89,7 @@ describe('overrides main locale translations properly', () => {
     createMockImplementation(configData);
 
     expect(i18n.global.messages.en.testMessage).toBe('message 1');
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.en.testMessage).toBe('en override');
   });
 
@@ -111,7 +107,7 @@ describe('overrides main locale translations properly', () => {
     createMockImplementation(configData);
 
     expect(i18n.global.messages.en.testMessage).toBe('message 1');
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.en.testMessage).toBe('different en override');
   });
 
@@ -126,7 +122,7 @@ describe('overrides main locale translations properly', () => {
     createMockImplementation(configData);
 
     expect(i18n.global.messages.en.testMessage2).toBeUndefined();
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.en.testMessage2).toBe('en override');
   });
 });
@@ -151,7 +147,7 @@ describe('overrides fallback locale translations properly', () => {
     createMockImplementation(null, configData);
 
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     // Check if the current locale is 'es'
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
   });
@@ -167,7 +163,7 @@ describe('overrides fallback locale translations properly', () => {
     createMockImplementation(null, configData);
 
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
   });
 
@@ -182,7 +178,7 @@ describe('overrides fallback locale translations properly', () => {
     createMockImplementation(null, configData);
 
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
   });
 
@@ -200,7 +196,7 @@ describe('overrides fallback locale translations properly', () => {
     createMockImplementation(null, configData);
 
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.es.testMessage).toBe('message 1');
   });
 
@@ -215,7 +211,7 @@ describe('overrides fallback locale translations properly', () => {
     createMockImplementation(null, configData);
 
     expect(i18n.global.messages.es.testMessage2).toBeUndefined();
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.es.testMessage2).toBeUndefined();
   });
 });
@@ -258,7 +254,7 @@ describe('overrides multiple fallback locale translations properly', () => {
     expect(i18n.global.messages.en.testMessage).toBe('main');
     expect(i18n.global.messages.es.testMessage).toBe('fallback');
     expect(i18n.global.messages.fr.testMessage).toBe('fallback2');
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.en.testMessage).toBe('en override');
   });
 });
@@ -317,7 +313,7 @@ describe('overrideTranslations with different fallbackLocales positions', () => 
     };
     createMockImplementation(null, null, configData);
 
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.de.testMessage).toBe('message 3');
   });
 
@@ -332,7 +328,7 @@ describe('overrideTranslations with different fallbackLocales positions', () => 
     };
     createMockImplementation(null, null, configData);
 
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.de.testMessage).toBe('message 3');
   });
 
@@ -347,7 +343,7 @@ describe('overrideTranslations with different fallbackLocales positions', () => 
     };
     createMockImplementation(null, null, configData);
 
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.de.testMessage).toBe('message 3');
   });
 
@@ -362,7 +358,7 @@ describe('overrideTranslations with different fallbackLocales positions', () => 
     };
     createMockImplementation(null, null, configData);
 
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.de.testMessage).toBe('message 3');
   });
 
@@ -377,7 +373,7 @@ describe('overrideTranslations with different fallbackLocales positions', () => 
     };
     createMockImplementation(null, null, configData);
 
-    await overrideTranslations('test', i18n, 'login');
+    await overrideTranslations(i18n, 'login');
     expect(i18n.global.messages.de.testMessage).toBe('message 3');
   });
 });

@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import axios from 'axios';
 import { merge } from 'lodash';
+import { getTranslationOverrideByLocale } from '../api/UilocaleApi';
 
 /**
  * Set locale and fallback locale for a given i18n instance. This function accounts
@@ -43,21 +43,17 @@ function mergeMessages(i18n, locale, overrides) {
  * Get translation overrides from IDM config for the specified locale.
  * Will get overrides for packageName as well as shared
  *
- * @param {String} idmContext IDM base url
  * @param {String} locale locale to get overrides for
- * @param {String} packageName the package to override translations in (enduser, login)
+ * @param {String} packageNames the packages to override translations in (enduser, login, admin, shared)
  * @returns promise containing message override information if present, and an empty object if not.
  */
-function getTranslationOverridesForLocale(idmContext, locale, packageName) {
+function getTranslationOverridesForLocale(locale, packageNames) {
   return new Promise((resolve) => {
-    const idmInstance = axios.create({
-      baseURL: idmContext,
-      headers: {},
-    });
-
-    idmInstance.get(`/config/uilocale/${locale}?_fields=${packageName},shared`).then((res) => {
-      delete res.data._id;
-      resolve({ locale, messages: res.data });
+    getTranslationOverrideByLocale(locale, packageNames).then((res) => {
+      if (res) {
+        delete res.data._id;
+      }
+      resolve({ locale, messages: res?.data || {} });
     },
     () => {
       // no tranlsation overrides found
@@ -69,21 +65,20 @@ function getTranslationOverridesForLocale(idmContext, locale, packageName) {
 /**
  * Get translation overrides from IDM config for main locale and fallback locale
  *
- * @param {String} idmContext IDM base url
  * @param {String} locale main locale to get overrides for
  * @param {String[]} fallbackLocales array of fallback locales to get overrides for
- * @param {String} packageName the package to override translations in (enduser, login)
+ * @param {String} packageNames the packages to override translations in (enduser, login, admin, shared)
  * @returns promise containing message override information for main locale and fallback locale
  */
-function getTranslationOverrides(idmContext, locale, fallbackLocales, packageName) {
+export function getTranslationOverrides(locale, fallbackLocales, packageNames) {
   return new Promise((resolve) => {
     // get config translations for main locale
-    const localePromise = getTranslationOverridesForLocale(idmContext, locale, packageName);
+    const localePromise = getTranslationOverridesForLocale(locale, packageNames);
 
     const fallbackPromises = [];
     // get config translation for fallback locale
     fallbackLocales.forEach((fallbackLocale) => {
-      fallbackPromises.push(getTranslationOverridesForLocale(idmContext, fallbackLocale, packageName));
+      fallbackPromises.push(getTranslationOverridesForLocale(fallbackLocale, packageNames));
     });
 
     // returns array of objects containing locale and messages retrieved from config
@@ -98,12 +93,11 @@ function getTranslationOverrides(idmContext, locale, fallbackLocales, packageNam
  * In the provided i18n instance, override translation messages for the provided
  * package name and shared. This is done for both the main locale, and the fallback locale
  *
- * @param {String} idmContext IDM base url
  * @param {Object} i18n i18n instance
  * @param {String} packageName the package to override translations in (enduser, login)
  * @returns a resolved promise, after the translations have been overridden for main locale and fallback locale
  */
-export function overrideTranslations(idmContext, i18n, packageName) {
+export function overrideTranslations(i18n, packageName) {
   const { locale, fallbackLocale } = i18n.global;
 
   // i18n fallback locale can be an array of strings or a single string
@@ -119,7 +113,7 @@ export function overrideTranslations(idmContext, i18n, packageName) {
     }
   }
 
-  return getTranslationOverrides(idmContext, locale, fallbackLocalesToUse, packageName).then((res) => {
+  return getTranslationOverrides(locale, fallbackLocalesToUse, `${packageName},shared`).then((res) => {
     res.forEach((override) => {
       if (override.messages.shared) mergeMessages(i18n, override.locale, override.messages.shared);
       if (override.messages[packageName]) mergeMessages(i18n, override.locale, override.messages[packageName]);

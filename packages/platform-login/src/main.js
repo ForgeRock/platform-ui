@@ -174,7 +174,7 @@ const startApp = () => {
       store.commit('setHostedJourneyPagesState', false);
     }
   })
-    .then(() => overrideTranslations(store.state.SharedStore.idmBaseURL, i18n, 'login'))
+    .then(() => overrideTranslations(i18n, 'login'))
     .finally(() => loadApp());
 };
 
