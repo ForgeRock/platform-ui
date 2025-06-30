@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
             :key="tab.title"
             :data-testid="tab.title"
             :class="[tabs[currentStep].hideFooter && 'wizard-footer-hidden', 'wizard-tab']"
-            :title-item-class="(!edit && index > highestVisitedStep) && 'disabled'"
+            :title-item-class="(!edit && index > highestVisitedStep) ? 'disabled' : ''"
             no-fade>
             <template #title>
               <div class="position-relative">
@@ -65,7 +65,9 @@ of the MIT license. See the LICENSE file for details. -->
           <BCardFooter
             v-if="!tabs[currentStep].hideFooter"
             class="d-flex justify-content-between">
-            <slot name="footer-content">
+            <slot
+              name="footer-content"
+              :valid="valid">
               <div>
                 <BButton
                   v-if="currentStep > 0"

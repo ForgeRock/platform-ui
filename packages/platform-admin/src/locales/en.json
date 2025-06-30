@@ -3299,6 +3299,13 @@
     "editProperty": "Edit Property",
     "entitlement": "Entitlement",
     "entitlementDescription": "Specify this property as containing entitlements.",
+    "enum": {
+      "description": "Enumerate allowable values for this property",
+      "detailTabDescription": "Enter property details",
+      "errorRetrieving": "There was an error retrieving enum values or translations",
+      "errorSaving": "There was an error saving enum values or translations",
+      "successSaving": "Save Successful"
+    },
     "enumeratedValues": "Enumerated Values",
     "errorRetrievingSystemObjects": "Error retrieving system objects",
     "guardedString": "Guarded String",

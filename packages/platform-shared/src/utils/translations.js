@@ -97,9 +97,10 @@ export function isTranslationKey(text) {
  * Non-alphanumeric characters are removed
  *
  * @param {String|String[]} text text to attempt to translate
+ * @param {String} alternatePrefix enum.<field name>
  * @returns {String|String[]} translated text if found, original text if not
  */
-export function getTranslation(text) {
+export function getTranslation(text, alternatePrefix = '') {
   try {
     if (!text) {
       return text;
@@ -116,7 +117,7 @@ export function getTranslation(text) {
     }
 
     // append the translationPrefix because overrides are not stored at the root level
-    const key = `${overridePrefix}.${toTranslationKey(text)}`;
+    const key = `${alternatePrefix || overridePrefix}.${toTranslationKey(text)}`;
     if (translationExists(key)) {
       return i18n.global.t(key);
     }
@@ -125,4 +126,18 @@ export function getTranslation(text) {
   } catch (e) {
     return text;
   }
+}
+
+/**
+ * Attempt to get a translation for a given enum.
+ * If a translation exists, return that. Else return the translation of the string.
+ * Non-alphanumeric characters are removed
+ *
+ * @param {String|String[]} text text to attempt to translate
+ * @param {String} alternatePrefix enum.<field name>
+ * @returns {String|String[]} translated text if found, original text if not
+ */
+export function getEnumTranslation(text, alternatePrefix = '') {
+  const translatedEnum = getTranslation(text, `pingTranslations.enum.${alternatePrefix}`);
+  return translatedEnum !== text ? translatedEnum : getTranslation(text);
 }

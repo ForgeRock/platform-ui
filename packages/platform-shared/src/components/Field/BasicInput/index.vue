@@ -256,7 +256,9 @@ export default {
       input.value = instance?.proxy?.$refs.input;
       if (props.autofocus && input.value) {
         delay(() => {
-          input.value.focus();
+          if (input.value) {
+            input.value.focus();
+          }
         }, 600);
       }
     });
