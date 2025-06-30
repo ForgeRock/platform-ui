@@ -105,6 +105,7 @@
     "LockTenant": "Lock Tenant",
     "LogApiKeys": "Log API Keys",
     "Monitoring": "Monitoring",
+    "ManagedObjectEditProperty": "Edit Managed Object Property",
     "ManagedIdentities": "Managed Identities",
     "ManagedObjectSettings": "Managed Object Settings",
     "NormalView": "Normal View",
@@ -1533,11 +1534,11 @@
           "moreInfo": "For more information, refer to the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
           "useInOwnApp": "Use in your own {label} app:",
           "setConfig": "Dynamically set the configuration in your {label} app. For example, in a <code>{file}</code> file. Copy the code snippet.",
-          "moreConfigInfo":  "For more information on setting the configuration in your app, refer <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
+          "moreConfigInfo": "For more information on setting the configuration in your app, refer <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
           "generalIntegration": "For general information on how to integrate your own {label} application with the Ping SDK for {label}, refer to the <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">{text}</a>.",
           "undefinedFieldsError": "Some required fields are not configured. Please ensure {fields} are set in the OIDC Client.",
           "ios": {
-            "label":"iOS",
+            "label": "iOS",
             "switchToFolder": "Switch to the <code>iOS/swiftui-quickstart</code> folder and open the <code>QuickStart.xcodeproj</code> file.",
             "openCodeFile": "Open the <code>{file}</code>.",
             "replaceOptions": "Copy the code snippet and replace the <code>let options = FROptions(...)</code> values.",
@@ -1550,7 +1551,7 @@
             "createPlistDescription": "Initialize the SDK by calling <code>try FRAuth.start()</code>."
           },
           "android": {
-            "label":"Android",
+            "label": "Android",
             "openAndroidStudio": "Using Android Studio open the <code>android/kotlin-ui-prototype</code> folder. Wait for the gradle build to finish.",
             "openCodeFile": "Open the <code>{file}</code> file.",
             "replaceOptions": "Copy the code snippet and replace the <code>val PingAdvancedIdentityCloud = FROptionsBuilder.build &#123; ... &#125;</code> values. Notice that the app supports multiple configurations. Edit based on your needs.",
@@ -1563,7 +1564,7 @@
             "createStringsXmlExample": "Initialize the SDK by calling <code>try FRAuth.start(context)</code>."
           },
           "js": {
-            "label":"Javascript single-page",
+            "label": "Javascript single-page",
             "cdToSampleApp": "In a terminal window, <code>cd</code> to <code>sdk-sample-apps/javascript</code>.",
             "npmInstall": "Run <code>npm install</code>.",
             "openMainJs": "Open <code>embedded-login/src/{file}</code> in your IDE.",
@@ -3321,13 +3322,6 @@
     "editProperty": "Edit Property",
     "entitlement": "Entitlement",
     "entitlementDescription": "Specify this property as containing entitlements.",
-    "enum": {
-      "description": "Enumerate allowable values for this property",
-      "detailTabDescription": "Enter property details",
-      "errorRetrieving": "There was an error retrieving enum values or translations",
-      "errorSaving": "There was an error saving enum values or translations",
-      "successSaving": "Save Successful"
-    },
     "enumeratedValues": "Enumerated Values",
     "errorRetrievingSystemObjects": "Error retrieving system objects",
     "guardedString": "Guarded String",
@@ -3348,6 +3342,37 @@
     "properties": "Properties",
     "property": "property",
     "propertyDeleted": "Property deleted",
+    "propertyWizard": {
+      "editTitle": "{propertyName} ({propertyType})",
+      "errors": {
+        "propertyRetrieving": "There was an error retrieving property data",
+        "enumSaving": "There was an error saving enum values or translations",
+        "propertyUnavailable": "Property Unavailable",
+        "unableToLoadProperty": "Unable to load the selected property"
+      },
+      "goBackToIdentityProfile": "Go back to the identity profile.",
+      "newTitle": "New {propertyType} Property",
+      "successSaving": "Property successfully saved",
+      "tabs": {
+        "details": {
+          "title": "Details",
+          "description": "Enter property details.",
+          "enumDescription": "Enumerate allowable values for this property"
+        },
+        "display": {
+          "title": "Display",
+          "description": "Define display attributes for this property."
+        },
+        "validation": {
+          "title": "Validation",
+          "description": "Define validation policies for this property."
+        },
+        "privacyAndEncryption": {
+          "title": "Privacy & Encryption",
+          "description": "Encode this property to protect sensitive data."
+        }
+      }
+    },
     "propertyPreferenceActivated": "'{property}' Preference Activated",
     "propertyPreferenceDeactivated": "'{property}' Preference Deactivated",
     "propertySaved": "Property saved",

@@ -4,7 +4,8 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="h-100">
-    <FrNavbar>
+    <FrNavbar
+      @clicked="$emit('cancel-action')">
       <template #center-content>
         <slot name="center-content">
           <h1
@@ -78,7 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
               <div>
                 <BButton
-                  @click="$router.push({ path: breadcrumbPath })"
+                  @click="breadcrumbPath ? $router.push({ path: breadcrumbPath }) : $emit('cancel-action')"
                   variant="link">
                   {{ $t('common.cancel') }}
                 </BButton>
@@ -129,7 +130,7 @@ const {
   setBreadcrumb,
 } = useBreadcrumb();
 // Events
-defineEmits(['save']);
+defineEmits(['cancel-action', 'save']);
 
 // Props
 const props = defineProps({
