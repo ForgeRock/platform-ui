@@ -141,6 +141,39 @@ describe('is_valid_esv_variable validators', () => {
   });
 });
 
+describe('valid_url_or_esv_variable validators', () => {
+  it('should return true when no value is passed', async () => {
+    const result = await rules.valid_url_or_esv_variable('');
+    expect(result).toBe(true);
+  });
+
+  it('should return false when correct value is not passed', async () => {
+    const result = await rules.valid_url_or_esv_variable('abcd');
+    expect(result).toBe('Must be a url or a valid ESV variable in the format &{esv.variable}');
+  });
+
+  it('should return true when valid url variable is passed as params', async () => {
+    const getVariableSpy = jest.spyOn(esvApi, 'getVariable').mockResolvedValue({ data: true, status: 200 });
+    const result = await rules.valid_url_or_esv_variable('http://example.com');
+    expect(getVariableSpy).toHaveBeenCalled();
+    expect(result).toBe(true);
+  });
+
+  it('should return true when valid esv variable is passed as params', async () => {
+    const getVariableSpy = jest.spyOn(esvApi, 'getVariable').mockResolvedValue({ data: true, status: 200 });
+    const result = await rules.valid_url_or_esv_variable('&{esv.test.success}');
+    expect(getVariableSpy).toHaveBeenCalled();
+    expect(result).toBe(true);
+  });
+
+  it('should return error message when invalid esv variable is passed as params', async () => {
+    const getVariableSpy = jest.spyOn(esvApi, 'getVariable').mockResolvedValue({ data: false, status: 401 });
+    const result = await rules.valid_url_or_esv_variable('&{esv.test.failure}');
+    expect(getVariableSpy).toHaveBeenCalled();
+    expect(result).toBe('Please provide a valid ESV variable');
+  });
+});
+
 describe('valid_js_variable_name validators', () => {
   it('should return true when the value matches the correct regex pattern', () => {
     const result = rules.valid_js_variable_name('test123');

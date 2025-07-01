@@ -2589,6 +2589,7 @@
         "groupsClaimMapTitle": "{providerName} Group",
         "groupsClaimConfigurationWarning": "You must configure your provider's email, first name, and last name as custom claims before setting federation groups claim.",
         "groupIdentifiers": "Group Identifiers",
+        "issuer": "Issuer",
         "wellKnownEndpoint": "Well-known Endpoint",
         "wellKnownEndpointHelp": "<a href='{url}' target='_blank' rel='noopener'>Where to find your well-known endpoint?</a>",
         "buttonText": "Button Text",
