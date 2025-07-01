@@ -188,6 +188,8 @@ Feature: Enduser Security Questions
     And user types "answer" in the field "Answer for: What's your favorite color?"
     And user clicks on "Next" button
     Then enduser dashboard is loaded with enduser data
+    When user clicks on "Sign out" menu item from top right user menu
+    Then the message "Sign In" should be present    
     When user navigates to "Password reset by KBA" journey
     And user types the stored value of "endUserName" in "User Name" field
     And user clicks on "Next" button
