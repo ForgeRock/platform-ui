@@ -266,7 +266,7 @@ export function getRules(i18n) {
   const text_without_fragment = (value) => (Array.isArray(value) ? !value.some((element) => element.includes('#')) : !value.includes('#')) || i18n.global.t('common.policyValidationMessages.url_with_fragment');
 
   // Rule to check whether url is valid
-  const url = (value) => (value ? customValidators.url(value, i18n) : i18n.global.t('common.policyValidationMessages.url'));
+  const url = (value) => customValidators.url(value) || i18n.global.t('common.policyValidationMessages.validUrl');
 
   // Rule to check whether url, relative path or esv is valid in bookmark applications
   const validBookmarkUrl = async (value) => {
@@ -279,6 +279,17 @@ export function getRules(i18n) {
     const isValidESV = await customValidators.isValidESV(value, true); // Passing 2nd params as true, indicating only check for ESV variable
     return isValidESV || i18n.global.t('common.policyValidationMessages.validEsvVariable');
   };
+
+  async function valid_url_or_esv_variable(value) {
+    if (!value) {
+      return true; // Allow empty value to ensure required validation remains optional
+    }
+    if (!doesValueContainPlaceholder(value)) {
+      return customValidators.url(value) || i18n.global.t('common.policyValidationMessages.urlOrEsv');
+    }
+    const isValidESV = await customValidators.isValidESV(value, true); // Passing 2nd params as true, indicating only check for ESV variable
+    return isValidESV || i18n.global.t('common.policyValidationMessages.validEsvVariable');
+  }
 
   // Rule to check for compatibility with ESV naming schema
   const lower_case_alpha_numeric_underscore_hyphen_only = (value) => {
@@ -438,6 +449,7 @@ export function getRules(i18n) {
     url,
     valid_js_variable_name,
     validBookmarkUrl,
+    valid_url_or_esv_variable,
     whitespace,
     max_value_comparison,
     is_valid_esv_variable,
