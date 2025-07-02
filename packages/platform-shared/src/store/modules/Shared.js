@@ -19,7 +19,6 @@ const defaultState = {
   autoReportsEnabled: false,
   currentPackage: '',
   applicationPolicyEnabled: false,
-  oidcJourneysEnabled: false,
   fraasEnvironmentUrl: null,
   fraasFederationUrl: null,
   fraasLoggingKeyURL: null,
@@ -114,9 +113,6 @@ const mutations = {
         state.journeyAIAgentVersion = env.VUE_APP_HELIX_JOURNEY_AGENT_VERSION;
         state.helixEnvironmentUrl = env.VUE_APP_HELIX_ENVIRONMENT_URL;
         state.helixEnvironmentId = env.VUE_APP_HELIX_ENVIRONMENT_ID;
-      }
-      if (env.VUE_APP_ENABLE_OIDC_JOURNEYS === 'true' || env.VUE_APP_ENABLE_OIDC_JOURNEYS === true) {
-        state.oidcJourneysEnabled = env.VUE_APP_ENABLE_OIDC_JOURNEYS;
       }
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
         if (env.VUE_APP_IGA_API_URL) {
