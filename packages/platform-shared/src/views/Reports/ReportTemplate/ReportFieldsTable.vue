@@ -221,9 +221,7 @@ watch(tableEntries, (current, previous) => {
 });
 
 watch(atLeastOneLabelIsEmpty, (emptyList) => {
-  if (emptyList.length) {
-    emit('disable-template-save', true);
-  }
+  emit('disable-template-save', !!emptyList.length);
 });
 </script>
 

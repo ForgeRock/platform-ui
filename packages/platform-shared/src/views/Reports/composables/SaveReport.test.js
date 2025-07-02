@@ -9,7 +9,9 @@ import axios from 'axios';
 import { flushPromises } from '@vue/test-utils';
 import useSaveReport from './SaveReport';
 
-const successVal = { name: 'payloadName', description: 'payloadDescription', viewers: [1, 2, 3] };
+const successVal = {
+  name: '', displayName: 'payloadName', description: 'payloadDescription', viewers: [1, 2, 3],
+};
 const rejectValue = 'rejected';
 
 describe('@composable', () => {
@@ -72,7 +74,7 @@ describe('@composable', () => {
     // Call the save function
     const reportConfig = '{"version":"v2","entities":[{"entity":"users"}],"fields":[{"label":"Given Name","value":"users.givenName"},{"label":"Account Status","value":"users.accountStatus"},{"label":"City","value":"users.city"}]}';
     saveReport({
-      name: 'payloadName', description: 'payloadDescription', viewers: [1, 2, 3], reportConfig,
+      name: '', displayName: 'payloadName', description: 'payloadDescription', viewers: [1, 2, 3], reportConfig,
     });
     await flushPromises();
 
@@ -80,7 +82,7 @@ describe('@composable', () => {
     expect(axios.create).toHaveBeenCalled();
     expect(axios.create().post).toHaveBeenCalledWith('templates?_action=create&templateType=draft', {
       reportTemplate: {
-        description: 'payloadDescription', name: 'PAYLOADNAME', reportConfig: '{"version":"v2","entities":[{"entity":"users"}],"fields":[{"label":"Given Name","value":"users.givenName"},{"label":"Account Status","value":"users.accountStatus"},{"label":"City","value":"users.city"}]}', viewers: [1, 2, 3],
+        description: 'payloadDescription', displayName: 'payloadName', reportConfig: '{"version":"v2","entities":[{"entity":"users"}],"fields":[{"label":"Given Name","value":"users.givenName"},{"label":"Account Status","value":"users.accountStatus"},{"label":"City","value":"users.city"}]}', viewers: [1, 2, 3],
       },
     });
   });

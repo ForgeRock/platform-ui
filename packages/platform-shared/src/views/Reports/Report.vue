@@ -69,7 +69,7 @@ const newReportJobId = ref(null);
 const routerMap = ['Report', 'ReportHistory'];
 const templateName = route.params.template;
 const templateState = route.params.state;
-const prettyTemplateName = templateName.toLowerCase().replace(/-/g, ' ');
+const prettyTemplateName = ref('');
 const tabIndex = ref(routerMap.indexOf(route.name));
 const tabItems = [
   {
@@ -113,7 +113,7 @@ async function getReportTemplate() {
       templateType: templateState,
     }, false);
     const [reportTemplate] = result;
-
+    prettyTemplateName.value = reportTemplate.displayName;
     if (!reportTemplate) {
       throw new Error(404);
     }

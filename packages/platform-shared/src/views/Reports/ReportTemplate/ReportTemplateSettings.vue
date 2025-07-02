@@ -86,7 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
         <template v-if="tabItems[index].id === 'detailsTab'">
           <FrReportSettingsDetailsForm
-            :is-name-editable="false"
+            :report-names="reportNames"
             :model-value="reportDetails"
             @update:modelValue="reportDetails = $event" />
         </template>
@@ -143,11 +143,16 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  reportNames: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 // Globals
 const tabIndex = ref(0);
 const reportDetails = ref(props.value);
+const reportNames = ref(props.reportNames);
 
 const tabItems = [
   {

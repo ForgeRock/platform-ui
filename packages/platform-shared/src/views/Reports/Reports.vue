@@ -59,7 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
         <template #cell(report)="{ item }">
           <div :id="`${item.name}-${item.type}`">
             <h2 class="h5 mb-1">
-              {{ startCase(item.name.toLowerCase()) }}
+              {{ startCase(item.displayName) }}
             </h2>
             <p class="text-body text-truncate mb-0">
               {{ item.description }}
@@ -271,6 +271,9 @@ const isCustomReportEnabled = store.state.SharedStore.currentPackage === 'admin'
 const isPublishing = ref(false);
 const isDeleting = ref(false);
 
+// Computed
+const allReportNames = computed(() => reports.value.map((report) => report.displayName.toLowerCase()));
+
 // Functions
 /**
  * Opens the delete template confirm modal
@@ -305,7 +308,7 @@ async function retrieveReportTemplates(params = null) {
  * @param {String} filter search term
  */
 function filterReports(report, filter) {
-  return startCase(report.name).toLowerCase().includes(filter.toLowerCase())
+  return startCase(report.displayName).toLowerCase().includes(filter.toLowerCase())
     || report.description.toLowerCase().includes(filter.toLowerCase());
 }
 
@@ -332,7 +335,7 @@ function onFiltered(filteredItems) {
  */
 function sortCompareReports(aRow, bRow, key, sortDesc, formatter, compareOptions, compareLocale) {
   if (key === 'report') {
-    return aRow.name.localeCompare(bRow.name, compareLocale, compareOptions);
+    return aRow.displayName.localeCompare(bRow.displayName, compareLocale, compareOptions);
   }
   return 0;
 }
@@ -385,6 +388,7 @@ function openDuplicateModal(report) {
     description: report.description,
     status: report.type,
     viewers: report.viewers,
+    displayName: report.displayName,
   };
   bvModal.value.show('new-report-modal');
 }
@@ -463,9 +467,6 @@ async function assignViewersToReport(report, viewers) {
 
   saveViewers({ ...report, viewers });
 }
-
-// Computed
-const allReportNames = computed(() => reports.value.map((report) => report.name));
 
 // Watchers
 watch(saveReportError, (newVal) => showErrorMessage(newVal, i18n.global.t('reports.saveError')));

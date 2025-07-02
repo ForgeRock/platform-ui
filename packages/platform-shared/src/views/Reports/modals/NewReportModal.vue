@@ -70,9 +70,9 @@ const props = defineProps({
   },
 });
 const newReportFormData = ref({
-  name: '',
   description: '',
   viewers: [],
+  displayName: '',
 });
 
 // Methods
@@ -80,9 +80,9 @@ const newReportFormData = ref({
  * Resets the form values
  */
 function resetFormValues() {
-  newReportFormData.value.name = '';
   newReportFormData.value.description = '';
   newReportFormData.value.viewers = [];
+  newReportFormData.value.displayName = '';
 }
 
 /**
@@ -97,13 +97,17 @@ function handleModalHide() {
  * Handles the form submission
  */
 function handleNextClick() {
-  const { name, description, viewers } = newReportFormData.value;
+  const {
+    description,
+    viewers,
+    displayName,
+  } = newReportFormData.value;
   const emitType = Object.keys(props.reportDataForDuplication).length ? 'duplicate-report' : 'new-report-save';
 
   emit(emitType, {
     description,
-    name,
     viewers,
+    displayName,
     // conditional properties
     ...(emitType === 'duplicate-report' && { originalReportName: props.reportDataForDuplication.name }),
     ...(emitType === 'duplicate-report' && { status: props.reportDataForDuplication.status }),
@@ -121,11 +125,12 @@ const submitButtonText = computed(() => (Object.keys(props.reportDataForDuplicat
 // Watchers
 watch(() => props.reportDataForDuplication, (report) => {
   if (report && Object.keys(report).length) {
-    newReportFormData.value.name = report.name ? i18n.global.t('common.copyOfItem', { item: startCase(report.name.toLowerCase()) }) : '';
     newReportFormData.value.description = report.description || '';
     newReportFormData.value.viewers = report.viewers || [];
+    newReportFormData.value.displayName = report.displayName ? i18n.global.t('common.copyOfItem', { item: startCase(report.displayName) }) : '';
   } else {
     resetFormValues();
   }
 });
+
 </script>

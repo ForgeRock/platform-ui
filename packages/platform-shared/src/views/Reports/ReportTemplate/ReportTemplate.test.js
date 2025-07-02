@@ -173,7 +173,8 @@ describe('Component for creating custom analytics reports', () => {
 
     AutoApi.getReportTemplates = jest.fn().mockReturnValue(Promise.resolve({
       result: [{
-        name: 'TEST-REPORT',
+        name: 'TEMPLATE-NAME',
+        displayName: 'TEMPLATE NAME',
         description: '',
         reportConfig: JSON.stringify({
           version: 'v2',
@@ -411,7 +412,7 @@ describe('Component for creating custom analytics reports', () => {
       expect(saveAnalyticsReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', {
         entities: [{ entity: 'applications' }],
         fields: [{ label: 'Applications Id', value: 'applications._id' }],
-      }, ['reportadmin'], '');
+      }, ['reportadmin'], '', 'TEMPLATE NAME');
     });
 
     it('ensures that the "Add Data" empty state does not show if a data source has been selected', async () => {
@@ -509,7 +510,7 @@ describe('Component for creating custom analytics reports', () => {
           { label: 'Applications Name', value: 'applications.name' },
           { label: 'Applications Id', value: 'applications._id' },
         ],
-      }, ['reportadmin'], '');
+      }, ['reportadmin'], '', 'TEMPLATE NAME');
     });
 
     it('ensures that the correct payload is sent when a related data source join type is saved', async () => {
@@ -545,7 +546,7 @@ describe('Component for creating custom analytics reports', () => {
           { entity: 'applications.roles', type: 'left' },
         ],
         fields: [],
-      }, ['reportadmin'], '');
+      }, ['reportadmin'], '', 'TEMPLATE NAME');
     });
 
     describe('@settings', () => {

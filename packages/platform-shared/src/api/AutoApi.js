@@ -253,16 +253,28 @@ export async function getAutoAccessReportResult(userName, dateRange, template, n
  * @param {Object} payload report template attributes
  * @param {Array} viewers report template viewers
  * @param {String} description report template description
+ * @param {String} displayName report template displayName
  * @returns {Promise<Object>}
  */
-export function saveAnalyticsReport(name, payload, viewers, description = '') {
+export function saveAnalyticsReport(name, payload, viewers, description = '', displayName) {
+  const reportTemplate = {
+    description,
+    viewers,
+    displayName,
+    reportConfig: JSON.stringify({ ...versionedPayload, ...payload }),
+  };
+
+  // Only add name if it's not undefined and not an empty string
+  // Editing a draft template will now call update action
+  if (name) {
+    reportTemplate.name = name;
+    return generateAutoAccessReports().post('templates?_action=update&templateType=draft', {
+      reportTemplate,
+    });
+  }
+
   return generateAutoAccessReports().post('templates?_action=create&templateType=draft', {
-    reportTemplate: {
-      name,
-      description,
-      viewers,
-      reportConfig: JSON.stringify({ ...versionedPayload, ...payload }),
-    },
+    reportTemplate,
   });
 }
 
@@ -306,20 +318,17 @@ export function deleteAnalyticsReport(id, templateType) {
 export function duplicateAnalyticsReport(payload) {
   const {
     description,
-    name,
     originalReportName,
     viewers,
     status,
+    displayName,
   } = payload;
-
-  // We replace all spaces with dashes. This is a requirement of the backend.
-  const apiFormattedReportName = name.replaceAll(' ', '-').toUpperCase();
 
   return generateAutoAccessReports().post(`templates/${originalReportName}?_action=duplicate&templateType=${status}`, {
     reportTemplate: {
       description,
-      name: apiFormattedReportName,
       viewers,
+      displayName,
     },
   });
 }

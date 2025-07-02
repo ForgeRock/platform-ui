@@ -412,6 +412,7 @@ describe('Report Template Settings component', () => {
         expect(wrapper.emitted('input')[1][0]).toEqual({
           description: '',
           name: '',
+          displayName: '',
           viewers: [
             '1',
           ],

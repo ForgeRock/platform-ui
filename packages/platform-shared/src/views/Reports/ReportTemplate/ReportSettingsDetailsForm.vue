@@ -6,12 +6,11 @@ of the MIT license. See the LICENSE file for details. -->
   <BForm>
     <BFormGroup label-for="name-field">
       <FrField
-        v-model="reportData.name"
+        v-model="reportData.displayName"
         name="name-field"
         type="text"
-        :disabled="!isNameEditable"
         :description="$t('reports.newReportModal.nameInputDescription')"
-        :label="$t('common.name')"
+        :label="$t('reports.newReportModal.name')"
         :validation="validationRules"
         :validation-immediate="false" />
     </BFormGroup>
@@ -52,10 +51,6 @@ import FrReportSettingsAssignViewersForm from './ReportSettingsAssignViewersForm
 
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
-  isNameEditable: {
-    type: Boolean,
-    default: true,
-  },
   reportNames: {
     type: Array,
     default: () => [],
@@ -66,15 +61,18 @@ const props = defineProps({
   },
 });
 
+const originalDisplayName = props.modelValue.displayName?.toLowerCase().replace(/-/g, ' ').trim() || '';
+
 // Globals
 const reportData = reactive({
   name: props.modelValue.name || '',
   description: props.modelValue.description || '',
   viewers: props.modelValue.viewers ? [...props.modelValue.viewers] : [],
+  displayName: props.modelValue.displayName || '',
 });
 
 // Computed
-const vanityReportNames = computed(() => props.reportNames.map((name) => name.replace(/-/g, ' ').toLowerCase()));
+const vanityReportNames = computed(() => props.reportNames.map((name) => name.toLowerCase().replace(/-/g, ' ').trim()).filter((name) => name !== originalDisplayName));
 const validationRules = computed(() => ({
   alpha_num_spaces: true,
   ...(props.reportNames.length && { unique: vanityReportNames.value }),
@@ -86,6 +84,7 @@ watch(() => props.modelValue, (newValue) => {
     reportData.name = newValue.name || '';
     reportData.description = newValue.description || '';
     reportData.viewers = newValue.viewers ? [...newValue.viewers] : [];
+    reportData.displayName = newValue.displayName || '';
   }
 }, { deep: true });
 
@@ -94,6 +93,7 @@ watch(reportData, (newValue) => {
     name: newValue.name,
     description: newValue.description,
     viewers: newValue.viewers,
+    displayName: newValue.displayName,
   });
 });
 </script>
