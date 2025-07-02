@@ -65,6 +65,16 @@ describe('DeleteModal', () => {
     expect(deleteButton.attributes('disabled')).toBe('');
   });
 
+  it('cancel should be hidden when deleting', () => {
+    const wrapper = setup({
+      isDeleting: true,
+      testid: 'delete-modal',
+    });
+
+    const cancelButton = findByTestId(wrapper, 'btn-cancel-delete-modal');
+    expect(cancelButton.exists()).toBeFalsy();
+  });
+
   describe('@actions', () => {
     it('should emit delete-item event', () => {
       const wrapper = setup({

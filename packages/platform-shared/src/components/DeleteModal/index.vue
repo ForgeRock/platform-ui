@@ -26,6 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <template #modal-footer="{ cancel }">
       <BButton
+        v-if="!isDeleting"
         variant="link"
         class="text-danger"
         :data-testid="`btn-cancel-${testid}`"
