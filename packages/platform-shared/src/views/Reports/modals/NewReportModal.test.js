@@ -109,14 +109,18 @@ describe('New Report Modal component', () => {
       await flushPromises();
 
       // Check the emitted value
-      const [[{ description, name, viewers }]] = wrapper.emitted()['new-report-save'];
-      expect(name).toBe(nameInputValue);
+      const [[{
+        description,
+        viewers,
+        displayName,
+      }]] = wrapper.emitted()['new-report-save'];
+      expect(displayName).toBe(nameInputValue);
       expect(description).toBe(descriptionInputValue);
       expect(viewers).toStrictEqual([mockedApiResponse.data.result[3]._id]);
     });
 
     it('correctly emits the form data for a duplicate report', async () => {
-      await wrapper.setProps({ reportDataForDuplication: { name: 'MY-REPORT' } });
+      await wrapper.setProps({ reportDataForDuplication: { displayName: 'My-Report' } });
 
       const descriptionInputValue = 'test description';
 
@@ -141,8 +145,12 @@ describe('New Report Modal component', () => {
       await flushPromises();
 
       // Check the emitted value
-      const [[{ description, name, viewers }]] = wrapper.emitted()['duplicate-report'];
-      expect(name).toBe('Copy of My Report');
+      const [[{
+        description,
+        viewers,
+        displayName,
+      }]] = wrapper.emitted()['duplicate-report'];
+      expect(displayName).toBe('Copy of My Report');
       expect(description).toBe(descriptionInputValue);
       expect(viewers).toStrictEqual([mockedApiResponse.data.result[3]._id]);
     });
@@ -239,7 +247,7 @@ describe('New Report Modal component', () => {
       let nameInputValue = nameInput.element.value;
       expect(nameInputValue).toBe('');
 
-      await wrapper.setProps({ reportDataForDuplication: { name: 'MY-REPORT' } });
+      await wrapper.setProps({ reportDataForDuplication: { displayName: 'My-Report' } });
 
       nameInputValue = nameInput.element.value;
       expect(nameInputValue).toBe('Copy of My Report');

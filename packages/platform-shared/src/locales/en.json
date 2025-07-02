@@ -2293,6 +2293,7 @@
       "descriptionInputLabel": "Description (optional)",
       "labelGroups": "Groups",
       "labelViewers": "Who Can Run",
+      "name": "Name",
       "nameInputDescription": "Name for this report.",
       "reportViewerOption": "Report Viewer Group",
       "title": "New Report",

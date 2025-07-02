@@ -39,7 +39,8 @@ describe('Report Settings Details Form component', () => {
 
   const initialFormData = {
     'model-value': {
-      name: 'Test template',
+      name: '',
+      displayName: 'Test template',
       description: 'Test template description',
       viewers: ['13c0ab62-a072-4e52-ba47-c0ee43d7b9fd'],
     },
@@ -48,6 +49,7 @@ describe('Report Settings Details Form component', () => {
   const initialFormDataEmpty = {
     'model-value': {
       name: '',
+      displayName: '',
       description: '',
       viewers: [],
     },
@@ -90,7 +92,7 @@ describe('Report Settings Details Form component', () => {
       // Set a value into the name input
       await nameInput.setValue(nameInputValue);
       await flushPromises();
-      const emittedName = lastEmittedInputChange()[0].name;
+      const emittedName = lastEmittedInputChange()[0].displayName;
 
       // Emitted name should match
       expect(emittedName).toBe(nameInputValue);
@@ -170,7 +172,7 @@ describe('Report Settings Details Form component', () => {
 
     it('fills the correct values into the form', async () => {
       // Name
-      expect(nameInput.element.value).toBe(initialFormData['model-value'].name);
+      expect(nameInput.element.value).toBe(initialFormData['model-value'].displayName);
 
       // Description
       expect(descriptionInput.element.value).toBe(initialFormData['model-value'].description);

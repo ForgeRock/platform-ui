@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       :disable-save="disableTemplateSave"
       :report-state="reportState"
       :is-saving="isSavingTemplate"
-      :template-name="reportDetails.name"
+      :template-name="reportDetails.displayName"
       @delete="bvModal.show('deleteModal')"
       @save="saveTemplateFromHeader" />
     <main
@@ -20,13 +20,14 @@ of the MIT license. See the LICENSE file for details. -->
           :aggregates="findSettingsObject('aggregate').definitions"
           @update-table-entry-label="onUpdateTableEntryLabel"
           @update-table-column-order="onColumnOrderUpdate"
-          @disable-template-save="disableTemplateSave = $event"
+          @disable-template-save="hasEmptyLabels = $event"
         />
         <FrReportTemplateSettings
           v-model="reportDetails"
           :data-source-being-deleted="dataSourceBeingDeleted"
           :report-is-loading="reportIsLoading"
           :report-settings="reportSettings"
+          :report-names="allReportNames"
           @delete-data-source="onDeleteDataSource"
           @delete-definition="updateSettings"
           @delete-parameter="onDeleteParameter"
@@ -105,7 +106,8 @@ import { displayNotification, showErrorMessage } from '@forgerock/platform-share
 import { deleteAnalyticsReport, getReportTemplates, saveAnalyticsReport } from '@forgerock/platform-shared/src/api/AutoApi';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import { isEqual, startCase, cloneDeep } from 'lodash';
+import { isEqual, cloneDeep } from 'lodash';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import useReportSettings from '../composables/ReportSettings';
 import useReportParameters from '../composables/ReportParameters';
 import useReportEntities from '../composables/ReportEntities';
@@ -200,22 +202,26 @@ const {
 // Globals
 const dataSourceBeingDeleted = ref('');
 const definitionBeingEdited = ref({});
-const disableTemplateSave = ref(true);
+const templateModified = ref(false);
 const isDeletingTemplate = ref(false);
 const isFetchingEntityColumns = ref(false);
 const isFetchingTemplate = ref(true);
 const isSavingDefinition = ref(false);
 const isSavingTemplate = ref(false);
+const hasEmptyLabels = ref(false);
 const relatedEntityDefinitionToEdit = ref({});
 const reportDetails = ref({
   name: '',
+  displayName: '',
   description: '',
   viewers: [],
 });
 const reportIsLoading = ref(true);
 const reportState = route.params.state;
 const templateId = route.params.template.toUpperCase();
-const templateName = route.params.template.replace(/-/g, ' ');
+const allReportNames = ref([]);
+const originalReportName = ref('');
+const { alpha_num_spaces: alphaNumSpaces } = ValidationRules.getRules(i18n);
 
 // Functions
 /**
@@ -226,7 +232,7 @@ async function saveTemplate(settings = reportSettings.value) {
   const payload = reportPayload(settings);
 
   try {
-    await saveAnalyticsReport(templateId, payload, reportDetails.value.viewers, reportDetails.value.description);
+    await saveAnalyticsReport(templateId, payload, reportDetails.value.viewers, reportDetails.value.description, reportDetails.value.displayName);
     if (reportState === 'published') {
       router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: templateId.toLowerCase() } });
     }
@@ -258,7 +264,7 @@ async function onAddDataSource(dataSource) {
 
       entitiesList.splice(parentIndex + 1, 0, ...entityDefinitionsList);
       bvModal.value.hide('report-data-sources-modal');
-      disableTemplateSave.value = false;
+      templateModified.value = true;
       isFetchingEntityColumns.value = false;
     }, 1001);
   }
@@ -282,7 +288,7 @@ function updateSettings(settingsId, definitionIndex, updatedDefinition) {
 
   definitions.splice(0);
   definitions.push(...updatedDefinitionsList);
-  disableTemplateSave.value = false;
+  templateModified.value = true;
 
   bvModal.value.hide(modal);
 }
@@ -308,7 +314,7 @@ async function saveTemplateAndUpdateSettings(settingsId, definitionIndex, update
   }
 
   isSavingDefinition.value = false;
-  disableTemplateSave.value = true;
+  templateModified.value = false;
 
   displayNotification('success', i18n.global.t('reports.template.reportUpdated'));
   bvModal.value.hide(modal);
@@ -357,7 +363,7 @@ function onSetColumnSelections(defIndex, columns) {
 
   // Update the entities array with the corrected data
   findSettingsObject('entities').definitions = cloneDeep(entitiesDefs);
-  disableTemplateSave.value = false;
+  templateModified.value = true;
 }
 
 /**
@@ -419,7 +425,7 @@ function onUpdateTableEntryLabel(settingsId, id, inputText) {
     sortDefinitions.push(...updatedSortDefinitions);
   }
 
-  disableTemplateSave.value = false;
+  templateModified.value = true;
 }
 
 /**
@@ -443,7 +449,7 @@ function onColumnOrderUpdate(newIndex, oldIndex) {
       }
     });
   });
-  disableTemplateSave.value = false;
+  templateModified.value = true;
 }
 
 /**
@@ -537,7 +543,7 @@ async function onDeleteDataSource(defIndex) {
 
   definitionsList.splice(0);
   definitionsList.push(...filteredDefinitions);
-  disableTemplateSave.value = false;
+  templateModified.value = true;
   removeAssociatedDefinitions(deleteQueue);
   dataSourceBeingDeleted.value = '';
 }
@@ -563,7 +569,7 @@ async function saveTemplateFromHeader() {
   if (reportState === 'published') {
     router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: templateId.toLowerCase() } });
   }
-  disableTemplateSave.value = true;
+  templateModified.value = false;
   isSavingTemplate.value = false;
   displayNotification('success', i18n.global.t('reports.template.reportUpdated'));
 }
@@ -676,7 +682,7 @@ async function onUpdateParameter(definitionIndex, currentDefinition) {
   const parameterHasNewName = oldParameterName !== currentDefinition?.parameterName;
 
   await saveTemplateAndUpdateSettings('parameters', definitionIndex, currentDefinition);
-  disableTemplateSave.value = true;
+  templateModified.value = false;
 
   // Handle filters on parameter update
   if (filterRulesThatMatchParameter.length) {
@@ -778,13 +784,28 @@ const parameterUniqueKeys = computed(() => findSettingsObject('parameters').defi
   .map(({ parameterName }) => parameterName)
   .filter((key) => key !== definitionBeingEdited.value.parameters?.definition?.parameterName));
 const templateHasAtLeastOneDataSource = computed(() => findSettingsObject('entities').definitions.length);
+const disableTemplateSave = computed(() => {
+  // Removes the current(editing) report name from all Report names
+  // And, Checks if the reportName is already existing
+  const isDuplicateName = allReportNames.value.filter((name) => name !== originalReportName.value).includes(reportDetails.value.displayName.toLowerCase().trim());
+
+  // Validate display name against alpha_num_spaces rule
+  const validationResult = alphaNumSpaces(reportDetails.value.displayName);
+  const isNameValid = typeof validationResult !== 'string';
+
+  // Disable save if duplicate, invalid name, or template not modified
+  return isDuplicateName || !isNameValid || !templateModified.value || hasEmptyLabels.value;
+});
 
 /**
  * Check to see if detail settings has changed so we can set the save button disabled status accordingly
  */
 watch(reportDetails, (newVal, oldVal) => {
   if (!reportIsLoading.value && !isEqual(newVal, oldVal)) {
-    disableTemplateSave.value = false;
+    const isDuplicate = allReportNames.value.filter((name) => name !== originalReportName.value).includes(newVal.displayName.toLowerCase().trim());
+    if (!isDuplicate) {
+      templateModified.value = true;
+    }
   }
 }, { deep: true });
 
@@ -801,9 +822,20 @@ watch(reportDetails, (newVal, oldVal) => {
     // Gets saved report data and report entities
     const [{ result }] = await Promise.all([getTemplate, fetchReportEntities()]);
 
+    // This is required for validation while editing the display Name
+    const allReportsResult = await getReportTemplates();
+    if (allReportsResult?.result.length) {
+      allReportNames.value = allReportsResult.result.filter((item) => item.visible).map((item) => item.displayName.toLowerCase());
+    }
+
     if (result?.length) {
       const [existingTemplate] = result;
-      const { reportConfig, viewers, description } = existingTemplate;
+      const {
+        reportConfig,
+        viewers,
+        description,
+        displayName,
+      } = existingTemplate;
       const {
         entities,
         fields,
@@ -815,11 +847,11 @@ watch(reportDetails, (newVal, oldVal) => {
 
       // Sets the Details tab information
       reportDetails.value = {
-        name: startCase(templateName.toLowerCase()),
         description,
         viewers,
+        displayName,
       };
-
+      originalReportName.value = displayName.trim().toLowerCase();
       // Populates the settings definitions
       findSettingsObject('entities').definitions.push(...await entityDefinitions(entities, fields));
       findSettingsObject('parameters').definitions.push(...await parameterDefinitions(parameters));

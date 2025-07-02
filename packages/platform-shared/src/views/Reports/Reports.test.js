@@ -50,6 +50,7 @@ describe('Reports', () => {
     result: [
       {
         name: 'OOTB-TEMPLATE',
+        displayName: 'Ootb Template',
         description: 'Provides the history of when the provided user(s) accessed the provided app integration in the realm for a given period of time',
         version: 0,
         reportConfig: '{"version":"v2"}',
@@ -69,6 +70,7 @@ describe('Reports', () => {
       },
       {
         name: 'DRAFT-TEMPLATE',
+        displayName: 'Draft Template',
         description: 'Draft Report',
         version: 0,
         reportConfig: '{"version":"v2"}',
@@ -92,6 +94,7 @@ describe('Reports', () => {
       },
       {
         name: 'PUBLISHED-TEMPLATE',
+        displayName: 'Published Template',
         description: 'Published Report',
         version: 1,
         reportConfig: '{"version":"v2"}',
@@ -115,6 +118,7 @@ describe('Reports', () => {
       },
       {
         name: 'OOTB-TEMPLATE-DUPLICATABLE',
+        displayName: 'Ootb Template Duplicatable',
         description: 'Duplicatable template that provides the history of when the provided user(s) accessed the provided app integration in the realm for a given period of time',
         version: 0,
         reportConfig: '{"version":"v2"}',
@@ -134,6 +138,7 @@ describe('Reports', () => {
       },
       {
         name: 'TEMPLATE-VISIBLE-NOT-VISIBLE',
+        displayName: 'Template Visible Not Visible',
         description: 'Not visible template that should not be shown in the Report table',
         version: 0,
         reportConfig: '{"version":"v2"}',
@@ -320,7 +325,6 @@ describe('Reports', () => {
     const actions = rows[3].findAll('a[role="menuitem"]');
     const editButton = actions[1];
     await editButton.trigger('click');
-
     expect(AutoApi.editAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE');
     expect(routerPushSpy).toHaveBeenCalledWith({
       name: 'EditReportTemplate',
@@ -459,6 +463,7 @@ describe('Reports', () => {
 
     wrapper.vm.reportBeingProcessed = {
       name: 'DRAFT-TEMPLATE',
+      displayName: 'Draft Template',
       type: 'draft',
       viewers: [],
     };
@@ -469,7 +474,7 @@ describe('Reports', () => {
     await flushPromises();
 
     expect(AutoApi.editAnalyticsReport).not.toHaveBeenCalled();
-    expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('DRAFT-TEMPLATE', {}, ['1', '2'], undefined);
+    expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('DRAFT-TEMPLATE', {}, ['1', '2'], undefined, 'Draft Template');
     expect(Notification.displayNotification).toHaveBeenCalledWith('success', 'Report viewers saved successfully');
   });
 
@@ -483,6 +488,7 @@ describe('Reports', () => {
 
     wrapper.vm.reportBeingProcessed = {
       name: 'PUBLISHED-TEMPLATE',
+      displayName: 'Published Template',
       type: 'published',
       viewers: [],
     };
@@ -493,7 +499,7 @@ describe('Reports', () => {
     await flushPromises();
 
     expect(AutoApi.editAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE');
-    expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE', {}, ['1', '2'], undefined);
+    expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE', {}, ['1', '2'], undefined, 'Published Template');
     expect(Notification.displayNotification).toHaveBeenCalledWith('success', 'Report viewers saved successfully');
   });
 
@@ -506,6 +512,7 @@ describe('Reports', () => {
     await flushPromises();
     wrapper.vm.reportBeingProcessed = {
       name: 'DRAFT-TEMPLATE',
+      displayName: 'Draft Template',
       type: 'draft',
       viewers: [],
     };
@@ -515,7 +522,7 @@ describe('Reports', () => {
     assignViewersModal.vm.$emit('save', ['1', '2']);
     await flushPromises();
 
-    expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('DRAFT-TEMPLATE', {}, ['1', '2'], undefined);
+    expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('DRAFT-TEMPLATE', {}, ['1', '2'], undefined, 'Draft Template');
     expect(Notification.showErrorMessage).toHaveBeenCalledWith(error, 'Error saving report viewers');
   });
 
@@ -529,6 +536,7 @@ describe('Reports', () => {
     await flushPromises();
     wrapper.vm.reportBeingProcessed = {
       name: 'PUBLISHED-TEMPLATE',
+      displayName: 'Published Template',
       type: 'published',
       viewers: [],
     };
@@ -539,7 +547,7 @@ describe('Reports', () => {
     await flushPromises();
 
     expect(AutoApi.editAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE');
-    expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE', {}, ['1', '2'], undefined);
+    expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE', {}, ['1', '2'], undefined, 'Published Template');
     expect(Notification.showErrorMessage).toHaveBeenCalledWith(error, 'Error saving report viewers');
   });
 
