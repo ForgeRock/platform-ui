@@ -54,7 +54,6 @@ const defaultState = {
   webStorageAvailable: true,
   workforceEnabled: false,
   wsfedEnabled: false,
-  customWsfedEnabled: false,
   templateBuilderEnabled: false,
   enableSamlSigningCheckbox: false,
   enableManagedObjectSchemaEditor: false,
@@ -204,10 +203,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_WSFED === 'true' || env.VUE_APP_ENABLE_WSFED === true) {
       state.wsfedEnabled = true;
-    }
-
-    if (env.VUE_APP_ENABLE_CUSTOM_WSFED === 'true' || env.VUE_APP_ENABLE_CUSTOM_WSFED === true) {
-      state.customWsfedEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_TEMPLATE_BUILDER === 'true' || env.VUE_APP_ENABLE_TEMPLATE_BUILDER === true) {
