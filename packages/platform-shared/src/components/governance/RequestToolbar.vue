@@ -7,12 +7,14 @@ of the MIT license. See the LICENSE file for details. -->
     <BButtonToolbar
       justify
       class="px-4 py-3 border-bottom-0">
-      <BDropdown
-        data-testid="status-dropdown"
+      <FrActionsMenu
+        data-testid="status-menu"
         variant="link"
+        :selected-item-index="selectedStatusIndex"
         toggle-class="text-dark px-0 d-flex">
         <template #button-content>
-          <div class="p-0 toolbar-link-text"
+          <div
+            class="p-0 toolbar-link-text"
             data-testid="status-dropdown-button">
             <span class="font-weight-bold mr-1">
               {{ `${$t('common.status')}:` }}
@@ -30,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
             {{ status.text }}
           </BDropdownItem>
         </template>
-      </BDropdown>
+      </FrActionsMenu>
       <div>
         <FrSortDropdown
           class="px-3"
@@ -49,7 +51,9 @@ of the MIT license. See the LICENSE file for details. -->
           <FrIcon
             icon-class="mr-lg-2"
             name="filter_list">
-            <span class="d-none d-lg-inline" id="filter-toggle-label">
+            <span
+              class="d-none d-lg-inline"
+              id="filter-toggle-label">
               {{ showFilters ? $t('governance.hideFilters') : $t('governance.showFilters') }}
             </span>
           </FrIcon>
@@ -88,10 +92,10 @@ import {
   BButton,
   BButtonToolbar,
   BCollapse,
-  BDropdown,
   BDropdownItem,
 } from 'bootstrap-vue';
 import { onMounted, ref } from 'vue';
+import FrActionsMenu from '@forgerock/platform-shared/src/components/ActionsMenu/ActionsMenu';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrRequestFilter from '@forgerock/platform-shared/src/components/governance/RequestFilter';
 import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
@@ -119,6 +123,7 @@ const props = defineProps({
 });
 
 const selectedStatus = ref({});
+const selectedStatusIndex = ref(-1);
 const showFilters = ref(false);
 const sortField = ref('date');
 
@@ -157,6 +162,7 @@ function handleSortDirectionChange(direction) {
  */
 function handleStatusChange(status) {
   selectedStatus.value = status;
+  selectedStatusIndex.value = props.statusOptions.findIndex((option) => option.value === status.value);
   emit('status-change', status.value);
 }
 </script>

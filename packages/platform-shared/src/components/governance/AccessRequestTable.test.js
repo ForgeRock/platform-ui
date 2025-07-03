@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -106,8 +106,11 @@ describe('AccessRequestTable', () => {
       const wrapper = setup();
       await flushPromises();
 
-      const statusDropdown = findByTestId(wrapper, 'status-dropdown');
-      const completedOption = statusDropdown.findAll('ul li a')[1];
+      const statusMenu = findByTestId(wrapper, 'status-menu');
+      const statusMenuButton = statusMenu.find('button');
+      await statusMenuButton.trigger('click');
+      const completedOption = statusMenu.findAll('ul li a')[1];
+
       await completedOption.trigger('click');
       await flushPromises();
 
