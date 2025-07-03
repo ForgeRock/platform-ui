@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -86,7 +86,7 @@ describe('RequestToolbar', () => {
     dropdownBtn.trigger('click');
     await flushPromises();
 
-    findByTestId(wrapper, 'status-dropdown').findAll('li')[1]
+    findByTestId(wrapper, 'status-menu').findAll('li')[1]
       .find('a')
       .trigger('click');
     await flushPromises();

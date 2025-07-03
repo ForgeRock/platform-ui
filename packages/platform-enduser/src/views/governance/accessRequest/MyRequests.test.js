@@ -278,8 +278,10 @@ describe('MyRequests', () => {
       },
     }));
 
-    const statusDropdown = findByTestId(wrapper, 'status-dropdown');
-    const completedOption = statusDropdown.findAll('ul li a')[1];
+    const statusMenu = findByTestId(wrapper, 'status-menu');
+    const statusMenuButton = statusMenu.find('button');
+    await statusMenuButton.trigger('click');
+    const completedOption = statusMenu.findAll('ul li a')[1];
     await completedOption.trigger('click');
     await flushPromises();
 
