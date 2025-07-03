@@ -89,7 +89,7 @@ describe('formEventsWorker module', () => {
 
       it('getLabel should return null if the field does not exist', () => {
         const label = workerModule.form.getLabel('nonexistent');
-        expect(label).toBeNull();
+        expect(label).toBeUndefined();
       });
 
       it('getValue should return the value of a field by its key', () => {
@@ -260,6 +260,76 @@ describe('formEventsWorker module', () => {
             [
               {
                 type: 'string', model: 'foo', label: 'Foo Label', showAlways: true,
+              },
+            ],
+          ],
+        });
+      });
+
+      it('should update queryFilter via script execution', () => {
+        const script = 'form.setQueryFilter("foo", "type eq \\"admin\\"");';
+        const scriptVariables = {
+          formValues: {},
+          formSchema: [
+            [
+              {
+                type: 'select',
+                model: 'foo',
+                label: 'Foo',
+                options: { queryFilter: null },
+              },
+            ],
+          ],
+        };
+
+        global.onmessage({ data: { script, scriptVariables } });
+
+        expect(workerModule._getFieldByKey('foo').options.queryFilter).toBe('type eq "admin"');
+        expect(mockPostMessage).toHaveBeenCalledWith({
+          formValues: {},
+          formSchema: [
+            [
+              {
+                type: 'select',
+                model: 'foo',
+                label: 'Foo',
+                options: { queryFilter: 'type eq "admin"' },
+              },
+            ],
+          ],
+        });
+      });
+
+      it('setSelectOptions should set options for a field', () => {
+        const script = 'form.setSelectOptions("foo", [{ label: "A", value: 1 }, { label: "B", value: 2 }]);';
+        const scriptVariables = {
+          formValues: { foo: 1 },
+          formSchema: [
+            [
+              {
+                type: 'select',
+                model: 'foo',
+                label: 'Foo',
+                options: [],
+              },
+            ],
+          ],
+        };
+
+        global.onmessage({ data: { script, scriptVariables } });
+
+        expect(mockPostMessage).toHaveBeenCalledWith({
+          formValues: { foo: 1 },
+          formSchema: [
+            [
+              {
+                type: 'select',
+                model: 'foo',
+                label: 'Foo',
+                options: [
+                  { label: 'A', value: 1 },
+                  { label: 'B', value: 2 },
+                ],
               },
             ],
           ],

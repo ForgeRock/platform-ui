@@ -240,6 +240,16 @@ export default {
       this.showingInitialOptions = false;
       this.getResourceList(true);
     },
+    customQuery() {
+      this.showingInitialOptions = false;
+      this.getResourceList(false);
+    },
+    value(newValue, oldValue) {
+      // allows resetting the value to an empty string
+      if (newValue === '' && oldValue !== undefined) {
+        this.selectValue = newValue;
+      }
+    },
   },
 };
 </script>

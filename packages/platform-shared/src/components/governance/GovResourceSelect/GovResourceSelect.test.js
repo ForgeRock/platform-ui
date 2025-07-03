@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -152,5 +152,19 @@ describe('GovResourceSelect Component', () => {
     await flushPromises();
     expect(wrapper.emitted('get-role-info')[0][0]).toEqual({ id: 'roleId2', name: 'role 2' });
     expect(wrapper.emitted('input')[0][0]).toEqual('managed/alpha_role/roleId2');
+  });
+
+  it('retrieves options when the customQuery changes', async () => {
+    const resourceSpy = jest.spyOn(CommonsApi, 'getResource');
+    const wrapper = mountComponent({
+      queryParamFunction: (query, resource, bool, customQuery) => `queryFilter=${customQuery}`,
+    });
+    await flushPromises();
+    expect(resourceSpy).toHaveBeenCalledWith('alpha_user', 'queryFilter=');
+    expect(resourceSpy).not.toHaveBeenCalledWith('alpha_user', 'queryFilter=a basic filter');
+
+    wrapper.setProps({ customQuery: 'a basic filter' });
+    await flushPromises();
+    expect(resourceSpy).toHaveBeenCalledWith('alpha_user', 'queryFilter=a basic filter');
   });
 });

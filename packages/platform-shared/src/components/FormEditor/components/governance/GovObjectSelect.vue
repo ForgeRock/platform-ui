@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * Form custom component used for selecting a single object using an api call
  */
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import {
   optionFunctionWithCustom,
@@ -80,6 +80,7 @@ function initializeValue(value) {
   inputValue.value = value.split('/')?.pop() || '';
 }
 
-initializeValue(props.property.value);
-
+watch(() => props.property.value, (newValue) => {
+  initializeValue(newValue);
+}, { immediate: true });
 </script>

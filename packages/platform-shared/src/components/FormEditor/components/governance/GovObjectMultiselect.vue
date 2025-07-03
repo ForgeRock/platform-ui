@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * Form custom component used for selecting a multiple objects using an api call
  */
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   optionFunctionWithCustom,
   queryParamFunctionWithCustom,
@@ -80,5 +80,7 @@ function initializeValue(values) {
   inputValue.value = values?.map((value) => value.split('/')?.pop()) || [];
 }
 
-initializeValue(props.property.value);
+watch(() => props.property.value, (newValue) => {
+  initializeValue(newValue);
+}, { immediate: true });
 </script>
