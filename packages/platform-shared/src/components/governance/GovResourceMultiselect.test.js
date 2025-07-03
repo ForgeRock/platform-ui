@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -62,5 +62,19 @@ describe('GovResourceMultiselect', () => {
       { text: 'App 1', value: 'app1' },
       { text: 'App 2', value: 'app2' },
     ]);
+  });
+
+  it('retrieves options when the customQuery changes', async () => {
+    const resourceSpy = jest.spyOn(CommonsApi, 'getResource');
+    wrapper = mountComponent({
+      queryParamFunction: (query, resource, bool, customQuery) => `queryFilter=${customQuery}`,
+    });
+    await flushPromises();
+    expect(resourceSpy).toHaveBeenCalledWith('application', 'queryFilter=');
+    expect(resourceSpy).not.toHaveBeenCalledWith('application', 'queryFilter=a basic filter');
+
+    wrapper.setProps({ customQuery: 'a basic filter' });
+    await flushPromises();
+    expect(resourceSpy).toHaveBeenCalledWith('application', 'queryFilter=a basic filter');
   });
 });

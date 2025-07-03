@@ -30,6 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   computed,
   ref,
+  watch,
 } from 'vue';
 import {
   debounce,
@@ -126,6 +127,7 @@ async function getInitialValues(resourceIds) {
     initialValues.value = resourceIds.map((value) => props.optionFunction({ id: value, name: value }, null));
   } finally {
     initialValuesLoad.value = true;
+    selectValue.value = [...resourceIds];
   }
 }
 
@@ -136,8 +138,8 @@ async function getInitialValues(resourceIds) {
  *
  * @param {String} queryString - The query string to filter the resource list.
  */
-async function getResourceList(queryString) {
-  if (!optionsLoad.value && props.value.length) {
+async function getResourceList(queryString, setValue) {
+  if (setValue || (!optionsLoad.value && props.value.length)) {
     getInitialValues(props.value);
   } else {
     initialValuesLoad.value = true;
@@ -175,6 +177,10 @@ function search(query) {
   getResourceList(query);
 }
 const debouncedSearch = debounce(search, 500);
+
+watch([() => props.customQuery, () => props.value], () => {
+  getResourceList(null, true);
+});
 
 getResourceList();
 </script>

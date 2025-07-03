@@ -65,8 +65,18 @@ function enableField(key) {
  */
 function getLabel(key) {
   const field = _getFieldByKey(key);
-  if (field) return field.label;
-  return null;
+  return field?.label;
+}
+
+/**
+ * Retrieves the enumerated options array for a select/mulitselect field by its key.
+ *
+ * @param {string} key - The unique identifier for the field.
+ * @returns {Array|undefined} The options array for the field, or undefined if not found.
+ */
+function getSelectOptions(key) {
+  const field = _getFieldByKey(key);
+  return field?.options;
 }
 
 /**
@@ -111,6 +121,29 @@ function setLabel(key, label) {
 }
 
 /**
+ * Sets the enumerated options for a select field identified by the given key.
+ *
+ * @param {string} key - The unique identifier for the field whose options are to be set.
+ * @param {Array} options - The array of options to assign to the select field.
+ */
+function setSelectOptions(key, options) {
+  const field = _getFieldByKey(key);
+  if (field) field.options = options;
+}
+
+/**
+ * Sets the query filter for the options of a form field identified by the given key.
+ * This only applies if the field is an object select/multiselect field
+ *
+ * @param {string} key - The unique identifier for the form field.
+ * @param {*} filter - The filter to apply to the field's options.
+ */
+function setQueryFilter(key, filter) {
+  const field = _getFieldByKey(key);
+  if (field?.options) field.options.queryFilter = filter;
+}
+
+/**
  * Sets the value for a given key in the _tempFormValues object.
  *
  * @param {string} key - The key for which the value should be set.
@@ -125,9 +158,12 @@ export const form = {
   enableField,
   getLabel,
   getValue,
+  getSelectOptions,
   hideField,
   showField,
   setLabel,
+  setQueryFilter,
+  setSelectOptions,
   setValue,
   currentFieldValue: null,
   urlParams: null,
