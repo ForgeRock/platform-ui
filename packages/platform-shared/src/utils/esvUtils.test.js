@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
+import * as ESVApi from '@forgerock/platform-shared/src/api/EsvApi';
 import {
   formatIdAsPlaceholder,
+  getEsvValue,
+  getIdfromPlaceholder,
   valueIsPurposePlaceholder,
   mapBooleanToSecretVersionStatus,
   processSecretVersionData,
@@ -28,6 +31,11 @@ it('formats IDs correctly as placeholders', () => {
 it('maps boolean secret version statuses to API status strings', () => {
   expect(mapBooleanToSecretVersionStatus(true)).toBe('ENABLED');
   expect(mapBooleanToSecretVersionStatus(false)).toBe('DISABLED');
+});
+
+it('gets esv id from a placeholder', () => {
+  expect(getIdfromPlaceholder('&{esv-123-abc_def}')).toBe('esv-123-abc_def');
+  expect(getIdfromPlaceholder({ $bool: '&{esv-123-abc_def}' })).toBe('esv-123-abc_def');
 });
 
 describe('processing secret version data', () => {
@@ -311,4 +319,34 @@ describe('determining whether a field value contains a $purpose based placeholde
     `('Value containing $name', ({ fieldValue, expectedValue }) => {
       expect(valueIsPurposePlaceholder(fieldValue)).toBe(expectedValue);
     });
+});
+
+describe('getEsvValue', () => {
+  ESVApi.getVariable = jest.fn().mockImplementation((esvId) => {
+    if (esvId === 'esv-variable') {
+      return Promise.resolve({ data: { valueBase64: 'dmFyaWFibGU=' } });
+    }
+    return Promise.reject(new Error('ESV not found'));
+  });
+
+  ESVApi.getSecret = jest.fn().mockImplementation((esvId) => {
+    if (esvId === 'esv-secret') {
+      return Promise.resolve({ data: { valueBase64: 'c2VjcmV0' } });
+    }
+    return Promise.reject(new Error('ESV not found'));
+  });
+
+  it('returns the correct ESV variable value from an placeholder', async () => {
+    let esvValue = await getEsvValue('&{esv.variable}');
+    expect(esvValue).toBe('variable');
+    esvValue = await getEsvValue({ $string: '&{esv.variable}' });
+    expect(esvValue).toBe('variable');
+  });
+
+  it('returns an empty string for an invalid placeholder', async () => {
+    let esvValue = await getEsvValue('invalid-placeholder');
+    expect(esvValue).toBe('');
+    esvValue = await getEsvValue({ $string: 'invalid-placeholder' });
+    expect(esvValue).toBe('');
+  });
 });
