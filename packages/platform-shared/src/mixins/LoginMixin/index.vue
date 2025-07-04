@@ -20,6 +20,7 @@ export const FrCallbackType = {
   SuspendedTextOutputCallback: 'SuspendedTextOutputCallback',
   WebAuthnComponent: 'WebAuthnComponent',
   PushChallengeNumber: 'PushChallengeNumber',
+  SameDeviceVerificationCallback: 'SameDeviceVerificationCallback',
 };
 
 export function getIdFromSession() {

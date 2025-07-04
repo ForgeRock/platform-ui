@@ -219,6 +219,7 @@
     "okay": "Okay",
     "on": "On",
     "onMobileDevice": "On a mobile device?",
+    "continueOnDevice": "Continue on this device?",
     "optional": "(optional)",
     "optionalFieldTitle": "{fieldTitle} (optional)",
     "order": "Order",

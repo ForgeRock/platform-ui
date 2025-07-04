@@ -492,6 +492,7 @@ export default {
     FrReCaptchaEnterpriseCallback: () => import('@/components/callbacks/ReCaptchaEnterpriseCallback/ReCaptchaEnterprise'),
     FrRecoveryCodesComponent: () => import('@/components/display/RecoveryCodes'),
     FrSelectIdPCallback: () => import('@/components/callbacks/SelectIdPCallback'),
+    FrSameDeviceVerificationCallback: () => import('@/components/callbacks/SameDeviceVerificationCallback'),
     FrSuspendedTextOutputCallback: () => import('@/components/callbacks/SuspendedTextOutputCallback'),
     FrTermsAndConditionsCallback: () => import('@/components/callbacks/TermsAndConditionsCallback'),
     FrTextOutputCallback: () => import('@/components/callbacks/TextOutputCallback'),
@@ -881,6 +882,7 @@ export default {
           this.FrCallbackType.RecoveryCodesComponent,
           this.FrCallbackType.SuspendedTextOutputCallback,
           this.FrCallbackType.WebAuthnComponent,
+          this.FrCallbackType.SameDeviceVerificationCallback,
         ];
         this.nextButtonVisible = hideNextButtonCallbacks.indexOf(type) > -1 ? false : this.nextButtonVisible;
 
