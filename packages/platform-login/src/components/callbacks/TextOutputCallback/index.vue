@@ -33,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
         <div
           v-html="qrCodeHtml" />
         <BButton
+          v-if="showDeviceOption"
           :href="qrCodeMobileLink"
           class="mt-2"
           variant="link">
@@ -84,6 +85,7 @@ export default {
       qrCodeHtml: '',
       qrCodeMobileLink: '',
       hideSpinner: false,
+      showDeviceOption: true,
     };
   },
   computed: {
@@ -137,7 +139,12 @@ export default {
       )(loginHelpers, QRCodeReader);
     },
     createCode(options) {
-      const { code = 'M', version = 4, text } = options;
+      const {
+        code = 'M',
+        version = 4,
+        text,
+        showDeviceOption,
+      } = options;
       const qr = new QRCodeGenerator(version, code);
       qr.addData(text);
       qr.make();
@@ -149,6 +156,7 @@ export default {
 
       this.qrCodeMobileLink = text;
       this.hideSpinner = true;
+      this.showDeviceOption = showDeviceOption === undefined || options.showDeviceOption;
     },
     setHiddenCallback(name, value) {
       // keep dom updated too
