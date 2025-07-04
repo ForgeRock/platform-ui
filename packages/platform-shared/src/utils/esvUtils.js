@@ -1,10 +1,12 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { getSecret, getVariable } from '@forgerock/platform-shared/src/api/EsvApi';
+import { convertBase64ToString } from '@forgerock/platform-shared/src/utils/encodeUtils';
 import dayjs from 'dayjs';
 import { isObject } from 'lodash';
 
@@ -219,9 +221,40 @@ export function showEsvSecretsForField(fieldType) {
 
 /**
  * Convert the provided placeholder value to _id
- * @param {String} an ESV placeholder
+ * @param {String|Object} an ESV placeholder
  * @returns {String} _id of the placeholder
  */
 export function getIdfromPlaceholder(value) {
-  return `${value.slice(2, -1).replaceAll('.', '-')}`;
+  let esvValue = value;
+  if (typeof value === 'object' && value !== null && Object.keys(value).length === 1) {
+    [esvValue] = Object.values(value);
+  }
+  return `${esvValue.slice(2, -1).replaceAll('.', '-')}`;
+}
+
+/**
+ * validates If the input params is a valid ESV or not (variable or potentially secret)
+ * @param {String} esvValue value of the ESV to validate
+ * @param {boolean} onlyCheckForVariable
+ * @returns {boolean}
+ */
+export async function getEsvValue(esvValue, onlyCheckForVariable) {
+  const esvId = getIdfromPlaceholder(esvValue);
+  try {
+    const { data: variableData } = await getVariable(esvId);
+    return convertBase64ToString(variableData?.valueBase64 || '');
+  } catch (e) {
+    // If the variable does not exist, it may be a secret, so we will try to get the secret
+  }
+
+  if (onlyCheckForVariable) {
+    return '';
+  }
+  try {
+    const { data: secretData } = await getSecret(esvId);
+    return convertBase64ToString(secretData?.valueBase64 || '');
+  } catch (e) {
+    // If the secret does not exist, we will return an empty string
+    return '';
+  }
 }
