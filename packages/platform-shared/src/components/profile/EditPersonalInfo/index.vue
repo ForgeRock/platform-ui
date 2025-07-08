@@ -47,6 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :required="field.required"
                   :index="index"
                   :disabled="!field.userEditable"
+                  number-validation="number"
                   v-on="$listeners"
                   @input="updateField(index, $event)" />
               </div>
