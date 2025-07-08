@@ -62,6 +62,10 @@ export default {
       type: String,
       default: '',
     },
+    numberValidation: {
+      type: String,
+      default: 'numeric',
+    },
   },
   mixins: [
     ListsMixin,
@@ -81,7 +85,7 @@ export default {
         return 'oneOf:true,false';
       }
       if (this.items.type === 'number') {
-        return 'numeric';
+        return this.numberValidation;
       }
       return '';
     },

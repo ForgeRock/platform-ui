@@ -68,6 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :items="field.items"
                     :label="field.title"
                     :name="field.key"
+                    number-validation="number"
                     :required="field.required"
                     @input="updateField(index, $event)" />
                 </BFormGroup>

@@ -155,6 +155,28 @@ export function getRules(i18n) {
     return valid || i18n.global.t('common.policyValidationMessages.VALID_INT');
   };
 
+  /**
+   * Validates whether a value is a valid number. This allows for both integers and floating point numbers.
+   * @param {String|Number|Array} value Value to validate
+   * @returns true if valid, or a validation message if invalid
+   * @example 123
+   * @example [{ value: 123 }, { value: 1.23 }, 123, 1.23, '123', '1.23', '1.23e10', '1.23E10', '-123', '-1.23', '-1.23e10', '-1.23E10']
+   */
+  function number(value) {
+    let valid = true;
+    const regex = /^[-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/;
+    if (Array.isArray(value)) {
+      value.forEach((singleValue) => {
+        if (singleValue.value || singleValue.value === 0 ? !regex.test(singleValue.value) : !regex.test(singleValue)) {
+          valid = false;
+        }
+      });
+    } else {
+      valid = regex.test(value);
+    }
+    return valid || i18n.global.t('common.policyValidationMessages.VALID_NUMBER');
+  }
+
   const integer = (value) => rules.integer(value) || i18n.global.t('common.validation.int');
 
   const oneOf = (value, list) => rules.one_of(value, list) || i18n.global.t('common.policyValidationMessages.VALID_BOOLEAN');
@@ -394,6 +416,7 @@ export function getRules(i18n) {
     noMicrosoftRealm,
     not_starts_with_case_insensitive,
     not_starts_with_number,
+    number,
     numeric,
     oneOf,
     period_required,

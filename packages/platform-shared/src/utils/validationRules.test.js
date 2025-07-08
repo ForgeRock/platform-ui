@@ -29,6 +29,25 @@ describe('numeric validators', () => {
   });
 });
 
+describe('number validators', () => {
+  it('should validate single number value', () => {
+    expect(rules.number('123')).toBe(true);
+    expect(rules.number('1.1')).toBe(true);
+    expect(rules.number(123)).toBe(true);
+    expect(rules.number(1.1)).toBe(true);
+    expect(rules.number('a')).toBe('Value must be a number.');
+    expect(rules.number('1 1')).toBe('Value must be a number.');
+    expect(rules.number('1a')).toBe('Value must be a number.');
+  });
+
+  it('should validate multi number value', () => {
+    expect(rules.number(['1', '1.2', '33'])).toBe(true);
+    expect(rules.number([1, 1.23, 3])).toBe(true);
+    expect(rules.number([1, '2', 3.4])).toBe(true);
+    expect(rules.number([123, 1.1, 'a'])).toBe('Value must be a number.');
+  });
+});
+
 describe('allowedRules validators', () => {
   it('should return true when correct value is passed', async () => {
     const result = await rules.allowedRules('abcd', ['alpha', 'numeric', 'under', 'period', 'hypen']);

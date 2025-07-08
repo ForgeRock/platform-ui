@@ -502,6 +502,7 @@
       "UNKNOWN": "Unable to create or modify {propertyname} due to an unknown configuration issue",
       "EXTENDED_FIELD_POLICY": "{propertyname} is not valid",
       "VALID_INT": "Value must be of type integer.",
+      "VALID_NUMBER": "Value must be a number.",
       "policyServiceError": {
         "policyApi": "Unable to retrieve {policyApi}, Please try again later.",
         "policyReadError": "Error retrieving password policy",
