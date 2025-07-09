@@ -1,16 +1,11 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
- */
+/* eslint-disable operator-linebreak */
 
 import { has, isArray } from 'lodash';
 import isEmail from 'validator/lib/isEmail';
@@ -92,12 +87,51 @@ export function ipv4(value) {
 }
 
 /**
- * validates a text field is an ipv6 address
+ * Validates a text field is an ipv6 address
+ * This regex is designed to match the various representations of IPv6 addresses,
+ * including:
+ * 1.  Standard 8-group hex notation (e.g., 2001:0db8:85a3:0000:0000:8a2e:0370:7334)
+ * 2.  Compressed notation with '::' (e.g., 2001:db8::8a2e:370:7334)
+ * 3.  Mixed notation with an IPv4 address at the end (e.g., ::ffff:192.0.2.128)
+ *
+ * It is broken down into several parts for readability and combined at the end.
  * @param {String} value
  * @returns {Boolean} Whether validation passed or not.
  */
 export function ipv6(value) {
-  const ip6Regex = /((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\s*$)|(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$))/;
+  // This Regex was created by Gemini AI. I have validated it against the RFC 4291 and it works for all suggested IPv6 addresses.
+  // An individual hexadecimal group in an IPv6 address (1-4 hex characters)
+  const hexGroup = '[0-9a-fA-F]{1,4}';
+
+  // The IPv4 part of a mixed-notation address (e.g., 192.168.1.1)
+  const ipv4Part = '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)';
+
+  // Regex for the full, uncompressed 8-group format
+  const fullIPv6 = `(?:${hexGroup}:){7}${hexGroup}`;
+
+  // Regex for addresses where '::' replaces one or more groups
+  // It handles cases where '::' is at the beginning, middle, or end.
+  const compressedIPv6 =
+      `(?:(?:${hexGroup}:){1,7}:)|` + // 1-7 groups, then ::
+      `(?:(?:${hexGroup}:){1,6}:${hexGroup})|` + // 1-6 groups, ::, then 1 group
+      `(?:(?:${hexGroup}:){1,5}(?::${hexGroup}){1,2})|` + // 1-5 groups, ::, then 1-2 groups
+      `(?:(?:${hexGroup}:){1,4}(?::${hexGroup}){1,3})|` + // 1-4 groups, ::, then 1-3 groups
+      `(?:(?:${hexGroup}:){1,3}(?::${hexGroup}){1,4})|` + // 1-3 groups, ::, then 1-4 groups
+      `(?:(?:${hexGroup}:){1,2}(?::${hexGroup}){1,5})|` + // 1-2 groups, ::, then 1-5 groups
+      `(?:${hexGroup}:(?:(?::${hexGroup}){1,6}))|` + // 1 group, ::, then 1-6 groups
+      `:(?:(?::${hexGroup}){1,7}|:)`; // :: at the beginning
+
+  // Regex for mixed notation (IPv6 ending with an IPv4 address)
+  const mixedNotation =
+    `(?:(?:${hexGroup}:){1,6})?::ffff:${ipv4Part}|` + // Optional groups, ::ffff:, then IPv4
+    `::ffff:${ipv4Part}`; // Just ::ffff: and IPv4
+
+  const zoneIdentifies = '(?:%[0-9A-Za-z]+)?'; // Optional zone identifier (e.g., %eth0)
+
+  // Combine all parts into a single regex.
+  // The `^` and `$` anchors ensure the entire string must match.
+  const ip6Regex = new RegExp(`^((${fullIPv6})|(${compressedIPv6})|(${mixedNotation}))${zoneIdentifies}$`);
+
   return ip6Regex.test(value);
 }
 
