@@ -486,8 +486,12 @@ of the MIT license. See the LICENSE file for details. -->
         background-color: {{ theme.accountTableRowHoverColor || '#f6f8fa' }} !important;
       }
 
-      #app .dropdown-item:hover,
       #app .dropdown-item:focus {
+        background-color: unset;
+      }
+
+      #app .dropdown-item:hover,
+      #app .dropdown-item:focus-visible {
         background-color: {{ theme.profileMenuHoverColor || '#e4f4fd' }};
         color: {{ theme.profileMenuHoverTextColor || '#181b20' }};
       }
