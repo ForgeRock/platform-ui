@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div ref="menuContainer">
+  <div
+    ref="menuContainer"
+    class="menu-container">
     <button
       aria-haspopup="true"
       class="btn btn-link dropdown-toggle text-dark px-0 d-flex"
@@ -11,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
       :aria-controls="menuListId"
       :aria-expanded="isOpen.toString()"
       :id="menuButtonId"
-      @click="isOpen = !isOpen"
+      @click="openMenu"
       @keydown.enter.prevent="openMenu"
       @keydown.space.prevent="openMenu"
       @keydown.up.prevent="openMenu"
@@ -21,10 +23,10 @@ of the MIT license. See the LICENSE file for details. -->
 
     <ul
       v-if="isOpen"
-      class="menu"
       ref="menuListRef"
       role="menu"
       :aria-labelledby="menuButtonId"
+      :class="menuClasses"
       :id="menuListId"
       @click="toggleMenu"
       @keydown.prevent="handleKeydown">
@@ -35,13 +37,17 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
-  ref, nextTick, onMounted, onBeforeUnmount,
+  ref, nextTick, onMounted, onBeforeUnmount, computed,
 } from 'vue';
 
 const props = defineProps({
   selectedItemIndex: {
     type: Number,
     default: -1,
+  },
+  right: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -94,7 +100,10 @@ function closeMenu() {
  * @param event keydown event
  */
 async function openMenu(event) {
-  if (isOpen.value) return;
+  if (isOpen.value) {
+    closeMenu();
+    return;
+  }
 
   isOpen.value = true;
   await nextTick();
@@ -184,6 +193,11 @@ function handleClickOutside(event) {
   }
 }
 
+const menuClasses = computed(() => ({
+  menu: true,
+  'menu--right': props.right,
+}));
+
 onMounted(() => {
   document.addEventListener('pointerdown', handleClickOutside);
 });
@@ -194,17 +208,28 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.menu-container {
+  position: relative;
+}
+
 .menu {
   list-style: none;
   padding-left: 0;
   margin: 0;
   position: absolute;
   min-width: 12rem;
+  top: 100%;
+  left: 0;
   background-color: white;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.13);
   z-index: 10;
   border: 1px solid #e7eef4;
   border-radius: 4px;
   padding: 4px 0px;
+}
+
+.menu--right {
+  right: 0;
+  left: unset;
 }
 </style>
