@@ -1025,6 +1025,10 @@
         "validate": "Validate",
         "validateHelp": "Add validation properties for this property."
       },
+      "relationships":{
+        "title": "Relationships",
+        "add": "Relationship"
+      },
       "saveProfile": "Save Profile",
       "savingProfile": "Saving Profile",
       "saveSuccess": "Identity Profile saved",
