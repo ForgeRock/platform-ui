@@ -193,6 +193,7 @@
     "askAi": "Ask AI",
     "errors": {
       "messageFromWrongAgent": "Received a message that was not from the agent following Post of a user message - this is not expected",
+      "missingInput": "An error occurred interacting with the AI assistant. Please try again.",
       "tooManyResponses": "Received more than one new message following Post of a user message - this is not expected"
     },
     "explain": "Explain",
