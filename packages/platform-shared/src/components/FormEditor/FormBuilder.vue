@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrFormGenerator
       v-else
       field-name-prop="id"
+      visibility-prop="id"
       :schema="schemaFormGenerator"
       :model="updatedModelValue"
       @update:model="fieldChanged">
@@ -40,6 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="pb-1 mb-4"
           :property="property"
           :model="updatedModelValue"
+          :read-only="readOnly"
           @update:model="fieldChanged"
           @is-valid="setValidSection" />
       </template>
