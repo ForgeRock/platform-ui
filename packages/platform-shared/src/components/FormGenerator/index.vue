@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
           :title="property.groupTitle">
           <Component
             :is="getVisibilityComponent(property.collapsible)"
-            v-model="sectionExpanded[property.label]">
+            v-model="sectionExpanded[property[visibilityProp]]">
             <template v-if="property.type === 'managedObject'">
               <slot
                 name="relationshipField"
@@ -130,6 +130,10 @@ export default {
     fieldNameProp: {
       type: String,
       default: undefined,
+    },
+    visibilityProp: {
+      type: String,
+      default: 'label',
     },
   },
   data() {
@@ -254,7 +258,7 @@ export default {
      */
     showField(property) {
       if (property?.showAlways !== undefined) {
-        this.sectionExpanded[property.label] = property.showAlways;
+        this.sectionExpanded[property[this.visibilityProp]] = property.showAlways;
         return property.showAlways;
       }
 
@@ -271,10 +275,10 @@ export default {
         if (property?.showFieldForValue !== undefined) {
           currentVal = Array.isArray(currentVal) ? currentVal[0] : currentVal;
           if (currentVal === property.showFieldForValue) {
-            this.sectionExpanded[property.label] = true;
+            this.sectionExpanded[property[this.visibilityProp]] = true;
             return true;
           }
-          this.sectionExpanded[property.label] = false;
+          this.sectionExpanded[property[this.visibilityProp]] = false;
           return false;
         }
         return currentVal || false;

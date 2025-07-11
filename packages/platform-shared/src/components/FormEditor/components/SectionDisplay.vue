@@ -14,7 +14,6 @@ of the MIT license. See the LICENSE file for details. -->
       </BCardHeader>
       <BCardBody class="px-4 pb-0">
         <FrFormBuilder
-          field-name-prop="id"
           :transform-schema="false"
           :form="{ fields: property.fields }"
           :model-value="model"
