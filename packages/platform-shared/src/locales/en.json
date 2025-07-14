@@ -669,7 +669,8 @@
     "retrievingObject": "Error retrieving {object}",
     "savingObject": "Error saving {object}",
     "updatingMappingsFail": "Unable to update mappings",
-    "userScriptError": "Invalid script provided. Please refer to the documentation for valid scripts."
+    "userScriptError": "Invalid script provided. Please refer to the documentation for valid scripts.",
+    "invalidFields": "There are invalid fields in the form. Please correct them before proceeding."
   },
   "filterModal": {
     "activeApplied": "No filters applied | {count} filter applied | {count} filters applied",
