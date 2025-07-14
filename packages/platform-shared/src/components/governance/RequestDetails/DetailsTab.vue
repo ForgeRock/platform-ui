@@ -63,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ details.externalRequestId || blankValueIndicator }}
         </BCol>
       </BRow>
-      <BRow>
+      <BRow class="mb-4">
         <BCol lg="12">
           <small class="d-block mb-2">
             {{ $t(`governance.requestModal.detailsTab.justification`) }}
@@ -71,7 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ details.justification || blankValueIndicator }}
         </BCol>
       </BRow>
-      <BRow v-if="details.statusRaw === 'suspended'">
+      <BRow v-if="details.statusRaw === 'suspended'" class="mb-4">
         <BCol
           lg="6"
           md="12"
@@ -86,7 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BButton
               v-if="type === detailTypes.ADMIN_REQUEST"
               variant="link"
-              class="ml-0 pl-0 mb-2"
+              class="ml-0 pl-0 pt-0 pb-1"
               @click="openResumeDateModal">
               <FrIcon
                 name="edit">
