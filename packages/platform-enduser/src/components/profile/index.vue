@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrProfileContainer>
+  <FrProfileContainer :show-personal-info="!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled">
     <template #settings="{ profile, updateProfile, processingRequest }">
       <BCol :lg="(!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled) ? 8 : 12">
         <FrAccountSecurity
@@ -44,8 +44,6 @@ import { BCol } from 'bootstrap-vue';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
-import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrAccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
 import FrProfileContainer from '@forgerock/platform-shared/src/enduser/components/profile/ProfileContainer';
 import FrAccountControls from '@forgerock/platform-shared/src/enduser/components/profile/AccountControls';
@@ -61,10 +59,6 @@ import FrSocial from '@/components/profile/Social/';
  */
 export default {
   name: 'Profile',
-  mixins: [
-    RestMixin,
-    NotificationMixin,
-  ],
   components: {
     BCol,
     FrAccountControls,

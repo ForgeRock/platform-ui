@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BRow
       class="my-5">
       <BCol
+        v-if="showPersonalInfo"
         class="profileCol mb-4"
         lg="4">
         <FrEditProfile
@@ -18,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
           :schema="managedResourceSchema"
           :profile="profile"
           :show-edit="profile._id !== undefined && isInternalUser === false"
-          :show-image-upload="managedResourceSchema.properties && managedResourceSchema.properties.profileImage !== undefined" />
+          :show-image-upload="managedResourceSchema.properties?.profileImage !== undefined" />
       </BCol>
       <slot
         name="settings"
@@ -49,6 +50,12 @@ export default {
     RestMixin,
     NotificationMixin,
   ],
+  props: {
+    showPersonalInfo: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       profile: {
