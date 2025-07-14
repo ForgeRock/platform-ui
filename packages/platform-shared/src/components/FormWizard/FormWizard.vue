@@ -4,40 +4,41 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="h-100">
-    <FrNavbar
-      @clicked="$emit('cancel-action')">
-      <template #center-content>
-        <slot name="center-content">
-          <h1
-            class="h4 font-weight-bold m-0 pl-3 max-lines max-lines-1"
-            data-testid="wizard-title">
-            {{ title }}
-          </h1>
-        </slot>
-      </template>
-      <template #right-content>
-        <slot name="right-content" />
-      </template>
-    </FrNavbar>
-    <BCard
-      class="wizard-tabs card-tabs-vertical"
-      no-body>
-      <FrSpinner
-        v-if="isLoading"
-        testid="form-wizard-spinner"
-        class="py-5" />
-      <BTabs
-        v-else
-        v-model="currentStep"
-        :lazy="lazy"
-        content-class="fr-wizard-content"
-        :active-nav-item-class="progressDots && 'fr-active-nav-item'"
-        :nav-wrapper-class="[progressDots && 'progress-dots-padding', 'fr-wizard pt-3']"
-        pills
-        vertical>
-        <VeeForm
-          v-slot="{ meta: { valid }}"
-          as="span">
+    <VeeForm
+      v-slot="{ meta: { valid }}"
+      as="span">
+      <FrNavbar
+        @clicked="$emit('cancel-action')">
+        <template #center-content>
+          <slot name="center-content">
+            <h1
+              class="h4 font-weight-bold m-0 pl-3 max-lines max-lines-1"
+              data-testid="wizard-title">
+              {{ title }}
+            </h1>
+          </slot>
+        </template>
+        <template #right-content>
+          <slot name="right-content" />
+        </template>
+      </FrNavbar>
+      <BCard
+        class="wizard-tabs card-tabs-vertical"
+        no-body>
+        <FrSpinner
+          v-if="isLoading"
+          testid="form-wizard-spinner"
+          class="py-5" />
+        <BTabs
+          v-else
+          v-model="currentStep"
+          :lazy="lazy"
+          content-class="fr-wizard-content"
+          :active-nav-item-class="progressDots && 'fr-active-nav-item'"
+          :nav-wrapper-class="[progressDots && 'progress-dots-padding', 'fr-wizard pt-3']"
+          pills
+          vertical
+          @activate-tab="(...events) => handleTabClick(valid, events[2])">
           <BTab
             v-for="(tab, index) in tabs"
             :key="tab.title"
@@ -102,9 +103,9 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
             </slot>
           </BCardFooter>
-        </VeeForm>
-      </BTabs>
-    </BCard>
+        </BTabs>
+      </BCard>
+    </VeeForm>
   </div>
 </template>
 
@@ -124,6 +125,8 @@ import { Form as VeeForm } from 'vee-validate';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar/';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import i18n from '@/i18n';
 
 // Composables
 const {
@@ -183,6 +186,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  /**
+   * If true, the form will validate when switching tabs.
+   * This is useful to prevent users from skipping steps with invalid data.
+   */
+  validateOnTabChange: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const currentStep = ref(0);
@@ -203,6 +214,20 @@ const changeStep = (amount) => {
     highestVisitedStep.value = currentStep.value;
   }
 };
+
+/**
+ * Handles tab activation in the wizard.
+ * Prevents tab change and shows an error message if validation fails and validateOnTabChange is enabled.
+ *
+ * @param {boolean} valid - Indicates if the current form state is valid.
+ * @param {Object} bvEvent - BvEvent object from BootstrapVue, used to prevent tab activation.
+ */
+function handleTabClick(valid, bvEvent) {
+  if (props.validateOnTabChange && !valid) {
+    bvEvent.preventDefault();
+    showErrorMessage({}, i18n.global.t('errors.invalidFields'));
+  }
+}
 
 setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
 
