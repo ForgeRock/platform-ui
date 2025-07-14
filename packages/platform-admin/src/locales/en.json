@@ -119,6 +119,7 @@
     "PromotionAuthentication": "Promotion Authentication",
     "PromotionHistory": "Promotion History",
     "Realm": "Realm",
+    "Recommendations": "Recommendations",
     "ReportHistory": "Run History",
     "ReportRun": "Run Report",
     "Reports": "Reports",
@@ -149,6 +150,7 @@
     "authBehavior": "Auth Behavior",
     "authScripts": "Auth Scripts",
     "bulkImport": "Import",
+    "recommendations": "Recommendations",
     "certification": "Certification",
     "compliance": "Compliance",
     "configureManaged": "Configure",
@@ -3869,6 +3871,28 @@
     "viewUpdates": "View updates"
   },
   "governance": {
+    "recommendations": {
+      "title": "Recommendations",
+      "subtitle": "Configure recommendation settings",
+      "notConfiguredTitle": "You haven't enabled recommendations yet",
+      "notConfiguredSubTitle": "Enable to configure access and certification recommendations.",
+      "activate": "Activate Recommendations",
+      "settings": {
+        "userProperties": "User Properties",
+        "userPropertiesDescription": "Select the user properties that will be analyzed in order to generate recommendation data in IGA.",
+        "confidenceScore": "Confidence Score",
+        "confidenceScoreDescription": "Set the thresholds for determining whether existing and recommended access is listed as high, medium, or low confidence",
+        "threshold": "Threshold:",
+        "thresholds": "Thresholds",
+        "roleMiningConfidenceThreshold": "Role Mining Confidence",
+        "roleMiningEntitlementThreshold": "Role Mining Entitlement Threshold",
+        "roleMiningMembershipThreshold": "Role Mining Membership Threshold",
+        "getUserSchemaError": "There was an error retrieving the user schema",
+        "getAnalyticsSettingsError": "There was an error retrieving the analytics settings data",
+        "putAnalyticsSettingsError": "There was an error saving the analytics settings data",
+        "putAnalyticsSettingsSuccess": "Analytics settings saved successfully"
+      }
+    },
     "certification": {
       "getTemplateFieldValuesError": "There was an error parsing certification template.",
       "accessReviewHistory": "Access Review History",
