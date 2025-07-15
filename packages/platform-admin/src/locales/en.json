@@ -120,6 +120,7 @@
     "PromotionHistory": "Promotion History",
     "Realm": "Realm",
     "Recommendations": "Recommendations",
+    "RelationshipEdit": "Edit Relationship",
     "ReportHistory": "Run History",
     "ReportRun": "Run Report",
     "Reports": "Reports",
@@ -3396,6 +3397,26 @@
     "reconciliation": "Reconciliation",
     "referencedObjectField": "Object Type Property",
     "referencedObjectFieldDescription": "Object type property to use to populate enumerated values.",
+    "relationshipWizard": {
+      "errors": {
+        "gettingRelationshipData": "There was an error retrieving relationship data"
+      },
+      "tabs": {
+        "derivedProperties": {
+          "description": "Optionally define additional properties on each object type that derive their values from the related object type.",
+          "subtitle": "Derived Properties (optional)",
+          "title": "Derived Properties"
+        },
+        "relationshipProperty": {
+          "description": "Define properties on each related profile to reference to its related managed object type.",
+          "title": "Relationship Property"
+        },
+        "relationshipSettings": {
+          "description": "Settings for this relationship.",
+          "title": "Relationship Settings"
+        }
+      }
+    },
     "returnedByDefault": "Returned by default",
     "rules": {
       "action": "Action",
