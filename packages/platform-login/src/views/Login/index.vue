@@ -23,9 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
       tabindex="-1"
       v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode"
       class="px-0 flex-grow-1 d-flex container focus-ring-none">
-      <BContainer
-        fluid
-        class="flex-grow-1 d-flex">
+      <BContainer class="flex-grow-1 d-flex">
         <BRow :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'align-items-center m-0 flex-grow-1']">
           <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
             <section>
