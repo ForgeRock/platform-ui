@@ -1683,6 +1683,7 @@
         "subtitle": "View and take action on your pending access requests."
       },
       "newRequest": {
+        "accessEndDateInvalid": "End date must be after the start date.",
         "addAccessFor": "Add access for",
         "added": "Added",
         "addItems": "Add items to complete request",
@@ -1756,7 +1757,8 @@
       "resumeDate": "Resume Date",
       "searchText": "Request ID, Requested By, Requested For",
       "submittedARequest": "submitted a request",
-      "submittedRequest": "submitted this request"
+      "submittedRequest": "submitted this request",
+      "untilDate": "Until {date}" 
     },
     "accountDetails": "Account Details",
     "certificationTask": {
@@ -2071,6 +2073,7 @@
         "awaitingApproval": "Awaiting Approval",
         "changeResumeDateJustification": "Provide a justification for the date change",
         "decision": "Decision",
+        "endDate": "Access End Date",
         "externalRequestId": "External Request ID",
         "justification": "Justification",
         "priority": "Priority",
@@ -2078,6 +2081,7 @@
         "requestComplete": "Request Complete",
         "requestId": "Request ID",
         "requestSubmitted": "Request Submitted",
+        "startDate": "Access Start Date",
         "status": "Status",
         "outcome": "Outcome"
       },

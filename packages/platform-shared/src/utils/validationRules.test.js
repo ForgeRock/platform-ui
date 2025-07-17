@@ -459,6 +459,32 @@ describe('is_before_date validator', () => {
   });
 });
 
+describe('are_start_and_end_dates_valid validator', () => {
+  it('should return true when date validation passes', () => {
+    const result = rules.are_start_and_end_dates_valid('', {
+      startDate: '2025-01-01T01:00:00',
+      endDate: '2033-01-01T01:00:00',
+    });
+    expect(result).toBe(true);
+  });
+
+  it('should return corresponding error message if date validation fails', () => {
+    const result = rules.are_start_and_end_dates_valid('', {
+      startDate: '2033-01-01T01:00:00',
+      endDate: '2025-01-01T01:00:00',
+    });
+    expect(result).toBe('End date must be after the start date.');
+  });
+
+  it('should return corresponding error message if date validation fails with time', () => {
+    const result = rules.are_start_and_end_dates_valid('', {
+      startDate: '2025-01-01T09:00:00',
+      endDate: '2025-01-01T01:00:00',
+    });
+    expect(result).toBe('End date must be after the start date.');
+  });
+});
+
 describe('ip validators', () => {
   it('should return true when the value is a valid ipv4 address', () => {
     expect(rules.ipv4_ipv6('1.1.1.1')).toBe(true);

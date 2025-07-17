@@ -16,8 +16,12 @@ import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/Catal
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as PolicyApi from '@forgerock/platform-shared/src/api/governance/PolicyApi';
 import { getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import NewRequest from './index';
 import i18n from '@/i18n';
+
+const rules = ValidationRules.getRules(i18n);
+ValidationRules.extendRules(rules);
 
 jest.mock('@forgerock/platform-shared/src/utils/governance/AccessRequestUtils');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
@@ -76,6 +80,9 @@ describe('NewRequest', () => {
           $router: { push: jest.fn() },
           $store: {
             state: {
+              SharedStore: {
+                governanceDevEnabled: false,
+              },
               requestCartUsers: [{
                 name: 'Barbara Jensen',
                 userName: 'bjensen',
