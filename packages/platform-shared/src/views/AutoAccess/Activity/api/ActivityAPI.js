@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,7 +9,7 @@ import { uniq } from 'lodash';
 import { generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
 import store from '@/store';
 
-const entitySearch = '/entity/search/';
+const entitySearch = '/entity/search/autoaccess/risk_explainability';
 
 export const MODELS = {
   ensemble: 'Model C',
@@ -82,8 +82,8 @@ export const apiToInternalEvent = (data) => {
   }
   if (riskScoreData.risk_score_threshold < riskScoreData.ueba_avg_risk_score) {
     if (predictionResult.ueba_signal.explainability
-        && predictionResult.ueba_signal.explainability?.response !== 'failed'
-        && predictionResult.ueba_signal.explainability?.response !== 'unknown') {
+      && predictionResult.ueba_signal.explainability?.response !== 'failed'
+      && predictionResult.ueba_signal.explainability?.response !== 'unknown') {
       uebaReasons.push(predictionResult.ueba_signal.explainability?.response);
     }
     if (!predictionResult.ueba_signal.explainability && !clusteringReasons.length && !heuristicReasons.length) {
