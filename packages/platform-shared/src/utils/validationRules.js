@@ -317,6 +317,17 @@ export function getRules(i18n) {
     return result || message || i18n.global.t('common.policyValidationMessages.IS_BEFORE_DATE', { date });
   };
 
+  // check if a start and end dates are in correct order
+  // for use with datetime component to check full value of combined date and time
+  const are_start_and_end_dates_valid = (value, { startDate, endDate }) => {
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+    if (start.isValid()) {
+      return end.isAfter(start) || i18n.global.t('governance.accessRequest.newRequest.accessEndDateInvalid');
+    }
+    return true;
+  };
+
   // Rule to check if the value is valid JSON
   const json = (value) => {
     try {
@@ -403,6 +414,7 @@ export function getRules(i18n) {
     alpha_num_under_comma,
     alpha_num,
     alpha,
+    are_start_and_end_dates_valid,
     check_form_row_width,
     connector_bundle_version,
     date_format,

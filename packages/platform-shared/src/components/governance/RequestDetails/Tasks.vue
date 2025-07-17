@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ item.displayName || capitalize(item.name) }}
       </h2>
       <small>
-        {{ parseDate(item.startDate) }}
+        {{ getDateDisplay(item) }}
       </small>
     </template>
 
@@ -232,5 +232,16 @@ function showTaskDetailsModal(currentItem) {
 
 function closeTaskDetailsModal() {
   taskDetails.value = {};
+}
+
+/**
+ * Get the date display to show under the task name
+ * @param item Task item
+ */
+function getDateDisplay(item) {
+  if (item.type === 'scheduled' && item.status === 'in-progress') {
+    return i18n.global.t('governance.accessRequest.untilDate', { date: parseDate(item.events?.scheduled?.date) });
+  }
+  return parseDate(item.startDate);
 }
 </script>

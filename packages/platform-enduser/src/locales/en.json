@@ -284,6 +284,9 @@
         "subtitle": "View and take action on your pending access requests."
       },
       "newRequest": {
+        "accessStartDate": "Access Start Date",
+        "accessEndDate": "Access End Date",
+        "accessEndDateInvalid": "End date must be after the start date.",
         "addAccessFor": "Add access for",
         "added": "Added",
         "addItems": "Add items to complete request",

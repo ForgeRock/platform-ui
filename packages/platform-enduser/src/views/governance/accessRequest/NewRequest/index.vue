@@ -665,6 +665,7 @@ export default {
   .fr-cart-panel {
     right: 0;
     width: 320px;
+    overflow-x: clip !important;
     background-color: $white;
     top: 0;
     margin-top: 72px;

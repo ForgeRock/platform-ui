@@ -75,6 +75,22 @@ of the MIT license. See the LICENSE file for details. -->
           {{ details.externalRequestId || blankValueIndicator }}
         </BCol>
       </BRow>
+      <BRow
+        v-if="details.startDate || details.endDate"
+        class="mb-4">
+        <BCol lg="6">
+          <small class="d-block mb-2">
+            {{ $t(`governance.requestModal.detailsTab.startDate`) }}
+          </small>
+          {{ getFormattedDate(details.startDate) }}
+        </BCol>
+        <BCol lg="6">
+          <small class="d-block mb-2">
+            {{ $t(`governance.requestModal.detailsTab.endDate`) }}
+          </small>
+          {{ getFormattedDate(details.endDate) }}
+        </BCol>
+      </BRow>
       <BRow class="mb-4">
         <BCol lg="12">
           <small class="d-block mb-2">
@@ -307,6 +323,8 @@ function getDetails(item) {
     priority: item.details.priority || null,
     justification: item.rawData.request?.common?.justification,
     outcome: setOutcomeValue(item.rawData.decision?.outcome),
+    startDate: item.rawData.request?.common?.startDate,
+    endDate: item.rawData.request?.common?.endDate,
   };
 
   return newDetails;
@@ -355,6 +373,17 @@ async function updateResumeDate(newResumeTime, justification) {
     savingRequest.value = false;
     emit('update-item');
   }
+}
+
+/**
+ * Return a properly formatted date to display
+ * @param date Date value
+ */
+function getFormattedDate(date) {
+  if (!date) {
+    return blankValueIndicator;
+  }
+  return dayjs(date).format('MMM D, YYYY h:mm A');
 }
 
 onMounted(() => {

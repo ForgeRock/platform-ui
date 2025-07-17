@@ -154,6 +154,35 @@ describe('DetailsTab', () => {
     expect(wrapper.text()).toContain('externalId');
   });
 
+  it('shows start date and end date fields if either present', async () => {
+    const wrapper = setup({
+      item: {
+        details: {},
+        rawData: {
+          request: { common: { endDate: '2025-07-21T20:36:49+00:00' } },
+        },
+      },
+    });
+    await flushPromises();
+    expect(wrapper.text()).toContain('Access Start Date');
+    expect(wrapper.text()).toContain('Access End Date');
+    expect(wrapper.text()).toContain('Jul 21, 2025');
+  });
+
+  it('does not show temporal fields if neither present', async () => {
+    const wrapper = setup({
+      item: {
+        details: {},
+        rawData: {
+          request: { common: { } },
+        },
+      },
+    });
+    await flushPromises();
+    expect(wrapper.text()).not.toContain('Access Start Date');
+    expect(wrapper.text()).not.toContain('Access End Date');
+  });
+
   it('shows resume date if request has suspended status', async () => {
     const wrapper = setup({
       item: {
