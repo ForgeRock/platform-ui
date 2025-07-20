@@ -280,6 +280,7 @@ export default {
           assignmentId: catalogItem.assignment.id,
           requested: this.isRequested(catalogItem.id),
           glossary: catalogItem.glossary?.idx['/entitlement'],
+          prediction: catalogItem.prediction,
         }));
       }
       if (this.catalogResults[0]?.application) {
