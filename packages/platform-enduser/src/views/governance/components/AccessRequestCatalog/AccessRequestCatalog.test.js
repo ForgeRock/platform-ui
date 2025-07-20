@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
 import AccessRequestCatalog from './index';
 
@@ -30,11 +31,51 @@ const mockCatalogItems = [
   },
 ];
 
+const mockRecommendationItems = [
+  {
+    appType: 'entitlement',
+    icon: '',
+    name: 'Entitlement',
+    description: 'A recommended entitlement.',
+    templateName: 'template',
+    requested: true,
+    prediction: {
+      confidenceLevel: 'HIGH',
+      confidenceIcon: 'thumb_up_off_alt',
+      confidence: 0.9,
+      confidencePercentage: 90,
+    },
+    id: 1,
+  },
+  {
+    appType: 'entitlement',
+    icon: '',
+    name: 'Entitlement 2',
+    description: 'Another recommended entitlement.',
+    templateName: 'template',
+    requested: false,
+    id: 2,
+  },
+];
+
 describe('AccessRequestCatalog Component', () => {
+  CommonsApi.getFilterSchema = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
+
   function mountComponent(propsData, overrideData = { selectedTab: 2 }) {
     const wrapper = mount(AccessRequestCatalog, {
       global: {
         plugins: [i18n],
+        mocks: {
+          $store: {
+            state: {
+              govAutoIdSettings: {
+                enableAutoId: true,
+                highScorePercentThreshold: 80,
+                lowScorePercentThreshold: 20,
+              },
+            },
+          },
+        },
       },
       props: {
         loading: false,
@@ -141,5 +182,34 @@ describe('AccessRequestCatalog Component', () => {
       requested: false,
       templateName: 'template2',
     });
+  });
+
+  it('only shows entitlements tab when viewing recommended access', async () => {
+    const wrapper = mountComponent(
+      {
+        catalogItems: mockRecommendationItems,
+        initialTab: 'entitlement',
+        requestType: 'recommendations',
+      },
+    );
+    await flushPromises();
+    const tabs = wrapper.find('.nav-tabs');
+    const tabItems = tabs.findAll('.nav-item');
+    expect(tabItems.length).toEqual(1);
+  });
+
+  it('shows recommended access for the access that has predictions', async () => {
+    const wrapper = mountComponent(
+      {
+        catalogItems: mockRecommendationItems,
+        initialTab: 'entitlement',
+        requestType: 'recommendations',
+      },
+    );
+    await flushPromises();
+    const recommendedText = wrapper.findAll('.recommended-text');
+    expect(recommendedText.length).toEqual(1);
+    const iconSpan = wrapper.find('span[id="predictionIcon-1"]');
+    expect(iconSpan.text()).toEqual('thumb_up_off_alt');
   });
 });

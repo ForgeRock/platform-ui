@@ -86,6 +86,7 @@ function getObjectDisplayName() {
   switch (props.type) {
     case 'certification':
     case 'approval':
+    case 'recommendation':
       return props.object || i18n.global.t('governance.recommendation.entitlement');
     default:
       return i18n.global.t('governance.recommendation.genericObject');
@@ -95,6 +96,13 @@ function getObjectDisplayName() {
 const displayInfo = computed(() => {
   const percentage = props.prediction.confidencePercentage;
   const object = getObjectDisplayName();
+  if (props.type === 'recommendation') {
+    return {
+      title: i18n.global.t('governance.recommendation.popover.recommended'),
+      body: i18n.global.t('governance.recommendation.popover.catalogRecommendation', { percentage, object }),
+      rules: props.prediction?.rule,
+    };
+  }
   if (confidenceLevel.value === confidenceLevels.HIGH) {
     return {
       title: i18n.global.t('governance.recommendation.popover.recommended'),

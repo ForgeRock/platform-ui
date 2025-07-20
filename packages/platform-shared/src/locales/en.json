@@ -2040,7 +2040,8 @@
         "highRecommendation": "This {object} is recommended for this user with high confidence.  Of the similar users who currently have the below listed attributes, {percentage}% also have this {object}.",
         "lowRecommendation": "This {object} is NOT recommended for this user.  Of the similar users who currently have the below listed attributes, only {percentage}% also have this {object}.",
         "noStrongRecommendation": "There is no strong recommendation for this user to have this {object}.  Of the similar users who currently have the below listed attributes, {percentage}% also have this {object}.",
-        "noRecommendationAvailable": "There is no recommendation currently available for this {object}."
+        "noRecommendationAvailable": "There is no recommendation currently available for this {object}.",
+        "catalogRecommendation": "This {object} is recommended because {percentage}% of users similar to you also have it."
       },
       "banner": {
         "recommended": "Access recommended",

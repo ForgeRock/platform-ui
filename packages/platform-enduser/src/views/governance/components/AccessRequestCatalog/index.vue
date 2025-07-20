@@ -195,6 +195,18 @@ of the MIT license. See the LICENSE file for details. -->
                                 {{ item.description }}
                               </small>
                             </p>
+                            <div
+                              v-if="Boolean(item.prediction)"
+                              class="row align-items-center pl-3">
+                              <FrRecommendationIcon
+                                :prediction="getPredictionDisplay(item)"
+                                :auto-id-settings="this.$store.state.govAutoIdSettings"
+                                type="recommendation"
+                                :id="item.id" />
+                              <div class="recommended-text">
+                                {{ $t('governance.accessRequest.recommended') }}
+                              </div>
+                            </div>
                           </BMedia>
                         </BCardBody>
                         <BCardFooter class="border-0 pt-0 d-flex justify-content-end">
@@ -321,8 +333,11 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import { getPredictionDisplayInfo } from '@forgerock/platform-shared/src/utils/governance/prediction';
 import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
+import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
 import FrItemDetailsModal from './modals/ItemDetailsModal/ItemDetailsModal';
 import FrSODViolationMessage from './modals/SODViolationMessage';
 
@@ -355,6 +370,7 @@ export default {
     FrPagination,
     FrSearchInput,
     FrSODViolationMessage,
+    FrRecommendationIcon,
     FrSortDropdown,
     FrSpinner,
     VeeForm,
@@ -430,6 +446,7 @@ export default {
       page: 1,
       pageSize: 10,
       savedFilter: {},
+      schema: {},
       searchValue: '',
       selectedItem: {},
       selectedTab: 0,
@@ -520,9 +537,15 @@ export default {
       return Object.keys(this.availableTabs)[this.selectedTab];
     },
   },
-  mounted() {
+  async mounted() {
     this.selectedTab = Object.keys(this.availableTabs).indexOf(this.initialTab);
     this.searchCatalog();
+    try {
+      const { data } = await getFilterSchema();
+      this.schema.user = data.user;
+    } catch {
+      // We don't need to show an error here
+    }
   },
   methods: {
     isEmpty,
@@ -557,6 +580,9 @@ export default {
       this.searchCatalog({ page: 1 });
     },
     getGovernanceFilter,
+    getPredictionDisplay(item) {
+      return getPredictionDisplayInfo(item, this.$store.state.govAutoIdSettings, this.schema.user);
+    },
     onImageError,
     /**
      * Sets filter back to what it was when filter modal was opened
@@ -670,5 +696,9 @@ a.card:hover {
 
 .rounded-pill {
   border-radius: 50rem !important;
+}
+
+.recommended-text {
+  font-size: 0.8rem;
 }
 </style>
