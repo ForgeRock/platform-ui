@@ -132,7 +132,7 @@ export function deleteTheme(themeName) {
 export function saveThemeEdit() {
   cy.findByRole('navigation', { name: 'Header navigation' })
     .should('be.visible')
-    .find('[aria-label^="Breadcrumb"]')
+    .find('[aria-label^="Back to"]')
     .click();
 
   // Fill in the Theme name, save the Theme and wait for the save to complete

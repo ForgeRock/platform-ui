@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
           name="menu"
         />
       </button>
-      <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
+      <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1" role="presentation">
         <li
           v-if="tenantLockedMode"
           class="d-flex align-items-center px-3">
@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-flex align-items-center"
           @click="$emit('clicked')">
           <RouterLink
-            :aria-label="$t('common.breadcrumb') + `, ${returnRouteText}`"
+            :aria-label="$t('common.backTo', {object: returnRouteText})"
             active-class=""
             class="fr-back-link overflow-hidden pl-4 pl-lg-0 mt-0"
             v-show="hasBreadcrumb"
