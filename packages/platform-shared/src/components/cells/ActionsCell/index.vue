@@ -12,7 +12,6 @@ of the MIT license. See the LICENSE file for details. -->
       no-caret
       right
       variant="link"
-      @shown="$emit('shown')"
       :toggle-class="`text-decoration-none p-0 ${toggleClass}`"
       :data-testid="`actions-${testId}`">
       <template #button-content>

@@ -109,7 +109,8 @@
       "only-child",
       "focus-visible",
       "placeholder-shown",
-      "deep"
+      "deep",
+      "has"
     ],
     "value-keyword-case": [
       "lower",

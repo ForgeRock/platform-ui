@@ -513,12 +513,6 @@ a.card {
     white-space: nowrap;
   }
 
-  td:not(.sticky-column-right) {
-    max-width: 300px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-
   tr.b-table-row-selected.table-transparent {
     background-color: $light-blue !important;
   }
