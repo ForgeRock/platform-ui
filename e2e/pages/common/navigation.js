@@ -10,6 +10,6 @@
 export function clickBreadcrumb() {
   cy.findByRole('navigation', { name: 'Header navigation' })
     .should('be.visible')
-    .find('[aria-label^="Breadcrumb"]')
+    .find('[aria-label^="Back to"]')
     .click();
 }

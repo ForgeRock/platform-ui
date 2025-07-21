@@ -43,6 +43,7 @@
     "availableColumns": "Available Columns",
     "avatar": "Avatar",
     "back": "Back",
+    "backTo": "Back to {object}",
     "basic": "Basic",
     "beta": "Beta",
     "blocked": "Blocked",
