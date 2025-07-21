@@ -69,7 +69,6 @@ of the MIT license. See the LICENSE file for details. -->
     <BTable
       v-show="tableData.length && !isLoading"
       class="mb-0"
-      :tbody-tr-class="rowClass"
       hover
       id="list-resource-table"
       responsive
@@ -90,7 +89,6 @@ of the MIT license. See the LICENSE file for details. -->
             :delete-option="deleteAccess"
             :divider="editAccess || hasClearSessionAccess(item)"
             :edit-option="editAccess"
-            @shown="setActiveRow(item)"
             @delete-clicked="showDeleteResourceModal(item._id)"
             @edit-clicked="$emit('row-clicked', item)">
             <template
@@ -344,7 +342,6 @@ export default {
       resourceToClearSessionsForName: '',
       searchHasFocus: true,
       availableColumnList: [],
-      selectedRowId: '',
     };
   },
   computed: {
@@ -430,8 +427,7 @@ export default {
         this.columns.push({
           key: 'actions',
           label: '',
-          stickyColumn: true,
-          class: 'sticky-column-right',
+          class: 'col-actions',
         });
       }
     },
@@ -633,22 +629,6 @@ export default {
       this.columns = updatedColumnList.filter((column) => column.enabled);
       this.appendActionColumn();
     },
-    /**
-     * Sets the row class based on the selectedRowId
-     * The currently selected row will have a class of 'selected z-index-1000',
-     * This styling ensures the action dialog box child element is positioned correctly with respect to the sticky columns.
-     */
-    rowClass(item) {
-      return item?._id === this.selectedRowId ? 'selected z-index-1000' : '';
-    },
-    /**
-     * Listener method when the action cell is shown
-     * Sets selectedRowId based on the current item's Id, Which is used to apply the selected row class.
-     * This is used to ensure the action dialog box child element is positioned correctly with respect to the sticky columns.
-     */
-    setActiveRow(item) {
-      this.selectedRowId = item._id;
-    },
   },
 };
 </script>
@@ -657,14 +637,20 @@ export default {
     cursor: pointer;
   }
 
-  :deep(.table tr td.sticky-column-right) {
-    width: 80px;
-    position: sticky;
+  :deep(.table td.col-actions),
+  :deep(.table th.col-actions) {
+    position: sticky !important;
     right: 0;
+    overflow: visible;
+    z-index: 1000;
+    background-color: $white;
+    &:has(.dropdown.show) {
+      position: sticky;
+      z-index: 1001;
+    }
   }
 
-  :deep(.table tr:hover td.sticky-column-right) {
-    background-image: none !important;
+  :deep(.table-hover tr:hover td.col-actions) {
     background-color: $gray-100 !important;
   }
 
@@ -710,12 +696,6 @@ export default {
       transform: translate3d(4px, 0, 0);
     }
   }
-
-:deep() .z-index-1000 {
-  .sticky-column-right {
-    z-index: 1000!important;
-  }
-}
 
 :deep(.btn-link.text-dark:hover) {
   background-color: #f6f8fa;
