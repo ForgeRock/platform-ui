@@ -71,6 +71,20 @@ of the MIT license. See the LICENSE file for details. -->
         </FrIcon>
       </BDropdownItem>
       <!--
+        Triggered on click, indicates user would like to export this row's item
+        @event export-clicked
+      -->
+      <BDropdownItem
+        v-if="exportOption"
+        @click="$emit('export-clicked', $event)"
+        :data-testid="`dropdown-export-${testId}`">
+        <FrIcon
+          icon-class="mr-2"
+          name="file_download">
+          {{ $t('common.export') }}
+        </FrIcon>
+      </Bdropdownitem>
+      <!--
         Slot for any custom actions not covered by common use cases
       -->
       <slot name="custom-bottom-actions" />
@@ -152,6 +166,13 @@ export default {
     editOptionText: {
       default: '',
       type: String,
+    },
+    /**
+     * Enables a dropdown option to export the item in the current row
+     */
+    exportOption: {
+      default: false,
+      type: Boolean,
     },
     /**
      * Enables a dropdown option to activate or deactivate the item in the current row

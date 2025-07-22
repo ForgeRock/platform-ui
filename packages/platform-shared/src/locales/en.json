@@ -2017,6 +2017,14 @@
       "NEW_ACCESS": "New Access",
       "TEMPORAL": "Temporal Constraints"
     },
+    "importModal": {
+      "existingError": "A {itemType} with this id already exists.",
+      "genericImportError": "Error parsing import file",
+      "genericValidationError": "Error validating import file",
+      "import": "Import {itemType}",
+      "importingItem": "Importing {itemType}...",
+      "description": "Choose a JSON file containing the {itemType} to import."
+    },
     "prediction": {
       "HIGH": "High Confidence",
       "LOW": "Not Recommended"

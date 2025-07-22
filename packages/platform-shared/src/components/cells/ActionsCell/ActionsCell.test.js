@@ -40,6 +40,7 @@ describe('Actions cell actions and renders', () => {
         testId: '0',
         deleteOption: false,
         editOption: false,
+        exportOption: false,
       },
     });
 
@@ -48,6 +49,9 @@ describe('Actions cell actions and renders', () => {
 
     const dropdownEdit = findByTestId(wrapper, 'dropdown-edit-0');
     expect(dropdownEdit.exists()).toBe(false);
+
+    const exportEdit = findByTestId(wrapper, 'dropdown-export-0');
+    expect(exportEdit.exists()).toBe(false);
 
     const dropdownShowActiveToggle = findByTestId(wrapper, 'dropdown-delete-0');
     expect(dropdownShowActiveToggle.exists()).not.toBe(true);
@@ -188,6 +192,26 @@ describe('Actions cell actions and renders', () => {
     });
     const dropdownEdit = findByTestId(wrapper, 'dropdown-edit-0');
     expect(dropdownEdit.text()).toContain('Custom Edit');
+  });
+
+  it('emits export-clicked event when Export dropdown toggle item is clicked', () => {
+    const wrapper = mount(ActionsCell, {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
+        testId: '0',
+        exportOption: true,
+      },
+    });
+
+    const dropdownExport = wrapper.findAll('.dropdown-item')[1];
+    expect(dropdownExport.text()).toContain('Export');
+    expect(dropdownExport.text()).toContain('file_download');
+    expect(dropdownExport.classes()).toContain('dropdown-item');
+
+    dropdownExport.trigger('click');
+    expect(wrapper.emitted('export-clicked')).toBeTruthy();
   });
 
   it('custom classes applied to toggle button properly', () => {

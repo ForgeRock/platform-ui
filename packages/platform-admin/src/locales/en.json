@@ -1382,7 +1382,7 @@
       }
     },
     "requests": {
-      "subTitle": "View and take action on all pending access requests."
+      "subTitle": "View and manage access requests, request types, and additional configuration."
     }
   },
   "passwordPolicy": {
@@ -4201,6 +4201,14 @@
         "filterError": "Filter must contain minimum of one before and after condition for each property at same level."
       }
     },
+    "importModal": {
+      "existingError": "A {itemType} with this id already exists.",
+      "genericImportError": "Error parsing import file",
+      "genericValidationError": "Error validating import file",
+      "import": "Import {itemType}",
+      "importingItem": "Importing {itemType}...",
+      "description": "Choose a JSON file containing the {itemType} to import."
+    },
     "glossary": {
       "addGlossaryItem": "Add {glossaryType} Glossary Item",
       "application": "Application",
@@ -4537,11 +4545,13 @@
       }
     },
     "requestTypes": {
+      "name": "Request Type",
       "enableValidation": "Enable validation",
       "errorDeletingRequestType": "There was an error deleting the request type",
       "errorGettingRequestTypes": "There was an error retrieving the request types",
       "errorGettingWorkflows": "There was an error retrieving the workflows",
       "errorSavingRequestType": "There was an error saving the request type",
+      "errorExportingRequestType": "There was an error exporting the request type",
       "properties": {
         "editProperty": "Edit Property",
         "emptyTitle": "You haven't added any properties yet",
