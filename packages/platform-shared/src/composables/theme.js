@@ -192,13 +192,12 @@ export default function useTheme() {
       const { data: { result } } = await getThemes({ realm, _queryFilter: `linkedTrees eq "${treeId}"` });
       if (result[0]) {
         decodedTheme = decodeThemeScripts(result[0]);
-      }
-    } finally {
-      if (decodedTheme) {
         themeStore.theme = addDefaultsToTheme(decodedTheme);
       } else {
-        themeStore.theme = null;
+        themeStore.theme.name = '';
       }
+    } catch {
+      // No error needed, just no theme linked to tree
     }
   }
 
