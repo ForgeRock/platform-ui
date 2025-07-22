@@ -239,4 +239,16 @@ describe('AccessReviews', () => {
   it('should show the request id', () => {
     expect(wrapper.text()).toMatch('ID: 1');
   });
+
+  describe('suspended request', () => {
+    it('should show the resume date column for a suspended request', async () => {
+      await wrapper.setProps({
+        requests: [
+          custom,
+        ],
+        requestStatus: 'suspended',
+      });
+      expect(wrapper.text()).toMatch('Resume Date');
+    });
+  });
 });

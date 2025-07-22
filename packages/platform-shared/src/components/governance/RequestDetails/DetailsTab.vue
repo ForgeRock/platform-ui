@@ -29,13 +29,13 @@ of the MIT license. See the LICENSE file for details. -->
         <BCol
           lg="6">
           <small class="d-block mb-2">
-            {{ $t(`governance.requestModal.detailsTab.outcome`) }}
+            {{ $t(`governance.requestModal.detailsTab.decision`) }}
           </small>
           <BBadge
-            v-if="details.outcome"
+            v-if="details.decision"
             class="px-4"
-            :variant="details.outcome.variant">
-            {{ details.outcome.name }}
+            :variant="details.decision.variant">
+            {{ details.decision.name }}
           </BBadge>
         </BCol>
         <BCol lg="6">
@@ -56,6 +56,18 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
       </BRow>
       <BRow class="mb-4">
+        <BCol
+          lg="6">
+          <small class="d-block mb-2">
+            {{ $t(`governance.requestModal.detailsTab.outcome`) }}
+          </small>
+          <BBadge
+            v-if="details.outcome"
+            class="px-4"
+            :variant="details.outcome.variant">
+            {{ details.outcome.name }}
+          </BBadge>
+        </BCol>
         <BCol lg="6">
           <small class="d-block mb-2">
             {{ $t(`governance.requestModal.detailsTab.externalRequestId`) }}
@@ -71,13 +83,15 @@ of the MIT license. See the LICENSE file for details. -->
           {{ details.justification || blankValueIndicator }}
         </BCol>
       </BRow>
-      <BRow v-if="details.statusRaw === 'suspended'" class="mb-4">
+      <BRow
+        v-if="details.statusRaw === 'suspended'"
+        class="mb-4">
         <BCol
           lg="6"
           md="12"
           sm="12">
           <small class="d-block mb-2">
-            {{ $t(`governance.requestModal.detailsTab.resumeDate`) }}
+            {{ $t(`governance.accessRequest.resumeDate`) }}
           </small>
           <span class="mr-2">
             {{ dayjs(details.resumeDate).format('MMM D, YYYY h:mm A') }}
@@ -184,22 +198,12 @@ function closeModal() {
   bvModal.value.hide('UpdateResumeDateModal');
 }
 
-function setDecisionValue(type) {
+function setDecisionValue(type, status) {
   switch (type) {
     case 'approved':
       return {
         name: i18n.global.t('governance.decisions.approved'),
         variant: 'success',
-      };
-    case 'suspended':
-      return {
-        name: i18n.global.t('governance.decisions.suspended'),
-        variant: 'warning',
-      };
-    case 'cancelled':
-      return {
-        name: i18n.global.t('governance.decisions.canceled'),
-        variant: 'warning',
       };
     case 'rejected':
       return {
@@ -207,8 +211,41 @@ function setDecisionValue(type) {
         variant: 'danger',
       };
     default:
+      if (status === 'complete' || status === 'cancelled') {
+        return {};
+      }
       return {
         name: i18n.global.t('governance.decisions.pending'),
+        variant: 'warning',
+      };
+  }
+}
+
+function setStatusValue(type) {
+  switch (type) {
+    case 'suspended':
+      return {
+        name: i18n.global.t('governance.status.suspend'),
+        variant: 'warning',
+      };
+    case 'cancelled':
+      return {
+        name: i18n.global.t('governance.status.canceled'),
+        variant: 'danger',
+      };
+    case 'complete':
+      return {
+        name: i18n.global.t('governance.status.complete'),
+        variant: 'success',
+      };
+    case 'provisioning':
+      return {
+        name: i18n.global.t('common.provisioning'),
+        variant: 'warning',
+      };
+    default:
+      return {
+        name: i18n.global.t('governance.status.in-progress'),
         variant: 'warning',
       };
   }
@@ -252,15 +289,6 @@ function setOutcomeValue(type) {
 }
 
 /**
- * Returns request status
- * @param {Object} decision Request decision object
- * @returns {String} Request status
- */
-function getStatus(decision) {
-  return decision?.decision || decision?.status;
-}
-
-/**
  * Retrieves the details for a given item.
  *
  * @param {Object} item - The item for which to retrieve the details.
@@ -273,8 +301,9 @@ function getDetails(item) {
     requestId: item.details.id,
     resumeDate: waitTask?.events?.scheduled?.date,
     waitTaskId: waitTask?.name,
-    status: setDecisionValue(getStatus(item.rawData.decision)),
-    statusRaw: getStatus(item.rawData.decision),
+    status: setStatusValue(item.rawData?.decision?.status),
+    decision: setDecisionValue(item.rawData?.decision?.decision, item.rawData?.decision?.status),
+    statusRaw: item.rawData?.decision?.status,
     priority: item.details.priority || null,
     justification: item.rawData.request?.common?.justification,
     outcome: setOutcomeValue(item.rawData.decision?.outcome),

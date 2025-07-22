@@ -22,7 +22,9 @@ of the MIT license. See the LICENSE file for details. -->
       <template
         v-for="(action, key) in availableActions"
         :key="key">
-        <BDropdownDivider v-if="key === 'divider'" aria-hidden="true"/>
+        <BDropdownDivider
+          v-if="key === 'divider'"
+          aria-hidden="true" />
         <BDropdownItem
           v-else
           :data-testid="key === 'details' ? 'view-details-button' : `dropdown-action-${key}`"
@@ -65,6 +67,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  suspended: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const userId = computed(() => useUserStore().userId);
@@ -90,6 +96,15 @@ const sharedActions = {
     text: 'common.forward',
     icon: 'redo',
     event: 'REASSIGN',
+  },
+};
+
+const suspendedActions = {
+  changeResumeDate: {
+    key: 'changeResumeDate',
+    text: 'governance.accessRequest.changeResumeDate',
+    icon: 'edit',
+    event: 'CHANGERESUMEDATE',
   },
 };
 
@@ -151,6 +166,9 @@ const isSelfApprover = computed(() => (props.item?.rawData?.user?.id
 const permissions = computed(() => props.item.rawData?.phases?.[0]?.permissions || {});
 
 const availableActions = computed(() => {
+  if (props.suspended && props.type === detailTypes.ADMIN_REQUEST) {
+    return { ...actionsByType[detailTypes.USER_REQUEST], ...suspendedActions };
+  }
   if (isEmpty(permissions.value)) return actionsByType[props.type];
   function pickFunction(action, permission) {
     switch (permission) {

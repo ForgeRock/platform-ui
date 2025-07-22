@@ -1739,6 +1739,7 @@
         "userImageAltText": "Profile Picture - {userName}",
         "yourRequest": "Your Request"
       },
+      "changeResumeDate": "Change Resume Date",
       "customRequestAltText": "Custom Request",
       "noRequests": "No {status} Access Requests",
       "recommended": "Recommended",
@@ -1751,6 +1752,7 @@
       "requestType": "Request Type",
       "requestTypesError": "Error getting request types",
       "requestTypesTabTitle": "Request Types",
+      "resumeDate": "Resume Date",
       "searchText": "Request ID, Requested By, Requested For",
       "submittedARequest": "submitted a request",
       "submittedRequest": "submitted this request"
@@ -2066,13 +2068,12 @@
       },
       "detailsTab": {
         "awaitingApproval": "Awaiting Approval",
-        "changeResumeDate": "Change resume date",
         "changeResumeDateJustification": "Provide a justification for the date change",
+        "decision": "Decision",
         "externalRequestId": "External Request ID",
         "justification": "Justification",
         "priority": "Priority",
         "provisioning": "Provisioning",
-        "resumeDate": "Resume Date",
         "requestComplete": "Request Complete",
         "requestId": "Request ID",
         "requestSubmitted": "Request Submitted",

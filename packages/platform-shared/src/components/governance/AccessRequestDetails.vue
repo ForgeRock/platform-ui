@@ -43,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
       <!-- Cancel panel -->
       <BCard
         data-testId="request-detail-cancel"
-        v-if="isActive"
+        v-if="isActive || isSuspended"
         class="mb-5">
         <h3 class="h5 card-title">
           {{ $t('governance.requestModal.cancelRequest') }}
@@ -117,6 +117,8 @@ const isLoading = ref(true);
 const modalType = ref('');
 
 const isActive = computed(() => item.value.rawData?.decision?.status === 'in-progress');
+
+const isSuspended = computed(() => item.value.rawData?.decision?.status === 'suspended');
 
 async function getRequestData() {
   isLoading.value = true;

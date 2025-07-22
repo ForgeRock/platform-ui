@@ -83,6 +83,7 @@ describe('DetailsTab', () => {
           decision: {
             decision: 'approved',
             outcome: 'provisioned',
+            status: 'complete',
           },
           request: {
             common: {
@@ -111,7 +112,7 @@ describe('DetailsTab', () => {
   it('initializes with the correct default data structure based on props', async () => {
     const wrapper = setup();
     await wrapper.vm.$nextTick();
-    expect(wrapper.vm.details.status.name).toContain('Approved');
+    expect(wrapper.vm.details.status.name).toContain('Completed');
   });
 
   it('initializes with the correct default data structure based on props when outcome is presented', async () => {
@@ -137,7 +138,7 @@ describe('DetailsTab', () => {
     });
     await flushPromises();
     const requestedBy = wrapper.find('.row');
-    expect(requestedBy.text()).toBe('StatusPendingRequest ID');
+    expect(requestedBy.text()).toBe('StatusIn-ProgressRequest ID');
   });
 
   it('shows external request id if present', async () => {

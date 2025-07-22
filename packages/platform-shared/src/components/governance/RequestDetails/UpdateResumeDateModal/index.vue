@@ -14,14 +14,14 @@ of the MIT license. See the LICENSE file for details. -->
       title-class="h5"
       title-tag="h2"
       :static="isTesting"
-      :title="$t('governance.requestModal.detailsTab.changeResumeDate')"
+      :title="$t('governance.accessRequest.changeResumeDate')"
       @hidden="resetModal">
       <FrField
         class="mr-1"
         v-model="newResumeDate"
         name="resumeDate"
         type="datetime"
-        :placeholder="$t('governance.requestModal.detailsTab.resumeDate')"
+        :placeholder="$t('governance.accessRequest.resumeDate')"
         :adjust-for-timezone="false"
         :show-seconds="false"
         :validation="validationParams" />
@@ -99,7 +99,7 @@ const validationParams = {
   },
 };
 
-watch(prop.currentResumeDate, (value) => {
+watch(() => prop.currentResumeDate, (value) => {
   newResumeDate.value = value;
 }, { immediate: true });
 
