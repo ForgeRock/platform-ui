@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { cloneDeep, uniq } from 'lodash';
+import { cloneDeep, uniq, find } from 'lodash';
 import { getBasicFilter, getPriorityFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getPredictionDisplayInfo, isHighConfidence, isLowConfidence } from '@forgerock/platform-shared/src/utils/governance/prediction';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
@@ -307,6 +307,17 @@ function getRequestedDateText(date) {
 }
 
 /**
+ * Get the resume date for the given request.
+ * @param {Object} request - The request to check.
+ * @returns {String} The resume date string. Returns an empty string if the date is not provided.
+ */
+function getRequestedResumeDate(request) {
+  const waitTask = find(request.decision?.phases, (phase) => phase.name.includes('waitTask'));
+  if (waitTask) return dayjs(waitTask.events.scheduled.date).local().format();
+  return null;
+}
+
+/**
  * Returns the basic request display object for a given request.
  * This is used for requests that are not for applications, entitlement, or roles
  *
@@ -322,6 +333,7 @@ function getBasicRequestDisplay(request) {
       date: getRequestedDateText(request.decision?.startDate),
       requestedBy: getRequestedByText(request.requester),
       requestedFor: getRequestedForText(request.user),
+      resumeDate: getRequestedResumeDate(request),
       isCustom: true,
     },
     rawData: request,
@@ -377,6 +389,7 @@ function getAdvancedRequestDisplay(request, objectType) {
       date: getRequestedDateText(request.decision?.startDate),
       requestedFor: getRequestedForText(request.user),
       requestedBy: getRequestedByText(request.requester),
+      resumeDate: getRequestedResumeDate(request),
       icon: getIcon(request, objectType),
     },
     rawData: request,

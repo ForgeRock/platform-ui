@@ -147,6 +147,7 @@ const openModalMock = {
     priority: 'high',
     requestedBy: 'Mike Wong',
     requestedFor: 'Andrew Hertel',
+    resumeDate: null,
     type: 'Remove Application',
   },
   rawData: {

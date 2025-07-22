@@ -3,10 +3,11 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BCard no-body>
+  <BCard no-body class="request-card">
     <FrAccessRequestList
       :is-loading="isLoading"
       :list-name="title"
+      :request-status="status"
       :requests="accessRequests"
       @open-detail="$emit('navigate-to-details', $event)">
       <template #header>
@@ -28,10 +29,11 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #actions="{ item }">
         <FrRequestActionsCell
-          v-if="status === 'in-progress'"
+          v-if="status === 'in-progress' || status === 'suspended'"
           class="mr-3"
           :item="item"
-          :type="allowForwarding ? detailTypes.ADMIN_REQUEST : detailTypes.USER_REQUEST"
+          :suspended="status === 'suspended'"
+          :type="props.allowForwarding ? detailTypes.ADMIN_REQUEST : detailTypes.USER_REQUEST"
           @action="handleAction($event, item)" />
       </template>
     </FrAccessRequestList>
@@ -48,6 +50,11 @@ of the MIT license. See the LICENSE file for details. -->
     :item="modalItem"
     @modal-closed="modalItem = {}"
     @update-list="loadRequests(true)" />
+  <FrUpdateResumeDateModal
+    v-if="modalItem"
+    :loading="isSaving"
+    :current-resume-date="resumeDate"
+    @update-resume-date="updateResumeDate" />
 </template>
 
 <script setup>
@@ -55,9 +62,11 @@ import {
   BCard,
 } from 'bootstrap-vue';
 import { ref } from 'vue';
+import { find, startsWith } from 'lodash';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import {
   detailTypes,
   getRequestFilter,
@@ -65,11 +74,13 @@ import {
   sortByOptions,
   sortKeysMap,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { requestAction, updateRequestResumeDate } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrAccessRequestList from '@forgerock/platform-shared/src/components/governance/AccessRequestList';
 import FrRequestActionsCell from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActionsCell';
 import FrRequestToolbar from '@forgerock/platform-shared/src/components/governance/RequestToolbar';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
+import FrUpdateResumeDateModal from '@forgerock/platform-shared/src/components/governance/RequestDetails/UpdateResumeDateModal';
 import i18n from '@/i18n';
 
 /**
@@ -113,9 +124,11 @@ const modalItem = ref({});
 const modalType = ref(REQUEST_MODAL_TYPES.CANCEL);
 const numFilters = ref(0);
 const pageSize = ref(10);
+const resumeDate = ref(null);
 const sortDir = ref('desc');
 const sortKeys = ref('date');
 const status = ref('in-progress');
+const isSaving = ref(false);
 const statusOptions = ref([
   {
     text: i18n.global.t('governance.status.pending'),
@@ -169,9 +182,15 @@ async function loadRequests(goToFirstPage) {
  * @param {string} type - The type of modal to open.
  */
 function openModal(item, type) {
+  resumeDate.value = null;
   modalItem.value = item;
   modalType.value = REQUEST_MODAL_TYPES[type];
-  bvModal.value.show('request_modal');
+  if (modalType.value === 'CHANGERESUMEDATE') {
+    resumeDate.value = item.details.resumeDate;
+    bvModal.value.show('UpdateResumeDateModal');
+  } else {
+    bvModal.value.show('request_modal');
+  }
 }
 
 /**
@@ -194,4 +213,39 @@ function filterHandler(property) {
   const resetPaging = (key !== 'currentPage');
   loadRequests(resetPaging);
 }
+
+/**
+ * Updates a suspended request's resume date.
+ *
+ * @param {String} newResumeTime - The new resume date for the request.
+ * @param {String} justification - The justification for modifying the request's resume date.
+ */
+async function updateResumeDate(newResumeTime, justification) {
+  isSaving.value = true;
+  const requestId = modalItem.value.details.id;
+  const waitTask = find(modalItem.value.rawData.decision?.phases, (phase) => startsWith(phase.name, 'waitTask'));
+  const payload = {
+    events: {
+      scheduled: {
+        date: newResumeTime,
+      },
+    },
+  };
+  try {
+    await updateRequestResumeDate(requestId, waitTask.name, payload);
+    await requestAction(requestId, 'comment', waitTask.name, { comment: justification });
+    bvModal.value.hide('UpdateResumeDateModal');
+    await loadRequests();
+    displayNotification('success', i18n.global.t('governance.accessRequest.requestSaveSuccess'));
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.accessRequest.requestSaveError'));
+  } finally {
+    isSaving.value = false;
+  }
+}
 </script>
+<style lang="scss">
+.request-card {
+  min-width: fit-content;
+}
+</style>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -115,6 +115,18 @@ describe('RequestActionsCell', () => {
       expect(buttons[1].text()).toMatch('Forward');
     });
 
+    it('shows the "Change Resume Date" action for admin request if the request is suspended', () => {
+      wrapper = setup({
+        type: detailTypes.ADMIN_REQUEST,
+        suspended: true,
+      });
+
+      const buttons = wrapper.findAll('[role="menuitem"]');
+      expect(buttons[0].text()).toMatch('View Details');
+      expect(buttons[1].text()).toMatch('Cancel Request');
+      expect(buttons[2].text()).toMatch('Change Resume Date');
+    });
+
     it('clicking the buttons emits the correct events', () => {
       wrapper = setup({
         permissions: adminRequestPermissions,
@@ -122,6 +134,16 @@ describe('RequestActionsCell', () => {
       });
       clickButtonAndAssertEvent(0, 'DETAILS');
       clickButtonAndAssertEvent(1, 'REASSIGN');
+    });
+
+    it('clicking the change resume date button emits the correct event', () => {
+      wrapper = setup({
+        type: detailTypes.ADMIN_REQUEST,
+        suspended: true,
+      });
+      const buttons = wrapper.findAll('[role="menuitem"]');
+      buttons[2].trigger('click');
+      expect(wrapper.emitted('action')[0]).toEqual(['CHANGERESUMEDATE']);
     });
   });
 

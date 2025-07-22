@@ -64,6 +64,11 @@ of the MIT license. See the LICENSE file for details. -->
           type="approval"
           :id="item.details.id" />
       </template>
+      <template #cell(resumeDate)="{ item }">
+        <small class="text-muted">
+          {{ getItemResumeDate(item) }}
+        </small>
+      </template>
       <template #cell(date)="{ item }">
         <small class="text-muted">
           {{ item.details.date }}
@@ -95,7 +100,12 @@ import {
   BMedia,
   BMediaBody,
 } from 'bootstrap-vue';
-import { ref, watch, computed } from 'vue';
+import {
+  ref,
+  watch,
+  computed,
+} from 'vue';
+import dayjs from 'dayjs';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { buildRequestDisplay, getPriorityImageSrc, getPriorityImageAltText } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
@@ -105,6 +115,10 @@ const prop = defineProps({
   isLoading: {
     type: Boolean,
     default: false,
+  },
+  requestStatus: {
+    type: String,
+    default: '',
   },
   requests: {
     type: Array,
@@ -154,8 +168,19 @@ const fields = computed(() => {
     });
   }
 
+  if (prop.requestStatus === 'suspended') {
+    fieldList.splice(1, 0, {
+      key: 'resumeDate',
+      label: i18n.global.t('governance.accessRequest.resumeDate'),
+    });
+  }
+
   return fieldList;
 });
+
+function getItemResumeDate(item) {
+  return item.details.resumeDate ? dayjs(item.details.resumeDate).format('MMM D, YYYY') : null;
+}
 
 watch(() => prop.requests, (newRequests) => {
   items.value = buildRequestDisplay(newRequests, prop.autoIdSettings, prop.schema.user).map((item) => ({
