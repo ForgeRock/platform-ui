@@ -86,6 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template #cell(actions)="{ item }">
         <template v-if="editAccess || deleteAccess || hasClearSessionAccess(item)">
           <FrActionsCell
+            boundary="scrollParent"
             :delete-option="deleteAccess"
             :divider="editAccess || hasClearSessionAccess(item)"
             :edit-option="editAccess"
