@@ -68,6 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <BTable
       class="mb-0"
+      v-resizable-table="{ allowAutoLayout: true, persistKey: `relationship-table-${relationshipArrayProperty.propName}`}"
       hover
       ref="relationshipArrayGrid"
       responsive

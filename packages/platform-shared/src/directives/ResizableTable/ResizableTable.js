@@ -30,55 +30,56 @@
  * <table v-resizable-table="{ maxWidth: 400, persistKey: 'my-table', onResizeEnd: fn }">...</table>
  */
 
+import i18n from '@/i18n';
+import { getValueFromLocalStorage, setLocalStorageValue } from '../../utils/localStorageUtils';
+import store from '../../store';
+
 const TABLE_CLASS = 'resizable-table';
 const RESIZER_CLASS = 'resizer';
+const COL_ACTIONS_CLASS = 'col-actions';
+const CHECKBOX_COLUMN_CLASS = 'checkbox-column';
+const FIXED_WIDTH_CLASS_W_50 = 'w-50';
+const FIXED_WIDTH_CLASS_W_25 = 'w-25';
 const RESIZING_CLASS = `${TABLE_CLASS}--resizing`;
 const RESIZER_MEASURE_CLASS = `${TABLE_CLASS}__shared-measure-container`;
 const RESIZER_LIVE_REGION_CLASS = `${TABLE_CLASS}__live-region`;
 const TABLE_NOWRAP_CLASS = `${TABLE_CLASS}--nowrap`;
-const STORAGE_KEY_PREFIX = `${TABLE_CLASS}-widths-`;
-const GLOBAL_MIN_WIDTH = 24;
+const STORAGE_KEY_SUFFIX = '-column-width';
+const DEFAULT_MIN_WIDTH = 120;
+const DEFAULT_MAX_WIDTH = 800;
+const CHECKBOX_COLUMN_WIDTH = 15;
 const RESIZER_CONTENT_BUFFER = 24;
 const MUTATION_OBSERVER_DEBOUNCE_MS = 200;
-const DEFAULT_MAX_WIDTH = Infinity;
 const ANNOUNCE_WIDTH_THRESHOLD = 10;
+let cols = [];
 
 /**
- * Checks if an element is visible in the DOM.
- * @param {HTMLElement} el
- * @returns {boolean}
+ * Sets the width of a column based on its class and provided width.
+ * Ensures minimum width for checkbox and action columns.
+ * If the provided width is less than the global minimum, it defaults to the global minimum width.
+ * If the provided width is greater than the global maximum, it defaults to the global maximum width.
+ * @param {HTMLElement} col - The element representing the column header.
+ * @param {Number} width - The updated value for the column width.
+ * @return {Number} The final width applied to the column.
  */
-function isElementVisible(el) {
-  if (!el) return false;
-  return !!(el.offsetParent || el === document.body);
-}
-
-/**
- * Persist column widths to localStorage.
- * @param {string} key
- * @param {number[]} widths
- */
-function setPersistedWidths(key, widths) {
-  localStorage.setItem(STORAGE_KEY_PREFIX + key, JSON.stringify(widths));
-}
-
-/**
- * Retrieve persisted column widths from localStorage.
- * @param {string} key
- * @returns {number[]}
- */
-function getPersistedWidths(key) {
-  if (!key) return [];
-  const persisted = localStorage.getItem(STORAGE_KEY_PREFIX + key);
-  return persisted ? JSON.parse(persisted) : [];
+function updateColumnWidths(col, width) {
+  let columnWidth;
+  if (col.classList.contains(CHECKBOX_COLUMN_CLASS)) {
+    columnWidth = CHECKBOX_COLUMN_WIDTH;
+  } else if (col.classList.contains(COL_ACTIONS_CLASS)) {
+    columnWidth = DEFAULT_MIN_WIDTH;
+  } else {
+    columnWidth = Math.max(DEFAULT_MIN_WIDTH, Math.min(DEFAULT_MAX_WIDTH, width));
+  }
+  col.style.setProperty('width', `${columnWidth}px`, 'important');
+  return columnWidth;
 }
 
 // Helper to sync column widths to computed widths
-function syncColumnWidthsToComputed(table) {
-  const cols = table.querySelectorAll('th');
+function syncColumnWidthsToComputed() {
   cols.forEach((col) => {
     const computedWidth = getComputedStyle(col).width;
-    col.style.setProperty('width', computedWidth, 'important');
+    updateColumnWidths(col, computedWidth);
   });
 }
 
@@ -116,16 +117,15 @@ export default {
     const options = binding.value || {};
     // Find the table element (supports both direct and nested usage)
     const table = el.tagName === 'TABLE' ? el : el.querySelector('table');
-
-    if (!table) {
+    const { enableTableColumnResizing } = store.state.SharedStore;
+    if (!table || !enableTableColumnResizing) {
       return;
     }
     table.classList.add(TABLE_CLASS);
 
     // Accessibility: live region for announcements
-    const liveRegion = document.createElement('div');
-    liveRegion.setAttribute('aria-live', 'assertive');
-    liveRegion.setAttribute('role', 'status');
+    const liveRegion = document.createElement('span');
+    liveRegion.setAttribute('aria-live', 'polite');
     liveRegion.classList.add(RESIZER_LIVE_REGION_CLASS);
     table.parentNode.insertBefore(liveRegion, table);
     table.__resizeLiveRegion = liveRegion;
@@ -137,10 +137,11 @@ export default {
      * Announces a message via the live region for screen readers.
      * @param {string} msg
      */
-    function announce(msg) {
+    function announce(type, index, width) {
+      const translatedMsg = i18n.global.t(`common.announceText.${type}`, { index, width });
       liveRegion.textContent = '';
       requestAnimationFrame(() => {
-        liveRegion.textContent = msg;
+        liveRegion.textContent = translatedMsg;
       });
     }
 
@@ -156,13 +157,32 @@ export default {
     }
 
     /**
+     * Remove the hard coded width classes from the column list.
+     * Used to reset the column widths when persisting widths.
+     * @param {NodeList} columnList - List of column elements to remove classes from
+     */
+    const removeClassesFromColumnList = (columnList) => {
+      columnList.forEach((col) => {
+        if (col.classList.contains(FIXED_WIDTH_CLASS_W_50) || col.classList.contains(FIXED_WIDTH_CLASS_W_25)) {
+          col.classList.remove(FIXED_WIDTH_CLASS_W_50);
+          col.classList.remove(FIXED_WIDTH_CLASS_W_25);
+        }
+      });
+    };
+
+    /**
      * Persists the current column widths using the persistKey option.
      */
-    const persistCurrentWidths = () => {
+    const persistCurrentWidths = (columnList) => {
       if (!options.persistKey) return;
-      const cols = table.querySelectorAll('th');
-      const widths = Array.from(cols).map((c) => parseInt(getComputedStyle(c).width, 10) || c.offsetWidth);
-      setPersistedWidths(options.persistKey, widths);
+      const tdColumnList = table.querySelectorAll('td');
+      removeClassesFromColumnList(columnList);
+      removeClassesFromColumnList(tdColumnList);
+      const widths = Array.from(columnList).map((c) => {
+        const updatedWidth = parseInt(getComputedStyle(c).width, 10) || c.offsetWidth;
+        return updateColumnWidths(c, updatedWidth);
+      });
+      setLocalStorageValue(options.persistKey + STORAGE_KEY_SUFFIX, widths);
     };
 
     let maxWidths = [];
@@ -175,7 +195,7 @@ export default {
      * @returns {HTMLElement}
      */
     function createResizer(col, colIndex) {
-      const resizer = document.createElement('div');
+      const resizer = document.createElement('span');
       resizer.classList.add(RESIZER_CLASS);
       if (options.resizerClass) resizer.classList.add(options.resizerClass);
       resizer.setAttribute('role', 'separator');
@@ -184,7 +204,7 @@ export default {
       resizer.setAttribute('aria-label', `Resize column ${colIndex + 1}`);
       if (table.id) resizer.setAttribute('aria-controls', table.id);
       resizer.setAttribute('aria-valuenow', col.offsetWidth);
-      resizer.setAttribute('aria-valuemin', GLOBAL_MIN_WIDTH);
+      resizer.setAttribute('aria-valuemin', DEFAULT_MIN_WIDTH);
       resizer.setAttribute('aria-valuemax', maxWidths[colIndex]);
       if (options.resizerStyle) Object.assign(resizer.style, options.resizerStyle);
       if (col.hasAttribute('data-no-resize')) resizer.style.display = 'none';
@@ -200,7 +220,8 @@ export default {
     function createResizableColumn(col, colIndex) {
       col.style.position = 'relative';
       // Prevent duplicate resizers or columns marked as non-resizable
-      if (col.querySelector(`.${RESIZER_CLASS}`) || col.hasAttribute('data-no-resize')) return;
+      if (col.querySelector(`.${RESIZER_CLASS}`) || col.classList.contains(COL_ACTIONS_CLASS)
+        || col.classList.contains(CHECKBOX_COLUMN_CLASS) || col.hasAttribute('data-no-resize')) return;
       const resizer = createResizer(col, colIndex);
 
       let startX = 0;
@@ -219,16 +240,15 @@ export default {
         window.requestAnimationFrame(() => {
           const clientX = getClientX(e);
           const dx = isRTL ? startX - clientX : clientX - startX;
-          const minWidth = GLOBAL_MIN_WIDTH;
           const maxWidth = maxWidths[colIndex] || options.maxWidth || DEFAULT_MAX_WIDTH;
-          const newWidth = Math.max(minWidth, Math.min(maxWidth, startWidth + dx));
+          const newWidth = Math.max(DEFAULT_MIN_WIDTH, Math.min(maxWidth, startWidth + dx));
           if (col.style.width !== `${newWidth}px`) {
-            col.style.setProperty('width', `${newWidth}px`, 'important');
+            updateColumnWidths(col, newWidth);
             resizer.setAttribute('aria-valuenow', newWidth);
-            resizer.setAttribute('aria-valuemin', minWidth);
+            resizer.setAttribute('aria-valuemin', DEFAULT_MIN_WIDTH);
             resizer.setAttribute('aria-valuemax', maxWidth);
             if (Math.abs(newWidth - lastAnnouncedWidth[colIndex]) >= ANNOUNCE_WIDTH_THRESHOLD) {
-              announce(`Column ${colIndex + 1} resized to ${Math.round(newWidth)} pixels`);
+              announce('columnResized', colIndex + 1, Math.round(newWidth));
               lastAnnouncedWidth[colIndex] = newWidth;
             }
             emitCallback('onResize', { columnIndex: colIndex, width: newWidth, event: e });
@@ -257,8 +277,8 @@ export default {
         document.addEventListener('click', suppressClick, true);
         const styles = window.getComputedStyle(col);
         const width = parseInt(styles.width, 10) || col.offsetWidth;
-        announce(`Column ${colIndex + 1} finalized at ${Math.round(width)} pixels`);
-        persistCurrentWidths();
+        announce('columnFinalized', colIndex + 1, Math.round(width));
+        persistCurrentWidths(cols);
         // Emit a custom event for consumers
         const resizeEvent = new CustomEvent('column-resized', {
           bubbles: true,
@@ -305,15 +325,13 @@ export default {
         const styles = window.getComputedStyle(column);
         let width = parseInt(styles.width, 10) || column.offsetWidth;
         const delta = e.key === 'ArrowRight' ? 10 : -10;
-        const minWidth = GLOBAL_MIN_WIDTH;
         const maxWidth = maxWidths[columnIndex] || options.maxWidth || DEFAULT_MAX_WIDTH;
-        width = Math.max(minWidth, Math.min(maxWidth, width + delta));
-        column.style.setProperty('width', `${width}px`, 'important');
-        announce(`Column ${columnIndex + 1} resized to ${Math.round(width)} pixels`);
+        width = Math.max(DEFAULT_MIN_WIDTH, Math.min(maxWidth, width + delta));
+        updateColumnWidths(column, width);
+        announce('columnResized', columnIndex + 1, Math.round(width));
         resizer.setAttribute('aria-valuenow', width);
-        resizer.setAttribute('aria-valuemin', minWidth);
+        resizer.setAttribute('aria-valuemin', DEFAULT_MIN_WIDTH);
         resizer.setAttribute('aria-valuemax', maxWidth);
-        persistCurrentWidths();
         const resizeEvent = new CustomEvent('column-resized', {
           bubbles: true,
           detail: { columnIndex, width, originalEvent: e },
@@ -325,7 +343,7 @@ export default {
       // Double-click to auto-fit column to content
       resizer.addEventListener('dblclick', () => {
         const { rows } = table;
-        let maxContentWidth = GLOBAL_MIN_WIDTH;
+        let maxContentWidth = DEFAULT_MIN_WIDTH;
         for (let i = 0; i < rows.length; i += 1) {
           const cell = rows[i].cells[colIndex];
           if (cell) {
@@ -333,9 +351,9 @@ export default {
             if (totalWidth > maxContentWidth) maxContentWidth = totalWidth;
           }
         }
-        col.style.setProperty('width', `${maxContentWidth}px`, 'important');
-        announce(`Column ${colIndex + 1} auto-fitted to ${Math.round(maxContentWidth)} pixels`);
-        persistCurrentWidths();
+        updateColumnWidths(col, maxContentWidth);
+        announce('columnAutoFitted', colIndex + 1, Math.round(maxContentWidth));
+        persistCurrentWidths(cols);
         const resizeEvent = new CustomEvent('column-resized', {
           bubbles: true,
           detail: { columnIndex: colIndex, width: maxContentWidth, originalEvent: null },
@@ -352,39 +370,24 @@ export default {
      * @param {HTMLTableElement} tbl
      */
     function createResizableTable(tbl) {
-      if (!isElementVisible(tbl)) return;
+      cols = Array.from(tbl.querySelectorAll('th'));
+      const nonActionsCols = cols.filter((col) => !col.classList.contains(COL_ACTIONS_CLASS) && !col.classList.contains(CHECKBOX_COLUMN_CLASS));
+      if (!nonActionsCols.length || nonActionsCols.length === 1) return; // Hide the resizer if no columns or only one non-action column is present in the table
       if (options.wrap) {
         table.classList.remove(TABLE_NOWRAP_CLASS);
       } else {
         table.classList.add(TABLE_NOWRAP_CLASS);
       }
-      const cols = Array.from(tbl.querySelectorAll('th'));
       // Determine max widths for each column
       maxWidths = cols.map((col) => (col.hasAttribute('data-max-width')
         ? parseInt(col.getAttribute('data-max-width'), 10)
         : options.maxWidth || DEFAULT_MAX_WIDTH));
       // Restore persisted widths if available
-      const persistedWidths = getPersistedWidths(options.persistKey);
-      if (persistedWidths.length) {
-        cols.forEach((col, idx) => {
-          if (persistedWidths[idx]) {
-            const minW = GLOBAL_MIN_WIDTH;
-            const maxW = maxWidths[idx] || options.maxWidth || DEFAULT_MAX_WIDTH;
-            const restoredWidth = Math.max(minW, Math.min(maxW, persistedWidths[idx]));
-            col.style.setProperty('width', `${restoredWidth}px`, 'important');
-          }
-        });
-      } else {
-        // Set initial widths if not persisted
-        cols.forEach((col) => {
-          if (!col.style.width) {
-            col.style.setProperty('width', `${Math.max(GLOBAL_MIN_WIDTH, col.offsetWidth)}px`, 'important');
-          }
-        });
-        persistCurrentWidths();
-      }
+      const persistedWidths = getValueFromLocalStorage(options.persistKey + STORAGE_KEY_SUFFIX) || [];
       // Add resizer handles to each column
       cols.forEach((col, colIndex) => {
+        const restoredWidth = persistedWidths[colIndex] || getComputedStyle(col).width || col.offsetWidth || DEFAULT_MIN_WIDTH;
+        updateColumnWidths(col, restoredWidth);
         createResizableColumn(col, colIndex);
       });
     }
@@ -395,7 +398,7 @@ export default {
     }
 
     // Sync on window resize to prevent jump after dev tools open/close
-    window.addEventListener('resize', () => syncColumnWidthsToComputed(table));
+    window.addEventListener('resize', () => syncColumnWidthsToComputed());
 
     // Observe table structure changes to re-initialize resizers
     let mutationTimeout;
@@ -432,16 +435,13 @@ export default {
        * @param {number} width
        */
       setColumnWidth: (colIndex, width) => {
-        const cols = table.querySelectorAll('th');
         if (cols[colIndex]) {
-          const minW = GLOBAL_MIN_WIDTH;
           const maxW = maxWidths[colIndex] || options.maxWidth || DEFAULT_MAX_WIDTH;
-          const newWidth = Math.max(minW, Math.min(maxW, width));
-          cols[colIndex].style.setProperty('width', `${newWidth}px`, 'important');
+          const newWidth = Math.max(DEFAULT_MIN_WIDTH, Math.min(maxW, width));
+          updateColumnWidths(cols[colIndex], newWidth);
           const resizer = cols[colIndex].querySelector(`.${RESIZER_CLASS}`);
           if (resizer) resizer.setAttribute('aria-valuenow', newWidth);
-          announce(`Column ${colIndex + 1} resized to ${Math.round(newWidth)} pixels`);
-          persistCurrentWidths();
+          announce('columnResized', colIndex + 1, Math.round(newWidth));
           emitCallback('onResizeEnd', { columnIndex: colIndex, width: newWidth, event: null });
         }
       },
@@ -459,10 +459,9 @@ export default {
        * @param {number} colIndex
        */
       autoFitColumn: (colIndex) => {
-        const cols = table.querySelectorAll('th');
         if (cols[colIndex]) {
           const { rows } = table;
-          let maxContentWidth = GLOBAL_MIN_WIDTH;
+          let maxContentWidth = DEFAULT_MIN_WIDTH;
           for (let i = 0; i < rows.length; i += 1) {
             const cell = rows[i].cells[colIndex];
             if (cell) {
@@ -470,11 +469,11 @@ export default {
               if (totalWidth > maxContentWidth) maxContentWidth = totalWidth;
             }
           }
-          cols[colIndex].style.setProperty('width', `${maxContentWidth}px`, 'important');
+          updateColumnWidths(cols[colIndex], maxContentWidth);
           const resizer = cols[colIndex].querySelector(`.${RESIZER_CLASS}`);
           if (resizer) resizer.setAttribute('aria-valuenow', maxContentWidth);
-          announce(`Column ${colIndex + 1} auto-fitted to ${Math.round(maxContentWidth)} pixels`);
-          persistCurrentWidths();
+          announce('columnAutoFitted', colIndex + 1, Math.round(maxContentWidth));
+          persistCurrentWidths(cols);
           emitCallback('onResizeEnd', { columnIndex: colIndex, width: maxContentWidth, event: null });
         }
       },
@@ -491,7 +490,6 @@ export default {
     if (!table) return;
 
     // Remove resizer handles and attributes
-    const cols = table.querySelectorAll('th');
     cols.forEach((col) => {
       const resizer = col.querySelector(`.${RESIZER_CLASS}`);
       if (resizer) {
@@ -499,7 +497,7 @@ export default {
       }
       // Reset column width to computed style
       const computedWidth = getComputedStyle(col).width;
-      col.style.setProperty('width', computedWidth, 'important');
+      updateColumnWidths(col, computedWidth);
     });
 
     // Remove table class and live region
@@ -517,11 +515,6 @@ export default {
     }
 
     // Remove window resize listener
-    window.removeEventListener('resize', () => syncColumnWidthsToComputed(table));
+    window.removeEventListener('resize', () => syncColumnWidthsToComputed());
   },
-};
-
-export {
-  setPersistedWidths,
-  getPersistedWidths,
 };

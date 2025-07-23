@@ -69,6 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BTable
       v-show="tableData.length && !isLoading"
       class="mb-0"
+      v-resizable-table="{ persistKey: `list-resource-${resourceName}`}"
       hover
       id="list-resource-table"
       responsive
