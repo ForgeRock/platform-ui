@@ -1031,7 +1031,12 @@
       },
       "relationships":{
         "title": "Relationships",
-        "add": "Relationship"
+        "label": "Relationship",
+        "loading": "Loading relationships...",
+        "noData": "No relationships yet",
+        "noDataSubText": "Create relationships between this and other object types.",
+        "internalRole": "Internal Role"
+
       },
       "saveProfile": "Save Profile",
       "savingProfile": "Saving Profile",
