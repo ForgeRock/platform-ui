@@ -32,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="!loading"
         ref="privilegesGrid"
         class="mb-0 border-top"
+        v-resizable-table="{ allowAutoLayout: true, persistKey: `privileges-tab-${resourceName}`}"
         show-empty
         :empty-text="$t('common.noRecordsToShow')"
         :fields="privilegesColumns"
@@ -216,6 +217,7 @@ export default {
         {
           key: 'actions',
           label: '',
+          class: 'col-actions',
         },
       ],
       schemaMap: {},

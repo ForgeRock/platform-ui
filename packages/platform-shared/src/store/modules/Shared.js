@@ -59,6 +59,7 @@ const defaultState = {
   enableManagedObjectSchemaEditor: false,
   overrideSessionTimeoutsEnabled: false,
   enableMonitoringUI: false,
+  enableTableColumnResizing: false,
 };
 
 const mutations = {
@@ -224,6 +225,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS) {
       state.overrideSessionTimeoutsEnabled = env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS === 'true' || env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS === true;
+    }
+
+    if (env.VUE_APP_ENABLE_TABLE_COLUMN_RESIZING === 'true' || env.VUE_APP_ENABLE_TABLE_COLUMN_RESIZING === true) {
+      state.enableTableColumnResizing = true;
     }
   },
   // Needed for Login since setFeatureFlags isn't called there

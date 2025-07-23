@@ -32,7 +32,9 @@
     }
   }
   &.resizable-table--nowrap th,
-  &.resizable-table--nowrap td {
+  &.resizable-table--nowrap td,
+  &.resizable-table--nowrap th:not(.checkbox-column),
+  &.resizable-table--nowrap th:not(.checkbox-column) div {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -41,8 +43,25 @@
   .resizable-table--resizing {
     background: #d3d8e0;
   }
+
+  td.col-actions,
+  th.col-actions {
+    position: sticky !important;
+    right: 0;
+    overflow: visible;
+    z-index: 1000;
+    background-color: $white;
+    &:has(.dropdown.show) {
+      position: sticky;
+      z-index: 1001;
+    }
+  }
 }
 
+.table-hover tbody tr:hover,
+.table-hover tr:hover td.col-actions {
+  background-color: $gray-100 !important;
+}
 .resizable-table__shared-measure-container {
   position: absolute;
   visibility: hidden;
