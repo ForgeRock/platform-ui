@@ -1068,12 +1068,11 @@
         }
       },
       "relationships": {
-        "title": "Relationships",
+        "internalRole": "Internal Role",
         "label": "Relationship",
         "loading": "Loading relationships...",
         "noData": "No relationships yet",
         "noDataSubText": "Create relationships between this and other object types.",
-        "internalRole": "Internal Role",
         "single": "Has one",
         "multiple": "Has many",
         "modal":{
@@ -1081,6 +1080,33 @@
           "description": "Define a relationship between this and another object type.",
           "objectType": "Object Type",
           "relationshipType": "Relationship Type"
+        },
+        "propertyUpdateError": "Error updating relationship properties",
+        "title": "Relationships",
+        "relationshipWizard": {
+          "errors": {
+            "gettingRelationshipData": "There was an error retrieving relationship data",
+            "relationshipSaveError": "Error saving relationship"
+          },
+          "relationshipSaveSuccess": "Relationship saved",
+          "tabs": {
+            "derivedProperties": {
+              "description": "Optionally define additional properties on each object type that derive their values from the related object type.",
+              "subtitle": "Derived Properties (optional)",
+              "title": "Derived Properties"
+            },
+            "relationshipProperty": {
+              "labelDescription": "Human-readable label for this property.",
+              "description": "Define properties on each related profile to reference to its related managed object type.",
+              "displayProperties": "Display Properties",
+              "displayPropertiesDescription": "<strong>{objectTitle}</strong> properties to display in the context of this relationship.",
+              "title": "Relationship Property"
+            },
+            "relationshipSettings": {
+              "description": "Settings for this relationship.",
+              "title": "Relationship Settings"
+            }
+          }
         }
       },
       "saveProfile": "Save Profile",
@@ -3405,26 +3431,6 @@
     "reconciliation": "Reconciliation",
     "referencedObjectField": "Object Type Property",
     "referencedObjectFieldDescription": "Object type property to use to populate enumerated values.",
-    "relationshipWizard": {
-      "errors": {
-        "gettingRelationshipData": "There was an error retrieving relationship data"
-      },
-      "tabs": {
-        "derivedProperties": {
-          "description": "Optionally define additional properties on each object type that derive their values from the related object type.",
-          "subtitle": "Derived Properties (optional)",
-          "title": "Derived Properties"
-        },
-        "relationshipProperty": {
-          "description": "Define properties on each related profile to reference to its related managed object type.",
-          "title": "Relationship Property"
-        },
-        "relationshipSettings": {
-          "description": "Settings for this relationship.",
-          "title": "Relationship Settings"
-        }
-      }
-    },
     "returnedByDefault": "Returned by default",
     "rules": {
       "action": "Action",
