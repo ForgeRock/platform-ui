@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -57,6 +57,14 @@ export default {
       type: String,
       default: null,
     },
+    /**
+     * If true, the current value will be match to the options exactly.
+     * If false, the current value will be matched by _id.
+     */
+    exactMatch: {
+      type: Boolean,
+      default: true,
+    },
     label: {
       type: String,
       default: null,
@@ -100,7 +108,12 @@ export default {
         : this.$t('common.placeholders.typeToSearchFor', { item: this.resourcePath });
     },
     selectOptions() {
-      const match = this.options.find((option) => isEqual(option, this.value));
+      let match;
+      if (this.exactMatch) {
+        match = this.options.find((option) => isEqual(option, this.value));
+      } else {
+        match = this.options.find((option) => option._id === this.value._id);
+      }
       if (match || this.isSearching) return this.options;
       if (this.type === 'multiselect') return [...this.value, ...this.options];
       return [this.value, ...this.options];
