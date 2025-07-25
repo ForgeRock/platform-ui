@@ -213,10 +213,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             class="pb-4 px-4 px-md-5 w-100"
             data-testid="in-situ-logo-preview">
-            <div
-              tabindex="-1"
-              class="d-flex"
-              ref="callbackAppHeaderContainer">
+            <div class="d-flex">
               <img
                 v-if="logoEnabled"
                 class="ping-logo mt-4"
@@ -225,6 +222,8 @@ of the MIT license. See the LICENSE file for details. -->
                 :src="logoPath">
               <div
                 v-if="journeyHeaderEnabled"
+                tabindex="-1"
+                ref="callbackAppHeaderContainer"
                 class="flex-grow-1"
                 id="appHeader">
                 <FrLoginHeader
