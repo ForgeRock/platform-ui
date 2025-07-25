@@ -298,6 +298,23 @@ const router = createRouter({
       ],
     },
     {
+      path: '/my-machine-accounts',
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
+      meta: { authenticate: true },
+      children: [
+        {
+          path: '',
+          name: 'MachineAccounts',
+          component: () => import('@/views/governance/Directory/MachineAccounts/MachineAccounts'),
+        },
+        {
+          path: '/:accountId',
+          name: 'MachineAccountDetails',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/Accounts/AccountsDetails/AccountsDetails'),
+        },
+      ],
+    },
+    {
       path: '/list/:resourceType/:resourceName',
       name: 'ListResource',
       component: () => import(/* webpackChunkName: "listResource" */ '@forgerock/platform-shared/src/enduser/views/ListResourceView'),

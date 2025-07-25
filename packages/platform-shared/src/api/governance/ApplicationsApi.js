@@ -21,7 +21,6 @@ const applicationUrl = 'governance/application';
 /**
  * Fetches the list of applications based on the provided resource and query parameters.
  *
- * @param {string} resource - The resource identifier for the application list.
  * @param {Object} [queryParams={}] - An optional object containing query parameters to filter the application list.
  * @returns {Promise} - A promise that resolves to the list of applications.
  */

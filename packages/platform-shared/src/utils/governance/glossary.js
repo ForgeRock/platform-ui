@@ -17,8 +17,13 @@ import { getGlossaryAttributes } from '@forgerock/platform-shared/src/api/govern
  */
 // eslint-disable-next-line import/prefer-default-export
 export async function getGlossarySchema(resourceType = 'role') {
+  const resourcePrefixMap = {
+    account: '/iga/governance/',
+  };
+  const objectType = `${resourcePrefixMap[resourceType] || '/openidm/managed/'}${resourceType}`;
+
   const params = {
-    objectType: `/openidm/managed/${resourceType}`,
+    objectType,
     pageNumber: 0,
     pageSize: 100,
     sortBy: 'name',

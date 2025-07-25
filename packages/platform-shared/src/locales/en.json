@@ -1164,6 +1164,7 @@
     "dropdownMenuOptions": "Dropdown Menu Options"
   },
   "sideMenu": {
+    "accounts": "Accounts",
     "authorizationRole": "Internal Role",
     "dashboard": "Dashboard",
     "dataSources": "Data Sources",
@@ -1183,6 +1184,7 @@
       "lcm": "Administer",
       "lcmUsers": "Users",
       "lcmEntitlements": "Entitlements",
+      "machineAccounts": "Machine Accounts",
       "myAccess": "My Access",
       "myAccounts": "My Accounts",
       "myEntitlements": "My Entitlements",
@@ -1674,6 +1676,7 @@
       "confirmRevokeEntitlement": "Are you sure you want to revoke this entitlement from this role? | Are you sure you want to revoke these entitlements from this role?",
       "errorGettingData": "Error getting {grantType}.",
       "noRecordFound": "No {grantType} found.",
+      "noResultsAccount": "No {grantType} for this account.",
       "noResultsUser": "No {grantType} for this user.",
       "revokeEntitlement": "Revoke Entitlement? | Revoke Entitlements?",
       "revoking": "Revoking"
@@ -1787,6 +1790,64 @@
       "waitTaskIdNotFound": "Could not find active wait task for request."
     },
     "accountDetails": "Account Details",
+    "accounts": {
+      "accountSubType": "Account Subtype",
+      "accountType": "Account Type",
+      "accountTypes": {
+        "machine": "Machine",
+        "user": "User"
+      },
+      "changeMachine": "Change to Machine Account",
+      "custodians": "Custodians",
+      "failedToLoad": "Failed to load accounts",
+      "failedToLoadCustodians": "Failed to load custodians",
+      "default": "Default",
+      "details": {
+        "detailsTab": {
+          "accountSaved": "Account saved successfully",
+          "accountSaveErrorMessage": "Error saving account, please try again",
+          "notLoadErrorMessage": "Error loading the details of the account",
+          "title": "Account Details",
+          "user": "User"
+        },
+        "entitlementsTab": {
+          "title": "Users",
+          "notFound": "No actors found",
+          "notFoundDescription": "Try a new search in the seach box above.",
+          "failedToLoad": "Failed to load account's actors"
+        },
+        "objectPropertiesTab": {
+          "title": "Account Properties"
+        },
+        "tabs": {
+          "details": "Details",
+          "entitlements": "Entitlements",
+          "objectProperties": "Object Properties"
+        }
+      },
+      "editMachine": "Edit Machine Account",
+      "errors": {
+        "errorSearchingAccounts": "There was an error searching accounts"
+      },
+      "machine": "Machine",
+      "modal": {
+        "set": "Set",
+        "setMachineDescription": "This action will change this account to a machine account. Select any custodians that you want to assign to this machine account below. Note that this operation may not immediately reflect changes",
+        "title": "{action} Machine Account",
+        "update": "Update",
+        "updateMachineDescription": "Add or remove the custodians that are assigned to this machine account."
+      },
+      "owner": "Owner",
+      "subtitle": "View and manage accounts across all your configured applications.",
+      "tabs": {
+        "all": "All accounts",
+        "correlated": "Correlated accounts",
+        "uncorrelated": "Uncorrelated accounts",
+        "machine": "Machine accounts"
+      },
+      "type": "Type",
+      "user": "User"
+    },
     "certificationTask": {
       "hideTechnicalDetails": "Hide technical details",
       "showTechnicalDetails": "Show technical details",
@@ -2188,7 +2249,8 @@
       },
       "errors": {
         "errorCreatingAccessRequest": "There was an error creating an access request",
-        "errorSearchingCatalog": "There was an error searching the catalog"
+        "errorSearchingCatalog": "There was an error searching the catalog",
+        "errorSearchingApplications": "There was an error searching applications"
       },
       "successfullyAdded": "{resource} request successfully submitted"
     },

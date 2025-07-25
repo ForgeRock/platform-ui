@@ -27,7 +27,7 @@ describe('ApplicationsApi', () => {
         get: jest.fn().mockResolvedValue(mockResponse),
       });
 
-      const result = await getApplications('resource', queryParams);
+      const result = await getApplications(null, queryParams);
       expect(result).toEqual(mockResponse);
       expect(encodeQueryString).toHaveBeenCalledWith(queryParams);
       expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application?page=1&size=10');
@@ -40,7 +40,7 @@ describe('ApplicationsApi', () => {
         get: jest.fn().mockResolvedValue(mockResponse),
       });
 
-      const result = await getApplications('resource');
+      const result = await getApplications();
       expect(result).toEqual(mockResponse);
       expect(encodeQueryString).toHaveBeenCalledWith({});
       expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application');

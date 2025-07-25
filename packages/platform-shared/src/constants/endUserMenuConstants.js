@@ -109,6 +109,10 @@ export const DEFAULT_MENU_ITEMS = [
         id: 'myEntitlements',
         routeTo: { name: 'Entitlements' },
       },
+      {
+        id: 'machineAccounts',
+        routeTo: { name: 'MachineAccounts' },
+      },
     ],
     available: (flag) => flag.ifGovernance,
   },
