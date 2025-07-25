@@ -4549,6 +4549,9 @@
         "requireRequestJustificationWithViolation": "Require Request Justification With Violation",
         "settingsSavedSuccessfully": "Request settings saved successfully",
         "title": "Request Settings"
+      },
+      "errors": {
+        "errorResumeDate": "Resume date must be a future date"
       }
     },
     "requestTypes": {

@@ -21,6 +21,7 @@ describe('RequestActionsCell', () => {
         plugins: [i18n],
       },
       props: {
+        status: 'pending',
         ...props,
       },
     });
@@ -115,10 +116,34 @@ describe('RequestActionsCell', () => {
       expect(buttons[1].text()).toMatch('Forward');
     });
 
+    it('shows correct actions for completed admin request with permissions', () => {
+      wrapper = setup({
+        permissions: adminRequestPermissions,
+        type: detailTypes.ADMIN_REQUEST,
+        status: 'complete',
+      });
+
+      const buttons = wrapper.findAll('[role="menuitem"]');
+      expect(buttons.length).toBe(1);
+      expect(buttons[0].text()).toMatch('View Details');
+    });
+
+    it('shows correct actions for cancelled admin request with permissions', () => {
+      wrapper = setup({
+        permissions: adminRequestPermissions,
+        type: detailTypes.ADMIN_REQUEST,
+        status: 'cancelled',
+      });
+
+      const buttons = wrapper.findAll('[role="menuitem"]');
+      expect(buttons.length).toBe(1);
+      expect(buttons[0].text()).toMatch('View Details');
+    });
+
     it('shows the "Change Resume Date" action for admin request if the request is suspended', () => {
       wrapper = setup({
         type: detailTypes.ADMIN_REQUEST,
-        suspended: true,
+        status: 'suspended',
       });
 
       const buttons = wrapper.findAll('[role="menuitem"]');
@@ -139,7 +164,7 @@ describe('RequestActionsCell', () => {
     it('clicking the change resume date button emits the correct event', () => {
       wrapper = setup({
         type: detailTypes.ADMIN_REQUEST,
-        suspended: true,
+        status: 'suspended',
       });
       const buttons = wrapper.findAll('[role="menuitem"]');
       buttons[2].trigger('click');

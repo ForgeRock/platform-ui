@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrRequestActionsCell
             v-if="status === 'pending'"
             :item="item"
+            :status="status"
             :type="detailTypes.FULFILLMENT"
             @action="handleAction($event, item)" />
         </template>

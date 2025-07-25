@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
         :placeholder="$t('governance.accessRequest.resumeDate')"
         :adjust-for-timezone="false"
         :show-seconds="false"
-        :validation="validationParams" />
+        :min-date="minResumeDate" />
       <FrField
         name="justificationText"
         v-model="justificationText"
@@ -60,6 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
  * @param {string} currentResumeDate - The current resume date for the suspended request
  */
 import {
+  computed,
   defineProps,
   ref,
   watch,
@@ -92,12 +93,7 @@ const emit = defineEmits(['get-entitlements']);
 
 const newResumeDate = ref(null);
 const justificationText = ref('');
-const validationParams = {
-  is_after_date: {
-    date: dayjs(),
-    message: 'governance.certification.errors.errorDeadline',
-  },
-};
+const minResumeDate = computed(() => new Date());
 
 watch(() => prop.currentResumeDate, (value) => {
   newResumeDate.value = value;

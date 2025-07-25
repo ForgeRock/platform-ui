@@ -49,6 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrRequestActionsCell
               v-if="status === 'pending'"
               :allow-self-approval="allowSelfApproval"
+              :status="status"
               :item="item"
               :type="detailTypes.APPROVAL"
               @action="handleAction($event, item)" />

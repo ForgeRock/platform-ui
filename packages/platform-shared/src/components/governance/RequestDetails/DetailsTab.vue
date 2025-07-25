@@ -99,33 +99,6 @@ of the MIT license. See the LICENSE file for details. -->
           {{ details.justification || blankValueIndicator }}
         </BCol>
       </BRow>
-      <BRow
-        v-if="details.statusRaw === 'suspended'"
-        class="mb-4">
-        <BCol
-          lg="6"
-          md="12"
-          sm="12">
-          <small class="d-block mb-2">
-            {{ $t(`governance.accessRequest.resumeDate`) }}
-          </small>
-          <span class="mr-2">
-            {{ dayjs(details.resumeDate).format('MMM D, YYYY h:mm A') }}
-          </span>
-          <span class="mb-2">
-            <BButton
-              v-if="type === detailTypes.ADMIN_REQUEST"
-              variant="link"
-              class="ml-0 pl-0 pt-0 pb-1"
-              @click="openResumeDateModal">
-              <FrIcon
-                name="edit">
-                {{ $t(`common.edit`) }}
-              </FrIcon>
-            </BButton>
-          </span>
-        </BCol>
-      </BRow>
     </div>
     <FrRequestFormManager
       @save="modifyRequest"
@@ -134,11 +107,6 @@ of the MIT license. See the LICENSE file for details. -->
       :request="props.item?.rawData || {}"
       :read-only="props.readOnly"
     />
-    <FrUpdateResumeDateModal
-      v-if="details"
-      :loading="savingRequest"
-      :current-resume-date="details.resumeDate"
-      @update-resume-date="updateResumeDate" />
   </div>
 </template>
 
@@ -156,23 +124,18 @@ import {
   onMounted,
   ref,
 } from 'vue';
-import { find, startsWith } from 'lodash';
 import dayjs from 'dayjs';
 import {
-  BButton,
   BBadge,
   BCol,
   BImg,
   BRow,
 } from 'bootstrap-vue';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { requestAction, updateRequestResumeDate } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { getPriorityImageSrc, detailTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import { getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import FrRequestFormManager from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestFormManager';
-import FrUpdateResumeDateModal from '@forgerock/platform-shared/src/components/governance/RequestDetails/UpdateResumeDateModal';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -194,25 +157,9 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update-item']);
-const { bvModal } = useBvModal();
 const details = ref(null);
 const savingRequest = ref(false);
 const phaseId = computed(() => props.item.rawData.phases?.[0]?.name);
-
-/**
- * Shows the "Update Resume Date" modal
- */
-function openResumeDateModal() {
-  bvModal.value.show('UpdateResumeDateModal');
-}
-
-/**
- * Closes the "Update Resume Date" modal
- */
-function closeModal() {
-  bvModal.value.hide('UpdateResumeDateModal');
-}
 
 function setDecisionValue(type, status) {
   switch (type) {
@@ -311,15 +258,11 @@ function setOutcomeValue(type) {
  * @returns {Object} - The details of the item.
  */
 function getDetails(item) {
-  const waitTask = find(item.rawData.decision?.phases, (phase) => startsWith(phase.name, 'waitTask'));
   const newDetails = {
     externalRequestId: item.rawData.request?.common?.externalRequestId,
     requestId: item.details.id,
-    resumeDate: waitTask?.events?.scheduled?.date,
-    waitTaskId: waitTask?.name,
     status: setStatusValue(item.rawData?.decision?.status),
     decision: setDecisionValue(item.rawData?.decision?.decision, item.rawData?.decision?.status),
-    statusRaw: item.rawData?.decision?.status,
     priority: item.details.priority || null,
     justification: item.rawData.request?.common?.justification,
     outcome: setOutcomeValue(item.rawData.decision?.outcome),
@@ -345,33 +288,6 @@ async function modifyRequest(requestPayload) {
     showErrorMessage(error, i18n.global.t('governance.accessRequest.requestSaveError'));
   } finally {
     savingRequest.value = false;
-  }
-}
-
-/**
- * Updates a suspended request's resume date.
- *
- * @param {Object} values - The values to modify the request with.
- */
-async function updateResumeDate(newResumeTime, justification) {
-  savingRequest.value = true;
-  const payload = {
-    events: {
-      scheduled: {
-        date: newResumeTime,
-      },
-    },
-  };
-  try {
-    await updateRequestResumeDate(props.item.rawData.id, details.value.waitTaskId, payload);
-    await requestAction(props.item.rawData.id, 'comment', phaseId.value, { comment: justification });
-    displayNotification('success', i18n.global.t('governance.accessRequest.requestSaveSuccess'));
-    closeModal(newResumeTime);
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.accessRequest.requestSaveError'));
-  } finally {
-    savingRequest.value = false;
-    emit('update-item');
   }
 }
 

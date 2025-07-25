@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -107,6 +107,10 @@ const props = defineProps({
   item: {
     type: Object,
     default: () => ({}),
+  },
+  phaseName: {
+    type: String,
+    default: null,
   },
   isTask: {
     type: Boolean,
@@ -240,7 +244,7 @@ function close(cancel) {
   */
 function modalAction(item, ok) {
   const action = modalType.value.toLowerCase();
-  const phaseName = getPhaseName(item.rawData);
+  const phase = props.phaseName || getPhaseName(item.rawData);
   loading.value = true;
   const requestPayload = {};
   switch (action) {
@@ -258,7 +262,7 @@ function modalAction(item, ok) {
     default:
       requestPayload.comment = comment.value;
   }
-  requestAction(item.details.id, action, phaseName, requestPayload).then(() => {
+  requestAction(item.details.id, action, phase, requestPayload).then(() => {
     displayNotification('success', componentComputed.value.message);
     emit('modal-success');
   }).catch(() => {

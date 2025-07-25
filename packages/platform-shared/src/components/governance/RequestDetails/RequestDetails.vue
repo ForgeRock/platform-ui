@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -102,6 +102,7 @@ const tabs = ref([
   {
     component: FrTasks,
     title: i18n.global.t('common.tasks'),
+    type: props.type,
   },
 ]);
 const tabsToShow = computed(() => tabs.value.filter(({ hide }) => !hide));

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -112,7 +112,7 @@ describe('RequestActions', () => {
 
   it('hides buttons if no permissions', () => {
     Object.values(detailTypes).forEach((type) => {
-      if (type === detailTypes.USER_REQUEST) return;
+      if (type === detailTypes.USER_REQUEST || type === detailTypes.SCHEDULED) return;
       wrapper = setup({
         permissions: {},
         type,

@@ -6,7 +6,9 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { cloneDeep } from 'lodash';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { detailTypes } from '../../../utils/governance/AccessRequestUtils';
 import Tasks from './Tasks';
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
@@ -74,9 +76,9 @@ const ITEM = {
   },
 };
 
-function setup() {
+function setup(props) {
   useBvModal.mockReturnValue({ bvModal: { value: { show: jest.fn(), hide: jest.fn() } } });
-  wrapper = mount(Tasks, {
+  return mount(Tasks, {
     global: {
       mocks: {
         $t: (t) => t,
@@ -84,14 +86,15 @@ function setup() {
     },
     props: {
       item: ITEM,
+      type: detailTypes.USER_REQUEST,
+      ...props,
     },
   });
 }
 
 describe('Tasks', () => {
-  beforeEach(() => setup());
-
   it('Should renders table columns correctly', () => {
+    wrapper = setup();
     const columns = wrapper.findAll('th');
     expect(columns.length).toBe(3);
     expect(columns[0].text()).toBe('Task');
@@ -100,6 +103,7 @@ describe('Tasks', () => {
   });
 
   it('should call the appropriate method when opening task details modal', async () => {
+    wrapper = setup();
     await flushPromises();
 
     const showSpy = jest.spyOn(wrapper.vm.bvModal.value, 'show');
@@ -111,11 +115,51 @@ describe('Tasks', () => {
   });
 
   it('Should render wait date correctly', () => {
+    wrapper = setup();
     const smalls = wrapper.findAll('tr small');
     const date1 = smalls[0];
     expect(date1.text()).toBe('Jul 16, 2025');
 
     const date2 = smalls[2];
     expect(date2.text()).toBe('Until Jul 17, 2025');
+  });
+
+  it('Should not render dropdown menu for user requests', () => {
+    wrapper = setup();
+    const dropdowns = wrapper.findAll('.dropdown-menu');
+    expect(dropdowns.length).toBe(0);
+  });
+
+  it('Should render dropdown menus for admin requests', () => {
+    wrapper = setup({ type: detailTypes.ADMIN_REQUEST });
+    const dropdowns = wrapper.findAll('.dropdown-menu');
+    expect(dropdowns.length).toBe(2);
+
+    const completedDropDown = dropdowns[0].findAll('li');
+    expect(completedDropDown.length).toBe(1);
+    expect(completedDropDown[0].text()).toContain('viewDetails');
+
+    const activeDropdown = dropdowns[1].findAll('li');
+    expect(activeDropdown.length).toBe(2);
+    expect(activeDropdown[0].text()).toContain('viewDetails');
+    expect(activeDropdown[1].text()).toContain('changeResumeDate');
+  });
+
+  it('Should render action menu for admin requests with active approval', () => {
+    const activeApprovalItem = cloneDeep(ITEM);
+    activeApprovalItem.rawData.decision.phases[0].status = 'in-progress';
+    activeApprovalItem.rawData.decision.phases.splice(1, 1);
+
+    wrapper = setup({ item: activeApprovalItem, type: detailTypes.ADMIN_REQUEST });
+    const dropdowns = wrapper.findAll('.dropdown-menu');
+    expect(dropdowns.length).toBe(1);
+
+    const completedDropDown = dropdowns[0].findAll('li');
+    expect(completedDropDown.length).toBe(6);
+    expect(completedDropDown[0].text()).toContain('approve');
+    expect(completedDropDown[1].text()).toContain('reject');
+    expect(completedDropDown[3].text()).toContain('forward');
+    expect(completedDropDown[4].text()).toContain('addComment');
+    expect(completedDropDown[5].text()).toContain('viewDetails');
   });
 });
