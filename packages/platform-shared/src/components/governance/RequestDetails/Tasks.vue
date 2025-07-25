@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
     show-empty
     :empty-text="$t('common.noRecordsToShow')"
     tbody-tr-class="cursor-pointer"
-    :fields="tableColumns"
+    :fields="getTableColumns(type)"
     :items="tableData"
     @row-clicked="showTaskDetailsModal($event)">
     <template #cell(task)="{ item }">
@@ -43,11 +43,24 @@ of the MIT license. See the LICENSE file for details. -->
         {{ getStatus(item.decision || item.status) }}
       </BBadge>
     </template>
+    <template #cell(actions)="{ item }">
+      <FrRequestActionsCell
+        class="mr-3"
+        :item="item"
+        :status="item.status"
+        :type="getTypeOfTask(item)"
+        @action="handleAction($event, item)" />
+    </template>
   </BTable>
   <FrTaskDetailsModal
     :task-details="taskDetails"
     @hidden="closeTaskDetailsModal"
   />
+  <FrUpdateResumeDateModal
+    v-if="type === detailTypes.ADMIN_REQUEST"
+    :loading="savingRequest"
+    :current-resume-date="item.events?.scheduled?.date"
+    @update-resume-date="updateResumeDate" />
 </template>
 
 <script setup>
@@ -64,8 +77,13 @@ import {
 } from 'bootstrap-vue';
 import { ref, watch } from 'vue';
 import dayjs from 'dayjs';
+import { requestAction, updateRequestResumeDate } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { detailTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrAvatarGroup from '@forgerock/platform-shared/src/components/AvatarGroup/AvatarGroup';
+import FrRequestActionsCell from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActionsCell';
+import FrUpdateResumeDateModal from '@forgerock/platform-shared/src/components/governance/RequestDetails/UpdateResumeDateModal';
+import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import FrTaskDetailsModal from './TaskDetailsModal';
 import i18n from '@/i18n';
 
@@ -77,33 +95,23 @@ import i18n from '@/i18n';
  */
 
 const { bvModal } = useBvModal();
-
-const tableColumns = [
-  {
-    key: 'task',
-    label: i18n.global.t('common.task'),
-    class: 'text-truncate',
-  },
-  {
-    key: 'approvers',
-    label: i18n.global.t('common.approvers'),
-  },
-  {
-    key: 'status',
-    label: i18n.global.t('common.status'),
-  },
-];
+const emit = defineEmits(['update-item', 'action']);
 
 const prop = defineProps({
   item: {
     type: Object,
     required: true,
   },
+  type: {
+    type: String,
+    default: detailTypes.USER_REQUEST,
+  },
 });
 
 const requestOutcome = ref(null);
 const tableData = ref(null);
 const taskDetails = ref({});
+const savingRequest = ref(false);
 
 watch(
   () => prop.item,
@@ -130,6 +138,32 @@ watch(
     }));
   }, { immediate: true },
 );
+
+function getTableColumns(type) {
+  const tableColumns = [
+    {
+      key: 'task',
+      label: i18n.global.t('common.task'),
+      class: 'text-truncate',
+    },
+    {
+      key: 'approvers',
+      label: i18n.global.t('common.approvers'),
+    },
+    {
+      key: 'status',
+      label: i18n.global.t('common.status'),
+    },
+  ];
+
+  if (type === detailTypes.ADMIN_REQUEST) {
+    tableColumns.push({
+      key: 'actions',
+      label: '',
+    });
+  }
+  return tableColumns;
+}
 
 /**
  * Returns values for status badge
@@ -223,8 +257,11 @@ function showTaskDetailsModal(currentItem) {
     approvers: currentItem.actors,
     name: currentItem.displayName || currentItem.name,
     startDate: parseDate(currentItem.startDate),
+    completionDate: currentItem.completionDate ? parseDate(currentItem.completionDate) : null,
+    resumeDate: currentItem.events?.scheduled?.date ? parseDate(currentItem.events?.scheduled?.date) : null,
     status: getStatus(currentItem.decision || currentItem.status),
     statusBadge: getBadgeVariant(currentItem.decision || currentItem.status),
+    type: currentItem.type,
     workflowId: currentItem.workflowTaskId,
   };
   bvModal.value.show('TaskDetailsModal');
@@ -232,6 +269,93 @@ function showTaskDetailsModal(currentItem) {
 
 function closeTaskDetailsModal() {
   taskDetails.value = {};
+}
+
+/**
+ * Shows the "Update Resume Date" modal
+ */
+function openResumeDateModal() {
+  bvModal.value.show('UpdateResumeDateModal');
+}
+
+/**
+ * Closes the "Update Resume Date" modal
+ */
+function closeModal() {
+  bvModal.value.hide('UpdateResumeDateModal');
+}
+
+/**
+ * Given an access request, find the ID of the in-progress wait task
+ * @param item Access request object
+ * @returns {String} ID (name) of the wait task
+ */
+function getWaitTaskId(item) {
+  return item.decision?.phases.find((phase) => phase.type === 'scheduled' && phase.status === 'in-progress')?.name;
+}
+/**
+ * Updates a suspended request's resume date.
+ *
+ * @param {Object} values - The values to modify the request with.
+ */
+async function updateResumeDate(newResumeTime, justification) {
+  savingRequest.value = true;
+  const payload = {
+    events: {
+      scheduled: {
+        date: newResumeTime,
+      },
+    },
+  };
+  try {
+    const waitTaskId = getWaitTaskId(prop.item.rawData);
+    await updateRequestResumeDate(prop.item.details.id, waitTaskId, payload);
+    await requestAction(prop.item.details.id, 'comment', waitTaskId, { comment: justification });
+    displayNotification('success', i18n.global.t('governance.accessRequest.requestSaveSuccess'));
+    closeModal();
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.accessRequest.requestSaveError'));
+  } finally {
+    savingRequest.value = false;
+    emit('update-item');
+  }
+}
+
+/**
+ * Opens a modal based on the provided item and type.
+ * @param {Object} item - The item to show in the modal.
+ * @param {string} type - The type of modal to open.
+ */
+function openModal(item, action) {
+  emit('action', action, item.name);
+  bvModal.value.show('request_modal');
+}
+
+/*
+ * Handles the specified action for a given item.
+ * @param {string} action - The action to be performed.
+ * @param {Object} item - The item on which the action is to be performed.
+ */
+function handleAction(action, item) {
+  if (action === 'DETAILS') {
+    showTaskDetailsModal(item);
+  } else if (action === 'CHANGERESUMEDATE') {
+    openResumeDateModal();
+  } else {
+    openModal(item, action);
+  }
+}
+
+/**
+ * Given an access request phase, get the corresponding detailType
+ * @param item Phase task item
+ * @returns {String} Detail type of phase task
+ */
+function getTypeOfTask(item) {
+  if (item.type === 'request') {
+    return detailTypes.APPROVAL;
+  }
+  return item.type;
 }
 
 /**

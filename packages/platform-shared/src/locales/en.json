@@ -66,6 +66,7 @@
     "comment": "Comment",
     "comments": "Comments",
     "complete": "Complete",
+    "completionDate": "Completion Date",
     "configured": "Configured",
     "confirm": "Confirm",
     "confidential": "Confidential",
@@ -1764,7 +1765,8 @@
       "searchText": "Request ID, Requested By, Requested For",
       "submittedARequest": "submitted a request",
       "submittedRequest": "submitted this request",
-      "untilDate": "Until {date}" 
+      "untilDate": "Until {date}",
+      "waitTaskIdNotFound": "Could not find active wait task for request."
     },
     "accountDetails": "Account Details",
     "certificationTask": {

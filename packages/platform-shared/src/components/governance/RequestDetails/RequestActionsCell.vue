@@ -67,9 +67,9 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  suspended: {
-    type: Boolean,
-    default: false,
+  status: {
+    type: String,
+    default: 'complete',
   },
 });
 
@@ -156,6 +156,10 @@ const actionsByType = {
     comment: sharedActions.comment,
     details: sharedActions.details,
   },
+  [detailTypes.SCHEDULED]: {
+    details: sharedActions.details,
+    changeResumeDate: suspendedActions.changeResumeDate,
+  },
 };
 
 const isSelfApprover = computed(() => (props.item?.rawData?.user?.id
@@ -166,7 +170,10 @@ const isSelfApprover = computed(() => (props.item?.rawData?.user?.id
 const permissions = computed(() => props.item.rawData?.phases?.[0]?.permissions || {});
 
 const availableActions = computed(() => {
-  if (props.suspended && props.type === detailTypes.ADMIN_REQUEST) {
+  if (props.status === 'complete' || props.status === 'cancelled') {
+    return { details: sharedActions.details };
+  }
+  if (props.status === 'suspended' && props.type === detailTypes.ADMIN_REQUEST) {
     return { ...actionsByType[detailTypes.USER_REQUEST], ...suspendedActions };
   }
   if (isEmpty(permissions.value)) return actionsByType[props.type];

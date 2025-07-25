@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -251,6 +251,17 @@ describe('RequestModal', () => {
     rejectButton.trigger('click');
 
     expect(requestActionSpy).toHaveBeenCalledWith(1, 'reject', 'phaseTest', { justification: 'test justification' });
+  });
+  it('calls requestAction with justification from reject modal with passed in phase name', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REJECT, phaseName: 'customPhase' });
+    await flushPromises();
+
+    const justificationField = wrapper.find('textarea');
+    justificationField.setValue('test justification');
+    const rejectButton = wrapper.findAllComponents('[type="button"]').filter((x) => x.text().includes('Reject'))[0];
+    rejectButton.trigger('click');
+
+    expect(requestActionSpy).toHaveBeenCalledWith(1, 'reject', 'customPhase', { justification: 'test justification' });
   });
   it('will forward a request with the correct permissions', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.REASSIGN });

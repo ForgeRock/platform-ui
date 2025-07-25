@@ -11,14 +11,6 @@ of the MIT license. See the LICENSE file for details. -->
       <FrRequestHeader
         :item="item" />
 
-      <!-- Actions -->
-      <FrRequestActions
-        v-if="isActive && type === detailTypes.ADMIN_REQUEST"
-        :permissions="{ reassign: true }"
-        :type="detailTypes.ADMIN_REQUEST"
-        @action="openModal($event)"
-        class="mb-4" />
-
       <!-- Recommendation Banner -->
       <FrRecommendationBanner
         v-if="showRecommendationBanner(item, autoIdSettings)"
@@ -35,6 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrRequestDetails
           @add-comment="openModal('COMMENT')"
           @update-item="getRequestData"
+          @action="(type, phase) => openModal(type, phase)"
           :hide-actions="{ modify: true }"
           :type="type"
           :item="item" />
@@ -61,7 +54,8 @@ of the MIT license. See the LICENSE file for details. -->
     <FrRequestModal
       :type="modalType"
       :item="item"
-      @modal-closed="modalType = null"
+      :phase-name="phaseName"
+      @modal-closed="closeModal"
       @update-item="getRequestData"
       @update-list="$emit('navigate-to-list')" />
   </BContainer>
@@ -78,7 +72,6 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import {
-  detailTypes,
   getFormattedRequest,
   getRequestTypeDisplayName,
   showRecommendationBanner,
@@ -87,7 +80,6 @@ import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/govern
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrRequestDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestDetails';
 import FrRequestHeader from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestHeader';
-import FrRequestActions from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActions';
 import FrRecommendationBanner from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationBanner';
 import i18n from '@/i18n';
 
@@ -115,6 +107,7 @@ const { bvModal } = useBvModal();
 const item = ref({});
 const isLoading = ref(true);
 const modalType = ref('');
+const phaseName = ref('');
 
 const isActive = computed(() => item.value.rawData?.decision?.status === 'in-progress');
 
@@ -134,9 +127,17 @@ async function getRequestData() {
   }
 }
 
-function openModal(type) {
+function openModal(type, phase) {
   modalType.value = REQUEST_MODAL_TYPES[type];
+  if (phase) {
+    phaseName.value = phase;
+  }
   bvModal.value.show('request_modal');
+}
+
+function closeModal() {
+  modalType.value = null;
+  phaseName.value = null;
 }
 
 getRequestData();

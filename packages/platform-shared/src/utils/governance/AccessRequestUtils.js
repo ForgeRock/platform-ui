@@ -71,6 +71,7 @@ export const detailTypes = {
   ADMIN_REQUEST: 'adminRequest',
   USER_REQUEST: 'userRequest',
   FULFILLMENT: 'fulfillment',
+  SCHEDULED: 'scheduled',
 };
 
 export const requestTypes = {

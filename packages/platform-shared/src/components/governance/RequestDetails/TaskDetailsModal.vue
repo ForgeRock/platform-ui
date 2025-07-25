@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -37,14 +37,17 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <BRow>
       <!-- Approvers -->
-      <BCol
-        lg="4"
-        class="font-weight-bold row-height">
-        {{ $t('common.approvers') }}
-      </BCol>
-      <BCol lg="8">
-        <FrUserGroupList :users-list="taskDetails.approvers" />
-      </BCol>
+      <template v-if="taskDetails.type !== detailTypes.SCHEDULED">
+        <BCol
+          lg="4"
+          class="font-weight-bold row-height">
+          {{ $t('common.approvers') }}
+        </BCol>
+        <BCol
+          lg="8">
+          <FrUserGroupList :users-list="taskDetails.approvers" />
+        </BCol>
+      </template>
       <!-- Status -->
       <BCol
         lg="4"
@@ -82,6 +85,32 @@ of the MIT license. See the LICENSE file for details. -->
         data-testid="start-date">
         {{ taskDetails.startDate }}
       </BCol>
+      <!-- Completion Date -->
+      <template v-if="taskDetails.completionDate">
+        <BCol
+          lg="4"
+          class="font-weight-bold row-height">
+          {{ $t('common.completionDate') }}
+        </BCol>
+        <BCol
+          lg="8">
+          {{ taskDetails.completionDate }}
+        </BCol>
+      </template>
+      <!-- Resume Date -->
+      <template v-if="taskDetails.resumeDate">
+        <BCol
+          v-if="taskDetails.resumeDate"
+          lg="4"
+          class="font-weight-bold row-height">
+          {{ $t('governance.accessRequest.resumeDate') }}
+        </BCol>
+        <BCol
+          v-if="taskDetails.resumeDate"
+          lg="8">
+          {{ taskDetails.resumeDate }}
+        </BCol>
+      </template>
       <!-- Workflow ID -->
       <BCol
         lg="4"
@@ -112,6 +141,7 @@ import {
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrUserGroupList from '@forgerock/platform-shared/src/components/UserGroupList/UserGroupList';
+import { detailTypes } from '../../../utils/governance/AccessRequestUtils';
 
 defineProps({
   taskDetails: {

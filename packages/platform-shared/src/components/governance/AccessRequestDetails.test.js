@@ -8,7 +8,6 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import { detailTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import i18n from '@/i18n';
 import AccessRequestDetails from './AccessRequestDetails';
@@ -168,16 +167,6 @@ describe('AccessRequestDetails', () => {
       await flushPromises();
       const forwardButton = findByText(wrapper, 'button', 'Forward');
       expect(forwardButton).toBeUndefined();
-    });
-
-    it('allow forward when viewing a request as an admin', async () => {
-      const wrapper = setup({
-        requestId: '1',
-        type: detailTypes.ADMIN_REQUEST,
-      });
-      await flushPromises();
-      const forwardButton = findByText(wrapper, 'button', 'Forward');
-      expect(forwardButton.exists()).toBe(true);
     });
 
     it('shows recommendation banner', async () => {

@@ -32,8 +32,8 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="status === 'in-progress' || status === 'suspended'"
           class="mr-3"
           :item="item"
-          :suspended="status === 'suspended'"
-          :type="props.allowForwarding ? detailTypes.ADMIN_REQUEST : detailTypes.USER_REQUEST"
+          :status="status"
+          :type="props.isAdmin ? detailTypes.ADMIN_REQUEST : detailTypes.USER_REQUEST"
           @action="handleAction($event, item)" />
       </template>
     </FrAccessRequestList>
@@ -101,7 +101,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  allowForwarding: {
+  isAdmin: {
     type: Boolean,
     default: false,
   },
