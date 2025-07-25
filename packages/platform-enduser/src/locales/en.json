@@ -11,6 +11,7 @@
     "Delegates": "My Delegates",
     "DirectReports": "Direct Reports",
     "Entitlements": "My Entitlements",
+    "MachineAccounts": "My Machine Accounts",
     "MyRequests": "My Requests",
     "Roles": "My Roles",
     "Reports": "Reports",
@@ -222,6 +223,7 @@
     "directReports": "Direct Reports",
     "entitlements": "Entitlements",
     "inbox": "Inbox",
+    "machineAccounts": "My Machine Accounts",
     "myAccess": "My Access",
     "profile": "Profile",
     "reports": "Reports",
@@ -255,6 +257,8 @@
     "AccessRequestRecommendedNew": "Recommended Access",
     "Forbidden": "Forbidden",
     "ListResource": "List Resource",
+    "MachineAccounts": "My Machine Accounts",
+    "MachineAccountDetails": "Machine Account Details",
     "MyRequestDetails": "Request Details",
     "MyRequests": "My Requests",
     "NotFound": "Not Found",
@@ -419,6 +423,16 @@
       "title": "My Direct Reports"
     },
     "hideFilters": "Hide Filters",
+    "machineAccounts": {
+      "errorGettingMachineAccounts": "Error getting machine accounts.",
+      "errorGettingMachineAccountInfo": "Error getting machine account information.",
+      "noMachineAccountsFound": "No machine accounts found.",
+      "noResultsHelp": "Try a new search in the seach box above.",
+      "noResultsUser": "No machine accounts for this user.",
+      "requestSubmitted": "Request Submitted",
+      "subtitle": "View your machine accounts.",
+      "title": "My Machine Accounts"
+    },
     "requestForm": {
       "loadingForm": "Loading Form Definition...",
       "title": "Request Form",

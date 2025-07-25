@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
         body-class="mb-5"
         data-testid="gov-resource-table-no-results-first-load"
         :title="$t('governance.access.noRecordFound', { grantType: pluralizedGrantType })"
-        :subtitle="isNoResultsFirstLoad ? $t('governance.access.noResultsUser', { grantType: pluralizedGrantType }) : $t('common.noResultsHelp')" />
+        :subtitle="isNoResultsFirstLoad ? getNoResultsText() : $t('common.noResultsHelp')" />
       <BTable
         v-else
         v-resizable-table="{ persistKey: `gov-resource-${parentResourceName}` }"
@@ -520,6 +520,12 @@ export default {
         return item.name;
       }
       return item.descriptor?.idx?.[resource]?.displayName;
+    },
+    getNoResultsText() {
+      if (this.parentResourceName && this.parentResourceName === 'account') {
+        return this.$t('governance.access.noResultsAccount', { grantType: this.pluralizedGrantType });
+      }
+      return this.$t('governance.access.noResultsUser', { grantType: this.pluralizedGrantType });
     },
     /**
      * Determines the assignment label for accounts and entitlements
