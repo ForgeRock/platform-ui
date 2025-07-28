@@ -6,8 +6,8 @@
  */
 
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { searchCatalogEntitlements } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
+import { getEntitlementList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import { getApplications } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import {
   getCustomOptionFunction,
   getCustomQueryParamFunction,
@@ -31,12 +31,16 @@ describe('objectSelect utils', () => {
       expect(getResourceFunction('role')).toBe(getManagedResourceList);
     });
 
-    it('returns searchCatalogEntitlements for entitlement', () => {
-      expect(getResourceFunction('entitlement')).toBe(searchCatalogEntitlements);
+    it('returns getEntitlementList for entitlement', () => {
+      expect(getResourceFunction('entitlement')).toBe(getEntitlementList);
     });
 
-    it('returns getResource for other types', () => {
-      expect(getResourceFunction('application')).toBe(getResource);
+    it('returns getApplications for applications', () => {
+      expect(getResourceFunction('application')).toBe(getApplications);
+    });
+
+    it('returns getManagedResourceList for other types', () => {
+      expect(getResourceFunction('')).toBe(getManagedResourceList);
     });
   });
 
@@ -68,13 +72,13 @@ describe('objectSelect utils', () => {
     });
 
     it('returns formatted entitlement option', () => {
-      const resource = { descriptor: { idx: { '/entitlement': { displayName: 'Entitlement1' } } }, assignment: { id: 'entitlementId1' } };
+      const resource = { id: 'entitlementId1', descriptor: { idx: { '/entitlement': { displayName: 'Entitlement1' } } } };
       expect(optionFunction(resource, 'entitlement')).toEqual({ text: 'Entitlement1', value: 'entitlementId1' });
     });
 
     it('returns formatted default option', () => {
       const resource = { name: 'App1', id: 'appId1' };
-      expect(optionFunction(resource, 'application')).toEqual({ text: 'App1', value: 'appId1' });
+      expect(optionFunction(resource, '')).toEqual({ text: 'App1', value: 'appId1' });
     });
   });
 
@@ -133,7 +137,7 @@ describe('objectSelect utils', () => {
       const expectedParams = {
         pageSize: 10,
         fields: '*',
-        queryFilter: '/name sw "test" or /description sw "test"',
+        queryFilter: 'name sw "test" or description sw "test"',
       };
       expect(getQueryParams(queryString, 'customType')).toEqual(expectedParams);
     });
@@ -141,12 +145,12 @@ describe('objectSelect utils', () => {
     it('returns a function that generates query params with custom query filter', () => {
       const queryProperties = ['name', 'description'];
       const queryString = 'test';
-      const customQueryFilter = '/status eq "active"';
+      const customQueryFilter = 'status eq "active"';
       const getQueryParams = getCustomQueryParamFunction(queryProperties);
       const expectedParams = {
         pageSize: 10,
         fields: '*',
-        queryFilter: '(/name sw "test" or /description sw "test") and (/status eq "active")',
+        queryFilter: '(name sw "test" or description sw "test") and (status eq "active")',
       };
       expect(getQueryParams(queryString, 'customType', false, customQueryFilter)).toEqual(expectedParams);
     });
@@ -167,24 +171,24 @@ describe('objectSelect utils', () => {
     it('returns getCustomQueryParamFunction when isCustom is true', () => {
       const queryProperties = ['name', 'description'];
       const queryString = 'test';
-      const customQueryFilter = '/status eq "active"';
+      const customQueryFilter = 'status eq "active"';
       const queryParamFunc = queryParamFunctionWithCustom(true, queryProperties);
       const expectedParams = {
         pageSize: 10,
         fields: '*',
-        queryFilter: '(/name sw "test" or /description sw "test") and (/status eq "active")',
+        queryFilter: '(name sw "test" or description sw "test") and (status eq "active")',
       };
       expect(queryParamFunc(queryString, 'customType', false, customQueryFilter)).toEqual(expectedParams);
     });
 
     it('returns queryParamFunction when isCustom is false', () => {
       const queryString = 'John';
-      const customQueryFilter = '/mail co "test"';
+      const customQueryFilter = 'mail co "test"';
       const queryParamFunc = queryParamFunctionWithCustom(false, []);
       const expectedParams = {
         pageSize: 10,
         fields: 'givenName,sn,userName',
-        queryFilter: '(/givenName sw "John" or /sn sw "John" or /userName sw "John") and (/mail co "test")',
+        queryFilter: '(givenName sw "John" or sn sw "John" or userName sw "John") and (mail co "test")',
       };
       expect(queryParamFunc(queryString, 'alpha_user', false, customQueryFilter)).toEqual(expectedParams);
     });
@@ -241,7 +245,7 @@ describe('objectSelect utils', () => {
       const expectedParams = {
         pageSize: 10,
         fields: 'givenName,sn,userName',
-        queryFilter: '/givenName sw "John" or /sn sw "John" or /userName sw "John"',
+        queryFilter: 'givenName sw "John" or sn sw "John" or userName sw "John"',
       };
       expect(queryParamFunction(queryString, 'alpha_user')).toEqual(expectedParams);
     });
@@ -251,7 +255,7 @@ describe('objectSelect utils', () => {
       const expectedParams = {
         pageSize: 10,
         fields: 'name',
-        queryFilter: '/name sw "Admin"',
+        queryFilter: 'name sw "Admin"',
       };
       expect(queryParamFunction(queryString, 'alpha_role')).toEqual(expectedParams);
     });
@@ -269,8 +273,9 @@ describe('objectSelect utils', () => {
     it('returns query params for application', () => {
       const queryString = 'App1';
       const expectedParams = {
-        queryString: 'App1',
-        authoritative: false,
+        fields: 'application.id,application.name',
+        pageSize: 10,
+        queryFilter: 'application.id sw "App1" or application.name sw "App1"',
       };
       expect(queryParamFunction(queryString, 'application')).toEqual(expectedParams);
     });
@@ -285,11 +290,11 @@ describe('objectSelect utils', () => {
 
     it('returns query params with custom query filter', () => {
       const queryString = 'John';
-      const customQueryFilter = '/mail co "test"';
+      const customQueryFilter = 'mail co "test"';
       const expectedParams = {
         pageSize: 10,
         fields: 'givenName,sn,userName',
-        queryFilter: '(/givenName sw "John" or /sn sw "John" or /userName sw "John") and (/mail co "test")',
+        queryFilter: '(givenName sw "John" or sn sw "John" or userName sw "John") and (mail co "test")',
       };
       expect(queryParamFunction(queryString, 'alpha_user', false, customQueryFilter)).toEqual(expectedParams);
     });

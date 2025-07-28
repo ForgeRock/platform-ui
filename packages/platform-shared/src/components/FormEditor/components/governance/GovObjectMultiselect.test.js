@@ -7,8 +7,8 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/CatalogApi';
+import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import i18n from '@/i18n';
 import ObjectMultiselect from './GovObjectMultiselect';
 
@@ -152,17 +152,21 @@ describe('ObjectMultiselect', () => {
   describe('application', () => {
     beforeEach(() => {
       jest.clearAllMocks();
-      jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
-      CommonsApi.getResource.mockResolvedValue({
+      jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
+      ApplicationsApi.getApplications.mockResolvedValue({
         data: {
           result: [
             {
-              name: 'test1',
-              id: 'applicationId1',
+              application: {
+                name: 'test1',
+                id: 'applicationId1',
+              },
             },
             {
-              name: 'test2',
-              id: 'applicationId2',
+              application: {
+                name: 'test2',
+                id: 'applicationId2',
+              },
             },
           ],
         },
@@ -176,13 +180,17 @@ describe('ObjectMultiselect', () => {
       value: [],
     };
 
-    const applicationApiSpy = jest.spyOn(CommonsApi, 'getResource');
+    const applicationsApiSpy = jest.spyOn(ApplicationsApi, 'getApplications');
 
     it('calls to get list of applications', async () => {
       mountComponent({ property });
       await flushPromises();
 
-      expect(applicationApiSpy).toHaveBeenCalledWith('application', { authoritative: false, queryString: undefined });
+      expect(applicationsApiSpy).toHaveBeenCalledWith('application', {
+        fields: 'application.id,application.name',
+        pageSize: 10,
+        queryFilter: true,
+      });
     });
 
     it('has the returned applications as options', async () => {
@@ -196,25 +204,38 @@ describe('ObjectMultiselect', () => {
     it('calls to get an application when an initial value is provided', async () => {
       mountComponent({ property: { ...property, value: ['applicationId1'] } });
       await flushPromises();
-
-      expect(applicationApiSpy).toHaveBeenCalledWith('application', { authoritative: false, queryString: 'applicationId1' });
+      expect(applicationsApiSpy).toHaveBeenCalledWith('application', {
+        fields: 'application.id,application.name',
+        pageSize: 10,
+        queryFilter: 'application.id sw "applicationId1" or application.name sw "applicationId1"',
+      });
     });
   });
 
   describe('entitlement', () => {
     beforeEach(() => {
       jest.clearAllMocks();
-      jest.mock('@forgerock/platform-shared/src/api/governance/CatalogApi');
-      CatalogApi.searchCatalogEntitlements.mockResolvedValue({
+      jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
+      EntitlementApi.getEntitlementList.mockResolvedValue({
         data: {
           result: [
             {
-              descriptor: { idx: { '/entitlement': { displayName: 'test1' } } },
-              assignment: { id: 'entitlementId1' },
+              id: 'entitlementId1',
+              entitlement: {
+                __NAME__: 'test1',
+                id: 'applicationId1',
+              },
             },
             {
-              descriptor: { idx: { '/entitlement': { displayName: 'test2' } } },
-              assignment: { id: 'entitlementId2' },
+              id: 'entitlementId2',
+              descriptor: {
+                idx: {
+                  '/entitlement': {
+                    displayName: 'test2',
+                    id: 'entitlement2',
+                  },
+                },
+              },
             },
           ],
         },
@@ -228,13 +249,17 @@ describe('ObjectMultiselect', () => {
       value: [],
     };
 
-    const entitlementsSpy = jest.spyOn(CatalogApi, 'searchCatalogEntitlements');
+    const entitlementsSpy = jest.spyOn(EntitlementApi, 'getEntitlementList');
 
     it('calls to get list of entitlements', async () => {
       mountComponent({ property });
       await flushPromises();
 
-      expect(entitlementsSpy).toHaveBeenCalledWith('entitlement', { queryString: undefined });
+      expect(entitlementsSpy).toHaveBeenCalledWith('entitlement', {
+        fields: 'id,descriptor.idx./entitlement.displayName,entitlement.__NAME__,application.name',
+        pageSize: 10,
+        queryFilter: true,
+      });
     });
 
     it('has the returned entitlements as options', async () => {
@@ -248,8 +273,11 @@ describe('ObjectMultiselect', () => {
     it('calls to get an entitlement when an initial value is provided', async () => {
       mountComponent({ property: { ...property, value: ['entitlementId1'] } });
       await flushPromises();
-
-      expect(entitlementsSpy).toHaveBeenCalledWith('entitlement', { queryString: 'entitlementId1' });
+      expect(entitlementsSpy).toHaveBeenCalledWith('entitlement', {
+        fields: 'id,descriptor.idx./entitlement.displayName,entitlement.__NAME__,application.name',
+        pageSize: 10,
+        queryFilter: 'id sw "entitlementId1" or descriptor.idx./entitlement.displayName sw "entitlementId1" or entitlement.__NAME__ sw "entitlementId1" or application.name sw "entitlementId1"',
+      });
     });
   });
 

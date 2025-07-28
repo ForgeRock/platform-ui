@@ -6,8 +6,8 @@
  */
 
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { searchCatalogEntitlements } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
+import { getEntitlementList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import { getApplications } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import i18n from '@/i18n';
 
 /**
@@ -22,10 +22,10 @@ export function getResourceFunction(propertyType) {
     case 'role':
     case 'organization':
       return getManagedResourceList;
-    case 'entitlement':
-      return searchCatalogEntitlements;
     case 'application':
-      return getResource;
+      return getApplications;
+    case 'entitlement':
+      return getEntitlementList;
     default:
       return getManagedResourceList;
   }
@@ -85,10 +85,15 @@ export function optionFunction(resource, resourceType) {
         text: resource.name,
         value: resource._id,
       };
+    case 'application':
+      return {
+        text: resource.application.name,
+        value: resource.application.id,
+      };
     case 'entitlement':
       return {
-        text: resource.descriptor.idx['/entitlement'].displayName,
-        value: resource.assignment.id,
+        text: resource.descriptor?.idx['/entitlement'].displayName || resource.entitlement?.__NAME__,
+        value: resource.id,
       };
     default:
       return {
@@ -139,7 +144,7 @@ export function optionFunctionWithCustom(isCustom, displayProperty) {
 export function getQueryFilterWithCustomFilter(queryString, fields, customQueryFilter) {
   let queryFilter;
   if (queryString) {
-    const tempQuery = fields.map((field) => `/${field} sw "${queryString}"`).join(' or ');
+    const tempQuery = fields.map((field) => `${field} sw "${queryString}"`).join(' or ');
     queryFilter = customQueryFilter
       ? `(${tempQuery}) and (${customQueryFilter})`
       : tempQuery;
@@ -173,11 +178,21 @@ export function queryParamFunction(queryString, resourceType, singleResource = f
     }
     return queryParams;
   }
-
-  queryParams.queryString = queryString;
   if (resourceType === 'application') {
-    queryParams.authoritative = false;
+    const fields = ['application.id', 'application.name'];
+    queryParams.pageSize = 10;
+    queryParams.fields = fields.join(',');
+    queryParams.queryFilter = getQueryFilterWithCustomFilter(queryString, fields, customQueryFilter);
+    return queryParams;
   }
+  if (resourceType === 'entitlement') {
+    const fields = ['id', 'descriptor.idx./entitlement.displayName', 'entitlement.__NAME__', 'application.name'];
+    queryParams.pageSize = 10;
+    queryParams.fields = fields.join(',');
+    queryParams.queryFilter = getQueryFilterWithCustomFilter(queryString, fields, customQueryFilter);
+    return queryParams;
+  }
+  queryParams.queryString = queryString;
   return queryParams;
 }
 
