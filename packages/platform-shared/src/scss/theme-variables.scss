@@ -77,6 +77,18 @@ $light-gray:  #e7eef4;
   background-color: $cyan;
 }
 
+.bg-white {
+  background-color: $white;
+}
+
+.bg-black {
+  background-color: $black;
+}
+
+.bg-gray {
+  background-color: $gray;
+}
+
 /* Fr Tenant Tier colors */
 .yellow-tenant{
   &.tenant-badge {

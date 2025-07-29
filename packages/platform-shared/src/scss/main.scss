@@ -51,6 +51,12 @@ body {
   line-height: 14px;
 }
 
+.material-icons.md-16,
+.material-icons-outlined.md-16 {
+  font-size: 16px;
+  line-height: 16px;
+}
+
 .material-icons.md-18,
 .material-icons-outlined.md-18 {
   font-size: 18px;
@@ -289,6 +295,10 @@ legend {
   &:hover {
     border-color: $blue !important;
   }
+}
+
+.color-black {
+  color: $black;
 }
 
 .color-blue {
@@ -899,6 +909,11 @@ a.card {
 }
 
 /* Icon sizing */
+.size-20 {
+  width: 20px;
+  height: 20px;
+}
+
 .size-24 {
   width: 24px;
   height: 24px;

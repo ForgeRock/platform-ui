@@ -405,12 +405,18 @@
       "december": "December"
     },
     "timePeriods": {
+      "day": "day | days",
       "days": "day(s)",
+      "hour": "hour | hours",
       "hours": "hour(s)",
+      "justNow": "Just now",
       "last7Days": "Last 7 days",
       "last30Days": "Last 30 days",
       "minutes": "minute(s)",
+      "min": "min",
       "months": "month(s)",
+      "timeCombination": "{timeValue} {timeUnit}",
+      "timeCombinationAgo": "{timeValue} {timeUnit} ago",
       "today": "Today",
       "weeks": "week(s)",
       "yesterday": "Yesterday"

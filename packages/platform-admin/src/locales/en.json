@@ -212,6 +212,7 @@
       "nodeContextMultipleDisplayName": "Journey Segment",
       "nodeSuggestion": "What does this node do? | What do these nodes do?",
       "privacyInfo": "Privacy Info",
+      "replies": "{count} Reply | {count} Replies",
       "scriptSuggestion": "What does this Script do?",
       "startNewConversation": "Start New Conversation",
       "suggestions": "Suggestions",
@@ -1339,6 +1340,7 @@
     "title": "Server Clusters"
   },
   "trees": {
+    "addComment": "Add a comment",
     "addNodeModal": {
       "customNode": "Custom Node",
       "customNodeDescription": "Create a custom node for use across all journeys",
@@ -1346,6 +1348,15 @@
       "importNodesDescription": "Import nodes exported from other environments",
       "modalTitleImport": "Select a node type to add to the tree."
     },
+    "commentsPanel": {
+      "commentError": "Error adding comment",
+      "commentSuccess": "Comment added successfully",
+      "description": "Add comments...",
+      "noComments": "Give feedback, ask a question, or just leave a note of appreciation. When in add comment mode, click on any node to leave a comment.",
+      "pressEscToCancel": "Press ESC to cancel",
+      "title": "Comments"
+    },
+    "reply": "Reply",
     "treeSaveSuccessful": "All Changes Saved",
     "failedToGetNodeType": "Failed to gather node type details",
     "failedToGetNodeData": "Failed to gather node data",
@@ -1401,6 +1412,7 @@
     },
     "toolbar": {
       "autoLayout": "Auto Layout",
+      "comment": "Comment",
       "fullscreen": "Toggle Fullscreen",
       "zoomIn": "Zoom In",
       "zoomOut": "Zoom Out"
