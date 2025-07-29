@@ -15,6 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
     :max-length="maxLength"
     :floating-label="floatingLabel">
     <textarea
+      ref="input"
       :value="inputValue"
       @input="inputValue = $event.target.value; $emit('input', inputValue)"
       v-on="validationListeners"
@@ -32,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
       :data-testid="testid"
       @click="handleFocusEvent"
       @focus="handleFocusEvent"
+      @keydown="$emit('keydown', $event)"
       @blur="inputValueHandler(inputValue)" />
     <template #defaultButtons>
       <BInputGroupAppend v-if="copy">
@@ -181,15 +183,26 @@ export default {
 
     return { inputValue, fieldErrors, validationListeners };
   },
+  mounted() {
+    // Ensure the input is focused if autofocus is true
+    if (this.autofocus) {
+      setTimeout(() => {
+        if (this.$refs.input) {
+          this.$refs.input.focus();
+        }
+      }, 200);
+    }
+  },
   methods: {
     /**
      * Handler for click and focus events on textarea.
      * Floats the label if possible
      */
-    handleFocusEvent() {
+    handleFocusEvent(event) {
       if (this.label && !this.readonly && this.floatingLabel) {
         this.floatLabels = true;
       }
+      this.$emit('focus', event);
     },
     /**
     * Default inputValueHandler method.
