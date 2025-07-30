@@ -3,7 +3,10 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrActionsMenu :right="right">
+  <BDropdown
+    :right="right"
+    variant="link"
+    toggle-class="text-decoration-none p-0">
     <slot name="tenant-header" />
     <template #button-content>
       <!-- @slot Button content -->
@@ -55,12 +58,13 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.signOut') }}
       </FrIcon>
     </BDropdownItem>
-  </FrActionsMenu>
+  </BDropdown>
 </template>
 
 <script>
 import {
   BAvatar,
+  BDropdown,
   BDropdownItem,
   BDropdownDivider,
   BMedia,
@@ -71,7 +75,6 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
-import ActionsMenu from '../ActionsMenu/ActionsMenu';
 /**
  * Bootstrap dropdown menu used in navbar and sidemenu
  */
@@ -79,10 +82,10 @@ export default {
   name: 'DropdownMenu',
   components: {
     BAvatar,
+    BDropdown,
     BDropdownDivider,
     BDropdownItem,
     BMedia,
-    FrActionsMenu: ActionsMenu,
     FrMenuItem: MenuItem,
     FrIcon,
   },
@@ -131,11 +134,12 @@ export default {
 
 <style lang="scss" scoped>
 :deep {
-  .menu-container {
+  .b-dropdown {
     width: 100%;
   }
 
-  .menu {
+  .dropdown-menu.show {
+    position: absolute;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
     padding: 0;
     min-width: 243px;
@@ -150,15 +154,15 @@ export default {
     }
   }
 
+  .dropdown-toggle {
+    color: $fr-sidemenu-font-color;
+  }
+
   .dropdown-item {
     .text-gray {
       color: $text-muted;
     }
-    &:focus {
-      background-color: unset;
-    }
     &:focus-visible, &:hover {
-      background-color: $light-blue;
       .text-gray {
         color: $gray-700;
       }
@@ -170,12 +174,6 @@ export default {
     .media-body {
       overflow: hidden;
     }
-  }
-
-  .dropdown-toggle {
-    color: $fr-sidemenu-font-color;
-    text-decoration: none !important;
-    padding: 0;
   }
 
   .dropdown-toggle::after {

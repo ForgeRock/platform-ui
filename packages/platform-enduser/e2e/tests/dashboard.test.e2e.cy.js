@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -58,9 +58,11 @@ filterTests(['@forgeops', '@cloud'], () => {
           cy.get('.fr-menu-collapsed').should('not.exist');
 
           // Check that the user dropdown can show
-          cy.get('.menu').should('not.exist');
+          cy.get('.dropdown-menu.show').should('not.exist');
           cy.get('button.dropdown-toggle').click({ force: true });
-          cy.get('.menu')
+          cy.get('.dropdown-menu.show')
+            .should('exist');
+          cy.get('.dropdown-menu.show')
             .should('exist');
           cy.get('button.dropdown-toggle').click({ force: true });
 
