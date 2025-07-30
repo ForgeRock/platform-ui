@@ -1,9 +1,8 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 const DEFAULT_THEME_PARAMS = {
@@ -115,7 +114,7 @@ const DEFAULT_THEME_PARAMS = {
   profileMenuHoverTextColor: '#455469',
   secondaryColor: '#69788b',
   successColor: '#2ed47a',
-  switchBackgroundColor: '#c0c9d5',
+  switchBackgroundColor: '#939393',
   textColor: '#ffffff',
   topBarBackgroundColor: '#ffffff',
   topBarBorderColor: '#e7eef4',
