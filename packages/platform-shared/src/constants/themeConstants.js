@@ -50,7 +50,7 @@ const DEFAULT_THEME_PARAMS = {
   backgroundImage: '',
   bodyText: '#23282e',
   boldLinks: false,
-  buttonFocusBorderColor: '#0778d6',
+  buttonFocusBorderColor: '#0672cb',
   buttonRounded: 5,
   dangerColor: '#dc3545',
   darkColor: '#23282e',
