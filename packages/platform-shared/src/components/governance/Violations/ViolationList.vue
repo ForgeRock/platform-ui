@@ -16,6 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       @row-clicked="$emit('viewViolationDetails', $event)"
       @sort-changed="sortChanged"
       class="mb-0"
+      v-resizable-table="{ persistKey: `governance-violations-${isAdmin ? 'admin' : 'user'}`, showColumnResizer: showColumnResizer }"
       hover
       no-local-sorting
       no-sort-reset
@@ -219,6 +220,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  showColumnResizer: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const currentPage = ref(1);
@@ -267,7 +272,7 @@ const tableFields = [
   },
   {
     key: 'actions',
-    class: props.isAdmin ? 'w-120px' : '',
+    class: props.isAdmin ? 'w-120px col-actions' : 'col-actions',
     label: '',
     show: true,
   },

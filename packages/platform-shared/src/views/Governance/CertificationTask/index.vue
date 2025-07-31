@@ -38,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
               :title="tab.label">
               <FrTaskList
                 v-if="campaignId && actorId"
+                :show-column-resizer="showColumnResizer"
                 :certification-grant-type="tab.key"
                 :campaign-id="campaignId"
                 :campaign-details="campaignDetails"
@@ -119,6 +120,10 @@ export default {
   },
   props: {
     isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    showColumnResizer: {
       type: Boolean,
       default: false,
     },

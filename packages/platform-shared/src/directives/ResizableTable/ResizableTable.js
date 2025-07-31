@@ -38,6 +38,7 @@ const TABLE_CLASS = 'resizable-table';
 const RESIZER_CLASS = 'resizer';
 const COL_ACTIONS_CLASS = 'col-actions';
 const CHECKBOX_COLUMN_CLASS = 'checkbox-column';
+const SELECTOR_CELL_COLUMN_CLASS = 'selector-cell';
 const FIXED_WIDTH_CLASS_W_50 = 'w-50';
 const FIXED_WIDTH_CLASS_W_25 = 'w-25';
 const RESIZING_CLASS = `${TABLE_CLASS}--resizing`;
@@ -48,6 +49,7 @@ const STORAGE_KEY_SUFFIX = '-column-width';
 const DEFAULT_MIN_WIDTH = 120;
 const DEFAULT_MAX_WIDTH = 800;
 const CHECKBOX_COLUMN_WIDTH = 15;
+const SELECTOR_CELL_COLUMN_WIDTH = 40;
 const RESIZER_CONTENT_BUFFER = 24;
 const MUTATION_OBSERVER_DEBOUNCE_MS = 200;
 const ANNOUNCE_WIDTH_THRESHOLD = 10;
@@ -66,6 +68,8 @@ function updateColumnWidths(col, width) {
   let columnWidth;
   if (col.classList.contains(CHECKBOX_COLUMN_CLASS)) {
     columnWidth = CHECKBOX_COLUMN_WIDTH;
+  } else if (col.classList.contains(SELECTOR_CELL_COLUMN_CLASS)) {
+    columnWidth = SELECTOR_CELL_COLUMN_WIDTH;
   } else if (col.classList.contains(COL_ACTIONS_CLASS)) {
     columnWidth = DEFAULT_MIN_WIDTH;
   } else {
@@ -185,6 +189,18 @@ export default {
       setLocalStorageValue(options.persistKey + STORAGE_KEY_SUFFIX, widths);
     };
 
+    /**
+     * Checks if a column is an action column.
+     * @param {HTMLElement} col
+     * @returns {boolean}
+     */
+    const isActionColumn = (col) => {
+      const classList = col.classList || [];
+      return classList.contains(COL_ACTIONS_CLASS)
+        || classList.contains(CHECKBOX_COLUMN_CLASS)
+        || classList.contains(SELECTOR_CELL_COLUMN_CLASS);
+    };
+
     let maxWidths = [];
     const isRTL = getComputedStyle(table).direction === 'rtl';
 
@@ -220,8 +236,7 @@ export default {
     function createResizableColumn(col, colIndex) {
       col.style.position = 'relative';
       // Prevent duplicate resizers or columns marked as non-resizable
-      if (col.querySelector(`.${RESIZER_CLASS}`) || col.classList.contains(COL_ACTIONS_CLASS)
-        || col.classList.contains(CHECKBOX_COLUMN_CLASS) || col.hasAttribute('data-no-resize')) return;
+      if (col.querySelector(`.${RESIZER_CLASS}`) || isActionColumn(col) || col.hasAttribute('data-no-resize')) return;
       const resizer = createResizer(col, colIndex);
 
       let startX = 0;
@@ -371,7 +386,7 @@ export default {
      */
     function createResizableTable(tbl) {
       cols = Array.from(tbl.querySelectorAll('th'));
-      const nonActionsCols = cols.filter((col) => !col.classList.contains(COL_ACTIONS_CLASS) && !col.classList.contains(CHECKBOX_COLUMN_CLASS));
+      const nonActionsCols = cols.filter((col) => !isActionColumn(col));
       if (options.showColumnResizer === false || !nonActionsCols.length || nonActionsCols.length === 1) return; // Hide the resizer if no columns or only one non-action column is present in the table
       if (options.wrap) {
         table.classList.remove(TABLE_NOWRAP_CLASS);

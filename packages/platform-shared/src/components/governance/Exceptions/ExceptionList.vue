@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,6 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       @row-clicked="$emit('view-exception-details', $event)"
       @sort-changed="sortChanged"
       class="mb-0"
+      v-resizable-table="{ persistKey: `governance-exceptions-${isAdmin ? 'admin' : 'user'}`, showColumnResizer: showColumnResizer }"
       hover
       no-local-sorting
       no-sort-reset
@@ -161,6 +162,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  showColumnResizer: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const tableFields = [
@@ -198,7 +203,7 @@ const tableFields = [
   },
   {
     key: 'actions',
-    class: 'w-100px',
+    class: 'w-100px col-actions',
     label: '',
     sortable: false,
     show: true,

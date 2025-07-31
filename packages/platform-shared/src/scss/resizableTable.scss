@@ -46,7 +46,9 @@
   }
 
   td.col-actions,
-  th.col-actions {
+  th.col-actions,
+  td.cert-actions,
+  th.cert-actions {
     position: sticky !important;
     right: 0;
     overflow: visible;

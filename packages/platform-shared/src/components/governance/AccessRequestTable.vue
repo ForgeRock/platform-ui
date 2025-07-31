@@ -3,8 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BCard no-body class="request-card">
+  <BCard no-body>
     <FrAccessRequestList
+      show-column-resizer
       :is-loading="isLoading"
       :list-name="title"
       :request-status="status"
@@ -244,8 +245,3 @@ async function updateResumeDate(newResumeTime, justification) {
   }
 }
 </script>
-<style lang="scss">
-.request-card {
-  min-width: fit-content;
-}
-</style>
