@@ -17,7 +17,7 @@ const uilocaleEndpoint = '/config/uilocale';
  * @returns translation override files
  */
 export function getTranslationOverrideByLocale(locale, packageNames = 'shared') {
-  return generateIdmApi().get(`${uilocaleEndpoint}/${locale}?_fields=${packageNames}`);
+  return generateIdmApi(null, false).get(`${uilocaleEndpoint}/${locale}?_fields=${packageNames}`);
 }
 
 /**
