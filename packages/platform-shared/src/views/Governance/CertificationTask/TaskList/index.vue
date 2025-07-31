@@ -48,6 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="py-5" />
     <BTable
       v-else-if="items.length"
+      v-resizable-table="{ persistKey: `certification-tasklist--${campaignId}-${certificationGrantType}`, showColumnResizer: showColumnResizer }"
       @row-selected="onRowSelected"
       @sort-changed="sortChange"
       class="m-0 border-top border-bottom task-list-table"
@@ -352,6 +353,7 @@ of the MIT license. See the LICENSE file for details. -->
       :modal-id="getModalId('role')" />
     <FrGovernanceUserDetailsModal
       :manager="manager"
+      :show-column-resizer="showColumnResizer"
       :user="currentUserSelectedModal"
       :user-details="currentUserDetails" />
   </div>
@@ -540,6 +542,10 @@ export default {
     modalPrefix: {
       type: String,
       default: 'account',
+    },
+    showColumnResizer: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

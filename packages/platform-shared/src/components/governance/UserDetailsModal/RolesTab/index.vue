@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <template v-if="totalRows">
       <BTable
+        v-resizable-table="{ allowAutoLayout: true, persistKey: 'user-details-modal-roles', showColumnResizer: showColumnResizer }"
         :fields="rolesFields"
         :items="roles.result"
         :per-page="pageSize"
@@ -60,6 +61,10 @@ export default {
     roles: {
       type: Object,
       required: true,
+    },
+    showColumnResizer: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

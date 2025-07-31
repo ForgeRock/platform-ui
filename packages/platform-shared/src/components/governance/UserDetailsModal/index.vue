@@ -57,13 +57,19 @@ of the MIT license. See the LICENSE file for details. -->
       </BTab>
       <template v-if="!onlyDetails">
         <BTab :title="$t('common.roles')">
-          <FrRolesTab :roles="userDetails.userRoles" />
+          <FrRolesTab
+            :roles="userDetails.userRoles"
+            :show-column-resizer="showColumnResizer" />
         </BTab>
         <BTab :title="$t('common.accounts')">
-          <FrAccountsTab :accounts="userDetails.userAccounts" />
+          <FrAccountsTab
+            :accounts="userDetails.userAccounts"
+            :show-column-resizer="showColumnResizer" />
         </BTab>
         <BTab :title="$t('common.entitlements')">
-          <FrEntitlementsTab :entitlements="userDetails.userEntitlements" />
+          <FrEntitlementsTab
+            :entitlements="userDetails.userEntitlements"
+            :show-column-resizer="showColumnResizer" />
         </BTab>
       </template>
     </BTabs>
@@ -119,6 +125,10 @@ export default {
       }),
     },
     onlyDetails: {
+      type: Boolean,
+      default: false,
+    },
+    showColumnResizer: {
       type: Boolean,
       default: false,
     },

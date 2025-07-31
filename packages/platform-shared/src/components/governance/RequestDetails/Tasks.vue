@@ -5,6 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BTable
     class="mb-0"
+    v-resizable-table="{ allowAutoLayout: true, persistKey: `request-tasks-${type}`, showColumnResizer: showColumnResizer }"
     hover
     no-local-sorting
     responsive
@@ -105,6 +106,10 @@ const prop = defineProps({
   type: {
     type: String,
     default: detailTypes.USER_REQUEST,
+  },
+  showColumnResizer: {
+    type: Boolean,
+    default: false,
   },
 });
 
