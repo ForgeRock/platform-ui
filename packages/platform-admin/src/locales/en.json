@@ -1073,8 +1073,15 @@
         "loading": "Loading relationships...",
         "noData": "No relationships yet",
         "noDataSubText": "Create relationships between this and other object types.",
-        "internalRole": "Internal Role"
-
+        "internalRole": "Internal Role",
+        "single": "Has one",
+        "multiple": "Has many",
+        "modal":{
+          "title": "Create Relationship",
+          "description": "Define a relationship between this and another object type.",
+          "objectType": "Object Type",
+          "relationshipType": "Relationship Type"
+        }
       },
       "saveProfile": "Save Profile",
       "savingProfile": "Saving Profile",
