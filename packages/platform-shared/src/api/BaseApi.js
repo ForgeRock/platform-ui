@@ -320,14 +320,18 @@ export function generateFraasPromotionApi(requestOverride = {}) {
  * Generates a PingFederate API Axios instance
  * Version will not change, safe to hardcode to 1
  * We will only ever make calls against the Admin APIs, safe to hardcode the path
+ * newApi is the consolidated API, and will eventually be the only option - leaving original API
+ * until custom-wsfed is updated to use the new endpoint
+ * @param {boolean} newApi whether to use the new consolidated API - false by default
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
  * on extra information or override default properties https://github.com/axios/axios#request-config
  *
  * @returns {AxiosInstance}
  */
-export function generatePingFederateApi(requestOverride = {}) {
+export function generatePingFederateApi(requestOverride = {}, newApi = false) {
+  const path = newApi ? 'pf-aic/ws' : 'pf-admin-api';
   const requestDetails = {
-    baseURL: `${store.state.SharedStore.pingFederateUrl}/pf-admin-api/v1`,
+    baseURL: `${store.state.SharedStore.pingFederateUrl}/${path}/v1`,
     headers: {
       accept: 'application/json',
       'X-XSRF-Header': 'PingFederate',
