@@ -86,9 +86,9 @@ of the MIT license. See the LICENSE file for details. -->
                   class="mt-2"
                   height="24"
                   width="24"
-                  :alt="item.text"
+                  :alt="`${item.user.givenName} ${item.user.sn}`"
                   :aria-hidden="true"
-                  :src="item.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+                  :src="item.user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
               </template>
               <div class="media-body">
                 <h3 class="h5 mb-0 text-dark text-truncate">
@@ -100,6 +100,35 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
             </BMedia>
           </BButton>
+        </div>
+      </template>
+      <template
+        #cell(manager)="{ item }">
+        <div
+          v-if="item.manager"
+          class="d-flex justify-content-start align-items-center">
+          <BMedia>
+            <template #aside>
+              <BImg
+                class="mt-2"
+                height="24"
+                width="24"
+                :alt="`${item.manager.givenName} ${item.manager.sn}`"
+                :aria-hidden="true"
+                :src="item.manager.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+            </template>
+            <BMediaBody>
+              <h3 class="h5 mb-0 text-dark text-truncate">
+                {{ $t('common.userFullName', { givenName: item.manager.givenName, sn: item.manager.sn }) }}
+              </h3>
+              <small class="text-truncate">
+                {{ item.manager.userName }}
+              </small>
+            </BMediaBody>
+          </BMedia>
+        </div>
+        <div v-else>
+          {{ blankValueIndicator }}
         </div>
       </template>
       <template #cell(application)="{ item }">
@@ -365,6 +394,7 @@ import {
   BCollapse,
   BImg,
   BMedia,
+  BMediaBody,
   BTable,
   BTooltip,
 } from 'bootstrap-vue';
@@ -404,13 +434,14 @@ import {
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import { getGlossarySchema, getFilterSchema, getIgaAutoIdConfig } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { ADMIN_REVIEWER_PERMISSIONS, blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import {
   getCellData,
   getAllColumnCategories,
   getInitialColumns,
   setSelectedCategories,
 } from '@forgerock/platform-shared/src/utils/governance/certificationColumns';
+
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
 import { getPredictionDisplayInfo } from '@forgerock/platform-shared/src/utils/governance/prediction';
@@ -474,6 +505,7 @@ export default {
     BCollapse,
     BImg,
     BMedia,
+    BMediaBody,
     BTable,
     BTooltip,
     FrPagination,
@@ -619,6 +651,7 @@ export default {
         label: this.$t('governance.certificationTask.actions.reset'),
       }],
       allSelected: false,
+      blankValueIndicator,
       bulkCertifyModalProps,
       autoIdSettings: {},
       availableColumns: [],
@@ -688,7 +721,12 @@ export default {
   },
   computed: {
     certificationListColumnsToShow() {
-      return this.certificationListColumns.filter((col) => col.show);
+      return this.certificationListColumns.filter((col) => col.show).map((col) => {
+        if (col.key === 'manager._ref') {
+          col.key = 'manager';
+        }
+        return col;
+      });
     },
     isGroupByAccounts() {
       return this.showGroupBy && this.certificationGrantType === 'accounts';

@@ -170,6 +170,52 @@ describe('getInitialColumns', () => {
     ]);
   });
 
+  it('returns custom user manager column', () => {
+    const customColumns = ['user.name', 'user.manager._ref', 'account.email'];
+    const customColumnConfig = { accounts: customColumns };
+    const columnCategories = [
+      {
+        name: 'user',
+        items: [
+          {
+            key: 'name',
+            label: 'User Name',
+            category: 'user',
+          },
+          {
+            key: 'manager._ref',
+            label: 'User manager',
+            category: 'user',
+            class: 'text-truncate fr-access-cell',
+          },
+        ],
+      },
+      {
+        name: 'account',
+        items: [{ key: 'email', label: 'Account Email', category: 'account' }],
+      },
+    ];
+    const result = getInitialColumns('accounts', null, false, customColumnConfig, columnCategories);
+    expect(result).toEqual([
+      {
+        key: 'name', label: 'User Name', category: 'user', show: true,
+      },
+      {
+        key: 'manager._ref', label: 'User manager', category: 'user', show: true, class: 'text-truncate fr-access-cell',
+      },
+      {
+        key: 'email', label: 'Account Email', category: 'account', show: true,
+      },
+      {
+        key: 'actions',
+        class: 'w-200px cert-actions border-left fr-access-cell',
+        label: '',
+        sortable: false,
+        show: true,
+      },
+    ]);
+  });
+
   it('returns OOTB columns for account grantType', () => {
     const result = getInitialColumns('accounts', null, true, null, null);
     expect(result.map((c) => c.key)).toEqual(['user', 'application', 'account', 'flags', 'comments', 'actions']);
