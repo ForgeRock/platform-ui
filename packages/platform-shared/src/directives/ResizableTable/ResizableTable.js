@@ -39,8 +39,6 @@ const RESIZER_CLASS = 'resizer';
 const COL_ACTIONS_CLASS = 'col-actions';
 const CHECKBOX_COLUMN_CLASS = 'checkbox-column';
 const SELECTOR_CELL_COLUMN_CLASS = 'selector-cell';
-const FIXED_WIDTH_CLASS_W_50 = 'w-50';
-const FIXED_WIDTH_CLASS_W_25 = 'w-25';
 const RESIZING_CLASS = `${TABLE_CLASS}--resizing`;
 const RESIZER_MEASURE_CLASS = `${TABLE_CLASS}__shared-measure-container`;
 const RESIZER_LIVE_REGION_CLASS = `${TABLE_CLASS}__live-region`;
@@ -54,6 +52,12 @@ const RESIZER_CONTENT_BUFFER = 24;
 const MUTATION_OBSERVER_DEBOUNCE_MS = 200;
 const ANNOUNCE_WIDTH_THRESHOLD = 10;
 let cols = [];
+const FIXED_WIDTH_CLASS_LIST = [
+  'w-50',
+  'w-25',
+  'col-width-33',
+  'col-width-20',
+];
 
 /**
  * Sets the width of a column based on its class and provided width.
@@ -73,7 +77,8 @@ function updateColumnWidths(col, width) {
   } else if (col.classList.contains(COL_ACTIONS_CLASS)) {
     columnWidth = DEFAULT_MIN_WIDTH;
   } else {
-    columnWidth = Math.max(DEFAULT_MIN_WIDTH, Math.min(DEFAULT_MAX_WIDTH, width));
+    const indexOfPx = typeof width === 'string' ? width.indexOf('px') : -1;
+    columnWidth = Math.max(DEFAULT_MIN_WIDTH, Math.min(DEFAULT_MAX_WIDTH, indexOfPx > -1 ? parseInt(width.replace('px', ''), 10) : width));
   }
   col.style.setProperty('width', `${columnWidth}px`, 'important');
   return columnWidth;
@@ -167,10 +172,11 @@ export default {
      */
     const removeClassesFromColumnList = (columnList) => {
       columnList.forEach((col) => {
-        if (col.classList.contains(FIXED_WIDTH_CLASS_W_50) || col.classList.contains(FIXED_WIDTH_CLASS_W_25)) {
-          col.classList.remove(FIXED_WIDTH_CLASS_W_50);
-          col.classList.remove(FIXED_WIDTH_CLASS_W_25);
-        }
+        FIXED_WIDTH_CLASS_LIST.forEach((fixedClass) => {
+          if (col.classList.contains(fixedClass)) {
+            col.classList.remove(fixedClass);
+          }
+        });
       });
     };
 
