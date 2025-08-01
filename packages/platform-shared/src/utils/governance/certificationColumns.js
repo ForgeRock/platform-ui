@@ -199,11 +199,10 @@ function getOOTBColumn(category, key) {
  * @param {string} key - The key of the column to find within the specified category.
  * @returns {Object|null} A shallow copy of the found column object, or null if not found.
  */
-function getFilterPropertyColumn(columnCategories, category, key, glossaryAttribute) {
-  const name = glossaryAttribute ? `glossary.${glossaryAttribute}` : key;
+function getFilterPropertyColumn(columnCategories, category, key) {
   const columnData = columnCategories
     ?.find((group) => (group.name === category))?.items
-    ?.find((col) => (col.key === name));
+    ?.find((col) => (col.key === key));
   return columnData ? { ...columnData } : null;
 }
 
@@ -220,11 +219,12 @@ function getFilterPropertyColumn(columnCategories, category, key, glossaryAttrib
  */
 function getCustomColumns(columns, columnCategories) {
   const customColumns = columns.map((column) => {
-    const [category, key, glossaryAttribute] = column.split('.');
+    const parsedString = column.split('.');
+    const category = parsedString[0];
+    const key = parsedString.slice(1).join('.');
 
     // Get column if it is an OOTB column or Filter Property column
-    const colData = getOOTBColumn(category, key) || getFilterPropertyColumn(columnCategories, category, key, glossaryAttribute);
-
+    const colData = getOOTBColumn(category, key) || getFilterPropertyColumn(columnCategories, category, key);
     // If the column is not found in OOTB or custom columns, return a default column
     return colData || {
       key,
