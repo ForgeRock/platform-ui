@@ -1,4 +1,11 @@
-import { CONSTANTS } from '@forgerock/platform-shared/src/constants/endUserMenuConstants';
+/**
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
+import { END_USER_MENU_CONSTANTS } from '@forgerock/platform-shared/src/constants/endUserMenuConstants';
 import i18n from '@/i18n';
 import { getMenuItemTranslationKey } from './menuItemTranslations';
 import { getTranslation } from '../translations';
@@ -66,7 +73,7 @@ export function getUniqueMenuItems(menuItems = []) {
   const seenMenuIds = new Set();
 
   menuItems.forEach((menuItem) => {
-    if (menuItem.id === CONSTANTS.DIVIDER || menuItem.id === CONSTANTS.CUSTOM) {
+    if (menuItem.id === END_USER_MENU_CONSTANTS.DIVIDER || menuItem.id === END_USER_MENU_CONSTANTS.CUSTOM) {
       // Allow duplicates for 'divider' and 'custom' menu items
       uniqueMenuItems.push(menuItem);
       return;
@@ -98,7 +105,7 @@ export function getUniqueMenuItems(menuItems = []) {
  * @returns {Object} The minimal menu item object to add in the theme.
  */
 export function generateMinimalMenuItemForTheme(item) {
-  if (item.id === CONSTANTS.DIVIDER) {
+  if (item.id === END_USER_MENU_CONSTANTS.DIVIDER) {
     return { ...item }; // return the divider menu item as is
   }
 
@@ -141,7 +148,7 @@ export function generateMinimalMenuItemForTheme(item) {
 export function createMenuRouteObject(menuItem, sourceMenuItem) {
   if (menuItem.isManagedObject) {
     let routeParamObject = {};
-    if (menuItem.id === CONSTANTS.INTERNAL_ROLE) {
+    if (menuItem.id === END_USER_MENU_CONSTANTS.INTERNAL_ROLE) {
       routeParamObject = { resourceType: 'internal', resourceName: 'role' };
     } else {
       routeParamObject = { resourceType: 'managed', resourceName: menuItem.id };
@@ -189,7 +196,7 @@ export function getMenuBadgeInfo(menuItem) {
  * @param {Array<string>} notAllowedNames - List of not-allowed names (e.g., ['custom', 'divider']).
  * @param {string} [prefix='managed-'] - Prefix to add if the id is not allowed.
  */
-export function getValidManagedObjectMenuId(idValue = '', notAllowedNames = [CONSTANTS.CUSTOM, CONSTANTS.DIVIDER], prefix = 'managed-') {
+export function getValidManagedObjectMenuId(idValue = '', notAllowedNames = [END_USER_MENU_CONSTANTS.CUSTOM, END_USER_MENU_CONSTANTS.DIVIDER], prefix = 'managed-') {
   if (notAllowedNames.includes(idValue)) {
     return `${prefix}${idValue}`;
   }
@@ -202,8 +209,8 @@ export function getValidManagedObjectMenuId(idValue = '', notAllowedNames = [CON
  * @returns {string} The Menu ID.
  */
 export function createPrivilegeMenuId(privilege) {
-  const privilegeId = privilege.privilegePath === CONSTANTS.INTERNAL_ROLE
-    ? CONSTANTS.INTERNAL_ROLE
+  const privilegeId = privilege.privilegePath === END_USER_MENU_CONSTANTS.INTERNAL_ROLE
+    ? END_USER_MENU_CONSTANTS.INTERNAL_ROLE
     : privilege.privilegePath.split('/')[1];
 
   return getValidManagedObjectMenuId(privilegeId);
@@ -231,7 +238,7 @@ export function createManagedObjectMenuItem(privilege, hideAlphaUsersMenuItem) {
       name: 'ListResource',
       params: {
         resourceType: privilege.privilegePath.startsWith('internal/') ? 'internal' : 'managed',
-        resourceName: privilege.privilegePath === CONSTANTS.INTERNAL_ROLE ? 'role' : privilege.privilegePath.split('/')[1],
+        resourceName: privilege.privilegePath === END_USER_MENU_CONSTANTS.INTERNAL_ROLE ? 'role' : privilege.privilegePath.split('/')[1],
       },
     },
   };
