@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { DIVIDER_MENU_ITEM } from '../../constants/endUserMenuConstants';
+import { DIVIDER_MENU_ITEM, END_USER_MENU_CONSTANTS } from '../../constants/endUserMenuConstants';
 import {
   getAllEndUserMenuItems,
   generateEndUserMenuItems,
@@ -75,8 +75,6 @@ const DEFAULT_MENU_ITEMS = [
   },
 ];
 
-const CONSTANTS = { DIVIDER: 'divider', CUSTOM: 'custom' };
-
 describe('endUserMenu.js', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -134,7 +132,7 @@ describe('endUserMenu.js', () => {
   describe('generateEndUserMenuItems', () => {
     it('should process divider menu item', () => {
       const result = generateEndUserMenuItems({
-        configuredMenuItems: [{ id: CONSTANTS.DIVIDER }],
+        configuredMenuItems: [{ id: END_USER_MENU_CONSTANTS.DIVIDER }],
         store: {},
       });
       expect(result[0]).toEqual(DIVIDER_MENU_ITEM);

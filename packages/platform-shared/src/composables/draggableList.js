@@ -17,7 +17,7 @@ const defaultKeyboardControls = {
   moveDown: ['ArrowDown'],
 };
 
-const CONSTANTS = {
+const DRAGGABLE_LIST_CONSTANTS = {
   LIST_ITEM_ID: 'list-item-id',
 };
 
@@ -66,7 +66,7 @@ export default function useDraggableList(initialDraggableList, {
    * @param {string} id - The value of the attribute to match for focusing the element.
    */
   function focusElementByAttribute(id) {
-    const element = document.querySelector(`[${CONSTANTS.LIST_ITEM_ID}="${id}"]`);
+    const element = document.querySelector(`[${DRAGGABLE_LIST_CONSTANTS.LIST_ITEM_ID}="${id}"]`);
     if (element) {
       element.focus();
     }
@@ -124,7 +124,7 @@ export default function useDraggableList(initialDraggableList, {
    */
   function getItemProps(item, itemIndex) {
     return {
-      [CONSTANTS.LIST_ITEM_ID]: `${getItemId(item)}`,
+      [DRAGGABLE_LIST_CONSTANTS.LIST_ITEM_ID]: `${getItemId(item)}`,
       onKeydown: (event) => handleKeyDown(event, itemIndex),
       'aria-posinset': itemIndex + 1, // ARIA attribute for position in the list
       'aria-setsize': draggableList.value.length, // ARIA attribute for total number of items

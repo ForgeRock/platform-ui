@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { CONSTANTS, CUSTOM_MENU_ITEM, DIVIDER_MENU_ITEM } from '@forgerock/platform-shared/src/constants/endUserMenuConstants';
+import { END_USER_MENU_CONSTANTS, CUSTOM_MENU_ITEM, DIVIDER_MENU_ITEM } from '@forgerock/platform-shared/src/constants/endUserMenuConstants';
 import { getTranslationOverrides } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import i18n from '@/i18n';
 
@@ -57,7 +57,7 @@ export function getLocaleBasedMenuItemLabel(label = {}, labelKey) {
 export function getMenuItemTranslationKey(menuItem) {
   return (menuItem.isManagedObject
     ? getLocaleBasedMenuItemLabel(menuItem.label)
-    : `${CONSTANTS.MENU_ITEM_LABEL_LOCALE_PREFIX}${menuItem.id}`);
+    : `${END_USER_MENU_CONSTANTS.MENU_ITEM_LABEL_LOCALE_PREFIX}${menuItem.id}`);
 }
 
 /** Builds a label object for a menu item using translations from i18n and uiLocaleFiles.

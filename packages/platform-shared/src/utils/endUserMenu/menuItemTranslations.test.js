@@ -36,7 +36,7 @@ jest.mock('@/i18n', () => ({
 
 // Mock required constants
 jest.mock('@forgerock/platform-shared/src/constants/endUserMenuConstants', () => ({
-  CONSTANTS: { MENU_ITEM_LABEL_LOCALE_PREFIX: 'sideMenu.endUser.' },
+  END_USER_MENU_CONSTANTS: { MENU_ITEM_LABEL_LOCALE_PREFIX: 'sideMenu.endUser.' },
   CUSTOM_MENU_ITEM: { id: 'custom' },
   DIVIDER_MENU_ITEM: { id: 'divider' },
 }));

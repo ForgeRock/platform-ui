@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-const CONSTANTS = Object.freeze({
+const END_USER_MENU_CONSTANTS = Object.freeze({
   CUSTOM: 'custom',
   DIVIDER: 'divider',
   INTERNAL_ROLE: 'internal/role',
@@ -14,7 +14,7 @@ const CONSTANTS = Object.freeze({
   MENU_ITEM_LABEL_LOCALE_PREFIX: 'sideMenu.endUser.',
 });
 
-export { CONSTANTS };
+export { END_USER_MENU_CONSTANTS };
 
 export const CUSTOM_MENU_ITEM = {
   id: 'custom',
@@ -163,11 +163,11 @@ export const DEFAULT_MENU_ITEMS = [
     available: (flag) => flag.ifGovernance,
     subItems: [
       {
-        id: CONSTANTS.LCM_USERS,
+        id: END_USER_MENU_CONSTANTS.LCM_USERS,
         routeTo: { name: 'AdministerUsers' },
       },
       {
-        id: CONSTANTS.LCM_ENTITLEMENTS,
+        id: END_USER_MENU_CONSTANTS.LCM_ENTITLEMENTS,
         routeTo: { name: 'AdministerEntitlements' },
       },
     ],
@@ -178,6 +178,6 @@ export const DEFAULT_MENU_ITEMS = [
  *  on which they depend for their visibility.
 */
 export const LCM_SUBITEMS_ID_FLAG_MAP = {
-  [CONSTANTS.LCM_USERS]: 'govLcmUser',
-  [CONSTANTS.LCM_ENTITLEMENTS]: 'govLcmEntitlement',
+  [END_USER_MENU_CONSTANTS.LCM_USERS]: 'govLcmUser',
+  [END_USER_MENU_CONSTANTS.LCM_ENTITLEMENTS]: 'govLcmEntitlement',
 };

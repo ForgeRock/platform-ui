@@ -6,7 +6,7 @@
  */
 
 import {
-  CONSTANTS,
+  END_USER_MENU_CONSTANTS,
   DEFAULT_MENU_ITEMS,
   DIVIDER_MENU_ITEM,
   LCM_SUBITEMS_ID_FLAG_MAP,
@@ -100,12 +100,12 @@ export function generateEndUserMenuItems({
   const flags = generateFeatureFlags(store);
 
   // Include those privileged menu items which are not part of configuredMenuItems
-  const configuredMenuIds = new Map(configuredMenuItems.map((item) => [item.id, item]));
+  const configuredMenuIdMap = new Map(configuredMenuItems.map((item) => [item.id, item]));
   const privilegedMenuItems = privileges
     ?.sort((p1, p2) => p1.title.localeCompare(p2.title)) // sort privileges by title
     .map((privilege) => {
-      const menuId = createPrivilegeMenuId(privilege);
-      if (!configuredMenuIds.has(menuId)) {
+      const privilegeMenuId = createPrivilegeMenuId(privilege);
+      if (!configuredMenuIdMap.has(privilegeMenuId)) {
         return createManagedObjectMenuItem(privilege, hideAlphaUsersMenuItem);
       }
       return undefined; // Already consumed or not valid
@@ -120,11 +120,11 @@ export function generateEndUserMenuItems({
       return undefined;
     }
     // Handle Special Menu Item Types First
-    if (menuItem.id === CONSTANTS.DIVIDER) {
+    if (menuItem.id === END_USER_MENU_CONSTANTS.DIVIDER) {
       return { ...DIVIDER_MENU_ITEM };
     }
 
-    if (menuItem.id === CONSTANTS.CUSTOM) {
+    if (menuItem.id === END_USER_MENU_CONSTANTS.CUSTOM) {
       return {
         displayName: getLocaleBasedMenuItemLabel(menuItem.label, menuItem.labelKey),
         icon: menuItem.icon,
@@ -237,24 +237,20 @@ export function buildMenuItemsFromTheme(themeMenuItems = [], allEndUserMenuItems
   const allMenuIdsMap = new Map(allEndUserMenuItems.map((item) => [item.id, item]));
   const visitedMenuIds = new Set();
   const menuItemsBuilt = themeMenuItems.map((menuItem) => {
-    // Process each menu item as needed
+    // Track visited menu IDs to avoid duplicates
     visitedMenuIds.add(menuItem.id);
-
-    if (menuItem.disabled) {
-      // If the menu item is disabled, skip processing it
-      return undefined;
-    }
 
     // update latest label translation from allEndUserMenuItems
     const matchingItem = allMenuIdsMap.get(menuItem.id);
-    if (matchingItem) {
+    const noLabels = !menuItem.label || Object.keys(menuItem.label).length === 0;
+    if (matchingItem && noLabels) {
       menuItem.label = matchingItem.label;
     }
 
     // invalidate unknown menu items
     const isUnknownMenuItem = !menuItem.isManagedObject
       && !allMenuIdsMap.has(menuItem.id)
-      && ![CONSTANTS.CUSTOM, CONSTANTS.DIVIDER].includes(menuItem.id);
+      && ![END_USER_MENU_CONSTANTS.CUSTOM, END_USER_MENU_CONSTANTS.DIVIDER].includes(menuItem.id);
     if (isUnknownMenuItem) {
       return undefined;
     }
