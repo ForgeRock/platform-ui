@@ -110,7 +110,7 @@ function buildSchemaForFormGenerator(entitlementSchema, modelValue) {
       model: key,
       type,
       value: getDefaultValue(modelValue[key], type),
-      disabled: props.readOnly,
+      disabled: props.readOnly || propertySchema.readOnly,
     }];
   }).sort((a, b) => (entitlementSchema[a[0].model].order - entitlementSchema[b[0].model].order));
 }

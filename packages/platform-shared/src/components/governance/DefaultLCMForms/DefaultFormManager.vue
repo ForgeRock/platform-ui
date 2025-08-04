@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       :application-id="options.applicationId"
       :object-type="options.objectType"
       :read-only="readOnly"
-      :type="requestType === requestTypes.CREATE_ENTITLEMENT.value ? 'CREATE' : 'MODIFY'"
+      :type="requestType === requestTypes.CREATE_ENTITLEMENT.value ? 'CREATE' : 'UPDATE'"
       @update:glossaryValues="handleInput({ entitlementValues, glossaryValues: $event })"
       @update:entitlementValues="handleInput({ entitlementValues: $event, glossaryValues })" />
   </div>
