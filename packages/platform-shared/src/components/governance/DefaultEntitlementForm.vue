@@ -122,12 +122,14 @@ async function getGlossaryAndEntitlementDetails() {
 
     // get entitlement schema and values
     const { data: objectTypeSchema } = await getEntitlementSchema(props.applicationId, props.objectType);
-    const hideFlags = props.type === 'CREATE'
+    const disableFlags = props.type === 'CREATE'
       ? ['NOT_CREATABLE']
-      : [];
+      : ['NOT_UPDATEABLE'];
     entitlementSchema.value = pickBy(objectTypeSchema.properties, (value) => {
       const flags = value.flags || [];
-      return intersection(flags, hideFlags).length === 0;
+      const isDisabled = intersection(flags, disableFlags).length > 0;
+      value.readOnly = isDisabled;
+      return props.type !== 'CREATE' || !isDisabled;
     });
     entitlementValues.value = props.entitlement.entitlement || {};
   } catch (error) {

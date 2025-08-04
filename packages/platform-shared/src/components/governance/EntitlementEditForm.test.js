@@ -28,6 +28,11 @@ describe('EntitlementEditForm', () => {
       type: 'number',
       displayName: 'Test Number Property',
     },
+    testStringReadOnly: {
+      type: 'string',
+      displayName: 'Test Read Only String Property',
+      readOnly: true,
+    },
   };
 
   const modelValue = {
@@ -59,6 +64,24 @@ describe('EntitlementEditForm', () => {
 
     const testNumber = wrapper.find('[label="Test Number Property"]');
     expect(testNumber.exists()).toBe(true);
+  });
+
+  it('builds a form with some read only properties', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    const stringInput = wrapper.find('[label="Test String Property"]');
+    expect(stringInput.exists()).toBe(true);
+
+    const booleanInput = wrapper.find('[label="Test Boolean Property"]');
+    expect(booleanInput.exists()).toBe(true);
+
+    const testNumber = wrapper.find('[label="Test Number Property"]');
+    expect(testNumber.exists()).toBe(true);
+
+    const testReadOnly = wrapper.find('[id="Test Read Only String Property"]');
+    expect(testReadOnly.exists()).toBe(true);
+    expect(testReadOnly.attributes().disabled).toBe('true');
   });
 
   it('sets default value for booleans and emits event', async () => {

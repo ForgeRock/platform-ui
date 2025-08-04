@@ -61,7 +61,7 @@ describe('DefaultEntitlementForm', () => {
           type: 'string',
           order: 3,
           displayName: 'test object property2',
-          flags: ['NOT_CREATABLE'],
+          flags: ['NOT_CREATABLE', 'NOT_UPDATEABLE'],
         },
       },
     },
@@ -159,7 +159,7 @@ describe('DefaultEntitlementForm', () => {
       testObjectProperty2: 'some other value2',
     });
     await flushPromises();
-    expect(wrapper.emitted('update:entitlementValues')[3]).toEqual([
+    expect(wrapper.emitted('update:entitlementValues')[2]).toEqual([
       {
         testObjectProperty: 'new value',
         testObjectProperty2: 'some other value2',
@@ -177,5 +177,18 @@ describe('DefaultEntitlementForm', () => {
     expect(wrapper.find('[label="Object Type"]').attributes('value')).toBe('testObjectType');
     expect(wrapper.find('[label="Account Attribute"]').exists()).toBe(true);
     expect(wrapper.find('[label="Account Attribute"]').attributes('value')).toBe('testAccountAttribute');
+  });
+
+  it('shows NOT_UPDATEABLE properties as disabled for UPDATE mode', async () => {
+    wrapper = mountComponent({ type: 'UPDATE' });
+    await flushPromises();
+
+    const objectInput = wrapper.find('[id="test object property"]');
+    expect(objectInput.exists()).toBe(true);
+    expect(objectInput.attributes('value')).toEqual('some other value');
+
+    const objectInput2 = wrapper.find('[id="test object property2"]');
+    expect(objectInput2.exists()).toBe(true);
+    expect(objectInput2.attributes().disabled).toBe('true');
   });
 });
