@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -103,19 +103,20 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
         </BRow>
       </BCollapse>
-      <template #modal-footer="{ cancel, ok }">
-        <div class="d-flex flex-row-reverse">
-          <BButton
-            :disabled="!valid"
-            data-testid="save-button"
-            variant="primary"
-            @click="okHandler(ok)">
-            {{ $t('common.save') }}
-          </BButton>
+      <template #modal-footer="{ ok, cancel }">
+        <div class="d-flex">
           <BButton
             variant="link"
             @click="cancel()">
             {{ $t('common.cancel') }}
+          </BButton>
+          <BButton
+            :disabled="!valid"
+            data-testid="save-button"
+            variant="primary"
+            class="ml-2"
+            @click="okHandler(ok)">
+            {{ $t('common.save') }}
           </BButton>
         </div>
       </template>
