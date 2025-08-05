@@ -61,3 +61,18 @@ export const REQUEST_MODAL_TYPES = {
   REJECT: 'REJECT',
   CHANGERESUMEDATE: 'CHANGERESUMEDATE',
 };
+
+export const RECOMMENDATIONS_ATTRIBUTES = [
+  'accountStatus',
+  'city',
+  'cn',
+  'givenName',
+  'mail',
+  'manager',
+  'postalAddress',
+  'postalCode',
+  'sn',
+  'stateProvince',
+  'telephoneNumber',
+  'userName',
+];
