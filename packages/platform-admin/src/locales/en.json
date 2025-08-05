@@ -978,12 +978,16 @@
       "typeMultiValued": "{type} (multivalued)",
       "typeVirtual": "{type} (virtual)",
       "propertyTypes": {
-        "string": "String",
-        "boolean": "Boolean",
-        "number": "Number",
-        "object": "Object",
         "array": "Array",
-        "relationship": "Relationship"
+        "booleanHelp": "True or false",
+        "dateHelp": "Specific calendar date",
+        "datetimeHelp": "Date and time combined",
+        "durationHelp": "Elapsed time span",
+        "numberHelp": "Numeric values",
+        "objectHelp": "Structured data",
+        "relationship": "Relationship",
+        "stringHelp": "Text or characters",
+        "timeHelp": "Specific time of day"
       },
       "propertyAttributes": {
         "type": "Type",
@@ -1011,6 +1015,11 @@
         "validate": "Validate",
         "validateHelp": "Add validation properties for this property."
       },
+      "propertyAddModal": {
+        "title": "New {typeName} Property",
+        "propertyType": "Property Type",
+        "propertyTypeHelp": "Choose the type of property to create."
+      },
       "propertyWizard": {
         "editTitle": "{propertyName} ({propertyType})",
         "errors": {
@@ -1029,6 +1038,7 @@
             "titleHelp": "The user-facing name shown in forms and UI.",
             "name": "Property Key",
             "nameHelp": "The unique identifier used in code or APIs (e.g., <code>user_email</code>).",
+            "switchToAdvanced": "Switch to advanced set up",
             "tabDescription": "Enter property details.",
             "tabTitle": "Details"
           },
