@@ -118,7 +118,7 @@ export default {
     // Find the table element (supports both direct and nested usage)
     const table = el.tagName === 'TABLE' ? el : el.querySelector('table');
     const { enableTableColumnResizing } = store.state.SharedStore;
-    if (!table || !enableTableColumnResizing) {
+    if (!table || !enableTableColumnResizing || options.showColumnResizer === false) {
       return;
     }
     table.classList.add(TABLE_CLASS);
@@ -372,7 +372,7 @@ export default {
     function createResizableTable(tbl) {
       cols = Array.from(tbl.querySelectorAll('th'));
       const nonActionsCols = cols.filter((col) => !col.classList.contains(COL_ACTIONS_CLASS) && !col.classList.contains(CHECKBOX_COLUMN_CLASS));
-      if (!nonActionsCols.length || nonActionsCols.length === 1) return; // Hide the resizer if no columns or only one non-action column is present in the table
+      if (options.showColumnResizer === false || !nonActionsCols.length || nonActionsCols.length === 1) return; // Hide the resizer if no columns or only one non-action column is present in the table
       if (options.wrap) {
         table.classList.remove(TABLE_NOWRAP_CLASS);
       } else {
