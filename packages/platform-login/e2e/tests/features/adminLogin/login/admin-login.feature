@@ -93,6 +93,5 @@ Feature: Admin Login
   @cloud @forgeops
   Scenario: Admin logs out successfully
     When admin logs into the tenant
-    And user reloads journey page
     And user clicks on "Sign out" menu item from top right user menu
     Then page title is "Sign In"
