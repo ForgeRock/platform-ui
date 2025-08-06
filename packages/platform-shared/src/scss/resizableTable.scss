@@ -31,6 +31,7 @@
       z-index: 1;
     }
   }
+  
   &.resizable-table--nowrap th,
   &.resizable-table--nowrap td,
   &.resizable-table--nowrap th:not(.checkbox-column),
@@ -58,10 +59,20 @@
   }
 }
 
+.table-responsive {
+  &:has(.resizable-table tbody tr:only-child td.col-actions .dropdown-menu.show) {
+    overflow-x: visible;
+    .resizable-table {
+      table-layout: auto !important;
+    }
+  }
+}
+
 .table-hover tbody tr:hover,
 .table-hover tr:hover td.col-actions {
   background-color: $gray-100 !important;
 }
+
 .resizable-table__shared-measure-container {
   position: absolute;
   visibility: hidden;
