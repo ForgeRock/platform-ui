@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -77,6 +77,61 @@ describe('ConfirmActionModal', () => {
       wrapper.vm.reset();
 
       expect(wrapper.vm.confirmMessage).toBe('');
+    });
+  });
+
+  describe('modal shows expected steps and text', () => {
+    it('normal case does show next button', async () => {
+      wrapper = mount(ConfirmActionModal, {
+        global: {
+          mocks: {
+            $t: (t) => t,
+          },
+        },
+        props: {
+          modalOptions: {
+            requireJustification: false,
+            okLabel: 'okLabel',
+          },
+        },
+        data() {
+          return {
+            isTesting: true,
+            step: 'DETAILS',
+          };
+        },
+      });
+
+      const buttons = wrapper.findAll('.btn');
+      expect(buttons.length).toBe(2);
+      expect(buttons[1].text()).toBe('common.next');
+    });
+
+    it('no confirmation does not show next button', async () => {
+      wrapper = mount(ConfirmActionModal, {
+        global: {
+          mocks: {
+            $t: (t) => t,
+          },
+        },
+        props: {
+          modalOptions: {
+            requireJustification: false,
+            okLabel: 'okLabel',
+            noConfirmation: true,
+          },
+        },
+        data() {
+          return {
+            isTesting: true,
+            step: 'DETAILS',
+          };
+        },
+      });
+
+      const buttons = wrapper.findAll('.btn');
+      expect(buttons.length).toBe(2);
+      expect(buttons[1].text()).toBe('governance.certificationTask.actionsModal.okLabel');
     });
   });
 });

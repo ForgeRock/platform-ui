@@ -571,6 +571,9 @@ export default {
       okFunction: this.bulkException,
       initialStep: STEPS.DETAILS,
       requireJustification: this.campaignDetails.requireJustification?.exceptionAllowed,
+      textArgs: {
+        days: this.campaignDetails.exceptionDuration,
+      },
     };
 
     return {
@@ -667,13 +670,13 @@ export default {
       },
       revokeModalProps: {
         ...bulkRevokeModalProps,
-        description: 'revokeInlineItemDescription',
         okFunction: this.revoke,
+        noConfirmation: true,
       },
       exceptionModalProps: {
         ...bulkExceptionModalProps,
-        description: 'exceptionInlineItemDescription',
         okFunction: this.exception,
+        noConfirmation: true,
       },
     };
   },
@@ -1362,6 +1365,8 @@ export default {
       confirmDescription,
       confirmTitle,
       requireJustification,
+      noConfirmation,
+      textArgs,
     }, currentItemId = null) {
       this.currentItemId = currentItemId;
       this.confirmActionModalProps = {
@@ -1374,6 +1379,8 @@ export default {
         okFunction,
         initialStep: initialStep || STEPS.DETAILS,
         requireJustification,
+        noConfirmation,
+        textArgs,
       };
       this.$bvModal.show(this.getModalId('confirm-action'));
     },

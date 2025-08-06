@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -126,7 +126,7 @@ export default {
       this.comment = value;
     },
     okHandler(ok) {
-      if (this.step === STEPS.DETAILS) {
+      if (this.step === STEPS.DETAILS && this.showConfirm) {
         this.nextStep();
       } else {
         this.forwardItem();

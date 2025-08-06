@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       @hidden="reset">
       <div class="modal-container">
         <template v-if="step === STEPS.DETAILS">
-          <span>{{ $t(`governance.certificationTask.actionsModal.${modalOptions.description}`) }}</span>
+          <span>{{ description }}</span>
           <FrField
             v-model="confirmMessage"
             class="mb-4 mt-4"
@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
           variant="primary"
           :disabled="!valid"
           @click="okHandler(ok)">
-          {{ step === STEPS.DETAILS ? $t('common.next') : $t(`governance.certificationTask.actionsModal.${modalOptions.okLabel}`) }}
+          {{ hasConfirmStep ? $t('common.next') : $t(`governance.certificationTask.actionsModal.${modalOptions.okLabel}`) }}
         </BButton>
       </template>
     </BModal>
@@ -110,7 +110,7 @@ export default {
       this.confirmMessage = '';
     },
     okHandler(ok) {
-      if (this.step === STEPS.DETAILS) {
+      if (this.hasConfirmStep) {
         this.nextStep();
       } else {
         this.modalOptions.okFunction(this.confirmMessage);
@@ -124,7 +124,14 @@ export default {
       this.step = STEPS.DETAILS;
     },
   },
-
+  computed: {
+    hasConfirmStep() {
+      return this.step === STEPS.DETAILS && !this.modalOptions?.noConfirmation;
+    },
+    description() {
+      return this.$t(`governance.certificationTask.actionsModal.${this.modalOptions.description}`, this.modalOptions?.textArgs);
+    },
+  },
   watch: {
     modalOptions: {
       deep: true,
