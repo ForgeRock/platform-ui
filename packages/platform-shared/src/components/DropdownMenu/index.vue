@@ -3,10 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BDropdown
-    :right="right"
-    variant="link"
-    toggle-class="text-decoration-none p-0">
+  <FrActionsMenu :right="right">
     <slot name="tenant-header" />
     <template #button-content>
       <!-- @slot Button content -->
@@ -58,17 +55,17 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.signOut') }}
       </FrIcon>
     </BDropdownItem>
-  </BDropdown>
+  </FrActionsMenu>
 </template>
 
 <script>
 import {
   BAvatar,
-  BDropdown,
   BDropdownItem,
   BDropdownDivider,
   BMedia,
 } from 'bootstrap-vue';
+import ActionsMenu from '@forgerock/platform-shared/src/components/ActionsMenu/ActionsMenu';
 import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -82,10 +79,10 @@ export default {
   name: 'DropdownMenu',
   components: {
     BAvatar,
-    BDropdown,
     BDropdownDivider,
     BDropdownItem,
     BMedia,
+    FrActionsMenu: ActionsMenu,
     FrMenuItem: MenuItem,
     FrIcon,
   },
@@ -134,11 +131,11 @@ export default {
 
 <style lang="scss" scoped>
 :deep {
-  .b-dropdown {
+  .menu-container {
     width: 100%;
   }
 
-  .dropdown-menu.show {
+  .menu {
     position: absolute;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
     padding: 0;
@@ -154,15 +151,18 @@ export default {
     }
   }
 
-  .dropdown-toggle {
-    color: $fr-sidemenu-font-color;
-  }
-
   .dropdown-item {
     .text-gray {
       color: $text-muted;
     }
+    &:focus {
+      background-color: unset;
+      .h5 {
+        color: $gray-900 !important;
+      }
+    }
     &:focus-visible, &:hover {
+      background-color: $light-blue;
       .text-gray {
         color: $gray-700;
       }
@@ -174,6 +174,12 @@ export default {
     .media-body {
       overflow: hidden;
     }
+  }
+
+  .dropdown-toggle {
+    color: $fr-sidemenu-font-color;
+    text-decoration: none !important;
+    padding: 0;
   }
 
   .dropdown-toggle::after {

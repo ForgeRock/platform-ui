@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,12 +14,12 @@ of the MIT license. See the LICENSE file for details. -->
           <FrDropdownMenu
             v-if="dropdownItems.length"
             :dropdown-items="dropdownItems"
-            class="mt-3">
+            class="mt-3 w-100">
             <template #button-content>
               <BMedia
                 vertical-align="center"
                 no-body
-                class="text-left fr-dropdown-button">
+                class="text-left fr-dropdown-button w-100">
                 <BMediaAside>
                   <div :class="`letter-${realmInitial} fr-realm-stamp`">
                     <span
