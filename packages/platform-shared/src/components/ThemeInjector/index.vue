@@ -363,7 +363,8 @@ of the MIT license. See the LICENSE file for details. -->
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .card:not(.form-section),
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content,
       .modal-content .card,
-        #app .dropdown-menu {
+        #app .dropdown-menu,
+        #app .menu {
         background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
         border: 1px solid {{ theme.accountCardOuterBorderColor || '#e7eef4' }};
         color: {{ theme.accountCardTextColor || '#5e6d82' }};
@@ -504,6 +505,40 @@ of the MIT license. See the LICENSE file for details. -->
 
       #app .dropdown-item:hover .material-icons-outlined,
       #app .dropdown-item:focus .material-icons-outlined {
+        color: {{ theme.profileMenuHoverTextColor || 'inherit' }} !important;
+      }
+
+      #app .menu .dropdown-item:focus {
+        background-color: unset;
+      }
+
+      #app .menu .dropdown-item:focus .text-muted {
+        color: {{ theme.secondaryColor }} !important;
+      }
+
+      #app .menu .dropdown-item.active {
+        background-color: {{ theme.profileMenuActiveColor || '#e4f4fd' }};
+        color: {{ theme.darkColor || '#23282e' }};
+      }
+
+      #app .menu .dropdown-item:hover,
+      #app .menu .dropdown-item:focus-visible {
+        background-color: {{ theme.profileMenuHoverColor || '#e4f4fd' }} !important;
+        color: {{ theme.profileMenuHoverTextColor || '#181b20' }} !important;
+      }
+
+      #app .menu .dropdown-item:hover .h5,
+      #app .menu .dropdown-item:focus-visible .h5 {
+        color: {{ theme.profileMenuHoverTextColor || '#181b20' }} !important;
+      }
+
+      #app .menu .dropdown-item:hover .text-muted,
+      #app .menu .dropdown-item:focus-visible .text-muted {
+        color: {{ theme.profileMenuHoverTextColor || '#455469' }} !important;
+      }
+
+      #app .menu .dropdown-item:hover .material-icons-outlined,
+      #app .menu .dropdown-item:focus-visible .material-icons-outlined {
         color: {{ theme.profileMenuHoverTextColor || 'inherit' }} !important;
       }
 
