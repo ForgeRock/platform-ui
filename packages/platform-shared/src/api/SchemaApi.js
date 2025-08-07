@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -68,4 +68,14 @@ export function getSchema(obj, requestOverride) {
 
     return response;
   });
+}
+
+/**
+ * Deletes a property from the managed schema
+ * @param {String} objectName - The name of the object to delete the property from
+ * @param {String} propertyName - The name of the property to delete
+ * @returns {Promise} API promise with result from managed schema property delete
+ */
+export function deleteSchemaProperty(objectName, propertyName) {
+  return generateIdmApi().delete(`/schema/managed/${objectName}/properties/${propertyName}`);
 }
