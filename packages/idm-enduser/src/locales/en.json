@@ -218,6 +218,12 @@
     "notFound": {
       "couldNotFind": "We couldn't find the page you were looking for.",
       "returnRoute": "Return to {returnRoute}"
+    },
+    "login": {
+      "newHere": "New here?",
+      "createAccount": "Create an account",
+      "forgotUsername": "Forgot username?",
+      "forgotPassword": "Forgot password?"
     }
   },
   "pagination": {

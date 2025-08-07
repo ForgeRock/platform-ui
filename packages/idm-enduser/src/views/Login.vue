@@ -1,8 +1,7 @@
-<!-- Copyright 2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer class="vh-100 d-flex justify-content-center align-items-center">
     <FrCenterCard>
@@ -24,7 +23,9 @@ to such license between the licensee and ForgeRock AS. -->
             class="p-3 text-left">
             {{ errorMessage }}
           </FrAlert>
-          <BForm @submit.prevent="signIn">
+          <BForm
+            @submit.prevent="signIn"
+            class="mb-3">
             <FrField
               v-model="userName"
               class="mb-3"
@@ -41,19 +42,39 @@ to such license between the licensee and ForgeRock AS. -->
               {{ $t('common.signIn') }}
             </BButton>
           </BForm>
+          <p
+            class="text-center mb-0"
+            v-if="ENABLE_SELF_SERVICE && (forgotUsernameEnabled || resetPasswordEnabled)">
+            <span v-if="forgotUsernameEnabled">
+              <BLink href="#">{{ $t('pages.login.forgotUsername') }}</BLink>
+            </span>
+            <span
+              v-if="resetPasswordEnabled"
+              class="mx-2">
+              <BLink to="#">{{ $t('pages.login.forgotPassword') }}</BLink>
+            </span>
+          </p>
         </BCardBody>
+        <BCardFooter v-if="ENABLE_SELF_SERVICE && selfRegistrationEnabled">
+          {{ $t('pages.login.newHere') }}
+          <BLink to="#">
+            {{ $t('pages.login.createAccount') }}
+          </BLink>
+        </BCardFooter>
       </template>
     </FrCenterCard>
   </BContainer>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import {
   BButton,
   BCardBody,
+  BCardFooter,
   BContainer,
   BForm,
+  BLink,
 } from 'bootstrap-vue';
 import { useRouter } from 'vue-router';
 import FrAlert from '@forgerock/platform-shared/src/components/Alert';
@@ -62,6 +83,7 @@ import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
 import { useAuth } from '../composables/useAuth';
 import { logout } from '../api/AuthenticationApi';
 import i18n from '@/i18n';
+import store from '@/store';
 
 const router = useRouter();
 
@@ -70,6 +92,10 @@ const password = ref('');
 const errorMessage = ref('');
 
 const { loginIdmEnduser } = useAuth();
+const ENABLE_SELF_SERVICE = computed(() => store.state.FeatureFlagsStore.isSelfServiceEnabled);
+const selfRegistrationEnabled = computed(() => store.state.SharedStore.uiConfig.configuration?.selfRegistration || false);
+const forgotUsernameEnabled = computed(() => store.state.SharedStore.uiConfig.configuration?.forgotUsername || false);
+const resetPasswordEnabled = computed(() => store.state.SharedStore.uiConfig.configuration?.passwordReset || false);
 
 async function signIn() {
   try {
