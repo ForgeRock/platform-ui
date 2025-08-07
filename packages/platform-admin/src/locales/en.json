@@ -221,6 +221,10 @@
       "suggestion3": "At what point in this Journey is the user's identity established?"
     }
   },
+  "authentication": {
+    "errorRetrievingAuthServices": "There was an error retrieving authentication services.",
+    "errorRetrievingTemplatesData": "There was an error retrieving templates data."
+  },
   "connect": {
     "connectIdentities": "Connect Identities",
     "subtitle": "Connect to identity sources by installing connector servers.",
@@ -1348,12 +1352,13 @@
       "importNodesDescription": "Import nodes exported from other environments",
       "modalTitleImport": "Select a node type to add to the tree."
     },
-    "commentsPanel": {
+    "annotations": {
+      "comment": "Comment",
       "commentError": "Error adding comment",
       "commentSuccess": "Comment added successfully",
       "description": "Add comments...",
       "noComments": "Give feedback, ask a question, or just leave a note of appreciation. When in add comment mode, click on any node to leave a comment.",
-      "pressEscToCancel": "Press ESC to cancel",
+      "setToColor": "Set color {annotationColor}",
       "title": "Comments"
     },
     "reply": "Reply",
@@ -1411,6 +1416,7 @@
       "toggleNodeList": "Toggle Node List"
     },
     "toolbar": {
+      "addStickyNote": "Add Sticky Note",
       "autoLayout": "Auto Layout",
       "comment": "Comment",
       "fullscreen": "Toggle Fullscreen",
