@@ -920,6 +920,10 @@
         "title": "Identity Profile",
         "message": "Are you sure you want to delete the {profile} identity profile?"
       },
+      "deleteRelationshipModal": {
+        "title": "Relationship",
+        "message": "Are you sure you want to delete the {relationship} relationship?"
+      },
       "id": "Id",
       "title": "Configure Identities",
       "description": "Define the properties and settings for each identity profile",
@@ -946,6 +950,8 @@
       "addProperty": "Add Property",
       "editProperty": "Edit {objectTitle} Property",
       "readableTitle": "Readable Title",
+      "relationshipDeleteFail": "Unable to delete relationship {relationship}.",
+      "relationshipDeleteSuccess": "Successfully deleted relationship {relationship}.",
       "saveFilterSuccess": "Updated Identity Profile settings",
       "saveFilterFail": "Unable to save filter settings",
       "identityProfile": "Identity Profile",
