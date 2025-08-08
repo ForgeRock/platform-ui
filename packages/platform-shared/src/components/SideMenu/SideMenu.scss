@@ -232,7 +232,7 @@
       padding-right: 2.25rem;
     }
 
-    li > button {
+    li > button, .fr-sidebar-menuitems > button {
       color: inherit;
       background-color: inherit;
       border-color: $white;
@@ -331,7 +331,7 @@
       }
     }
 
-    ul.fr-sidebar-menuitems {
+    ul.fr-sidebar-menuitems, .fr-sidebar-menuitems > button {
       font-size: 0.875rem;
       overflow-x: hidden;
       overflow-y: auto;

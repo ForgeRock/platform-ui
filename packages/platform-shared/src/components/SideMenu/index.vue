@@ -93,24 +93,22 @@ of the MIT license. See the LICENSE file for details. -->
         </ul>
 
         <div class="fr-sidebar-bottom">
-          <ul class="fr-sidebar-menuitems flex-grow-1 border-top">
-            <li>
-              <button
-                @click="toggleMenu"
-                @mouseleave="onMouseLeave"
-                class="d-flex align-items-center"
-                :aria-expanded="(menuIsExpanded).toString()"
-                :aria-label="$t('sideMenu.toggleSidebar')">
-                <FrIcon
-                  icon-class="icon-flipped mr-3 toggle-side-menu"
-                  name="chrome_reader_mode">
-                  <span class="sidebar-item-text">
-                    {{ $t('sideMenu.toggleSidebar') }}
-                  </span>
-                </FrIcon>
-              </button>
-            </li>
-          </ul>
+          <div class="fr-sidebar-menuitems flex-grow-1 border-top">
+            <button
+              @click="toggleMenu"
+              @mouseleave="onMouseLeave"
+              class="d-flex align-items-center"
+              :aria-expanded="(menuIsExpanded).toString()"
+              :aria-label="$t('sideMenu.toggleSidebar')">
+              <FrIcon
+                icon-class="icon-flipped mr-3 toggle-side-menu"
+                name="chrome_reader_mode">
+                <span class="sidebar-item-text">
+                  {{ $t('sideMenu.toggleSidebar') }}
+                </span>
+              </FrIcon>
+            </button>
+          </div>
         </div>
       </div>
     </nav>
