@@ -84,14 +84,12 @@ of the MIT license. See the LICENSE file for details. -->
                   variant="link">
                   {{ $t('common.cancel') }}
                 </BButton>
-                <BButton
+                <FrButtonWithSpinner
                   v-if="isFinalStep || forceShowSaveButton"
                   data-testid="saveButton"
-                  @click="$emit('save')"
+                  :show-spinner="isSaving"
                   :disabled="!valid || !validForm || isSaving"
-                  variant="primary">
-                  {{ $t('common.save') }}
-                </BButton>
+                  @click="$emit('save')" />
                 <BButton
                   v-else
                   data-testid="nextButton"
@@ -126,6 +124,7 @@ import FrNavbar from '@forgerock/platform-shared/src/components/Navbar/';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import i18n from '@/i18n';
 
 // Composables
