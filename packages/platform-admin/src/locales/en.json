@@ -3202,6 +3202,7 @@
       "certificateInUse": "Certificate cannot be deleted while it is still active",
       "certificateUpdateFailure": "Certificate status update failed"
     },
+    "sslConfigDeleteSuccess": "SSL Configuration successfully deleted",
     "addCertificate": "Add Certificate",
     "sslConfig": "SSL Configuration",
     "title": "SSL Configurations",
