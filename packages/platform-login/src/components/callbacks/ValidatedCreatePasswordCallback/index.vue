@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrField
       :value="password.value"
       @input="password.value = $event; updateCallback($event)"
+      autocomplete="new-password"
       type="password"
       :errors="failuresForField"
       :label="password.label"
@@ -32,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="confirmPassword"
       :value="confirmPasswordText"
       @input="confirmPasswordText = $event; checkConfirmPasswordMatch()"
+      autocomplete="new-password"
       type="password"
       :errors="confirmPasswordFailures"
       :label="$t('login.password.confirmPassword')"
