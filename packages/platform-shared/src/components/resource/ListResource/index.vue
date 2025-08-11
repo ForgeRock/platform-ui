@@ -99,7 +99,7 @@ of the MIT license. See the LICENSE file for details. -->
               #custom-top-actions>
               <BDropdownItem @click="setResourceToClearSessionsFor(item)">
                 <FrIcon
-                  icon-class="mr-3"
+                  icon-class="mr-2"
                   name="clear_all">
                   {{ $t('common.endSessions') }}
                 </FrIcon>
