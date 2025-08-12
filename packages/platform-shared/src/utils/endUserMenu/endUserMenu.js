@@ -258,12 +258,12 @@ export function buildMenuItemsFromTheme(themeMenuItems = [], allEndUserMenuItems
     return menuItem;
   }).filter(Boolean); // Filter out any undefined items
 
-  // Consider menu items that were not visited, not disabled nor part of theme.endUserMenuItems
-  allEndUserMenuItems.forEach((menuItem) => {
-    if (!visitedMenuIds.has(menuItem.id)) {
-      menuItemsBuilt.push(menuItem);
-    }
-  });
+  // Consider menu items that were not visited, not disabled nor part of theme.endUserMenuItems or added newly
+  const newMenuItems = allEndUserMenuItems.filter((menuItem) => !visitedMenuIds.has(menuItem.id) && !menuItem.disabled);
+  if (newMenuItems.every((item) => item.id === END_USER_MENU_CONSTANTS.DIVIDER)) {
+    // If all new items are dividers, we don't need to add them
+    return menuItemsBuilt;
+  }
 
-  return menuItemsBuilt;
+  return [...menuItemsBuilt, ...newMenuItems];
 }
