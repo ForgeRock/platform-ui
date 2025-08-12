@@ -332,5 +332,12 @@ describe('endUserMenu.js', () => {
       const result = buildMenuItemsFromTheme(themeMenuItems, allEndUserMenuItems);
       expect(result.map((item) => item.id)).toEqual(['custom', 'divider', 'home']);
     });
+
+    it('should not add additional divider menu items as only menu items', () => {
+      const themeMenuItems = [{ id: 'dashboard' }];
+      const allEndUserMenuItems = [{ id: 'dashboard' }, { id: 'home', disabled: true }, { id: 'divider' }];
+      const result = buildMenuItemsFromTheme(themeMenuItems, allEndUserMenuItems);
+      expect(result).toEqual([{ id: 'dashboard' }]);
+    });
   });
 });
