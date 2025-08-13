@@ -4604,7 +4604,9 @@
     },
     "requestTypes": {
       "name": "Request Type",
+      "defaultValidation": "Default validation",
       "enableValidation": "Enable validation",
+      "enableCustomValidation": "Enable custom validation",
       "errorDeletingRequestType": "There was an error deleting the request type",
       "errorGettingRequestTypes": "There was an error retrieving the request types",
       "errorGettingWorkflows": "There was an error retrieving the workflows",
