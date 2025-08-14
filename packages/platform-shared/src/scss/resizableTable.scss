@@ -1,10 +1,10 @@
 .resizable-table {
   .resizer {
     position: absolute;
-    right: -4px;
+    right: 0;
     top: 4px;
     bottom: 4px;
-    width: 8px;
+    width: 5px;
     cursor: col-resize;
     user-select: none;
     z-index: 2;
@@ -19,6 +19,7 @@
       background: #d3d8e0;
       outline: 2px solid #1976d2;
       outline-offset: 2px;
+      margin: 0 4px;
     }
   }
 
@@ -90,4 +91,9 @@
   width: 1px;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.resizable-table.table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left), 
+.resizable-table.table.b-table > tfoot > tr > [aria-sort]:not(.b-table-sort-icon-left) {
+  background-position: right 1rem center;
 }
