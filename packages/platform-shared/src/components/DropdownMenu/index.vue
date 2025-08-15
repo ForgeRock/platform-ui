@@ -19,7 +19,10 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </template>
     <template v-if="showProfileLink">
-      <BDropdownDivider v-if="enableLogout && dropdownItems.length" />
+      <BDropdownDivider
+        v-if="enableLogout && dropdownItems.length"
+        aria-hidden="true"
+        role="presentation" />
       <BDropdownItem @click="$router.push({ name: 'Profile' })">
         <BMedia class="text-left">
           <template #aside>
@@ -43,7 +46,10 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </BMedia>
       </BDropdownItem>
-      <BDropdownDivider v-if="enableLogout" />
+      <BDropdownDivider
+        v-if="enableLogout"
+        aria-hidden="true"
+        role="presentation" />
     </template>
     <BDropdownItem
       v-if="enableLogout"
