@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,10 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       variant="link-dark">
       <FrIcon name="done_all" />
     </BButton>
-    <BDropdown
-      data-testid="bulk-select-dropdown"
-      toggle-class="p-1"
-      variant="link">
+    <FrActionsMenu data-testid="bulk-select-dropdown">
       <template #button-content>
         <label class="text-secondary mb-0">
           {{ $t('governance.certificationTask.select') }}
@@ -26,30 +23,30 @@ of the MIT license. See the LICENSE file for details. -->
         @click="$emit('select-tasks', true)">
         {{ $t('governance.certificationTask.selectAllTasksThisPage') }}
       </BDropdownItem>
-      <BDropdownDivider />
+      <BDropdownDivider aria-hidden="true"/>
       <BDropdownItem
         @click="$emit('select-tasks', false)">
         {{ $t('governance.certificationTask.deselectAll') }}
       </BDropdownItem>
-    </BDropdown>
+    </FrActionsMenu>
   </div>
 </template>
 <script>
 import {
   BButton,
-  BDropdown,
   BDropdownDivider,
   BDropdownItem,
 } from 'bootstrap-vue';
+import FrActionsMenu from '@forgerock/platform-shared/src/components/ActionsMenu/ActionsMenu';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 export default {
   name: 'TaskMultiSelect',
   components: {
     BButton,
-    BDropdown,
     BDropdownDivider,
     BDropdownItem,
+    FrActionsMenu,
     FrIcon,
   },
   props: {
@@ -72,3 +69,15 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+:deep(.menu-container button) {
+  text-decoration: none;
+  label {
+    cursor: pointer;
+  }
+}
+
+:deep(.dropdown-item:focus) {
+  color: $gray-700 !important;
+}
+</style>
