@@ -3,95 +3,96 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <Transition
-    name="slide-fade"
-    duration="1000">
-    <div
-      v-if="count > 0"
-      role="alert"
-      :class="[barSize === 'sm' ? 'w-500px' : '', 'floating-action-bar bg-dark rounded position-fixed px-4 py-2']">
-      <div class="w-100">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="mr-3 d-flex">
-            <div class="text-light mr-2 my-auto">
-              {{ $t('common.selectedColon') }}
-              <span class="font-weight-bold">
-                {{ count }}
-              </span>
-            </div>
-            <BButton
-              variant="link"
-              class="px-1"
-              @click="$emit('deselect')">
-              {{ $t('common.deselect') }}
-            </BButton>
-          </div>
-          <div class="d-flex">
-            <template
-              v-for="button in buttons"
-              :key="button.event">
-              <div
-                v-if="button.divider"
-                class="d-none d-md-inline-block vertical-divider" />
+  <div role="alert">
+    <Transition
+      name="slide-fade"
+      duration="1000">
+      <div
+        v-if="count > 0"
+        :class="[barSize === 'sm' ? 'w-500px' : '', 'floating-action-bar bg-dark rounded position-fixed px-4 py-2']">
+        <div class="w-100">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="mr-3 d-flex">
+              <div class="text-light mr-2 my-auto">
+                {{ $t('common.selectedColon') }}
+                <span class="font-weight-bold">
+                  {{ count }}
+                </span>
+              </div>
               <BButton
-                v-else
-                class="d-none d-md-inline-block"
-                variant="dark"
-                @click="$emit(button.event, $event)">
-                <FrIcon
-                  :name="button.icon"
-                  :icon-class="`mr-2 ${button.iconClass}`">
-                  {{ button.label }}
-                </FrIcon>
+                variant="link"
+                class="px-1"
+                @click="$emit('deselect')">
+                {{ $t('common.deselect') }}
               </BButton>
-            </template>
-            <BDropdown
-              v-if="menuItems.length || (buttons.length && width < 768)"
-              class="ml-1"
-              no-caret
-              right
-              boundary="window"
-              variant="dark">
-              <template #button-content>
-                <FrIcon
-                  icon-class="md-24"
-                  name="more_horiz" />
-              </template>
-              <template
-                v-for="(item, index) in menuItems"
-                :key="index">
-                <BDropdownDivider v-if="item.divider" />
-                <BDropdownItem
-                  v-else
-                  @click="$emit(item.event, item)">
-                  <FrIcon
-                    icon-class="mr-2"
-                    :name="item.icon">
-                    {{ item.label }}
-                  </FrIcon>
-                </BDropdownItem>
-              </template>
+            </div>
+            <div class="d-flex">
               <template
                 v-for="button in buttons"
                 :key="button.event">
-                <BDropdownDivider v-if="button.divider" />
-                <BDropdownItem
+                <div
+                  v-if="button.divider"
+                  class="d-none d-md-inline-block vertical-divider" />
+                <BButton
                   v-else
-                  class="d-md-none d-block"
+                  class="d-none d-md-inline-block"
+                  variant="dark"
                   @click="$emit(button.event, $event)">
                   <FrIcon
                     :name="button.icon"
                     :icon-class="`mr-2 ${button.iconClass}`">
                     {{ button.label }}
                   </FrIcon>
-                </BDropdownItem>
+                </BButton>
               </template>
-            </BDropdown>
+              <BDropdown
+                v-if="menuItems.length || (buttons.length && width < 768)"
+                class="ml-1"
+                no-caret
+                right
+                boundary="window"
+                variant="dark">
+                <template #button-content>
+                  <FrIcon
+                    icon-class="md-24"
+                    name="more_horiz" />
+                </template>
+                <template
+                  v-for="(item, index) in menuItems"
+                  :key="index">
+                  <BDropdownDivider v-if="item.divider" />
+                  <BDropdownItem
+                    v-else
+                    @click="$emit(item.event, item)">
+                    <FrIcon
+                      icon-class="mr-2"
+                      :name="item.icon">
+                      {{ item.label }}
+                    </FrIcon>
+                  </BDropdownItem>
+                </template>
+                <template
+                  v-for="button in buttons"
+                  :key="button.event">
+                  <BDropdownDivider v-if="button.divider" />
+                  <BDropdownItem
+                    v-else
+                    class="d-md-none d-block"
+                    @click="$emit(button.event, $event)">
+                    <FrIcon
+                      :name="button.icon"
+                      :icon-class="`mr-2 ${button.iconClass}`">
+                      {{ button.label }}
+                    </FrIcon>
+                  </BDropdownItem>
+                </template>
+              </BDropdown>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </Transition>
+    </Transition>
+  </div>
 </template>
 
 <script setup>

@@ -1697,7 +1697,8 @@ describe('TaskList', () => {
       wrapper.vm.selectedItems = [{ id: '123' }];
       await flushPromises();
       const floatingActionBar = wrapper.findComponent('[name="slide-fade"]');
-      floatingActionBar.vm.$emit('reassign');
+      const reassignButton = floatingActionBar.findAll('a').find((a) => a.text().toLowerCase().includes('reassign'));
+      await reassignButton.trigger('click');
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-reassign');
     });
     it('should emit the bv::show::modal to show the certification reasign modal', () => {
