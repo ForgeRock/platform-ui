@@ -47,6 +47,7 @@ const defaultState = {
   fraasMtlsFqdn: null,
   pendoEnabled: false,
   pingFederateUrl: null,
+  nodeVersioningEnabled: false,
   promoteAppsViaApi: false,
   riskAdminEnabled: false,
   riskDashboardEnabled: false,
@@ -158,6 +159,10 @@ const mutations = {
 
     if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
       state.googleMapsApiKey = env.VUE_APP_GOOGLE_MAPS_API_KEY;
+    }
+
+    if (env.VUE_APP_NODE_VERSIONING_ENABLED === true || env.VUE_APP_NODE_VERSIONING_ENABLED === 'true') {
+      state.nodeVersioningEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX === true || env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX === 'true') {
