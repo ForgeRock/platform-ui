@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -137,54 +137,50 @@ of the MIT license. See the LICENSE file for details. -->
                 <small>{{ $t('scriptEditor.value') }}</small>
               </BCol>
             </BFormRow>
-            <VeeForm
-              ref="observer"
-              as="span">
-              <div
-                v-for="(selectedVariable, index) in selectedVariables"
-                :key="selectedVariable.index"
-                :class="[{'pt-2': index}, 'd-flex']">
-                <div class="flex-grow-1 pr-3">
-                  <BFormRow class="align-items-start">
-                    <FrField
-                      :value="selectedVariable.name"
-                      @input="selectedVariable.name = $event; emitScriptValue()"
-                      class="col-6"
-                      :disabled="disabled"
-                      input-class="form-control-sm form-control-dark"
-                      validation="required"
-                      :name="`${$t('common.name')}-${selectedVariable.index}`" />
-                    <FrField
-                      :value="selectedVariable.value.value"
-                      @input="selectedVariable.value.value = $event; emitScriptValue()"
-                      class="col-6"
-                      :disabled="disabled"
-                      input-class="form-control-sm form-control-dark"
-                      validation="required"
-                      :name="`${$t('common.value')}-${selectedVariable.index}`"
-                      :type="selectedVariable.type" />
-                  </BFormRow>
-                </div>
-                <div class="d-flex">
-                  <BButton
-                    variant="link"
-                    class="max-height-50 mr-1"
+            <div
+              v-for="(selectedVariable, index) in selectedVariables"
+              :key="selectedVariable.index"
+              :class="[{'pt-2': index}, 'd-flex']">
+              <div class="flex-grow-1 pr-3">
+                <BFormRow class="align-items-start">
+                  <FrField
+                    :value="selectedVariable.name"
+                    @input="selectedVariable.name = $event; emitScriptValue()"
+                    class="col-6"
                     :disabled="disabled"
-                    size="sm"
-                    @click="removeVariable(index)">
-                    <FrIcon name="remove" />
-                  </BButton>
-                  <BButton
-                    variant="link"
-                    class="max-height-50 mr-1"
+                    input-class="form-control-sm form-control-dark"
+                    validation="required"
+                    :name="`${$t('common.name')}-${selectedVariable.index}`" />
+                  <FrField
+                    :value="selectedVariable.value.value"
+                    @input="selectedVariable.value.value = $event; emitScriptValue()"
+                    class="col-6"
                     :disabled="disabled"
-                    size="sm"
-                    @click="addVariable('', '', index + 1)">
-                    <FrIcon name="add" />
-                  </BButton>
-                </div>
+                    input-class="form-control-sm form-control-dark"
+                    validation="required"
+                    :name="`${$t('common.value')}-${selectedVariable.index}`"
+                    :type="selectedVariable.type" />
+                </BFormRow>
               </div>
-            </VeeForm>
+              <div class="d-flex">
+                <BButton
+                  variant="link"
+                  class="max-height-50 mr-1"
+                  :disabled="disabled"
+                  size="sm"
+                  @click="removeVariable(index)">
+                  <FrIcon name="remove" />
+                </BButton>
+                <BButton
+                  variant="link"
+                  class="max-height-50 mr-1"
+                  :disabled="disabled"
+                  size="sm"
+                  @click="addVariable('', '', index + 1)">
+                  <FrIcon name="add" />
+                </BButton>
+              </div>
+            </div>
           </template>
         </template>
       </div>
@@ -200,7 +196,6 @@ import {
   BFormRow,
 } from 'bootstrap-vue';
 import { debounce } from 'lodash';
-import { Form as VeeForm } from 'vee-validate';
 import { copyValueToClipboard } from '@forgerock/platform-shared/src/utils/clipboard';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -221,7 +216,6 @@ export default {
     BFormRow,
     FrField,
     FrIcon,
-    VeeForm,
     VuePrismEditor,
   },
   mixins: [NotificationMixin],
@@ -355,27 +349,18 @@ export default {
     },
     blurOnEscape,
     /**
-     * Checks if variables are filled in properly and calls emit if so
+     * Checks which variable editor (key/value fields or json editor) is being used and emits out current script values based on which is used
      */
     emitScriptValue() {
-      if (this.$refs.observer) {
-        this.$refs.observer.validate().then((isValid) => {
-          if (isValid) {
-            const globals = {};
-            this.selectedVariables.forEach((variable) => {
-              globals[variable.name] = this.tryParse(variable.value.value);
-            });
-            this.$emit('disableSave', false);
-            this.sendEmit(this.scriptType.value, globals);
-          } else {
-            this.$emit('disableSave', true);
-          }
-        });
-      } else if (this.jsonEditToggle) {
+      if (this.jsonEditToggle) {
         this.checkIfCodeIsParsable(this.currentJSONCode);
       } else {
         this.$emit('disableSave', false);
-        this.sendEmit(this.scriptType.value, {});
+        const globals = {};
+        this.selectedVariables.forEach((variable) => {
+          globals[variable.name] = this.tryParse(variable.value.value);
+        });
+        this.sendEmit(this.scriptType.value, globals);
       }
     },
     /**
