@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard no-body>
     <FrAccessRequestList
-      show-column-resizer
+      :show-column-resizer="showColumnResizer"
       :is-loading="isLoading"
       :list-name="title"
       :request-status="status"
@@ -31,6 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template #actions="{ item }">
         <FrRequestActionsCell
           v-if="status === 'in-progress' || status === 'suspended'"
+          :boundary="boundaryValue"
           class="mr-3"
           :item="item"
           :status="status"
@@ -68,6 +69,7 @@ import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
+import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import {
   detailTypes,
   getRequestFilter,
@@ -109,6 +111,10 @@ const props = defineProps({
   title: {
     type: String,
     default: '',
+  },
+  showColumnResizer: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -160,6 +166,7 @@ const componentRefs = new Map([
   ['totalRows', props.totalRows],
 ]);
 
+const boundaryValue = getDropdownBoundary(props.showColumnResizer);
 /**
  * Get current users access requests based on query params and target filter
  */

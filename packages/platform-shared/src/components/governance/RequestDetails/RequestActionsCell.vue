@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="d-flex align-items-center justify-content-end text-right dropdown-padding">
     <BDropdown
-      boundary="window"
+      :boundary="boundary"
       variant="link"
       no-caret
       right
@@ -70,6 +70,10 @@ const props = defineProps({
   status: {
     type: String,
     default: 'complete',
+  },
+  boundary: {
+    default: 'window',
+    type: String,
   },
 });
 
