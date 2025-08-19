@@ -21,16 +21,16 @@ of the MIT license. See the LICENSE file for details. -->
           {{ property.formText }}
         </div>
       </template>
-      <template #objectSelect="{ property }">
+      <template #objectSelect="{ property, visibility }">
         <FrGovObjectSelect
-          v-if="store.state.SharedStore.governanceEnabled"
+          v-if="store.state.SharedStore.governanceEnabled && visibility"
           class="pb-1 mb-4"
           :property="property"
           @update:model="fieldChanged" />
       </template>
-      <template #objectMultiselect="{ property }">
+      <template #objectMultiselect="{ property, visibility }">
         <FrGovObjectMultiselect
-          v-if="store.state.SharedStore.governanceEnabled"
+          v-if="store.state.SharedStore.governanceEnabled && visibility"
           class="pb-1 mb-4"
           :property="property"
           @update:model="fieldChanged" />
