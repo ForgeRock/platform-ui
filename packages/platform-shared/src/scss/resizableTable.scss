@@ -63,11 +63,18 @@
 }
 
 .table-responsive {
-  &:has(.resizable-table tbody tr:only-child td.col-actions .dropdown-menu.show) {
+  &:has(.resizable-table tbody tr:only-child td.col-actions .dropdown-menu.show),
+  &:has(.resizable-table tbody tr:only-child td.cert-actions .dropdown-menu.show) {
     overflow-x: visible;
     .resizable-table {
       table-layout: auto !important;
     }
+  }
+
+  .resizable-table tbody tr:only-child td.cert-actions .dropdown-menu.show {
+    left: auto;
+    right: 0;
+    width: fit-content;
   }
 }
 
@@ -96,4 +103,10 @@
 .resizable-table.table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left), 
 .resizable-table.table.b-table > tfoot > tr > [aria-sort]:not(.b-table-sort-icon-left) {
   background-position: right 1rem center;
+}
+
+.tabs .tab-content.col {
+  &:has(.resizable-table td.col-actions .dropdown) {
+    min-height: 300px;
+  }
 }

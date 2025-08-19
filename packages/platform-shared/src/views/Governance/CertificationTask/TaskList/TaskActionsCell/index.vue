@@ -73,7 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
 
     <BDropdown
       no-caret
-      boundary="window"
+      :boundary="boundary"
       toggle-class="p-1 d-inline"
       variant="link">
       <template #button-content>
@@ -170,6 +170,10 @@ export default {
     isStaged: {
       type: Boolean,
       default: false,
+    },
+    boundary: {
+      default: 'window',
+      type: String,
     },
   },
   methods: {
