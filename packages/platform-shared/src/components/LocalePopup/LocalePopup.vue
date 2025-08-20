@@ -72,6 +72,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="w-100 d-flex justify-content-end mb-3">
             <BButton
               variant="link"
+              class="mr-2"
               @click="closeAction = 'close', hide()">
               {{ $t('common.cancel') }}
             </BButton>
