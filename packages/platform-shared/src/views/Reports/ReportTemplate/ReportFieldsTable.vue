@@ -156,10 +156,11 @@ const tableEntries = computed(() => {
 });
 
 const atLeastOneLabelIsEmpty = computed(() => tableEntries.value.filter(({ context, columnLabel, label }) => {
+  // Using trim to remove blank spaces, else it may trigger to enable the save button
   if (context === 'AGGREGATE') {
-    return !label;
+    return !label.trim();
   }
-  return !columnLabel;
+  return !columnLabel.trim();
 }));
 
 // functions

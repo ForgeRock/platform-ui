@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BContainer
     fluid>
     <FrHeader
-      class="mt-5 mb-4 text-capitalize"
+      class="mt-5 mb-4"
       :title="prettyTemplateName"
       :top-text="$t('reports.heading')" />
     <BTabs

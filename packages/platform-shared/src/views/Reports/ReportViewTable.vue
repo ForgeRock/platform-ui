@@ -63,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="m-0 pb-3"
                 :key="item">
                 <small class="text-muted">
-                  {{ startCase(item) }}
+                  {{ item }}
                 </small>
                 <br>
                 <span v-if="item === 'node_event_time'">
@@ -91,7 +91,6 @@ import {
   BSkeletonTable,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
-import { startCase } from 'lodash';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 
 const props = defineProps({

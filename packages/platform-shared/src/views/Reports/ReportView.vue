@@ -180,7 +180,7 @@ import { ref, watch } from 'vue'; import {
 } from 'bootstrap-vue';
 import { getReportRuns } from '@forgerock/platform-shared/src/api/AutoApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { cloneDeep, startCase } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -243,7 +243,7 @@ const modalData = ref({});
 async function setConfigInfo(report) {
   reportDate.value = dayjs(report.createDate).format('MM/D/YYYY');
   reportTime.value = dayjs(report.createDate).format('h:mm A');
-  reportName.value = startCase(report.displayName);
+  reportName.value = report.displayName;
   csvStatus.value = report.exportCsvStatus === 'EXPORT_SUCCESS';
   jsonStatus.value = report.exportJsonStatus === 'EXPORT_SUCCESS';
 

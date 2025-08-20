@@ -120,7 +120,7 @@ describe('New Report Modal component', () => {
     });
 
     it('correctly emits the form data for a duplicate report', async () => {
-      await wrapper.setProps({ reportDataForDuplication: { displayName: 'My-Report' } });
+      await wrapper.setProps({ reportDataForDuplication: { displayName: 'My Report' } });
 
       const descriptionInputValue = 'test description';
 
@@ -247,7 +247,7 @@ describe('New Report Modal component', () => {
       let nameInputValue = nameInput.element.value;
       expect(nameInputValue).toBe('');
 
-      await wrapper.setProps({ reportDataForDuplication: { displayName: 'My-Report' } });
+      await wrapper.setProps({ reportDataForDuplication: { displayName: 'My Report' } });
 
       nameInputValue = nameInput.element.value;
       expect(nameInputValue).toBe('Copy of My Report');

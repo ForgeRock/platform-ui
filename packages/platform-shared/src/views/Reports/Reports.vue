@@ -59,7 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
         <template #cell(report)="{ item }">
           <div :id="`${item.name}-${item.type}`">
             <h2 class="h5 mb-1">
-              {{ startCase(item.displayName) }}
+              {{ item.displayName }}
             </h2>
             <p class="text-body text-truncate mb-0">
               {{ item.description }}
@@ -200,7 +200,6 @@ import {
   BSpinner,
   BBadge,
 } from 'bootstrap-vue';
-import { startCase } from 'lodash';
 import { useRouter } from 'vue-router';
 import {
   deleteAnalyticsReport,
@@ -308,7 +307,7 @@ async function retrieveReportTemplates(params = null) {
  * @param {String} filter search term
  */
 function filterReports(report, filter) {
-  return startCase(report.displayName).toLowerCase().includes(filter.toLowerCase())
+  return report.displayName.toLowerCase().includes(filter.toLowerCase())
     || report.description.toLowerCase().includes(filter.toLowerCase());
 }
 
