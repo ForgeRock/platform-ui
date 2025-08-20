@@ -34,7 +34,6 @@ const setSchemaProperties = (schema) => {
 /**
   * @returns {Promise}
   */
-// eslint-disable-next-line import/prefer-default-export
 export function getSchema(obj, requestOverride) {
   if (startsWith(obj, 'system/')) {
     const objParts = obj.split('/');
