@@ -1120,7 +1120,11 @@
             },
             "relationshipSettings": {
               "description": "Settings for this relationship.",
-              "title": "Relationship Settings"
+              "relationshipProperties": "Relationship Properties",
+              "relationshipPropertiesDescription": "Collect additional values as part of this relationship.",
+              "title": "Relationship Settings",
+              "validateRelationship": "Validate Relationship",
+              "validateRelationshipDescription": "Ensure that related profile exists before allowing reference. Disable to improve performance as validate requires an expensive query to the relationship."
             }
           }
         }
