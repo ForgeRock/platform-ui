@@ -132,8 +132,7 @@ export function deleteTheme(themeName) {
 export function saveThemeEdit() {
   cy.findByRole('navigation', { name: 'Header navigation' })
     .should('be.visible')
-    .find('[aria-label^="Back to"]')
-    .click();
+    .findByText('Hosted Pages').click();
 
   // Fill in the Theme name, save the Theme and wait for the save to complete
   cy.findByRole('dialog', { name: 'Really Leave?' }).within(() => {
