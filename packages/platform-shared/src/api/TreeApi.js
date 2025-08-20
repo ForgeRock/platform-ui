@@ -9,7 +9,8 @@ import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import apiUtils from './utils/apiUtils';
 
 const apiVersion = 'protocol=2.1,resource=1.0';
-const getTreeApiConfig = (realm) => {
+
+const getTreeApiConfig = (realm, useApiV3 = false) => {
   let configPath;
   if (!realm) {
     configPath = apiUtils.getCurrentRealmConfigPath();
@@ -18,7 +19,7 @@ const getTreeApiConfig = (realm) => {
   }
   return {
     path: `${configPath}/authentication/authenticationtrees`,
-    apiVersion,
+    apiVersion: useApiV3 ? 'protocol=2.1,resource=3.0' : apiVersion,
   };
 };
 
@@ -167,8 +168,21 @@ export function actionTreeTemplate() {
   *
   * @returns {Promise}
   */
-export function actionNodeGetAllTypes() {
-  return generateAmApi(getTreeApiConfig()).post(
+export function actionNodeListLatestTypes() {
+  return generateAmApi(getTreeApiConfig(undefined, true)).post(
+    '/nodes?_action=listLatestTypes',
+    {},
+    { withCredentials: true },
+  );
+}
+
+/**
+  * Returns a list of available node types
+  *
+  * @returns {Promise}
+  */
+export function actionNodeGetAllTypes(useApiV3 = false) {
+  return generateAmApi(getTreeApiConfig(undefined, useApiV3)).post(
     '/nodes?_action=getAllTypes',
     {},
     { withCredentials: true },

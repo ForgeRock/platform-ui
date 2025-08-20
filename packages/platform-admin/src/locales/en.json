@@ -637,6 +637,7 @@
     "maximumIdleTimeLabel": "Maximum Authenticated Session Idle Time",
     "nodeDetails": "Node Details",
     "nodeVersion": "Version: ",
+    "nodeUpdateAvailable": "Update Available",
     "noJourney": "You haven't created any journeys",
     "noJourneySearchResults": "There are no journeys matching the search term.",
     "noJourneySubtitle": "Configure journeys to allow users to sign in, register and perform self-service functions like reset their password or recover their username.",

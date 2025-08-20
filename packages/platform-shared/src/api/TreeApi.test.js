@@ -167,7 +167,12 @@ describe('Tree API', () => {
   });
 
   it('actionNodeGetAllTypes should call api with correct parameters', async () => {
+    const expectedConfig = {
+      path: 'realms/root/realms/alpha/realm-config/authentication/authenticationtrees',
+      apiVersion: 'protocol=2.1,resource=1.0',
+    };
     TreeApi.actionNodeGetAllTypes();
+    expect(mockGenerate).toHaveBeenLastCalledWith(expectedConfig);
     expect(mockPost).toHaveBeenLastCalledWith('/nodes?_action=getAllTypes', {}, withCreds);
   });
 
@@ -193,5 +198,19 @@ describe('Tree API', () => {
     const mockNodeConfig = { config: 'test' };
     TreeApi.actionNodeListOutcomes('mockNodeType', mockNodeConfig);
     expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType?_action=listOutcomes', mockNodeConfig, withCreds);
+  });
+
+  it('calls endpoints with resource version 3 when useApiV3 is set to true', async () => {
+    const expected = {
+      path: 'realms/root/realms/alpha/realm-config/authentication/authenticationtrees',
+      apiVersion: 'protocol=2.1,resource=3.0',
+    };
+
+    // listLatestTypes is only available in api v3
+    TreeApi.actionNodeListLatestTypes();
+    expect(mockGenerate).toHaveBeenLastCalledWith(expected);
+
+    TreeApi.actionNodeGetAllTypes(true);
+    expect(mockGenerate).toHaveBeenLastCalledWith(expected);
   });
 });
