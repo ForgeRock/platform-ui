@@ -39,7 +39,6 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * @description Modal for creating or duplicating an Analytics Report
  */
-import { startCase } from 'lodash';
 import { BButton, BModal } from 'bootstrap-vue';
 import { computed, ref, watch } from 'vue';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
@@ -127,7 +126,7 @@ watch(() => props.reportDataForDuplication, (report) => {
   if (report && Object.keys(report).length) {
     newReportFormData.value.description = report.description || '';
     newReportFormData.value.viewers = report.viewers || [];
-    newReportFormData.value.displayName = report.displayName ? i18n.global.t('common.copyOfItem', { item: startCase(report.displayName) }) : '';
+    newReportFormData.value.displayName = report.displayName ? i18n.global.t('common.copyOfItem', { item: report.displayName }) : '';
   } else {
     resetFormValues();
   }
