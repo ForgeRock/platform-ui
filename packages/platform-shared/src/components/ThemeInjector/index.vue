@@ -93,7 +93,7 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.bodyText }};
       }
 
-      .text-body {
+      <template v-if="mock">.fr-theme-preview</template> .text-body {
         color: {{ theme.bodyText }} !important;
       }
 
@@ -362,8 +362,8 @@ of the MIT license. See the LICENSE file for details. -->
 
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .card:not(.form-section),
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content,
-      .modal-content .card,
-        #app .dropdown-menu,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .card,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .dropdown-menu,
         #app .menu {
         background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
         border: 1px solid {{ theme.accountCardOuterBorderColor || '#e7eef4' }};
@@ -419,7 +419,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content input,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .form-control,
       .modal-content .form-control .dropdown-menu ,
-      .modal-content .b-dropdown .dropdown-menu {
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .b-dropdown .dropdown-menu {
         background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
         border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
         color: {{ theme.accountCardInputTextColor || '#23282e' }};
@@ -487,8 +487,8 @@ of the MIT license. See the LICENSE file for details. -->
         background-color: {{ theme.accountTableRowHoverColor || '#f6f8fa' }} !important;
       }
 
-      #app .dropdown-item:hover,
-      #app .dropdown-item:focus {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .dropdown-item:hover,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .dropdown-item:focus {
         background-color: {{ theme.profileMenuHoverColor || '#e4f4fd' }};
         color: {{ theme.profileMenuHoverTextColor || '#181b20' }};
       }
