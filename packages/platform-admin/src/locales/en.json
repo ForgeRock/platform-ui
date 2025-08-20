@@ -1126,6 +1126,9 @@
             },
             "relationshipSettings": {
               "description": "Settings for this relationship.",
+              "errors": {
+                "updatingSettings": "Error updating relationship settings"
+              },
               "relationshipProperties": "Relationship Properties",
               "relationshipPropertiesDescription": "Collect additional values as part of this relationship.",
               "title": "Relationship Settings",
