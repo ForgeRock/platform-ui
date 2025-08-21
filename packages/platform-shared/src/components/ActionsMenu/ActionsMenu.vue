@@ -222,6 +222,7 @@ onBeforeUnmount(() => {
   button {
     position: relative;
     overflow: hidden;
+    width: 100%;
   }
 }
 
