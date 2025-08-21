@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="!loading"
         ref="privilegesGrid"
         class="mb-0 border-top"
-        v-resizable-table="{ allowAutoLayout: true, persistKey: `privileges-tab-${resourceName}`, showColumnResizer: showColumnResizer }"
+        v-resizable-table="{ persistKey: `privileges-tab-${resourceName}`, showColumnResizer: showColumnResizer }"
         show-empty
         :empty-text="$t('common.noRecordsToShow')"
         :fields="privilegesColumns"
@@ -62,6 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
         <template #cell(actions)="{ index, item }">
           <FrActionsCell
+            :boundary="boundaryValue"
             @delete-clicked="confirmRemovePrivilege(index)"
             @edit-clicked="showEditModal(item, index)" />
         </template>
@@ -177,6 +178,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
+import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPrivilegeEditor from './PrivilegeEditor';
 import FrAddPrivileges from './AddPrivileges';
@@ -221,6 +223,7 @@ export default {
         },
       ],
       schemaMap: {},
+      boundaryValue: getDropdownBoundary(true),
     };
   },
   mixins: [
