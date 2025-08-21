@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div>
       <BTable
         class="m-0"
-        v-resizable-table="{ allowAutoLayout: true, persistKey: `reviewers-modal-${modalId}` }"
+        v-resizable-table="{ persistKey: `reviewers-modal-${modalId}` }"
         :items="reviewers"
         selectable
         hover

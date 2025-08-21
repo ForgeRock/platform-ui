@@ -53,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
         :subtitle="isNoResultsFirstLoad ? $t('governance.access.noResultsUser', { grantType: pluralizedGrantType }) : $t('common.noResultsHelp')" />
       <BTable
         v-else
-        v-resizable-table="{ allowAutoLayout: true, persistKey: `gov-resource-${parentResourceName}`, showColumnResizer: showColumnResizer }"
+        v-resizable-table="{ persistKey: `gov-resource-${parentResourceName}`, showColumnResizer: showColumnResizer }"
         v-model:sort-by="sortBy"
         v-model:sort-desc="sortDesc"
         :busy="isLoading"

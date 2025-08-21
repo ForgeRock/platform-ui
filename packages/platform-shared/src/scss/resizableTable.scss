@@ -102,10 +102,15 @@
 
 .resizable-table.table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left), 
 .resizable-table.table.b-table > tfoot > tr > [aria-sort]:not(.b-table-sort-icon-left) {
-  background-position: right 1rem center;
+  &:has(.resizer:focus-visible) {
+    background-position: right 1rem center;
+  } 
 }
 
 .tabs .tab-content.col {
+  &:has(.resizable-table) {
+    overflow-x: auto;
+  }
   &:has(.resizable-table td.col-actions .dropdown) {
     min-height: 300px;
   }
