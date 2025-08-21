@@ -5,7 +5,10 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <template v-if="showItemForUser && showItemForStoreValues">
     <!-- Item is a divider -->
-    <BDropdownDivider v-if="isDivider" />
+    <BDropdownDivider
+      v-if="isDivider"
+      aria-hidden="true"
+      tabindex="-1" />
     <!-- Item opens a modal -->
     <li
       v-else-if="modal && showItemForPrivileges"
