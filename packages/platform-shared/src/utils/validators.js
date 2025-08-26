@@ -10,7 +10,7 @@
 import { has, isArray } from 'lodash';
 import isEmail from 'validator/lib/isEmail';
 import { getSecret, getVariable } from '@forgerock/platform-shared/src/api/EsvApi';
-import { getIdfromPlaceholder } from './esvUtils';
+import { getIdfromPlaceholder, pullESVFromWithinString } from './esvUtils';
 
 const urlHasPath = (url) => url.pathname && url.pathname !== '/';
 
@@ -183,6 +183,25 @@ const validateESVForSecret = async (esvId) => {
   } catch (e) {
     return false;
   }
+};
+
+/**
+ * validates If the input params is a valid ESV or not
+ * @param {String} value
+ * @param {boolean} onlyCheckForVariable
+ * @returns {boolean}
+ */
+export const containsValidESV = async (value, onlyCheckForVariable) => {
+  const esvId = pullESVFromWithinString(value);
+  const isValidESVVariable = await validateESVForVariable(esvId);
+  if (onlyCheckForVariable) {
+    return isValidESVVariable;
+  }
+  if (isValidESVVariable) {
+    return true;
+  }
+  const isValidESVSecret = await validateESVForSecret(esvId);
+  return isValidESVSecret;
 };
 
 /**

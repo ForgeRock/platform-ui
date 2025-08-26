@@ -14,7 +14,7 @@ import { isObject } from 'lodash';
  * RegExp to determine if a property is a placeholder
  * must be a string with numbers/letters/fullstops and enclosed by &{}
  */
-export const PLACEHOLDER_REGEX = /^([\w '"",.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",.:/$£@]+)?$/;
+export const PLACEHOLDER_REGEX = /^([\w '"",\-.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",\-.:/$£@]+)?$/;
 
 /**
  * List of ESV variable types
@@ -220,6 +220,38 @@ export function showEsvSecretsForField(fieldType) {
 }
 
 /**
+ * Pulls the ESV placeholder from within a string or object
+ * @param {String|Object} stringValue an ESV placeholder or an object containing an ESV placeholder
+ * @returns {String} the ESV placeholder key or an empty string
+ */
+export function pullESVFromWithinString(stringValue) {
+  let esvValue = stringValue;
+  if (typeof stringValue === 'object' && stringValue !== null && Object.keys(stringValue).length === 1) {
+    [esvValue] = Object.values(stringValue);
+  }
+  const startIndex = esvValue.indexOf('&{');
+  const endIndex = esvValue.indexOf('}', startIndex);
+  if (startIndex < 0 || endIndex < 0) return '';
+  return esvValue.slice(startIndex + 2, endIndex).replace(/\./g, '-') || '';
+}
+
+/**
+ * Swaps out the ESV placeholder in a string/object for its actual value
+ * @param {String|Object} stringValue an ESV placeholder or an object containing an ESV placeholder
+ * @returns {String} the string with the ESV placeholder replaced by its actual value
+ */
+export async function swapESVForValue(stringValue) {
+  let esvValue = stringValue;
+  if (typeof stringValue === 'object' && stringValue !== null && Object.keys(stringValue).length === 1) {
+    [esvValue] = Object.values(stringValue);
+  }
+  const esvId = pullESVFromWithinString(esvValue);
+  const { data } = await getVariable(esvId);
+  const esvActualValue = convertBase64ToString(data.valueBase64);
+  return esvValue.replace(`&{${esvId.replace(/-/g, '.')}}`, esvActualValue);
+}
+
+/**
  * Convert the provided placeholder value to _id
  * @param {String|Object} an ESV placeholder
  * @returns {String} _id of the placeholder
@@ -229,7 +261,7 @@ export function getIdfromPlaceholder(value) {
   if (typeof value === 'object' && value !== null && Object.keys(value).length === 1) {
     [esvValue] = Object.values(value);
   }
-  return `${esvValue.slice(2, -1).replaceAll('.', '-')}`;
+  return `${esvValue.slice(2, -1).replace(/\./g, '-')}`;
 }
 
 /**
