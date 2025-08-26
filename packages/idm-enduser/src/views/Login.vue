@@ -51,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
             <span
               v-if="resetPasswordEnabled"
               class="mx-2">
-              <BLink to="#">{{ $t('pages.login.forgotPassword') }}</BLink>
+              <BLink :to="{name: 'PasswordReset'}">{{ $t('pages.login.forgotPassword') }}</BLink>
             </span>
           </p>
         </BCardBody>

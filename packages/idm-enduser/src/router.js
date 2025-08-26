@@ -45,6 +45,18 @@ const routes = [
     meta: { hideLayout: true },
   },
   {
+    path: '/passwordreset/:queryParams?',
+    name: 'PasswordReset',
+    beforeEnter: () => {
+      if (isAuthenticated()) {
+        return { path: '/dashboard' };
+      }
+      return true;
+    },
+    component: () => import('@/components/selfservice/passwordreset/PasswordReset'),
+    meta: { hideLayout: true },
+  },
+  {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@forgerock/platform-shared/src/enduser/components/Dashboard/DefaultDashboard'),

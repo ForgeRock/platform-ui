@@ -86,7 +86,7 @@ function setChildComponent(type, details) {
   });
 
   if (!selfServiceType.value) {
-    selfServiceType.value = 'GenericSelfService';
+    selfServiceType.value = components.GenericSelfService;
   }
 }
 

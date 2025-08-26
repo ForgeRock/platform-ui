@@ -7,30 +7,34 @@
 
 import { mount } from '@vue/test-utils';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import ForgotUsername from './ForgotUsername';
+import PasswordReset from './PasswordReset';
 import useSelfService from '@/composables/selfService';
-import FrGenericSelfService from '@/components/selfservice/common/GenericSelfService';
 
 jest.mock('@/composables/selfService');
+jest.mock('./ResetStage', () => ({
+  name: 'FrResetStage',
+  template: '<div class="reset-stage-mock">Reset Stage Mock</div>',
+}));
 
-describe('ForgotUsername', () => {
+jest.mock('vue-router', () => ({
+  useRoute: () => ({ params: {} }),
+}));
+
+describe('Password Reset', () => {
   let mockLoad;
   let mockAdvance;
   let wrapper;
-  let selfServiceDetails;
 
   beforeEach(() => {
     mockLoad = jest.fn();
     mockAdvance = jest.fn();
-    selfServiceDetails = { value: null };
-
     useSelfService.mockReturnValue({
       loadSelfServiceData: mockLoad,
       advanceSelfServiceStage: mockAdvance,
-      selfServiceDetails,
+      selfServiceDetails: { value: null },
     });
 
-    wrapper = mount(ForgotUsername, {
+    wrapper = mount(PasswordReset, {
       global: {
         mocks: {
           $t: (msg) => msg,
@@ -43,14 +47,13 @@ describe('ForgotUsername', () => {
     expect(wrapper.findComponent(FrSpinner).exists()).toBe(true);
   });
 
-  it('calls loadSelfServiceData on mount', () => {
-    expect(mockLoad).toHaveBeenCalledWith('username');
+  it('Renders FrResetStage component if type is ResetStage', async () => {
+    wrapper.vm.selfServiceType = { name: 'FrResetStage' };
+    await wrapper.vm.$nextTick();
+    expect(wrapper.findComponent({ name: 'FrResetStage' }).exists()).toBe(true);
   });
 
-  it('Renders GenericSelfService if type is unknown', async () => {
-    selfServiceDetails.value = { type: 'SomeUnknownType' };
-    await wrapper.vm.loadStageEmitter();
-    await wrapper.vm.$nextTick();
-    expect(wrapper.findComponent(FrGenericSelfService).exists()).toBe(true);
+  it('calls loadSelfServiceData on mount', () => {
+    expect(mockLoad).toHaveBeenCalledWith('reset', expect.any(Function));
   });
 });

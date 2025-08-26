@@ -63,9 +63,9 @@ function useSelfService() {
       const { data: advanceStageData } = await advanceStage(saveData, apiType, !noSessionFalse);
       selfServiceDetails.value = advanceStageData;
     } catch (error) {
+      selfServiceDetails.value = { apiType, error: error.response?.data?.message || '' };
       showErrorMessage(error, '');
     }
-    return null;
   }
 
   return {

@@ -12,7 +12,7 @@ import { extend } from 'lodash';
 /**
  * Request headers for anonymous access to the IDM API.
  */
-const ANONYMUS_HEADERS = {
+const ANONYMOUS_HEADERS = {
   'X-OpenIDM-NoSession': true,
   'X-OpenIDM-Password': 'anonymous',
   'X-OpenIDM-Username': 'anonymous',
@@ -20,12 +20,12 @@ const ANONYMUS_HEADERS = {
 };
 
 /**
- * Load the datta for self service api based on type
+ * Load the data for self service api based on type
  * @returns {Promise} The response from the API
  */
 export function loadData(apiType) {
   const selfServiceInstance = generateIdmApi({
-    headers: ANONYMUS_HEADERS,
+    headers: ANONYMOUS_HEADERS,
   });
   return selfServiceInstance.get(`/selfservice/${apiType}`);
 }
@@ -45,7 +45,7 @@ export function advanceStage(data, apiType, anonymous = true) {
       'X-OpenIDM-Username': null,
     };
   } else {
-    headers = ANONYMUS_HEADERS;
+    headers = ANONYMOUS_HEADERS;
   }
   const selfServiceInstance = generateIdmApi({
     headers: extend(headers, { 'X-Requested-With': 'XMLHttpRequest' }),

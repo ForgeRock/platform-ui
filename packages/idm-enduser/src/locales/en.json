@@ -107,7 +107,29 @@
     "save": "Save",
     "search": "Search",
     "settings": "Settings",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "user": {
+      "profile": {
+        "updateSuccess": "Updated your profile."
+      },
+      "sharing": {
+        "shareSuccess": "Shared your resource.",
+        "unshareSuccess": "Unshared your resource.",
+        "modifySuccess": "Modified resource permissions",
+        "requestAllowedSuccess": "Access granted",
+        "requestDeniedSuccess": "Access denied"
+      },
+      "kba": {
+        "description": "Select security question(s) below. These questions will help us verify your identity if you forget your password.",
+        "selectQuestion": "Select a security question...",
+        "custom": "Provide your own:",
+        "question": "Question",
+        "answer": "Answer",
+        "saveQuestions": "Save questions",
+        "submitAnswers": "Verify Answer | Verify Answers",
+        "notUnique": "Custom questions cannot be duplicates"
+      }
+    }
   },
   "loginAuthError": "Invalid username or password",
   "loginFailure": "Login failure",
@@ -232,6 +254,11 @@
         "username": {
           "title": "Recover Your Username",
           "description": "You can recover your username with the email address associated with your account."
+        },
+        "reset": {
+            "title": "Reset Password",
+            "description": "Verify You're Human",
+            "emailSent": "An email has been sent to your inbox with instructions on how to reset your password."
         }
       },
       "reset": {
