@@ -287,8 +287,8 @@ export function getRules(i18n) {
     if (!doesValueContainPlaceholder(value)) {
       return customValidators.url(value) || i18n.global.t('common.policyValidationMessages.urlOrEsv');
     }
-    const isValidESV = await customValidators.isValidESV(value, true); // Passing 2nd params as true, indicating only check for ESV variable
-    return isValidESV || i18n.global.t('common.policyValidationMessages.validEsvVariable');
+    const containsValidESV = await customValidators.containsValidESV(value, true); // Passing 2nd params as true, indicating only check for ESV variable
+    return containsValidESV || i18n.global.t('common.policyValidationMessages.validEsvVariable');
   }
 
   // Rule to check for compatibility with ESV naming schema
