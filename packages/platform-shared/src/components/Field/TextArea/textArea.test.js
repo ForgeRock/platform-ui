@@ -48,11 +48,11 @@ describe('TextArea input', () => {
       },
     });
     expect(wrapper.vm.floatLabels).toBe(false);
-    wrapper.vm.onClick();
+    wrapper.vm.handleFocusEvent();
     await flushPromises();
     expect(wrapper.vm.floatLabels).toBe(false);
     await wrapper.setProps({ label: 'test' });
-    wrapper.vm.onClick();
+    wrapper.vm.handleFocusEvent();
     await flushPromises();
     expect(wrapper.vm.floatLabels).toBe(true);
 
