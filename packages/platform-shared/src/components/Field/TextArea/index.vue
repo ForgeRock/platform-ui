@@ -30,7 +30,8 @@ of the MIT license. See the LICENSE file for details. -->
       :max-rows="maxRows"
       :readonly="readonly"
       :data-testid="testid"
-      @click="onClick"
+      @click="handleFocusEvent"
+      @focus="handleFocusEvent"
       @blur="inputValueHandler(inputValue)" />
     <template #defaultButtons>
       <BInputGroupAppend v-if="copy">
@@ -182,9 +183,10 @@ export default {
   },
   methods: {
     /**
-     * Handler for clicking the text area. Floats the label if possible
+     * Handler for click and focus events on textarea.
+     * Floats the label if possible
      */
-    onClick() {
+    handleFocusEvent() {
       if (this.label && !this.readonly && this.floatingLabel) {
         this.floatLabels = true;
       }
