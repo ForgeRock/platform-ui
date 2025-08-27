@@ -113,7 +113,7 @@ const mutations = {
       if (env.VUE_APP_ENABLE_JOURNEY_AI === 'true' || env.VUE_APP_ENABLE_JOURNEY_AI === true) {
         state.journeyAIEnabled = true;
         state.journeyAIAgentVersion = env.VUE_APP_HELIX_JOURNEY_AGENT_VERSION;
-        state.helixEnvironmentUrl = env.VUE_APP_HELIX_ENVIRONMENT_URL;
+        state.helixEnvironmentUrl = getFQDN(env.VUE_APP_HELIX_ENVIRONMENT_URL);
         state.helixEnvironmentId = env.VUE_APP_HELIX_ENVIRONMENT_ID;
       }
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
