@@ -73,7 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
       </FrField>
     </BFormGroup>
     <!-- Access Start Date / End Date -->
-    <BFormGroup v-if="this.$store.state.SharedStore.governanceDevEnabled">
+    <BFormGroup>
       <div class="mb-2 text-muted">
         {{ $t('governance.accessRequest.newRequest.accessStartDate') }}
       </div>
@@ -87,7 +87,7 @@ of the MIT license. See the LICENSE file for details. -->
         :adjust-for-timezone="false"
         :show-seconds="false" />
     </BFormGroup>
-    <BFormGroup v-if="this.$store.state.SharedStore.governanceDevEnabled">
+    <BFormGroup>
       <div class="mb-2 text-muted">
         {{ $t('governance.accessRequest.newRequest.accessEndDate') }}
       </div>
