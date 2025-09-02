@@ -1,11 +1,14 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, shallowMount, flushPromises } from '@vue/test-utils';
+import { defineRule } from 'vee-validate';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { email, required } from '@vee-validate/rules';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { URLSearchParams } from 'url';
@@ -17,8 +20,12 @@ import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import i18n from '@/i18n';
 import * as urlUtil from '../../utils/urlUtil';
+import { getAlternateFieldType } from '../../utils/loginUtils';
 import * as authResumptionUtil from '../../utils/authResumptionUtil';
 import Login from './index';
+
+defineRule('required', (value) => required(value) || 'required');
+defineRule('email', (value) => email(value) || 'email should be valid');
 
 describe('Login.vue', () => {
   let wrapper;
@@ -199,10 +206,10 @@ describe('Login.vue', () => {
   });
 
   it('Sets the correct field data type based on policyRequirements', () => {
-    expect(wrapper.vm.getAlternateFieldType(['VALID_DATE_TIME_FORMAT'])).toEqual('datetime');
-    expect(wrapper.vm.getAlternateFieldType(['VALID_DATE'])).toEqual('date');
-    expect(wrapper.vm.getAlternateFieldType(['VALID_DATE_FORMAT'])).toEqual('date');
-    expect(wrapper.vm.getAlternateFieldType(['VALID_TIME_FORMAT'])).toEqual('time');
+    expect(getAlternateFieldType(['VALID_DATE_TIME_FORMAT'])).toEqual('datetime');
+    expect(getAlternateFieldType(['VALID_DATE'])).toEqual('date');
+    expect(getAlternateFieldType(['VALID_DATE_FORMAT'])).toEqual('date');
+    expect(getAlternateFieldType(['VALID_TIME_FORMAT'])).toEqual('time');
   });
 
   describe('buildTreeForm', () => {
@@ -617,6 +624,38 @@ describe('Component Test', () => {
 
         const usernameInput = wrapper.find('div[label="User Name"] input');
         expect(usernameInput.element.value).toBe('User Name default value text');
+      });
+
+      it('Sets validation attributes when valid email address and required policies are present', async () => {
+        const stepValidationPayload = {
+          authId: 'eyxQ',
+          callbacks: [
+            {
+              type: 'NameCallback',
+              output: [
+                { name: 'prompt', value: 'Email' },
+                { name: 'policies', value: { policyRequirements: ['VALID_EMAIL_ADDRESS_FORMAT', 'REQUIRED'] } },
+              ],
+              input: [
+                { name: 'IDToken1', value: '' },
+              ],
+              _id: 0,
+            },
+          ],
+          description: '',
+        };
+
+        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(stepValidationPayload)));
+        const data = { loading: true, step: new FRStep(stepValidationPayload) };
+        const wrapper = setup(data);
+
+        await flushPromises();
+        wrapper.vm.buildTreeForm();
+        await flushPromises();
+
+        const frField = wrapper.find('.callback-component');
+        // Check the validation attribute
+        expect(frField.attributes('validation')).toBe('email|required');
       });
     });
   });
