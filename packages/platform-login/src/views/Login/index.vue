@@ -31,8 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :logo-enabled="logoEnabled && !themeLoading"
                 :logo-height="logoHeight"
                 :logo-path="logoPath"
-                :header-classes="['login-header']"
-              >
+                :header-classes="['login-header']">
                 <template #center-card-header>
                   <div aria-live="polite">
                     <template v-if="!loading && !themeLoading">
@@ -56,7 +55,6 @@ of the MIT license. See the LICENSE file for details. -->
                     </template>
                   </div>
                 </template>
-
                 <template #center-card-body>
                   <BCardBody
                     aria-live="assertive"
@@ -140,8 +138,7 @@ of the MIT license. See the LICENSE file for details. -->
                             ...component.listeners}" />
                         <div
                           v-if="nextButtonVisible"
-                          :class="['d-flex mt-3', journeySignInButtonPosition]"
-                        >
+                          :class="['d-flex mt-3', journeySignInButtonPosition]">
                           <BButton
                             type="submit"
                             variant="primary"
@@ -234,7 +231,6 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
             </div>
           </div>
-
           <div
             class="px-4 px-md-5 focus-ring-none"
             aria-live="polite"
@@ -342,12 +338,10 @@ of the MIT license. See the LICENSE file for details. -->
                         'next-step': (event, preventClear) => {
                           nextStep(event, preventClear);
                         },
-                        ...component.listeners}"
-                    />
+                        ...component.listeners}" />
                     <div
                       v-if="nextButtonVisible"
-                      :class="['d-flex mt-3', journeySignInButtonPosition]"
-                    >
+                      :class="['d-flex mt-3', journeySignInButtonPosition]">
                       <BButton
                         type="submit"
                         variant="primary"
@@ -382,8 +376,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BRow
               v-else
               class="justify-content-center"
-              aria-live="polite"
-            >
+              aria-live="polite">
               <div class="fr-center-card">
                 <Spinner class="mb-4" />
               </div>
@@ -417,7 +410,6 @@ of the MIT license. See the LICENSE file for details. -->
       id="appFooter" />
   </div>
 </template>
-
 <script>
 import {
   cloneDeep,
@@ -458,7 +450,14 @@ import {
   addTreeResumeDataToStorage,
   getResumeDataFromStorageAndClear,
 } from '../../utils/authResumptionUtil';
-import getAutocompleteValue from '../../utils/loginUtils';
+import {
+  decodeJwt,
+  getAlternateFieldType,
+  getAutocompleteValue,
+  getFieldValidation,
+  getLinkToTreeStart,
+  isSessionTimedOut,
+} from '../../utils/loginUtils';
 import { getCurrentQueryString, parseParameters, replaceUrlParams } from '../../utils/urlUtil';
 import doNewNodesContainRecaptchaV2 from '../../utils/recaptchaUtil';
 
@@ -738,17 +737,6 @@ export default {
       }, 200);
     },
     /**
-     * Decodes a JWT token
-     */
-    decodeJwt(token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map((c) => (
-        `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`
-      )).join(''));
-      return JSON.parse(jsonPayload);
-    },
-    /**
      * Redirects user to forbidden if non-root realm & journey pages have been inactivated for hosted pages
      */
     redirectIfInactive() {
@@ -854,8 +842,9 @@ export default {
           const {
             defaultText, fieldType, label, name, value,
           } = this.getField(callback, index);
-          const fieldDataType = this.getAlternateFieldType(policyRequirements) || fieldType;
+          const fieldDataType = getAlternateFieldType(policyRequirements) || fieldType;
           const errors = this.getTranslatedPolicyFailures(callback);
+          const validation = getFieldValidation(policyRequirements);
 
           component.callbackSpecificProps = {
             errors,
@@ -865,6 +854,7 @@ export default {
             value: value || defaultText,
             autocomplete: getAutocompleteValue(label),
             validationImmediate: !!errors.length,
+            ...(validation && { validation }),
           };
           if (policyRequirements.includes('VALID_ENUM_VALUE')) {
             const policyDetails = callback.getOutputByName('policies')?.policies?.find((policy) => policy.policyId === 'valid-enum-value');
@@ -1003,15 +993,6 @@ export default {
 
       // Once the URL params and state have been updated, update the URL to have just the parameters we want going forwards
       replaceUrlParams(this.realm, params);
-    },
-    /**
-     * @description Used to get link to start of tree from stepParams
-     * @param {Object} stepParams desctuctured object containing tree, realmPath strings
-     * @returns {string} returns string url
-     */
-    getLinkToTreeStart({ tree, realmPath, query: { goto, gotoOnFail } }) {
-      const gotosString = `${goto ? `&goto=${encodeURIComponent(goto)}` : ''}${gotoOnFail ? `&gotoOnFail=${encodeURIComponent(gotoOnFail)}` : ''}`;
-      return `/am/XUI/?realm=${realmPath}&authIndexType=service&authIndexValue=${tree}${gotosString}`;
     },
     /**
      * @description Used to get listeners for callback components
@@ -1166,18 +1147,6 @@ export default {
       }
     },
     /**
-     * @description Returns boolean true if payload has session timeout error code
-     * @param {Object} payload - step payload data
-     * @param {Boolean} suspendedIdWasSet - Whether suspendId was set upon navigation to this step
-     * @returns {Boolean}
-     */
-    isSessionTimedOut(payload, suspendedIdWasSet) {
-      return (
-        (payload.detail && payload.detail.errorCode === '110')
-        || (suspendedIdWasSet && payload.code.toString() === '401')
-      );
-    },
-    /**
      * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
      * this.step is defined. Then determines based on step.type what action to take.
      */
@@ -1288,13 +1257,13 @@ export default {
               break;
             case 'LoginFailure':
               this.loading = true;
-              if (this.retry && this.isSessionTimedOut(step.payload, suspendedIdWasSet)) {
+              if (this.retry && isSessionTimedOut(step.payload, suspendedIdWasSet)) {
                 this.retry = false;
                 this.loginFailure = true;
                 this.retryWithNewAuthId(previousStep, stepParams);
-              } else if (suspendedIdWasSet && this.isSessionTimedOut(step.payload, suspendedIdWasSet)) {
+              } else if (suspendedIdWasSet && isSessionTimedOut(step.payload, suspendedIdWasSet)) {
                 this.errorMessage = step.payload.message || this.$t('login.loginFailure');
-                this.linkToTreeStart = this.getLinkToTreeStart(stepParams);
+                this.linkToTreeStart = getLinkToTreeStart(stepParams);
                 this.loading = false;
                 this.loginFailure = true;
               } else {
@@ -1394,7 +1363,7 @@ export default {
     * @returns {Boolean} - whether AllowListings is enabled or not
     */
     allowListingsEnabled(authId) {
-      return !!this.decodeJwt(authId)['whitelist-state'];
+      return !!decodeJwt(authId)['whitelist-state'];
     },
     /**
     * Get a new authId by calling the SDK's FRAuth.next function with no step.
@@ -1473,26 +1442,6 @@ export default {
       }
     },
     /**
-     * Gets an alternate field type based on policy requirements
-     *
-     * @param {Array} policyRequirements
-     * @returns {String} - dataType string
-     */
-    getAlternateFieldType(policyRequirements) {
-      let dataType = '';
-      // Check policyRequirements for date policies and set dataType accordingly
-      if (policyRequirements.includes('VALID_DATE_TIME_FORMAT')) {
-        dataType = 'datetime';
-      } else if (policyRequirements.includes('VALID_DATE') || policyRequirements.includes('VALID_DATE_FORMAT')) {
-        dataType = 'date';
-      } else if (policyRequirements.includes('VALID_TIME_FORMAT')) {
-        dataType = 'time';
-      } else if (policyRequirements.includes('VALID_ENUM_VALUE')) {
-        dataType = 'select';
-      }
-      return dataType;
-    },
-    /**
      * Decides whether to save the value of a username field to localStorage
      * based on the value of the rememberMe checkbox and whether the current step
      * includes a username field
@@ -1548,7 +1497,6 @@ export default {
   },
 };
 </script>
-
 <style lang="scss" scoped>
 #callbacksPanel :deep {
   span.material-icons {

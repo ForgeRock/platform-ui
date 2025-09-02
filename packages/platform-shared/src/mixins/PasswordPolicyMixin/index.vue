@@ -172,14 +172,16 @@ export default {
             }
             return policy;
           case 'ATTRIBUTE_VALUE':
-            policy.params['match-attributes'].forEach((attribute) => {
+            if (Array.isArray(policy.params['match-attributes'])) {
+              policy.params['match-attributes'].forEach((attribute) => {
               // translate attribute names if possible
-              if (this.translationExists(`common.policyValidationMessages.attributes.${attribute}`)) {
-                attributes.push(this.$t(`common.policyValidationMessages.attributes.${attribute}`));
-              } else {
-                attributes.push(attribute);
-              }
-            });
+                if (this.translationExists(`common.policyValidationMessages.attributes.${attribute}`)) {
+                  attributes.push(this.$t(`common.policyValidationMessages.attributes.${attribute}`));
+                } else {
+                  attributes.push(attribute);
+                }
+              });
+            }
             return {
               policyRequirement: 'ATTRIBUTE_VALUE',
               params: { disallowedFields: attributes.join(', ') },

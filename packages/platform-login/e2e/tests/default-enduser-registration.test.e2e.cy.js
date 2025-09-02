@@ -34,6 +34,34 @@ filterTests(['@forgeops', '@smoke'], () => {
     cy.findAllByLabelText('Answer for: Who was your first employer?').last().clear().type('ForgeRock');
   }
 
+  function validateRequiredField(label, invalidValue, validValue) {
+    cy.findByLabelText(label)
+      .type(invalidValue)
+      .clear()
+      .blur();
+    cy.get('.error-message').should('contain', 'Please provide a value');
+
+    cy.findByLabelText(label)
+      .clear()
+      .type(validValue)
+      .blur();
+    cy.get('.error-message').should('not.exist');
+  }
+
+  function validateEmailField(invalidEmail, validEmail) {
+    cy.findByLabelText('Email Address')
+      .clear()
+      .type(invalidEmail)
+      .blur();
+    cy.get('.error-message').should('contain', 'Invalid email format (example@example.com)');
+
+    cy.findByLabelText('Email Address')
+      .clear()
+      .type(validEmail)
+      .blur();
+    cy.get('.error-message').should('not.exist');
+  }
+
   describe('Registration form', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Registration#/`;
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
@@ -116,6 +144,15 @@ filterTests(['@forgeops', '@smoke'], () => {
       cy.location().should((location) => {
         expect(location.pathname).to.eq('/enduser/');
       });
+    });
+
+    it('validates email and required fields', () => {
+      fillOutRegistrationForm(fieldData);
+
+      validateEmailField('invalidEmail', 'valid@example.com');
+      validateRequiredField('Username', 'textToBeCleared', userName);
+      validateRequiredField('First Name', 'textToBeCleared', 'newTest');
+      validateRequiredField('Last Name', 'textToBeCleared', 'User1');
     });
   });
 });
