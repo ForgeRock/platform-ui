@@ -358,6 +358,26 @@ describe('CertificationTask', () => {
       const groupByAccountField = findByTestId(wrapper, 'certification-group-by-account');
       expect(groupByAccountField.exists()).toBe(false);
     });
+
+    it('should load only entitlement composition tab because there is a target filter defined for entitlement composition', async () => {
+      CertificationApi.getCertificationDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          targetFilter: {
+            type: [
+              'entitlement',
+            ],
+          },
+        },
+      }));
+
+      wrapper = mountComponent();
+
+      await flushPromises();
+
+      const tabs = wrapper.findAllComponents({ name: 'BTab' });
+      const entitlementCompositionTab = tabs.find((tab) => tab.props('title') === wrapper.vm.$t('governance.certificationTask.certificationTabs.entitlementComposition'));
+      expect(entitlementCompositionTab).toBeTruthy();
+    });
   });
 
   describe('signOff', () => {

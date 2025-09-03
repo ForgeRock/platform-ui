@@ -4142,6 +4142,7 @@
       "activeCampaignsLabels": {
         "identity": "Identity",
         "entitlement": "Entitlement",
+        "entitlementComposition": "Entitlement Composition",
         "application": "Application",
         "roleMembership": "Role Membership"
       },
@@ -4556,7 +4557,9 @@
       "identityCertificationMessage": "Certify user accounts and entitlements granted on specified applications.",
       "newCertificationCampaignTemplate": "New Certification Campaign Template",
       "roleMembershipCertification": "Role Membership Certification",
-      "roleMembershipCertificationMessage": "Certify roles granted to users."
+      "roleMembershipCertificationMessage": "Certify roles granted to users.",
+      "entitlementCompositionCertification": "Entitlement Composition Certification",
+      "entitlementCompositionCertificationMessage": "Certify the technical details and glossary metadata of entitlements."
     },
     "editTemplate": {
       "closeActions": {
@@ -4567,12 +4570,14 @@
       "types": {
         "IDENTITY": "Identity",
         "ENTITLEMENT": "Entitlement",
-        "ROLEMEMBERSHIP": "Role Membership"
+        "ROLEMEMBERSHIP": "Role Membership",
+        "ENTITLEMENTCOMPOSITION": "Entitlement Composition"
       },
       "templateType": {
         "identity": "Identity Certification",
         "entitlement": "Entitlement Certification",
-        "roleMembership": "Role Membership Certification"
+        "roleMembership": "Role Membership Certification",
+        "entitlementComposition": "Entitlement Composition Certification"
       },
       "accounts": "Accounts",
       "additionalOptions": "Additional Options",

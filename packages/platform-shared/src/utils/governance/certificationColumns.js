@@ -121,7 +121,7 @@ const OOTBColumns = {
     category: 'application',
     class: 'text-truncate fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements'],
+    showFor: ['accounts', 'entitlements', 'entitlementComposition'],
   },
   entitlement: {
     key: 'entitlement',
@@ -130,7 +130,7 @@ const OOTBColumns = {
     category: 'entitlement',
     class: 'text-truncate fr-access-cell',
     show: true,
-    showFor: ['entitlements', 'accountEntitlement'],
+    showFor: ['entitlements', 'accountEntitlement', 'entitlementComposition'],
   },
   account: {
     key: 'account',
@@ -158,7 +158,7 @@ const OOTBColumns = {
     category: 'review',
     class: 'w-175px text-truncate fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
   },
   comments: {
     key: 'comments',
@@ -167,7 +167,7 @@ const OOTBColumns = {
     category: 'review',
     class: 'w-140px fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
   },
   actions: {
     key: 'actions',
@@ -175,7 +175,7 @@ const OOTBColumns = {
     label: '',
     sortable: false,
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
   },
 };
 
@@ -281,7 +281,7 @@ export function getInitialColumns(grantType, entitlementUserId, showAccountDrill
       label: '',
       sortable: false,
       show: true,
-      showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement'],
+      showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
     },
   ];
 

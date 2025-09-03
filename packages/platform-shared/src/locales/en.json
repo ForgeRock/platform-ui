@@ -135,6 +135,7 @@
     "entitlement": "Entitlement",
     "entitlementOwner": "Entitlement Owner",
     "entitlements": "Entitlements",
+    "entitlementComposition": "Entitlement Composition",
     "enumerated": "Enumerated",
     "enumeratedValues": "Enumerated Values",
     "error": "Error",
@@ -1898,6 +1899,7 @@
       "certificationTabs": {
         "accounts": "accounts",
         "entitlements": "entitlements",
+        "entitlementComposition": "entitlementComposition",
         "groupByAccount": "group by account"
       },
       "columns": {

@@ -169,6 +169,12 @@ export default {
           label: this.$t('common.roles'),
         });
       }
+      if (this.isEntitlementCompositionTargetFilter) {
+        tabs.push({
+          key: 'entitlementComposition',
+          label: this.$t('governance.certificationTask.certificationTabs.entitlementComposition'),
+        });
+      }
       return tabs;
     },
     isComplete() {
@@ -185,6 +191,9 @@ export default {
     },
     isRoleTargetFilter() {
       return this.isGrantType('roleMembership');
+    },
+    isEntitlementCompositionTargetFilter() {
+      return this.isGrantType('entitlement');
     },
     showGroupByField() {
       return this.isAccountTargetFilter && this.isEntitlementTargetFilter && !this.isRoleTargetFilter && this.showGroupByAccount;
