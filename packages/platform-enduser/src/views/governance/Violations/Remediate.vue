@@ -207,7 +207,7 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import { ref } from 'vue';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { getViolation, remediate } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
@@ -221,10 +221,11 @@ import store from '@/store';
  */
 
 const { setBreadcrumb } = useBreadcrumb();
+const route = useRoute();
 const router = useRouter();
 
 const cartExpanded = ref(true);
-const { violationId } = router.currentRoute.value.params;
+const { violationId } = route.params;
 const violation = ref(null);
 const entitlements = ref([]);
 const conflictEntitlements = ref([]);
@@ -236,8 +237,8 @@ const isError = ref(false);
 // calculates the breadcrumb path and title depending on the route name,
 // violation list page redirects to ViolationRemediate route and violation edit page redirects to ViolartionEditRemediate route,
 // both routes load this component
-const breadcrumbPath = router.currentRoute.value.name === 'ViolationRemediate' ? '/violations' : `/violations/violation/${violationId}`;
-const breadcrumbTitle = router.currentRoute.value.name === 'ViolationRemediate' ? i18n.global.t('pageTitles.Violations') : i18n.global.t('common.violation');
+const breadcrumbPath = route.name === 'ViolationRemediate' ? '/violations' : `/violations/violation/${violationId}`;
+const breadcrumbTitle = route.name === 'ViolationRemediate' ? i18n.global.t('pageTitles.Violations') : i18n.global.t('common.violation');
 setBreadcrumb(breadcrumbPath, breadcrumbTitle);
 
 function toggleCartPanel() {

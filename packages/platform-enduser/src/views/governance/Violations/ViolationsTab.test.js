@@ -1,22 +1,24 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ViolationsTab from './ViolationsTab';
 import i18n from '@/i18n';
-import router from '@/router';
 
 describe('ViolationsTab', () => {
+  let routerPushSpy;
   function setup() {
+    routerPushSpy = mockRouter().routerPush;
     return mount(ViolationsTab, {
       global: {
-        plugins: [i18n, router],
+        plugins: [i18n],
       },
     });
   }
@@ -128,9 +130,8 @@ describe('ViolationsTab', () => {
 
   it('should navigate to the violation details page', async () => {
     const wrapper = setup();
-    const routerPushSpy = jest.spyOn(router, 'push').mockImplementation(() => {});
     const violationListComponent = wrapper.findComponent({ name: 'ViolationList' });
-    violationListComponent.vm.$emit('view-violation-details', { id: '002bd665-3946-465c-b444-de470fa04254' });
+    violationListComponent.vm.$emit('viewViolationDetails', { id: '002bd665-3946-465c-b444-de470fa04254' });
     await flushPromises();
 
     expect(routerPushSpy).toHaveBeenCalledWith({
@@ -144,7 +145,6 @@ describe('ViolationsTab', () => {
 
   it('should navigate to the violation remediate page', async () => {
     const wrapper = setup();
-    const routerPushSpy = jest.spyOn(router, 'push').mockImplementation(() => {});
     const violationListComponent = wrapper.findComponent({ name: 'ViolationList' });
     violationListComponent.vm.$emit('revoke-violation', { id: '002bd665-3946-465c-b444-de470fa04254' });
     await flushPromises();

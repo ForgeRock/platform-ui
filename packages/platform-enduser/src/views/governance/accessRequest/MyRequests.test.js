@@ -6,7 +6,6 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import * as VueRouter from 'vue-router';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
@@ -15,7 +14,6 @@ import * as Notification from '@forgerock/platform-shared/src/utils/notification
 import MyRequests from './MyRequests';
 import i18n from '@/i18n';
 
-jest.mock('vue-router');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
@@ -237,11 +235,6 @@ describe('MyRequests', () => {
   });
 
   it('should load header texts correctly', () => {
-    VueRouter.useRoute.mockReturnValue({
-      params: {
-        requestsTab: '',
-      },
-    });
     const wrapper = setup();
 
     expect(wrapper.find('h1').text()).toBe('My Requests');

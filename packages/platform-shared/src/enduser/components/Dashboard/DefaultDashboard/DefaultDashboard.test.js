@@ -31,7 +31,6 @@ describe('DefaultDashboard.vue', () => {
         plugins: [Notifications, store],
         mocks: {
           $t: (key) => (key),
-          $router: { push: jest.fn() },
         },
       },
     });

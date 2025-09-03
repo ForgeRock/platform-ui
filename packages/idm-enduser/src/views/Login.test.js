@@ -1,25 +1,20 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import { flushPromises, mount } from '@vue/test-utils';
-import { useRouter } from 'vue-router';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import Login from './Login';
 import i18n from '@/i18n';
 import * as AuthenticationApi from '../api/AuthenticationApi';
 
-jest.mock('vue-router', () => ({
-  useRouter: jest.fn(() => ({
-    push: () => {},
-  })),
-}));
+const { routerPush } = mockRouter();
 
 describe('Login', () => {
   function setup() {
@@ -46,11 +41,6 @@ describe('Login', () => {
   });
 
   it('should login correctly', async () => {
-    const push = jest.fn();
-    useRouter.mockImplementation(() => ({
-      push,
-    }));
-
     const wrapper = setup();
 
     AuthenticationApi.logout = jest.fn().mockResolvedValue({});
@@ -102,8 +92,8 @@ describe('Login', () => {
     await flushPromises();
 
     expect(wrapper.vm.errorMessage).toBe('');
-    expect(push).toHaveBeenCalledTimes(1);
-    expect(push).toHaveBeenCalledWith({ name: 'Dashboard' });
+    expect(routerPush).toHaveBeenCalledTimes(1);
+    expect(routerPush).toHaveBeenCalledWith({ name: 'Dashboard' });
   });
 
   it('should display an error message when login fails', async () => {

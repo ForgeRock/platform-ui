@@ -13,13 +13,6 @@ import i18n from '@/i18n';
 import AccessRequestDetails from './AccessRequestDetails';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
-jest.mock('vue-router', () => ({
-  useRoute: jest.fn(() => ({ params: { requestId: 1 } })),
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-  })),
-}));
-
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
     consumer: {

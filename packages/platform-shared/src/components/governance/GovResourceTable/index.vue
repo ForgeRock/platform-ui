@@ -241,7 +241,6 @@ of the MIT license. See the LICENSE file for details. -->
       id="revoke-from-role-modal"
       no-close-on-backdrop
       no-close-on-esc
-      :static="isTesting"
       :title="$tc('governance.access.revokeEntitlement', itemsToRevoke.length)">
       {{ $tc('governance.access.confirmRevokeEntitlement', itemsToRevoke.length) }}
       <template #modal-footer="{ cancel }">
@@ -286,6 +285,7 @@ import {
   BMedia,
   BMediaAside,
   BMediaBody,
+  BModal,
   BTable,
 } from 'bootstrap-vue';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
@@ -321,6 +321,7 @@ export default {
     BMedia,
     BMediaAside,
     BMediaBody,
+    BModal,
     BTable,
     FrActionsCell,
     FrButtonWithSpinner,

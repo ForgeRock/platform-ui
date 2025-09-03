@@ -78,7 +78,9 @@ of the MIT license. See the LICENSE file for details. -->
 import { isEmpty } from 'lodash';
 import { ref, onMounted } from 'vue';
 import {
+  BCard,
   BContainer,
+  BImg,
   BMedia,
   BMediaAside,
   BMediaBody,

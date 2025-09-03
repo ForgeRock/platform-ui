@@ -6,14 +6,12 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import * as VueRouter from 'vue-router';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import MyRequestDetails from './MyRequestDetails';
 import i18n from '@/i18n';
-
-jest.mock('vue-router');
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
@@ -41,11 +39,7 @@ describe('RequestDetails', () => {
   }
 
   beforeEach(() => {
-    VueRouter.useRoute.mockReturnValue({
-      params: {
-        requestId: '1234',
-      },
-    });
+    mockRouter({ params: { requestId: '1234' } });
     AccessRequestApi.getRequest = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         id: '387b7fa9-c57a-495c-a276-74d025020cdc',

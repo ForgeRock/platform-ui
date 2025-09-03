@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,12 +8,13 @@
 import { setActivePinia } from 'pinia';
 import { createTestingPinia } from '@pinia/testing';
 import { useJourneyEditorAsChildPageStore } from '@forgerock/platform-shared/src/stores/journeyEditorAsChildPage';
-import { useRouter } from 'vue-router';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import useJourneyEditorAsChildPage from './journeyEditorAsChildPage';
 
-jest.mock('vue-router', () => ({
-  useRouter: jest.fn(),
-}));
+let routerPush;
+beforeEach(() => {
+  routerPush = mockRouter().routerPush;
+});
 
 describe('journeyEditorAsChildPage composable', () => {
   function setupTestStore({ editorIsChildPage = false, childJourneyId = '', parentRoute = '' }) {
@@ -30,10 +31,6 @@ describe('journeyEditorAsChildPage composable', () => {
   }
 
   it('Sets store state and navigates to the journey editor as a child page', () => {
-    const push = jest.fn();
-    useRouter.mockImplementationOnce(() => ({
-      push,
-    }));
     setupTestStore({});
     const store = useJourneyEditorAsChildPageStore();
     const { viewJourneyAsChildPage } = useJourneyEditorAsChildPage();
@@ -43,21 +40,17 @@ describe('journeyEditorAsChildPage composable', () => {
     expect(store.editorIsChildPage).toBe(false);
     expect(store.parentRoute).toBe('');
     // router push should not have been called
-    expect(push).not.toHaveBeenCalled();
+    expect(routerPush).not.toHaveBeenCalled();
 
     viewJourneyAsChildPage('123', 'returnRoute');
 
     expect(store.childJourneyId).toBe('123');
     expect(store.editorIsChildPage).toBe(true);
     expect(store.parentRoute).toBe('returnRoute');
-    expect(push).toHaveBeenCalledWith({ name: 'JourneyTree', params: { treeId: '123' } });
+    expect(routerPush).toHaveBeenCalledWith({ name: 'JourneyTree', params: { treeId: '123' } });
   });
 
   it('Clears store child page state and navigates back to the parent page', () => {
-    const push = jest.fn();
-    useRouter.mockImplementationOnce(() => ({
-      push,
-    }));
     setupTestStore({ editorIsChildPage: true, childJourneyId: '123', parentRoute: 'returnRoute' });
     const store = useJourneyEditorAsChildPageStore();
     const { returnToParentPage } = useJourneyEditorAsChildPage();
@@ -67,7 +60,7 @@ describe('journeyEditorAsChildPage composable', () => {
     expect(store.editorIsChildPage).toBe(true);
     expect(store.parentRoute).toBe('returnRoute');
     // router push should not have been called
-    expect(push).not.toHaveBeenCalled();
+    expect(routerPush).not.toHaveBeenCalled();
 
     returnToParentPage();
 
@@ -78,7 +71,7 @@ describe('journeyEditorAsChildPage composable', () => {
     expect(store.childJourneyId).toBe('123');
     expect(store.parentRoute).toBe('returnRoute');
 
-    expect(push).toHaveBeenCalledWith('returnRoute');
+    expect(routerPush).toHaveBeenCalledWith('returnRoute');
   });
 
   it('Clears store state when the user leaves the child page without returning to the parent page', () => {

@@ -6,6 +6,7 @@
  */
 
 import { nextTick } from 'vue';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId, findByRole, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
@@ -25,15 +26,10 @@ import {
 } from './RunReportStubs';
 import store from '@/store';
 
+mockRouter({ params: { template: 'template-name', state: 'draft' } });
+
 const rules = ValidationRules.getRules(i18n);
 ValidationRules.extendRules(rules);
-
-jest.mock('vue-router', () => ({
-  useRoute: jest.fn(() => ({ params: { template: 'template-name', state: 'draft' } })),
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-  })),
-}));
 
 describe('Run Report component', () => {
   function setup(props) {
