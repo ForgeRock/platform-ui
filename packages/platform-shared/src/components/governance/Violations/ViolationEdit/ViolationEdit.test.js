@@ -6,6 +6,7 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { cloneDeep } from 'lodash';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
@@ -21,12 +22,6 @@ import * as store from '@/store';
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/ViolationApi');
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
-jest.mock('vue-router', () => ({
-  useRoute: jest.fn(() => ({ params: { violationId: '1' } })),
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-  })),
-}));
 
 ValidationRules.extendRules({
   required: ValidationRules.getRules(i18n).required,
@@ -96,9 +91,12 @@ describe('Violation Edit', () => {
     isTesting: true,
     isAdmin: true,
   };
+  let routerPushSpy;
   function mountComponent(props = {}) {
     const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
     useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
+    routerPushSpy = mockRouter({ params: { violationId: '1' } }).routerPush;
+
     setupTestPinia();
 
     const wrapper = mount(ViolationEdit, {
@@ -207,7 +205,6 @@ describe('Violation Edit', () => {
 
     const wrapper = mountComponent();
     await flushPromises();
-    const routerSpy = jest.spyOn(wrapper.vm.router, 'push').mockImplementation(() => {});
 
     const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
     exceptionModal.vm.$emit('action', {
@@ -225,7 +222,7 @@ describe('Violation Edit', () => {
       comment: '',
     });
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
-    expect(routerSpy).toHaveBeenCalledWith({ path: '/back' });
+    expect(routerPushSpy).toHaveBeenCalledWith({ path: '/back' });
     expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
   });
 
@@ -236,7 +233,6 @@ describe('Violation Edit', () => {
 
     const wrapper = mountComponent();
     await flushPromises();
-    const routerSpy = jest.spyOn(wrapper.vm.router, 'push').mockImplementation(() => {});
 
     const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
     exceptionModal.vm.$emit('action', {
@@ -254,7 +250,7 @@ describe('Violation Edit', () => {
       comment: 'test',
     });
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
-    expect(routerSpy).toHaveBeenCalledWith({ path: '/back' });
+    expect(routerPushSpy).toHaveBeenCalledWith({ path: '/back' });
     expect(storeSpy).not.toHaveBeenCalledWith('setViolationsCount', 0);
   });
 
@@ -265,14 +261,13 @@ describe('Violation Edit', () => {
 
     const wrapper = mountComponent();
     await flushPromises();
-    const routerSpy = jest.spyOn(wrapper.vm.router, 'push').mockImplementation(() => {});
 
     const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
     exceptionModal.vm.$emit('action', 'allow');
     await flushPromises();
 
     expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error allowing the exception');
-    expect(routerSpy).not.toHaveBeenCalled();
+    expect(routerPushSpy).not.toHaveBeenCalled();
   });
 
   it('emits revoke-violation event when is not admin and click on revoke button', async () => {

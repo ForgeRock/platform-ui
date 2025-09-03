@@ -5,8 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { useRouter } from 'vue-router';
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -17,15 +17,7 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import UserDetails from './UserDetails';
 import i18n from '@/i18n';
 
-const routerPush = jest.fn();
-jest.mock('vue-router', () => ({
-  useRoute: jest.fn(() => ({ params: { userId: 'testId' } })),
-  useRouter: jest.fn(),
-}));
-
-useRouter.mockImplementation(() => ({
-  push: routerPush,
-}));
+const { routerPush } = mockRouter({ params: { userId: 'testId' } });
 
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');

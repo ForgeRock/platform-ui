@@ -6,6 +6,7 @@
  */
 
 import { nextTick } from 'vue';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
@@ -17,12 +18,7 @@ import i18n from '@/i18n';
 import RunHistory from './RunHistory';
 import HistoryStubs from './ReportHistoryStubs';
 
-jest.mock('vue-router', () => ({
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-  })),
-  useRoute: jest.fn(() => ({ params: { template: 'template-name', state: 'draft' } })),
-}));
+mockRouter({ params: { template: 'template-name', state: 'draft' } });
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 

@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
@@ -13,12 +14,7 @@ import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/g
 import i18n from '@/i18n';
 import RequestFormLauncher from './RequestFormLauncher';
 
-jest.mock('vue-router', () => ({
-  useRoute: jest.fn(() => ({ params: { formId: 'testId' } })),
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-  })),
-}));
+mockRouter({ params: { formId: 'testId' } });
 
 const mountComponent = () => {
   setupTestPinia({ user: { userId: '1234' } });
@@ -29,9 +25,6 @@ const mountComponent = () => {
         $store: {
           commit: jest.fn(),
           state: { SharedStore: { governanceEnabled: true } },
-        },
-        $route: {
-          params: { formId: 'testId' },
         },
       },
     },

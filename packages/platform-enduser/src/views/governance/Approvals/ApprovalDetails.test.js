@@ -8,13 +8,15 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import i18n from '@/i18n';
-import router from '@/router';
 import ApprovalDetails from './ApprovalDetails';
+
+mockRouter({ params: { requestId: '1234' } });
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
@@ -132,7 +134,7 @@ describe('ApprovalDetails', () => {
     setupTestPinia({ user: { userId: '1234' } });
     return mount(ApprovalDetails, {
       global: {
-        plugins: [router, i18n],
+        plugins: [i18n],
       },
       props,
     });

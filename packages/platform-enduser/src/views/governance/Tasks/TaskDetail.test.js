@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,11 +7,13 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import * as VueRouter from 'vue-router';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import i18n from '@/i18n';
 import TaskDetail from './TaskDetail';
 import * as TasksApi from '@/api/governance/TasksApi';
+
+mockRouter({ params: { taskId: 'testTaskId' } });
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 
@@ -89,11 +91,6 @@ describe('TaskDetail', () => {
   };
 
   beforeEach(() => {
-    VueRouter.useRoute.mockReturnValue({
-      params: {
-        taskId: 'testTaskId',
-      },
-    });
     TasksApi.getUserFulfillmentTasks = jest.fn().mockReturnValue(Promise.resolve({
       data: { result: [task] },
     }));

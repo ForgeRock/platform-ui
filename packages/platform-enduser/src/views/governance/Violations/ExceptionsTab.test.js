@@ -1,22 +1,24 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { flushPromises, shallowMount } from '@vue/test-utils';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ExceptionsTab from './ExceptionsTab';
 import i18n from '@/i18n';
-import router from '@/router';
+
+const { routerPush } = mockRouter();
 
 describe('ExceptionsTab', () => {
   function setup() {
     return shallowMount(ExceptionsTab, {
       global: {
-        plugins: [i18n, router],
+        plugins: [i18n],
       },
     });
   }
@@ -118,12 +120,11 @@ describe('ExceptionsTab', () => {
 
   it('should navigate to the exception details page', async () => {
     const wrapper = setup();
-    const routerPushSpy = jest.spyOn(router, 'push').mockImplementation(() => {});
     const exceptionListComponent = wrapper.findComponent({ name: 'ExceptionList' });
     exceptionListComponent.vm.$emit('view-exception-details', { id: '002bd665-3946-465c-b444-de470fa04254' });
     await flushPromises();
 
-    expect(routerPushSpy).toHaveBeenCalledWith({
+    expect(routerPush).toHaveBeenCalledWith({
       name: 'Violation',
       params: {
         violationId: '002bd665-3946-465c-b444-de470fa04254',

@@ -6,6 +6,7 @@
  */
 
 import { nextTick } from 'vue';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import {
@@ -21,6 +22,8 @@ import ValidationRules from '@forgerock/platform-shared/src/utils/validationRule
 import i18n from '@/i18n';
 import ReportTemplate from './ReportTemplate';
 
+mockRouter({ params: { template: 'template-name', state: 'published' } });
+
 ValidationRules.extendRules({
   alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
   whitespace: ValidationRules.getRules(i18n).whitespace,
@@ -30,12 +33,6 @@ ValidationRules.extendRules({
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/components/filterBuilder/utils/QueryFilterDefaults');
-jest.mock('vue-router', () => ({
-  useRoute: jest.fn(() => ({ params: { template: 'template-name', state: 'published' } })),
-  useRouter: jest.fn(() => ({
-    push: jest.fn(),
-  })),
-}));
 
 describe('Component for creating custom analytics reports', () => {
   function setup(props, mocks) {

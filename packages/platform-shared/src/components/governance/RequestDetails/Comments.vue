@@ -127,6 +127,7 @@ of the MIT license. See the LICENSE file for details. -->
 import dayjs from 'dayjs';
 import {
   BButton,
+  BButtonGroup,
   BImg,
   BMedia,
   BMediaBody,

@@ -159,6 +159,7 @@ import { computed, ref, watch } from 'vue';
 import {
   BCard,
   BDropdown,
+  BDropdownDivider,
   BDropdownItem,
   BTable,
   BButton,

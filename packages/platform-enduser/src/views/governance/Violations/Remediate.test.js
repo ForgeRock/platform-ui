@@ -6,8 +6,8 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import { createRouter, createWebHistory } from 'vue-router';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
@@ -24,22 +24,6 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
     },
   }),
 }));
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    {
-      path: '/violations/remediate/:violationId',
-      name: 'ViolationRemediate',
-      component: Remediate,
-    },
-    {
-      path: '/violations/:itemType/:violationId/remediate',
-      name: 'ViolationEditRemediate',
-      component: Remediate,
-    },
-  ],
-});
 
 function createViolationMock() {
   return {
@@ -108,11 +92,23 @@ function createViolationMock() {
 }
 
 describe('Remediate', () => {
-  function setup() {
+  let routerPushSpy;
+  function setup(isViolationEdit) {
     setupTestPinia();
+
+    routerPushSpy = isViolationEdit
+      ? mockRouter({
+        params: { violationId: '53feffce-1ade-4627-ac6c-b12ea7429ea6' },
+        name: 'ViolationEditRemediate',
+      }).routerPush
+      : mockRouter({
+        params: { violationId: '53feffce-1ade-4627-ac6c-b12ea7429ea6' },
+        name: 'ViolationRemediate',
+      }).routerPush;
+
     return mount(Remediate, {
       global: {
-        plugins: [i18n, router],
+        plugins: [i18n],
       },
     });
   }
@@ -168,11 +164,9 @@ describe('Remediate', () => {
   it('should setup breadcrumb to violations when the route is ViolationRemediate', async () => {
     const violation = createViolationMock();
     ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.resolve({ data: violation }));
-    router.push('/violations/remediate/53feffce-1ade-4627-ac6c-b12ea7429ea6');
     await flushPromises();
 
     const wrapper = setup();
-
     await flushPromises();
 
     expect(wrapper.vm.breadcrumbPath).toEqual('/violations');
@@ -182,11 +176,9 @@ describe('Remediate', () => {
   it('should setup breadcrumb to violation edit when the route is ViolationEditRemediate', async () => {
     const violation = createViolationMock();
     ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.resolve({ data: violation }));
-    router.push('/violations/violation/53feffce-1ade-4627-ac6c-b12ea7429ea6/remediate');
     await flushPromises();
 
-    const wrapper = setup();
-
+    const wrapper = setup(true);
     await flushPromises();
 
     expect(wrapper.vm.breadcrumbPath).toEqual('/violations/violation/53feffce-1ade-4627-ac6c-b12ea7429ea6');
@@ -355,7 +347,6 @@ describe('Remediate', () => {
   it('should revoke a violation correctly, this also should decrease the violations count on the store', async () => {
     const violation = createViolationMock();
     ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.resolve({ data: violation }));
-    const pushSpy = jest.spyOn(router, 'push');
 
     const wrapper = setup();
 
@@ -389,7 +380,7 @@ describe('Remediate', () => {
     await revokeButton.trigger('click');
 
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Violation successfully fixed');
-    expect(pushSpy).toHaveBeenCalledWith({ name: 'Violations' });
+    expect(routerPushSpy).toHaveBeenCalledWith({ name: 'Violations' });
     expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
   });
 
@@ -409,7 +400,6 @@ describe('Remediate', () => {
   it('should show error message if the violation cannot be revoked', async () => {
     const violation = createViolationMock();
     ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.resolve({ data: violation }));
-    const pushSpy = jest.spyOn(router, 'push');
 
     const wrapper = setup();
 
@@ -440,7 +430,7 @@ describe('Remediate', () => {
     expect(wrapper.vm.isError).toBe(true);
     expect(wrapper.vm.cartExpanded).toBe(true);
     expect(wrapper.vm.isLoading).toBe(false);
-    expect(pushSpy).not.toHaveBeenCalled();
+    expect(routerPushSpy).not.toHaveBeenCalled();
 
     const errorMessage = wrapper.find('[role="alert"]');
     expect(errorMessage.text()).toBe('error_outlineRevoking the selected entitlements did not fix the violation. Revoke additional entitlements and try again');
