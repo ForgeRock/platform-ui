@@ -926,6 +926,7 @@ export default {
       let grantType;
       if (certificationGrantType === 'accounts') grantType = 'accountGrant';
       if (certificationGrantType === 'entitlements') grantType = 'entitlementGrant';
+      if (certificationGrantType === 'entitlementComposition') grantType = 'entitlement';
       if (certificationGrantType === 'roles') grantType = 'roleMembership';
 
       return getBasicFilter('EQUALS', 'item.type', grantType);

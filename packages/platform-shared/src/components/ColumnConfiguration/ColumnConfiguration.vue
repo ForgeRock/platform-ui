@@ -64,7 +64,7 @@ import {
   BRow,
   BCol,
 } from 'bootstrap-vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Draggable from 'vuedraggable';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -172,6 +172,13 @@ function setInitialSelectValues() {
   });
 }
 
-setInitialSelectValues();
-setFieldValues(props.modelValue);
+// Watchers
+watch(
+  [() => props.modelValue, () => props.selectInputs],
+  ([newModelValue]) => {
+    setInitialSelectValues();
+    setFieldValues(newModelValue);
+  },
+  { deep: true, immediate: true },
+);
 </script>
