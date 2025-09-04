@@ -12,7 +12,7 @@ const DEFAULT_THEME_PARAMS = {
   accountCardInputBackgroundColor: '#ffffff',
   accountCardInputBorderColor: '#c0c9d5',
   accountCardInputLabelColor: '#5e6d82',
-  accountCardInputSelectColor: '#e4f4fd',
+  accountCardInputSelectColor: '#edf7fd',
   accountCardInputSelectHoverColor: '#f6f8fa',
   accountCardInputTextColor: '#23282e',
   accountCardOuterBorderColor: '#e7eef4',
