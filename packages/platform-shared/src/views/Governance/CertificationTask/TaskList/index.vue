@@ -241,7 +241,20 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
       <template #cell()="data">
-        {{ getCellData(data) }}
+        <div
+          class="text-truncate w-450px"
+          :id="`${data.item.id}-${data.field.key}`">
+          {{ getCellData(data) }}
+        </div>
+        <BPopover
+          v-if="isTruncated(`${data.item.id}-${data.field.key}`)"
+          :target="`${data.item.id}-${data.field.key}`"
+          triggers="focus hover"
+          placement="top">
+          <div class="p-1">
+            {{ getCellData(data) }}
+          </div>
+        </BPopover>
       </template>
       <template #cell(actions)="{ item }">
         <template v-if="item.decision.certification.status === 'signed-off'">
@@ -396,6 +409,7 @@ import {
   BImg,
   BMedia,
   BMediaBody,
+  BPopover,
   BTable,
   BTooltip,
 } from 'bootstrap-vue';
@@ -508,6 +522,7 @@ export default {
     BImg,
     BMedia,
     BMediaBody,
+    BPopover,
     BTable,
     BTooltip,
     FrPagination,
@@ -1584,6 +1599,13 @@ export default {
       };
       this.$bvModal.show(this.getModalId('role'));
     },
+    isTruncated(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        return el.offsetWidth < el.scrollWidth;
+      }
+      return false;
+    },
   },
   watch: {
     refreshTasks(newVal, oldVal) {
@@ -1640,6 +1662,9 @@ export default {
   }
   .w-140px {
     width: 140px;
+  }
+  .w-450px {
+    max-width: 450px;
   }
 }
 </style>
