@@ -1,11 +1,11 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     :class="[{'hide-polling-spinner': hideSpinner }, 'row', 'mb-2 mx-0']"
-    :aria-labelledby="!isMfaRegistrationStep ? message : false"
+    :aria-labelledby="!isMfaRegistrationStep && messageType !== 'SCRIPT' ? message : false"
     :aria-level="isFirstRenderedCallback ? 1 : 2"
     ref="textOutputPanel"
     role="heading">
