@@ -12,6 +12,7 @@ const RESIZER_CLASS = 'resizer';
 const COL_ACTIONS_CLASS = 'col-actions';
 const CHECKBOX_COLUMN_CLASS = 'checkbox-column';
 const SELECTOR_CELL_COLUMN_CLASS = 'selector-cell';
+const NON_RESIZE_COLUMN_CLASS = 'fr-no-resize';
 const STORAGE_KEY_SUFFIX = '-column-width';
 const CHECKBOX_COLUMN_WIDTH = 15;
 const SELECTOR_CELL_COLUMN_WIDTH = 40;
@@ -23,6 +24,12 @@ const FIXED_WIDTH_CLASS_LIST = [
   'w-25',
   'col-width-33',
   'col-width-20',
+];
+const NON_RESIZE_CLASS_LIST = [
+  COL_ACTIONS_CLASS,
+  CHECKBOX_COLUMN_CLASS,
+  SELECTOR_CELL_COLUMN_CLASS,
+  NON_RESIZE_COLUMN_CLASS,
 ];
 
 /**
@@ -109,17 +116,11 @@ const removeClassesFromColumnList = (columnList) => {
 };
 
 /**
- * Checks if a column is an action column.
- * @param {HTMLElement} col
- * @returns {boolean}
+ * Checks if a column width can be resized or not.
+ * @param {Array} classList - The list of class names for the column.
+ * @returns {boolean} - Indicates whether the column is non-resizable.
  */
-const isActionColumn = (col) => {
-  const classList = col.classList || [];
-  return classList.contains(COL_ACTIONS_CLASS)
-    || classList.contains(CHECKBOX_COLUMN_CLASS)
-    || classList.contains(SELECTOR_CELL_COLUMN_CLASS);
-};
-
+const isNonResizedColumn = (classList) => NON_RESIZE_CLASS_LIST.some((className) => classList.contains(className));
 /**
  * Persists the current column widths using the persistKey option.
  * @Param { Map } columnPropsMap - A map containing column properties.
@@ -196,7 +197,7 @@ export {
   updateColumnWidths,
   persistCurrentWidths,
   removeClassesFromColumnList,
-  isActionColumn,
+  isNonResizedColumn,
   createResizer,
   announceMessage,
   measureCellContent,

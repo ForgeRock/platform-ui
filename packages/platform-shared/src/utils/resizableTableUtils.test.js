@@ -142,25 +142,60 @@ describe('resizableTableUtils', () => {
     expect(setLocalStorageValueSpy).toHaveBeenCalledWith(localStorageKey, persistedViewportWidths);
   });
 
-  it('isActionColumn should detect all the action columns', () => {
-    const col = document.createElement('th');
-    col.classList.add('col-actions');
-    expect(resizableTableUtils.isActionColumn(col)).toBe(true);
-    col.classList.remove('col-actions');
-    col.classList.add('checkbox-column');
-    expect(resizableTableUtils.isActionColumn(col)).toBe(true);
-    col.classList.remove('checkbox-column');
-    col.classList.add('selector-cell');
-    expect(resizableTableUtils.isActionColumn(col)).toBe(true);
-    col.classList.remove('selector-cell');
-    expect(resizableTableUtils.isActionColumn(col)).toBe(false);
-  });
-
   it('createResizer should create a resizer element with correct attributes', () => {
     const col = document.createElement('th');
     const resizer = resizableTableUtils.createResizer(col, 0, { tableId: 'table1' });
     expect(resizer.classList.contains('resizer')).toBe(true);
     expect(resizer.getAttribute('aria-controls')).toBe('table1');
     expect(resizer.getAttribute('aria-label')).toContain('Resize column');
+  });
+});
+
+describe('isNonResizedColumn', () => {
+  const inputColumn = document.createElement('th');
+  inputColumn.classList.add('test-class');
+  afterEach(() => {
+    inputColumn.classList.remove('col-actions');
+    inputColumn.classList.remove('fr-no-resize');
+    inputColumn.classList.remove('checkbox-column');
+    inputColumn.classList.remove('selector-cell');
+  });
+
+  it('should return true if the element contains "col-actions" class', () => {
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    inputColumn.classList.add('col-actions');
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+  });
+
+  it('should return true if the element contains "fr-no-resize" class', () => {
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    inputColumn.classList.add('fr-no-resize');
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+  });
+
+  it('should return true if the element contains "checkbox-column" class', () => {
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    inputColumn.classList.add('checkbox-column');
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+  });
+
+  it('should return true if the element contains "selector-cell" class', () => {
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    inputColumn.classList.add('selector-cell');
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+  });
+
+  it('should return true if the element contains multiple classes from the non-resized column list', () => {
+    inputColumn.classList.add('selector-cell');
+    inputColumn.classList.add('checkbox-column');
+    inputColumn.classList.add('fr-no-resize');
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+  });
+
+  it('should return false if the classList does not include any of the non-resized column classes', () => {
+    inputColumn.classList.add('some-other-class');
+    inputColumn.classList.add('action-column');
+    inputColumn.classList.add('selector-column');
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
   });
 });
