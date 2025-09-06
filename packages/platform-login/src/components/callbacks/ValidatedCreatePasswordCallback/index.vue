@@ -150,7 +150,8 @@ export default {
     } else {
       this.setPolicies(this.callback.getPolicies().policies);
       const failingPolicies = this.callback.getFailedPolicies();
-      this.setFailingPolicies(failingPolicies);
+      const normalizedFailures = this.normalizePolicies(failingPolicies);
+      this.setFailingPolicies(normalizedFailures);
     }
   },
   methods: {
@@ -194,7 +195,7 @@ export default {
           let failures = [...failures1, ...failures2];
           failures = uniqWith(failures, isEqual);
           this.policies = this.normalizePolicies(failures);
-          this.setFailingPolicies(failures);
+          this.setFailingPolicies(this.policies);
 
           this.$emit('update-auth-id', step2.payload.authId);
         }).catch(() => {});
@@ -223,12 +224,11 @@ export default {
         }));
     },
     /**
-     * Sets failing policies for PolicyPanel component
-     * @param {Object[]} policies failing policy objects
+     * Sets failing policies for PolicyPanel component.
+     * Assumes that the policies provided have already been normalized.
+     * @param {Object[]} failingPolicies Normalized failing policy objects
      */
-    setFailingPolicies(policies) {
-      const failingPolicies = this.normalizePolicies(policies);
-
+    setFailingPolicies(failingPolicies) {
       this.$emit('on-failing-policies-set', failingPolicies);
 
       this.failuresForField = failingPolicies
@@ -255,6 +255,8 @@ export default {
 
       // reset to initial state when input is empty IAM-1409
       if (!value) {
+        this.curPass = '';
+        this.lastPass = '';
         this.setFailingPolicies(this.policies);
         return;
       }
@@ -276,8 +278,9 @@ export default {
         FRAuth.next(this.step, { realmPath: this.realm })
           .then((step) => {
             const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
-            const policies = callback.getFailedPolicies();
-            this.setFailingPolicies(policies);
+            const failingPolicies = callback.getFailedPolicies();
+            const normalizedFailures = this.normalizePolicies(failingPolicies);
+            this.setFailingPolicies(normalizedFailures);
 
             // update auth id in the event of authentication tree whitelisting
             this.$emit('update-auth-id', step.payload.authId);
