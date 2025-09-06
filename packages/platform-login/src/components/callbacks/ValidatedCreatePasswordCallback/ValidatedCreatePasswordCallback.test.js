@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -90,6 +90,8 @@ describe('ValidatedCreatePasswordCallback', () => {
   });
 
   it('aria-invalid false if there is no errors and the password field is touched', async () => {
+    // Checking for initial validation error by returning a failed policy and
+    // ensuring the aria-invalid attribute is set correctly.
     jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
       getCallbackOfType: () => ({
         getFailedPolicies: () => ([
@@ -118,6 +120,8 @@ describe('ValidatedCreatePasswordCallback', () => {
 
     expect(input.attributes('aria-invalid')).toBe('true');
 
+    // Checking that the validation has been cleared by returning an empty array of failed policies
+    // and setting a value on the password field.
     jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
       getCallbackOfType: () => ({
         getFailedPolicies: () => ([]),
@@ -132,6 +136,38 @@ describe('ValidatedCreatePasswordCallback', () => {
     await input.setValue('P4$$worD123456');
     await input.trigger('blur');
 
+    expect(input.attributes('aria-invalid')).toBe('false');
+
+    // Clears the password field and returns the same failed policies and
+    // ensures that the aria-invalid attribute is set to true.
+    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
+      getCallbackOfType: () => ({
+        getFailedPolicies: () => ([
+          '{ "policyRequirement": "LENGTH_BASED", "params": { "max-password-length": 0, "min-password-length": 8 } }',
+          "{ \"policyRequirement\": \"CHARACTER_SET\", \"params\": { \"allow-unclassified-characters\": true, \"character-set-ranges\": [  ], \"character-sets\": [ \"1:0123456789\", \"1:ABCDEFGHIJKLMNOPQRSTUVWXYZ\", \"1:abcdefghijklmnopqrstuvwxyz\", \"1:~!@#$%^&*()-_=+[]{}|;:,.<>/?\\\"'\\\\`\" ], \"min-character-sets\": 0 } }",
+        ]),
+        setInputValue: () => {},
+      }),
+    }));
+    await input.setValue('');
+    await input.trigger('blur');
+
+    expect(input.attributes('aria-invalid')).toBe('true');
+
+    // We want to check that when setting the password value to the same previous value,
+    // that the validation runs again and sets the aria-invalid attribute back to false.
+    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => Promise.resolve({
+      getCallbackOfType: () => ({
+        getFailedPolicies: () => ([]),
+        setInputValue: () => {},
+      }),
+      payload: {
+        authId: '1',
+      },
+    }));
+
+    await input.setValue('P4$$worD123456');
+    await input.trigger('blur');
     expect(input.attributes('aria-invalid')).toBe('false');
   });
 
