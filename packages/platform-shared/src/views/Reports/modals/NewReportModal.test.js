@@ -7,15 +7,12 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { findByText, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import NewReportModal from './NewReportModal';
 import { mockAxios, testData as mockedApiResponse } from '../__mocks__/mocks';
 import i18n from '@/i18n';
 
-ValidationRules.extendRules({
-  alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
-  unique: ValidationRules.getRules(i18n).unique,
-});
+mockValidation(['alpha_num_spaces', 'unique']);
 
 describe('New Report Modal component', () => {
   function setup(props) {

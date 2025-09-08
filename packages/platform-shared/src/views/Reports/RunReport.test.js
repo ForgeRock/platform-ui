@@ -9,7 +9,7 @@ import { nextTick } from 'vue';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId, findByRole, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as TreeApi from '@forgerock/platform-shared/src/api/TreeApi';
 import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -27,9 +27,7 @@ import {
 import store from '@/store';
 
 mockRouter({ params: { template: 'template-name', state: 'draft' } });
-
-const rules = ValidationRules.getRules(i18n);
-ValidationRules.extendRules(rules);
+mockValidation();
 
 describe('Run Report component', () => {
   function setup(props) {

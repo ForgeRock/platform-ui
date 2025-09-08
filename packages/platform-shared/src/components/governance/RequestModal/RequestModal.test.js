@@ -9,7 +9,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import i18n from '@/i18n';
 import RequestModal from './RequestModal';
@@ -31,9 +31,7 @@ ManagedResourceApi.getManagedResourceList.mockResolvedValue({
   },
 });
 
-ValidationRules.extendRules({
-  required: ValidationRules.getRules(i18n).required,
-});
+mockValidation(['required']);
 
 describe('RequestModal', () => {
   const typicalPropsData = {

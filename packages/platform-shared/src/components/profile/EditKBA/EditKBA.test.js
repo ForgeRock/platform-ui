@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,13 +7,11 @@
 
 import { first } from 'lodash';
 import { flushPromises, mount } from '@vue/test-utils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import i18n from '@/i18n';
 import EditKBA from './index';
 
-ValidationRules.extendRules({
-  required: ValidationRules.getRules(i18n).required,
-});
+mockValidation(['required']);
 
 describe('EditKBA.vue', () => {
   let wrapper;

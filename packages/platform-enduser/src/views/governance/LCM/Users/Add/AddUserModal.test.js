@@ -7,7 +7,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
@@ -15,8 +15,7 @@ import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import AddUserModal from './AddUserModal';
 import i18n from '@/i18n';
 
-const rules = ValidationRules.getRules(i18n);
-ValidationRules.extendRules(rules);
+mockValidation();
 
 jest.mock('@forgerock/platform-shared/src/api/SchemaApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');

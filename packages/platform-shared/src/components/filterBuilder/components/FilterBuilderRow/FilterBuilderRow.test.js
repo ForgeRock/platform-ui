@@ -6,18 +6,13 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import FilterBuilderRow from './index';
 import { defaultConditionOptions } from '../../utils/QueryFilterDefaults';
 import * as CertFilterDefaults from '../../CertificationFilter/CertFilterDefaults';
 import i18n from '@/i18n';
 
-const {
-  required,
-} = ValidationRules.getRules(i18n);
-ValidationRules.extendRules({
-  required,
-});
+mockValidation(['required']);
 
 const mountProps = {
   global: {

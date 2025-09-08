@@ -6,12 +6,11 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import AddUserForm from './AddUserForm';
 import i18n from '@/i18n';
 
-const rules = ValidationRules.getRules(i18n);
-ValidationRules.extendRules(rules);
+mockValidation();
 
 describe('AddUserForm', () => {
   let wrapper;

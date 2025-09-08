@@ -9,6 +9,7 @@ import { nextTick } from 'vue';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import {
   findAllByTestId,
   findByRole,
@@ -18,18 +19,11 @@ import {
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import ReportTemplate from './ReportTemplate';
 
 mockRouter({ params: { template: 'template-name', state: 'published' } });
-
-ValidationRules.extendRules({
-  alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
-  whitespace: ValidationRules.getRules(i18n).whitespace,
-  required: ValidationRules.getRules(i18n).required,
-  unique: ValidationRules.getRules(i18n).unique,
-});
+mockValidation(['alpha_num_spaces', 'whitespace', 'required', 'unique']);
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/components/filterBuilder/utils/QueryFilterDefaults');

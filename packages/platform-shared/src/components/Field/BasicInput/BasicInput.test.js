@@ -6,17 +6,15 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as clipboard from 'clipboard-polyfill/text';
 import * as AccessibilityUtils from '@forgerock/platform-shared/src/utils/accessibilityUtils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import Notifications from '@kyvg/vue3-notification';
 import BasicInput from './index';
 import i18n from '@/i18n';
 import { findByTestId } from '../../../utils/testHelpers';
 
-ValidationRules.extendRules({
-  required: ValidationRules.getRules(i18n).required,
-});
+mockValidation(['required']);
 
 const defaultProps = {
   name: 'stub-name',

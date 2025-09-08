@@ -6,11 +6,11 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import { defineRule } from 'vee-validate';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import EntitlementEditForm from './EntitlementEditForm';
 import i18n from '@/i18n';
 
-defineRule('integer', jest.fn());
+mockValidation(['integer']);
 
 describe('EntitlementEditForm', () => {
   let wrapper;

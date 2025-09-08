@@ -6,12 +6,10 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
-import i18n from '@/i18n';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import UpdateResumeDateModal from './index';
 
-const rules = ValidationRules.getRules(i18n);
-ValidationRules.extendRules(rules);
+const validationRules = mockValidation();
 
 describe('UpdateResumeDateModal Component', () => {
   let wrapper;
@@ -32,7 +30,7 @@ describe('UpdateResumeDateModal Component', () => {
 
   it('Should not be valid to set a resume date in the past', async () => {
     jest.useFakeTimers().setSystemTime(new Date('2077-01-01'));
-    ValidationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(false) });
+    validationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(false) });
     setup();
 
     const resumeDate = wrapper.findComponent(UpdateResumeDateModal);
@@ -50,7 +48,7 @@ describe('UpdateResumeDateModal Component', () => {
 
   it('Should not be valid to submit a resume date without the justification text', async () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-01-01'));
-    ValidationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(false) });
+    validationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(false) });
     setup();
 
     const resumeDate = wrapper.findComponent(UpdateResumeDateModal);
@@ -68,7 +66,7 @@ describe('UpdateResumeDateModal Component', () => {
 
   it('Should send a new resume date on save if set a future date', async () => {
     jest.useFakeTimers().setSystemTime(new Date('2023-01-01'));
-    ValidationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(true) });
+    validationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(true) });
     setup();
 
     const resumeDate = wrapper.findComponent(UpdateResumeDateModal);
