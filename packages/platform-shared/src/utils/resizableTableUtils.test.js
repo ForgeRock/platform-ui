@@ -156,10 +156,24 @@ describe('isNonResizedColumn', () => {
   inputColumn.classList.add('test-class');
   afterEach(() => {
     inputColumn.classList.remove('col-actions');
+    inputColumn.classList.remove('action-wide-column');
+    inputColumn.classList.remove('index-column');
     inputColumn.classList.remove('checkbox-column');
     inputColumn.classList.remove('selector-cell');
     inputColumn.classList.remove('w-100px');
     inputColumn.classList.remove('w-120px');
+  });
+
+  it('should return true if the element contains "action-wide-column" class', () => {
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    inputColumn.classList.add('action-wide-column');
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+  });
+
+  it('should return true if the element contains "index-column" class', () => {
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    inputColumn.classList.add('index-column');
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
   });
 
   it('should return true if the element contains "col-actions" class', () => {

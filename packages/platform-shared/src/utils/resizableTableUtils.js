@@ -26,6 +26,10 @@ const FIXED_WIDTH_CLASS_LIST = [
 // Maintains a map of fixed width column lists based on the existing column classes and their applied styling on page load, to avoid resizing them
 const NON_RESIZE_COLUMN_LIST = [
   {
+    className: 'action-wide-column',
+    width: 250,
+  },
+  {
     className: 'col-actions',
     width: MIN_COLUMN_WIDTH,
   },
@@ -44,6 +48,10 @@ const NON_RESIZE_COLUMN_LIST = [
   {
     className: 'w-120px',
     width: 120,
+  },
+  {
+    className: 'index-column',
+    width: 90,
   },
 ];
 
