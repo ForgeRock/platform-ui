@@ -227,11 +227,11 @@ export default {
      * Handler for when a tag is being added to the value
      */
     addTag() {
-      if (this.taggable && this.searchValue.length > 0) {
+      if (this.taggable && this.searchValue.trim().length > 0) {
         this.searchValue.split(',').forEach((untrimmedVal) => {
           const newVal = untrimmedVal.trim();
           const existsInCurrentValues = find(this.inputValue, { value: newVal });
-          if (!existsInCurrentValues) {
+          if (newVal && !existsInCurrentValues) {
             this.tagOptions.push({
               multiselectId: this.generateTagId(), text: newVal, value: newVal,
             });

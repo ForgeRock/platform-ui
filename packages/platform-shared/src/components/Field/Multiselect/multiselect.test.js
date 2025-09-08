@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -65,6 +65,20 @@ describe('Multiselect', () => {
     ]);
 
     expect(wrapper.emitted().input).toEqual([[['test']]]);
+  });
+
+  it.each([
+    { val: ',', desc: 'a single comma' },
+    { val: ',,,,,,', desc: 'multiple commas' },
+    { val: '   ', desc: 'only spaces' },
+  ])('MultiSelect input does not add tags when input is $desc', ({ val }) => {
+    const wrapper = setup({ taggable: true });
+    expect(wrapper.vm.tagOptions).toStrictEqual([]);
+    expect(wrapper.vm.inputValue).toStrictEqual([]);
+    wrapper.vm.searchValue = val;
+    wrapper.vm.addTag();
+    expect(wrapper.vm.tagOptions).toStrictEqual([]);
+    expect(wrapper.vm.inputValue).toStrictEqual([]);
   });
 
   it('MultiSelect input component process options prop from array', () => {

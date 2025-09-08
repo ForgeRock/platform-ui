@@ -365,11 +365,11 @@ export default {
     }
 
     function addTag() {
-      if (props.taggable && searchValue.value.length > 0) {
+      if (props.taggable && searchValue.value.trim().length > 0) {
         searchValue.value.split(',').forEach((untrimmedVal) => {
           const newVal = untrimmedVal.trim();
           const existsInCurrentValues = find(inputValue.value, { value: newVal });
-          if (!existsInCurrentValues) {
+          if (newVal && !existsInCurrentValues) {
             tagOptions.value.push({
               multiselectId: generateTagId(), text: newVal, value: newVal,
             });
@@ -407,7 +407,9 @@ export default {
       internalId,
       openHandler,
       searchChange,
+      searchValue,
       selectOptions,
+      tagOptions,
     };
   },
 };
