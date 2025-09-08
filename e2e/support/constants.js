@@ -47,4 +47,21 @@ export const JOURNEYS = {
   REGISTRATION_WITHOUT_EMAIL: { name: 'Registration without email', path: 'QA%20-%20Registration%20without%20email', fileName: 'QA-Registration_without_email_template' },
   PASSWORD_RESET_BY_KBA: { name: 'Password reset by KBA', path: 'QA%20-%20Password%20reset%20by%20KBA', fileName: 'QA-Password_reset_by_KBA_template' },
   REGISTRATION_WITH_ES_LOCALE: { name: 'Registration with ES locale', path: 'Registration&locale=es#' },
+  AUXILIAR: { name: 'Auxiliar', path: 'Auxiliar%20journey', fileName: 'QA-Auxiliar_Journey' },
+};
+
+/**
+ * Maps UI field labels to their corresponding JSON keys for theme API calls.
+ */
+export const THEME_UI_FIELD_MAPPING = {
+  'Brand Color': 'primaryColor',
+};
+
+/**
+ * Stores the values that some data can have according the environment in which the tests are running (cloud or forgeops)
+ */
+
+const isCloud = Cypress.env('IS_FRAAS');
+export const ENV_VALUES = {
+  DEFAULT_THEME: isCloud ? 'Starter Theme' : 'ForgeRock Theme',
 };

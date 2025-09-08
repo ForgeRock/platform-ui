@@ -99,7 +99,7 @@ Feature: Default enduser login
     And text "Welcome" does not exist
     And the message "Sign In" should be present
     And text "Login failure" does not exist
-    When admin Login into the tenant
+    When admin logs into the tenant
     And admin navigates to "Identities/Manage" page
     And user searches "endUserName" on search box
     And user clicks on "endUserName" cell on table

@@ -8,6 +8,7 @@
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
+import hexToRgb from '@e2e/utils/themeutils';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import generateRandomEndUser from '../utils/endUserData';
 import { selectDropdownOption } from '../utils/uiUtils';
@@ -26,10 +27,6 @@ Given('user navigates to {journey} journey', (journeyName) => {
   // TODO: Review a better way to improve stability
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
-});
-
-Given('admin Login into the tenant', () => {
-  cy.loginAsAdmin();
 });
 
 /**
@@ -81,6 +78,10 @@ When('user searches {string} on search box', (searchString) => {
   cy.findByRole('searchbox', { name: 'Search' }).clear().type(`${Cypress.env(searchString) ? Cypress.env(searchString) : searchString}{enter}`);
 });
 
+When('user focus field {string}', (field) => {
+  cy.findByLabelText(field).focus();
+});
+
 When('user types {string} in the field {string}', (value, field) => {
   cy.findByLabelText(field).clear().type(value);
 });
@@ -113,6 +114,11 @@ When('user selects {string} option on dropdown', (optionName) => {
   selectDropdownOption(optionName);
 });
 
+When('user selects {string} option on dropdown {string}', (option, dropdown) => {
+  cy.findByRole('combobox', { name: dropdown }).click();
+  selectDropdownOption(option);
+});
+
 When('clicks on {string} tab', (page) => {
   cy.findByRole('link', { name: page }).click();
 });
@@ -139,6 +145,10 @@ When('user clicks on {string} button', (button) => {
   cy.findByRole('button', { name: button }).click();
 });
 
+When('user clicks on {string} disabled button', (button) => {
+  cy.findByRole('button', { name: button }).click({ force: true });
+});
+
 When('user clicks on {string} button after waiting for {double} seconds', (button, seconds) => {
   cy.findByRole('button', { name: button }).wait(seconds * 1000).click();
 });
@@ -147,8 +157,32 @@ When('user clicks on {string} link', (link) => {
   cy.findByRole('link', { name: link }).click();
 });
 
+When('user clicks on option button {string} from more actions menu for item {string}', (option, item) => {
+  cy.findAllByRole('row')
+    .contains('td', item).parents('tr')
+    .within(() => {
+      cy.findByRole('button', { name: 'More Actions' }).click();
+      cy.findByRole('menuitem', { name: new RegExp(option, 'i') }).click();
+    });
+});
+
+When('user clicks on {string} menu option in side navigation bar', (menuOption) => {
+  cy.findByRole('link', { name: menuOption }).click();
+});
+
+When('user clicks on {string} submenu option under {string} in side navigation bar', (subMenuOption, parentMenu) => {
+  cy.findByRole('button', { name: parentMenu }).click();
+  cy.findByRole('link', { name: subMenuOption }).click();
+});
+
 Then('{string} button is enabled', (button) => {
   cy.findByRole('button', { name: button }).should('be.enabled');
+});
+
+Then('buttons are enabled:', (dataTable) => {
+  dataTable.raw().forEach((buttonName) => {
+    cy.findByRole('button', { name: buttonName }).should('be.enabled');
+  });
 });
 
 Then('{string} button is disabled', (button) => {
@@ -161,7 +195,8 @@ Then('{string} modal no longer exists', (modal) => {
 });
 
 Then('notification is displayed with text {string}', (message) => {
-  cy.findByRole('alert', { name: message }).should('be.visible');
+  cy.findByRole('alert', { name: message, timeout: 10000 })
+    .should('be.visible');
 });
 
 Then('{string} error message is displayed', (message) => {
@@ -302,4 +337,35 @@ Then('admin dashboard is loaded', () => {
   cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
   const username = Cypress.env('IS_FRAAS') ? Cypress.env('AM_USERNAME') : 'Platform Admin';
   cy.findAllByText(username).should('exist');
+});
+
+Then('more actions menu for item {string} has following buttons options:', (item, dataTable) => {
+  cy.findAllByRole('row')
+    .contains('td', item).parents('tr')
+    .within(() => {
+      cy.findByRole('button', { name: 'More Actions' }).click();
+      dataTable.raw().forEach((buttonOption) => {
+        cy.findByRole('menuitem', { name: new RegExp(buttonOption, 'i') }).should('exist');
+      });
+      cy.findByRole('button', { name: 'More Actions' }).click();
+    });
+});
+
+Then('more actions menu for item {string} does not have following buttons options:', (item, dataTable) => {
+  cy.findAllByRole('row')
+    .contains('td', item).parents('tr')
+    .within(() => {
+      cy.findByRole('button', { name: 'More Actions' }).click();
+      dataTable.raw().forEach((buttonOption) => {
+        cy.findByRole('menuitem', { name: new RegExp(buttonOption, 'i') }).should('not.exist');
+      });
+      cy.findByRole('button', { name: 'More Actions' }).click();
+    });
+});
+
+Then('{string} button has {string} attribute with value {string}', (buttonName, attribute, value) => {
+  let newValue = value;
+  if (attribute.includes('color')) newValue = hexToRgb(value);
+  cy.findByRole('button', { name: buttonName })
+    .should('have.css', attribute, newValue);
 });

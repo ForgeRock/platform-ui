@@ -25,8 +25,9 @@ Given('journey {journey} is imported via API', (name) => {
   const importedJourney = this.importedJourneys.find((journey) => journey.name === name);
   if (!importedJourney) {
     const fileName = generateJourneyFileName(name);
-    cy.importTreesViaAPI([fileName]);
-    this.importedJourneys.push({ name, fileName });
+    cy.importTreesViaAPI([fileName]).then(() => {
+      this.importedJourneys.push({ name, fileName });
+    });
   }
 });
 
