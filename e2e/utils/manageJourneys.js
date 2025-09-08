@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 import {
@@ -13,6 +14,7 @@ import {
   deleteIDMResource,
   postAMResource,
 } from '../api/journeyApi.e2e';
+import { updateThemes } from './themeutils';
 
 const maxRetryCount = 5;
 
@@ -28,11 +30,7 @@ function existTheme(themeList, themeName) {
   return themeList.some((theme) => theme.name === themeName);
 }
 
-function updateThemes(themes) {
-  return putIDMResource('config/ui', 'themerealm', themes);
-}
-
-function createTheme(body, retry = 0) {
+export function createTheme(body, retry = 0) {
   if (retry > maxRetryCount) {
     throw new Error(`Max retries(${maxRetryCount}) for 'createTheme' reached!`);
   }

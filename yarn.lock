@@ -10942,6 +10942,7 @@ __metadata:
     "@badeball/cypress-cucumber-preprocessor": 21.0.2
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
     "@faker-js/faker": 9.8.0
+    "@forgerock/platform-shared": 1.0.0
     "@neuralegion/cypress-har-generator": 5.16.4
     "@testing-library/cypress": 10.0.1
     "@testing-library/dom": 9.3.1
@@ -10988,6 +10989,7 @@ __metadata:
     style-resources-loader: 1.2.1
     stylelint: 14.1.0
     stylelint-config-html: 1.0.0
+    uuid: 3.3.3
     vue: 3.3.4
     vue-demi: 0.14.5
   languageName: unknown

@@ -179,10 +179,7 @@ Cypress.Commands.add('visitJourneyUrl', (journeyUrl) => {
  * @param {Boolean} login a boolean to tell if tests should authenticate (in case admin is not already logged in)
  */
 Cypress.Commands.add('importTreesViaAPI', (fixtureArray) => {
-  // Login as admin first
   cy.loginAsAdmin();
-
-  // Use API to import all Journeys & required data
   importJourneysViaAPI(fixtureArray);
 });
 
