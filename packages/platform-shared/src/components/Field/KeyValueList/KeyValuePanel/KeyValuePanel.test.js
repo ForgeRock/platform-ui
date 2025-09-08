@@ -6,14 +6,12 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { findByText } from '../../../../utils/testHelpers';
 import i18n from '@/i18n';
 import KeyValuePanel from './index';
 
-ValidationRules.extendRules({
-  required: ValidationRules.getRules(i18n).required,
-});
+mockValidation(['required']);
 
 describe('KeyValuePanel', () => {
   let wrapper;

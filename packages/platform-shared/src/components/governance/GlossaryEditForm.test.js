@@ -1,9 +1,8 @@
 /**
- * Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import {
@@ -11,16 +10,14 @@ import {
   flushPromises,
 } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { defineRule } from 'vee-validate';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import FrGovObjectMultiselect from '@forgerock/platform-shared/src/components/FormEditor/components/governance/GovObjectMultiselect';
 import FrGovObjectSelect from '@forgerock/platform-shared/src/components/FormEditor/components/governance/GovObjectSelect';
 import GlossaryEditForm from './GlossaryEditForm';
 import i18n from '@/i18n';
 
-defineRule('required', jest.fn());
-defineRule('numeric', jest.fn());
-defineRule('integer', jest.fn());
+mockValidation(['required', 'numeric', 'integer']);
 
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 ManagedResourceApi.getManagedResourceList.mockResolvedValue({

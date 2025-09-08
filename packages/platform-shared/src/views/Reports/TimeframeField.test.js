@@ -6,15 +6,14 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { nextTick } from 'vue';
 import { findByTestId, findByRole, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import dayjs from 'dayjs';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import TimeframeField from './TimeframeField';
 import i18n from '@/i18n';
 
-const rules = ValidationRules.getRules(i18n);
-ValidationRules.extendRules(rules);
+const validationRules = mockValidation();
 
 describe('Timeframe field for running reports', () => {
   function setup(props) {
@@ -90,7 +89,7 @@ describe('Timeframe field for running reports', () => {
 
       it('emits expected date values if the end-date datepicker is valid', async () => {
         // sets validation rule to true
-        ValidationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(true) });
+        validationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(true) });
 
         await setCustomTimeframeVariables();
 
@@ -106,7 +105,7 @@ describe('Timeframe field for running reports', () => {
 
       it('ensures that the endDate value outputs the "end of the day" zulu time for the given date', async () => {
         // sets validation rule to true
-        ValidationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(true) });
+        validationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(true) });
 
         wrapper = setup();
 
@@ -127,7 +126,7 @@ describe('Timeframe field for running reports', () => {
 
       it('emits "false" values if the end-date datepicker is invalid', async () => {
         // sets validation rule to false
-        ValidationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(false) });
+        validationRules.extendRules({ is_after_date: jest.fn().mockReturnValue(false) });
 
         await setCustomTimeframeVariables();
 

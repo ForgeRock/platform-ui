@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import FrField from './index';
+
+mockValidation(['required', 'email']);
 
 // function to clear promises and trigger timers (validation runs every 16ms)
 async function flush() {
@@ -237,18 +240,17 @@ describe('FrField.vue', () => {
     expect(wrapper.vm.field.value).toBe(true);
   });
 
-  // Need to figure out how to get vee-validate and jest working together
-  // it('Checks for required on string type', async () => {
-  //   wrapper.vm.field.type = 'string';
-  //   wrapper.vm.field.value = '';
-  //   wrapper.vm.field.validation = 'required|email';
-  //   await flush();
-  //   const stringInput = wrapper.find('#testField input');
-  //   stringInput.setValue('test');
-  //   await flush();
-  //   expect(stringInput.element.value).toBe('test');
+  it('Checks for required on string type', async () => {
+    wrapper.vm.field.type = 'string';
+    wrapper.vm.field.value = '';
+    wrapper.vm.field.validation = 'required|email';
+    await flush();
+    const stringInput = wrapper.find('#testField input');
+    stringInput.setValue('test');
+    await flush();
+    expect(stringInput.element.value).toBe('test');
 
-  //   const errorEl = wrapper.find('.error-message');
-  //   expect(errorEl.text()).toBeTruthy();
-  // });
+    const errorEl = wrapper.find('.error-message');
+    expect(errorEl.text()).toBeTruthy();
+  });
 });

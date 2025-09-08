@@ -7,15 +7,11 @@
 
 import { mount } from '@vue/test-utils';
 import { cloneDeep, assign, get } from 'lodash';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import FormGenerator from './index';
-import i18n from '@/i18n';
 
-ValidationRules.extendRules({
-  integer: ValidationRules.getRules(i18n).integer,
-  required: ValidationRules.getRules(i18n).required,
-});
+mockValidation(['required', 'integer']);
 
 const SchemaMixin = {
   methods: {

@@ -7,6 +7,7 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import Notifications from '@kyvg/vue3-notification';
@@ -16,12 +17,10 @@ import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/Catal
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as PolicyApi from '@forgerock/platform-shared/src/api/governance/PolicyApi';
 import { getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import NewRequest from './index';
 import i18n from '@/i18n';
 
-const rules = ValidationRules.getRules(i18n);
-ValidationRules.extendRules(rules);
+mockValidation();
 
 jest.mock('@forgerock/platform-shared/src/utils/governance/AccessRequestUtils');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');

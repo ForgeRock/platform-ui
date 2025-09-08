@@ -7,14 +7,12 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { findByText, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import i18n from '@/i18n';
 import ReportSettingsDetailsForm from './ReportSettingsDetailsForm';
 import { mockAxios, testData as mockedApiResponse } from '../__mocks__/mocks';
 
-ValidationRules.extendRules({
-  alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
-});
+mockValidation(['alpha_num_spaces']);
 
 describe('Report Settings Details Form component', () => {
   function setup(props) {

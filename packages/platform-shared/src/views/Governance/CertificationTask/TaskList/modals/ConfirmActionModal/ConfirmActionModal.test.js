@@ -6,13 +6,11 @@
  */
 
 import { flushPromises, mount, shallowMount } from '@vue/test-utils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import ConfirmActionModal from './index';
 
 let wrapper;
-ValidationRules.extendRules({
-  required: jest.fn().mockReturnValue(true),
-});
+mockValidation(['required']);
 
 function mountComponent(options) {
   wrapper = shallowMount(ConfirmActionModal, {

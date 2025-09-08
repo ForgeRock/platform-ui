@@ -7,7 +7,7 @@
 
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import { findByText, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { mount, flushPromises } from '@vue/test-utils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { cloneDeep } from 'lodash';
@@ -19,10 +19,7 @@ import * as Notification from '../../utils/notification';
 store.state.SharedStore.currentPackage = 'admin';
 store.state.SharedStore.autoCustomReportsEnabled = true;
 
-ValidationRules.extendRules({
-  alpha_num_spaces: ValidationRules.getRules(i18n).alpha_num_spaces,
-  unique: ValidationRules.getRules(i18n).unique,
-});
+mockValidation(['alpha_num_spaces', 'unique']);
 
 jest.mock('vue-router', () => ({
   useRouter: jest.fn(() => ({ push: jest.fn() })),

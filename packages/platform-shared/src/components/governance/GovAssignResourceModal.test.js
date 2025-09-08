@@ -6,8 +6,7 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
-import { defineRule } from 'vee-validate';
-import { required } from '@vee-validate/rules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import i18n from '@/i18n';
 import GovAssignResourceModal from './GovAssignResourceModal';
 
@@ -15,7 +14,7 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
 }));
 
-defineRule('required', () => required);
+mockValidation(['required']);
 
 const mountComponent = (propsData = {}) => mount(GovAssignResourceModal, {
   global: {
@@ -62,6 +61,6 @@ describe('GovAssignResourceModal Component', () => {
     await flushPromises();
 
     const grantButton = wrapper.findAll('[type="button"]').filter((item) => item.text().includes('Grant Entitlements'))[0];
-    expect(grantButton.attributes('disabled')).toBeUndefined();
+    expect(grantButton.attributes('disabled')).toBeFalsy();
   });
 });

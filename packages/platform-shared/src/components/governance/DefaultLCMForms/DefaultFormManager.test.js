@@ -6,8 +6,8 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import * as SchemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -15,10 +15,7 @@ import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import DefaultFormManager from './DefaultFormManager';
 import i18n from '@/i18n';
 
-ValidationRules.extendRules({
-  required: ValidationRules.getRules(i18n).required,
-  email: ValidationRules.getRules(i18n).email,
-});
+mockValidation(['required', 'email']);
 
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');

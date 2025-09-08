@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,18 +7,15 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { findByTestId, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
-import { Field } from 'vee-validate';
 import uuid from 'uuid/v4';
 import ListOfObjects from './index';
 import i18n from '@/i18n';
 
 jest.mock('uuid/v4');
 
-const stubs = { Field };
 const wrapperNoValue = {
   global: {
     plugins: [i18n],
-    stubs,
   },
   props: {
     properties: {
@@ -40,7 +37,7 @@ describe('ListOfObjects', () => {
     const wrapper = mount(ListOfObjects, {
       global: {
         plugins: [i18n],
-        stubs,
+        // stubs,
       },
       props: {
         properties: {
@@ -67,7 +64,6 @@ describe('ListOfObjects', () => {
     const wrapper = mount(ListOfObjects, {
       global: {
         plugins: [i18n],
-        stubs,
       },
       props: {
         properties: {
@@ -118,7 +114,7 @@ describe('ListOfObjects', () => {
     const wrapper = mount(ListOfObjects, {
       global: {
         plugins: [i18n],
-        stubs,
+        // stubs,
       },
       props: {
         properties: {
@@ -163,7 +159,6 @@ describe('ListOfObjects', () => {
     const wrapper = mount(ListOfObjects, {
       global: {
         plugins: [i18n],
-        stubs,
       },
       props: {
         label: 'test',
@@ -191,7 +186,6 @@ describe('ListOfObjects', () => {
     mount(ListOfObjects, {
       global: {
         plugins: [i18n],
-        stubs,
       },
       props: {
         properties: {
@@ -215,7 +209,6 @@ describe('ListOfObjects', () => {
     const wrapper = mount(ListOfObjects, {
       global: {
         plugins: [i18n],
-        stubs,
       },
       props: {
         properties: {},
@@ -237,7 +230,6 @@ describe('ListOfObjects', () => {
     const wrapper = mount(ListOfObjects, {
       global: {
         plugins: [i18n],
-        stubs,
       },
       props: {
         properties: {},

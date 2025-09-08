@@ -1,17 +1,16 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import ExceptionModal from './ExceptionModal';
 import i18n from '@/i18n';
 
-const { required } = ValidationRules.getRules(i18n);
-ValidationRules.extendRules({ required });
+mockValidation();
 
 describe('ExceptionModal', () => {
   let wrapper;

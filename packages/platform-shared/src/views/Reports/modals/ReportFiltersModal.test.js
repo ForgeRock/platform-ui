@@ -13,16 +13,11 @@ import {
   findAllByTestId,
   findByRole,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import i18n from '@/i18n';
 import ReportFiltersModal from './ReportFiltersModal';
 
-const {
-  required,
-} = ValidationRules.getRules(i18n);
-ValidationRules.extendRules({
-  required,
-});
+mockValidation(['required']);
 
 describe('Report Filter Modal component', () => {
   function setup(props) {

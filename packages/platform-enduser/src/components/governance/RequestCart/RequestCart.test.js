@@ -6,14 +6,13 @@
  */
 
 import { mount } from '@vue/test-utils';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { getPriorityImageSrc } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import RequestCart from './index';
 
-const rules = ValidationRules.getRules(i18n);
-ValidationRules.extendRules(rules);
+mockValidation();
 
 jest.mock('@forgerock/platform-shared/src/utils/governance/AccessRequestUtils');
 

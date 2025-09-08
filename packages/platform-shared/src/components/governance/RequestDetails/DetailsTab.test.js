@@ -6,8 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import { defineRule } from 'vee-validate';
-import { required } from '@vee-validate/rules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
@@ -19,7 +18,7 @@ import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/
 import DetailsTab from './DetailsTab';
 import i18n from '@/i18n';
 
-defineRule('required', () => required);
+mockValidation(['required']);
 
 jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
@@ -500,6 +499,7 @@ describe('DetailsTab', () => {
       const wrapper = setup({ isApproval: true, ...formItem });
       await flushPromises();
       await wrapper.find('input[name="testLabel"]').setValue('a custom value');
+      await flushPromises();
       await wrapper.find('button.btn-primary').trigger('click');
 
       const expectedPayload = {

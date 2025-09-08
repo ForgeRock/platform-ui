@@ -6,7 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
@@ -14,9 +14,7 @@ import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/
 import AddEntitlementModal from './AddEntitlementModal';
 import i18n from '@/i18n';
 
-ValidationRules.extendRules({
-  required: ValidationRules.getRules(i18n).required,
-});
+mockValidation(['required']);
 
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
