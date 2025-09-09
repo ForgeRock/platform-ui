@@ -1,9 +1,8 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
@@ -236,7 +235,7 @@ describe('AccountSecurity', () => {
     const accordionItems = findAllByTestId(accordion, 'accordion-item-wrapper');
 
     // Open the password accordion item
-    await accordionItems[0].find('div[role="tab"]').trigger('click');
+    await accordionItems[0].find('div[role="button"]').trigger('click');
     wrapper.vm.items[0].open$ = true;
     await flushPromises();
     expect(accordionItems[0].find('.collapse.show').exists()).toBe(true);
@@ -264,7 +263,7 @@ describe('AccountSecurity', () => {
     const accordionItems = findAllByTestId(accordion, 'accordion-item-wrapper');
 
     // Open the password accordion item
-    await accordionItems[0].find('div[role="tab"]').trigger('click');
+    await accordionItems[0].find('div[role="button"]').trigger('click');
     wrapper.vm.items[0].open$ = true;
     await flushPromises();
     expect(accordionItems[0].find('.collapse.show').exists()).toBe(true);
@@ -297,7 +296,7 @@ describe('AccountSecurity', () => {
     const accordionItems = findAllByTestId(accordion, 'accordion-item-wrapper');
 
     // Open the password accordion item
-    await accordionItems[0].find('div[role="tab"]').trigger('click');
+    await accordionItems[0].find('div[role="button"]').trigger('click');
     wrapper.vm.items[0].open$ = true;
     await flushPromises();
     expect(accordionItems[0].find('.collapse.show').exists()).toBe(true);
