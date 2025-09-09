@@ -9,7 +9,7 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
@@ -18,7 +18,6 @@ import ApprovalDetails from './ApprovalDetails';
 
 mockRouter({ params: { requestId: '1234' } });
 
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
@@ -130,7 +129,7 @@ const accessRequest = {
 
 describe('ApprovalDetails', () => {
   const setup = (props) => {
-    useBvModal.mockReturnValue({ bvModal: { show: jest.fn(), hide: jest.fn() } });
+    mockModal();
     setupTestPinia({ user: { userId: '1234' } });
     return mount(ApprovalDetails, {
       global: {

@@ -7,7 +7,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
@@ -19,8 +19,6 @@ import DetailsTab from './DetailsTab';
 import i18n from '@/i18n';
 
 mockValidation(['required']);
-
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
 
@@ -96,8 +94,7 @@ describe('DetailsTab', () => {
       ...propsData,
     };
     setupTestPinia(undefined, false);
-    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
-    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
+    mockModal();
     return mount(DetailsTab, {
       global: {
         plugins: [i18n],

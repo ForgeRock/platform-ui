@@ -6,8 +6,8 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import dayjs from 'dayjs';
@@ -15,7 +15,6 @@ import ViolationList from './ViolationList';
 import i18n from '@/i18n';
 import * as store from '@/store';
 
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 CommonsApi.getResource.mockReturnValue(Promise.resolve({
   data: {
@@ -23,14 +22,15 @@ CommonsApi.getResource.mockReturnValue(Promise.resolve({
   },
 }));
 
+let modalShow;
+
 describe('ViolationList', () => {
   const defaultProps = {
     policyRuleOptions: ['ruleOne'],
     isAdmin: true,
   };
   function mountComponent(props = {}) {
-    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
-    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
+    ({ modalShow } = mockModal());
     const wrapper = mount(ViolationList, {
       global: {
         plugins: [i18n],
@@ -500,7 +500,7 @@ describe('ViolationList', () => {
         userName: 'Opal@IGATestQA.onmicrosoft.com',
       },
     });
-    expect(wrapper.vm.bvModal.show).toHaveBeenCalledWith('ExceptionModal');
+    expect(modalShow).toHaveBeenCalledWith('ExceptionModal');
   });
 
   it('should extend exception when the exception modal emits action event and decrease the violations count on the store when the violation is allowed forever', async () => {

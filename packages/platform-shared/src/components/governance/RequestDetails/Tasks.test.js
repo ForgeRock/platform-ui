@@ -7,11 +7,9 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { cloneDeep } from 'lodash';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { detailTypes } from '../../../utils/governance/AccessRequestUtils';
 import Tasks from './Tasks';
-
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 
 let wrapper;
 
@@ -76,8 +74,9 @@ const ITEM = {
   },
 };
 
+let modalShow;
 function setup(props) {
-  useBvModal.mockReturnValue({ bvModal: { value: { show: jest.fn(), hide: jest.fn() } } });
+  ({ modalShow } = mockModal());
   return mount(Tasks, {
     global: {
       mocks: {
@@ -106,12 +105,11 @@ describe('Tasks', () => {
     wrapper = setup();
     await flushPromises();
 
-    const showSpy = jest.spyOn(wrapper.vm.bvModal.value, 'show');
-    expect(showSpy).not.toHaveBeenCalled();
+    expect(modalShow).not.toHaveBeenCalled();
 
     wrapper.vm.showTaskDetailsModal(ITEM);
     await flushPromises();
-    expect(showSpy).toHaveBeenCalledWith('TaskDetailsModal');
+    expect(modalShow).toHaveBeenCalledWith('TaskDetailsModal');
   });
 
   it('Should render wait date correctly', () => {

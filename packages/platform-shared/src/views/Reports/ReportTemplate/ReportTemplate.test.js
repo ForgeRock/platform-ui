@@ -7,6 +7,7 @@
 
 import { nextTick } from 'vue';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
@@ -18,27 +19,19 @@ import {
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import i18n from '@/i18n';
 import ReportTemplate from './ReportTemplate';
 
 mockRouter({ params: { template: 'template-name', state: 'published' } });
 mockValidation(['alpha_num_spaces', 'whitespace', 'required', 'unique']);
-
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/components/filterBuilder/utils/QueryFilterDefaults');
 
 describe('Component for creating custom analytics reports', () => {
-  function setup(props, mocks) {
-    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
-    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
+  function setup(props) {
     setupTestPinia();
+    mockModal();
     return mount(ReportTemplate, {
       global: {
-        mocks: {
-          $bvModal: { show: jest.fn(), hide: jest.fn() },
-          ...mocks,
-        },
         plugins: [i18n],
       },
       props: {

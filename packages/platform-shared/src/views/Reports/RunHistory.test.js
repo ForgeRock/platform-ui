@@ -9,8 +9,7 @@ import { nextTick } from 'vue';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as Notifications from '@forgerock/platform-shared/src/utils/notification';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as ReportsApiHelper from './utils/ReportsApiHelper';
@@ -19,13 +18,10 @@ import RunHistory from './RunHistory';
 import HistoryStubs from './ReportHistoryStubs';
 
 mockRouter({ params: { template: 'template-name', state: 'draft' } });
-
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
+mockModal();
 
 describe('Run History component', () => {
   function setup(props) {
-    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
-    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
     return mount(RunHistory, {
       attachTo: createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']),
       global: {

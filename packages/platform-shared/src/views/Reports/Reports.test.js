@@ -8,8 +8,8 @@
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import { findByText, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { mount, flushPromises } from '@vue/test-utils';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { cloneDeep } from 'lodash';
 import i18n from '@/i18n';
 import Reports from './Reports';
@@ -25,12 +25,10 @@ jest.mock('vue-router', () => ({
   useRouter: jest.fn(() => ({ push: jest.fn() })),
 }));
 
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
-
 describe('Reports', () => {
+  let modalShow;
   function setup(props = {}) {
-    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
-    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
+    ({ modalShow } = mockModal());
     return mount(Reports, {
       global: {
         plugins: [i18n],
@@ -274,10 +272,9 @@ describe('Reports', () => {
     const wrapper = setup();
     await flushPromises();
 
-    const showSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
     const deleteButton = findByText(wrapper, 'span', 'Delete');
     await deleteButton.trigger('click');
-    expect(showSpy).toHaveBeenCalledWith('deleteModal');
+    expect(modalShow).toHaveBeenCalledWith('deleteModal');
   });
 
   it('deletes a report', async () => {
@@ -393,13 +390,12 @@ describe('Reports', () => {
     const wrapper = setup();
     await flushPromises();
 
-    const showSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
     const rows = wrapper.findAll('table tbody tr');
     const actions = rows[0].findAll('a[role="menuitem"]');
     const assignViewersButton = actions[1];
     await assignViewersButton.trigger('click');
 
-    expect(showSpy).toHaveBeenCalledWith('assign-viewers-modal');
+    expect(modalShow).toHaveBeenCalledWith('assign-viewers-modal');
   });
 
   it('should open duplicate modal when duplicate button is clicked', async () => {

@@ -7,12 +7,12 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { cloneDeep } from 'lodash';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ViolationEdit from './ViolationEdit';
 import i18n from '@/i18n';
@@ -21,7 +21,6 @@ import * as store from '@/store';
 
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/ViolationApi');
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 
 mockValidation(['required']);
 
@@ -89,23 +88,16 @@ describe('Violation Edit', () => {
     isTesting: true,
     isAdmin: true,
   };
-  let routerPushSpy;
+  let routerPush;
+  let modalShow;
   function mountComponent(props = {}) {
-    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
-    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
-    routerPushSpy = mockRouter({ params: { violationId: '1' } }).routerPush;
-
+    ({ modalShow } = mockModal());
+    ({ routerPush } = mockRouter({ params: { violationId: '1' } }));
     setupTestPinia();
 
     const wrapper = mount(ViolationEdit, {
       global: {
         plugins: [i18n],
-        mocks: {
-          $bvModal: {
-            show: jest.fn(),
-            hide: jest.fn(),
-          },
-        },
       },
       props: {
         ...defaultProps,
@@ -146,13 +138,12 @@ describe('Violation Edit', () => {
 
   it('opens forward modal', async () => {
     const wrapper = mountComponent();
-    const forwardModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
     await flushPromises();
 
     const forwardButton = wrapper.find('button');
     await forwardButton.trigger('click');
 
-    expect(forwardModalSpy).toHaveBeenCalledWith('violation-forward-modal');
+    expect(modalShow).toHaveBeenCalledWith('violation-forward-modal');
   });
 
   it('calls to forward a violation', async () => {
@@ -176,12 +167,11 @@ describe('Violation Edit', () => {
 
   it('opens conflict modal if is admin', async () => {
     const wrapper = mountComponent();
-    const forwardModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
     await flushPromises();
 
     wrapper.vm.openConflictModal();
 
-    expect(forwardModalSpy).toHaveBeenCalledWith('violation-conflicts-modal');
+    expect(modalShow).toHaveBeenCalledWith('violation-conflicts-modal');
   });
 
   it('emits view-conflicts event if is not admin and actions are not hidden', async () => {
@@ -220,7 +210,7 @@ describe('Violation Edit', () => {
       comment: '',
     });
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
-    expect(routerPushSpy).toHaveBeenCalledWith({ path: '/back' });
+    expect(routerPush).toHaveBeenCalledWith({ path: '/back' });
     expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
   });
 
@@ -248,7 +238,7 @@ describe('Violation Edit', () => {
       comment: 'test',
     });
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
-    expect(routerPushSpy).toHaveBeenCalledWith({ path: '/back' });
+    expect(routerPush).toHaveBeenCalledWith({ path: '/back' });
     expect(storeSpy).not.toHaveBeenCalledWith('setViolationsCount', 0);
   });
 
@@ -265,7 +255,7 @@ describe('Violation Edit', () => {
     await flushPromises();
 
     expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error allowing the exception');
-    expect(routerPushSpy).not.toHaveBeenCalled();
+    expect(routerPush).not.toHaveBeenCalled();
   });
 
   it('emits revoke-violation event when is not admin and click on revoke button', async () => {

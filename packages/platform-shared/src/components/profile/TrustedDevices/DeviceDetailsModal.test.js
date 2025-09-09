@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,14 +7,15 @@
 
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mount } from '@vue/test-utils';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import DeviceDetailsModal from './DeviceDetailsModal';
+
+mockModal();
 
 describe('Device Details Modal', () => {
   function setup(props) {
     return mount(DeviceDetailsModal, {
       global: {
-        bvModal: useBvModal(),
         mocks: {
           $t: (msg) => msg,
         },
