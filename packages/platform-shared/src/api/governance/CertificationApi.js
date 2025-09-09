@@ -226,8 +226,9 @@ export function forwardCertification(actorId, certId, newActorId, comment) {
  * @param {String} actorId id of current actor
  * @returns {Promise}
  */
-export function getCertificationUserFilter(certId, actorId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/filter/user?actorId=${actorId}`;
+export function getCertificationUserFilter(certId, actorId, queryString) {
+  let resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/filter/user?actorId=${actorId}`;
+  if (queryString) resourceUrl += `&queryString=${queryString}`;
   return generateIgaApi().get(resourceUrl);
 }
 
@@ -238,8 +239,9 @@ export function getCertificationUserFilter(certId, actorId) {
  * @param {String} actorId id of current actor
  * @returns {Promise}
  */
-export function getCertificationApplicationFilter(certId, actorId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/filter/application?actorId=${actorId}`;
+export function getCertificationApplicationFilter(certId, actorId, queryString) {
+  let resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/filter/application?actorId=${actorId}`;
+  if (queryString) resourceUrl += `&queryString=${queryString}`;
   return generateIgaApi().get(resourceUrl);
 }
 
