@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -61,8 +61,32 @@ describe('TaskFilters', () => {
         },
         {
           id: 'user',
-          text: 'undefined',
+          text: 'undefined undefined undefined',
           value: 'user',
+        },
+      ]);
+    });
+    it('should get the user response to the searched for user variable', async () => {
+      getCertificationUserFilter.mockImplementation(() => Promise.resolve({
+        data: [{
+          id: 'admin', givenName: 'Admin', sn: 'User', mail: 'admin@test.com',
+        }],
+      }));
+      wrapper.vm.getUserInfoFilter('admin');
+
+      await wrapper.vm.$nextTick();
+      expect(wrapper.vm.users).toEqual([
+        {
+          text: 'governance.certificationTask.allUsers',
+          value: '',
+        },
+        {
+          id: 'admin',
+          givenName: 'Admin',
+          sn: 'User',
+          mail: 'admin@test.com',
+          text: 'Admin User admin@test.com',
+          value: 'admin',
         },
       ]);
     });

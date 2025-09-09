@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -72,7 +72,8 @@ of the MIT license. See the LICENSE file for details. -->
             id="certificationTaskUser"
             type="select"
             :label="$t('governance.certificationTask.user')"
-            :options="users">
+            :options="users"
+            @search-change="debounceUserSearch">
             <template #singleLabel="{ option }">
               <div
                 v-if="option.givenName"
@@ -90,7 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
                     class="media-body d-flex flex-column">
                     <div
                       class="mb-0 text-dark text-truncate">
-                      {{ option.givenName }}
+                      {{ `${option.givenName} ${option.sn}` }}
                     </div>
                     <small class="text-truncate">
                       {{ option.userName }}
@@ -124,7 +125,7 @@ of the MIT license. See the LICENSE file for details. -->
                     class="media-body d-flex flex-column">
                     <div
                       class="mb-0 text-dark text-truncate">
-                      {{ option.givenName }}
+                      {{ `${option.givenName} ${option.sn}` }}
                     </div>
                     <small class="text-truncate">
                       {{ option.userName }}
@@ -142,7 +143,8 @@ of the MIT license. See the LICENSE file for details. -->
             variant="outline-secondary"
             type="select"
             :label="$t('governance.certificationTask.application')"
-            :options="applications">
+            :options="applications"
+            @search-change="debounceAppSearch">
             <template #singleLabel="{ option }">
               <div
                 class="certification-task-filter-default"
@@ -209,6 +211,7 @@ import { onImageError } from '@forgerock/platform-shared/src/utils/applicationIm
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import { debounce } from 'lodash';
 import {
   getCertificationUserFilter,
   getCertificationApplicationFilter,
@@ -248,6 +251,8 @@ export default {
         user: defaultUserValue.value,
         application: defaultApplicationValue.value,
       },
+      debounceUserSearch: debounce(this.getUserInfoFilter, 500),
+      debounceAppSearch: debounce(this.getApplicationInfoFilter, 500),
     };
   },
   props: {
@@ -264,21 +269,21 @@ export default {
     getUserSelected() {
       return this.formFields?.user?.name || this.$t('governance.certificationTask.allUsers');
     },
-    getUserInfoFilter() {
-      getCertificationUserFilter(this.certId, this.actorId)
+    getUserInfoFilter(queryString) {
+      getCertificationUserFilter(this.certId, this.actorId, queryString)
         .then(({ data }) => {
           this.users = data.map((user) => ({
             ...user,
             value: user?.id,
-            text: `${user?.givenName}`,
+            text: `${user?.givenName} ${user?.sn} ${user?.mail}`,
           }));
           this.users = [this.defaultUserValue, ...this.users];
         }).catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.errors.filterError'));
         });
     },
-    getApplicationInfoFilter() {
-      getCertificationApplicationFilter(this.certId, this.actorId)
+    getApplicationInfoFilter(queryString) {
+      getCertificationApplicationFilter(this.certId, this.actorId, queryString)
         .then(({ data }) => {
           this.applications = data.map((application) => ({
             ...application,
