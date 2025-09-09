@@ -147,7 +147,7 @@ Then('profile translations are in {string}', (language) => {
       // Social Login translations
       cy.findByRole('heading', { name: 'Connexion sociale' }).should('be.visible');
       cy.findByText('Connectez-vous à votre compte en utilisant des fournisseurs d\'identité sociale.').should('be.visible');
-      cy.findByRole('tab', { name: 'Google Google Connecté' }).should('be.visible').click();
+      cy.findByRole('button', { name: 'Google Google Connecté' }).should('be.visible').click();
       cy.findByRole('button', { name: 'Déconnecter' }).should('be.visible').click();
       cy.findByRole('heading', { name: 'Déconnecter google?' }).should('be.visible');
       cy.findByText('Êtes-vous sûr de vouloir déconnecter google en tant que fournisseur d\'identité sociale?').should('be.visible');
@@ -155,7 +155,7 @@ Then('profile translations are in {string}', (language) => {
         .siblings().should('have.text', 'Déconnecter')
         .click();
       cy.findByRole('alert', { name: 'google déconnecté avec succès.' }).should('be.visible').within(() => { cy.findByRole('button', { name: 'Close' }).click({ force: true }); });
-      cy.findByRole('tab', { name: 'Google Google Non connecté' }).should('be.visible');
+      cy.findByRole('button', { name: 'Google Google Non connecté' }).should('be.visible');
 
       // Trusted devices card translations
       // cy.findByRole('heading', { name: 'Appareils de confiance en français' }).should('be.visible');
@@ -170,7 +170,7 @@ Then('profile translations are in {string}', (language) => {
       // Oauth Applications card translations
       cy.findByRole('heading', { name: 'Applications autorisées' }).should('be.visible');
       cy.findByText('Applications auxquelles vous avez donné accès à vos informations personnelles.').should('be.visible');
-      cy.findByRole('tab', { name: 'endUserUIClient endUserUIClient' }).should('be.visible').click();
+      cy.findByRole('button', { name: 'endUserUIClient endUserUIClient' }).should('be.visible').click();
       cy.findByText('Partagé avec endUserUIClient').should('be.visible');
       cy.findByText('Expirééé').should('be.visible');
       cy.findByRole('button', { name: 'Révoquer l\'accès' }).should('be.visible').click();
@@ -204,7 +204,7 @@ Then('profile translations are in {string}', (language) => {
       cy.findByText('Téléchargez les données de votre profil de compte, y compris les informations personnelles, l\'activité du compte, les données des appareils, les accords de confidentialité et de consentement.').should('be.visible');
       cy.findByRole('heading', { name: 'Supprimer le compte' }).should('be.visible').click();
       cy.findByText('Supprimez définitivement toutes les données de votre compte.').should('be.visible');
-      cy.findByRole('button', { name: 'Supprimer le compte' }).should('be.visible').click();
+      cy.findAllByRole('button', { name: 'Supprimer le compte' }).eq(1).should('be.visible').click();
       cy.findByRole('heading', { name: 'Supprimer définitivement votre compte?' }).should('be.visible').click();
       cy.findByText('Êtes-vous sûr de vouloir supprimer définitivement les données de votre compte?').should('be.visible');
       cy.findByText('Cette action est irréversible.').should('be.visible');

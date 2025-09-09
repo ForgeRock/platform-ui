@@ -4,8 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
-    class="accordion"
-    role="tablist">
+    class="accordion">
     <BCard
       no-body
       :class="cardClasses"
@@ -31,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
           @keydown="handleSectionExpanded($event, key, data)">
           <BCardHeader
             :class="`pr-4 border-0 position-relative cursor-pointer ${headerClasses}`"
-            role="tab"
+            role="button"
             v-b-toggle="`accordion-${accordionGroup}-${key}`">
             <!-- @slot item header (shown while collapsed and expanded) -->
             <slot
@@ -45,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-on="$listeners"
             @show="emitAccordionState"
             @hide="emitAccordionState"
-            role="tabpanel">
+            role="region">
             <BCardBody
               class="pt-0">
               <!-- @slot item body (shown while expanded) -->

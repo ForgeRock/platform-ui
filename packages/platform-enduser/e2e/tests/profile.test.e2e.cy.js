@@ -103,13 +103,13 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.get('div.profileCol .card-body').should('be.visible').should('contain', 'First Last');
 
       // Check that the user can download their data
-      cy.findByRole('tab', { name: 'Download your data' }).should('be.visible').click();
+      cy.findByRole('button', { name: 'Download your data' }).should('be.visible').click();
       cy.findByRole('button', { name: 'Download' }).should('be.visible').click();
       cy.readFile(path.join(downloadsFolder, 'userProfile.json')).should('exist');
 
       // Check that the user can delete their account
-      cy.findByRole('tab', { name: 'Delete Account' }).should('be.visible').click();
       cy.findByRole('button', { name: 'Delete Account' }).should('be.visible').click();
+      cy.findAllByRole('button', { name: 'Delete Account' }).eq(1).should('be.visible').click();
 
       // Watch for the user being deleted
       cy.intercept('DELETE', `**/openidm/managed/${userObject}/${userId}`).as('deleteUser');
