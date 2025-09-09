@@ -4518,6 +4518,12 @@
       "decisionsBreakdownChartTooltip": "Decisions made in this campaign",
       "decisionsByAppChartLabel": "Access by Application",
       "decisionsByAppChartTooltip": "Number of accounts to be certified in this campaign by application",
+      "previousDecisionChartLabel": "Previous Decision",
+      "previousDecisionChartTooltip": "Items in this campaign that were certified in the past",
+      "previousDecisionChartItemsLabel": {
+        "previouslyReviewed": "Previously Reviewed",
+        "neverCertified": "Never Certified"
+      },
       "deleteCampaignButtonText": "Delete Campaign",
       "deleteCampaignModal": {
         "text": "Are you sure you want to delete this staged campaign?",
