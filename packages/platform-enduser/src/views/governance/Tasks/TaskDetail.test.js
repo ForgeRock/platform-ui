@@ -8,14 +8,12 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import i18n from '@/i18n';
 import TaskDetail from './TaskDetail';
 import * as TasksApi from '@/api/governance/TasksApi';
 
 mockRouter({ params: { taskId: 'testTaskId' } });
-
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 
 const decision = {
   actors: {
@@ -75,13 +73,12 @@ const task = {
   ],
 };
 
-jest.mock('vue-router');
+let modalShow;
 
 describe('TaskDetail', () => {
   let wrapper;
   const setup = () => {
-    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
-    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
+    ({ modalShow } = mockModal());
     setupTestPinia({ user: { userId: '1234' } });
     return mount(TaskDetail, {
       global: {
@@ -162,21 +159,19 @@ describe('TaskDetail', () => {
 
   it('opens request modal with type FULFILL', async () => {
     wrapper = setup();
-    const showModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
     await flushPromises();
 
     wrapper.findComponent({ name: 'RequestActions' }).vm.$emit('action', 'FULFILL');
     expect(wrapper.vm.modalType).toBe('FULFILL');
-    expect(showModalSpy).toHaveBeenCalledWith('request_modal');
+    expect(modalShow).toHaveBeenCalledWith('request_modal');
   });
 
   it('opens request modal with type DENY', async () => {
     wrapper = setup();
-    const showModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
     await flushPromises();
 
     wrapper.findComponent({ name: 'RequestActions' }).vm.$emit('action', 'DENY');
     expect(wrapper.vm.modalType).toBe('DENY');
-    expect(showModalSpy).toHaveBeenCalledWith('request_modal');
+    expect(modalShow).toHaveBeenCalledWith('request_modal');
   });
 });

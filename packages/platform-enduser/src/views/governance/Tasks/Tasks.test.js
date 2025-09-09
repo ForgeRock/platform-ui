@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,19 +7,18 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as TasksApi from '@/api/governance/TasksApi';
 import * as store from '@/store';
 import i18n from '@/i18n';
 import Tasks from './Tasks';
 
-jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+let modalShow;
 
 const mountComponent = () => {
-  const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
-  useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
+  ({ modalShow } = mockModal());
   setupTestPinia({ user: { userId: '1234' } });
   return mount(Tasks, {
     global: {
@@ -188,21 +187,19 @@ describe('Approvals', () => {
 
   it('opens request modal with type FULFILL', async () => {
     wrapper = mountComponent();
-    const showModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
     await flushPromises();
 
     wrapper.findComponent({ name: 'RequestActionsCell' }).vm.$emit('action', 'FULFILL');
     expect(wrapper.vm.modalType).toBe('FULFILL');
-    expect(showModalSpy).toHaveBeenCalledWith('request_modal');
+    expect(modalShow).toHaveBeenCalledWith('request_modal');
   });
 
   it('opens request modal with type DENY', async () => {
     wrapper = mountComponent();
-    const showModalSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
     await flushPromises();
 
     wrapper.findComponent({ name: 'RequestActionsCell' }).vm.$emit('action', 'DENY');
     expect(wrapper.vm.modalType).toBe('DENY');
-    expect(showModalSpy).toHaveBeenCalledWith('request_modal');
+    expect(modalShow).toHaveBeenCalledWith('request_modal');
   });
 });
