@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -121,6 +121,24 @@ export function createTooltipContainer(idArray = []) {
     tooltipElement.setAttribute('id', elementId);
     document.body.appendChild(tooltipElement);
   });
+}
+
+/**
+ * Mocks certain document functions for testing purposes.
+ * Specifically, it overrides `document.createRange` to return a Range object
+ * with mocked `getBoundingClientRect` and `getClientRects` methods.
+ * Useful for testing components or utilities that rely on DOM Range methods.
+ */
+export function mockScriptDocumentFunctions() {
+  document.createRange = () => {
+    const range = new Range();
+    range.getBoundingClientRect = jest.fn();
+    range.getClientRects = jest.fn(() => ({
+      item: () => null,
+      length: 0,
+    }));
+    return range;
+  };
 }
 
 /**
