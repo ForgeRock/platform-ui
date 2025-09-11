@@ -2730,10 +2730,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/javascript-sdk@npm:4.6.0":
-  version: 4.6.0
-  resolution: "@forgerock/javascript-sdk@npm:4.6.0"
-  checksum: ce6be77fbb3b8223b7b9d0f50382e27df7d22e215f5b03ef937f935630d472b971449da04344be64ed3dcaf5d30f272c836d5099cbea4386d2ed9f64fcab3f0e
+"@forgerock/javascript-sdk@npm:4.8.2":
+  version: 4.8.2
+  resolution: "@forgerock/javascript-sdk@npm:4.8.2"
+  dependencies:
+    "@reduxjs/toolkit": ^2.2.5
+    immer: ^10.1.1
+  checksum: 3f0df254348de1a278951b54c1fbc8940b6ac4be428287fc3aaac90640a5f9133ec49baaa626480924750b16937b54d44a4a9d8dd4f7a9b4896a8af5daf4b337
   languageName: node
   linkType: hard
 
@@ -2761,7 +2764,6 @@ __metadata:
     "@codemirror/lint": 6.4.2
     "@codemirror/theme-one-dark": 6.1.2
     "@codemirror/view": 6.22.1
-    "@forgerock/javascript-sdk": 4.6.0
     "@forgerock/platform-login": 1.0.0
     "@forgerock/platform-shared": 1.0.0
     "@kyvg/vue3-notification": 3.0.2
@@ -2900,7 +2902,6 @@ __metadata:
   dependencies:
     "@badeball/cypress-cucumber-preprocessor": 21.0.2
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
-    "@forgerock/javascript-sdk": 4.6.0
     "@forgerock/ping-protect": 4.6.0
     "@forgerock/platform-shared": 1.0.0
     "@hcaptcha/vue-hcaptcha": 0.3.2
@@ -2999,7 +3000,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@forgerock/platform-shared@workspace:packages/platform-shared"
   dependencies:
-    "@forgerock/javascript-sdk": 4.6.0
     "@forgerock/platform-shared": 1.0.0
     "@googlemaps/js-api-loader": 1.16.2
     "@googlemaps/markerclusterer": 2.5.2
@@ -3840,6 +3840,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@reduxjs/toolkit@npm:^2.2.5":
+  version: 2.9.0
+  resolution: "@reduxjs/toolkit@npm:2.9.0"
+  dependencies:
+    "@standard-schema/spec": ^1.0.0
+    "@standard-schema/utils": ^0.3.0
+    immer: ^10.0.3
+    redux: ^5.0.1
+    redux-thunk: ^3.1.0
+    reselect: ^5.1.0
+  peerDependencies:
+    react: ^16.9.0 || ^17.0.0 || ^18 || ^19
+    react-redux: ^7.2.1 || ^8.1.3 || ^9.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-redux:
+      optional: true
+  checksum: 3c7458a1ba254e9b59e05cdbb5b25c2328108aa5f98f9f0173e90fe03b8f6fb698ad6829de998a6567786ff59748e2d2e1c158ef9764fa4007aeb7dba59c5c3d
+  languageName: node
+  linkType: hard
+
 "@riophae/vue-treeselect@npm:0.4.0":
   version: 0.4.0
   resolution: "@riophae/vue-treeselect@npm:0.4.0"
@@ -3956,6 +3978,20 @@ __metadata:
   version: 1.0.2
   resolution: "@soda/get-current-script@npm:1.0.2"
   checksum: 60c13475db06e2ece83df4c0f64bf3ca4f69f5fcd462512f1be2f5b6e5c3e1dbd75b0209cc2b21bb3ff9bc5fefd7ba60c2626cdda2f7067cffe985d9af439622
+  languageName: node
+  linkType: hard
+
+"@standard-schema/spec@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@standard-schema/spec@npm:1.0.0"
+  checksum: 2d7d73a1c9706622750ab06fc40ef7c1d320b52d5e795f8a1c7a77d0d6a9f978705092bc4149327b3cff4c9a14e5b3800d3b00dc945489175a2d3031ded8332a
+  languageName: node
+  linkType: hard
+
+"@standard-schema/utils@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@standard-schema/utils@npm:0.3.0"
+  checksum: 7084f875d322792f2e0a5904009434c8374b9345b09ba89828b68fd56fa3c2b366d35bf340d9e8c72736ef01793c2f70d350c372ed79845dc3566c58d34b4b51
   languageName: node
   linkType: hard
 
@@ -10942,6 +10978,7 @@ __metadata:
     "@badeball/cypress-cucumber-preprocessor": 21.0.2
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
     "@faker-js/faker": 9.8.0
+    "@forgerock/javascript-sdk": 4.8.2
     "@forgerock/platform-shared": 1.0.0
     "@neuralegion/cypress-har-generator": 5.16.4
     "@testing-library/cypress": 10.0.1
@@ -12254,6 +12291,13 @@ __metadata:
   version: 3.0.6
   resolution: "immediate@npm:3.0.6"
   checksum: f9b3486477555997657f70318cc8d3416159f208bec4cca3ff3442fd266bc23f50f0c9bd8547e1371a6b5e82b821ec9a7044a4f7b944798b25aa3cc6d5e63e62
+  languageName: node
+  linkType: hard
+
+"immer@npm:^10.0.3, immer@npm:^10.1.1":
+  version: 10.1.3
+  resolution: "immer@npm:10.1.3"
+  checksum: 1829457274084c14e32397f80132037cc758afb05e1fa36c92c8c2eea53fdca47cfa3509f7b8f7aaac1787434bbf1a2f2e7f8cbe40de969221188c0fcfe9d196
   languageName: node
   linkType: hard
 
@@ -18186,6 +18230,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"redux-thunk@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "redux-thunk@npm:3.1.0"
+  peerDependencies:
+    redux: ^5.0.0
+  checksum: bea96f8233975aad4c9f24ca1ffd08ac7ec91eaefc26e7ba9935544dc55d7f09ba2aa726676dab53dc79d0c91e8071f9729cddfea927f4c41839757d2ade0f50
+  languageName: node
+  linkType: hard
+
+"redux@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "redux@npm:5.0.1"
+  checksum: e74affa9009dd5d994878b9a1ce30d6569d986117175056edb003de2651c05b10fe7819d6fa94aea1a94de9a82f252f986547f007a2fbeb35c317a2e5f5ecf2c
+  languageName: node
+  linkType: hard
+
 "reflect-metadata@npm:0.2.1":
   version: 0.2.1
   resolution: "reflect-metadata@npm:0.2.1"
@@ -18466,6 +18526,13 @@ __metadata:
   version: 1.0.0
   resolution: "requires-port@npm:1.0.0"
   checksum: eee0e303adffb69be55d1a214e415cf42b7441ae858c76dfc5353148644f6fd6e698926fc4643f510d5c126d12a705e7c8ed7e38061113bdf37547ab356797ff
+  languageName: node
+  linkType: hard
+
+"reselect@npm:^5.1.0":
+  version: 5.1.1
+  resolution: "reselect@npm:5.1.1"
+  checksum: 5d32d48be29071ddda21a775945c2210cf4ca3fccde1c4a0e1582ac3bf99c431c6c2330ef7ca34eae4c06feea617e7cb2c275c4b33ccf9a930836dfc98b49b13
   languageName: node
   linkType: hard
 

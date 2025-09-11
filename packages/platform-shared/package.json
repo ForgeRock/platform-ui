@@ -8,7 +8,6 @@
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache"
   },
   "dependencies": {
-    "@forgerock/javascript-sdk": "4.6.0",
     "@forgerock/platform-shared": "1.0.0",
     "@googlemaps/js-api-loader": "1.16.2",
     "@googlemaps/markerclusterer": "2.5.2",
