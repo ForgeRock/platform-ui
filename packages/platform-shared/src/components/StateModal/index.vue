@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -25,7 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
         :button-text="futureState"
         :disabled="isChanging"
         :show-spinner="isChanging"
-        :spinner-text="futureState"
+        :spinner-text="spinnerText"
         :variant="variant"
         @click="$emit('change-state', !currentState)" />
     </template>
@@ -56,6 +56,9 @@ export default {
   computed: {
     futureState() {
       return this.currentState ? this.$t('common.deactivate') : this.$t('common.activate');
+    },
+    spinnerText() {
+      return this.currentState ? this.$t('common.deactivating') : this.$t('common.activating');
     },
     variant() {
       return this.currentState ? 'danger' : 'primary';
