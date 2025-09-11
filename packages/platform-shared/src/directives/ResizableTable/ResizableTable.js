@@ -24,9 +24,10 @@
 
 import {
   announceMessage,
+  applyFixedTableLayout,
   createResizer,
   getColumnWidth,
-  getMaxColumnWidthInPx,
+  getColumnWidthRangeInPx,
   getPersistedColumnWidth,
   isNonResizedColumn,
   measureCellContent,
@@ -61,8 +62,9 @@ document.body.appendChild(sharedMeasureDiv);
 function syncColumnWidthsToComputed() {
   const columnPropsMap = COLUMN_PROPS_MAP.get(persistKey);
   const persistedWidthsInPixel = getPersistedColumnWidth(persistKey);
-  columnPropsMap.persistedWidthsInPixel = persistedWidthsInPixel;
-  columnPropsMap.columnMaxWidth = getMaxColumnWidthInPx();
+  const columnWidthRange = getColumnWidthRangeInPx();
+  columnPropsMap.columnMaxWidth = columnWidthRange.max;
+  columnPropsMap.columnMinWidth = columnWidthRange.min;
   columnPropsMap.cols.forEach((col, colIndex) => {
     const restoredWidthInPx = persistedWidthsInPixel[colIndex] || parseInt(getComputedStyle(col).width, 10) || col.offsetWidth;
     updateColumnWidths(colIndex, restoredWidthInPx, columnPropsMap);
@@ -125,9 +127,7 @@ export default {
       const onMove = (e) => {
         if (!isResizing) return;
         // Ensure table-layout is fixed when user starts interacting with the column width
-        if (table.style.tableLayout !== 'fixed') {
-          table.style.setProperty('table-layout', 'fixed');
-        }
+        applyFixedTableLayout(table);
         window.requestAnimationFrame(() => {
           const clientX = getClientX(e);
           const dx = isRTL ? startX - clientX : clientX - startX;
@@ -196,9 +196,7 @@ export default {
       resizer.addEventListener('keydown', (e) => {
         if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
         // Ensure table-layout is fixed when user starts interacting with the column width
-        if (table.style.tableLayout !== 'fixed') {
-          table.style.setProperty('table-layout', 'fixed');
-        }
+        applyFixedTableLayout(table);
         e.preventDefault();
         const column = e.target.parentElement;
         const columnIndex = Array.from(column.parentElement.children).indexOf(column);
@@ -247,16 +245,18 @@ export default {
       persistKey = options.persistKey;
       // Restore persisted widths if available
       const persistedColumnWidths = getPersistedColumnWidth(persistKey);
-
+      if (persistedColumnWidths?.length > 0) {
+        applyFixedTableLayout(table); // Ensure table-layout is fixed when the modified column widths are being restored
+      }
+      const columnWidthRange = getColumnWidthRangeInPx();
       // Creates a Map of column properties based on the table persistKey
       COLUMN_PROPS_MAP.set(persistKey, {
         persistKey,
         cols,
         tableId: table.id,
         tdColumnList: tbl.querySelector('tbody tr:first-child')?.cells || tbl.rows?.[1]?.cells || [],
-        persistedWidthsInPixel: persistedColumnWidths || [],
-        columnMinWidth: 120,
-        columnMaxWidth: getMaxColumnWidthInPx(),
+        columnMinWidth: columnWidthRange.min,
+        columnMaxWidth: columnWidthRange.max,
       });
 
       // Add resizer handles to each column

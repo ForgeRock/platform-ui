@@ -9,15 +9,10 @@ import i18n from '@/i18n';
 import { getValueFromLocalStorage, setLocalStorageValue } from './localStorageUtils';
 
 const RESIZER_CLASS = 'resizer';
-const COL_ACTIONS_CLASS = 'col-actions';
-const CHECKBOX_COLUMN_CLASS = 'checkbox-column';
-const SELECTOR_CELL_COLUMN_CLASS = 'selector-cell';
-const NON_RESIZE_COLUMN_CLASS = 'fr-no-resize';
 const STORAGE_KEY_SUFFIX = '-column-width';
-const CHECKBOX_COLUMN_WIDTH = 15;
-const SELECTOR_CELL_COLUMN_WIDTH = 40;
 const MAX_COLUMN_WIDTH_LOWER_LIMIT = 400;
 const MAX_COLUMN_WIDTH_UPPER_LIMIT = 1200;
+const MIN_COLUMN_WIDTH = 120;
 const RESIZER_CONTENT_BUFFER = 24;
 const FIXED_WIDTH_CLASS_LIST = [
   'w-50',
@@ -25,11 +20,29 @@ const FIXED_WIDTH_CLASS_LIST = [
   'col-width-33',
   'col-width-20',
 ];
-const NON_RESIZE_CLASS_LIST = [
-  COL_ACTIONS_CLASS,
-  CHECKBOX_COLUMN_CLASS,
-  SELECTOR_CELL_COLUMN_CLASS,
-  NON_RESIZE_COLUMN_CLASS,
+
+// Maintains a map of fixed width column lists based on the existing column classes and their applied styling on page load, to avoid resizing them
+const NON_RESIZE_COLUMN_LIST = [
+  {
+    className: 'col-actions',
+    width: MIN_COLUMN_WIDTH,
+  },
+  {
+    className: 'checkbox-column',
+    width: 15, // The existing width of the checkbox column is 15px
+  },
+  {
+    className: 'selector-cell',
+    width: 40, // The existing width of the selector cell is 40px
+  },
+  {
+    className: 'w-100px',
+    width: 100,
+  },
+  {
+    className: 'w-120px',
+    width: 120,
+  },
 ];
 
 /**
@@ -44,17 +57,22 @@ const convertPixelIntoViewportUnit = (widthInPx) => {
 };
 
 /**
- * Convert and return the pixel width (px) equivalent of a viewport width (vw).
- * @param {Number} widthInVw - The width in viewport units to convert.
- * @return {Number} Converted width in pixels (px).
+ * Converts a viewport width (vw) to its pixel (px) equivalent.
+ * @param {Number} widthInVw - The width in viewport units.
+ * @return {Number} The equivalent width in pixels, rounded to the nearest integer.
  */
 const convertViewportIntoPixelUnit = (widthInVw) => {
   const currentViewportWidth = window.innerWidth;
-  return (widthInVw * currentViewportWidth) / 100;
+  return Math.round((widthInVw * currentViewportWidth) / 100);
 };
 
-// Helper to get the current width of a column based on the current and computed styles
-const getColumnWidth = (col) => parseInt(col.style.width, 10) || parseInt(getComputedStyle(col).width, 10) || col.offsetWidth;
+/**
+ * Helper to get the current width of a column based on the applied styles.
+ * If the computed width is not available, it falls back to inline styles or offsetWidth.
+ * @param {HTMLElement} col - The element for calculating the column width.
+ * @return {Number} The width of the column in pixels.
+ */
+const getColumnWidth = (col) => parseInt(col.getBoundingClientRect().width, 10) || parseInt(col.style.width, 10) || col.offsetWidth;
 
 /**
  * Returns the Persisted column widths in pixel unit based on the persistKey.
@@ -67,17 +85,20 @@ const getPersistedColumnWidth = (persistKey) => {
 };
 
 /**
- * Returns the Maximum allowable column width calculated based on the viewport width.
- * @return {Number} Maximum column width in pixels.
+ * Returns the Minimum and Maximum allowable column width calculated based on the viewport width.
+ * @return {Object} An object containing the min and max column width in pixels.
  */
-const getMaxColumnWidthInPx = () => {
-  const allowableViewportWidth = Math.round(window.innerWidth * 0.4 * 100) / 100; // Allow max width as 40% of the viewport width
-  return Math.max(MAX_COLUMN_WIDTH_LOWER_LIMIT, Math.min(allowableViewportWidth, MAX_COLUMN_WIDTH_UPPER_LIMIT));
+const getColumnWidthRangeInPx = () => {
+  const viewportWidth = window.innerWidth;
+  return {
+    min: Math.max(Math.round(viewportWidth * 0.1), MIN_COLUMN_WIDTH),
+    // max column width should be calculated based on the viewport width along with upper and lower limits
+    max: Math.max(MAX_COLUMN_WIDTH_LOWER_LIMIT, Math.min(Math.round(viewportWidth * 0.6), MAX_COLUMN_WIDTH_UPPER_LIMIT)),
+  };
 };
 
 /**
  * Iterates over the available columns and updates the corresponding column widths.
- * Updates the persistedWidthsInPixel map with the updated calculated width.
  * @param {Number} colIndex - The index of the column.
  * @param {Number} updatedWidthAtIndex - The updated value for the column width.
  * @Param {Map} columnPropsMap - A map containing column properties.
@@ -85,18 +106,14 @@ const getMaxColumnWidthInPx = () => {
 const updateColumnWidths = (colIndex, updatedWidthAtIndex, columnPropsMap) => {
   Array.from(columnPropsMap.cols).forEach((col, index) => {
     let columnWidth;
-    if (col.classList.contains(CHECKBOX_COLUMN_CLASS)) {
-      columnWidth = CHECKBOX_COLUMN_WIDTH;
-    } else if (col.classList.contains(SELECTOR_CELL_COLUMN_CLASS)) {
-      columnWidth = SELECTOR_CELL_COLUMN_WIDTH;
-    } else if (col.classList.contains(COL_ACTIONS_CLASS)) {
-      columnWidth = columnPropsMap.columnMinWidth;
+    const nonResizableColumn = NON_RESIZE_COLUMN_LIST.find((column) => col.classList.contains(column.className));
+    if (nonResizableColumn && nonResizableColumn.width) {
+      columnWidth = nonResizableColumn.width;
     } else {
-      const updatedColWidth = index === colIndex ? updatedWidthAtIndex : parseInt(getComputedStyle(col).width, 10) || col.offsetWidth;
+      const updatedColWidth = index === colIndex ? updatedWidthAtIndex : getColumnWidth(col);
       columnWidth = Math.max(columnPropsMap.columnMinWidth, Math.min(columnPropsMap.columnMaxWidth, updatedColWidth));
     }
     col.style.setProperty('width', `${columnWidth}px`, 'important');
-    columnPropsMap.persistedWidthsInPixel[index] = columnWidth; // Sync persisted width with current computed width
   });
 };
 
@@ -120,7 +137,7 @@ const removeClassesFromColumnList = (columnList) => {
  * @param {Array} classList - The list of class names for the column.
  * @returns {boolean} - Indicates whether the column is non-resizable.
  */
-const isNonResizedColumn = (classList) => NON_RESIZE_CLASS_LIST.some((className) => classList.contains(className));
+const isNonResizedColumn = (classList) => NON_RESIZE_COLUMN_LIST.some((column) => classList.contains(column.className));
 /**
  * Persists the current column widths using the persistKey option.
  * @Param { Map } columnPropsMap - A map containing column properties.
@@ -132,7 +149,7 @@ const persistCurrentWidths = (columnPropsMap) => {
   if (columnPropsMap.tdColumnList?.length > 0) {
     removeClassesFromColumnList(columnPropsMap.tdColumnList);
   }
-  const viewPortWidths = columnPropsMap.persistedWidthsInPixel.map((width) => convertPixelIntoViewportUnit(width));
+  const viewPortWidths = columnPropsMap.cols.map((col) => convertPixelIntoViewportUnit(getColumnWidth(col)));
   setLocalStorageValue(columnPropsMap.persistKey + STORAGE_KEY_SUFFIX, viewPortWidths);
 };
 
@@ -187,18 +204,28 @@ const measureCellContent = (sharedMeasureDiv, cell) => {
   const padding = (parseInt(style.paddingLeft, 10) || 0) + (parseInt(style.paddingRight, 10) || 0);
   return sharedMeasureDiv.offsetWidth + padding + RESIZER_CONTENT_BUFFER;
 };
+/**
+ * Apply fixed table-layout, if not already applied, to ensure column widths are respected
+ * @param {HTMLElement} table - The table element to apply the layout to.
+ */
+const applyFixedTableLayout = (table) => {
+  if (table.style.tableLayout !== 'fixed') {
+    table.style.setProperty('table-layout', 'fixed');
+  }
+};
 
 export {
+  announceMessage,
+  applyFixedTableLayout,
   convertPixelIntoViewportUnit,
   convertViewportIntoPixelUnit,
+  createResizer,
   getColumnWidth,
+  getColumnWidthRangeInPx,
   getPersistedColumnWidth,
-  getMaxColumnWidthInPx,
-  updateColumnWidths,
+  isNonResizedColumn,
+  measureCellContent,
   persistCurrentWidths,
   removeClassesFromColumnList,
-  isNonResizedColumn,
-  createResizer,
-  announceMessage,
-  measureCellContent,
+  updateColumnWidths,
 };

@@ -12,13 +12,21 @@ describe('resizableTableUtils', () => {
   let originalInnerWidth;
   let columnPropsMap;
 
+  beforeAll(() => {
+    Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', {
+      writable: true,
+      value: jest.fn(() => ({
+        x: 0, y: 0, width: 0, height: 0, top: 0, right: 0, bottom: 0, left: 0,
+      })),
+    });
+  });
+
   beforeEach(() => {
     // Store the original innerWidth to restore it after the test
     originalInnerWidth = global.innerWidth;
     columnPropsMap = {
       cols: [document.createElement('th')],
       tdColumnList: [],
-      persistedWidthsInPixel: [100, 200, 300],
       persistKey: 'test-key',
       columnMinWidth: 120,
       columnMaxWidth: 800,
@@ -64,27 +72,12 @@ describe('resizableTableUtils', () => {
     expect(col2.classList.contains('bar')).toBe(true);
   });
 
-  it('getPersistedColumnWidth should convert and return persisted column widths in pixel units', () => {
+  it('getPersistedColumnWidth should convert and return the rounded value of the persisted column widths in pixel units', () => {
     jest.spyOn(localStorageUtils, 'getValueFromLocalStorage').mockReturnValue([20, 15, 10, 40]);
-    expect(resizableTableUtils.getPersistedColumnWidth('test')).toEqual([204.8, 153.6, 102.4, 409.6]);
+    expect(resizableTableUtils.getPersistedColumnWidth('test')).toEqual([205, 154, 102, 410]);
 
     jest.spyOn(localStorageUtils, 'getValueFromLocalStorage').mockReturnValue([10, 35, 40]);
-    expect(resizableTableUtils.getPersistedColumnWidth('test')).toEqual([102.4, 358.4, 409.6]); // Converted values into pixel units
-  });
-
-  it('getMaxColumnWidthInPx should return 400px for lower screen resolutions', () => {
-    global.innerWidth = 500;
-    expect(resizableTableUtils.getMaxColumnWidthInPx()).toBe(400);
-  });
-
-  it('getMaxColumnWidthInPx should return the calculated max column width based on the screen resolutions', () => {
-    global.innerWidth = 2560;
-    expect(resizableTableUtils.getMaxColumnWidthInPx()).toBe(1024);
-  });
-
-  it('getMaxColumnWidthInPx should return 1200px, when the screen resolution is much higher', () => {
-    global.innerWidth = 5000;
-    expect(resizableTableUtils.getMaxColumnWidthInPx()).toBe(1200);
+    expect(resizableTableUtils.getPersistedColumnWidth('test')).toEqual([102, 358, 410]); // Converted values into pixel units
   });
 
   it('updateColumnWidths should set corresponding widths for checkbox, selector, and action columns', () => {
@@ -96,7 +89,6 @@ describe('resizableTableUtils', () => {
     columnPropsMap = {
       ...columnPropsMap,
       cols: [col1, col2],
-      persistedWidthsInPixel: [120, 180],
     };
 
     resizableTableUtils.updateColumnWidths(0, 200, columnPropsMap);
@@ -113,28 +105,36 @@ describe('resizableTableUtils', () => {
     columnPropsMap = {
       ...columnPropsMap,
       cols: [col1, col2, col3],
-      persistedWidthsInPixel: [120, 180],
     };
     resizableTableUtils.updateColumnWidths(0, 200, columnPropsMap);
     expect(col1.style.width).toBe('200px');
-    expect(columnPropsMap.persistedWidthsInPixel[0]).toBe(200);
 
     resizableTableUtils.updateColumnWidths(1, 80, columnPropsMap);
     expect(col2.style.width).toBe('120px'); // Width should be reset to global min width
-    expect(columnPropsMap.persistedWidthsInPixel[1]).toBe(120);
 
     resizableTableUtils.updateColumnWidths(2, 860, columnPropsMap);
     expect(col3.style.width).toBe(`${columnPropsMap.columnMaxWidth}px`); // Width should be reset to global max width
-    expect(columnPropsMap.persistedWidthsInPixel[2]).toBe(800);
   });
 
-  it('persistCurrentWidths should trigger setLocalStorageValue to persist the updated widths', () => {
-    const col = document.createElement('td');
-    const persistedViewportWidths = [20, 15, 10, 40];
+  it('persistCurrentWidths should trigger setLocalStorageValue to persist the updated column widths in viewport units', () => {
+    const col1 = document.createElement('td');
+    const col2 = document.createElement('td');
+    const col3 = document.createElement('td');
+    const widthsArray = [300, 450, 500];
+    col1.getBoundingClientRect = jest.fn().mockReturnValueOnce({
+      x: 50, y: 50, width: widthsArray[0], height: 100, top: 50, right: 250, bottom: 150, left: 50,
+    });
+    col2.getBoundingClientRect = jest.fn().mockReturnValueOnce({
+      x: 50, y: 50, width: widthsArray[1], height: 100, top: 50, right: 250, bottom: 150, left: 50,
+    });
+    col3.getBoundingClientRect = jest.fn().mockReturnValueOnce({
+      x: 50, y: 50, width: widthsArray[2], height: 100, top: 50, right: 250, bottom: 150, left: 50,
+    });
+
+    const persistedViewportWidths = [resizableTableUtils.convertPixelIntoViewportUnit(widthsArray[0]), resizableTableUtils.convertPixelIntoViewportUnit(widthsArray[1]), resizableTableUtils.convertPixelIntoViewportUnit(widthsArray[2])];
     columnPropsMap = {
       ...columnPropsMap,
-      cols: [col],
-      persistedWidthsInPixel: persistedViewportWidths.map((width) => resizableTableUtils.convertViewportIntoPixelUnit(width)),
+      cols: [col1, col2, col3],
     };
     const setLocalStorageValueSpy = jest.spyOn(localStorageUtils, 'setLocalStorageValue');
     resizableTableUtils.persistCurrentWidths(columnPropsMap);
@@ -156,9 +156,10 @@ describe('isNonResizedColumn', () => {
   inputColumn.classList.add('test-class');
   afterEach(() => {
     inputColumn.classList.remove('col-actions');
-    inputColumn.classList.remove('fr-no-resize');
     inputColumn.classList.remove('checkbox-column');
     inputColumn.classList.remove('selector-cell');
+    inputColumn.classList.remove('w-100px');
+    inputColumn.classList.remove('w-120px');
   });
 
   it('should return true if the element contains "col-actions" class', () => {
@@ -167,9 +168,15 @@ describe('isNonResizedColumn', () => {
     expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
   });
 
-  it('should return true if the element contains "fr-no-resize" class', () => {
+  it('should return true if the element contains "w-100px" class', () => {
     expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
-    inputColumn.classList.add('fr-no-resize');
+    inputColumn.classList.add('w-100px');
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+  });
+
+  it('should return true if the element contains "w-120px" class', () => {
+    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    inputColumn.classList.add('w-120px');
     expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
   });
 
@@ -188,7 +195,7 @@ describe('isNonResizedColumn', () => {
   it('should return true if the element contains multiple classes from the non-resized column list', () => {
     inputColumn.classList.add('selector-cell');
     inputColumn.classList.add('checkbox-column');
-    inputColumn.classList.add('fr-no-resize');
+    inputColumn.classList.add('w-100px');
     expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
   });
 
@@ -197,5 +204,50 @@ describe('isNonResizedColumn', () => {
     inputColumn.classList.add('action-column');
     inputColumn.classList.add('selector-column');
     expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+  });
+});
+
+describe('applyFixedTableLayout', () => {
+  it('should update the table-layout property to fixed for auto-layout tables', () => {
+    const autoTable = document.createElement('table');
+    autoTable.style.tableLayout = 'auto';
+    resizableTableUtils.applyFixedTableLayout(autoTable);
+    expect(autoTable.style.tableLayout).toBe('fixed');
+  });
+
+  it('should set the table-layout property to fixed for table without explicit table-layout property', () => {
+    const table = document.createElement('table');
+    resizableTableUtils.applyFixedTableLayout(table);
+    expect(table.style.tableLayout).toBe('fixed');
+  });
+
+  it('should keep the table-layout property to fixed for fixed-layout tables', () => {
+    const fixedTable = document.createElement('table');
+    fixedTable.style.tableLayout = 'fixed';
+    resizableTableUtils.applyFixedTableLayout(fixedTable);
+    expect(fixedTable.style.tableLayout).toBe('fixed');
+  });
+});
+
+describe('getColumnWidthRangeInPx', () => {
+  it('should return the correct min and max column width based on the viewport width', () => {
+    global.innerWidth = 1024;
+    const { min, max } = resizableTableUtils.getColumnWidthRangeInPx();
+    expect(min).toBe(120); // Minimum width should be 120px, as 10% of 1024 is less than 120
+    expect(max).toBe(614); // Maximum width should be 614px, as 60% of 1024 is within the range of 400-1200
+  });
+
+  it('should return lower range of max width and default min width value for lower screen resolutions', () => {
+    global.innerWidth = 500;
+    const { min, max } = resizableTableUtils.getColumnWidthRangeInPx();
+    expect(min).toBe(120); // Minimum width should be 120px, as 10% of 500 is less than 120
+    expect(max).toBe(400); // Lower range of max width should get applied, as 60% of 500 is less than the lower range limit of 400px
+  });
+
+  it('should return the calculated min width and higher range of max width for higher screen resolutions', () => {
+    global.innerWidth = 2560;
+    const { min, max } = resizableTableUtils.getColumnWidthRangeInPx();
+    expect(min).toBe(256); // Minimum width should be 256px, as 10% of 2560 is greater than the minimum limit of 120px
+    expect(max).toBe(1200); // Higher range of max width should get applied, as 60% of 2560 is greater than 1024
   });
 });
