@@ -22,7 +22,6 @@
   "dependencies": {
     "@badeball/cypress-cucumber-preprocessor": "21.0.2",
     "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
-    "@forgerock/javascript-sdk": "4.6.0",
     "@forgerock/ping-protect": "4.6.0",
     "@forgerock/platform-shared": "1.0.0",
     "@hcaptcha/vue-hcaptcha": "0.3.2",
