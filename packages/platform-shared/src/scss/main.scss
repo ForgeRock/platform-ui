@@ -563,8 +563,7 @@ a.card {
 
 @media (min-width: 992px) {
   .table {
-    table-layout: auto;
-    width: 100%;
+    table-layout: fixed;
   }
 
   .w-lg-auto {
