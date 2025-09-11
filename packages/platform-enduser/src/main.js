@@ -288,7 +288,7 @@ const addAppAuth = (realm) => {
           window.logout(false, reason !== 'subject_mismatch');
         },
         sessionClaimsHandler(newClaims) {
-          if (claims.auth_time !== newClaims.auth_time || claims.realm !== newClaims.realm) {
+          if (claims.realm !== newClaims.realm) {
             window.logout(false);
           }
           /**
