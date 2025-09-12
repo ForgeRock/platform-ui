@@ -16,10 +16,12 @@ import { isObject } from 'lodash';
  */
 export const PLACEHOLDER_REGEX = /^([\w '"",\-.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",\-.:/$£@]+)?$/;
 
+export const ESV_NAME_PREPEND = 'esv-';
+
 /**
  * List of ESV variable types
  */
-export const ESVTypes = [
+export const ESV_TYPES = [
   'string',
   'list',
   'array',
