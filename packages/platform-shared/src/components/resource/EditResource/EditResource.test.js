@@ -7,6 +7,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
+import axios from 'axios';
 import * as SessionsApi from '@/api/SessionsApi';
 import * as SchemaApi from '@/api/SchemaApi';
 import * as ManagedResourceApi from '@/api/ManagedResourceApi';
@@ -929,6 +930,57 @@ describe('EditResource.vue', () => {
           viewable: true,
         },
       });
+    });
+  });
+
+  describe('showMetadataTab is properly set when calling loadData', () => {
+    let schemaResponse;
+    let privilegeResponse;
+    let resourceResponse;
+
+    beforeEach(() => {
+      wrapper = mountComponent();
+      schemaResponse = {
+        data: {
+          title: 'User',
+          order: [],
+          properties: { _meta: { type: 'relationship', viewable: true } },
+        },
+      };
+      privilegeResponse = { data: { VIEW: { allowed: true, properties: ['_meta'] }, UPDATE: { allowed: false }, DELETE: { allowed: false } } };
+      resourceResponse = { data: { _rev: '1', givenName: 'John', sn: 'Doe' } };
+
+      jest.spyOn(wrapper.vm, 'getObjectTypeProperties').mockReturnValue({});
+      jest.spyOn(wrapper.vm, 'getResource').mockResolvedValue(() => Promise.resolve(resourceResponse));
+
+      axios.all.mockResolvedValueOnce([
+        schemaResponse,
+        privilegeResponse,
+      ]);
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('does not set showMetadataTab if canClearSessions is false', async () => {
+      wrapper.setProps({
+        canClearSessions: false,
+      });
+      await wrapper.vm.loadData();
+      expect(wrapper.vm.showMetadataTab).toBe(false);
+      expect(schemaResponse.data.order).not.toContain('_meta');
+      expect(schemaResponse.data.properties._meta.viewable).toBe(true);
+    });
+
+    it('sets showMetadataTab and updates schema when canClearSessions and _meta exist', async () => {
+      wrapper.setProps({
+        canClearSessions: true,
+      });
+      await wrapper.vm.loadData();
+      expect(wrapper.vm.showMetadataTab).toBe(true);
+      expect(schemaResponse.data.order).toContain('_meta');
+      expect(schemaResponse.data.properties._meta.viewable).toBe(false);
     });
   });
 });

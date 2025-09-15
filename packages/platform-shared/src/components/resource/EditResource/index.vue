@@ -181,6 +181,9 @@ of the MIT license. See the LICENSE file for details. -->
             <FrUserDevicesTab
               v-if="resourceIsUser"
               :user-id="id" />
+            <FrMetadataTab
+              v-if="showMetadataTab"
+              :meta="formFields._meta" />
             <FrJsonTab
               v-if="jsonString"
               :json-string="jsonString" />
@@ -255,10 +258,10 @@ import FrLinkedApplicationsTab from '@forgerock/platform-shared/src/components/r
 import FrObjectTypeEditor from './ObjectTypeEditor';
 import FrSettingsTab from './CustomTabs/SettingsTab';
 import FrPrivilegesTab from './CustomTabs/PrivilegesTab';
+import FrMetadataTab from './CustomTabs/MetadataTab';
 import FrJsonTab from './CustomTabs/JsonTab';
 import FrUserDevicesTab from './CustomTabs/UserDevices';
 import store from '@/store';
-
 /**
  * @description Full page that provides view/edit of a specific resource for delegated admin. Auto generates fields based on backend return.
  * Currently generates string, number, boolean and password (not based on type, but on field name being passsword).
@@ -276,6 +279,7 @@ export default {
     FrDeletePanel,
     FrIcon,
     FrJsonTab,
+    FrMetadataTab,
     FrLinkedApplicationsTab,
     FrObjectTypeEditor,
     FrPrivilegesTab,
@@ -344,6 +348,7 @@ export default {
       mobileDropdownTabs: [],
       hasActiveSessions: false,
       showClearSessionsModal: false,
+      showMetadataTab: false,
       clearSessionsName: '',
       linkedApplications: [],
       linkedAppImgMap: {
@@ -376,6 +381,18 @@ export default {
         this.$emit('breadcrumb-data-changed', { route: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`, routeName: this.$t('pages.access.list', { resource: this.getTranslation(this.resourceTitle) }) });
 
         this.objectTypeProperties = this.getObjectTypeProperties(schema.data, privilege.data);
+
+        // if this.canClearSessions is true we know this is a user object in the platform admin ui
+        // and if the _meta property exists we want to show the metadata tab
+        if (this.canClearSessions && schema.data.properties._meta) {
+          this.showMetadataTab = true;
+          // add _meta to order so it shows up in this.relationshipProperties and gets added
+          // to the resource query alongside other singleton relationships
+          schema.data.order.push('_meta');
+          // mark _meta as viewable = false so the objectTypeEditor ignores it
+          schema.data.properties._meta.viewable = false;
+        }
+
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
 
         this.getResource().then((resourceDetails) => {
@@ -400,7 +417,6 @@ export default {
         }).catch((error) => {
           this.showErrorMessage(error, this.$t('errors.errorRetrievingResource'));
         });
-
         this.loadLinkedApplicationsData();
       }))
         .catch((error) => {
