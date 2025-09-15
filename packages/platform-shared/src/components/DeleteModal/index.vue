@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     :id="id"
     :ref="id"
     :static="isTesting"
+    @cancel="$emit('cancel-delete')"
     @hidden="$emit('hidden')"
     :hide-header-close="isDeleting"
     no-close-on-backdrop
