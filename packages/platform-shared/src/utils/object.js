@@ -17,12 +17,14 @@ import {
  *
  * @param {Object|Array} newObj - The new object or array to compare.
  * @param {Object|Array} oldObj - The old object or array to compare against.
+ * @param {Boolean} checkRemovedKeys - if we should check for removed keys.
+ *
  * @returns {Array} An array of changes. For objects, each change is represented as an object
  *                  with `value` (the new value) and `name` (the key). For arrays, it returns
  *                  the elements from `newObj` that differ from `oldObj`.
  */
 // eslint-disable-next-line import/prefer-default-export
-export function findChanges(newObj, oldObj) {
+export function findChanges(newObj, oldObj, checkRemovedKeys = false) {
   let changes;
   if (isArray(newObj)) {
     changes = filter(newObj, (field, index) => {
@@ -46,6 +48,22 @@ export function findChanges(newObj, oldObj) {
         });
       }
     });
+
+    if (checkRemovedKeys) {
+      // Check for removed keys. This is a shared function, and this functionality is new
+      // to avoid unintended changes to existing usages, only check if desired
+      const newKeys = Object.keys(newObj);
+      const oldKeys = Object.keys(oldObj);
+      const removedKeys = oldKeys.filter((key) => !newKeys.includes(key));
+      if (removedKeys.length) {
+        each(removedKeys, (key) => {
+          changes.push({
+            value: undefined,
+            name: key,
+          });
+        });
+      }
+    }
   }
   return changes;
 }
