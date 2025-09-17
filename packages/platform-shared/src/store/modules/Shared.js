@@ -45,7 +45,6 @@ const defaultState = {
   newMultiselectEnabled: false,
   mtlsEnabled: false,
   fraasMtlsFqdn: null,
-  pendoEnabled: false,
   pingFederateUrl: null,
   nodeVersioningEnabled: false,
   promoteAppsViaApi: false,
@@ -189,9 +188,6 @@ const mutations = {
       if (env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
         state.governanceEnabled = true;
         state.governanceDevEnabled = true;
-      }
-      if (env.VUE_APP_ENABLE_PENDO === 'true' || env.VUE_APP_ENABLE_PENDO === true) {
-        state.pendoEnabled = true;
       }
 
       if (env.VUE_APP_ENABLE_MTLS === 'true' || env.VUE_APP_ENABLE_MTLS === true) {
