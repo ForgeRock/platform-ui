@@ -538,6 +538,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    journeyShowAsteriskForRequiredFields: {
+      type: Boolean,
+      default: false,
+    },
     journeyTheaterMode: {
       type: Boolean,
       default: false,
@@ -706,6 +710,19 @@ export default {
     journeyRememberMeEnabled() {
       this.setRememberedUsername();
     },
+    // on page load journeyShowAsteriskForRequiredFields will be false, it will
+    // update when the theme is loaded
+    journeyShowAsteriskForRequiredFields(value) {
+      if (value) {
+        this.componentList.forEach((component) => {
+          if (component.isRequired && (component.type === 'FrField' || component.type === 'FrPasswordCallback')) {
+            const { label } = component.callbackSpecificProps;
+            component.callbackSpecificProps.label = `${label}<span class="text-danger" aria-hidden="true">*</span>`;
+            component.callbackSpecificProps.isHtml = true;
+          }
+        });
+      }
+    },
     isFirstStep() {
       this.handleFocus();
     },
@@ -845,7 +862,6 @@ export default {
           const fieldDataType = getAlternateFieldType(policyRequirements) || fieldType;
           const errors = this.getTranslatedPolicyFailures(callback);
           const validation = getFieldValidation(policyRequirements);
-
           component.callbackSpecificProps = {
             errors,
             label,
