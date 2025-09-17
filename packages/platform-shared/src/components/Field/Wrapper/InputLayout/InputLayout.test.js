@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -94,5 +94,43 @@ describe('InputLayout', () => {
     });
 
     expect(wrapper.find('.floating-label').exists()).toBe(false);
+  });
+
+  it('InputLayout displays HTML content when isHtml is true', () => {
+    const wrapper = mount(InputLayout, {
+      props: {
+        ...defaultProps,
+        label: 'Username <span aria-hidden="true">*</span>',
+        isHtml: true,
+      },
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
+      },
+    });
+
+    const asterisk = wrapper.find('label span[aria-hidden="true"]');
+    expect(asterisk.exists()).toBe(true);
+    expect(asterisk.text()).toBe('*');
+  });
+
+  it('InputLayout does not render HTML when isHtml is false', () => {
+    const wrapper = mount(InputLayout, {
+      props: {
+        ...defaultProps,
+        label: 'Username <span aria-hidden="true">*</span>',
+        isHtml: false,
+      },
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
+      },
+    });
+
+    const asterisk = wrapper.find('label span[aria-hidden="true"]');
+    expect(asterisk.exists()).toBe(false);
+    expect(wrapper.find('label').text()).toContain('Username <span aria-hidden="true">*</span>');
   });
 });

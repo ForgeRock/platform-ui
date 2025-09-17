@@ -543,6 +543,7 @@
         "journeyJustifiedContentMobileViewEnabled": "Visible in mobile",
         "journeyPagesDescription": "Customize the authentication and registration journey pages.",
         "journeyRememberMeDescription": "Add option to remember username on next sign in.",
+        "journeyShowAsteriskForRequiredFields": "Display an asterisk (*) next to the label for all mandatory fields.",
         "journeyTheaterMode": "Theater Mode",
         "journeyTheaterModeDescription": "Expand the UI using the available space in your browser window.",
         "journeyText": "Journey Text",

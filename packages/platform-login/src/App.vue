@@ -34,6 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
             :journey-justified-content-enabled="theme.journeyJustifiedContentEnabled"
             :journey-justified-content-mobile-view-enabled="theme.journeyJustifiedContentMobileViewEnabled"
             :journey-layout="theme.journeyLayout"
+            :journey-show-asterisk-for-required-fields="theme.journeyShowAsteriskForRequiredFields"
             :journey-sign-in-button-position="theme.journeySignInButtonPosition"
             :key="$route.fullPath"
             :logo-alt-text="localizedLogoAltText"
