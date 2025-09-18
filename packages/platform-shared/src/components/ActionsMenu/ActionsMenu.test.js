@@ -5,14 +5,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, DOMWrapper } from '@vue/test-utils';
 import ActionsMenu from './ActionsMenu';
 
-let wrapper;
+function setupApp() {
+  const app = document.createElement('div');
+  app.id = 'app';
+  document.body.appendChild(app);
+  return app;
+}
 
 function setup(propsData) {
-  wrapper = mount(ActionsMenu, {
-    attachTo: document.body,
+  const target = setupApp();
+  mount(ActionsMenu, {
+    attachTo: target,
     slots: {
       default: '<li data-v-68a6b289="" role="presentation"><a class="active dropdown-item" role="menuitem" href="#" target="_self">Pending</a></li><li data-v-68a6b289="" role="presentation"><a class="active dropdown-item" role="menuitem" href="#" target="_self">Completed</a></li>',
       'button-content': '<div data-v-68a6b289="" class="p-0 toolbar-link-text" data-testid="status-dropdown-button"><span data-v-68a6b289="" class="font-weight-bold mr-1">Status:</span> Pending</div>',
@@ -21,11 +27,19 @@ function setup(propsData) {
       ...propsData,
     },
   });
+
+  const bodyWrapper = new DOMWrapper(document.body);
+
+  return { wrapper: bodyWrapper };
 }
+
+beforeEach(() => {
+  document.body.innerHTML = '';
+});
 
 describe('Actions Menu Component', () => {
   it('Will render button content', () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('[data-testid="status-dropdown-button"]');
     const menu = wrapper.find('[role="menu"]');
 
@@ -35,7 +49,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content and keep focus on button when clicked', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
     let menu = wrapper.find('[role="menu"]');
 
@@ -52,7 +66,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content and focus first element when arrow down is pressed', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
     let menu = wrapper.find('[role="menu"]');
 
@@ -69,7 +83,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content and focus first element when space is pressed', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -82,7 +96,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content and focus first element when enter is pressed', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -94,7 +108,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content and focus last element when arrow up is pressed', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -106,7 +120,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content, focus first and last element when home and end keys are pressed', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -128,7 +142,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content, focus item that starts with c when c key is pressed', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -145,7 +159,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content, focus item with index 1 when selectedItemIndex is 1 and Enter is pressed', async () => {
-    setup({ 'selected-item-index': 1 });
+    const { wrapper } = setup({ 'selected-item-index': 1 });
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -157,7 +171,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content, focus item with index 1 when selectedItemIndex is 1 and space is pressed', async () => {
-    setup({ 'selected-item-index': 1 });
+    const { wrapper } = setup({ 'selected-item-index': 1 });
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -169,7 +183,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will focus button element when item is selected', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -184,7 +198,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will focus button element when menu is opened and Escape is pressed', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -199,7 +213,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will focus button element when menu is opened and Tab is pressed', async () => {
-    setup();
+    const { wrapper } = setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -211,5 +225,53 @@ describe('Actions Menu Component', () => {
     const firstItem = menu.findAll('a')[0];
     await firstItem.trigger('keydown', { key: 'Tab' });
     expect(document.activeElement).toBe(button.element);
+  });
+
+  it('Will render ul inside menu container', async () => {
+    const { wrapper } = setup();
+
+    const button = wrapper.find('button');
+
+    await button.element.focus();
+    await button.trigger('keydown', { key: 'ArrowUp' });
+
+    const menuContainer = wrapper.find('.menu-container');
+    expect(menuContainer.exists()).toBe(true);
+
+    const menuContainerSecondChild = menuContainer.element.children[1];
+
+    expect(menuContainerSecondChild.tagName.toLowerCase()).toBe('ul');
+    expect(menuContainerSecondChild.getAttribute('role')).toBe('menu');
+
+    const app = wrapper.find('#app');
+    expect(app.exists()).toBe(true);
+
+    const appSecondChild = app.element.children[1];
+
+    expect(appSecondChild).toBeUndefined();
+  });
+
+  it('Will teleport ul to app div', async () => {
+    const { wrapper } = setup({ 'use-floating-menu': true });
+
+    const button = wrapper.find('button');
+
+    await button.element.focus();
+    await button.trigger('keydown', { key: 'ArrowUp' });
+
+    const menuContainer = wrapper.find('.menu-container');
+    expect(menuContainer.exists()).toBe(true);
+
+    const menuContainerSecondChild = menuContainer.element.children[1];
+
+    expect(menuContainerSecondChild).toBeUndefined();
+
+    const app = wrapper.find('#app');
+    expect(app.exists()).toBe(true);
+
+    const appSecondChild = app.element.children[1];
+
+    expect(appSecondChild.tagName.toLowerCase()).toBe('ul');
+    expect(appSecondChild.getAttribute('role')).toBe('menu');
   });
 });

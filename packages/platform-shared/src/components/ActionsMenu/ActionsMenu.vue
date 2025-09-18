@@ -3,12 +3,10 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div
-    ref="menuContainer"
-    class="menu-container">
+  <div class="menu-container">
     <button
       aria-haspopup="true"
-      class="btn btn-link dropdown-toggle text-dark px-0 d-flex"
+      :class="buttonClasses"
       ref="menuButtonRef"
       :aria-controls="menuListId"
       :aria-expanded="isOpen.toString()"
@@ -20,18 +18,22 @@ of the MIT license. See the LICENSE file for details. -->
       @keydown.down.prevent="openMenu">
       <slot name="button-content" />
     </button>
-
-    <ul
-      v-if="isOpen"
-      ref="menuListRef"
-      role="menu"
-      :aria-labelledby="menuButtonId"
-      :id="menuListId"
-      :class="menuClasses"
-      @click="toggleMenu"
-      @keydown.prevent="handleKeydown">
-      <slot />
-    </ul>
+    <teleport
+      to="#app"
+      :disabled="!useFloatingMenu">
+      <ul
+        v-if="isOpen"
+        ref="menuListRef"
+        role="menu"
+        :aria-labelledby="menuButtonId"
+        :id="menuListId"
+        :class="menuClasses"
+        :style="floatingStyle"
+        @click="toggleMenu"
+        @keydown.prevent="handleKeydown">
+        <slot />
+      </ul>
+    </teleport>
   </div>
 </template>
 
@@ -45,25 +47,42 @@ of the MIT license. See the LICENSE file for details. -->
  * css focus state must not have styles and focus-visible and hover states must have theme values.
  */
 import {
-  ref, nextTick, onMounted, onBeforeUnmount, computed,
+  ref, nextTick, onMounted, onBeforeUnmount, computed, defineEmits,
 } from 'vue';
+import floatingElementPosition from '@forgerock/platform-shared/src/composables/floatingElementPosition';
 
 const props = defineProps({
+  // Index of the item to be focused when menu is opened
   selectedItemIndex: {
     type: Number,
     default: -1,
   },
+  // Align menu to the bottom right of the button
   right: {
     type: Boolean,
     default: false,
   },
+  // Teleport to #app to avoid overflow issues when used in complex layouts
+  useFloatingMenu: {
+    type: Boolean,
+    default: false,
+  },
+  noCaret: {
+    type: Boolean,
+    default: false,
+  },
+  toggleClass: {
+    type: [String, Object, Array],
+    default: '',
+  },
 });
+
+const emit = defineEmits(['show', 'hide']);
 
 const uid = Math.random().toString(36).slice(2);
 const menuButtonId = `menu-button-${uid}`;
 const menuListId = `menu-list-${uid}`;
 
-const menuContainer = ref(null);
 const isOpen = ref(false);
 const menuButtonRef = ref(null);
 const menuListRef = ref(null);
@@ -72,6 +91,15 @@ const focusedIndex = ref(-1);
 const typeBuffer = ref('');
 let typeAheadTimeout = null;
 
+const { floatingStyle } = floatingElementPosition({
+  alignRight: props.right,
+  targetRef: menuButtonRef,
+  enabled: props.useFloatingMenu,
+  isVisible: isOpen,
+  floatingRef: menuListRef,
+  floatingElementStyles: { width: 'fit-content', zIndex: 1000 },
+});
+
 /**
  * Focus a specific item in the menu
  * @param index index of the item to focus
@@ -79,7 +107,7 @@ let typeAheadTimeout = null;
 function focusItem(index) {
   if (!menuItems.value?.[index]) return;
   focusedIndex.value = index;
-  menuItems.value[index].focus();
+  menuItems.value[index].focus({ preventScroll: true });
 }
 
 /**
@@ -98,9 +126,12 @@ function moveFocus(direction) {
  * Close the menu and reset focused index
  */
 function closeMenu() {
-  isOpen.value = false;
   focusedIndex.value = -1;
-  menuButtonRef.value.focus();
+  if (menuButtonRef?.value) {
+    menuButtonRef.value.focus({ preventScroll: true });
+  }
+  isOpen.value = false;
+  emit('hide');
 }
 
 /**
@@ -115,6 +146,7 @@ async function openMenu(event) {
 
   isOpen.value = true;
   await nextTick();
+  emit('show');
 
   menuItems.value = Array.from(menuListRef.value?.querySelectorAll('[role="menuitem"]') || []);
 
@@ -196,10 +228,16 @@ function handleKeydown(event) {
 function handleClickOutside(event) {
   if (!isOpen.value) return;
   const path = event.composedPath();
-  if (!path.includes(menuContainer.value)) {
+  if (!path.includes(menuListRef.value) && !path.includes(menuButtonRef.value)) {
     closeMenu();
   }
 }
+
+const buttonClasses = computed(() => ([
+  'btn btn-link dropdown-toggle text-dark px-0 d-flex',
+  { 'no-caret': props.noCaret },
+  typeof props.toggleClass === 'string' ? props.toggleClass : [props.toggleClass],
+]));
 
 const menuClasses = computed(() => ({
   menu: true,
@@ -245,5 +283,9 @@ onBeforeUnmount(() => {
 .menu--right {
   right: 0;
   left: unset;
+}
+
+.no-caret::after {
+  display: none !important;
 }
 </style>
