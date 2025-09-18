@@ -243,11 +243,6 @@ When('the message {string} should be present', (message) => {
     .should('be.visible');
 });
 
-When('{string} option should be present', (option) => {
-  cy.findByText(option)
-    .should('be.visible');
-});
-
 When('user clicks on {string} menu item from top right user menu', (menuItem) => {
   cy.findByTestId('fr-main-navbar').within(() => {
     cy.findByRole('button').click();
@@ -263,8 +258,31 @@ Then('page url does not contain {string}', (url) => {
   cy.url().should('not.include', url);
 });
 
-Then('{string} field has {string} validation error', (field, validationError) => {
-  cy.get(`[label="${field}"]`).find('.error-message').should('have.text', validationError);
+Then('{string} field has {string} validation error', (fieldLabel, expectedError) => {
+  cy.contains('label', fieldLabel)
+    .should('exist')
+    .invoke('attr', 'for')
+    .then((inputId) => {
+      cy.get(`#${inputId}`).should('exist');
+
+      cy.get('[role="alert"].fr-validation-requirements.error-messages')
+        .should('be.visible')
+        .and('contain.text', expectedError);
+    });
+});
+
+Then('error message {string} is visible in locale dropdown', (expectedError) => {
+  cy.findByRole('textbox', { name: /Locale/i }).then(($input) => {
+    const listboxId = $input.attr('aria-controls');
+
+    cy.get(`#${listboxId}`)
+      .should('be.visible')
+      .within(() => {
+        cy.findByText(expectedError)
+          .should('be.visible')
+          .and('have.class', 'text-danger');
+      });
+  });
 });
 
 Then('{string} validation error doesn\'t exist', (validationError) => {
