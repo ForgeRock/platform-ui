@@ -26,6 +26,7 @@ import {
   announceMessage,
   applyFixedTableLayout,
   createResizer,
+  getColumnName,
   getColumnWidth,
   getColumnWidthRangeInPx,
   getPersistedColumnWidth,
@@ -43,7 +44,6 @@ const RESIZER_MEASURE_CLASS = `${TABLE_CLASS}__shared-measure-container`;
 const RESIZER_LIVE_REGION_CLASS = `${TABLE_CLASS}__live-region`;
 const TABLE_NOWRAP_CLASS = `${TABLE_CLASS}--nowrap`;
 const MUTATION_OBSERVER_DEBOUNCE_MS = 200;
-const ANNOUNCE_WIDTH_THRESHOLD = 10;
 const COLUMN_PROPS_MAP = new Map();
 let persistKey;
 
@@ -97,8 +97,6 @@ export default {
     table.parentNode.insertBefore(liveRegion, table);
     table.__resizeLiveRegion = liveRegion;
 
-    // Track last announced width for accessibility
-    const lastAnnouncedWidth = {};
     const isRTL = getComputedStyle(table).direction === 'rtl';
 
     /**
@@ -115,7 +113,6 @@ export default {
 
       let startX = 0;
       let startWidth = 0;
-      lastAnnouncedWidth[colIndex] = col.offsetWidth;
 
       // Helper to get the X coordinate from mouse or touch event
       const getClientX = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
@@ -134,13 +131,8 @@ export default {
           const newWidth = Math.max(columnPropsMap.columnMinWidth, Math.min(columnPropsMap.columnMaxWidth, startWidth + dx));
           if (col.style.width !== `${newWidth}px`) {
             updateColumnWidths(colIndex, newWidth, columnPropsMap);
-            resizer.setAttribute('aria-valuenow', newWidth);
-            resizer.setAttribute('aria-valuemin', columnPropsMap.columnMinWidth);
-            resizer.setAttribute('aria-valuemax', columnPropsMap.columnMaxWidth);
-            if (Math.abs(newWidth - lastAnnouncedWidth[colIndex]) >= ANNOUNCE_WIDTH_THRESHOLD) {
-              announceMessage(liveRegion, 'columnResized', colIndex + 1, Math.round(newWidth));
-              lastAnnouncedWidth[colIndex] = newWidth;
-            }
+            const columnName = getColumnName(columnPropsMap, colIndex);
+            announceMessage(liveRegion, columnName, Math.round(newWidth));
           }
         });
       };
@@ -163,8 +155,6 @@ export default {
           document.removeEventListener('click', suppressClick, true);
         };
         document.addEventListener('click', suppressClick, true);
-        const width = parseInt(getComputedStyle(col).width, 10) || col.offsetWidth;
-        announceMessage(liveRegion, 'columnFinalized', colIndex + 1, Math.round(width));
         persistCurrentWidths(columnPropsMap);
       };
 
@@ -203,11 +193,11 @@ export default {
         const delta = e.key === 'ArrowRight' ? 10 : -10;
         const columnWidth = getColumnWidth(column);
         const width = Math.max(columnPropsMap.columnMinWidth, Math.min(columnPropsMap.columnMaxWidth, columnWidth + delta));
-        updateColumnWidths(columnIndex, width, columnPropsMap);
-        announceMessage(liveRegion, 'columnResized', columnIndex + 1, Math.round(width));
-        resizer.setAttribute('aria-valuenow', width);
-        resizer.setAttribute('aria-valuemin', columnPropsMap.columnMinWidth);
-        resizer.setAttribute('aria-valuemax', columnPropsMap.columnMaxWidth);
+        if (column.style.width !== `${width}px`) {
+          updateColumnWidths(columnIndex, width, columnPropsMap);
+          const columnName = getColumnName(columnPropsMap, columnIndex);
+          announceMessage(liveRegion, columnName, Math.round(width));
+        }
         persistCurrentWidths(columnPropsMap);
       });
 
@@ -223,7 +213,8 @@ export default {
           }
         }
         updateColumnWidths(colIndex, maxContentWidth, columnPropsMap);
-        announceMessage(liveRegion, 'columnAutoFitted', colIndex + 1, Math.round(maxContentWidth));
+        const columnName = getColumnName(columnPropsMap, colIndex);
+        announceMessage(liveRegion, columnName, Math.round(maxContentWidth));
         persistCurrentWidths(columnPropsMap);
       });
       col.appendChild(resizer);

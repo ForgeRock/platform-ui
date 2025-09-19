@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { debounce } from 'lodash';
 import i18n from '@/i18n';
 import { getValueFromLocalStorage, setLocalStorageValue } from './localStorageUtils';
 
@@ -14,6 +15,7 @@ const MAX_COLUMN_WIDTH_LOWER_LIMIT = 400;
 const MAX_COLUMN_WIDTH_UPPER_LIMIT = 1200;
 const MIN_COLUMN_WIDTH = 120;
 const RESIZER_CONTENT_BUFFER = 24;
+const DEBOUNCE_TIMER_IN_MS = 1000;
 const FIXED_WIDTH_CLASS_LIST = [
   'w-50',
   'w-25',
@@ -168,26 +170,22 @@ const createResizer = (col, colIndex, columnPropsMap) => {
   resizer.setAttribute('tabindex', '0');
   resizer.setAttribute('aria-label', `Resize column ${colIndex + 1}`);
   if (columnPropsMap.tableId) resizer.setAttribute('aria-controls', columnPropsMap.tableId);
-  resizer.setAttribute('aria-valuenow', col.offsetWidth);
-  resizer.setAttribute('aria-valuemin', columnPropsMap.columnMinWidth);
-  resizer.setAttribute('aria-valuemax', columnPropsMap.columnMaxWidth);
   return resizer;
 };
 
 /**
  * Announces a message via the live region for screen readers.
  * @param {HTMLElement} liveRegion - The live region element.
- * @param {string} type - The type of announcement.
- * @param {number} index - The index of the column.
+ * @param {String} columnName - The name of the column for which the width is being announced.
  * @param {number} width - The width of the column.
  */
-const announceMessage = (liveRegion, type, index, width) => {
-  const translatedMsg = i18n.global.t(`common.announceText.${type}`, { index, width });
+const announceMessage = debounce((liveRegion, columnName, width) => {
+  const translatedMsg = i18n.global.t('common.columnResizedAnnounceText', { columnName, width });
   liveRegion.textContent = '';
   requestAnimationFrame(() => {
     liveRegion.textContent = translatedMsg;
   });
-};
+}, DEBOUNCE_TIMER_IN_MS);
 
 /**
  * Measures the content width of a table cell, including padding and buffer.
@@ -214,12 +212,26 @@ const applyFixedTableLayout = (table) => {
   }
 };
 
+/**
+ * Gets the column name based on the column index from the columnPropsMap.
+ * If the column name cannot be determined, it returns the column index + 1 as a fallback.
+ * @param {Map} columnPropsMap - A map containing column properties.
+ * @param {number} columnIndex - The index of the column.
+ * @return {String} The name of the column or the column index + 1 if the name cannot be determined.
+ */
+const getColumnName = (columnPropsMap, columnIndex) => {
+  const columnInnerText = columnPropsMap.cols[columnIndex]?.innerText;
+  // For the column name, Only consider the first line of the innerText to remove string related to sorting/filtering
+  return columnInnerText?.split('\n')[0] || String(columnIndex + 1);
+};
+
 export {
   announceMessage,
   applyFixedTableLayout,
   convertPixelIntoViewportUnit,
   convertViewportIntoPixelUnit,
   createResizer,
+  getColumnName,
   getColumnWidth,
   getColumnWidthRangeInPx,
   getPersistedColumnWidth,

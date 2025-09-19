@@ -251,3 +251,39 @@ describe('getColumnWidthRangeInPx', () => {
     expect(max).toBe(1200); // Higher range of max width should get applied, as 60% of 2560 is greater than 1024
   });
 });
+
+describe('getColumnName', () => {
+  it('should return the correct column name if the innertext contains newline character', () => {
+    const th1 = document.createElement('th');
+    th1.innerText = 'Name\n Click to sort ascending';
+    const th2 = document.createElement('th');
+    th2.innerText = 'Status\n active/inactive';
+    const columnPropsMap = {
+      cols: [th1, th2],
+    };
+    expect(resizableTableUtils.getColumnName(columnPropsMap, 0)).toEqual('Name');
+    expect(resizableTableUtils.getColumnName(columnPropsMap, 1)).toEqual('Status');
+  });
+
+  it('should return the correct column name if the innertext does not contain newline character', () => {
+    const th1 = document.createElement('th');
+    th1.innerText = 'Description';
+    const th2 = document.createElement('th');
+    th2.innerText = 'Actions';
+    const columnPropsMap = {
+      cols: [th1, th2],
+    };
+    expect(resizableTableUtils.getColumnName(columnPropsMap, 0)).toEqual('Description');
+    expect(resizableTableUtils.getColumnName(columnPropsMap, 1)).toEqual('Actions');
+  });
+
+  it('should return the fallback column name based on the index if innertext is not found', () => {
+    const th1 = document.createElement('th');
+    const th2 = document.createElement('th');
+    const columnPropsMap = {
+      cols: [th1, th2],
+    };
+    expect(resizableTableUtils.getColumnName(columnPropsMap, 0)).toEqual('1');
+    expect(resizableTableUtils.getColumnName(columnPropsMap, 1)).toEqual('2');
+  });
+});
