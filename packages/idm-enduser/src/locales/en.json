@@ -224,6 +224,38 @@
       "createAccount": "Create an account",
       "forgotUsername": "Forgot username?",
       "forgotPassword": "Forgot password?"
+    },
+    "selfservice": {
+      "signIn": "Sign in",
+      "captchaError": "ReCaptcha configured improperly - contact your administrator.",
+      "headers": {
+        "username": {
+          "title": "Recover Your Username",
+          "description": "You can recover your username with the email address associated with your account."
+        }
+      },
+      "reset": {
+        "title": "Reset Password",
+        "description": "Verify You're Human",
+        "emailSent": "An email has been sent to your inbox with instructions on how to reset your password."
+      },
+      "forgotUsername": {
+        "advanceStageButtonText": "Recover Username",
+        "yourUsername": "Your username is {username}",
+        "unableToRetrieve": "Unable to retrieve your username",
+        "tryAgain": "Try finding your username again",
+        "emailSent": "An email containing your username has been sent to your account."
+      },
+      "passwordReset": {
+        "userQuery": "Enter email to retrieve account details",
+        "advanceStageButtonText": "Retrieve Account",
+        "tryAgain": "Try resetting your password again",
+        "errorMessage": "Error resetting your password",
+        "successMessage": "Your password has been reset.",
+        "newPassword": "New password",
+        "changePassword": "Change Password",
+        "kbaVerificationStageDescription": "Verify your identity by answering security questions"
+      }
     }
   },
   "pagination": {

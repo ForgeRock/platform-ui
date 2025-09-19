@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="text-center mb-0"
             v-if="ENABLE_SELF_SERVICE && (forgotUsernameEnabled || resetPasswordEnabled)">
             <span v-if="forgotUsernameEnabled">
-              <BLink href="#">{{ $t('pages.login.forgotUsername') }}</BLink>
+              <BLink :to="{name: 'ForgotUsername'}">{{ $t('pages.login.forgotUsername') }}</BLink>
             </span>
             <span
               v-if="resetPasswordEnabled"
@@ -92,7 +92,7 @@ const password = ref('');
 const errorMessage = ref('');
 
 const { loginIdmEnduser } = useAuth();
-const ENABLE_SELF_SERVICE = computed(() => store.state.FeatureFlagsStore.isSelfServiceEnabled);
+const ENABLE_SELF_SERVICE = store.state.FeatureFlagsStore.isSelfServiceEnabled;
 const selfRegistrationEnabled = computed(() => store.state.SharedStore.uiConfig.configuration?.selfRegistration || false);
 const forgotUsernameEnabled = computed(() => store.state.SharedStore.uiConfig.configuration?.forgotUsername || false);
 const resetPasswordEnabled = computed(() => store.state.SharedStore.uiConfig.configuration?.passwordReset || false);
