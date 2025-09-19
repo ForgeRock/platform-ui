@@ -625,11 +625,7 @@
       },
       "updateSuccess": "Updated your profile."
     },
-    "announceText": {
-      "columnResized": "Column {index} resized to {width} pixels",
-      "columnAutoFitted": "Column {index} auto-fitted to {width} pixels",
-      "columnFinalized": "Column {index} finalized at {width} pixels"
-    }
+    "columnResizedAnnounceText": "Column {columnName} resized to {width} pixels"
   },
   "dashboard": {
     "managedAccess": {
