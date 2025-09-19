@@ -8,12 +8,10 @@
 import { findByTestId, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mount, flushPromises } from '@vue/test-utils';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
-import * as Notifications from '@forgerock/platform-shared/src/utils/notification';
 import ReportView from './ReportView';
 import { reportTableData, reportTableDataPage2 } from './__mocks__/mocks';
-
-jest.mock('@forgerock/platform-shared/src/utils/notification');
 
 mockRouter({ params: { id: 'job_123abc', template: 'template-name' } });
 
@@ -38,7 +36,7 @@ describe('Report View component', () => {
   let wrapper;
 
   beforeEach(() => {
-    Notifications.displayNotification = jest.fn().mockReturnValue(false);
+    mockNotification();
     AutoApi.getReportResult = jest.fn().mockReturnValue(Promise.resolve({
       result: [{
         journey_name: 'PasswordGrant',

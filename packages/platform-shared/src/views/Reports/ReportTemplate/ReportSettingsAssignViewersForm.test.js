@@ -6,13 +6,15 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import * as Notification from '@forgerock/platform-shared/src/utils/notification';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import ReportSettingsAssignViewersForm from './ReportSettingsAssignViewersForm';
 import i18n from '@/i18n';
 import * as ManagedResourceApi from '../../../api/ManagedResourceApi';
 
 describe('ReportSettingsAssignViewersForm', () => {
+  let showErrorMessage;
   function setup(props = {}) {
+    ({ showErrorMessage } = mockNotification());
     return mount(ReportSettingsAssignViewersForm, {
       global: {
         plugins: [i18n],
@@ -261,12 +263,11 @@ describe('ReportSettingsAssignViewersForm', () => {
   it('should show error when load viewers fails', async () => {
     const error = new Error('error');
     ManagedResourceApi.getManagedResourceList = jest.fn().mockRejectedValue(error);
-    Notification.showErrorMessage = jest.fn();
 
     const wrapper = setup();
     await flushPromises();
 
-    expect(Notification.showErrorMessage).toHaveBeenCalledWith(error, 'There was an error retrieving users Who Can Run');
+    expect(showErrorMessage).toHaveBeenCalledWith(error, 'There was an error retrieving users Who Can Run');
 
     const viewersMultiselect = wrapper.find('[role="listbox"]');
     const viewersOptions = viewersMultiselect.findAll('[role="option"]');
@@ -310,12 +311,11 @@ describe('ReportSettingsAssignViewersForm', () => {
       },
     });
     ManagedResourceApi.getManagedResource = jest.fn().mockRejectedValue(errorResponse);
-    Notification.showErrorMessage = jest.fn();
 
     const wrapper = setup({ 'model-value': ['1', '2', 'report_viewer'] });
     await flushPromises();
 
-    expect(Notification.showErrorMessage).toHaveBeenCalledWith(errorResponse, 'There was an error retrieving users Who Can Run');
+    expect(showErrorMessage).toHaveBeenCalledWith(errorResponse, 'There was an error retrieving users Who Can Run');
 
     const viewersMultiselect = wrapper.find('[role="listbox"]');
     const viewersOptions = viewersMultiselect.findAll('[role="option"]');

@@ -10,11 +10,11 @@ import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRou
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId, findByRole, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as TreeApi from '@forgerock/platform-shared/src/api/TreeApi';
 import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import * as notification from '@forgerock/platform-shared/src/utils/notification';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import i18n from '@/i18n';
@@ -28,9 +28,12 @@ import store from '@/store';
 
 mockRouter({ params: { template: 'template-name', state: 'draft' } });
 mockValidation();
+let displayNotification;
+let showErrorMessage;
 
 describe('Run Report component', () => {
   function setup(props) {
+    ({ displayNotification, showErrorMessage } = mockNotification());
     return mount(RunReport, {
       global: {
         plugins: [i18n],
@@ -247,7 +250,6 @@ describe('Run Report component', () => {
         await flushPromises();
 
         const runReportSpy = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockImplementation(() => Promise.resolve({}));
-        const successSpy = jest.spyOn(notification, 'displayNotification');
         const parameterElement = findByTestId(wrapper, `fr-field-${parameter}`);
         // Sets field values
         if (schema.enum) {
@@ -273,7 +275,7 @@ describe('Run Report component', () => {
 
         expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { [parameter]: payloadValue });
         expect(wrapper.emitted('update-tab')).toEqual([['report-history']]);
-        expect(successSpy).toHaveBeenCalled();
+        expect(displayNotification).toHaveBeenCalled();
         expect(wrapper.vm.isSubmitting).toBe(false);
       });
     });
@@ -287,7 +289,6 @@ describe('Run Report component', () => {
 
       const mockError = new Error();
       const runReportSpyReject = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockRejectedValue(mockError);
-      const errorSpy = jest.spyOn(notification, 'showErrorMessage');
       await findByTestId(wrapper, 'input-fr-field-accountStatus').setValue('enabled');
       await flushPromises();
       const submitButton = findByTestId(wrapper, 'run-report-button');
@@ -297,7 +298,7 @@ describe('Run Report component', () => {
 
       expect(runReportSpyReject).toHaveBeenCalled();
       expect(wrapper.emitted('tab-update')).toBeUndefined();
-      expect(errorSpy).toHaveBeenCalled();
+      expect(showErrorMessage).toHaveBeenCalled();
       expect(wrapper.vm.isSubmitting).toBe(false);
     });
 

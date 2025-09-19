@@ -1,12 +1,11 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount } from '@vue/test-utils';
-import Notifications from '@kyvg/vue3-notification';
 import { reassignCertificationTasks } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import ReassignModal from './index';
 
@@ -14,14 +13,12 @@ jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 
 let wrapper;
 
-function mountComponent(mocks = {}, propsData = {}) {
+function mountComponent(propsData = {}) {
   wrapper = shallowMount(ReassignModal, {
     global: {
       mocks: {
         $t: (t) => t,
-        ...mocks,
       },
-      plugins: [Notifications],
     },
     props: {
       isLoading: false,
@@ -32,7 +29,7 @@ function mountComponent(mocks = {}, propsData = {}) {
 describe('ReassignModal', () => {
   describe('setReassignBulkAction', () => {
     it('should set the is loading to false to hide the loader in the header', async () => {
-      mountComponent({});
+      mountComponent();
       reassignCertificationTasks.mockImplementation(() => Promise.reject(new Error()));
       const showErrorMessage = jest.spyOn(wrapper.vm, 'showErrorMessage');
       wrapper.vm.saveReassignBulkAction();
@@ -44,7 +41,7 @@ describe('ReassignModal', () => {
 
   describe('saveReassignBulkAction method', () => {
     beforeEach(() => {
-      mountComponent({}, {
+      mountComponent({
         campaignId: 'a96de99c-c638-4bdd-84cb-5fb559225152',
         selectedTasks: [],
       });

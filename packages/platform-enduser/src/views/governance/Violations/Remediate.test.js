@@ -7,14 +7,15 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
-import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
 import Remediate from './Remediate';
 import EntitlementsSearchableList from '@/components/governance/EntitlementsCart/EntitlementsSearchableList';
 import * as store from '@/store';
 
+const notification = mockNotification();
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
     consumer: {
@@ -188,7 +189,7 @@ describe('Remediate', () => {
   it('should show error message if the violation data fetch fails', async () => {
     const error = new Error('ERROR');
     ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.reject(error));
-    const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage');
+    const showErrorMessageSpy = jest.spyOn(notification, 'showErrorMessage');
 
     const wrapper = setup();
 
@@ -369,7 +370,7 @@ describe('Remediate', () => {
     await flushPromises();
 
     ViolationApi.remediate = jest.fn().mockImplementation(() => Promise.resolve());
-    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification');
+    const displayNotificationSpy = jest.spyOn(notification, 'displayNotification');
     store.default.replaceState({
       violationsCount: 1,
       SharedStore: {},

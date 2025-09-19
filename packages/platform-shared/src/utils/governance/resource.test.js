@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import * as notification from '@forgerock/platform-shared/src/utils/notification';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as CatalogApi from '@forgerock/platform-shared/src/api/governance/CatalogApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
@@ -21,6 +21,8 @@ import {
   revokeResourcesFromIGA,
 } from './resource';
 import * as CommonsApi from '@/api/governance/CommonsApi';
+
+const notification = mockNotification();
 
 describe('getGovernanceGrants', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,13 +7,15 @@
 
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
-import Notifications from '@kyvg/vue3-notification';
 import i18n from '@/i18n';
 import TenantBehavior from './TenantBehavior';
 import DonutChartCard from './DonutChartCard';
 import NormalViewToolbar from './NormalViewToolbar';
 import store from '../../../../store';
+
+mockNotification();
 
 describe('TenantBehavior', () => {
   const defaultProps = {};
@@ -232,7 +234,7 @@ describe('TenantBehavior', () => {
   function setup() {
     return mount(TenantBehavior, {
       global: {
-        plugins: [i18n, Notifications],
+        plugins: [i18n],
       },
       props: {
         ...defaultProps,
