@@ -6,12 +6,11 @@
  */
 
 import { mount, DOMWrapper } from '@vue/test-utils';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
+import ReCaptchaEnterpriseCallback from './ReCaptchaEnterprise';
 import i18n from '@/i18n';
 
-import ReCaptchaEnterpriseCallback from './ReCaptchaEnterprise';
-
-jest.mock('@forgerock/platform-shared/src/utils/notification');
+const { showErrorMessage } = mockNotification();
 
 const API_URL = 'http://test.com';
 const SITE_KEY = 'site-key';

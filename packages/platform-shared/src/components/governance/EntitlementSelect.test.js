@@ -1,15 +1,17 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import EntitlementSelect from './EntitlementSelect';
 import i18n from '@/i18n';
+
+const notification = mockNotification();
 
 function getEntitlementsResult() {
   return {
@@ -148,7 +150,7 @@ describe('EntitlementSelect', () => {
   it('should display error message if the api call fails', async () => {
     const error = new Error('ERROR');
     CommonsApi.searchGovernanceResource = jest.fn().mockReturnValue(Promise.reject(error));
-    const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage');
+    const showErrorMessageSpy = jest.spyOn(notification, 'showErrorMessage');
 
     const wrapper = setup();
     await flushPromises();
@@ -381,7 +383,7 @@ describe('EntitlementSelect', () => {
           totalCount: 0,
         },
       }));
-    const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage');
+    const showErrorMessageSpy = jest.spyOn(notification, 'showErrorMessage');
 
     const wrapper = setup({
       'model-value': 'Entitlement name',

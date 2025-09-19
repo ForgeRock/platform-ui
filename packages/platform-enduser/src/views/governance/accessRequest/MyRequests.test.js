@@ -7,15 +7,15 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import MyRequests from './MyRequests';
 import i18n from '@/i18n';
 
+let showErrorMessage;
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
-
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
     consumer: {
@@ -29,6 +29,7 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
 describe('MyRequests', () => {
   function setup(user = { userId: '1234' }) {
     setupTestPinia({ user });
+    ({ showErrorMessage } = mockNotification());
     return mount(MyRequests, {
       global: {
         plugins: [i18n],
@@ -291,13 +292,11 @@ describe('MyRequests', () => {
   it('should show error if requests cannot be fetched', async () => {
     const error = new Error('Error fetching requests');
     AccessRequestApi.getUserRequests = jest.fn().mockRejectedValue(error);
-    Notification.showErrorMessage = jest.fn();
-    const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage');
 
     const wrapper = setup();
     await flushPromises();
 
-    expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error retrieving your requests');
+    expect(showErrorMessage).toHaveBeenCalledWith(error, 'There was an error retrieving your requests');
     expect(wrapper.vm.isLoading).toBe(false);
     expect(wrapper.vm.accessRequests).toHaveLength(0);
   });
@@ -305,13 +304,11 @@ describe('MyRequests', () => {
   it('should show request type ids if request types cannot be fetched', async () => {
     const error = new Error('Error fetching requests');
     AccessRequestApi.getRequestType = jest.fn().mockRejectedValue(error);
-    Notification.showErrorMessage = jest.fn();
-    const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage');
 
     const wrapper = setup();
     await flushPromises();
 
-    expect(showErrorMessageSpy).not.toHaveBeenCalled();
+    expect(showErrorMessage).not.toHaveBeenCalled();
     const requestRows = wrapper.findAll('table tbody [role="row"]');
     expect(requestRows).toHaveLength(2);
     const cellsFirstRow = requestRows[0].findAll('td');

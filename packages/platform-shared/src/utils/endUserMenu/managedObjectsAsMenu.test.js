@@ -6,12 +6,12 @@
  */
 
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import isFraasFilter from '@forgerock/platform-shared/src/utils/fraasUtils';
 import { fetchManagedObjectsAsMenuItems } from './managedObjectsAsMenu';
 
+const { showErrorMessage } = mockNotification();
 jest.mock('@forgerock/platform-shared/src/api/ConfigApi');
-jest.mock('@forgerock/platform-shared/src/utils/notification');
 jest.mock('@forgerock/platform-shared/src/utils/fraasUtils');
 jest.mock('@/i18n', () => ({
   global: { t: jest.fn((key) => key) },

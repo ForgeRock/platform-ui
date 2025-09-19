@@ -5,15 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { cloneDeep } from 'lodash';
 import { mount, flushPromises } from '@vue/test-utils';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
-import { cloneDeep } from 'lodash';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ViolationEdit from './ViolationEdit';
 import i18n from '@/i18n';
 import ViolationDetails from './ViolationDetails';
@@ -21,7 +21,7 @@ import * as store from '@/store';
 
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/ViolationApi');
-
+const notification = mockNotification();
 mockValidation(['required']);
 
 const violation = {
@@ -185,7 +185,7 @@ describe('Violation Edit', () => {
 
   it('should allow exception forever and navigate to violations list when the allow exception modal emits action event', async () => {
     ViolationApi.allowException = jest.fn().mockImplementation(() => Promise.resolve());
-    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    const displayNotificationSpy = jest.spyOn(notification, 'displayNotification');
     store.default.replaceState({
       violationsCount: 1,
     });
@@ -216,7 +216,7 @@ describe('Violation Edit', () => {
 
   it('should allow exception and navigate to violations list when the allow exception modal emits action event and not to update the violations count on the store', async () => {
     ViolationApi.allowException = jest.fn().mockImplementation(() => Promise.resolve());
-    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    const displayNotificationSpy = jest.spyOn(notification, 'displayNotification');
     const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
 
     const wrapper = mountComponent();
@@ -245,7 +245,7 @@ describe('Violation Edit', () => {
   it('should show error message when the allow exception api call fails', async () => {
     const error = new Error('ERROR');
     ViolationApi.allowException = jest.fn().mockImplementation(() => Promise.reject(error));
-    const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage').mockImplementation(() => {});
+    const showErrorMessageSpy = jest.spyOn(notification, 'showErrorMessage');
 
     const wrapper = mountComponent();
     await flushPromises();

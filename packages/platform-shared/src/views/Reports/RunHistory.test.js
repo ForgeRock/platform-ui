@@ -10,7 +10,7 @@ import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRou
 import { flushPromises, mount } from '@vue/test-utils';
 import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
-import * as Notifications from '@forgerock/platform-shared/src/utils/notification';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as ReportsApiHelper from './utils/ReportsApiHelper';
 import i18n from '@/i18n';
@@ -19,9 +19,11 @@ import HistoryStubs from './ReportHistoryStubs';
 
 mockRouter({ params: { template: 'template-name', state: 'draft' } });
 mockModal();
+let showErrorMessage;
 
 describe('Run History component', () => {
   function setup(props) {
+    ({ showErrorMessage } = mockNotification());
     return mount(RunHistory, {
       attachTo: createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']),
       global: {
@@ -222,7 +224,6 @@ describe('Run History component', () => {
 
       ReportsApiHelper.requestExport = jest.fn().mockReturnValue(Promise.resolve({ data: { message: '' } }));
       ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(requestReportResponseStub));
-      Notifications.displayNotification = jest.fn();
       const requestExportSpy = jest.spyOn(ReportsApiHelper, 'requestExport');
       const requestReportRunsSpy = jest.spyOn(ReportsApiHelper, 'requestReportRuns');
 
@@ -255,7 +256,6 @@ describe('Run History component', () => {
 
       ReportsApiHelper.requestExport = jest.fn().mockReturnValue(Promise.resolve({ data: { message: '' } }));
       ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(requestReportResponseStub));
-      Notifications.displayNotification = jest.fn();
 
       JSONExportButton.trigger('click');
       await wrapper.vm.$nextTick();
@@ -301,11 +301,10 @@ describe('Run History component', () => {
       const CSVDownloadButton = findByTestId(job0123, 'CSV-download-button');
 
       const downloadIcon = CSVDownloadButton.find('.material-icons-outlined');
-      const errorSpy = jest.spyOn(Notifications, 'showErrorMessage');
 
       expect(downloadIcon.text()).toBe('file_download');
       await CSVDownloadButton.trigger('click');
-      expect(errorSpy).toHaveBeenCalled();
+      expect(showErrorMessage).toHaveBeenCalled();
     });
 
     it('shows the report summary modal when the "Run Details" option is selected in the ellipses menu', async () => {

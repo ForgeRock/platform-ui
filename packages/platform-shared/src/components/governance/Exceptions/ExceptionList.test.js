@@ -1,18 +1,19 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
-import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ExceptionList from './ExceptionList';
 import i18n from '@/i18n';
 import * as store from '@/store';
 
+const notification = mockNotification();
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
 CommonsApi.getResource.mockReturnValue(Promise.resolve({
@@ -140,7 +141,7 @@ describe('ExceptionList', () => {
 
   it('should forward the violation when the forward modal emits forward-item event and decrease the violations count value in the store', async () => {
     ViolationApi.forwardViolation = jest.fn().mockReturnValue(Promise.resolve());
-    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    const displayNotificationSpy = jest.spyOn(notification, 'displayNotification').mockImplementation(() => {});
     store.default.replaceState({
       violationsCount: 1,
     });
@@ -180,7 +181,7 @@ describe('ExceptionList', () => {
 
   it('should extend exception when the exception modal emits action event and decrease the violations count on the store when the violation is allowed forever', async () => {
     ViolationApi.allowException = jest.fn().mockReturnValue(Promise.resolve());
-    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    const displayNotificationSpy = jest.spyOn(notification, 'displayNotification').mockImplementation(() => {});
     store.default.replaceState({
       violationsCount: 1,
     });
@@ -214,7 +215,7 @@ describe('ExceptionList', () => {
 
   it('should extend exception when the exception modal emits action event and not decrease the violations count on the store when the violation is not allowed forever', async () => {
     ViolationApi.allowException = jest.fn().mockReturnValue(Promise.resolve());
-    const displayNotificationSpy = jest.spyOn(Notification, 'displayNotification').mockImplementation(() => {});
+    const displayNotificationSpy = jest.spyOn(notification, 'displayNotification').mockImplementation(() => {});
     const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
 
     const wrapper = mountComponent({

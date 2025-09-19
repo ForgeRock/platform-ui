@@ -9,18 +9,19 @@ import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import { findByText, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import { mount, flushPromises } from '@vue/test-utils';
 import { cloneDeep } from 'lodash';
 import i18n from '@/i18n';
 import Reports from './Reports';
 import store from '../../store';
-import * as Notification from '../../utils/notification';
 
 store.state.SharedStore.currentPackage = 'admin';
 store.state.SharedStore.autoCustomReportsEnabled = true;
 
 mockValidation(['alpha_num_spaces', 'unique']);
-
+let showErrorMessage;
+let displayNotification;
 jest.mock('vue-router', () => ({
   useRouter: jest.fn(() => ({ push: jest.fn() })),
 }));
@@ -29,6 +30,7 @@ describe('Reports', () => {
   let modalShow;
   function setup(props = {}) {
     ({ modalShow } = mockModal());
+    ({ displayNotification, showErrorMessage } = mockNotification());
     return mount(Reports, {
       global: {
         plugins: [i18n],
@@ -254,7 +256,6 @@ describe('Reports', () => {
   it('No data div displayed when error', async () => {
     const error = new Error('Error');
     AutoApi.getReportTemplates = jest.fn().mockRejectedValue(error);
-    Notification.showErrorMessage = jest.fn();
 
     const wrapper = setup();
     await flushPromises();
@@ -265,7 +266,7 @@ describe('Reports', () => {
     const noData = findByTestId(wrapper, 'no-data');
     expect(noData.exists()).toBe(true);
 
-    expect(Notification.showErrorMessage).toHaveBeenCalledWith(error, 'No Report Template found');
+    expect(showErrorMessage).toHaveBeenCalledWith(error, 'No Report Template found');
   });
 
   it('ensures that the confirm delete modal call is executed when the delete report button is clicked', async () => {
@@ -413,7 +414,6 @@ describe('Reports', () => {
 
   it('should publish correctly a report when publish button is clicked', async () => {
     AutoApi.publishAnalyticsReport = jest.fn().mockResolvedValue({});
-    Notification.displayNotification = jest.fn();
     const wrapper = setup();
     await flushPromises();
 
@@ -423,7 +423,7 @@ describe('Reports', () => {
     await publishButton.trigger('click');
 
     expect(AutoApi.publishAnalyticsReport).toHaveBeenCalledWith('DRAFT-TEMPLATE', 'draft');
-    expect(Notification.displayNotification).toHaveBeenCalledWith('success', 'Successfully published report');
+    expect(displayNotification).toHaveBeenCalledWith('success', 'Successfully published report');
     expect(wrapper.vm.reportBeingProcessed).toBeUndefined();
     expect(wrapper.vm.isPublishing).toBe(false);
   });
@@ -431,7 +431,6 @@ describe('Reports', () => {
   it('should show error notification when publish fails', async () => {
     const error = new Error('Error');
     AutoApi.publishAnalyticsReport = jest.fn().mockRejectedValue(error);
-    Notification.showErrorMessage = jest.fn();
     const wrapper = setup();
     await flushPromises();
 
@@ -441,7 +440,7 @@ describe('Reports', () => {
     await publishButton.trigger('click');
 
     expect(AutoApi.publishAnalyticsReport).toHaveBeenCalledWith('DRAFT-TEMPLATE', 'draft');
-    expect(Notification.showErrorMessage).toHaveBeenCalledWith(error, 'Error publishing report');
+    expect(showErrorMessage).toHaveBeenCalledWith(error, 'Error publishing report');
     expect(wrapper.vm.reportBeingProcessed).toBeUndefined();
     expect(wrapper.vm.isPublishing).toBe(false);
   });
@@ -449,7 +448,6 @@ describe('Reports', () => {
   it('assign viewers to a draft report correctly', async () => {
     AutoApi.editAnalyticsReport = jest.fn().mockResolvedValue({});
     AutoApi.saveAnalyticsReport = jest.fn().mockResolvedValue({});
-    Notification.displayNotification = jest.fn();
 
     const wrapper = setup();
     await flushPromises();
@@ -468,13 +466,12 @@ describe('Reports', () => {
 
     expect(AutoApi.editAnalyticsReport).not.toHaveBeenCalled();
     expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('DRAFT-TEMPLATE', {}, ['1', '2'], undefined, 'Draft Template');
-    expect(Notification.displayNotification).toHaveBeenCalledWith('success', 'Report viewers saved successfully');
+    expect(displayNotification).toHaveBeenCalledWith('success', 'Report viewers saved successfully');
   });
 
   it('assign viewers to a published report correctly', async () => {
     AutoApi.editAnalyticsReport = jest.fn().mockResolvedValue({});
     AutoApi.saveAnalyticsReport = jest.fn().mockResolvedValue({});
-    Notification.displayNotification = jest.fn();
 
     const wrapper = setup();
     await flushPromises();
@@ -493,13 +490,12 @@ describe('Reports', () => {
 
     expect(AutoApi.editAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE');
     expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE', {}, ['1', '2'], undefined, 'Published Template');
-    expect(Notification.displayNotification).toHaveBeenCalledWith('success', 'Report viewers saved successfully');
+    expect(displayNotification).toHaveBeenCalledWith('success', 'Report viewers saved successfully');
   });
 
   it('should show error notification when assign viewers fails', async () => {
     const error = new Error('Error');
     AutoApi.saveAnalyticsReport = jest.fn().mockRejectedValue(error);
-    Notification.showErrorMessage = jest.fn();
 
     const wrapper = setup();
     await flushPromises();
@@ -516,14 +512,13 @@ describe('Reports', () => {
     await flushPromises();
 
     expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('DRAFT-TEMPLATE', {}, ['1', '2'], undefined, 'Draft Template');
-    expect(Notification.showErrorMessage).toHaveBeenCalledWith(error, 'Error saving report viewers');
+    expect(showErrorMessage).toHaveBeenCalledWith(error, 'Error saving report viewers');
   });
 
   it('should show error notification when assign viewers fails saving report', async () => {
     const error = new Error('Error');
     AutoApi.editAnalyticsReport = jest.fn().mockResolvedValue({});
     AutoApi.saveAnalyticsReport = jest.fn().mockRejectedValue(error);
-    Notification.showErrorMessage = jest.fn();
 
     const wrapper = setup();
     await flushPromises();
@@ -541,7 +536,7 @@ describe('Reports', () => {
 
     expect(AutoApi.editAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE');
     expect(AutoApi.saveAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE', {}, ['1', '2'], undefined, 'Published Template');
-    expect(Notification.showErrorMessage).toHaveBeenCalledWith(error, 'Error saving report viewers');
+    expect(showErrorMessage).toHaveBeenCalledWith(error, 'Error saving report viewers');
   });
 
   it('search and filter report templates', async () => {

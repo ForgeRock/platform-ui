@@ -7,12 +7,13 @@
 
 import { flushPromises, shallowMount } from '@vue/test-utils';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
+import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
-import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import ExceptionsTab from './ExceptionsTab';
 import i18n from '@/i18n';
 
 const { routerPush } = mockRouter();
+const notification = mockNotification();
 
 describe('ExceptionsTab', () => {
   function setup() {
@@ -105,7 +106,7 @@ describe('ExceptionsTab', () => {
   it('getExceptions method should handle error when loading the violation list', async () => {
     const error = new Error('error');
     ViolationApi.getViolationListEndUser.mockRejectedValue(error);
-    const showErrorMessageSpy = jest.spyOn(Notification, 'showErrorMessage').mockImplementation(() => {});
+    const showErrorMessageSpy = jest.spyOn(notification, 'showErrorMessage').mockImplementation(() => {});
 
     const wrapper = setup();
 
