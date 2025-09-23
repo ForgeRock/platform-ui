@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="columnOrganizerKey"
         :column-organizer-key="columnOrganizerKey"
         v-model="availableColumnList"
-        @list-reordered="updateColumnList" />
+        @list-updated="updateColumnList" />
     </div>
     <div
       v-if="isLoading"
@@ -340,7 +340,6 @@ export default {
       resourceName: this.routerParameters.resourceName,
       isRowSelected: false,
       columns: [],
-      displayFields: [],
       sortBy: null,
       sortDesc: false,
       filter: '',
@@ -368,6 +367,9 @@ export default {
     capitalizedResourceName() {
       return pluralize(capitalize(this.resourceTitle || this.resourceName));
     },
+    displayFields() {
+      return this.columns.filter((field) => field.key !== 'actions').map((field) => field.key);
+    },
     pageSizes() {
       return [...new Set([this.minimumPageSize, ...[10, 20, 50, 100]])].filter((pageSize) => pageSize >= this.minimumPageSize);
     },
@@ -382,7 +384,6 @@ export default {
   mounted() {
     this.resourceName = this.getResourceName(this.routerParameters.resourceName);
     if (this.propColumns.length) {
-      this.displayFields = this.propColumns.map((obj) => obj.key);
       this.columns = this.propColumns;
     } else if (!this.columnOrganizerList || this.columnOrganizerList.length === 0) {
       this.loadTableDefs();
@@ -409,7 +410,6 @@ export default {
      */
     propColumns(newVal, oldVal) {
       if (newVal.length) {
-        this.displayFields = newVal.map((obj) => obj.key);
         this.columns = newVal;
         if (oldVal.length) {
           this.loadData(this.fetchSearchQueryString(), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
@@ -421,7 +421,6 @@ export default {
         if (newValue.length && newValue !== oldValue) {
           this.availableColumnList = newValue;
           this.columns = newValue.filter((column) => column.enabled);
-          this.displayFields = newValue.map((obj) => obj.key);
           this.appendActionColumn();
         }
       },
@@ -515,7 +514,6 @@ export default {
      * Builds table column definitions using menu item parameters
      */
     loadTableDefs() {
-      this.displayFields = [];
       this.columns = [];
       if (this.routerParameters && this.routerParameters.order) {
         this.routerParameters.order.forEach((columnName) => {
@@ -525,7 +523,6 @@ export default {
             && this.displayFields.length < 4
             && column.searchable
           ) {
-            this.displayFields.push(columnName);
             this.columns.push({
               key: columnName,
               label: this.getTranslation(column.title),
@@ -632,7 +629,7 @@ export default {
       this.loadData(this.fetchSearchQueryString(), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
     },
     /**
-     * Handler method for the ListOrganizer reordered event.
+     * Handler method for the ListOrganizer list-updated event.
      * Updates the local storage with the new column list for the corresponding columnOrganizerKey.
      * updates the availableColumnList which is used to render the column organizer modal,
      * updates the columns based on the enabled columns from updatedColumnList which are used to render the table,
@@ -642,7 +639,12 @@ export default {
     updateColumnList(updatedColumnList) {
       setLocalStorageValue(this.columnOrganizerKey, updatedColumnList);
       this.availableColumnList = updatedColumnList;
+      const previousDisplayFields = this.displayFields;
       this.columns = updatedColumnList.filter((column) => column.enabled);
+      // If there is a newly added display field, reload the data
+      if (this.displayFields.some((field) => !previousDisplayFields.includes(field))) {
+        this.loadData(this.fetchSearchQueryString(), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
+      }
       this.appendActionColumn();
     },
     /**

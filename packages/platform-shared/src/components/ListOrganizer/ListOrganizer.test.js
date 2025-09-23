@@ -123,7 +123,7 @@ describe('ListOrganizer Component', () => {
   it('applyChanges() emits an input event with the current list values', () => {
     wrapper.vm.applyChanges();
 
-    expect(wrapper.emitted()['list-reordered'][0]).toEqual([[
+    expect(wrapper.emitted()['list-updated'][0]).toEqual([[
       {
         key: 1,
         label: '1',
@@ -161,7 +161,7 @@ describe('ListOrganizer Component', () => {
 
     wrapper.vm.applyChanges();
 
-    expect(wrapper.emitted()['list-reordered'][1]).toEqual([[
+    expect(wrapper.emitted()['list-updated'][1]).toEqual([[
       {
         key: 1,
         label: '1',

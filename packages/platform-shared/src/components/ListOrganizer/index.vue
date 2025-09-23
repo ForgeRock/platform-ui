@@ -172,7 +172,7 @@ export default {
     applyChanges() {
       this.searching = false;
       this.searchList = null;
-      this.$emit('list-reordered', this.list);
+      this.$emit('list-updated', this.list);
     },
     resetList() {
       this.list = cloneDeep(this.value);
