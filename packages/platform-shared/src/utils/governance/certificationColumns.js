@@ -126,7 +126,7 @@ const OOTBColumns = {
   entitlement: {
     key: 'entitlement',
     label: i18n.global.t('governance.certificationTask.entitlement'),
-    sortable: false,
+    sortable: true,
     category: 'entitlement',
     class: 'text-truncate fr-access-cell',
     show: true,
