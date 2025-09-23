@@ -93,8 +93,10 @@ describe('ListResource Component', () => {
     });
 
     wrapper.setData({
-      columns: [{}, {}],
+      columns: [],
     });
+
+    jest.spyOn(ListResource, 'mounted').mockImplementation(() => { });
   });
 
   it('Component successfully loaded and displays the "no data" state', () => {
@@ -165,7 +167,7 @@ describe('ListResource Component', () => {
       pageSize: 10,
     });
     wrapper.setProps({ queryThreshold: 0 });
-    wrapper.vm.displayFields = ['userName'];
+    wrapper.vm.columns = [{ key: 'userName' }];
     wrapper.vm.clear();
     expect(wrapper.emitted()['get-table-data'][3][0]).toEqual({
       fields: ['userName'],
@@ -173,11 +175,6 @@ describe('ListResource Component', () => {
       page: 1,
       pageSize: 10,
     });
-  });
-
-  beforeEach(() => {
-    jest.spyOn(ListResource, 'mounted')
-      .mockImplementation(() => { });
   });
 
   it('ListResource sort column', () => {
@@ -425,8 +422,8 @@ describe('ListResource Component', () => {
       expect(columnOrganizerIcon.text()).toBe('view_column');
     });
 
-    it('fetchSearchQueryString should include all displayFields if columnOrganizerKey is not present', () => {
-      wrapper.vm.displayFields = ['userName', 'email', 'phone'];
+    it('fetchSearchQueryString should include all columns if columnOrganizerKey is not present', () => {
+      wrapper.vm.columns = [{ key: 'userName' }, { key: 'email' }, { key: 'phone' }];
       wrapper.vm.filter = 'test';
       const results = wrapper.vm.fetchSearchQueryString();
       expect(results).toBe('userName sw "test" OR email sw "test" OR phone sw "test"');
@@ -437,10 +434,34 @@ describe('ListResource Component', () => {
         columnOrganizerKey: 'test-key',
       });
       await flushPromises();
-      wrapper.vm.displayFields = ['userName', 'passwordLastChangedTime', 'frIndexedInteger', 'frIndexedDate1', 'email', 'phone'];
+      wrapper.vm.columns = [{ key: 'userName' }, { key: 'passwordLastChangedTime' }, { key: 'frIndexedInteger' }, { key: 'frIndexedDate1' }, { key: 'email' }, { key: 'phone' }];
       wrapper.vm.filter = 'test';
       const results = wrapper.vm.fetchSearchQueryString();
       expect(results).toBe('userName sw "test" OR email sw "test" OR phone sw "test"');
+    });
+
+    it('Only loads data from visible fields', async () => {
+      generateIDMAPI.get.mockImplementationOnce(() => Promise.resolve({
+        data: { result: ['test'] },
+      }));
+      await wrapper.setProps({
+        columnOrganizerKey: 'test-key',
+      });
+      await flushPromises();
+
+      const listOrganizer = wrapper.findComponent({ name: 'ListOrganizer' });
+      expect(listOrganizer.exists()).toBe(true);
+
+      listOrganizer.vm.$emit('list-updated', [{ key: 'userName', enabled: true }]);
+      await flushPromises();
+
+      expect(wrapper.emitted()['get-table-data'][0][0]).toEqual({
+        fields: ['userName'],
+        filter: 'true',
+        page: 1,
+        pageSize: 10,
+        sortField: 'userName',
+      });
     });
   });
 });
