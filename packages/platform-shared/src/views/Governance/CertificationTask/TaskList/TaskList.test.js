@@ -1474,7 +1474,7 @@ describe('TaskList', () => {
       }, {
         key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
         key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
@@ -1843,7 +1843,7 @@ describe('TaskList', () => {
     });
     it('should display correct entitlement columns', async () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
         key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {

@@ -1026,6 +1026,8 @@ export default {
           return 'role.name';
         case 'prediction':
           return 'prediction.confidence';
+        case 'entitlement':
+          return 'descriptor.idx./entitlement.displayName';
         default:
           return sortBy;
       }
