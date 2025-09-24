@@ -150,6 +150,13 @@ export default {
       default: true,
     },
     /**
+     * For accessibility: if you want to manually associate the input field with a label, legend etc.
+     */
+    inputLabelledby: {
+      type: String,
+      default: '',
+    },
+    /**
      * Boolean to render label and help text as html.
      */
     isHtml: {
@@ -382,9 +389,13 @@ export default {
       }
     }
 
-    watch(() => inputValue.value, (value) => {
+    watch(() => inputValue.value, (value, oldValue) => {
       floatLabels.value = setFloatLabels(isOpen.value, inputValue.value);
-      context.emit('input', map(value, 'value'));
+      const newValues = map(value, 'value');
+      const oldValues = map(oldValue, 'value');
+      if (!isEqual(newValues, oldValues)) {
+        context.emit('input', newValues);
+      }
     });
 
     watch(() => props.value, (value) => {
