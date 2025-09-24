@@ -231,4 +231,68 @@ describe('Multiselect', () => {
     const multiselect = findByTestId(wrapper, 'stub-testid');
     expect(multiselect.attributes('autofocus')).toBe('true');
   });
+
+  it('prevents infinite recursion when parent component updates value prop after input event', async () => {
+    const wrapper = setup({
+      options: ['a', 'b', 'c'],
+      value: ['a'],
+    });
+    await flushPromises();
+    expect(wrapper.vm.inputValue).toEqual([{
+      multiselectId: 0,
+      text: 'a',
+      value: 'a',
+    }]);
+    const emittedEvents = wrapper.emitted();
+    if (emittedEvents.input) {
+      delete emittedEvents.input;
+    }
+    const multiselect = wrapper.find('.multiselect');
+    await multiselect.trigger('click');
+    await flushPromises();
+    const options = multiselect.findAll('.multiselect__option');
+    await options[1].trigger('click');
+    await flushPromises();
+    expect(wrapper.emitted().input).toBeTruthy();
+    expect(wrapper.emitted().input).toHaveLength(1);
+    const actualEmittedValue = wrapper.emitted().input[0][0];
+    expect(actualEmittedValue).toEqual(['a', 'c']);
+    const initialInputEventCount = wrapper.emitted().input.length;
+    await wrapper.setProps({
+      value: actualEmittedValue, // Parent updates prop to match emitted value
+    });
+    await flushPromises();
+    const finalInputEventCount = wrapper.emitted().input ? wrapper.emitted().input.length : 0;
+    expect(finalInputEventCount).toBe(initialInputEventCount);
+    expect(wrapper.vm.inputValue).toEqual([
+      {
+        multiselectId: 0,
+        text: 'a',
+        value: 'a',
+      },
+      {
+        multiselectId: 2,
+        text: 'c',
+        value: 'c',
+      },
+    ]);
+  });
+
+  it('prevents infinite recursion with identical values during prop updates', async () => {
+    const wrapper = setup({
+      options: ['a', 'b', 'c'],
+      value: ['a', 'b'],
+    });
+    await flushPromises();
+    const emittedEvents = wrapper.emitted();
+    if (emittedEvents.input) {
+      delete emittedEvents.input;
+    }
+    await wrapper.vm.inputHandler([{ text: 'a', value: 'a', multiselectId: 0 }]);
+    await flushPromises();
+    expect(wrapper.emitted('input')[0][0]).toStrictEqual(['a']);
+    await wrapper.vm.inputHandler([{ text: 'a', value: 'a', multiselectId: 0 }]);
+    await flushPromises();
+    expect(wrapper.emitted('input')[1]).toBeFalsy();
+  });
 });
