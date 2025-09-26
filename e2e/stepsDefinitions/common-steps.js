@@ -11,7 +11,7 @@ import { random } from 'lodash';
 import hexToRgb from '@e2e/utils/themeutils';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import generateRandomEndUser from '../utils/endUserData';
-import { selectDropdownOption } from '../utils/uiUtils';
+import { selectDropdownOption, typeIntoField } from '../utils/uiUtils';
 import { generateJourneyURL } from '../utils/journeyUtils';
 
 Given('admin logs into the tenant', () => {
@@ -70,6 +70,20 @@ Given('admin navigates to login page', () => {
   cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
 });
 
+When('user fills the following fields', (dataTable) => {
+  dataTable.hashes().forEach((row) => {
+    typeIntoField(row.Field, row.Value);
+  });
+});
+
+When('user clicks on the item {string} from the current table', (itemName) => {
+  cy.findAllByRole('cell', { name: itemName }).click();
+});
+
+When('user navigates back with browser Back arrow', () => {
+  cy.go('back');
+});
+
 When('user clicks on {string} cell on table', (cellToClick) => {
   cy.findAllByRole('cell', { name: Cypress.env(cellToClick) ? Cypress.env(cellToClick) : cellToClick }).eq(0).click();
 });
@@ -119,10 +133,6 @@ When('user selects {string} option on dropdown {string}', (option, dropdown) => 
   selectDropdownOption(option);
 });
 
-When('clicks on {string} tab', (page) => {
-  cy.findByRole('link', { name: page }).click();
-});
-
 When('user reloads the page', () => {
   cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
   cy.reload();
@@ -162,7 +172,7 @@ When('user clicks on option button {string} from more actions menu for item {str
     .contains('td', item).parents('tr')
     .within(() => {
       cy.findByRole('button', { name: 'More Actions' }).click();
-      cy.findByRole('menuitem', { name: new RegExp(option, 'i') }).click();
+      cy.findByRole('menuitem', { name: new RegExp(option, 'i') }).click({ force: true });
     });
 });
 
@@ -386,4 +396,48 @@ Then('{string} button has {string} attribute with value {string}', (buttonName, 
   if (attribute.includes('color')) newValue = hexToRgb(value);
   cy.findByRole('button', { name: buttonName })
     .should('have.css', attribute, newValue);
+});
+
+Then('user populates the following values into fields:', (dataTable) => {
+  dataTable.hashes().forEach((row) => {
+    cy.findByLabelText(row.Field).should('have.value', row.Value);
+  });
+});
+
+Then('the item {string} does not exist in the current table', (itemName) => {
+  cy.findByRole('cell', { name: itemName, timeout: 5000 }).should('not.exist');
+});
+
+Then('the item {string} is visible in the current table', (itemName) => {
+  cy.findByRole('cell', { name: itemName, timeout: 5000 }).should('be.visible');
+});
+
+Then('the following items do not exist in the current table:', (dataTable) => {
+  dataTable.raw().forEach((itemName) => {
+    cy.findByRole('cell', { name: itemName, timeout: 5000 }).should('not.exist');
+  });
+});
+
+Then('the following items are visible in the current table:', (dataTable) => {
+  dataTable.raw().forEach((itemName) => {
+    cy.findByRole('cell', { name: itemName, timeout: 5000 }).should('be.visible');
+  });
+});
+
+Then('the value of the {string} column for the {string} item in the current table is {string}', (columnName, itemName, expectedValue) => {
+  let columnIndex;
+  cy.findByRole('table').within(() => {
+    cy.get('thead').findAllByRole('columnheader').each((columnHeader, headerIndex) => {
+      if (columnHeader.text().trim() === columnName) {
+        columnIndex = headerIndex;
+      }
+    }).then(() => {
+      cy.log(`Column ${columnName} has index ${columnIndex}`);
+      cy.findAllByRole('row')
+        .filter(`:has(td:contains("${itemName}"))`)
+        .findAllByRole('cell')
+        .eq(columnIndex)
+        .should('have.text', expectedValue);
+    });
+  });
 });

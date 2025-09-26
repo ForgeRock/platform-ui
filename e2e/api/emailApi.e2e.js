@@ -1,5 +1,5 @@
 /**
- * Copyright 2021-2024 ForgeRock AS. All Rights Reserved
+ * Copyright 2021-2025 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -71,6 +71,37 @@ export function createEmailTemplates(templateIds, accessToken = Cypress.env('ACC
   }));
 }
 
+export function createEmailTemplateWithData(templateData, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  const parsedFrom = (templateData.fromName ? `"${templateData.fromName}" <${templateData.fromAddress}>` : templateData.fromAddress) || '';
+  return cy.request({
+    method: 'PUT',
+    url: `https://${Cypress.env('FQDN')}/openidm/config/emailTemplate/${templateData.templateId}`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body: {
+      _id: `emailTemplate/${templateData.templateId}`,
+      defaultLocale: templateData.defaultLocale || 'en',
+      enabled: templateData.enabled !== 'false',
+      from: parsedFrom,
+      message: {
+        en: templateData.message || '',
+      },
+      html: {
+        en: templateData.html || '',
+      },
+      mimeType: 'text/html',
+      subject: {
+        en: templateData.subjectEn || '',
+      },
+      styles: templateData.styles || '',
+      displayName: templateData.displayName || templateData.templateId,
+      description: templateData.description || '',
+    },
+  });
+}
+
 /**
  * Deletes a list of specified email templates
  * @param {string[]} templateIds The list of template ids to remove
@@ -84,6 +115,7 @@ export function deleteEmailTemplates(templateIds, accessToken = Cypress.env('ACC
     headers: {
       authorization: `Bearer ${accessToken}`,
     },
+    failOnStatusCode: false,
   }));
 }
 
