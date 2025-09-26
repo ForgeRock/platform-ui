@@ -656,10 +656,4 @@ export default {
   height: 34px;
   width: 34px;
 }
-
-:deep(.checkbox-column) {
-  width: 15px;
-  padding-right: 0;
-  vertical-align: middle;
-}
 </style>

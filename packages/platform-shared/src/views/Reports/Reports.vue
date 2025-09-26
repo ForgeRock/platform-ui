@@ -36,6 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
           @search-input-focus="hasFocus = true" />
       </BButtonToolbar>
       <BTable
+        v-resizable-table="{ persistKey: 'reports' }"
         class="mb-0"
         fixed
         hover
@@ -263,7 +264,7 @@ const tableFields = [
   {
     key: 'actions',
     label: '',
-    class: 'text-nowrap text-right d-none d-lg-table-cell w-250px',
+    class: 'text-nowrap text-right d-none d-lg-table-cell w-250px fr-no-resize',
   },
 ];
 const isCustomReportEnabled = store.state.SharedStore.currentPackage === 'admin' && store.state.SharedStore.autoCustomReportsEnabled;

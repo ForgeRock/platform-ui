@@ -68,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <BTable
       class="mb-0"
-      v-resizable-table="{ persistKey: `relationship-table-${relationshipArrayProperty.propName}`, showColumnResizer: showColumnResizer }"
+      v-resizable-table="{ persistKey: `relationship-table-${$store.state.realm}-${parentResource}-${relationshipArrayProperty.propName}`, showColumnResizer: showColumnResizer }"
       hover
       ref="relationshipArrayGrid"
       responsive
@@ -715,12 +715,6 @@ export default {
         a[role='menuitemradio'] {
           display: none !important;
         }
-      }
-
-      .checkbox-column {
-        width: 15px;
-        padding-right: 0;
-        vertical-align: middle;
       }
 
       .cursor-pointer {

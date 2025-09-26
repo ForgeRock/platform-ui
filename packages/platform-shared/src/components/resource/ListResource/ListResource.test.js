@@ -33,6 +33,11 @@ describe('ListResource Component', () => {
         plugins: [i18n],
         mocks: {
           $route,
+          $store: {
+            state: {
+              realm: 'alpha',
+            },
+          },
           generateIDMAPI: () => {
             const retv = {
               data: {

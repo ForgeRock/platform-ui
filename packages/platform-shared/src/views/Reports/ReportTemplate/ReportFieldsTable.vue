@@ -22,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else
       no-body>
       <BTableSimple
+        v-resizable-table="{ persistKey: 'reports-fields-table' }"
         ref="entityColumnSelectionTable"
         responsive>
         <BThead>

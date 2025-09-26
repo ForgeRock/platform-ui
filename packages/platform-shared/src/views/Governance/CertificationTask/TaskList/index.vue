@@ -873,7 +873,7 @@ export default {
           key: 'selector',
           label: '',
           sortable: false,
-          class: 'selector-cell',
+          class: 'selector-cell fr-no-resize',
           show: true,
         });
       }

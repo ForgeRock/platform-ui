@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -127,17 +127,17 @@ export default function useRunHistoryTable() {
     {
       key: 'view-report',
       label: '',
-      class: 'd-none d-lg-table-cell fr-view-report fr-bg-none',
+      class: 'd-none d-lg-table-cell fr-view-report fr-bg-none fr-no-resize',
     },
     {
       key: 'export',
       label: '',
-      class: 'fr-export-report fr-bg-none',
+      class: 'fr-export-report fr-bg-none fr-no-resize',
     },
     {
       key: 'actions',
       label: '',
-      class: 'fr-report-history-actions p-2 pr-3 fr-bg-none',
+      class: 'fr-report-history-actions p-2 pr-3 fr-bg-none col-actions',
     },
   ];
 

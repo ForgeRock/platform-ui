@@ -30,7 +30,7 @@ import {
   getColumnWidth,
   getColumnWidthRangeInPx,
   getPersistedColumnWidth,
-  isNonResizedColumn,
+  isResizableColumn,
   measureCellContent,
   persistCurrentWidths,
   updateColumnWidths,
@@ -108,7 +108,7 @@ export default {
     function createResizableColumn(col, colIndex, columnPropsMap) {
       col.style.position = 'relative';
       // Prevent duplicate resizers or columns marked as non-resizable
-      if (col.querySelector(`.${RESIZER_CLASS}`) || isNonResizedColumn(col.classList)) return;
+      if (col.querySelector(`.${RESIZER_CLASS}`) || !isResizableColumn(col.classList)) return;
       const resizer = createResizer(col, colIndex, columnPropsMap);
 
       let startX = 0;
@@ -226,8 +226,8 @@ export default {
      */
     function createResizableTable(tbl) {
       const cols = Array.from(tbl.querySelectorAll('th'));
-      const nonActionsCols = cols.filter((col) => !isNonResizedColumn(col.classList));
-      if (options.showColumnResizer === false || !nonActionsCols.length || nonActionsCols.length === 1) return; // Hide the resizer if no columns or only one non-action column is present in the table
+      const resizableCols = cols.filter((col) => isResizableColumn(col.classList));
+      if (options.showColumnResizer === false || resizableCols.length <= 1) return; // Hide resizer if less than 2 resizable columns present in the table
       if (options.wrap) {
         table.classList.remove(TABLE_NOWRAP_CLASS);
       } else {

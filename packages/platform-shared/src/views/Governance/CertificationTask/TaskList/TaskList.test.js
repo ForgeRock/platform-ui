@@ -1482,7 +1482,7 @@ describe('TaskList', () => {
       }, {
         key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
-        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell', label: '', sortable: false, show: true,
+        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize', label: '', sortable: false, show: true,
       }]);
     });
     it('openAddCommentModalFromCommentsModal called hides CertificationTaskCommentsModal and shows CertificationTaskAddCommentModal', async () => {
@@ -1727,7 +1727,7 @@ describe('TaskList', () => {
       }, {
         key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
-        key: 'actions', class: 'w-230px cert-actions border-left fr-access-cell', label: '', sortable: false, show: true,
+        key: 'actions', class: 'w-230px cert-actions border-left fr-access-cell fr-no-resize', label: '', sortable: false, show: true,
       }]);
     });
     it('should have selectable as true', async () => {
@@ -1849,7 +1849,7 @@ describe('TaskList', () => {
       }, {
         key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
-        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell', label: '', sortable: false, show: true,
+        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize', label: '', sortable: false, show: true,
       }]);
     });
     it('should have the right base filter for account', () => {
