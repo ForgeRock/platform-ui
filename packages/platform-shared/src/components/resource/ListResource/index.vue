@@ -68,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <BTable
       v-show="tableData.length && !isLoading"
-      v-resizable-table="{ persistKey: `list-resource-${resourceName}`, showColumnResizer: showColumnResizer }"
+      v-resizable-table="{ persistKey: `list-resource-${$store.state.realm}-${resourceName}`, showColumnResizer: showColumnResizer }"
       :class="`mb-0 ${tableContainerClass}`"
       hover
       id="list-resource-table"

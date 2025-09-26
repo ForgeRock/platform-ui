@@ -40,36 +40,42 @@ describe('resizableTableUtils', () => {
     global.dispatchEvent(new Event('resize'));
   });
 
-  it('convertPixelIntoViewportUnit should convert pixels into viewport units based on the window resolution', () => {
+  it('persistCurrentWidths should convert pixels into viewport units based on the window resolution', () => {
+    const setLocalStorageValueSpy = jest.spyOn(localStorageUtils, 'setLocalStorageValue').mockReturnValue([20, 15, 10, 40]);
     global.innerWidth = 1024;
-    expect(resizableTableUtils.convertPixelIntoViewportUnit(500)).toBe(48.83);
-    expect(resizableTableUtils.convertPixelIntoViewportUnit(250)).toBe(24.41);
+    const mockTh = document.createElement('th');
+    mockTh.getBoundingClientRect = jest.fn().mockReturnValue({
+      x: 50, y: 50, width: 500, height: 100, top: 50, right: 250, bottom: 150, left: 50,
+    });
+    const localColumnPropsMap = {
+      cols: [mockTh],
+      tdColumnList: [],
+      persistKey: 'test-key',
+      columnMinWidth: 120,
+      columnMaxWidth: 800,
+    };
+    resizableTableUtils.persistCurrentWidths(localColumnPropsMap);
+    expect(setLocalStorageValueSpy).toHaveBeenCalledWith('test-key-column-width', [48.83]);
+
+    mockTh.getBoundingClientRect = jest.fn().mockReturnValue({
+      x: 50, y: 50, width: 250, height: 100, top: 50, right: 250, bottom: 150, left: 50,
+    });
+    resizableTableUtils.persistCurrentWidths(localColumnPropsMap);
+    expect(setLocalStorageValueSpy).toHaveBeenCalledWith('test-key-column-width', [24.41]);
 
     global.innerWidth = 2560;
-    expect(resizableTableUtils.convertPixelIntoViewportUnit(500)).toBe(19.53);
-    expect(resizableTableUtils.convertPixelIntoViewportUnit(250)).toBe(9.77);
+    resizableTableUtils.persistCurrentWidths(localColumnPropsMap);
+    expect(setLocalStorageValueSpy).toHaveBeenCalledWith('test-key-column-width', [9.77]);
   });
 
-  it('convertViewportIntoPixelUnit should convert vw into pixel units based on the window resolution', () => {
+  it('getPersistedColumnWidth should convert vw into pixel units based on the window resolution', () => {
+    jest.spyOn(localStorageUtils, 'getValueFromLocalStorage').mockReturnValue([20, 15, 10, 40]);
     global.innerWidth = 1024;
-    expect(resizableTableUtils.convertViewportIntoPixelUnit(50)).toBe(512);
-    expect(resizableTableUtils.convertViewportIntoPixelUnit(25)).toBe(256);
+    expect(resizableTableUtils.getPersistedColumnWidth('test')[0]).toBe(205);
+    expect(resizableTableUtils.getPersistedColumnWidth('test')[1]).toBe(154);
 
     global.innerWidth = 2560;
-    expect(resizableTableUtils.convertViewportIntoPixelUnit(50)).toBe(1280);
-    expect(resizableTableUtils.convertViewportIntoPixelUnit(25)).toBe(640);
-  });
-
-  it('removeClassesFromColumnList should remove fixed width classes from the input element list', () => {
-    const col1 = document.createElement('th');
-    col1.classList.add('w-50', 'foo');
-    const col2 = document.createElement('th');
-    col2.classList.add('col-width-33', 'bar');
-    resizableTableUtils.removeClassesFromColumnList([col1, col2]);
-    expect(col1.classList.contains('w-50')).toBe(false);
-    expect(col1.classList.contains('foo')).toBe(true);
-    expect(col2.classList.contains('col-width-33')).toBe(false);
-    expect(col2.classList.contains('bar')).toBe(true);
+    expect(resizableTableUtils.getPersistedColumnWidth('test')[0]).toBe(512);
   });
 
   it('getPersistedColumnWidth should convert and return the rounded value of the persisted column widths in pixel units', () => {
@@ -78,24 +84,6 @@ describe('resizableTableUtils', () => {
 
     jest.spyOn(localStorageUtils, 'getValueFromLocalStorage').mockReturnValue([10, 35, 40]);
     expect(resizableTableUtils.getPersistedColumnWidth('test')).toEqual([102, 358, 410]); // Converted values into pixel units
-  });
-
-  it('updateColumnWidths should set corresponding widths for checkbox, selector, and action columns', () => {
-    const col1 = document.createElement('input');
-    col1.classList.add('checkbox-column');
-    const col2 = document.createElement('button');
-    col2.classList.add('col-actions');
-
-    columnPropsMap = {
-      ...columnPropsMap,
-      cols: [col1, col2],
-    };
-
-    resizableTableUtils.updateColumnWidths(0, 200, columnPropsMap);
-    expect(col1.style.width).toBe('15px');
-
-    resizableTableUtils.updateColumnWidths(1, 100, columnPropsMap);
-    expect(col2.style.width).toBe('120px');
   });
 
   it('updateColumnWidths should update the column width based on the input value if it is higher than the default min width', () => {
@@ -131,7 +119,18 @@ describe('resizableTableUtils', () => {
       x: 50, y: 50, width: widthsArray[2], height: 100, top: 50, right: 250, bottom: 150, left: 50,
     });
 
-    const persistedViewportWidths = [resizableTableUtils.convertPixelIntoViewportUnit(widthsArray[0]), resizableTableUtils.convertPixelIntoViewportUnit(widthsArray[1]), resizableTableUtils.convertPixelIntoViewportUnit(widthsArray[2])];
+    const mockTh = document.createElement('th');
+    mockTh.getBoundingClientRect = jest.fn().mockReturnValue({
+      x: 50, y: 50, width: 500, height: 100, top: 50, right: 250, bottom: 150, left: 50,
+    });
+    const localColumnPropsMap = {
+      cols: [mockTh],
+      tdColumnList: [],
+      persistKey: 'test-key',
+      columnMinWidth: 120,
+      columnMaxWidth: 800,
+    };
+    resizableTableUtils.persistCurrentWidths(localColumnPropsMap);
     columnPropsMap = {
       ...columnPropsMap,
       cols: [col1, col2, col3],
@@ -139,7 +138,7 @@ describe('resizableTableUtils', () => {
     const setLocalStorageValueSpy = jest.spyOn(localStorageUtils, 'setLocalStorageValue');
     resizableTableUtils.persistCurrentWidths(columnPropsMap);
     const localStorageKey = `${columnPropsMap.persistKey}-column-width`;
-    expect(setLocalStorageValueSpy).toHaveBeenCalledWith(localStorageKey, persistedViewportWidths);
+    expect(setLocalStorageValueSpy).toHaveBeenCalledWith(localStorageKey, [29.3, 43.95, 48.83]);
   });
 
   it('createResizer should create a resizer element with correct attributes', () => {
@@ -151,73 +150,37 @@ describe('resizableTableUtils', () => {
   });
 });
 
-describe('isNonResizedColumn', () => {
+describe('isResizableColumn', () => {
   const inputColumn = document.createElement('th');
   inputColumn.classList.add('test-class');
   afterEach(() => {
     inputColumn.classList.remove('col-actions');
-    inputColumn.classList.remove('action-wide-column');
-    inputColumn.classList.remove('index-column');
     inputColumn.classList.remove('checkbox-column');
-    inputColumn.classList.remove('selector-cell');
-    inputColumn.classList.remove('w-100px');
-    inputColumn.classList.remove('w-120px');
-  });
-
-  it('should return true if the element contains "action-wide-column" class', () => {
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
-    inputColumn.classList.add('action-wide-column');
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
-  });
-
-  it('should return true if the element contains "index-column" class', () => {
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
-    inputColumn.classList.add('index-column');
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
   });
 
   it('should return true if the element contains "col-actions" class', () => {
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(true);
     inputColumn.classList.add('col-actions');
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
-  });
-
-  it('should return true if the element contains "w-100px" class', () => {
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
-    inputColumn.classList.add('w-100px');
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
-  });
-
-  it('should return true if the element contains "w-120px" class', () => {
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
-    inputColumn.classList.add('w-120px');
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+    expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(false);
   });
 
   it('should return true if the element contains "checkbox-column" class', () => {
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(true);
     inputColumn.classList.add('checkbox-column');
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
-  });
-
-  it('should return true if the element contains "selector-cell" class', () => {
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
-    inputColumn.classList.add('selector-cell');
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+    expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(false);
   });
 
   it('should return true if the element contains multiple classes from the non-resized column list', () => {
     inputColumn.classList.add('selector-cell');
     inputColumn.classList.add('checkbox-column');
-    inputColumn.classList.add('w-100px');
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(true);
+    expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(false);
   });
 
   it('should return false if the classList does not include any of the non-resized column classes', () => {
     inputColumn.classList.add('some-other-class');
     inputColumn.classList.add('action-column');
     inputColumn.classList.add('selector-column');
-    expect(resizableTableUtils.isNonResizedColumn(inputColumn.classList)).toBe(false);
+    expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(true);
   });
 });
 

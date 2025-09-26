@@ -27,6 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
       :class="[{'d-none': loading}, 'table-responsive']"
     >
       <BTable
+        v-resizable-table="{ persistKey: 'report-view' }"
         data-testid="report-table"
         :empty-text="$t('reports.noReportData')"
         :fixed="false"

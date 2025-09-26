@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -165,13 +165,3 @@ onMounted(async () => {
   devices.value = await fetchData(realm, props.userId);
 });
 </script>
-
-<style lang="scss" scoped>
-  :deep {
-    .checkbox-column {
-      width: 15px;
-      padding-right: 0;
-      vertical-align: middle;
-    }
-  }
-</style>

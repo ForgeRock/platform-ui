@@ -43,18 +43,19 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </BButtonToolbar>
       <BTableSimple
+        v-resizable-table="{ persistKey: `orderable-properties-list-${nodeName}` }"
         hover
         class="mb-0"
         tbody-tr-class="cursor-pointer"
         responsive>
         <BThead>
           <BTr>
-            <BTh class="w-100px pr-0">
+            <BTh class="w-100px pr-0 fr-no-resize">
               <div class="d-flex justify-content-start">
                 {{ $t('common.order') }}
               </div>
             </BTh>
-            <BTh class="col-width-30">
+            <BTh class="w-30">
               {{ $t('common.property') }}
             </BTh>
             <BTh>
@@ -63,7 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BTh>
               {{ $t('common.required') }}
             </BTh>
-            <BTh class="col-width-15" />
+            <BTh class="col-actions" />
           </BTr>
         </BThead>
         <Draggable
@@ -106,8 +107,9 @@ of the MIT license. See the LICENSE file for details. -->
                   {{ $t('common.required') }}
                 </BBadge>
               </BTd>
-              <BTd>
+              <BTd class="col-actions">
                 <FrActionsCell
+                  :boundary="boundaryValue"
                   class="py-2"
                   :edit-option="false"
                   :delete-option="false"
@@ -176,6 +178,7 @@ import {
 import Draggable from 'vuedraggable';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import {
   ref,
   watch,
@@ -190,6 +193,10 @@ const emits = defineEmits([
 ]);
 
 const props = defineProps({
+  nodeName: {
+    type: String,
+    default: '',
+  },
   /**
    * Properties to display in table
    */
@@ -199,6 +206,7 @@ const props = defineProps({
   },
 });
 
+const boundaryValue = getDropdownBoundary(true);
 const orderedProperties = ref([]);
 
 /**
@@ -267,14 +275,6 @@ orderTable();
 
 <style lang="scss" scoped>
 :deep {
-  .col-width-15 {
-    width: 15%;
-  }
-
-  .col-width-30 {
-    width: 30%;
-  }
-
   #properties-table {
     .chosen-item {
       background-color: $white;

@@ -5,6 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BTable
+      v-resizable-table="{ persistKey: 'reports-run-history' }"
       class="mb-0"
       :current-page="currentPage"
       data-testid="run-history-table"
@@ -100,6 +101,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template #cell(actions)="{ item }">
         <FrActionsCell
           v-if="item.reportStatus === 'complete' || item.reportStatus === 'expired'"
+          :boundary="boundaryValue"
           test-id="ellipse-menu"
           :delete-option="false"
           :divider="false"
@@ -157,6 +159,7 @@ import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import FrReportExportButtons from './RunHistoryExportButtons';
 import FrRunReportBadges from './RunReportBadges';
 import useRunHistoryTable from './composables/RunHistoryTable';
@@ -183,6 +186,8 @@ const emit = defineEmits([
   'view-report',
   'view-run-details',
 ]);
+
+const boundaryValue = getDropdownBoundary(true);
 
 /**
  * GLOBALS
