@@ -29,6 +29,7 @@ import { getSessionTimeoutInfo } from '@forgerock/platform-shared/src/api/Sessio
 import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
+import ResizableTable from '@forgerock/platform-shared/src/directives/ResizableTable/ResizableTable';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import BootstrapVue from 'bootstrap-vue';
@@ -116,6 +117,9 @@ const loadApp = () => {
   app.use(Notifications);
   app.use(Vue3Sanitize, baseSanitizerConfig);
   router.isReady().then(() => app.mount('#appRoot'));
+
+  // Register the resizable-table directive globally
+  app.directive('resizable-table', ResizableTable);
 };
 
 /**

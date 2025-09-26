@@ -535,6 +535,14 @@ a.card {
   th.col-actions {
     width: 120px;
 
+    &.w-70px {
+      width: 70px;
+    }
+
+    &.w-100px {
+      width: 100px;
+    }
+
     &.w-250px {
       width: 250px;
     }
@@ -547,8 +555,17 @@ a.card {
   vertical-align: middle;
 }
 
+.selector-column {
+  width: 50px;
+  padding: 0 0 0 1.5rem !important;
+}
+
 .w-30 {
   width: 30%;
+}
+
+.w-40px {
+  width: 40px;
 }
 
 .w-100px {

@@ -49,6 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BCardHeader>
         <BTable
           v-if="accessReviewList.length"
+          v-resizable-table="{ persistKey: 'governance-access-reviews' }"
           class="mb-0"
           hover
           responsive

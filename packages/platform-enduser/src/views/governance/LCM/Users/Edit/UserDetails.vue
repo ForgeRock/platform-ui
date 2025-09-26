@@ -129,7 +129,7 @@ const grantTabItems = [
       {
         key: 'actions',
         label: '',
-        thClass: 'w-100px',
+        class: 'col-actions w-100px',
       },
     ],
   },
@@ -155,9 +155,8 @@ const grantTabItems = [
       {
         key: 'actions',
         label: '',
-        class: 'p-3',
+        class: 'p-3 col-actions w-100px',
         sortable: false,
-        thClass: 'w-100px',
       },
     ],
   },
@@ -181,9 +180,8 @@ const grantTabItems = [
       {
         key: 'actions',
         label: '',
-        class: 'p-3',
+        class: 'p-3 col-actions w-100px',
         sortable: false,
-        thClass: 'w-100px',
       },
     ],
   },

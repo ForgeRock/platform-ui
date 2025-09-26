@@ -68,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <BTable
       class="mb-0"
-      v-resizable-table="{ persistKey: `relationship-table-${$store.state.realm}-${parentResource}-${relationshipArrayProperty.propName}`, showColumnResizer: showColumnResizer }"
+      v-resizable-table="{ persistKey: `relationship-table-${$store.state.realm}-${parentResource}-${relationshipArrayProperty.propName}` }"
       hover
       ref="relationshipArrayGrid"
       responsive
@@ -285,10 +285,6 @@ export default {
     relationshipArrayProperty: {
       type: Object,
       required: true,
-    },
-    showColumnResizer: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {

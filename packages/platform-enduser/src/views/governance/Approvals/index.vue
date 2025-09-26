@@ -49,6 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrRequestActionsCell
               v-if="status === 'pending'"
               :allow-self-approval="allowSelfApproval"
+              :boundary="boundaryValue"
               :status="status"
               :item="item"
               :type="detailTypes.APPROVAL"
@@ -100,6 +101,7 @@ import {
   getFormattedRequest,
   getRequestTypeDisplayNames,
 } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrRequestActionsCell from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActionsCell';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
@@ -124,6 +126,7 @@ export default {
   mixins: [NotificationMixin],
   data() {
     return {
+      boundaryValue: getDropdownBoundary(true),
       REQUEST_MODAL_TYPES,
       detailTypes,
       accessRequests: [],

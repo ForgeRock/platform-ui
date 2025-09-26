@@ -34,6 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BCardHeader>
       <BTable
         v-if="items.length"
+        v-resizable-table="{ persistKey: 'governance-delegates' }"
         id="delegate-table"
         data-testid="delegate-table"
         @sort-changed="sortChanged"
@@ -64,6 +65,7 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
         <template #cell(edit)="{ item }">
           <FrActionsCell
+            :boundary="boundaryValue"
             :delete-option="false"
             :edit-option="false"
             :divider="false">
@@ -131,6 +133,7 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import { getTaskProxies, deleteTaskProxy } from '@/api/governance/DirectoryApi';
 import FrAddDelegateModal from './AddDelegateModal';
 
@@ -162,6 +165,7 @@ export default {
   ],
   data() {
     return {
+      boundaryValue: getDropdownBoundary(true),
       fields: [
         {
           key: 'user',
@@ -178,7 +182,7 @@ export default {
         },
         {
           key: 'edit',
-          class: 'w-96px',
+          class: 'col-actions w-100px',
           label: '',
         },
       ],

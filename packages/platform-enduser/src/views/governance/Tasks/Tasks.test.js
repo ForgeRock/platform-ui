@@ -10,7 +10,7 @@ import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHe
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as TasksApi from '@/api/governance/TasksApi';
-import * as store from '@/store';
+import store from '@/store';
 import i18n from '@/i18n';
 import Tasks from './Tasks';
 
@@ -20,6 +20,7 @@ let modalShow;
 const mountComponent = () => {
   ({ modalShow } = mockModal());
   setupTestPinia({ user: { userId: '1234' } });
+  store.state.SharedStore.enableTableColumnResizing = false;
   return mount(Tasks, {
     global: {
       plugins: [i18n],
@@ -174,10 +175,8 @@ describe('Approvals', () => {
   });
 
   it('sets tasks count to show in side nav bar badge', async () => {
-    store.default.replaceState({
-      fulfillmentTasksCount: 0,
-    });
-    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
+    store.state.fulfillmentTasksCount = 0;
+    const storeSpy = jest.spyOn(store, 'commit').mockImplementation();
 
     wrapper = mountComponent();
     await flushPromises();

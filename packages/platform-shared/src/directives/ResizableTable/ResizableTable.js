@@ -85,7 +85,7 @@ export default {
     // Find the table element (supports both direct and nested usage)
     const table = el.tagName === 'TABLE' ? el : el.querySelector('table');
     const { enableTableColumnResizing } = store.state.SharedStore;
-    if (!table || !enableTableColumnResizing || options.showColumnResizer === false) {
+    if (!table || !enableTableColumnResizing) {
       return;
     }
     table.classList.add(TABLE_CLASS);
@@ -227,7 +227,7 @@ export default {
     function createResizableTable(tbl) {
       const cols = Array.from(tbl.querySelectorAll('th'));
       const resizableCols = cols.filter((col) => isResizableColumn(col.classList));
-      if (options.showColumnResizer === false || resizableCols.length <= 1) return; // Hide resizer if less than 2 resizable columns present in the table
+      if (resizableCols.length <= 1) return; // Hide resizer if less than 2 resizable columns present in the table
       if (options.wrap) {
         table.classList.remove(TABLE_NOWRAP_CLASS);
       } else {

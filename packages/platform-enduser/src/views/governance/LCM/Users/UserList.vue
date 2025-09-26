@@ -159,7 +159,7 @@ const userColumns = computed(() => {
   columns.push({
     key: 'actions',
     label: '',
-    class: 'w-70px',
+    class: 'w-70px col-actions',
   });
 
   return columns;

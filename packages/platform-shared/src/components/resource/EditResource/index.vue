@@ -135,7 +135,6 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
           <FrPrivilegesTab
             v-if="internalRolePrivilegesField"
-            :show-column-resizer="showColumnResizer"
             :disabled="disableSaveButton"
             :privileges-field="internalRolePrivilegesField"
             :resource-path="`${resourceType}/${resourceName}/${id}`"
@@ -148,7 +147,6 @@ of the MIT license. See the LICENSE file for details. -->
             :key="`${relationshipProperty.propName}_tab`">
             <BTab :title="getTranslation(relationshipProperty.title)">
               <FrRelationshipArray
-                :show-column-resizer="showColumnResizer"
                 :additional-query-filter="relationshipProperty.key === 'assignments' ? assignmentsQueryFilter : ''"
                 :parent-resource="relationshipProperty.key === 'assignments' ? assignmentsParentResource : `${resourceType}/${resourceName}`"
                 :parent-resource-override="relationshipProperty.key === 'assignments' ? `${resourceType}/${resourceName}` : ''"
@@ -307,10 +305,6 @@ export default {
   },
   props: {
     canClearSessions: {
-      type: Boolean,
-      default: false,
-    },
-    showColumnResizer: {
       type: Boolean,
       default: false,
     },

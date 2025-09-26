@@ -25,7 +25,6 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-3"
         no-body>
         <FrRequestDetails
-          :show-column-resizer="showColumnResizer"
           @add-comment="openModal('COMMENT')"
           @update-item="getRequestData"
           @action="(type, phase) => openModal(type, phase)"
@@ -96,10 +95,6 @@ const props = defineProps({
   autoIdSettings: {
     type: Object,
     default: () => ({}),
-  },
-  showColumnResizer: {
-    type: Boolean,
-    default: false,
   },
 });
 

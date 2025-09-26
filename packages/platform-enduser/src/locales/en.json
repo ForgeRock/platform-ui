@@ -5,7 +5,17 @@
   },
   "routeNames": {
     "AccessRequestNew": "New Access Request",
-    "Reports": "Reports"
+    "AccessReviews": "Access Reviews",
+    "Accounts": "My Accounts",
+    "Approvals": "Approvals",
+    "Delegates": "My Delegates",
+    "DirectReports": "Direct Reports",
+    "Entitlements": "My Entitlements",
+    "MyRequests": "My Requests",
+    "Roles": "My Roles",
+    "Reports": "Reports",
+    "Tasks": "Tasks",
+    "Violations": "Violations"
   },
   "user": {
     "profile": {

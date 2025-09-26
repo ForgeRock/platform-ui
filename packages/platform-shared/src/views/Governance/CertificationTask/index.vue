@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -38,7 +38,6 @@ of the MIT license. See the LICENSE file for details. -->
               :title="tab.label">
               <FrTaskList
                 v-if="campaignId && actorId"
-                :show-column-resizer="showColumnResizer"
                 :certification-grant-type="tab.key"
                 :campaign-id="campaignId"
                 :campaign-details="campaignDetails"
@@ -120,10 +119,6 @@ export default {
   },
   props: {
     isAdmin: {
-      type: Boolean,
-      default: false,
-    },
-    showColumnResizer: {
       type: Boolean,
       default: false,
     },

@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <template v-if="totalRows">
       <BTable
-        v-resizable-table="{ persistKey: 'user-details-modal-entitlements', showColumnResizer: showColumnResizer }"
+        v-resizable-table="{ persistKey: 'user-details-modal-entitlements' }"
         :fields="entitlementsFields"
         :items="entitlements.result"
         :per-page="pageSize"
@@ -79,10 +79,6 @@ export default {
     entitlements: {
       type: Object,
       required: true,
-    },
-    showColumnResizer: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {

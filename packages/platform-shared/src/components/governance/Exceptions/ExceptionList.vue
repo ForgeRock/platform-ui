@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       @row-clicked="$emit('view-exception-details', $event)"
       @sort-changed="sortChanged"
       class="mb-0"
-      v-resizable-table="{ persistKey: `governance-exceptions-${isAdmin ? 'admin' : 'user'}`, showColumnResizer: showColumnResizer }"
+      v-resizable-table="{ persistKey: `governance-exceptions-${isAdmin ? 'admin' : 'user'}` }"
       hover
       no-local-sorting
       no-sort-reset
@@ -161,10 +161,6 @@ const props = defineProps({
   totalRowCount: {
     type: Number,
     default: 0,
-  },
-  showColumnResizer: {
-    type: Boolean,
-    default: false,
   },
 });
 
