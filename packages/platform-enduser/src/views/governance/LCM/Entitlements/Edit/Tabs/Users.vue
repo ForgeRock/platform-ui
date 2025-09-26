@@ -14,6 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BButtonToolbar>
     </BCardHeader>
     <BTable
+      v-resizable-table="{ persistKey: 'governance-administer-entitlements-user-tab' }"
       class="mb-0"
       responsive
       show-empty

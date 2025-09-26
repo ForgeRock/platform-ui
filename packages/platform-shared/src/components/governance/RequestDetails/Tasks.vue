@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BTable
     class="mb-0"
-    v-resizable-table="{ persistKey: `request-tasks-${type}`, showColumnResizer: showColumnResizer }"
+    v-resizable-table="{ persistKey: `request-tasks-${type}` }"
     hover
     no-local-sorting
     responsive
@@ -107,10 +107,6 @@ const prop = defineProps({
     type: String,
     default: detailTypes.USER_REQUEST,
   },
-  showColumnResizer: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const requestOutcome = ref(null);
@@ -165,6 +161,7 @@ function getTableColumns(type) {
     tableColumns.push({
       key: 'actions',
       label: '',
+      class: 'col-actions',
     });
   }
   return tableColumns;

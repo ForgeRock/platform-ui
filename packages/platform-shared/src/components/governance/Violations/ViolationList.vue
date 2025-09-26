@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       @row-clicked="$emit('viewViolationDetails', $event)"
       @sort-changed="sortChanged"
       class="mb-0"
-      v-resizable-table="{ persistKey: `governance-violations-${isAdmin ? 'admin' : 'user'}`, showColumnResizer: showColumnResizer }"
+      v-resizable-table="{ persistKey: `governance-violations-${isAdmin ? 'admin' : 'user'}` }"
       hover
       no-local-sorting
       no-sort-reset
@@ -98,7 +98,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BDropdown
             v-if="item.status !== 'pending'"
             no-caret
-            toggle-class="py-1 px-3"
+            toggle-class="py-1 pl-3 pr-1"
             variant="link">
             <template #button-content>
               <FrIcon
@@ -221,10 +221,6 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-  showColumnResizer: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const currentPage = ref(1);
@@ -273,7 +269,7 @@ const tableFields = [
   },
   {
     key: 'actions',
-    class: props.isAdmin ? 'w-120px col-actions' : 'col-actions',
+    class: [{ 'w-250px': !props.isAdmin }, 'col-actions'],
     label: '',
     show: true,
   },

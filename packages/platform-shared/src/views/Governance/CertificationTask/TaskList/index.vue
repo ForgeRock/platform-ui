@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="py-5" />
     <BTable
       v-else-if="items.length"
-      v-resizable-table="{ persistKey: `certification-tasklist--${campaignId}-${certificationGrantType}`, showColumnResizer: showColumnResizer }"
+      v-resizable-table="{ persistKey: `certification-tasklist-${campaignId}-${certificationGrantType}` }"
       @row-selected="onRowSelected"
       @sort-changed="sortChange"
       class="m-0 border-top border-bottom task-list-table"
@@ -68,7 +68,6 @@ of the MIT license. See the LICENSE file for details. -->
         <FrField
           v-if="item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
           @change="selectTask($event, item)"
-          class="m-4"
           name="columnSelected"
           type="checkbox"
           :testid="`multiselect-${item.id}`"
@@ -396,7 +395,6 @@ of the MIT license. See the LICENSE file for details. -->
       :modal-id="getModalId('role')" />
     <FrGovernanceUserDetailsModal
       :manager="manager"
-      :show-column-resizer="showColumnResizer"
       :user="currentUserSelectedModal"
       :user-details="currentUserDetails" />
   </div>
@@ -592,10 +590,6 @@ export default {
       type: String,
       default: 'account',
     },
-    showColumnResizer: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     const bulkCertifyModalProps = {
@@ -734,7 +728,7 @@ export default {
         okFunction: this.exception,
         noConfirmation: true,
       },
-      boundaryValue: getDropdownBoundary(this.showColumnResizer),
+      boundaryValue: getDropdownBoundary(true),
     };
   },
   computed: {
@@ -873,7 +867,7 @@ export default {
           key: 'selector',
           label: '',
           sortable: false,
-          class: 'selector-cell fr-no-resize',
+          class: 'selector-column fr-no-resize',
           show: true,
         });
       }
@@ -1647,10 +1641,6 @@ export default {
 :deep {
   .fr-access-cell {
     padding: 0.5rem 1.5rem !important;
-  }
-  .selector-cell {
-    width: 40px;
-    padding: 0 .5rem 0 0 !important;
   }
   .cert-actions {
     box-shadow: -4px 0px 5px 0px rgb(0 0 0 / 5%);

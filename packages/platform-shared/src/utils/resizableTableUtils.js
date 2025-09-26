@@ -175,7 +175,7 @@ function applyFixedTableLayout(table) {
  */
 function getColumnName(columnPropsMap, columnIndex) {
   const columnInnerText = columnPropsMap.cols[columnIndex]?.innerText;
-  // For the column name, only consider the first line of the innerText to remove string related to sorting/filtering
+  // For the column name, only consider the first line of the innerText to remove strings related to sorting/filtering
   return columnInnerText?.split('\n')[0] || String(columnIndex + 1);
 }
 

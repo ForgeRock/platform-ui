@@ -108,20 +108,20 @@ describe('ViolationList', () => {
     expect(columns[2].text()).toBe('Created (Click to sort ascending)');
   });
 
-  it('add fixed with of 120px to actions column when is admin', async () => {
+  it('only uses col-actions class on actions column when is admin', async () => {
     const wrapper = mountComponent();
     await flushPromises();
     const table = wrapper.findComponent('.table-responsive');
     const columns = table.findAll('[role=columnheader]');
-    expect(columns[4].classes()).toContain('w-120px');
+    expect(columns[4].classes()).toContain('col-actions');
   });
 
-  it('not to add fixed with to actions column when is not admin', async () => {
+  it('uses w-250px class on actions column when is not admin', async () => {
     const wrapper = mountComponent({ isAdmin: false });
     await flushPromises();
     const table = wrapper.findComponent('.table-responsive');
     const columns = table.findAll('[role=columnheader]');
-    expect(columns[3].classes()).not.toContain('w-120px');
+    expect(columns[3].classes()).toContain('w-250px');
   });
 
   it('should show dropdown options only for not pending violations', async () => {

@@ -48,6 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BCol>
       <BTable
         v-else
+        v-resizable-table="{ persistKey: 'governance-direct-reports' }"
         id="table-directreports"
         class="cursor-pointer"
         data-testid="table-directreports"

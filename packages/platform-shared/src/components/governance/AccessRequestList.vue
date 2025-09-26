@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else-if="items.length"
       :aria-label="listName"
       class="border-top mb-0"
-      v-resizable-table="{ persistKey: `governance-access-request-list-${listName}`, showColumnResizer: showColumnResizer }"
+      v-resizable-table="{ persistKey: `governance-access-request-list-${listName}` }"
       responsive
       hover
       tbody-tr-class="cursor-pointer"
@@ -139,10 +139,6 @@ const prop = defineProps({
     default: () => ({
       user: [],
     }),
-  },
-  showColumnResizer: {
-    type: Boolean,
-    default: false,
   },
 });
 

@@ -35,7 +35,6 @@ of the MIT license. See the LICENSE file for details. -->
           :is-approval="tab.isApproval"
           :read-only="tab.readOnly"
           :type="tab.type"
-          :show-column-resizer="tab.showColumnResizer"
           v-on="$listeners" />
       </BTab>
     </BTabs>
@@ -80,10 +79,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  showColumnResizer: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const tabs = ref([
@@ -108,7 +103,6 @@ const tabs = ref([
     component: FrTasks,
     title: i18n.global.t('common.tasks'),
     type: props.type,
-    showColumnResizer: props.showColumnResizer,
   },
 ]);
 const tabsToShow = computed(() => tabs.value.filter(({ hide }) => !hide));

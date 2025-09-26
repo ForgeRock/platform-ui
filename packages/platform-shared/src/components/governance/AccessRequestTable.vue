@@ -5,7 +5,6 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard no-body>
     <FrAccessRequestList
-      :show-column-resizer="showColumnResizer"
       :is-loading="isLoading"
       :list-name="title"
       :request-status="status"
@@ -112,10 +111,6 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  showColumnResizer: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 // Emits
@@ -166,7 +161,7 @@ const componentRefs = new Map([
   ['totalRows', props.totalRows],
 ]);
 
-const boundaryValue = getDropdownBoundary(props.showColumnResizer);
+const boundaryValue = getDropdownBoundary(true);
 /**
  * Get current users access requests based on query params and target filter
  */

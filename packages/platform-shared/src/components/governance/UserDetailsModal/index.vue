@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -57,19 +57,13 @@ of the MIT license. See the LICENSE file for details. -->
       </BTab>
       <template v-if="!onlyDetails">
         <BTab :title="$t('common.roles')">
-          <FrRolesTab
-            :roles="userDetails.userRoles"
-            :show-column-resizer="showColumnResizer" />
+          <FrRolesTab :roles="userDetails.userRoles" />
         </BTab>
         <BTab :title="$t('common.accounts')">
-          <FrAccountsTab
-            :accounts="userDetails.userAccounts"
-            :show-column-resizer="showColumnResizer" />
+          <FrAccountsTab :accounts="userDetails.userAccounts" />
         </BTab>
         <BTab :title="$t('common.entitlements')">
-          <FrEntitlementsTab
-            :entitlements="userDetails.userEntitlements"
-            :show-column-resizer="showColumnResizer" />
+          <FrEntitlementsTab :entitlements="userDetails.userEntitlements" />
         </BTab>
       </template>
     </BTabs>
@@ -125,10 +119,6 @@ export default {
       }),
     },
     onlyDetails: {
-      type: Boolean,
-      default: false,
-    },
-    showColumnResizer: {
       type: Boolean,
       default: false,
     },

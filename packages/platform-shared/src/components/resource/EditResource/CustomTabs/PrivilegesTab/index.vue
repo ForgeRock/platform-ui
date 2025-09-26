@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="!loading"
         ref="privilegesGrid"
         class="mb-0 border-top"
-        v-resizable-table="{ persistKey: `privileges-tab-${resourceName}`, showColumnResizer: showColumnResizer }"
+        v-resizable-table="{ persistKey: `privileges-tab-${resourceName}` }"
         show-empty
         :empty-text="$t('common.noRecordsToShow')"
         :fields="privilegesColumns"
@@ -251,10 +251,6 @@ export default {
     resourceName: {
       type: String,
       default: '',
-    },
-    showColumnResizer: {
-      type: Boolean,
-      default: false,
     },
   },
   computed: {
