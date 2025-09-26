@@ -1,4 +1,4 @@
-.resizable-table {
+.table-resizable {
   .resizer {
     position: absolute;
     right: 0;
@@ -12,11 +12,11 @@
     transition: background 0.3s ease;
 
     &:hover {
-      background: #d3d8e0;
+      background: $gray-300;
     }
 
     &:focus-visible {
-      background: #d3d8e0;
+      background: $gray-300;
       outline: 2px solid #1976d2;
       outline-offset: 2px;
       margin: 0 4px;
@@ -25,7 +25,7 @@
 
   th {
     &:hover .resizer {
-      background: #d3d8e0;
+      background: $gray-300;
     }
 
     &:focus {
@@ -33,17 +33,38 @@
     }
   }
   
-  &.resizable-table--nowrap th,
-  &.resizable-table--nowrap td,
-  &.resizable-table--nowrap th:not(.checkbox-column),
-  &.resizable-table--nowrap th:not(.checkbox-column) div {
+  &.table-resizable--nowrap th div,
+  &.table-resizable--nowrap td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .resizable-table--resizing {
-    background: #d3d8e0;
+  .table-resizable--resizing {
+    background: $gray-300;
+  }
+
+  .sticky-left,
+  .sticky-right {
+    position: sticky !important;
+    z-index: 100;
+    background-color: $white;
+  }
+
+  .table-hover tbody tr:hover,
+  .b-table-row-selected {
+    .sticky-left,
+    .sticky-right {
+      background-color: inherit !important;
+    }
+  }
+
+  .sticky-left {
+    left: 0;
+  }
+
+  .sticky-right {
+    right: 0;
   }
 
   td.col-actions,
@@ -60,18 +81,25 @@
       z-index: 1001;
     }
   }
+
+  table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left), 
+  table.b-table > tfoot > tr > [aria-sort]:not(.b-table-sort-icon-left) {
+    &:has(.resizer:focus-visible) {
+      background-position: right 1rem center;
+    } 
+  }
 }
 
-.table-responsive {
-  &:has(.resizable-table tbody tr:only-child td.col-actions .dropdown-menu.show),
-  &:has(.resizable-table tbody tr:only-child td.cert-actions .dropdown-menu.show) {
+.table-responsive.table-resizable {
+  &:has(tbody tr:only-child td.col-actions .dropdown-menu.show),
+  &:has(tbody tr:only-child td.cert-actions .dropdown-menu.show) {
     overflow-x: visible;
-    .resizable-table {
+    table {
       table-layout: auto !important;
     }
   }
 
-  .resizable-table tbody tr:only-child td.cert-actions .dropdown-menu.show {
+  tbody tr:only-child td.cert-actions .dropdown-menu.show {
     left: auto;
     right: 0;
     width: fit-content;
@@ -83,7 +111,7 @@
   background-color: $gray-100 !important;
 }
 
-.resizable-table__shared-measure-container {
+.table-resizable__shared-measure-container {
   position: absolute;
   visibility: hidden;
   white-space: nowrap;
@@ -91,7 +119,7 @@
   pointer-events: none;
 }
 
-.resizable-table__live-region {
+.table-resizable__live-region {
   position: absolute;
   left: -9999px;
   height: 1px;
@@ -100,18 +128,11 @@
   white-space: nowrap;
 }
 
-.resizable-table.table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left), 
-.resizable-table.table.b-table > tfoot > tr > [aria-sort]:not(.b-table-sort-icon-left) {
-  &:has(.resizer:focus-visible) {
-    background-position: right 1rem center;
-  } 
-}
-
 .tabs .tab-content.col {
-  &:has(.resizable-table) {
+  &:has(.table-resizable) {
     overflow-x: auto;
   }
-  &:has(.resizable-table td.col-actions .dropdown) {
+  &:has(.table-resizable td.col-actions .dropdown) {
     min-height: 300px;
   }
 }

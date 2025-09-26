@@ -41,94 +41,92 @@ of the MIT license. See the LICENSE file for details. -->
           <FrRunReportBadges :report-status="item.reportStatus" />
         </div>
       </template>
-      <template #cell(view-report)="{ item }">
-        <BButton
-          v-if="item.reportStatus === 'complete'"
-          class="pl-0 pr-0 py-1 my-2"
-          data-testid="view-report-button"
-          variant="link"
-          @click="emit('view-report', item.runId)">
-          {{ $t('reports.tabs.runHistory.table.viewReport') }}
-        </BButton>
-      </template>
-      <template #cell(export)="{ item }">
-        <template v-if="props.templateState !== 'draft' && (item.reportStatus === 'complete' || item.reportIsExpiredAndHasAtLeastOneDownload())">
-          <BTooltip :target="item.tooltipId()">
-            {{ item.tooltipLabel() }}
-          </BTooltip>
-          <BDropdown
-            boundary="window"
-            class="p-0"
-            data-testid="actions-dropdown"
-            no-caret
-            right
-            toggle-class="text-decoration-none p-0"
-            variant="link">
-            <template #button-content>
-              <div
-                class="p-2"
-                :id="item.tooltipId()">
-                <BSpinner
-                  v-if="item.hasAnyActiveExports() || item.hasAnyActiveDownloads()"
-                  small
-                  :label="$t('common.loadingEtc')" />
-                <FrIcon
-                  v-else
-                  :icon-class="`${item.hasAnyErrors() ? 'text-danger' : 'text-dark'} md-24`"
-                  :name="item.hasAnyErrors() ? 'error_outline' : 'file_download'" />
-              </div>
-            </template>
-            <BDropdownGroup>
-              <template
-                v-for="(exportStatus, fileType) in item.export"
-                :key="fileType">
-                <BDropdownItem
-                  v-if="item.reportStatus === 'complete' || item.reportIsExpiredAndFileTypeHasDownload(exportStatus)"
-                  class="fr-run-history-table-options"
-                  :disabled="exportStatus === 'downloading' || ((exportStatus === 'export' || exportStatus === 'error') && item.hasAnyActiveExports())"
-                  :data-testid="`${fileType}-${exportStatus}-button`"
-                  @click="exportHandler(fileType, item, exportStatus)">
-                  <FrReportExportButtons
-                    :file-type="fileType"
-                    :export-status="exportStatus"
-                    :label="item.statusLabel(exportStatus, fileType)" />
-                </BDropdownItem>
-              </template>
-            </BDropdownGroup>
-          </BDropdown>
-        </template>
-      </template>
       <template #cell(actions)="{ item }">
-        <FrActionsCell
-          v-if="item.reportStatus === 'complete' || item.reportStatus === 'expired'"
-          :boundary="boundaryValue"
-          test-id="ellipse-menu"
-          :delete-option="false"
-          :divider="false"
-          :edit-option="false">
-          <template #custom-top-actions>
-            <BDropdownGroup>
-              <BDropdownItem
-                class="d-lg-none"
-                @click="emit('view-report', item.runId)">
-                <FrIcon
-                  data-testid="view-report-option"
-                  icon-class="mr-3"
-                  name="description">
-                  {{ $t('reports.tabs.runHistory.table.viewReport') }}
-                </FrIcon>
-              </BDropdownItem>
-              <BDropdownItem @click="emit('view-run-details', item)">
-                <FrIcon
-                  data-testid="view-run-option"
-                  icon-class="mr-3"
-                  name="list_alt">
-                  {{ $t('reports.tabs.runHistory.table.runDetails') }}
-                </FrIcon>
-              </BDropdownItem>
-            </BDropdownGroup>
+        <div class="d-flex justify-content-center align-items-center">
+          <BButton
+            v-if="item.reportStatus === 'complete'"
+            class="pl-0 pr-0 py-1 my-2"
+            data-testid="view-report-button"
+            variant="link"
+            @click="emit('view-report', item.runId)">
+            {{ $t('reports.tabs.runHistory.table.viewReport') }}
+          </BButton>
+          <template v-if="props.templateState !== 'draft' && (item.reportStatus === 'complete' || item.reportIsExpiredAndHasAtLeastOneDownload())">
+            <BTooltip :target="item.tooltipId()">
+              {{ item.tooltipLabel() }}
+            </BTooltip>
+            <BDropdown
+              boundary="window"
+              class="p-0"
+              data-testid="actions-dropdown"
+              no-caret
+              right
+              toggle-class="text-decoration-none p-0"
+              variant="link">
+              <template #button-content>
+                <div
+                  class="p-2"
+                  :id="item.tooltipId()">
+                  <BSpinner
+                    v-if="item.hasAnyActiveExports() || item.hasAnyActiveDownloads()"
+                    small
+                    :label="$t('common.loadingEtc')" />
+                  <FrIcon
+                    v-else
+                    :icon-class="`${item.hasAnyErrors() ? 'text-danger' : 'text-dark'} md-24`"
+                    :name="item.hasAnyErrors() ? 'error_outline' : 'file_download'" />
+                </div>
+              </template>
+              <BDropdownGroup>
+                <template
+                  v-for="(exportStatus, fileType) in item.export"
+                  :key="fileType">
+                  <BDropdownItem
+                    v-if="item.reportStatus === 'complete' || item.reportIsExpiredAndFileTypeHasDownload(exportStatus)"
+                    class="fr-run-history-table-options"
+                    :disabled="exportStatus === 'downloading' || ((exportStatus === 'export' || exportStatus === 'error') && item.hasAnyActiveExports())"
+                    :data-testid="`${fileType}-${exportStatus}-button`"
+                    @click="exportHandler(fileType, item, exportStatus)">
+                    <FrReportExportButtons
+                      :file-type="fileType"
+                      :export-status="exportStatus"
+                      :label="item.statusLabel(exportStatus, fileType)" />
+                  </BDropdownItem>
+                </template>
+              </BDropdownGroup>
+            </BDropdown>
           </template>
-        </FrActionsCell>
+          <FrActionsCell
+            v-if="item.reportStatus === 'complete' || item.reportStatus === 'expired'"
+            :boundary="boundaryValue"
+            test-id="ellipse-menu"
+            :delete-option="false"
+            :divider="false"
+            :edit-option="false">
+            <template #custom-top-actions>
+              <BDropdownGroup>
+                <BDropdownItem
+                  class="d-lg-none"
+                  @click="emit('view-report', item.runId)">
+                  <FrIcon
+                    data-testid="view-report-option"
+                    icon-class="mr-3"
+                    name="description">
+                    {{ $t('reports.tabs.runHistory.table.viewReport') }}
+                  </FrIcon>
+                </BDropdownItem>
+                <BDropdownItem @click="emit('view-run-details', item)">
+                  <FrIcon
+                    data-testid="view-run-option"
+                    icon-class="mr-3"
+                    name="list_alt">
+                    {{ $t('reports.tabs.runHistory.table.runDetails') }}
+                  </FrIcon>
+                </BDropdownItem>
+              </BDropdownGroup>
+            </template>
+          </FrActionsCell>
+        </div>
       </template>
     </BTable>
     <FrPagination
@@ -287,17 +285,8 @@ watch(() => props.updatedRow, (newRow) => updateTableRow(newRow));
         min-height: 48px;
       }
     }
-    .fr-report-history-actions {
-      width: 74px;
-    }
     .fr-report-history-status {
       width: auto;
-    }
-    .fr-view-report {
-      width: 140px;
-    }
-    .fr-export-report {
-      width: 76px;
     }
     .fr-report-export-button {
       width: 90px;

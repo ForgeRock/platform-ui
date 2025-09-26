@@ -59,7 +59,8 @@ of the MIT license. See the LICENSE file for details. -->
       :empty-text="$t('common.noRecordsToShow')"
       :fields="certificationListColumnsToShow"
       :items="items"
-      :no-local-sorting="true"
+      no-local-sorting
+      no-sort-reset
       :per-page="pageSize"
       :selectable="isSelectable"
       :sort-by="sortBy"
@@ -867,7 +868,7 @@ export default {
           key: 'selector',
           label: '',
           sortable: false,
-          class: 'selector-column fr-no-resize',
+          class: 'selector-column fr-no-resize sticky-left',
           show: true,
         });
       }
@@ -1622,9 +1623,6 @@ export default {
     padding: 10px;
   }
 }
-.small-column {
-  width: 5%;
-}
 .clickable:hover {
   cursor: pointer;
   text-decoration: underline;
@@ -1645,9 +1643,6 @@ export default {
   .cert-actions {
     box-shadow: -4px 0px 5px 0px rgb(0 0 0 / 5%);
     padding: 1rem 1rem !important;
-  }
-  .w-200px {
-    width: 200px;
   }
   .w-230px {
     width: 230px;

@@ -171,7 +171,7 @@ const OOTBColumns = {
   },
   actions: {
     key: 'actions',
-    class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize',
+    class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right',
     label: '',
     sortable: false,
     show: true,
@@ -277,7 +277,7 @@ export function getInitialColumns(grantType, entitlementUserId, showAccountDrill
     { ...OOTBColumns.comments },
     {
       key: 'actions',
-      class: `${showAccountDrilldown ? 'w-230px' : 'w-200px'} cert-actions border-left fr-access-cell fr-no-resize`,
+      class: `${showAccountDrilldown ? 'w-230px' : 'w-200px'} cert-actions border-left fr-access-cell fr-no-resize sticky-right`,
       label: '',
       sortable: false,
       show: true,

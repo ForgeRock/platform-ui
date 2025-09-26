@@ -52,7 +52,7 @@ export default function getManagedObjectColumnList(localStorageKey, managedPrope
         sortable: true,
         enabled: localStorageValue?.[index] ? localStorageValue[index]?.enabled : columnList.length < 4, // To maintain consistency with the table display data, enable first 4 set of display property in the filter list
         sortDirection: 'desc',
-        class: 'text-truncate w-max-300',
+        class: 'text-truncate',
       });
     }
   });
