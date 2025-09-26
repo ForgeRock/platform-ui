@@ -343,50 +343,9 @@ describe('ListResource Component', () => {
     expect(wrapper.vm.paginationPageSize).toBe(2);
   });
 
-  it('should not include the overflow class in table container if isDropdownOpen props is not present', async () => {
+  it('should be a responsive table', async () => {
     const tableContainerElement = wrapper.find('.table-responsive');
     expect(tableContainerElement.exists()).toBe(true);
-    expect(tableContainerElement.classes('overflow-x-visible')).toBe(false);
-  });
-
-  it('should set the table container class based on the input props', async () => {
-    await wrapper.setProps({
-      isDropdownOpen: true,
-      tableData: [{}],
-    });
-    await flushPromises();
-    const tableContainerElement = wrapper.find('.table-responsive');
-    expect(tableContainerElement.exists()).toBe(true);
-    // Table has single element and isDropdownOpen is set as true, so overflow-x-visible class should be applied
-    expect(tableContainerElement.classes('overflow-x-visible')).toBe(true);
-  });
-
-  it('should not set the table container class if table contains more than one elements', async () => {
-    await wrapper.setProps({
-      isDropdownOpen: true,
-      tableData: [{}, {}],
-    });
-    await flushPromises();
-    const tableContainerElement = wrapper.find('.table-responsive');
-    expect(tableContainerElement.exists()).toBe(true);
-    // Table has more than one elements, so overflow-x-visible class should not be applied
-    expect(tableContainerElement.classes('overflow-x-visible')).toBe(false);
-  });
-
-  it('toggleTableContainerClass should update the table container class based on the input param', async () => {
-    await wrapper.setProps({
-      tableData: [{}],
-    });
-    await wrapper.vm.toggleTableContainerClass(true);
-    const tableContainerElement = wrapper.find('.table-responsive');
-    expect(tableContainerElement.exists()).toBe(true);
-    expect(tableContainerElement.classes('overflow-x-visible')).toBe(true);
-
-    // Check if the class is removed when toggled to false
-    await wrapper.vm.toggleTableContainerClass(false);
-    const updatedTableContainerElement = wrapper.find('.table-responsive');
-    expect(updatedTableContainerElement.exists()).toBe(true);
-    expect(updatedTableContainerElement.classes('overflow-x-visible')).toBe(false);
   });
 
   describe('Pagination attributes verification', () => {

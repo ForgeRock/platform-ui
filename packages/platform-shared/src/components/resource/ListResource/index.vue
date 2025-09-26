@@ -69,7 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BTable
       v-show="tableData.length && !isLoading"
       v-resizable-table="{ persistKey: `list-resource-${$store.state.realm}-${resourceName}` }"
-      :class="`mb-0 ${tableContainerClass}`"
+      class="mb-0"
       hover
       id="list-resource-table"
       responsive
@@ -91,7 +91,6 @@ of the MIT license. See the LICENSE file for details. -->
             :delete-option="deleteAccess"
             :divider="editAccess || hasClearSessionAccess(item)"
             :edit-option="editAccess"
-            @dropdown-open="toggleTableContainerClass($event)"
             @delete-clicked="showDeleteResourceModal(item._id)"
             @edit-clicked="$emit('row-clicked', item)">
             <template
@@ -326,10 +325,6 @@ export default {
       type: String,
       default: null,
     },
-    isDropdownOpen: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -348,7 +343,6 @@ export default {
       resourceToClearSessionsForName: '',
       searchHasFocus: true,
       availableColumnList: [],
-      tableContainerClass: '',
     };
   },
   computed: {
@@ -421,10 +415,6 @@ export default {
         }
       },
       immediate: true,
-    },
-    isDropdownOpen(isOpen) {
-      // Toggle the class for the table container based on dropdown visibility
-      this.toggleTableContainerClass(isOpen);
     },
   },
   methods: {
@@ -643,23 +633,10 @@ export default {
       }
       this.appendActionColumn();
     },
-    /**
-     * Handler method for the Dropdown toggle event.
-     * When the dropdown is opened within a sticky column in a responsive table layout, It was causing the table to overflow.
-     * Restricting the overflow-x to visible when the dropdown is open.
-     * @param {boolean} isDropdownOpen - Indicates whether the dropdown is open or closed
-     */
-    toggleTableContainerClass(isDropdownOpen) {
-      this.tableContainerClass = this.tableData?.length === 1 && isDropdownOpen ? 'overflow-x-visible' : '';
-    },
   },
 };
 </script>
 <style lang="scss" scoped>
-  :deep(.table-responsive.overflow-x-visible) {
-    overflow-x: visible;
-  }
-
   :deep(.table tr:not(.b-table-empty-row) td) {
     cursor: pointer;
   }

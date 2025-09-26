@@ -543,14 +543,26 @@ a.card {
       width: 100px;
     }
 
+    &.w-175px {
+      width: 175px;
+    }
+
+    &.w-200px {
+      width: 200px;
+    }
+
     &.w-250px {
       width: 250px;
+    }
+
+    &.w-300px {
+      width: 300px;
     }
   }
 }
 
 .checkbox-column {
-  width: 15px;
+  width: 30px;
   padding-right: 0 !important;
   vertical-align: middle;
 }
@@ -560,8 +572,16 @@ a.card {
   padding: 0 0 0 1.5rem !important;
 }
 
+.w-20 {
+  width: 20%;
+}
+
 .w-30 {
   width: 30%;
+}
+
+.w-33 {
+  width: 33%;
 }
 
 .w-40px {

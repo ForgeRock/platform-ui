@@ -125,19 +125,9 @@ export default function useRunHistoryTable() {
       sortable: true,
     },
     {
-      key: 'view-report',
-      label: '',
-      class: 'd-none d-lg-table-cell fr-view-report fr-bg-none fr-no-resize',
-    },
-    {
-      key: 'export',
-      label: '',
-      class: 'fr-export-report fr-bg-none fr-no-resize',
-    },
-    {
       key: 'actions',
       label: '',
-      class: 'fr-report-history-actions p-2 pr-3 fr-bg-none col-actions',
+      class: 'w-200px p-2 pr-3 col-actions sticky-right',
     },
   ];
 

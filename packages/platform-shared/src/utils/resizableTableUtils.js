@@ -110,12 +110,11 @@ function persistCurrentWidths(columnPropsMap) {
 
 /**
  * Creates a resizer handle for a column header. Triggered inside createResizableColumn corresponding to each column
- * @param {HTMLElement} col - The column header element to which the resizer will be attached.
  * @param {number} colIndex - The index of the column.
  * @param {Map} columnPropsMap - A map containing column properties.
  * @returns {HTMLElement} The created resizer element to be used next to the column header.
  */
-function createResizer(col, colIndex, columnPropsMap) {
+function createResizer(colIndex, columnPropsMap) {
   const resizer = document.createElement('span');
   resizer.classList.add(RESIZER_CLASS);
   resizer.setAttribute('role', 'separator');

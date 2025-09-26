@@ -142,8 +142,7 @@ describe('resizableTableUtils', () => {
   });
 
   it('createResizer should create a resizer element with correct attributes', () => {
-    const col = document.createElement('th');
-    const resizer = resizableTableUtils.createResizer(col, 0, { tableId: 'table1' });
+    const resizer = resizableTableUtils.createResizer(0, { tableId: 'table1' });
     expect(resizer.classList.contains('resizer')).toBe(true);
     expect(resizer.getAttribute('aria-controls')).toBe('table1');
     expect(resizer.getAttribute('aria-label')).toContain('Resize column');

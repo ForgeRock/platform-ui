@@ -207,7 +207,7 @@ describe('Run History component', () => {
       const table = findByTestId(wrapper, 'run-history-table');
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
       const tableRowComplete = tableRows[3];
-      const tableRowViewReportButton = tableRowComplete.find('.fr-view-report').find('button');
+      const tableRowViewReportButton = tableRowComplete.find('.col-actions').find('button');
 
       expect(tableRowViewReportButton.exists()).toBe(true);
     });

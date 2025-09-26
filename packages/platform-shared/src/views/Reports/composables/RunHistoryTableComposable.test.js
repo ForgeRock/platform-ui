@@ -58,7 +58,7 @@ describe('@useRunHistoryTable', () => {
     });
 
     it('returns the expected table column keys', () => {
-      const expectedColumnNames = ['date', 'reportStatus', 'view-report', 'export', 'actions'];
+      const expectedColumnNames = ['date', 'reportStatus', 'actions'];
       const tableColumnKeys = tableColumns.map((item) => item.key);
 
       expect(tableColumnKeys).toEqual(expectedColumnNames);

@@ -40,7 +40,7 @@ describe('getManagedObjectColumnList', () => {
       {
         key: 'col1',
         label: 'translated:Title1',
-        class: 'text-truncate w-max-300',
+        class: 'text-truncate',
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
@@ -48,7 +48,7 @@ describe('getManagedObjectColumnList', () => {
       {
         key: 'col2',
         label: 'translated:Title2',
-        class: 'text-truncate w-max-300',
+        class: 'text-truncate',
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
@@ -56,7 +56,7 @@ describe('getManagedObjectColumnList', () => {
       {
         key: 'col3',
         label: 'translated:Title3',
-        class: 'text-truncate w-max-300',
+        class: 'text-truncate',
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
@@ -64,7 +64,7 @@ describe('getManagedObjectColumnList', () => {
       {
         key: 'col5',
         label: 'translated:Title5',
-        class: 'text-truncate w-max-300',
+        class: 'text-truncate',
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
@@ -72,7 +72,7 @@ describe('getManagedObjectColumnList', () => {
       {
         key: 'col7',
         label: 'translated:Title7',
-        class: 'text-truncate w-max-300',
+        class: 'text-truncate',
         sortable: true,
         enabled: false, // Only the first 4 columns are enabled by default, This is to maintain consistency with the table display data
         sortDirection: 'desc',

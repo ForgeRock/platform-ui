@@ -162,7 +162,7 @@ describe('getInitialColumns', () => {
       },
       {
         key: 'actions',
-        class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize',
+        class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right',
         label: '',
         sortable: false,
         show: true,
@@ -208,7 +208,7 @@ describe('getInitialColumns', () => {
       },
       {
         key: 'actions',
-        class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize',
+        class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right',
         label: '',
         sortable: false,
         show: true,
