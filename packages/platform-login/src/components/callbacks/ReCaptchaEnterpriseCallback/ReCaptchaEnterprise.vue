@@ -25,9 +25,24 @@ const recaptchaSiteKey = props.callback.getSiteKey();
 const recaptchaApiUrl = props.callback.getApiUrl();
 const recaptchaClass = props.callback.getElementClass();
 
+/**
+ * Generate a recaptcha token and set it on the callback
+ */
+const executeAndSetToken = async () => {
+  try {
+    const token = await window.grecaptcha.enterprise.execute(recaptchaSiteKey, { action: 'LOGIN' });
+    props.callback.setResult(token);
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('pages.selfservice.captchaError'));
+  }
+};
+
+/**
+ * @description Injects the recaptcha script into the head of the document
+ * and sets up the recaptcha callback to get a token and set it in the
+ * callback's result.
+ * */
 const injectRecaptchaScript = () => {
-  // Append a new script to head to load recaptcha using the api url and site
-  // key set in the nodes configuration
   const scriptSrc = `${recaptchaApiUrl}?render=${recaptchaSiteKey}`;
   // Ensure script has not already been added to the page
   if (!document.querySelector(`script[src='${scriptSrc}']`)) {
@@ -35,26 +50,30 @@ const injectRecaptchaScript = () => {
     const recaptchaScript = document.createElement('script');
     recaptchaScript.setAttribute('src', scriptSrc);
 
-    // Add event listener to wait for the script to load
-    recaptchaScript.addEventListener('load', () => {
-      try {
-        // When recaptcha is ready
-        window.grecaptcha.enterprise.ready(async () => {
-          // Set the recaptcha containers class to the class set in the node config
-          const recaptchaContainer = document.querySelector('.grecaptcha-badge').parentElement;
-          recaptchaContainer.classList.add(recaptchaClass);
-
-          // Wait for recaptcha to generate a token and set the callbacks value
-          const token = await window.grecaptcha.enterprise.execute(recaptchaSiteKey, { action: 'LOGIN' });
-          props.callback.setResult(token);
-        });
-      } catch (error) {
-        showErrorMessage(error, i18n.global.t('pages.selfservice.captchaError'));
-      }
-    });
-
     // Add the script to head
     document.head.appendChild(recaptchaScript);
+
+    // Add event listener to wait for the script to load
+    recaptchaScript.addEventListener('load', () => {
+      // When recaptcha is ready
+      window.grecaptcha.enterprise.ready(async () => {
+        try {
+        // Set the recaptcha containers class to the class set in the node config
+          const recaptchaContainer = document.querySelector('.grecaptcha-badge')?.parentElement;
+          if (recaptchaContainer) {
+            recaptchaContainer.classList.add(recaptchaClass);
+          }
+          await executeAndSetToken();
+        } catch (error) {
+          showErrorMessage(error, i18n.global.t('pages.selfservice.captchaError'));
+        }
+      });
+    });
+  } else {
+    // If a Journey loops back around to this node multiple times, we need to get a new token and add it to the callback
+    window.grecaptcha.enterprise.ready(async () => {
+      await executeAndSetToken();
+    });
   }
 };
 

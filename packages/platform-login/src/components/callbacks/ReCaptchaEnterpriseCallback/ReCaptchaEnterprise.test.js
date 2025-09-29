@@ -13,10 +13,10 @@ import i18n from '@/i18n';
 const { showErrorMessage } = mockNotification();
 
 const API_URL = 'http://test.com';
-const SITE_KEY = 'site-key';
 const ELEMENT_CLASS = 'classy';
+const SITE_KEY = 'site-key';
+const RECAPTCHA_ERROR = i18n.global.t('pages.selfservice.captchaError');
 const TOKEN = 'token';
-const RECAPTCHA_ERROR = 'Error creating recaptcha';
 const setResult = jest.fn();
 
 const mockCreateRecpatchaElementSuccess = () => {
@@ -25,10 +25,6 @@ const mockCreateRecpatchaElementSuccess = () => {
   child.classList.add('grecaptcha-badge');
   container.appendChild(child);
   document.body.append(container);
-};
-
-const mockCreateRecpatchaElementFailure = () => {
-  throw new Error(RECAPTCHA_ERROR);
 };
 
 window.grecaptcha = {
@@ -85,19 +81,6 @@ describe('CustomNodesView', () => {
 
       expect(recpatchaContainer.exists()).toBeTruthy();
     });
-
-    it('should displays error if recapctha initialisation fails', async () => {
-      window.grecaptcha.enterprise.ready = jest.fn().mockImplementation(() => {
-        mockCreateRecpatchaElementFailure();
-      });
-      const error = new Error(RECAPTCHA_ERROR);
-      await recaptchaScript.trigger('load');
-
-      expect(showErrorMessage).toHaveBeenCalledWith(
-        error,
-        'Error loading reCaptcha',
-      );
-    });
   });
 
   describe('@actions', () => {
@@ -109,6 +92,44 @@ describe('CustomNodesView', () => {
       await recaptchaScript.trigger('load');
 
       expect(setResult).toHaveBeenCalledWith(TOKEN);
+    });
+
+    it('should use existing recaptcha script if already present and send token to callback', async () => {
+      // Clear previous calls
+      setResult.mockClear();
+
+      // Script should already exist from initial mount in beforeEach
+      expect(document.querySelectorAll(`script[src='${scriptSrc}']`).length).toBe(1);
+
+      // Mount component again simulating a second load where script is already on the page
+      setup();
+
+      // Still only one script tag should be present
+      expect(document.querySelectorAll(`script[src='${scriptSrc}']`).length).toBe(1);
+
+      window.grecaptcha.enterprise.ready = jest.fn().mockImplementation((callback) => {
+        mockCreateRecpatchaElementSuccess();
+        callback();
+      });
+
+      const existingScriptEl = document.querySelector(`script[src='${scriptSrc}']`);
+      await new DOMWrapper(existingScriptEl).trigger('load');
+
+      expect(setResult).toHaveBeenCalledWith(TOKEN);
+    });
+  });
+
+  describe('@errors', () => {
+    it('handles recaptcha initialisation failure gracefully', async () => {
+      window.grecaptcha.enterprise.execute = jest.fn().mockRejectedValue(new Error(RECAPTCHA_ERROR));
+      window.grecaptcha.enterprise.ready = jest.fn().mockImplementation((callback) => {
+        mockCreateRecpatchaElementSuccess();
+        callback();
+      });
+      await recaptchaScript.trigger('load');
+      await Promise.resolve();
+      expect(showErrorMessage).toHaveBeenCalledWith(expect.any(Error), RECAPTCHA_ERROR);
+      expect(showErrorMessage.mock.calls[0][0].message).toBe(RECAPTCHA_ERROR);
     });
   });
 });
