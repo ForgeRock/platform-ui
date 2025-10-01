@@ -92,7 +92,7 @@ const { bvModal } = useBvModal();
 const { setBreadcrumb } = useBreadcrumb();
 
 // Data
-const { requestId } = route.params;
+const { requestId, status } = route.params;
 const modalType = ref('');
 const isActive = ref(false);
 const item = ref({});
@@ -112,8 +112,8 @@ const actionPermissions = computed(() => {
     approve: allowSelfApproval.value ? permissions.approve : !isSelfApprover && permissions.approve,
     reject: permissions.reject || false,
     reassign: permissions.reassign || false,
-    comment: permissions.comment || false,
-    modify: permissions.modify || false,
+    comment: status === 'complete' ? false : permissions.comment || false,
+    modify: status === 'complete' ? false : permissions.modify || false,
   };
 });
 
@@ -132,7 +132,7 @@ async function getBaseRequest() {
 async function getApproval() {
   try {
     const params = {
-      actorStatus: 'active',
+      actorStatus: status === 'complete' ? 'inactive' : status,
       _action: 'search',
     };
     const filter = getBasicFilter('EQUALS', 'id', requestId);
@@ -142,7 +142,7 @@ async function getApproval() {
       const { data: requestTypeData } = await getRequestTypeDisplayName(request.requestType);
       request.requestTypeDisplayName = requestTypeData.displayName;
       item.value = getFormattedRequest(request, autoIdSettings);
-      isActive.value = true;
+      isActive.value = (status === 'active');
     }
   } catch (error) {
     showErrorMessage('error', i18n.global.t('governance.approval.errorGettingApprovals'));

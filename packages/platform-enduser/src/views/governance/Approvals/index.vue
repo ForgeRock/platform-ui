@@ -287,7 +287,7 @@ export default {
      * @param {Object} item - The item to view.
      */
     viewDetails(item) {
-      this.$router.push({ name: 'ApprovalDetails', params: { requestId: item.details.id } });
+      this.$router.push({ name: 'ApprovalDetails', params: { requestId: item.details.id, status: this.status === 'pending' ? 'active' : this.status } });
     },
     /**
      * Handles filtering requests as well as updates to pagination
