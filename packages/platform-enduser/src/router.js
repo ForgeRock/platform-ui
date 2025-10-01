@@ -124,7 +124,7 @@ const router = createRouter({
           component: () => import('@/views/governance/Approvals'),
         },
         {
-          path: ':requestId',
+          path: ':requestId/:status',
           name: 'ApprovalDetails',
           component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/Approvals/ApprovalDetails'),
         },

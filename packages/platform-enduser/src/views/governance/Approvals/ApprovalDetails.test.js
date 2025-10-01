@@ -16,7 +16,7 @@ import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/g
 import i18n from '@/i18n';
 import ApprovalDetails from './ApprovalDetails';
 
-mockRouter({ params: { requestId: '1234' } });
+mockRouter({ params: { requestId: '1234', status: 'active' } });
 
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
 
