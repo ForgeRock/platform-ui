@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -30,14 +30,17 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </template>
     <BMediaBody class="align-self-center text-truncate">
-      <h2 class="h5 text-muted mb-1">
-        {{ item.details.type }}
-      </h2>
-      <h1
-        v-if="item.details.name"
-        class="mb-1 text-truncate">
-        {{ item.details.name }}
-      </h1>
+      <div class="d-flex flex-column-reverse">
+        <h1
+          :class="[item.details.name ? 'mb-1 text-truncate' : 'h5 text-muted']">
+          {{ item.details.name || item.details.type }}
+        </h1>
+        <h2
+          v-if="item.details.name"
+          class="h5 text-muted mb-1">
+          {{ item.details.type }}
+        </h2>
+      </div>
       <div>
         <span class="text-dark">
           {{ item.details.requestedBy }}
