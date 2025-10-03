@@ -1,13 +1,13 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard>
     <div class="d-flex align-items-center justify-content-start pb-2">
-      <h5 class="mb-0">
+      <h2 class="h5 mb-0">
         {{ title }}
-      </h5>
+      </h2>
       <div
         v-if="tooltip"
         :id="`link-button-${tooltipId}`"
@@ -26,11 +26,11 @@ of the MIT license. See the LICENSE file for details. -->
       <Transition
         appear
         name="fade">
-        <h1
+        <p
           :data-testid="`counter-${counterId}`"
-          class="mb-0">
+          class="h1 mb-0">
           {{ countFormatted }}
-        </h1>
+        </p>
       </Transition>
       <BTooltip
         v-if="tooltip"
