@@ -1,20 +1,29 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { flushPromises, mount } from '@vue/test-utils';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { DOMWrapper, flushPromises, mount } from '@vue/test-utils';
+import { createAppContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import OrderablePropertiesList from './OrderablePropertiesList';
 
 console.warn = jest.fn();
 
+beforeEach(() => {
+  document.body.innerHTML = '';
+});
+
 describe('OrderablePropertiesList', () => {
+  function getDomWrapper() {
+    return new DOMWrapper(document.body);
+  }
+
   function setup() {
     return mount(OrderablePropertiesList, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
       },
@@ -91,14 +100,15 @@ describe('OrderablePropertiesList', () => {
 
     it('should display move down button only for first item in table', async () => {
       const wrapper = setup();
+      const domWrapper = getDomWrapper();
       await flushPromises();
 
       const property = findByTestId(wrapper, 'actions-property-0');
 
-      await property.trigger('click');
+      await property.find('button').trigger('click');
 
-      const moveUp = findByTestId(property, 'move-up-btn');
-      const moveDown = findByTestId(property, 'move-down-btn');
+      const moveUp = findByTestId(domWrapper, 'move-up-btn');
+      const moveDown = findByTestId(domWrapper, 'move-down-btn');
 
       expect(moveDown.isVisible()).toBeTruthy();
       expect(moveUp.exists()).toBeFalsy();
@@ -106,14 +116,15 @@ describe('OrderablePropertiesList', () => {
 
     it('should display move down and down buttons for items in middle of the table', async () => {
       const wrapper = setup();
+      const domWrapper = getDomWrapper();
       await flushPromises();
 
       const property = findByTestId(wrapper, 'actions-property-1');
 
-      await property.trigger('click');
+      await property.find('button').trigger('click');
 
-      const moveUp = findByTestId(property, 'move-up-btn');
-      const moveDown = findByTestId(property, 'move-down-btn');
+      const moveUp = findByTestId(domWrapper, 'move-up-btn');
+      const moveDown = findByTestId(domWrapper, 'move-down-btn');
 
       expect(moveDown.isVisible()).toBeTruthy();
       expect(moveUp.isVisible()).toBeTruthy();
@@ -121,14 +132,15 @@ describe('OrderablePropertiesList', () => {
 
     it('should display move up button only for last item in table', async () => {
       const wrapper = setup();
+      const domWrapper = getDomWrapper();
       await flushPromises();
 
       const property = findByTestId(wrapper, 'actions-property-5');
 
-      await property.trigger('click');
+      await property.find('button').trigger('click');
 
-      const moveUp = findByTestId(property, 'move-up-btn');
-      const moveDown = findByTestId(property, 'move-down-btn');
+      const moveUp = findByTestId(domWrapper, 'move-up-btn');
+      const moveDown = findByTestId(domWrapper, 'move-down-btn');
 
       expect(moveUp.isVisible()).toBeTruthy();
       expect(moveDown.exists()).toBeFalsy();
@@ -165,6 +177,7 @@ describe('OrderablePropertiesList', () => {
 
     it('should move a property via butttons', async () => {
       const wrapper = setup();
+      const domWrapper = getDomWrapper();
       await flushPromises();
 
       let tableRows = wrapper.findAll('tr');
@@ -175,9 +188,9 @@ describe('OrderablePropertiesList', () => {
       expect(property2[1].text()).toContain('Boolean valuebooleanValue');
 
       let actions = findByTestId(wrapper, 'actions-property-0');
-      await actions.trigger('click');
+      await actions.find('button').trigger('click');
 
-      const moveDown = findByTestId(actions, 'move-down-btn');
+      const moveDown = findByTestId(domWrapper, 'move-down-btn');
       await moveDown.trigger('click');
       await flushPromises();
 
@@ -190,9 +203,9 @@ describe('OrderablePropertiesList', () => {
       expect(property2[1].text()).toContain('Usernameusername');
 
       actions = findByTestId(wrapper, 'actions-property-1');
-      await actions.trigger('click');
+      await actions.find('button').trigger('click');
 
-      const moveUp = findByTestId(actions, 'move-up-btn');
+      const moveUp = findByTestId(domWrapper, 'move-up-btn');
       await moveUp.trigger('click');
       await flushPromises();
 

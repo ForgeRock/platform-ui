@@ -7,8 +7,13 @@
 
 import { nextTick } from 'vue';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
-import { flushPromises, mount } from '@vue/test-utils';
-import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { DOMWrapper, flushPromises, mount } from '@vue/test-utils';
+import {
+  createAppContainer,
+  createTooltipContainer,
+  findByTestId,
+  toggleActionsMenu,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
@@ -23,9 +28,10 @@ let showErrorMessage;
 
 describe('Run History component', () => {
   function setup(props) {
+    createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']);
     ({ showErrorMessage } = mockNotification());
-    return mount(RunHistory, {
-      attachTo: createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']),
+    const wrapper = mount(RunHistory, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
       },
@@ -33,26 +39,30 @@ describe('Run History component', () => {
         ...props,
       },
     });
+    const domWrapper = new DOMWrapper(document.body);
+    return { wrapper, domWrapper };
   }
 
   let wrapper;
+  let domWrapper;
 
   describe('@renders', () => {
     it('displays the spinner on mount', async () => {
-      wrapper = setup();
+      ({ wrapper } = setup());
       const spinner = wrapper.find('.spinner-large');
       expect(spinner.exists()).toBe(true);
     });
 
     describe('on data load initial table view', () => {
       beforeEach(() => {
+        document.body.innerHTML = '';
         ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
-        wrapper = setup({
+        ({ wrapper, domWrapper } = setup({
           newReportJobId: 'job_0123',
           reportConfig: {},
           templateName: 'template-name',
           templateState: 'published',
-        });
+        }));
       });
 
       it('displays the table of historical report requests', () => {
@@ -90,11 +100,11 @@ describe('Run History component', () => {
             status: 'COMPLETED_SUCCESS',
           }]));
         jest.useFakeTimers();
-        wrapper = setup({
+        ({ wrapper } = setup({
           reportConfig: {},
           templateName: 'template-name',
           templateState: 'published',
-        });
+        }));
 
         // First time around should show the loading state because the report is still running
         await nextTick();
@@ -177,11 +187,11 @@ describe('Run History component', () => {
 
       it('does not display the "vanity" loading state on the first table entry if there is a missing newReportJobId prop value', async () => {
         ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
-        wrapper = setup({
+        ({ wrapper } = setup({
           reportConfig: {},
           templateName: 'template-name',
           templateState: 'published',
-        });
+        }));
 
         await nextTick();
         const table = findByTestId(wrapper, 'run-history-table');
@@ -196,11 +206,11 @@ describe('Run History component', () => {
   describe('@actions', () => {
     beforeEach(() => {
       ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(HistoryStubs));
-      wrapper = setup({
+      ({ wrapper } = setup({
         reportConfig: {},
         templateName: 'template-name',
         templateState: 'published',
-      });
+      }));
     });
 
     it('changes the route to the "full report view" when the "View Report" button is clicked', async () => {
@@ -311,7 +321,8 @@ describe('Run History component', () => {
       const table = findByTestId(wrapper, 'run-history-table');
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
       const firstTableRow = tableRows[0];
-      const RunDetailsDropdownOption = firstTableRow.find('[data-testid="view-run-option"]');
+      await toggleActionsMenu(firstTableRow);
+      const RunDetailsDropdownOption = domWrapper.find('[data-testid="view-run-option"]');
 
       await RunDetailsDropdownOption.trigger('click');
       expect(wrapper.vm.parametersForDetailsModal).toEqual([{ label: 'org_names', value: 'Sales' }]);

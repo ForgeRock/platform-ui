@@ -6,12 +6,10 @@ of the MIT license. See the LICENSE file for details. -->
   <div
     align="right"
     :class="wrapperClass ? wrapperClass : 'pr-3'">
-    <BDropdown
-      :boundary="boundary"
-      class="p-0"
+    <FrActionsMenu
+      use-floating-menu
       no-caret
       right
-      variant="link"
       :toggle-class="`text-decoration-none p-0 ${toggleClass}`"
       :data-testid="`actions-${testId}`">
       <template #button-content>
@@ -81,7 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
           name="file_download">
           {{ $t('common.export') }}
         </FrIcon>
-      </Bdropdownitem>
+      </BDropdownItem>
       <!--
         Slot for any custom actions not covered by common use cases
       -->
@@ -100,17 +98,17 @@ of the MIT license. See the LICENSE file for details. -->
           name="delete">
           {{ $t('common.delete') }}
         </FrIcon>
-      </Bdropdownitem>
-    </BDropdown>
+      </BDropdownItem>
+    </FrActionsMenu>
   </div>
 </template>
 
 <script>
 import {
-  BDropdown,
   BDropdownDivider,
   BDropdownItem,
 } from 'bootstrap-vue';
+import FrActionsMenu from '@forgerock/platform-shared/src/components/ActionsMenu/ActionsMenu';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
@@ -120,16 +118,12 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 export default {
   name: 'ActionsCell',
   components: {
+    FrActionsMenu,
     FrIcon,
-    BDropdown,
     BDropdownDivider,
     BDropdownItem,
   },
   props: {
-    boundary: {
-      default: 'window',
-      type: String,
-    },
     /**
      * Enables a dropdown option to delete the current row
      */

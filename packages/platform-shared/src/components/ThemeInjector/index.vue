@@ -510,6 +510,11 @@ of the MIT license. See the LICENSE file for details. -->
 
       #app .menu .dropdown-item:focus {
         background-color: unset;
+        color: #455469 !important;
+      }
+
+      #app .dropdown-item:focus .material-icons-outlined {
+        color: #455469 !important;
       }
 
       #app .menu .dropdown-item:focus .text-muted {

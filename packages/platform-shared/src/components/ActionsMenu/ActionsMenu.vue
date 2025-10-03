@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       :aria-controls="menuListId"
       :aria-expanded="isOpen.toString()"
       :id="menuButtonId"
-      @click="openMenu"
+      @click.stop="openMenu"
       @keydown.enter.prevent="openMenu"
       @keydown.space.prevent="openMenu"
       @keydown.up.prevent="openMenu"
@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
         :aria-labelledby="menuButtonId"
         :id="menuListId"
         :class="menuClasses"
-        :style="floatingStyle"
+        :style="[defaultMenuStyles, floatingStyle]"
         @click="toggleMenu"
         @keydown.prevent="handleKeydown">
         <slot />
@@ -90,6 +90,10 @@ const menuItems = ref([]);
 const focusedIndex = ref(-1);
 const typeBuffer = ref('');
 let typeAheadTimeout = null;
+
+const defaultMenuStyles = {
+  position: props.useFloatingMenu ? 'fixed' : 'absolute',
+};
 
 const { floatingStyle } = floatingElementPosition({
   alignRight: props.right,
@@ -268,7 +272,6 @@ onBeforeUnmount(() => {
   list-style: none;
   padding-left: 0;
   margin: 0;
-  position: absolute;
   min-width: 12rem;
   top: 100%;
   left: 0;

@@ -109,7 +109,6 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
               <FrActionsCell
                 v-else
-                :boundary="boundaryValue"
                 toggle-class="w-42 h-42"
                 wrapper-class="pr-0"
                 :delete-option="isCustomReportEnabled && !item.ootb"
@@ -218,7 +217,6 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrNewReportModal from './modals/NewReportModal';
@@ -242,7 +240,6 @@ const {
 } = useSaveReportTemplate();
 
 // Globals
-const boundaryValue = getDropdownBoundary(true);
 const currentPage = ref(1);
 const hasFocus = ref(false);
 const loading = ref(true);

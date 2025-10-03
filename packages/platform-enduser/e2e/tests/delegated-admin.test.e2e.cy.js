@@ -229,9 +229,13 @@ filterTests(['@forgeops', '@cloud'], () => {
         cy.findByRole('searchbox', { name: 'Search' }).type(`${internalRoleName}{enter}`);
         cy.findByRole('cell', { name: internalRoleName }).should('exist').closest('tr').within(() => {
           cy.findByRole('button').click();
-          cy.findAllByRole('menuitem').should('have.length', 1);
-          cy.findByRole('menuitem', { name: 'Edit' });
         });
+        // Find menu item teleported to app container
+        cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+          .within(() => {
+            cy.findAllByRole('menuitem').should('have.length', 1);
+            cy.findByRole('menuitem', { name: 'Edit' });
+          });
         cy.findByRole('button', { name: 'New Internal Role' }).should('not.exist');
 
         // navigate to user list to ensure we have add, delete, and edit access
@@ -239,10 +243,14 @@ filterTests(['@forgeops', '@cloud'], () => {
         cy.findByRole('searchbox', { name: 'Search' }).type(`${userName}{enter}`);
         cy.findByRole('cell', { name: userName }).should('exist').closest('tr').within(() => {
           cy.findByRole('button').click();
-          cy.findAllByRole('menuitem').should('have.length', 2);
-          cy.findByRole('menuitem', { name: 'Edit' });
-          cy.findByRole('menuitem', { name: 'Delete' });
         });
+        // Find menu item teleported to app container
+        cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+          .within(() => {
+            cy.findAllByRole('menuitem').should('have.length', 2);
+            cy.findByRole('menuitem', { name: 'Edit' });
+            cy.findByRole('menuitem', { name: 'Delete' });
+          });
         cy.findByRole('button', { name: `New ${Cypress.env('IS_FRAAS') ? 'Alpha realm - User' : 'User'}` });
 
         // remove the created internal role

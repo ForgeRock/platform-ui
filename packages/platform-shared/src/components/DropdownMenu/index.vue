@@ -163,12 +163,14 @@ export default {
     }
     &:focus {
       background-color: unset;
+      color: $gray-700;
       .h5 {
         color: $gray-900 !important;
       }
     }
     &:focus-visible, &:hover {
       background-color: $light-blue;
+      color: $black;
       .text-gray {
         color: $gray-700;
       }

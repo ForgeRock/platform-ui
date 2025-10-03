@@ -172,6 +172,9 @@ When('user clicks on option button {string} from more actions menu for item {str
     .contains('td', item).parents('tr')
     .within(() => {
       cy.findByRole('button', { name: 'More Actions' }).click();
+    });
+  cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+    .within(() => {
       cy.findByRole('menuitem', { name: new RegExp(option, 'i') }).click({ force: true });
     });
 });
@@ -371,24 +374,31 @@ Then('more actions menu for item {string} has following buttons options:', (item
   cy.findAllByRole('row')
     .contains('td', item).parents('tr')
     .within(() => {
-      cy.findByRole('button', { name: 'More Actions' }).click();
+      cy.findByRole('button', { name: 'More Actions' }).as('moreActionsButton').click();
+    });
+  cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+    .within(() => {
       dataTable.raw().forEach((buttonOption) => {
         cy.findByRole('menuitem', { name: new RegExp(buttonOption, 'i') }).should('exist');
       });
-      cy.findByRole('button', { name: 'More Actions' }).click();
     });
+  cy.get('@moreActionsButton').click();
 });
 
 Then('more actions menu for item {string} does not have following buttons options:', (item, dataTable) => {
   cy.findAllByRole('row')
     .contains('td', item).parents('tr')
     .within(() => {
-      cy.findByRole('button', { name: 'More Actions' }).click();
+      cy.findByRole('button', { name: 'More Actions' }).as('moreActionsButton').click();
+    });
+
+  cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+    .within(() => {
       dataTable.raw().forEach((buttonOption) => {
         cy.findByRole('menuitem', { name: new RegExp(buttonOption, 'i') }).should('not.exist');
       });
-      cy.findByRole('button', { name: 'More Actions' }).click();
     });
+  cy.get('@moreActionsButton').click();
 });
 
 Then('{string} button has {string} attribute with value {string}', (buttonName, attribute, value) => {

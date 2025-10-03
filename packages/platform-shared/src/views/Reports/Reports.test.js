@@ -6,11 +6,16 @@
  */
 
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
-import { findByText, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import {
+  createAppContainer,
+  findByText,
+  findByTestId,
+  toggleActionsMenu,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
-import { mount, flushPromises } from '@vue/test-utils';
+import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
 import { cloneDeep } from 'lodash';
 import i18n from '@/i18n';
 import Reports from './Reports';
@@ -31,7 +36,9 @@ describe('Reports', () => {
   function setup(props = {}) {
     ({ modalShow } = mockModal());
     ({ displayNotification, showErrorMessage } = mockNotification());
-    return mount(Reports, {
+    const domWrapper = new DOMWrapper(document.body);
+    const wrapper = mount(Reports, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
         mocks: {
@@ -42,6 +49,7 @@ describe('Reports', () => {
       },
       props,
     });
+    return { wrapper, domWrapper };
   }
   const templates = {
     result: [
@@ -158,10 +166,11 @@ describe('Reports', () => {
 
   beforeEach(() => {
     AutoApi.getReportTemplates = jest.fn().mockResolvedValue(templates);
+    document.body.innerHTML = '';
   });
 
   it('Report cards displayed successfully', async () => {
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     const table = wrapper.find('table');
@@ -194,7 +203,7 @@ describe('Reports', () => {
     clonedTemplates.result[4].visible = false;
     AutoApi.getReportTemplates = jest.fn().mockResolvedValue(clonedTemplates);
 
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     const table = wrapper.find('table');
@@ -205,21 +214,23 @@ describe('Reports', () => {
   });
 
   it('should show correct actions for out of the box templates', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[1].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[1]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     expect(actions.length).toBe(1);
     expect(actions[0].text()).toBe('list_altRun History');
   });
 
   it('should show correct actions for draft templates', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[0].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[0]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     expect(actions.length).toBe(6);
     expect(actions[0].text()).toBe('list_altRun History');
     expect(actions[1].text()).toBe('person_addAssign Report');
@@ -230,11 +241,12 @@ describe('Reports', () => {
   });
 
   it('should show correct actions for published templates', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[3].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[3]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     expect(actions.length).toBe(4);
     expect(actions[0].text()).toBe('list_altRun History');
     expect(actions[1].text()).toBe('editEdit Template');
@@ -243,11 +255,12 @@ describe('Reports', () => {
   });
 
   it('should show correct actions for ootb duplicatable templates', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[2].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[2]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     expect(actions.length).toBe(2);
     expect(actions[0].text()).toBe('list_altRun History');
     expect(actions[1].text()).toBe('control_point_duplicateDuplicate');
@@ -257,7 +270,7 @@ describe('Reports', () => {
     const error = new Error('Error');
     AutoApi.getReportTemplates = jest.fn().mockRejectedValue(error);
 
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     const table = wrapper.find('table');
@@ -270,21 +283,23 @@ describe('Reports', () => {
   });
 
   it('ensures that the confirm delete modal call is executed when the delete report button is clicked', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
-    const deleteButton = findByText(wrapper, 'span', 'Delete');
+    await toggleActionsMenu(wrapper);
+    const deleteButton = findByText(domWrapper, 'span', 'Delete');
     await deleteButton.trigger('click');
     expect(modalShow).toHaveBeenCalledWith('deleteModal');
   });
 
   it('deletes a report', async () => {
     AutoApi.deleteAnalyticsReport = jest.fn().mockResolvedValue({});
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     // Opens delete modal
-    await findByText(wrapper, 'a', 'Delete').trigger('click');
+    await toggleActionsMenu(wrapper);
+    await findByText(domWrapper, 'a', 'Delete').trigger('click');
 
     const { name, type } = templates.result[1];
     const deleteAnalyticsReportSpy = jest.spyOn(AutoApi, 'deleteAnalyticsReport');
@@ -295,12 +310,13 @@ describe('Reports', () => {
   });
 
   it('routes to expected location when the edit report button is clicked for a draft report', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const routerPushSpy = jest.spyOn(wrapper.vm.router, 'push');
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[0].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[0]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     const editButton = actions[2];
     await editButton.trigger('click');
 
@@ -312,12 +328,13 @@ describe('Reports', () => {
 
   it('routes to expected location when the edit report button is clicked for a published report', async () => {
     AutoApi.editAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const routerPushSpy = jest.spyOn(wrapper.vm.router, 'push');
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[3].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[3]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     const editButton = actions[1];
     await editButton.trigger('click');
     expect(AutoApi.editAnalyticsReport).toHaveBeenCalledWith('PUBLISHED-TEMPLATE');
@@ -328,14 +345,14 @@ describe('Reports', () => {
   });
 
   it('hides the "New Report" button if the autoCustomReportsEnabled property in the store is set to false', async () => {
-    let wrapper = setup();
+    let { wrapper } = setup();
     await flushPromises();
 
     let newReportButton = findByText(wrapper, 'button', 'addNew Report');
     expect(newReportButton.exists()).toBe(true);
 
     store.state.SharedStore.autoCustomReportsEnabled = false;
-    wrapper = setup();
+    ({ wrapper } = setup());
     await flushPromises();
 
     newReportButton = findByText(wrapper, 'button', 'addNew Report');
@@ -346,17 +363,19 @@ describe('Reports', () => {
   });
 
   it('opens the new report modal when the "Duplicate" button is clicked', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const showSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
-    const duplicateButton = findByText(wrapper, 'span', 'Duplicate');
+    await toggleActionsMenu(wrapper);
+
+    const duplicateButton = findByText(domWrapper, 'span', 'Duplicate');
     await duplicateButton.trigger('click');
     expect(showSpy).toHaveBeenCalledWith('new-report-modal');
   });
 
   it('should navigate to report run when run button is clicked', async () => {
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     const routerPushSpy = jest.spyOn(wrapper.vm.$router, 'push');
@@ -372,12 +391,13 @@ describe('Reports', () => {
   });
 
   it('should navigate to report history wheni run history button is clicked', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const routerPushSpy = jest.spyOn(wrapper.vm.$router, 'push');
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[0].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[0]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     const runHistoryButton = actions[0];
     await runHistoryButton.trigger('click');
 
@@ -388,11 +408,12 @@ describe('Reports', () => {
   });
 
   it('should open assign viewers modal when assign viewers button is clicked', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[0].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[0]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     const assignViewersButton = actions[1];
     await assignViewersButton.trigger('click');
 
@@ -400,12 +421,13 @@ describe('Reports', () => {
   });
 
   it('should open duplicate modal when duplicate button is clicked', async () => {
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const showSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[0].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[0]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     const duplicateButton = actions[3];
     await duplicateButton.trigger('click');
 
@@ -414,11 +436,12 @@ describe('Reports', () => {
 
   it('should publish correctly a report when publish button is clicked', async () => {
     AutoApi.publishAnalyticsReport = jest.fn().mockResolvedValue({});
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[0].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[0]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     const publishButton = actions[4];
     await publishButton.trigger('click');
 
@@ -431,11 +454,12 @@ describe('Reports', () => {
   it('should show error notification when publish fails', async () => {
     const error = new Error('Error');
     AutoApi.publishAnalyticsReport = jest.fn().mockRejectedValue(error);
-    const wrapper = setup();
+    const { wrapper, domWrapper } = setup();
     await flushPromises();
 
     const rows = wrapper.findAll('table tbody tr');
-    const actions = rows[0].findAll('a[role="menuitem"]');
+    await toggleActionsMenu(rows[0]);
+    const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
     const publishButton = actions[4];
     await publishButton.trigger('click');
 
@@ -449,7 +473,7 @@ describe('Reports', () => {
     AutoApi.editAnalyticsReport = jest.fn().mockResolvedValue({});
     AutoApi.saveAnalyticsReport = jest.fn().mockResolvedValue({});
 
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     wrapper.vm.reportBeingProcessed = {
@@ -473,7 +497,7 @@ describe('Reports', () => {
     AutoApi.editAnalyticsReport = jest.fn().mockResolvedValue({});
     AutoApi.saveAnalyticsReport = jest.fn().mockResolvedValue({});
 
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     wrapper.vm.reportBeingProcessed = {
@@ -497,7 +521,7 @@ describe('Reports', () => {
     const error = new Error('Error');
     AutoApi.saveAnalyticsReport = jest.fn().mockRejectedValue(error);
 
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
     wrapper.vm.reportBeingProcessed = {
       name: 'DRAFT-TEMPLATE',
@@ -520,7 +544,7 @@ describe('Reports', () => {
     AutoApi.editAnalyticsReport = jest.fn().mockResolvedValue({});
     AutoApi.saveAnalyticsReport = jest.fn().mockRejectedValue(error);
 
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
     wrapper.vm.reportBeingProcessed = {
       name: 'PUBLISHED-TEMPLATE',
@@ -540,7 +564,7 @@ describe('Reports', () => {
   });
 
   it('search and filter report templates', async () => {
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     const reportSearchField = wrapper.find('input[type="search"]');

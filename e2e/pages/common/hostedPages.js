@@ -71,14 +71,20 @@ export function setThemeAsDefault(themeName) {
   cy.findByRole('cell', { name: themeName }).should('exist').closest('tr').within(() => {
     // Click on the correct Theme row burger menu
     cy.findByRole('button').click();
-    // Non-default theme should have 4 options, check all of them are correctly displayed
-    cy.findAllByRole('menuitem').should('have.length', 4);
-    cy.findByRole('menuitem', { name: 'Edit' }).should('exist');
-    cy.findByRole('menuitem', { name: 'Duplicate' }).should('exist');
-    cy.findByRole('menuitem', { name: 'Delete' }).should('exist');
-    // Set the Theme as the Realm Default
-    cy.findByRole('menuitem', { name: 'Set as Realm Default' }).should('exist').click({ force: true });
   });
+
+  // Find menu item teleported to app container
+  cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+    .within(() => {
+      // Non-default theme should have 4 options, check all of them are correctly displayed
+      cy.findAllByRole('menuitem').should('have.length', 4);
+      cy.findByRole('menuitem', { name: 'Edit' }).should('exist');
+      cy.findByRole('menuitem', { name: 'Duplicate' }).should('exist');
+      cy.findByRole('menuitem', { name: 'Delete' }).should('exist');
+      // Set the Theme as the Realm Default
+      cy.findByRole('menuitem', { name: 'Set as Realm Default' }).should('exist').click({ force: true });
+    });
+
   // Check that Save notification is correctly displayed
   expectAndCloseNotification('Theme successfully set as default');
 
@@ -88,13 +94,18 @@ export function setThemeAsDefault(themeName) {
     cy.findByRole('cell', { name: 'Realm Default' }).should('exist');
     // Click on the correct Theme row burger menu
     cy.findByRole('button').click();
-    // Default theme should have 2 options, check all of them are correctly displayed
-    cy.findAllByRole('menuitem').should('have.length', 2);
-    cy.findByRole('menuitem', { name: 'Edit' }).should('exist');
-    cy.findByRole('menuitem', { name: 'Duplicate' }).should('exist');
-    cy.findByRole('menuitem', { name: 'Set as Realm Default' }).should('not.exist');
-    cy.findByRole('menuitem', { name: 'Delete' }).should('not.exist');
   });
+
+  // Find menu item teleported to app container
+  cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+    .within(() => {
+      // Default theme should have 2 options, check all of them are correctly displayed
+      cy.findAllByRole('menuitem').should('have.length', 2);
+      cy.findByRole('menuitem', { name: 'Edit' }).should('exist');
+      cy.findByRole('menuitem', { name: 'Duplicate' }).should('exist');
+      cy.findByRole('menuitem', { name: 'Set as Realm Default' }).should('not.exist');
+      cy.findByRole('menuitem', { name: 'Delete' }).should('not.exist');
+    });
 }
 
 /**
@@ -186,9 +197,14 @@ export function deleteAllThemesFromList() {
 
           // Delete Theme
           cy.findByRole('button').click({ force: true });
-          cy.findByRole('menuitem', { name: 'Delete' }).click({ force: true });
         });
       });
+
+      // Find menu item teleported to app container
+      cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+        .within(() => {
+          cy.findByRole('menuitem', { name: 'Delete' }).click({ force: true });
+        });
 
       // Confirm delete Theme modal
       cy.findByRole('dialog', { name: 'Delete Theme?' }).within(() => {

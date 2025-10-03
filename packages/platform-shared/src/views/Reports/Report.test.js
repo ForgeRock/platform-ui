@@ -8,7 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import { createTooltipContainer, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { createAppContainer, createTooltipContainer, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -30,8 +30,9 @@ mockValidation();
 describe('Report component that contains the run and history tabs', () => {
   function setup(props) {
     setupTestPinia();
+    createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']);
     return mount(Report, {
-      attachTo: createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']),
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
       },
