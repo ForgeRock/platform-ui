@@ -8,14 +8,16 @@
 import { nextTick } from 'vue';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
-import { mount, flushPromises } from '@vue/test-utils';
+import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import {
+  createAppContainer,
   findAllByTestId,
   findByRole,
   findByText,
   findByTestId,
+  toggleActionsMenu,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
@@ -31,6 +33,7 @@ describe('Component for creating custom analytics reports', () => {
     setupTestPinia();
     mockModal();
     return mount(ReportTemplate, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
       },
@@ -42,6 +45,7 @@ describe('Component for creating custom analytics reports', () => {
   }
 
   let wrapper;
+  let domWrapper;
 
   const fieldOptionsStub = {
     data: {
@@ -205,7 +209,9 @@ describe('Component for creating custom analytics reports', () => {
     });
 
     jest.useFakeTimers();
+    document.body.innerHTML = '';
     wrapper = setup();
+    domWrapper = new DOMWrapper(document.body);
     jest.clearAllMocks();
   });
 
@@ -353,7 +359,8 @@ describe('Component for creating custom analytics reports', () => {
 
       // deletes the "owners" related entity
       const [, applicationOwners] = dataSourceContainer.findAll('.card');
-      const deleteMenu = applicationOwners.find('[role="menu"]');
+      await toggleActionsMenu(applicationOwners.find('.menu-container'));
+      const deleteMenu = domWrapper.find('#app > .menu');
       await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
       await flushPromises();
       jest.runAllTimers();
@@ -370,7 +377,8 @@ describe('Component for creating custom analytics reports', () => {
       await addDataSource();
 
       const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
-      const dataSourceDeleteButton = findByText(dataSourceContainer, 'a', 'deleteDelete');
+      await toggleActionsMenu(dataSourceContainer.find('.menu-container'));
+      const dataSourceDeleteButton = findByText(domWrapper, 'a', 'deleteDelete');
       await dataSourceDeleteButton.trigger('click');
 
       // Should take user to initial view asking to add a Data Source
@@ -418,7 +426,8 @@ describe('Component for creating custom analytics reports', () => {
       // Should show related entities for the applications entity since the getReportEntities
       // API call returns a value for the relatedEntities property.
       let entitiesSettingContainer = findByTestId(wrapper, 'entities-settings-container');
-      let relatedDataSourcesLegend = findByText(entitiesSettingContainer, 'legend', 'Related data sources');
+      await toggleActionsMenu(entitiesSettingContainer.find('.menu-container'));
+      let relatedDataSourcesLegend = findByText(domWrapper, 'legend', 'Related data sources');
       expect(relatedDataSourcesLegend.exists()).toBe(true);
 
       // should detect roles and assignments as related entity options
@@ -431,7 +440,7 @@ describe('Component for creating custom analytics reports', () => {
       // related entities and test that there are no related entity elements.
 
       // delete current entity
-      await findByText(entitiesSettingContainer, 'a', 'deleteDelete').trigger('click');
+      await findByText(domWrapper, 'a', 'deleteDelete').trigger('click');
       await flushPromises();
       jest.runAllTimers();
       await nextTick();
@@ -504,12 +513,12 @@ describe('Component for creating custom analytics reports', () => {
       AutoApi.saveAnalyticsReport = jest.fn().mockReturnValue(Promise.resolve({}));
       const entitiesSettingContainer = findByTestId(wrapper, 'entities-settings-container');
       const [, applicationRolesRelatedEntity] = entitiesSettingContainer.findAll('.card-body');
-      const ellipseMenu = applicationRolesRelatedEntity.find('[role="menu"]');
-      const allMenuItemOptions = ellipseMenu.findAll('[role="menuitem"]');
+      await toggleActionsMenu(applicationRolesRelatedEntity.find('.menu-container'));
+      const parameterActionsMenu = domWrapper.find('#app > .menu');
+      const allMenuItemOptions = parameterActionsMenu.findAll('[role="menuitem"]');
       const [settingsOption] = allMenuItemOptions;
 
       // loads current related entity data to edit
-      await ellipseMenu.trigger('click');
       await settingsOption.trigger('click');
 
       const saveAnalyticsReportSpy = jest.spyOn(AutoApi, 'saveAnalyticsReport');
@@ -573,13 +582,13 @@ describe('Component for creating custom analytics reports', () => {
           await addParameterDefinition();
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const actionsMenu = findByRole(parametersSettingContainer, 'menu');
-          const deleteOption = findByText(actionsMenu, 'a', 'deleteDelete');
+          await toggleActionsMenu(parametersSettingContainer);
+          const parameterActionsMenu = domWrapper.find('#app > [role="menu"]');
+          const deleteOption = findByText(parameterActionsMenu, 'a', 'deleteDelete');
 
           let newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter basic');
           expect(newParameterDefinitionHeading.exists()).toBe(true);
 
-          await actionsMenu.trigger('click');
           await deleteOption.trigger('click');
 
           newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter basic');
@@ -594,10 +603,10 @@ describe('Component for creating custom analytics reports', () => {
           const newParameterDefinitionHeading = findByText(parametersSettingContainer, 'h4', 'MyParameter basic');
           expect(newParameterDefinitionHeading.exists()).toBe(true);
 
-          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
+          await toggleActionsMenu(parametersSettingContainer);
+          const parameterActionsMenu = domWrapper.find('#app > [role="menu"]');
           const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameter');
 
-          await parameterActionsMenu.trigger('click');
           await parametersEditOption.trigger('click');
 
           const [, parametersModal] = wrapper.findAll('[role="dialog"]');
@@ -693,14 +702,14 @@ describe('Component for creating custom analytics reports', () => {
           await addFilterDefinition();
 
           const filterSettingsContainer = findByTestId(wrapper, 'filter-settings-container');
-          const actionsMenu = findByRole(filterSettingsContainer, 'menu');
-          const deleteOption = findByText(actionsMenu, 'a', 'deleteDelete');
+          await toggleActionsMenu(filterSettingsContainer);
+          const parameterActionsMenu = domWrapper.find('#app > [role="menu"]');
+          const deleteOption = findByText(parameterActionsMenu, 'a', 'deleteDelete');
 
           // ensures that the filter definition exists
           let activeFilterCard = findByText(filterSettingsContainer, 'p', 'checkFilter active');
           expect(activeFilterCard.exists()).toBe(true);
 
-          await actionsMenu.trigger('click');
           await deleteOption.trigger('click');
 
           // ensures that the filter definition does NOT exist anymore
@@ -732,10 +741,10 @@ describe('Component for creating custom analytics reports', () => {
           AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
+          await toggleActionsMenu(parametersSettingContainer);
+          const parameterActionsMenu = domWrapper.find('#app > [role="menu"]');
           const parametersEditOption = findByText(parameterActionsMenu, 'a', 'editEdit Parameter');
 
-          await parameterActionsMenu.trigger('click');
           await parametersEditOption.trigger('click');
 
           // ensures that the original parameter name is set
@@ -781,11 +790,11 @@ describe('Component for creating custom analytics reports', () => {
           AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
+          await toggleActionsMenu(parametersSettingContainer);
+          const parameterActionsMenu = domWrapper.find('#app > [role="menu"]');
           const parametersDeleteOption = findByText(parameterActionsMenu, 'a', 'deleteDelete');
 
           // Deletes the parameter
-          await parameterActionsMenu.trigger('click');
           await parametersDeleteOption.trigger('click');
 
           [,, filtersModal] = wrapper.findAll('[role="dialog"]');
@@ -824,11 +833,11 @@ describe('Component for creating custom analytics reports', () => {
           AutoApi.getReportFieldOptions = jest.fn().mockReturnValue(Promise.resolve(fieldOptionsStubFiltered));
 
           const parametersSettingContainer = findByTestId(wrapper, 'parameters-settings-container');
-          const parameterActionsMenu = findByRole(parametersSettingContainer, 'menu');
+          await toggleActionsMenu(parametersSettingContainer);
+          const parameterActionsMenu = domWrapper.find('#app > [role="menu"]');
           const parametersDeleteOption = findByText(parameterActionsMenu, 'a', 'deleteDelete');
 
           // Deletes the parameter
-          await parameterActionsMenu.trigger('click');
           await parametersDeleteOption.trigger('click');
 
           // ensures that the filter definition does NOT exist anymore
@@ -851,10 +860,10 @@ describe('Component for creating custom analytics reports', () => {
           await addFilterDefinition();
 
           let filterSettingsContainer = findByTestId(wrapper, 'filter-settings-container');
-          let editFilterButton = filterSettingsContainer.find('button');
-          let editFilterOptionButton = findByText(filterSettingsContainer, 'a', 'editEdit Filter');
-          await editFilterButton.trigger('click');
+          await toggleActionsMenu(filterSettingsContainer);
+          let editFilterOptionButton = findByText(domWrapper, 'a', 'editEdit Filter');
           await editFilterOptionButton.trigger('click');
+          await toggleActionsMenu(filterSettingsContainer);
           await flushPromises();
           await nextTick();
 
@@ -884,14 +893,12 @@ describe('Component for creating custom analytics reports', () => {
           // deletes the "applications / roles" data source
           const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
           const [,, applicationsRoles] = dataSourceContainer.findAll('.card');
-          const deleteMenu = applicationsRoles.find('[role="menu"]');
-          await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
-
+          await toggleActionsMenu(applicationsRoles.find('.menu-container'));
+          await findByText(domWrapper, 'a', 'deleteDelete').trigger('click');
           // opens filter modal to ensure that the second rule that had the deleted data source selection is also deleted
           filterSettingsContainer = findByTestId(wrapper, 'filter-settings-container');
-          editFilterButton = filterSettingsContainer.find('button');
-          editFilterOptionButton = findByText(filterSettingsContainer, 'a', 'editEdit Filter');
-          await editFilterButton.trigger('click');
+          await toggleActionsMenu(filterSettingsContainer);
+          editFilterOptionButton = findByText(domWrapper, 'a', 'editEdit Filter');
           await editFilterOptionButton.trigger('click');
           await flushPromises();
 
@@ -961,9 +968,8 @@ describe('Component for creating custom analytics reports', () => {
           expect(newParameterDefinitionHeading.exists()).toBe(true);
 
           // deletes the aggregate
-          const actionsMenu = findByRole(aggregateSettingContainer, 'menu');
-          const deleteOption = findByText(actionsMenu, 'a', 'deleteDelete');
-          await actionsMenu.trigger('click');
+          await toggleActionsMenu(aggregateSettingContainer);
+          const deleteOption = findByText(domWrapper, 'a', 'deleteDelete');
           await deleteOption.trigger('click');
 
           // ensures that the aggregate definition does NOT exist anymore
@@ -1004,8 +1010,8 @@ describe('Component for creating custom analytics reports', () => {
           // deletes the "applications / roles" data source
           const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
           const [,, applicationsRoles] = dataSourceContainer.findAll('.card');
-          const deleteMenu = applicationsRoles.find('[role="menu"]');
-          await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
+          await toggleActionsMenu(applicationsRoles.find('.menu-container'));
+          await findByText(domWrapper, 'a', 'deleteDelete').trigger('click');
           await flushPromises();
 
           // Checks to make sure that only the aggregate that had the deleted data source is not present
@@ -1068,9 +1074,8 @@ describe('Component for creating custom analytics reports', () => {
           expect(definitionHeading.text()).toBe('arrow_upwardSort by: applications._id');
 
           // sets the existing definition to edit
-          const actionsMenu = findByRole(sortSettingsContainer, 'menu');
-          const editOption = findByText(actionsMenu, 'a', 'editEdit Sorting');
-          await actionsMenu.trigger('click');
+          await toggleActionsMenu(sortSettingsContainer);
+          const editOption = findByText(domWrapper, 'a', 'editEdit Sorting');
           await editOption.trigger('click');
 
           const [,,,, sortModal] = wrapper.findAll('[role="dialog"]');
@@ -1108,9 +1113,8 @@ describe('Component for creating custom analytics reports', () => {
           expect(definitionHeading.text()).toBe('arrow_upwardSort by: applications._id');
 
           // deletes the sort definition
-          const actionsMenu = findByRole(sortSettingsContainer, 'menu');
-          const deleteOption = findByText(actionsMenu, 'a', 'deleteDelete');
-          await actionsMenu.trigger('click');
+          await toggleActionsMenu(sortSettingsContainer);
+          const deleteOption = findByText(domWrapper, 'a', 'deleteDelete');
           await deleteOption.trigger('click');
 
           // ensures that the sort definition does NOT exist anymore
@@ -1150,8 +1154,9 @@ describe('Component for creating custom analytics reports', () => {
           // deletes the "applications / roles" data source
           const dataSourceContainer = findByTestId(wrapper, 'entities-settings-container');
           const [,, applicationsRoles] = dataSourceContainer.findAll('.card');
-          const deleteMenu = applicationsRoles.find('[role="menu"]');
-          await findByText(deleteMenu, 'a', 'deleteDelete').trigger('click');
+          await toggleActionsMenu(applicationsRoles.find('.menu-container'));
+
+          await findByText(domWrapper, 'a', 'deleteDelete').trigger('click');
           await flushPromises();
 
           // Checks to make sure that only the sort definition that had the deleted data source is not present

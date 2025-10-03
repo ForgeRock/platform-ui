@@ -7,7 +7,12 @@
 
 import { nextTick } from 'vue';
 import { flushPromises, mount } from '@vue/test-utils';
-import { findByText, findAllByTestId, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import {
+  createAppContainer,
+  findByText,
+  findAllByTestId,
+  findByTestId,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import i18n from '@/i18n';
@@ -20,6 +25,7 @@ mockValidation(['alpha_num_spaces']);
 describe('Report Template Settings component', () => {
   function setup(props) {
     return mount(ReportTemplateSettings, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
       },

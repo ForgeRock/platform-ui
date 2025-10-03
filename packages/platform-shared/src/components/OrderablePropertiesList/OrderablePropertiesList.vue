@@ -109,7 +109,6 @@ of the MIT license. See the LICENSE file for details. -->
               </BTd>
               <BTd class="w-120px fr-no-resize sticky-right">
                 <FrActionsCell
-                  :boundary="boundaryValue"
                   class="py-2"
                   :edit-option="false"
                   :delete-option="false"
@@ -118,7 +117,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <template #custom-top-actions>
                     <BDropdownItem
                       v-if="element.order !== 0"
-                      @click.stop="moveProperty(element.order, element.order - 1)"
+                      @click="moveProperty(element.order, element.order - 1)"
                       data-testid="move-up-btn">
                       <FrIcon
                         icon-class="mr-2"
@@ -128,7 +127,7 @@ of the MIT license. See the LICENSE file for details. -->
                     </Bdropdownitem>
                     <BDropdownItem
                       v-if="element.order !== (orderedProperties.length - 1)"
-                      @click.stop="moveProperty(element.order, element.order + 1)"
+                      @click="moveProperty(element.order, element.order + 1)"
                       data-testid="move-down-btn">
                       <FrIcon
                         icon-class="mr-2"
@@ -138,7 +137,7 @@ of the MIT license. See the LICENSE file for details. -->
                     </Bdropdownitem>
                     <BDropdownDivider v-if="orderedProperties.length > 1" />
                     <BDropdownItem
-                      @click.stop="$emit('remove-property', element);"
+                      @click="$emit('remove-property', element);"
                       data-testid="remove-btn">
                       <FrIcon
                         icon-class="mr-2"
@@ -178,7 +177,6 @@ import {
 import Draggable from 'vuedraggable';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import {
   ref,
   watch,
@@ -206,7 +204,6 @@ const props = defineProps({
   },
 });
 
-const boundaryValue = getDropdownBoundary(true);
 const orderedProperties = ref([]);
 
 /**

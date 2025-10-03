@@ -8,6 +8,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHelpers';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import EntitlementList from './EntitlementList';
 import i18n from '@/i18n';
@@ -23,6 +24,7 @@ describe('EntitlementList', () => {
   let wrapper;
   function mountComponent() {
     return mount(EntitlementList, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
       },

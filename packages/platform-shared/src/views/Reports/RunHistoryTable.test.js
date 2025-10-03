@@ -1,12 +1,17 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { DOMWrapper, mount } from '@vue/test-utils';
+import {
+  createAppContainer,
+  createTooltipContainer,
+  findByTestId,
+  toggleActionsMenu,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 
 import i18n from '@/i18n';
 import RunHistoryTable from './RunHistoryTable';
@@ -20,8 +25,10 @@ const {
 
 describe('Run History Table component', () => {
   function setup(props) {
-    return mount(RunHistoryTable, {
-      attachTo: createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']),
+    createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']);
+    const domWrapper = new DOMWrapper(document.body);
+    const wrapper = mount(RunHistoryTable, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
       },
@@ -30,13 +37,16 @@ describe('Run History Table component', () => {
         ...props,
       },
     });
+    return { wrapper, domWrapper };
   }
 
   let wrapper;
+  let domWrapper;
 
   describe('@renders', () => {
     beforeEach(() => {
-      wrapper = setup();
+      document.body.innerHTML = '';
+      ({ wrapper, domWrapper } = setup());
     });
 
     describe('on data load initial table view', () => {
@@ -67,7 +77,8 @@ describe('Run History Table component', () => {
 
   describe('@actions', () => {
     beforeEach(() => {
-      wrapper = setup();
+      document.body.innerHTML = '';
+      ({ wrapper, domWrapper } = setup());
     });
 
     it('emits "view-report" when the view report button is clicked in the table', async () => {
@@ -101,7 +112,9 @@ describe('Run History Table component', () => {
     });
 
     it('emits "view-run-details" if the "Run Details" button is clicked in the ellipse menu', async () => {
-      const RunDetailsDropdownOption = findByTestId(wrapper, 'view-run-option');
+      await toggleActionsMenu(wrapper);
+
+      const RunDetailsDropdownOption = findByTestId(domWrapper, 'view-run-option');
 
       await RunDetailsDropdownOption.trigger('click');
       expect(wrapper.emitted()['view-run-details'][0]).toBeTruthy();

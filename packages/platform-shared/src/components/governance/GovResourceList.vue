@@ -54,7 +54,6 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(actions)="{ item }">
         <FrActionsCell
-          :boundary="boundaryValue"
           wrapper-class="pr-2"
           :delete-option="false"
           :divider="false"
@@ -104,7 +103,6 @@ import {
 import { pluralizeAnyString } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getPermissionsForUsers } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
-import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -145,7 +143,6 @@ const props = defineProps({
   },
 });
 
-const boundaryValue = getDropdownBoundary(true);
 const isLoading = ref(false);
 const items = ref([]);
 const currentPage = ref(1);

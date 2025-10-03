@@ -5,18 +5,26 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { DOMWrapper, mount } from '@vue/test-utils';
 import {
+  createAppContainer,
   findByRole,
   findByText,
   findByTestId,
+  toggleActionsMenu,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import ReportDataSourceDefinition from './ReportDataSourceDefinition';
 
+beforeEach(() => {
+  document.body.innerHTML = '';
+});
+
 describe('Report Data Source Definition component', () => {
   function setup(props) {
-    return mount(ReportDataSourceDefinition, {
+    const domWrapper = new DOMWrapper(document.body);
+    const wrapper = mount(ReportDataSourceDefinition, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
       },
@@ -26,6 +34,7 @@ describe('Report Data Source Definition component', () => {
         ...props,
       },
     });
+    return { wrapper, domWrapper };
   }
 
   const dataSourceColumns = [{
@@ -53,10 +62,11 @@ describe('Report Data Source Definition component', () => {
   const selectedRelatedDataSources = [{ path: 'applications.assignments', label: 'Assignments' }];
 
   let wrapper;
+  let domWrapper;
 
   describe('@component', () => {
     beforeEach(async () => {
-      wrapper = setup();
+      ({ wrapper, domWrapper } = setup());
     });
 
     it('displays the definition name as the card title when the "name" prop has a value', () => {
@@ -68,7 +78,7 @@ describe('Report Data Source Definition component', () => {
       let emptyColumnsText = wrapper.find('fieldset').find('p');
       expect(emptyColumnsText.text()).toBe('No columns');
 
-      wrapper = setup({ dataSourceColumns });
+      ({ wrapper } = setup({ dataSourceColumns }));
 
       emptyColumnsText = wrapper.find('fieldset').find('p');
       expect(emptyColumnsText.exists()).toBe(false);
@@ -86,7 +96,7 @@ describe('Report Data Source Definition component', () => {
       expect(allFieldSets.length).toBe(1);
       expect(firstFieldsetLabel.text()).toBe('Available Columns');
 
-      wrapper = setup({ relatedDataSources });
+      ({ wrapper } = setup({ relatedDataSources }));
 
       allFieldSets = wrapper.findAll('fieldset');
       expect(allFieldSets.length).toBe(2);
@@ -106,7 +116,7 @@ describe('Report Data Source Definition component', () => {
     });
 
     it('shows a checkmark for any related data sources that appear in the list of the selectedRelatedDataSources prop', () => {
-      wrapper = setup({ relatedDataSources, selectedRelatedDataSources });
+      ({ wrapper } = setup({ relatedDataSources, selectedRelatedDataSources }));
 
       const allFieldSets = wrapper.findAll('fieldset');
       expect(allFieldSets.length).toBe(2);
@@ -120,14 +130,14 @@ describe('Report Data Source Definition component', () => {
     });
 
     it('shows a specific title path that includes the parent data source name for related data source definitions', () => {
-      wrapper = setup({ dataSource: 'applications.assignments', dataSourcePathLabel: 'Applications / Assignments' });
+      ({ wrapper } = setup({ dataSource: 'applications.assignments', dataSourcePathLabel: 'Applications / Assignments' }));
 
       const dataSourceDefinitionHeading = wrapper.find('h4');
       expect(dataSourceDefinitionHeading.text()).toBe('Applications / Assignments');
     });
 
     it('emits the data source columns array when a column checkbox is selected', async () => {
-      wrapper = setup({ dataSourceColumns });
+      ({ wrapper } = setup({ dataSourceColumns }));
 
       const [firstNameCheckbox, lastNameCheckbox] = findByRole(wrapper, 'group').findAll('input[type="checkbox"]');
       await firstNameCheckbox.setValue();
@@ -137,7 +147,7 @@ describe('Report Data Source Definition component', () => {
     });
 
     it('emits the related entity value when a related data source is selected', async () => {
-      wrapper = setup({ relatedDataSources });
+      ({ wrapper } = setup({ relatedDataSources }));
 
       const allFieldSets = wrapper.findAll('fieldset');
 
@@ -154,24 +164,26 @@ describe('Report Data Source Definition component', () => {
     });
 
     it('emits "delete-data-source" when a data source definition card is deleted', async () => {
-      const deleteButton = findByTestId(wrapper, 'dropdown-delete-');
+      await toggleActionsMenu(wrapper.find('.menu-container'));
+      const deleteButton = findByTestId(domWrapper, 'dropdown-delete-');
       await deleteButton.trigger('click');
       expect(wrapper.emitted()['delete-data-source'][0]).toBeTruthy();
     });
 
-    it('only displays the "settings" option in the ellipse menu for related entity definitions', () => {
-      const ellipseMenu = wrapper.find('[role="menu"]');
-      const allMenuItemOptions = ellipseMenu.findAll('[role="menuitem"]');
+    it('only displays the "settings" option in the ellipse menu for related entity definitions', async () => {
+      await toggleActionsMenu(wrapper.find('.menu-container'));
+      const allMenuItemOptions = domWrapper.findAll('#app > .menu [role="menuitem"]');
       const [deleteOption] = allMenuItemOptions;
 
       expect(allMenuItemOptions.length).toBe(1);
       expect(deleteOption.text()).toBe('deleteDelete');
 
-      // sets a related entity
-      wrapper = setup({ dataSource: 'applications.roles', dataSourcePathLabel: 'Applications / Roles' });
+      // sets a related entity, closes the previous menu, and opens a new one
+      await toggleActionsMenu(wrapper.find('.menu-container'));
+      ({ wrapper, domWrapper } = setup({ dataSource: 'applications.roles', dataSourcePathLabel: 'Applications / Roles' }));
 
-      const ellipseMenuForRelatedEntities = wrapper.find('[role="menu"]');
-      const allMenuItemOptionsForRelatedEntities = ellipseMenuForRelatedEntities.findAll('[role="menuitem"]');
+      await toggleActionsMenu(wrapper.find('.menu-container'));
+      const allMenuItemOptionsForRelatedEntities = domWrapper.findAll('#app > .menu [role="menuitem"]');
       const [settingsOptionForRelatedEntities, deleteOptionForRelatedEntities] = allMenuItemOptionsForRelatedEntities;
 
       expect(allMenuItemOptionsForRelatedEntities.length).toBe(2);
@@ -181,14 +193,13 @@ describe('Report Data Source Definition component', () => {
 
     it('emits "related-entity-settings" when the related entity "settings" ellipse menu option is selected.', async () => {
       // sets a related entity
-      wrapper = setup({ dataSource: 'applications.roles', dataSourcePathLabel: 'Applications / Roles' });
+      ({ wrapper, domWrapper } = setup({ dataSource: 'applications.roles', dataSourcePathLabel: 'Applications / Roles' }));
 
-      const ellipseMenu = wrapper.find('[role="menu"]');
-      const allMenuItemOptions = ellipseMenu.findAll('[role="menuitem"]');
+      await toggleActionsMenu(wrapper.find('.menu-container'));
+      const allMenuItemOptions = domWrapper.findAll('#app > .menu [role="menuitem"]');
       const [settingsOption] = allMenuItemOptions;
-
-      await ellipseMenu.trigger('click');
       await settingsOption.trigger('click');
+
       expect(wrapper.emitted()['related-entity-settings'][0]).toBeTruthy();
     });
   });

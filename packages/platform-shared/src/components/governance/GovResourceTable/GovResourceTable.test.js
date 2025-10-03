@@ -5,9 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { createAppContainer, findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import { mount, flushPromises } from '@vue/test-utils';
+import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
@@ -51,6 +51,10 @@ const mockItems = [
   },
 ];
 
+beforeEach(() => {
+  document.body.innerHTML = '';
+});
+
 describe('GovResourceTable', () => {
   CommonsApi.getGlossarySchema = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
   CommonsApi.getUserGrants = jest.fn().mockReturnValue(Promise.resolve({
@@ -62,7 +66,9 @@ describe('GovResourceTable', () => {
   async function mountComponent(overrideProps) {
     jest.clearAllMocks();
     setupTestPinia({ user: { userId: 'testId' } });
+    const domWrapper = new DOMWrapper(document.body);
     const wrapper = mount(GovResourceTable, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n, Notifications],
         mocks: {
@@ -103,11 +109,11 @@ describe('GovResourceTable', () => {
       },
     });
     await flushPromises();
-    return wrapper;
+    return { wrapper, domWrapper };
   }
 
   it('should have a loading spinner then have a table', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     const myAccessSpinner = wrapper.find('[role="status"]');
     expect(myAccessSpinner.exists()).toBeTruthy();
     wrapper.setProps({ items: mockItems });
@@ -117,13 +123,13 @@ describe('GovResourceTable', () => {
   });
 
   it('should have an input to search my access review table if items are return', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     const searchMyAccessReviewTable = findByTestId(wrapper, 'search-gov-resource-table');
     expect(searchMyAccessReviewTable.exists()).toBeTruthy();
   });
 
   it('shows the actions menu if passed in and account assignment is direct', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     let actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     expect(actionOptionsMenu.exists()).toBeFalsy();
     let badge = findByTestId(wrapper, 'status-badge');
@@ -140,7 +146,7 @@ describe('GovResourceTable', () => {
   });
 
   it('shows the actions menu if showViewDetails is true', async () => {
-    const wrapper = await mountComponent({ showViewDetails: true, parentResourceName: 'role' });
+    const { wrapper } = await mountComponent({ showViewDetails: true, parentResourceName: 'role' });
     wrapper.setProps({
       grantType: 'entitlement',
       items: [
@@ -167,7 +173,7 @@ describe('GovResourceTable', () => {
   });
 
   it('does not have the actions menu if account assignment is not direct', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     let actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     expect(actionOptionsMenu.exists()).toBeFalsy();
     let badge = findByTestId(wrapper, 'status-badge');
@@ -211,19 +217,18 @@ describe('GovResourceTable', () => {
   });
 
   it('should open revoke modal when revoke is clicked', async () => {
-    const wrapper = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
+    const { wrapper, domWrapper } = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
     const revoke = jest.spyOn(wrapper.vm, 'showRevokeModal');
     await wrapper.setProps({ items: mockItems });
-
     const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
-    await actionOptionsMenu.trigger('click');
-    await actionOptionsMenu.find('li:nth-of-type(2) > a').trigger('click'); // Revoke menu item
+    await actionOptionsMenu.find('button').trigger('click');
+    await domWrapper.find('#app > .menu li:nth-of-type(2) > a').trigger('click'); // Revoke menu item
 
     expect(revoke).toHaveBeenCalled();
   });
 
   it('should show floating bar when row is selected, and show revoke modal when revoke button is clicked', async () => {
-    const wrapper = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
+    const { wrapper } = await mountComponent({ showViewDetails: true, grantType: 'entitlement' });
     const revoke = jest.spyOn(wrapper.vm, 'showRevokeModal');
     await wrapper.setProps({ items: mockItems });
     wrapper.findAll('[role="row"]')[1].trigger('click');
@@ -235,7 +240,7 @@ describe('GovResourceTable', () => {
   });
 
   it('clearing the search input resets the query params', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     const searchMyAccessReviewTable = findComponentByTestId(wrapper, 'search-gov-resource-table');
     await searchMyAccessReviewTable.vm.$emit('input', 'test');
@@ -247,7 +252,7 @@ describe('GovResourceTable', () => {
   });
 
   it('can sort table by descending', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     wrapper.vm.sortChanged({ sortBy: 'appName', sortDesc: true });
     expect(wrapper.vm.sortDesc).toBe(true);
@@ -258,7 +263,7 @@ describe('GovResourceTable', () => {
   });
 
   it('can sort table by ascending', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     wrapper.vm.sortChanged({ sortBy: 'appName', sortDesc: false });
     expect(wrapper.emitted()['load-data'][1][0]).toStrictEqual({
       pageNumber: 0, pageSize: 10, sortBy: 'application.name', sortDir: 'asc', grantType: 'account',
@@ -286,7 +291,7 @@ describe('GovResourceTable', () => {
   });
 
   it('emits sortBy of \'name\' when parent resource is role', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     wrapper.setProps({ parentResourceName: 'alpha_role' });
     await flushPromises();
     wrapper.vm.loadData();
@@ -296,7 +301,7 @@ describe('GovResourceTable', () => {
   });
 
   it('displays row cell name when parent resource is role', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     await wrapper.setProps({ items: mockItems });
     await flushPromises();
     const roleAccountNameCell = wrapper.findAll('h3').filter((item) => item.text().includes('test'));
@@ -304,7 +309,7 @@ describe('GovResourceTable', () => {
   });
 
   it('can set page size', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     wrapper.vm.loadData({ paginationPageSize: 20 });
 
     expect(wrapper.vm.paginationPageSize).toBe(20);
@@ -312,7 +317,7 @@ describe('GovResourceTable', () => {
   });
 
   it('can set page', async () => {
-    const wrapper = await mountComponent();
+    const { wrapper } = await mountComponent();
     wrapper.vm.loadData({ paginationPage: 2 });
 
     expect(wrapper.vm.paginationPage).toBe(2);
@@ -321,7 +326,7 @@ describe('GovResourceTable', () => {
 
   describe('loadData()', () => {
     it('sets table items when data is successfully loaded', async () => {
-      const wrapper = await mountComponent();
+      const { wrapper } = await mountComponent();
       wrapper.setProps({
         items: [
           {
@@ -362,7 +367,7 @@ describe('GovResourceTable', () => {
     });
 
     it('displays noData component when no my access are found', async () => {
-      const wrapper = await mountComponent();
+      const { wrapper } = await mountComponent();
       wrapper.setProps({ items: [] });
       await flushPromises();
       expect(wrapper.vm.isNoResultsFirstLoad).toBe(true);
@@ -373,7 +378,7 @@ describe('GovResourceTable', () => {
 
   describe('method getResourceDisplayName should return correct displayName', () => {
     it('item with descriptor should return property displayName value', async () => {
-      const wrapper = await mountComponent();
+      const { wrapper } = await mountComponent();
       const item = {
         descriptor: {
           idx: {
@@ -389,7 +394,7 @@ describe('GovResourceTable', () => {
     });
 
     it('item without displayName property should return undefined', async () => {
-      const wrapper = await mountComponent();
+      const { wrapper } = await mountComponent();
       const item = {
         descriptor: {
           idx: {
@@ -403,7 +408,7 @@ describe('GovResourceTable', () => {
     });
 
     it('item without resource property should return undefined', async () => {
-      const wrapper = await mountComponent();
+      const { wrapper } = await mountComponent();
       const item = {
         descriptor: {
           idx: {
@@ -419,7 +424,7 @@ describe('GovResourceTable', () => {
     });
 
     it('item without idx property should return undefined', async () => {
-      const wrapper = await mountComponent();
+      const { wrapper } = await mountComponent();
       const item = { descriptor: {} };
       const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
 
@@ -427,7 +432,7 @@ describe('GovResourceTable', () => {
     });
 
     it('item without descriptor property should return undefined', async () => {
-      const wrapper = await mountComponent();
+      const { wrapper } = await mountComponent();
       const item = {};
       const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
 

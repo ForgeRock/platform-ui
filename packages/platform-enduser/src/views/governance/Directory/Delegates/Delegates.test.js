@@ -1,12 +1,17 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, flushPromises } from '@vue/test-utils';
-import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
+import {
+  createAppContainer,
+  findByTestId,
+  findComponentByTestId,
+  toggleActionsMenu,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import Notifications from '@kyvg/vue3-notification';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
@@ -16,10 +21,12 @@ jest.mock('@/api/governance/DirectoryApi');
 
 describe('AccessReviews', () => {
   let wrapper;
+  let domWrapper;
 
   function setup(userStore = {}) {
     setupTestPinia({ user: { userId: 'testId', privileges: { IDMUsersView: true }, ...userStore } });
     return mount(Delegates, {
+      attachTo: createAppContainer(),
       global: {
         mocks: {
           $t: (t) => t,
@@ -53,6 +60,7 @@ describe('AccessReviews', () => {
   describe('on mount with default pinia store', () => {
     beforeEach(() => {
       wrapper = setup();
+      domWrapper = new DOMWrapper(document.body);
     });
 
     it('should have a table', () => {
@@ -92,7 +100,8 @@ describe('AccessReviews', () => {
         start: 'today',
         end: 'tomorrow',
       }];
-      const deleteButton = findByTestId(wrapper, 'remove-delegate');
+      await toggleActionsMenu(wrapper);
+      const deleteButton = findByTestId(domWrapper, 'remove-delegate');
 
       await deleteButton.trigger('click');
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('delegate-delete-modal');

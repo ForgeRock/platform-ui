@@ -1,20 +1,30 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import { findByText, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { DOMWrapper, mount } from '@vue/test-utils';
+import {
+  createAppContainer,
+  findByText,
+  findByRole,
+  toggleActionsMenu,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import ReportTemplateHeader from './ReportTemplateHeader';
 
 describe('Report Template Header component', () => {
+  let wrapper;
+  let domWrapper;
+
   function setup(props) {
     setupTestPinia();
+    domWrapper = new DOMWrapper(document.body);
     return mount(ReportTemplateHeader, {
+      attachTo: createAppContainer(),
       global: {
         plugins: [i18n],
       },
@@ -24,10 +34,9 @@ describe('Report Template Header component', () => {
     });
   }
 
-  let wrapper;
-
   describe('@component', () => {
     beforeEach(async () => {
+      document.body.innerHTML = '';
       wrapper = setup();
     });
 
@@ -44,7 +53,9 @@ describe('Report Template Header component', () => {
     });
 
     it('emits "delete" when the duplicate option is selected from the ellipse menu', async () => {
-      const actionsMenu = findByRole(wrapper, 'menu');
+      await toggleActionsMenu(wrapper);
+
+      const actionsMenu = findByRole(domWrapper, 'menu');
       const deleteOption = findByText(actionsMenu, 'a', 'deleteDelete');
 
       await deleteOption.trigger('click');

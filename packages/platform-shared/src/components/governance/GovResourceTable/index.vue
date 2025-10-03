@@ -187,7 +187,6 @@ of the MIT license. See the LICENSE file for details. -->
           <FrActionsCell
             v-if="item.assignment === directAssignment || item.assignment === staticAssignment || showViewDetails"
             test-id="relationship-menu"
-            boundary="scrollParent"
             :delete-option="false"
             :divider="false"
             :edit-option="false">

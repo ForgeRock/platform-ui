@@ -71,9 +71,10 @@ export function findAllByTestId(wrapper, testId) {
  * vue-test-utils helper function for getting an element by role
  * @param {*} wrapper the component wrapper
  * @param {*} role the role
+ * @param {String} text the text to match against
  * @returns a wrapper containing the found element
  */
-export function findByRole(wrapper, role) {
+export function findByRole(wrapper, role, text) {
   if (!wrapper) {
     throw new Error('Please provide a wrapper');
   }
@@ -82,7 +83,15 @@ export function findByRole(wrapper, role) {
     throw new Error('Please provide a valid role');
   }
 
-  return wrapper.find(`[role=${role}]`);
+  if (text !== undefined && typeof text !== 'string') {
+    throw new Error('Please provide a valid text value');
+  }
+
+  if (text === undefined) {
+    return wrapper.find(`[role=${role}]`);
+  }
+
+  return wrapper.findAll(`[role=${role}]`).filter((item) => item.text().includes(text))[0];
 }
 
 /**
@@ -109,6 +118,17 @@ export function findAllByText(wrapper, selector, text) {
  */
 export function findByText(wrapper, selector, text) {
   return findAllByText(wrapper, selector, text)[0];
+}
+
+/**
+ * Creates a new application container element.
+ * @returns {HTMLElement} The created application container element.
+ */
+export function createAppContainer() {
+  const app = document.createElement('div');
+  app.id = 'app';
+  document.body.appendChild(app);
+  return app;
 }
 
 /**
@@ -142,6 +162,17 @@ export function mockScriptDocumentFunctions() {
 }
 
 /**
+ * Toggles opened or closed the first actions menu found in the given element.
+ * @param {HTMLElement} element The element containing the actions menu button(s).
+ * @param {number} index The index of the actions menu button to toggle (default is 0).
+ */
+export async function toggleActionsMenu(element) {
+  const actionsCellButton = element.findAll('button').filter((item) => item.text().includes('more_horiz'))[0];
+  expect(actionsCellButton).toBeDefined();
+  await actionsCellButton.trigger('click');
+}
+
+/**
  * Helper function for testing composable functions that require setup to be called.
  * It will return the result and the app instance for testing provide/unmount functions if needed
  * @param {*} composable the composable function to test
@@ -159,4 +190,4 @@ export function withSetup(composable) {
   return [result, app];
 }
 
-export default { findByTestId, findByRole };
+export default { findByTestId, findByRole, toggleActionsMenu };
