@@ -247,6 +247,7 @@ export default {
     value(newValue, oldValue) {
       // allows resetting the value to an empty string
       if (newValue === '' && oldValue !== undefined) {
+        this.savedData = {};
         this.selectValue = newValue;
       }
     },
