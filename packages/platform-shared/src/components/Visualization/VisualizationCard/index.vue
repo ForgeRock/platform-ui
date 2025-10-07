@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
             <!--   ref="cardTitle" -->
             <!-- > -->
             <div
-              :class="[{'mb-4': !count}, 'position-relative']"
+              :class="[{'mb-2': !count}, 'position-relative']"
               ref="cardTitle">
               <div
                 class="d-flex align-items-center justify-content-start"
@@ -172,9 +172,11 @@ export default {
       * Sets the svgWidth value based on responsive resizing
       */
     onResize() {
-      const cardBodyPaddingTop = parseInt(getComputedStyle(this.$refs.cardBody).paddingTop, 10);
-      this.svgWidth = this.$refs.cardHeader.offsetWidth;
-      this.svgHeight = this.$refs.cardBody.offsetHeight - (cardBodyPaddingTop * 2) - this.$refs.cardHeader?.offsetHeight;
+      const { cardBody, cardHeader } = this.$refs;
+      if (!cardBody || !cardHeader) return;
+      const cardBodyPaddingTop = parseInt(getComputedStyle(cardBody).paddingTop, 10) || 0;
+      this.svgWidth = cardHeader.offsetWidth;
+      this.svgHeight = cardBody.offsetHeight - (cardBodyPaddingTop * 2) - (cardHeader?.offsetHeight || 0);
     },
   },
   computed: {

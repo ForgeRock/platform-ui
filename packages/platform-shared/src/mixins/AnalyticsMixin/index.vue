@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -132,10 +132,62 @@ export default {
       //   });
       return getAnalyticsData(eventType, dateRange, this.selectedIntervalType)
         .then(({ data }) => {
+          if (eventType === 'totalNodes' || eventType === 'totalCustomNodes') {
+            const total = data.reduce((sum, d) => sum + (d.result?.count || 0), 0);
+            return {
+              dateRange: persist ? 'previous' : 'current',
+              value: total,
+            };
+          }
+
           const formattedData = this.formatApiData(data, eventType, dateRange, persist);
           return Promise.resolve(formattedData);
         }).catch((error) => Promise.reject(error));
     },
+
+    /**
+      * Makes a request to the analytics API for journey data and returns formatted data.
+      *
+      * @param {DateRange} dateRange The start and end dates for the data.
+      * @param {string} eventType The event type to filter the data.
+      * @param {boolean} compare A flag indicating whether to compare data.
+      * @param {array} journeyIds An array of journey IDs to filter the data.
+      * @returns {Promise<array>} A promise that resolves to an array of formatted journey data.
+      */
+    getChartDataForNewDashboard(dateRange, eventType, compare, journeyIds) {
+      return getAnalyticsData(eventType, dateRange, this.selectedIntervalType, journeyIds)
+        .then(({ data }) => Promise.all(journeyIds.map((journeyId) => {
+          const journeyKey = `${journeyId}Journey`;
+          const filteredJourneyData = data.filter((d) => d.eventType === journeyKey);
+
+          if (!this.eventTypes[journeyKey]) {
+            this.eventTypes[journeyKey] = {
+              data: [],
+              id: journeyId,
+              name: journeyKey,
+              resultKey: ['successCount', 'failureCount', 'continueCount'],
+              persist: false,
+            };
+          }
+
+          const formattedData = this.formatApiData(
+            filteredJourneyData,
+            journeyKey,
+            dateRange,
+            this.eventTypes[journeyKey].persist,
+          );
+
+          return {
+            data: formattedData,
+            eventType: journeyKey,
+            compare,
+            id: journeyId,
+            active: !compare,
+          };
+        })))
+        .catch((error) => Promise.reject(error));
+    },
+
     /**
       * Find the total value for the active dataset
       *

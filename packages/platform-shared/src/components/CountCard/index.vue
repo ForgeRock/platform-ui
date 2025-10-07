@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -26,11 +26,26 @@ of the MIT license. See the LICENSE file for details. -->
       <Transition
         appear
         name="fade">
-        <p
-          :data-testid="`counter-${counterId}`"
-          class="h1 mb-0">
-          {{ countFormatted }}
+        <div class="d-flex align-items-end justify-content-start">
+          <p
+            :data-testid="`counter-${counterId}`"
+            class="display-4 h1 mb-0">
+            {{ countFormatted }}
+          </p>
+          <p
+            v-if="shouldCompare"
+            class="mb-1 ml-3 d-flex align-items-center h5">
+            <FrIcon
+              name="arrow_upward"
+              :class="[
+                trend === 'up' ? 'text-success rotate-45' : 'text-danger rotate-135',
+                'ml-2',
+                'md-24'
+              ]"
+          />
+          <span class="ml-1">{{ percentage }}%</span>
         </p>
+        </div>
       </Transition>
       <BTooltip
         v-if="tooltip"
@@ -118,6 +133,18 @@ export default {
      */
     title: {
       required: true,
+      type: String,
+    },
+    shouldCompare: {
+      default: false,
+      type: Boolean,
+    },
+    percentage: {
+      default: 0,
+      type: Number,
+    },
+    trend: {
+      default: 'down',
       type: String,
     },
   },

@@ -9,10 +9,16 @@ import { generateAnalyticsApi } from './BaseApi';
 import store from '@/store';
 
 // eslint-disable-next-line import/prefer-default-export
-export function getAnalyticsData(eventType, dateRange, intervalType) {
-  const { endDate, startDate } = dateRange;
-  const endDateTimeStr = endDate ? `&endDateTime=${endDate}` : '';
-  const params = `&startDateTime=${startDate}&intervalType=${intervalType}${endDateTimeStr}`;
+export function getAnalyticsData(eventType, dateRange, intervalType, journeys = []) {
+  const { startDate, endDate } = dateRange;
 
-  return generateAnalyticsApi().get(`?eventType=${eventType}&realm=${store.state.realm}${params}`);
+  const endDateTimeStr = endDate ? `&endDateTime=${endDate}` : '';
+  const journeyParam = journeys.length ? `&journeys=${encodeURIComponent(journeys.join(','))}` : '';
+  const params = `&startDateTime=${startDate}&intervalType=${intervalType}${endDateTimeStr}${journeyParam}`;
+
+  const useV2Endpoint = store.state.analyticsDashEnabled && (store.state.analyticsDashboardMode === 'beta' || journeys.length > 0);
+
+  const endpoint = useV2Endpoint ? '/v2' : '';
+
+  return generateAnalyticsApi().get(`${endpoint}?eventType=${eventType}&realm=${store.state.realm}${params}`);
 }
