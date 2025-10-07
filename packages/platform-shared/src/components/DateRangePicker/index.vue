@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -122,10 +122,10 @@ export default {
       if (today.subtract(1, 'day').isSame(startDate, 'day')) {
         return this.$t('dashboard.analytics.dateRangeYesterday');
       }
-      if (sevenDaysAgo.isSame(startDate, 'day')) {
+      if (sevenDaysAgo.isSame(startDate, 'day') && sevenDaysAgo.add(7, 'day').isSame(endDate, 'day')) {
         return this.$t('dashboard.analytics.dateRangeLast7Days');
       }
-      if (thirtyDaysAgo.isSame(startDate, 'day')) {
+      if (thirtyDaysAgo.isSame(startDate, 'day') && thirtyDaysAgo.add(30, 'day').isSame(endDate, 'day')) {
         return this.$t('dashboard.analytics.dateRangeLast30Days');
       }
       if (startDate.isSame(endDate, 'day')) {

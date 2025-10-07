@@ -31,6 +31,7 @@ $material-icons-font-path: '~material-icons/iconfont/';
   whitesmoke: $white-smoke;
   brightgray: $bright-gray;
   red: $red;
+  cyan: $cyan;
   /* stylelint-enable */
 }
 
@@ -1062,6 +1063,14 @@ dd {
 
 .rotate-90 {
   transform: rotate(90deg);
+}
+
+.rotate-45 {
+  transform: rotate(45deg);
+}
+
+.rotate-135 {
+  transform: rotate(135deg);
 }
 
 /* Fixes upstream from popper (floating-ui) in bootstrap-vue's tooltip
