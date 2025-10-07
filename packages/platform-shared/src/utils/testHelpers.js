@@ -6,6 +6,7 @@
  */
 
 import { createApp } from 'vue';
+import { getAxe } from '@forgerock/platform-shared/config/jest-axe-config';
 
 /**
  * vue-test-utils helper function for getting an element by data-testid
@@ -187,6 +188,33 @@ export function withSetup(composable) {
   });
   app.mount(document.createElement('div'));
   return [result, app];
+}
+
+/**
+ * Tests a Vue component wrapper for accessibility violations using jest-axe.
+ * @async
+ * @param {Object} wrapper - The Vue component wrapper to test.
+ * @param {Object} overrideRules - Optional axe rules to override default settings.
+ * @returns {Promise<Object>} The results from the axe accessibility check.
+ *
+ * NOTE: 💡 Developer Responsibility:
+ *
+ * If the component has asynchronous operations (e.g., data fetching,
+ * nextTick updates), you MUST resolve them using flushPromises()
+ * BEFORE running assertions (including jest-axe checks).
+ *
+ * @example
+ * it('component is accessible after data load', async () => {
+ *   const wrapper = mount(MyComponent);
+ *   await flushPromises(); // <-- REQUIRED for async components
+ *   await runA11yTest(wrapper, { rules: { 'image-alt': { enabled: false } } });
+ * });
+ */
+export async function runA11yTest(wrapper, overrideRules = {}) {
+  const axe = getAxe(overrideRules);
+  const results = await axe(wrapper.html());
+  expect(results).toHaveNoViolations();
+  return results; // in case further checks are needed in the test
 }
 
 export default { findByTestId, findByRole, toggleActionsMenu };
