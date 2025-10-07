@@ -2730,7 +2730,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/javascript-sdk@npm:4.8.2":
+"@forgerock/javascript-sdk@npm:4.8.2, @forgerock/javascript-sdk@npm:^4.8.2":
   version: 4.8.2
   resolution: "@forgerock/javascript-sdk@npm:4.8.2"
   dependencies:
@@ -2746,6 +2746,15 @@ __metadata:
   peerDependencies:
     "@forgerock/javascript-sdk": 4.6.0
   checksum: 4bd3ec19561768362b470bc081d5e7391c428d048e3e91f91ab05141beb5e147a62a2d78e02a59ae63292a76a4d49c7c5ff2a8eae767dc70b02e1de79af0da41
+  languageName: node
+  linkType: hard
+
+"@forgerock/ping-protect@npm:4.6.0-beta.1":
+  version: 4.6.0-beta.1
+  resolution: "@forgerock/ping-protect@npm:4.6.0-beta.1"
+  dependencies:
+    "@forgerock/javascript-sdk": ^4.8.2
+  checksum: 9a4f7115320fe439fae4a1edb23d6bfbc3b53dcee8841e5250fe97a1015b091770d57036e02a344a1761d90e65132a26deefcfc860395eebfe8a14de176e7200
   languageName: node
   linkType: hard
 
@@ -10979,6 +10988,7 @@ __metadata:
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
     "@faker-js/faker": 9.8.0
     "@forgerock/javascript-sdk": 4.8.2
+    "@forgerock/ping-protect": 4.6.0-beta.1
     "@forgerock/platform-shared": 1.0.0
     "@neuralegion/cypress-har-generator": 5.16.4
     "@testing-library/cypress": 10.0.1
