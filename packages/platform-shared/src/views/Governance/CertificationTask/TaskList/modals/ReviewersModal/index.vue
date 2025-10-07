@@ -201,7 +201,7 @@ export default {
         {
           key: 'actions',
           label: '',
-          class: 'w-114px col-actions',
+          class: 'w-114px fr-no-resize sticky-right',
         },
       ],
       ResourceType,

@@ -199,7 +199,7 @@ const tableFields = [
   },
   {
     key: 'actions',
-    class: 'w-100px col-actions',
+    class: 'w-100px fr-no-resize sticky-right',
     label: '',
     sortable: false,
     show: true,

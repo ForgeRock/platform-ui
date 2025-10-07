@@ -108,12 +108,12 @@ describe('ViolationList', () => {
     expect(columns[2].text()).toBe('Created (Click to sort ascending)');
   });
 
-  it('only uses col-actions class on actions column when is admin', async () => {
+  it('does not use w-250px class on actions column when is admin', async () => {
     const wrapper = mountComponent();
     await flushPromises();
     const table = wrapper.findComponent('.table-responsive');
     const columns = table.findAll('[role=columnheader]');
-    expect(columns[4].classes()).toContain('col-actions');
+    expect(columns[4].classes()).not.toContain('w-250px');
   });
 
   it('uses w-250px class on actions column when is not admin', async () => {

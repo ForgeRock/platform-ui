@@ -60,7 +60,7 @@
     @include border-radius($custom-checkbox-indicator-border-radius);
 
     border: 1px solid $custom-checkbox-indicator-border-color;
-    left: -30px;
+    left: -2rem;
   }
 
   .custom-control-label::after {

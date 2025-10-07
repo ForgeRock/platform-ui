@@ -33,7 +33,7 @@
     }
   }
   
-  &.table-resizable--nowrap th div,
+  &.table-resizable--nowrap th:not(.sticky-left) div,
   &.table-resizable--nowrap td {
     white-space: nowrap;
     overflow: hidden;
@@ -67,8 +67,8 @@
     right: 0;
   }
 
-  td.col-actions,
-  th.col-actions,
+  td.sticky-right,
+  th.sticky-right,
   td.cert-actions,
   th.cert-actions {
     position: sticky !important;
@@ -91,7 +91,7 @@
 }
 
 .table-responsive.table-resizable {
-  &:has(tbody tr:only-child td.col-actions .dropdown-menu.show),
+  &:has(tbody tr:only-child td.sticky-right .dropdown-menu.show),
   &:has(tbody tr:only-child td.cert-actions .dropdown-menu.show) {
     overflow-x: visible;
     table {
@@ -107,7 +107,7 @@
 }
 
 .table-hover tbody tr:hover,
-.table-hover tr:hover td.col-actions {
+.table-hover tr:hover td.sticky-right {
   background-color: $gray-100 !important;
 }
 
@@ -132,7 +132,7 @@
   &:has(.table-resizable) {
     overflow-x: auto;
   }
-  &:has(.table-resizable td.col-actions .dropdown) {
+  &:has(.table-resizable td.sticky-right .dropdown) {
     min-height: 300px;
   }
 }

@@ -11,18 +11,16 @@ import { getValueFromLocalStorage, setLocalStorageValue } from './localStorageUt
 
 const RESIZER_CLASS = 'resizer';
 const STORAGE_KEY_SUFFIX = '-column-width';
-const MAX_COLUMN_WIDTH_LOWER_LIMIT = 400;
-const MAX_COLUMN_WIDTH_UPPER_LIMIT = 1200;
 const MIN_COLUMN_WIDTH = 120;
 const RESIZER_CONTENT_BUFFER = 24;
 const DEBOUNCE_TIMER_IN_MS = 1000;
 // Maintains a map of columns which should not be resizable
-const NON_RESIZABLE_COLUMN_CLASSES = ['col-actions', 'checkbox-column', 'fr-no-resize'];
+const NON_RESIZABLE_COLUMN_CLASS = 'fr-no-resize';
 
 /**
  * Convert and return the viewport width (vw) equivalent of a pixel width (px).
- * @param {Number} widthInPx - The width in pixels to convert.
- * @return {Number} Converted width in viewport units (vw) rounded upto 2 decimal places.
+ * @param {number} widthInPx - The width in pixels to convert.
+ * @return {number} Converted width in viewport units (vw) rounded upto 2 decimal places.
  */
 function convertPixelIntoViewportUnit(widthInPx) {
   const currentViewportWidth = window.innerWidth;
@@ -32,8 +30,8 @@ function convertPixelIntoViewportUnit(widthInPx) {
 
 /**
  * Converts a viewport width (vw) to its pixel (px) equivalent.
- * @param {Number} widthInVw - The width in viewport units.
- * @return {Number} The equivalent width in pixels, rounded to the nearest integer.
+ * @param {number} widthInVw - The width in viewport units.
+ * @return {number} The equivalent width in pixels, rounded to the nearest integer.
  */
 function convertViewportIntoPixelUnit(widthInVw) {
   const currentViewportWidth = window.innerWidth;
@@ -44,7 +42,7 @@ function convertViewportIntoPixelUnit(widthInVw) {
  * Helper to get the current width of a column based on the applied styles.
  * If the computed width is not available, it falls back to inline styles or offsetWidth.
  * @param {HTMLElement} col - The element for calculating the column width.
- * @return {Number} The width of the column in pixels.
+ * @return {number} The width of the column in pixels.
  */
 function getColumnWidth(col) {
   return parseInt(col.getBoundingClientRect().width, 10) || parseInt(col.style.width, 10) || col.offsetWidth;
@@ -61,16 +59,11 @@ function getPersistedColumnWidth(persistKey) {
 }
 
 /**
- * Returns the Minimum and Maximum allowable column width calculated based on the viewport width.
- * @return {Object} An object containing the min and max column width in pixels.
+ * Returns the minimum allowable column width calculated based on the viewport width.
+ * @return {number} The minimum column width in pixels.
  */
-function getColumnWidthRangeInPx() {
-  const viewportWidth = window.innerWidth;
-  return {
-    min: Math.max(Math.round(viewportWidth * 0.1), MIN_COLUMN_WIDTH),
-    // max column width should be calculated based on the viewport width along with upper and lower limits
-    max: Math.max(MAX_COLUMN_WIDTH_LOWER_LIMIT, Math.min(Math.round(viewportWidth * 0.6), MAX_COLUMN_WIDTH_UPPER_LIMIT)),
-  };
+function getColumnMinWidthInPx() {
+  return Math.max(Math.round(window.innerWidth * 0.1), MIN_COLUMN_WIDTH);
 }
 
 /**
@@ -79,20 +72,20 @@ function getColumnWidthRangeInPx() {
  * @returns {boolean} - Indicates whether the column is resizable.
  */
 function isResizableColumn(classList) {
-  return !NON_RESIZABLE_COLUMN_CLASSES.some((column) => classList.contains(column));
+  return !classList.contains(NON_RESIZABLE_COLUMN_CLASS);
 }
 
 /**
  * Iterates over the available columns and updates the corresponding column widths.
- * @param {Number} colIndex - The index of the column.
- * @param {Number} updatedWidthAtIndex - The updated value for the column width.
- * @Param {Map} columnPropsMap - A map containing column properties.
+ * @param {number} colIndex - The index of the column.
+ * @param {number} updatedWidthAtIndex - The updated value for the column width.
+ * @param {object} columnProps - An object containing column properties.
  */
-function updateColumnWidths(colIndex, updatedWidthAtIndex, columnPropsMap) {
-  Array.from(columnPropsMap.cols).forEach((col, index) => {
+function updateColumnWidths(colIndex, updatedWidthAtIndex, columnProps) {
+  Array.from(columnProps.cols).forEach((col, index) => {
     if (isResizableColumn(col.classList)) {
       const updatedColWidth = index === colIndex ? updatedWidthAtIndex : getColumnWidth(col);
-      const columnWidth = Math.max(columnPropsMap.columnMinWidth, Math.min(columnPropsMap.columnMaxWidth, updatedColWidth));
+      const columnWidth = Math.max(columnProps.columnMinWidth, updatedColWidth);
       col.style.setProperty('width', `${columnWidth}px`, 'important');
     }
   });
@@ -100,28 +93,28 @@ function updateColumnWidths(colIndex, updatedWidthAtIndex, columnPropsMap) {
 
 /**
  * Persists the current column widths using the persistKey option.
- * @Param { Map } columnPropsMap - A map containing column properties.
+ * @param {object} columnProps - An object containing column properties.
  */
-function persistCurrentWidths(columnPropsMap) {
-  if (!columnPropsMap.persistKey) return;
-  const viewPortWidths = columnPropsMap.cols.map((col) => convertPixelIntoViewportUnit(getColumnWidth(col)));
-  setLocalStorageValue(columnPropsMap.persistKey + STORAGE_KEY_SUFFIX, viewPortWidths);
+function persistCurrentWidths(columnProps) {
+  if (!columnProps.persistKey) return;
+  const viewPortWidths = columnProps.cols.map((col) => convertPixelIntoViewportUnit(getColumnWidth(col)));
+  setLocalStorageValue(columnProps.persistKey + STORAGE_KEY_SUFFIX, viewPortWidths);
 }
 
 /**
  * Creates a resizer handle for a column header. Triggered inside createResizableColumn corresponding to each column
  * @param {number} colIndex - The index of the column.
- * @param {Map} columnPropsMap - A map containing column properties.
+ * @param {object} columnProps - An object containing column properties.
  * @returns {HTMLElement} The created resizer element to be used next to the column header.
  */
-function createResizer(colIndex, columnPropsMap) {
+function createResizer(colIndex, columnProps) {
   const resizer = document.createElement('span');
   resizer.classList.add(RESIZER_CLASS);
   resizer.setAttribute('role', 'separator');
   resizer.setAttribute('aria-orientation', 'vertical');
   resizer.setAttribute('tabindex', '0');
   resizer.setAttribute('aria-label', `Resize column ${colIndex + 1}`);
-  if (columnPropsMap.tableId) resizer.setAttribute('aria-controls', columnPropsMap.tableId);
+  if (columnProps.tableId) resizer.setAttribute('aria-controls', columnProps.tableId);
   return resizer;
 }
 
@@ -166,14 +159,14 @@ function applyFixedTableLayout(table) {
 }
 
 /**
- * Gets the column name based on the column index from the columnPropsMap.
+ * Gets the column name based on the column index from the columnProps.
  * If the column name cannot be determined, it returns the column index + 1 as a fallback.
- * @param {Map} columnPropsMap - A map containing column properties.
+ * @param {object} columnProps - An object containing column properties.
  * @param {number} columnIndex - The index of the column.
  * @return {String} The name of the column or the column index + 1 if the name cannot be determined.
  */
-function getColumnName(columnPropsMap, columnIndex) {
-  const columnInnerText = columnPropsMap.cols[columnIndex]?.innerText;
+function getColumnName(columnProps, columnIndex) {
+  const columnInnerText = columnProps.cols[columnIndex]?.innerText;
   // For the column name, only consider the first line of the innerText to remove strings related to sorting/filtering
   return columnInnerText?.split('\n')[0] || String(columnIndex + 1);
 }
@@ -184,7 +177,7 @@ export {
   createResizer,
   getColumnName,
   getColumnWidth,
-  getColumnWidthRangeInPx,
+  getColumnMinWidthInPx,
   getPersistedColumnWidth,
   isResizableColumn,
   measureCellContent,

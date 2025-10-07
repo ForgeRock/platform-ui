@@ -213,7 +213,7 @@ export default {
         {
           key: 'actions',
           label: '',
-          class: 'p-3 col-actions w-100px',
+          class: 'p-3 fr-no-resize sticky-right w-100px',
           sortable: false,
         },
       ];

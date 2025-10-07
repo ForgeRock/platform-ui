@@ -161,7 +161,7 @@ function getTableColumns(type) {
     tableColumns.push({
       key: 'actions',
       label: '',
-      class: 'col-actions',
+      class: 'w-120px fr-no-resize sticky-right',
     });
   }
   return tableColumns;

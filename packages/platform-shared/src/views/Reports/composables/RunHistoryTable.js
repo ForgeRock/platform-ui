@@ -127,7 +127,7 @@ export default function useRunHistoryTable() {
     {
       key: 'actions',
       label: '',
-      class: 'w-200px p-2 pr-3 col-actions sticky-right',
+      class: 'w-200px p-2 pr-3 fr-no-resize sticky-right',
     },
   ];
 

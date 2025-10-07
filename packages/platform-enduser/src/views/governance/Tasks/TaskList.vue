@@ -109,7 +109,7 @@ const fields = [
   },
   {
     key: 'actions',
-    class: 'col-actions',
+    class: 'w-120px fr-no-resize sticky-right',
     label: '',
   },
 ];

@@ -385,7 +385,7 @@ export default {
           key: 'selected',
           label: '',
           sortable: false,
-          class: 'checkbox-column sticky-left',
+          class: 'checkbox-column fr-no-resize sticky-left',
         });
       }
 

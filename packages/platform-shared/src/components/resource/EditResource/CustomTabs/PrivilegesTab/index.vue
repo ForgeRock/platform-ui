@@ -219,7 +219,7 @@ export default {
         {
           key: 'actions',
           label: '',
-          class: 'col-actions',
+          class: 'w-120px fr-no-resize sticky-right',
         },
       ],
       schemaMap: {},
