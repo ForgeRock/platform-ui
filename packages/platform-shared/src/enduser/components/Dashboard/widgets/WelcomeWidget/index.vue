@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BAvatar
           variant="link"
           size="72px"
+          alt=""
           :src="avatarSource" />
       </template>
       <h1 class="text-capatilize">
@@ -29,6 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BAvatar
           variant="link"
           size="112px"
+          alt=""
           :src="avatarSource" />
         <div data-testid="dashboard-welcome-greeting">
           {{ $t('pages.dashboard.widgets.welcome.greeting') }}, <span class="text-capitalize">
