@@ -103,7 +103,7 @@ const devices = ref([]);
 const selectedDevice = ref({});
 
 const fields = [{
-  key: 'selected', label: '', sortable: false, class: 'checkbox-column sticky-left',
+  key: 'selected', label: '', sortable: false, class: 'checkbox-column fr-no-resize sticky-left',
 }, {
   key: 'device', label: i18n.global.t('pages.profile.trustedDevices.device'),
 }];

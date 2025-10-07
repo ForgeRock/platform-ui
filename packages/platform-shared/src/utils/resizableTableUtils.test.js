@@ -10,7 +10,7 @@ import * as localStorageUtils from './localStorageUtils';
 
 describe('resizableTableUtils', () => {
   let originalInnerWidth;
-  let columnPropsMap;
+  let columnProps;
 
   beforeAll(() => {
     Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', {
@@ -24,12 +24,11 @@ describe('resizableTableUtils', () => {
   beforeEach(() => {
     // Store the original innerWidth to restore it after the test
     originalInnerWidth = global.innerWidth;
-    columnPropsMap = {
+    columnProps = {
       cols: [document.createElement('th')],
       tdColumnList: [],
       persistKey: 'test-key',
       columnMinWidth: 120,
-      columnMaxWidth: 800,
     };
   });
 
@@ -52,7 +51,6 @@ describe('resizableTableUtils', () => {
       tdColumnList: [],
       persistKey: 'test-key',
       columnMinWidth: 120,
-      columnMaxWidth: 800,
     };
     resizableTableUtils.persistCurrentWidths(localColumnPropsMap);
     expect(setLocalStorageValueSpy).toHaveBeenCalledWith('test-key-column-width', [48.83]);
@@ -90,18 +88,15 @@ describe('resizableTableUtils', () => {
     const col1 = document.createElement('th');
     const col2 = document.createElement('th');
     const col3 = document.createElement('th');
-    columnPropsMap = {
-      ...columnPropsMap,
+    columnProps = {
+      ...columnProps,
       cols: [col1, col2, col3],
     };
-    resizableTableUtils.updateColumnWidths(0, 200, columnPropsMap);
+    resizableTableUtils.updateColumnWidths(0, 200, columnProps);
     expect(col1.style.width).toBe('200px');
 
-    resizableTableUtils.updateColumnWidths(1, 80, columnPropsMap);
+    resizableTableUtils.updateColumnWidths(1, 80, columnProps);
     expect(col2.style.width).toBe('120px'); // Width should be reset to global min width
-
-    resizableTableUtils.updateColumnWidths(2, 860, columnPropsMap);
-    expect(col3.style.width).toBe(`${columnPropsMap.columnMaxWidth}px`); // Width should be reset to global max width
   });
 
   it('persistCurrentWidths should trigger setLocalStorageValue to persist the updated column widths in viewport units', () => {
@@ -128,16 +123,15 @@ describe('resizableTableUtils', () => {
       tdColumnList: [],
       persistKey: 'test-key',
       columnMinWidth: 120,
-      columnMaxWidth: 800,
     };
     resizableTableUtils.persistCurrentWidths(localColumnPropsMap);
-    columnPropsMap = {
-      ...columnPropsMap,
+    columnProps = {
+      ...columnProps,
       cols: [col1, col2, col3],
     };
     const setLocalStorageValueSpy = jest.spyOn(localStorageUtils, 'setLocalStorageValue');
-    resizableTableUtils.persistCurrentWidths(columnPropsMap);
-    const localStorageKey = `${columnPropsMap.persistKey}-column-width`;
+    resizableTableUtils.persistCurrentWidths(columnProps);
+    const localStorageKey = `${columnProps.persistKey}-column-width`;
     expect(setLocalStorageValueSpy).toHaveBeenCalledWith(localStorageKey, [29.3, 43.95, 48.83]);
   });
 
@@ -153,25 +147,12 @@ describe('isResizableColumn', () => {
   const inputColumn = document.createElement('th');
   inputColumn.classList.add('test-class');
   afterEach(() => {
-    inputColumn.classList.remove('col-actions');
-    inputColumn.classList.remove('checkbox-column');
+    inputColumn.classList.remove('fr-no-resize');
   });
 
-  it('should return true if the element contains "col-actions" class', () => {
+  it('should return true if the element contains "sticky-right" class', () => {
     expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(true);
-    inputColumn.classList.add('col-actions');
-    expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(false);
-  });
-
-  it('should return true if the element contains "checkbox-column" class', () => {
-    expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(true);
-    inputColumn.classList.add('checkbox-column');
-    expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(false);
-  });
-
-  it('should return true if the element contains multiple classes from the non-resized column list', () => {
-    inputColumn.classList.add('selector-cell');
-    inputColumn.classList.add('checkbox-column');
+    inputColumn.classList.add('fr-no-resize');
     expect(resizableTableUtils.isResizableColumn(inputColumn.classList)).toBe(false);
   });
 
@@ -205,26 +186,23 @@ describe('applyFixedTableLayout', () => {
   });
 });
 
-describe('getColumnWidthRangeInPx', () => {
-  it('should return the correct min and max column width based on the viewport width', () => {
+describe('getColumnMinWidthInPx', () => {
+  it('should return the correct min column width based on the viewport width', () => {
     global.innerWidth = 1024;
-    const { min, max } = resizableTableUtils.getColumnWidthRangeInPx();
+    const min = resizableTableUtils.getColumnMinWidthInPx();
     expect(min).toBe(120); // Minimum width should be 120px, as 10% of 1024 is less than 120
-    expect(max).toBe(614); // Maximum width should be 614px, as 60% of 1024 is within the range of 400-1200
   });
 
   it('should return lower range of max width and default min width value for lower screen resolutions', () => {
     global.innerWidth = 500;
-    const { min, max } = resizableTableUtils.getColumnWidthRangeInPx();
+    const min = resizableTableUtils.getColumnMinWidthInPx();
     expect(min).toBe(120); // Minimum width should be 120px, as 10% of 500 is less than 120
-    expect(max).toBe(400); // Lower range of max width should get applied, as 60% of 500 is less than the lower range limit of 400px
   });
 
   it('should return the calculated min width and higher range of max width for higher screen resolutions', () => {
     global.innerWidth = 2560;
-    const { min, max } = resizableTableUtils.getColumnWidthRangeInPx();
+    const min = resizableTableUtils.getColumnMinWidthInPx();
     expect(min).toBe(256); // Minimum width should be 256px, as 10% of 2560 is greater than the minimum limit of 120px
-    expect(max).toBe(1200); // Higher range of max width should get applied, as 60% of 2560 is greater than 1024
   });
 });
 
@@ -234,11 +212,11 @@ describe('getColumnName', () => {
     th1.innerText = 'Name\n Click to sort ascending';
     const th2 = document.createElement('th');
     th2.innerText = 'Status\n active/inactive';
-    const columnPropsMap = {
+    const columnProps = {
       cols: [th1, th2],
     };
-    expect(resizableTableUtils.getColumnName(columnPropsMap, 0)).toEqual('Name');
-    expect(resizableTableUtils.getColumnName(columnPropsMap, 1)).toEqual('Status');
+    expect(resizableTableUtils.getColumnName(columnProps, 0)).toEqual('Name');
+    expect(resizableTableUtils.getColumnName(columnProps, 1)).toEqual('Status');
   });
 
   it('should return the correct column name if the innertext does not contain newline character', () => {
@@ -246,20 +224,20 @@ describe('getColumnName', () => {
     th1.innerText = 'Description';
     const th2 = document.createElement('th');
     th2.innerText = 'Actions';
-    const columnPropsMap = {
+    const columnProps = {
       cols: [th1, th2],
     };
-    expect(resizableTableUtils.getColumnName(columnPropsMap, 0)).toEqual('Description');
-    expect(resizableTableUtils.getColumnName(columnPropsMap, 1)).toEqual('Actions');
+    expect(resizableTableUtils.getColumnName(columnProps, 0)).toEqual('Description');
+    expect(resizableTableUtils.getColumnName(columnProps, 1)).toEqual('Actions');
   });
 
   it('should return the fallback column name based on the index if innertext is not found', () => {
     const th1 = document.createElement('th');
     const th2 = document.createElement('th');
-    const columnPropsMap = {
+    const columnProps = {
       cols: [th1, th2],
     };
-    expect(resizableTableUtils.getColumnName(columnPropsMap, 0)).toEqual('1');
-    expect(resizableTableUtils.getColumnName(columnPropsMap, 1)).toEqual('2');
+    expect(resizableTableUtils.getColumnName(columnProps, 0)).toEqual('1');
+    expect(resizableTableUtils.getColumnName(columnProps, 1)).toEqual('2');
   });
 });

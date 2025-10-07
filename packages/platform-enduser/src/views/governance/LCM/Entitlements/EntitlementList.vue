@@ -187,7 +187,7 @@ const entitlementColumns = [
   {
     key: 'actions',
     label: '',
-    class: 'w-70px col-actions',
+    class: 'w-70px fr-no-resize sticky-right',
   },
 ];
 

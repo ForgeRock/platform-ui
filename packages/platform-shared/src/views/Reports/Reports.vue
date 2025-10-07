@@ -267,7 +267,7 @@ const tableFields = [
   {
     key: 'actions',
     label: '',
-    class: 'w-175px col-actions',
+    class: 'w-175px fr-no-resize sticky-right',
   },
 ];
 const isCustomReportEnabled = store.state.SharedStore.currentPackage === 'admin' && store.state.SharedStore.autoCustomReportsEnabled;

@@ -269,7 +269,7 @@ const tableFields = [
   },
   {
     key: 'actions',
-    class: [{ 'w-250px': !props.isAdmin }, 'col-actions'],
+    class: [{ 'w-250px': !props.isAdmin }, 'w-120px fr-no-resize sticky-right'],
     label: '',
     show: true,
   },

@@ -444,7 +444,7 @@ export default {
           {
             key: 'selected',
             label: '',
-            class: 'checkbox-column sticky-left',
+            class: 'checkbox-column fr-no-resize sticky-left',
           },
           ...this.fields,
         ];

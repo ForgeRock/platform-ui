@@ -28,7 +28,7 @@ import {
   createResizer,
   getColumnName,
   getColumnWidth,
-  getColumnWidthRangeInPx,
+  getColumnMinWidthInPx,
   getPersistedColumnWidth,
   isResizableColumn,
   measureCellContent,
@@ -76,19 +76,16 @@ function isRightToLeft(table) {
 
 /**
  * Event Handler for window resizing event.
- * Fetches the updated column widths from the local storage by using the persistKey and updates the columnPropsMap with the updated pixel widths.
+ * Fetches the updated column widths from the local storage by using the persistKey and updates the columnProps with the updated pixel widths.
  * Apply the updated pixel widths to each of the column elements.
- * @Param { Map } columnPropsMap - A map containing column properties.
  */
 function syncColumnWidthsToComputed() {
-  COLUMN_PROPS_MAP.forEach((columnPropsMap, key) => {
+  COLUMN_PROPS_MAP.forEach((columnProps, key) => {
     const persistedWidthsInPixel = getPersistedColumnWidth(key);
-    const columnWidthRange = getColumnWidthRangeInPx();
-    columnPropsMap.columnMaxWidth = columnWidthRange.max;
-    columnPropsMap.columnMinWidth = columnWidthRange.min;
-    columnPropsMap.cols.forEach((col, colIndex) => {
+    columnProps.columnMinWidth = getColumnMinWidthInPx();
+    columnProps.cols.forEach((col, colIndex) => {
       const restoredWidthInPx = persistedWidthsInPixel[colIndex] || parseInt(getComputedStyle(col).width, 10) || col.offsetWidth;
-      updateColumnWidths(colIndex, restoredWidthInPx, columnPropsMap);
+      updateColumnWidths(colIndex, restoredWidthInPx, columnProps);
     });
   });
 }
@@ -100,20 +97,21 @@ function getClientX(e) {
 
 /**
  * Makes a column header resizable by adding a resizer handle and events.
- * @param {number} colIndex
- * @param {Map} columnPropsMap
+ * @param {number} colIndex - The index of the column
+ * @param {object} columnProps - An object containing column properties
  * @param {HTMLElement} table - The table element
  */
-function createResizableColumn(colIndex, columnPropsMap, table) {
-  const col = columnPropsMap.cols[colIndex];
+function createResizableColumn(colIndex, columnProps, table) {
+  const col = columnProps.cols[colIndex];
   col.style.position = 'relative';
   // Prevent duplicate resizers or columns marked as non-resizable
   if (col.querySelector(`.${RESIZER_CLASS}`) || !isResizableColumn(col.classList)) return;
-  const resizer = createResizer(colIndex, columnPropsMap);
+  const resizer = createResizer(colIndex, columnProps);
   const handlers = getEventHandlers(resizer);
   let startX = 0;
   let startWidth = 0;
   let isResizing = false;
+  const { persistKey } = columnProps;
 
   /**
    * Shared logic for mouse down and touch start events.
@@ -140,10 +138,10 @@ function createResizableColumn(colIndex, columnPropsMap, table) {
     window.requestAnimationFrame(() => {
       const clientX = getClientX(event);
       const dx = isRightToLeft(table) ? startX - clientX : clientX - startX;
-      const newWidth = Math.max(columnPropsMap.columnMinWidth, Math.min(columnPropsMap.columnMaxWidth, startWidth + dx));
+      const newWidth = Math.max(columnProps.columnMinWidth, startWidth + dx);
       if (col.style.width !== `${newWidth}px`) {
-        updateColumnWidths(colIndex, newWidth, columnPropsMap);
-        const columnName = getColumnName(columnPropsMap, colIndex);
+        updateColumnWidths(colIndex, newWidth, columnProps);
+        const columnName = getColumnName(columnProps, colIndex);
         announceMessage(table.__resizeLiveRegion, columnName, Math.round(newWidth));
       }
     });
@@ -155,6 +153,7 @@ function createResizableColumn(colIndex, columnPropsMap, table) {
   function onUp() {
     if (!isResizing) return;
     isResizing = false;
+
     resizer.classList.remove(RESIZING_CLASS);
     document.removeEventListener('mousemove', onMove);
     document.removeEventListener('mouseup', onUp);
@@ -167,7 +166,7 @@ function createResizableColumn(colIndex, columnPropsMap, table) {
       document.removeEventListener('click', suppressClick, true);
     };
     document.addEventListener('click', suppressClick, true);
-    persistCurrentWidths(columnPropsMap);
+    persistCurrentWidths(COLUMN_PROPS_MAP.get(persistKey));
   }
 
   /**
@@ -205,13 +204,13 @@ function createResizableColumn(colIndex, columnPropsMap, table) {
     const columnIndex = Array.from(column.parentElement.children).indexOf(column);
     const delta = (isRightToLeft(table) ? event.key === 'ArrowLeft' : event.key === 'ArrowRight') ? 10 : -10;
     const columnWidth = getColumnWidth(column);
-    const width = Math.max(columnPropsMap.columnMinWidth, Math.min(columnPropsMap.columnMaxWidth, columnWidth + delta));
+    const width = Math.max(columnProps.columnMinWidth, columnWidth + delta);
     if (column.style.width !== `${width}px`) {
-      updateColumnWidths(columnIndex, width, columnPropsMap);
-      const columnName = getColumnName(columnPropsMap, columnIndex);
+      updateColumnWidths(columnIndex, width, columnProps);
+      const columnName = getColumnName(columnProps, columnIndex);
       announceMessage(table.__resizeLiveRegion, columnName, Math.round(width));
     }
-    persistCurrentWidths(columnPropsMap);
+    persistCurrentWidths(columnProps);
   };
 
   /**
@@ -219,7 +218,7 @@ function createResizableColumn(colIndex, columnPropsMap, table) {
    */
   handlers.onDoubleClick = () => {
     const { rows } = table;
-    let maxContentWidth = columnPropsMap.columnMinWidth;
+    let maxContentWidth = columnProps.columnMinWidth;
     for (let i = 0; i < rows.length; i += 1) {
       const cell = rows[i].cells[colIndex];
       if (cell) {
@@ -227,10 +226,10 @@ function createResizableColumn(colIndex, columnPropsMap, table) {
         if (totalWidth > maxContentWidth) maxContentWidth = totalWidth;
       }
     }
-    updateColumnWidths(colIndex, maxContentWidth, columnPropsMap);
-    const columnName = getColumnName(columnPropsMap, colIndex);
+    updateColumnWidths(colIndex, maxContentWidth, columnProps);
+    const columnName = getColumnName(columnProps, colIndex);
     announceMessage(table.__resizeLiveRegion, columnName, Math.round(maxContentWidth));
-    persistCurrentWidths(columnPropsMap);
+    persistCurrentWidths(columnProps);
   };
 
   resizer.addEventListener('mousedown', handlers.onMouseDown);
@@ -261,15 +260,13 @@ function createResizableTable(table, options) {
   if (persistedColumnWidths?.length > 0) {
     applyFixedTableLayout(table); // Ensure table-layout is fixed when the modified column widths are being restored
   }
-  const columnWidthRange = getColumnWidthRangeInPx();
-  // Creates a Map of column properties based on the table persistKey
+  // Adds column properties to the Map based on the table persistKey
   COLUMN_PROPS_MAP.set(persistKey, {
     persistKey,
     cols,
     tableId: table.id,
     tdColumnList: table.querySelector('tbody tr:first-child')?.cells || table.rows?.[1]?.cells || [],
-    columnMinWidth: columnWidthRange.min,
-    columnMaxWidth: columnWidthRange.max,
+    columnMinWidth: getColumnMinWidthInPx(),
   });
 
   // Add resizer handles to each column

@@ -64,7 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BTh>
               {{ $t('common.required') }}
             </BTh>
-            <BTh class="col-actions" />
+            <BTh class="w-120px fr-no-resize sticky-right" />
           </BTr>
         </BThead>
         <Draggable
@@ -107,7 +107,7 @@ of the MIT license. See the LICENSE file for details. -->
                   {{ $t('common.required') }}
                 </BBadge>
               </BTd>
-              <BTd class="col-actions">
+              <BTd class="w-120px fr-no-resize sticky-right">
                 <FrActionsCell
                   :boundary="boundaryValue"
                   class="py-2"

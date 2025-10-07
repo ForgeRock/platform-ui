@@ -54,8 +54,8 @@ describe('ResizableTable directive', () => {
     th1 = document.createElement('th');
     th1.textContent = 'A';
     tr.appendChild(th1);
-    singleColTableParent.appendChild(document.createElement('thead')).appendChild(tr);
-    singleColTableParent.appendChild(document.createElement('tbody'));
+    tableElement.appendChild(document.createElement('thead')).appendChild(tr);
+    tableElement.appendChild(document.createElement('tbody'));
     document.body.appendChild(singleColTableParent);
     return singleColTableParent;
   }
@@ -165,15 +165,8 @@ describe('ResizableTable directive', () => {
     expect(getResizer(th1)).toBeNull();
   });
 
-  it('does not add resizer to table having only one display column and another column having col-action class', () => {
-    th2.classList.add('col-actions');
-    ResizableTable.mounted(el, binding);
-    expect(getResizer(th2)).toBeNull();
-    expect(getResizer(th1)).toBeNull();
-  });
-
-  it('does not add resizer to table having only one display column and one checkbox column', () => {
-    th2.classList.add('checkbox-column');
+  it('does not add resizer to table having only one display column and another column having fr-no-resize class', () => {
+    th2.classList.add('fr-no-resize');
     ResizableTable.mounted(el, binding);
     expect(getResizer(th2)).toBeNull();
     expect(getResizer(th1)).toBeNull();
@@ -206,7 +199,7 @@ describe('ResizableTable directive', () => {
 
   it('respects min and max width constraints during resize', () => {
     // Mock the range to be narrow for easier testing
-    jest.spyOn(resizableTableUtils, 'getColumnWidthRangeInPx').mockReturnValue({ min: 100, max: 200 });
+    jest.spyOn(resizableTableUtils, 'getColumnMinWidthInPx').mockReturnValue(100);
     ResizableTable.mounted(el, binding);
     const resizer = getResizer();
     th1.style.width = '150px';
@@ -215,11 +208,6 @@ describe('ResizableTable directive', () => {
     resizer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0, clientX: 150 }));
     document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 0 })); // Large drag left
     expect(parseInt(th1.style.width, 10)).toBe(100);
-
-    // Try to resize above max width
-    resizer.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0, clientX: 150 }));
-    document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 500 })); // Large drag right
-    expect(parseInt(th1.style.width, 10)).toBe(200);
   });
 
   it('double-click auto-fits column', () => {

@@ -530,35 +530,6 @@ a.card {
   tr:focus {
     outline: none;
   }
-
-  td.col-actions,
-  th.col-actions {
-    width: 120px;
-
-    &.w-70px {
-      width: 70px;
-    }
-
-    &.w-100px {
-      width: 100px;
-    }
-
-    &.w-175px {
-      width: 175px;
-    }
-
-    &.w-200px {
-      width: 200px;
-    }
-
-    &.w-250px {
-      width: 250px;
-    }
-
-    &.w-300px {
-      width: 300px;
-    }
-  }
 }
 
 .checkbox-column {
@@ -588,6 +559,10 @@ a.card {
   width: 40px;
 }
 
+.w-70px {
+  width: 70px;
+}
+
 .w-100px {
   width: 100px;
 }
@@ -608,12 +583,20 @@ a.card {
   width: 160px;
 }
 
+.w-175px {
+  width: 175px;
+}
+
 .w-200px {
   width: 200px;
 }
 
 .w-250px {
   width: 250px;
+}
+
+.w-300px {
+  width: 300px;
 }
 
 @media (min-width: 992px) {

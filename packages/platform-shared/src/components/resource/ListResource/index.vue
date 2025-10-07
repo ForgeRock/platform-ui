@@ -428,7 +428,7 @@ export default {
         this.columns.push({
           key: 'actions',
           label: '',
-          class: 'col-actions',
+          class: 'fr-no-resize sticky-right w-120px',
         });
       }
     },
@@ -639,23 +639,6 @@ export default {
 <style lang="scss" scoped>
   :deep(.table tr:not(.b-table-empty-row) td) {
     cursor: pointer;
-  }
-
-  :deep(.table td.col-actions),
-  :deep(.table th.col-actions) {
-    position: sticky !important;
-    right: 0;
-    overflow: visible;
-    z-index: 1000;
-    background-color: $white;
-    &:has(.dropdown.show) {
-      position: sticky;
-      z-index: 1001;
-    }
-  }
-
-  :deep(.table-hover tr:hover td.col-actions) {
-    background-color: $gray-100 !important;
   }
 
   .toolbar-divider {

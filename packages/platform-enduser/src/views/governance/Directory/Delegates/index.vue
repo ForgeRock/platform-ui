@@ -182,7 +182,7 @@ export default {
         },
         {
           key: 'edit',
-          class: 'col-actions w-100px',
+          class: 'fr-no-resize sticky-right w-100px',
           label: '',
         },
       ],
