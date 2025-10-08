@@ -671,6 +671,7 @@
     "errorRetrievingJourneyTemplate": "Error retrieving journey template",
     "errorRetrievingTableData": "Error retrieving journey data",
     "errorSettingDefault": "Error setting journey as default",
+    "errorSavingNode": "Error saving node",
     "errorLoadingThemeDetails": "Error loading theme details",
     "unableToEditResource": "Unable to edit {resource}",
     "unableToDeleteResource": "Unable to delete {resource}",
@@ -1458,9 +1459,11 @@
       "displayChoiceTypeDescription": "Specifies the field format that the choice collector is displayed in.",
       "displayChoiceRadio": "radio",
       "displayChoiceSelect": "select",
+      "latestVersion": "Latest ({version})",
       "name": "Name",
       "none": "none",
       "minimumRequired": "At Least {minItems} Value(s) Required",
+      "hasNewMissingRequiredValues": "Node is missing required configuration values.",
       "policyDisplayCheckmark": "Checkmark Policy Display",
       "policyDisplayCheckmarkDescription": "Successful policy list items will be denoted with a checkmark instead of faded bullet-points.",
       "showButtonsAsLinks": "Show buttons as links",
@@ -1474,7 +1477,24 @@
       "pageFooterTitle": "Page Footer",
       "pageFooterInfo": "Localized footer to display on the page node (first locale will be used as fallback)",
       "theme": "Theme",
-      "themeDescription": "If using hosted pages, specify a theme to override this journey's UI theme."
+      "themeDescription": "If using hosted pages, specify a theme to override this journey's UI theme.",
+      "hasNewUnconnectedOutputs": "Node has unconnected outputs.",
+      "updateAvailable": "Update Available",
+      "updateAvailableDesc": "There is a new version of this node available.",
+      "viewDetails": "View Details",
+      "errorUpdatingNodeVersion": "Error updating node version",
+      "revertNodeModal": {
+        "desc": "Are you sure you want to revert to <b>version {version}</b>? Older versions may not offer the same capabilities as newer versions and may disrupt current journey function.",
+        "title": "Revert Node Version",
+        "revertingNode": "Reverting node..."
+      },
+      "updateNodeModal": {
+        "errorLoadingVersionInfo": "Error loading new version information",
+        "moreInfo": "More info",
+        "updatingNode": "Updating node...",
+        "updateNodeVersion": "Update Node Version",
+        "whatsNew": "What's New"
+      }
     },
     "debugWarningTitle": "Debug warning",
     "debugWarning": "<b>Debug mode is active.</b> Make sure you deactivate before promoting your environment configuration.",
