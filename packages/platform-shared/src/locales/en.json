@@ -290,6 +290,7 @@
     "required": "Required",
     "reset": "Reset",
     "reviewers": "Reviewer(s)",
+    "revert": "Revert",
     "revoke": "Revoke",
     "revokeAll": "Revoke all",
     "revoked": "Revoked",

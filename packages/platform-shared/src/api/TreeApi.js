@@ -10,6 +10,13 @@ import apiUtils from './utils/apiUtils';
 
 const apiVersion = 'protocol=2.1,resource=1.0';
 
+/**
+  * Constructs the tree APIs config using the passed realm name and version
+  * @param {String} realm the current realm
+  * @param {Boolean} useApiV3 whether to use the tree api resource 3.0
+  *
+  * @returns {Object}
+  */
 const getTreeApiConfig = (realm, useApiV3 = false) => {
   let configPath;
   if (!realm) {
@@ -26,6 +33,8 @@ const getTreeApiConfig = (realm, useApiV3 = false) => {
 /**
   * Returns a list of already created trees with any input fields
   * @param {String[]} fields Optional list of fields to search
+  * @param {Boolean} queryFilter for filtering results
+  * @param {Number} pageSize quantity of results to shgow on each page
   *
   * @returns {Promise}
   */
@@ -69,26 +78,31 @@ export function getTree(treeId, forExport, realm, fields) {
   * @param {String} nodeId Unique ID for the node
   * @param {String} nodetype The type of node
   * @param {Object} nodeDetails Details of the node to save
+  * @param {String} nodeVersion The version of the node
   *
   * @returns {Promise}
   */
-export function putNode(nodeId, nodeType, nodeDetails) {
-  return generateAmApi(getTreeApiConfig()).put(
-    `/nodes/${nodeType}/${nodeId}`,
+export function putNode(nodeId, nodeType, nodeDetails, nodeVersion = null) {
+  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}/${nodeId}` : `/nodes/${nodeType}/${nodeId}`;
+  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).put(
+    path,
     nodeDetails,
     { withCredentials: true },
   );
 }
 
 /**
-  * Reads an existing tree
+  * Deletes a node
   * @param {String} nodeId Tree name used for identification
+  * @param {String} nodetype The type of node
+  * @param {String} nodeVersion The version of the node
   *
   * @returns {Promise}
   */
-export function deleteNode(nodeId, nodeType) {
-  return generateAmApi(getTreeApiConfig()).delete(
-    `/nodes/${nodeType}/${nodeId}`,
+export function deleteNode(nodeId, nodeType, nodeVersion = null) {
+  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}/${nodeId}` : `/nodes/${nodeType}/${nodeId}`;
+  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).delete(
+    path,
     { withCredentials: true },
   );
 }
@@ -178,6 +192,7 @@ export function actionNodeListLatestTypes() {
 
 /**
   * Returns a list of available node types
+  * @param {Boolean} useApiV3 whether to use the tree api resource 3.0
   *
   * @returns {Promise}
   */
@@ -192,12 +207,14 @@ export function actionNodeGetAllTypes(useApiV3 = false) {
 /**
   * Returns a specific node types schema
   * @param {String} nodeType Id specifiying a specific node type
+  * @param {String} nodeVersion The version of the node
   *
   * @returns {Promise}
   */
-export function actionNodeSchema(nodeType, template = {}) {
-  return generateAmApi(getTreeApiConfig()).post(
-    `/nodes/${nodeType}?_action=schema`,
+export function actionNodeSchema(nodeType, template = {}, nodeVersion = null) {
+  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=schema` : `/nodes/${nodeType}?_action=schema`;
+  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+    path,
     template,
     { withCredentials: true },
   );
@@ -206,12 +223,14 @@ export function actionNodeSchema(nodeType, template = {}) {
 /**
   * Returns a node types base data template
   * @param {String} nodeType Id specifiying a specific node type
+* * @param {String} nodeVersion The version of the node
   *
   * @returns {Promise}
   */
-export function actionNodeTemplate(nodeType) {
-  return generateAmApi(getTreeApiConfig()).post(
-    `/nodes/${nodeType}?_action=template`,
+export function actionNodeTemplate(nodeType, nodeVersion = null) {
+  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=template` : `/nodes/${nodeType}?_action=template`;
+  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+    path,
     {},
     { withCredentials: true },
   );
@@ -220,13 +239,15 @@ export function actionNodeTemplate(nodeType) {
 /**
   * Returns a specific node types data template
   * @param {String} nodeType Id specifiying a specific node type
-  * @param {String} nodeId Id specifiying a specific node type
+  * @param {String} nodeId Id of the node to get the template of
+  * @param {String} nodeVersion The version of the node
   *
   * @returns {Promise}
   */
-export function getNodeTemplate(nodeType, nodeId) {
-  return generateAmApi(getTreeApiConfig()).get(
-    `/nodes/${nodeType}/${nodeId}`,
+export function getNodeTemplate(nodeType, nodeId, nodeVersion = null) {
+  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}/${nodeId}` : `/nodes/${nodeType}/${nodeId}`;
+  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).get(
+    path,
     { withCredentials: true },
   );
 }
@@ -235,13 +256,61 @@ export function getNodeTemplate(nodeType, nodeId) {
   * Returns a specific node types outcomes
   * @param {String} nodeType Id specifiying a specific node type
   * @param {String} nodeTypeConfig Optional object for node type details
+  * @param {String} nodeVersion The version of the node
   *
   * @returns {Promise}
   */
-export function actionNodeListOutcomes(nodeType, nodeTypeConfig = {}) {
-  return generateAmApi(getTreeApiConfig()).post(
-    `/nodes/${nodeType}?_action=listOutcomes`,
+export function actionNodeListOutcomes(nodeType, nodeTypeConfig = {}, nodeVersion = null) {
+  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=listOutcomes` : `/nodes/${nodeType}?_action=listOutcomes`;
+  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+    path,
     nodeTypeConfig,
+    { withCredentials: true },
+  );
+}
+
+/**
+  * Returns version information about the given node type
+  * @param {String} nodeType Id specifiying a specific node type
+  *
+  * @returns {Promise}
+  */
+export function actionNodeGetVersionInfo(nodeType) {
+  return generateAmApi(getTreeApiConfig(undefined, true)).post(
+    `/nodes/${nodeType}?_action=versionInfo`,
+    {},
+    { withCredentials: true },
+  );
+}
+
+/**
+  * Updates a node to the given target version
+  * @param {String} nodeType Id specifiying a specific node type
+  * @param {String} currentVersion The current version of the node
+  * @param {String} targetVersion The version you wish to upgrade the node to
+  * @param {Object} nodeData The current node configuration
+  *
+  * @returns {Promise}
+  */
+export function actionNodeGetUpgradedConfig(nodeType, currentVersion, targetVersion, nodeData) {
+  return generateAmApi(getTreeApiConfig(undefined, true)).post(
+    `/nodes/${nodeType}/${currentVersion}?_action=getUpgradedConfig&targetVersion=${targetVersion}`,
+    nodeData,
+    { withCredentials: true },
+  );
+}
+
+/**
+  * Returns a specific nodes type data
+  * @param {String} nodeType Id specifiying a specific node type
+  * @param {String} nodeVersion The version of the node
+  *
+  * @returns {Promise}
+  */
+export function actionNodeGetType(nodeType, nodeVersion = null) {
+  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=getType` : `/nodes/${nodeType}?_action=getType`;
+  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+    path,
     { withCredentials: true },
   );
 }
