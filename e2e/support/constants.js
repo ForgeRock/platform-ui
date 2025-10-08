@@ -109,3 +109,24 @@ export const ROLES = {
   toggle: 'switch',
   checkbox: 'checkbox',
 };
+
+/**
+ * Maps HTML element names to their corresponding CSS selectors.
+ */
+export const HTML_ELEMENT_SELECTORS = {
+  Heading: 'h1, h2, h3, h4, h5, h6',
+  'Bold Text': 'strong',
+  'Italic Text': 'em',
+  'Strikethrough Text': 's',
+  Link: 'a',
+  'List Item': 'li',
+  Code: 'code',
+  Quote: 'blockquote',
+  Table: 'table',
+  'Table Row': 'tr',
+  'Table Cell': 'td',
+  'Table Header': 'th',
+  Image: 'img',
+  Paragraph: 'p',
+  'Line Break': 'br',
+};
