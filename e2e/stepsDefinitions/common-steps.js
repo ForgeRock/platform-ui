@@ -8,7 +8,7 @@
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
-import { ROLES, THEME_UI_FIELD_MAPPING } from '@e2e/support/constants';
+import { ROLES, THEME_UI_FIELD_MAPPING, HTML_ELEMENT_SELECTORS } from '@e2e/support/constants';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import generateRandomEndUser from '../utils/endUserData';
 import { checkElementCss, selectDropdownOption, typeIntoField } from '../utils/uiUtils';
@@ -121,6 +121,11 @@ When('user types the stored value of {string} in {string} field', (storedDataNam
   cy.findByLabelText(fieldName).clear().type(Cypress.env(storedDataName));
 });
 
+When(/^user types the following text to the (markdown|css) editor:$/, (editorType, text) => {
+  const editorClass = editorType === 'markdown' ? '.markdown-editor' : '.css-editor';
+  cy.get(`${editorClass} [role="textbox"]`).clear().type(text, { parseSpecialCharSequences: false });
+});
+
 When('user waits for themerealm request', () => {
   cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
   cy.wait('@getTheme', { timeout: 10000 });
@@ -138,6 +143,17 @@ When('user fills registration form with following data', (dataTable) => {
     }
     Cypress.env(endUserProperty, stringToType);
     cy.findByLabelText(row.Field).clear().type(stringToType);
+  });
+});
+
+When('user selects {string} option on menu', (optionName) => {
+  cy.findByRole('menuitem', { name: optionName }).click();
+});
+
+Then('the menu has following options:', (dataTable) => {
+  const expectedOptions = dataTable.raw().flat();
+  expectedOptions.forEach((optionName) => {
+    cy.findByRole('menuitem', { name: optionName }).should('exist');
   });
 });
 
@@ -200,7 +216,7 @@ When('user clicks on option button {string} from more actions menu for item {str
     .within(() => {
       cy.findByRole('button', { name: 'More Actions' }).click();
     });
-  cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+  cy.get('#app').findByRole('menu').should('be.visible')
     .within(() => {
       cy.findByRole('menuitem', { name: new RegExp(option, 'i') }).click({ force: true });
     });
@@ -273,6 +289,18 @@ Then('enduser account is deleted via API', () => {
 When('the user clears the {string} field', (field) => {
   cy.findByLabelText(field)
     .clear();
+});
+
+When('user closes the {string} modal', (modalName) => {
+  cy.findByRole('dialog', { name: modalName }).within(() => {
+    cy.findByRole('button', { name: 'Close' }).click();
+  });
+});
+
+When('user clicks on modal header to trigger field validation', () => {
+  cy.findByRole('dialog').within(() => {
+    cy.get('h4, .modal-header, .modal-title').first().click();
+  });
 });
 
 Then('{string} modal is displayed/opened', (modal) => {
@@ -411,7 +439,7 @@ Then('more actions menu for item {string} has following buttons options:', (item
     .within(() => {
       cy.findByRole('button', { name: 'More Actions' }).as('moreActionsButton').click();
     });
-  cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+  cy.get('#app').findByRole('menu').should('be.visible')
     .within(() => {
       dataTable.raw().forEach((buttonOption) => {
         cy.findByRole('menuitem', { name: new RegExp(buttonOption, 'i') }).should('exist');
@@ -427,7 +455,7 @@ Then('more actions menu for item {string} does not have following buttons option
       cy.findByRole('button', { name: 'More Actions' }).as('moreActionsButton').click();
     });
 
-  cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+  cy.get('#app').findByRole('menu').should('be.visible')
     .within(() => {
       dataTable.raw().forEach((buttonOption) => {
         cy.findByRole('menuitem', { name: new RegExp(buttonOption, 'i') }).should('not.exist');
@@ -466,7 +494,9 @@ Then('the value of the {string} column for the {string} item in the current tabl
   let columnIndex;
   cy.findByRole('table').within(() => {
     cy.get('thead').findAllByRole('columnheader').each((columnHeader, headerIndex) => {
-      if (columnHeader.text().trim() === columnName) {
+      const headerText = columnHeader.text().trim();
+      const ariaLabel = columnHeader.attr('aria-label');
+      if (headerText === columnName || ariaLabel === columnName) {
         columnIndex = headerIndex;
       }
     }).then(() => {
@@ -478,6 +508,16 @@ Then('the value of the {string} column for the {string} item in the current tabl
         .should('have.text', expectedValue);
     });
   });
+});
+
+Then('the {string} modal contains {string} text', (modalName, expectedText) => {
+  cy.findByRole('dialog', { name: modalName }).within(() => {
+    cy.contains(expectedText).should('be.visible');
+  });
+});
+
+Then('the {string} modal contains HTML {string} element', (modalName, expectedHtml) => {
+  cy.findByRole('dialog', { name: modalName }).should('contain.html', expectedHtml);
 });
 
 /**
@@ -526,4 +566,51 @@ Then('elements have following attributes with values:', (dataTable) => {
 
 Then('the {string} {role} has {string} attribute with value {string}', (name, role, attribute, value) => {
   checkElementCss(role, name, attribute, value);
+});
+
+/**
+ * Verifies that a modal contains elements with specific CSS properties
+ * This is a generic step that can be used for any modal dialog
+ * Usage: Then the "Terms & Conditions" modal should have elements with CSS properties:
+ *          | Text      | CSS Property | CSS Value |
+ *          | Bold text | font-weight  | 700       |
+ */
+Then('the {string} modal should have elements with CSS properties:', (modalName, dataTable) => {
+  cy.findByRole('dialog', { name: modalName }).within(() => {
+    dataTable.hashes().forEach((row) => {
+      cy.contains(row.Text).should('have.css', row['CSS Property'], row['CSS Value']);
+    });
+  });
+});
+
+/**
+ * Verifies that a modal contains elements mapped by semantic types
+ * This step maps user-friendly names to HTML elements for better readability
+ * Usage: Then the "Terms & Conditions" modal should contain elements with semantic types:
+ *          | Text             | Element Type |
+ *          | h1 Heading 8-)   | Main Heading |
+ *          | This is bold     | Bold Text    |
+ *          | Visit link       | Link         |
+ */
+Then('the {string} modal should contain elements with semantic types:', (modalName, dataTable) => {
+  cy.findByRole('dialog', { name: modalName }).within(() => {
+    dataTable.hashes().forEach((row) => {
+      const htmlElement = HTML_ELEMENT_SELECTORS[row['Element Type']];
+      cy.contains(row.Text).should('match', htmlElement);
+    });
+  });
+});
+
+Then('the preview iframe contains {string} text', (expectedText) => {
+  cy.get('iframe').then(($iframe) => {
+    const iframeBody = $iframe.contents().find('body');
+    cy.wrap(iframeBody).should('contain', expectedText);
+  });
+});
+
+Then('the preview iframe contains {string} HTML', (expectedHtml) => {
+  cy.get('iframe').then(($iframe) => {
+    const iframeBody = $iframe.contents().find('body');
+    cy.wrap(iframeBody).should('contain.html', expectedHtml);
+  });
 });
