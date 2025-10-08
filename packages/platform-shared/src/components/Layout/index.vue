@@ -44,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
         :docs-link="docsLink"
         help-url="https://backstage.forgerock.com/"
         v-show="!hideNavBar" />
-      <div
+      <main
         id="appContent"
         tabindex="-1"
         :class="{'show-navbar': !hideNavBar}">
@@ -64,7 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
             </FrAlert>
           </template>
         </notifications>
-      </div>
+      </main>
       <footer
         v-if="showFooter"
         class="app-footer">
