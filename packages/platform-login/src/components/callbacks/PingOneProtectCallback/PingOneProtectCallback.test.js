@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,14 +16,9 @@ HTMLCanvasElement.prototype.getContext = () => {};
 
 const mockConfig = {
   envId: '02fb4743-189a-4bc7-9d6c-a919edfe6447',
-  consoleLogEnabled: true,
-  customHost: '',
-  lazyMetadata: false,
   behavioralDataCollection: true,
-  deviceKeyRsyncIntervals: 14,
   enableTrust: false,
   disableTags: false,
-  disableHub: false,
 };
 
 const getMockCallback = (type) => ({
