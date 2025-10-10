@@ -4,13 +4,12 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="d-flex align-items-center justify-content-end text-right dropdown-padding">
-    <BDropdown
-      :boundary="boundary"
-      variant="link"
+    <FrActionsMenu
       no-caret
       right
       toggle-class="text-decoration-none p-0"
-      data-testid="dropdown-actions">
+      data-testid="dropdown-actions"
+      use-floating-menu>
       <template #button-content>
         <FrIcon
           icon-class="text-muted md-24"
@@ -35,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t(action.text) }}
         </BDropdownItem>
       </template>
-    </BDropdown>
+    </FrActionsMenu>
   </div>
 </template>
 
@@ -46,10 +45,10 @@ of the MIT license. See the LICENSE file for details. -->
 import { computed } from 'vue';
 import { isEmpty, pickBy } from 'lodash';
 import {
-  BDropdown,
   BDropdownItem,
   BDropdownDivider,
 } from 'bootstrap-vue';
+import FrActionsMenu from '@forgerock/platform-shared/src/components/ActionsMenu/ActionsMenu';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { detailTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
@@ -70,10 +69,6 @@ const props = defineProps({
   status: {
     type: String,
     default: 'complete',
-  },
-  boundary: {
-    default: 'window',
-    type: String,
   },
 });
 

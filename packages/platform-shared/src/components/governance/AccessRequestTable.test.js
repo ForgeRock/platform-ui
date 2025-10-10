@@ -5,8 +5,13 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, flushPromises } from '@vue/test-utils';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
+import {
+  createAppContainer,
+  findByRole,
+  findByTestId,
+  toggleActionsMenu,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
@@ -71,14 +76,22 @@ describe('AccessRequestTable', () => {
 
   const setup = (props) => {
     setupTestPinia({ user: { userId: '1234' } });
-    return mount(AccessRequestTable, {
-      ...stubProps,
-      props: {
-        accessRequests,
-        ...props,
-      },
-    });
+    return {
+      wrapper: mount(AccessRequestTable, {
+        attachTo: createAppContainer(),
+        ...stubProps,
+        props: {
+          accessRequests,
+          ...props,
+        },
+      }),
+      domWrapper: new DOMWrapper(document.body),
+    };
   };
+
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
 
   describe('@Component Tests', () => {
     beforeEach(() => {
@@ -90,7 +103,7 @@ describe('AccessRequestTable', () => {
     });
 
     it('should list requests correctly', async () => {
-      const wrapper = setup();
+      const { domWrapper, wrapper } = setup();
       await flushPromises();
 
       const requestRows = wrapper.findAll('table tbody [role="row"]');
@@ -99,11 +112,14 @@ describe('AccessRequestTable', () => {
       expect(cellsFirstRow[0].text()).toContain('entitlementRevoke');
       expect(cellsFirstRow[0].text()).toContain('ID: 1');
       expect(cellsFirstRow[1].text()).toContain('Jun 22, 2023');
-      expect(cellsFirstRow[2].findAll('ul li')[2].text()).toContain('Cancel Request');
+
+      await toggleActionsMenu(domWrapper);
+      const viewDetailsButton = findByRole(domWrapper, 'menuitem', 'View Details');
+      expect(viewDetailsButton).toBeDefined();
     });
 
     it('should filter by status correctly', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
 
       const statusMenu = findByTestId(wrapper, 'status-menu');
@@ -137,13 +153,13 @@ describe('AccessRequestTable', () => {
     });
 
     it('Navigates to request details page after clicking on "View Details"', async () => {
-      const wrapper = setup();
+      const { domWrapper, wrapper } = setup();
       await flushPromises();
 
-      const viewDetailsButton = findByTestId(wrapper, 'view-details-button');
-      expect(viewDetailsButton.exists()).toBe(true);
+      await toggleActionsMenu(domWrapper);
+      const viewDetailsButton = findByRole(domWrapper, 'menuitem', 'View Details');
+      expect(viewDetailsButton).toBeDefined();
       await viewDetailsButton.trigger('click');
-
       expect(wrapper.emitted('navigate-to-details')).toHaveLength(1);
       expect(wrapper.emitted('navigate-to-details')[0][0].details.id).toBe(1);
     });

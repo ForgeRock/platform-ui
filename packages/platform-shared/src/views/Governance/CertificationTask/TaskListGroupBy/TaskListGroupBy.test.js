@@ -5,24 +5,38 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import { mount, flushPromises } from '@vue/test-utils';
+import {
+  createAppContainer,
+  createTooltipContainer,
+  findByTestId,
+  findByRole,
+  toggleActionsMenu,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
+import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import TaskListGroupBy from './index';
+
+const { modalShow } = mockModal();
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
     consumer: {
       web: {
         '1_0-web': { id: 'web', displayName: 'Web Application', image: 'web.png' },
+        '2.0-azure': { id: 'azure.ad', displayName: 'azure', image: 'microsoft.svg' },
       },
     },
   }),
 }));
+
+beforeEach(() => {
+  document.body.innerHTML = '';
+});
 
 describe('Glossary', () => {
   createTooltipContainer([
@@ -33,117 +47,122 @@ describe('Glossary', () => {
     'flags-01fec9de-a9e7-435b-8d16-2b2367714278-0',
     'btnCertify-01fec9de-a9e7-435b-8d16-2b2367714278',
   ]);
-  const setup = () => mount(TaskListGroupBy, {
-    global: {
-      plugins: [i18n, Notifications],
-      mocks: {
-        $bvModal: {
-          show: jest.fn(),
+  function setup() {
+    const wrapper = mount(TaskListGroupBy, {
+      attachTo: createAppContainer(),
+      global: {
+        plugins: [i18n, Notifications],
+        mocks: {
+          $bvModal: {
+            show: modalShow,
+          },
         },
       },
-    },
-    props: {
-      actorId: 'managed/user/b29d411e-987e-4f67-afc7-1c590718179b',
-      campaignDetails: {
-        status: 'in-progress',
-        certObjectType: 'user',
-        name: 'asdfasdf',
-        description: 'asdfasdf',
-        isEventBased: false,
-        stagingEnabled: false,
-        schedule: null,
-        skipInactiveCertifiers: false,
-        allowSelfCertification: false,
-        selfCertificationRule: 'none',
-        enableForward: true,
-        enableReassign: true,
-        reassignPermissions: {
-          certify: true, comment: true, claim: true, delegate: true, exception: true, forward: true, reassign: true, reset: true, revoke: true, save: true, signoff: true,
-        },
-        exceptionDuration: 14,
-        allowBulkCertify: true,
-        allowPartialSignoff: false,
-        showRemediationRule: false,
-        remediationRule: 'BasicRevocation',
-        showInitializeRule: false,
-        initializeRule: '',
-        showFinalizeRule: false,
-        finalizeRule: '',
-        certificationType: 'identity',
-        ownerId: 'managed/user/b29d411e-987e-4f67-afc7-1c590718179b',
-        stageDuration: 14,
-        expirationAction: null,
-        expirationActionDelay: 0,
-        expirationReassignee: null,
-        stages: [{
-          certifierType: 'user',
-          certifierId: 'managed/user/b29d411e-987e-4f67-afc7-1c590718179b',
-          certifierScript: null,
-          certifierInfo: {
+      props: {
+        actorId: 'managed/user/b29d411e-987e-4f67-afc7-1c590718179b',
+        campaignDetails: {
+          status: 'in-progress',
+          certObjectType: 'user',
+          name: 'asdfasdf',
+          description: 'asdfasdf',
+          isEventBased: false,
+          stagingEnabled: false,
+          schedule: null,
+          skipInactiveCertifiers: false,
+          allowSelfCertification: false,
+          selfCertificationRule: 'none',
+          enableForward: true,
+          enableReassign: true,
+          reassignPermissions: {
+            certify: true, comment: true, claim: true, delegate: true, exception: true, forward: true, reassign: true, reset: true, revoke: true, save: true, signoff: true,
+          },
+          exceptionDuration: 14,
+          allowBulkCertify: true,
+          allowPartialSignoff: false,
+          showRemediationRule: false,
+          remediationRule: 'BasicRevocation',
+          showInitializeRule: false,
+          initializeRule: '',
+          showFinalizeRule: false,
+          finalizeRule: '',
+          certificationType: 'identity',
+          ownerId: 'managed/user/b29d411e-987e-4f67-afc7-1c590718179b',
+          stageDuration: 14,
+          expirationAction: null,
+          expirationActionDelay: 0,
+          expirationReassignee: null,
+          stages: [{
+            certifierType: 'user',
+            certifierId: 'managed/user/b29d411e-987e-4f67-afc7-1c590718179b',
+            certifierScript: null,
+            certifierInfo: {
+              mail: 'igaadmin@fr.com', givenName: 'iga', id: 'b29d411e-987e-4f67-afc7-1c590718179b', sn: 'admin', userName: 'igaadmin',
+            },
+          }],
+          defaultCertifierId: null,
+          assignmentNotification: 'emailTemplate/certificationAssigned',
+          assignmentNotificationIncludeManager: false,
+          reassignNotification: 'emailTemplate/certificationReassigned',
+          expirationNotification: null,
+          reminderNotification: null,
+          reminderFrequency: 0,
+          escalationNotification: null,
+          escalationFrequency: null,
+          escalationOwner: null,
+          remediationDelay: 0,
+          targetFilter: {
+            type: ['accountGrant', 'entitlementGrant'], user: { operator: 'ALL', operand: [] }, application: { operator: 'EQUALS', operand: { targetName: 'authoritative', targetValue: false } }, account: { operator: 'ALL', operand: [] }, entitlement: { operator: 'ALL', operand: [] }, decision: { operator: 'ALL', operand: [] },
+          },
+          duration: 14,
+          ownerInfo: {
             mail: 'igaadmin@fr.com', givenName: 'iga', id: 'b29d411e-987e-4f67-afc7-1c590718179b', sn: 'admin', userName: 'igaadmin',
           },
-        }],
-        defaultCertifierId: null,
-        assignmentNotification: 'emailTemplate/certificationAssigned',
-        assignmentNotificationIncludeManager: false,
-        reassignNotification: 'emailTemplate/certificationReassigned',
-        expirationNotification: null,
-        reminderNotification: null,
-        reminderFrequency: 0,
-        escalationNotification: null,
-        escalationFrequency: null,
-        escalationOwner: null,
-        remediationDelay: 0,
-        targetFilter: {
-          type: ['accountGrant', 'entitlementGrant'], user: { operator: 'ALL', operand: [] }, application: { operator: 'EQUALS', operand: { targetName: 'authoritative', targetValue: false } }, account: { operator: 'ALL', operand: [] }, entitlement: { operator: 'ALL', operand: [] }, decision: { operator: 'ALL', operand: [] },
-        },
-        duration: 14,
-        ownerInfo: {
-          mail: 'igaadmin@fr.com', givenName: 'iga', id: 'b29d411e-987e-4f67-afc7-1c590718179b', sn: 'admin', userName: 'igaadmin',
-        },
-        id: '3fa7d00e-543e-4b6b-8c5b-4c0cbfcd80de',
-        templateId: 'ff4220bc-b2c7-484c-9466-00b1601b9e61',
-        startDate: '2023-04-27T19:41:00+00:00',
-        deadline: '2023-05-11T19:41:00+00:00',
-        completionDate: null,
-        reminderNotificationDate: null,
-        escalationNotificationDate: null,
-        systemMessages: { errors: [], info: [] },
-        etlJobId: null,
-        totals: { total: 22, 'in-progress': 13 },
-        progress: 0.4090909090909091,
-        statistics: {
-          userCount: { new: 7 },
-          usersMissingEmail: 0,
-          actorsMissingEmail: 0,
-          entitlementsWithoutOwner: 5,
-          applications: { TargetADApp: 22, total: 22 },
-          entitlements: {
-            'Zoran User': 7, 'Zoran Admin': 3, 'Zoran Entitlement Owner': 3, 'Zoran Executive': 1, 'Zoran Supervisor': 1, total: 15,
+          id: '3fa7d00e-543e-4b6b-8c5b-4c0cbfcd80de',
+          templateId: 'ff4220bc-b2c7-484c-9466-00b1601b9e61',
+          startDate: '2023-04-27T19:41:00+00:00',
+          deadline: '2023-05-11T19:41:00+00:00',
+          completionDate: null,
+          reminderNotificationDate: null,
+          escalationNotificationDate: null,
+          systemMessages: { errors: [], info: [] },
+          etlJobId: null,
+          totals: { total: 22, 'in-progress': 13 },
+          progress: 0.4090909090909091,
+          statistics: {
+            userCount: { new: 7 },
+            usersMissingEmail: 0,
+            actorsMissingEmail: 0,
+            entitlementsWithoutOwner: 5,
+            applications: { TargetADApp: 22, total: 22 },
+            entitlements: {
+              'Zoran User': 7, 'Zoran Admin': 3, 'Zoran Entitlement Owner': 3, 'Zoran Executive': 1, 'Zoran Supervisor': 1, total: 15,
+            },
+            previousDecision: { previouslyReviewed: 0, total: 22 },
+            currentDecision: {
+              revoke: 2, abstain: 0, certify: 7, exception: 0, noDecision: 13,
+            },
+            decisionsByApplication: { TargetADApp: 22 },
+            decisionsByRole: {},
+            primaryReviewer: { total: 3, 'in-progress': 2, complete: 1 },
           },
-          previousDecision: { previouslyReviewed: 0, total: 22 },
-          currentDecision: {
-            revoke: 2, abstain: 0, certify: 7, exception: 0, noDecision: 13,
-          },
-          decisionsByApplication: { TargetADApp: 22 },
-          decisionsByRole: {},
-          primaryReviewer: { total: 3, 'in-progress': 2, complete: 1 },
         },
+        campaignId: '3fa7d00e-543e-4b6b-8c5b-4c0cbfcd80de',
+        certificationGrantType: 'accounts',
+        isAdmin: true,
+        isEntitlementCertificationType: false,
+        refreshTasks: false,
+        showGroupBy: true,
       },
-      campaignId: '3fa7d00e-543e-4b6b-8c5b-4c0cbfcd80de',
-      certificationGrantType: 'accounts',
-      isAdmin: true,
-      isEntitlementCertificationType: false,
-      refreshTasks: false,
-      showGroupBy: true,
-    },
-    stubs: {
-      BTooltip: true,
-    },
-  });
+      stubs: {
+        BTooltip: true,
+      },
+    });
+    return { wrapper, domWrapper: new DOMWrapper(document.body) };
+  }
   beforeEach(() => {
     setupTestPinia({ user: { userId: '1234' } });
     jest.spyOn(CommonsApi, 'getGlossarySchema').mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    jest.spyOn(CommonsApi, 'getFilterSchema').mockReturnValue(Promise.resolve({ data: { user: [] } }));
     jest.spyOn(CommonsApi, 'getIgaAutoIdConfig').mockReturnValue(Promise.resolve({ data: { result: [] } }));
     jest.spyOn(CertificationApi, 'getCertificationCounts').mockReturnValue(Promise.resolve({
       data: {
@@ -264,7 +283,7 @@ describe('Glossary', () => {
             _id: 'c7c5b4b3-e723-48a8-ad15-4176f15f82f0', accountEnabled: false, displayName: 'Perkin Reek', givenName: 'Perkin', mail: 'Perkin.Reek@autoidzoran.onmicrosoft.com', mailNickname: 'Perkin.Reek', manager: null, memberOf: ['a895d259-3279-45e8-b91c-ed6c8962202f', '0fcfd73c-6c0a-4ad3-a580-95795af493c5'], otherMails: [], proxyAddresses: ['SMTP:Perkin.Reek@autoidzoran.onmicrosoft.com'], surname: 'Reek', userPrincipalName: 'Perkin.Reek@autoidzoran.onmicrosoft.com', userType: 'Member', linkQualifier: 'default', metadata: { entityType: '/openidm/reconciliation', created: '2023-04-27T18:43:08.454Z' },
           },
           application: {
-            mapping: 'managedAlpha_user_systemTargetadappUser', _rev: 'f60b29ad-f81b-421f-8358-0aef49dce5c2-2864', authoritative: false, description: 'TargetADApp', fr: { realm: 'alpha' }, id: '4ab98652-0a20-4cef-bcdb-35e1edf60093', name: 'TargetADApp', templateName: 'azure.ad', templateVersion: '1.0.0', connectorId: 'TargetADApp', ssoIdentities: { oidcId: 'TargetADApp' }, metadata: { entityType: '/openidm/managed/application', created: '2023-04-27T17:36:58.87Z' },
+            mapping: 'managedAlpha_user_systemTargetadappUser', _rev: 'f60b29ad-f81b-421f-8358-0aef49dce5c2-2864', authoritative: false, description: 'TargetADApp', fr: { realm: 'alpha' }, id: '4ab98652-0a20-4cef-bcdb-35e1edf60093', name: 'TargetADApp', templateName: 'azure.ad', templateVersion: '2.0', connectorId: 'TargetADApp', ssoIdentities: { oidcId: 'TargetADApp' }, metadata: { entityType: '/openidm/managed/application', created: '2023-04-27T17:36:58.87Z' },
           },
           applicationOwner: [{
             _rev: 'f60b29ad-f81b-421f-8358-0aef49dce5c2-1289',
@@ -518,43 +537,43 @@ describe('Glossary', () => {
   });
   describe('@renders', () => {
     it('renders both account and entitlement tables', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       expect(wrapper.find('#CertificationAccountsTaskList').exists()).toBeTruthy();
       expect(wrapper.find('#CertificationEntitlementsTaskList').exists()).toBeTruthy();
     });
     it('renders both account and entitlement tables should have one row each', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       expect(wrapper.find('#CertificationAccountsTaskList').find('table').find('tbody').findAll('tr').length).toEqual(1);
       expect(wrapper.find('#CertificationEntitlementsTaskList').find('table').find('tbody').findAll('tr').length).toEqual(1);
     });
     it('renders account details with correct data', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       expect(wrapper.find('#CertificationAccountsTaskList').find('table').find('tbody').find('tr')
         .findAll('td')[1].text()).toContain('Perkin.Reek@autoidzoran.onmicrosoft.com');
     });
     it('renders entitlement details with correct data', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       expect(wrapper.find('#CertificationEntitlementsTaskList').find('table').find('tbody').find('tr')
         .findAll('td')[1].text()).toContain('entitlement name');
     });
     it('renders chevron_right with correct data', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       expect(findByTestId(wrapper, 'group-by-icon').exists()).toBeTruthy();
     });
   });
   describe('@actions', () => {
     it('should emit progress event on load', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       expect(wrapper.emitted()['check-progress']).toBeTruthy();
     });
     it('should open account modal on account name click', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       findByTestId(wrapper, 'account-cell').trigger('click');
       await flushPromises();
@@ -562,7 +581,7 @@ describe('Glossary', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('CertificationTaskAccountModal');
     });
     it('should open application modal on application name click', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       findByTestId(wrapper, 'application-cell').trigger('click');
       await flushPromises();
@@ -570,7 +589,7 @@ describe('Glossary', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('CertificationTaskApplicationModal');
     });
     it('should open entitlement modal from account table', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       findByTestId(wrapper, 'entitlement-cell').trigger('click');
       await flushPromises();
@@ -578,57 +597,73 @@ describe('Glossary', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-entitlement');
     });
     it('should open add comments for account table', async () => {
-      const wrapper = setup();
+      const { domWrapper, wrapper } = setup();
       await flushPromises();
-      findByTestId(wrapper, 'add-comment-button-01fec9de-a9e7-435b-8d16-2b2367714278').trigger('click');
+
+      await toggleActionsMenu(domWrapper);
+      const viewReviewersButton = findByRole(domWrapper, 'menuitem', 'Add Comment');
+      viewReviewersButton.trigger('click');
       await wrapper.vm.$nextTick();
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-add-comment');
+
+      expect(modalShow).toHaveBeenCalledWith('certification-account-add-comment');
     });
     it('should open add comments for entitlement table', async () => {
-      const wrapper = setup();
+      const { domWrapper, wrapper } = setup();
       await flushPromises();
-      wrapper.findAll('[data-testid="add-comment-button-01fec9de-a9e7-435b-8d16-2b2367714278"]')[1].trigger('click');
+
+      await toggleActionsMenu(domWrapper.findAll('td').filter((item) => item.classes().includes('sticky-right'))[1]);
+      const viewReviewersButton = findByRole(domWrapper, 'menuitem', 'Add Comment');
+      viewReviewersButton.trigger('click');
       await wrapper.vm.$nextTick();
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-add-comment');
+
+      expect(modalShow).toHaveBeenCalledWith('certification-entitlement-add-comment');
     });
     it('should open comments modal on accounts table', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       findByTestId(wrapper, 'cert-comments-button').trigger('click');
       await wrapper.vm.$nextTick();
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-view-comments');
     });
     it('should open comments modal on entitlements table', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       wrapper.findAll('[data-testid="cert-comments-button"]')[1].trigger('click');
       await wrapper.vm.$nextTick();
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-comments');
     });
     it('should open reviewers modal on accounts table', async () => {
-      const wrapper = setup();
+      const { domWrapper, wrapper } = setup();
       await flushPromises();
-      findByTestId(wrapper, 'cert-reviewers-button-accounts').trigger('click');
+
+      await toggleActionsMenu(domWrapper);
+      const viewReviewersButton = findByRole(domWrapper, 'menuitem', 'View Reviewers');
+      viewReviewersButton.trigger('click');
       await wrapper.vm.$nextTick();
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-view-reviewers');
+
+      expect(modalShow).toHaveBeenCalledWith('certification-account-view-reviewers');
     });
     it('should open reviewers modal on entitlements table', async () => {
-      const wrapper = setup();
+      const { domWrapper, wrapper } = setup();
       await flushPromises();
-      findByTestId(wrapper, 'cert-reviewers-button-entitlements').trigger('click');
+
+      await toggleActionsMenu(domWrapper.findAll('td').filter((item) => item.classes().includes('sticky-right'))[1]);
+      const viewReviewersButton = findByRole(domWrapper, 'menuitem', 'View Reviewers');
+      viewReviewersButton.trigger('click');
       await wrapper.vm.$nextTick();
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-reviewers');
+
+      expect(modalShow).toHaveBeenCalledWith('certification-entitlement-view-reviewers');
     });
   });
   describe('@units', () => {
     it('should emit refresh-complete event', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       wrapper.vm.refreshComplete();
       expect(wrapper.emitted()['refresh-complete']).toBeTruthy();
     });
     it('should emit sign-off event', async () => {
-      const wrapper = setup();
+      const { wrapper } = setup();
       await flushPromises();
       wrapper.vm.hidesignOff();
       expect(wrapper.emitted()['signed-off']).toBeTruthy();

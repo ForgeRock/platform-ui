@@ -71,11 +71,11 @@ of the MIT license. See the LICENSE file for details. -->
       </BTooltip>
     </template>
 
-    <BDropdown
+    <FrActionsMenu
       no-caret
-      :boundary="boundary"
+      right
       toggle-class="p-1 d-inline"
-      variant="link">
+      use-floating-menu>
       <template #button-content>
         <!-- Visually hidden label for screen readers -->
         <span class="sr-only">
@@ -132,26 +132,26 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('governance.certificationTask.actions.viewActivity') }}
         </FrIcon>
       </BDropdownItem>
-    </BDropdown>
+    </FrActionsMenu>
   </div>
 </template>
 <script>
 import {
   BButton,
-  BDropdown,
   BDropdownItem,
   BTooltip,
 } from 'bootstrap-vue';
 import { get } from 'lodash';
+import FrActionsMenu from '@forgerock/platform-shared/src/components/ActionsMenu/ActionsMenu';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 export default {
   name: 'TaskActionsCell',
   components: {
     BButton,
-    BDropdown,
     BDropdownItem,
     BTooltip,
+    FrActionsMenu,
     FrIcon,
   },
   props: {
@@ -170,10 +170,6 @@ export default {
     isStaged: {
       type: Boolean,
       default: false,
-    },
-    boundary: {
-      default: 'window',
-      type: String,
     },
   },
   methods: {

@@ -76,10 +76,6 @@
     overflow: visible;
     z-index: 1000;
     background-color: $white;
-    &:has(.dropdown.show) {
-      position: sticky;
-      z-index: 1001;
-    }
   }
 
   table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left), 
@@ -87,22 +83,6 @@
     &:has(.resizer:focus-visible) {
       background-position: right 1rem center;
     } 
-  }
-}
-
-.table-responsive.table-resizable {
-  &:has(tbody tr:only-child td.sticky-right .dropdown-menu.show),
-  &:has(tbody tr:only-child td.cert-actions .dropdown-menu.show) {
-    overflow-x: visible;
-    table {
-      table-layout: auto !important;
-    }
-  }
-
-  tbody tr:only-child td.cert-actions .dropdown-menu.show {
-    left: auto;
-    right: 0;
-    width: fit-content;
   }
 }
 
@@ -131,8 +111,5 @@
 .tabs .tab-content.col {
   &:has(.table-resizable) {
     overflow-x: auto;
-  }
-  &:has(.table-resizable td.sticky-right .dropdown) {
-    min-height: 300px;
   }
 }

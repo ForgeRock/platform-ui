@@ -5,13 +5,12 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { flushPromises, mount } from '@vue/test-utils';
+import { DOMWrapper, flushPromises, mount } from '@vue/test-utils';
+import { createAppContainer, toggleActionsMenu } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { cloneDeep } from 'lodash';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { detailTypes } from '../../../utils/governance/AccessRequestUtils';
 import Tasks from './Tasks';
-
-let wrapper;
 
 const ITEM = {
   rawData: {
@@ -77,23 +76,31 @@ const ITEM = {
 let modalShow;
 function setup(props) {
   ({ modalShow } = mockModal());
-  return mount(Tasks, {
-    global: {
-      mocks: {
-        $t: (t) => t,
+  return {
+    wrapper: mount(Tasks, {
+      attachTo: createAppContainer(),
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-    },
-    props: {
-      item: ITEM,
-      type: detailTypes.USER_REQUEST,
-      ...props,
-    },
-  });
+      props: {
+        item: ITEM,
+        type: detailTypes.USER_REQUEST,
+        ...props,
+      },
+    }),
+    domWrapper: new DOMWrapper(document.body),
+  };
 }
+
+beforeEach(() => {
+  document.body.innerHTML = '';
+});
 
 describe('Tasks', () => {
   it('Should renders table columns correctly', () => {
-    wrapper = setup();
+    const { wrapper } = setup();
     const columns = wrapper.findAll('th');
     expect(columns.length).toBe(3);
     expect(columns[0].text()).toBe('Task');
@@ -102,7 +109,7 @@ describe('Tasks', () => {
   });
 
   it('should call the appropriate method when opening task details modal', async () => {
-    wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     expect(modalShow).not.toHaveBeenCalled();
@@ -113,7 +120,7 @@ describe('Tasks', () => {
   });
 
   it('Should render wait date correctly', () => {
-    wrapper = setup();
+    const { wrapper } = setup();
     const smalls = wrapper.findAll('tr small');
     const date1 = smalls[0];
     expect(date1.text()).toBe('Jul 16, 2025');
@@ -123,41 +130,46 @@ describe('Tasks', () => {
   });
 
   it('Should not render dropdown menu for user requests', () => {
-    wrapper = setup();
+    const { wrapper } = setup();
     const dropdowns = wrapper.findAll('.dropdown-menu');
     expect(dropdowns.length).toBe(0);
   });
 
-  it('Should render dropdown menus for admin requests', () => {
-    wrapper = setup({ type: detailTypes.ADMIN_REQUEST });
-    const dropdowns = wrapper.findAll('.dropdown-menu');
-    expect(dropdowns.length).toBe(2);
+  it('Should render dropdown menus for admin requests', async () => {
+    const { domWrapper } = setup({ type: detailTypes.ADMIN_REQUEST });
 
-    const completedDropDown = dropdowns[0].findAll('li');
+    await flushPromises();
+    const actionsCellRows = domWrapper.findAll('td').filter((item) => item.classes().includes('sticky-right'));
+    expect(actionsCellRows.length).toBe(2);
+
+    await toggleActionsMenu(actionsCellRows[0]);
+    const completedDropDown = domWrapper.findAll('[role="menuitem"]');
     expect(completedDropDown.length).toBe(1);
     expect(completedDropDown[0].text()).toContain('viewDetails');
 
-    const activeDropdown = dropdowns[1].findAll('li');
+    await toggleActionsMenu(actionsCellRows[0]);
+    await toggleActionsMenu(actionsCellRows[1]);
+    const activeDropdown = domWrapper.findAll('[role="menuitem"]');
     expect(activeDropdown.length).toBe(2);
     expect(activeDropdown[0].text()).toContain('viewDetails');
     expect(activeDropdown[1].text()).toContain('changeResumeDate');
   });
 
-  it('Should render action menu for admin requests with active approval', () => {
+  it('Should render action menu for admin requests with active approval', async () => {
     const activeApprovalItem = cloneDeep(ITEM);
     activeApprovalItem.rawData.decision.phases[0].status = 'in-progress';
     activeApprovalItem.rawData.decision.phases.splice(1, 1);
+    const { domWrapper } = setup({ item: activeApprovalItem, type: detailTypes.ADMIN_REQUEST });
 
-    wrapper = setup({ item: activeApprovalItem, type: detailTypes.ADMIN_REQUEST });
-    const dropdowns = wrapper.findAll('.dropdown-menu');
-    expect(dropdowns.length).toBe(1);
+    await flushPromises();
 
-    const completedDropDown = dropdowns[0].findAll('li');
-    expect(completedDropDown.length).toBe(6);
+    await toggleActionsMenu(domWrapper);
+    const completedDropDown = domWrapper.findAll('[role="menuitem"]');
+    expect(completedDropDown.length).toBe(5);
     expect(completedDropDown[0].text()).toContain('approve');
     expect(completedDropDown[1].text()).toContain('reject');
-    expect(completedDropDown[3].text()).toContain('forward');
-    expect(completedDropDown[4].text()).toContain('addComment');
-    expect(completedDropDown[5].text()).toContain('viewDetails');
+    expect(completedDropDown[2].text()).toContain('forward');
+    expect(completedDropDown[3].text()).toContain('addComment');
+    expect(completedDropDown[4].text()).toContain('viewDetails');
   });
 });
