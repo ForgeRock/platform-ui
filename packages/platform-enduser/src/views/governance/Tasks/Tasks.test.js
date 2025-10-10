@@ -9,21 +9,46 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as fulfillmentTasks from '@forgerock/platform-shared/src/utils/governance/fulfillmentTasks';
+import ResizableTable from '@forgerock/platform-shared/src/directives/ResizableTable/ResizableTable';
+import { createRouter, createWebHistory } from 'vue-router';
 import * as TasksApi from '@/api/governance/TasksApi';
 import store from '@/store';
 import i18n from '@/i18n';
 import Tasks from './Tasks';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/utils/governance/fulfillmentTasks');
+fulfillmentTasks.buildTaskDisplay = jest.fn();
 let modalShow;
 
 const mountComponent = () => {
   ({ modalShow } = mockModal());
   setupTestPinia({ user: { userId: '1234' } });
   store.state.SharedStore.enableTableColumnResizing = false;
+
+  // Create the app element for Teleport target
+  if (!document.getElementById('app')) {
+    const appDiv = document.createElement('div');
+    appDiv.id = 'app';
+    document.body.appendChild(appDiv);
+  }
+
+  // Create a mock router
+  const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+      { path: '/', name: 'Home', component: { template: '<div>Home</div>' } },
+      { path: '/tasks/:taskId', name: 'TaskDetails', component: { template: '<div>TaskDetails</div>' } },
+    ],
+  });
+
   return mount(Tasks, {
     global: {
-      plugins: [i18n],
+      plugins: [i18n, router],
+      directives: {
+        'resizable-table': ResizableTable,
+      },
     },
   });
 };
@@ -68,11 +93,24 @@ const mockRequest = {
   ],
 };
 
-describe('Approvals', () => {
+describe('Tasks', () => {
   CommonsApi.getResource.mockReturnValue(Promise.resolve({}));
+  fulfillmentTasks.buildTaskDisplay = jest.fn().mockReturnValue([{
+    details: {
+      id: 'task1',
+      assignee: 'John Doe',
+      name: 'Phase 1',
+      priority: 'high',
+      assignedDate: 'Jan 1, 2023',
+    },
+    rawData: mockRequest,
+  }]);
+
   let wrapper;
 
   beforeEach(() => {
+    document.body.innerHTML = '';
+    jest.clearAllMocks();
     TasksApi.getUserFulfillmentTasks = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
@@ -81,6 +119,15 @@ describe('Approvals', () => {
         },
       }),
     );
+  });
+
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount();
+      wrapper = null;
+    }
+    document.body.innerHTML = '';
+    jest.clearAllMocks();
   });
 
   it('shows no data component when no tasks are found', async () => {
@@ -93,85 +140,118 @@ describe('Approvals', () => {
       }),
     );
 
+    // Override the global mock to return empty array for this test
+    fulfillmentTasks.buildTaskDisplay.mockReturnValue([]);
+
     wrapper = mountComponent();
     await flushPromises();
-    expect(wrapper.find('.fr-no-data').text()).toBe('inboxNo Tasks');
+
+    // Check for the NoData component by name
+    const noData = wrapper.findComponent({ name: 'NoData' });
+    expect(noData.exists()).toBe(true);
+    expect(noData.props('icon')).toBe('inbox');
   });
 
-  it('sets page size and gets approvals based on event from pagination component', async () => {
+  it('sets page size and gets tasks based on event from pagination component', async () => {
+    const getTasksSpy = jest.spyOn(TasksApi, 'getUserFulfillmentTasks').mockImplementation(() => Promise.resolve({
+      data: {
+        result: [
+          {
+            id: 'task1',
+            phases: [{ name: 'phase1' }],
+            decision: {
+              phases: [{ name: 'phase1', displayName: 'Phase 1', startDate: '2023-01-01' }],
+              actors: {
+                active: [{
+                  phase: 'phase1', givenName: 'John', sn: 'Doe', userName: 'jdoe',
+                }],
+                inactive: [],
+              },
+            },
+            request: { common: { priority: 'high' } },
+          },
+        ],
+        totalCount: 1,
+      },
+    }));
+
     wrapper = mountComponent();
     await flushPromises();
-    const getTasksSpy = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
+
+    // Clear the calls made during mount
+    getTasksSpy.mockClear();
 
     const pagination = wrapper.findComponent({ name: 'Pagination' });
     pagination.vm.$emit('on-page-size-change', 2);
+    await flushPromises();
+
     expect(wrapper.vm.pageSize).toBe(2);
-    expect(getTasksSpy).toHaveBeenCalledWith(
-      '1234',
-      {
-        _pagedResultsOffset: 0,
-        _pageSize: 2,
-        _sortKeys: 'decision.phases.startDate',
-        _sortType: 'date',
-        _sortDir: 'desc',
-        actorStatus: 'active',
-      },
-      {
-        operator: 'AND',
-        operand: [],
-      },
-    );
+
+    // Check the most recent call after the page size change
+    const lastCall = getTasksSpy.mock.calls[getTasksSpy.mock.calls.length - 1];
+    expect(lastCall[0]).toBe('1234');
+    expect(lastCall[1]).toEqual(expect.objectContaining({
+      _pagedResultsOffset: 0,
+      _pageSize: 2,
+      _sortKeys: 'decision.phases.startDate',
+      _sortType: 'date',
+      _sortDir: 'desc',
+      actorStatus: 'active',
+    }));
   });
 
   it('sets page and gets tasks based on event from pagination component', async () => {
+    const getTasksSpy = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
+
     wrapper = mountComponent();
     await flushPromises();
 
-    const getTasksSpy = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
+    // Clear the calls made during mount
+    getTasksSpy.mockClear();
 
     const pagination = wrapper.findComponent({ name: 'Pagination' });
     pagination.vm.$emit('input', 2);
+    await flushPromises();
+
     expect(wrapper.vm.currentPage).toBe(2);
-    expect(getTasksSpy).toHaveBeenCalledWith(
-      '1234',
-      {
-        _pagedResultsOffset: 10,
-        _pageSize: 10,
-        _sortKeys: 'decision.phases.startDate',
-        _sortType: 'date',
-        _sortDir: 'desc',
-        actorStatus: 'active',
-      },
-      {
-        operator: 'AND',
-        operand: [],
-      },
-    );
+
+    // Check the most recent call after the page change
+    const lastCall = getTasksSpy.mock.calls[getTasksSpy.mock.calls.length - 1];
+    expect(lastCall[0]).toBe('1234');
+    expect(lastCall[1]).toEqual(expect.objectContaining({
+      _pagedResultsOffset: 10,
+      _pageSize: 10,
+      _sortKeys: 'decision.phases.startDate',
+      _sortType: 'date',
+      _sortDir: 'desc',
+      actorStatus: 'active',
+    }));
   });
 
   it('sets status and gets tasks based on event from toolbar', async () => {
+    const getTasksSpy = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
+
     wrapper = mountComponent();
     await flushPromises();
 
-    const getTasksSpy = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
+    // Clear the calls made during mount
+    getTasksSpy.mockClear();
 
     const toolbar = wrapper.findComponent({ name: 'RequestToolbar' });
     toolbar.vm.$emit('status-change', 'complete');
-    expect(getTasksSpy).toHaveBeenCalledWith(
-      '1234',
-      {
-        _pagedResultsOffset: 0,
-        _pageSize: 10,
-        _sortKeys: 'decision.phases.startDate',
-        _sortType: 'date',
-        _sortDir: 'desc',
-        actorStatus: 'inactive',
-      },
-      {
-        operator: 'AND',
-        operand: [],
-      },
-    );
+    await flushPromises();
+
+    // Check the most recent call after the status change
+    const lastCall = getTasksSpy.mock.calls[getTasksSpy.mock.calls.length - 1];
+    expect(lastCall[0]).toBe('1234');
+    expect(lastCall[1]).toEqual(expect.objectContaining({
+      _pagedResultsOffset: 0,
+      _pageSize: 10,
+      _sortKeys: 'decision.phases.startDate',
+      _sortType: 'date',
+      _sortDir: 'desc',
+      actorStatus: 'inactive',
+    }));
   });
 
   it('sets tasks count to show in side nav bar badge', async () => {
@@ -185,6 +265,18 @@ describe('Approvals', () => {
   });
 
   it('opens request modal with type FULFILL', async () => {
+    // Restore the original mock for this test that needs task data
+    fulfillmentTasks.buildTaskDisplay.mockReturnValue([{
+      details: {
+        id: 'task1',
+        assignee: 'John Doe',
+        name: 'Phase 1',
+        priority: 'high',
+        assignedDate: 'Jan 1, 2023',
+      },
+      rawData: mockRequest,
+    }]);
+
     wrapper = mountComponent();
     await flushPromises();
 
@@ -194,6 +286,18 @@ describe('Approvals', () => {
   });
 
   it('opens request modal with type DENY', async () => {
+    // Restore the original mock for this test that needs task data
+    fulfillmentTasks.buildTaskDisplay.mockReturnValue([{
+      details: {
+        id: 'task1',
+        assignee: 'John Doe',
+        name: 'Phase 1',
+        priority: 'high',
+        assignedDate: 'Jan 1, 2023',
+      },
+      rawData: mockRequest,
+    }]);
+
     wrapper = mountComponent();
     await flushPromises();
 

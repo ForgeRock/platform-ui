@@ -164,7 +164,6 @@ export function mockScriptDocumentFunctions() {
 /**
  * Toggles opened or closed the first actions menu found in the given element.
  * @param {HTMLElement} element The element containing the actions menu button(s).
- * @param {number} index The index of the actions menu button to toggle (default is 0).
  */
 export async function toggleActionsMenu(element) {
   const actionsCellButton = element.findAll('button').filter((item) => item.text().includes('more_horiz'))[0];

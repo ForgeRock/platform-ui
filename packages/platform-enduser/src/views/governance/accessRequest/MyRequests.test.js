@@ -5,9 +5,14 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { flushPromises, mount } from '@vue/test-utils';
+import { DOMWrapper, flushPromises, mount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import {
+  createAppContainer,
+  findByRole,
+  findByTestId,
+  toggleActionsMenu,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
@@ -30,16 +35,20 @@ describe('MyRequests', () => {
   function setup(user = { userId: '1234' }) {
     setupTestPinia({ user });
     ({ showErrorMessage } = mockNotification());
-    return mount(MyRequests, {
-      global: {
-        plugins: [i18n],
-        mocks: {
-          $router: {
-            push: jest.fn(),
+    return {
+      wrapper: mount(MyRequests, {
+        attachTo: createAppContainer(),
+        global: {
+          plugins: [i18n],
+          mocks: {
+            $router: {
+              push: jest.fn(),
+            },
           },
         },
-      },
-    });
+      }),
+      domWrapper: new DOMWrapper(document.body),
+    };
   }
 
   function mockAccessRequests(status = 'in-progress') {
@@ -218,6 +227,7 @@ describe('MyRequests', () => {
   }
 
   beforeEach(() => {
+    document.body.innerHTML = '';
     AccessRequestApi.getUserRequests = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         result: mockAccessRequests(),
@@ -236,34 +246,37 @@ describe('MyRequests', () => {
   });
 
   it('should load header texts correctly', () => {
-    const wrapper = setup();
+    const { wrapper } = setup();
 
     expect(wrapper.find('h1').text()).toBe('My Requests');
     expect(wrapper.find('p').text()).toBe('View your pending access requests or submit a new request.');
   });
 
   it('should list requests correctly', async () => {
-    const wrapper = setup();
+    const { domWrapper, wrapper } = setup();
     await flushPromises();
 
-    const requestRows = wrapper.findAll('table tbody [role="row"]');
+    const requestRows = domWrapper.findAll('table tbody [role="row"]');
     expect(requestRows).toHaveLength(2);
     const cellsFirstRow = requestRows[0].findAll('td');
     expect(cellsFirstRow[0].text()).toContain('entitlementRevoke');
     expect(cellsFirstRow[0].text()).toContain('ID: 1');
     expect(cellsFirstRow[1].text()).toContain('Jun 22, 2023');
-    expect(cellsFirstRow[2].findAll('ul li')[2].text()).toContain('Cancel Request');
+    await toggleActionsMenu(cellsFirstRow[2]);
+    expect(findByRole(domWrapper, 'menuitem', 'Cancel Request').exists()).toBe(true);
+    await toggleActionsMenu(cellsFirstRow[2]);
     const cellsSecondRow = requestRows[1].findAll('td');
     expect(cellsSecondRow[0].text()).toContain('Grant Application');
     expect(cellsSecondRow[0].text()).toContain('Test Application');
     expect(cellsSecondRow[0].text()).toContain('Test User');
     expect(cellsSecondRow[0].text()).toContain('ID: 387b7fa9-c57a-495c-a276-74d025020cdc');
-    expect(cellsSecondRow[2].findAll('ul li')[2].text()).toContain('Cancel Request');
+    await toggleActionsMenu(cellsSecondRow[2]);
+    expect(findByRole(domWrapper, 'menuitem', 'Cancel Request').exists()).toBe(true);
     expect(wrapper.vm.isLoading).toBe(false);
   });
 
   it('should filter by status correctly', async () => {
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     AccessRequestApi.getUserRequests = jest.fn().mockReturnValue(Promise.resolve({
@@ -293,7 +306,7 @@ describe('MyRequests', () => {
     const error = new Error('Error fetching requests');
     AccessRequestApi.getUserRequests = jest.fn().mockRejectedValue(error);
 
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     expect(showErrorMessage).toHaveBeenCalledWith(error, 'There was an error retrieving your requests');
@@ -305,7 +318,7 @@ describe('MyRequests', () => {
     const error = new Error('Error fetching requests');
     AccessRequestApi.getRequestType = jest.fn().mockRejectedValue(error);
 
-    const wrapper = setup();
+    const { wrapper } = setup();
     await flushPromises();
 
     expect(showErrorMessage).not.toHaveBeenCalled();
@@ -318,11 +331,12 @@ describe('MyRequests', () => {
   });
 
   it('Navigates to request details page after clicking on "View Details"', async () => {
-    const wrapper = setup();
+    const { domWrapper, wrapper } = setup();
     await flushPromises();
 
     const routerSpy = jest.spyOn(wrapper.vm.$router, 'push');
-    const viewDetailsButton = findByTestId(wrapper, 'view-details-button');
+    await toggleActionsMenu(domWrapper);
+    const viewDetailsButton = findByTestId(domWrapper, 'view-details-button');
     expect(viewDetailsButton.exists()).toBe(true);
     await viewDetailsButton.trigger('click');
     expect(routerSpy).toHaveBeenCalledWith({

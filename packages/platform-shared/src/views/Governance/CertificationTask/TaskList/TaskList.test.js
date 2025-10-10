@@ -5,9 +5,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount, mount, flushPromises } from '@vue/test-utils';
+import {
+  DOMWrapper,
+  shallowMount,
+  mount,
+  flushPromises,
+} from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
-import { findByTestId, createTooltipContainer } from '@forgerock/platform-shared/src/utils/testHelpers';
+import {
+  createAppContainer,
+  findByTestId,
+  findByRole,
+  createTooltipContainer,
+  toggleActionsMenu,
+} from '@forgerock/platform-shared/src/utils/testHelpers';
 import { cloneDeep } from 'lodash';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
@@ -28,7 +39,6 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
-let wrapper;
 const resourceDataMock = {
   data: {
     result: [],
@@ -36,8 +46,12 @@ const resourceDataMock = {
   },
 };
 
+let loadItemsListSpy;
+let buildUrlParamsSpy;
+let showErrorMessageSpy;
+let displayNotificationSpy;
 function shallowMountComponent(data = {}, propsData = {}) {
-  wrapper = shallowMount(TaskList, {
+  const wrapper = shallowMount(TaskList, {
     global: {
       mocks: {
         $t: (t) => t,
@@ -59,12 +73,18 @@ function shallowMountComponent(data = {}, propsData = {}) {
       ...propsData,
     },
   });
+  loadItemsListSpy = jest.spyOn(wrapper.vm, 'loadItemsList');
+  buildUrlParamsSpy = jest.spyOn(wrapper.vm, 'buildUrlParams');
+  showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+  displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+  return wrapper;
 }
 
 function mountComponent(propOverrides = {}) {
   createTooltipContainer(['btnCertify-test-id-0', 'btnRevoke-test-id-0', 'btnAllowException-test-id-0']);
   setupTestPinia({ user: { userId: 'testId' } });
-  wrapper = mount(TaskList, {
+  const wrapper = mount(TaskList, {
+    attachTo: createAppContainer(),
     global: {
       attachTo: document.body,
       mocks: {
@@ -82,6 +102,7 @@ function mountComponent(propOverrides = {}) {
       ...propOverrides,
     },
   });
+  return { wrapper, domWrapper: new DOMWrapper(document.body) };
 }
 
 describe('TaskList', () => {
@@ -131,7 +152,7 @@ describe('TaskList', () => {
     });
 
     it('shows descriptor.idx./account property in table', async () => {
-      mountComponent();
+      const { wrapper } = mountComponent();
       await flushPromises();
 
       const account = findByTestId(wrapper, 'account-cell');
@@ -139,7 +160,7 @@ describe('TaskList', () => {
     });
 
     it('shows descriptor.idx./entitlement property in table', async () => {
-      mountComponent({ certificationGrantType: 'entitlements' });
+      const { wrapper } = mountComponent({ certificationGrantType: 'entitlements' });
       await flushPromises();
 
       const entitlement = findByTestId(wrapper, 'entitlement-cell');
@@ -149,7 +170,7 @@ describe('TaskList', () => {
 
   describe('paginationChange', () => {
     it('should call getItems with the pagination page', async () => {
-      shallowMountComponent();
+      const wrapper = shallowMountComponent();
       const getCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'getItems');
       await flushPromises();
       wrapper.vm.paginationPage = 1;
@@ -161,23 +182,27 @@ describe('TaskList', () => {
 
   describe('openSortModal', () => {
     it('should emit the bv::show::modal to show the certification task sort', () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.openSortModal();
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-sort');
     });
   });
   describe('isItemSelected', () => {
     it('should return true if the allSelected variable is true', () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.allSelected = true;
       const result = wrapper.vm.isItemSelected('test');
       expect(result).toEqual(true);
     });
     it('should return false if the allSelected variable is false and there is no selected tasks', () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.allSelected = false;
       wrapper.vm.selectedItems = [];
       const result = wrapper.vm.isItemSelected({ id: 'test' });
       expect(result).toEqual(false);
     });
     it('should return true if the task id is selected', () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.allSelected = false;
       wrapper.vm.selectedItems = [{ id: 'test-id' }];
       const result = wrapper.vm.isItemSelected('test-id');
@@ -186,15 +211,17 @@ describe('TaskList', () => {
   });
   describe('loadItemsList', () => {
     it('should set the total rows with the total hits', () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.loadItemsList(resourceDataMock);
       expect(wrapper.vm.totalRows).toEqual(2);
     });
     it('should set the current page with the page param', () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.loadItemsList(resourceDataMock, 1);
       expect(wrapper.vm.currentPage).toEqual(1);
     });
     it('should set the tasks data with the mapped data with selected property', () => {
-      shallowMountComponent();
+      const wrapper = shallowMountComponent();
       wrapper.vm.selectedItems = [{ id: 'test-id' }];
       const resource = {
         data: {
@@ -216,7 +243,7 @@ describe('TaskList', () => {
       expect(wrapper.vm.items).toEqual(expectedValue);
     });
     it('should add flags to item', () => {
-      shallowMountComponent({});
+      const wrapper = shallowMountComponent();
       const resource = {
         data: {
           result: [{}],
@@ -226,7 +253,7 @@ describe('TaskList', () => {
       expect(wrapper.vm.items[0].flags).toEqual(['NEW_ACCESS']);
     });
     it('should emit check-progress if there is a task in status', () => {
-      shallowMountComponent();
+      const wrapper = shallowMountComponent();
       const resource = {
         data: {
           result: [{
@@ -244,6 +271,7 @@ describe('TaskList', () => {
       expect(wrapper.emitted()['check-progress']).toHaveLength(1);
     });
     it('should show noData component when there are no templates', async () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.loadItemsList({ data: { result: [], totalHits: 0 } }, 0);
       await flushPromises();
 
@@ -252,39 +280,44 @@ describe('TaskList', () => {
     });
   });
   describe('getItems', () => {
-    let loadItemsListSpy;
-    let buildUrlParamsSpy;
-
     beforeEach(() => {
-      shallowMountComponent({
-        currentPage: 2,
-        sortBy: 'name',
-        sortDir: 'asc',
-      });
-      loadItemsListSpy = jest.spyOn(wrapper.vm, 'loadItemsList');
-      buildUrlParamsSpy = jest.spyOn(wrapper.vm, 'buildUrlParams');
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should call loadItemsList once the result of the call is ready', async () => {
+      const wrapper = shallowMountComponent({
+        currentPage: 2,
+        sortBy: 'name',
+        sortDir: 'asc',
+      });
       wrapper.vm.getItems(2);
 
       await flushPromises();
       expect(loadItemsListSpy).toHaveBeenCalled();
     });
     it('should call buildUrlParams with the required params', () => {
+      const wrapper = shallowMountComponent({
+        currentPage: 2,
+        sortBy: 'name',
+        sortDir: 'asc',
+      });
       wrapper.vm.getItems(2);
       expect(buildUrlParamsSpy).toHaveBeenCalledWith(2, 'name', 'asc');
     });
     it('should call getCertificationTasksListByCampaign with the required params', () => {
+      const wrapper = shallowMountComponent({
+        currentPage: 2,
+        sortBy: 'name',
+        sortDir: 'asc',
+      });
       wrapper.vm.getItems(2);
       expect(CertificationApi.getCertificationTasksListByCampaign).toHaveBeenCalled();
     });
   });
   describe('buildUrlParams', () => {
     it('should return the urlParams according to the params', () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.pageSize = 10;
-      shallowMountComponent();
       const expectedValue = {
         appendUserPermissions: true,
         pageSize: 10,
@@ -297,8 +330,8 @@ describe('TaskList', () => {
       expect(result).toStrictEqual(expectedValue);
     });
     it('should return the urlParams according to the params when isAdmin', async () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.pageSize = 10;
-      shallowMountComponent();
       const expectedValue = {
         appendUserPermissions: true,
         pageSize: 10,
@@ -317,8 +350,8 @@ describe('TaskList', () => {
       expect(result).toStrictEqual(expectedValue);
     });
     it('should not return task status if task status is staging', async () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.pageSize = 10;
-      shallowMountComponent();
       const expectedValue = {
         appendUserPermissions: true,
         pageSize: 10,
@@ -339,7 +372,7 @@ describe('TaskList', () => {
   });
   describe('getBaseFilters', () => {
     it('should return the base filters to load the list', () => {
-      shallowMountComponent();
+      const wrapper = shallowMountComponent();
       const expectedValue = [{
         operator: 'EQUALS',
         operand: {
@@ -354,7 +387,7 @@ describe('TaskList', () => {
   describe('buildBodyParams', () => {
     describe('admin', () => {
       it('should return the base filters to load the list when there is no filters', async () => {
-        shallowMountComponent();
+        const wrapper = shallowMountComponent();
         await wrapper.setProps({ isAdmin: true });
         const expectedValue = {
           targetFilter: {
@@ -373,7 +406,7 @@ describe('TaskList', () => {
       });
 
       it('should return the base filters to load the list when there are filters', async () => {
-        shallowMountComponent();
+        const wrapper = shallowMountComponent();
         await wrapper.setProps({ isAdmin: true });
         wrapper.vm.listFilters = {
           user: 'useris',
@@ -429,7 +462,7 @@ describe('TaskList', () => {
 
     describe('enduser', () => {
       it('should return the base filters to load the list when there is no filters', () => {
-        shallowMountComponent();
+        const wrapper = shallowMountComponent();
         const expectedValue = {
           targetFilter: {
             operator: 'AND',
@@ -447,7 +480,7 @@ describe('TaskList', () => {
       });
 
       it('should return the base filters to load the list when there are filters', () => {
-        shallowMountComponent();
+        const wrapper = shallowMountComponent();
         wrapper.vm.listFilters = {
           user: 'useris',
           application: 'appid',
@@ -508,6 +541,7 @@ describe('TaskList', () => {
       id: 'test-id-2',
     }];
     it('should return the task list with all selected tasks', () => {
+      const wrapper = shallowMountComponent();
       const expectedValue = [{
         id: 'test-id',
         selected: true,
@@ -521,6 +555,8 @@ describe('TaskList', () => {
       expect(wrapper.vm.items).toStrictEqual(expectedValue);
     });
     it('should return the correct selected values, even if there are duplicated tasks', () => {
+      const wrapper = shallowMountComponent();
+      wrapper.vm.items = resource;
       wrapper.vm.selectedItems = [...resource, {
         id: 'test-id',
       }];
@@ -528,6 +564,7 @@ describe('TaskList', () => {
       expect(wrapper.vm.selectedItems.length).toEqual(2);
     });
     it('should return the task list with all task in selected false', () => {
+      const wrapper = shallowMountComponent();
       const expectedValue = [{
         id: 'test-id',
         selected: false,
@@ -543,16 +580,17 @@ describe('TaskList', () => {
   });
   describe('updateItemList', () => {
     it('should call display notification with the success message', () => {
-      const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+      const wrapper = shallowMountComponent();
       wrapper.vm.updateItemList();
       expect(displayNotificationSpy).toBeCalledWith('success', 'governance.certificationTask.success.undefined');
     });
     it('should set the selected task to empty', () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.updateItemList();
       expect(wrapper.vm.selectedItems).toEqual([]);
     });
     it('should call getCertificationTaskList with the main page', () => {
-      shallowMountComponent();
+      const wrapper = shallowMountComponent();
       const getCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'getItems');
       wrapper.vm.mainPageNumber = 1;
       wrapper.vm.updateItemList();
@@ -561,14 +599,14 @@ describe('TaskList', () => {
   });
   describe('filterItems', () => {
     it('should call getCertificationTaskList with the paginationPage', () => {
-      shallowMountComponent();
+      const wrapper = shallowMountComponent();
       const getCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'getItems');
       wrapper.vm.paginationPage = 1;
       wrapper.vm.filterItems({ decision: ['noDecision'] });
       expect(getCertificationTaskListSpy).toBeCalledWith(1);
     });
     it('listFilters should contain the new filters', () => {
-      shallowMountComponent();
+      const wrapper = shallowMountComponent();
       const filterTest = {
         decision: ['certify'],
       };
@@ -579,15 +617,16 @@ describe('TaskList', () => {
 
   describe('bulk certify', () => {
     beforeEach(() => {
-      shallowMountComponent({}, { campaignId: 'test-id' });
       CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
+      const wrapper = shallowMountComponent({}, { campaignId: 'test-id' });
       wrapper.vm.bulkCertify();
       expect(wrapper.emitted()).toHaveProperty('change-saving');
       expect(wrapper.emitted()['change-saving']).toHaveLength(1);
     });
     it('should call updateItemList after the certification is completed', async () => {
+      const wrapper = shallowMountComponent({}, { campaignId: 'test-id' });
       const updateItemListSpy = jest.spyOn(wrapper.vm, 'updateItemList');
       wrapper.vm.bulkCertify();
 
@@ -597,15 +636,16 @@ describe('TaskList', () => {
   });
   describe('bulk revoke', () => {
     beforeEach(() => {
-      shallowMountComponent({}, { campaignId: 'test-id' });
       CertificationApi.revokeItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
+      const wrapper = shallowMountComponent({}, { campaignId: 'test-id' });
       wrapper.vm.bulkRevoke();
       expect(wrapper.emitted()).toHaveProperty('change-saving');
       expect(wrapper.emitted()['change-saving']).toHaveLength(1);
     });
     it('should call updateItemList after the certification is completed', async () => {
+      const wrapper = shallowMountComponent({}, { campaignId: 'test-id' });
       const updateItemListSpy = jest.spyOn(wrapper.vm, 'updateItemList');
       wrapper.vm.bulkRevoke('comments');
 
@@ -615,15 +655,16 @@ describe('TaskList', () => {
   });
   describe('bulk exception', () => {
     beforeEach(() => {
-      shallowMountComponent({}, { campaignId: 'test-id' });
       CertificationApi.exceptionItem.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
+      const wrapper = shallowMountComponent({}, { campaignId: 'test-id' });
       wrapper.vm.bulkException();
       expect(wrapper.emitted()).toHaveProperty('change-saving');
       expect(wrapper.emitted()['change-saving']).toHaveLength(1);
     });
     it('should call updateItemList after exception is complete', async () => {
+      const wrapper = shallowMountComponent({}, { campaignId: 'test-id' });
       const updateItemListSpy = jest.spyOn(wrapper.vm, 'updateItemList');
       wrapper.vm.bulkException('comments');
 
@@ -633,6 +674,7 @@ describe('TaskList', () => {
   });
   describe('open confirm action modal', () => {
     it('should set the modal props correctly', () => {
+      const wrapper = shallowMountComponent({}, { campaignId: 'test-id' });
       const expectedValue = {
         confirmDescription: undefined,
         confirmTitle: undefined,
@@ -648,6 +690,7 @@ describe('TaskList', () => {
       expect(wrapper.vm.confirmActionModalProps).toEqual(expectedValue);
     });
     it('should emit event to show confirm action modal', () => {
+      const wrapper = shallowMountComponent({}, { campaignId: 'test-id' });
       wrapper.vm.openActionConfirmModal({});
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-confirm-action');
     });
@@ -702,7 +745,7 @@ describe('TaskList', () => {
     });
     it('shows revoke for non-role based', async () => {
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(nonRoleBased));
-      mountComponent();
+      const { wrapper } = mountComponent();
       await flushPromises();
       const revoke = findByTestId(wrapper, 'btnRevoke-testId');
       expect(revoke.exists()).toBe(true);
@@ -710,7 +753,7 @@ describe('TaskList', () => {
 
     it('hides revoke action for role based', async () => {
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
-      mountComponent();
+      const { wrapper } = mountComponent();
       await flushPromises();
       const revoke = findByTestId(wrapper, 'btnRevoke-testId');
       expect(revoke.exists()).toBe(false);
@@ -718,7 +761,7 @@ describe('TaskList', () => {
 
     it('shows exception for non-role based', async () => {
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(nonRoleBased));
-      mountComponent({ campaignDetails: { exceptionDuration: 1 } });
+      const { wrapper } = mountComponent({ campaignDetails: { exceptionDuration: 1 } });
       await flushPromises();
       const exception = findByTestId(wrapper, 'btnAllowException-testId');
       expect(exception.exists()).toBe(true);
@@ -726,7 +769,7 @@ describe('TaskList', () => {
 
     it('hides exception action for role based', async () => {
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
-      mountComponent({ campaignDetails: { exceptionDuration: 1 } });
+      const { wrapper } = mountComponent({ campaignDetails: { exceptionDuration: 1 } });
       await flushPromises();
       const exception = findByTestId(wrapper, 'btnAllowException-testId');
       expect(exception.exists()).toBe(false);
@@ -734,7 +777,7 @@ describe('TaskList', () => {
 
     it('hides multiselect option', async () => {
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
-      mountComponent();
+      const { wrapper } = mountComponent();
       await flushPromises();
       const revoke = findByTestId(wrapper, 'multiselect-testId');
       expect(revoke.exists()).toBe(false);
@@ -742,7 +785,7 @@ describe('TaskList', () => {
 
     it('changes tooltip text from certify to acknowledge', async () => {
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
-      mountComponent();
+      const { wrapper } = mountComponent();
       await flushPromises();
 
       const revoke = findByTestId(wrapper, 'tooltip-certify-testId');
@@ -753,13 +796,9 @@ describe('TaskList', () => {
 
   describe('line item details', () => {
     jest.spyOn(CommonsApi, 'getGlossarySchema').mockReturnValue(Promise.resolve({ data: { result: [] } }));
-    let showErrorMessageSpy;
-    beforeEach(() => {
-      shallowMountComponent();
-      showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
-    });
 
     it('openUserModal called saves currentUserSelectedModal data and shows GovernanceUserDetailsModal', async () => {
+      const wrapper = shallowMountComponent();
       const id = 'id-test';
       const user = {
         givenName: 'Test',
@@ -775,6 +814,7 @@ describe('TaskList', () => {
     });
 
     it('openUserModal called saves currentUserSelectedModal and it must not match the user if it has a property that is not allowed.', async () => {
+      const wrapper = shallowMountComponent();
       const id = 'id-test';
       const user = {
         password: 'test-password',
@@ -790,6 +830,7 @@ describe('TaskList', () => {
     });
 
     it('getUserDetails should show error message if api returns error', async () => {
+      const wrapper = shallowMountComponent();
       const error = new Error('ERROR');
       const id = 'id-test';
       CertificationApi.getUserDetails.mockImplementation(() => Promise.reject(error));
@@ -801,6 +842,7 @@ describe('TaskList', () => {
     });
 
     it('openApplicationModal sets application data and opens application modal', async () => {
+      const wrapper = shallowMountComponent();
       const application = {
         id: '4ab37e2f-9470-45f6-85dd-f8a7b095e0d4',
         name: 'TestADApp',
@@ -823,6 +865,7 @@ describe('TaskList', () => {
     });
 
     it('openAccountModal sets account data and opens account modal', async () => {
+      const wrapper = shallowMountComponent();
       const content = {
         account: {
           id: 'test',
@@ -856,6 +899,7 @@ describe('TaskList', () => {
     });
 
     it('openViewCommentsModal sets comment data and opens view comments modal', async () => {
+      const wrapper = shallowMountComponent();
       const comments = [
         {
           action: 'comment',
@@ -876,6 +920,7 @@ describe('TaskList', () => {
     });
 
     it('openAddCommentModalFromCommentsModal hides the view comments modal and opens the add comment modal', async () => {
+      const wrapper = shallowMountComponent();
       wrapper.vm.openAddCommentModalFromCommentsModal();
 
       await flushPromises();
@@ -885,6 +930,7 @@ describe('TaskList', () => {
     });
 
     it('openAddCommentModal sets the line item id and opens the add comment modal', async () => {
+      const wrapper = shallowMountComponent();
       const lineItemId = '4ab37e2f-9470-45f6-85dd-f8a7b095e0d4';
 
       wrapper.vm.openAddCommentModal(lineItemId);
@@ -895,6 +941,7 @@ describe('TaskList', () => {
     });
 
     it('addComment calls governance api properly', async () => {
+      const wrapper = shallowMountComponent();
       const comment = 'Test comment';
       const task = {
         id: '1',
@@ -916,18 +963,18 @@ describe('TaskList', () => {
 
       wrapper.vm.currentLineItemIdSelectedModal = '1';
       wrapper.vm.items = [task];
-      const spyNotification = jest.spyOn(wrapper.vm, 'displayNotification');
 
       wrapper.vm.addComment(comment);
 
       await flushPromises();
 
-      expect(spyNotification).toHaveBeenCalledWith('success', 'governance.certificationTask.lineItemAddCommentModal.addCommentSuccessfullyMessage');
+      expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'governance.certificationTask.lineItemAddCommentModal.addCommentSuccessfullyMessage');
       expect(wrapper.vm.currentCommentsSelectedModal).toEqual(task.decision.certification.comments);
       expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('certification-account-add-comment');
     });
 
     it('addComment calls governance api error', async () => {
+      const wrapper = shallowMountComponent();
       const comment = 'Test comment';
       const task = {
         id: '1',
@@ -949,16 +996,16 @@ describe('TaskList', () => {
       wrapper.vm.currentLineItemIdSelectedModal = '1';
       wrapper.vm.items = [task];
       CertificationApi.saveComment.mockImplementation(() => Promise.reject(error));
-      const spyNotification = jest.spyOn(wrapper.vm, 'showErrorMessage');
 
       wrapper.vm.addComment(comment);
 
       await flushPromises();
 
-      expect(spyNotification).toHaveBeenCalledWith(error, 'governance.certificationTask.error.addCommentErrorDefaultMessage');
+      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.certificationTask.error.addCommentErrorDefaultMessage');
     });
 
     it('openReviewersModal sets reviewer data and opens view reviewers modal', async () => {
+      const wrapper = shallowMountComponent();
       const id = '12345';
       const actors = [
         {
@@ -996,6 +1043,7 @@ describe('TaskList', () => {
     });
 
     it('closeEditReviewerModal should close edit reviewer modal and open view reviewers modal', async () => {
+      const wrapper = shallowMountComponent();
       expect(wrapper.vm.$bvModal.hide).not.toHaveBeenCalledWith('CertificationTaskEditReviewerModal');
       expect(wrapper.vm.$bvModal.show).not.toHaveBeenCalledWith('CertificationTaskReviewersModal');
 
@@ -1012,13 +1060,10 @@ describe('TaskList', () => {
     describe('edit reviewer', () => {
       let permissions;
       let reviewers;
-      let displayNotificationSpy;
 
       beforeEach(() => {
         CertificationApi.reassignItem.mockImplementation(() => Promise.resolve());
         CertificationApi.updateActors.mockImplementation(() => Promise.resolve());
-        displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
-        showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
         permissions = {
           comment: true,
           delegate: true,
@@ -1077,10 +1122,11 @@ describe('TaskList', () => {
             },
           },
         ];
-        wrapper.vm.currentReviewersSelectedModal = reviewers;
       });
 
       it('editReviewer should call api correctly new reviewer', async () => {
+        const wrapper = shallowMountComponent();
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
         const reviewerId = '/managed/user/123457';
         const newReviewer = {
           id: '/managed/user/123457',
@@ -1116,6 +1162,8 @@ describe('TaskList', () => {
       });
 
       it('editReviewer should show error when the user is already a reviewer', async () => {
+        const wrapper = shallowMountComponent();
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
         const reviewerId = '/managed/user/12345';
         const newReviewer = {
           id: '/managed/user/12345',
@@ -1150,6 +1198,8 @@ describe('TaskList', () => {
       });
 
       it('editReviewer should call api error', async () => {
+        const wrapper = shallowMountComponent();
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
         const error = new Error('ERROR');
         CertificationApi.reassignItem.mockImplementation(() => Promise.reject(error));
 
@@ -1183,6 +1233,8 @@ describe('TaskList', () => {
       });
 
       it('deleteReviewer should call api correctly and not close modal', async () => {
+        const wrapper = shallowMountComponent();
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
         const reviewerId = '/managed/user/12345';
         const closeEditReviewerModalSpy = jest.spyOn(wrapper.vm, 'closeEditReviewerModal');
         const newReviewers = [
@@ -1219,6 +1271,8 @@ describe('TaskList', () => {
       });
 
       it('deleteReviewer should call api correctly and close modal', async () => {
+        const wrapper = shallowMountComponent();
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
         const reviewerId = '/managed/user/12345';
         const closeEditReviewerModalSpy = jest.spyOn(wrapper.vm, 'closeEditReviewerModal');
         const newReviewers = [
@@ -1255,6 +1309,8 @@ describe('TaskList', () => {
       });
 
       it('deleteReviewer should call api error', async () => {
+        const wrapper = shallowMountComponent();
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
         const error = new Error('ERROR');
         CertificationApi.updateActors.mockImplementation(() => Promise.reject(error));
         const reviewerId = '/managed/user/12345';
@@ -1271,6 +1327,8 @@ describe('TaskList', () => {
       });
 
       it('isLastSignOffReviewer true', () => {
+        const wrapper = shallowMountComponent();
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
         expect(wrapper.vm.isLastSignOffReviewer()).toBe(false);
         wrapper.vm.currentReviewersSelectedModal[0].permissions.signoff = false;
         [, wrapper.vm.currentReviewerSelectedModal] = wrapper.vm.currentReviewersSelectedModal;
@@ -1279,6 +1337,8 @@ describe('TaskList', () => {
       });
 
       it('isLastSignOffReviewer false not selected reviewer', () => {
+        const wrapper = shallowMountComponent();
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
         wrapper.vm.currentReviewersSelectedModal[0].permissions.signoff = false;
         [wrapper.vm.currentReviewerSelectedModal] = wrapper.vm.currentReviewersSelectedModal;
 
@@ -1287,6 +1347,7 @@ describe('TaskList', () => {
     });
 
     it('openEntitlementModal should set entitlement data and open entitlement modal', async () => {
+      const wrapper = shallowMountComponent();
       CertificationApi.getEntitlementDetails.mockImplementation(() => Promise.resolve({
         data: {
           name: 'test',
@@ -1318,11 +1379,8 @@ describe('TaskList', () => {
 
   describe('Open edit reviewer modal', () => {
     describe('Admin view', () => {
-      beforeEach(() => {
-        shallowMountComponent({}, { isAdmin: true });
-      });
-
       it('openEditReviewerModal should set reviewer data and open edit reviewer modal', async () => {
+        const wrapper = shallowMountComponent({}, { isAdmin: true });
         const reviewers = [
           {
             id: '/managed/user/12345',
@@ -1383,11 +1441,8 @@ describe('TaskList', () => {
     });
 
     describe('EndUser view', () => {
-      beforeEach(() => {
-        shallowMountComponent({}, { actorId: '/managed/user/12345' });
-      });
-
       it('openEditReviewerModal should set reviewer data and open edit reviewer modal', async () => {
+        const wrapper = shallowMountComponent({}, { actorId: '/managed/user/12345' });
         const reviewers = [
           {
             id: '/managed/user/12345',
@@ -1449,26 +1504,34 @@ describe('TaskList', () => {
   });
 
   describe('Entitlements tab', () => {
-    let loadItemsListSpy;
-
     beforeEach(() => {
-      wrapper.vm.currentPage = 2;
-      wrapper.vm.sortBy = 'name';
-      wrapper.vm.sortDir = 'asc';
-      shallowMountComponent({}, {
-        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
-      });
-      loadItemsListSpy = jest.spyOn(wrapper.vm, 'loadItemsList');
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should call loadItemsList once the result of the call is ready', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       wrapper.vm.getItems(2);
 
       await flushPromises();
       expect(loadItemsListSpy).toHaveBeenCalled();
     });
     it('should show the right columns for entitlements tab', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
+
+      // Initialize the columns as would happen in mounted()
+      wrapper.vm.tasksFields = wrapper.vm.getInitialColumns('entitlements', null, false, null, null, {});
+      wrapper.vm.updateColumns({});
+
       expect(wrapper.vm.certificationListColumns).toEqual([{
         key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
@@ -1486,6 +1549,12 @@ describe('TaskList', () => {
       }]);
     });
     it('openAddCommentModalFromCommentsModal called hides CertificationTaskCommentsModal and shows CertificationTaskAddCommentModal', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       wrapper.vm.openAddCommentModalFromCommentsModal();
 
       await flushPromises();
@@ -1495,6 +1564,12 @@ describe('TaskList', () => {
     });
 
     it('openAddCommentModal called saves currentLineItemIdSelectedModal data and shows CertificationTaskAddCommentModal', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       const lineItemId = '4ab37e2f-9470-45f6-85dd-f8a7b095e0d4';
 
       wrapper.vm.openAddCommentModal(lineItemId);
@@ -1504,6 +1579,12 @@ describe('TaskList', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-add-comment');
     });
     it('openEntitlementModal should open entitlement modal with data setted', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       CertificationApi.getEntitlementDetails.mockImplementation(() => Promise.resolve({
         data: {
           name: 'test',
@@ -1532,6 +1613,12 @@ describe('TaskList', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-entitlement');
     });
     it('openViewCommentsModal called saves currentCommentsSelectedModal, currentLineItemIdSelectedModal data and shows CertificationTaskCommentsModal', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       const comments = [
         {
           action: 'comment',
@@ -1551,6 +1638,12 @@ describe('TaskList', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-comments');
     });
     it('openReviewersModal should open reviewers modal with data setted', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       const id = '12345';
       const actors = [
         {
@@ -1584,6 +1677,12 @@ describe('TaskList', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-reviewers');
     });
     it('openEditReviewerModal should open edit reviewer modal with data setted', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       const reviewers = [
         {
           id: '/managed/user/12345',
@@ -1645,6 +1744,12 @@ describe('TaskList', () => {
     });
 
     it('closeEditReviewerModal should close edit reviewer modal and open reviewers modal', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       expect(wrapper.vm.$bvModal.hide).not.toHaveBeenCalledWith('CertificationTaskEditReviewerModal');
       expect(wrapper.vm.$bvModal.show).not.toHaveBeenCalledWith('CertificationTaskReviewersModal');
 
@@ -1656,6 +1761,12 @@ describe('TaskList', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-reviewers');
     });
     it('addComment calls governance api properly', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       const comment = 'Test comment';
       const task = {
         id: '1',
@@ -1678,22 +1789,27 @@ describe('TaskList', () => {
       wrapper.vm.currentLineItemIdSelectedModal = '1';
       wrapper.vm.items = [task];
       wrapper.vm.getItems = jest.fn().mockImplementation(() => Promise.resolve({}));
-      const spyNotification = jest.spyOn(wrapper.vm, 'displayNotification');
 
       wrapper.vm.addComment(comment);
 
       await flushPromises();
 
-      expect(spyNotification).toHaveBeenCalledWith('success', 'governance.certificationTask.lineItemAddCommentModal.addCommentSuccessfullyMessage');
+      expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'governance.certificationTask.lineItemAddCommentModal.addCommentSuccessfullyMessage');
       expect(wrapper.vm.currentCommentsSelectedModal).toEqual(task.decision.certification.comments);
       expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('certification-entitlement-add-comment');
     });
     it('should emit the bv::show::modal to show the certification task sort', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       wrapper.vm.openSortModal();
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-sort');
     });
     it('should emit the bv::show::modal to show the certification reasign modal', async () => {
-      mountComponent({ modalPrefix: 'entitlement' });
+      const { wrapper } = mountComponent({ modalPrefix: 'entitlement' });
       wrapper.vm.selectedItems = [{ id: '123' }];
       await flushPromises();
       const floatingActionBar = wrapper.findComponent('[name="slide-fade"]');
@@ -1702,6 +1818,12 @@ describe('TaskList', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-reassign');
     });
     it('should emit the bv::show::modal to show the certification reasign modal', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+      });
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDir = 'asc';
       wrapper.vm.openActionConfirmModal({});
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-confirm-action');
     });
@@ -1709,13 +1831,18 @@ describe('TaskList', () => {
 
   describe('Scenarios For Accounts Tab when group by is true', () => {
     beforeEach(() => {
-      shallowMountComponent({}, {
-        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
-      });
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should display correct account columns', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
+
+      // Initialize the columns as would happen in mounted()
+      wrapper.vm.tasksFields = wrapper.vm.getInitialColumns('accounts', null, true, null, null, {});
+      wrapper.vm.updateColumns({});
+
       expect(wrapper.vm.certificationListColumns).toEqual([{
         key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
@@ -1731,9 +1858,15 @@ describe('TaskList', () => {
       }]);
     });
     it('should have selectable as true', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
       expect(wrapper.vm.isSelectable).toEqual(true);
     });
     it('should clear row selection on filter', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
       const filters = {
         decision: [
           'revoke',
@@ -1746,11 +1879,17 @@ describe('TaskList', () => {
       expect(wrapper.emitted()['clear-item']).toBeTruthy();
     });
     it('should clear row selection on page change', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
       wrapper.vm.paginationChange();
       await flushPromises();
       expect(wrapper.emitted()['clear-item']).toBeTruthy();
     });
     it('should hide group by when accounts count is zero', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
       const accountDataMock = {
         data: {
           result: [],
@@ -1762,6 +1901,9 @@ describe('TaskList', () => {
       expect(wrapper.emitted()['hide-group-by']).toHaveLength(1);
     });
     it('should have the right base filter for account', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
       const baseFilters = wrapper.vm.getBaseFilters();
       expect(baseFilters).toEqual([
         {
@@ -1771,6 +1913,9 @@ describe('TaskList', () => {
         { operand: { targetName: 'item.type', targetValue: 'accountGrant' }, operator: 'EQUALS' }]);
     });
     it('should raise select item event on row select', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
       const items = [
         {
           id: 'ebf15835-d35c-4268-bac3-a6ec59302246',
@@ -1783,6 +1928,9 @@ describe('TaskList', () => {
       expect(wrapper.emitted()['select-item'][0]).toEqual([items[0]]);
     });
     it('should raise activity modal event with right modal id', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
       const item = {
         decision: {
           certification: {
@@ -1794,6 +1942,9 @@ describe('TaskList', () => {
       expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-account-activity');
     });
     it('should raise activity modal event with right modal id and set the right activity items', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
       const item = {
         decision: {
           certification: {
@@ -1821,6 +1972,9 @@ describe('TaskList', () => {
       ]);
     });
     it('should raise forward modal event with right modal id', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
       wrapper.vm.openForwardModal('1234', true);
       expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-account-forward');
     });
@@ -1829,7 +1983,12 @@ describe('TaskList', () => {
   describe('Scenarios For Entitlements Tab when group by is true', () => {
     let getCertificationTasksListByCampaignSpy;
     beforeEach(() => {
-      shallowMountComponent({}, {
+      getCertificationTasksListByCampaignSpy = jest.fn().mockImplementation(() => Promise.resolve({ data: 'results' }));
+      CertificationApi.getCertificationTasksListByCampaign = getCertificationTasksListByCampaignSpy;
+      CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: 'results' }));
+    });
+    it('should display correct entitlement columns', async () => {
+      const wrapper = shallowMountComponent({}, {
         certificationGrantType: 'entitlements',
         showGroupBy: true,
         entitlementUserId: '66f3b405-60db-42a6-8a7a-59f6470348f6',
@@ -1837,11 +1996,11 @@ describe('TaskList', () => {
         refreshTasks: true,
         modalPrefix: 'entitlement',
       });
-      getCertificationTasksListByCampaignSpy = jest.fn().mockImplementation(() => Promise.resolve({ data: 'results' }));
-      CertificationApi.getCertificationTasksListByCampaign = getCertificationTasksListByCampaignSpy;
-      CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: 'results' }));
-    });
-    it('should display correct entitlement columns', async () => {
+
+      // Initialize the columns as would happen in mounted()
+      wrapper.vm.tasksFields = wrapper.vm.getInitialColumns('entitlements', '66f3b405-60db-42a6-8a7a-59f6470348f6', false, null, null, {});
+      wrapper.vm.updateColumns({});
+
       expect(wrapper.vm.certificationListColumns).toEqual([{
         key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
@@ -1853,10 +2012,26 @@ describe('TaskList', () => {
       }]);
     });
     it('should have the right base filter for account', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements',
+        showGroupBy: true,
+        entitlementUserId: '66f3b405-60db-42a6-8a7a-59f6470348f6',
+        isAdmin: true,
+        refreshTasks: true,
+        modalPrefix: 'entitlement',
+      });
       const baseFilters = wrapper.vm.getBaseFilters();
       expect(baseFilters).toEqual([{ operand: { targetName: 'decision.certification.primaryReviewer.id', targetValue: '' }, operator: 'EQUALS' }, { operand: { targetName: 'item.type', targetValue: 'entitlementGrant' }, operator: 'EQUALS' }]);
     });
     it('should call the backend api with correct params when grouped by', async () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements',
+        showGroupBy: true,
+        entitlementUserId: '66f3b405-60db-42a6-8a7a-59f6470348f6',
+        isAdmin: true,
+        refreshTasks: true,
+        modalPrefix: 'entitlement',
+      });
       const filters = {
         decision: [
           'revoke',
@@ -1894,6 +2069,14 @@ describe('TaskList', () => {
       });
     });
     it('should raise activity modal event with right modal id', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements',
+        showGroupBy: true,
+        entitlementUserId: '66f3b405-60db-42a6-8a7a-59f6470348f6',
+        isAdmin: true,
+        refreshTasks: true,
+        modalPrefix: 'entitlement',
+      });
       const item = {
         decision: {
           certification: {
@@ -1905,11 +2088,23 @@ describe('TaskList', () => {
       expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-entitlement-activity');
     });
     it('should raise forward modal event with right modal id', () => {
+      const wrapper = shallowMountComponent({}, {
+        certificationGrantType: 'entitlements',
+        showGroupBy: true,
+        entitlementUserId: '66f3b405-60db-42a6-8a7a-59f6470348f6',
+        isAdmin: true,
+        refreshTasks: true,
+        modalPrefix: 'entitlement',
+      });
       wrapper.vm.openForwardModal('1234', true);
       expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-entitlement-forward');
     });
   });
   describe('Verify items', () => {
+    beforeEach(() => {
+      document.body.innerHTML = '';
+      jest.clearAllMocks();
+    });
     const resource = {
       data: {
         result: [{
@@ -1940,7 +2135,7 @@ describe('TaskList', () => {
       },
     };
     it('are disabled and do not exist if is in staging with showGroupBy and accounts certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
-      mountComponent({
+      const { domWrapper, wrapper } = mountComponent({
         campaignDetails: {
           allowBulkCertify: true,
           status: 'staging',
@@ -1964,15 +2159,17 @@ describe('TaskList', () => {
       expect(revokeBtn.attributes('disabled')).toBeDefined();
       const allowExceptionBtn = findByTestId(wrapper, 'btnAllowException-test-id-0');
       expect(allowExceptionBtn.attributes('disabled')).toBeDefined();
-      const forwardBtn = findByTestId(wrapper, 'forward-button-test-id-0');
+
+      await toggleActionsMenu(domWrapper);
+      const forwardBtn = findByRole(domWrapper, 'menuitem', 'Forward');
       expect(forwardBtn.classes()).toContain('disabled');
-      const addCommentBtn = findByTestId(wrapper, 'add-comment-button-test-id-0');
+      const addCommentBtn = findByRole(domWrapper, 'menuitem', 'Add Comment');
       expect(addCommentBtn.classes()).toContain('disabled');
-      const cartReviewersBtn = findByTestId(wrapper, 'cert-reviewers-button-accounts');
+      const cartReviewersBtn = findByRole(domWrapper, 'menuitem', 'View Reviewers');
       expect(cartReviewersBtn.classes()).toContain('disabled');
     });
     it('are enabled and do exist if is not in staging with showGroupBy and accounts certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
-      mountComponent({
+      const { domWrapper, wrapper } = mountComponent({
         campaignDetails: {
           allowBulkCertify: true,
           status: 'in-progress',
@@ -1996,15 +2193,17 @@ describe('TaskList', () => {
       expect(revokeBtn.attributes('disabled')).toBeFalsy();
       const allowExceptionBtn = findByTestId(wrapper, 'btnAllowException-test-id-0');
       expect(allowExceptionBtn.attributes('disabled')).toBeFalsy();
-      const forwardBtn = findByTestId(wrapper, 'forward-button-test-id-0');
+
+      await toggleActionsMenu(domWrapper);
+      const forwardBtn = findByRole(domWrapper, 'menuitem', 'Forward');
       expect(forwardBtn.classes()).not.toContain('disabled');
-      const addCommentBtn = findByTestId(wrapper, 'add-comment-button-test-id-0');
+      const addCommentBtn = findByRole(domWrapper, 'menuitem', 'Add Comment');
       expect(addCommentBtn.classes()).not.toContain('disabled');
-      const cartReviewersBtn = findByTestId(wrapper, 'cert-reviewers-button-accounts');
+      const cartReviewersBtn = findByRole(domWrapper, 'menuitem', 'View Reviewers');
       expect(cartReviewersBtn.classes()).not.toContain('disabled');
     });
     it('does exist if it not in staging with showGroupBy and accounts certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
-      mountComponent({
+      const { wrapper } = mountComponent({
         campaignDetails: {
           allowBulkCertify: true,
           status: 'in-progress',
@@ -2020,7 +2219,7 @@ describe('TaskList', () => {
       expect(selectEntitlementBtn.exists()).toBeTruthy();
     });
     it('does not exist if it is in staging with showGroupBy and accounts certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
-      mountComponent({
+      const { wrapper } = mountComponent({
         campaignDetails: {
           allowBulkCertify: true,
           status: 'staging',

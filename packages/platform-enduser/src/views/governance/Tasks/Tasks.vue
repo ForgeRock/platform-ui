@@ -38,7 +38,6 @@ of the MIT license. See the LICENSE file for details. -->
         <template #actions="{ item }">
           <FrRequestActionsCell
             v-if="status === 'pending'"
-            :boundary="boundaryValue"
             :item="item"
             :status="status"
             :type="detailTypes.FULFILLMENT"
@@ -85,7 +84,6 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getTaskFilter } from '@forgerock/platform-shared/src/utils/governance/fulfillmentTasks';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
-import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import FrTaskFilter from './TaskFilter';
 import FrTaskList from './TaskList';
 import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';
@@ -98,7 +96,6 @@ const { userId } = useUserStore();
 const { bvModal } = useBvModal();
 
 // data
-const boundaryValue = getDropdownBoundary(true);
 const currentPage = ref(1);
 const filter = ref({});
 const fulfillmentTasks = ref([]);

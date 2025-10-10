@@ -276,7 +276,6 @@ of the MIT license. See the LICENSE file for details. -->
           v-else
           class="d-flex justify-content-end align-items-center">
           <FrTaskActionsCell
-            :boundary="boundaryValue"
             @action="handleAction"
             :campaign-details="campaignDetails"
             :cert-grant-type="certificationGrantType"
@@ -471,7 +470,6 @@ import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/compone
 import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
 import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
 import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
-import getDropdownBoundary from '@forgerock/platform-shared/src/utils/dropdownPropsUtils';
 import FrAccountModal from './modals/AccountModal';
 import FrActivityModal from './modals/ActivityModal';
 import FrAddCommentModal from './modals/AddCommentModal';
@@ -728,7 +726,6 @@ export default {
         okFunction: this.exception,
         noConfirmation: true,
       },
-      boundaryValue: getDropdownBoundary(true),
     };
   },
   computed: {
