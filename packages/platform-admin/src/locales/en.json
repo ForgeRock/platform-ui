@@ -4052,6 +4052,12 @@
       "description": "Tenant will be locked until promotion has completed. Sign in to the {upper} tenant to view details.",
       "signInButtonText": "Sign in to {upper}"
     },
+    "promoUpgrade": {
+      "title": "Upgrade {upper} Environment?",
+      "promoUpgradeDescription": "This environment is on a deferred release schedule. Promoting now will <b>upgrade your {upper} environment immediately</b>. If you need to promote without upgrading, contact support.",
+      "proceedAndUpgrade": "Proceed And Upgrade",
+      "errorPromoMetadataState": "Error loading promotion metadata."
+    },
     "lockTenants": {
       "errorLoadingLockState": "Error loading tenant lock state.",
       "errorLocking": "Error locking environments.",
