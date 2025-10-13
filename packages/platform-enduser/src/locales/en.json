@@ -468,8 +468,12 @@
       "newEntitlement": "New Entitlement",
       "newEntitlementTitle": "{appName} {objectType} Entitlement",
       "createSuccess": "Your request to create an entitlement has been submitted.",
+      "modifySuccess": "Your request to modify an entitlement has been submitted.",
       "title": "Entitlements",
       "accountAttribute": "Account Attribute"
+    },
+    "users": {
+      "modifySuccess": "Your request to modify a user has been submitted."
     }
   }
 }
