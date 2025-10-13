@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrPolicyPanel
         v-if="policies.length"
         class="mt-2"
-        :num-columns="2"
+        :num-columns="numColumns"
         :policies="policies"
         :policy-failures="policyFailures"
         :value-entered="!!$attrs.value" />
@@ -92,9 +92,22 @@ export default {
       type: [String, Object],
       default: '',
     },
+    /**
+     * Data to be sent in the payload to the validation endpoint
+     * e.g. for user registration this could be { userName: 'testuser' }
+     */
     payloadData: {
       type: Object,
       default: null,
+    },
+    /**
+     * If provided, the payload sent to the validation endpoint will be wrapped in an object with this key
+     * e.g. if payloadObject is 'user' and payloadData is { foo: 'bar' }, the payload sent will be:
+     * { user: { foo: 'bar', password: 'the-input-value' } }
+     */
+    payloadObject: {
+      type: String,
+      default: '',
     },
     /**
     * Use only IDM policies for validation, useful for password reset flows in
@@ -103,6 +116,36 @@ export default {
     useIdmPoliciesOnly: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * Override the default policy endpoint
+     * By default this is `/policy/${resourceType}/${resourceName}`
+     */
+    initialPolicyEndpoint: {
+      type: String,
+      default: null,
+    },
+    /**
+     * Override the default validation endpoint
+     * By default this is `${initialPolicyEndpoint}/?_action=validateObject`
+     */
+    validationEndpoint: {
+      type: String,
+      default: null,
+    },
+    /**
+     * Property in the payload to be validated against policy
+     */
+    passwordProperty: {
+      type: String,
+      default: 'password',
+    },
+    /**
+     * Number of columns to display policies in
+     */
+    numColumns: {
+      type: Number,
+      default: 2,
     },
   },
   data() {
@@ -142,15 +185,18 @@ export default {
 
       const headers = this.getAnonymousHeaders();
       const policyService = this.getRequestService({ headers });
-      const payload = { ...this.payloadData, password: value };
+      const payload = this.payloadObject
+        ? { [this.payloadObject]: { ...this.payloadData, password: value } }
+        : { ...this.payloadData, password: value };
 
       // validate value and update failed policies
-      policyService.post(`${this.policyEndpoint}/policy/?_action=validateObject`, payload, { cancelToken: this.checkPasswordCancelTokenSource.token })
+      const endpoint = this.validationEndpoint || `${this.policyEndpoint}/policy/?_action=validateObject`;
+      policyService.post(endpoint, payload, { cancelToken: this.checkPasswordCancelTokenSource.token })
         .then((res) => {
           if (res.data.failedPolicyRequirements) {
             const failedPolicies = [];
             res.data.failedPolicyRequirements.forEach((policy) => {
-              if (policy.property === 'password') failedPolicies.push(policy.policyRequirements[0]);
+              if (policy.property === this.passwordProperty) failedPolicies.push(policy.policyRequirements[0]);
             });
             /**
              * triggered whenever validation occurs
@@ -173,9 +219,10 @@ export default {
     getIdmPolicies() {
       const headers = this.getAnonymousHeaders();
       const policyService = this.getRequestService({ headers });
+      const endpoint = this.initialPolicyEndpoint || this.policyEndpoint;
 
-      return policyService.get(this.policyEndpoint).then((res) => {
-        const passwordPolicies = res.data.properties.find((pol) => (pol.name === 'password')).policies;
+      return policyService.get(endpoint).then((res) => {
+        const passwordPolicies = res.data.properties.find((pol) => (pol.name === this.passwordProperty)).policies;
         const filteredPolicies = passwordPolicies.filter((pol) => (ignoredPolicies.indexOf(pol.policyRequirements[0]) === -1));
         const policyObjects = filteredPolicies.map((pol) => ({ policyRequirement: pol.policyRequirements[0], params: pol.params }));
         this.policies = [...this.policies, ...policyObjects];

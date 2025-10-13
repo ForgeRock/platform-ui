@@ -87,6 +87,17 @@ export const emailTemplateSanitizerConfig = {
   },
 };
 
+export const termsAndConditionsSanitizerConfig = {
+  allowedTags: false,
+  allowedAttributes: {
+    '*': ['id', 'class'],
+    a: ['href', 'name', {
+      name: 'target',
+      values: ['_blank', '_self'],
+    }],
+  },
+};
+
 export function sanitize(content, config = baseSanitizerConfig) {
   return sanitizeHtml(content, config);
 }

@@ -6,7 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import HorizontalRule from '@/components/utils/HorizontalRule';
+import HorizontalRule from './HorizontalRule';
 
 describe('HorizontalRule.vue', () => {
   it('Renders insert prop', () => {
