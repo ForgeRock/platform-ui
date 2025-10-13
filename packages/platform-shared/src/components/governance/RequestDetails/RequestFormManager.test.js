@@ -168,6 +168,25 @@ describe('RequestFormManager', () => {
       expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
       expect(wrapper.find('[label="testLabel"]').exists()).toBe(false);
     });
+    it('shows request details for custom requestTypes', async () => {
+      const customRequestItemDetails = {
+        phases: [{ name: 'testPhase' }],
+        workflow: { id: 'testWorkflowId' },
+        requestType: 'custom',
+        request: { custom: { userName: 'testName' }, common: { justification: 'justification.' } },
+      };
+      jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType')
+        .mockResolvedValue({ data: { result: [] } });
+      const assignmentSpy = jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByWorkflowNode')
+        .mockResolvedValue({ data: { result: [] } });
+
+      const wrapper = setup({ request: customRequestItemDetails });
+      await flushPromises();
+
+      expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
+      expect(wrapper.find('h3').text()).toBe('Request Details');
+      expect(wrapper.find('div[class="col-sm-4 weight-600"').text()).toBe('userName');
+    });
   });
 
   describe('application request', () => {
