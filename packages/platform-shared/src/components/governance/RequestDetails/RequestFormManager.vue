@@ -17,6 +17,26 @@ of the MIT license. See the LICENSE file for details. -->
         :request-type="requestType"
         :options="defaultFormOptions"
         @input="defaultFormValues = $event" />
+      <BCard
+        v-if="!form && !showDefaultForm && request?.request?.custom && !isLoadingForm">
+        <h3 class="h5 mb-4">
+          {{ $t('governance.requestModal.requestDetailsLink') }}
+        </h3>
+        <BRow
+          v-for="(detail, name) in request.request.custom"
+          :key="name">
+          <BCol
+            sm="4"
+            class="weight-600">
+            {{ name }}
+          </BCol>
+          <BCol
+            sm="8"
+            class="mb-3">
+            {{ detail || String(detail) }}
+          </BCol>
+        </BRow>
+      </BCard>
     </div>
     <div
       v-if="showSaveButton"
@@ -45,6 +65,7 @@ import useForm from '@forgerock/platform-shared/src/composables/governance/forms
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrDefaultFormManager from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/DefaultFormManager';
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
+import { BCard, BCol, BRow } from 'bootstrap-vue';
 
 const { schema, setSchema } = useGovernanceStore();
 const emit = defineEmits(['save']);
