@@ -1013,8 +1013,6 @@
         "duration": "Duration",
         "isVirtual": "Virtual",
         "isVirtualHelp": "Specifies whether the property takes a static value, or whether its value is calculated dynamically as the result of a script.",
-        "returnByDefault": "Return By Default",
-        "returnByDefaultHelp": "Return this property in query results, even if it is not explicitly requested.",
         "notifySelf": "Notify Self",
         "notifySelfHelp": "Specifies if the object which owns this relationship should be notified upon modification.",
         "notifyRelationships": "Notify Relationships",
@@ -1082,6 +1080,7 @@
             "tabTitle": "Privacy & Encryption"
           },
           "propertyValue": {
+            "addSource": "Add Source",
             "default": "Default Value",
             "defaultHelp": "Provide a default value for this property.",
             "enum": "Enumerate allowable values for this property",
@@ -1090,9 +1089,24 @@
             "manuallyHelp": "Entered directly by a user or system.",
             "nullable": "Nullable",
             "nullableHelp": "Allow a <code>NULL</code> value.",
+            "relationship": "Relationship",
+            "relationshipHelp": "Derived from a related identity profile property.",
+            "relationshipProperty": "Relationship Property",
+            "returnByDefault": "Return By Default",
+            "returnByDefaultHelp": "Return this property in query results, even if it is not explicitly requested.",
+            "script": "Script",
+            "scriptHelp": "Calculated using a custom script.",
             "showAdvanced": "Show Advanced",
             "tabDescription": "Choose how the value for this property is set.",
-            "tabTitle": "Property Value"
+            "tabTitle": "Property Value",
+            "fullObject": "Full Object",
+            "selectProperties": "Select Properties",
+            "selectPropertiesHelp": "Each source group must end with a relationship property pointing to the same managed object type for the relationship to work correctly.",
+            "assignmentsProperty": "Assignments Property",
+            "sources": "Source(s)",
+            "referencedObjectProperties": "Referenced Object Properties",
+            "flattenProperties": "Flatten properties",
+            "flattenPropertiesHelp": "If value is derived from a profile property (rather than the full object), flatten to return array of plain fields rather than as JSON objects."
           },
           "validation": {
             "atLeastXCapitals": "Minimum capital letters",
