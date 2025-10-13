@@ -345,8 +345,11 @@ filterTests(['@forgeops', '@cloud'], () => {
           cy.findByRole('dialog').findAllByLabelText('Authorization Roles').first().type('{enter}');
           cy.contains('.multiselect__tag', internalRoleName);
           cy.findByRole('button', { name: 'Cancel' }).click();
+          cy.intercept('GET', '**/openidm/managed/**').as('search');
+          cy.findByRole('searchbox', { name: 'Search' }).should('be.visible').type(`${internalRoleName}{enter}`, { force: true });
+          cy.wait('@search');
 
-          cy.get('.custom-checkbox').eq(3).click('left');
+          cy.findAllByRole('checkbox').eq(1).click({ force: true });
           cy.findByRole('button', { name: 'Remove' }).click();
           cy.findByRole('dialog').findByRole('button', { name: 'Remove' }).click();
           expectNotification('Authorization Roles successfully removed');

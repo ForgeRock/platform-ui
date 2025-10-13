@@ -1643,9 +1643,6 @@ export default {
   .w-230px {
     width: 230px;
   }
-  .w-140px {
-    width: 140px;
-  }
   .w-450px {
     max-width: 450px;
   }
