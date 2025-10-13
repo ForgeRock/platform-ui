@@ -21,6 +21,10 @@ of the MIT license. See the LICENSE file for details. -->
         @click="submitRequest" />
     </template>
   </BCard>
+  <FrRequestSubmitSuccessModal
+    :request-id="requestId"
+    router-path="AdministerEntitlements"
+    :success-text="$t('governance.entitlements.modifySuccess')" />
 </template>
 
 <script setup>
@@ -31,10 +35,12 @@ of the MIT license. See the LICENSE file for details. -->
  */
 import { computed, ref } from 'vue';
 import { BCard } from 'bootstrap-vue';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
+import FrRequestSubmitSuccessModal from '@/views/governance/LCM/RequestSubmitSuccessModal';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -43,15 +49,20 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-
+const { bvModal } = useBvModal();
 const isSaving = ref(null);
 const entitlementValues = ref({});
 const glossaryValues = ref({});
 const MODIFY_ENTITLEMENT_REQUEST_TYPE = 'modifyEntitlement';
+const requestId = ref('');
 
 const readOnly = computed(() => (!props.entitlement?.permissions?.modifyEntitlement));
 const applicationId = computed(() => props.entitlement?.application?.id);
 const objectType = computed(() => props.entitlement?.item?.objectType);
+
+function showSuccessModal() {
+  bvModal.value.show('successful-submit');
+}
 
 /**
  * Submits a modifyEntitlement request with values from the forms
@@ -68,8 +79,9 @@ async function submitRequest() {
         object: entitlementValues.value,
       },
     };
-    await submitCustomRequest(MODIFY_ENTITLEMENT_REQUEST_TYPE, requestPayload);
-    displayNotification('success', i18n.global.t('governance.requestForm.requestSubmitted'));
+    const { data } = await submitCustomRequest(MODIFY_ENTITLEMENT_REQUEST_TYPE, requestPayload);
+    requestId.value = data.id;
+    showSuccessModal();
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.requestForm.errorSubmittingRequest'));
   } finally {

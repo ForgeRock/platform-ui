@@ -29,13 +29,17 @@ of the MIT license. See the LICENSE file for details. -->
       :show-spinner="isSaving"
       @click="submitRequest" />
   </div>
+  <FrRequestSubmitSuccessModal
+    :request-id="requestId"
+    router-path="AdministerUsers"
+    :success-text="$t('governance.users.modifySuccess')" />
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { cloneDeep } from 'lodash';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { findChanges } from '@forgerock/platform-shared/src/utils/object';
 import { convertRelationshipPropertiesToFormBuilder, convertRelationshipPropertiesToRef } from '@forgerock/platform-shared/src/components/FormEditor/utils/formGeneratorSchemaTransformer';
 import { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
@@ -45,6 +49,8 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrModifyUserForm from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/User/ModifyUserForm';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import FrRequestSubmitSuccessModal from '@/views/governance/LCM/RequestSubmitSuccessModal';
 import i18n from '@/i18n';
 
 const props = defineProps({
@@ -70,6 +76,8 @@ const {
 
 const isSaving = ref(false);
 const originalUser = ref({});
+const requestId = ref('');
+const { bvModal } = useBvModal();
 
 /**
  * Generates the payload for a request using a custom form.
@@ -102,6 +110,10 @@ function getFormRequestPayload(newValues, oldValues) {
   };
 }
 
+function showSuccessModal() {
+  bvModal.value.show('successful-submit');
+}
+
 /**
  * Submits a modifyUser request with values from the forms
  */
@@ -113,8 +125,10 @@ async function submitRequest() {
       : { user: formValue.value };
     const requestPayload = getFormRequestPayload(userValues, originalUser.value);
 
-    await submitCustomRequest(requestTypes.MODIFY_USER.value, requestPayload);
-    displayNotification('success', i18n.global.t('governance.requestForm.requestSubmitted'));
+    const { data } = await submitCustomRequest(requestTypes.MODIFY_USER.value, requestPayload);
+    requestId.value = data.id;
+    showSuccessModal();
+    // displayNotification('success', i18n.global.t('governance.requestForm.requestSubmitted'));
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.requestForm.errorSubmittingRequest'));
   } finally {
