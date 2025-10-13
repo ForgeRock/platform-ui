@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BCardBody>
         <BCardFooter v-if="ENABLE_SELF_SERVICE && selfRegistrationEnabled">
           {{ $t('pages.login.newHere') }}
-          <BLink to="#">
+          <BLink :to="{name: 'Registration'}">
             {{ $t('pages.login.createAccount') }}
           </BLink>
         </BCardFooter>

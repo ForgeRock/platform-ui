@@ -1,11 +1,26 @@
-<!-- Copyright 2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <FrRouterView v-if="$route.meta.hideLayout" />
+    <template v-if="$route.meta.hideLayout">
+      <notifications
+        class="ml-3"
+        position="bottom left"
+        width="320"
+        :duration="4000">
+        <template #body="props">
+          <FrAlert
+            :variant="props.item.type"
+            :title="props.item.text"
+            show>
+            {{ props.item.text }}
+          </FrAlert>
+        </template>
+      </notifications>
+      <FrRouterView />
+    </template>
     <FrLayout
       v-else
       is-enduser
@@ -18,6 +33,7 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script setup>
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
+import FrAlert from '@forgerock/platform-shared/src/components/Alert/';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import { computed } from 'vue';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';

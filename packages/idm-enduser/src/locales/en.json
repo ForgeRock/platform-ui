@@ -101,7 +101,8 @@
       "srOnlyNotMet": "Not met {policy}",
       "formRowOversized": "Row is too large, the total of columns and offsets cannot exceed 12",
       "validJSVariable": "Must be a valid variable name",
-      "notStartsWithNumber": "Cannot start with a number"
+      "notStartsWithNumber": "Cannot start with a number",
+      "policyValidationFailed": "Policy validation failed for '{property}'"
     },
     "remove": "Remove",
     "save": "Save",
@@ -248,6 +249,7 @@
       "forgotPassword": "Forgot password?"
     },
     "selfservice": {
+      "genericError": "An error occurred. Please try again.",
       "signIn": "Sign in",
       "captchaError": "ReCaptcha configured improperly - contact your administrator.",
       "headers": {
@@ -282,6 +284,38 @@
         "newPassword": "New password",
         "changePassword": "Change Password",
         "kbaVerificationStageDescription": "Verify your identity by answering security questions"
+      },
+      "registration": {
+        "completeRegistration": "Complete Registration",
+        "createdAccount": "User account has been created.",
+        "emailValidation": "An email has been sent to the address you entered. Click the link in that email to proceed.",
+        "haveAccount": "Already have an account?",
+        "signUp": "Sign Up",
+        "signUpMsg": "Signing up is fast and easy.",
+        "successMessage": "Your account has been created. You may now sign in.",
+        "tryAgain": "Try creating your account again",
+        "termsAndConditions": {
+          "singlePage": "By clicking \"Sign Up\" you agree to our",
+          "title": "Terms and Conditions"
+        },
+        "consent": {
+          "title": "Privacy & Consent",
+          "agreement": "I agree"
+        },
+        "stageTitle": {
+          "captcha": "Verify You're Human",
+          "consent": "",
+          "emailValidation": "",
+          "kbaSecurityAnswerDefinitionStage": "Create Security Questions",
+          "termsAndConditions": ""
+        },
+        "stageSubtitle": {
+          "captcha": "No robots allowed",
+          "consent": "",
+          "emailValidation": "",
+          "kbaSecurityAnswerDefinitionStage": "",
+          "termsAndConditions": ""
+        }
       }
     }
   },

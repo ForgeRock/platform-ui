@@ -46,12 +46,12 @@ import {
   each,
   filter,
 } from 'lodash';
-import HorizontalRule from '@/components/utils/HorizontalRule';
+import FrHorizontalRule from '@forgerock/platform-shared/src/components/HorizontalRule/HorizontalRule';
 
 export default {
   name: 'SelectIdPCallback',
   components: {
-    FrHorizontalRule: HorizontalRule,
+    FrHorizontalRule,
   },
   props: {
     autofocus: {

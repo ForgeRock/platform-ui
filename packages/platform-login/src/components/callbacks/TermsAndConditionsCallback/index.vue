@@ -33,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BModal } from 'bootstrap-vue';
 import { convertBase64ToString } from '@forgerock/platform-shared/src/utils/encodeUtils';
+import { termsAndConditionsSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 
 export default {
   name: 'TermsAndConditions',
@@ -53,16 +54,7 @@ export default {
     this.name = `callback_${this.index}`;
 
     const terms = convertBase64ToString(this.callback.getTerms());
-    this.terms = this.$sanitize(terms, {
-      allowedTags: false,
-      allowedAttributes: {
-        '*': ['id', 'class'],
-        a: ['href', 'name', {
-          name: 'target',
-          values: ['_blank', '_self'],
-        }],
-      },
-    });
+    this.terms = this.$sanitize(terms, termsAndConditionsSanitizerConfig);
     this.callback.setInputValue(true);
   },
   data() {

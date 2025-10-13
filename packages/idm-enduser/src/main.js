@@ -10,6 +10,8 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import axios from 'axios';
 import BootstrapVue from 'bootstrap-vue';
+import Vue3Sanitize from 'vue-3-sanitize';
+import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import App from './App';
 import i18n from './i18n';
 import router from './router';
@@ -24,6 +26,12 @@ axios.defaults.headers.common['x-requested-with'] = 'XMLHttpRequest';
 
 // set the base URL for the API requests
 store.commit('SharedStore/setBaseURLs', process.env);
+store.commit('setAuthHeaders', {
+  'X-OpenIDM-NoSession': true,
+  'X-OpenIDM-Password': 'anonymous',
+  'X-OpenIDM-Username': 'anonymous',
+  'cache-control': 'no-cache',
+});
 
 // load the ui configuration, required for translations
 try {
@@ -46,6 +54,7 @@ function loadApp() {
   app.use(store);
   app.use(createPinia());
   app.use(Notifications);
+  app.use(Vue3Sanitize, baseSanitizerConfig);
   router.isReady().then(() => app.mount('#appRoot'));
 }
 

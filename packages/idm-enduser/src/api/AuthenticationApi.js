@@ -1,9 +1,8 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { generateIdmApi } from '@forgerock/platform-shared/src/api/BaseApi';
@@ -35,6 +34,24 @@ export function login(username, password) {
       'X-OpenIDM-NoSession': false,
       'X-OpenIDM-Username': username,
       'X-OpenIDM-Password': password,
+    },
+  }).post('/authentication?_action=login');
+}
+
+/**
+ * Logs in a user using a JWT (JSON Web Token).
+ * Sends a POST request to the authentication endpoint with the provided JWT in the headers.
+ * @param {string} jwt - The JSON Web Token to use for authentication.
+ * @returns {Promise} A promise that resolves with the response from the authentication API.
+ */
+export function loginWithJwt(jwt) {
+  return generateIdmApi({
+    headers: {
+      'X-OpenIDM-Jwt': jwt,
+      'X-OpenIDM-NoSession': false,
+      'X-OpenIDM-Password': null,
+      'X-OpenIDM-Username': null,
+      'X-Requested-With': 'XMLHttpRequest',
     },
   }).post('/authentication?_action=login');
 }

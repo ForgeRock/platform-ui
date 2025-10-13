@@ -9,7 +9,14 @@ import { createStore } from 'vuex';
 import Shared from '@forgerock/platform-shared/src/store/modules/Shared';
 
 export default createStore({
-  state: {},
+  state: {
+    authHeaders: {},
+  },
+  mutations: {
+    setAuthHeaders(state, val) {
+      state.authHeaders = val;
+    },
+  },
   modules: {
     SharedStore: {
       namespaced: true,

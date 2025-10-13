@@ -26,7 +26,7 @@ const ANONYMOUS_HEADERS = {
 export function loadData(apiType) {
   const selfServiceInstance = generateIdmApi({
     headers: ANONYMOUS_HEADERS,
-  });
+  }, false);
   return selfServiceInstance.get(`/selfservice/${apiType}`);
 }
 
@@ -49,6 +49,6 @@ export function advanceStage(data, apiType, anonymous = true) {
   }
   const selfServiceInstance = generateIdmApi({
     headers: extend(headers, { 'X-Requested-With': 'XMLHttpRequest' }),
-  });
+  }, false);
   return selfServiceInstance.post(`/selfservice/${apiType}?_action=submitRequirements`, data);
 }

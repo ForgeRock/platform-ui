@@ -6,7 +6,7 @@
  */
 
 import { ref } from 'vue';
-import { has } from 'lodash';
+import { has, last } from 'lodash';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { useRouter } from 'vue-router';
 import { loadData, advanceStage } from '@/api/SelfServiceApi';
@@ -17,6 +17,7 @@ import { loadData, advanceStage } from '@/api/SelfServiceApi';
 function useSelfService() {
   const selfServiceDetails = ref(null);
   const showSelfService = ref(true);
+  const errorFunction = ref(null);
   const router = useRouter();
 
   /**
@@ -36,6 +37,30 @@ function useSelfService() {
         showErrorMessage(error, '');
       }
     }
+  }
+
+  /**
+   * Parses a query string into an object.
+   * If the query string contains 'returnParams', extracts and returns its value.
+   * Otherwise, converts the query string into a key-value object.
+   * example =>
+   *   queryParams = '&token=MY_TOKEN&code=MY_CODE'
+   *   returns {
+   *       token: 'MY_TOKEN',
+   *       code: 'MY_CODE'
+   *   }
+   * @param {string} queryParams - The query string to parse (e.g., "?key1=value1&key2=value2").
+   * @returns {Object} An object representing the parsed query parameters.
+   */
+  function parseQueryParams(queryParams) {
+    if (!queryParams.match('returnParams')) {
+      return JSON.parse(
+        `{
+          ${`${decodeURI(`"${queryParams.slice(1).replace(/&/g, '","').replace(/=/g, '":"')}`)}"`}
+        }`,
+      );
+    }
+    return { returnParams: last(decodeURIComponent(queryParams).split('returnParams=')) };
   }
 
   /**
@@ -63,16 +88,22 @@ function useSelfService() {
       const { data: advanceStageData } = await advanceStage(saveData, apiType, !noSessionFalse);
       selfServiceDetails.value = advanceStageData;
     } catch (error) {
-      selfServiceDetails.value = { apiType, error: error.response?.data?.message || '' };
-      showErrorMessage(error, '');
+      if (errorFunction.value) {
+        errorFunction.value(error);
+      } else {
+        selfServiceDetails.value = { apiType, error: error.response?.data?.message || '' };
+        showErrorMessage(error, '');
+      }
     }
   }
 
   return {
     selfServiceDetails,
     showSelfService,
+    errorFunction,
     loadSelfServiceData,
     advanceSelfServiceStage,
+    parseQueryParams,
   };
 }
 
