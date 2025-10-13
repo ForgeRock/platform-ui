@@ -25,7 +25,6 @@ let modalShow;
 const mountComponent = () => {
   ({ modalShow } = mockModal());
   setupTestPinia({ user: { userId: '1234' } });
-  store.state.SharedStore.enableTableColumnResizing = false;
 
   // Create the app element for Teleport target
   if (!document.getElementById('app')) {

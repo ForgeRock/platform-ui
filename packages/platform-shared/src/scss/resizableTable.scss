@@ -67,17 +67,6 @@
     right: 0;
   }
 
-  td.sticky-right,
-  th.sticky-right,
-  td.cert-actions,
-  th.cert-actions {
-    position: sticky !important;
-    right: 0;
-    overflow: visible;
-    z-index: 1000;
-    background-color: $white;
-  }
-
   table.b-table > thead > tr > [aria-sort]:not(.b-table-sort-icon-left), 
   table.b-table > tfoot > tr > [aria-sort]:not(.b-table-sort-icon-left) {
     &:has(.resizer:focus-visible) {
@@ -108,8 +97,6 @@
   white-space: nowrap;
 }
 
-.tabs .tab-content.col {
-  &:has(.table-resizable) {
-    overflow-x: auto;
-  }
+.tabs .tab-content.col:has(.table-resizable) {
+  overflow-x: auto;
 }

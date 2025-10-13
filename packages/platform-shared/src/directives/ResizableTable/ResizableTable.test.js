@@ -6,7 +6,6 @@
  */
 
 import ResizableTable from './ResizableTable';
-import store from '@/store';
 import * as localStorageUtils from '../../utils/localStorageUtils';
 import * as resizableTableUtils from '../../utils/resizableTableUtils';
 
@@ -82,18 +81,7 @@ describe('ResizableTable directive', () => {
 
   afterEach(() => {
     document.body.innerHTML = '';
-    store.state.SharedStore.enableTableColumnResizing = true;
     jest.useRealTimers();
-  });
-
-  it('mounted should not add table-resizable behaviour if feature flag is set to false', () => {
-    store.state.SharedStore.enableTableColumnResizing = false;
-    ResizableTable.mounted(el, binding);
-    expect(table.classList.contains('table-resizable')).toBe(false);
-    expect(table.querySelectorAll('.resizer').length).toBe(0);
-    // Accessibility: live region should not be created
-    expect(table.__resizeLiveRegion).not.toBeDefined();
-    expect(table.parentNode.contains(table.__resizeLiveRegion)).toBe(false);
   });
 
   it('mounted adds table-resizable class and resizer handles', () => {

@@ -291,12 +291,4 @@ export default {
     padding-right: 0;
   }
 }
-:deep {
-  .w-140px {
-    width: 140px;
-  }
- .w-96px {
-    width: 96px;
-  }
-}
 </style>

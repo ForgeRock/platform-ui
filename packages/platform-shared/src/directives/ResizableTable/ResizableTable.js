@@ -35,7 +35,6 @@ import {
   persistCurrentWidths,
   updateColumnWidths,
 } from '../../utils/resizableTableUtils';
-import store from '../../store';
 
 const TABLE_CLASS = 'table-resizable';
 const RESIZER_CLASS = 'resizer';
@@ -290,8 +289,7 @@ export default {
     const options = binding.value || {};
     // Find the table element (supports both direct and nested usage)
     const table = (el.tagName === 'TABLE' ? el : el.querySelector('table'));
-    const { enableTableColumnResizing } = store.state.SharedStore;
-    if (!table || !enableTableColumnResizing) {
+    if (!table) {
       return;
     }
     table.parentElement.classList.add(TABLE_CLASS);
