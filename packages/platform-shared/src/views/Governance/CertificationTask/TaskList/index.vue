@@ -143,8 +143,7 @@ of the MIT license. See the LICENSE file for details. -->
               no-body>
               <img
                 class="mr-4 size-28"
-                :alt="$t('common.logo')"
-                :aria-hidden="true"
+                alt=""
                 :onerror="onImageError"
                 :src="getApplicationLogo(item.application)">
               <div class="media-body align-self-center overflow-hidden text-nowrap">
