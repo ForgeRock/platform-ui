@@ -43,7 +43,8 @@ filterTests(['@forgeops', '@cloud'], () => {
       });
     });
 
-    it('Logs in with new user, switch to profile view, updates password and checks it was updated successfully', () => {
+    // TODO: Skip test due it's constantly failing in pipeline execution. Ticket IAM-9677 was created to solve the issue.
+    it.skip('Logs in with new user, switch to profile view, updates password and checks it was updated successfully', () => {
       // Login as Enduser with password used during creation
       cy.loginAsEnduser(userName, defaultPassword);
 

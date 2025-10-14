@@ -8487,6 +8487,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cypress-real-events@npm:1.15.0":
+  version: 1.15.0
+  resolution: "cypress-real-events@npm:1.15.0"
+  peerDependencies:
+    cypress: ^4.x || ^5.x || ^6.x || ^7.x || ^8.x || ^9.x || ^10.x || ^11.x || ^12.x || ^13.x || ^14.x || ^15.x
+  checksum: 8e6657d0bd8ce8883a23bdb0915b049347b7f5880c4136f495ef39e793d2016ef46957e4861826bc3d9c0b1ef08ab355cfb2582b46fc6609cdbb14d02d5ec5f7
+  languageName: node
+  linkType: hard
+
 "cypress-recurse@npm:1.35.3":
   version: 1.35.3
   resolution: "cypress-recurse@npm:1.35.3"
@@ -11300,6 +11309,7 @@ __metadata:
     babel-plugin-require-context-hook: 1.0.0
     babel-plugin-transform-import-meta: 2.3.2
     cypress-file-upload: 5.0.8
+    cypress-real-events: 1.15.0
     dotenv: 8.2.0
     eslint: 5.16.0
     eslint-config-airbnb-base: 14.2.0
