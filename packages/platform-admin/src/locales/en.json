@@ -1943,11 +1943,13 @@
             "activateSuccess": "Certificate successfully activated",
             "activatingSigningCert": "Activating Certificate...",
             "certificateDetails": "Certificate Details",
+            "certificateUploadSuccess": "Certificate successfully uploaded",
             "creatingSigningCert": "Generating certificate...",
             "errorActivatingSigningCert": "There was an error activating the signing certificate.",
             "errorCreatingSigningCert": "There was an error generating the signing certificate.",
             "errorGettingCert": "There was an error getting certificate details",
             "errorRetrievingMs365Apps": "There was an error retrieving Microsoft 365 applications.",
+            "errorUploadingCert": "There was an error uploading the certificate. {displayError}",
             "expiresDate": "Expires (Valid Until)",
             "issuedDate": "Issued Date (Valid From)",
             "issuerDN": "Issuer DN",
@@ -1963,15 +1965,18 @@
             "stepTwoCustomAppDescription": "Once your Service Provider (SP) partner has been updated to trust this certificate, activate this certificate.",
             "stepTwoMs365AppDescription": "Once all Microsoft 365 applications have been updated to trust this certificate, activate this certificate.",
             "subjectDN": "Subject DN",
+            "uploadingCertificate": "Uploading Certificate",
             "viewPowershellCmdlets": "View PowerShell Cmdlets"
           },
+          "trustedCert":"Trusted Certificate",
+          "deleteTrustedCertText": "Are you sure you want to delete this certificate? Deleting may have an effect on any other Microsoft 365 apps using this certificate.",
           "deleteSuccess": "Certificate successfully deleted",
           "downloadCertificate": "Download Certificate",
-          "errorDeletingSigningCert": "There was an error deleting the signing certificate.",
+          "errorDeletingCert": "There was an error deleting the {type} certificate.",
           "errorDownloadingSigningCert": "There was an error downloading the signing certificate.",
-          "errorGettingSigningCert": "There was an error getting signing certificates.",
+          "errorGettingCerts": "There was an error getting {type} certificates.",
           "newCertificate": "Generate New Certificate",
-          "tableEmpty": "No signing certificates found",
+          "tableEmpty": "No {type} certificates found",
           "tableHeaders": {
             "type": "Type",
             "created": "Created",
@@ -1981,10 +1986,7 @@
           "title": "Signing Certificate",
           "tooltipCertificate": "To generate a new certificate, you must delete the existing inactive certificate.",
           "status": {
-            "active": "Active",
-            "inactive": "Inactive",
-            "expired": "Expired",
-            "expiring": "Expiring"
+            "notYetValid": "Not Yet Valid"
           }
         },
         "validationErrors": "Validation error(s) occurred, please try again.",
