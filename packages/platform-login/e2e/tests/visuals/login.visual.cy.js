@@ -15,7 +15,7 @@ filterTests(['@forgeops'], () => {
       cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
       // Wait for page to be fully loaded and stable
       cy.get('[data-testid="callbacks_panel"]', { timeout: 20000 }).should('be.visible');
-      cy.get('.ping-logo').should('be.visible');
+      cy.get('.fr-company-logo').should('be.visible');
     });
 
     it('should capture default login form', () => {

@@ -12,6 +12,7 @@ import {
   CODE_EDITOR_ICON_SELECTORS,
   JOURNEYS,
   KEYBOARD_ACTIONS,
+  ROLES,
 } from '../support/constants';
 
 /**
@@ -62,4 +63,18 @@ defineParameterType({
   name: 'shortcut',
   regexp: new RegExp(Object.keys(KEYBOARD_ACTIONS).join('|')),
   transformer: (key) => KEYBOARD_ACTIONS[key],
+});
+
+/**
+ * Defines the {role} parameter type.
+ * This parameter type validates the Gherkin role (e.g., "toggle") against the
+ * `ROLES` constant map and transforms it into its actual ARIA role (e.g., "switch")
+ * before passing it to the step definition.
+ */
+defineParameterType({
+  name: 'role',
+  regexp: new RegExp(Object.keys(ROLES).join('|')),
+  transformer(gherkinRole) {
+    return ROLES[gherkinRole];
+  },
 });

@@ -73,6 +73,7 @@ export const JOURNEYS = {
   PASSWORD_RESET_BY_KBA: { name: 'Password reset by KBA', path: 'QA%20-%20Password%20reset%20by%20KBA', fileName: 'QA-Password_reset_by_KBA_template' },
   REGISTRATION_WITH_ES_LOCALE: { name: 'Registration with ES locale', path: 'Registration&locale=es#' },
   AUXILIAR: { name: 'Auxiliar', path: 'Auxiliar%20journey', fileName: 'QA-Auxiliar_Journey' },
+  QA_THEMES_EDIT_TESTING_JOURNEY_SIMPLE: { name: 'QA Themes Edit Testing Journey Simple', path: 'QA%20-%20Themes%20edit%20testing%20journey%20Simple', fileName: 'QA_Themes_Edit_Testing_Journey_Simple_template' },
 };
 
 /**
@@ -80,6 +81,11 @@ export const JOURNEYS = {
  */
 export const THEME_UI_FIELD_MAPPING = {
   'Brand Color': 'primaryColor',
+  Footer: 'journeyFooterEnabled',
+  Header: 'journeyHeaderEnabled',
+  'Remember Me': 'journeyRememberMeEnabled',
+  'Error Heading Fallback': 'journeyA11yAddFallbackErrorHeading',
+  'Script Tags': 'journeyFooterScriptTag',
 };
 
 /**
@@ -89,4 +95,16 @@ export const THEME_UI_FIELD_MAPPING = {
 const isCloud = Cypress.env('IS_FRAAS');
 export const ENV_VALUES = {
   DEFAULT_THEME: isCloud ? 'Starter Theme' : 'ForgeRock Theme',
+};
+
+/**
+ * Maps Gherkin-friendly names to their actual ARIA role attribute values.
+ * This allows for aliases, like mapping "toggle" to the "switch" role.
+ */
+export const ROLES = {
+  button: 'button',
+  link: 'link',
+  switch: 'switch',
+  toggle: 'switch',
+  checkbox: 'checkbox',
 };

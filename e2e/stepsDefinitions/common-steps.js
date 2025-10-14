@@ -8,10 +8,10 @@
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
-import hexToRgb from '@e2e/utils/themeutils';
+import { ROLES, THEME_UI_FIELD_MAPPING } from '@e2e/support/constants';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import generateRandomEndUser from '../utils/endUserData';
-import { selectDropdownOption, typeIntoField } from '../utils/uiUtils';
+import { checkElementCss, selectDropdownOption, typeIntoField } from '../utils/uiUtils';
 import { generateJourneyURL } from '../utils/journeyUtils';
 
 Given('admin logs into the tenant', () => {
@@ -55,6 +55,22 @@ Given('enduser account is created via API', () => {
       });
     });
   }
+});
+
+Given('enduser logs into {journey} journey', (journeyName) => {
+  const userName = Cypress.env('endUserName');
+  const password = Cypress.env('endUserPassword');
+  const successLogin = true;
+  const loginUrl = generateJourneyURL(journeyName);
+  const givenName = Cypress.env('endUserFirstName');
+
+  cy.loginAsEnduser(
+    userName,
+    password,
+    successLogin,
+    loginUrl,
+    givenName,
+  );
 });
 
 Given('admin/enduser is logged out', () => {
@@ -155,12 +171,22 @@ When('user clicks on {string} button', (button) => {
   cy.findByRole('button', { name: button }).click();
 });
 
-When('user clicks on {string} disabled button', (button) => {
-  cy.findByRole('button', { name: button }).click({ force: true });
+When('user forcefully clicks on {string} button', (button) => {
+  cy.findByRole('button', { name: button }).realClick({ force: true });
 });
 
 When('user clicks on {string} button after waiting for {double} seconds', (button, seconds) => {
   cy.findByRole('button', { name: button }).wait(seconds * 1000).click();
+});
+
+When('user focuses {string} {role}', (name, role) => {
+  cy.findByRole(role, { name }).focus();
+});
+
+When('user hovers {string} {role}', (name, role) => {
+  cy.findByRole(role, { name })
+    .scrollIntoView()
+    .realHover();
 });
 
 When('user clicks on {string} link', (link) => {
@@ -186,6 +212,13 @@ When('user clicks on {string} menu option in side navigation bar', (menuOption) 
 When('user clicks on {string} submenu option under {string} in side navigation bar', (subMenuOption, parentMenu) => {
   cy.findByRole('button', { name: parentMenu }).click();
   cy.findByRole('link', { name: subMenuOption }).click();
+});
+
+When(/^user (checks|unchecks|turns on|turns off) the "([^"]*)" (switch|toggle|checkbox)$/, (action, name, role) => {
+  const desiredState = action === 'checks' || action === 'turns on';
+  const actualRole = ROLES[role] || role;
+  const accessibleName = actualRole === 'switch' ? THEME_UI_FIELD_MAPPING[name] || name : name;
+  cy.findByRole(actualRole, { name: accessibleName }).setToggleState(desiredState);
 });
 
 Then('{string} button is enabled', (button) => {
@@ -251,7 +284,7 @@ Then('{string} modal is displayed after user is iddle for {int} seconds', (modal
     .should('be.visible');
 });
 
-When('the message {string} should be present', (message) => {
+Then('the message {string} should be present', (message) => {
   cy.findByText(message)
     .should('be.visible');
 });
@@ -402,13 +435,6 @@ Then('more actions menu for item {string} does not have following buttons option
   cy.get('@moreActionsButton').click();
 });
 
-Then('{string} button has {string} attribute with value {string}', (buttonName, attribute, value) => {
-  let newValue = value;
-  if (attribute.includes('color')) newValue = hexToRgb(value);
-  cy.findByRole('button', { name: buttonName })
-    .should('have.css', attribute, newValue);
-});
-
 Then('user populates the following values into fields:', (dataTable) => {
   dataTable.hashes().forEach((row) => {
     cy.findByLabelText(row.Field).should('have.value', row.Value);
@@ -489,4 +515,14 @@ Then('{string} dropdown has following options:', (dropdown, dataTable) => {
 Then(/^"([^"]*)" dropdown is (visible|not visible)$/, (dropdownName, visibility) => {
   const assertion = visibility === 'visible' ? 'be.visible' : 'not.be.visible';
   cy.get('button.btn.btn-link.dropdown-toggle').should(assertion);
+});
+
+Then('elements have following attributes with values:', (dataTable) => {
+  dataTable.hashes().forEach((row) => {
+    checkElementCss(row.Role, row.Name, row.Attribute, row.Value);
+  });
+});
+
+Then('the {string} {role} has {string} attribute with value {string}', (name, role, attribute, value) => {
+  checkElementCss(role, name, attribute, value);
 });

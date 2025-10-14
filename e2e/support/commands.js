@@ -9,6 +9,7 @@
 import '@testing-library/cypress/add-commands';
 import 'cypress-file-upload';
 import '@neuralegion/cypress-har-generator/commands';
+import 'cypress-real-events/support';
 import generatePageURL from '../utils/adminUtils';
 import { importJourneysViaAPI, deleteJourneysViaAPI } from '../utils/manageJourneys';
 
@@ -230,3 +231,25 @@ Cypress.Commands.add('openJobListPage', () => {
   cy.findByTestId('spinner-is-loading-jobs').should('not.exist');
   cy.findByRole('button', { name: 'Schedule a Job', timeout: 10000 }).should('be.visible');
 });
+
+/**
+ * Custom command to set the state of a toggleable element (checkbox or switch).
+ * It checks the current state and only clicks if it doesn't match the desired state.
+ *
+ * @example
+ * // Basic usage
+ * cy.findByRole('checkbox', { name: 'My Check' }).setToggleState(true);
+ *
+ * // Usage with click options (like forcing)
+ * cy.findByRole('switch', { name: 'My Switch' }).setToggleState(false, { force: true });
+ */
+Cypress.Commands.add(
+  'setToggleState',
+  { prevSubject: 'element' },
+  (subject, desiredState, clickOptions = {}) => cy.wrap(subject).scrollIntoView().then(($toggle) => {
+    const currentState = $toggle.attr('aria-checked') === 'true' || $toggle.is(':checked');
+    if (currentState !== desiredState) {
+      cy.wrap($toggle).realClick(clickOptions);
+    }
+  }),
+);
