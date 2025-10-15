@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BCard,
 } from 'bootstrap-vue';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { find, startsWith } from 'lodash';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -182,15 +182,19 @@ async function loadRequests(goToFirstPage) {
  * @param {string} type - The type of modal to open.
  */
 function openModal(item, type) {
-  resumeDate.value = null;
-  modalItem.value = item;
-  modalType.value = REQUEST_MODAL_TYPES[type];
-  if (modalType.value === 'CHANGERESUMEDATE') {
-    resumeDate.value = item.details.resumeDate;
-    bvModal.value.show('UpdateResumeDateModal');
-  } else {
-    bvModal.value.show('request_modal');
-  }
+  // ActionsMenu component manages focus on trigger elements when modals are opened/closed.
+  // To avoid conflicts, we defer showing the modal until the next tick.
+  nextTick(() => {
+    resumeDate.value = null;
+    modalItem.value = item;
+    modalType.value = REQUEST_MODAL_TYPES[type];
+    if (modalType.value === 'CHANGERESUMEDATE') {
+      resumeDate.value = item.details.resumeDate;
+      bvModal.value.show('UpdateResumeDateModal');
+    } else {
+      bvModal.value.show('request_modal');
+    }
+  });
 }
 
 /**
