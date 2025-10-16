@@ -11,6 +11,7 @@ const END_USER_MENU_CONSTANTS = Object.freeze({
   INTERNAL_ROLE: 'internal/role',
   LCM_USERS: 'lcmUsers',
   LCM_ENTITLEMENTS: 'lcmEntitlements',
+  LCM_ROLES: 'lcmRoles',
   MENU_ITEM_LABEL_LOCALE_PREFIX: 'sideMenu.endUser.',
 });
 
@@ -174,6 +175,11 @@ export const DEFAULT_MENU_ITEMS = [
         id: END_USER_MENU_CONSTANTS.LCM_ENTITLEMENTS,
         routeTo: { name: 'AdministerEntitlements' },
       },
+      {
+        id: END_USER_MENU_CONSTANTS.LCM_ROLES,
+        routeTo: { name: 'AdministerRoles' },
+        available: (flag) => flag.governanceDevEnabled,
+      },
     ],
   },
 ];
@@ -184,4 +190,5 @@ export const DEFAULT_MENU_ITEMS = [
 export const LCM_SUBITEMS_ID_FLAG_MAP = {
   [END_USER_MENU_CONSTANTS.LCM_USERS]: 'govLcmUser',
   [END_USER_MENU_CONSTANTS.LCM_ENTITLEMENTS]: 'govLcmEntitlement',
+  [END_USER_MENU_CONSTANTS.LCM_ROLES]: 'govLcmRole',
 };

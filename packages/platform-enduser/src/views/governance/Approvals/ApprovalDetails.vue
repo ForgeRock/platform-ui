@@ -9,16 +9,18 @@ of the MIT license. See the LICENSE file for details. -->
     <template v-if="!isEmpty(item)">
       <!-- Header -->
       <FrRequestHeader
-        :item="item" />
-
-      <!-- Actions -->
-      <FrRequestActions
-        v-if="isActive"
-        data-testId="approval-detail-actions"
-        :permissions="actionPermissions"
-        :type="detailTypes.APPROVAL"
-        @action="openModal($event)"
-        class="mb-4" />
+        :item="item">
+        <template #request-actions>
+          <!-- Actions -->
+          <FrRequestActions
+            v-if="isActive"
+            data-testId="approval-detail-actions"
+            :permissions="actionPermissions"
+            :type="detailTypes.APPROVAL"
+            @action="openModal($event)"
+            class="mb-4" />
+        </template>
+      </FrRequestHeader>
 
       <!-- Recommendation Banner -->
       <FrRecommendationBanner

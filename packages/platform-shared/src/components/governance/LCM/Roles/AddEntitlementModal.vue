@@ -111,8 +111,8 @@ import { onImageError } from '@forgerock/platform-shared/src/utils/applicationIm
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrAppAndObjectType from '@/views/governance/LCM/Entitlements/Add/Steps/AppAndObjectType';
-import FrRequestSubmitSuccess from '@/views/governance/LCM/RequestSubmitSuccess';
+import FrAppAndObjectType from '@forgerock/platform-shared/src/components/governance/LCM/Entitlements/Add/Steps/AppAndObjectType';
+import FrRequestSubmitSuccess from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccess';
 import i18n from '@/i18n';
 
 defineProps({

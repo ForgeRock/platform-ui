@@ -169,11 +169,28 @@ export function createMenuRouteObject(menuItem, sourceMenuItem) {
   return {};
 }
 
-// helper function to check if alpha users menu item should be hidden
+/**
+ * Helper function to check if alpha users menu item should be hidden.
+ * @param {Object} item - The menu item to check.
+ * @param {Boolean} hideAlphaUsersMenuItem - Flag to hide alpha users menu item.
+ * @returns {Boolean} - Whether the alpha users menu item should be hidden.
+ */
 export function checkIfAlphaUsersShouldBeHidden(item, hideAlphaUsersMenuItem) {
   // Hide alpha users menu item when governance lcm user is enabled,
   // to be informed via hideAlphaUsersMenuItem parameter
   return hideAlphaUsersMenuItem && (item.id === 'alpha_user' || item.privilegePath === 'managed/alpha_user');
+}
+
+/**
+ * Helper function to check if alpha roles menu item should be hidden.
+ * @param {Object} item - The menu item to check.
+ * @param {Boolean} hideAlphaRolesMenuItem - Flag to hide alpha roles menu item.
+ * @returns {Boolean} - Whether the alpha roles menu item should be hidden.
+ */
+export function checkIfAlphaRolesShouldBeHidden(item, hideAlphaRolesMenuItem) {
+  // Hide alpha roles menu item when governance lcm role is enabled,
+  // to be informed via hideAlphaRolesMenuItem parameter
+  return hideAlphaRolesMenuItem && (item.id === 'alpha_role' || item.privilegePath === 'managed/alpha_role');
 }
 
 /**

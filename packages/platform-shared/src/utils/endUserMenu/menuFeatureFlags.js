@@ -16,6 +16,7 @@ export function generateFeatureFlags(store) {
     govLcmEnabled,
     govLcmUser,
     govLcmEntitlement,
+    govLcmRole,
     realm,
     SharedStore = {},
   } = store.state;
@@ -23,6 +24,7 @@ export function generateFeatureFlags(store) {
   const {
     autoAccessEnabled,
     autoReportsEnabled,
+    governanceDevEnabled,
     governanceEnabled,
     workforceEnabled,
   } = SharedStore;
@@ -33,8 +35,10 @@ export function generateFeatureFlags(store) {
   return {
     autoAccessEnabled,
     autoReportsEnabled,
+    governanceDevEnabled,
     govLcmEnabled,
     govLcmEntitlement,
+    govLcmRole,
     govLcmUser,
     ifGovernance,
     realm,

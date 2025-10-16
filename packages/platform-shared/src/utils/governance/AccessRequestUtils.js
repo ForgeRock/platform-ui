@@ -99,6 +99,22 @@ export const requestTypes = {
     label: 'governance.accessRequest.requestTypes.entitlementRemove',
     value: 'entitlementRemove',
   },
+  CREATE_ROLE: {
+    label: 'governance.accessRequest.requestTypes.createRole',
+    value: 'createRole',
+  },
+  DELETE_ROLE: {
+    label: 'governance.accessRequest.requestTypes.deleteRole',
+    value: 'deleteRole',
+  },
+  MODIFY_ROLE: {
+    label: 'governance.accessRequest.requestTypes.modifyRole',
+    value: 'modifyRole',
+  },
+  PUBLISH_ROLE: {
+    label: 'governance.accessRequest.requestTypes.publishRole',
+    value: 'publishRole',
+  },
   CREATE_USER: {
     label: 'governance.accessRequest.requestTypes.createUser',
     value: 'createUser',
@@ -120,6 +136,15 @@ export const requestTypes = {
     value: 'roleRemove',
   },
 };
+
+export const OOTB_NO_FORM_REQUEST_TYPES = [
+  requestTypes.ROLE_GRANT,
+  requestTypes.ROLE_REVOKE,
+  requestTypes.ACCOUNT_GRANT,
+  requestTypes.ACCOUNT_REVOKE,
+  requestTypes.ENTITLEMENT_GRANT,
+  requestTypes.ENTITLEMENT_REVOKE,
+];
 
 export function isSupportedRequestType(requestType) {
   return Object.values(requestTypes).some((type) => type.value === requestType);
@@ -185,6 +210,9 @@ export function getRequestFilter(filter, status) {
       case 'in-progress':
         allFilters.push(getBasicFilter('EQUALS', 'decision.status', status));
         break;
+      case 'draft':
+        allFilters.push(getBasicFilter('EQUALS', 'request.common.isDraft', true));
+        break;
       case 'suspended':
         allFilters.push(getBasicFilter('EQUALS', 'decision.status', 'suspended'));
         break;
@@ -216,7 +244,7 @@ export function getStatusText(statusOptions, status) {
 export function getRequestObjectType(requestType) {
   if (requestType.includes('application')) return 'application';
   if (requestType.toLowerCase().includes('entitlement')) return 'entitlement';
-  if (requestType.includes('role')) return 'role';
+  if (requestType.toLowerCase().includes('role')) return 'role';
   if (requestType === 'createUser' || requestType === 'deleteUser' || requestType === 'modifyUser') return 'lcmUser';
   return '';
 }

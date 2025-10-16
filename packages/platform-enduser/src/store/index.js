@@ -39,6 +39,7 @@ export default createStore({
     govLcmEnabled: false,
     govLcmEntitlement: false,
     govLcmUser: false,
+    govLcmRole: false,
 
     // governance autoid settings
     govAutoIdSettings: {},
@@ -125,6 +126,11 @@ export default createStore({
     setGovLcmUser(state, { viewUser }) {
       state.govLcmUser = viewUser;
       if (state.govLcmUser) state.govLcmEnabled = true;
+    },
+
+    setGovLcmRole(state, { viewRole }) {
+      state.govLcmRole = viewRole;
+      if (state.govLcmRole) state.govLcmEnabled = true;
     },
   },
   modules: {

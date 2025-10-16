@@ -16,6 +16,7 @@
     "add": "Add",
     "added": "Added",
     "adding": "Adding...",
+    "additionalDetails": "Additional Details",
     "addObject": "Add {object}",
     "addAObject": "Add a {object}",
     "admin": "Admin",
@@ -287,6 +288,7 @@
     "releaseInfo": "Ping Advanced Identity Cloud Version {version}",
     "remove": "Remove",
     "removed": "Removed",
+    "removeObject": "Remove {object}",
     "report": "Report",
     "requestSubmitted": "Request Submitted",
     "require": "require",
@@ -306,6 +308,7 @@
     "running": "Running",
     "save": "Save",
     "saveAndClose": "Save and Close",
+    "saveAsDraft": "Save as Draft",
     "saveChanges": "Save changes",
     "saveObject": "Save {object}",
     "saving": "Saving...",
@@ -327,6 +330,7 @@
     "serviceAccounts": "Service Accounts",
     "settings": "Settings",
     "show": "Show",
+    "showAdditionalDetails": "Show Additional Details",
     "showLabel": "Show {label}",
     "showPassword": "Show password",
     "showAdvanced": "Show advanced settings",
@@ -1199,6 +1203,7 @@
       "lcm": "Administer",
       "lcmUsers": "Users",
       "lcmEntitlements": "Entitlements",
+      "lcmRoles": "Roles",
       "machineAccounts": "Machine Accounts",
       "myAccess": "My Access",
       "myAccounts": "My Accounts",
@@ -1732,6 +1737,7 @@
         "roleMembership": "Role Details"
       },
       "recommendation": "Access Recommendation",
+      "noResultsRole": "No {grantType} for this role.",
       "revokeEntitlement": "Revoke Entitlement? | Revoke Entitlements?",
       "revoking": "Revoking",
       "startDate": "Access Start Date",
@@ -1751,6 +1757,10 @@
         "entitlementRemove": "Remove Entitlement",
         "createEntitlement": "Create Entitlement",
         "modifyEntitlement": "Modify Entitlement",
+        "createRole": "Create Role",
+        "deleteRole": "Delete Role",
+        "modifyRole": "Modify Role",
+        "publishRole": "Publish Role",
         "createUser": "Create User",
         "deleteUser": "Delete User",
         "modifyUser": "Modify User",
@@ -1908,6 +1918,13 @@
       },
       "type": "Type",
       "user": "User"
+    },
+    "administer": {
+      "roles": {
+        "members": "Members",
+        "entitlements": "Entitlements",
+        "newRole": "New role"
+      }
     },
     "certificationTask": {
       "hideTechnicalDetails": "Hide technical details",
@@ -2221,6 +2238,8 @@
       },
       "requestError": "Error submitting request",
       "requestExpiration": "Request Expiration (optional)",
+      "externalRequestId": "External Request ID",
+      "requestId": "Request ID",
       "requestSuccess": "Request successfully submitted",
       "revokeJustification": "Provide a justification for revoking access.",
       "revokeRequest": "Revoke Request",

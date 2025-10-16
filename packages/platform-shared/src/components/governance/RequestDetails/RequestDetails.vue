@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-for="(tab, index) in tabsToShow"
         :key="tab.title"
         :title="tab.title"
-        class="p-0"
+        lazy
         :data-testid="`tab-${tab}`">
         <template
           v-if="tab.component === 'FrComments'"
@@ -34,6 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
           :hide-actions="tab.hideActions"
           :is-approval="tab.isApproval"
           :read-only="tab.readOnly"
+          :is-draft="tab.isDraft"
           :type="tab.type"
           v-on="$listeners" />
       </BTab>
@@ -63,6 +64,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  isDraft: {
+    type: Boolean,
+    default: false,
+  },
   type: {
     type: String,
     default: '',
@@ -86,23 +91,26 @@ const tabs = ref([
     component: FrDetailsTab,
     title: i18n.global.t('common.details'),
     isApproval: props.isApproval,
-    readOnly: props.hideActions.modify,
+    readOnly: props.hideActions.modify && !props.isDraft,
+    isDraft: props.isDraft,
     type: props.type,
   },
   {
     component: FrWorkflow,
     title: i18n.global.t('governance.requestModal.titles.tracking'),
-    hide: props.hideTracking,
+    hide: props.hideTracking || props.isDraft,
   },
   {
     component: FrComments,
     title: i18n.global.t('common.comments'),
+    hide: props.isDraft,
     hideActions: props.hideActions.comment,
   },
   {
     component: FrTasks,
     title: i18n.global.t('common.tasks'),
     type: props.type,
+    hide: props.isDraft,
   },
 ]);
 const tabsToShow = computed(() => tabs.value.filter(({ hide }) => !hide));

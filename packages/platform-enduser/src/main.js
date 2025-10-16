@@ -198,6 +198,14 @@ const startApp = async () => {
         }
       }
 
+      // role lcm
+      if (data.lcmSettings?.role?.enabled) {
+        // check if user can see any users
+        if (privilegesData.find((privilege) => privilege.privilegePath === 'managed/alpha_role')) {
+          store.commit('setGovLcmRole', { viewRole: true });
+        }
+      }
+
       // entitlement lcm
       if (data.lcmSettings?.entitlement?.enabled) {
         // check if user can see any entitlements or create for any app

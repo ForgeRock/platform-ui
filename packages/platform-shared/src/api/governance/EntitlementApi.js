@@ -62,7 +62,11 @@ export function getEntitlementSchema(application, objectType) {
  * @param {Object} [queryParams={}] - An optional object containing query parameters to filter the application list.
  * @returns {Promise} - A promise that resolves to the list of applications.
  */
-export function getApplicationList(resource, queryParams = {}) {
+export function getApplicationList(resource, queryParams = {}, overrideScopePermission = false) {
   const encodedQueryParams = encodeQueryString(queryParams);
-  return generateIgaApi().get(`${applicationUrl}${encodedQueryParams}&scopePermission=createEntitlement`);
+  let url = `${applicationUrl}${encodedQueryParams}`;
+  if (!overrideScopePermission) {
+    url += '&scopePermission=createEntitlement';
+  }
+  return generateIgaApi().get(url);
 }

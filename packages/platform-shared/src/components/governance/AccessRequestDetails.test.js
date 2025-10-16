@@ -118,10 +118,9 @@ describe('AccessRequestDetails', () => {
       const wrapper = setup();
       await flushPromises();
       const detail = findByTestId(wrapper, 'request-detail');
-      expect(detail.text()).toContain('Manuel Escobar');
-      expect(detail.text()).toContain('manuel.escobar@test.com');
-      expect(detail.text()).toContain('Pending');
-      expect(detail.text()).toContain('Medium Priority');
+      expect(detail.text()).toContain('Access Start Date');
+      expect(detail.text()).toContain('Access End Date');
+      expect(detail.text()).toContain('Jul 15, 2023 7:23 PM');
       expect(AccessRequestApi.getRequest).toHaveBeenCalledWith('1');
     });
     it('shows cancel panel for in progress request', async () => {
@@ -184,7 +183,8 @@ describe('AccessRequestDetails', () => {
       const strongText = wrapper.find('strong');
       expect(strongText.text()).toContain('Access recommended');
       const icons = wrapper.findAll('.material-icons-outlined');
-      expect(icons[0].text()).toContain('thumb_up_off_alt');
+      expect(icons[0].text()).toContain('keyboard_arrow_right');
+      expect(icons[1].text()).toContain('thumb_up_off_alt');
     });
 
     it('shows no recommendation banner', async () => {
