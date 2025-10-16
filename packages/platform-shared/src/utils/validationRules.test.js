@@ -50,13 +50,13 @@ describe('number validators', () => {
 
 describe('allowedRules validators', () => {
   it('should return true when correct value is passed', async () => {
-    const result = await rules.allowedRules('abcd', ['alpha', 'numeric', 'under', 'period', 'hypen']);
+    const result = await rules.allowedRules('abcd', ['alpha', 'numeric', 'under', 'period', 'hyphen', 'comma']);
     expect(result).toBe(true);
   });
 
   it('should return corresponding error message when value passed does not qualify the allowed rules', async () => {
-    const result = await rules.allowedRules('*** %', ['alpha_upper', 'period', 'hypen']);
-    expect(result).toBe('Can only contain upper case alphabetic characters, periods, and hypens.');
+    const result = await rules.allowedRules('*** %', ['alpha_upper', 'period', 'hyphen']);
+    expect(result).toBe('Can only contain upper case alphabetic characters, periods, and hyphens.');
   });
 });
 
