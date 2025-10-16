@@ -253,3 +253,5 @@ Cypress.Commands.add(
     }
   }),
 );
+
+Cypress.Commands.add('getIframeBody', (iframeSelector) => cy.get(iframeSelector).its('0.contentDocument.body').should('not.be.empty').then(cy.wrap));

@@ -10,7 +10,7 @@ Feature: Enduser UI Translations
     When dashboard translations are in 'french'
     And user clicks on 'Éditer le profil en français' button
     Then profile translations are in 'french'
-    When user clicks on 'Mes applications en français' tab
+    When user clicks on 'Mes applications en français' link
     Then Applications page translations are in 'french'
 
   @C26990
@@ -55,5 +55,5 @@ Feature: Enduser UI Translations
     When dashboard translations are in 'japanese'
     And user clicks on 'プロフィール編集' button
     Then profile translations are in 'japanese'
-    When user clicks on '私のフランス語アプリケーション' tab
+    When user clicks on '私のフランス語アプリケーション' link
     Then Applications page translations are in 'japanese'
