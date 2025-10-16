@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
  * Generic Glossary Form which displays fields based on glossary schema.
  * It has option to edit if there are glossary values previously saved.
  */
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { isArray, cloneDeep } from 'lodash';
 import FrFormGenerator from '@forgerock/platform-shared/src/components/FormGenerator';
 import FrGovObjectMultiselect from '@forgerock/platform-shared/src/components/FormEditor/components/governance/GovObjectMultiselect';
@@ -182,5 +182,7 @@ function buildSchemaForFormGenerator(glossarySchema) {
   });
 }
 
-buildSchemaForFormGenerator(props.glossarySchema);
+watch(() => [props.glossarySchema, props.readOnly], () => {
+  buildSchemaForFormGenerator(props.glossarySchema);
+}, { deep: true, immediate: true });
 </script>

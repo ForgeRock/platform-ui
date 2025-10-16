@@ -115,7 +115,7 @@ of the MIT license. See the LICENSE file for details. -->
             </BMediaAside>
             <BMediaBody class="text-truncate">
               <h2 class="h5 mb-0 text-truncate">
-                {{ item.application.name }}
+                {{ item.application?.name }}
               </h2>
               <small class="text-muted">
                 {{ getDisplayName(item) }}
@@ -139,7 +139,7 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ getResourceDisplayName(item, '/entitlement') }}
               </h2>
               <small class="text-muted">
-                {{ item.application.name }}
+                {{ item.application?.name }}
               </small>
             </BMediaBody>
           </BMedia>
@@ -277,6 +277,7 @@ of the MIT license. See the LICENSE file for details. -->
       :glossary-schema="glossarySchema"
       :modal-id="modalId" />
     <FrFloatingActionBar
+      v-if="!showRemoveButton"
       :buttons="actionBarButtons"
       :count="selectedItems.length"
       @deselect="onToggleSelectAll(false)"
@@ -386,6 +387,10 @@ export default {
       type: String,
       default: 'gov-resource',
     },
+    noDataText: {
+      type: String,
+      default: '',
+    },
     parentResourceName: {
       type: String,
       default: '',
@@ -479,6 +484,9 @@ export default {
         ...item,
         assignment: this.assignmentHandler(item),
       }));
+    },
+    noDataSubtitle() {
+      return this.isNoResultsFirstLoad ? this.$t('governance.access.noResultsUser', { grantType: this.pluralizedGrantType }) : this.$t('common.noResultsHelp');
     },
     pluralizedGrantType() {
       return pluralizeValue(this.grantType);

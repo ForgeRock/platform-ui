@@ -111,6 +111,23 @@ const router = createRouter({
             },
           ],
         },
+        {
+          path: 'roles',
+          children: [
+            {
+              path: '',
+              name: 'AdministerRoles',
+              component: () => import('@/views/governance/LCM/Roles/RolesList'),
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.SharedStore.governanceDevEnabled, store.state.govLcmRole]),
+            },
+            {
+              path: ':roleId/:roleStatus',
+              name: 'RoleDetails',
+              component: () => import('@/views/governance/LCM/Roles/RoleDetails'),
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.SharedStore.governanceDevEnabled, store.state.govLcmRole]),
+            },
+          ],
+        },
       ],
     },
     {

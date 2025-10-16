@@ -236,6 +236,7 @@
     "AccessReviews": "Access Reviews",
     "Accounts": "Accounts",
     "AdministerEntitlements": "Entitlements",
+    "AdministerRoles": "Roles",
     "AdministerUsers": "Users",
     "Applications": "Applications",
     "ApprovalDetails": "Approval Details",
@@ -386,6 +387,21 @@
         "generalSettings": "General Settings",
         "errorGettingEntitlement": "Error getting entitlement"
       },
+      "roles": {
+        "subtitle": "Assign roles to users to give them access.",
+        "newRole": "New Role",
+        "entitlements": "Entitlements",
+        "members": "Members",
+        "membershipRules": "Membership Rules",
+        "noMembersText": "No members exist for this role",
+        "successCreate": "Role create request has been submitted successfully",
+        "successUpdate": "Role update request has been submitted successfully",
+        "successPublish": "Role draft has been published successfully",
+        "errorCreate": "There was an error creating the role create request",
+        "errorUpdate": "There was an error updating the role update request",
+        "errorPublish": "There was an error publishing the role draft",
+        "successDelete": "Role delete request submitted successfully"
+      },
       "users": {
         "title": "Users",
         "subtitle": "Create and manage your user identities."
@@ -480,6 +496,7 @@
     "entitlements": {
       "entitlementDetails": "Entitlement Details",
       "chooseApplication": "Choose the application for which to create the entitlement.",
+      "chooseEntitlementApplication": "Choose the entitlement's application.",
       "newEntitlement": "New Entitlement",
       "newEntitlementTitle": "{appName} {objectType} Entitlement",
       "createSuccess": "Your request to create an entitlement has been submitted.",

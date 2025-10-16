@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <p>
-      {{ $t('governance.entitlements.chooseApplication') }}
+      {{ props.labelText ? props.labelText : $t('governance.entitlements.chooseApplication') }}
     </p>
     <FrGovResourceSelect
       v-model="application"
@@ -74,6 +74,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  labelText: {
+    type: String,
+    default: '',
+  },
 });
 
 const application = ref('');
@@ -124,9 +128,9 @@ function emitValue(selectedObjectType) {
 }
 
 /**
- * Queries the specified resource.
+ * Query for the specified resource type with the provided query parameters.
  * @param {String} resourceType - The resource type to query.
- * @param {Object} queryParams - The query parameters for the search.
+ * @param {Object} queryParams - The query parameters for the request.
  */
 function resourceFunction(resourceType, queryParams) {
   return getApplicationList(resourceType, queryParams, props.overrideScopePermission);

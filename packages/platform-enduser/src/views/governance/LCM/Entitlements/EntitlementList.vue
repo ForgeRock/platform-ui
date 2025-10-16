@@ -138,7 +138,7 @@ import { onImageError } from '@forgerock/platform-shared/src/utils/applicationIm
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
-import FrAddEntitlementModal from './Add/AddEntitlementModal';
+import FrAddEntitlementModal from '@forgerock/platform-shared/src/components/governance/LCM/Roles/AddEntitlementModal';
 import i18n from '@/i18n';
 
 // composables

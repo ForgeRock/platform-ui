@@ -226,11 +226,12 @@ function getQueryFields(resourceType) {
 function getQueryStringFields(resourceType) {
   switch (resourceType) {
     case 'user':
-    case 'role':
     case 'organization':
       return getQueryFields(resourceType).map((field) => `/${field}`);
     case 'entitlement':
       return ['descriptor.idx./entitlement.displayName'];
+    case 'role':
+      return ['role.name', 'role.description'];
     default:
       return ['*'];
   }

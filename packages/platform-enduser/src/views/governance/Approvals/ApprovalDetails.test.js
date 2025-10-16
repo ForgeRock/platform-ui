@@ -160,10 +160,9 @@ describe('ApprovalDetails', () => {
       wrapper = setup();
       await flushPromises();
       const detail = findByTestId(wrapper, 'approval-detail');
-      expect(detail.text()).toContain('Manuel Escobar');
-      expect(detail.text()).toContain('manuel.escobar@test.com');
-      expect(detail.text()).toContain('Pending');
-      expect(detail.text()).toContain('Medium Priority');
+      expect(detail.text()).toContain('Access Start Date');
+      expect(detail.text()).toContain('Access End Date');
+      expect(detail.text()).toContain('Jul 15, 2023 7:23 PM');
     });
 
     it('can get an inactive approval', async () => {

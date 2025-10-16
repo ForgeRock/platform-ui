@@ -17,6 +17,7 @@ import { filterAvailableEndUserMenuItems } from './menuFilter';
 import { getLocaleBasedMenuItemLabel, updateMenuItemsWithTranslations } from './menuItemTranslations';
 import {
   checkIfAlphaUsersShouldBeHidden,
+  checkIfAlphaRolesShouldBeHidden,
   createManagedObjectMenuItem,
   createMenuRouteObject,
   createPrivilegeMenuId,
@@ -77,6 +78,7 @@ export async function getAllEndUserMenuItems({ store = {}, getTranslations = fal
 export function generateEndUserMenuItems({
   configuredMenuItems = [],
   hideAlphaUsersMenuItem = false,
+  hideAlphaRolesMenuItem = false,
   isEndUserUI = false,
   privileges = [],
   store = {},
@@ -160,6 +162,9 @@ export function generateEndUserMenuItems({
 
       // If LCM menu item is present, ensure it has eligible subItems populated
       finalSubItems = finalSubItems.filter((subItem) => {
+        if (!flags.governanceDevEnabled && subItem.id === 'lcmRoles') {
+          return undefined;
+        }
         const flag = LCM_SUBITEMS_ID_FLAG_MAP[subItem.id];
         return flags[flag]; // Only include subItems if the corresponding flag is true
       });
@@ -177,7 +182,7 @@ export function generateEndUserMenuItems({
     if (isEndUserUI) {
       // reject current menu item if it is a managed object and not part of the user privileges
       if (menuItem.isManagedObject) {
-        if (!privilegesMap.has(menuItem.id) || checkIfAlphaUsersShouldBeHidden(menuItem, hideAlphaUsersMenuItem)) {
+        if (!privilegesMap.has(menuItem.id) || checkIfAlphaUsersShouldBeHidden(menuItem, hideAlphaUsersMenuItem) || checkIfAlphaRolesShouldBeHidden(menuItem, hideAlphaRolesMenuItem)) {
           return undefined;
         }
       }

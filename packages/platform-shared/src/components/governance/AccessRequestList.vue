@@ -71,6 +71,11 @@ of the MIT license. See the LICENSE file for details. -->
           {{ getItemResumeDate(item) }}
         </small>
       </template>
+      <template #cell(createdDate)="{ item }">
+        <small class="text-muted">
+          {{ getItemCreatedDate(item) }}
+        </small>
+      </template>
       <template #cell(date)="{ item }">
         <small class="text-muted">
           {{ item.details.date }}
@@ -178,11 +183,22 @@ const fields = computed(() => {
     });
   }
 
+  if (prop.requestStatus === 'draft') {
+    fieldList.splice(1, 1, {
+      key: 'createdDate',
+      label: i18n.global.t('common.created'),
+    });
+  }
+
   return fieldList;
 });
 
 function getItemResumeDate(item) {
   return item.details.resumeDate ? dayjs(item.details.resumeDate).format('MMM D, YYYY') : null;
+}
+
+function getItemCreatedDate(item) {
+  return item.rawData.metadata?.createdDate ? dayjs(item.rawData.metadata.createdDate).format('MMM D, YYYY') : null;
 }
 
 watch(() => prop.requests, (newRequests) => {

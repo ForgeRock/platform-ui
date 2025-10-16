@@ -139,6 +139,7 @@
     "RequestDetails": "Request Details",
     "Requests": "Requests",
     "RequestTypeDetails": "Request Type Details",
+    "Roles": "Roles",
     "Scopes": "Scopes",
     "Scripts": "Scripts",
     "SecurityQuestions": "Security Questions",
@@ -196,6 +197,7 @@
     "risk": "Risk",
     "riskAdministration": "Risk Administration",
     "riskConfig": "Risk Config",
+    "roles": "Roles",
     "scopes": "Scopes",
     "scripts": "Scripts",
     "security": "Security",
@@ -4191,6 +4193,13 @@
     "viewUpdates": "View updates"
   },
   "governance": {
+    "accessModeling": {
+      "assignmentConfidence": "Average Assignment Confidence",
+      "assignmentConfidenceDescription": "Confidence score that assigned roles are assigned correctly.",
+      "assignmentCoverage": "Assignment Coverage",
+      "assignmentCoverageDescription": "Percentage of assigned entitlements that are included in recommendations.",
+      "latestJob": "Latest Role Mining Job"
+    },
     "recommendations": {
       "title": "Recommendations",
       "subtitle": "Configure recommendation settings",
@@ -4910,10 +4919,14 @@
           },
           "permissions": {
             "createEntitlements": "Create Entitlements",
+            "createRole": "Create Roles",
             "createUsers": "Create Users",
+            "deleteRole": "Delete Role",
             "deleteUser": "Delete User",
             "modifyEntitlements": "Modify Entitlements",
+            "modifyRole": "Modify Role",
             "modifyUser": "Modify User",
+            "publishRole": "Publish Roles",
             "viewApplications": "View Applications",
             "viewEntitlements": "View Entitlements",
             "viewGrants": "View Grants",
@@ -5240,6 +5253,7 @@
         "updateSuccess": "LCM Settings updated successfully",
         "types": {
           "entitlement": "Entitlement LCM",
+          "role": "Role LCM",
           "user": "User LCM"
         },
         "modal": {

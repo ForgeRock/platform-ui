@@ -207,9 +207,11 @@ export default {
 
       // if governance user lcm is enabled, we hide the standard menu item for alpha users
       const hideAlphaUsersMenuItem = this.$store.state.govLcmUser;
+      const hideAlphaRolesMenuItem = this.$store.state.govLcmRole;
       const endUserMenuItems = generateEndUserMenuItems({
         configuredMenuItems,
         hideAlphaUsersMenuItem,
+        hideAlphaRolesMenuItem,
         isEndUserUI: true,
         privileges: this.$store.state.privileges,
         store: this.$store,

@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BCard,
 } from 'bootstrap-vue';
-import { nextTick, ref } from 'vue';
+import { nextTick, onMounted, ref } from 'vue';
 import { find, startsWith } from 'lodash';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -82,6 +82,7 @@ import FrRequestToolbar from '@forgerock/platform-shared/src/components/governan
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrUpdateResumeDateModal from '@forgerock/platform-shared/src/components/governance/RequestDetails/UpdateResumeDateModal';
 import i18n from '@/i18n';
+import store from '@/store';
 
 /**
  * Displays the list of Requests and the corresponding filters.
@@ -247,4 +248,13 @@ async function updateResumeDate(newResumeTime, justification) {
     isSaving.value = false;
   }
 }
+
+onMounted(() => {
+  if (!props.isAdmin && store.state.SharedStore.governanceDevEnabled) {
+    statusOptions.value = [...statusOptions.value, {
+      text: i18n.global.t('common.draft'),
+      value: 'draft',
+    }];
+  }
+});
 </script>

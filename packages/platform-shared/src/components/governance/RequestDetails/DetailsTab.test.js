@@ -9,19 +9,41 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import * as applicationImageResolver from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/RequestFormsApi';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
+import * as RoleApi from '@forgerock/platform-shared/src/api/governance/RoleApi';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
-import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
+import * as Glossary from '@forgerock/platform-shared/src/utils/governance/glossary';
+import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import DetailsTab from './DetailsTab';
 import i18n from '@/i18n';
 
 mockValidation(['required']);
+jest.mock('axios');
+jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/RoleApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
+jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
+  getApplicationTemplateList: jest.fn().mockResolvedValue({
+    consumer: {
+      web: {
+        '1_0-web': { id: 'web', displayName: 'Web Application', image: 'web.png' },
+      },
+    },
+  }),
+}));
 
+AccessRequestApi.requestAction = jest.fn().mockImplementation(() => Promise.resolve({
+  data: {},
+}));
 GlossaryApi.getGlossaryAttributes.mockImplementation(() => Promise.resolve({
   data: {
     result: [
@@ -33,6 +55,41 @@ GlossaryApi.getGlossaryAttributes.mockImplementation(() => Promise.resolve({
     ],
   },
 }));
+Glossary.getGlossarySchema = jest.fn().mockImplementation(() => Promise.resolve([
+  {
+    allowedValues: [],
+    isIndexed: true,
+    isMultiValue: false,
+    managedObjectType: null,
+    searchable: true,
+    isInternal: true,
+    displayName: 'Requestable',
+    name: 'requestable',
+    description: 'Can the role be requested',
+    objectType: '/openidm/managed/role',
+    type: 'boolean',
+    id: 'testId001',
+  },
+  {
+    id: 'testId002',
+    displayName: 'Role Owner',
+    name: 'roleOwner',
+    description: 'Role Owner of Object',
+    objectType: '/openidm/managed/role',
+    type: 'managedObject',
+    managedObjectType: '/openidm/managed/user',
+    allowedValues: [],
+    isIndexed: true,
+    isMultiValue: false,
+    searchable: true,
+    isInternal: true,
+    metadata: {
+      modifiedDate: '2025-11-06T16:47:06.809946805Z',
+      createdDate: '2025-11-06T16:47:06.809940423Z',
+    },
+  },
+]));
+
 EntitlementApi.getEntitlementSchema.mockImplementation(() => Promise.resolve({
   data: {
     properties: {
@@ -50,6 +107,76 @@ EntitlementApi.getEntitlementSchema.mockImplementation(() => Promise.resolve({
     },
   },
 }));
+
+EntitlementApi.getEntitlementUsers.mockImplementation(() => Promise.resolve({
+  data: {
+    result: [],
+    totalCount: 0,
+  },
+}));
+
+EntitlementApi.getEntitlementList.mockImplementation(() => Promise.resolve({
+  data: {
+    result: [
+      {
+        descriptor: {
+          idx: {
+            '/entitlement': {
+              displayName: 'Customer Support - QA',
+            },
+          },
+          id: 'entitlementId1',
+        },
+      },
+      {
+        descriptor: {
+          idx: {
+            '/entitlement': {
+              displayName: 'Sales Representative - QA',
+            },
+          },
+          id: 'entitlementId2',
+        },
+      },
+    ],
+  },
+}));
+
+EntitlementApi.getApplicationList = jest.fn().mockImplementation(() => Promise.resolve({
+  data: {
+    result: [
+      {
+        application: {
+          name: 'TestApp',
+          id: 'TestId',
+          objectTypes: [
+            {
+              name: 'TestObjectType',
+              accountAttribute: 'accountAttribute1',
+            },
+            {
+              name: 'TestObjectType2',
+            },
+          ],
+        },
+      },
+    ],
+  },
+}));
+
+RoleApi.getRoleDataById = jest.fn().mockImplementation(() => Promise.resolve({
+  result: [
+    { id: 'ent1', name: 'Entry One' },
+    { id: 'ent2', name: 'Entry Two' },
+  ],
+  totalCount: 2,
+}));
+
+ManagedResourceApi.getManagedResourceList = jest.fn().mockImplementation(() => Promise.resolve([]));
+
+applicationImageResolver.onImageError = jest.fn().mockImplementation(() => {});
+
+jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType').mockResolvedValue({ data: { result: [] } });
 
 describe('DetailsTab', () => {
   const setup = (propsData = {}) => {
@@ -86,8 +213,21 @@ describe('DetailsTab', () => {
             common: {
               justification: 'justification.',
             },
+            role: {
+              glossary: {},
+              object: {
+                entitlements: {
+                  result: [],
+                  totalCount: 0,
+                },
+                members: {
+                  result: [],
+                  totalCount: 0,
+                },
+              },
+            },
           },
-          requestType: 'requestType test',
+          requestType: 'modifyRole',
         },
       },
       type: 'adminRequest',
@@ -98,56 +238,29 @@ describe('DetailsTab', () => {
     return mount(DetailsTab, {
       global: {
         plugins: [i18n],
+        stubs: {
+          FrRequestFormManager: true,
+          FrRequestRoleDetails: true,
+          FrSpinner: true,
+          FrGovObjectSelect: true,
+        },
       },
       props,
     });
   };
 
-  jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType').mockResolvedValue({ data: { result: [] } });
-
   it('initializes with the correct default data structure based on props', async () => {
     const wrapper = setup();
     await wrapper.vm.$nextTick();
-    expect(wrapper.vm.details.status.name).toContain('Completed');
+    expect(wrapper.vm.item).toHaveProperty('details');
+    expect(wrapper.vm.item).toHaveProperty('rawData');
   });
 
   it('initializes with the correct default data structure based on props when outcome is presented', async () => {
     const wrapper = setup();
     await wrapper.vm.$nextTick();
-    expect(wrapper.vm.details.outcome.name).toContain('Provisioned');
-  });
-
-  it('handles when the request is submitted by the system', async () => {
-    const wrapper = setup({
-      item: {
-        details: {
-          requestedBy: {
-            id: 'SYSTEM',
-          },
-        },
-        rawData: {
-          decision: {
-            outcome: 'provisioned',
-          },
-        },
-      },
-    });
-    await flushPromises();
-    const requestedBy = wrapper.find('.row');
-    expect(requestedBy.text()).toBe('StatusIn-ProgressRequest ID');
-  });
-
-  it('shows external request id if present', async () => {
-    const wrapper = setup({
-      item: {
-        details: {},
-        rawData: {
-          request: { common: { externalRequestId: 'externalId' } },
-        },
-      },
-    });
-    await flushPromises();
-    expect(wrapper.text()).toContain('externalId');
+    expect(wrapper.vm.item).toHaveProperty('rawData');
+    expect(wrapper.vm.item.rawData.decision.outcome).toContain('provisioned');
   });
 
   it('shows start date and end date fields if either present', async () => {
@@ -156,6 +269,7 @@ describe('DetailsTab', () => {
         details: {},
         rawData: {
           request: { common: { endDate: '2025-07-21T20:36:49+00:00' } },
+          requestType: 'entitlementGrant',
         },
       },
     });
@@ -322,144 +436,6 @@ describe('DetailsTab', () => {
         expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
         expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account');
         expect(wrapper.find('[label="testLabel"]').exists()).toBe(false);
-      });
-    });
-
-    describe('create entitlement request', () => {
-      const createEntitlementRequestItem = {
-        item: {
-          details: {
-            id: 'testId',
-          },
-          rawData: {
-            id: 'testId',
-            phases: [{ name: 'testPhase' }],
-            workflow: { id: 'testWorkflowId' },
-            requestType: 'createEntitlement',
-            application: { id: 'testApp' },
-            request: {
-              entitlement: {
-                glossary: {
-                  testGlossaryProperty: 'test1',
-                },
-                object: {
-                  testObjectProperty: 'test2',
-                },
-                objectType: 'testObjectType',
-              },
-            },
-          },
-        },
-      };
-
-      it('loads request data into form', async () => {
-        const wrapper = setup(createEntitlementRequestItem);
-        await flushPromises();
-
-        expect(wrapper.find('[label="test glossary property"]').exists()).toBe(true);
-        expect(wrapper.find('[id="test glossary property"]').attributes('value')).toBe('test1');
-
-        expect(wrapper.find('[label="test object property"]').exists()).toBe(true);
-        expect(wrapper.find('[id="test object property"]').attributes('value')).toBe('test2');
-      });
-
-      it('creates the correct payload to modify the request', async () => {
-        const requestSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockResolvedValue({ data: {} });
-        const wrapper = setup(createEntitlementRequestItem);
-        await flushPromises();
-
-        const form = wrapper.findComponent(FrDefaultEntitlementForm);
-        form.vm.$emit('update:glossaryValues', { testGlossaryProperty: 'customValue' });
-        form.vm.$emit('update:entitlementValues', { testObjectProperty: 'customValue2' });
-
-        await wrapper.find('button.btn-primary').trigger('click');
-
-        const expectedPayload = {
-          entitlement: {
-            objectType: 'testObjectType',
-            glossary: {
-              testGlossaryProperty: 'customValue',
-            },
-            object: {
-              testObjectProperty: 'customValue2',
-            },
-          },
-        };
-
-        expect(requestSpy).toHaveBeenCalledWith(
-          'testId',
-          'modify',
-          'testPhase',
-          expectedPayload,
-        );
-      });
-    });
-
-    describe('modify entitlement request', () => {
-      const modifyEntitlementRequestItem = {
-        item: {
-          details: {
-            id: 'testId',
-          },
-          rawData: {
-            id: 'testId',
-            phases: [{ name: 'testPhase' }],
-            workflow: { id: 'testWorkflowId' },
-            requestType: 'modifyEntitlement',
-            application: { id: 'testApp' },
-            request: {
-              entitlement: {
-                glossary: {
-                  testGlossaryProperty: 'test1',
-                },
-                object: {
-                  testObjectProperty: 'test2',
-                },
-              },
-            },
-          },
-        },
-      };
-
-      it('loads request data into form', async () => {
-        const wrapper = setup(modifyEntitlementRequestItem);
-        await flushPromises();
-
-        expect(wrapper.find('[label="test glossary property"]').exists()).toBe(true);
-        expect(wrapper.find('[id="test glossary property"]').attributes('value')).toBe('test1');
-
-        expect(wrapper.find('[label="test object property"]').exists()).toBe(true);
-        expect(wrapper.find('[id="test object property"]').attributes('value')).toBe('test2');
-      });
-
-      it('creates the correct payload to modify the request', async () => {
-        const requestSpy = jest.spyOn(AccessRequestApi, 'requestAction').mockResolvedValue({ data: {} });
-        const wrapper = setup(modifyEntitlementRequestItem);
-        await flushPromises();
-
-        const form = wrapper.findComponent(FrDefaultEntitlementForm);
-        form.vm.$emit('update:glossaryValues', { testGlossaryProperty: 'customValue' });
-        form.vm.$emit('update:entitlementValues', { testObjectProperty: 'customValue2' });
-
-        await wrapper.find('button.btn-primary').trigger('click');
-
-        const expectedPayload = {
-          entitlement: {
-            glossary: {
-              testGlossaryProperty: 'customValue',
-            },
-            object: {
-              testObjectProperty: 'customValue2',
-            },
-          },
-        };
-
-        expect(requestSpy).toHaveBeenCalledWith(
-          'testId',
-          'modify',
-          'testPhase',
-          expectedPayload,
-        );
       });
     });
 

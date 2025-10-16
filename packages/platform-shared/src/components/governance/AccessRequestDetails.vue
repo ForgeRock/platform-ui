@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <template v-if="!isLoading">
       <!-- Header -->
       <FrRequestHeader
+        :is-draft="isDraft"
         :item="item" />
 
       <!-- Recommendation Banner -->
@@ -18,7 +19,6 @@ of the MIT license. See the LICENSE file for details. -->
         :auto-id-settings="autoIdSettings"
         :object-display-name="item.details.name"
         :user-display-name="item.details.requestedFor" />
-
       <!-- Request details -->
       <BCard
         data-testId="request-detail"
@@ -29,6 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
           @update-item="getRequestData"
           @action="(type, phase) => openModal(type, phase)"
           :hide-actions="{ modify: true }"
+          :is-draft="isDraft"
           :type="type"
           :item="item" />
       </BCard>
@@ -83,6 +84,8 @@ import FrRequestHeader from '@forgerock/platform-shared/src/components/governanc
 import FrRecommendationBanner from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationBanner';
 import i18n from '@/i18n';
 
+const isDraft = ref(false);
+
 const props = defineProps({
   requestId: {
     type: String,
@@ -120,6 +123,7 @@ async function getRequestData() {
     const { data: requestTypeData } = await getRequestTypeDisplayName(data.requestType);
     data.requestTypeDisplayName = requestTypeData.displayName;
     item.value = getFormattedRequest(data, props.autoIdSettings);
+    isDraft.value = item.value.rawData.request.common.isDraft;
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.accessRequest.myRequests.errorGettingRequests'));
   } finally {
