@@ -87,6 +87,14 @@ Given('admin navigates to login page', () => {
   cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
 });
 
+When('user clicks on {string} {role}', (name, role) => {
+  cy.findByRole(role, { name }).click();
+});
+
+When('user clicks on menuitem {string}', (text) => {
+  cy.findByRole('menuitem', { name: text }).click();
+});
+
 When('user fills the following fields', (dataTable) => {
   dataTable.hashes().forEach((row) => {
     typeIntoField(row.Field, row.Value);
@@ -184,10 +192,6 @@ When('user clicks on {string} button in {string} modal', (button, modal) => {
   });
 });
 
-When('user clicks on {string} button', (button) => {
-  cy.findByRole('button', { name: button }).click();
-});
-
 When('user forcefully clicks on {string} button', (button) => {
   cy.findByRole('button', { name: button }).realClick({ force: true });
 });
@@ -204,10 +208,6 @@ When('user hovers {string} {role}', (name, role) => {
   cy.findByRole(role, { name })
     .scrollIntoView()
     .realHover();
-});
-
-When('user clicks on {string} link', (link) => {
-  cy.findByRole('link', { name: link }).click();
 });
 
 When('user clicks on option button {string} from more actions menu for item {string}', (option, item) => {
@@ -464,7 +464,7 @@ Then('more actions menu for item {string} does not have following buttons option
   cy.get('@moreActionsButton').click();
 });
 
-Then('user populates the following values into fields:', (dataTable) => {
+Then('the following values have been populated into fields:', (dataTable) => {
   dataTable.hashes().forEach((row) => {
     cy.findByLabelText(row.Field).should('have.value', row.Value);
   });
@@ -520,15 +520,12 @@ Then('the {string} modal contains HTML {string} element', (modalName, expectedHt
   cy.findByRole('dialog', { name: modalName }).should('contain.html', expectedHtml);
 });
 
-/**
- * Verifies that a specific button is visible or not visible
- * This step checks that a button with the given text is visible or not visible on the page
- * @param {string} button - The text content of the button to check
- * @param {string} visibility - Either "is visible" or "is not visible"
- */
-Then(/^"([^"]*)" button (is visible|is not visible)$/, (button, visibility) => {
-  const assertion = visibility === 'is visible' ? 'be.visible' : 'not.be.visible';
-  cy.findByRole('button', { name: button }).should(assertion);
+Then('{string} button is visible', (button) => {
+  cy.findByRole('button', { name: button }).should('be.visible');
+});
+
+Then('{string} button does not exist', (button) => {
+  cy.findByRole('button', { name: button }).should('not.exist');
 });
 
 /**
@@ -613,4 +610,34 @@ Then('the preview iframe contains {string} HTML', (expectedHtml) => {
     const iframeBody = $iframe.contents().find('body');
     cy.wrap(iframeBody).should('contain.html', expectedHtml);
   });
+});
+
+Then('{string} button is enabled in the {string} modal', (buttonName, modalName) => {
+  cy.findByRole('dialog', { name: modalName }).within(() => {
+    cy.findByRole('button', { name: buttonName }).should('be.enabled');
+  });
+});
+
+Then('{string} button is disabled in the {string} modal', (buttonName, modalName) => {
+  cy.findByRole('dialog', { name: modalName }).within(() => {
+    cy.findByRole('button', { name: buttonName }).should('be.disabled');
+  });
+});
+
+Then('{string} checkbox is disabled', (checkboxName) => {
+  cy.findByRole('checkbox', { name: checkboxName }).should('be.disabled');
+});
+
+Then('the following menu items are visible:', (dataTable) => {
+  dataTable.raw().forEach((menuItem) => {
+    cy.findByRole('menuitem', { name: menuItem }).should('be.visible');
+  });
+});
+
+Then('{string} link is visible', (linkText) => {
+  cy.findByRole('link', { name: linkText }).should('be.visible');
+});
+
+Then('{string} link does not exist', (linkText) => {
+  cy.findByRole('link', { name: linkText }).should('not.exist');
 });

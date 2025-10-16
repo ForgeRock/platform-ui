@@ -24,6 +24,7 @@ export const ADMIN_PAGES = {
   EVENT_HOOKS: { label: 'Event Hooks', url: 'events' },
   JOURNEYS: { label: 'Journeys', url: 'journeys' },
   EMAIL_TEMPLATES: { label: 'Email/Templates', url: 'email/templates' },
+  EMAIL_TEMPLATES_EDIT: { label: 'Email/Templates/Edit', url: 'email/templates/edit/templateEdit' },
   EMAIL_PROVIDER: { label: 'Email/Provider', url: 'provider' },
   SCRIPTS_AUTH_SCRIPTS: { label: 'Scripts/Auth Scripts', url: 'scripts' },
   SCRIPTS_CUSTOM_ENDPOINTS: { label: 'Scripts/Custom Endpoints', url: 'customEndpoints' },
@@ -108,6 +109,7 @@ export const ROLES = {
   switch: 'switch',
   toggle: 'switch',
   checkbox: 'checkbox',
+  tab: 'tab',
 };
 
 /**
