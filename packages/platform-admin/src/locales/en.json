@@ -4922,6 +4922,7 @@
           "expirationSettingsDescription": "Choose what to do when the request expires.",
           "expirationSettingsDescriptionViolation": "Choose what to do when the violation expires.",
           "expirationSettingsDescriptionFulfillment": "Choose what to do when the request expires.",
+          "expirationSettingsReassignedActorsDescription": "Add users and roles to whom this request will be reassigned.",
           "expirationVariableDescription": "Enter the name of a custom workflow variable this is storing the expiration date of this specific task, e.g. <code class=p-0>taskExpirationDate</code>",
           "formAssignmentDescription": "Allow dynamic form selection or choose a specific form to present to reviewer.",
           "formAssignmentDynamic": "Dynamic form selection",
