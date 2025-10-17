@@ -364,7 +364,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .card,
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .dropdown-menu,
-        #app .menu {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .menu {
         background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
         border: 1px solid {{ theme.accountCardOuterBorderColor || '#e7eef4' }};
         color: {{ theme.accountCardTextColor || '#5e6d82' }};
@@ -503,18 +503,26 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.profileMenuHoverTextColor || '#455469' }} !important;
       }
 
-      #app .dropdown-item:hover .material-icons-outlined,
-      #app .dropdown-item:focus .material-icons-outlined {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .dropdown-item:hover .material-icons-outlined,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .dropdown-item:focus .material-icons-outlined {
         color: {{ theme.profileMenuHoverTextColor || 'inherit' }} !important;
       }
-
-      #app .menu .dropdown-item:focus {
+      <!-- Styling for actions menu component -->
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .menu .dropdown-item:focus {
         background-color: unset;
         color: #455469 !important;
       }
 
-      #app .dropdown-item:focus .material-icons-outlined {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .menu .dropdown-item:focus .material-icons-outlined {
         color: #455469 !important;
+      }
+
+      #app .menu .dropdown-item:focus .text-success {
+        color: {{ theme.successColor }} !important;
+      }
+
+      #app .menu .dropdown-item:focus .text-danger {
+        color: {{ theme.dangerColor }} !important;
       }
 
       #app .menu .dropdown-item:focus .text-muted {
@@ -526,8 +534,8 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.darkColor || '#23282e' }};
       }
 
-      #app .menu .dropdown-item:hover,
-      #app .menu .dropdown-item:focus-visible {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .menu .dropdown-item:hover,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .menu .dropdown-item:focus-visible {
         background-color: {{ theme.profileMenuHoverColor || '#e4f4fd' }} !important;
         color: {{ theme.profileMenuHoverTextColor || '#181b20' }} !important;
       }
@@ -542,8 +550,8 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.profileMenuHoverTextColor || '#455469' }} !important;
       }
 
-      #app .menu .dropdown-item:hover .material-icons-outlined,
-      #app .menu .dropdown-item:focus-visible .material-icons-outlined {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .menu .dropdown-item:hover .material-icons-outlined,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .menu .dropdown-item:focus-visible .material-icons-outlined {
         color: {{ theme.profileMenuHoverTextColor || 'inherit' }} !important;
       }
 
