@@ -7,7 +7,12 @@
  */
 
 import { defineParameterType } from '@badeball/cypress-cucumber-preprocessor';
-import { ADMIN_PAGES, JOURNEYS } from '../support/constants';
+import {
+  ADMIN_PAGES,
+  CODE_EDITOR_ICON_SELECTORS,
+  JOURNEYS,
+  KEYBOARD_ACTIONS,
+} from '../support/constants';
 
 /**
  * Define page parameter type
@@ -31,4 +36,30 @@ defineParameterType({
   transformer(journey) {
     return journey;
   },
+});
+
+/**
+ * Defines a custom Cucumber parameter type named '{codeEditorIconButton}'.
+ * It validates the button name against CODE_EDITOR_ICON_SELECTORS
+ * and transforms it into the corresponding CSS selector.
+ */
+defineParameterType({
+  name: 'codeEditorIconButton',
+  regexp: new RegExp(Object.keys(CODE_EDITOR_ICON_SELECTORS).join('|')),
+  transformer: (key) => CODE_EDITOR_ICON_SELECTORS[key],
+});
+
+/**
+ * Defines a custom Cucumber parameter type named '{shortcut}'.
+ *
+ * This allows using human-readable names for keyboard actions in Gherkin steps
+ * without quotes (e.g., 'When the user performs the undo keyboard action').
+ *
+ * It automatically validates that the action exists as a key in KEYBOARD_ACTIONS and
+ * transforms the matched name into its corresponding cross-platform command string.
+ */
+defineParameterType({
+  name: 'shortcut',
+  regexp: new RegExp(Object.keys(KEYBOARD_ACTIONS).join('|')),
+  transformer: (key) => KEYBOARD_ACTIONS[key],
 });

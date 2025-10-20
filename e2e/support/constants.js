@@ -36,6 +36,31 @@ export const ADMIN_PAGES = {
 };
 
 /**
+ * A map of the Code Editor's icon button tooltips
+ * to their unique CSS selectors.
+ * @const {Object.<string, string>}
+ */
+export const CODE_EDITOR_ICON_SELECTORS = {
+  Code: '#btnShowCurlPanel',
+  Test: '#btnShowValidationPanel',
+  Docs: '#btnShowHelpPanel',
+};
+
+/**
+ * A map of human-readable keyboard action names to their
+ * cross-platform Cypress shortcut commands.
+ * @const {Object.<string, string>}
+ */
+export const KEYBOARD_ACTIONS = {
+  'select all': '{selectall}',
+  clear: '{selectall}{del}',
+  undo: Cypress.platform === 'darwin' ? '{meta}z' : '{ctrl}z',
+  copy: Cypress.platform === 'darwin' ? '{meta}c' : '{ctrl}c',
+  cut: Cypress.platform === 'darwin' ? '{meta}x' : '{ctrl}x',
+  paste: Cypress.platform === 'darwin' ? '{meta}v' : '{ctrl}v',
+};
+
+/**
  * Journeys
  */
 export const JOURNEYS = {
