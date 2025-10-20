@@ -273,6 +273,7 @@ Then('page url does not contain {string}', (url) => {
 
 Then('{string} field has {string} validation error', (fieldLabel, expectedError) => {
   cy.contains('label', fieldLabel)
+    .scrollIntoView()
     .should('exist')
     .invoke('attr', 'for')
     .then((inputId) => {
@@ -450,4 +451,42 @@ Then('the value of the {string} column for the {string} item in the current tabl
         .should('have.text', expectedValue);
     });
   });
+});
+
+/**
+ * Verifies that a specific button is visible or not visible
+ * This step checks that a button with the given text is visible or not visible on the page
+ * @param {string} button - The text content of the button to check
+ * @param {string} visibility - Either "is visible" or "is not visible"
+ */
+Then(/^"([^"]*)" button (is visible|is not visible)$/, (button, visibility) => {
+  const assertion = visibility === 'is visible' ? 'be.visible' : 'not.be.visible';
+  cy.findByRole('button', { name: button }).should(assertion);
+});
+
+/**
+ * Verifies that a dropdown has the specified options.
+ * This step uses regex matching to find the dropdown button, allowing it to match
+ * buttons whose accessible name contains the dropdown label (e.g., "Type: JavaScript" matches "Type").
+ * Usage: Then "Type" dropdown has the following options:
+ *           | JavaScript |
+ *           | Groovy     |
+ */
+Then('{string} dropdown has following options:', (dropdown, dataTable) => {
+  cy.findByRole('button', { name: new RegExp(dropdown, 'i') }).click();
+  dataTable.raw().forEach((option) => {
+    cy.findByRole('menuitem', { name: new RegExp(option, 'i') }).should('exist');
+  });
+  cy.findByRole('button', { name: new RegExp(dropdown, 'i') }).click();
+});
+
+/**
+ * Verifies that a dropdown is visible or not visible on the page
+ * This step uses the specific dropdown toggle selector for better reliability
+ * Usage: Then "Type" dropdown is visible
+ *        Then "Type" dropdown is not visible
+ */
+Then(/^"([^"]*)" dropdown is (visible|not visible)$/, (dropdownName, visibility) => {
+  const assertion = visibility === 'visible' ? 'be.visible' : 'not.be.visible';
+  cy.get('button.btn.btn-link.dropdown-toggle').should(assertion);
 });
