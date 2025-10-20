@@ -3833,7 +3833,20 @@
         "syncToken": "Sync Token",
         "syncTokenError": "Error updating sync token",
         "syncTokenWarning": "Warning! This value is used internally by the application as a reference point for on-going change detection. The format and contents are application-specific. Only change this manually if you are absolutely sure you know the value you provide is compatible with this application.",
-        "syncTokenDescription": "Sync token used for incremental inbound reconciliation."
+        "syncTokenDescription": "Sync token used for incremental inbound reconciliation.",
+        "liveSyncFailureOptions": "LiveSync Failure Options",
+        "liveSyncFailureDescription": "Defines the number of times a failed live synchronization attempt should be retried.",
+        "doNotRetry": "Do not re-attempt",
+        "retryIndefinitely": "Retry indefinitely",
+        "retrySpecificNumber": "Retry a specific number of times",
+        "liveSyncRetryAttempts": "LiveSync retry attempt(s)",
+        "actionRetryAttempts": "Action to perform after retry attempts",
+        "syncNow": "Sync Now",
+        "liveSyncSuccess": "LiveSync successfully completed.",
+        "liveSyncError": "Error triggering LiveSync.",
+        "loggedIgnore": "Log and ignore failure",
+        "deadLetterQueue": "Send to dead-letter queue",
+        "runScriptFailure": "Run script on failure"
       }
     },
     "eventHooks": {
