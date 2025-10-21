@@ -617,12 +617,16 @@ export default {
      * @param {Array} itemsToRevoke list of items that are being revoked
      */
     showRevokeModal(itemsToRevoke) {
-      this.itemsToRevoke = itemsToRevoke;
-      if (this.resourceIsRole) {
-        this.$bvModal.show('revoke-from-role-modal');
-      } else {
-        this.$bvModal.show(this.revokeModalId);
-      }
+      // ActionsMenu component manages focus on trigger elements when modals are opened/closed.
+      // To avoid conflicts, we defer showing the modal until the next tick.
+      this.$nextTick(() => {
+        this.itemsToRevoke = itemsToRevoke;
+        if (this.resourceIsRole) {
+          this.$bvModal.show('revoke-from-role-modal');
+        } else {
+          this.$bvModal.show(this.revokeModalId);
+        }
+      });
     },
     sortChanged(event) {
       const { sortBy, sortDesc } = event;
