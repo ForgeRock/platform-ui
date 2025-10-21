@@ -6,7 +6,7 @@
  */
 
 import { ref } from 'vue';
-import { has, last } from 'lodash';
+import { has, isNull, last } from 'lodash';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { useRouter } from 'vue-router';
 import { loadData, advanceStage } from '@/api/SelfServiceApi';
@@ -36,6 +36,32 @@ function useSelfService() {
       } else {
         showErrorMessage(error, '');
       }
+    }
+  }
+
+  /**
+   * Checks if the user has required progressive profile processes and navigates to the ProgressiveProfile route if necessary.
+   * If no profile processes are required, continues the login process.
+   * Optionally reloads self-service data if the API type is updated.
+   *
+   * @async
+   * @param {Object} userDetails - The user details object, expected to contain authorization info.
+   * @param {Function} continueLogin - The function to call to continue the login process if no profile processes are required.
+   * @param {string} [updateApiType] - Optional API type to update and reload self-service data.
+   * @returns {Promise<void>}
+   */
+  async function progressiveProfileCheck(userDetails, continueLogin, updateApiType) {
+    if (
+      has(userDetails, 'authorization.requiredProfileProcesses')
+          && !isNull(userDetails.authorization.requiredProfileProcesses)
+          && userDetails.authorization.requiredProfileProcesses.length > 0
+    ) {
+      const profileProcess = userDetails.authorization.requiredProfileProcesses[0].split('/')[1];
+      router.push({ name: 'ProgressiveProfile', params: { profileProcess } });
+      // If we update the apiType we need to reload the selfServiceDetails with the fresh info.
+      if (updateApiType) loadSelfServiceData(updateApiType);
+    } else {
+      await continueLogin();
     }
   }
 
@@ -103,6 +129,7 @@ function useSelfService() {
     errorFunction,
     loadSelfServiceData,
     advanceSelfServiceStage,
+    progressiveProfileCheck,
     parseQueryParams,
   };
 }

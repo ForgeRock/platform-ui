@@ -97,6 +97,7 @@ const {
   showSelfService,
   errorFunction,
   parseQueryParams,
+  progressiveProfileCheck,
 } = useSelfService();
 
 // data
@@ -146,17 +147,15 @@ async function autoLogin(jwt, successUrl) {
   await logout();
 
   try {
-    await loginWithJwt(jwt);
+    const { data } = await loginWithJwt(jwt);
     displayNotification('success', i18n.global.t('pages.selfservice.registration.createdAccount'));
 
     if (successUrl && successUrl.length > 0) {
       window.location = successUrl;
     } else {
-      router.push({ name: 'Dashboard' });
-      // TODO: Check for progressive profiling
-      // progressiveProfileCheck(data, () => {
-      //   router.push({ name: 'Dashboard' });
-      // });
+      await progressiveProfileCheck(data, async () => {
+        router.push({ name: 'Dashboard' });
+      });
     }
   } catch (error) {
     showErrorMessage('error', i18n.global.t('loginFailure'));
@@ -217,7 +216,7 @@ async function setChildComponent(type, details) {
  * @returns {Object|undefined} The extracted policy error if found, otherwise undefined.
  */
 function findPolicyError(errorResponse) {
-  let errorMessage = errorResponse.data.message;
+  let errorMessage = errorResponse?.data?.message || '';
   let policyError = '';
 
   if (has(errorResponse, 'data.detail.failedPolicyRequirements')) {

@@ -1,19 +1,21 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
+import { useRouter } from 'vue-router';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import useSelfService from '@/composables/selfService';
 import {
   getAccessToken, getProfile, login, logout,
 } from '../api/AuthenticationApi';
+import store from '@/store';
 
 const idmContext = getFQDN(process.env.VUE_APP_IDM_URL);
 
@@ -46,6 +48,8 @@ export function useAuth() {
   // plugin is initialized the pinia store plugin is probably not used by the app yet.
   let userStoreInstance;
   let enduserStoreInstance;
+  const { progressiveProfileCheck } = useSelfService();
+  const router = useRouter();
 
   function getUserStore() {
     if (!userStoreInstance) {
@@ -115,11 +119,20 @@ export function useAuth() {
    * Login the IDM enduser
    * @param {String} username The username
    * @param {String} password The password
+   * @param {Boolean} noSession Whether to create a session or not
    * @returns {Promise} The response from the API
    */
-  async function loginIdmEnduser(username, password) {
-    const { data } = await login(username, password);
-    loadIdmEnduserInfo(data);
+  async function loginIdmEnduser(username, password, noSession = false) {
+    const { data } = await login(username, password, noSession);
+    if (store.state.FeatureFlagsStore.isSelfServiceEnabled) {
+      await progressiveProfileCheck(data, async () => {
+        await loadIdmEnduserInfo(data);
+        router.push({ name: 'Dashboard' });
+      });
+    } else {
+      await loadIdmEnduserInfo(data);
+      router.push({ name: 'Dashboard' });
+    }
   }
 
   // trigger logout from anywhere in the SPA by calling this global function
@@ -141,6 +154,7 @@ export function useAuth() {
     isAuthenticated,
     restoreIdmEnduserSession,
     loginIdmEnduser,
+    loadIdmEnduserInfo,
     initializeLogout,
   };
 }

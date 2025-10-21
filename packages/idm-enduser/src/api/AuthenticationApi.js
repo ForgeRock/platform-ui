@@ -26,12 +26,13 @@ export function getAccessToken() {
  * Login to the IDM API
  * @param {string} username The username to login with
  * @param {string} password The password to login with
+ * @param {boolean} [noSession=false] Whether to create a session or not
  * @returns {Promise} The response from the API
  */
-export function login(username, password) {
+export function login(username, password, noSession = false) {
   return generateIdmApi({
     headers: {
-      'X-OpenIDM-NoSession': false,
+      'X-OpenIDM-NoSession': noSession,
       'X-OpenIDM-Username': username,
       'X-OpenIDM-Password': password,
     },

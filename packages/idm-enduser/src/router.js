@@ -11,6 +11,18 @@ import { useAuth } from './composables/useAuth';
 const { isAuthenticated, restoreIdmEnduserSession } = useAuth();
 
 /**
+ * Checks if the user is authenticated and determines the appropriate navigation path.
+ * @async
+ * @returns {Promise<{ path: string } | true>} Returns an object with a redirect path if authenticated, otherwise returns true.
+ */
+async function checkAuthentication() {
+  if (isAuthenticated()) {
+    return { path: '/dashboard' };
+  }
+  return true;
+}
+
+/**
  * Available routes configuration
  * hideSideMenu - Will hide left-hand navigation when route accessed
  * hideNavBar - Will hide top toolbar when route accessed
@@ -23,61 +35,8 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    beforeEnter: () => {
-      if (isAuthenticated()) {
-        return { path: '/dashboard' };
-      }
-      return true;
-    },
+    beforeEnter: checkAuthentication,
     component: () => import('@/views/Login'),
-    meta: { hideLayout: true },
-  },
-  {
-    path: '/forgotusername',
-    name: 'ForgotUsername',
-    beforeEnter: () => {
-      if (isAuthenticated()) {
-        return { path: '/dashboard' };
-      }
-      return true;
-    },
-    component: () => import('@/components/selfservice/forgotusername/ForgotUsername'),
-    meta: { hideLayout: true },
-  },
-  {
-    path: '/passwordreset/:queryParams?',
-    name: 'PasswordReset',
-    beforeEnter: () => {
-      if (isAuthenticated()) {
-        return { path: '/dashboard' };
-      }
-      return true;
-    },
-    component: () => import('@/components/selfservice/passwordreset/PasswordReset'),
-    meta: { hideLayout: true },
-  },
-  {
-    path: '/passwordreset/:queryParams',
-    name: 'PasswordResetForm',
-    beforeEnter: () => {
-      if (isAuthenticated()) {
-        return { path: '/dashboard' };
-      }
-      return true;
-    },
-    component: () => import('@/components/selfservice/passwordreset/PasswordReset'),
-    meta: { hideLayout: true },
-  },
-  {
-    path: '/registration/:queryParams?',
-    name: 'Registration',
-    beforeEnter: () => {
-      if (isAuthenticated()) {
-        return { path: '/dashboard' };
-      }
-      return true;
-    },
-    component: () => import('@/components/selfservice/registration/Registration'),
     meta: { hideLayout: true },
   },
   {
@@ -110,6 +69,52 @@ const routes = [
     name: 'NotFound',
     component: () => import('@forgerock/platform-shared/src/views/NotFound'),
     meta: { authenticate: true },
+  },
+  // Self-Service routes
+  {
+    path: '/forgotusername',
+    name: 'ForgotUsername',
+    beforeEnter: checkAuthentication,
+    component: () => import('@/components/selfservice/forgotusername/ForgotUsername'),
+    meta: { hideLayout: true },
+  },
+  {
+    path: '/passwordreset/:queryParams?',
+    name: 'PasswordReset',
+    beforeEnter: () => {
+      if (isAuthenticated()) {
+        return { path: '/dashboard' };
+      }
+      return true;
+    },
+    component: () => import('@/components/selfservice/passwordreset/PasswordReset'),
+    meta: { hideLayout: true },
+  },
+  {
+    path: '/passwordreset/:queryParams',
+    name: 'PasswordResetForm',
+    beforeEnter: checkAuthentication,
+    component: () => import('@/components/selfservice/passwordreset/PasswordReset'),
+    meta: { hideLayout: true },
+  },
+  {
+    path: '/registration/:queryParams?',
+    name: 'Registration',
+    beforeEnter: () => {
+      if (isAuthenticated()) {
+        return { path: '/dashboard' };
+      }
+      return true;
+    },
+    component: () => import('@/components/selfservice/registration/Registration'),
+    meta: { hideLayout: true },
+  },
+  {
+    path: '/profilecompletion/:profileProcess?',
+    name: 'ProgressiveProfile',
+    beforeEnter: checkAuthentication,
+    component: () => import('@/components/selfservice/progressiveprofile/ProgressiveProfile'),
+    meta: { hideLayout: true },
   },
 ];
 

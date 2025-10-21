@@ -316,6 +316,9 @@
           "kbaSecurityAnswerDefinitionStage": "",
           "termsAndConditions": ""
         }
+      },
+      "progressiveProfile": {
+        "skipThis": "Skip this"
       }
     }
   },

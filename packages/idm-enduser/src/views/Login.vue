@@ -76,7 +76,6 @@ import {
   BForm,
   BLink,
 } from 'bootstrap-vue';
-import { useRouter } from 'vue-router';
 import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
@@ -84,8 +83,6 @@ import { useAuth } from '../composables/useAuth';
 import { logout } from '../api/AuthenticationApi';
 import i18n from '@/i18n';
 import store from '@/store';
-
-const router = useRouter();
 
 const userName = ref('');
 const password = ref('');
@@ -104,8 +101,6 @@ async function signIn() {
 
     // attempt to login
     await loginIdmEnduser(userName.value, password.value);
-
-    router.push({ name: 'Dashboard' });
   } catch (error) {
     if (error.status === 401) {
       errorMessage.value = i18n.global.t('loginAuthError');
