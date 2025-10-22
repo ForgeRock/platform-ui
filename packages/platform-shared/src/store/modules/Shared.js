@@ -64,13 +64,12 @@ const defaultState = {
 
 const mutations = {
   setEnvironment(state, env) {
-    if (env.VUE_APP_FRAAS === 'true') {
+    if (env.VUE_APP_FRAAS?.toString() === 'true') {
       state.isFraas = true;
     }
   },
   setBaseURLs(state, env) {
-    if (env.VUE_APP_AM_URL && env.VUE_APP_AM_URL.length > 0) {
-      state.hasAmUrl = true;
+    if (env.VUE_APP_AM_URL?.length > 0) {
       state.amBaseURL = getFQDN(env.VUE_APP_AM_URL);
     }
 
@@ -82,22 +81,24 @@ const mutations = {
       state.analyticsURL = getFQDN(env.VUE_APP_ANALYTICS_API_URL);
     }
 
-    if (env.VUE_APP_ENABLE_APPLICATION_POLICY === 'true' || env.VUE_APP_ENABLE_APPLICATION_POLICY === true) {
-      state.applicationPolicyEnabled = env.VUE_APP_ENABLE_APPLICATION_POLICY;
-    }
-
-    if (env.VUE_APP_FRAAS === 'true') {
+    if (env.VUE_APP_FRAAS?.toString() === 'true') {
       if (env.VUE_APP_FRAAS_ENV_URL) {
         state.fraasEnvironmentUrl = getFQDN(env.VUE_APP_FRAAS_ENV_URL);
       }
+
+      if (env.VUE_APP_ENABLE_MTLS?.toString() === 'true') {
+        state.fraasMtlsFqdn = env.VUE_APP_MTLS_FQDN;
+      }
+
       if (env.VUE_APP_FRAAS_LOGGING_URL) {
         state.fraasLoggingKeyURL = getFQDN(env.VUE_APP_FRAAS_LOGGING_URL);
       }
+
       if (env.VUE_APP_FRAAS_MONITORING_URL) {
         state.fraasMonitoringURL = getFQDN(env.VUE_APP_FRAAS_MONITORING_URL);
       }
-      if (env.VUE_APP_ENABLE_AUTO_ACCESS === 'true') {
-        state.autoAccessEnabled = true;
+
+      if (env.VUE_APP_ENABLE_AUTO_ACCESS?.toString() === 'true') {
         if (env.VUE_APP_AUTO_ACCESS_API_URL) {
           state.autoAccessApiUrl = getFQDN(env.VUE_APP_AUTO_ACCESS_API_URL);
         }
@@ -108,13 +109,14 @@ const mutations = {
           state.autoAccessTenantId = env.VUE_APP_AUTO_ACCESS_TENANT_ID;
         }
       }
-      if (env.VUE_APP_ENABLE_JOURNEY_AI === 'true' || env.VUE_APP_ENABLE_JOURNEY_AI === true) {
-        state.journeyAIEnabled = true;
+
+      if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true') {
         state.journeyAIAgentVersion = env.VUE_APP_HELIX_JOURNEY_AGENT_VERSION;
         state.helixEnvironmentUrl = getFQDN(env.VUE_APP_HELIX_ENVIRONMENT_URL);
         state.helixEnvironmentId = env.VUE_APP_HELIX_ENVIRONMENT_ID;
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
+
+      if (env.VUE_APP_ENABLE_GOVERNANCE?.toString() === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV?.toString() === 'true') {
         if (env.VUE_APP_IGA_API_URL) {
           state.igaApiUrl = getFQDN(env.VUE_APP_IGA_API_URL);
         }
@@ -122,33 +124,34 @@ const mutations = {
           state.igaOrchestrationApiUrl = getFQDN(env.VUE_APP_IGA_ORCHESTRATION_API_URL);
         }
       }
+
       if (env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL) {
         state.fraasFederationUrl = getFQDN(env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL);
       }
+
       if (env.VUE_APP_FRAAS_PROMOTION_URL) {
         state.fraasPromotionUrl = getFQDN(env.VUE_APP_FRAAS_PROMOTION_URL);
       }
+
       if (env.VUE_APP_FRAAS_ALLOWABLE_CONFIG_PROMOTION_INGRESS_URLS) {
         state.fraasPromotionAllowableIngressUrls = env.VUE_APP_FRAAS_ALLOWABLE_CONFIG_PROMOTION_INGRESS_URLS;
       }
+
       if (env.VUE_APP_FRAAS_PROMOTION_CONFIG_INGRESS_URL) {
         state.fraasPromotionIngressUrl = env.VUE_APP_FRAAS_PROMOTION_CONFIG_INGRESS_URL;
       }
+
       if (env.VUE_APP_FRAAS_PROMOTION_CONFIG_EGRESS_URL) {
         state.fraasPromotionEgressUrl = env.VUE_APP_FRAAS_PROMOTION_CONFIG_EGRESS_URL;
       }
-      if (env.VUE_APP_PROMOTE_APPS_VIA_API === true || env.VUE_APP_PROMOTE_APPS_VIA_API === 'true') {
-        state.promoteAppsViaApi = env.VUE_APP_PROMOTE_APPS_VIA_API;
-      }
-      if (env.VUE_APP_ENABLE_WSFED === 'true' || env.VUE_APP_ENABLE_WSFED === true) {
+
+      if (env.VUE_APP_ENABLE_WSFED?.toString() === 'true') {
         state.pingFederateUrl = getFQDN(env.VUE_APP_PINGFEDERATE_URL);
       }
-      if (env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR === 'true' || env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR === true) {
-        state.enableManagedObjectSchemaEditor = env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR;
-      }
-      if (env.VUE_APP_ENABLE_MONITORING_UI === 'true' || env.VUE_APP_ENABLE_MONITORING_UI === true) {
-        state.enableMonitoringUI = env.VUE_APP_ENABLE_MONITORING_UI;
-      }
+    }
+
+    if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
+      state.autoAccessReportsUrl = getFQDN(env.VUE_APP_AUTO_ACCESS_REPORTS_URL);
     }
 
     if (env.VUE_APP_GOOGLE_FONTS_API_KEY) {
@@ -157,14 +160,6 @@ const mutations = {
 
     if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
       state.googleMapsApiKey = env.VUE_APP_GOOGLE_MAPS_API_KEY;
-    }
-
-    if (env.VUE_APP_NODE_VERSIONING_ENABLED === true || env.VUE_APP_NODE_VERSIONING_ENABLED === 'true') {
-      state.nodeVersioningEnabled = true;
-    }
-
-    if (env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX === true || env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX === 'true') {
-      state.enableSamlSigningCheckbox = true;
     }
   },
 
@@ -177,56 +172,85 @@ const mutations = {
   },
 
   setFeatureFlags(state, env) {
+    if (env.VUE_APP_AM_URL?.length > 0) {
+      state.hasAmUrl = true;
+    }
+
     if (env.VUE_APP_FRAAS === 'true') {
-      if (env.VUE_APP_SHOW_ESV_UI) {
-        state.showEsvUi = env.VUE_APP_SHOW_ESV_UI === 'true' || env.VUE_APP_SHOW_ESV_UI === true;
+      if (env.VUE_APP_SHOW_ESV_UI?.toString() === 'true') {
+        state.showEsvUi = true;
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true) {
-        state.governanceEnabled = true;
-      }
-      if (env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
+
+      if (env.VUE_APP_ENABLE_GOVERNANCE_DEV?.toString() === 'true') {
         state.governanceEnabled = true;
         state.governanceDevEnabled = true;
+      } else if (env.VUE_APP_ENABLE_GOVERNANCE?.toString() === 'true') {
+        state.governanceEnabled = true;
       }
 
-      if (env.VUE_APP_ENABLE_MTLS === 'true' || env.VUE_APP_ENABLE_MTLS === true) {
-        state.mtlsEnabled = env.VUE_APP_ENABLE_MTLS;
-        state.fraasMtlsFqdn = env.VUE_APP_MTLS_FQDN;
+      if (env.VUE_APP_ENABLE_MTLS?.toString() === 'true') {
+        state.mtlsEnabled = true;
+      }
+
+      if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true') {
+        state.journeyAIEnabled = true;
+      }
+
+      if (env.VUE_APP_ENABLE_AUTO_ACCESS?.toString() === 'true') {
+        state.autoAccessEnabled = true;
+      }
+
+      if (env.VUE_APP_ENABLE_MONITORING_UI?.toString() === 'true') {
+        state.enableMonitoringUI = true;
+      }
+
+      if (env.VUE_APP_PROMOTE_APPS_VIA_API?.toString() === 'true') {
+        state.promoteAppsViaApi = true;
       }
     }
 
-    if (env.VUE_APP_ENABLE_WORKFORCE) {
-      state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
+    if (env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX?.toString() === 'true') {
+      state.enableSamlSigningCheckbox = true;
     }
 
-    if (env.VUE_APP_ENABLE_WSFED === 'true' || env.VUE_APP_ENABLE_WSFED === true) {
+    if (env.VUE_APP_ENABLE_APPLICATION_POLICY?.toString() === 'true') {
+      state.applicationPolicyEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_TEMPLATE_BUILDER?.toString() === 'true') {
+      state.workforceEnabled = true;
+      state.templateBuilderEnabled = true;
+    } else if (env.VUE_APP_ENABLE_WORKFORCE?.toString() === 'true') {
+      state.workforceEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR?.toString() === 'true') {
+      state.enableManagedObjectSchemaEditor = true;
+    }
+
+    if (env.VUE_APP_NODE_VERSIONING_ENABLED?.toString() === 'true') {
+      state.nodeVersioningEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_WSFED?.toString() === 'true') {
       state.wsfedEnabled = true;
     }
 
-    if (env.VUE_APP_ENABLE_TEMPLATE_BUILDER === 'true' || env.VUE_APP_ENABLE_TEMPLATE_BUILDER === true) {
-      state.workforceEnabled = true;
-      state.templateBuilderEnabled = true;
+    if (env.VUE_APP_ENABLE_ANALYTICS_CUSTOM_REPORTING?.toString() === 'true') {
+      state.autoCustomReportsEnabled = true;
     }
 
-    if (env.VUE_APP_ENABLE_ANALYTICS_CUSTOM_REPORTING) {
-      state.autoCustomReportsEnabled = env.VUE_APP_ENABLE_ANALYTICS_CUSTOM_REPORTING === 'true' || env.VUE_APP_ENABLE_ANALYTICS_CUSTOM_REPORTING === true;
+    if (env.VUE_APP_ENABLE_ANALYTICS_REPORTING?.toString() === 'true') {
+      state.autoReportsEnabled = true;
     }
 
-    if (env.VUE_APP_ENABLE_ANALYTICS_REPORTING) {
-      state.autoReportsEnabled = env.VUE_APP_ENABLE_ANALYTICS_REPORTING === 'true' || env.VUE_APP_ENABLE_ANALYTICS_REPORTING === true;
-    }
-
-    if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
-      state.autoAccessReportsUrl = getFQDN(env.VUE_APP_AUTO_ACCESS_REPORTS_URL);
-    }
-
-    if (env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS) {
-      state.overrideSessionTimeoutsEnabled = env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS === 'true' || env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS === true;
+    if (env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS?.toString() === 'true') {
+      state.overrideSessionTimeoutsEnabled = true;
     }
   },
   // Needed for Login since setFeatureFlags isn't called there
   setNewMultiselectEnabled(state, env) {
-    state.newMultiselectEnabled = env.VUE_APP_ENABLE_NEW_MULTISELECT === 'true' || env.VUE_APP_ENABLE_NEW_MULTISELECT === true;
+    state.newMultiselectEnabled = env.VUE_APP_ENABLE_NEW_MULTISELECT?.toString() === 'true';
   },
   setWebStorageAvailable(state, val) {
     state.webStorageAvailable = val;
