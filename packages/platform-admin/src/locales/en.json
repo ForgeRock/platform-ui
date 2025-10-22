@@ -34,6 +34,7 @@
     "Profile": "Profile",
     "Promotion": "Promotion",
     "PromotionHistory": "Promotion History",
+    "Provisioners": "Provisioners",
     "Realm": "Realm Settings",
     "Reports": "Reports",
     "Scopes": "Scopes",
@@ -122,6 +123,7 @@
     "Promotion": "Promotion",
     "PromotionAuthentication": "Promotion Authentication",
     "PromotionHistory": "Promotion History",
+    "Provisioners": "Provisioners",
     "Realm": "Realm",
     "Recommendations": "Recommendations",
     "RelationshipEdit": "Edit Relationship",
@@ -182,6 +184,7 @@
     "oauthClients": "OAuth2 Clients",
     "pipelines": "Pipelines",
     "provider": "Provider",
+    "provisioners": "Provisioners",
     "provisioningRole": "External Role",
     "realmOverview": "Realm Overview",
     "reports": "Reports",
@@ -2332,6 +2335,17 @@
       "userInfoSignedThenEncryptedResponseFormat": "User info signed then encrypted response format.",
       "x509": "X509",
       "x509SubjectName": "x509SubjectName"
+    }
+  },
+  "provisioners": {
+    "provisioner": "provisioner",
+    "listView": {
+      "deleteError": "There was an error deleting the provisioner",
+      "deleteSuccess": "Provisioner deleted successfully",
+      "loadError": "There was an error retrieving the list of provisioners",
+      "noProvisionersText": "No provisioners found",
+      "subtitle": "Manage legacy and API-configured provisioners",
+      "title": "Provisioners"
     }
   },
   "realm": {

@@ -308,9 +308,14 @@ export default {
     showItemForUser() {
       return !this.showForRoles.length || this.allRoles.some((userRole) => this.showForRoles.includes(userRole));
     },
-    // If the item is restricted by store values, only display it when all of those exist and are truthy
+    // If the item is restricted by store values, only display it when all of those are truthy or falsey as required
     showItemForStoreValues() {
-      return !this.showForStoreValues.length || this.showForStoreValues.every((storeValue) => !!get(this.$store.state, storeValue, false));
+      return !this.showForStoreValues.length || this.showForStoreValues.every((storeValue) => {
+        if (storeValue.startsWith('!')) {
+          return !get(this.$store.state, storeValue.slice(1), false);
+        }
+        return !!get(this.$store.state, storeValue, false);
+      });
     },
   },
   watch: {
@@ -337,7 +342,12 @@ export default {
      * @param {Array} showForStoreValues list of environment variables subItem is permitted to appear for
      */
     showSubItemForStoreValues(showForStoreValues) {
-      return !showForStoreValues?.length || showForStoreValues.every((storeValue) => !!get(this.$store.state, storeValue, false));
+      return !showForStoreValues?.length || showForStoreValues.every((storeValue) => {
+        if (storeValue.startsWith('!')) {
+          return !get(this.$store.state, storeValue.slice(1), false);
+        }
+        return !!get(this.$store.state, storeValue, false);
+      });
     },
     /**
      * Determine whether or not the current item should be expanded if it is a menu, based on the route name

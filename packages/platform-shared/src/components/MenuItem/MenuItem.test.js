@@ -1,18 +1,19 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { flushPromises, shallowMount } from '@vue/test-utils';
 import { BButton, BBadge } from 'bootstrap-vue';
 import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import MenuItem from './index';
 
 let wrapper;
 
-function mountComponent(props, mocks = { $route: { name: 'daniel' } }, stubs = {}) {
+function mountComponent(props, pinia = {}, mocks = { $route: { name: 'daniel' } }, stubs = {}) {
+  setupTestPinia(pinia);
   wrapper = shallowMount(MenuItem, {
     props,
     global: {
@@ -25,10 +26,13 @@ function mountComponent(props, mocks = { $route: { name: 'daniel' } }, stubs = {
   });
 }
 
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
 describe('MenuItem Component', () => {
   describe('showing items based on roles', () => {
     it('Determines not to show an item for a user with insufficient roles', () => {
-      setupTestPinia();
       mountComponent({
         displayName: 'bob',
         showForRoles: ['superAdmin'],
@@ -38,12 +42,11 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to show an item for a user with sufficient roles', () => {
-      setupTestPinia({ user: { idmRoles: ['plainOldAdmin'] } });
       mountComponent({
         displayName: 'bob',
         showForRoles: ['plainOldAdmin'],
         userRoles: ['plainOldAdmin'],
-      });
+      }, { user: { idmRoles: ['plainOldAdmin'] } });
 
       expect(wrapper.vm.showItemForUser).toBe(true);
     });
@@ -57,19 +60,24 @@ describe('MenuItem Component', () => {
     });
 
     it('determines to show subItem for user if subitem has proper access called out', () => {
-      setupTestPinia({ user: { idmRoles: ['employee mate'] } });
-      mountComponent({
-        displayName: 'subBob',
-      });
+      setupTestPinia();
+      mountComponent(
+        {
+          displayName: 'subBob',
+        },
+        { user: { idmRoles: ['employee mate'] } },
+      );
 
       expect(wrapper.vm.showSubItemForUser(['employee mate'])).toBe(true);
     });
 
     it('determines to not show subItem for user if subitem has proper access called out', () => {
-      setupTestPinia({ user: { idmRoles: ['employee mate'] } });
-      mountComponent({
-        displayName: 'subBob',
-      });
+      mountComponent(
+        {
+          displayName: 'subBob',
+        },
+        { user: { idmRoles: ['employee mate'] } },
+      );
 
       expect(wrapper.vm.showSubItemForUser(['employee boss'])).toBe(false);
     });
@@ -82,6 +90,7 @@ describe('MenuItem Component', () => {
         showForRoles: ['superAdmin'],
         showForStoreValues: ['isFraas', 'SharedStore.hasAmUrl'],
       },
+      { },
       {
         $store: {
           state: {
@@ -96,12 +105,35 @@ describe('MenuItem Component', () => {
       expect(wrapper.vm.showItemForStoreValues).toBe(false);
     });
 
+    it('Determines not to show an item to the user when a flag is set that should not be set for this item', async () => {
+      mountComponent({
+        displayName: 'bob',
+        showForRoles: ['superAdmin'],
+        showForStoreValues: ['!isFraas', 'SharedStore.hasAmUrl'],
+      },
+      {},
+      {
+        $store: {
+          state: {
+            isFraas: true,
+            SharedStore: {
+              hasAmUrl: true,
+            },
+          },
+        },
+        $route: { name: 'little-bob-2' },
+      });
+      await flushPromises();
+      expect(wrapper.vm.showItemForStoreValues).toBe(false);
+    });
+
     it('Determines to show an item to the user when the store values passed to the component are all found to be truthy in the store, even if they are found in nested structures', () => {
       mountComponent({
         displayName: 'bob',
         showForRoles: ['superAdmin'],
         showForStoreValues: ['isFraas', 'SharedStore.hasAmUrl'],
       },
+      {},
       {
         $store: {
           state: {
@@ -117,10 +149,10 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to show any menu option that relies on a truthy value from the FederationAdmin privilege property in the user store', () => {
-      setupTestPinia({ user: { privileges: { FederationAdmin: true } } });
       mountComponent({
         showForPrivileges: ['FederationAdmin'],
       },
+      { user: { privileges: { FederationAdmin: true } } },
       {
         $route: { name: 'little-ted' },
       });
@@ -129,10 +161,10 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to hide any menu option that relies on a falsy value from the FederationAdmin privilege property in the user store', () => {
-      setupTestPinia({ user: { privileges: { FederationAdmin: false } } });
       mountComponent({
         showForPrivileges: ['FederationAdmin'],
       },
+      { user: { privileges: { FederationAdmin: false } } },
       {
         $route: { name: 'little-ted-2' },
       });
@@ -157,6 +189,7 @@ describe('MenuItem Component', () => {
             },
           ],
         },
+        {},
         {
           $route: { name: 'little-bob-2' },
         },
@@ -176,6 +209,7 @@ describe('MenuItem Component', () => {
             },
           ],
         },
+        {},
         {
           $route: { name: 'little-ben' },
         },
@@ -196,6 +230,7 @@ describe('MenuItem Component', () => {
           },
         ],
       },
+      {},
       {
         $store: {
           state: {
@@ -226,6 +261,7 @@ describe('MenuItem Component', () => {
           },
         ],
       },
+      {},
       {
         $store: {
           state: {
@@ -258,6 +294,7 @@ describe('MenuItem Component', () => {
           },
         ],
       },
+      {},
       {
         $store: {
           state: {
