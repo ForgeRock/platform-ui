@@ -18,7 +18,11 @@ mockValidation();
 
 AuthenticationApi.logout = jest.fn().mockResolvedValue({});
 AuthenticationApi.loginWithJwt = jest.fn().mockResolvedValue({});
-
+AuthenticationApi.getAuthenticationConfig = jest.fn().mockResolvedValue({
+  data: {
+    providers: [],
+  },
+});
 mockRouter({});
 
 describe('Registration', () => {

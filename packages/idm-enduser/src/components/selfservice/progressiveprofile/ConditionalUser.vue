@@ -19,8 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
           :label="property.schema.title"
           :validation="property.isRequired ? 'required' : ''"
           :value="property.value"
-          @input="saveDetails[property.name] = $event"
-          type="text" />
+          @input="saveDetails[property.name] = $event" />
         <FrField
           v-else
           v-model="saveDetails[property.name]"

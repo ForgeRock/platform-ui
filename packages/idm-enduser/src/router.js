@@ -33,9 +33,27 @@ const routes = [
     redirect: '/dashboard',
   },
   {
+    path: '/handleOAuth/:amData',
+    component: () => import('@/components/selfservice/social/OAuthReturn'),
+    meta: { hideLayout: true },
+  },
+  {
+    path: '/oauthReturn',
+    component: () => import('@/components/selfservice/social/OAuthReturn'),
+    meta: { hideLayout: true },
+  },
+  {
     path: '/login',
     name: 'Login',
-    beforeEnter: checkAuthentication,
+    beforeEnter: () => {
+      if (isAuthenticated()) {
+        return { path: '/dashboard' };
+      }
+      if (window.location.search && window.location.search.match(/state|oauth_token/)) {
+        return { path: '/oauthReturn' };
+      }
+      return true;
+    },
     component: () => import('@/views/Login'),
     meta: { hideLayout: true },
   },
@@ -114,6 +132,13 @@ const routes = [
     name: 'ProgressiveProfile',
     beforeEnter: checkAuthentication,
     component: () => import('@/components/selfservice/progressiveprofile/ProgressiveProfile'),
+    meta: { hideLayout: true },
+  },
+  {
+    path: '/accountClaiming',
+    name: 'AccountClaiming',
+    component: () => import('@/components/selfservice/registration/AccountClaiming'),
+    beforeEnter: checkAuthentication,
     meta: { hideLayout: true },
   },
 ];

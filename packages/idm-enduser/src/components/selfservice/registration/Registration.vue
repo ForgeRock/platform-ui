@@ -69,7 +69,7 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import useSelfService from '@/composables/selfService';
-import { loginWithJwt, logout } from '@/api/AuthenticationApi';
+import { loginWithJwt, logout, loginWithDataStoreToken } from '@/api/AuthenticationApi';
 import FrAllInOneRegistration from './AllInOneRegistration';
 import FrEmailValidation from './EmailValidation';
 import FrConsent from './Consent';
@@ -77,14 +77,8 @@ import FrUserDetails from './UserDetails';
 import FrKBASecurityAnswerDefinitionStage from './KBASecurityAnswerDefinitionStage';
 import FrTermsAndConditions from './TermsAndConditions';
 import FrCaptcha from '../common/Captcha';
+import store from '@/store';
 import i18n from '@/i18n';
-
-const props = defineProps({
-  clientToken: {
-    type: String,
-    default: null,
-  },
-});
 
 // composables
 const route = useRoute();
@@ -99,6 +93,8 @@ const {
   parseQueryParams,
   progressiveProfileCheck,
 } = useSelfService();
+
+const clientToken = computed(() => store.state.OAuthState.clientToken);
 
 // data
 const clientTokenUsed = ref(false);
@@ -163,6 +159,20 @@ async function autoLogin(jwt, successUrl) {
 }
 
 /**
+ * Advances the registration process to the next stage.
+ *
+ * @param {Object} params - Parameters required to advance the stage.
+ * @returns {Promise<void>} Resolves when the stage has been successfully advanced.
+ */
+async function advanceStage(params) {
+  await advanceSelfServiceStage(apiType, params, null);
+  if (selfServiceDetails.value) {
+    // eslint-disable-next-line no-use-before-define
+    setChildComponent(selfServiceDetails.value.type, selfServiceDetails.value);
+  }
+}
+
+/**
  * Sets the child component based on the provided type and details.
  *
  * @param {string} type - The type of child component to set.
@@ -176,19 +186,27 @@ async function setChildComponent(type, details) {
     selfServiceType.value = null;
     showSelfService.value = false;
 
-    await advanceSelfServiceStage(apiType, {});
-    if (selfServiceDetails.value) {
-      setChildComponent(selfServiceDetails.value.type, selfServiceDetails.value);
-    }
-  } else if (props.clientToken && !clientTokenUsed.value) {
-    advanceSelfServiceStage(apiType, {
-      clientToken: props.clientToken,
-      oauthRegister: 'true',
-    });
+    await advanceStage({});
+  } else if (clientToken.value && !clientTokenUsed.value) {
     clientTokenUsed.value = true;
+    await advanceStage({ clientToken: clientToken.value, oauthRegister: 'true' });
   } else if (details.type === 'localAutoLogin') {
     if (has(details, 'additions.oauthLogin') && details.additions.oauthLogin) {
-      // TODO: implement social login and progressive profiling
+      try {
+        const { data } = await loginWithDataStoreToken(clientToken.value);
+        displayNotification('success', i18n.global.t('pages.selfservice.registration.createdAccount'));
+        if (details.additions.successUrl && details.additions.successUrl.length > 0) {
+          window.location = details.additions.successUrl;
+        } else {
+          progressiveProfileCheck(data, () => {
+            window.history.pushState('', '', window.location.pathname);
+            router.push('/');
+          });
+        }
+      } catch {
+        window.history.pushState('', '', window.location.pathname);
+        router.push('/login');
+      }
     } else {
       autoLogin(details.additions.credentialJwt, details.additions.successUrl);
     }
@@ -238,19 +256,6 @@ function apiErrorCallback(error) {
   const errorMessage = findPolicyError(error.response);
   showSelfService.value = true;
   showErrorMessage(null, errorMessage);
-}
-
-/**
- * Advances the registration process to the next stage.
- *
- * @param {Object} params - Parameters required to advance the stage.
- * @returns {Promise<void>} Resolves when the stage has been successfully advanced.
- */
-async function advanceStage(params) {
-  await advanceSelfServiceStage(apiType, params, null);
-  if (selfServiceDetails.value) {
-    setChildComponent(selfServiceDetails.value.type, selfServiceDetails.value);
-  }
 }
 
 /**

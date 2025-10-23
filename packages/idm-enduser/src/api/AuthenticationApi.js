@@ -7,6 +7,12 @@
 
 import { generateIdmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 
+const ANONYMOUS_HEADERS = {
+  'X-OpenIDM-NoSession': true,
+  'X-OpenIDM-Username': 'anonymous',
+  'X-OpenIDM-Password': 'anonymous',
+};
+
 /**
  * Get the access token from the IDM API used to restore the user session
  * @returns {Promise} The response from the API
@@ -58,15 +64,33 @@ export function loginWithJwt(jwt) {
 }
 
 /**
+ * Logs in a user using a provided Data Store token.
+ *
+ * Sends a POST request to the authentication endpoint with custom headers,
+ * including the Data Store token for authentication.
+ *
+ * @param {string} dataStoreToken - The Data Store token used for authentication.
+ * @returns {Promise} A promise that resolves with the response of the login request.
+ */
+export function loginWithDataStoreToken(dataStoreToken) {
+  return generateIdmApi({
+    headers: {
+      'X-OpenIDM-NoSession': false,
+      'X-OpenIDM-OAuth-Login': 'true',
+      'X-OpenIDM-DataStoreToken': dataStoreToken,
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  }).post('/authentication?_action=login');
+}
+
+/**
  * Logout from the IDM API
  * @returns {Promise} The response from the API
  */
 export function logout() {
   return generateIdmApi({
     headers: {
-      'X-OpenIDM-NoSession': true,
-      'X-OpenIDM-Username': 'anonymous',
-      'X-OpenIDM-Password': 'anonymous',
+      ...ANONYMOUS_HEADERS,
       'cache-control': 'no-cache',
     },
   }).post('/authentication?_action=logout');
@@ -80,4 +104,46 @@ export function logout() {
  */
 export function getProfile(resourcePath, id) {
   return generateIdmApi().get(`/${resourcePath}/${id}`);
+}
+
+/**
+ * Retrieves the authentication configuration from the IDM API.
+ *
+ * Sends a GET request to the '/authentication' endpoint with headers
+ * for anonymous access (no session, anonymous username and password).
+ *
+ * @returns {Promise<AxiosResponse>} A promise that resolves to the authentication configuration response.
+ */
+export function getAuthenticationConfig() {
+  return generateIdmApi({
+    headers: ANONYMOUS_HEADERS,
+  }).get('/authentication');
+}
+
+/**
+ * Requests an authentication redirect URL from the identity provider.
+ *
+ * @param {Object} payload - The request payload containing authentication parameters.
+ * @returns {Promise<Object>} A promise that resolves to the response from the identity provider.
+ */
+export function getAuthRedirect(payload) {
+  return generateIdmApi({
+    headers: ANONYMOUS_HEADERS,
+  }).post('/identityProviders?_action=getAuthRedirect', payload);
+}
+
+/**
+ * Sends a POST request to handle post-authentication with the provided payload and data store token.
+ *
+ * @param {string} dataStoreToken - The token used for authenticating with the data store.
+ * @param {Object} payload - The payload to be sent in the POST request.
+ * @returns {Promise} A promise that resolves with the response from the API.
+ */
+export function handlePostAuth(dataStoreToken, payload) {
+  return generateIdmApi({
+    headers: {
+      ...ANONYMOUS_HEADERS,
+      'X-OpenIDM-DataStoreToken': dataStoreToken,
+    },
+  }).post('/identityProviders?_action=handlePostAuth', payload);
 }

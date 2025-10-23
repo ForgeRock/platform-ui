@@ -9,9 +9,15 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import RegistrationMock from './mocks/RegistrationMock';
 import UserDetails from './UserDetails';
+import * as AuthenticationApi from '@/api/AuthenticationApi';
 import i18n from '@/i18n';
 
 mockValidation();
+AuthenticationApi.getAuthenticationConfig = jest.fn().mockResolvedValue({
+  data: {
+    providers: [],
+  },
+});
 
 describe('UserList', () => {
   let wrapper;
@@ -97,6 +103,21 @@ describe('UserList', () => {
         },
       },
     });
+  });
+
+  it('shows social buttons when social providers are available', async () => {
+    AuthenticationApi.getAuthenticationConfig = jest.fn().mockResolvedValue({
+      data: {
+        providers: [
+          { name: 'google', type: 'social' },
+        ],
+      },
+    });
+
+    wrapper = mountComponent();
+    await flushPromises();
+
+    expect(wrapper.findComponent({ name: 'SocialButtons' }).exists()).toBe(true);
   });
 
   describe('not inline', () => {

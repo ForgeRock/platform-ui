@@ -11,10 +11,22 @@ import Shared from '@forgerock/platform-shared/src/store/modules/Shared';
 export default createStore({
   state: {
     authHeaders: {},
+    OAuthState: {
+      clientToken: null,
+      originalToken: null,
+      returnParams: null,
+    },
   },
   mutations: {
     setAuthHeaders(state, val) {
       state.authHeaders = val;
+    },
+    setOAuthState(state, clientToken, originalToken, returnParams) {
+      state.OAuthState = {
+        clientToken,
+        originalToken,
+        returnParams,
+      };
     },
   },
   modules: {

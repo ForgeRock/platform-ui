@@ -9,9 +9,16 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import RegistrationMock from './mocks/RegistrationMock';
 import AllInOneRegistration from './AllInOneRegistration';
+import * as AuthenticationApi from '@/api/AuthenticationApi';
 import i18n from '@/i18n';
 
 mockValidation();
+
+AuthenticationApi.getAuthenticationConfig = jest.fn().mockResolvedValue({
+  data: {
+    providers: [],
+  },
+});
 
 describe('AllInOneRegistration', () => {
   let wrapper;

@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrButtonWithSpinner
       variant="primary"
       class="mt-2 mb-3 w-100"
-      :disabled="!valid || !passwordValid || loading"
+      :disabled="!valid || loading || (stages.idmUserDetails && !passwordValid)"
       :button-text="$t('common.signUp')"
       :spinner-text="$t('common.signUp')"
       :loading="loading"

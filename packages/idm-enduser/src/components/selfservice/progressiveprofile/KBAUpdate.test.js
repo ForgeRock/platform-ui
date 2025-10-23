@@ -27,7 +27,7 @@ describe('KBAUpdate', () => {
   }
 
   it('emits update:data with KBA form group data when KBA is complete', async () => {
-    wrapper = mountComponent({ inline: true });
+    wrapper = mountComponent();
     await flushPromises();
 
     const questionSelects = wrapper.findAllComponents('[label="Select a security question..."]');

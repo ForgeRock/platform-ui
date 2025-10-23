@@ -8,6 +8,8 @@ of the MIT license. See the LICENSE file for details. -->
     v-slot="slotProps"
     as="div">
     <BForm>
+      <FrSocialButtons
+        v-if="!isSocialReg" />
       <BFormGroup
         class="mb-3"
         v-for="(property, key) in userDetails"
@@ -77,7 +79,7 @@ import {
 } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrPolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput';
-// import SocialButtons from '@/components/utils/SocialButtons';
+import FrSocialButtons from '@/components/selfservice/social/SocialButtons';
 
 const props = defineProps({
   selfServiceDetails: {

@@ -23,6 +23,9 @@ of the MIT license. See the LICENSE file for details. -->
             class="p-3 text-left">
             {{ errorMessage }}
           </FrAlert>
+          <FrSocialButtons
+            v-if="ENABLE_SELF_SERVICE"
+            sign-in />
           <BForm
             @submit.prevent="signIn"
             class="mb-3">
@@ -79,6 +82,7 @@ import {
 import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
+import FrSocialButtons from '../components/selfservice/social/SocialButtons';
 import { useAuth } from '../composables/useAuth';
 import { logout } from '../api/AuthenticationApi';
 import i18n from '@/i18n';
