@@ -78,8 +78,12 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             v-else
             class="d-flex align-items-center p-3 h-100">
-            <div class="fr-company-logo fr-company-logo-horizontal" />
-            <div class="fr-company-logo fr-company-logo-square" />
+            <img
+              v-bind="horizontalLogoAttrs"
+              class="fr-company-logo fr-company-logo-horizontal">
+            <img
+              v-bind="squareLogoAttrs"
+              class="fr-company-logo fr-company-logo-square">
           </div>
         </div>
         <ul class="fr-sidebar-menuitems flex-grow-1">
@@ -125,6 +129,7 @@ import {
   BMediaAside,
   BMediaBody,
 } from 'bootstrap-vue';
+import logo from '@forgerock/platform-shared/src/composables/logo';
 import FrDropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
 import FrMenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -202,6 +207,16 @@ export default {
     onMouseLeave() {
       this.$emit('mouse-leave');
     },
+  },
+  setup() {
+    const {
+      horizontalLogoAttrs,
+      squareLogoAttrs,
+    } = logo();
+    return {
+      horizontalLogoAttrs,
+      squareLogoAttrs,
+    };
   },
 };
 </script>

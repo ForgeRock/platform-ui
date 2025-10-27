@@ -902,24 +902,6 @@ a.card {
   width: 100%;
 }
 
-.fr-company-logo-horizontal {
-  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-horizontal.svg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  height: 100%;
-  width: 100%;
-}
-
-.fr-company-logo-square {
-  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-square.svg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  height: 100%;
-  width: 100%;
-}
-
 .fr-realm-stamp {
   align-items: center;
   border-radius: 50%;

@@ -343,12 +343,10 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       .fr-company-logo.fr-company-logo-square {
-        background-image: url("{{ logoProfileCollapsed ? logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
         height: {{ logoProfileCollapsed ? theme.logoProfileHeight || theme.logoHeight || 24 : theme.logoHeight || 24 }}px;
       }
 
       .fr-company-logo.fr-company-logo-horizontal {
-        background-image: url("{{ logoProfile ? logoProfile : require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg') }}");
         height: {{ theme.logoProfileHeight || theme.logoHeight || 24 }}px;
       }
 
