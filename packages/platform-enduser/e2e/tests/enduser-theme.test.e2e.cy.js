@@ -121,6 +121,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     });
 
     it('Should change profile page logo', () => {
+      const imageUrl = 'https://mods.vorondesign.com/files/FDqscS50BRdqtEhUK1U9hA/%2FVPlainL%2F1ColorLayer%2FVDesignPlainLorig.png';
       // Set the Theme logo data for the test
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('tab', { name: 'Logo' }).click();
@@ -150,8 +151,9 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.loginAsEnduser(userName, userPassword);
 
       // Check that the Theme is correctly applied
-      cy.get('div.fr-company-logo')
-        .should('have.css', 'background-image', 'url("https://mods.vorondesign.com/files/FDqscS50BRdqtEhUK1U9hA/%2FVPlainL%2F1ColorLayer%2FVDesignPlainLorig.png")');
+      cy.get(`img[src="${imageUrl}"]`)
+        .should('have.attr', 'alt')
+        .and('equal', 'alt');
     });
 
     it('Should toggle profile pieces', () => {

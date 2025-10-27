@@ -113,7 +113,7 @@ export default {
       localizedFooter: '',
       localizedHeader: '',
       localizedJustifiedContent: '',
-      localizedLogo: '',
+      localizedLogo: 'images/ping-logo-square-color.svg',
       localizedLogoAltText: '',
     };
   },

@@ -28,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
             <section>
               <FrCenterCard
+                :logo-alt-text="logoAltText"
                 :logo-enabled="logoEnabled && !themeLoading"
                 :logo-height="logoHeight"
                 :logo-path="logoPath"
@@ -214,7 +215,7 @@ of the MIT license. See the LICENSE file for details. -->
               <img
                 v-if="logoEnabled"
                 class="fr-company-logo mt-4"
-                alt=""
+                :alt="logoAltText"
                 :style="{ height: `${logoHeight}px` }"
                 :src="logoPath">
               <div
@@ -574,6 +575,10 @@ export default {
     journeySignInButtonPosition: {
       type: String,
       default: 'flex-column',
+    },
+    logoAltText: {
+      type: String,
+      default: '',
     },
     logoEnabled: {
       type: Boolean,
