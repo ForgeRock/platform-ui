@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -19,7 +19,7 @@ describe('CenterCard Component', () => {
       },
     });
 
-    expect(wrapper.find('.ping-logo').exists()).toBe(true);
+    expect(wrapper.find('.fr-company-logo').exists()).toBe(true);
   });
 
   it('CenterCard has a logo with default props', () => {
@@ -34,7 +34,7 @@ describe('CenterCard Component', () => {
       },
     });
 
-    const logo = wrapper.find('.ping-logo');
+    const logo = wrapper.find('.fr-company-logo');
     expect(logo.exists()).toBe(true);
   });
 

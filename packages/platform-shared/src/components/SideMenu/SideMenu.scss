@@ -30,11 +30,11 @@
   width: $fr-sidemenu-width-lg;
   transform: translateX(0);
 
-  .ping-logo-horizontal {
+  .fr-company-logo-horizontal {
     display: block;
   }
 
-  .ping-logo-square {
+  .fr-company-logo-square {
     display: none;
   }
 }
@@ -51,11 +51,11 @@
   .sidebar-item-text,
   :deep(.fr-sidebar-menuitems .menu-item-text),
   :deep(.fr-menu-item-submenuitems),
-  .ping-logo-horizontal {
+  .fr-company-logo-horizontal {
     display: none;
   }
 
-  .ping-logo-square {
+  .fr-company-logo-square {
     display: block;
   }
 }
@@ -76,11 +76,11 @@
         display: block;
       }
 
-      .ping-logo-horizontal {
+      .fr-company-logo-horizontal {
         display: block;
       }
 
-      .ping-logo-square {
+      .fr-company-logo-square {
         display: none;
       }
     }
@@ -191,21 +191,21 @@
   .fr-menu-mobile.fr-menu-expanded & {
     transform: translateX(0);
 
-    .ping-logo-horizontal {
+    .fr-company-logo-horizontal {
       display: block;
     }
 
-    .ping-logo-square {
+    .fr-company-logo-square {
       display: none;
     }
   }
 
   .fr-menu-mobile.fr-menu-collapsed & {
-    .ping-logo-horizontal {
+    .fr-company-logo-horizontal {
       display: none;
     }
 
-    .ping-logo-square {
+    .fr-company-logo-square {
       display: none;
     }
   }
@@ -217,8 +217,7 @@
   }
 
   .fr-sidebar-nav {
-    .ping-logo {
-      height: 24px;
+    .fr-company-logo {
       background-position: left;
     }
 

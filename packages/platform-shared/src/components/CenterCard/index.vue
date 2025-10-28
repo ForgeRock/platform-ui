@@ -16,12 +16,12 @@ of the MIT license. See the LICENSE file for details. -->
             <template v-if="logoEnabled">
               <div
                 v-if="logoPath.length === 0"
-                class="ping-logo ping-logo-square mb-3 mt-2"
+                class="fr-company-logo fr-company-logo-square mb-3 mt-2"
                 fluid
                 :alt="$t('common.logo')" />
               <img
                 v-else
-                class="ping-logo mb-4 mt-2"
+                class="fr-company-logo mb-4 mt-2"
                 :alt="logoAltText"
                 :src="logoPath"
                 :style="{ height: `${logoHeight}px`}">
@@ -134,7 +134,7 @@ export default {
       .justify-content-center {
         flex-direction: column;
 
-        .ping-logo {
+        .fr-company-logo {
           align-self: center;
           height: $fr-center-card-logo-height;
           max-width: 100%;

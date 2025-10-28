@@ -213,7 +213,7 @@ of the MIT license. See the LICENSE file for details. -->
             <div class="d-flex">
               <img
                 v-if="logoEnabled"
-                class="ping-logo mt-4"
+                class="fr-company-logo mt-4"
                 alt=""
                 :style="{ height: `${logoHeight}px` }"
                 :src="logoPath">

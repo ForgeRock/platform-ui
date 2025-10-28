@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -20,7 +20,7 @@ describe.each(browsers)('In %s:', (browserName) => {
   }, 60000);
 
   test('Login form appears', async () => {
-    const loginCardElement = await driver.findElement(By.css('.fr-center-card .ping-logo'));
+    const loginCardElement = await driver.findElement(By.css('.fr-center-card .fr-company-logo'));
     await expect(loginCardElement.isDisplayed()).resolves.toBe(true);
 
     const loginForm = await driver.findElement(By.css('#callbacksPanel form'));

@@ -74,8 +74,8 @@ of the MIT license. See the LICENSE file for details. -->
         <div
           v-else
           class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
-          <div class="ping-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
-            <div class="ping-logo ping-logo-square-footer" />
+          <div class="fr-company-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
+            <div class="fr-company-logo fr-company-logo-square-footer" />
           </div>
           <div
             class="mr-4 opacity-70">
@@ -397,7 +397,7 @@ body {
   }
 }
 
-.ping-logo-container {
+.fr-company-logo-container {
   width: 21px;
   height: 21px;
 }
