@@ -12,8 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
       :aria-expanded="isOpen.toString()"
       :id="menuButtonId"
       @click.stop="openMenu"
-      @keydown.enter.prevent="openMenu"
-      @keydown.space.prevent="openMenu"
+      @keydown.enter.prevent.stop="openMenu"
+      @keydown.space.prevent.stop="openMenu"
       @keydown.up.prevent="openMenu"
       @keydown.down.prevent="openMenu">
       <slot name="button-content" />
@@ -101,7 +101,7 @@ const { floatingStyle } = floatingElementPosition({
   enabled: props.useFloatingMenu,
   isVisible: isOpen,
   floatingRef: menuListRef,
-  floatingElementStyles: { width: 'fit-content', zIndex: 1000 },
+  floatingElementStyles: { width: 'fit-content', zIndex: 2000 },
 });
 
 /**

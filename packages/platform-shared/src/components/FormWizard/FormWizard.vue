@@ -336,6 +336,12 @@ setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
     cursor: auto;
     pointer-events: none;
   }
+
+  .card-footer {
+    position: relative;
+    z-index: 2001;
+    background-color: $white;
+  }
 }
 
 :deep(.navbar-nav) .dropdown-menu {
