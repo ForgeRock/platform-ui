@@ -41,8 +41,16 @@ of the MIT license. See the LICENSE file for details. -->
                 :type="property.type"
                 :ui-schema="property"
                 :path="property.model"
-                :name-prop="fieldNameProp"
-              />
+                :name-prop="fieldNameProp">
+                <template
+                  v-for="(key, slotName) in $slots"
+                  #[slotName]="slotData">
+                  <!-- @slot passthrough slot -->
+                  <slot
+                    :name="slotName"
+                    v-bind="slotData" />
+                </template>
+              </Component>
             </template>
             <slot
               v-else

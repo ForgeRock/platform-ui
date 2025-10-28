@@ -43,7 +43,10 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol
           sm="4"
-          class="text-gray-900">
+          class="text-gray-900 d-flex">
+          <FrIcon
+            :icon-class="`size-28 rounded-circle d-flex align-items-center justify-content-center mr-3 color-dark${accountSubTypeObject?.iconColor} bg-light${accountSubTypeObject?.iconColor} mt-n25`"
+            :name="accountSubTypeObject?.icon" />
           {{ accountSubType }}
         </BCol>
       </BRow>
@@ -144,7 +147,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   onMounted, ref, computed,
 } from 'vue';
-import { capitalize } from 'lodash';
+import { capitalize, find } from 'lodash';
 import { BButton, BCard, BModal } from 'bootstrap-vue';
 import { useRoute } from 'vue-router';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
@@ -158,6 +161,7 @@ import { getManagedResourceList } from '@forgerock/platform-shared/src/api/Manag
 import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import dayjs from 'dayjs';
 import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { getAccountTypeVariant } from '../utils/accountUtility';
 
 import i18n from '@/i18n';
@@ -188,6 +192,7 @@ const actors = ref([]);
 const displayPairs = ref([]);
 const loading = ref(true);
 const saving = ref(false);
+const accountSubTypeObject = ref({});
 
 const isCorrelated = computed(() => props.account?.user);
 const isMachine = computed(() => accountType.value.toLowerCase() === accountConstants.ACCOUNT_TYPES.MACHINE);
@@ -197,6 +202,12 @@ const updateSchema = computed(() => glossarySchema.value.filter((entry) => {
     entry.displayName = i18n.global.t('governance.accounts.custodians');
     entry.type = 'managedObject';
     entry.managedObjectType = '/openidm/managed/user';
+    return true;
+  }
+  if (entry.name === 'accountSubtype') {
+    entry.displayName = i18n.global.t('governance.accounts.accountSubType');
+    entry.type = 'string';
+    entry.enumeratedValues = accountConstants.ACCOUNT_SUBTYPES;
     return true;
   }
   return false;
@@ -286,7 +297,8 @@ async function getGlossary() {
     glossarySchema.value = glossarySchemaResult.data['/iga/governance/account'];
 
     accountType.value = capitalize(glossaryValues.value?.accountType || accountConstants.ACCOUNT_TYPES.DEFAULT);
-    accountSubType.value = capitalize(glossaryValues.value?.accountSubtype) || blankValueIndicator;
+    accountSubTypeObject.value = find(accountConstants.ACCOUNT_SUBTYPES, { value: glossaryValues.value?.accountSubtype });
+    accountSubType.value = accountSubTypeObject.value?.text || capitalize(glossaryValues.value?.accountSubtype) || blankValueIndicator;
 
     if (isCorrelated.value) {
       actors.value = [
