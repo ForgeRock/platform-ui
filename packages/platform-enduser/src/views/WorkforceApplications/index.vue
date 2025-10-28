@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
                     width="50"
                     height="50"
                     :src="getLogo(app.icon)"
-                    :alt="app.name"
+                    alt=""
                     :onerror="onImageError">
                 </div>
                 <h5 class="card-title mb-0">
