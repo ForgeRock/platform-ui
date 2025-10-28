@@ -16,7 +16,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     });
 
     it('location should be at /am/XUI', () => {
-      cy.get('.fr-center-card').find('.ping-logo').should('be.visible');
+      cy.get('.fr-center-card').find('.fr-company-logo').should('be.visible');
       cy.location().should((location) => {
         expect(location.href).to.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
         expect(location.host).to.eq(Cypress.env('FQDN'));

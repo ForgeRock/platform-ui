@@ -342,18 +342,18 @@ of the MIT license. See the LICENSE file for details. -->
         color: inherit;
       }
 
-      .ping-logo.ping-logo-square {
+      .fr-company-logo.fr-company-logo-square {
         background-image: url("{{ logoProfileCollapsed ? logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
-        height: {{ logoProfileCollapsed && theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
+        height: {{ logoProfileCollapsed ? theme.logoProfileHeight || theme.logoHeight || 24 : theme.logoHeight || 24 }}px;
       }
 
-      .ping-logo.ping-logo-horizontal {
+      .fr-company-logo.fr-company-logo-horizontal {
         background-image: url("{{ logoProfile ? logoProfile : require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg') }}");
-        height: {{ theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
+        height: {{ theme.logoProfileHeight || theme.logoHeight || 24 }}px;
       }
 
-      <template v-if="mock">.fr-theme-preview.enduser</template> .fr-sidebar-nav{
-        background-color: {{ theme.accountNavigationBackgroundColor|| '#ffffff' }};
+      <template v-if="mock">.fr-theme-preview.enduser</template> .fr-sidebar-nav {
+        background-color: {{ theme.accountNavigationBackgroundColor || '#ffffff' }};
       }
 
       .fr-sidebar-wrapper .fr-sidebar-bottom {
