@@ -122,6 +122,15 @@ of the MIT license. See the LICENSE file for details. -->
                         {{ item.type }}
                       </BBadge>
                     </template>
+                    <template #cell(accountSubType)="{ item }">
+                      <div
+                        class="w-100px d-flex">
+                        <FrIcon
+                          :icon-class="`size-28 rounded-circle d-flex align-items-center justify-content-center mr-3 color-dark${getIcon(item, 'iconColor')} bg-light${getIcon(item, 'iconColor')} mt-n25`"
+                          :name="getIcon(item, 'icon')" />
+                        {{ getAccountSubType(item) }}
+                      </div>
+                    </template>
                     <template #cell(actions)="{ item }">
                       <FrActionsCell
                         :divider="false"
@@ -180,7 +189,7 @@ import {
 } from 'bootstrap-vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { capitalize } from 'lodash';
+import { capitalize, find } from 'lodash';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -239,6 +248,12 @@ const fields = computed(() => {
       sortable: false,
     },
     {
+      key: 'accountSubType',
+      class: 'w-240px',
+      label: i18n.global.t('governance.accounts.accountSubType'),
+      sortable: false,
+    },
+    {
       key: 'actions',
       label: '',
       sortable: false,
@@ -251,7 +266,10 @@ const fields = computed(() => {
   }
   // Don't show user for uncorrelated tab
   if (selectedTab.value === 2) {
-    return tableFields.filter((field) => field.key !== 'user');
+    return tableFields.filter((field) => field.key !== 'user' && field.key !== 'accountSubType');
+  }
+  if (selectedTab.value === 1 || selectedTab.value === 0) {
+    return tableFields.filter((field) => field.key !== 'accountSubType');
   }
   return tableFields;
 });
@@ -432,6 +450,27 @@ function navigateToEdit(accountId) {
       tab: 'details',
     },
   });
+}
+
+/**
+ * Navigate to the given account by id
+ * @param item Account Object
+ */
+function getAccountSubType(item) {
+  if (!item.glossary.idx['/account'].accountSubtype) {
+    return blankValueIndicator;
+  }
+  return find(accountConstants.ACCOUNT_SUBTYPES, { value: item.glossary.idx['/account'].accountSubtype })?.text;
+}
+
+/**
+ * Handle getting icon
+ * @param item Account object
+ * @param type Type of icon data being retrieved
+ */
+function getIcon(item, type) {
+  if (type === 'iconColor') return find(accountConstants.ACCOUNT_SUBTYPES, { value: item.glossary.idx['/account'].accountSubtype })?.iconColor;
+  return find(accountConstants.ACCOUNT_SUBTYPES, { value: item.glossary.idx['/account'].accountSubtype })?.icon;
 }
 
 /**

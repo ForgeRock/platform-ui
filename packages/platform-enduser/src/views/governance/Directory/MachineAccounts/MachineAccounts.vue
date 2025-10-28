@@ -62,6 +62,15 @@ of the MIT license. See the LICENSE file for details. -->
                   </BMediaBody>
                 </BMedia>
               </template>
+              <template #cell(accountSubType)="{ item }">
+                <div
+                  class="w-100px d-flex">
+                  <FrIcon
+                    :icon-class="`size-28 rounded-circle d-flex align-items-center justify-content-center mr-3 color-dark${getIcon(item, 'iconColor')} bg-light${getIcon(item, 'iconColor')} mt-n25`"
+                    :name="getIcon(item, 'icon')" />
+                  {{ getAccountSubType(item) }}
+                </div>
+              </template>
               <template #cell(actions)="{ item }">
                 <FrActionsCell
                   :divider="false"
@@ -111,7 +120,7 @@ import {
   BMediaBody,
   BTable,
 } from 'bootstrap-vue';
-import { capitalize } from 'lodash';
+import { capitalize, find } from 'lodash';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
@@ -151,6 +160,12 @@ const fields = [
     key: 'displayName',
     label: i18n.global.t('common.displayName'),
     sortable: true,
+  },
+  {
+    key: 'accountSubType',
+    class: 'w-240px',
+    label: i18n.global.t('governance.accounts.accountSubType'),
+    sortable: false,
   },
   {
     key: 'actions',
@@ -246,6 +261,17 @@ function sortingChanged(ctx) {
 
 /**
  * Navigate to the given account by id
+ * @param item Account Object
+ */
+function getAccountSubType(item) {
+  if (!item.glossary.idx['/account'].accountSubtype) {
+    return blankValueIndicator;
+  }
+  return find(accountConstants.ACCOUNT_SUBTYPES, { value: item.glossary.idx['/account'].accountSubtype })?.text;
+}
+
+/**
+ * Navigate to the given account by id
  * @param accountId string The account ID to navigate to
  */
 function navigateToEdit(accountId) {
@@ -274,6 +300,16 @@ function clear() {
 function pageSizeChange(pageSize) {
   entriesPerPage.value = pageSize;
   search();
+}
+
+/**
+ * Handle getting icon
+ * @param item Account object
+ * @param type Type of icon data being retrieved
+ */
+function getIcon(item, type) {
+  if (type === 'iconColor') return find(accountConstants.ACCOUNT_SUBTYPES, { value: item.glossary.idx['/account'].accountSubtype })?.iconColor;
+  return find(accountConstants.ACCOUNT_SUBTYPES, { value: item.glossary.idx['/account'].accountSubtype })?.icon;
 }
 
 onMounted(async () => {

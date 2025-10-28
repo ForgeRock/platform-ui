@@ -15,7 +15,15 @@ of the MIT license. See the LICENSE file for details. -->
     :allow-empty="uiSchema.allowEmpty"
     :validation="uiSchema.validation"
     :value="uiSchema.value"
-    @input="updateValue" />
+    @input="updateValue">
+    <template
+      v-for="(key, slotName) in $slots"
+      #[slotName]="slotData">
+      <slot
+        :name="slotName"
+        v-bind="slotData" />
+    </template>
+  </FrField>
 </template>
 <script>
 import FrField from '@forgerock/platform-shared/src/components/Field';

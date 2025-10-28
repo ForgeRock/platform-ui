@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrFormGenerator
@@ -21,6 +20,18 @@ to such license between the licensee and ForgeRock AS. -->
           :property="property"
           @update:model="emitGlossaryValueUpdateEvent" />
       </template>
+      <template
+        v-for="(slotName, index) in ['singleLabel', 'option']"
+        :key="index"
+        #[slotName]="{ option }">
+        <div class="d-flex form-selector">
+          <FrIcon
+            :icon-class="`size-28 rounded-circle d-flex align-items-center justify-content-center mr-3 color-dark${option?.iconColor} bg-light${option?.iconColor}`"
+            :property="option"
+            :name="option?.icon" />
+          {{ option?.text }}
+        </div>
+      </template>
     </FrFormGenerator>
   </div>
 </template>
@@ -35,6 +46,7 @@ import { isArray, cloneDeep } from 'lodash';
 import FrFormGenerator from '@forgerock/platform-shared/src/components/FormGenerator';
 import FrGovObjectMultiselect from '@forgerock/platform-shared/src/components/FormEditor/components/governance/GovObjectMultiselect';
 import FrGovObjectSelect from '@forgerock/platform-shared/src/components/FormEditor/components/governance/GovObjectSelect';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 const props = defineProps({
   glossarySchema: {
