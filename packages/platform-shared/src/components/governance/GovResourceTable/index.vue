@@ -114,9 +114,9 @@ of the MIT license. See the LICENSE file for details. -->
                 height="24">
             </BMediaAside>
             <BMediaBody class="text-truncate">
-              <h3 class="h5 mb-0 text-truncate">
+              <h2 class="h5 mb-0 text-truncate">
                 {{ item.application.name }}
-              </h3>
+              </h2>
               <small class="text-muted">
                 {{ getDisplayName(item) }}
               </small>
@@ -135,9 +135,9 @@ of the MIT license. See the LICENSE file for details. -->
                 height="24">
             </BMediaAside>
             <BMediaBody class="text-truncate">
-              <h3 class="h5 mb-0 text-truncate">
+              <h2 class="h5 mb-0 text-truncate">
                 {{ getResourceDisplayName(item, '/entitlement') }}
-              </h3>
+              </h2>
               <small class="text-muted">
                 {{ item.application.name }}
               </small>
@@ -163,9 +163,9 @@ of the MIT license. See the LICENSE file for details. -->
             <BMediaBody
               class="text-truncate"
               vertical-align="center">
-              <h3 class="h5 text-truncate">
+              <h2 class="h5 text-truncate">
                 {{ item.role.name }}
-              </h3>
+              </h2>
             </BMediaBody>
           </BMedia>
         </template>

@@ -304,7 +304,7 @@ describe('GovResourceTable', () => {
     const { wrapper } = await mountComponent();
     await wrapper.setProps({ items: mockItems });
     await flushPromises();
-    const roleAccountNameCell = wrapper.findAll('h3').filter((item) => item.text().includes('test'));
+    const roleAccountNameCell = wrapper.findAll('h2').filter((item) => item.text().includes('test'));
     expect(roleAccountNameCell[0].exists()).toBe(true);
   });
 
