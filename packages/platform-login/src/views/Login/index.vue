@@ -142,7 +142,7 @@ of the MIT license. See the LICENSE file for details. -->
                           <BButton
                             type="submit"
                             variant="primary"
-                            :disabled="nextButtonDisabled">
+                            :disabled="nextButtonDisabled || !isFormValid">
                             {{ buttonTextLocalized }}
                           </BButton>
                         </div>
@@ -345,7 +345,7 @@ of the MIT license. See the LICENSE file for details. -->
                       <BButton
                         type="submit"
                         variant="primary"
-                        :disabled="nextButtonDisabled">
+                        :disabled="nextButtonDisabled || !isFormValid">
                         {{ buttonTextLocalized }}
                       </BButton>
                     </div>
@@ -443,6 +443,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
 import { svgShapesSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { useForm } from 'vee-validate';
 import i18n from '@/i18n';
 import {
   resumingTreeFollowingRedirect,
@@ -629,6 +630,10 @@ export default {
       idpComponent: undefined,
     };
   },
+  setup() {
+    const { meta } = useForm();
+    return { meta };
+  },
   computed: {
     /**
      * IAM-7752 JAWS initial automatic reading says page has no links even when content is present
@@ -674,6 +679,9 @@ export default {
     },
     isRootRealm() {
       return this.realm === 'root' || this.realm === '/root' || this.realm === '/';
+    },
+    isFormValid() {
+      return this.meta.valid;
     },
   },
   mounted() {
