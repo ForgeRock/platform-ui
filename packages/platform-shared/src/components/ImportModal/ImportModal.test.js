@@ -157,7 +157,7 @@ describe('ImportModal', () => {
 
     it('Should display success with general node errors', async () => {
       const wrapper = setup({ importFunction: mockImportFunctionSuccessGeneralError });
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       const input = wrapper.find('input[type="file"]');
 
@@ -174,7 +174,6 @@ describe('ImportModal', () => {
       const importBtn = wrapper.find('.btn-primary');
       await importBtn.trigger('click');
 
-      // both flushPromises are required here
       await flushPromises();
       await flushPromises();
       expect(mockImportFunctionSuccessGeneralError).toHaveBeenCalled();
