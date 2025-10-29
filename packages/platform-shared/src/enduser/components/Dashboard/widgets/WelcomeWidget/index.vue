@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
           alt=""
           :src="avatarSource" />
       </template>
-      <h1 class="text-capatilize">
+      <h1 class="text-capitalize">
         {{ $t(`pages.dashboard.widgets.welcome.greeting${timeOfDay}`, { name: givenName }) }}
       </h1>
       <p>{{ $t('pages.dashboard.widgets.welcome.welcomeMessageCompact') }}</p>
