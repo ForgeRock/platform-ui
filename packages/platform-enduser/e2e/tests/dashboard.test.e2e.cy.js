@@ -13,7 +13,6 @@ filterTests(['@forgeops', '@cloud'], () => {
     let userId = '';
     let userName = '';
     const fullName = 'First Last';
-    // const givenName = 'First';
 
     afterEach(() => {
       deleteIDMUser(userId);
@@ -52,9 +51,6 @@ filterTests(['@forgeops', '@cloud'], () => {
             .get('.fr-sidebar-nav');
           // .should('have.css', 'width', '213.75px');
           cy.get('.fr-menu-collapsed').should('not.exist');
-          // cy.get('.fr-sidebar-bottom').click();
-          // cy.get('.fr-menu-collapsed').should('exist');
-          // cy.get('.fr-sidebar-bottom').click();
           cy.get('.fr-menu-collapsed').should('not.exist');
 
           // Check that the user dropdown can show

@@ -30,6 +30,8 @@
   "devDependencies": {
     "@babel/eslint-parser": "7.22.9",
     "@faker-js/faker": "9.8.0",
+    "@percy/cli": "1.31.2",
+    "@percy/cypress": "3.1.6",
     "@testing-library/dom": "9.3.1",
     "@testing-library/jest-dom": "6.1.2",
     "@testing-library/user-event": "13.0.1",
