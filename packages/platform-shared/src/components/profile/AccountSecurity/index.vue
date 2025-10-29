@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -80,6 +80,7 @@ import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
+import { capitalize } from 'lodash';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
@@ -151,6 +152,10 @@ export default {
     return {
       isOnKBA: false,
       kbaData: {},
+      mfaJourneys: {
+        addDevice: null,
+        removeDevice: null,
+      },
       passwordItem: {
         ariaLabel: this.$t('pages.access.resetPassword'),
         key: 'password',
@@ -184,7 +189,6 @@ export default {
       this.kbaData = response.data;
     }).catch(() => { this.isOnKBA = false; });
 
-    this.loadAuthenicationDevices();
     this.setUpdateJourneys();
   },
   watch: {
@@ -204,13 +208,24 @@ export default {
       this.getRequestService(configOptions).get('/selfservice/trees').then((res) => {
         const realm = this.forceRoot ? '/' : (new URLSearchParams(window.location.search)).get('realm') || '/';
         const passwordJourney = res.data.mapping.updatePassword;
+        const getLinkUrl = (journeyName) => (
+          `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${realm}&noSession=true&ForceAuth=true&authIndexType=service&authIndexValue=${journeyName}&goto=${encodeURIComponent(window.location.href)}`
+        );
         if (passwordJourney) {
-          this.$set(this.passwordItem, 'linkUrl', `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${realm}&noSession=true&ForceAuth=true&authIndexType=service&authIndexValue=${passwordJourney}&goto=${encodeURIComponent(window.location.href)}`);
+          this.$set(this.passwordItem, 'linkUrl', getLinkUrl(passwordJourney));
         }
         const usernameJourney = res.data.mapping.updateUsername;
         if (usernameJourney) {
-          this.$set(this.usernameItem, 'linkUrl', `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${realm}&noSession=true&ForceAuth=true&authIndexType=service&authIndexValue=${usernameJourney}&goto=${encodeURIComponent(window.location.href)}`);
+          this.$set(this.usernameItem, 'linkUrl', getLinkUrl(usernameJourney));
         }
+        const addDeviceJourney = res.data.mapping.addDevice;
+        const removeDeviceJourney = res.data.mapping.removeDevice;
+        if (addDeviceJourney && removeDeviceJourney) {
+          this.mfaJourneys.addDevice = getLinkUrl(addDeviceJourney);
+          this.mfaJourneys.removeDevice = getLinkUrl(removeDeviceJourney);
+        }
+        // Load authentication devices to determine 2FA status
+        this.loadAuthenicationDevices();
       }, () => {
         this.showErrorMessage('error', this.$t('pages.profile.accountSecurity.journeyServiceError'));
       });
@@ -235,13 +250,25 @@ export default {
         .then((responseArray) => {
           const collapsedResponseArray = responseArray.reduce((acc, response) => acc.concat(response.data.result), []);
           if (collapsedResponseArray.length) {
+            const removeDeviceUrl = this.mfaJourneys.removeDevice;
             this.mfaItem = {
               title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
               text: this.$t('common.on'),
               iconType: 'ON',
               key: 'twoStepVerification',
               linkText: this.$t('common.change'),
-              linkPath: '/auth-devices',
+              linkPath: !removeDeviceUrl ? '/auth-devices' : '',
+              linkUrl: removeDeviceUrl || '',
+            };
+          } else if (this.mfaJourneys.addDevice) {
+            this.mfaItem = {
+              title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
+              text: this.$t('common.off'),
+              iconType: 'OFF',
+              key: 'twoStepVerification',
+              linkText: capitalize(this.$t('common.enable')),
+              linkPath: '',
+              linkUrl: this.mfaJourneys.addDevice,
             };
           }
         });
