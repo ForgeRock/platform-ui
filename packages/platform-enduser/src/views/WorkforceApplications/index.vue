@@ -50,9 +50,9 @@ of the MIT license. See the LICENSE file for details. -->
                     alt=""
                     :onerror="onImageError">
                 </div>
-                <h5 class="card-title mb-0">
+                <h2 class="h5 card-title mb-0">
                   {{ app.name }}
-                </h5>
+                </h2>
               </div>
             </BCardBody>
           </a>
