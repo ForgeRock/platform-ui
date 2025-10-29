@@ -88,3 +88,14 @@ export function deleteSchemaProperty(objectName, propertyName) {
 export function querySchema(params) {
   return generateIdmApi().get(`schema${encodeQueryString(params)}`);
 }
+
+/**
+ * Saves/updates a property in the managed schema
+ * @param {String} objectName - The name of the object to delete the property from
+ * @param {String} propertyName - The name of the property to delete
+ * @param {Object} propertyConfig - The configuration of the property to save
+ * @returns {Promise} API promise with result from managed schema property delete
+ */
+export function saveSchemaProperty(objectName, propertyName, propertyConfig) {
+  return generateIdmApi().put(`/schema/managed/${objectName}/properties/${propertyName}?waitForCompletion=true`, propertyConfig);
+}
