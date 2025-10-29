@@ -23,6 +23,7 @@
 
 import './commands';
 import './e2e';
+import '@percy/cypress';
 
 // This configuration is designed to handle uncaught exceptions in the application code,
 // and prevent these exceptions from stopping the test execution.
