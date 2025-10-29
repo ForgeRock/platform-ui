@@ -481,7 +481,7 @@ export default {
           if (params.searchValue) {
             const nameMap = {
               accountGrant: 'application.name',
-              entitlementGrant: 'assignment.name',
+              entitlementGrant: 'descriptor.idx./entitlement.displayName',
               roleMembership: 'role.name',
             };
             targetFilter.operand.push({
