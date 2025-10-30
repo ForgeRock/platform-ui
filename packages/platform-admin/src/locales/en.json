@@ -41,6 +41,7 @@
     "Scopes": "Scopes",
     "SyncDataEditor": "Advanced Sync Editor",
     "SyncIdentityProfileEditor": "Advanced Sync Editor",
+    "SyncDataProvisionerEditor": "Advanced Sync Editor",
     "TemplateBuilder": "Application Templates",
     "TermsAndConditions": "Terms & Conditions",
     "Workflows": "Workflows"
@@ -3554,7 +3555,7 @@
         "appTitle": "No synchronized applications yet",
         "appSubtitle": "Synchronize data between {displayName} {objectTypeName} and other applications.",
         "identityTitle": "No synchronized data for {displayName}",
-        "identitySubtitle": "Synchronize data between {displayName} and other entities."
+        "identitySubtitle": "Synchronize data between {displayName} {objectTypeName} and other entities."
       },
       "tabs": {
         "mapping": {
@@ -3686,6 +3687,7 @@
         "resultDescription": "Do nothing"
       }
     },
+    "schedules": "Schedules",
     "selectNonAccountObject": "Select Object Type",
     "selectNonAccountObjectDescription": "Object type from which to populate enumerated values for this property",
     "sourceOfValues": "Source of Values",
@@ -3773,10 +3775,11 @@
     "setUp": "Set Up",
     "subTitle": "Periodically perform a full or partial reconciliation.",
     "subTitleFullOnly": "Periodically perform a full reconciliation.",
+    "subTitleIncrementalOnly": "Periodically perform an incremental reconciliation.",
     "taskScanner": "Task Scanner",
     "times": "times",
     "title": "Schedule Jobs",
-    "titleFullOnly": "Schedule Job",
+    "titleSingleJob": "Schedule Job",
     "untilDate": "Until specific date",
     "useCron": "Use cron",
     "weeks": "week(s)",
