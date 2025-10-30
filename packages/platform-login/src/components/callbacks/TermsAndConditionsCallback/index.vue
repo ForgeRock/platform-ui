@@ -22,6 +22,8 @@ of the MIT license. See the LICENSE file for details. -->
       <BModal
         ref="terms-modal"
         hide-footer
+        title-tag="h2"
+        title-class="h5"
         body-class="p-3 border-none"
         :title="$t('login.termsAndConditions')">
         <p v-html="terms" />
