@@ -10,7 +10,7 @@ import i18n from '@/i18n';
 import PushChallengeNumber from './index';
 
 describe('PushChallengeNumber', () => {
-  it('renders push-challenge number', () => {
+  it('renders push-challenge number and reacts to number changes in the callback', async () => {
     const wrapper = mount(PushChallengeNumber, {
       global: {
         plugins: [i18n],
@@ -23,6 +23,15 @@ describe('PushChallengeNumber', () => {
       },
     });
     expect(wrapper.text()).toContain('45');
+
+    await wrapper.setProps({
+      callback: {
+        getOutputValue: () => 20,
+      },
+    });
+
+    expect(wrapper.text()).not.toContain('45');
+    expect(wrapper.text()).toContain('20');
   });
 
   it('renders push-challenge with default message', () => {

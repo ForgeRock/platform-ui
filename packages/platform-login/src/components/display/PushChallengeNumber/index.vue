@@ -33,6 +33,11 @@ export default {
       default: '',
     },
   },
+  computed: {
+    pushChallengeNumber() {
+      return this.callback.getOutputValue();
+    },
+  },
   methods: {
     setPushChallengeMessage() {
       // If the push-challenge message has not been overriden by admin, replace the default AM message for the default Platform message
@@ -48,7 +53,6 @@ export default {
   },
   data() {
     return {
-      pushChallengeNumber: this.callback.getOutputValue(),
       pushChallengeMessage: this.setPushChallengeMessage(),
     };
   },
