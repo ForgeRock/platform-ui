@@ -17,6 +17,7 @@
     "EditServerClusterServers": "Edit Server Cluster Servers",
     "EditWorkflow": "Workflow Builder",
     "EmailProvider": "Email Provider",
+    "EditProvisioner": "Edit Provisioner",
     "EmailTemplatePreview": "Email Template Preview",
     "EmailTemplates": "Email Templates",
     "Entitlements": "Entitlements",
@@ -78,6 +79,7 @@
     "EditEmailTemplate": "Edit Email Template",
     "EditGatewayOrAgent": "Edit Gateway Or Agent",
     "EditProvider": "Edit Provider",
+    "EditProvisioner": "Edit Provisioner",
     "EditReportTemplate": "Report Template",
     "EditResource": "Edit Resource",
     "EditScope": "Edit Scope",
@@ -2340,7 +2342,11 @@
     }
   },
   "provisioners": {
-    "provisioner": "provisioner",
+    "editView": {
+      "excludeUnmodifiedDescription": "When true, synchronization operations update only the modified properties on a target resource",
+      "excludeUnmodifiedLabel": "Exclude Unmodified",
+      "invalidJson": "Invalid JSON format"
+    },
     "listView": {
       "deleteError": "There was an error deleting the provisioner",
       "deleteSuccess": "Provisioner deleted successfully",
@@ -2348,7 +2354,8 @@
       "noProvisionersText": "No provisioners found",
       "subtitle": "Manage legacy and API-configured provisioners",
       "title": "Provisioners"
-    }
+    },
+    "provisioner": "provisioner"
   },
   "realm": {
     "title": "Realm",
