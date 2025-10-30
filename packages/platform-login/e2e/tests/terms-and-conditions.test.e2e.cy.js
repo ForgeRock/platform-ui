@@ -128,7 +128,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       // Check that T&C are correctly shown as a dialog
       cy.findByRole('dialog').within(() => {
         // Check T&C header is shown
-        cy.findByRole('heading', { name: 'Terms & Conditions', level: 5 }).should('be.visible');
+        cy.findByRole('heading', { name: 'Terms & Conditions', level: 2 }).should('be.visible');
 
         // Check T&C content is correct
         cy.findByText(termsContent).should('be.visible');
