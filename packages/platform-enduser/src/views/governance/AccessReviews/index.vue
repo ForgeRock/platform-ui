@@ -64,9 +64,9 @@ of the MIT license. See the LICENSE file for details. -->
               class="align-items-center"
               no-body>
               <div class="media-body align-self-center">
-                <h5 class="m-0">
+                <h2 class="h5 m-0">
                   {{ item.campaignName || item.name }}
-                </h5>
+                </h2>
                 <small class="text-muted">
                   {{ item.description }}
                 </small>

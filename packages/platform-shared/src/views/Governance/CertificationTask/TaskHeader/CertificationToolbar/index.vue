@@ -6,9 +6,9 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <FrNavbar>
       <template #center-content>
-        <h4>
+        <h1 class="h4">
           <span>{{ campaignDetails.name }}</span>
-        </h4>
+        </h1>
       </template>
       <template
         v-if="!hideSignOff"

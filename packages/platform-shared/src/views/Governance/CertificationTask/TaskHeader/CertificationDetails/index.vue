@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         md="4"
         lg="4">
         <div>
-          <h5>{{ $t('common.status') }}</h5>
+          <h2 class="h5">{{ $t('common.status') }}</h2>
           <div class="d-flex align-items-center">
             <div class="details-chart position-relative">
               <FrCircleProgressBar
@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         md="4"
         lg="4">
         <div>
-          <h5>{{ $t('governance.certificationTask.decisions') }}</h5>
+          <h2 class="h5">{{ $t('governance.certificationTask.decisions') }}</h2>
           <div class="d-flex align-items-center">
             <FrPieChart
               id="decisions-chart"
@@ -63,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
         md="4"
         lg="4">
         <div>
-          <h5>{{ $t('common.deadline') }}</h5>
+          <h2 class="h5">{{ $t('common.deadline') }}</h2>
           <div class="mt-2">
             <FrIcon
               icon-class="d-inline"
