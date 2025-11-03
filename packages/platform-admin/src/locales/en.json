@@ -1054,9 +1054,12 @@
             "titleHelp": "The user-facing name shown in forms and UI.",
             "name": "Property Key",
             "nameHelp": "The unique identifier used in code or APIs (e.g., <code>user_email</code>).",
+            "format": "Property Format",
+            "formatHelp": "Specify the format for this property.",
             "switchToAdvanced": "Switch to advanced set up",
             "tabDescription": "Enter property details.",
-            "tabTitle": "Details"
+            "tabTitle": "Details",
+            "stringFormatWarning": "Changing the string format will clear any existing validation rules."
           },
           "display": {
             "searchable": "Show in Admin List View",
