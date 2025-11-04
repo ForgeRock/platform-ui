@@ -41,13 +41,13 @@ of the MIT license. See the LICENSE file for details. -->
                     {{ element }}
                   </span>
                   <span
+                    :aria-label="$t('common.close')"
                     :data-testid="`remove-${element.toString().replace(/\s/g, '-')}-tag`"
                     @click="removeTag(element)"
-                    @keydown.enter="removeTag(element)">
+                    @keydown.enter="removeTag(element)"
+                    role="button"
+                    tabindex="0">
                     <FrIcon
-                      tabindex="0"
-                      :aria-label="$t('common.close')"
-                      :aria-controls="`fr-tags-tag_${element.toString().replace(/\s/g, '_')}`"
                       icon-class="close-icon pl-2"
                       name="close"
                     />

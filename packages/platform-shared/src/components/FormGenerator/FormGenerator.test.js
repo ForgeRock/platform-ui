@@ -5,10 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { cloneDeep, assign, get } from 'lodash';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import FormGenerator from './index';
 
 mockValidation(['required', 'integer']);
@@ -164,7 +164,7 @@ function setup(props) {
   return mount(FormGenerator, {
     global: {
       mocks: {
-        $t: () => {},
+        $t: (msg) => msg,
       },
       mixins: [SchemaMixin],
       stubs: {
@@ -195,6 +195,15 @@ describe('Form Generator', () => {
     expect(findByTestId(wrapper, 'fr-field-PasswordLabel').exists()).toBe(true);
     expect(findByTestId(wrapper, 'fr-field-DateLabel').exists()).toBe(true);
     expect(findByTestId(wrapper, 'fr-field-TextAreaLabel').exists()).toBe(true);
+  });
+
+  describe('@a11y', () => {
+    it('should have no accessibility violations', async () => {
+      const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
   });
 
   describe('safeCompare method', () => {

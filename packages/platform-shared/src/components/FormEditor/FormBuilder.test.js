@@ -7,6 +7,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as formEvents from './utils/formEvents';
 import FormBuilder from './FormBuilder';
 import i18n from '@/i18n';
@@ -116,6 +117,14 @@ describe('FormBuilder', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('@a11y', () => {
+    it('should have no accessibility violations', async () => {
+      const wrapper = setup();
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
   });
 
   it('should init correctly the form generator', async () => {
