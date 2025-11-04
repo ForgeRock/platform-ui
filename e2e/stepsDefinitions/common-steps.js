@@ -50,6 +50,7 @@ Given('enduser account is created via API', () => {
         Cypress.env('endUserName', endUser.username);
         Cypress.env('endUserFirstName', endUser.firstName);
         Cypress.env('endUserLastName', endUser.lastName);
+        Cypress.env('endUserEmail', endUser.emailAddress);
         Cypress.env('endUserPassword', endUser.password);
         Cypress.env('endUserId', result.body._id);
       });
