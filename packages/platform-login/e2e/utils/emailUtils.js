@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { putEmailProviderConfig } from '@e2e/api/emailApi.e2e';
+import { recurse } from 'cypress-recurse';
 
 /**
  * Sets the idm email provider using the details of the test email account passed
@@ -51,4 +52,18 @@ export const extractLinkFromEmail = (emailContent) => {
   }
 
   return link.getAttribute('href');
+};
+
+/**
+ * Helper function to get the latest email from the test email account
+ * Retries until an email object is received and stores it as 'emailObject' alias
+ */
+export const getLastEmail = () => {
+  // Keep retrying until the task returns an object
+  recurse(() => cy.task('getLatestEmail', Cypress.env('emailAccount')), Cypress._.isObject, {
+    timeout: 5000, // Give up after 5 seconds assuming email will be in inbox by then
+    delay: 1000, // Will try a maximum of 5 times
+  }).then((email) => {
+    cy.wrap(email).as('emailObject');
+  });
 };

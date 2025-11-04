@@ -66,6 +66,7 @@ export const KEYBOARD_ACTIONS = {
 export const JOURNEYS = {
   DEFAULT_REGISTRATION: { name: 'Registration', path: 'Registration' },
   DEFAULT_LOGIN: { name: 'Login', path: 'Login' },
+  DEFAULT_FORGOTTEN_USERNAME: { name: 'Forgotten Username', path: 'ForgottenUsername' },
   SCRIPTED_CONFIRMATION_CALLBACKS: { name: 'Scripted Confirmation Callbacks', path: 'QA%20-%20Scripted%20Decision%20Node%20with%20ConfirmationCallbacks#/' },
   ALL_SECTIONS_ACTIVE: { name: 'All sections active', path: 'QA%20-%20Default%20Login%20with%20all%20enduser%20sections%20active' },
   GO_TO_ON_FAIL_URL_VALIDATION: { name: 'gotoOnFail URL validation', path: 'QA%20-%20gotoOnFail%20URL%20validation', fileName: 'QA-gotoOnFail_URL_validation_template' },
