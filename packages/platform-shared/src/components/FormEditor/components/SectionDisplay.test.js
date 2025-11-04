@@ -5,7 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import SectionDisplay from './SectionDisplay';
 import i18n from '@/i18n';
 
@@ -38,6 +39,14 @@ describe('SectionDisplay.vue', () => {
       },
     });
   }
+
+  describe('@a11y', () => {
+    it('should have no accessibility violations', async () => {
+      const wrapper = mountComponent({ property, model });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+  });
 
   it('renders header, footer, and passes props to FormBuilder', () => {
     const wrapper = mountComponent({ property, model });
