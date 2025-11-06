@@ -195,10 +195,10 @@ export function actionNodeGetAllTypes(useApiV3 = false) {
   *
   * @returns {Promise}
   */
-export function actionNodeSchema(nodeType) {
+export function actionNodeSchema(nodeType, template = {}) {
   return generateAmApi(getTreeApiConfig()).post(
     `/nodes/${nodeType}?_action=schema`,
-    {},
+    template,
     { withCredentials: true },
   );
 }
