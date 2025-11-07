@@ -27,6 +27,7 @@ export function getRules(i18n) {
       alpha: { regex: '[a-zA-Z]', name: i18n.global.t('common.policyValidationMessages.customValidation.alphabetic') },
       hypen: { regex: '-', name: i18n.global.t('common.policyValidationMessages.customValidation.hypens') },
       numeric: { regex: '[0-9]', name: i18n.global.t('common.policyValidationMessages.customValidation.numeric') },
+      positive_integer: { regex: '[1-9][0-9]*', name: i18n.global.t('common.policyValidationMessages.customValidation.positiveInteger') },
       period: { regex: '\\.', name: i18n.global.t('common.policyValidationMessages.customValidation.periods') },
       space: { regex: ' ', name: i18n.global.t('common.policyValidationMessages.customValidation.spaces') },
       under: { regex: '_', name: i18n.global.t('common.policyValidationMessages.customValidation.underscores') },

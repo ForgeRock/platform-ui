@@ -160,7 +160,7 @@
     "forgeRock": "ForgeRock",
     "forward": "Forward",
     "from": "From",
-    "fullscreen": "Fullscreen",    
+    "fullscreen": "Fullscreen",
     "genericError": "Something went wrong, please try again.",
     "get": "Get",
     "group": "Group",
@@ -552,6 +552,7 @@
         "message": "Can only contain {ruleNames}.",
         "numeric": "numeric characters",
         "periods": "periods",
+        "positiveInteger": "positive integer",
         "spaces": "spaces",
         "underscores": "underscores"
       },
