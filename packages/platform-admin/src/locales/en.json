@@ -3515,11 +3515,16 @@
       "loadingSyncData": "Loading sync data...",
       "title": "Advanced Sync",
       "addModal": {
-        "title": "Sync account object type",
+        "flipSyncIconLabel": "Flip sync direction",
+        "identityProfile": "Identity Profile",
+        "linkedMapping": "Linked Mapping",
+        "linkedMappingDescription": "Choose from existing relationship(s) between source and target.",
+        "linkMapping": "Link Mapping",
+        "linkMappingDescription": "Reuse the links from an existing sync configuration, rather than creating new links.",
+        "selectLinkedMapping": "Select Linked Mapping",
         "syncFrom": "Sync From",
         "syncTo": "Sync To",
-        "flipSyncIconLabel": "Flip sync direction",
-        "identityProfile": "Identity Profile"
+        "title": "Sync account object type"
       },
       "deleteModal": {
         "title": "Sync Data",
