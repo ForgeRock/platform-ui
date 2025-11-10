@@ -25,13 +25,8 @@ Feature: Enduser Registration
       | Password      | Rg_GRg9k&e    |
     And user fills security question "What's your favorite color?" with answer "Red"
     And user fills security question "Who was your first employer?" with answer "Ping" if present
-    Then 'Next' button is enabled
-    When user clicks on 'Next' button
     Then 'Email Address' field has 'Invalid email format (example@example.com)' validation error
     When user fills registration form with following data
       | Field         | Value                  |
       | Email Address | valid_email@domain.com |
-      | Password      | Rg_GRg9k&e             |
-    And user fills security question "What's your favorite color?" with answer "Red"
-    And user fills security question "Who was your first employer?" with answer "Ping" if present
     Then 'Next' button is enabled
