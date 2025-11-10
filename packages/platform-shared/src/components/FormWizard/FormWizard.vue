@@ -339,7 +339,7 @@ setBreadcrumb(props.breadcrumbPath, props.breadcrumbTitle);
 
   .card-footer {
     position: relative;
-    z-index: 2001;
+    z-index: 1030;
     background-color: $white;
   }
 }
