@@ -101,7 +101,7 @@ const { floatingStyle } = floatingElementPosition({
   enabled: props.useFloatingMenu,
   isVisible: isOpen,
   floatingRef: menuListRef,
-  floatingElementStyles: { width: 'fit-content', zIndex: 2000 },
+  floatingElementStyles: { width: 'fit-content', zIndex: 1020 },
 });
 
 /**
