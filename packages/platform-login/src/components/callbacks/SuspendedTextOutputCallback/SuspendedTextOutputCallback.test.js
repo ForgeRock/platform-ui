@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,6 +8,7 @@
 import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
 import i18n from '@/i18n';
 
@@ -61,6 +62,18 @@ describe('SuspendedTextOutputCallback', () => {
 
       // but renders without the html tags
       expect(wrapper.text()).toContain(STUB_MESSAGE_TEXT);
+    });
+
+    it('calls getTranslation function from mixin', () => {
+      const getTranslationSpy = jest.spyOn(TranslationMixin.methods, 'getTranslation');
+      setup();
+      expect(getTranslationSpy).toHaveBeenCalledWith('test output message');
+    });
+
+    it('calls getTranslation function from mixin when message contains HTML', () => {
+      const getTranslationSpy = jest.spyOn(TranslationMixin.methods, 'getTranslation');
+      setup(propsWithHtmlMessage);
+      expect(getTranslationSpy).toHaveBeenCalledWith('<p>test output message</p>');
     });
 
     describe('with classes', () => {
