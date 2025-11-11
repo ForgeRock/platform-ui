@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import { findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import PollingWaitCallback from '@/components/callbacks/PollingWaitCallback';
 import i18n from '@/i18n';
 
@@ -79,5 +80,11 @@ describe('PollingWaitCallback', () => {
     const spinner = findByRole(wrapper, 'status');
     expect(spinner.exists()).toBeFalsy();
     expect(wrapper.text()).not.toContain('Message');
+  });
+
+  it('calls getTranslation function from mixin', () => {
+    const getTranslationSpy = jest.spyOn(TranslationMixin.methods, 'getTranslation');
+    wrapper = setup();
+    expect(getTranslationSpy).toHaveBeenCalledWith('Message');
   });
 });
