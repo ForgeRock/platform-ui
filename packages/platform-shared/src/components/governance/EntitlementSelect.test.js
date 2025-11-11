@@ -7,7 +7,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
-import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import EntitlementSelect from './EntitlementSelect';
 import i18n from '@/i18n';
 
@@ -126,7 +126,7 @@ describe('EntitlementSelect', () => {
   });
 
   it('should load entitlements from API with current value empty', async () => {
-    CommonsApi.searchGovernanceResource = jest.fn().mockReturnValue(Promise.resolve(getEntitlementsResult()));
+    EntitlementApi.getEntitlementList = jest.fn().mockReturnValue(Promise.resolve(getEntitlementsResult()));
 
     const wrapper = setup();
     await flushPromises();
@@ -149,7 +149,7 @@ describe('EntitlementSelect', () => {
 
   it('should display error message if the api call fails', async () => {
     const error = new Error('ERROR');
-    CommonsApi.searchGovernanceResource = jest.fn().mockReturnValue(Promise.reject(error));
+    EntitlementApi.getEntitlementList = jest.fn().mockReturnValue(Promise.reject(error));
     const showErrorMessageSpy = jest.spyOn(notification, 'showErrorMessage');
 
     const wrapper = setup();
@@ -164,7 +164,7 @@ describe('EntitlementSelect', () => {
   });
 
   it('should load entitlements from API with current not in the list', async () => {
-    CommonsApi.searchGovernanceResource = jest.fn()
+    EntitlementApi.getEntitlementList = jest.fn()
       .mockReturnValueOnce(Promise.resolve(getEntitlementsResultMore()))
       .mockReturnValueOnce(Promise.resolve(getOneEntitlementsResult()));
 
@@ -194,7 +194,7 @@ describe('EntitlementSelect', () => {
   });
 
   it('should render properly the entitlements in the list', async () => {
-    CommonsApi.searchGovernanceResource = jest.fn().mockReturnValue(Promise.resolve(getEntitlementsResult()));
+    EntitlementApi.getEntitlementList = jest.fn().mockReturnValue(Promise.resolve(getEntitlementsResult()));
 
     const wrapper = setup();
     await flushPromises();
@@ -210,7 +210,7 @@ describe('EntitlementSelect', () => {
   });
 
   it('should show more results when view more button is clisked', async () => {
-    CommonsApi.searchGovernanceResource = jest.fn()
+    EntitlementApi.getEntitlementList = jest.fn()
       .mockReturnValueOnce(Promise.resolve(getEntitlementsResultMore()))
       .mockReturnValueOnce(Promise.resolve({
         data: {
@@ -252,7 +252,7 @@ describe('EntitlementSelect', () => {
   });
 
   it('should emit selected value when selected', async () => {
-    CommonsApi.searchGovernanceResource = jest.fn().mockReturnValue(Promise.resolve(getEntitlementsResult()));
+    EntitlementApi.getEntitlementList = jest.fn().mockReturnValue(Promise.resolve(getEntitlementsResult()));
 
     const wrapper = setup();
     await flushPromises();
@@ -264,7 +264,7 @@ describe('EntitlementSelect', () => {
 
   it('should search entitlements when input is changed', async () => {
     jest.useFakeTimers();
-    CommonsApi.searchGovernanceResource = jest.fn()
+    EntitlementApi.getEntitlementList = jest.fn()
       .mockReturnValueOnce(Promise.resolve(getEntitlementsResult()))
       .mockReturnValueOnce(Promise.resolve(getOneEntitlementsResult()));
 
@@ -287,7 +287,7 @@ describe('EntitlementSelect', () => {
   });
 
   it('should not add the entitlement to options if it is already fetched because is the current value', async () => {
-    CommonsApi.searchGovernanceResource = jest.fn()
+    EntitlementApi.getEntitlementList = jest.fn()
       .mockReturnValueOnce(Promise.resolve(getEntitlementsResultMore()))
       .mockReturnValueOnce(Promise.resolve(getOneEntitlementsResult()))
       .mockReturnValueOnce(Promise.resolve({
@@ -348,7 +348,7 @@ describe('EntitlementSelect', () => {
   });
 
   it('should load correctly when entitlements response is empty', async () => {
-    CommonsApi.searchGovernanceResource = jest.fn().mockReturnValue(Promise.resolve({
+    EntitlementApi.getEntitlementList = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         result: [],
         resultCount: 0,
@@ -364,11 +364,11 @@ describe('EntitlementSelect', () => {
     expect(wrapper.vm.viewMore).toBe(false);
     expect(wrapper.vm.selectedValue).toBe('');
     expect(wrapper.vm.totalPagedResults).toBe(0);
-    expect(CommonsApi.searchGovernanceResource).toHaveBeenCalledTimes(1);
+    expect(EntitlementApi.getEntitlementList).toHaveBeenCalledTimes(1);
   });
 
   it('should load correctly when entitlements response is empty and current value is selected, this could happen if the entitlement on the filter is deleted', async () => {
-    CommonsApi.searchGovernanceResource = jest.fn()
+    EntitlementApi.getEntitlementList = jest.fn()
       .mockReturnValueOnce(Promise.resolve({
         data: {
           result: [],
@@ -395,7 +395,7 @@ describe('EntitlementSelect', () => {
     expect(wrapper.vm.viewMore).toBe(false);
     expect(wrapper.vm.selectedValue).toBe('Entitlement name');
     expect(wrapper.vm.totalPagedResults).toBe(0);
-    expect(CommonsApi.searchGovernanceResource).toHaveBeenCalledTimes(2);
+    expect(EntitlementApi.getEntitlementList).toHaveBeenCalledTimes(2);
     expect(showErrorMessageSpy).toHaveBeenCalledWith(null, 'Entitlement Entitlement name not found');
   });
 });
