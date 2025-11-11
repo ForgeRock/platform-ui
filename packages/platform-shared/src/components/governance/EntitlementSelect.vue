@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { BButton } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import { ref } from 'vue';
-import { searchGovernanceResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getEntitlementList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { debounce } from 'lodash';
 import i18n from '@/i18n';
@@ -74,20 +74,11 @@ async function search() {
   const searchParameters = {
     pageNumber: currentPage,
     pageSize: entriesPerPage,
-    sortBy: 'entitlement.displayName',
-    sortDir: 'asc',
-  };
-  const payload = {
-    targetFilter: {
-      operator: 'CONTAINS',
-      operand: {
-        targetName: 'descriptor.idx./entitlement.displayName',
-        targetValue: searchQuery.value,
-      },
-    },
+    sortKeys: 'descriptor.idx./entitlement.displayName',
+    queryFilter: `descriptor.idx./entitlement.displayName co '${searchQuery.value}'`,
   };
   try {
-    const { data } = await searchGovernanceResource(payload, searchParameters);
+    const { data } = await getEntitlementList('resource', searchParameters);
     let options = data.result.map((item) => {
       const displayName = getEntitlementDisplayName(item);
       return {
@@ -106,29 +97,23 @@ async function search() {
 
       // if the current value is not on the fetched items then get it from the server
       if (!isCurrentValueInOptions && !isCurrentValueInSelectOptions) {
-        const payloadValue = {
-          targetFilter: {
-            operator: 'EQUALS',
-            operand: {
-              targetName: 'descriptor.idx./entitlement.displayName',
-              targetValue: props.modelValue,
-            },
-          },
+        const searchParams = {
+          queryFilter: `descriptor.idx./entitlement.displayName eq '${props.modelValue}'`,
         };
-        const { data: dataValue } = await searchGovernanceResource(payloadValue, {});
+        const { data: dataValue } = await getEntitlementList('resource', searchParams);
         if (!dataValue.result.length) {
           showErrorMessage(null, i18n.global.t('governance.entitlements.notFound', { entitlement: props.modelValue }));
-          return;
+        } else {
+          const selecteditemDisplayName = getEntitlementDisplayName(dataValue.result[0]);
+          options = [
+            {
+              value: selecteditemDisplayName,
+              text: selecteditemDisplayName,
+            },
+            ...options,
+          ];
+          totalPagedResults += 1;
         }
-        const selecteditemDisplayName = getEntitlementDisplayName(dataValue.result[0]);
-        options = [
-          {
-            value: selecteditemDisplayName,
-            text: selecteditemDisplayName,
-          },
-          ...options,
-        ];
-        totalPagedResults += 1;
       } else if (isCurrentValueInOptions && isCurrentValueInSelectOptions) {
         // if the current value is in the options list and already fetched then remove it from the options list
         options = options.filter((option) => option.value !== props.modelValue);
