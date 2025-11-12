@@ -95,6 +95,8 @@ src/
 
 ├── components/ - General application components
 
+├── components/selfservice - Components to support self service functions
+
 ├── composables/ - General application composables functions
 
 ├── scss/ - SCSS / CSS styling files
@@ -223,6 +225,12 @@ yarn build
 # run all tests
 yarn unit
 ```
+
+<a name="self-service"></a>
+## Self Service
+Self service was removed in IDM 8.x. This app has support for self service flows such as registration, progressive profile, and social login to enable usage with IDM 7.5.x versions and below. Self service features are disabled in idm-enduser by default, but can be enabled in the UI by setting `VUE_APP_ENABLE_SELF_SERVICE=true` in the `.env` file before building or serving the application.
+
+To fully use the features, they still need to be configured in IDM admin UI [Self Service Docs](https://docs.pingidentity.com/pingidm/7.5/self-service-reference/preface.html)
 
 <a name="browser-support"></a>
 ## Browser support
