@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="toggleMenu"
         class="navbar-toggler expand-sidebar"
         type="button"
-        aria-controls="#fr-sidebar-nav"
+        aria-controls="fr-sidebar-nav"
         :aria-expanded="(menuIsExpanded).toString()"
         :aria-label="$t('sideMenu.toggleSidebar')">
         <FrIcon
@@ -22,7 +22,9 @@ of the MIT license. See the LICENSE file for details. -->
           name="menu"
         />
       </button>
-      <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1" role="presentation">
+      <BNavbarNav
+        class="flex-row align-items-center justify-content-between flex-grow-1"
+        role="presentation">
         <li
           v-if="tenantLockedMode"
           class="d-flex align-items-center px-3">
@@ -67,12 +69,13 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-flex align-items-center">
           <slot name="center-content" />
         </li>
-        <li
+        <div
           :aria-hidden="!hasRightContent"
-          class="flex-row d-flex">
+          role="presentation"
+          class="flex-row d-flex align-items-center">
           <slot name="right-content">
             <FrNotification v-if="showNotifications" />
-            <div
+            <li
               v-if="showHelpLink"
               class="mr-4 d-none d-sm-block nav-item">
               <a
@@ -81,8 +84,8 @@ of the MIT license. See the LICENSE file for details. -->
                 target="_blank">
                 {{ $t('navbar.helpSupport') }}
               </a>
-            </div>
-            <div
+            </li>
+            <li
               v-if="showDocsLink"
               class="d-none d-sm-block nav-item">
               <a
@@ -91,83 +94,82 @@ of the MIT license. See the LICENSE file for details. -->
                 target="_blank">
                 {{ $t('navbar.docs') }}
               </a>
-            </div>
-            <div v-if="showDropdown">
-              <FrDropdownMenu
-                :dropdown-items="tenantMenuItems"
-                :show-profile-link="showProfileLink"
-                enable-logout
-                right
-                class="pl-sm-4">
-                <template #tenant-header>
-                  <BDropdownHeader
-                    v-if="$store.state.isFraas && hasTenantInfo"
-                    id="tenant-dropdown-header-label">
-                    <div class="h6 text-muted">
-                      {{ $t('tenantSettings.details.tenant') }}
-                    </div>
-                    <BMedia>
-                      <FrTenantTierBadge :tenant-tier="$store.state.promotionTenantInfo.currentTier" />
-                      <template>
-                        <img
-                          v-if="tenantRegionInfo"
-                          :src="tenantRegionInfo.flag && require(`@forgerock/platform-shared/src/assets/images/flags/${tenantRegionInfo.flag}.svg`)"
-                          :alt="$t('tenantSettings.details.flagAltText')"
-                          class="mr-2"
-                          width="18"
-                          height="21">
-                      </template>
-                      <small class="text-muted my-auto">
-                        {{ $store.state.tenantInfo.region }}
-                      </small>
-                    </BMedia>
-                  </BDropdownHeader>
-                </template>
-                <template #button-content>
-                  <BMedia
-                    vertical-align="center"
-                    class="text-left">
-                    <template #aside>
-                      <BAvatar
-                        size="34"
-                        variant="light"
-                        :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+            </li>
+            <FrDropdownMenu
+              v-if="showDropdown"
+              :dropdown-items="tenantMenuItems"
+              :show-profile-link="showProfileLink"
+              enable-logout
+              right
+              class="pl-sm-4">
+              <template #tenant-header>
+                <BDropdownHeader
+                  v-if="$store.state.isFraas && hasTenantInfo"
+                  id="tenant-dropdown-header-label">
+                  <div class="h6 text-muted">
+                    {{ $t('tenantSettings.details.tenant') }}
+                  </div>
+                  <BMedia>
+                    <FrTenantTierBadge :tenant-tier="$store.state.promotionTenantInfo.currentTier" />
+                    <template>
+                      <img
+                        v-if="tenantRegionInfo"
+                        :src="tenantRegionInfo.flag && require(`@forgerock/platform-shared/src/assets/images/flags/${tenantRegionInfo.flag}.svg`)"
+                        :alt="$t('tenantSettings.details.flagAltText')"
+                        class="mr-2"
+                        width="18"
+                        height="21">
                     </template>
-                    <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
-                      <div class="h5 my-0 text-truncate">
-                        {{ userDetails.company || userDetails.name }}
-                      </div>
-                      <div class="text-muted text-truncate">
-                        {{ userDetails.company ? userDetails.name : userDetails.email }}
-                      </div>
-                    </div>
+                    <small class="text-muted my-auto">
+                      {{ $store.state.tenantInfo.region }}
+                    </small>
                   </BMedia>
-                </template>
-                <template
-                  #dropdown-header
-                  v-if="userDetails.company || userDetails.subscription">
-                  <BDropdownHeader
-                    class="py-1 fr-dropdown-header">
-                    <div class="mt-1">
-                      <div
-                        v-if="tenantMenuItems.length"
-                        class="h6">
-                        {{ $t('common.tenant').toUpperCase() }}
-                      </div>
-                      <div class="h5 my-0">
-                        {{ userDetails.company }}
-                      </div>
-                      <span class="text-muted">
-                        {{ userDetails.subscription }}
-                      </span>
+                </BDropdownHeader>
+              </template>
+              <template #button-content>
+                <BMedia
+                  vertical-align="center"
+                  class="text-left">
+                  <template #aside>
+                    <BAvatar
+                      size="34"
+                      variant="light"
+                      :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+                  </template>
+                  <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
+                    <div class="h5 my-0 text-truncate">
+                      {{ userDetails.company || userDetails.name }}
                     </div>
-                  </BDropdownHeader>
-                  <BDropdownDivider />
-                </template>
-              </FrDropdownMenu>
-            </div>
+                    <div class="text-muted text-truncate">
+                      {{ userDetails.company ? userDetails.name : userDetails.email }}
+                    </div>
+                  </div>
+                </BMedia>
+              </template>
+              <template
+                #dropdown-header
+                v-if="userDetails.company || userDetails.subscription">
+                <BDropdownHeader
+                  class="py-1 fr-dropdown-header">
+                  <div class="mt-1">
+                    <div
+                      v-if="tenantMenuItems.length"
+                      class="h6">
+                      {{ $t('common.tenant').toUpperCase() }}
+                    </div>
+                    <div class="h5 my-0">
+                      {{ userDetails.company }}
+                    </div>
+                    <span class="text-muted">
+                      {{ userDetails.subscription }}
+                    </span>
+                  </div>
+                </BDropdownHeader>
+                <BDropdownDivider />
+              </template>
+            </FrDropdownMenu>
           </slot>
-        </li>
+        </div>
       </BNavbarNav>
     </BNavbar>
   </header>

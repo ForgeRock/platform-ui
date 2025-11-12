@@ -191,29 +191,71 @@ export function withSetup(composable) {
 }
 
 /**
- * Tests a Vue component wrapper for accessibility violations using jest-axe.
- * @async
- * @param {Object} wrapper - The Vue component wrapper to test.
- * @param {Object} overrideRules - Optional axe rules to override default settings.
- * @returns {Promise<Object>} The results from the axe accessibility check.
+ * Runs axe accessibility checks on a Vue wrapper, DOM node, or HTML string.
  *
- * NOTE: 💡 Developer Responsibility:
+ * @param {Object|HTMLElement|Node|string} wrapper
+ *   - Vue Test Utils wrapper (has .html() / .element)
+ *   - HTMLElement / Node
+ *   - HTML string
+ * @param {Object} options
+ * @param {Object} [options.overrideRules] Axe rule overrides passed to getAxe()
+ * @param {boolean} [options.useFullDocument=false] If true, run axe against document.body
+ * @param {boolean} [options.cleanupTempContainer=true] Remove temp container if created from HTML string
+ * @returns {Promise<Object>} axe results
  *
- * If the component has asynchronous operations (e.g., data fetching,
- * nextTick updates), you MUST resolve them using flushPromises()
- * BEFORE running assertions (including jest-axe checks).
- *
- * @example
- * it('component is accessible after data load', async () => {
+ * Usage examples:
+ * it('component does not have accessibility violations', async () => {
  *   const wrapper = mount(MyComponent);
  *   await flushPromises(); // <-- REQUIRED for async components
  *   await runA11yTest(wrapper, { rules: { 'image-alt': { enabled: false } } });
  * });
+ * // Other usage examples:
+ * await runA11yTest(wrapper);                       // Vue wrapper
+ * await runA11yTest(document.getElementById('x'));  // DOM node
+ * await runA11yTest('<div role="dialog">Hi</div>'); // HTML string
+ * await runA11yTest(wrapper, { useFullDocument: true }); // include externally controlled nodes
  */
-export async function runA11yTest(wrapper, overrideRules = {}) {
+export async function runA11yTest(wrapper, {
+  overrideRules = {},
+  useFullDocument = false,
+  cleanupTempContainer = true,
+} = {}) {
   const axe = getAxe(overrideRules);
-  const results = await axe(wrapper.html());
+  let target = null;
+  let tempContainer = null;
+
+  // Full document mode (includes external controlled regions)
+  if (useFullDocument) {
+    target = document.body;
+  } else if (wrapper && typeof wrapper === 'object' && typeof wrapper.html === 'function') {
+    // Vue wrapper
+    // Ensure external referenced nodes (e.g., aria-controls) exist before this call if needed.
+    target = wrapper.element;
+  } else if (wrapper instanceof HTMLElement) {
+    // DOM node / HTMLElement
+    target = wrapper;
+  } else if (typeof wrapper === 'string') {
+    // HTML string
+    tempContainer = document.createElement('div');
+    tempContainer.setAttribute('data-axe-temp-root', 'true');
+    tempContainer.innerHTML = wrapper;
+    document.body.appendChild(tempContainer);
+    target = tempContainer;
+  } else {
+    throw new Error('runA11yTest: Unsupported wrapper type. Provide a Vue wrapper, DOM node, or HTML string.');
+  }
+
+  if (!target) {
+    throw new Error('runA11yTest: Unable to resolve target for axe analysis.');
+  }
+
+  const results = await axe(target);
   expect(results).toHaveNoViolations();
+
+  if (tempContainer && cleanupTempContainer) {
+    tempContainer.remove();
+  }
+
   return results; // in case further checks are needed in the test
 }
 

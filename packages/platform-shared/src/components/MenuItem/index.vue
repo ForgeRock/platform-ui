@@ -60,6 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else-if="event"
       :is="bootstrapComponent"
       :active="active"
+      :aria-label="displayName"
       @click="$emit('item-click', event)"
       :link-class="'d-flex align-items-center'">
       <FrIcon
