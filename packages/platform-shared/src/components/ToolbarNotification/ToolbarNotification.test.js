@@ -9,6 +9,19 @@ import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import ToolbarNotification from './index';
 
+// Mocking RestMixin module to help ToolbarNotification to render
+jest.mock('@forgerock/platform-shared/src/mixins/RestMixin', () => ({
+  methods: {
+    getRequestService() {
+      return {
+        get: jest.fn().mockResolvedValue({ data: { _notifications: [] } }),
+        post: jest.fn().mockResolvedValue({}),
+        delete: jest.fn().mockResolvedValue({}),
+      };
+    },
+  },
+}));
+
 describe('ToolbarNotification', () => {
   let wrapper;
   let notifications = [{

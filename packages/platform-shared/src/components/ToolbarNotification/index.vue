@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,36 +11,45 @@ of the MIT license. See the LICENSE file for details. -->
       <FrIcon
         icon-class="mr-2 md-24"
         name="notifications" />
+      <span class="sr-only">
+        {{ $tc('pages.app.notifications.counts', notifications.length, { count: notifications.length }) }}
+      </span>
       <span
+        aria-hidden="true"
         v-if="notifications.length > 0"
         class="badge badge-pill badge-danger">
         {{ notifications.length }}
       </span>
     </template>
-    <BDropdownHeader class="border-bottom py-3">
-      <div class="fr-notification-header">
-        <span>{{ $t('pages.app.notifications.title') }} ({{ notifications.length }})</span>
-        <a
-          v-if="notifications.length > 0"
-          @click.prevent="clearAll()"
-          class="float-right"
-          href="#">
-          {{ $t('pages.app.notifications.clearAll') }}
-        </a>
-      </div>
-    </BDropdownHeader>
-
-    <template v-if="notifications.length > 0">
-      <div
-        class="scrollbox"
-        is="transition-group"
-        name="notification-list">
-        <div
+    <li class="border-bottom py-3">
+      <header
+        class="dropdown-header"
+        role="presentation">
+        <div class="fr-notification-header">
+          <span>{{ $t('pages.app.notifications.title') }} ({{ notifications.length }})</span>
+          <a
+            v-if="notifications.length > 0"
+            @click.prevent="clearAll()"
+            class="float-right color-darkblue"
+            href="#">
+            {{ $t('pages.app.notifications.clearAll') }}
+          </a>
+        </div>
+      </header>
+    </li>
+    <li
+      v-if="notifications.length > 0">
+      <transition-group
+        name="notification-list"
+        class="scrollbox notification-list"
+        tag="ul">
+        <li
           v-for="(notification, index) in notifications"
           :class="[
             `${notification.notificationType}-notification`,
             { 'border-bottom': (index + 1) < notifications.length }, 'dropdown-item', 'py-3', 'fr-notification-item']"
-          :key="notification._id">
+          :key="notification._id"
+          role="listitem">
           <div class="media">
             <div class="media-body">
               <h6 class="my-0">
@@ -60,20 +69,20 @@ of the MIT license. See the LICENSE file for details. -->
                 name="delete" />
             </BButton>
           </div>
+        </li>
+      </transition-group>
+    </li>
+    <li
+      v-else
+      class="mt-4 mb-3 fr-no-notifications fr-notification-item">
+      <div class="media">
+        <div class="media-body align-self-center">
+          <h6 class="text-center">
+            {{ $t('pages.app.notifications.noNotifications') }}
+          </h6>
         </div>
       </div>
-    </template>
-    <template v-else>
-      <div class="mt-4 mb-3 fr-no-notifications fr-notification-item">
-        <div class="media">
-          <div class="media-body align-self-center">
-            <h6 class="text-center">
-              {{ $t('pages.app.notifications.noNotifications') }}
-            </h6>
-          </div>
-        </div>
-      </div>
-    </template>
+    </li>
   </BNavItemDropdown>
 </template>
 
@@ -86,7 +95,6 @@ import {
 import {
   BButton,
   BNavItemDropdown,
-  BDropdownHeader,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -117,7 +125,6 @@ export default {
   components: {
     BButton,
     BNavItemDropdown,
-    BDropdownHeader,
     FrIcon,
   },
   mixins: [
@@ -250,6 +257,9 @@ export default {
       border-bottom: 0;
     }
   }
+  .dropdown-menu {
+    position: absolute;
+  }
 
   .badge-danger {
     position: absolute;
@@ -265,6 +275,11 @@ export default {
     .scrollbox {
       max-height: 14.1875rem;
       overflow-y: auto;
+      &.notification-list {
+        // reset default ul styles
+        margin: 0;
+        padding: 0;
+      }
     }
   }
 

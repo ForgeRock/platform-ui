@@ -5,8 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, DOMWrapper } from '@vue/test-utils';
+import { mount, DOMWrapper, flushPromises } from '@vue/test-utils';
 import ActionsMenu from './ActionsMenu';
+import { runA11yTest } from '../../utils/testHelpers';
 
 function setupApp() {
   const app = document.createElement('div');
@@ -15,19 +16,24 @@ function setupApp() {
   return app;
 }
 
-function setup(propsData) {
+async function setup(propsData, slots = {}) {
   const target = setupApp();
   mount(ActionsMenu, {
     attachTo: target,
     slots: {
       default: '<li data-v-68a6b289="" role="presentation"><a class="active dropdown-item" role="menuitem" href="#" target="_self">Pending</a></li><li data-v-68a6b289="" role="presentation"><a class="active dropdown-item" role="menuitem" href="#" target="_self">Completed</a></li>',
-      'button-content': '<div data-v-68a6b289="" class="p-0 toolbar-link-text" data-testid="status-dropdown-button"><span data-v-68a6b289="" class="font-weight-bold mr-1">Status:</span> Pending</div>',
+      ...slots,
     },
     props: {
       ...propsData,
     },
+    global: {
+      mocks: {
+        $t: (msg) => msg,
+      },
+    },
   });
-
+  await flushPromises();
   const bodyWrapper = new DOMWrapper(document.body);
 
   return { wrapper: bodyWrapper };
@@ -38,18 +44,27 @@ beforeEach(() => {
 });
 
 describe('Actions Menu Component', () => {
-  it('Will render button content', () => {
-    const { wrapper } = setup();
+  describe('@a11y', () => {
+    it('should have no accessibility violations with default props', async () => {
+      const { wrapper } = await setup();
+      await runA11yTest(wrapper);
+    });
+  });
+  it('Will render button content', async () => {
+    // button-content slot is only needed for this test case.
+    const buttonContentSlot = {
+      'button-content': '<div data-v-68a6b289="" class="p-0 toolbar-link-text" data-testid="status-dropdown-button"><span data-v-68a6b289="" class="font-weight-bold mr-1">Status:</span> Pending</div>',
+    };
+    const { wrapper } = await setup({}, buttonContentSlot);
     const button = wrapper.find('[data-testid="status-dropdown-button"]');
     const menu = wrapper.find('[role="menu"]');
-
     expect(button.exists()).toBe(true);
     expect(button.text()).toContain('Status: Pending');
     expect(menu.exists()).toBe(false);
   });
 
   it('Will render menu content and keep focus on button when clicked', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
     let menu = wrapper.find('[role="menu"]');
 
@@ -66,7 +81,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content and focus first element when arrow down is pressed', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
     let menu = wrapper.find('[role="menu"]');
 
@@ -83,7 +98,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content and focus first element when space is pressed', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -96,7 +111,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content and focus first element when enter is pressed', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -108,7 +123,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content and focus last element when arrow up is pressed', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -120,7 +135,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content, focus first and last element when home and end keys are pressed', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -142,7 +157,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content, focus item that starts with c when c key is pressed', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -159,7 +174,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content, focus item with index 1 when selectedItemIndex is 1 and Enter is pressed', async () => {
-    const { wrapper } = setup({ 'selected-item-index': 1 });
+    const { wrapper } = await setup({ 'selected-item-index': 1 });
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -171,7 +186,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render menu content, focus item with index 1 when selectedItemIndex is 1 and space is pressed', async () => {
-    const { wrapper } = setup({ 'selected-item-index': 1 });
+    const { wrapper } = await setup({ 'selected-item-index': 1 });
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -183,7 +198,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will focus button element when item is selected', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -198,7 +213,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will focus button element when menu is opened and Escape is pressed', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -213,7 +228,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will focus button element when menu is opened and Tab is pressed', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
     const button = wrapper.find('button');
 
     await button.element.focus();
@@ -228,7 +243,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will render ul inside menu container', async () => {
-    const { wrapper } = setup();
+    const { wrapper } = await setup();
 
     const button = wrapper.find('button');
 
@@ -252,7 +267,7 @@ describe('Actions Menu Component', () => {
   });
 
   it('Will teleport ul to app div', async () => {
-    const { wrapper } = setup({ 'use-floating-menu': true });
+    const { wrapper } = await setup({ 'use-floating-menu': true });
 
     const button = wrapper.find('button');
 

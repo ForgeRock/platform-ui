@@ -5,6 +5,7 @@
     "accountAttribute": "Account Attribute",
     "accounts": "Accounts",
     "action": "Action",
+    "actionMenuToggle": "Toggle actions menu",
     "actions": "Actions",
     "active": "Active",
     "activeColumns": "Active Columns",
@@ -890,6 +891,7 @@
     },
     "app": {
       "notifications": {
+        "counts": "0 notification | 1 notification | {count} notifications",
         "noNotifications": "No notifications available",
         "title": "Notifications",
         "clearAll": "Clear All",

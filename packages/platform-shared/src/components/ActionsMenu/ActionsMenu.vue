@@ -16,7 +16,11 @@ of the MIT license. See the LICENSE file for details. -->
       @keydown.space.prevent.stop="openMenu"
       @keydown.up.prevent="openMenu"
       @keydown.down.prevent="openMenu">
-      <slot name="button-content" />
+      <slot name="button-content">
+        <span class="sr-only">
+          {{ $t('common.actionMenuToggle') }}
+        </span>
+      </slot>
     </button>
     <teleport
       v-if="isOpen"
@@ -47,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
  * css focus state must not have styles and focus-visible and hover states must have theme values.
  */
 import {
-  ref, nextTick, onMounted, onBeforeUnmount, computed, defineEmits,
+  ref, nextTick, onMounted, onBeforeUnmount, computed,
 } from 'vue';
 import floatingElementPosition from '@forgerock/platform-shared/src/composables/floatingElementPosition';
 

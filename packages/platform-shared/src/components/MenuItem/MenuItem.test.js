@@ -5,14 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { flushPromises, shallowMount } from '@vue/test-utils';
+import { flushPromises, mount, shallowMount } from '@vue/test-utils';
 import { BButton, BBadge } from 'bootstrap-vue';
 import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import MenuItem from './index';
+import { runA11yTest } from '../../utils/testHelpers';
 
 let wrapper;
 
-function mountComponent(props, pinia = {}, mocks = { $route: { name: 'daniel' } }, stubs = {}) {
+function shallowMountComponent(props, pinia = {}, mocks = { $route: { name: 'daniel' } }, stubs = {}) {
   setupTestPinia(pinia);
   wrapper = shallowMount(MenuItem, {
     props,
@@ -26,14 +27,141 @@ function mountComponent(props, pinia = {}, mocks = { $route: { name: 'daniel' } 
   });
 }
 
+// Dummy menu container with role="menu" to satisfy aria-required-parent reference
+function setupDummyHtmlContainer(wrapperElement) {
+  const menuBar = document.createElement('nav');
+  menuBar.setAttribute('role', 'menu');
+  menuBar.setAttribute('id', 'menu-container');
+  document.body.appendChild(menuBar);
+  if (wrapperElement) {
+    menuBar.appendChild(wrapperElement);
+  }
+}
+
+function removeDummyHtmlContainer(wrapperElement) {
+  const menuBar = document.getElementById('menu-container');
+  if (!menuBar) return;
+  if (wrapperElement && menuBar.contains(wrapperElement)) {
+    menuBar.removeChild(wrapperElement);
+  }
+  document.body.removeChild(menuBar);
+}
+
+function mountComponent(props, pinia = {}, mocks = { $route: { name: 'daniel' } }, stubs = {}) {
+  setupTestPinia(pinia);
+  wrapper = mount(MenuItem, {
+    props,
+    global: {
+      mocks: {
+        $t: (msg) => msg,
+        ...mocks,
+      },
+      stubs,
+    },
+  });
+  setupDummyHtmlContainer(wrapper.element);
+}
+
+function unmountComponent(wrapperElement) {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+
+  removeDummyHtmlContainer(wrapperElement);
+}
+
 afterEach(() => {
   jest.clearAllMocks();
+  unmountComponent(wrapper.element);
 });
 
 describe('MenuItem Component', () => {
+  describe('@a11y', () => {
+    describe('should not have any accessibility violations', () => {
+      it('with basic menu item', async () => {
+        await mountComponent({
+          displayName: 'Test menu',
+          icon: 'home',
+          routeTo: { name: 'Test route' },
+        });
+        await flushPromises();
+        await runA11yTest(wrapper);
+      });
+      it('with menu item being an URL', async () => {
+        mountComponent({
+          displayName: 'Test url',
+          icon: 'link',
+          url: '/test/url',
+        });
+        await flushPromises();
+        await runA11yTest(wrapper);
+      });
+      it('with menu having subitems', async () => {
+        mountComponent({
+          displayName: 'Parent menu',
+          icon: 'folder',
+          subItems: [
+            {
+              displayName: 'Child menu 1',
+            },
+          ],
+        });
+        await flushPromises();
+        await runA11yTest(wrapper);
+      });
+      it('when menu opens a modal', async () => {
+        mountComponent({
+          displayName: 'Toggle Modal',
+          icon: 'launch',
+          modal: 'modal-id',
+        });
+        await flushPromises();
+        await runA11yTest(wrapper);
+      });
+      it('when menu item is a divider', async () => {
+        mountComponent({
+          divider: true,
+        });
+        await flushPromises();
+        await runA11yTest(wrapper);
+      });
+      it('when menu item is shown as nav', async () => {
+        mountComponent({
+          isNav: true,
+          displayName: 'Test menu',
+          icon: 'home',
+        });
+        await flushPromises();
+        await runA11yTest(wrapper);
+      });
+      it('when menu item is an event item', async () => {
+        mountComponent({
+          event: 'custom-event',
+          displayName: 'Test Event',
+          icon: 'home',
+        });
+        await flushPromises();
+        await runA11yTest(wrapper);
+      });
+      it('when menu item has badge content', async () => {
+        mountComponent({
+          isNav: true,
+          displayName: 'Test menu',
+          icon: 'home',
+          showBadgeWithContentFromStore: 'userCount',
+        },
+        {
+          userCount: 5,
+        });
+        await flushPromises();
+        await runA11yTest(wrapper);
+      });
+    });
+  });
+
   describe('showing items based on roles', () => {
     it('Determines not to show an item for a user with insufficient roles', () => {
-      mountComponent({
+      shallowMountComponent({
         displayName: 'bob',
         showForRoles: ['superAdmin'],
       });
@@ -42,7 +170,7 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to show an item for a user with sufficient roles', () => {
-      mountComponent({
+      shallowMountComponent({
         displayName: 'bob',
         showForRoles: ['plainOldAdmin'],
         userRoles: ['plainOldAdmin'],
@@ -52,7 +180,7 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to show an item for a user if the item has no role restrictions', () => {
-      mountComponent({
+      shallowMountComponent({
         displayName: 'bob',
       });
 
@@ -61,7 +189,7 @@ describe('MenuItem Component', () => {
 
     it('determines to show subItem for user if subitem has proper access called out', () => {
       setupTestPinia();
-      mountComponent(
+      shallowMountComponent(
         {
           displayName: 'subBob',
         },
@@ -72,7 +200,7 @@ describe('MenuItem Component', () => {
     });
 
     it('determines to not show subItem for user if subitem has proper access called out', () => {
-      mountComponent(
+      shallowMountComponent(
         {
           displayName: 'subBob',
         },
@@ -85,7 +213,7 @@ describe('MenuItem Component', () => {
 
   describe('showing items based on store values', () => {
     it('Determines not to show an item to the user when the store values passed to the component are not all found to be truthy in the store, even when those properties are in nested structures', () => {
-      mountComponent({
+      shallowMountComponent({
         displayName: 'bob',
         showForRoles: ['superAdmin'],
         showForStoreValues: ['isFraas', 'SharedStore.hasAmUrl'],
@@ -106,7 +234,7 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines not to show an item to the user when a flag is set that should not be set for this item', async () => {
-      mountComponent({
+      shallowMountComponent({
         displayName: 'bob',
         showForRoles: ['superAdmin'],
         showForStoreValues: ['!isFraas', 'SharedStore.hasAmUrl'],
@@ -128,7 +256,7 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to show an item to the user when the store values passed to the component are all found to be truthy in the store, even if they are found in nested structures', () => {
-      mountComponent({
+      shallowMountComponent({
         displayName: 'bob',
         showForRoles: ['superAdmin'],
         showForStoreValues: ['isFraas', 'SharedStore.hasAmUrl'],
@@ -149,7 +277,7 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to show any menu option that relies on a truthy value from the FederationAdmin privilege property in the user store', () => {
-      mountComponent({
+      shallowMountComponent({
         showForPrivileges: ['FederationAdmin'],
       },
       { user: { privileges: { FederationAdmin: true } } },
@@ -161,7 +289,7 @@ describe('MenuItem Component', () => {
     });
 
     it('Determines to hide any menu option that relies on a falsy value from the FederationAdmin privilege property in the user store', () => {
-      mountComponent({
+      shallowMountComponent({
         showForPrivileges: ['FederationAdmin'],
       },
       { user: { privileges: { FederationAdmin: false } } },
@@ -175,7 +303,7 @@ describe('MenuItem Component', () => {
 
   describe('determining whether the item is expanded', () => {
     it('Will set its state to be expanded if the current route name matches that of one of its sub items', () => {
-      mountComponent(
+      shallowMountComponent(
         {
           displayName: 'bob',
           subItems: [
@@ -199,7 +327,7 @@ describe('MenuItem Component', () => {
     });
 
     it('Will not set its state to be expanded if the current route name does not match that of one of its sub items', () => {
-      mountComponent(
+      shallowMountComponent(
         {
           displayName: 'bob',
           subItems: [
@@ -220,7 +348,7 @@ describe('MenuItem Component', () => {
   });
 
   it('Budget on dropdown parent not shown', () => {
-    mountComponent(
+    shallowMountComponent(
       {
         displayName: 'inbox',
         subItems: [
@@ -250,7 +378,7 @@ describe('MenuItem Component', () => {
   });
 
   it('Budget on dropdown parent shown if is not expanded', () => {
-    mountComponent(
+    shallowMountComponent(
       {
         displayName: 'inbox',
         showBadgeWithContentFromStore: 'inboxTotalCount',
@@ -283,7 +411,7 @@ describe('MenuItem Component', () => {
   });
 
   it('Budget on dropdown parent not shown if is expanded', () => {
-    mountComponent(
+    shallowMountComponent(
       {
         displayName: 'inbox',
         showBadgeWithContentFromStore: 'inboxTotalCount',
