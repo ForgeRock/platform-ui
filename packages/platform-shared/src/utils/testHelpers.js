@@ -166,8 +166,8 @@ export function mockScriptDocumentFunctions() {
  * Toggles opened or closed the first actions menu found in the given element.
  * @param {HTMLElement} element The element containing the actions menu button(s).
  */
-export async function toggleActionsMenu(element) {
-  const actionsCellButton = element.findAll('button').filter((item) => item.text().includes('more_horiz'))[0];
+export async function toggleActionsMenu(element, index = 0) {
+  const actionsCellButton = element.findAll('button').filter((item) => item.text().includes('more_horiz'))[index];
   expect(actionsCellButton).toBeDefined();
   await actionsCellButton.trigger('click');
 }
