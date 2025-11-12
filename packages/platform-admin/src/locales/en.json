@@ -145,6 +145,7 @@
     "ServiceAccounts": "Service Accounts",
     "SSLConfigurations": "SSL Configurations",
     "SyncDataEditor": "Advanced Sync Editor",
+    "SyncDataProvisionerEditor": "Advanced Sync Editor",
     "SyncIdentityProfileEditor": "Advanced Sync Editor",
     "TemplateBuilder": "Application Templates",
     "TenantAdmins": "Tenant Admins",
