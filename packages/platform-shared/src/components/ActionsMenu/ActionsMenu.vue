@@ -19,10 +19,10 @@ of the MIT license. See the LICENSE file for details. -->
       <slot name="button-content" />
     </button>
     <teleport
+      v-if="isOpen"
       to="#app"
       :disabled="!useFloatingMenu">
       <ul
-        v-if="isOpen"
         ref="menuListRef"
         role="menu"
         :aria-labelledby="menuButtonId"
