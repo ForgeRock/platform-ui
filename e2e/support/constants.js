@@ -110,6 +110,7 @@ export const ROLES = {
   toggle: 'switch',
   checkbox: 'checkbox',
   tab: 'tab',
+  heading: 'heading',
 };
 
 /**

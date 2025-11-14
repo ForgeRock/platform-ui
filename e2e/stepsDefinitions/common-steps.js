@@ -83,6 +83,38 @@ Given('enduser logs into {journey} journey', (journeyName) => {
   );
 });
 
+/**
+ * Creates multiple end user accounts with random credentials, stores them with numbered environment variables
+ * Usage: Given 3 enduser accounts are created via API
+ */
+Given('{int} enduser accounts are created via API', (userCount) => {
+  if (!Cypress.env('ACCESS_TOKEN')) {
+    cy.loginAsAdmin();
+  }
+
+  for (let i = 1; i <= userCount; i += 1) {
+    if (!Cypress.env(`endUserId${i}`)) {
+      const endUser = generateRandomEndUser();
+      cy.log(`Creating new IDM enduser ${i}: ${endUser.username}`).then(() => {
+        createIDMUser({
+          userName: endUser.username,
+          password: endUser.password,
+          givenName: endUser.firstName,
+          sn: endUser.lastName,
+          mail: endUser.emailAddress,
+        }).then((result) => {
+          expect(result.status).to.equal(201);
+          Cypress.env(`endUserName${i}`, endUser.username);
+          Cypress.env(`endUserFirstName${i}`, endUser.firstName);
+          Cypress.env(`endUserLastName${i}`, endUser.lastName);
+          Cypress.env(`endUserPassword${i}`, endUser.password);
+          Cypress.env(`endUserId${i}`, result.body._id);
+        });
+      });
+    }
+  }
+});
+
 Given('admin/enduser is logged out', () => {
   cy.logout();
   Cypress.env('ACCESS_TOKEN', '');
@@ -109,6 +141,24 @@ Given('browser locale is set to {string}', (locale) => {
 
 When('user clicks on {string} {role}', (name, role) => {
   cy.findByRole(role, { name: new RegExp(name, 'i') }).click();
+});
+
+/**
+ * Clicks on an element by its exact accessible name and role.
+ * This step should only be used when multiple elements would match the regex pattern
+ * used in the standard "user clicks on {string} {role}" step.
+ *
+ * @example
+ * // Use this step when you have overlapping element names like:
+ * // - "Users" button and "Users & Roles" button on the same page
+ * // - "Save" and "Save & Continue" buttons
+ * When user clicks on "Users" button with exact accessible name
+ *
+ * @param {string} name - The exact accessible name of the element (case-sensitive)
+ * @param {string} role - The ARIA role of the element to find
+ */
+When('user clicks on {string} {role} with exact accessible name', (name, role) => {
+  cy.findByRole(role, { name }).click();
 });
 
 When('user fills the following fields', (dataTable) => {
@@ -298,6 +348,31 @@ When(/^user (forcefully )?(checks|unchecks|turns on|turns off) the "([^"]*)" (sw
   cy.findByRole(actualRole, { name: accessibleName }).setToggleState(desiredState, clickOptions);
 });
 
+/**
+ * Adds a value to a multi-tag input field
+ * Usage: When user adds "https://example.com" to the "Sign-in URLs" tag input
+ */
+When('user adds {string} to the {string} tag input', (value, fieldName) => {
+  cy.findByLabelText(fieldName).parent().find('.fr-tag-input').type(`${value}{enter}`, { force: true });
+});
+
+When('user adds the stored value of {string} to the {string} tag input', (storedDataName, fieldName) => {
+  const value = Cypress.env(storedDataName);
+  cy.findByLabelText(fieldName).parent().find('.fr-tag-input').type(`${value}{enter}`, { force: true });
+});
+
+/**
+ * Removes a specific tag from a multi-tag input field by clicking its remove button
+ * Usage: When user removes "https://example.com" tag from the "Sign-in URLs" tag input
+ */
+When('user removes {string} tag from the {string} tag input', (tagValue, fieldName) => {
+  // First try to find the specific field container, then look for the tag remove button
+  cy.findByLabelText(fieldName)
+    .parent()
+    .find(`[data-testid="remove-${tagValue}-tag"]`)
+    .click();
+});
+
 Then('{string} button is enabled', (button) => {
   cy.findByRole('button', { name: button }).should('be.enabled');
 });
@@ -473,6 +548,11 @@ Then('fields are not visible', (datatable) => {
   });
 });
 
+Then(/^the "([^"]*)" field is (enabled|disabled)$/, (fieldName, expectedState) => {
+  const assertion = expectedState === 'enabled' ? 'be.enabled' : 'be.disabled';
+  cy.findByLabelText(fieldName).should(assertion);
+});
+
 Then('text {string} does not exist', (text) => {
   cy.findByText(text).should('not.exist');
 });
@@ -560,6 +640,34 @@ Then('the following items do not exist in the current table:', (dataTable) => {
 Then('the following items are visible in the current table:', (dataTable) => {
   dataTable.raw().forEach((itemName) => {
     cy.findByRole('cell', { name: itemName, timeout: 5000 }).should('be.visible');
+  });
+});
+
+/**
+ * Verifies that specific tabs are visible using a data table
+ * Usage:
+ * Then the following tabs are visible:
+ *   | All Apps          |
+ *   | IT infrastructure |
+ *   | Healthcare        |
+ */
+Then('the following tabs are visible:', (dataTable) => {
+  dataTable.raw().forEach((tabName) => {
+    cy.findByRole('tab', { name: tabName }).should('be.visible');
+  });
+});
+
+/**
+ * Verifies that specific radio options are visible using a data table
+ * Usage:
+ * Then the following radio options are visible:
+ *   | Active Directory    |
+ *   | Salesforce          |
+ *   | Google Workspace    |
+ */
+Then('the following radio options are visible:', (dataTable) => {
+  dataTable.raw().forEach((optionName) => {
+    cy.findByRole('radio', { name: new RegExp(optionName, 'i') }).should('exist');
   });
 });
 
@@ -749,4 +857,12 @@ Then('the page favicon url contains {string}', (filename) => {
     .findByTestId('favicon')
     .should('have.attr', 'href')
     .and('include', filename);
+});
+
+Then('the {string} dropdown is visible', (fieldName) => {
+  cy.findByRole('combobox', { name: fieldName }).should('be.visible');
+});
+
+Then('the {string} tag input is visible', (fieldName) => {
+  cy.findByLabelText(fieldName).should('exist');
 });
