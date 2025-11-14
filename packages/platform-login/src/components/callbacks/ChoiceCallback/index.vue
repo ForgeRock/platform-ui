@@ -3,29 +3,31 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BFormGroup
-    v-if="displayType === 'radio'"
-    class="text-left"
-    :label="getTranslation(selected.label)">
-    <BFormRadioGroup
+  <div>
+    <BFormGroup
+      v-if="displayType === 'radio'"
+      class="text-left"
+      :label="getTranslation(selected.label)">
+      <BFormRadioGroup
+        v-model="selected.value"
+        :options="selected.options"
+        :autofocus="autofocus"
+        text-field="text"
+        stacked
+        @input="callback.setInputValue($event)" />
+    </BFormGroup>
+    <FrField
+      v-else
       v-model="selected.value"
-      :options="selected.options"
+      type="select"
       :autofocus="autofocus"
-      text-field="text"
-      stacked
+      :floating-label="floatingLabel"
+      :label="selected.label"
+      :name="selected.name"
+      :options="selected.options"
+      show-hover-title
       @input="callback.setInputValue($event)" />
-  </BFormGroup>
-  <FrField
-    v-else
-    v-model="selected.value"
-    type="select"
-    :autofocus="autofocus"
-    :floating-label="floatingLabel"
-    :label="selected.label"
-    :name="selected.name"
-    :options="selected.options"
-    show-hover-title
-    @input="callback.setInputValue($event)" />
+  </div>
 </template>
 
 <script>
