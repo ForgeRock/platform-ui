@@ -112,6 +112,7 @@ describe('GovernanceDashboard', () => {
           '123',
           {
             _pageSize: 0,
+            ignoreRequestable: true,
           },
         );
     });

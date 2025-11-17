@@ -146,6 +146,7 @@ import {
   get,
   isEmpty,
   pick,
+  filter,
 } from 'lodash';
 import {
   BBadge,
@@ -267,11 +268,12 @@ export default {
           id: catalogItem.id,
           requested: this.isRequested(catalogItem.id),
           glossary: catalogItem.glossary?.idx['/role'],
+          requestable: get(catalogItem, 'glossary.idx./role.requestable', catalogItem.requestable || true),
         }));
       }
       if (this.catalogResults[0]?.entitlement) {
         return this.catalogResults.map((catalogItem) => ({
-          description: catalogItem.glossary?.idx['/entitlement']?.description || catalogItem.entitlement.description,
+          description: get(catalogItem, 'glossary.idx./entitlement.description', catalogItem.entitlement.description),
           icon: getApplicationLogo(catalogItem.application),
           name: catalogItem.descriptor?.idx['/entitlement']?.displayName || catalogItem.entitlement.displayName,
           appType: catalogItem.entitlement.name,
@@ -279,7 +281,8 @@ export default {
           id: catalogItem.id,
           assignmentId: catalogItem.assignment.id,
           requested: this.isRequested(catalogItem.id),
-          glossary: catalogItem.glossary?.idx['/entitlement'],
+          glossary: get(catalogItem, 'glossary.idx./entitlement', {}),
+          requestable: get(catalogItem, 'glossary.idx./entitlement.requestable', catalogItem.requestable || false),
           prediction: catalogItem.prediction,
         }));
       }
@@ -295,6 +298,7 @@ export default {
           glossary: catalogItem.glossary?.idx['/application'],
           applicationId: catalogItem.application.id,
           mappingNames: catalogItem.application.mappingNames,
+          requestable: get(catalogItem, 'glossary.idx./application.requestable', catalogItem.requestable || true),
           connectorId: catalogItem.application.connectorId,
         }));
       }
@@ -447,9 +451,9 @@ export default {
           roleMembership: 'role,id,glossary',
         };
         const searchParams = {
-          fields: fieldsMap[catalogType],
-          pageSize: params.pageSize || 10,
-          pagedResultsOffset: ((params.page || 1) - 1) * 10,
+          _fields: fieldsMap[catalogType],
+          _pageSize: params.pageSize || 10,
+          _pagedResultsOffset: ((params.page || 1) - 1) * 10,
         };
         if (params.sortKeys) {
           searchParams.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortKeys}`;
@@ -495,10 +499,37 @@ export default {
         }
         if (this.requestType === 'recommendations') {
           const userId = this.requestCartUsers[0].id;
+          searchParams.ignoreRequestable = true;
           const { data } = await getUserRecommendations(userId, searchParams, targetFilter);
+          const catalogIds = [];
           data.result.forEach((item) => {
             item.id = item.catalog?.id;
+            if (!get(item, 'glossary.idx./entitlement.requestable', false)) {
+              catalogIds.push(item.catalog?.id);
+            }
           });
+          if (catalogIds.length > 0) {
+            const catalogFilter = {
+              operator: 'OR',
+              operand: [],
+            };
+            catalogIds.forEach((id) => { catalogFilter.operand.push({ operator: 'EQUALS', operand: { targetValue: id, targetName: 'id' } }); });
+            const catalogParams = {
+              _fields: fieldsMap[catalogType],
+              _pageSize: params.pageSize || 10,
+              _pagedResultsOffset: ((params.page || 1) - 1) * 10,
+            };
+            const results = await queryCatalog(catalogParams, catalogFilter);
+            if (results.data.result.length > 0) {
+              results.data.result.forEach((item) => {
+                const requestable = get(item, 'glossary.idx./entitlement.requestable', false);
+                if (requestable) {
+                  const filteredResult = filter(data.result, { id: item.id });
+                  filteredResult[0].requestable = requestable;
+                }
+              });
+            }
+          }
           this.catalogResults = data?.result || [];
           this.totalCount = data?.totalCount || 0;
         } else {

@@ -162,9 +162,10 @@ of the MIT license. See the LICENSE file for details. -->
                         class="h-100 shadow-none cursor-pointer hover-blue-border"
                         no-body
                         role="button"
+                        :class="{'disabled-card': !item.requestable}"
                         tabindex="0"
                         @keydown.enter="openItemDetails(item)"
-                        @click="openItemDetails(item)"
+                        @click="item.requestable && openItemDetails(item)"
                       >
                         <BCardBody class="d-flex">
                           <BMedia
@@ -215,6 +216,14 @@ of the MIT license. See the LICENSE file for details. -->
                               icon-class="mr-2 text-success"
                               name="check">
                               {{ $t('governance.accessRequest.newRequest.added') }}
+                            </FrIcon>
+                          </template>
+                          <template v-else-if="!item.requestable">
+                            <FrIcon
+                              icon-class="mr-2 text-muted"
+                              class="text-muted"
+                              name="cancel">
+                              {{ $t('governance.accessRequest.newRequest.nonRequestable') }}
                             </FrIcon>
                           </template>
                           <span
@@ -684,6 +693,14 @@ a.card:hover {
   text-decoration: none;
   border-color: $blue !important;
   background: $white;
+}
+
+.disabled-card {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.disabled-card:hover {
+  border-color: $gray !important;
 }
 
 .nav-tabs .nav-link:hover {
