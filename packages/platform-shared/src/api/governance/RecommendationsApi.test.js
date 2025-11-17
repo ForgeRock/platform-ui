@@ -20,7 +20,7 @@ describe('Recommendations API', () => {
 
   it('should call getUserRecommendations correct URL and payload', async () => {
     const userId = 'user123';
-    const params = { _pageSize: 10, queryFilter: true };
+    const params = { _pageSize: 10, _queryFilter: true };
 
     const data = { result: [], totalCount: 0 };
     get.mockResolvedValueOnce(Promise.resolve(data));

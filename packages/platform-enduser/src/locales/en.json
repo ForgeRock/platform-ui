@@ -336,6 +336,7 @@
         "newRequest": "New Request",
         "noFilterResults": "No results found",
         "noFilterResultsSubTitle": "Try adjusting applied filters or search keywords",
+        "nonRequestable": "Access is not requestable",
         "noRequestedItemsYet": "No requested items yet",
         "noResults": "No {item} available",
         "noResultsSubTitle": "No {item} are available for request for the selected user(s).",

@@ -18,6 +18,7 @@ const mockCatalogItems = [
     description: 'A good roll, flakey, warm, yum.',
     templateName: 'template',
     requested: true,
+    requestable: true,
     id: 1,
   },
   {
@@ -27,6 +28,7 @@ const mockCatalogItems = [
     description: 'A perfect role',
     templateName: 'template2',
     requested: false,
+    requestable: true,
     id: 2,
   },
 ];
@@ -180,6 +182,7 @@ describe('AccessRequestCatalog Component', () => {
       id: 2,
       name: 'role 2',
       requested: false,
+      requestable: true,
       templateName: 'template2',
     });
   });

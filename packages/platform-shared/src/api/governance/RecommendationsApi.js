@@ -19,9 +19,9 @@ import { convertTargetFilterToQueryFilter } from '@forgerock/platform-shared/src
  */
 // eslint-disable-next-line import/prefer-default-export
 export function getUserRecommendations(userId, params, targetFilter) {
-  if (targetFilter && !params.queryFilter) {
-    params.queryFilter = convertTargetFilterToQueryFilter(targetFilter);
+  if (targetFilter && !params._queryFilter) {
+    params._queryFilter = convertTargetFilterToQueryFilter(targetFilter);
   }
-  const queryString = encodeQueryString(params);
+  const queryString = encodeQueryString(params, false);
   return generateIgaApi().get(`/governance/user/${userId}/recommendations${queryString}`);
 }

@@ -163,6 +163,7 @@ export default {
       if (this.$store.state.govAutoIdEnabled) {
         const params = {
           _pageSize: 0,
+          ignoreRequestable: true,
         };
         try {
           const resourceData = await getUserRecommendations(this.userId, params);

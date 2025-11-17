@@ -47,6 +47,7 @@ CatalogApi.queryCatalog = jest.fn().mockReturnValue({
           name: 'My Service Now App',
           templateName: 'servicenow',
           templateVersion: '2.0',
+          requestable: true,
         },
       },
     ],
