@@ -12,6 +12,7 @@ import {
   reject,
   startsWith,
 } from 'lodash';
+import encodeQueryString from '../utils/encodeQueryString';
 import { generateIdmApi } from './BaseApi';
 import { getConfig } from './ConfigApi';
 
@@ -77,4 +78,13 @@ export function getSchema(obj, requestOverride) {
  */
 export function deleteSchemaProperty(objectName, propertyName) {
   return generateIdmApi().delete(`/schema/managed/${objectName}/properties/${propertyName}`);
+}
+
+/**
+ * Gets schema results based on specific params
+ *
+ * @returns {Promise} API promise with return list of schema objects
+ */
+export function querySchema(params) {
+  return generateIdmApi().get(`schema${encodeQueryString(params)}`);
 }

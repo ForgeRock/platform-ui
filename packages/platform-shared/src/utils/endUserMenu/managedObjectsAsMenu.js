@@ -6,7 +6,7 @@
  */
 
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
+import { querySchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import isFraasFilter from '@forgerock/platform-shared/src/utils/fraasUtils';
 import { getMenuItemIcon } from '@forgerock/platform-shared/src/enduser/utils/enduserPrivileges';
 import i18n from '@/i18n';
@@ -24,16 +24,16 @@ import { getValidManagedObjectMenuId } from './menuItemUtils';
 export async function fetchManagedObjectsAsMenuItems(store = {}) {
   let managedObjectMenuItems = [];
   try {
-    const managedObjects = await getConfig('managed');
-    if (managedObjects.data?.objects) {
-      managedObjectMenuItems = managedObjects.data.objects.map((object) => ({
-        id: getValidManagedObjectMenuId(object.name),
-        label: { en: object.schema.title },
-        icon: getMenuItemIcon(object.schema),
+    const managedObjects = await querySchema({ _queryFilter: '_id sw "managed"', _fields: ['_id', 'title', 'mat-icon'] });
+    if (managedObjects.data?.result) {
+      managedObjectMenuItems = managedObjects.data.result.map((object) => ({
+        id: getValidManagedObjectMenuId(object._id.replace('managed/', '')),
+        label: { en: object.title },
+        icon: getMenuItemIcon(object),
         isManagedObject: true,
         routeTo: {
           name: 'ListResource',
-          params: { resourceType: 'managed', resourceName: object.name },
+          params: { resourceType: 'managed', resourceName: object._id.replace('managed/', '') },
         },
       }));
     }
@@ -65,10 +65,14 @@ export async function fetchManagedObjectsAsMenuItems(store = {}) {
       managedObjectMenuItems = managedObjectMenuItems.filter((item) => !item.id.endsWith('application'));
     }
 
+    // always filter out usermeta and svcacct
+    managedObjectMenuItems = managedObjectMenuItems.filter((item) => !item.id.endsWith('usermeta') && !item.id.endsWith('svcacct'));
+
     // sort the menu items by labels in alphabetical order
     managedObjectMenuItems = managedObjectMenuItems.sort((a, b) => a.id.localeCompare(b.id));
   } catch (error) {
     showErrorMessage(error, i18n.global.t('sideMenu.endUser.errorRetrievingManagedObjects'));
   }
+
   return managedObjectMenuItems;
 }

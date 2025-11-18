@@ -25,6 +25,7 @@ export const useUserStore = defineStore('user', () => {
   const amAdmin = ref(false);
   const privileges = ref({});
   const hasFederationAdminPrivilege = computed(() => privileges.value.FederationAdmin === true);
+  const hasTenantAdminPrivilege = computed(() => privileges.value.TenantAdmin === true);
   const hasTenantAuditorPrivilege = computed(() => privileges.value.TenantAuditor === true);
   const hasIDMUsersViewPrivilege = computed(() => privileges.value.IDMUsersView === true);
 
@@ -117,6 +118,7 @@ export const useUserStore = defineStore('user', () => {
     givenName,
     name,
     hasFederationAdminPrivilege,
+    hasTenantAdminPrivilege,
     hasTenantAuditorPrivilege,
     hasIDMUsersViewPrivilege,
     userId,

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -83,9 +83,13 @@ export default {
     redirectToDashboard() {
       // When a user selects to go 'back to Dashboard' they are directed/redirected to the correct 'package' Dashboard, according to what type of user they are.
       if ((this.$store.state.SharedStore.currentPackage === 'admin') && (!this.amAdmin && !this.realmAdmin)) {
+        if (this.$store.state.defaultRoute) {
+          this.$router.push({ name: this.$store.state.defaultRoute?.name });
+          return;
+        }
         window.location.href = this.$store.state.enduserURL;
       } else {
-        this.$router.push({ name: 'Dashboard' });
+        this.$router.push({ name: this.$store.state.defaultRoute?.name || 'Dashboard' });
       }
     },
   },
