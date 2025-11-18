@@ -1,8 +1,7 @@
-<!-- Copyright 2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrProfileContainer>
     <template #settings="{ updateProfile }">
@@ -12,6 +11,10 @@ to such license between the licensee and ForgeRock AS. -->
           v-model:close-reset-password="closeResetPassword"
           @reset-password="(currentPassword, newPassword) => updateProfile(...getResetPasswordPayload(currentPassword, newPassword))" />
         <FrAccountControls class="mb-5" />
+        <FrSocial
+          v-if="ENABLE_SELF_SERVICE"
+          :client-token="clientToken"
+          :linked-provider="linkedProvider" />
         <FrPreferences
           class="mb-5"
           @updateProfile="updateProfile" />
@@ -21,19 +24,23 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script setup>
-
+import { computed, ref } from 'vue';
 import { BCol } from 'bootstrap-vue';
 import FrProfileContainer from '@forgerock/platform-shared/src/enduser/components/profile/ProfileContainer';
 import FrAccountControls from '@forgerock/platform-shared/src/enduser/components/profile/AccountControls';
 import FrPreferences from '@forgerock/platform-shared/src/enduser/components/profile/Preferences';
-import { ref } from 'vue';
 import FrAccountSecurity from '@/components/AccountSecurity';
+import FrSocial from '@/components/Social';
+import store from '@/store';
 
 /**
  * @description Controlling component for profile management
  */
 
 const closeResetPassword = ref(false);
+const ENABLE_SELF_SERVICE = store.state.FeatureFlagsStore.isSelfServiceEnabled;
+const clientToken = computed(() => store.state.OAuthState.clientToken);
+const linkedProvider = computed(() => store.state.OAuthState.linkedProvider);
 
 /**
  * Returns the payload for the reset password request, it returns a list of
@@ -62,4 +69,5 @@ function getResetPasswordPayload(currentPassword, newPassword) {
     },
   ];
 }
+
 </script>

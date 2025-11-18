@@ -236,6 +236,23 @@
       "preferences": {
         "title": "Preferences",
         "subtitle": "Set your communications preferences."
+      },
+     "socialSignIn": {
+        "connect": "Connect",
+        "connected": "Connected",
+        "disconnect": "Disconnect {provider}",
+        "disconnectConfirmMsg": "If you disconnect, you will not be able to log in with {provider}.",
+        "errorConnectingProvider": "Error connecting social identity provider.",
+        "errorDisconnectingProvider": "Error disconnecting social identity provider.",
+        "errorGettingProfile": "Error retrieving social identity profile.",
+        "errorLoadingProviders": "Error loading social identity providers.",
+        "linkedAccount": "Linked account",
+        "linkedProvider": "{provider} has been linked",
+        "unlinkProvider": "{provider} has been unlinked",
+        "notConnected": "Not Connected",
+        "sharing": "You are sharing",
+        "subtitle": "Sign into your account using social identity providers.",
+        "title": "Social Sign-in"
       }
     },
     "notFound": {

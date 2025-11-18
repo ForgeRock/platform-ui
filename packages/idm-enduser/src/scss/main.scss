@@ -1,3 +1,13 @@
 @import '~bootstrap/scss/bootstrap.scss';
 @import '~bootstrap-vue/dist/bootstrap-vue.css';
 @import '~@forgerock/platform-shared/src/scss/main.scss';
+
+
+.fr-company-logo-square {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/ping-logo-square.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+}

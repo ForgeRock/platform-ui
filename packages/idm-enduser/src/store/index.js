@@ -15,17 +15,27 @@ export default createStore({
       clientToken: null,
       originalToken: null,
       returnParams: null,
+      linkedProvider: null,
     },
   },
   mutations: {
     setAuthHeaders(state, val) {
       state.authHeaders = val;
     },
-    setOAuthState(state, clientToken, originalToken, returnParams) {
+    setOAuthState(state, params) {
       state.OAuthState = {
-        clientToken,
-        originalToken,
-        returnParams,
+        clientToken: params.clientToken,
+        originalToken: params.originalToken,
+        returnParams: params.returnParams,
+        linkedProvider: params.linkedProvider,
+      };
+    },
+    clearOAuthState(state) {
+      state.OAuthState = {
+        clientToken: null,
+        originalToken: null,
+        returnParams: null,
+        linkedProvider: null,
       };
     },
   },

@@ -73,16 +73,23 @@ async function handleOAuthReturn() {
       // check for progressive profile
       progressiveProfileCheck(loginData, () => {
         if (linkedProvider) {
+          store.commit('setOAuthState', {
+            clientToken: dataStoreToken, originalToken, returnParams: null, linkedProvider,
+          });
           router.push({ name: 'Profile' });
         } else if (isNull(originalToken)) {
           router.push('/');
         } else {
-          store.commit('setOAuthState', dataStoreToken, originalToken, null);
+          store.commit('setOAuthState', {
+            clientToken: dataStoreToken, originalToken, returnParams: null, linkedProvider: null,
+          });
           router.push({ name: 'AccountClaiming' });
         }
       });
     } catch (error) {
-      store.commit('setOAuthState', dataStoreToken, originalToken, null);
+      store.commit('setOAuthState', {
+        clientToken: dataStoreToken, originalToken, returnParams: null, linkedProvider: null,
+      });
       router.push({ name: 'AccountClaiming' });
     }
   } catch (error) {

@@ -31,6 +31,13 @@ const routes = [
   {
     path: '/',
     redirect: '/dashboard',
+    beforeEnter: () => {
+      if (window.location.search && window.location.search.match(/state|oauth_token/)) {
+        return { path: '/oauthReturn' };
+      }
+      return true;
+    },
+    meta: { authenticate: true },
   },
   {
     path: '/handleOAuth/:amData',
@@ -45,6 +52,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
+    alias: ['/_=_', '/_'], // Need alias for catching Facebook and Instagram odd oAuth return
     beforeEnter: () => {
       if (isAuthenticated()) {
         return { path: '/dashboard' };
