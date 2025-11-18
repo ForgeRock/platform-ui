@@ -5,13 +5,13 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
+import { querySchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import isFraasFilter from '@forgerock/platform-shared/src/utils/fraasUtils';
 import { fetchManagedObjectsAsMenuItems } from './managedObjectsAsMenu';
 
 const { showErrorMessage } = mockNotification();
-jest.mock('@forgerock/platform-shared/src/api/ConfigApi');
+jest.mock('@forgerock/platform-shared/src/api/SchemaApi');
 jest.mock('@forgerock/platform-shared/src/utils/fraasUtils');
 jest.mock('@/i18n', () => ({
   global: { t: jest.fn((key) => key) },
@@ -20,18 +20,21 @@ jest.mock('@/i18n', () => ({
 describe('fetchManagedObjectsAsMenuItems', () => {
   const managedObjectsMock = {
     data: {
-      objects: [
+      result: [
         {
-          name: 'user',
-          schema: { title: 'User', 'mat-icon': 'person' },
+          _id: 'managed/user',
+          title: 'User',
+          'mat-icon': 'person',
         },
         {
-          name: 'assignment',
-          schema: { title: 'Assignment' },
+          _id: 'managed/assignment',
+          title: 'Assignment',
+          'mat-icon': 'check_box_outline_blank',
         },
         {
-          name: 'application',
-          schema: { title: 'Application' },
+          _id: 'managed/application',
+          title: 'Application',
+          'mat-icon': 'check_box_outline_blank',
         },
       ],
     },
@@ -39,44 +42,44 @@ describe('fetchManagedObjectsAsMenuItems', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    getConfig.mockResolvedValue(managedObjectsMock);
+    querySchema.mockResolvedValue(managedObjectsMock);
     isFraasFilter.mockImplementation((items) => items.filter((item) => item.id !== 'user'));
   });
 
   it('should fetch and format managed objects as menu items', async () => {
     const result = await fetchManagedObjectsAsMenuItems();
-    expect(getConfig).toHaveBeenCalledWith('managed');
+    expect(querySchema).toHaveBeenCalledWith({ _queryFilter: '_id sw "managed"', _fields: ['_id', 'title', 'mat-icon'] });
     expect(result).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
+      [
+        {
           id: 'application',
           label: { en: 'Application' },
           icon: 'check_box_outline_blank',
           isManagedObject: true,
-          routeTo: expect.objectContaining({ name: 'ListResource', params: { resourceType: 'managed', resourceName: 'application' } }),
-        }),
-        expect.objectContaining({
+          routeTo: { name: 'ListResource', params: { resourceType: 'managed', resourceName: 'application' } },
+        },
+        {
           id: 'assignment',
           label: { en: 'Assignment' },
           icon: 'check_box_outline_blank',
           isManagedObject: true,
-          routeTo: expect.objectContaining({ name: 'ListResource', params: { resourceType: 'managed', resourceName: 'assignment' } }),
-        }),
-        expect.objectContaining({
+          routeTo: { name: 'ListResource', params: { resourceType: 'managed', resourceName: 'assignment' } },
+        },
+        {
           id: 'internal/role',
           label: { en: 'sideMenu.authorizationRole' },
           icon: 'people',
           isManagedObject: true,
-          routeTo: expect.objectContaining({ name: 'ListResource', params: { resourceType: 'internal', resourceName: 'role' } }),
-        }),
-        expect.objectContaining({
+          routeTo: { name: 'ListResource', params: { resourceType: 'internal', resourceName: 'role' } },
+        },
+        {
           id: 'user',
           label: { en: 'User' },
           icon: 'person',
           isManagedObject: true,
-          routeTo: expect.objectContaining({ name: 'ListResource', params: { resourceType: 'managed', resourceName: 'user' } }),
-        }),
-      ]),
+          routeTo: { name: 'ListResource', params: { resourceType: 'managed', resourceName: 'user' } },
+        },
+      ],
     );
     // Sorted by id
     expect(result.map((i) => i.id)).toEqual([
@@ -94,7 +97,7 @@ describe('fetchManagedObjectsAsMenuItems', () => {
 
   it('should filter managed objects using isFraasFilter if isFraas is true', async () => {
     const store = { state: { isFraas: true, realm: 'alpha' } };
-    getConfig.mockResolvedValue({
+    querySchema.mockResolvedValue({
       data: {
         objects: [
           { name: 'user', schema: { title: 'User', 'mat-icon': 'person' } },
@@ -126,16 +129,16 @@ describe('fetchManagedObjectsAsMenuItems', () => {
     expect(result.some((item) => item.id.endsWith('application'))).toBe(false);
   });
 
-  it('should show error message if getConfig throws', async () => {
+  it('should show error message if querySchema throws', async () => {
     const error = new Error('Failed to fetch');
-    getConfig.mockRejectedValueOnce(error);
+    querySchema.mockRejectedValueOnce(error);
     const result = await fetchManagedObjectsAsMenuItems();
     expect(showErrorMessage).toHaveBeenCalledWith(error, 'sideMenu.endUser.errorRetrievingManagedObjects');
     expect(result).toEqual([]);
   });
 
   it('should handle missing managed objects gracefully', async () => {
-    getConfig.mockResolvedValueOnce({ data: {} });
+    querySchema.mockResolvedValueOnce({ data: {} });
     const result = await fetchManagedObjectsAsMenuItems();
     expect(result.some((item) => item.id === 'internal/role')).toBe(true);
     expect(result.length).toBe(1);
