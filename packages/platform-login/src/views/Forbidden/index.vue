@@ -3,27 +3,22 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer
-    fluid>
-    <div style="margin-top: 40%;">
-      <FrForbidden
-        :show-dashboard="false"
-        :show-logout="false" />
-    </div>
-  </BContainer>
+  <div class="d-flex justify-content-center align-items-center vh-100">
+    <FrForbidden
+      :show-dashboard="false"
+      :show-logout="false" />
+  </div>
 </template>
 
 <script>
 /**
  * @description Card container that will stay horizontally and vertically center on the screen (example can be found on the default login page)
  */
-import { BContainer } from 'bootstrap-vue';
 import FrForbidden from '@forgerock/platform-shared/src/views/Forbidden';
 
 export default {
   name: 'ForbiddenWrapper',
   components: {
-    BContainer,
     FrForbidden,
   },
   props: {
