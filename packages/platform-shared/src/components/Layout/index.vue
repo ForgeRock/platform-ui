@@ -369,7 +369,7 @@ body {
   height: 100%;
 
   &.show-navbar {
-    padding-bottom: 124px;
+    padding-bottom: $fr-app-content-padding-bottom;
     height: calc(100% - 141px);
   }
 

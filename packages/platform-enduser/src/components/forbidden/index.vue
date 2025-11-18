@@ -3,12 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer
-    fluid>
-    <div style="margin-top: 40%;">
-      <FrForbidden :show-dashboard="false" />
-    </div>
-  </BContainer>
+  <div class="page-height">
+    <FrForbidden :show-dashboard="false" />
+  </div>
 </template>
 <script>
 /**
@@ -16,12 +13,10 @@ of the MIT license. See the LICENSE file for details. -->
  *
  * */
 import FrForbidden from '@forgerock/platform-shared/src/views/Forbidden';
-import { BContainer } from 'bootstrap-vue';
 
 export default {
   name: 'ForbiddenWrapper',
   components: {
-    BContainer,
     FrForbidden,
   },
   props: {
@@ -32,3 +27,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.page-height {
+  height: calc(100vh - #{$fr-navbar-height + $fr-app-content-padding-bottom}); // Adjust height based on navbar and padding
+  padding-top: $fr-app-content-padding-bottom; // To manage vertical centering
+}
+</style>
