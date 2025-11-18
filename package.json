@@ -68,6 +68,7 @@
   "resolutions": {
     "@babel/runtime": "7.26.10",
     "autoprefixer": "10.4.5",
+    "brace-expansion": "2.0.2",
     "cross-spawn": "7.0.5",
     "elliptic": "6.6.0",
     "istanbul-lib-instrument": "5.2.0",
