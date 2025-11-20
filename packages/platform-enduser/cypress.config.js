@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -32,9 +32,15 @@ module.exports = defineConfig({
   videosFolder: 'e2e/videos',
   e2e: {
     async setupNodeEvents(on, config) {
+      // Override specPattern for Percy visual tests
+      if (process.env.PERCY_ENABLED === 'true') {
+        config.specPattern = 'e2e/tests/visuals/**/*.visual.cy.js';
+        config.excludeSpecPattern = [];
+      }
+
       return require('../../e2e/plugins/index.js')(on, config); // eslint-disable-line global-require
     },
-    excludeSpecPattern: ['lighthouse.suite.cy.js'],
+    excludeSpecPattern: ['lighthouse.suite.cy.js', 'e2e/tests/visuals/**/*'],
     specPattern: 'e2e/tests/**/*.{js,feature}',
     supportFile: 'e2e/support/index.js',
   },
