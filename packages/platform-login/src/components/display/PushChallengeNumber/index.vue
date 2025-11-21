@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,9 +9,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-0">
       {{ pushChallengeMessage }}
     </p>
-    <h1 class="mb-2 mt-4 p-3">
+    <p class="h1 mb-2 mt-4 p-3">
       {{ pushChallengeNumber }}
-    </h1>
+    </p>
   </div>
 </template>
 <script>
