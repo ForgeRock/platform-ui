@@ -70,7 +70,7 @@ export default {
       default: null,
     },
     value: {
-      type: Object,
+      type: [Object, Array],
       default: () => ({}),
     },
     resourcePath: {
@@ -108,15 +108,19 @@ export default {
         : this.$t('common.placeholders.typeToSearchFor', { item: this.resourcePath });
     },
     selectOptions() {
-      let match;
-      if (this.exactMatch) {
-        match = this.options.find((option) => isEqual(option, this.value));
-      } else {
-        match = this.options.find((option) => option._id === this.value._id);
-      }
+      const predicate = this.exactMatch
+        ? (option) => isEqual(option, this.value)
+        : (option) => option._id === this.value._id;
+
+      const match = this.options.find(predicate);
+
       if (match || this.isSearching) return this.options;
-      if (this.type === 'multiselect') return [...this.value, ...this.options];
-      return [this.value, ...this.options];
+
+      const hasValue = Array.isArray(this.value)
+        ? this.value.length > 0
+        : Object.keys(this.value).length > 0;
+      const valuesToAdd = this.type === 'multiselect' ? this.value : [this.value];
+      return hasValue ? [...valuesToAdd, ...this.options] : this.options;
     },
   },
   methods: {

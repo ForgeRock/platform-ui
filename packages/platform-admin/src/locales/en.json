@@ -1976,7 +1976,7 @@
             "uploadingCertificate": "Uploading Certificate",
             "viewPowershellCmdlets": "View PowerShell Cmdlets"
           },
-          "trustedCert":"Trusted Certificate",
+          "trustedCert": "Trusted Certificate",
           "deleteTrustedCertText": "Are you sure you want to delete this certificate? Deleting may have an effect on any other Microsoft 365 apps using this certificate.",
           "deleteSuccess": "Certificate successfully deleted",
           "downloadCertificate": "Download Certificate",
@@ -3800,6 +3800,7 @@
     "managedSchemaError": "Error retrieving managed schema",
     "mappingRetrievalError": "Error retrieving mappings",
     "mappingUpdateError": "Error updating mapping",
+    "noDataPreviewMapping": "The source managed object contains no data to preview the mapping.",
     "noProperties": "No properties mapped",
     "noPropertiesHelp": "Map properties from {source} to {target}.",
     "noResultsFound": "No results found.",
