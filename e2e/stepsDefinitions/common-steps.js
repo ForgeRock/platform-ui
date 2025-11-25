@@ -11,7 +11,9 @@ import { random } from 'lodash';
 import { ROLES, THEME_UI_FIELD_MAPPING, HTML_ELEMENT_SELECTORS } from '@e2e/support/constants';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import generateRandomEndUser from '../utils/endUserData';
-import { checkElementCss, selectDropdownOption, typeIntoField } from '../utils/uiUtils';
+import {
+  checkElementCss, selectDropdownOption, typeIntoField, selectRadioOption,
+} from '../utils/uiUtils';
 import { generateJourneyURL } from '../utils/journeyUtils';
 
 Given('admin logs into the tenant', () => {
@@ -174,6 +176,17 @@ When('user selects {string} option on dropdown {string}', (option, dropdown) => 
   selectDropdownOption(option);
 });
 
+When('user types and selects {string} option on dropdown {string}', (option, dropdown) => {
+  cy.findByRole('combobox', { name: dropdown }).click().type(option);
+  selectDropdownOption(option);
+});
+
+When('user types and selects the stored value of {string} option on dropdown {string}', (storedDataName, dropdown) => {
+  const storedValue = Cypress.env(storedDataName);
+  cy.findByRole('combobox', { name: dropdown }).click().type(storedValue);
+  selectDropdownOption(storedValue);
+});
+
 When('user reloads the page', () => {
   cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
   cy.reload();
@@ -301,6 +314,11 @@ When('user clicks on modal header to trigger field validation', () => {
   cy.findByRole('dialog').within(() => {
     cy.get('h4, .modal-header, .modal-title').first().click();
   });
+});
+
+When(/^user (forcefully )?selects "([^"]*)" radio option$/, (forcefully, option) => {
+  const options = forcefully ? { force: true } : undefined;
+  selectRadioOption(option, options);
 });
 
 Then('{string} modal is displayed/opened', (modal) => {
@@ -640,4 +658,18 @@ Then('{string} link is visible', (linkText) => {
 
 Then('{string} link does not exist', (linkText) => {
   cy.findByRole('link', { name: linkText }).should('not.exist');
+});
+
+/**
+ * Verifies that a checkbox is checked or unchecked
+ * Usage: Then the "Use Secret Store for secrets" checkbox should be checked
+ *        Then the "Use Secret Store for secrets" checkbox should be unchecked
+ */
+Then(/^the "([^"]*)" checkbox should be (checked|unchecked)$/, (checkboxName, expectedState) => {
+  const assertion = expectedState === 'checked' ? 'be.checked' : 'not.be.checked';
+  cy.findByRole('checkbox', { name: checkboxName }).should(assertion);
+});
+
+Then('{string} tab is selected', (tabName) => {
+  cy.findByRole('tab', { name: tabName }).should('have.attr', 'aria-selected', 'true');
 });
