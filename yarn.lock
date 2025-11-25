@@ -2725,7 +2725,7 @@ __metadata:
     vue: 3.3.4
     vue-3-sanitize: 0.1.4
     vue-cli-plugin-i18n: 2.3.2
-    vue-i18n: 10.0.6
+    vue-i18n: 10.0.8
     vue-router: 4.2.4
     vuex: 4.0.2
   languageName: unknown
@@ -2829,7 +2829,7 @@ __metadata:
     vue-color: 2.7.1
     vue-drag-drop: 1.1.4
     vue-draggable-resizable: 2.1.0
-    vue-i18n: 10.0.6
+    vue-i18n: 10.0.8
     vue-multiselect: 2.1.7
     vue-prism-editor: 1.3.0
     vue-router: 4.2.4
@@ -2889,7 +2889,7 @@ __metadata:
     vue: 3.3.4
     vue-3-sanitize: 0.1.4
     vue-cli-plugin-i18n: 2.3.2
-    vue-i18n: 10.0.6
+    vue-i18n: 10.0.8
     vue-router: 4.2.4
     vue-spinner: 1.0.3
     vuex: 4.0.2
@@ -2945,7 +2945,7 @@ __metadata:
     vue: 3.3.4
     vue-3-sanitize: 0.1.4
     vue-cli-plugin-i18n: 2.3.2
-    vue-i18n: 10.0.6
+    vue-i18n: 10.0.8
     vue-multiselect: 2.1.7
     vue-recaptcha: 1.3.0
     vue-recaptcha-v3: 2.0.1
@@ -2989,7 +2989,7 @@ __metadata:
     vee-validate: 4.11.8
     vue: 3.3.4
     vue-cli-plugin-i18n: 2.3.2
-    vue-i18n: 10.0.6
+    vue-i18n: 10.0.8
     vue-router: 4.2.4
     vuex: 4.0.2
     whatwg-fetch: 3.2.0
@@ -3049,7 +3049,7 @@ __metadata:
     vue-clipboard2: 0.3.1
     vue-draggable-resizable: 2.1.0
     vue-ellipse-progress: 1.3.1
-    vue-i18n: 10.0.6
+    vue-i18n: 10.0.8
     vue-multiselect: 2.1.7
     vue-prism-editor: 1.3.0
     vue-router: 4.2.4
@@ -3105,30 +3105,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/core-base@npm:10.0.6":
-  version: 10.0.6
-  resolution: "@intlify/core-base@npm:10.0.6"
+"@intlify/core-base@npm:10.0.8":
+  version: 10.0.8
+  resolution: "@intlify/core-base@npm:10.0.8"
   dependencies:
-    "@intlify/message-compiler": 10.0.6
-    "@intlify/shared": 10.0.6
-  checksum: e69173486697f05a4fa18d64dfa07efcf23416079aac7b4de3028810726ad1fd5352b2e3da37c389aa91aab0c6b3cbe0931c71c0a3df98e85b73fa5e3ddb3632
+    "@intlify/message-compiler": 10.0.8
+    "@intlify/shared": 10.0.8
+  checksum: 80a842b5ed73977f7938a04fda0fc2a29d12af0c847bc4ca3b09fcab967da44c105291e15777e96bbb5b5bd74fec143c2ee6da523e8df48d6667ed9e44669b55
   languageName: node
   linkType: hard
 
-"@intlify/message-compiler@npm:10.0.6":
-  version: 10.0.6
-  resolution: "@intlify/message-compiler@npm:10.0.6"
+"@intlify/message-compiler@npm:10.0.8":
+  version: 10.0.8
+  resolution: "@intlify/message-compiler@npm:10.0.8"
   dependencies:
-    "@intlify/shared": 10.0.6
+    "@intlify/shared": 10.0.8
     source-map-js: ^1.0.2
-  checksum: 70a0af84199c041708e6b31a3b4f0670b3404e2a77f171107535f8f8eb26a4fb8622b42b9cc4a23f7f9e575619610288f7a06823ed5f983652732dfde11646ce
+  checksum: 0a09ac0c0d9396407ecc961ff7561f9860a2429b56e99048f32f189830ae1bc3dc4c649883bbc8fe3dd3bb5b7169ec6b8985a2c09409da1f310a5311dc7eb6cf
   languageName: node
   linkType: hard
 
-"@intlify/shared@npm:10.0.6":
-  version: 10.0.6
-  resolution: "@intlify/shared@npm:10.0.6"
-  checksum: 82ee54f03b857ea0f494c138e119d4a6427344b32614f572bf1b73ace2a3b25b336635a6c4cff9e9fdfbf061a49631ac22cbe3786478423425c3d97053309525
+"@intlify/shared@npm:10.0.8":
+  version: 10.0.8
+  resolution: "@intlify/shared@npm:10.0.8"
+  checksum: 301c7e3fa69b6befa533ba767fd405c4fc5eeed4357b7c1bdb32cdc74baf4b0b1dd72d161ef6c58331fe16a4932660f5d0501fba5edeada0147af58a6e9127d0
   languageName: node
   linkType: hard
 
@@ -21867,16 +21867,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-i18n@npm:10.0.6":
-  version: 10.0.6
-  resolution: "vue-i18n@npm:10.0.6"
+"vue-i18n@npm:10.0.8":
+  version: 10.0.8
+  resolution: "vue-i18n@npm:10.0.8"
   dependencies:
-    "@intlify/core-base": 10.0.6
-    "@intlify/shared": 10.0.6
+    "@intlify/core-base": 10.0.8
+    "@intlify/shared": 10.0.8
     "@vue/devtools-api": ^6.5.0
   peerDependencies:
     vue: ^3.0.0
-  checksum: 9ab7a2021ac14f8a668914fbcd92a9fddce9ef100047cb9f0f43123ee407392743e92a080833b0ee20ab4ec2de9ef802a184dd242a4517776ea882578243d2d4
+  checksum: 817ee188af1e0790b30b150b83ea41da956e6c41e4abbe17e316001c7f6e9a870176225b074cbcda560e7c0eeaef1f1bae287af6bf7ee352f33b730ed4b43304
   languageName: node
   linkType: hard
 
