@@ -361,7 +361,7 @@ export default {
       const isGroupStart = hasColumnClass(row, 'group-start');
       const isGroupEnd = hasColumnClass(row, 'group-end');
       const isNested = hasColumnClass(row, 'nested');
-      const rowShowing = this.model[row[0]?.show];
+      const rowShowing = get(this.model, row[0].show);
       const classes = [];
 
       if (rowShowing) {
