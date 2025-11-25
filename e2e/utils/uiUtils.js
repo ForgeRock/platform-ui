@@ -13,7 +13,7 @@ export function clickOnDropdown(index, dropdownName) {
 }
 
 export function selectDropdownOption(optionName) {
-  cy.findByRole('option', { name: optionName }).click();
+  cy.findByRole('option', { name: new RegExp(optionName, 'i') }).click();
 }
 
 export function typeIntoField(fieldName, text) {
@@ -48,4 +48,8 @@ export function checkElementCss(role, name, attribute, value) {
         .should('have.css', attribute, newValue);
     }
   });
+}
+
+export function selectRadioOption(optionName, clickOptions = {}) {
+  cy.findByRole('radio', { name: new RegExp(optionName, 'i') }).click(clickOptions);
 }
