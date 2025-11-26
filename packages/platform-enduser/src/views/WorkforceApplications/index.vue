@@ -29,13 +29,16 @@ of the MIT license. See the LICENSE file for details. -->
       >
         {{ resultCountMessage }}
       </div>
-      <BRow>
+      <BRow
+        tag="ul"
+        class="list-unstyled">
         <BCol
           v-for="app in filteredApplications"
           :key="app.name"
           class="mb-4"
           lg="3"
-          cols="6">
+          cols="6"
+          tag="li">
           <a
             :href="app.url"
             class="card h-100 cursor-pointer"
