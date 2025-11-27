@@ -114,6 +114,16 @@ export const ROLES = {
 };
 
 /**
+ * Mapping for plural role names to their singular forms.
+ * Handles irregular plurals in step definitions.
+ */
+export const PLURAL_TO_SINGULAR_ROLES = {
+  checkboxes: 'checkbox',
+  switches: 'switch',
+  toggles: 'toggle',
+};
+
+/**
  * Maps HTML element names to their corresponding CSS selectors.
  */
 export const HTML_ELEMENT_SELECTORS = {
