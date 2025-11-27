@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -13,7 +13,6 @@ import {
   JOURNEYS,
   KEYBOARD_ACTIONS,
   ROLES,
-  SECRET_TYPES,
 } from '../support/constants';
 
 /**
@@ -77,18 +76,5 @@ defineParameterType({
   regexp: new RegExp(Object.keys(ROLES).join('|')),
   transformer(gherkinRole) {
     return ROLES[gherkinRole];
-  },
-});
-
-/**
- * Defines the {secretType} parameter type.
- * This parameter type validates the secret type against the SECRET_TYPES constant map
- * and allows using predefined secret types in Gherkin steps.
- */
-defineParameterType({
-  name: 'secretType',
-  regexp: new RegExp(Object.values(SECRET_TYPES).map((type) => type.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')),
-  transformer(secretType) {
-    return secretType;
   },
 });
