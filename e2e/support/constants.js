@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -121,16 +121,6 @@ export const PLURAL_TO_SINGULAR_ROLES = {
   checkboxes: 'checkbox',
   switches: 'switch',
   toggles: 'toggle',
-};
-
-/**
- * ESV Secret Types available in the secret creation modal
- */
-export const SECRET_TYPES = {
-  SECRET: 'Secret',
-  PEM_ENCODED_SECRET: 'PEM-Encoded Secret',
-  BASE64_ENCODED_HMAC_KEY: 'Base64-Encoded HMAC Key',
-  BASE64_ENCODED_AES_KEY: 'Base64-Encoded AES Key',
 };
 
 /**
