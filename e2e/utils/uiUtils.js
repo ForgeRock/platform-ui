@@ -12,8 +12,38 @@ export function clickOnDropdown(index, dropdownName) {
   cy.findAllByLabelText(dropdownName).filter(':visible').eq(index - 1).click({ force: true });
 }
 
+/**
+ * Shared Selector Logic:
+ * Returns the Cypress chainable for the specific dropdown trigger button.
+ * Centralizes the logic for "More Actions" (icon) vs Named Dropdowns (text).
+ */
+export const getDropdownTrigger = (dropdownName) => {
+  if (dropdownName.toLowerCase() === 'more actions') {
+    return cy.findByRole('toolbar').contains('button', 'more_horiz');
+  }
+  return cy.contains('button', new RegExp(dropdownName, 'i'));
+};
+
 export function selectDropdownOption(optionName) {
   cy.findByRole('option', { name: new RegExp(optionName, 'i') }).click();
+}
+
+function removeTagsRecursively() {
+  cy.get('.multiselect__tags-wrap').then(($tagsWrapper) => {
+    if ($tagsWrapper.children().length > 0) {
+      cy.get('input').type('{backspace}');
+      removeTagsRecursively();
+    }
+  });
+}
+
+export function clearDropdown(dropdownName) {
+  cy.findByRole('combobox', { name: dropdownName })
+    .parent()
+    .within(() => {
+      cy.get('input').click({ force: true });
+      removeTagsRecursively();
+    });
 }
 
 export function typeIntoField(fieldName, text) {
