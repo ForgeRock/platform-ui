@@ -249,9 +249,37 @@ Cypress.Commands.add(
   (subject, desiredState, clickOptions = {}) => cy.wrap(subject).scrollIntoView().then(($toggle) => {
     const currentState = $toggle.attr('aria-checked') === 'true' || $toggle.is(':checked');
     if (currentState !== desiredState) {
-      cy.wrap($toggle).realClick(clickOptions);
+      cy.wrap($toggle).click(clickOptions);
     }
   }),
+);
+
+/**
+ * Custom command to verify the state of a toggleable element.
+ * Compatible with both native checkboxes and ARIA switches.
+ *
+ * @example
+ * cy.findByRole('checkbox', { name: 'Subscribe' }).verifyToggleState(true);
+ */
+Cypress.Commands.add(
+  'verifyToggleState',
+  { prevSubject: 'element' },
+  (subject, expectedState) => {
+    cy.wrap(subject).scrollIntoView().should(($el) => {
+      // 1. Check for ARIA attribute (common in switches/custom UI components)
+      const ariaChecked = $el.attr('aria-checked');
+      // 2. Check for native property (standard checkboxes)
+      const nativeChecked = $el.is(':checked');
+      // logic: If aria-checked exists, priority is usually given to it for accessibility,
+      // otherwise fallback to native checked property.
+      const actualState = ariaChecked !== undefined
+        ? ariaChecked === 'true'
+        : nativeChecked;
+      // Create a clear error message for the report
+      const stateLabel = expectedState ? 'checked/on' : 'unchecked/off';
+      expect(actualState).to.equal(expectedState, `Expected element to be ${stateLabel}`);
+    });
+  },
 );
 
 Cypress.Commands.add('getIframeBody', (iframeSelector) => cy.get(iframeSelector).its('0.contentDocument.body').should('not.be.empty').then(cy.wrap));

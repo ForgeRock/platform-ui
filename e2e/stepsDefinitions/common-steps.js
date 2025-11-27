@@ -12,7 +12,12 @@ import { ROLES, THEME_UI_FIELD_MAPPING, HTML_ELEMENT_SELECTORS } from '@e2e/supp
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import generateRandomEndUser from '../utils/endUserData';
 import {
-  checkElementCss, selectDropdownOption, typeIntoField, selectRadioOption,
+  checkElementCss,
+  selectDropdownOption,
+  typeIntoField,
+  clearDropdown,
+  getDropdownTrigger,
+  selectRadioOption,
 } from '../utils/uiUtils';
 import { generateJourneyURL } from '../utils/journeyUtils';
 
@@ -93,10 +98,6 @@ When('user clicks on {string} {role}', (name, role) => {
   cy.findByRole(role, { name }).click();
 });
 
-When('user clicks on menuitem {string}', (text) => {
-  cy.findByRole('menuitem', { name: text }).click();
-});
-
 When('user fills the following fields', (dataTable) => {
   dataTable.hashes().forEach((row) => {
     typeIntoField(row.Field, row.Value);
@@ -156,15 +157,23 @@ When('user fills registration form with following data', (dataTable) => {
   });
 });
 
-When('user selects {string} option on menu', (optionName) => {
-  cy.findByRole('menuitem', { name: optionName }).click();
-});
-
-Then('the menu has following options:', (dataTable) => {
-  const expectedOptions = dataTable.raw().flat();
-  expectedOptions.forEach((optionName) => {
-    cy.findByRole('menuitem', { name: optionName }).should('exist');
-  });
+/**
+ * Click a specific option from a dropdown menu.
+ * Supports standard labeled buttons (partial match, e.g., "Type") and the "More actions" (three-dots) menu.
+ * @example
+ * When user clicks "JavaScript" option on "Type" dropdown menu
+ * @example
+ * When user clicks "Edit Details" option on "More Actions" dropdown menu
+ */
+When('user clicks {string} option on {string} dropdown menu', (option, dropdown) => {
+  getDropdownTrigger(dropdown).click();
+  cy.get('.dropdown-menu.show')
+    .should('be.visible')
+    .within(() => {
+      cy.findByRole('menuitem', { name: new RegExp(option, 'i') })
+        .scrollIntoView()
+        .click();
+    });
 });
 
 When('user selects {string} option on dropdown', (optionName) => {
@@ -224,14 +233,19 @@ When('user hovers {string} {role}', (name, role) => {
 });
 
 When('user clicks on option button {string} from more actions menu for item {string}', (option, item) => {
-  cy.findAllByRole('row')
-    .contains('td', item).parents('tr')
+  cy.contains('tr, .card-header', item)
+    .as('targetRow')
     .within(() => {
-      cy.findByRole('button', { name: 'More Actions' }).click();
+      cy.get('button[aria-label="More Actions"], .dropdown-toggle')
+        .should('exist')
+        .click();
     });
-  cy.get('#app').findByRole('menu').should('be.visible')
+  cy.get('ul[role="menu"], .dropdown-menu')
+    .filter(':visible')
+    .should('be.visible')
     .within(() => {
-      cy.findByRole('menuitem', { name: new RegExp(option, 'i') }).click({ force: true });
+      cy.contains('[role="menuitem"], .dropdown-item', new RegExp(option, 'i'))
+        .click({ force: true });
     });
 });
 
@@ -244,11 +258,31 @@ When('user clicks on {string} submenu option under {string} in side navigation b
   cy.findByRole('link', { name: subMenuOption }).click();
 });
 
-When(/^user (checks|unchecks|turns on|turns off) the "([^"]*)" (switch|toggle|checkbox)$/, (action, name, role) => {
+/**
+ * Updates the state (checked/unchecked) of a toggleable element (Checkbox or Switch).
+ * * This step is smart enough to:
+ * 1. Determine the desired state based on the verb used (checks vs unchecks).
+ * 2. Map semantic roles (toggle -> switch).
+ * 3. Handle theme-specific field name mappings if necessary.
+ * 4. Apply a force click if "forcefully" is specified in the step.
+ * * @example
+ * // Standard usage
+ * When user checks the "Terms and Conditions" checkbox
+ * When user turns off the "Dark Mode" switch
+ * * // Forceful usage (bypasses Cypress visibility checks)
+ * When user forcefully unchecks the "Hidden Setting" checkbox
+ * * @param {string} [forcefulCapture] - Optional capture group for the word "forcefully ". If defined, `{ force: true }` is passed to the click.
+ * @param {'checks'|'unchecks'|'turns on'|'turns off'} action - The verb indicating the desired final state.
+ * @param {string} name - The accessible name (label text) of the element.
+ * @param {'switch'|'toggle'|'checkbox'} role - The type of element to search for.
+ */
+When(/^user (forcefully )?(checks|unchecks|turns on|turns off) the "([^"]*)" (switch|toggle|checkbox)$/, (forcefulCapture, action, name, role) => {
+  const isForce = !!forcefulCapture;
+  const clickOptions = isForce ? { force: true } : {};
   const desiredState = action === 'checks' || action === 'turns on';
   const actualRole = ROLES[role] || role;
   const accessibleName = actualRole === 'switch' ? THEME_UI_FIELD_MAPPING[name] || name : name;
-  cy.findByRole(actualRole, { name: accessibleName }).setToggleState(desiredState);
+  cy.findByRole(actualRole, { name: accessibleName }).setToggleState(desiredState, clickOptions);
 });
 
 Then('{string} button is enabled', (button) => {
@@ -302,6 +336,10 @@ Then('enduser account is deleted via API', () => {
 When('the user clears the {string} field', (field) => {
   cy.findByLabelText(field)
     .clear();
+});
+
+When('user clears {string} dropdown', (dropdown) => {
+  clearDropdown(dropdown);
 });
 
 When('user closes the {string} modal', (modalName) => {
@@ -547,30 +585,37 @@ Then('{string} button does not exist', (button) => {
 });
 
 /**
- * Verifies that a dropdown has the specified options.
- * This step uses regex matching to find the dropdown button, allowing it to match
- * buttons whose accessible name contains the dropdown label (e.g., "Type: JavaScript" matches "Type").
- * Usage: Then "Type" dropdown has the following options:
- *           | JavaScript |
- *           | Groovy     |
+ * Verifies the visibility of options within a specific dropdown menu.
+ * Supports standard labeled buttons (partial match, e.g., "Type") and the "More actions" (three-dots) menu.
+ * @example
+ * Then "Type" dropdown menu has following options:
+ * | JavaScript |
+ * | Groovy     |
+ * @example
+ * Then "More Actions" dropdown menu has following options:
+ * | Edit Details |
+ * | Delete       |
  */
-Then('{string} dropdown has following options:', (dropdown, dataTable) => {
-  cy.findByRole('button', { name: new RegExp(dropdown, 'i') }).click();
-  dataTable.raw().forEach((option) => {
-    cy.findByRole('menuitem', { name: new RegExp(option, 'i') }).should('exist');
-  });
-  cy.findByRole('button', { name: new RegExp(dropdown, 'i') }).click();
+Then('{string} dropdown menu has following options:', (dropdown, dataTable) => {
+  getDropdownTrigger(dropdown).click();
+  cy.get('.dropdown-menu.show')
+    .should('be.visible')
+    .within(() => {
+      dataTable.raw().flat().forEach((option) => {
+        cy.findByRole('menuitem', { name: new RegExp(option, 'i') })
+          .scrollIntoView()
+          .should('be.visible');
+      });
+    });
+  cy.get('body').click(0, 0);
 });
 
-/**
- * Verifies that a dropdown is visible or not visible on the page
- * This step uses the specific dropdown toggle selector for better reliability
- * Usage: Then "Type" dropdown is visible
- *        Then "Type" dropdown is not visible
- */
-Then(/^"([^"]*)" dropdown is (visible|not visible)$/, (dropdownName, visibility) => {
-  const assertion = visibility === 'visible' ? 'be.visible' : 'not.be.visible';
-  cy.get('button.btn.btn-link.dropdown-toggle').should(assertion);
+Then('{string} dropdown menu is visible', (dropdown) => {
+  getDropdownTrigger(dropdown).should('be.visible');
+});
+
+Then('{string} dropdown menu does not exist', (dropdown) => {
+  getDropdownTrigger(dropdown).should('not.exist');
 });
 
 Then('elements have following attributes with values:', (dataTable) => {
@@ -646,10 +691,11 @@ Then('{string} checkbox is disabled', (checkboxName) => {
   cy.findByRole('checkbox', { name: checkboxName }).should('be.disabled');
 });
 
-Then('the following menu items are visible:', (dataTable) => {
-  dataTable.raw().forEach((menuItem) => {
-    cy.findByRole('menuitem', { name: menuItem }).should('be.visible');
-  });
+Then(/^the "([^"]*)" (switch|toggle|checkbox) is (checked|unchecked|turned on|turned off)$/, (name, role, state) => {
+  const expectedState = state === 'checked' || state === 'turned on';
+  const actualRole = ROLES[role] || role;
+  const accessibleName = actualRole === 'switch' ? THEME_UI_FIELD_MAPPING[name] || name : name;
+  cy.findByRole(actualRole, { name: accessibleName }).verifyToggleState(expectedState);
 });
 
 Then('{string} link is visible', (linkText) => {
@@ -660,16 +706,23 @@ Then('{string} link does not exist', (linkText) => {
   cy.findByRole('link', { name: linkText }).should('not.exist');
 });
 
-/**
- * Verifies that a checkbox is checked or unchecked
- * Usage: Then the "Use Secret Store for secrets" checkbox should be checked
- *        Then the "Use Secret Store for secrets" checkbox should be unchecked
- */
-Then(/^the "([^"]*)" checkbox should be (checked|unchecked)$/, (checkboxName, expectedState) => {
-  const assertion = expectedState === 'checked' ? 'be.checked' : 'not.be.checked';
-  cy.findByRole('checkbox', { name: checkboxName }).should(assertion);
-});
-
 Then('{string} tab is selected', (tabName) => {
   cy.findByRole('tab', { name: tabName }).should('have.attr', 'aria-selected', 'true');
+});
+
+Then('{string} dropdown has {string} option selected', (dropdown, option) => {
+  cy.findByRole('combobox', { name: dropdown })
+    .should('exist')
+    .within(() => {
+      cy.get('.multiselect__tag, .multiselect__single')
+        .contains(new RegExp(option, 'i'))
+        .should('be.visible');
+    });
+});
+
+Then('{string} dropdown menu has {string} option selected', (dropdown, option) => {
+  getDropdownTrigger(dropdown)
+    .scrollIntoView()
+    .should('be.visible')
+    .and('contain.text', option);
 });
