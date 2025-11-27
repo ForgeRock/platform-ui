@@ -124,6 +124,16 @@ export const PLURAL_TO_SINGULAR_ROLES = {
 };
 
 /**
+ * ESV Secret Types available in the secret creation modal
+ */
+export const SECRET_TYPES = {
+  SECRET: 'Secret',
+  PEM_ENCODED_SECRET: 'PEM-Encoded Secret',
+  BASE64_ENCODED_HMAC_KEY: 'Base64-Encoded HMAC Key',
+  BASE64_ENCODED_AES_KEY: 'Base64-Encoded AES Key',
+};
+
+/**
  * Maps HTML element names to their corresponding CSS selectors.
  */
 export const HTML_ELEMENT_SELECTORS = {
