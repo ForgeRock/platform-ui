@@ -30,6 +30,7 @@ module.exports = defineConfig({
   fixturesFolder: 'e2e/fixtures',
   screenshotsFolder: 'e2e/screenshots',
   videosFolder: 'e2e/videos',
+  downloadsFolder: 'e2e/downloads',
   e2e: {
     async setupNodeEvents(on, config) {
       // Override specPattern for Percy visual tests

@@ -8,8 +8,10 @@
 
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
-import { ROLES, THEME_UI_FIELD_MAPPING, HTML_ELEMENT_SELECTORS } from '@e2e/support/constants';
 import { addOverrides } from '@e2e/api/localizationApi.e2e';
+import {
+  ROLES, THEME_UI_FIELD_MAPPING, HTML_ELEMENT_SELECTORS, PLURAL_TO_SINGULAR_ROLES,
+} from '@e2e/support/constants';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import generateRandomEndUser from '../utils/endUserData';
 import {
@@ -371,6 +373,56 @@ When('user removes {string} tag from the {string} tag input', (tagValue, fieldNa
     .parent()
     .find(`[data-testid="remove-${tagValue}-tag"]`)
     .click();
+});
+
+/**
+ * Updates the state (checked/unchecked) of multiple toggleable elements (Checkbox or Switch).
+ * * This step is smart enough to:
+ * 1. Determine the desired state based on the verb used (checks vs unchecks).
+ * 2. Map semantic roles (toggle -> switch).
+ * 3. Handle theme-specific field name mappings if necessary.
+ * 4. Apply a force click if "forcefully" is specified in the step.
+ * * @example
+ * // Standard usage
+ * When user checks the following checkboxes:
+ *   | Terms and Conditions |
+ *   | Privacy Policy       |
+ * When user turns off the following switches:
+ *   | Dark Mode     |
+ *   | Notifications |
+ * * // Forceful usage (bypasses Cypress visibility checks)
+ * When user forcefully unchecks the following checkboxes:
+ *   | Hidden Setting 1 |
+ *   | Hidden Setting 2 |
+ * * @param {string} [forcefulCapture] - Optional capture group for the word "forcefully ". If defined, `{ force: true }` is passed to the click.
+ * @param {'checks'|'unchecks'|'turns on'|'turns off'} action - The verb indicating the desired final state.
+ * @param {'switches'|'toggles'|'checkboxes'} role - The type of elements to search for (plural form).
+ * @param {DataTable} dataTable - Table containing the names of the elements to toggle.
+ */
+When(/^user (forcefully )?(checks|unchecks|turns on|turns off) the following (switches|toggles|checkboxes):$/, (forcefulCapture, action, role, dataTable) => {
+  const isForce = !!forcefulCapture;
+  const clickOptions = isForce ? { force: true } : {};
+  const desiredState = action === 'checks' || action === 'turns on';
+  const singularRole = PLURAL_TO_SINGULAR_ROLES[role] || role.slice(0, -2);
+  const actualRole = ROLES[singularRole] || singularRole;
+
+  dataTable.raw().forEach(([name]) => {
+    const accessibleName = actualRole === 'switch' ? THEME_UI_FIELD_MAPPING[name] || name : name;
+    cy.findByRole(actualRole, { name: accessibleName }).setToggleState(desiredState, clickOptions);
+  });
+});
+
+When('user clicks on copy button from field {string}', (fieldName) => {
+  cy.findByLabelText(fieldName)
+    .closest('.floating-label')
+    .find('button[name="copyButton"]')
+    .click();
+});
+
+When('the value of field {string} is stored as {string}', (fieldName, storedDataName) => {
+  cy.findByLabelText(fieldName).invoke('val').then((fieldValue) => {
+    Cypress.env(storedDataName, fieldValue);
+  });
 });
 
 Then('{string} button is enabled', (button) => {
@@ -823,6 +875,17 @@ Then(/^the "([^"]*)" (switch|toggle|checkbox) is (checked|unchecked|turned on|tu
   cy.findByRole(actualRole, { name: accessibleName }).verifyToggleState(expectedState);
 });
 
+Then(/^the following (switches|toggles|checkboxes) are (checked|unchecked|turned on|turned off):$/, (role, state, dataTable) => {
+  const expectedState = state === 'checked' || state === 'turned on';
+  const singularRole = PLURAL_TO_SINGULAR_ROLES[role] || role.slice(0, -2);
+  const actualRole = ROLES[singularRole] || singularRole;
+
+  dataTable.raw().forEach(([name]) => {
+    const accessibleName = actualRole === 'switch' ? THEME_UI_FIELD_MAPPING[name] || name : name;
+    cy.findByRole(actualRole, { name: accessibleName }).verifyToggleState(expectedState);
+  });
+});
+
 Then('{string} link is visible', (linkText) => {
   cy.findByRole('link', { name: linkText }).should('be.visible');
 });
@@ -865,4 +928,25 @@ Then('the {string} dropdown is visible', (fieldName) => {
 
 Then('the {string} tag input is visible', (fieldName) => {
   cy.findByLabelText(fieldName).should('exist');
+});
+
+Then(/^"([^"]*)" field is (enabled|disabled)$/, (fieldName, state) => {
+  const assertion = state === 'enabled' ? 'be.enabled' : 'be.disabled';
+  cy.findByLabelText(fieldName).should(assertion);
+});
+
+Then('the {string} file is downloaded', (fileName) => {
+  const downloadsFolder = Cypress.config('downloadsFolder');
+  cy.readFile(`${downloadsFolder}/${fileName}`, { timeout: 20000 });
+});
+
+Then('the clipboard contains the stored value of {string}', (storedDataName) => {
+  const expectedText = Cypress.env(storedDataName);
+  if (Cypress.browser.name === 'chrome' || Cypress.browser.name === 'electron') {
+    cy.window().then((win) => {
+      win.navigator.clipboard.readText().then((clipboardText) => {
+        expect(clipboardText).to.equal(expectedText);
+      });
+    });
+  }
 });
