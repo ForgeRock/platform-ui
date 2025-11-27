@@ -318,6 +318,15 @@ When('user clicks on option button {string} from more actions menu for item {str
     });
 });
 
+When(/^user (forcefully )?clicks on "([^"]*)" button for item "([^"]*)"$/, (forcefully, buttonName, item) => {
+  const clickOptions = forcefully ? { force: true } : undefined;
+  cy.findAllByRole('cell', { name: item })
+    .closest('tr')
+    .within(() => {
+      cy.findByRole('button', { name: buttonName }).click(clickOptions);
+    });
+});
+
 When('user clicks on {string} menu option in side navigation bar', (menuOption) => {
   cy.findByRole('link', { name: menuOption }).click();
 });
@@ -684,7 +693,7 @@ Then('the item {string} does not exist in the current table', (itemName) => {
 });
 
 Then('the item {string} is visible in the current table', (itemName) => {
-  cy.findByRole('cell', { name: itemName, timeout: 5000 }).should('be.visible');
+  cy.findByRole('cell', { name: itemName, timeout: 5000 }).scrollIntoView().should('be.visible');
 });
 
 Then('the following items do not exist in the current table:', (dataTable) => {
