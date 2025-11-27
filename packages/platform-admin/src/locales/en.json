@@ -3342,6 +3342,7 @@
   "esv": {
     "title": "Environment Secrets & Variables",
     "subTitle": "Set secrets and variables that are specific to this environment. These will be substituted into configuration or script placeholders.",
+    "encoding": "Encoding",
     "placeholder": "Configuration Placeholder",
     "updateStarted": "Update process started",
     "updateFinished": "Update process completed",
