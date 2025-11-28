@@ -213,4 +213,9 @@ describe('Tree API', () => {
     TreeApi.actionNodeGetAllTypes(true);
     expect(mockGenerate).toHaveBeenLastCalledWith(expected);
   });
+
+  it('actionNodeConfigProviderScript should call api with correct parameters', async () => {
+    TreeApi.actionNodeConfigProviderScript('mockNodeType');
+    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType?_action=configProviderScript', {}, withCreds);
+  });
 });

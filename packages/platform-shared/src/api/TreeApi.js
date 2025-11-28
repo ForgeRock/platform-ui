@@ -314,3 +314,18 @@ export function actionNodeGetType(nodeType, nodeVersion = null) {
     { withCredentials: true },
   );
 }
+
+/**
+  * Returns a config provider script template
+  * @param {String} nodeType Id specifying a specific node type
+  * @param {String} nodeVersion The version of the node
+  *
+  * @returns {Promise}
+  */
+export function actionNodeConfigProviderScript(nodeType, nodeVersion = null) {
+  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=configProviderScript`
+    : `/nodes/${nodeType}?_action=configProviderScript`;
+  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+    path, {}, { withCredentials: true },
+  );
+}
