@@ -161,9 +161,9 @@ Then('profile translations are in {string}', (language) => {
       // cy.findByRole('heading', { name: 'Appareils de confiance en français' }).should('be.visible');
       // cy.findByText('Les appareils qui ont accédé à votre compte.').should('be.visible');
       cy.findByRole('heading', { name: 'Mac (Browser)' }).scrollIntoView().should('be.visible').click();
-      cy.findByRole('heading', { name: 'Système d\'exploitation' }).should('be.visible');
-      cy.findByRole('heading', { name: 'Navigateur' }).should('be.visible');
-      cy.findByRole('heading', { name: 'Processeur' }).should('be.visible');
+      cy.findByText('Système d\'exploitation').should('exist');
+      cy.findByText('Navigateur').should('exist');
+      cy.findByText('Processeur').should('exist');
       // cy.findByRole('button', { name: 'Supprimer l\'appareil', exact: false }).should('be.visible');
       // TODO: Blocked by https://pingidentity.atlassian.net/browse/IAM-7396, uncomment when fixed (All commented lines in this Trusted Devices section)
 

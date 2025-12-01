@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,9 +41,9 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="device.os"
           data-testid="device-os"
           class="mb-3">
-          <h3 class="small">
+          <p class="h3 small font-weight-normal">
             {{ $t('pages.profile.trustedDevices.os') }}
-          </h3>
+          </p>
           <p class="bold">
             {{ device.os }}
           </p>
@@ -52,9 +52,9 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="device.browser"
           data-testid="device-browser"
           class="mb-3">
-          <h3 class="small">
+          <p class="h3 small font-weight-normal">
             {{ $t('pages.profile.trustedDevices.browser') }}
-          </h3>
+          </p>
           <p class="bold">
             {{ device.browser }}
           </p>
@@ -62,9 +62,9 @@ of the MIT license. See the LICENSE file for details. -->
         <div
           v-if="device.cpu"
           data-testid="device-cpu">
-          <h3 class="small">
+          <p class="h3 small font-weight-normal">
             {{ $t('pages.profile.trustedDevices.cpu') }}
-          </h3>
+          </p>
           <p class="bold">
             {{ device.cpu }}
           </p>
