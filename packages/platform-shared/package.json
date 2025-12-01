@@ -36,7 +36,7 @@
     "pretty-data": "0.40.0",
     "prismjs": "1.30.0",
     "sanitize-html": "2.12.1",
-    "turndown": "7.2.0",
+    "turndown": "7.2.2",
     "ua-parser-js": "1.0.33",
     "util": "0.12.5",
     "uuid": "3.3.3",
