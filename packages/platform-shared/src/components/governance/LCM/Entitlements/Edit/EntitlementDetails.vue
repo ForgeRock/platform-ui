@@ -63,9 +63,12 @@ import { getEntitlementById } from '@forgerock/platform-shared/src/api/governanc
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrDetails from './Tabs/Details';
 import FrUsers from './Tabs/Users';
 import i18n from '@/i18n';
+
+const userStore = useUserStore();
 
 // Composables
 const route = useRoute();
@@ -84,7 +87,11 @@ async function loadEntitlement() {
 }
 
 onMounted(() => {
-  setBreadcrumb('/administer/entitlements', i18n.global.t('pageTitles.AdministerEntitlements'));
+  let breadcrumbPath = '/administer/entitlements';
+  if (userStore.adminUser) {
+    breadcrumbPath = '/entitlements';
+  }
+  setBreadcrumb(breadcrumbPath, i18n.global.t('pageTitles.AdministerEntitlements'));
   loadEntitlement();
 });
 

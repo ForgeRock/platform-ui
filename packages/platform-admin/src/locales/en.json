@@ -2,6 +2,7 @@
   "routeNames": {
     "Accounts": "Accounts",
     "AccountsDetails": "Account Details",
+    "AdministerEntitlements": "Administer Entitlements",
     "Applications": "Applications",
     "BulkImport": "Import",
     "Certification": "Certification",
@@ -49,6 +50,7 @@
   "pageTitles": {
     "Accounts": "Accounts",
     "AccountsDetails": "Account Details",
+    "AdministerEntitlements": "Administer Entitlements",
     "Applications": "Applications",
     "AutoAccessDataSources": "Data Sources",
     "AutoAccessPipelines": "Pipelines",
