@@ -2932,7 +2932,7 @@ __metadata:
     jest-environment-jsdom: 29.6.3
     jest-html-reporters: 1.2.0
     lodash: 4.17.21
-    nodemailer: ^6.9.14
+    nodemailer: 7.0.7
     pinia: 2.1.6
     playwright-webkit: 1.34
     qrcode-generator: 1.4.4
@@ -11327,7 +11327,7 @@ __metadata:
     mochawesome-report-generator: 5.1.0
     nano-staged: 0.8.0
     nock: 13.0.4
-    nodemailer: ^6.9.14
+    nodemailer: 7.0.7
     postcss-html: 1.4.1
     sass: 1.52.1
     sass-loader: 8.0.2
@@ -16563,10 +16563,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:^6.9.14":
-  version: 6.9.14
-  resolution: "nodemailer@npm:6.9.14"
-  checksum: 4037a45e24dbca47c0ea9a962d2c316deef7afe6ebf73c7da3a84942a8d501d85aae7f36dc1c5dac58dec7275f7cb1c92fd4f9c7c19f037225019ad2f402a9dc
+"nodemailer@npm:7.0.7":
+  version: 7.0.7
+  resolution: "nodemailer@npm:7.0.7"
+  checksum: 6bfde3a9ecbfef896a029c029a1b58ad74c6a4a4ecf4c4a4794c82150c5f4c76202256f5d3fdeca4e4f8c2ecbf802d86985a891d61194b6095d521678ed9057f
   languageName: node
   linkType: hard
 
