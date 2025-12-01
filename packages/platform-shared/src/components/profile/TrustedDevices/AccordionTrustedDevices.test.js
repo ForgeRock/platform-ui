@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -85,15 +85,15 @@ describe('Accordion Trusted Devices', () => {
       const collapse = firstItem.find('.collapse');
 
       // OS
-      const deviceOs = collapse.find('.row .col:nth-child(2) div div:nth-child(1) p').text();
+      const deviceOs = collapse.find('.row .col:nth-child(2) div div:nth-child(1) p:nth-child(2)').text();
       expect(deviceOs).toBe('Linux x86_64');
 
       // Browser
-      const deviceBrowser = collapse.find('.row .col:nth-child(2) div div:nth-child(2) p').text();
+      const deviceBrowser = collapse.find('.row .col:nth-child(2) div div:nth-child(2) p:nth-child(2)').text();
       expect(deviceBrowser).toBe('Chrome 121.0.0.0');
 
       // CPU
-      const deviceCpu = collapse.find('.row .col:nth-child(2) div div:nth-child(3) p').text();
+      const deviceCpu = collapse.find('.row .col:nth-child(2) div div:nth-child(3) p:nth-child(2)').text();
       expect(deviceCpu).toBe('Linux x86_64');
 
       // Formatted Address
@@ -109,15 +109,15 @@ describe('Accordion Trusted Devices', () => {
       const collapse = firstItem.find('.collapse');
 
       // OS
-      const deviceOs = collapse.find('.row .col:nth-child(1) div div:nth-child(1) p').text();
+      const deviceOs = collapse.find('.row .col:nth-child(1) div div:nth-child(1) p:nth-child(2)').text();
       expect(deviceOs).toBe('Mac OS 10.15.7');
 
       // Browser
-      const deviceBrowser = collapse.find('.row .col:nth-child(1) div div:nth-child(2) p').text();
+      const deviceBrowser = collapse.find('.row .col:nth-child(1) div div:nth-child(2) p:nth-child(2)').text();
       expect(deviceBrowser).toBe('Chrome 119.0.0.0');
 
       // CPU
-      const deviceCpu = collapse.find('.row .col:nth-child(1) div div:nth-child(3) p').text();
+      const deviceCpu = collapse.find('.row .col:nth-child(1) div div:nth-child(3) p:nth-child(2)').text();
       expect(deviceCpu).toBe('MacIntel');
 
       // Formatted Address
