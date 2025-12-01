@@ -147,19 +147,9 @@ function shouldSuppressError(message) {
 }
 
 // Only suppress in CI environments (not in local development)
+/* eslint-disable no-console */
 if (process.env.CI === 'true' || process.env.JENKINS_HOME) {
-  /* eslint-disable no-console */
-  const originalWarn = console.warn;
   const originalError = console.error;
-
-  // Suppress console.warn for Vue compat deprecation warnings
-  // These are the bulk of the noise (~43K lines) and all use console.warn
-  console.warn = function warn(...args) {
-    if (shouldSuppressWarning(args[0])) {
-      return;
-    }
-    originalWarn.apply(console, args);
-  };
 
   // Conservative suppression for console.error
   // Only suppress very specific known error messages, never test failures
@@ -174,5 +164,14 @@ if (process.env.CI === 'true' || process.env.JENKINS_HOME) {
   if (typeof global.Vue !== 'undefined' && global.Vue.config) {
     global.Vue.config.warnHandler = () => {};
   }
-  /* eslint-enable no-console */
 }
+// Suppress console.warn for Vue compat deprecation warnings (both local and CI)
+const originalWarn = console.warn;
+
+console.warn = function warn(...args) {
+  if (shouldSuppressWarning(args[0])) {
+    return;
+  }
+  originalWarn.apply(console, args);
+};
+/* eslint-enable no-console */
