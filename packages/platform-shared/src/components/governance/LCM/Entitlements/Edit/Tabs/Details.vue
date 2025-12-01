@@ -40,7 +40,7 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
-import FrRequestSubmitSuccessModal from '@/views/governance/LCM/RequestSubmitSuccessModal';
+import FrRequestSubmitSuccessModal from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccessModal';
 import i18n from '@/i18n';
 
 const props = defineProps({

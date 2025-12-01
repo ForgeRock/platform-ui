@@ -1130,7 +1130,8 @@
   },
   "pageTitles": {
     "AccessViewer": "User Access Graph",
-    "ComplianceExceptionDetails": "Exception Details"
+    "ComplianceExceptionDetails": "Exception Details",
+    "AdministerEntitlements": "Administer Entitlements"
   },
   "pagination": {
     "dropdown": {
@@ -1924,6 +1925,19 @@
         "members": "Members",
         "entitlements": "Entitlements",
         "newRole": "New role"
+      },
+      "entitlements": {
+        "title": "Entitlements",
+        "subtitle": "Manage and configure user entitlements across all your configured applications.",
+        "generalSettings": "General Settings",
+        "errorGettingEntitlement": "Error getting entitlement",
+        "entitlementDetails": "Entitlement Details",
+        "newEntitlement": "New Entitlement",
+        "chooseApplication": "Choose Application"
+      },
+      "users": {
+        "title": "Users",
+        "subtitle": "Create and manage your user identities."
       }
     },
     "certificationTask": {
