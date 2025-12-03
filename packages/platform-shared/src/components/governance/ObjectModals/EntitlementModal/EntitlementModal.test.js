@@ -12,14 +12,16 @@ import EntitlementModal from './index';
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils');
 describe('EntitlementModal', () => {
-  let application;
+  let entitlement;
   let wrapper;
   beforeEach(() => {
-    const entitlement = {
-      id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
-    };
-    application = {
-      templateName: 'salesforce',
+    entitlement = {
+      entitlement: {
+        id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
+      },
+      application: {
+        templateName: 'salesforce',
+      },
     };
 
     getApplicationLogo.mockImplementation(() => 'testlogo');
@@ -34,7 +36,6 @@ describe('EntitlementModal', () => {
       },
       propsData: {
         entitlement,
-        application,
       },
     });
     wrapper.vm.isTest = true;
@@ -42,12 +43,12 @@ describe('EntitlementModal', () => {
 
   it('should load application logo correctly', () => {
     expect(wrapper.vm.logo).toBe('testlogo');
-    expect(getApplicationLogo).toHaveBeenCalledWith(application);
+    expect(getApplicationLogo).toHaveBeenCalledWith(entitlement.application);
   });
 
   it('should load entitlement name correctly', () => {
-    expect(wrapper.vm.displayName).toBe('governance.certificationTask.entitlementModal.name');
-    expect(getApplicationDisplayName).toHaveBeenCalledWith(application);
+    expect(wrapper.vm.displayNameHeader).toBe('governance.certificationTask.entitlementModal.name');
+    expect(getApplicationDisplayName).toHaveBeenCalledWith(entitlement.application);
   });
 
   it('should render default modalId', () => {

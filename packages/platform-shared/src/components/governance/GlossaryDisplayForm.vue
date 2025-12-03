@@ -67,7 +67,8 @@ async function init() {
     };
   });
 
-  glossaryData.value = await Promise.all(promises);
+  const glossData = await Promise.all(promises);
+  glossaryData.value = glossData.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 init();

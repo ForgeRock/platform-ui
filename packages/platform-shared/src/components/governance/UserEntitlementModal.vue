@@ -160,7 +160,7 @@ import { computed } from 'vue';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import FrContentDetailsTab from '@forgerock/platform-shared/src/views/Governance/CertificationTask/TaskList/modals/AccountModal/ContentDetailsTab';
+import FrContentDetailsTab from '@forgerock/platform-shared/src/components/governance/ObjectModals/AccountModal/ContentDetailsTab';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 

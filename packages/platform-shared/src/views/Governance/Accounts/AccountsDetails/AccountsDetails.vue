@@ -89,8 +89,8 @@ import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import { revokeResourcesFromIGA } from '@forgerock/platform-shared/src/utils/governance/resource';
 import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
+import FrAccountObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
 import FrDetailsTab from './DetailsTab';
-import FrAccountObjectProperties from './ObjectProperties';
 import { getAccountDisplayName } from '../utils/accountUtility';
 import i18n from '@/i18n';
 
@@ -185,7 +185,7 @@ async function revokeEntitlement(payload) {
  */
 function tabActivated(index) {
   const accountsTab = tabs[index];
-  window.history.pushState(window.history.state, '', `#/accounts/${id}/${accountsTab}`);
+  window.history.pushState(window.history.state, '', `#/accounts/${encodeURIComponent(id)}/${accountsTab}`);
 }
 
 /**

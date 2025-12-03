@@ -23,17 +23,17 @@ of the MIT license. See the LICENSE file for details. -->
           class="mr-3 mw-100 h-auto"
           height="36"
           width="36"
-          :alt="displayName"
+          :alt="displayNameHeader"
           :onerror="onImageError"
           :src="logo">
         <div class="media-body">
           <small class="mb-1 d-block">
-            {{ displayName }}
+            {{ displayNameHeader }}
           </small>
           <p
             v-if="entitlement"
             class="mb-0 h5">
-            {{ entitlement.__NAME__ }}
+            {{ displayName }}
           </p>
         </div>
       </BMedia>
@@ -46,38 +46,49 @@ of the MIT license. See the LICENSE file for details. -->
           icon-class="md-24" />
       </BButtonClose>
     </template>
-    <BTabs
-      class="card-tabs-vertical"
-      pills
-      vertical>
-      <BTab
-        active
-        :title="$t('common.details')">
-        <FrEntitlementDetailsTab :entitlement="entitlement" />
-      </BTab>
-      <BTab :title="$t('governance.certificationTask.glossary')">
+    <div class="p-4">
+      <BCard>
+        <div
+          class="d-flex justify-content-between section-header"
+          :class="{ 'mb-4': isVisible.glossary }"
+          @click="isVisible.glossary = !isVisible.glossary">
+          <h1
+            class="h5 mb-0">
+            {{ $t(`governance.entitlementDetails`) }}
+          </h1>
+          <FrIcon
+            :name="isVisible.glossary ? 'keyboard_arrow_down' : 'chevron_right'"
+            class="ml-2" />
+        </div>
         <FrGlossaryDisplayForm
-          class="p-4"
+          v-if="isVisible.glossary"
           :glossary-schema="glossarySchema"
           :glossary-values="glossaryValues" />
-      </BTab>
-    </BTabs>
+      </BCard>
+    </div>
+    <div class="pt-0 pb-4 px-4">
+      <FrObjectProperties
+        @toggle-collapse="isVisible.properties = !isVisible.properties"
+        enable-collapse
+        :is-collapsed="!isVisible.properties"
+        :object-properties="entitlement?.entitlement || {}"
+        object="entitlements" />
+    </div>
   </BModal>
 </template>
 
 <script>
 import {
   BButtonClose,
+  BCard,
   BMedia,
   BModal,
-  BTab,
-  BTabs,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
-import FrEntitlementDetailsTab from './EntitlementDetailsTab';
+import FrObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
 
 /**
  * @description  modal component to show entitlement details, this modal is opened when the user clicks the entitlement
@@ -92,19 +103,14 @@ export default {
   name: 'EntitlementModal',
   components: {
     BButtonClose,
+    BCard,
     BMedia,
     BModal,
-    BTab,
-    BTabs,
-    FrEntitlementDetailsTab,
     FrGlossaryDisplayForm,
+    FrObjectProperties,
     FrIcon,
   },
   props: {
-    application: {
-      type: Object,
-      default: () => {},
-    },
     entitlement: {
       type: Object,
       default: () => {},
@@ -120,15 +126,22 @@ export default {
   },
   data() {
     return {
+      isVisible: {
+        glossary: true,
+        properties: true,
+      },
       isTest: false, // only for test purposes, to make the modal static
     };
   },
   computed: {
     logo() {
-      return getApplicationLogo(this.application);
+      return getApplicationLogo(this.entitlement.application);
     },
     displayName() {
-      return this.$t('governance.certificationTask.entitlementModal.name', { entitlementName: getApplicationDisplayName(this.application) });
+      return this.entitlement.descriptor?.idx?.['/entitlement']?.displayName || this.entitlement.entitlement?.__NAME__;
+    },
+    displayNameHeader() {
+      return this.$t('governance.certificationTask.entitlementModal.name', { entitlementName: getApplicationDisplayName(this.entitlement.application) });
     },
     glossaryValues() {
       return this.entitlement?.glossary?.idx?.['/entitlement'] || {};
@@ -139,3 +152,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.section-header {
+  cursor: pointer;
+}
+</style>

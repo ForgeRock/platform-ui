@@ -20,9 +20,11 @@ describe('AccountModal', () => {
       },
       props: {
         isTesting: true,
-        role: {
-          name: 'test role',
-          description: 'test description',
+        roleDetails: {
+          role: {
+            name: 'test role',
+            description: 'test description',
+          },
           glossary: {
             idx: {
               '/role': {

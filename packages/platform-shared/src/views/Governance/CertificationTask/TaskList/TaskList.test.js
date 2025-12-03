@@ -1368,9 +1368,15 @@ describe('TaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.currentEntitlementSelected).toEqual({
-        name: 'test',
+        application: {
+          templateName: 'salesforce',
+        },
+        entitlement: {
+          name: 'test',
+        },
         entitlementOwner: { userName: 'mikeTest' },
         glossary: { test1: 'test1' },
+        id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
       });
       expect(wrapper.vm.currentApplicationSelectedModal).toEqual(lineItem.application);
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-entitlement');
@@ -1605,9 +1611,15 @@ describe('TaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.currentEntitlementSelected).toEqual({
-        name: 'test',
+        application: {
+          templateName: 'salesforce',
+        },
+        entitlement: {
+          name: 'test',
+        },
         entitlementOwner: { userName: 'mikeTest' },
         glossary: { test1: 'test1' },
+        id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
       });
       expect(wrapper.vm.currentApplicationSelectedModal).toEqual(lineItem.application);
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-entitlement');

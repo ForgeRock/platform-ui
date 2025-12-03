@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     body-class="p-0"
     content-class="border-0"
     scrollable
-    id="CertificationTaskAccountModal"
+    :id="modalId"
     no-close-on-backdrop
     no-close-on-esc
     ok-only
@@ -36,20 +36,22 @@ of the MIT license. See the LICENSE file for details. -->
           icon-class="md-24" />
       </BButtonClose>
     </template>
-    <BTabs
-      class="card-tabs-vertical"
-      pills
-      vertical>
-      <BTab
-        active
-        :title="$t('governance.accountDetails')">
-        <FrAccountDetailsTab :grant="grant" />
-      </BTab>
-      <BTab
-        :title="$t('governance.certificationTask.lineItemDetailsModal.contentDetailsTabText')">
-        <FrContentDetailsTab :content="grant.account" />
-      </BTab>
-    </BTabs>
+    <div class="p-4">
+      <FrAccountDetailsTab
+        @toggle-collapse="isVisible.glossary = !isVisible.glossary"
+        enable-collapse
+        :is-collapsed="!isVisible.glossary"
+        :account="grant"
+        :use-existing-glossary="true" />
+    </div>
+    <div class="pt-0 pb-4 px-4">
+      <FrObjectProperties
+        @toggle-collapse="isVisible.properties = !isVisible.properties"
+        enable-collapse
+        :is-collapsed="!isVisible.properties"
+        :object-properties="grant?.account || {}"
+        object="accounts" />
+    </div>
   </BModal>
 </template>
 
@@ -57,23 +59,19 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BButtonClose,
   BModal,
-  BTab,
-  BTabs,
   BMedia,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrAccountDetailsTab from './AccountDetailsTab';
-import FrContentDetailsTab from './ContentDetailsTab';
+import FrAccountDetailsTab from '@forgerock/platform-shared/src/views/Governance/Accounts/AccountsDetails/DetailsTab';
+import FrObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
 
 export default {
   name: 'AccountModal',
   components: {
     BButtonClose,
     BModal,
-    BTab,
-    BTabs,
     FrAccountDetailsTab,
-    FrContentDetailsTab,
+    FrObjectProperties,
     FrIcon,
     BMedia,
   },
@@ -82,6 +80,18 @@ export default {
       type: Object,
       required: true,
     },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskAccountModal',
+    },
+  },
+  data() {
+    return {
+      isVisible: {
+        glossary: true,
+        properties: true,
+      },
+    };
   },
   computed: {
     accountDisplayName() {
