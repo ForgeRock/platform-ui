@@ -2092,7 +2092,12 @@
       "failedToLoad": "Failed to load entitlements",
       "notFound": "Entitlement {entitlement} not found",
       "entitlementSourceAttributes": "Entitlement Source Attributes",
-      "glossaryAttributes": "Glossary Attributes"
+      "glossaryAttributes": "Glossary Attributes",
+      "details": {
+        "objectPropertiesTab": {
+          "title": "Entitlement Properties"
+        }
+      }
     },
     "errors": {
       "getUsers": "Users cannot be obtained at the moment"

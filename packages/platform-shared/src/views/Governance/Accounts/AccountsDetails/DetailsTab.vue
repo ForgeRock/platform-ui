@@ -78,35 +78,48 @@ of the MIT license. See the LICENSE file for details. -->
       </BRow>
     </BCard>
     <BCard>
-      <h1 class="h5 mb-4">
-        {{ i18n.global.t('governance.accounts.details.detailsTab.title') }}
-      </h1>
-      <BRow
-        v-for="(pair, index) in displayPairs"
-        :key="index">
-        <BCol
-          sm="3"
-          class="weight-600">
-          {{ pair[0].key }}
-        </BCol>
-        <BCol
-          sm="3"
-          class="mb-3 text-gray-900">
-          {{ pair[0].value === null || pair[0].value === undefined ? blankValueIndicator : pair[0].value }}
-        </BCol>
-        <template v-if="pair[1]">
-          <BCol
-            sm="3"
-            class="weight-600">
-            {{ pair[1].key }}
-          </BCol>
-          <BCol
-            sm="3"
-            class="mb-3 text-gray-900">
-            {{ pair[1].value === null || pair[1].value === undefined ? blankValueIndicator : pair[1].value }}
-          </BCol>
-        </template>
-      </BRow>
+      <div
+        class="d-flex justify-content-between"
+        :class="{ 'section-header': enableCollapse }"
+        @click="emit('toggle-collapse')">
+        <h1 class="h5">
+          {{ i18n.global.t('governance.accounts.details.detailsTab.title') }}
+        </h1>
+        <FrIcon
+          v-if="enableCollapse"
+          :name="!isCollapsed ? 'keyboard_arrow_down' : 'chevron_right'"
+          class="ml-2" />
+      </div>
+      <BCollapse :visible="!isCollapsed">
+        <div class="mt-4">
+          <BRow
+            v-for="([leftColumnAttribute, rightColumnAttribute], index) in displayPairs"
+            :key="index">
+            <BCol
+              sm="3"
+              class="weight-600">
+              {{ leftColumnAttribute.key }}
+            </BCol>
+            <BCol
+              sm="3"
+              class="mb-3 text-gray-900">
+              {{ leftColumnAttribute.value ?? blankValueIndicator }}
+            </BCol>
+            <template v-if="rightColumnAttribute">
+              <BCol
+                sm="3"
+                class="weight-600">
+                {{ rightColumnAttribute.key }}
+              </BCol>
+              <BCol
+                sm="3"
+                class="mb-3 text-gray-900">
+                {{ rightColumnAttribute.value ?? blankValueIndicator }}
+              </BCol>
+            </template>
+          </BRow>
+        </div>
+      </BCollapse>
     </BCard>
   </template>
   <BModal
@@ -148,8 +161,9 @@ import {
   onMounted, ref, computed,
 } from 'vue';
 import { capitalize, find } from 'lodash';
-import { BButton, BCard, BModal } from 'bootstrap-vue';
-import { useRoute } from 'vue-router';
+import {
+  BButton, BCard, BCollapse, BModal, BRow, BCol, BBadge,
+} from 'bootstrap-vue';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
@@ -180,9 +194,21 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  useExistingGlossary: {
+    type: Boolean,
+    default: false,
+  },
+  isCollapsed: {
+    type: Boolean,
+    default: false,
+  },
+  enableCollapse: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const route = useRoute();
+const emit = defineEmits(['toggle-collapse']);
 const { bvModal } = useBvModal();
 const glossarySchema = ref([]);
 const glossaryValues = ref({});
@@ -273,13 +299,17 @@ async function getActorsInfo() {
 
 async function getGlossaryValues() {
   try {
-    const { data } = await getAccountGlossaryAttributesData(route.params.accountId);
+    // If glossary data is passed in and should be used, e.g. on a certification decision item, use that instead of querying
+    if (props.useExistingGlossary) {
+      return props.account?.glossary?.idx?.['/account'] || {};
+    }
+    const { data } = await getAccountGlossaryAttributesData(props.account?.keys?.accountId);
     return data;
   } catch (error) {
     if (error.response && error.response.status !== 404) {
       showErrorMessage(error, i18n.global.t('governance.glossary.queryAttrError', { resourceType: i18n.global.t('common.account') }));
     }
-    return {};
+    return props.account?.glossary?.idx?.['/account'] || {};
   }
 }
 
@@ -358,7 +388,7 @@ function closeModal() {
 async function save() {
   saving.value = true;
   try {
-    await saveAccountGlossaryAttributesData(route.params.accountId, glossaryValues.value);
+    await saveAccountGlossaryAttributesData(props.account?.keys?.accountId, glossaryValues.value);
     displayNotification('success', i18n.global.t('governance.accounts.details.detailsTab.accountSaved'));
     await getGlossary();
   } catch (error) {
@@ -381,5 +411,9 @@ onMounted(() => {
 
 .text-gray-900 {
   color: $gray-900
+}
+
+.section-header {
+  cursor: pointer;
 }
 </style>

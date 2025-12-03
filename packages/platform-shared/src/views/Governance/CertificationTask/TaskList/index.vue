@@ -383,14 +383,13 @@ of the MIT license. See the LICENSE file for details. -->
     <FrAccountModal
       v-if="currentAccountSelectedModal"
       :grant="currentAccountSelectedModal" />
-    <FrEntitlmentModal
-      :application="currentApplicationSelectedModal"
+    <FrEntitlementModal
       :entitlement="currentEntitlementSelected"
       :glossary-schema="glossarySchema.entitlement"
       :modal-id="getModalId('entitlement')" />
     <FrRoleModal
       :glossary-schema="glossarySchema.role"
-      :role="currentRoleSelected"
+      :role-details="currentRoleSelected"
       :modal-id="getModalId('role')" />
     <FrGovernanceUserDetailsModal
       :manager="manager"
@@ -470,17 +469,17 @@ import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/compone
 import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
 import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
 import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
-import FrAccountModal from './modals/AccountModal';
+import FrAccountModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/AccountModal';
+import FrEntitlementModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/EntitlementModal';
+import FrRoleModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/RoleModal/RoleModal';
 import FrActivityModal from './modals/ActivityModal';
 import FrAddCommentModal from './modals/AddCommentModal';
 import FrApplicationModal from './modals/ApplicationModal';
 import FrConfirmActionModal, { STEPS } from './modals/ConfirmActionModal';
 import FrCommentsModal from './modals/CommentsModal';
 import FrEditReviewerModal from './modals/EditReviewerModal';
-import FrEntitlmentModal from './modals/EntitlementModal';
 import FrReviewersModal from './modals/ReviewersModal';
 import FrReassignModal from './modals/ReassignModal';
-import FrRoleModal from './modals/RoleModal/RoleModal';
 import FrTaskActionsCell from './TaskActionsCell';
 import FrTaskFilters from './TaskFilters';
 import FrTaskMultiSelect from './TaskMultiSelect';
@@ -531,7 +530,7 @@ export default {
     FrApplicationModal,
     FrCommentsModal,
     FrEditReviewerModal,
-    FrEntitlmentModal,
+    FrEntitlementModal,
     FrReassignModal,
     FrReviewersModal,
     FrRoleModal,
@@ -1566,19 +1565,13 @@ export default {
         this.$bvModal.show('CertificationTaskApplicationModal');
       });
     },
-    async openEntitlementModal({
-      application,
-      id,
-      glossary,
-      entitlementOwner,
-    }) {
+    async openEntitlementModal(item) {
       try {
-        const { data } = await getEntitlementDetails(this.campaignId, id);
-        this.currentApplicationSelectedModal = application;
+        const { data } = await getEntitlementDetails(this.campaignId, item.id);
+        this.currentApplicationSelectedModal = item.application;
         this.currentEntitlementSelected = {
-          ...data,
-          entitlementOwner,
-          glossary,
+          entitlement: data,
+          ...item,
         };
         this.$bvModal.show(this.getModalId('entitlement'));
       } catch (error) {
@@ -1587,7 +1580,7 @@ export default {
     },
     openRoleModal(item) {
       this.currentRoleSelected = {
-        ...item.role,
+        role: item.role,
         glossary: item.glossary,
         roleOwner: item.roleOwner,
       };

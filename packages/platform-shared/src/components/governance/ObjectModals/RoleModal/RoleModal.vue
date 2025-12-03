@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
             {{ $t('governance.certificationTask.roleDetails') }}
           </small>
           <h5 class="mb-0">
-            {{ role.name }}
+            {{ roleObj.name }}
           </h5>
         </div>
       </BMedia>
@@ -51,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
           <dd
             class="col-lg-8 mb-4"
             data-testid="role-description">
-            {{ role.description || blankValueIndicator }}
+            {{ roleObj.description || blankValueIndicator }}
           </dd>
           <dt class="col-lg-4 mb-4">
             {{ $t('common.roleOwner') }}
@@ -120,15 +120,16 @@ const props = defineProps({
     type: String,
     default: 'role-modal',
   },
-  role: {
+  roleDetails: {
     type: Object,
     default: () => ({}),
   },
 });
 
 const filteredGlossarySchema = computed(() => props?.glossarySchema?.filter((glossaryProp) => (glossaryProp.name !== 'roleOwner')));
-const glossaryValues = computed(() => props?.role?.glossary?.idx?.['/role'] || {});
-const roleOwner = computed(() => props?.role?.roleOwner?.[0] || null);
-const roleApplications = computed(() => props?.role?.applications || []);
+const glossaryValues = computed(() => props?.roleDetails?.glossary?.idx?.['/role'] || {});
+const roleOwner = computed(() => props?.roleDetails?.roleOwner?.[0] || null);
+const roleApplications = computed(() => props?.roleDetails?.applications || []);
+const roleObj = computed(() => props?.roleDetails?.role);
 
 </script>

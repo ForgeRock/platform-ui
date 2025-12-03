@@ -8,7 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import ObjectProperties from './ObjectProperties';
 
-async function mountComponent() {
+async function mountComponent(additionalProps = {}) {
   const wrapper = mount(ObjectProperties, {
     global: {
       mocks: {
@@ -25,6 +25,7 @@ async function mountComponent() {
           'SMTP:Alyson@IGATestQA.onmicrosoft.com',
         ],
       },
+      ...additionalProps,
     },
   });
   await flushPromises();
@@ -71,5 +72,18 @@ describe('ObjectProperties Component', () => {
     expect(propertyFourName.text()).toBe('cn');
     const propertyFourDetail = propertyFour.find('div.col-sm-8');
     expect(propertyFourDetail.text()).toBe('--');
+  });
+
+  it('collapse works when enabled', async () => {
+    const wrapper = await mountComponent({ enableCollapse: true });
+    const cards = wrapper.findAll('.card-body');
+    const visibleCollapse = cards[0].find('.collapse.show');
+    expect(visibleCollapse.exists()).toBe(true);
+
+    await wrapper.setProps({ isCollapsed: true });
+    await wrapper.vm.$nextTick();
+
+    const visibleAfterCollapse = cards[0].find('.collapse.show');
+    expect(visibleAfterCollapse.exists()).toBe(false);
   });
 });

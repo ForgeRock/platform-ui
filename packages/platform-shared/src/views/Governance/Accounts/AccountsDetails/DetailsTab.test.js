@@ -112,6 +112,9 @@ function getAccount(accountType) {
         },
       },
     },
+    keys: {
+      accountId: 'system/Target/User/102',
+    },
     descriptor: {
       idx: {
         '/account': {
@@ -134,7 +137,7 @@ describe('DetailsTab', () => {
     jest.clearAllMocks();
   });
 
-  async function mountComponent(accountType, readOnly) {
+  async function mountComponent(accountType, readOnly, additionalProps) {
     jest.spyOn(AccountApi, 'getAccountGlossaryAttributesData')
       .mockResolvedValue({ data: accountType === 'machine' ? machineValues : testValues });
 
@@ -146,6 +149,7 @@ describe('DetailsTab', () => {
         account: getAccount(accountType),
         readOnly,
         isTesting: true,
+        ...additionalProps,
       },
       global: {
         mocks: {
@@ -247,6 +251,26 @@ describe('DetailsTab', () => {
       await flushPromises();
 
       expect(wrapper.vm.saving).toBe(false);
+    });
+
+    it('does not read new glossary data if choosing to use existing', async () => {
+      const wrapper = await mountComponent('orphan', false, { useExistingGlossary: true });
+      expect(AccountApi.getAccountGlossaryAttributesData).not.toHaveBeenCalled();
+      await wrapper.vm.$nextTick();
+      await flushPromises();
+    });
+
+    it('collapse works when enabled', async () => {
+      const wrapper = await mountComponent('default', false, { enableCollapse: true });
+      const cards = wrapper.findAll('.card-body');
+      const visibleCollapse = cards[2].find('.collapse.show');
+      expect(visibleCollapse.exists()).toBe(true);
+
+      await wrapper.setProps({ isCollapsed: true });
+      await wrapper.vm.$nextTick();
+
+      const visibleAfterCollapse = cards[2].find('.collapse.show');
+      expect(visibleAfterCollapse.exists()).toBe(false);
     });
   });
 });
