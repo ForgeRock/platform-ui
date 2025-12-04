@@ -2254,6 +2254,7 @@
         "newTemplate": "New Application Template",
         "nonAccountObject": "Non-Account Object",
         "nonAccountObjectDescription": "Must match a non account object type ID",
+        "nonAccountObjectMappingNote": "These fields are only required if this non account object maps to a property on the account object",
         "nonAccountProperties": "Non Account Properties",
         "nonAccountPropertiesSubtitle": "Source is the account property and Referenced object type is the ID of the Non-account object. This should also be set on the account property above.",
         "objectTypeDropdownDescription1": "Don't see the object type you were expecting?",
