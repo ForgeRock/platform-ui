@@ -316,6 +316,7 @@
     "script": "Script",
     "scripts": "Scripts",
     "search": "Search",
+    "searchable": "Searchable",
     "searchAllFields": "Search all fields",
     "searchPlaceholder": "Search {searchItem}",
     "secretLower": "secret",
