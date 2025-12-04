@@ -1206,9 +1206,17 @@
             "derivedProperties": {
               "addPropertyButton": "Add Derived Property",
               "addPropertyDescription": "Add a property to <code class=\"text-lowercase\">{sourceObject}</code> that derives its value from its <code class=\"text-lowercase\">{sourceProperty}</code>.",
-              "allObjectProperties": "Full {objectTitle} Object",
+              "allObjectProperties": "Full {objectTitle} object",
+              "deriveValueFrom": "Derive value from",
+              "deriveValueFromDescription": "{targetObjectName} property from which to derive the value of this property.",
               "description": "Optionally define additional properties on each object type that derive their values from the related object type.",
+              "editPropertyTitle": "Edit Derived Property",
+              "errorUpdatingDerivedProperties": "Error updating derived properties",
+              "flattenPropertiesDescription": "Flatten to return array of plain fields rather than as JSON objects.",
+              "notifyObjectType": "Notify Related Managed Object Type",
+              "notifyObjectTypeDescription": "Notify specified related managed object types on modification of these properties.",
               "propertiesTitle": "Derived {objectTitle} Properties",
+              "searchableDescription": "Display this property as a column in administration tables.",
               "subtitle": "Derived Properties (optional)",
               "title": "Derived Properties"
             },
