@@ -3,39 +3,41 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BCard
-    class="account-card"
-    no-body>
-    <BCardHeader class="p-4">
-      <h2 class="h4">
-        {{ $t('pages.profile.preferences.title') }}
-      </h2>
-      <p class="m-0">
-        {{ $t('pages.profile.preferences.subtitle') }}
-      </p>
-    </BCardHeader>
-    <BCardBody
-      v-for="(obj, preference, index) in preferences"
-      :class="{ 'border-bottom': index !== preferencesLength }"
-      :key="preference"
-      :collapsible="false"
-      :panel-shown="false">
-      <div class="d-inline-flex w-100">
-        <h3 class="h5 align-self-center m-0">
-          {{ getTranslation(obj.description) }}
-        </h3>
-        <div class="ml-auto">
-          <FrField
-            v-model="obj.value"
-            type="boolean"
-            :name="preference"
-            :label="obj.description"
-            :sr-only-label="true"
-            @change="savePreferences(preference, $event)" />
+  <section :aria-label="$t('pages.profile.preferences.title')">
+    <BCard
+      class="account-card"
+      no-body>
+      <BCardHeader class="p-4">
+        <h2 class="h4">
+          {{ $t('pages.profile.preferences.title') }}
+        </h2>
+        <p class="m-0">
+          {{ $t('pages.profile.preferences.subtitle') }}
+        </p>
+      </BCardHeader>
+      <BCardBody
+        v-for="(obj, preference, index) in preferences"
+        :class="{ 'border-bottom': index !== preferencesLength }"
+        :key="preference"
+        :collapsible="false"
+        :panel-shown="false">
+        <div class="d-inline-flex w-100">
+          <h3 class="h5 align-self-center m-0">
+            {{ getTranslation(obj.description) }}
+          </h3>
+          <div class="ml-auto">
+            <FrField
+              v-model="obj.value"
+              type="boolean"
+              :name="preference"
+              :label="obj.description"
+              :sr-only-label="true"
+              @change="savePreferences(preference, $event)" />
+          </div>
         </div>
-      </div>
-    </BCardBody>
-  </BCard>
+      </BCardBody>
+    </BCard>
+  </section>
 </template>
 
 <script>

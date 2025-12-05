@@ -212,7 +212,7 @@ describe('Profile', () => {
     const wrapper = setup();
     await flushPromises();
 
-    const accountSecurityCard = wrapper.find('div.accordion');
+    const accountSecurityCard = wrapper.find('section.accordion');
     expect(accountSecurityCard.exists()).toBe(true);
     expect(accountSecurityCard.find('h2').text()).toBe('Sign-in & Security');
 
@@ -247,7 +247,7 @@ describe('Profile', () => {
     const wrapper = setup(patchResetPasswordSpy.mockRejectedValue(error));
     await flushPromises();
 
-    const accountSecurityCard = wrapper.find('div.accordion');
+    const accountSecurityCard = wrapper.find('section.accordion');
 
     const currentPassword = accountSecurityCard.find('input[name="currentPassword"]');
     await currentPassword.setValue('testCurrentPassword');

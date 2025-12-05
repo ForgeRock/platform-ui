@@ -218,8 +218,8 @@ describe('AccountSecurity', () => {
     await flushPromises();
 
     const accordion = wrapper.find('.accordion');
-    expect(accordion.find('header h2').text()).toBe('Sign-in & Security');
-    expect(accordion.find('header p').text()).toBe('Update your username or password used to sign in.');
+    expect(accordion.find('h2').text()).toBe('Sign-in & Security');
+    expect(accordion.find('p').text()).toBe('Update your username or password used to sign in.');
 
     const accordionItems = findAllByTestId(accordion, 'accordion-item-wrapper');
     expect(accordionItems.length).toBe(1);
