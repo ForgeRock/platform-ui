@@ -3,16 +3,14 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div
+  <section
     class="accordion">
     <BCard
       no-body
       :class="cardClasses"
     >
-      <header>
-        <!-- @slot Accordion header -->
-        <slot name="accordionHeader" />
-      </header>
+      <!-- @slot Accordion header -->
+      <slot name="accordionHeader" />
       <template
         v-for="(data, key) in items"
         :key="key">
@@ -56,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
     </BCard>
-  </div>
+  </section>
 </template>
 
 <script>

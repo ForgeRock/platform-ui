@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrAccordion
       id="account-controls"
       accordion-group="accountControls"
+      :aria-label="$t('pages.profile.accountControls.title')"
       :items="items">
       <template #accordionHeader>
         <div class="p-4">

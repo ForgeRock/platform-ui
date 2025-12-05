@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <FrAccordion
     accordion-group="trustedDevices"
     class="mb-4"
+    :aria-label="i18n.global.t('pages.profile.trustedDevices.title')"
     :items="devices"
     @section-expanded="handleSectionExpanded">
     <template #accordionHeader>
