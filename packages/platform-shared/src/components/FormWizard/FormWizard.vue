@@ -222,7 +222,7 @@ const changeStep = (amount) => {
  * @param {Object} bvEvent - BvEvent object from BootstrapVue, used to prevent tab activation.
  */
 function handleTabClick(valid, bvEvent) {
-  if (props.validateOnTabChange && !valid) {
+  if (props.validateOnTabChange && (!valid || !props.validForm)) {
     bvEvent.preventDefault();
     showErrorMessage({}, i18n.global.t('errors.invalidFields'));
   }

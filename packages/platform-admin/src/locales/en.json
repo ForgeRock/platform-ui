@@ -1046,7 +1046,8 @@
           "propertyRetrieving": "There was an error retrieving the property",
           "propertySaving": "There was an error saving the property",
           "propertyUnavailable": "Property Unavailable",
-          "unableToLoadProperty": "Unable to load the selected property"
+          "unableToLoadProperty": "Unable to load the selected property",
+          "invalidJson": "Invalid JSON format. Please check your syntax and try again"
         },
         "goBackToManagedObjectType": "Go back to the managed object type.",
         "newTitle": "New {propertyType} Property",
@@ -1090,6 +1091,10 @@
             "privateHelp": "Prevent property accessiblity over REST.",
             "tabDescription": "Encode this property to protect sensitive data.",
             "tabTitle": "Privacy & Encryption"
+          },
+          "properties": {
+            "tabDescription": "Define properties for this object property.",
+            "tabTitle": "Properties"
           },
           "propertyValue": {
             "addSource": "Add Source",
