@@ -7,15 +7,21 @@
 
 import { filterTests } from '@e2e/util';
 
+// Helper function to set up registration page with all necessary waits
+const setupRegistrationPage = (locationUrl) => {
+  cy.visit(locationUrl);
+  cy.get('.card-body').should('be.visible');
+  cy.get('.fr-policy-list-item', { timeout: 4000 }).first().should('be.visible');
+};
+
 filterTests(['@forgeops'], () => {
   describe('Registration Page - Visual Tests', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Registration#/`;
     // Visual regression tests for registration page
     it('should capture registration form states', () => {
-      cy.visit(locationUrl);
+      setupRegistrationPage(locationUrl);
       cy.findByLabelText('Username').type('testuser123');
       cy.findByLabelText('First Name').type('Test');
-
       cy.percySnapshot('Login - Registration Form Partial');
 
       cy.findByLabelText('Password').type('Password@1234');
@@ -28,10 +34,7 @@ filterTests(['@forgeops'], () => {
     });
 
     it('should capture first security questions dropdown', () => {
-      cy.visit(locationUrl);
-
-      // Wait for page to fully load
-      cy.get('.card-body').should('be.visible');
+      setupRegistrationPage(locationUrl);
 
       // Click the first security question dropdown using combobox role
       cy.findAllByRole('combobox').first().should('be.visible').click();
@@ -40,10 +43,7 @@ filterTests(['@forgeops'], () => {
     });
 
     it('should capture security question selection - favorite color', () => {
-      cy.visit(locationUrl);
-
-      // Wait for page to fully load
-      cy.get('.card-body').should('be.visible');
+      setupRegistrationPage(locationUrl);
 
       // Click the first security question dropdown using combobox role
       cy.findAllByRole('combobox').first().should('be.visible').click();
@@ -59,10 +59,7 @@ filterTests(['@forgeops'], () => {
     });
 
     it('should capture custom security question input', () => {
-      cy.visit(locationUrl);
-
-      // Wait for page to fully load
-      cy.get('.card-body').should('be.visible');
+      setupRegistrationPage(locationUrl);
 
       // Click the first security question dropdown using combobox role
       cy.findAllByRole('combobox').first().should('be.visible').click();
@@ -75,10 +72,7 @@ filterTests(['@forgeops'], () => {
     });
 
     it('should capture second security questions dropdown', () => {
-      cy.visit(locationUrl);
-
-      // Wait for page to fully load
-      cy.get('.card-body').should('be.visible');
+      setupRegistrationPage(locationUrl);
 
       // Only test second security question if not in FRaaS (Cloud) environment
       if (!Cypress.env('IS_FRAAS')) {
