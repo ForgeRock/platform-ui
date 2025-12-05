@@ -4,18 +4,20 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="pt-2">
-    <div :class="{ 'border-bottom': isValidJSONString(listValues) && isValidField() && showBorders && showLastBorder}">
+    <div :class="{ 'border-bottom': isValidJSONString(listValues) && isValidField() && showBorders && showLastBorder && !showTable}">
       <div
         v-if="showTitle"
         class="d-flex justify-content-between align-items-center">
         <label>{{ fieldTitle }}</label>
       </div>
-      <div>
+      <div :class="showTable ? 'border rounded' : ''">
         <div
           v-if="!listValues || !listValues.length"
-          :class="{ 'border-top': showBorders }"
+          :class="{ 'border-top': showBorders && !showTable }"
           class="d-flex pt-3 pb-3 px-0 align-items-center">
-          <div class="text-muted text-left flex-grow-1">
+          <div
+            :class="{ 'pl-3': showTable }"
+            class="text-muted text-left flex-grow-1">
             ({{ $t('common.none') }})
           </div>
           <button
@@ -31,33 +33,51 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             v-for="(obj, index) in listValues"
             :key="obj.listUniqueIndex"
-            :class="{ 'border-top': showBorders }"
-            class="d-flex pt-3 pb-2 px-0">
-            <div class="flex-grow-1 pr-3 position-relative">
+            :class="{ 'border-top': showBorders && !(showTable && index === 0), 'pt-3': !showTable }"
+            class="d-flex pb-2 px-0">
+            <div
+              :class="{'pr-3': !showTable }"
+              class="flex-grow-1 position-relative">
               <div class="form-row align-items-center">
+                <BContainer
+                  v-if="showTable && index === 0"
+                  :key="key"
+                  class="ml-1 p-0 responsive-header d-none d-lg-block border-bottom"
+                  fluid>
+                  <BRow class="m-0">
+                    <BCol
+                      v-for="(property, propertyKey) in objectProperties"
+                      :key="propertyKey"
+                      cols="3"
+                      class="font-weight-bold text-dark pr-1 py-2">
+                      {{ property.title || propertyKey }}
+                    </BCol>
+                  </BRow>
+                </BContainer>
                 <template v-for="(objValue, key) in obj">
                   <div
                     v-if="key !== 'listUniqueIndex' && objectProperties[key] && !objectProperties[key].hidden"
                     :key="key"
-                    :class="`col-lg-${columnWidth}`"
-                    class="pb-2">
+                    :class="[`col-lg-${columnWidth}`, showTable ? 'p-3' : 'pb-2']">
                     <div v-if="objectProperties[key].type === 'boolean'">
                       <BFormCheckbox
                         v-model="obj[key]"
+                        :class="objectProperties[key].fieldClass || ''"
                         :disabled="disabled || objectProperties[key].disabled"
                         :name="`${key}_${index}_${_uid}`"
                         @change="emitInput(listValues)">
-                        {{ objectProperties[key].title || key }}
+                        {{ !showTable || isSmallScreen ? objectProperties[key].title || key : '' }}
                       </BFormCheckbox>
                     </div>
                     <div v-else-if="objectProperties[key].type === 'number'">
                       <FrField
                         :value="obj[key]"
                         @input="obj[key] = $event; emitInput(listValues)"
+                        :class="objectProperties[key].fieldClass || ''"
                         :disabled="disabled || objectProperties[key].disabled"
                         type="number"
                         validation="required|isNumber"
-                        :label="objectProperties[key].title || key"
+                        :label="!showTable || isSmallScreen ? objectProperties[key].title || key : ''"
                         :name="`${key}_${index}_${_uid}`"
                       />
                     </div>
@@ -65,8 +85,9 @@ of the MIT license. See the LICENSE file for details. -->
                       <FrField
                         :value="obj[key] || objectProperties[key].value"
                         @input="obj[key] = $event; emitInput(listValues, key)"
+                        :class="objectProperties[key].fieldClass || ''"
                         :disabled="disabled || objectProperties[key].disabled"
-                        :label="objectProperties[key].title || key"
+                        :label="!showTable || isSmallScreen ? objectProperties[key].title || key : ''"
                         :name="`${key}_${index}_${_uid}`"
                         :options="objectProperties[key].options"
                         :type="objectProperties[key].type"
@@ -82,6 +103,11 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
             </div>
             <div v-if="multiValued || noListValuesOnMount">
+              <div
+                v-if="showTable && index === 0"
+                class="py-2 responsive-header d-none d-lg-block border-bottom">
+                  &nbsp;
+              </div>
               <div class="position-relative d-inline-flex justify-content-end">
                 <button
                   v-if="listValues.length > 0"
@@ -204,6 +230,13 @@ export default {
       type: Boolean,
       default: true,
     },
+    /**
+     * Whether to show the grid/table style layout
+     */
+    showTable: {
+      type: Boolean,
+      default: false,
+    },
     showTitle: {
       type: Boolean,
       default: true,
@@ -241,6 +274,7 @@ export default {
       listUniqueIndex: 0,
       objectProperties: {},
       showEditor: false,
+      isSmallScreen: false,
     };
   },
   computed: {
@@ -289,6 +323,13 @@ export default {
     } else if (this.showEmptyList) {
       this.addObjectToList(-1);
     }
+
+    // Check screen size and add resize listener
+    this.checkScreenSize();
+    window.addEventListener('resize', this.checkScreenSize);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.checkScreenSize);
   },
   methods: {
     /**
@@ -388,6 +429,9 @@ export default {
         rules.required = true;
       }
       return rules;
+    },
+    checkScreenSize() {
+      this.isSmallScreen = window.innerWidth < 992;
     },
   },
 };
