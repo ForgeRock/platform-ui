@@ -5,10 +5,18 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <template v-if="showItemForUser && showItemForStoreValues">
     <!-- Item is a divider -->
-    <BDropdownDivider
+    <!-- BDropdownDivider creates an a11y issue about `List element has direct children that are not allowed: [role=presentation]`,
+    so we are creating the divider manually.
+    -->
+    <li
       v-if="isDivider"
-      aria-hidden="true"
-      tabindex="-1" />
+      role="presentation"
+      aria-hidden="true">
+      <hr
+        role="separator"
+        aria-orientation="horizontal"
+        class="dropdown-divider">
+    </li>
     <!-- Item opens a modal -->
     <li
       v-else-if="modal && showItemForPrivileges"
@@ -156,7 +164,6 @@ import {
   BCollapse,
   BNavItem,
   BDropdownItem,
-  BDropdownDivider,
   VBToggle,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -179,7 +186,6 @@ export default {
     BCollapse,
     BNavItem,
     BDropdownItem,
-    BDropdownDivider,
     FrIcon,
   },
   props: {
@@ -249,7 +255,7 @@ export default {
       default: '',
     },
     /**
-     * Indicates that the item should render as a BDropdownDivider
+     * Indicates that the item should render as a horizontal divider.
      */
     isDivider: {
       type: Boolean,
