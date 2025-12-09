@@ -113,7 +113,7 @@ export default {
       localizedFooter: '',
       localizedHeader: '',
       localizedJustifiedContent: '',
-      localizedLogo: 'images/ping-logo-square-color.svg',
+      localizedLogo: '',
       localizedLogoAltText: '',
     };
   },
@@ -179,6 +179,8 @@ export default {
         if (this.localizedFavicon) {
           document.getElementById('favicon').href = this.localizedFavicon;
         }
+      } catch {
+        this.localizedLogo = this.localizedLogo || 'images/ping-logo-square-color.svg';
       } finally {
         this.hideAppOnTransition = false;
       }
