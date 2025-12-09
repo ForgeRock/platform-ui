@@ -129,7 +129,7 @@ import {
   BMediaAside,
   BMediaBody,
 } from 'bootstrap-vue';
-import logo from '@forgerock/platform-shared/src/composables/logo';
+import useLogo from '@forgerock/platform-shared/src/composables/logo';
 import FrDropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
 import FrMenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -212,7 +212,7 @@ export default {
     const {
       horizontalLogoAttrs,
       squareLogoAttrs,
-    } = logo();
+    } = useLogo();
     return {
       horizontalLogoAttrs,
       squareLogoAttrs,

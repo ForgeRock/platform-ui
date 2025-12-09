@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+/* eslint-disable global-require */
+
 import {
   computed,
 } from 'vue';
@@ -12,19 +14,17 @@ import { getLocalizedString } from '@forgerock/platform-shared/src/utils/transla
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import i18n from '@/i18n';
 
-export default function logo() {
+export default function useLogo() {
   const { theme } = useTheme();
   const i18nArguments = [i18n.global.locale, i18n.global.fallbackLocale];
 
   function getHorizontalLogoSrc() {
     return getLocalizedString(theme.value.logoProfile, ...i18nArguments)
-    // eslint-disable-next-line global-require
     || require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg');
   }
 
   function getSquareLogoSrc() {
     return getLocalizedString(theme.value.logoProfileCollapsed, ...i18nArguments)
-    // eslint-disable-next-line global-require
     || require('@forgerock/platform-shared/src/assets/images/placeholder.svg');
   }
 
