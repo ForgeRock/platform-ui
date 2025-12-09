@@ -1657,7 +1657,7 @@
       "createCredentials": "Create a client ID for your application.",
       "createCredentialsWithSecret": "Create a client ID and secret for your application.",
       "createApp": "Create Application",
-      "errorAddingToDashboard": "There was an error adding application to dashboard service",
+      "errorAddingToDashboard": "There was an error saving application to dashboard service",
       "applicationDetails": "Application Details",
       "oauthSettings": "{signInMethod} Settings",
       "applicationType": "Application Type",
@@ -1716,7 +1716,6 @@
       },
       "messages": {
         "getAppDataFail": "Unable to retrieve application data",
-        "getDashboardFail": "Unable to retrieve enduser application details",
         "getManagedAppFail": "Unable to retrieve managed application",
         "schemaFail": "Unable to get application properties",
         "updateSuccess": "Application updated",

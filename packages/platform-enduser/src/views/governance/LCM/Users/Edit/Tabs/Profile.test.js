@@ -89,6 +89,8 @@ PrivilegeApi.getResourceTypePrivilege.mockImplementation(() => Promise.resolve({
 
 RequestFormAssignmentsApi.getFormAssignmentByLcmOperation.mockImplementation(() => Promise.resolve({ data: { result: [] } }));
 
+AccessRequestApi.submitCustomRequest.mockImplementation(() => Promise.resolve({ data: { id: 'test-request-id' } }));
+
 describe('Profile', () => {
   let wrapper;
   function mountComponent() {
@@ -132,7 +134,7 @@ describe('Profile', () => {
     wrapper = mountComponent();
     await flushPromises();
 
-    await wrapper.findComponent('[id="User Name"]').vm.$emit('input', 'newUserName');
+    await wrapper.findComponent('[id="User Name"]').vm.$emit('update:model', { path: 'userName', value: 'newUserName' });
     await wrapper.find('[type="button"]').trigger('click');
     await flushPromises();
     expect(AccessRequestApi.submitCustomRequest).toHaveBeenCalledWith(

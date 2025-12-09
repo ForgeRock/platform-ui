@@ -267,8 +267,8 @@ describe('FormBuilder', () => {
     await field.setValue('test1');
     await flushPromises();
 
-    expect(wrapper.emitted('is-valid')).toHaveLength(4);
-    expect(wrapper.emitted('is-valid')[3][0]).toBe(true);
+    expect(wrapper.emitted('is-valid')).toHaveLength(5);
+    expect(wrapper.emitted('is-valid')[4][0]).toBe(true);
 
     expect(wrapper.emitted('update:modelValue')).toHaveLength(1);
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ field1: 'test1' });

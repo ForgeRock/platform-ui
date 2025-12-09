@@ -114,7 +114,7 @@ describe('ModifyUserForm', () => {
     wrapper = mountComponent();
     await flushPromises();
 
-    wrapper.findComponent('[id="User Name"]').vm.$emit('input', 'newUserName');
+    wrapper.findComponent('[id="User Name"]').vm.$emit('update:model', { path: 'userName', value: 'newUserName' });
     await flushPromises();
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({
       userName: 'newUserName',

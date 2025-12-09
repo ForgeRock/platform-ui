@@ -119,7 +119,7 @@ import {
   BInputGroupAppend,
   BTooltip,
 } from 'bootstrap-vue';
-import { delay, debounce } from 'lodash';
+import { delay, debounce, uniq } from 'lodash';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
@@ -313,13 +313,12 @@ export default {
     ariaDescribedBy() {
       if ((this.meta.valid && !this.errors.length) || !this.fieldErrors) return this.describedbyId || undefined;
 
-      const combinedErrors = this.errors.concat(this.fieldErrors);
-      if (!combinedErrors) return this.describedbyId || undefined;
+      if (!this.combinedErrors) return this.describedbyId || undefined;
 
-      return createAriaDescribedByList(this.name, combinedErrors);
+      return createAriaDescribedByList(this.name, this.combinedErrors);
     },
     combinedErrors() {
-      return this.errors.concat(this.fieldErrors);
+      return uniq(this.errors.concat(this.fieldErrors));
     },
     /**
      * Determines the `aria-invalid` attribute's state based on field interactions and validation status.

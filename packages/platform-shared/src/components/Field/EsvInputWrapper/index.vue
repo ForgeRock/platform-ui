@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -20,6 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
         <template #prependButton>
           <FrEsvDropdown
             class="within-input-button"
+            :include-secrets="includeSecrets"
             is-within-input
             :field-type="originalType"
             @esv-selected="handlePlaceholderEntered" />
@@ -43,6 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
         </Component>
         <FrEsvDropdown
           :field-type="originalType"
+          :include-secrets="includeSecrets"
           @esv-selected="handlePlaceholderEntered" />
       </div>
     </template>
@@ -93,6 +95,14 @@ export default {
     FrTimeInput,
   },
   props: {
+    includeSecrets: {
+      type: Boolean,
+      default: true,
+    },
+    coercePlaceholder: {
+      type: Boolean,
+      default: true,
+    },
     /**
      * Field component to be wrapped
      */
@@ -150,8 +160,12 @@ export default {
      * @param {Object} placeholder the placeholder value
      */
     handlePlaceholderEntered(placeholder) {
-      const coercedPlaceholder = coercePlaceholderByType(this.originalType, placeholder);
-      this.$emit('input', coercedPlaceholder);
+      if (this.coercePlaceholder) {
+        const coercedPlaceholder = coercePlaceholderByType(this.originalType, placeholder);
+        this.$emit('input', coercedPlaceholder);
+      } else {
+        this.$emit('input', placeholder);
+      }
     },
   },
 };

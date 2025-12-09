@@ -192,9 +192,19 @@ describe('ItemDetailsModal', () => {
       });
       await flushPromises();
 
+      // Click next to move to form step
       await wrapper.find('.modal-footer button.btn-primary').trigger('click');
-      await wrapper.findComponent('#testLabel').vm.$emit('input', 'testValue');
-      await wrapper.find('.modal-footer button.btn-primary').trigger('click');
+      await flushPromises();
+
+      // Emit input event from the form step component with the form data
+      const formStep = wrapper.findComponent({ name: 'ItemFormStep' });
+      await formStep.vm.$emit('input', { testModel: 'testValue' });
+      await flushPromises();
+
+      // Trigger the modal's ok event directly
+      const modal = wrapper.findComponent({ name: 'BModal' });
+      await modal.vm.$emit('ok');
+      await flushPromises();
 
       // Assert that the correct event is emitted
       expect(wrapper.emitted()).toHaveProperty('toggle-item');
