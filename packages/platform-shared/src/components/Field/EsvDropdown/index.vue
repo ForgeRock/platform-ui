@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -91,6 +91,10 @@ export default {
       type: String,
       required: true,
     },
+    includeSecrets: {
+      type: Boolean,
+      default: true,
+    },
     isWithinInput: {
       type: Boolean,
       default: false,
@@ -99,7 +103,7 @@ export default {
   setup(props, context) {
     const query = ref('');
 
-    const filteredEsvData = useFilteredEsvs(query, props.fieldType);
+    const filteredEsvData = useFilteredEsvs(query, props.fieldType, props.includeSecrets);
 
     function esvClicked(esvItem) {
       context.emit('esv-selected', esvItem.placeholder);

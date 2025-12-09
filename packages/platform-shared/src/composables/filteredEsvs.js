@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,7 +17,7 @@ import { useEsvInputStore } from '../stores/esvInput';
  * @returns {Object} containing the loading state, a list of filtered variables and secrets,
  * whether secrets are to be displayed and a reactive variable to toggle the list in use
  */
-export default function useFilteredEsvs(query, fieldType) {
+export default function useFilteredEsvs(query, fieldType, includeSecrets = true) {
   if (query === null || query === undefined || fieldType === null || fieldType === undefined) {
     throw new Error('Both fieldType and query are required to use this composable');
   }
@@ -29,13 +29,13 @@ export default function useFilteredEsvs(query, fieldType) {
     .filter(({ expressionType }) => typeof expressionType === 'undefined' || expressionTypesToInclude.includes(expressionType)));
 
   // Compute the ESV list, only include secrets if needed for the field type
-  const includeSecrets = showEsvSecretsForField(fieldType);
+  const secretsVisible = includeSecrets && showEsvSecretsForField(fieldType);
   const filteredEsvs = computed(() => {
     const lowerCaseQuery = query.value.toLowerCase();
 
     return [
       ...relevantVariables.value.filter(({ placeholder }) => placeholder.includes(lowerCaseQuery)),
-      ...(includeSecrets ? esvInputStore.secrets.filter(({ placeholder }) => placeholder.includes(lowerCaseQuery)) : []),
+      ...(secretsVisible ? esvInputStore.secrets.filter(({ placeholder }) => placeholder.includes(lowerCaseQuery)) : []),
     ];
   });
 
@@ -55,7 +55,7 @@ export default function useFilteredEsvs(query, fieldType) {
   return {
     isLoading,
     filteredEsvs,
-    secretsVisible: includeSecrets,
+    secretsVisible,
     esvListInUse,
   };
 }

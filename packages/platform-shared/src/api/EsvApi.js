@@ -1,9 +1,8 @@
 /**
- * Copyright 2021-2024 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { convertStringToBase64 } from '@forgerock/platform-shared/src/utils/encodeUtils';
@@ -367,31 +366,37 @@ export function getSecretsAndVariablesCount() {
 }
 
 /**
- * Gets all variables and secrets in an environment.
+ * Gets all variables and/or secrets in an environment.
  * @param {Object} queryConfig the query configuration
- * @param {String} queryConfig.expressionType the variables expression type to filter by
+ * @param {String} [queryConfig.expressionType] The variables expression type to filter by.
+ * @param {String} [queryConfig.esvType='all'] The type of ESV to retrieve ('variables', 'secrets', or 'all').
  * @returns {Promise} a promise which resolves to an object with all secrets and variables
  */
-export async function getAllEsvs({ expressionType } = {}) {
+export async function getAllEsvs({ expressionType, esvType = 'all' } = {}) {
   const esvCount = await getSecretsAndVariablesCount();
   const pageSize = 100;
-  const secretsPageCount = Math.ceil(esvCount.data.secrets / pageSize);
-  const variablesPageCount = Math.ceil(esvCount.data.variables / pageSize);
   const esvSecrets = [];
   const esvVariables = [];
 
-  for (let i = 1; i <= secretsPageCount; i += 1) {
-    /* eslint-disable no-await-in-loop */
-    const pageRequest = await getStartupSecretsV2({ page: i, pageSize });
+  const shouldFetchSecrets = esvType === 'all' || esvType === 'secrets';
+  const shouldFetchVariables = esvType === 'all' || esvType === 'variables';
 
-    esvSecrets.push(...pageRequest.data.result);
+  if (shouldFetchSecrets) {
+    const secretsPageCount = Math.ceil(esvCount.data.secrets / pageSize);
+    for (let i = 1; i <= secretsPageCount; i += 1) {
+      /* eslint-disable no-await-in-loop */
+      const pageRequest = await getStartupSecretsV2({ page: i, pageSize });
+      esvSecrets.push(...pageRequest.data.result);
+    }
   }
 
-  for (let i = 1; i <= variablesPageCount; i += 1) {
-    /* eslint-disable no-await-in-loop */
-    const pageRequest = await getStartupVariablesV2({ page: i, pageSize, expressionType });
-
-    esvVariables.push(...pageRequest.data.result);
+  if (shouldFetchVariables) {
+    const variablesPageCount = Math.ceil(esvCount.data.variables / pageSize);
+    for (let i = 1; i <= variablesPageCount; i += 1) {
+      /* eslint-disable no-await-in-loop */
+      const pageRequest = await getStartupVariablesV2({ page: i, pageSize, expressionType });
+      esvVariables.push(...pageRequest.data.result);
+    }
   }
 
   return {

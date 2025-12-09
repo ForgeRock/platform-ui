@@ -102,7 +102,7 @@ describe('RequestFormLauncher', () => {
 
     const wrapper = mountComponent();
     await flushPromises();
-    await wrapper.findComponent('.fr-field').vm.$emit('input', 'a custom value');
+    wrapper.findComponent('[id="testLabel (optional)"]').vm.$emit('update:model', { path: 'custom.testProperty1', value: 'a custom value' });
     await wrapper.find('[aria-label="Submit Request"]').trigger('click');
 
     expect(submitSpy).toBeCalledWith('customRequestType', { common: {}, custom: { testProperty1: 'a custom value' } });
