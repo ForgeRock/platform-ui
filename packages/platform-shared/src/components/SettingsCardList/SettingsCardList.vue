@@ -124,7 +124,7 @@ function changeState(key, value, route) {
 function handleRowClick(event, key, listItem) {
   // We want to ignore clicks directly on the button as the elements have independent handlers
   if (props.clickable && event.target.tagName?.toLowerCase() !== 'button') {
-    this.changeState(key, listItem.value, listItem.route);
+    changeState(key, listItem.value, listItem.route);
   }
 }
 

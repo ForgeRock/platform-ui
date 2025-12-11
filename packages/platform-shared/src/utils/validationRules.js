@@ -265,7 +265,17 @@ export function getRules(i18n) {
 
   // Rule to check whether value is a valid IPv4 or IPv6 address
   function ipv4_ipv6(value) {
-    if (value === '' || customValidators.ipv4(value) || customValidators.ipv6(value)) {
+    let arrayValid = true;
+    if (Array.isArray(value)) {
+      value.forEach((singleValue) => {
+        if (singleValue !== '' && !customValidators.ipv4(singleValue) && !customValidators.ipv6(singleValue)) {
+          arrayValid = false;
+        }
+      });
+      if (arrayValid) {
+        return true;
+      }
+    } else if (value === '' || customValidators.ipv4(value) || customValidators.ipv6(value)) {
       return true;
     }
     return i18n.global.t('common.policyValidationMessages.validIp');

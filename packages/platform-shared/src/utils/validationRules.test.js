@@ -526,6 +526,15 @@ describe('ip validators', () => {
     expect(rules.ipv4_ipv6('2001:db82:2001:db82')).toBe('Please provide a valid IPv4 or IPv6 address');
     expect(rules.ipv4_ipv6(':::')).toBe('Please provide a valid IPv4 or IPv6 address');
   });
+
+  it('should return corresponding error message when the value is an invalid ipv4 or ipv6 address within an array', () => {
+    expect(rules.ipv4_ipv6(['1', '1.2.3.4'])).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6(['bonk', '1.2.3.4'])).toBe('Please provide a valid IPv4 or IPv6 address');
+  });
+
+  it('should return true when all array elements valid', () => {
+    expect(rules.ipv4_ipv6(['1.2.3.4', '5.6.7.8'])).toBe(true);
+  });
 });
 
 describe('other validation Rules', () => {
