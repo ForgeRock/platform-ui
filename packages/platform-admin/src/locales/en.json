@@ -3557,6 +3557,7 @@
       "addSyncData": "Sync Data",
       "errors": {
         "errorGettingSyncData": "Error retrieving advanced sync data",
+        "errorGettingDefaultData": "Error retrieving default mappings data",
         "mappingUnavailable": "Mapping Unavailable",
         "unableToLoadMapping": "Unable to load the selected mapping",
         "errorGettingMappingProperties": "Error retrieving {mappingType} properties",
@@ -3564,6 +3565,8 @@
       },
       "goBackToApp": "Go back to the application.",
       "loadingSyncData": "Loading sync data...",
+      "showDefaultMappings": "Default Mappings",
+      "defaultMappingsWarning": "These mappings were created when provisioning was set up to support required application functionality. Use caution when editing, as changes could break this functionality.",
       "title": "Advanced Sync",
       "addModal": {
         "flipSyncIconLabel": "Flip sync direction",
@@ -3587,7 +3590,9 @@
         "appTitle": "No synchronized applications yet",
         "appSubtitle": "Synchronize data between {displayName} {objectTypeName} and other applications.",
         "identityTitle": "No synchronized data for {displayName}",
-        "identitySubtitle": "Synchronize data between {displayName} {objectTypeName} and other entities."
+        "identitySubtitle": "Synchronize data between {displayName} {objectTypeName} and other entities.",
+        "defaultTitle": "No default mappings found",
+        "defaultSubtitle": "These mappings are created automatically to support required application functionality."
       },
       "tabs": {
         "mapping": {
