@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2023 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2025 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -578,7 +578,8 @@ $fr-sidemenu-background-color: $white;
 $fr-sidemenu-active-border-color: $gray-800;
 $fr-sidemenu-font-color: $gray-700;
 $fr-sidemenu-height: 4.5rem;
-$fr-sidemenu-hover:  $light-blue;
+$fr-sidemenu-hover:  $gray-100;
+$fr-sidemenu-active: $light-blue;
 $fr-sidemenu-shadow: transparent;
 $fr-sidemenu-border: $gray-200;
 $fr-sidemenu-width-lg: 15em;

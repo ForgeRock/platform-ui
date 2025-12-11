@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright 2020-2025 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -9,9 +9,15 @@
   .nav-pills .nav-link.active,
   .nav-pills .show > .nav-link {
     color: $gray-800;
-    background: $light-blue;
+    background: $fr-sidemenu-active;
     border-left-color: $blue;
     border-radius: 0;
+
+    &:hover,
+    &:focus {
+      background: $fr-sidemenu-active;
+      border-left-color: $blue;
+    }
   }
 
   .nav-pills .nav-link {
@@ -19,6 +25,11 @@
     border-left: 3px solid transparent;
     font-size: 0.875rem;
     padding: 0.875rem 1.5rem;
+
+    &:hover,
+    &:focus {
+      background: $fr-sidemenu-hover;
+    }
   }
 }
 
