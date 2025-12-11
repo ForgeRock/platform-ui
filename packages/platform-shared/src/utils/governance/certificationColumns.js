@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -172,7 +172,7 @@ const OOTBColumns = {
   actions: {
     key: 'actions',
     class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right',
-    label: '',
+    label: i18n.global.t('common.actions'),
     sortable: false,
     show: true,
     showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
@@ -278,7 +278,7 @@ export function getInitialColumns(grantType, entitlementUserId, showAccountDrill
     {
       key: 'actions',
       class: `${showAccountDrilldown ? 'w-230px' : 'w-200px'} cert-actions border-left fr-access-cell fr-no-resize sticky-right`,
-      label: '',
+      label: i18n.global.t('common.actions'),
       sortable: false,
       show: true,
       showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
