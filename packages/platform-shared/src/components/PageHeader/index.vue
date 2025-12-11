@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,9 +22,12 @@ of the MIT license. See the LICENSE file for details. -->
     </BBadge>
     <p
       v-if="subtitle !== ''"
-      class="text-muted mb-4">
+      :class="`text-muted ${ $slots.additionalContent ? `mb-1` : `mb-4`}`">
       {{ subtitle }}
     </p>
+    <div v-if="$slots.additionalContent">
+      <slot name="additionalContent" />
+    </div>
   </div>
 </template>
 

@@ -3768,7 +3768,57 @@
       "title": "Proxy Connect",
       "enable": "Configure",
       "disable": "Configure",
-      "description": "Configure IP and Header access rules for your tenant"
+      "description": "Configure IP and Header access rules for your tenant",
+      "errorRetrievingProxyConnectConfig": "Could not retrieve Proxy Connect config",
+      "errorUpdatingProxyConnectConfig": "Could not update Proxy Connect config",
+      "ipRulesTabName": "IP Address Filtering",
+      "headerRulesTabName": "Security Headers",
+      "statusDescription": "Proxy Connect Status",
+      "open": "Open",
+      "filtering": "Filtering",
+      "blocking": "Blocking",
+      "pendingUpdatesTitle": "Pending Proxy Connect Updates",
+      "newProxyConnectStatusHeader": "Status Change",
+      "newHeaderRulesEnabledStatusHeader": "Security Headers Enabled Status Change",
+      "newIpRulesEnabledStatusHeader": "IP Rules Enabled Status Change",
+      "successfullyAppliedConfig": "Proxy Connect config applied successfully",
+      "errorApplyingProxyConnectConfig": "Could not apply new Proxy Connect config",
+      "headerRules": {
+        "noDataTitle": "You haven't configured any Security Headers for this tenant",
+        "noDataSubtitle": "Add Security Headers for this tenant",
+        "headerRuleName": "Header Name",
+        "headerRuleValue": "Value",
+        "headerRuleAddedName": "Added Security Headers",
+        "headerRuleRemovedName": "Removed Security Headers",
+        "headerRuleDisplayName": "Security Header",
+        "createModalTitle": "Create Security Header"
+      },
+      "ipRules": {
+        "noDataTitle": "You haven't configured any IP filters for this tenant",
+        "noDataSubtitle": "Add IP filters for this tenant",
+        "ipRulesFieldDescription": "Rule Exceptions",
+        "ipRulesFieldLabel": "Accepted IP Addresses",
+        "ipRulesRemovedLabel": "Removed IP Addresses",
+        "ipRulesAddedLabel": "Added IP Addresses"
+      },
+      "pendingUpdates": {
+        "updatesToApply": "You have <span class=\"font-weight-bold text-dark\">{count} update</span> to apply. | You have <span class=\"font-weight-bold text-dark\">{count} updates</span> to apply.",
+        "viewUpdates": "View Update | View Updates",
+        "errorApplyingUpdates": "Error applying updates",
+        "updateInProgress": "<span class=\"font-weight-bold\">Update in progress.</span> Adding or editing of Proxy Connect config is inactive until update has completed, which may take up to 10 minutes."
+      },
+      "pendingUpdatesModal": {
+        "applyUpdates": "Apply Now",
+        "applyingUpdates": "Applying...",
+        "pendingTitle": "Pending Updates",
+        "applyTitle": "Apply {count} Update? | Apply {count} Updates?",
+        "applyButton": "Apply {count} Update | Apply {count} Updates",
+        "tableStageDescription": "The following <span class=\"font-weight-bold text-dark\">{count} update</span> is pending application to your environment. | The following <span class=\"font-weight-bold text-dark\">{count} updates</span> are pending application to your environment.",
+        "confirmStageBeforeLink": "Are you sure you want to apply ",
+        "confirmStageBackLinkText": "{count} pending update | {count} pending updates",
+        "confirmStageAfterLink": " to your environment?",
+        "updateWarning": "Changes may take up to 10 minutes to propagate, during which time you will not be able to make further updates."
+      }
     },
     "errorRetrievingInterfacesConfig": "Could not retrieve interfaces config"
   },
