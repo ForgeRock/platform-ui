@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -1632,7 +1632,6 @@ export default {
   }
   .cert-actions {
     box-shadow: -4px 0px 5px 0px rgb(0 0 0 / 5%);
-    padding: 1rem 1rem !important;
   }
   .w-230px {
     width: 230px;

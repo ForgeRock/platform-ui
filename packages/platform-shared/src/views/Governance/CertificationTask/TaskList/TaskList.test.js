@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -1551,7 +1551,7 @@ describe('TaskList', () => {
       }, {
         key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
-        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: '', sortable: false, show: true,
+        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: 'Actions', sortable: false, show: true,
       }]);
     });
     it('openAddCommentModalFromCommentsModal called hides CertificationTaskCommentsModal and shows CertificationTaskAddCommentModal', async () => {
@@ -1866,7 +1866,7 @@ describe('TaskList', () => {
       }, {
         key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
-        key: 'actions', class: 'w-230px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: '', sortable: false, show: true,
+        key: 'actions', class: 'w-230px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: 'Actions', sortable: false, show: true,
       }]);
     });
     it('should have selectable as true', async () => {
@@ -2020,7 +2020,7 @@ describe('TaskList', () => {
       }, {
         key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
-        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: '', sortable: false, show: true,
+        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: 'Actions', sortable: false, show: true,
       }]);
     });
     it('should have the right base filter for account', () => {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -163,7 +163,7 @@ describe('getInitialColumns', () => {
       {
         key: 'actions',
         class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right',
-        label: '',
+        label: 'Actions',
         sortable: false,
         show: true,
       },
@@ -209,7 +209,7 @@ describe('getInitialColumns', () => {
       {
         key: 'actions',
         class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right',
-        label: '',
+        label: 'Actions',
         sortable: false,
         show: true,
       },
