@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,6 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
               ({{ $t('common.none') }})
             </div>
             <button
+              :aria-label="$t('common.add')"
               class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
               @click.prevent="addElementToList(-1)">
               <FrIcon
@@ -47,6 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
             <div>
               <div class="list-button-container position-relative d-inline-flex justify-content-end">
                 <button
+                  :aria-label="$t('common.remove')"
                   type="button"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   @click.prevent="removeElementFromList(index)">
@@ -55,6 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
                   />
                 </button>
                 <button
+                  :aria-label="$t('common.add')"
                   type="button"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   @click.prevent="addElementToList(index)">
