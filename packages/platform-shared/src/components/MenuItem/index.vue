@@ -392,11 +392,17 @@ button.btn.btn-secondary.dropdown-toggle {
   font-size: 0.875rem;
 
   &.router-link-active {
-    background-color: $fr-sidemenu-hover;
+    background-color: $fr-sidemenu-active;
     border-left-color: $primary;
     .badge {
       background-color: $primary;
       color: $white;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: $fr-sidemenu-active;
+      border-left-color: $primary;
     }
   }
 
