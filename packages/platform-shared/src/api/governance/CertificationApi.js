@@ -160,11 +160,12 @@ export function getCertificationTasksListByCampaign(urlParams, campaignId, paylo
  * @param {Boolean} isAdmin - is the user an admin
  * @returns {Promise}
  */
-export function getInProgressTasksByCampaign(campaignId, isAdmin = false, taskStatus) {
+export function getInProgressTasksByCampaign(campaignId, isAdmin = false, taskStatus, primaryReviewerId) {
   const queryParams = {
     status: 'in-progress',
     isAdmin,
     taskStatus,
+    primaryReviewerId,
   };
   const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items`;
   return generateIgaApi().get(resourceUrl, { params: queryParams });
