@@ -19,6 +19,7 @@ const defaultState = {
   autoReportsEnabled: false,
   currentPackage: '',
   applicationPolicyEnabled: false,
+  aicConnectionUisEnabled: false,
   fraasEnvironmentUrl: null,
   fraasFederationUrl: null,
   fraasLoggingKeyURL: null,
@@ -43,6 +44,7 @@ const defaultState = {
   maxIdleExpirationTime: null,
   maxSessionExpirationTime: null,
   newMultiselectEnabled: false,
+  proxyConnectEnabled: false,
   mtlsEnabled: false,
   fraasMtlsFqdn: null,
   pingFederateUrl: null,
@@ -188,6 +190,10 @@ const mutations = {
         state.governanceEnabled = true;
       }
 
+      if (env.VUE_APP_ENABLE_PROXY_CONNECT?.toString() === 'true') {
+        state.proxyConnectEnabled = true;
+      }
+
       if (env.VUE_APP_ENABLE_MTLS?.toString() === 'true') {
         state.mtlsEnabled = true;
       }
@@ -198,6 +204,10 @@ const mutations = {
 
       if (env.VUE_APP_ENABLE_AUTO_ACCESS?.toString() === 'true') {
         state.autoAccessEnabled = true;
+      }
+
+      if (env.VUE_APP_ENABLE_AIC_CONNECTION_UIS?.toString() === 'true') {
+        state.aicConnectionUisEnabled = true;
       }
 
       if (env.VUE_APP_ENABLE_MONITORING_UI?.toString() === 'true') {
