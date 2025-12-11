@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template #header="slotData">
         <h3 class="h5 mb-0">
           <BImg
-            :alt="slotData.name || slotData._id"
+            alt=""
             :src="slotData.logoUri || defaultAppImg"
             class="mr-4"
             height="24"
