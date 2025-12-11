@@ -26,17 +26,20 @@
     "Glossary": "Glossary",
     "GovernanceEvents": "Governance Events",
     "HostedPages": "Hosted Pages",
+    "Interfaces": "Interfaces",
     "Jobs": "Jobs",
     "Journeys": "Journeys",
     "JourneyTree": "Journey Tree",
     "LockTenant": "Lock Tenant",
     "ManagedIdentities": "Manage Identities",
     "ManagedObjectSettings": "Managed Object Settings",
+    "mtls": "MTLS",
     "PasswordPolicy": "Password Policy",
     "Profile": "Profile",
     "Promotion": "Promotion",
     "PromotionHistory": "Promotion History",
     "Provisioners": "Provisioners",
+    "ProxyConnect": "Proxy Connect",
     "Realm": "Realm Settings",
     "Reports": "Reports",
     "Scopes": "Scopes",
@@ -110,6 +113,7 @@
     "HostedPages": "Hosted Pages",
     "HostedPagesEdit": "Edit Hosted Pages",
     "hostedPagesSettings": "Hosted Pages Settings",
+    "Interfaces": "Interfaces",
     "Jobs": "Jobs",
     "Journeys": "Journeys",
     "JourneyTree": "Journey Tree",
@@ -119,6 +123,7 @@
     "ManagedObjectEditProperty": "Edit Managed Object Property",
     "ManagedIdentities": "Managed Identities",
     "ManagedObjectSettings": "Managed Object Settings",
+    "mtls": "MTLS",
     "NormalView": "Normal View",
     "NotFound": "Not Found",
     "OAuthClients": "OAuth2 Clients",
@@ -130,6 +135,7 @@
     "PromotionAuthentication": "Promotion Authentication",
     "PromotionHistory": "Promotion History",
     "Provisioners": "Provisioners",
+    "ProxyConnect": "Proxy Connect",
     "Realm": "Realm",
     "Recommendations": "Recommendations",
     "RelationshipEdit": "Edit Relationship",
@@ -3516,6 +3522,23 @@
       "primaryDomainHelpText": "Include at least one fully qualified domain name to be included in the certificate signing request. You cannot use special characters (?, $, % and so on), IP addresses, Port numbers, or \"http:// or https://\" in your common name or SANs. Eg. mydomain.com",
       "primaryDomainHelpTextWithHtml": "Include at least one fully qualified domain name to be included in the certificate signing request. You cannot use special characters (?, $, % and so on), IP addresses, Port numbers, or \"http:// or https://\" in your common name or SANs. Eg. <code>mydomain.com</code>"
     }
+  },
+  "interfaces": {
+    "title": "Interfaces",
+    "description": "Configure security, access and network interfaces for your tenant",
+    "mtls": {
+      "title": "MTLS",
+      "enable": "Configure",
+      "disable": "Configure",
+      "description": "Configure MTLS settings for your tenant"
+    },
+    "proxyConnect": {
+      "title": "Proxy Connect",
+      "enable": "Configure",
+      "disable": "Configure",
+      "description": "Configure IP and Header access rules for your tenant"
+    },
+    "errorRetrievingInterfacesConfig": "Could not retrieve interfaces config"
   },
   "securityQuestions": {
     "subtitle": "Define security questions to use for verification purposes.",
