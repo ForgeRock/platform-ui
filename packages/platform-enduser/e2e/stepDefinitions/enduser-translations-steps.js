@@ -5,10 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
+import { When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
 import { createIDMUser, deleteIDMUser } from '@e2e/api/managedApi.e2e';
-import { addOverrides, deleteOverrides } from '@e2e/api/localizationApi.e2e';
+import { deleteOverrides } from '@e2e/api/localizationApi.e2e';
 import { importJourneysViaAPI, deleteJourneysViaAPI } from '@e2e/utils/manageJourneys';
 import LOCALES from '../support/constants';
 
@@ -67,11 +67,6 @@ after(() => {
       cy.logout();
     });
   }
-});
-
-Given('{string} language is set via API', (localeCode) => {
-  const locale = Object.values(LOCALES).find((localeObject) => localeObject.code === localeCode);
-  addOverrides(locale.code, locale.translations);
 });
 
 When('{string} language set is deleted via API', (localeCode) => {

@@ -9,6 +9,7 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
 import { ROLES, THEME_UI_FIELD_MAPPING, HTML_ELEMENT_SELECTORS } from '@e2e/support/constants';
+import { addOverrides } from '@e2e/api/localizationApi.e2e';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import generateRandomEndUser from '../utils/endUserData';
 import {
@@ -20,6 +21,7 @@ import {
   selectRadioOption,
 } from '../utils/uiUtils';
 import { generateJourneyURL } from '../utils/journeyUtils';
+import LOCALES from '../../packages/platform-enduser/e2e/support/constants';
 
 Given('admin logs into the tenant', () => {
   cy.loginAsAdmin();
@@ -94,8 +96,19 @@ Given('admin navigates to login page', () => {
   cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
 });
 
+Given('{string} language is set via API', (localeCode) => {
+  const locale = Object.values(LOCALES).find((localeObject) => localeObject.code === localeCode);
+  addOverrides(locale.code, locale.translations);
+});
+
+Given('browser locale is set to {string}', (locale) => {
+  const localesList = locale.split(',');
+  Cypress.env('LOCALESLIST', localesList);
+  Cypress.env('LOCALE', localesList[0]);
+});
+
 When('user clicks on {string} {role}', (name, role) => {
-  cy.findByRole(role, { name }).click();
+  cy.findByRole(role, { name: new RegExp(name, 'i') }).click();
 });
 
 When('user fills the following fields', (dataTable) => {
@@ -464,6 +477,10 @@ Then('text {string} does not exist', (text) => {
   cy.findByText(text).should('not.exist');
 });
 
+Then('text {string} is visible', (text) => {
+  cy.findByText(text).should('be.visible');
+});
+
 Then('the value of the {string} field is {string}', (fieldName, expectedValue) => {
   cy.findByLabelText(fieldName).should('have.value', expectedValue);
 });
@@ -725,4 +742,11 @@ Then('{string} dropdown menu has {string} option selected', (dropdown, option) =
     .scrollIntoView()
     .should('be.visible')
     .and('contain.text', option);
+});
+
+Then('the page favicon url contains {string}', (filename) => {
+  cy.get('head')
+    .findByTestId('favicon')
+    .should('have.attr', 'href')
+    .and('include', filename);
 });
