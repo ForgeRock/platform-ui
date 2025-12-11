@@ -175,7 +175,7 @@ of the MIT license. See the LICENSE file for details. -->
                               v-if="tabType === 'entitlement' || tabType === 'application'"
                               height="28"
                               class="mb-3"
-                              :alt="item.appType || $t('governance.accessRequest.newRequest.role')"
+                              alt=""
                               :onerror="onImageError"
                               :src="item.icon">
                             <div
