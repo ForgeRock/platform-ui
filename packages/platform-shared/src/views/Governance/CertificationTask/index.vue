@@ -221,7 +221,7 @@ export default {
       this.isSaving = !this.isSaving;
     },
     checkInProgress() {
-      getInProgressTasksByCampaign(this.campaignId, this.isAdmin, this.taskStatus).then(({ data }) => {
+      getInProgressTasksByCampaign(this.campaignId, this.isAdmin, this.taskStatus, this.actorId).then(({ data }) => {
         // verifies if the user has at least one sign-off permission for line items
         const atLeastOneSignoffPermission = (item) => {
           const reviewer = item.decision.certification.actors.find((actor) => actor.id === this.actorId);
