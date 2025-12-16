@@ -49,6 +49,19 @@ export function getBasicFilter(operator, targetName, targetValue) {
 }
 
 /**
+ * Combines multiple filters using a basic boolean operator.
+ * @param {string} operator Boolean operator, e.g., "AND", "OR"
+ * @param {Array} filters List of filters to combine
+ * @returns Boolean filter
+ */
+export function getBasicBooleanFilter(operator, filters) {
+  return {
+    operator,
+    operand: filters,
+  };
+}
+
+/**
  * Returns a basic "NOT" filter object.
  *
  * @param {string} operator - The operator for the filter.
@@ -163,11 +176,11 @@ export function convertTargetFilterToQueryFilter(targetFilter) {
         return `!(${buildQuery(operand[0])})`;
 
       case 'EXISTS':
-        return `${operand.targetName} pr`;
+        return `${operand.targetName} co ''`;
 
       case 'IN':
         return operand.targetValue
-          .map((val) => `(${operand.targetName} eq '${val})'`)
+          .map((val) => `(${operand.targetName} eq '${val}')`)
           .join(' or ');
 
       default:

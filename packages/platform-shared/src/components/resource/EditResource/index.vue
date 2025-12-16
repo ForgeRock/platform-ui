@@ -59,6 +59,17 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.endSessions') }}
       </FrIcon>
     </BButton>
+    <BButton
+      v-if="canViewUserAccess"
+      class="mb-4"
+      variant="outline-primary"
+      @click="goToUserAccess">
+      <FrIcon
+        icon-class="mr-2 text-nowrap"
+        name="account_box">
+        {{ $t('pages.access.viewUserAccess') }}
+      </FrIcon>
+    </BButton>
     <slot
       name="edit-content"
       :relationship-properties="relationshipProperties"
@@ -751,6 +762,16 @@ export default {
 
       this.mobileDropdownTabs = tabTitles;
     },
+    goToUserAccess() {
+      this.$router.push({
+        name: 'AccessViewer',
+        params: {
+          resourceType: this.resourceType,
+          resourceName: this.resourceName,
+          resourceId: this.id,
+        },
+      });
+    },
   },
   computed: {
     assignmentsParentResource() {
@@ -830,6 +851,10 @@ export default {
         }
         return property.type === 'array' && property.viewable !== false;
       });
+    },
+    canViewUserAccess() {
+      // Only show this button if governance is enabled and in admin managed identities view
+      return this.resourceIsUser && this.$store.state.SharedStore.governanceDevEnabled && this.$route.meta.listRoute === 'managed-identities';
     },
   },
 };
