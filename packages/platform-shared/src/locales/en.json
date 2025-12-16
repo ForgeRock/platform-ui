@@ -857,6 +857,7 @@
       "details": "Details",
       "getSessionInfoError": "There was an error getting session information.",
       "resetPassword": "Reset Password",
+      "viewUserAccess": "View User Access",
       "failedSavePassword": "Failed to save password",
       "successSavePassword": "Successfully saved password",
       "removeConfirm": "Are you sure you want to remove the selected {type}?",
@@ -1122,6 +1123,7 @@
     }
   },
   "pageTitles": {
+    "AccessViewer": "User Access Graph",
     "ComplianceExceptionDetails": "Exception Details"
   },
   "pagination": {
@@ -1683,14 +1685,60 @@
   },
   "governance": {
     "access": {
+      "access": "Access",
       "accountName": "Account Name",
+      "backToUser": "Back to User",
+      "certificationDetails": {
+        "title": "Certification Details",
+        "certifiedBy": "Last Certified By",
+        "completionDate": "Certified On",
+        "decision": "Decision",
+        "noCertification": "This access has not been previously certified."
+      },
       "confirmRevokeEntitlement": "Are you sure you want to revoke this entitlement from this role? | Are you sure you want to revoke these entitlements from this role?",
+      "displayName": {
+        "accountGrant": "Account",
+        "entitlementGrant": "Entitlement",
+        "roleMembership": "Role"
+      },
+      "endDate": "Access End Date",
       "errorGettingData": "Error getting {grantType}.",
+      "errorGettingUser": "Error loading data for user graph.",
+      "filter": {
+        "applications": "Applications",
+        "clearAll": "Clear all",
+        "clearFilters": "Clear Filters",
+        "conditional": "Conditional Roles",
+        "direct": "Direct Roles",
+        "generalFilters": "General",
+        "filterObject": "{type} Filters",
+        "filters": "Access Filters",
+        "hideFilters": "Hide Filters",
+        "neverCertified": "Never Certified",
+        "roleBased": "Role-based Access",
+        "showIf": "Show if"
+      },
+      "loadingAccess": "Loading user access",
+      "noAccessFound": "No access found for user",
+      "noAccessFoundSubtitle": "Try a new filter in the panel to the left.",
       "noRecordFound": "No {grantType} found.",
       "noResultsAccount": "No {grantType} for this account.",
       "noResultsUser": "No {grantType} for this user.",
+      "panelTitle": {
+        "accountGrant": "Account Details",
+        "entitlementGrant": "Entitlement Details",
+        "roleMembership": "Role Details"
+      },
+      "recommendation": "Access Recommendation",
       "revokeEntitlement": "Revoke Entitlement? | Revoke Entitlements?",
-      "revoking": "Revoking"
+      "revoking": "Revoking",
+      "startDate": "Access Start Date",
+      "toggleAccessFilter": "Show Filter",
+      "toolbar": {
+        "fullscreen": "Toggle Fullscreen",
+        "zoomIn": "Zoom In",
+        "zoomOut": "Zoom Out"
+      }
     },
     "accessRequest": {
       "requestTypes": {

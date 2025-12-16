@@ -8,6 +8,7 @@
 import {
   getGovernanceFilter,
   getBasicFilter,
+  getBasicBooleanFilter,
   getPriorityFilter,
   getActivePhaseFilter,
   convertTargetFilterToQueryFilter,
@@ -221,5 +222,19 @@ describe('convertTargetFilterToQueryFilter', () => {
 
   it('returns an empty string if no filter is provided', () => {
     expect(convertTargetFilterToQueryFilter()).toBe('true');
+  });
+
+  describe('getBasicBooleanFilter', () => {
+    it('returns correct filter for AND value', () => {
+      const innerFilters = [
+        getBasicFilter('EQUALS', 'isActive', true),
+        getBasicFilter('EQUALS', 'isPrivileged', false),
+      ];
+      const expectedFilter = {
+        operator: 'AND',
+        operand: innerFilters,
+      };
+      expect(getBasicBooleanFilter('AND', innerFilters)).toStrictEqual(expectedFilter);
+    });
   });
 });
