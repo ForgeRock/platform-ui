@@ -15,12 +15,28 @@ of the MIT license. See the LICENSE file for details. -->
             xmlns="http://www.w3.org/2000/svg"
             @mousedown="selectAccess"
             ref="accessCanvas">
-            <!-- Connections will be here next commit -->
+            <FrConnection
+              v-for="(line, key) in connectionLayout"
+              :source="line.source"
+              :target="line.target"
+              :line-id="key"
+              :key="`line-${key}`"
+              :class="{ 'accented-connection': areLinesAccented(line), 'fade-connection': !areLinesAccented(line) }" />
           </svg>
           <div
             v-for="(node, key) in nodes"
             :key="`node-${key}`">
-            <!-- Access and label cards will be here next commit -->
+            <FrLabelCard
+              v-if="node.displayType === 'LabelNode'"
+              :card="node"
+              :type="node.displayType" />
+            <FrAccessCard
+              v-else
+              :selected="node.id === activeNodeId"
+              @access-selected="selectAccess"
+              @get-card-details="updateCardDetails"
+              :access="node"
+              :class="{ 'accented-connection': isCardAccented(node), 'fade-connection': !isCardAccented(node) }" />
           </div>
         </div>
       </div>
@@ -44,6 +60,9 @@ import {
 import {
   each,
 } from 'lodash';
+import FrConnection from './connection';
+import FrAccessCard from './accessCards/AccessCard';
+import FrLabelCard from './accessCards/LabelCard';
 import { generateNodeSkeleton, formatAccessGrants } from '../utils/accessUtility';
 
 const props = defineProps({
@@ -163,6 +182,43 @@ function updateConnectionLayout() {
 }
 
 /**
+ * Takes the location details of a card and stores them
+ * @param nodeRef Details of the card to update
+ */
+function updateCardDetails(nodeRef, nodeId) {
+  const nodeBoundingBox = nodeRef.getBoundingClientRect();
+  const canvasRect = frCanvasInteractive.value.getBoundingClientRect();
+  const cardDetails = {
+    leftX: nodeBoundingBox.left - canvasRect.left,
+    rightX: nodeBoundingBox.right - canvasRect.left,
+    y: nodeBoundingBox.top - canvasRect.top + nodeBoundingBox.height / 2,
+    nodeId,
+    nodeHeight: 65,
+    nodeWidth: 250,
+  };
+  nodeDetails[nodeId] = cardDetails;
+}
+
+/**
+ * Given a connection line, determine if it should be accented or not
+ * @param line Connection line details
+ */
+function areLinesAccented(line) {
+  return !props.activeNodeId || (line.source?.nodeId === props.activeNodeId || line.target?.nodeId === props.activeNodeId);
+}
+
+/**
+ * Given an access card, determine if it should be accented or not
+ * @param card Access card details
+ */
+function isCardAccented(card) {
+  return !props.activeNodeId
+         || (card?.id === props.activeNodeId
+         || card?.connections?.[props.activeNodeId]
+         || nodes.value[props.activeNodeId]?.connections?.[card.id]);
+}
+
+/**
  * Constructs access graph in the form of an object of nodes from the list of the user's current IGA grant structure
  */
 async function buildAccessGraph() {
@@ -202,11 +258,7 @@ async function buildAccessGraph() {
   });
 
   await nextTick();
-  if (true) {
-    // Disabling this function being called until next commit
-  } else {
-    updateConnectionLayout();
-  }
+  updateConnectionLayout();
 }
 
 /**
