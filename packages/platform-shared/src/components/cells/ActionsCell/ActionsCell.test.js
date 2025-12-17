@@ -7,7 +7,7 @@
 
 import { DOMWrapper, mount } from '@vue/test-utils';
 import i18n from '@forgerock/platform-shared/src/i18n';
-import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { createAppContainer, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ActionsCell from './index';
 import { findByTestId } from '../../../utils/testHelpers';
 
@@ -29,6 +29,57 @@ beforeEach(() => {
 });
 
 describe('Actions cell actions and renders', () => {
+  describe('@a11y', () => {
+    const a11yScenarios = [
+      { name: 'menu is closed', props: {}, openMenu: false },
+      { name: 'menu is opened', props: {}, openMenu: true },
+      {
+        name: 'dropdown items are edit + a divider + delete',
+        props: {
+          deleteOption: true,
+          editOption: true,
+          exportOption: false,
+          divider: true,
+          duplicateOption: false,
+          showActiveToggle: false,
+        },
+        openMenu: true,
+      },
+      {
+        name: 'all options are enabled',
+        props: {
+          deleteOption: true,
+          editOption: true,
+          exportOption: true,
+          divider: true,
+          duplicateOption: true,
+          showActiveToggle: true,
+        },
+        openMenu: true,
+      },
+      {
+        name: 'no default options',
+        props: {
+          deleteOption: false,
+          editOption: false,
+          exportOption: false,
+          divider: false,
+          duplicateOption: false,
+          showActiveToggle: false,
+        },
+        openMenu: true,
+      },
+    ];
+
+    it.each(a11yScenarios)('has no violations when $name', async ({ props, openMenu }) => {
+      const { wrapper, domWrapper } = setup(props);
+      if (openMenu) {
+        const menuButton = wrapper.find('.dropdown-toggle');
+        await menuButton.trigger('click');
+      }
+      await runA11yTest(openMenu ? domWrapper.element : wrapper);
+    });
+  });
   it('renders "Delete" and "Edit" by default if no props are passed', async () => {
     const { wrapper, domWrapper } = setup({ testId: '0' });
     const menuButton = wrapper.find('.dropdown-toggle');
