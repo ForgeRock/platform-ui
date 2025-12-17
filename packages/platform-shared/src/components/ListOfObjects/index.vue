@@ -20,14 +20,15 @@ of the MIT license. See the LICENSE file for details. -->
             class="text-muted text-left flex-grow-1">
             ({{ $t('common.none') }})
           </div>
-          <button
+          <BButton
             :class="buttonClass"
             class="btn mr-1 mb-2 mb-lg-0 text-dark"
             data-testid="list-objects-none-add"
             :disabled="disabled"
+            :aria-label="$t('common.add')"
             @click.prevent="addObjectToList(-1)">
             <FrIcon name="add" />
-          </button>
+          </BButton>
         </div>
         <template v-if="isValidJSONString(listValues) && isValidField()">
           <div
@@ -109,24 +110,26 @@ of the MIT license. See the LICENSE file for details. -->
                   &nbsp;
               </div>
               <div class="position-relative d-inline-flex justify-content-end">
-                <button
+                <BButton
                   v-if="listValues.length > 0"
                   :data-testid="`list-objects-remove-${index}`"
                   :class="buttonClass"
                   class="btn mr-1 mb-2 mb-lg-0 text-dark"
                   :disabled="disabled"
+                  :aria-label="$t('common.remove')"
                   @click.prevent="removeElementFromList(index)">
                   <FrIcon name="remove" />
-                </button>
-                <button
+                </BButton>
+                <BButton
                   v-if="multiValued || listValues.length === 0"
                   :data-testid="`list-objects-add-${index}`"
                   :class="buttonClass"
                   class="btn mr-1 mb-2 mb-lg-0 text-dark"
                   :disabled="disabled"
+                  :aria-label="$t('common.add')"
                   @click.prevent="addObjectToList(index)">
                   <FrIcon name="add" />
-                </button>
+                </BButton>
               </div>
             </div>
           </div>
@@ -153,7 +156,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { cloneDeep } from 'lodash';
-import { BFormCheckbox } from 'bootstrap-vue';
+import { BFormCheckbox, BButton } from 'bootstrap-vue';
 import { useField } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -173,6 +176,7 @@ export default {
   name: 'ListOfObjects',
   components: {
     BFormCheckbox,
+    BButton,
     FrField,
     FrIcon,
     FrInlineJsonEditor,

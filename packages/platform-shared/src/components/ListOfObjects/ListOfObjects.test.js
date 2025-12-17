@@ -6,7 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
-import { findByTestId, findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, findByText, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import uuid from 'uuid/v4';
 import ListOfObjects from './index';
 import i18n from '@/i18n';
@@ -33,6 +33,29 @@ const wrapperNoValue = {
 };
 
 describe('ListOfObjects', () => {
+  describe('@a11y', () => {
+    function setup(value = null) {
+      const config = { ...wrapperNoValue };
+      config.props.value = value;
+      return mount(ListOfObjects, config);
+    }
+
+    it('ListOfObjects component should be accessible when there is an array value', async () => {
+      const wrapper = setup([{ test: 'test' }]);
+      await runA11yTest(wrapper);
+    });
+
+    it('ListOfObjects component should be accessible when there is an object value', async () => {
+      const wrapper = setup({ test: 'test' });
+      await runA11yTest(wrapper);
+    });
+
+    it('ListOfObjects component should be accessible when the wrapper has no value', async () => {
+      const wrapper = setup();
+      await runA11yTest(wrapper);
+    });
+  });
+
   it('ListOfObjects sets listValues when there is an array value', () => {
     const wrapper = mount(ListOfObjects, {
       global: {
