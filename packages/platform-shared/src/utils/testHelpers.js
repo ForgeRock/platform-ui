@@ -199,7 +199,6 @@ export function withSetup(composable) {
  *   - HTML string
  * @param {Object} options
  * @param {Object} [options.overrideRules] Axe rule overrides passed to getAxe()
- * @param {boolean} [options.useFullDocument=false] If true, run axe against document.body
  * @param {boolean} [options.cleanupTempContainer=true] Remove temp container if created from HTML string
  * @returns {Promise<Object>} axe results
  *
@@ -213,21 +212,16 @@ export function withSetup(composable) {
  * await runA11yTest(wrapper);                       // Vue wrapper
  * await runA11yTest(document.getElementById('x'));  // DOM node
  * await runA11yTest('<div role="dialog">Hi</div>'); // HTML string
- * await runA11yTest(wrapper, { useFullDocument: true }); // include externally controlled nodes
  */
 export async function runA11yTest(wrapper, {
   overrideRules = {},
-  useFullDocument = false,
   cleanupTempContainer = true,
 } = {}) {
   const axe = getAxe(overrideRules);
   let target = null;
   let tempContainer = null;
 
-  // Full document mode (includes external controlled regions)
-  if (useFullDocument) {
-    target = document.body;
-  } else if (wrapper && typeof wrapper === 'object' && typeof wrapper.html === 'function') {
+  if (wrapper && typeof wrapper === 'object' && typeof wrapper.html === 'function') {
     // Vue wrapper
     // Ensure external referenced nodes (e.g., aria-controls) exist before this call if needed.
     target = wrapper.element;
