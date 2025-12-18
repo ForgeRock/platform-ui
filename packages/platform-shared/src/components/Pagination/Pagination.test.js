@@ -6,6 +6,7 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import Pagination from './index';
 import { DatasetSize } from './types';
 
@@ -24,6 +25,17 @@ describe('Pagination Component', () => {
       },
     });
   }
+
+  describe('@a11y', () => {
+    it('should not have any accessibility violations', async () => {
+      const wrapper = mountPagination({
+        propsData: {
+          totalRows: 20,
+        },
+      });
+      await runA11yTest(wrapper);
+    });
+  });
 
   it('Pagination correct aria labels', () => {
     const wrapper = mountPagination();
@@ -51,7 +63,7 @@ describe('Pagination Component', () => {
     expect(buttons[4].classes('d-none')).toBe(true);
   });
 
-  it('buttons disabled when totaRows equals 0', () => {
+  it('buttons disabled when totalRows equals 0', () => {
     const wrapper = mountPagination();
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
@@ -310,7 +322,7 @@ describe('Pagination Component', () => {
       expect(buttons[0].classes('d-none')).toBe(false);
     });
 
-    it('Pagination does not display first page buton when hideGoToFirstPageButton is true', () => {
+    it('Pagination does not display first page button when hideGoToFirstPageButton is true', () => {
       const wrapper = mountPaginationCustom({
         propsData: {
           hideGoToFirstPageButton: true,
@@ -335,7 +347,7 @@ describe('Pagination Component', () => {
       expect(buttons[4].classes('d-none')).toBe(false);
     });
 
-    it('Pagination does not display last page buton when hideGoToLastPageButton is true', () => {
+    it('Pagination does not display last page button when hideGoToLastPageButton is true', () => {
       const wrapper = mountPaginationCustom({
         propsData: {
           hideGoToLastPageButton: true,
