@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BButton
             v-if="allowAdd"
             variant="primary"
-            @click="addEvent ? this.$emit(addEvent) : $bvModal.show('govCreateResourceModal')">
+            @click="addEvent ? this.$emit(addEvent) : $bvModal.show(`${modalId}-show`)">
             <FrIcon
               icon-class="mr-2"
               name="add">
@@ -183,6 +183,18 @@ of the MIT license. See the LICENSE file for details. -->
             {{ item.assignment }}
           </BBadge>
         </template>
+        <template #cell(prediction)=" { item }">
+          <div
+            v-if="Boolean(item.prediction)"
+            class="row align-items-center pl-3">
+            <FrRecommendationIcon
+              :prediction="getPredictionDisplay(item)"
+              :auto-id-settings="this.$store.state.govAutoIdSettings"
+              type="recommendation"
+              :test="(console.log('prediction', item))"
+              :id="item.ent_id || item.id" />
+          </div>
+        </template>
         <template #cell(actions)="{ item }">
           <FrActionsCell
             v-if="item.assignment === directAssignment || item.assignment === staticAssignment || showViewDetails"
@@ -227,6 +239,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrGovAssignResourceModal
       :entitlement-options="entitlementOptions"
       :is-saving="assigningResource"
+      :modal-id="modalId + '-show'"
       :parent-resource-name="parentResourceName"
       :resource-type="pluralizedGrantType"
       @assign-resources="$emit('assign-resources', $event)"
@@ -262,7 +275,7 @@ of the MIT license. See the LICENSE file for details. -->
       :show-account-tab="!resourceIsRole"
       :grant="grantDetails"
       :glossary-schema="glossarySchema"
-      modal-id="userEntitlementModal" />
+      :modal-id="modalId" />
     <FrFloatingActionBar
       :buttons="actionBarButtons"
       :count="selectedItems.length"
@@ -303,6 +316,8 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import formatConstraintDate from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
+import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
+import { getPredictionDisplayInfo } from '@forgerock/platform-shared/src/utils/governance/prediction';
 import FrGovAssignResourceModal from '../GovAssignResourceModal';
 import FrRevokeRequestModal from '../RevokeRequestModal';
 import i18n from '@/i18n';
@@ -333,6 +348,7 @@ export default {
     FrSearchInput,
     FrSpinner,
     FrUserEntitlementModal,
+    FrRecommendationIcon,
   },
   mixins: [
     NotificationMixin,
@@ -389,6 +405,14 @@ export default {
     totalCount: {
       type: Number,
       default: 0,
+    },
+    autoId: {
+      type: Object,
+      default: () => ({}),
+    },
+    userSchema: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
@@ -528,6 +552,13 @@ export default {
       return this.$t('governance.access.noResultsUser', { grantType: this.pluralizedGrantType });
     },
     /**
+     * Manupa recommendations prediction value to
+     * @param {Object} item - table recommendation item object
+     */
+    getPredictionDisplay(item) {
+      return getPredictionDisplayInfo(item, this.autoId, this.userSchema);
+    },
+    /**
      * Determines the assignment label for accounts and entitlements
      * @param {Object} membership - table membership item object
      */
@@ -542,7 +573,7 @@ export default {
     handleRowClick(item) {
       if (this.showViewDetails && this.grantType === 'entitlement') {
         this.grantDetails = { ...item };
-        this.$bvModal.show('userEntitlementModal');
+        this.$bvModal.show(this.modalId);
       }
     },
     /**
@@ -637,7 +668,7 @@ export default {
     savingStatus(status) {
       if (status === 'success') {
         this.onToggleSelectAll(false);
-        this.$bvModal.hide('govCreateResourceModal');
+        this.$bvModal.hide(`${this.modalId}-show`);
         this.loadData();
       } else if (status === 'requestsRevoked') {
         this.onToggleSelectAll(false);

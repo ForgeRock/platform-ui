@@ -281,6 +281,8 @@
     "query": "Query",
     "qrCode": "QR code",
     "realm": "Realm",
+    "recommendation": "Recommendation",
+    "recommendations": "Recommendations",
     "reject": "Reject",
     "releaseInfo": "Ping Advanced Identity Cloud Version {version}",
     "remove": "Remove",
