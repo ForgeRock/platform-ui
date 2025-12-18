@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     as="span">
     <BModal
       cancel-variant="outline-secondary"
-      id="govCreateResourceModal"
+      :id="modalId"
       no-close-on-backdrop
       no-close-on-esc
       size="lg"
@@ -172,6 +172,10 @@ const props = defineProps({
   resourceType: {
     type: String,
     required: true,
+  },
+  modalId: {
+    type: String,
+    default: 'userEntitlementModal',
   },
 });
 
