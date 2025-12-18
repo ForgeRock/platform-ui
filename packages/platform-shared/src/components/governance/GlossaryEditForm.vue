@@ -26,6 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
         #[slotName]="{ option }">
         <div class="d-flex form-selector">
           <FrIcon
+            v-if="option.icon"
             :icon-class="`size-28 rounded-circle d-flex align-items-center justify-content-center mr-3 color-dark${option?.iconColor} bg-light${option?.iconColor}`"
             :property="option"
             :name="option?.icon" />
