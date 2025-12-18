@@ -261,6 +261,10 @@ When('user types and selects the stored value of {string} option on dropdown {st
   selectDropdownOption(storedValue);
 });
 
+When('user closes the {string} dropdown', (dropdown) => {
+  cy.findByRole('combobox', { name: dropdown }).type('{esc}');
+});
+
 When('user reloads the page', () => {
   cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
   cy.reload();
