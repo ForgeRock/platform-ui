@@ -754,6 +754,7 @@
   },
   "locale": {
     "addLocale": "Add Locale",
+    "editLocale": "Edit Locale",
     "specifyLocale": "Specify a Locale",
     "localeTitle": "Locale"
   },

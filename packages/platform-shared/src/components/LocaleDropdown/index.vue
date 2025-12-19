@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -46,6 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
             <BButton
               type="button"
+              :aria-label="$t('locale.editLocale')"
               class="btn-sm btn-edit"
               variant="primary"
               @click.stop.prevent="editLocale(obj.locale)">
