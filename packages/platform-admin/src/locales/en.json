@@ -3018,7 +3018,7 @@
       }
     }
   },
-  "termsAndCondtions": {
+  "termsAndConditions": {
     "title": "Terms & Conditions",
     "subTitle": "Configure versioned terms & conditions to track and manage user consent.",
     "newVersion": "New Version",
@@ -3052,7 +3052,8 @@
       "saveDraftSuccess": "Saved a new T&C draft",
       "saveError": "Unable to save new Terms & Conditions version",
       "getTermsFail": "Failed to retrieve Terms & Conditions data",
-      "publishConfirmationText": "Are you sure you want to publish this version of terms and conditions? You will not be able to make any further changes after you publish."
+      "publishConfirmationText": "Are you sure you want to publish this version of terms and conditions? You will not be able to make any further changes after you publish.",
+      "linksDisabledWarning": "Interactive elements are disabled in live preview"
     }
   },
   "tenantAdmins": {
