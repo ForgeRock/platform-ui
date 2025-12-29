@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,10 +7,13 @@
 
 /* eslint-disable indent */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import EsvInputWrapper from './index';
 import i18n from '@/i18n';
+
+mockValidation();
 
 const defaultProps = {
   name: 'stub-name',
@@ -34,6 +37,7 @@ describe('EsvInputWrapper', () => {
           i18n,
         ],
       },
+      attachTo: document.body,
       props: {
         ...defaultProps,
         ...props,
@@ -55,6 +59,7 @@ describe('EsvInputWrapper', () => {
     it.each(testCases)('%s', (name, fieldType, expectedDropdownWithinInput) => {
       const wrapper = setup({ type: fieldType });
       expect(wrapper.vm.dropdownWithinInput).toBe(expectedDropdownWithinInput);
+      wrapper.unmount();
     });
   });
 
@@ -76,6 +81,70 @@ describe('EsvInputWrapper', () => {
       wrapper.vm.handlePlaceholderEntered(placeholder);
       wrapper.vm.$nextTick();
       expect(wrapper.emitted().input).toEqual([[expectedEmit]]);
+      wrapper.unmount();
+    });
+  });
+
+  describe('inputValueHandler intercepts placeholder values', () => {
+    it('should intercept and coerce placeholder values when they contain ESV placeholders', async () => {
+      const wrapper = setup({ type: 'string', originalType: 'string' });
+      const placeholderValue = '&{esv.string}';
+
+      // Spy on inputValueHandler and then call it by directly emitting from the wrapper's child
+      // This simulates the inner component emitting an input event
+      const inputValueHandlerSpy = jest.spyOn(wrapper.vm, 'inputValueHandler');
+
+      // Simulate the inner component emitting by triggering the handler bound via v-on
+      // Ideally, we would trigger an emit on the inner component, but this is proving difficult due to veeValidate
+      wrapper.vm.inputValueHandler(placeholderValue);
+      await flushPromises();
+
+      expect(inputValueHandlerSpy).toHaveBeenCalledWith(placeholderValue);
+      const emittedInput = wrapper.emitted().input;
+      expect(emittedInput).toBeTruthy();
+      expect(emittedInput[0][0]).toEqual({ $string: '&{esv.string}' });
+
+      wrapper.unmount();
+    });
+
+    it('should pass through regular values without interception', async () => {
+      const wrapper = setup({ type: 'string', originalType: 'string' });
+      const regularValue = 'regular input value';
+
+      // Spy on inputValueHandler and then call it by directly emitting from the wrapper's child
+      const inputValueHandlerSpy = jest.spyOn(wrapper.vm, 'inputValueHandler');
+
+      // Simulate the inner component emitting by triggering the handler bound via v-on
+      // Ideally, we would trigger an emit on the inner component, but this is proving difficult due to veeValidate
+      wrapper.vm.inputValueHandler(regularValue);
+      await flushPromises();
+
+      expect(inputValueHandlerSpy).toHaveBeenCalledWith(regularValue);
+      const emittedInput = wrapper.emitted().input;
+      expect(emittedInput).toBeTruthy();
+      expect(emittedInput[0][0]).toBe('regular input value');
+
+      wrapper.unmount();
+    });
+
+    it('should handle array values with placeholders by extracting the first element', async () => {
+      const wrapper = setup({ type: 'tag', originalType: 'array', innerComponent: 'FrTag' });
+      const placeholderValue = '&{esv.array}';
+
+      // Spy on inputValueHandler and then call it with an array value
+      const inputValueHandlerSpy = jest.spyOn(wrapper.vm, 'inputValueHandler');
+
+      // Simulate the FrTag component emitting an array value
+      // Ideally, we would trigger an emit on the inner component, but this is proving difficult due to veeValidate
+      wrapper.vm.inputValueHandler([placeholderValue]);
+      await flushPromises();
+
+      expect(inputValueHandlerSpy).toHaveBeenCalledWith([placeholderValue]);
+      const emittedInput = wrapper.emitted().input;
+      expect(emittedInput).toBeTruthy();
+      expect(emittedInput[0][0]).toEqual({ $array: '&{esv.array}' });
+
+      wrapper.unmount();
     });
   });
 });
