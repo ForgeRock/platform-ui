@@ -1,13 +1,14 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
+  <!-- eslint-disable vue/no-deprecated-dollar-listeners-api -->
   <div class="esv-input-wrapper">
     <template v-if="dropdownWithinInput">
       <Component
         v-bind="$attrs"
-        v-on="$listeners"
+        v-on="{ ...$listeners, input: inputValueHandler }"
         :type="type"
         :is="innerComponent">
         <template
@@ -31,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="d-flex">
         <Component
           v-bind="$attrs"
-          v-on="$listeners"
+          v-on="{ ...$listeners, input: inputValueHandler }"
           :type="type"
           :is="innerComponent">
           <template
@@ -67,7 +68,7 @@ import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 import FrTimeInput from '@forgerock/platform-shared/src/components/Field/TimeInput';
-import { coercePlaceholderByType } from '@forgerock/platform-shared/src/utils/esvUtils';
+import { coercePlaceholderByType, doesValueContainPlaceholder } from '@forgerock/platform-shared/src/utils/esvUtils';
 import FrEsvDropdown from '../EsvDropdown';
 
 /**
@@ -129,6 +130,18 @@ export default {
     };
   },
   methods: {
+    /**
+     * Intercepted inputValueHandler method, which checks for placeholder values before emitting input events
+     *
+     * @param {Array|Object|Number|String} newVal value to be set for internal model
+     */
+    inputValueHandler(newVal) {
+      if (doesValueContainPlaceholder(newVal)) {
+        this.handlePlaceholderEntered(Array.isArray(newVal) ? newVal[0] : newVal);
+      } else {
+        this.$emit('input', newVal);
+      }
+    },
     /**
      * Determines whether the ESV dropdown should be shown inside or beside the wrapped component
      */
