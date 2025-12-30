@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -78,6 +78,36 @@ export function checkElementCss(role, name, attribute, value) {
         .should('have.css', attribute, newValue);
     }
   });
+}
+
+/**
+ * Reusable helper function to check an element's CSS by selector.
+ * @param {string} selector - Any selector for the target element.
+ * @param {string} attribute - The CSS attribute to check (e.g., 'color').
+ * @param {string} value - The expected value of the attribute.
+ */
+export function checkElementCssBySelector(selector, attribute, value) {
+  let expected = value;
+
+  if (attribute.includes('color')) {
+    expected = hexToRgb(value);
+  }
+
+  cy.get(selector)
+    .scrollIntoView()
+    .should('have.css', attribute, expected);
+}
+
+export function checkElementCssByText(text, attribute, value) {
+  let expected = value;
+
+  if (attribute.includes('color')) {
+    expected = hexToRgb(value);
+  }
+
+  cy.contains(text)
+    .scrollIntoView()
+    .should('have.css', attribute, expected);
 }
 
 export function selectRadioOption(optionName, clickOptions = {}) {

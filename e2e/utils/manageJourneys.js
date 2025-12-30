@@ -1,5 +1,5 @@
 /**
- * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2024-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -15,6 +15,36 @@ import {
   postAMResource,
 } from '../api/journeyApi.e2e';
 import { updateThemes } from './themeutils';
+
+class JourneyCleanupManager {
+  constructor() {
+    this.journeys = [];
+  }
+
+  add(journey) {
+    this.journeys.push(journey);
+  }
+
+  clear() {
+    this.journeys = [];
+  }
+
+  getAll() {
+    return this.journeys;
+  }
+
+  cleanup() {
+    if (this.journeys.length > 0) {
+      const journeysToDelete = this.journeys.map((journey) => journey.fileName);
+      cy.log(`Deleting imported journey(s) ${journeysToDelete} via API`).then(() => {
+        cy.deleteTreesViaAPI(journeysToDelete);
+        this.clear();
+      });
+    }
+  }
+}
+
+export const journeyCleanupManager = new JourneyCleanupManager();
 
 const maxRetryCount = 5;
 

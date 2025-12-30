@@ -22,6 +22,8 @@ import {
   clearDropdown,
   getDropdownTrigger,
   selectRadioOption,
+  checkElementCssBySelector,
+  checkElementCssByText,
 } from '../utils/uiUtils';
 import { generateJourneyURL } from '../utils/journeyUtils';
 import LOCALES from '../../packages/platform-enduser/e2e/support/constants';
@@ -271,6 +273,10 @@ When('user clicks {string} option on {string} dropdown menu', (option, dropdown)
         .scrollIntoView()
         .click();
     });
+});
+
+When('user opens {string} dropdown menu', (dropdown) => {
+  getDropdownTrigger(dropdown).click();
 });
 
 When('user selects {string} option on dropdown', (optionName) => {
@@ -595,6 +601,23 @@ When('user clicks on {string} menu item from top right user menu', (menuItem) =>
     cy.findByRole('button').click();
     cy.findByRole('menuitem', { name: menuItem }).click();
   });
+});
+
+When('user clicks on the user menu', () => {
+  cy.findByTestId('fr-main-navbar').within(() => {
+    cy.findByRole('button').click();
+  });
+});
+
+When('user clicks the {string} image edit button', (identifier) => {
+  cy.findByText(new RegExp(identifier, 'i'))
+    .should('be.visible')
+    .closest('fieldset, .form-group, .tab-pane')
+    .within(() => {
+      cy.findByRole('button', { name: /edit|logo|preview/i })
+        .first()
+        .click();
+    });
 });
 
 Then('page url contains {string}', (url) => {
@@ -1036,4 +1059,25 @@ Then('the End User UI forbidden page is displayed', () => {
   cy.findByAltText('forbidden').should('be.visible');
   cy.findByText('You are not authorized to view this site. Please sign out and try again').should('be.visible');
   cy.findByRole('button', { name: 'Sign out' }).should('be.visible');
+});
+
+Then('{string} element has {string} attribute with value {string}', (selector, attribute, value) => {
+  checkElementCssBySelector(selector, attribute, value);
+});
+
+Then('elements have following selector attributes with values:', (dataTable) => {
+  dataTable.hashes().forEach((row) => {
+    checkElementCssBySelector(row.Selector, row.Attribute, row.Value);
+  });
+});
+
+Then('elements have following text attributes with values:', (dataTable) => {
+  dataTable.hashes().forEach((row) => {
+    checkElementCssByText(row.Text, row.Attribute, row.Value);
+  });
+});
+
+// TODO: delete this
+When('user waits for {int} seconds', (seconds) => {
+  cy.wait(seconds * 1000);
 });
