@@ -77,6 +77,7 @@ export const JOURNEYS = {
   REGISTRATION_WITH_ES_LOCALE: { name: 'Registration with ES locale', path: 'Registration&locale=es#' },
   AUXILIAR: { name: 'Auxiliar', path: 'Auxiliar%20journey', fileName: 'QA-Auxiliar_Journey' },
   QA_THEMES_EDIT_TESTING_JOURNEY_SIMPLE: { name: 'QA Themes Edit Testing Journey Simple', path: 'QA%20-%20Themes%20edit%20testing%20journey%20Simple', fileName: 'QA_Themes_Edit_Testing_Journey_Simple_template' },
+  QA_THEMES_EDIT_TESTING_JOURNEY_WITH_SQ: { name: 'QA Themes Edit Testing Journey with Security Questions', path: 'QA%20-%20Themes%20edit%20testing%20journey%20with%20SQ', fileName: 'QA_Themes_Edit_Testing_Journey_With_SQ_template' },
 };
 
 /**
@@ -112,6 +113,7 @@ export const ROLES = {
   checkbox: 'checkbox',
   tab: 'tab',
   heading: 'heading',
+  option: 'option',
 };
 
 /**

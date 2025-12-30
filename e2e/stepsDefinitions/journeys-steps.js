@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -8,25 +8,18 @@
 
 import { Given, When } from '@badeball/cypress-cucumber-preprocessor';
 import { generateJourneyFileName } from '../utils/journeyUtils';
-
-this.importedJourneys = [];
+import { journeyCleanupManager } from '../utils/manageJourneys';
 
 after(() => {
-  if (this.importedJourneys.length > 0) {
-    const journeysToDelete = this.importedJourneys.map((journey) => journey.fileName);
-    cy.log(`Deleting imported journey(s) ${journeysToDelete} via API`).then(() => {
-      cy.deleteTreesViaAPI(journeysToDelete);
-      this.importedJourneys = [];
-    });
-  }
+  journeyCleanupManager.cleanup();
 });
 
 Given('journey {journey} is imported via API', (name) => {
-  const importedJourney = this.importedJourneys.find((journey) => journey.name === name);
+  const importedJourney = journeyCleanupManager.getAll().find((journey) => journey.name === name);
   if (!importedJourney) {
     const fileName = generateJourneyFileName(name);
     cy.importTreesViaAPI([fileName]).then(() => {
-      this.importedJourneys.push({ name, fileName });
+      journeyCleanupManager.add({ name, fileName });
     });
   }
 });
