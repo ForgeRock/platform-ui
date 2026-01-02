@@ -45,6 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
                         <FrApplicationSearch
                           @search:applications="searchApplications"
                           @update:applications="updateApplications"
+                          :applications="selectedApplications"
                           :application-search-results="applicationSearchResults" />
                       </div>
                       <FrSearchInput

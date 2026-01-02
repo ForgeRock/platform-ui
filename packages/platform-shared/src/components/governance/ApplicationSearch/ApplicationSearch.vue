@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrField
+    :value="selectedApplications"
     class="w-100"
     name="filterByApplication"
     type="multiselect"
@@ -73,7 +74,7 @@ of the MIT license. See the LICENSE file for details. -->
  * @prop {Boolean} isTesting - Determines if the component is in a test environment
  */
 import { BMedia, BMediaBody } from 'bootstrap-vue';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -81,6 +82,10 @@ import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platfo
 import i18n from '@/i18n';
 
 const props = defineProps({
+  applications: {
+    type: Array,
+    default: () => [],
+  },
   applicationSearchResults: {
     type: Array,
     default: () => [],
@@ -91,6 +96,8 @@ const emit = defineEmits([
   'search:applications',
   'update:applications',
 ]);
+
+const selectedApplications = ref(props.applications);
 
 const applicationFilterOptions = computed(() => {
   const options = props.applicationSearchResults.map((application) => ({
@@ -119,4 +126,8 @@ function filterByApplicationSearch(searchValue) {
 }
 
 const debouncedApplicationSearch = debounce(filterByApplicationSearch, 500);
+
+watch(() => props.applications, (newValue) => {
+  selectedApplications.value = newValue || [];
+});
 </script>

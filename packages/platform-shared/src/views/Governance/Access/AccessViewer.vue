@@ -51,7 +51,10 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
           </div>
           <div class="border-top p-2 flex-grow-1 overflow-auto">
-            <!-- Filter component will be here next commit-->
+            <FrAccessFilter
+              use-query-filter
+              @update-filter="updateAccessByFilter"
+              @clear-filters="clearAccessFilters" />
           </div>
         </BCard>
         <div class="d-flex flex-column h-100 w-100 ">
@@ -91,6 +94,14 @@ of the MIT license. See the LICENSE file for details. -->
                 :title="$t('governance.access.noAccessFound')"
                 :subtitle="$t('governance.access.noAccessFoundSubtitle')" />
             </div>
+            <FrAccessDetailPanel
+              v-if="!refreshPanel"
+              :access="selectedNode"
+              :read-only="true"
+              :auto-id-settings="autoIdSettings"
+              :user-schema="filterSchema?.user"
+              @close-panel="activeNodeId = null"
+              @open-selected-access-modal="openGrantDetailsModal" />
           </div>
         </div>
       </div>
@@ -131,6 +142,7 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
+import FrAccessFilter from '@forgerock/platform-shared/src/components/governance/AccessFilter/AccessFilter';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import { useRoute } from 'vue-router';
 import {
@@ -141,14 +153,18 @@ import FrAccountModal from '@forgerock/platform-shared/src/components/governance
 import FrEntitlementModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/EntitlementModal';
 import FrRoleModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/RoleModal/RoleModal';
 import { getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrUserDetails from '@forgerock/platform-shared/src/components/governance/UserDetails';
 import FrAccessToolbar from './components/AccessToolbar';
+import FrAccessDetailPanel from './components/AccessDetailPanel';
 import FrAccessCanvas from './components/AccessCanvas';
+import { getGrantNodeIdentifierFromGrant } from './utils/accessUtility';
 import accessConstants from './utils/accessConstants';
 import i18n from '@/i18n';
 
 // Composables
 const route = useRoute();
+const { bvModal } = useBvModal();
 const { setBreadcrumb } = useBreadcrumb();
 
 // Data
@@ -176,6 +192,13 @@ const userId = computed(() => resourceId.split('/').pop());
 const totalAccess = computed(() => Object.values(userGrants.value).flat());
 const selectedGrantTypes = computed(() => Object.keys(grantTypes.value).filter((type) => grantTypes.value[type]));
 const hasAccessToShow = computed(() => totalAccess.value.length > 0);
+const selectedNode = computed(() => {
+  const panelNode = totalAccess.value.find((grant) => getGrantNodeIdentifierFromGrant(grant) === activeNodeId.value);
+  if (panelNode) {
+    return panelNode;
+  }
+  return {};
+});
 
 /**
  * Get grants that belong to the selected user
@@ -228,6 +251,47 @@ async function getGrantsForUser(params, specificGrantTypes) {
     }));
   } catch (err) {
     showErrorMessage(err, i18n.global.t('governance.access.errorGettingData', { grantType: i18n.global.t('governance.access.access') }));
+  }
+}
+
+async function getGrantForUser(compositeId) {
+  try {
+    const params = {
+      _queryFilter: `compositeId eq "${compositeId}"`,
+    };
+    const { data } = await getUserGrants(userId.value, params);
+    return data.result[0];
+  } catch (err) {
+    showErrorMessage(err, i18n.global.t('governance.access.errorGettingData', { grantType: i18n.global.t('governance.access.access') }));
+    return null;
+  }
+}
+
+/**
+ * Updates the current filter for retrieving grants
+ */
+async function updateAccessByFilter(updatedQueryFilter) {
+  loading.value = true;
+  queryFilters.value = updatedQueryFilter;
+  await getGrantsForUser({});
+  loading.value = false;
+}
+
+/**
+ * Clears out the current filters for retrieving grants
+ */
+function clearAccessFilters() {
+  updateAccessByFilter('true');
+}
+
+async function openGrantDetailsModal() {
+  if (selectedNode.value) {
+    try {
+      modalNode.value = await getGrantForUser(selectedNode.value.compositeId);
+      bvModal.value.show(`access-${modalNode.value.item.type}`);
+    } catch (e) {
+      // Error message handled in getGrantForUser
+    }
   }
 }
 
