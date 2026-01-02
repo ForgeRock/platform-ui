@@ -56,6 +56,9 @@ describe('Accounts Unit', () => {
   function mountComponent() {
     const wrapper = mount(Accounts, {
       global: {
+        stubs: {
+          ApplicationSearch: true,
+        },
         mocks: {
           $t: (string, obj) => {
             switch (string) {
