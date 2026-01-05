@@ -3802,6 +3802,7 @@
       "queryFilterValidation": "Please provide a valid query filter value.",
       "scriptDescription": "Execute a script at a scheduled interval.",
       "scriptValidation": "Please provide a valid Script value.",
+      "syncSource": "Sync Source",
       "taskScannerDescription": "Scan a set of properties with a query filter at a scheduled interval, and execute a script on the objects returned by the query.",
       "taskState": "Task State",
       "taskStateCompletedLabel": "Completed",
