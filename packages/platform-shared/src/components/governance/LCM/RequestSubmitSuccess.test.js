@@ -6,13 +6,18 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import RequestSubmitSuccess from './RequestSubmitSuccess';
 import i18n from '@/i18n';
+import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 
 describe('RequestSubmitSuccess', () => {
   let wrapper;
+  let routerPush;
 
   function mountComponent() {
+    setupTestPinia({ user: {} });
+    routerPush = mockRouter().routerPush;
     return mount(RequestSubmitSuccess, {
       global: {
         plugins: [i18n],
@@ -42,11 +47,10 @@ describe('RequestSubmitSuccess', () => {
   it('navigates to my requests page when clicking link', async () => {
     wrapper = mountComponent();
 
-    const routerPushSpy = jest.spyOn(wrapper.vm.$router, 'push');
     wrapper.find('button').trigger('click');
     await flushPromises();
 
-    expect(routerPushSpy).toHaveBeenCalledWith({
+    expect(routerPush).toHaveBeenCalledWith({
       name: 'MyRequestDetails',
       params: { requestId: 'RequestIdTest' },
     });
