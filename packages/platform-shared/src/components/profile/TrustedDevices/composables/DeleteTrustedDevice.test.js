@@ -6,12 +6,12 @@
  */
 
 import { flushPromises } from '@vue/test-utils';
-import * as TrustedDevicesApi from '@forgerock/platform-shared/src/api/TrustedDevicesApi';
+import * as DevicesApi from '@forgerock/platform-shared/src/api/DevicesApi';
 import useDeleteTrustedDevice from './DeleteTrustedDevice';
 
 describe('Delete Trusted Devices', () => {
   it('Returns the correct deleting states', async () => {
-    TrustedDevicesApi.deleteTrustedDevice = jest.fn().mockReturnValue(Promise.resolve([]));
+    DevicesApi.deleteTrustedDevice = jest.fn().mockReturnValue(Promise.resolve([]));
 
     const { deleteData, isDeleting } = useDeleteTrustedDevice();
     // Initial deleting state
@@ -28,7 +28,7 @@ describe('Delete Trusted Devices', () => {
 
   it('Returns the correct error state', async () => {
     const testError = new Error('error');
-    TrustedDevicesApi.deleteTrustedDevice = jest.fn().mockReturnValue(Promise.reject(testError));
+    DevicesApi.deleteTrustedDevice = jest.fn().mockReturnValue(Promise.reject(testError));
 
     const { deleteData, error } = useDeleteTrustedDevice();
     // Initial error state

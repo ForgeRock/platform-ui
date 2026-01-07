@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,31 +6,29 @@ of the MIT license. See the LICENSE file for details. -->
   <FrAccordion
     accordion-group="trustedDevices"
     class="mb-4"
-    :aria-label="i18n.global.t('pages.profile.trustedDevices.title')"
+    :aria-label="$t('pages.profile.trustedDevices.title')"
     :items="devices"
     @section-expanded="handleSectionExpanded">
     <template #accordionHeader>
       <div class="p-4">
         <h2 class="h4">
-          {{ i18n.global.t('pages.profile.trustedDevices.title') }}
+          {{ $t('pages.profile.trustedDevices.title') }}
         </h2>
         <p class="m-0">
-          {{ i18n.global.t('pages.profile.trustedDevices.subtitle') }}
+          {{ $t('pages.profile.trustedDevices.subtitle') }}
         </p>
       </div>
     </template>
     <template #header="slotData">
       <BRow>
-        <BCol
-          cols="10">
+        <BCol cols="10">
           <BRow class="align-items-center">
-            <BCol
-              md="6">
+            <BCol md="6">
               <BMedia
                 class="align-items-center"
                 no-body>
                 <div
-                  :data-device-type="slotData.deviceType"
+                  :data-device-type="slotData.deviceType.toLowerCase()"
                   data-testid="device-type"
                   class="device device-xs mr-4" />
                 <BMediaBody>
@@ -44,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
                     @click.stop="handleEditButtonClick"
                     @keydown.enter.stop="handleEditButtonClick"
                     @keydown.space.prevent.stop="handleEditButtonClick">
-                    {{ i18n.global.t('common.edit') }}
+                    {{ $t('common.editName') }}
                   </BButton>
                 </BMediaBody>
               </BMedia>
@@ -57,7 +55,9 @@ of the MIT license. See the LICENSE file for details. -->
                   icon-class="mr-2 text-success"
                   :outlined="false"
                   name="check_circle">
-                  {{ i18n.global.t('pages.profile.trustedDevices.currentDevice') }}
+                  <span class="text-dark">
+                    {{ $t('pages.profile.trustedDevices.currentDevice') }}
+                  </span>
                 </FrIcon>
               </span>
               <span
@@ -82,7 +82,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrIcon
             icon-class="mr-2"
             name="block">
-            {{ i18n.global.t('pages.profile.trustedDevices.remove') }}
+            {{ $t('pages.profile.trustedDevices.remove') }}
           </FrIcon>
         </BButton>
       </div>
@@ -91,7 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
   <FrDeleteModal
     id="delete-device-modal"
     :is-deleting="isDeleting"
-    :translated-item-type="i18n.global.t('pages.profile.trustedDevices.device')"
+    :translated-item-type="$t('pages.profile.trustedDevices.device')"
     @delete-item="handleDeleteItem" />
   <FrEditTrustedDeviceModal
     :is-saving="isSaving"

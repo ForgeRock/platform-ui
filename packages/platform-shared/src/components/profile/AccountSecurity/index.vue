@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -35,7 +35,9 @@ of the MIT license. See the LICENSE file for details. -->
                 v-else-if="item.iconType === 'ON'"
                 name="check_circle"
                 icon-class="mr-2 text-success">
-                {{ item.text }}
+                <span class="text-dark">
+                  {{ item.text }}
+                </span>
               </FrIcon>
               <span v-else>
                 {{ item.text }}
@@ -225,7 +227,7 @@ export default {
           this.mfaJourneys.removeDevice = getLinkUrl(removeDeviceJourney);
         }
         // Load authentication devices to determine 2FA status
-        this.loadAuthenicationDevices();
+        this.loadAuthenticationDevices();
       }, () => {
         this.showErrorMessage('error', this.$t('pages.profile.accountSecurity.journeyServiceError'));
       });
@@ -236,7 +238,7 @@ export default {
     /**
      * Get authentication device information used for mfa
      */
-    loadAuthenicationDevices() {
+    loadAuthenticationDevices() {
       const query = '_queryId=*&_fields=_id';
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);

@@ -6,7 +6,7 @@
  */
 
 import { flushPromises } from '@vue/test-utils';
-import * as TrustedDevicesApi from '@forgerock/platform-shared/src/api/TrustedDevicesApi';
+import * as DevicesApi from '@forgerock/platform-shared/src/api/DevicesApi';
 import * as Parse from '../utils/parse';
 import * as Format from '../utils/format';
 import useFetchTrustedDevices from './FetchTrustedDevicesData';
@@ -14,7 +14,7 @@ import { deviceData } from '../testDeviceData';
 
 describe('Fetch Trusted Devices', () => {
   it('Returns the correct loading states', async () => {
-    TrustedDevicesApi.loadUserTrustedDevices = jest.fn().mockReturnValue(Promise.resolve([]));
+    DevicesApi.loadUserTrustedDevices = jest.fn().mockReturnValue(Promise.resolve([]));
 
     const { fetchData, isLoading } = useFetchTrustedDevices();
     // Initial loading state
@@ -31,7 +31,7 @@ describe('Fetch Trusted Devices', () => {
 
   it('Returns the correct error state', async () => {
     const testError = new Error('error');
-    TrustedDevicesApi.loadUserTrustedDevices = jest.fn().mockReturnValue(Promise.reject(testError));
+    DevicesApi.loadUserTrustedDevices = jest.fn().mockReturnValue(Promise.reject(testError));
 
     const { fetchData, error } = useFetchTrustedDevices();
     // Initial error state
@@ -51,7 +51,7 @@ describe('Fetch Trusted Devices', () => {
 
     // Function mocks
     const testFetch = jest.fn();
-    TrustedDevicesApi.loadUserTrustedDevices = testFetch.mockReturnValue(Promise.resolve(deviceData));
+    DevicesApi.loadUserTrustedDevices = testFetch.mockReturnValue(Promise.resolve(deviceData));
     Parse.parseLocationData = jest.fn().mockReturnValue(Promise.resolve(testResult));
     Format.formatDevices = jest.fn().mockReturnValue(testResult);
 

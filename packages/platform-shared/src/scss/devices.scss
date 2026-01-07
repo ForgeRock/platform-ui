@@ -15,7 +15,8 @@
     background-position: 0 -36px;
   }
 
-  &[data-device-type=chromiumos] {
+  &[data-device-type=chromiumos],
+  &[data-device-type='chromium os'] {
     background-position: 0 -72px;
   }
 
@@ -23,7 +24,8 @@
     background-position: 0 -108px;
   }
 
-  &[data-device-type=macos] {
+  &[data-device-type=macos],
+  &[data-device-type='mac os'] {
     background-position: 0 -144px;
   }
 
