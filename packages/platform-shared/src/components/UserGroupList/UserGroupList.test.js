@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import UserGroupList from './UserGroupList';
+import { runA11yTest } from '../../utils/testHelpers';
 
 let wrapper;
 
@@ -24,6 +25,22 @@ function setup(props) {
 }
 
 describe('UserGroupList', () => {
+  describe('@a11y', () => {
+    it('Should be accessible', async () => {
+      const usersList = [
+        { id: 'user1', name: 'John Doe' },
+        { id: 'user2', name: 'Jane Smith' },
+        { id: 'role1', name: 'Admin' },
+      ];
+      setup({
+        usersList,
+        usersToDisplay: 3,
+        hideShowMore: true,
+      });
+      await runA11yTest(wrapper);
+    });
+  });
+
   it('Should renders user information correctly', () => {
     const usersList = [
       { id: 'user1', name: 'John Doe' },
