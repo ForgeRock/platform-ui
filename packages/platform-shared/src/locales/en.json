@@ -2170,10 +2170,16 @@
     },
     "entitlementDetails": "Entitlement Details",
     "entitlements": {
+      "chooseApplication": "Choose the application for which to create the entitlement.",
+      "createSuccess": "Your request to create an entitlement has been submitted.",
+      "entitlementDetails": "Entitlement Details",
       "failedToLoad": "Failed to load entitlements",
       "notFound": "Entitlement {entitlement} not found",
       "entitlementSourceAttributes": "Entitlement Source Attributes",
       "glossaryAttributes": "Glossary Attributes",
+      "modifySuccess": "Your request to modify an entitlement has been submitted.",
+      "newEntitlement": "New Entitlement",
+      "newEntitlementTitle": "{appName} {objectType} Entitlement",
       "details": {
         "objectPropertiesTab": {
           "title": "Entitlement Properties"

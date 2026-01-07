@@ -12,6 +12,7 @@ import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHel
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import EntitlementList from './EntitlementList';
 import i18n from '@/i18n';
+import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
@@ -23,6 +24,7 @@ jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
 describe('EntitlementList', () => {
   let wrapper;
   function mountComponent() {
+    setupTestPinia({ user: {} });
     return mount(EntitlementList, {
       attachTo: createAppContainer(),
       global: {

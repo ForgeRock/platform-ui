@@ -9,11 +9,13 @@ import { mount } from '@vue/test-utils';
 import { findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
 import RequestSubmitSuccessModal from './RequestSubmitSuccessModal';
 import i18n from '@/i18n';
+import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 
 describe('RequestSubmitSuccessModal', () => {
   let wrapper;
 
   function mountComponent() {
+    setupTestPinia({ user: {} });
     return mount(RequestSubmitSuccessModal, {
       global: {
         plugins: [i18n],

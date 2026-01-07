@@ -6,6 +6,7 @@
  */
 
 import { flushPromises, mount } from '@vue/test-utils';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
@@ -13,6 +14,7 @@ import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance
 import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
 import AddEntitlementModal from './AddEntitlementModal';
 import i18n from '@/i18n';
+import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 
 mockValidation(['required']);
 
@@ -26,6 +28,7 @@ jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
 
 describe('AddEntitlementModal', () => {
   let wrapper;
+  let routerPush;
 
   GlossaryApi.getGlossaryAttributes.mockImplementation(() => Promise.resolve({
     data: {
@@ -58,6 +61,8 @@ describe('AddEntitlementModal', () => {
   AccessRequestApi.submitCustomRequest.mockImplementation(() => Promise.resolve({ data: { id: '123' } }));
 
   function mountComponent() {
+    setupTestPinia({ user: {} });
+    routerPush = mockRouter().routerPush;
     return mount(AddEntitlementModal, {
       global: {
         plugins: [i18n],
@@ -145,7 +150,6 @@ describe('AddEntitlementModal', () => {
 
   it('third step has link to access request', async () => {
     wrapper = mountComponent();
-    const routerPushSpy = jest.spyOn(wrapper.vm.$router, 'push');
     wrapper.vm.step = 2;
     wrapper.vm.requestId = '123';
     await flushPromises();
@@ -154,7 +158,7 @@ describe('AddEntitlementModal', () => {
     expect(viewLink.text()).toBe('View Request');
     viewLink.trigger('click');
 
-    expect(routerPushSpy).toHaveBeenCalledWith({
+    expect(routerPush).toHaveBeenCalledWith({
       name: 'MyRequestDetails',
       params: { requestId: '123' },
     });

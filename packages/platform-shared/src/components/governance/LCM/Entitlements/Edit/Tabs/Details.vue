@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
   </BCard>
   <FrRequestSubmitSuccessModal
     :request-id="requestId"
-    router-path="AdministerEntitlements"
+    :router-path="entitlementPath"
     :success-text="$t('governance.entitlements.modifySuccess')" />
 </template>
 
@@ -41,7 +41,10 @@ import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governan
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/governance/DefaultEntitlementForm';
 import FrRequestSubmitSuccessModal from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccessModal';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import i18n from '@/i18n';
+
+const userStore = useUserStore();
 
 const props = defineProps({
   entitlement: {
@@ -56,6 +59,7 @@ const glossaryValues = ref({});
 const MODIFY_ENTITLEMENT_REQUEST_TYPE = 'modifyEntitlement';
 const requestId = ref('');
 
+const entitlementPath = computed(() => (userStore.adminUser ? 'Entitlements' : 'AdministerEntitlements'));
 const readOnly = computed(() => (!props.entitlement?.permissions?.modifyEntitlement));
 const applicationId = computed(() => props.entitlement?.application?.id);
 const objectType = computed(() => props.entitlement?.item?.objectType);
@@ -88,5 +92,4 @@ async function submitRequest() {
     isSaving.value = false;
   }
 }
-
 </script>

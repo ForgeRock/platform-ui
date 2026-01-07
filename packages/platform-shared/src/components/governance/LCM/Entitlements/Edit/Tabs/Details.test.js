@@ -10,6 +10,7 @@ import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/E
 import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
 import Details from './Details';
 import i18n from '@/i18n';
+import { setupTestPinia } from '../../../../../../utils/testPiniaHelpers';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
@@ -67,6 +68,7 @@ describe('Details', () => {
   }));
 
   function mountComponent() {
+    setupTestPinia({ user: {} });
     return mount(Details, {
       global: {
         plugins: [i18n],

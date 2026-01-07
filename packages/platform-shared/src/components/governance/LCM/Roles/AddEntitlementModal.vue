@@ -113,7 +113,10 @@ import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrAppAndObjectType from '@forgerock/platform-shared/src/components/governance/LCM/Entitlements/Add/Steps/AppAndObjectType';
 import FrRequestSubmitSuccess from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccess';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import i18n from '@/i18n';
+
+const userStore = useUserStore();
 
 defineProps({
   isTesting: {
@@ -193,6 +196,11 @@ async function submitRequest() {
       object: entitlementValues.value,
     },
   };
+  if (userStore.adminUser) {
+    requestPayload.common.context = {
+      type: 'admin',
+    };
+  }
   return submitCustomRequest(CREATE_ENTITLEMENT_REQUEST_TYPE, requestPayload);
 }
 

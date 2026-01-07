@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BButton
       v-if="requestId"
       variant="outline-primary"
-      @click="$router.push({ name: 'MyRequestDetails', params: { requestId } })">
+      @click="navigateToRequestDetails()">
       {{ $t('common.viewRequest') }}
     </BButton>
   </div>
@@ -26,8 +26,13 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import { BButton, BImg } from 'bootstrap-vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 
-defineProps({
+const router = useRouter();
+const userStore = useUserStore();
+
+const props = defineProps({
   requestId: {
     type: String,
     default: '',
@@ -37,5 +42,10 @@ defineProps({
     default: '',
   },
 });
+
+function navigateToRequestDetails() {
+  const componentName = userStore.adminUser ? 'RequestDetails' : 'MyRequestDetails';
+  router.push({ name: componentName, params: { requestId: props.requestId } });
+}
 
 </script>
