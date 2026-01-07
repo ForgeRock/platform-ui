@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import UserBasicInfo from './UserBasicInfo';
+import { runA11yTest } from '../../utils/testHelpers';
 
 let wrapper;
 
@@ -32,6 +33,13 @@ function setup(props) {
 }
 
 describe('UserBasicInfo', () => {
+  describe('@a11y', () => {
+    it('Should be accessible', async () => {
+      setup();
+      await runA11yTest(wrapper);
+    });
+  });
+
   it('Should renders user information correctly for regular user', () => {
     setup();
 
