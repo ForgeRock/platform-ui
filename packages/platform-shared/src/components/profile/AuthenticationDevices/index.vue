@@ -1,11 +1,11 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="mt-5 w-100">
     <div class="pl-0">
-      <div class="container">
+      <BContainer fluid>
         <BRow>
           <BCol
             md="8"
@@ -16,23 +16,55 @@ of the MIT license. See the LICENSE file for details. -->
             <p class="mb-4">
               {{ $t('pages.authenticationDevices.subtitle') }}
             </p>
-            <div
-              class="card"
+            <BCard
+              no-body
               v-if="authenticationDevicesArray.length">
               <template
-                v-for="device in authenticationDevicesArray"
+                v-for="(device, deviceIndex) in authenticationDevicesArray"
                 :key="device.uuid">
-                <div class="card-body border-bottom">
+                <BCardBody class="border-bottom">
                   <BRow class="px-4">
-                    <div class="w-100 media align-items-center">
+                    <BMedia
+                      class="w-100 align-items-center"
+                      no-body>
                       <FrIcon
-                        icon-class="md-24 mr-3"
-                        name="stay_primary_portrait" />
-                      <div class="media-body">
-                        <h2 class="h5 m-0">
-                          {{ getTranslation(device.deviceName) }}
-                        </h2>
-                      </div>
+                        icon-class="md-36 mr-3"
+                        name="qr_code_scanner" />
+                      <BMediaBody class="d-lg-flex justify-content-between align-items-center">
+                        <div>
+                          <h2 class="h5 m-0">
+                            {{ getTranslation(device.deviceName) }}
+                          </h2>
+                          <div v-if="device.lastAccessDate">
+                            <span class="text-body">
+                              {{ $t('pages.authenticationDevices.lastSignIn') }}
+                              <FrRelativeTime
+                                :timestamp="device.lastAccessDate"
+                                include-ago />
+                            </span>
+                          </div>
+                          <div v-if="device.createdDate">
+                            <span class="text-body">
+                              {{ $t('pages.authenticationDevices.added') }}
+                              <FrRelativeTime
+                                :timestamp="device.createdDate"
+                                include-ago />
+                            </span>
+                          </div>
+                        </div>
+                        <div
+                          v-if="deviceIndex === 0"
+                          class="px-lg-4 px-xl-5 mt-2 mt-lg-0">
+                          <FrIcon
+                            icon-class="mr-2 text-success"
+                            name="check_circle"
+                            :outlined="false">
+                            <span class="text-dark">
+                              {{ $t('pages.authenticationDevices.currentDevice') }}
+                            </span>
+                          </FrIcon>
+                        </div>
+                      </BMediaBody>
                       <BDropdown
                         variant="link"
                         no-caret
@@ -40,7 +72,7 @@ of the MIT license. See the LICENSE file for details. -->
                         toggle-class="pr-0 text-decoration-none">
                         <template #button-content>
                           <FrIcon
-                            icon-class="text-muted"
+                            icon-class="md-24 text-muted"
                             name="more_horiz" />
                         </template>
                         <template
@@ -58,64 +90,40 @@ of the MIT license. See the LICENSE file for details. -->
                           </div>
                         </template>
                       </BDropdown>
-                    </div>
+                    </BMedia>
                   </BRow>
-                </div>
+                </BCardBody>
               </template>
-            </div>
+            </BCard>
           </BCol>
         </BRow>
-      </div>
+      </BContainer>
       <BModal
-        id="authentication-devices-modal"
         ref="fsModal"
-        cancel-variant="outline-secondary"
+        no-close-on-backdrop
+        no-close-on-esc
+        :title="modalInfo.title"
+        title-class="h5"
+        title-tag="h2"
         @close="setModalData('', {})">
-        <template #modal-header="{ close }">
-          <div class="d-flex w-100 h-100">
-            <h2
-              class="h5 modal-title my-0">
-              {{ modalInfo.title }}
-            </h2>
-            <button
-              type="button"
-              :aria-label="$t('common.close')"
-              class="close"
-              @click="close()">
-              <FrIcon
-                icon-class="font-weight-bolder md-24 mb-1"
-                name="close" />
-            </button>
-          </div>
-        </template>
         <FrField
           v-if="modalType === 'edit'"
           v-model="deviceName"
           autofocus
           name="name"
           :label="$t('pages.authenticationDevices.editModalInput')" />
-        <template
-          v-if="modalType === 'delete'">
-          {{ $t('pages.authenticationDevices.deleteModalText') }}
-        </template>
-        <template
-          v-if="modalType === 'errorEdit'">
-          {{ $t('pages.authenticationDevices.unableToEditModalText') }}
-        </template>
-        <template
-          v-if="modalType === 'errorDelete'">
-          {{ $t('pages.authenticationDevices.unableToDeleteModalText') }}
+        <template v-else>
+          {{ modalText }}
         </template>
         <template #modal-footer="{ cancel }">
           <BButton
             v-show="modalInfo.showCancel"
-            variant="btn-link mr-2"
-            :class="modalType === 'delete' && 'text-danger'"
+            variant="link"
+            :class="[{ 'text-danger': modalType === 'delete' }, 'mr-2']"
             @click="cancel()">
             {{ $t('common.cancel') }}
           </BButton>
           <BButton
-            type="button"
             :variant="modalType === 'delete' ? 'danger' : 'primary'"
             @click="handleModalPrimaryButton(modalType)">
             {{ modalInfo.primaryButtonText }}
@@ -128,21 +136,32 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  BCol, BDropdown, BDropdownDivider, BDropdownItemButton, BRow, BModal, BButton,
+  BCard,
+  BCardBody,
+  BCol,
+  BContainer,
+  BDropdown,
+  BDropdownDivider,
+  BDropdownItemButton,
+  BRow,
+  BMedia,
+  BMediaBody,
+  BModal,
+  BButton,
 } from 'bootstrap-vue';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import { deleteAuthenticationDevice, getAuthenticationDevices, updateAuthenticationDevice } from '@forgerock/platform-shared/src/api/DevicesApi';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrRelativeTime from '@forgerock/platform-shared/src/components/RelativeTime';
 
 /**
  * @description If fullstack (AM/IDM) is configured will work with authorized devices endpoiint (AM) and display a list of currently of authorized devices for the current
  * user. This will also allow a user to remove an authorized device, causing the next login session of that device to trigger the appropriate device authorization flow from AM.
- *
  */
 
 const AUTH_TYPES = ['oath', 'push', 'webauthn'];
@@ -150,20 +169,25 @@ const AUTH_TYPES = ['oath', 'push', 'webauthn'];
 export default {
   name: 'AuthenticationDevices',
   mixins: [
-    RestMixin,
     NotificationMixin,
     TranslationMixin,
   ],
   components: {
     BButton,
+    BCard,
+    BCardBody,
     BCol,
+    BContainer,
     BDropdown,
     BDropdownDivider,
     BDropdownItemButton,
+    BMedia,
+    BMediaBody,
     BModal,
     BRow,
     FrField,
     FrIcon,
+    FrRelativeTime,
   },
   props: {
     /**
@@ -189,6 +213,18 @@ export default {
   },
   computed: {
     ...mapState(useUserStore, ['userSearchAttribute']),
+    modalText() {
+      switch (this.modalType) {
+        case 'delete':
+          return this.$t('pages.authenticationDevices.deleteModalText');
+        case 'errorEdit':
+          return this.$t('pages.authenticationDevices.unableToEditModalText');
+        case 'errorDelete':
+          return this.$t('pages.authenticationDevices.unableToDeleteModalText');
+        default:
+          return '';
+      }
+    },
   },
   methods: {
     /**
@@ -198,7 +234,7 @@ export default {
      * @returns {Object[]} authentication devices with dropdown information for each device
      */
     addDropdown(items) {
-      return items.map((item) => {
+      return [...items].sort((cur, next) => next.lastAccessDate - cur.lastAccessDate).map((item) => {
         const dropdownEdit = {
           icon: 'edit',
           text: this.$t('common.editName'),
@@ -217,37 +253,23 @@ export default {
       });
     },
     /**
-     * Get URL for managing 2FA
-     *
-     * @param {String} authType 'oauth', 'push', or 'webauthn'
-     * @returns {String} 2FA url
-     */
-    get2faUrl(authType) {
-      return `/users/${this.userSearchAttribute}/devices/2fa/${authType}`;
-    },
-    /**
      * Get all authentication devices for all types for a user
      */
-    loadAuthenicationDevices() {
-      const query = '_queryId=*';
-      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
-      const selfServiceInstance = this.getRequestService(configOptions);
-
-      const authPromises = AUTH_TYPES.map((authType) => {
-        const url = `${this.get2faUrl(authType)}?${query}`;
-        return selfServiceInstance.get(url, { withCredentials: true });
-      });
-      Promise.all(authPromises)
-        .then((responseArray) => {
-          const flattenedArray = responseArray.reduce((acc, response, index) => {
-            const devicesWithAuthType = response.data.result.map((device) => ({ ...device, authType: AUTH_TYPES[index] }));
-            return acc.concat(devicesWithAuthType);
-          }, []);
-          if (!flattenedArray.length) {
-            this.$router.push({ path: '/profile' });
-          }
-          this.authenticationDevicesArray = this.addDropdown(flattenedArray);
-        });
+    async loadAuthenticationDevices() {
+      const authPromises = AUTH_TYPES.map((authType) => getAuthenticationDevices(this.forceRoot ? 'root' : this.$store.state.realm, this.userSearchAttribute, authType));
+      try {
+        const responseArray = await Promise.all(authPromises);
+        const flattenedArray = responseArray.reduce((acc, response, index) => {
+          const devicesWithAuthType = response.data.result.map((device) => ({ ...device, authType: AUTH_TYPES[index] }));
+          return acc.concat(devicesWithAuthType);
+        }, []);
+        if (!flattenedArray.length) {
+          this.$router.push({ path: '/profile' });
+        }
+        this.authenticationDevicesArray = this.addDropdown(flattenedArray);
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('pages.authenticationDevices.loadError'));
+      }
     },
     /**
      * Delete an authentication device from a user
@@ -255,24 +277,19 @@ export default {
      * @param {String} authType 'oauth', 'push', or 'webauthn'
      * @param {String} id device id to remove
      */
-    deleteDevice(authType, id) {
-      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
-      const selfServiceInstance = this.getRequestService(configOptions);
-      const url = `${this.get2faUrl(authType)}/${id}`;
-
-      selfServiceInstance.delete(url, { withCredentials: true })
-        .then(() => {
-          this.displayNotification('success', this.$t('pages.authenticationDevices.deleteSuccess'));
-          this.loadAuthenicationDevices();
-          this.$refs.fsModal.hide();
-        })
-        .catch((error) => {
-          if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
-            this.setModalData('errorDelete', {});
-          } else {
-            this.showErrorMessage(error, this.$t('pages.authenticationDevices.deleteError'));
-          }
-        });
+    async deleteDevice(authType, id) {
+      try {
+        await deleteAuthenticationDevice(this.forceRoot ? 'root' : this.$store.state.realm, this.userSearchAttribute, authType, id);
+        this.displayNotification('success', this.$t('pages.authenticationDevices.deleteSuccess'));
+        this.loadAuthenticationDevices();
+        this.$refs.fsModal.hide();
+      } catch (error) {
+        if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
+          this.setModalData('errorDelete', {});
+        } else {
+          this.showErrorMessage(error, this.$t('pages.authenticationDevices.deleteError'));
+        }
+      }
     },
     /**
      * Update a device with a new name
@@ -281,25 +298,20 @@ export default {
      * @param {String} id device id to update
      * @param {String} newName new device name
      */
-    updateDeviceName(authType, id, newName) {
-      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
-      const selfServiceInstance = this.getRequestService(configOptions);
-      const url = `${this.get2faUrl(authType)}/${id}`;
+    async updateDeviceName(authType, id, newName) {
       const payload = { deviceName: newName };
-
-      selfServiceInstance.put(url, payload, { withCredentials: true })
-        .then(() => {
-          this.displayNotification('success', this.$t('pages.authenticationDevices.editSuccess'));
-          this.loadAuthenicationDevices();
-          this.$refs.fsModal.hide();
-        })
-        .catch((error) => {
-          if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
-            this.setModalData('errorEdit', {});
-          } else {
-            this.showErrorMessage(error, this.$t('pages.authenticationDevices.editError'));
-          }
-        });
+      try {
+        await updateAuthenticationDevice(this.forceRoot ? 'root' : this.$store.state.realm, this.userSearchAttribute, authType, id, payload);
+        this.displayNotification('success', this.$t('pages.authenticationDevices.editSuccess'));
+        this.loadAuthenticationDevices();
+        this.$refs.fsModal.hide();
+      } catch (error) {
+        if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
+          this.setModalData('errorEdit', {});
+        } else {
+          this.showErrorMessage(error, this.$t('pages.authenticationDevices.editError'));
+        }
+      }
     },
     /**
      * Set data for modal based on modal type and device data
@@ -363,7 +375,7 @@ export default {
     },
   },
   mounted() {
-    this.loadAuthenicationDevices();
+    this.loadAuthenticationDevices();
     this.setBreadcrumb('/profile', this.$t('routeNames.Profile'));
   },
 };

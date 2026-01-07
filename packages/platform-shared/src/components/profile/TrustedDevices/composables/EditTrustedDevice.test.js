@@ -6,12 +6,12 @@
  */
 
 import { flushPromises } from '@vue/test-utils';
-import * as TrustedDevicesApi from '@forgerock/platform-shared/src/api/TrustedDevicesApi';
+import * as DevicesApi from '@forgerock/platform-shared/src/api/DevicesApi';
 import useEditTrustedDevices from './EditTrustedDevice';
 
 describe('Fetch Trusted Devices', () => {
   it('Returns the correct saving states', async () => {
-    TrustedDevicesApi.updateTrustedDevice = jest.fn().mockReturnValue(Promise.resolve([]));
+    DevicesApi.updateTrustedDevice = jest.fn().mockReturnValue(Promise.resolve([]));
 
     const { editData, isSaving } = useEditTrustedDevices();
     // Initial saving state
@@ -28,7 +28,7 @@ describe('Fetch Trusted Devices', () => {
 
   it('Returns the correct error state', async () => {
     const testError = new Error('error');
-    TrustedDevicesApi.updateTrustedDevice = jest.fn().mockReturnValue(Promise.reject(testError));
+    DevicesApi.updateTrustedDevice = jest.fn().mockReturnValue(Promise.reject(testError));
 
     const { editData, error } = useEditTrustedDevices();
     // Initial error state

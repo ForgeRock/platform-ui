@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -161,7 +161,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('tab', { name: 'Layout' }).click();
       cy.findByRole('checkbox', { name: 'Password' }).scrollIntoView().should('be.checked').click({ force: true });
-      cy.findByRole('checkbox', { name: '2-Step Verification' }).scrollIntoView().should('be.checked').click({ force: true });
+      cy.findByRole('checkbox', { name: '2-Step/Push Authentication' }).scrollIntoView().should('be.checked').click({ force: true });
       cy.findByRole('checkbox', { name: 'Security Questions' }).scrollIntoView().should('not.be.checked').click({ force: true });
 
       // Save the Theme and set it as the Realm Default
@@ -183,10 +183,10 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.wait('@getTheme', { timeout: 10000 });
 
       // Check that the Theme is correctly applied
-      // Verify personal information, password row, and 2-step verification row do not appear
+      // Verify personal information, password row, and 2-Step/Push Authentication row do not appear
       cy.findByRole('heading', { name: 'Sign-in & Security' }).should('exist');
       cy.findByRole('heading', { name: 'Password' }).should('not.exist');
-      cy.findByRole('heading', { name: '2-Step Verification' }).should('not.exist');
+      cy.findByRole('heading', { name: '2-Step/Push Authentication' }).should('not.exist');
       // Verify username and Security Questions rows do appear
       cy.findByRole('heading', { name: 'Username' }).should('exist');
       cy.findByRole('heading', { name: 'Security Questions' }).should('exist');

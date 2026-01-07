@@ -444,7 +444,7 @@
         "topBarHeaderColor": "Top Bar Header Color",
         "topBarTextColor": "Top Bar Text Color",
         "trustedDevices": "Trusted Devices",
-        "twoStepVerification": "2-Step Verification",
+        "twoStepVerification": "2-Step/Push Authentication",
         "userCompany": "Company",
         "username": "Username"
       },

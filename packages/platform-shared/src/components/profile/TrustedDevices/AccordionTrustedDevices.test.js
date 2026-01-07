@@ -10,7 +10,7 @@ import AccordionTrustedDevices from '@forgerock/platform-shared/src/components/p
 import i18n from '@forgerock/platform-shared/src/i18n';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { findByText } from '@forgerock/platform-shared/src/utils/testHelpers';
-import * as TrustedDevicesApi from '@forgerock/platform-shared/src/api/TrustedDevicesApi';
+import * as DevicesApi from '@forgerock/platform-shared/src/api/DevicesApi';
 import * as Parse from './utils/parse';
 import * as Fetch from './composables/FetchTrustedDevicesData';
 import { deviceData } from './testDeviceData';
@@ -40,7 +40,7 @@ describe('Accordion Trusted Devices', () => {
   let wrapper;
   describe('@renders', () => {
     beforeEach(async () => {
-      TrustedDevicesApi.loadUserTrustedDevices = jest.fn().mockReturnValue(Promise.resolve(deviceData));
+      DevicesApi.loadUserTrustedDevices = jest.fn().mockReturnValue(Promise.resolve(deviceData));
       Parse.parseLocationData = jest.fn().mockReturnValue(Promise.resolve({ formattedAddress: '123 Example st.', locality: 'Exampleville', map: 'http://example.com/map' }));
     });
 
@@ -61,7 +61,7 @@ describe('Accordion Trusted Devices', () => {
       // Device Type
       accordionItems.forEach((item, i) => {
         const deviceType = item.find('.media .device');
-        expect(deviceType.attributes('data-device-type')).toBe(deviceTypes[i]);
+        expect(deviceType.attributes('data-device-type')).toBe(deviceTypes[i].toLocaleLowerCase());
       });
 
       // Device Name
@@ -73,7 +73,11 @@ describe('Accordion Trusted Devices', () => {
       // Device Locality and Time
       accordionItems.forEach((item, i) => {
         const deviceLocality = findByText(item, '.card-header .row .row', localityAndTime[i]);
-        expect(deviceLocality).not.toBeUndefined();
+        if (i === 0) {
+          expect(deviceLocality).toBeUndefined();
+        } else {
+          expect(deviceLocality).not.toBeUndefined();
+        }
       });
     });
 

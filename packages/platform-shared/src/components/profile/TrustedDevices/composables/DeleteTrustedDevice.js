@@ -6,7 +6,7 @@
  */
 
 import { ref } from 'vue';
-import { deleteTrustedDevice } from '@forgerock/platform-shared/src/api/TrustedDevicesApi';
+import { deleteTrustedDevice } from '@forgerock/platform-shared/src/api/DevicesApi';
 
 /**
  * @description Composable for deleting Trusted Devices

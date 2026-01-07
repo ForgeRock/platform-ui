@@ -9,7 +9,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import ListViewTrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices/ListViewTrustedDevices';
 import i18n from '@forgerock/platform-shared/src/i18n';
 import { findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
-import * as TrustedDevicesApi from '@forgerock/platform-shared/src/api/TrustedDevicesApi';
+import * as DevicesApi from '@forgerock/platform-shared/src/api/DevicesApi';
 import * as Parse from './utils/parse';
 import { deviceData } from './testDeviceData';
 
@@ -39,7 +39,7 @@ describe('Accordion Trusted Devices', () => {
   let wrapper;
   describe('@renders', () => {
     beforeEach(async () => {
-      TrustedDevicesApi.loadUserTrustedDevices = jest.fn().mockReturnValue(Promise.resolve(deviceData));
+      DevicesApi.loadUserTrustedDevices = jest.fn().mockReturnValue(Promise.resolve(deviceData));
       Parse.parseLocationData = jest.fn().mockReturnValue(Promise.resolve({ formattedAddress: '123 Example st.', locality: 'Exampleville', map: 'http://example.com/map' }));
     });
 

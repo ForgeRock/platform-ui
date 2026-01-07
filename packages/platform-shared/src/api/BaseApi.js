@@ -67,7 +67,7 @@ export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
   *
   * @returns {AxiosInstance}
   */
-export function generateAmApi(resource, requestOverride = {}) {
+export function generateAmApi(resource, requestOverride = {}, routeToForbidden = true) {
   let headers = {
     'content-type': 'application/json',
     'accept-api-version': resource.apiVersion,
@@ -88,7 +88,7 @@ export function generateAmApi(resource, requestOverride = {}) {
   const request = axios.create(requestDetails);
 
   request.interceptors.response.use(null, (error) => {
-    if (error?.response?.status === 403) {
+    if (routeToForbidden && error?.response?.status === 403) {
       window.location.hash = '#/forbidden';
       window.location.replace(window.location);
     }

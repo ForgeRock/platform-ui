@@ -967,6 +967,8 @@
       "errorSavingAssignment": "Error saving assignment"
     },
     "authenticationDevices": {
+      "added": "Added",
+      "currentDevice": "Most Recent Device",
       "title": "2-Step/Push Authentication",
       "subtitle": "View devices used for 2-step verification or push authentication for your account.",
       "editName": "Edit Name",
@@ -979,6 +981,7 @@
       "deleteModalTitle": "Delete Device?",
       "deleteModalText": "You will not be able to authenticate using this device and may result in you getting locked out of your account if you rely solely on this device.",
       "deleteSuccess": "Device deleted",
+      "lastSignIn": "Last Sign-In",
       "unableToEditModalTitle": "Unable to Edit Device Name",
       "unableToEditModalText": "Unable to edit this device name. Please sign in with this device in order to edit it.",
       "unableToDeleteModalTitle": "Unable to Delete Device",
@@ -1023,7 +1026,7 @@
         "custom": "Custom",
         "currentPassword": "Current password",
         "newPassword": "New password",
-        "twoStepVerification": "2-Step Verification",
+        "twoStepVerification": "2-Step/Push Authentication",
         "journeyServiceError": "Error retrieving journey mappings.",
         "updateUsername": "Update Username",
         "resetSecurityQuestions": "Reset Security Questions"
@@ -1046,7 +1049,7 @@
         "subtitle": "Devices that have accessed your account.",
         "browser": "Browser",
         "cpu": "CPU",
-        "currentDevice": "Current Device",
+        "currentDevice": "Most Recent Device",
         "device": "Device",
         "editModalTitle": "Edit Device Name",
         "editModalInput": "Device name",

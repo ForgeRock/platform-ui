@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { ref } from 'vue';
-import { loadUserTrustedDevices } from '@forgerock/platform-shared/src/api/TrustedDevicesApi';
+import { loadUserTrustedDevices } from '@forgerock/platform-shared/src/api/DevicesApi';
 import { formatDevices } from '../utils/format';
 
 /**
@@ -29,17 +29,17 @@ export default function useFetchTrustedDevices() {
     * @returns {Promise<array>} Trusted device data formatted for the UI
   */
   const fetchData = async (realm, userId) => {
+    let formattedDevices = [];
     try {
       isLoading.value = true;
-      const response = await loadUserTrustedDevices(realm, userId);
-      const formattedDevices = formatDevices(response.data.result);
-      return formattedDevices;
+      const { data: { result } } = await loadUserTrustedDevices(realm, userId);
+      formattedDevices = await formatDevices(result || []);
     } catch (e) {
       error.value = e;
     } finally {
       isLoading.value = false;
     }
-    return [];
+    return formattedDevices;
   };
   return {
     error,
