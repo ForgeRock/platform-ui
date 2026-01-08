@@ -33,7 +33,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       testThemeName = `test_theme_${random(Number.MAX_SAFE_INTEGER)}`;
 
       // Login as admin and create testing IDM user
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
           userName = responseUserName;
           userId = responseUserId;
@@ -70,7 +70,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.logout();
 
       // Login as admin
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         // Navigate to the Hosted Pages page
         navigateToHostedPagesViaSidebar();
 

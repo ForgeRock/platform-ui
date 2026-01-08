@@ -21,7 +21,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     it('should show basic dashboard functionality', () => {
       // Get an admin access token and use it to create the test user
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
           userId = responseUserId;
           userName = responseUserName;
@@ -77,7 +77,7 @@ filterTests(['@forgeops', '@cloud'], () => {
       const dashboards = ['Google', 'Zendesk', 'salesforce'];
 
       // Get an admin access token and use it to create the test user
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
           userId = responseUserId;
           userName = responseUserName;
