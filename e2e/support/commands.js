@@ -103,6 +103,72 @@ Cypress.Commands.add('loginAsAdmin', () => {
   }
 });
 
+/**
+ * Cached login command for admin user using cy.session()
+ * Caches the authenticated session across test specs to avoid redundant logins
+ * Performs full login (~8 seconds) only on first use, then instant session restore
+ * Saves ~5-7 minutes per build by eliminating redundant authentication overhead
+ */
+Cypress.Commands.add('loginAsAdminCached', () => {
+  cy.session(
+    ['admin', Cypress.env('IS_FRAAS')],
+    () => {
+      cy.loginAsAdmin(); // Reuse existing login logic
+    },
+    {
+      validate() {
+        // Validate session by checking authentication status
+        // Sends POST to /authentication?_action=login without credentials to validate existing session
+        // Returns 401 if session expired, 200 if valid
+        // If validation fails, cy.session will discard cache and re-run setup function
+        cy.request({
+          method: 'POST',
+          url: '/openidm/authentication?_action=login',
+          failOnStatusCode: false,
+          headers: {
+            'content-type': 'application/json; charset=utf-8',
+            'cache-control': 'no-cache',
+            'x-requested-with': 'XMLHttpRequest',
+          },
+        }).then((response) => {
+          if (response.status !== 200) {
+            throw new Error(`Session validation failed: ${response.status}`);
+          }
+        });
+      },
+      cacheAcrossSpecs: true,
+    },
+  );
+
+  // Clear appAuth IndexedDB to force the app to fetch a fresh OAuth token
+  // While cy.session() preserves cookies for authentication, we need to populate
+  // Cypress.env('ACCESS_TOKEN') which is not persisted across specs
+  cy.clearAppAuthDatabase();
+
+  // Set up intercept BEFORE visiting the page
+  cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
+  // Alias needed for subsequent cy.wait('@getRelease') when IS_FRAAS
+  cy.intercept('GET', 'environment/release').as('getRelease');
+
+  // Navigate to admin page after session restore
+  const loginUrl = `${Cypress.config().baseUrl}/platform/`;
+  cy.visit(loginUrl);
+
+  // Fetch ACCESS_TOKEN after session restore
+  // The app will call /am/oauth2/access_token during page load since IndexedDB was cleared
+  // CRITICAL: Return this chainable so tests using .then() wait for token to be available
+  return cy.wait('@getAccessToken', { timeout: 10000 }).then((interception) => {
+    // Store the full response body (contains access_token, token_type, expires_in, scope)
+    // Tests expect to access Cypress.env('ACCESS_TOKEN').access_token
+    Cypress.env('ACCESS_TOKEN', interception.response.body);
+
+    // Wait for Cloud to load if needed
+    if (Cypress.env('IS_FRAAS')) {
+      cy.wait('@getRelease', { timeout: 10000 });
+    }
+  });
+});
+
 Cypress.Commands.add(
   'loginAsEnduser',
   (

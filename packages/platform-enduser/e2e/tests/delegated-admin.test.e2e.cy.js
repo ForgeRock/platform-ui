@@ -200,7 +200,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     retryableBeforeEach(() => {
       userName = `e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`;
       // Log in first to admin to allow us to use admin access token to create IDM resources
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser({ userName }).then((result) => {
           userId = result.body._id;
         });
