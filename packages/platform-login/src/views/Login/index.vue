@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -875,13 +875,14 @@ export default {
           const fieldDataType = getAlternateFieldType(policyRequirements) || fieldType;
           const errors = this.getTranslatedPolicyFailures(callback);
           const validation = getFieldValidation(policyRequirements);
+          const autocompleteValues = callback.getOutputByName('autocompleteValues');
           component.callbackSpecificProps = {
             errors,
             label,
             name,
             type: fieldDataType,
             value: value || defaultText,
-            autocomplete: getAutocompleteValue(label),
+            autocomplete: (Array.isArray(autocompleteValues) && autocompleteValues?.length) ? autocompleteValues.join(' ') : getAutocompleteValue(label),
             validationImmediate: !!errors.length,
             ...(validation && { validation }),
           };

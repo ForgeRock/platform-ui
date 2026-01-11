@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -656,6 +656,80 @@ describe('Component Test', () => {
         const frField = wrapper.find('.callback-component');
         // Check the validation attribute
         expect(frField.attributes('validation')).toBe('email|required');
+      });
+
+      it('Sets autocomplete attribute when autocompleteValues output is present', async () => {
+        const authDataWithAutocomplete = {
+          authId: '',
+          callbacks: [{
+            type: 'NameCallback',
+            output: [
+              { name: 'prompt', value: 'User Name' },
+              { name: 'autocompleteValues', value: ['webauthn', 'email'] },
+            ],
+            input: [{ name: 'IDToken1', value: '' }],
+          }],
+          header: 'Sign In',
+          description: '',
+        };
+        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataWithAutocomplete)));
+
+        const wrapper = setup();
+        jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+        await flushPromises();
+
+        const frField = wrapper.find('.callback-component');
+        // Check the autocomplete attribute
+        expect(frField.attributes('autocomplete')).toBe('webauthn email');
+      });
+
+      it('Falls back to label lookup when autocompleteValues output is missing', async () => {
+        const authDataMissingAutocomplete = {
+          authId: '',
+          callbacks: [{
+            type: 'NameCallback',
+            output: [
+              { name: 'prompt', value: 'User Name' },
+            ],
+            input: [{ name: 'IDToken1', value: '' }],
+          }],
+          header: 'Sign In',
+          description: '',
+        };
+        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataMissingAutocomplete)));
+
+        const wrapper = setup();
+        jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+        await flushPromises();
+
+        const frField = wrapper.find('.callback-component');
+        // 'User Name' maps to 'username' in loginUtils.js
+        expect(frField.attributes('autocomplete')).toBe('username');
+      });
+
+      it('Falls back to label lookup when autocompleteValues output is empty', async () => {
+        const authDataEmptyAutocomplete = {
+          authId: '',
+          callbacks: [{
+            type: 'NameCallback',
+            output: [
+              { name: 'prompt', value: 'User Name' },
+              { name: 'autocompleteValues', value: [] },
+            ],
+            input: [{ name: 'IDToken1', value: '' }],
+          }],
+          header: 'Sign In',
+          description: '',
+        };
+        jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataEmptyAutocomplete)));
+
+        const wrapper = setup();
+        jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+        await flushPromises();
+
+        const frField = wrapper.find('.callback-component');
+        // 'User Name' maps to 'username'
+        expect(frField.attributes('autocomplete')).toBe('username');
       });
     });
   });
