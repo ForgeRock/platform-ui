@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -165,6 +165,51 @@ describe('StringDisplay', () => {
       // Verify the component mounts successfully with the path
       expect(wrapper.exists()).toBe(true);
       expect(wrapper.props('path')).toBe(path);
+    });
+
+    it('registers field with initialValue from uiSchema.value', () => {
+      const initialValue = 'test initial value';
+      wrapper = mountComponent({
+        uiSchema: {
+          label: 'Test Field',
+          value: initialValue,
+        },
+        path: 'testField',
+      });
+
+      expect(wrapper.exists()).toBe(true);
+      // The field should be registered with the initial value
+      // This ensures vee-validate has the correct state from the start
+      expect(wrapper.props('uiSchema').value).toBe(initialValue);
+    });
+
+    it('registers field with empty string when uiSchema.value is undefined', () => {
+      wrapper = mountComponent({
+        uiSchema: {
+          label: 'Test Field',
+          // no value property
+        },
+        path: 'testField',
+      });
+
+      expect(wrapper.exists()).toBe(true);
+      expect(wrapper.props('uiSchema').value).toBeUndefined();
+    });
+
+    it('registers field with validation rules and initialValue', () => {
+      const initialValue = 'valid@email.com';
+      wrapper = mountComponent({
+        uiSchema: {
+          label: 'Email Field',
+          value: initialValue,
+          validation: 'required|email',
+        },
+        path: 'emailField',
+      });
+
+      expect(wrapper.exists()).toBe(true);
+      expect(wrapper.props('uiSchema').value).toBe(initialValue);
+      expect(wrapper.props('uiSchema').validation).toBe('required|email');
     });
   });
 

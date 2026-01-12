@@ -1,11 +1,10 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
-<!-- TODO: Once template change is merged: Remove || uiSchema.model === 'coreOAuth2ClientConfig.url' -->
 <template>
   <FrField
-    :can-enter-placeholders="uiSchema.canEnterPlaceholders || uiSchema.model === 'coreOAuth2ClientConfig.url'"
+    :can-enter-placeholders="uiSchema.canEnterPlaceholders"
     class="pb-1 mb-4"
     :autocomplete="uiSchema.autocomplete || ''"
     :copy="uiSchema.append"
@@ -63,7 +62,9 @@ export default {
   },
   setup(props) {
     // Use useField to connect to vee-validate. We use path to ensure name is unique
-    const { errorMessage, handleChange } = useField(props.path, props.uiSchema.validation);
+    const { errorMessage, handleChange } = useField(props.path, props.uiSchema.validation, {
+      initialValue: props.uiSchema.value,
+    });
 
     return {
       errorMessage,
