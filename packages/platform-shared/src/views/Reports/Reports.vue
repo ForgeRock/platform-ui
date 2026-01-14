@@ -53,6 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-0"
         fixed
         hover
+        primary-key="uniqueKey"
         responsive
         sort-by="report"
         :busy="loading"
@@ -71,7 +72,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </template>
         <template #cell(report)="{ item }">
-          <div :id="`${item.name}-${item.type}`">
+          <div :id="item.uniqueKey">
             <h2 class="h5 mb-1">
               {{ item.displayName }}
             </h2>
@@ -81,7 +82,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
           <BTooltip
             v-if="item.description"
-            :target="`${item.name}-${item.type}`">
+            :target="item.uniqueKey">
             {{ item.description }}
           </BTooltip>
         </template>
@@ -113,7 +114,7 @@ of the MIT license. See the LICENSE file for details. -->
             </BButton>
             <div class="d-flex justify-content-center">
               <div
-                v-if="reportBeingProcessed?.name === item.name && item.type === 'draft' && isPublishing"
+                v-if="shouldShowReportActionSpinner(item)"
                 class="w-42 h-42 d-flex justify-content-center align-items-center">
                 <BSpinner
                   class="opacity-50"
@@ -159,6 +160,15 @@ of the MIT license. See the LICENSE file for details. -->
                       icon-class="mr-2"
                       name="published_with_changes">
                       {{ $t('common.publish') }}
+                    </FrIcon>
+                  </BDropdownItem>
+                  <BDropdownItem
+                    v-if="customReportIsEnabled && !item.ootb"
+                    @click="exportTemplate(item)">
+                    <FrIcon
+                      icon-class="mr-2"
+                      name="file_download">
+                      {{ $t('common.export') }}
                     </FrIcon>
                   </BDropdownItem>
                 </template>
@@ -222,6 +232,7 @@ import {
   deleteAnalyticsReport,
   duplicateAnalyticsReport,
   editAnalyticsReport,
+  exportAnalyticsReportTemplate,
   getReportTemplates,
   publishAnalyticsReport,
 } from '@forgerock/platform-shared/src/api/AutoApi';
@@ -233,6 +244,7 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { downloadFile } from '@forgerock/platform-shared/src/utils/downloadFile';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrNewReportModal from './modals/NewReportModal';
@@ -266,6 +278,7 @@ const searchTerm = ref('');
 const reports = ref([]);
 const reportBeingProcessed = ref(undefined);
 const reportIsDuplicating = ref(false);
+const templateBeingExported = ref(undefined);
 const templateToDelete = ref(undefined);
 const tableFields = [
   {
@@ -310,7 +323,10 @@ async function retrieveReportTemplates(params = null) {
   loading.value = true;
   try {
     const { result } = await getReportTemplates(params);
-    reports.value = result.filter((item) => item.visible); // Only show items that have visible = true
+    reports.value = result.filter((item) => item.visible).map((item) => ({
+      ...item,
+      uniqueKey: `${item.name}-${item.type}`,
+    }));
     totalRows.value = result.length;
   } catch (error) {
     showErrorMessage(error, i18n.global.t('reports.noData'));
@@ -502,6 +518,43 @@ function handleImportSuccess(reportName) {
   } else {
     retrieveReportTemplates();
   }
+}
+
+/**
+ * Exports a report template as JSON
+ * @param {Object} report report object
+ */
+async function exportTemplate(report) {
+  templateBeingExported.value = report.uniqueKey;
+  try {
+    const response = await exportAnalyticsReportTemplate(report.name, report.type);
+
+    const fileName = `${report.uniqueKey}.json`;
+    await downloadFile(response.data, 'application/json', fileName);
+
+    displayNotification('success', i18n.global.t('reports.exportSuccess'));
+  } catch (err) {
+    showErrorMessage(err, i18n.global.t('reports.exportError'));
+  } finally {
+    templateBeingExported.value = undefined;
+  }
+}
+
+/**
+ * Determines if the action spinner should be shown for a given report row.
+ * Used to avoid duplicated spinner markup for multiple loading states.
+ *
+ * @param {Object} item Report row item from the table slot.
+ * @returns {boolean} True when publishing a draft for this row or exporting this template.
+ */
+function shouldShowReportActionSpinner(item) {
+  const isPublishingThisDraft = isPublishing.value
+    && reportBeingProcessed.value?.name === item.name
+    && item.type === 'draft';
+
+  const isExportingThisTemplate = templateBeingExported.value === item.uniqueKey;
+
+  return isPublishingThisDraft || isExportingThisTemplate;
 }
 
 // Watchers
