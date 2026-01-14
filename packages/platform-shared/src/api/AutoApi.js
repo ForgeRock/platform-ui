@@ -345,3 +345,23 @@ export function importAnalyticsReport(file) {
 
   return generateAutoAccessReports().post('templates/import', formData);
 }
+
+/**
+ * Export report template
+ *
+ * @param {String} reportName template name (UUID)
+ * @param {('published'|'draft')} templateType
+ * @returns {Promise<Blob>}
+ */
+export function exportAnalyticsReportTemplate(reportName, templateType = 'published') {
+  return generateAutoAccessReports().post(
+    `templates/${reportName}?templateType=${templateType}&_action=export`,
+    {},
+    {
+      responseType: 'blob',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    },
+  );
+}

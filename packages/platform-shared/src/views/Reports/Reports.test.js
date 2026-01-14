@@ -9,6 +9,7 @@ import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import {
   createAppContainer,
   findByText,
+  findByRole,
   toggleActionsMenu,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
@@ -166,6 +167,30 @@ describe('Reports', () => {
   beforeEach(() => {
     AutoApi.getReportTemplates = jest.fn().mockResolvedValue(templates);
     document.body.innerHTML = '';
+
+    window.URL.createObjectURL = jest.fn(() => 'mock-url');
+    window.URL.revokeObjectURL = jest.fn();
+
+    const originalCreateElement = document.createElement.bind(document);
+    document.createElement = jest.fn((tag) => {
+      if (tag === 'a') {
+        const element = originalCreateElement(tag);
+        element.click = jest.fn();
+        return element;
+      }
+      return originalCreateElement(tag);
+    });
+
+    const originalAppendChild = document.body.appendChild.bind(document.body);
+    document.body.appendChild = jest.fn((node) => originalAppendChild(node));
+
+    const originalRemoveChild = document.body.removeChild.bind(document.body);
+    document.body.removeChild = jest.fn((node) => {
+      if (node && node.parentNode) {
+        return originalRemoveChild(node);
+      }
+      return node;
+    });
   });
 
   it('Report cards displayed successfully', async () => {
@@ -230,13 +255,14 @@ describe('Reports', () => {
     const rows = wrapper.findAll('table tbody tr');
     await toggleActionsMenu(rows[0]);
     const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
-    expect(actions.length).toBe(6);
+    expect(actions.length).toBe(7);
     expect(actions[0].text()).toBe('list_altRun History');
     expect(actions[1].text()).toBe('person_addAssign Report');
     expect(actions[2].text()).toBe('editEdit Template');
     expect(actions[3].text()).toBe('control_point_duplicateDuplicate');
     expect(actions[4].text()).toBe('published_with_changesPublish');
-    expect(actions[5].text()).toBe('deleteDelete');
+    expect(actions[5].text()).toBe('file_downloadExport');
+    expect(actions[6].text()).toBe('deleteDelete');
   });
 
   it('should show correct actions for published templates', async () => {
@@ -246,11 +272,12 @@ describe('Reports', () => {
     const rows = wrapper.findAll('table tbody tr');
     await toggleActionsMenu(rows[3]);
     const actions = domWrapper.findAll('#app > .menu a[role="menuitem"]');
-    expect(actions.length).toBe(4);
+    expect(actions.length).toBe(5);
     expect(actions[0].text()).toBe('list_altRun History');
     expect(actions[1].text()).toBe('editEdit Template');
     expect(actions[2].text()).toBe('control_point_duplicateDuplicate');
-    expect(actions[3].text()).toBe('deleteDelete');
+    expect(actions[3].text()).toBe('file_downloadExport');
+    expect(actions[4].text()).toBe('deleteDelete');
   });
 
   it('should show correct actions for ootb duplicatable templates', async () => {
@@ -573,6 +600,113 @@ describe('Reports', () => {
     const rows = wrapper.findAll('table tbody tr');
     expect(rows.length).toBe(1);
     expect(rows[0].text()).toContain('Published Template');
+  });
+
+  it('should export a published custom report successfully', async () => {
+    const mockBlob = new Blob(['test data'], { type: 'application/json' });
+    AutoApi.exportAnalyticsReportTemplate = jest.fn().mockResolvedValue({ data: mockBlob });
+
+    const { wrapper, domWrapper } = setup();
+    await flushPromises();
+
+    const rows = wrapper.findAll('table tbody tr');
+    await toggleActionsMenu(rows[3]); // Published template
+    const exportButton = findByRole(domWrapper, 'menuitem', 'Export');
+
+    expect(exportButton).toBeDefined();
+    await exportButton.trigger('click');
+    await flushPromises();
+
+    // After export completes, verify API was called correctly
+    expect(AutoApi.exportAnalyticsReportTemplate).toHaveBeenCalledWith('PUBLISHED-TEMPLATE', 'published');
+    expect(displayNotification).toHaveBeenCalledWith('success', i18n.global.t('reports.exportSuccess'));
+    expect(wrapper.vm.templateBeingExported).toBeUndefined();
+  });
+
+  it('should export a draft custom report successfully', async () => {
+    const mockBlob = new Blob(['test data'], { type: 'application/json' });
+    AutoApi.exportAnalyticsReportTemplate = jest.fn().mockResolvedValue({ data: mockBlob });
+
+    const { wrapper, domWrapper } = setup();
+    await flushPromises();
+
+    const rows = wrapper.findAll('table tbody tr');
+    await toggleActionsMenu(rows[0]); // Draft template
+    const exportButton = findByRole(domWrapper, 'menuitem', 'Export');
+
+    expect(exportButton).toBeDefined();
+    await exportButton.trigger('click');
+    await flushPromises();
+
+    expect(AutoApi.exportAnalyticsReportTemplate).toHaveBeenCalledWith('DRAFT-TEMPLATE', 'draft');
+    expect(displayNotification).toHaveBeenCalledWith('success', i18n.global.t('reports.exportSuccess'));
+    expect(wrapper.vm.templateBeingExported).toBeUndefined();
+  });
+
+  it('should display error message when export fails', async () => {
+    const error = new Error('Export failed');
+    AutoApi.exportAnalyticsReportTemplate = jest.fn().mockRejectedValue(error);
+
+    const { wrapper, domWrapper } = setup();
+    await flushPromises();
+
+    const rows = wrapper.findAll('table tbody tr');
+    await toggleActionsMenu(rows[3]); // Published template
+    const exportButton = findByRole(domWrapper, 'menuitem', 'Export');
+
+    await exportButton.trigger('click');
+    await flushPromises();
+
+    // After error, spinner should be cleared
+    expect(wrapper.vm.templateBeingExported).toBeUndefined();
+    expect(AutoApi.exportAnalyticsReportTemplate).toHaveBeenCalledWith('PUBLISHED-TEMPLATE', 'published');
+    expect(showErrorMessage).toHaveBeenCalledWith(error, i18n.global.t('reports.exportError'));
+  });
+
+  it('should show spinner only for the specific report being exported (name-type format)', async () => {
+    const mockBlob = new Blob(['test data'], { type: 'application/json' });
+    // Create a promise that won't resolve immediately
+    let resolveExport;
+    const exportPromise = new Promise((resolve) => {
+      resolveExport = resolve;
+    });
+    AutoApi.exportAnalyticsReportTemplate = jest.fn().mockReturnValue(exportPromise);
+
+    const { wrapper, domWrapper } = setup();
+    await flushPromises();
+
+    const rows = wrapper.findAll('table tbody tr');
+    await toggleActionsMenu(rows[0]); // Draft template
+    const exportButton = findByRole(domWrapper, 'menuitem', 'Export');
+
+    await exportButton.trigger('click');
+    await wrapper.vm.$nextTick();
+
+    // Verify state uses name-type format (ensures draft and published with same name don't conflict)
+    expect(wrapper.vm.templateBeingExported).toBe('DRAFT-TEMPLATE-draft');
+    expect(wrapper.vm.templateBeingExported).not.toBe('PUBLISHED-TEMPLATE-published');
+
+    // The FrActionsCell should be hidden and spinner div should be shown for draft only
+    const spinnerDivs = wrapper.findAll('.w-42.h-42');
+    expect(spinnerDivs.length).toBeGreaterThan(0);
+
+    // Now resolve the export
+    resolveExport({ data: mockBlob });
+    await flushPromises();
+
+    // After completion, spinner should be cleared
+    expect(wrapper.vm.templateBeingExported).toBeUndefined();
+  });
+
+  it('should not show export button for out-of-the-box reports', async () => {
+    const { wrapper, domWrapper } = setup();
+    await flushPromises();
+
+    const rows = wrapper.findAll('table tbody tr');
+    await toggleActionsMenu(rows[1]); // OOTB template
+    const exportButton = findByRole(domWrapper, 'menuitem', 'Export');
+
+    expect(exportButton).toBeUndefined();
   });
 
   describe('Import functionality', () => {
