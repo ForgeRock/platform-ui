@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -60,7 +60,6 @@ const defaultState = {
   wsfedEnabled: false,
   templateBuilderEnabled: false,
   enableSamlSigningCheckbox: false,
-  enableManagedObjectSchemaEditor: false,
   overrideSessionTimeoutsEnabled: false,
   enableMonitoringUI: false,
 };
@@ -233,10 +232,6 @@ const mutations = {
       state.templateBuilderEnabled = true;
     } else if (env.VUE_APP_ENABLE_WORKFORCE?.toString() === 'true') {
       state.workforceEnabled = true;
-    }
-
-    if (env.VUE_APP_ENABLE_MANAGED_OBJECT_SCHEMA_EDITOR?.toString() === 'true') {
-      state.enableManagedObjectSchemaEditor = true;
     }
 
     if (env.VUE_APP_NODE_VERSIONING_ENABLED?.toString() === 'true') {
