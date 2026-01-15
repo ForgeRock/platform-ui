@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -85,7 +85,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <div v-else>
                       <FrField
                         :value="obj[key] || objectProperties[key].value"
-                        @input="obj[key] = $event; emitInput(listValues, key)"
+                        @input="obj[key] = $event; emitInput(listValues)"
                         :class="objectProperties[key].fieldClass || ''"
                         :disabled="disabled || objectProperties[key].disabled"
                         :label="!showTable || isSmallScreen ? objectProperties[key].title || key : ''"
@@ -347,19 +347,10 @@ export default {
       this.$emit('list-updated', 'add', valueIndex + 1);
       this.emitInput(this.listValues);
     },
-    emitInput(value, objKey = null) {
+    emitInput(value) {
       this.$nextTick(() => {
         const emitValue = this.checkEmptyValues(value);
         this.validateField();
-
-        if (this.objectProperties[objKey]?.validation?.unique) {
-          const filteredList = cloneDeep(emitValue);
-
-          const names = filteredList.map((obj) => obj.name);
-          const repeatedNames = names.filter((name, idx, arr) => arr.indexOf(name) !== idx && arr.lastIndexOf(name) === idx);
-          this.objectProperties[objKey].validation.unique = repeatedNames;
-          this.$emit('update-properties', { properties: this.objectProperties });
-        }
 
         if (emitValue.length === 0) {
           this.$emit('input', this.multiValued ? [] : {});
