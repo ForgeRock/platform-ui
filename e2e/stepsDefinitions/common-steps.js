@@ -262,7 +262,7 @@ When('user types and selects the stored value of {string} option on dropdown {st
 });
 
 When('user closes the {string} dropdown', (dropdown) => {
-  cy.findByRole('combobox', { name: dropdown }).type('{esc}');
+  cy.findByRole('combobox', { name: dropdown }).click().type('{esc}');
 });
 
 When('user reloads the page', () => {
