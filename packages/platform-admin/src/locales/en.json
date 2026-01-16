@@ -1501,7 +1501,7 @@
       "pageFooterInfo": "Localized footer to display on the page node (first locale will be used as fallback)",
       "theme": "Theme",
       "themeDescription": "If using hosted pages, specify a theme to override this journey's UI theme.",
-      "hasNewUnconnectedOutputs": "Node has unconnected outputs.",
+      "hasNewUnconnectedOutcomes": "Node has unconnected outcomes.",
       "updateAvailable": "Update Available",
       "updateAvailableDesc": "There is a new version of this node available.",
       "viewDetails": "View Details",
