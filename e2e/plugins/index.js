@@ -91,6 +91,11 @@ module.exports = async (on, config) => {
       const email = await getLatestEmail(emailAccount);
       return email;
     },
+    log(message) {
+      // eslint-disable-next-line no-console
+      console.log(message);
+      return null;
+    },
   });
 
   install(on);

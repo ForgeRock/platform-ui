@@ -1,16 +1,12 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import 'cypress-lighthouse';
-
 describe.skip('platform-enduser lighthouse suite', () => { // eslint-disable-line mocha/no-exclusive-tests
   const passThreshold = Cypress.env('lighthousePassThreshold');
-  const adminUserName = Cypress.env('AM_USERNAME'); // eslint-disable-line no-unused-vars
-  const adminPassword = Cypress.env('AM_PASSWORD'); // eslint-disable-line no-unused-vars
   const retries = 0;
 
   describe('/enduser/profile', { retries }, () => {
