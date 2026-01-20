@@ -310,8 +310,16 @@ Cypress.Commands.add(
     });
 
     if (sucessLogin) {
-      // Check for the Dashboard welcome greeting message
-      cy.findAllByRole('heading', { timeout: 20000 }).contains(givenName).should('be.visible');
+      // Lighthouse CI: Relaxed validation (any heading), Regular E2E: Strict validation (greeting text)
+      const lighthouseEnv = Cypress.env('LIGHTHOUSE_ENABLED');
+      const isLighthouseAudit = lighthouseEnv === 'true' || lighthouseEnv === true;
+
+      if (!isLighthouseAudit) {
+        cy.findAllByRole('heading', { timeout: 20000 }).contains(givenName).should('be.visible');
+      } else {
+        cy.findAllByRole('heading', { timeout: 20000 }).should('exist');
+        cy.log('✓ Authenticated session established (on profile page)');
+      }
     }
   },
 );

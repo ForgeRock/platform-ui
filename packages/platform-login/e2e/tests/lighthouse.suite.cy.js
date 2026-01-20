@@ -1,4 +1,9 @@
-import 'cypress-lighthouse';
+/**
+ * Copyright (c) 2026 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
 
 describe.skip('login lighthouse report', { retries: 0 }, () => { // eslint-disable-line mocha/no-exclusive-tests
   const locationUrl = `${Cypress.config().baseUrl}/am/XUI`;
