@@ -1,45 +1,48 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
-import { BModal } from 'bootstrap-vue';
+import { mount } from '@vue/test-utils';
+import { BModal, BButton } from 'bootstrap-vue';
 import Notifications from '@kyvg/vue3-notification';
 import SettingsTab from './index';
 import * as SchemaApi from '@/api/SchemaApi';
+import i18n from '@/i18n';
 
 let wrapper;
+
+const mountComponent = (properties) => mount(SettingsTab, {
+  global: {
+    mocks: {
+      $store: {
+        state: {
+          isFraas: true,
+          realm: 'realm',
+        },
+      },
+    },
+    plugins: [Notifications, i18n],
+    stubs: { BModal, BButton },
+    renderStubDefaultSlot: true,
+  },
+  props: {
+    properties,
+    resourcePath: 'resourcePath',
+    resourceName: 'resourceName',
+  },
+});
+
 describe('SettingsTab', () => {
   beforeEach(() => {
-    wrapper = shallowMount(SettingsTab, {
-      global: {
-        mocks: {
-          $t: () => {},
-          $store: {
-            state: {
-              isFraas: true,
-              realm: 'realm',
-            },
-          },
-        },
-        plugins: [Notifications],
-        stubs: { BModal },
-        renderStubDefaultSlot: true,
+    wrapper = mountComponent({
+      temporalConstraints: {
+        disabled: true,
       },
-      props: {
-        properties: {
-          temporalConstraints: {
-            disabled: true,
-          },
-          condition: {
-            disabled: false,
-          },
-        },
-        resourcePath: 'resourcePath',
-        resourceName: 'resourceName',
+      condition: {
+        disabled: false,
       },
     });
     wrapper.setData({
@@ -173,5 +176,29 @@ describe('SettingsTab', () => {
         value: 'test2',
       },
     ]);
+  });
+
+  it('shows correct button text based on whether setting is set', () => {
+    const wrapperWithButtons = mountComponent({
+      temporalConstraints: {
+        disabled: false,
+        value: 'some value',
+        title: 'Temporal Constraints',
+        propName: 'temporalConstraints',
+      },
+      condition: {
+        disabled: false,
+        value: '',
+        title: 'Condition',
+        propName: 'condition',
+      },
+    });
+    const buttons = wrapperWithButtons.findAllComponents(BButton);
+
+    // First property has setting set - should show "Edit"
+    expect(buttons[0].text()).toBe('Edit');
+
+    // Second property has no setting set - should show "Set up"
+    expect(buttons[1].text()).toBe('Set up');
   });
 });
