@@ -7107,9 +7107,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserstack-cypress-cli@npm:1.36.0":
-  version: 1.36.0
-  resolution: "browserstack-cypress-cli@npm:1.36.0"
+"browserstack-cypress-cli@npm:1.36.1":
+  version: 1.36.1
+  resolution: "browserstack-cypress-cli@npm:1.36.1"
   dependencies:
     archiver: 5.3.0
     async: 3.2.3
@@ -7127,6 +7127,7 @@ __metadata:
     git-repo-info: ^2.1.1
     gitconfiglocal: ^2.1.0
     glob: ^7.2.0
+    https-proxy-agent: ^5.0.1
     mkdirp: 1.0.4
     mocha: ^10.2.0
     node-ipc: 9.1.1
@@ -7140,7 +7141,7 @@ __metadata:
     yargs: 14.2.3
   bin:
     browserstack-cypress: bin/runner.js
-  checksum: 5d86eee9983291c3914787d9585cfda938e05e3511cd882950eb7d27e4864e51c010eb2d3e852dc117991856928a2a617a912015d51ba8320297d6aa79998938
+  checksum: c4f300e06459244f768e4d6655d371a28d95088678d44adba05c1b474bd9b2a784a96fa279b697aad1471f7154ac5cfa5555472ce27827e318895261342b73dc
   languageName: node
   linkType: hard
 
@@ -11867,7 +11868,7 @@ __metadata:
     babel-jest: 29.6.3
     babel-plugin-require-context-hook: 1.0.0
     babel-plugin-transform-import-meta: 2.3.2
-    browserstack-cypress-cli: 1.36.0
+    browserstack-cypress-cli: 1.36.1
     cypress-file-upload: 5.0.8
     cypress-real-events: 1.15.0
     dotenv: 8.2.0
