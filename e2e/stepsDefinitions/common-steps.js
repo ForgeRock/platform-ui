@@ -85,6 +85,13 @@ Given('enduser logs into {journey} journey', (journeyName) => {
   );
 });
 
+Given('enduser logs into the End User UI', () => {
+  const userName = Cypress.env('endUserName');
+  const password = Cypress.env('endUserPassword');
+
+  cy.loginAsEnduser(userName, password, false);
+});
+
 /**
  * Creates multiple end user accounts with random credentials, stores them with numbered environment variables
  * Usage: Given 3 enduser accounts are created via API
@@ -967,4 +974,15 @@ Then('the clipboard contains the stored value of {string}', (storedDataName) => 
       });
     });
   }
+});
+
+Then('the forbidden page is displayed', () => {
+  cy.findByAltText('forbidden').should('be.visible');
+  cy.findByText('You are not authorized to view this site.').should('be.visible');
+});
+
+Then('the End User UI forbidden page is displayed', () => {
+  cy.findByAltText('forbidden').should('be.visible');
+  cy.findByText('You are not authorized to view this site. Please sign out and try again').should('be.visible');
+  cy.findByRole('button', { name: 'Sign out' }).should('be.visible');
 });
