@@ -141,6 +141,11 @@ Given('browser locale is set to {string}', (locale) => {
   Cypress.env('LOCALE', localesList[0]);
 });
 
+When('admin/enduser logs out', () => {
+  cy.logout();
+  Cypress.env('ACCESS_TOKEN', '');
+});
+
 When('user clicks on {string} {role}', (name, role) => {
   cy.findByRole(role, { name: new RegExp(name, 'i') }).click();
 });
