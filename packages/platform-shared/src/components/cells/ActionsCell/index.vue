@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,12 +13,14 @@ of the MIT license. See the LICENSE file for details. -->
       :toggle-class="`text-decoration-none p-0 ${toggleClass}`"
       :data-testid="`actions-${testId}`">
       <template #button-content>
-        <FrIcon
-          icon-class="text-dark md-24"
-          name="more_horiz" />
-        <p class="sr-only">
-          {{ $t('common.moreActions') }}
-        </p>
+        <slot name="button-content">
+          <FrIcon
+            icon-class="text-dark md-24"
+            name="more_horiz" />
+          <p class="sr-only">
+            {{ $t('common.moreActions') }}
+          </p>
+        </slot>
       </template>
       <!--
         Slot for any custom actions not covered by common use cases

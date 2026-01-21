@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -55,14 +55,11 @@ of the MIT license. See the LICENSE file for details. -->
             <BTooltip :target="item.tooltipId()">
               {{ item.tooltipLabel() }}
             </BTooltip>
-            <BDropdown
-              boundary="window"
-              class="p-0"
-              data-testid="actions-dropdown"
-              no-caret
-              right
-              toggle-class="text-decoration-none p-0"
-              variant="link">
+            <FrActionsCell
+              test-id="run-history-export"
+              :delete-option="false"
+              :divider="false"
+              :edit-option="false">
               <template #button-content>
                 <div
                   class="p-2"
@@ -77,7 +74,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :name="item.hasAnyErrors() ? 'error_outline' : 'file_download'" />
                 </div>
               </template>
-              <BDropdownGroup>
+              <template #custom-top-actions>
                 <template
                   v-for="(exportStatus, fileType) in item.export"
                   :key="fileType">
@@ -93,8 +90,8 @@ of the MIT license. See the LICENSE file for details. -->
                       :label="item.statusLabel(exportStatus, fileType)" />
                   </BDropdownItem>
                 </template>
-              </BDropdownGroup>
-            </BDropdown>
+              </template>
+            </FrActionsCell>
           </template>
           <FrActionsCell
             v-if="item.reportStatus === 'complete' || item.reportStatus === 'expired'"
@@ -103,26 +100,24 @@ of the MIT license. See the LICENSE file for details. -->
             :divider="false"
             :edit-option="false">
             <template #custom-top-actions>
-              <BDropdownGroup>
-                <BDropdownItem
-                  class="d-lg-none"
-                  @click="emit('view-report', item.runId)">
-                  <FrIcon
-                    data-testid="view-report-option"
-                    icon-class="mr-3"
-                    name="description">
-                    {{ $t('reports.tabs.runHistory.table.viewReport') }}
-                  </FrIcon>
-                </BDropdownItem>
-                <BDropdownItem @click="emit('view-run-details', item)">
-                  <FrIcon
-                    data-testid="view-run-option"
-                    icon-class="mr-3"
-                    name="list_alt">
-                    {{ $t('reports.tabs.runHistory.table.runDetails') }}
-                  </FrIcon>
-                </BDropdownItem>
-              </BDropdownGroup>
+              <BDropdownItem
+                class="d-lg-none"
+                @click="emit('view-report', item.runId)">
+                <FrIcon
+                  data-testid="view-report-option"
+                  icon-class="mr-3"
+                  name="description">
+                  {{ $t('reports.tabs.runHistory.table.viewReport') }}
+                </FrIcon>
+              </BDropdownItem>
+              <BDropdownItem @click="emit('view-run-details', item)">
+                <FrIcon
+                  data-testid="view-run-option"
+                  icon-class="mr-3"
+                  name="list_alt">
+                  {{ $t('reports.tabs.runHistory.table.runDetails') }}
+                </FrIcon>
+              </BDropdownItem>
             </template>
           </FrActionsCell>
         </div>
@@ -145,8 +140,6 @@ of the MIT license. See the LICENSE file for details. -->
 import { ref, watch } from 'vue';
 import {
   BButton,
-  BDropdown,
-  BDropdownGroup,
   BDropdownItem,
   BSpinner,
   BTable,
