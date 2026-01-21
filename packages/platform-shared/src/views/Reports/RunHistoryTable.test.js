@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -40,84 +40,77 @@ describe('Run History Table component', () => {
     return { wrapper, domWrapper };
   }
 
+  function getTableRows(wrapper) {
+    const table = findByTestId(wrapper, 'run-history-table');
+    return table.find('tbody').findAll('tr[role="row"]');
+  }
+
+  async function openEllipseMenu(wrapper, buttonTestId, buttonIcon) {
+    const rows = getTableRows(wrapper);
+    const firstRow = rows[0];
+    const dropDownButtons = findByTestId(firstRow, buttonTestId);
+    await toggleActionsMenu(dropDownButtons, 0, buttonIcon);
+  }
+
   let wrapper;
   let domWrapper;
 
-  describe('@renders', () => {
-    beforeEach(() => {
-      document.body.innerHTML = '';
-      ({ wrapper, domWrapper } = setup());
-    });
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    ({ wrapper, domWrapper } = setup());
+  });
 
-    describe('on data load initial table view', () => {
-      it('displays the table of historical report requests', async () => {
-        const table = findByTestId(wrapper, 'run-history-table');
-        const tableRows = table.find('tbody').findAll('tr[role="row"]');
-        expect(tableRows.length).toBe(4);
-      });
+  describe('@renders', () => {
+    it('displays the table of historical report requests', () => {
+      const tableRows = getTableRows(wrapper);
+      expect(tableRows.length).toBe(4);
     });
 
     describe('@watchers', () => {
       it('updates a table row if the "updatedRow" prop has a new value', async () => {
         const tableRowStubs = reportHistoryTableDataGenerator(ReportHistoryStubs);
-        const newTableRowWithUpdatedStatus = updateValueInNestedObject(tableRowStubs[0], 'reportStatus', 'processing');
-        const table = findByTestId(wrapper, 'run-history-table');
-        const tableRows = table.find('tbody').findAll('tr[role="row"]');
-        const job0123 = tableRows[0];
-        const reportStatusComplete = findByTestId(job0123, 'fr-complete-report-badge');
+        const updated = updateValueInNestedObject(tableRowStubs[0], 'reportStatus', 'processing');
+        expect(findByTestId(wrapper, 'fr-complete-report-badge').exists()).toBe(true);
+        await wrapper.setProps({ updatedRow: [updated] });
 
-        expect(reportStatusComplete.exists()).toBe(true);
-        await wrapper.setProps({ updatedRow: [newTableRowWithUpdatedStatus] });
-
-        const reportProcessingState = findByTestId(job0123, 'fr-report-badge-spinner');
-        expect(reportProcessingState.exists()).toBe(true);
+        expect(findByTestId(wrapper, 'fr-report-badge-spinner').exists()).toBe(true);
       });
     });
   });
 
   describe('@actions', () => {
-    beforeEach(() => {
-      document.body.innerHTML = '';
-      ({ wrapper, domWrapper } = setup());
-    });
-
     it('emits "view-report" when the view report button is clicked in the table', async () => {
-      const table = findByTestId(wrapper, 'run-history-table');
-      const tableRows = table.find('tbody').findAll('tr[role="row"]');
+      const tableRows = getTableRows(wrapper);
       const job0123 = tableRows[0];
       const viewReportButton = findByTestId(job0123, 'view-report-button');
 
       await viewReportButton.trigger('click');
-      expect(wrapper.emitted()['view-report'][0]).toEqual(['job_0123']);
+      expect(wrapper.emitted()['view-report']?.[0]).toEqual(['job_0123']);
     });
 
-    it('emits "download-report" if status is "download" or "downloading" when the download button is clicked in the table', async () => {
-      const table = findByTestId(wrapper, 'run-history-table');
-      const tableRows = table.find('tbody').findAll('tr[role="row"]');
-      const job0123 = tableRows[0];
-      const CSVDownloadButton = findByTestId(job0123, 'CSV-download-button');
+    it('emits "download-report" when a download option is clicked from the export dropdown', async () => {
+      await openEllipseMenu(wrapper, 'actions-run-history-export', 'file_download');
+      const csvDownloadButton = findByTestId(domWrapper, 'CSV-download-button');
+      await csvDownloadButton.trigger('click');
 
-      await CSVDownloadButton.trigger('click');
-      expect(wrapper.emitted()['download-report'][0]).toBeTruthy();
+      expect(wrapper.emitted()['download-report']?.[0]).toBeTruthy();
     });
 
-    it('emits "export-report" if status is "export" when the export button is clicked in the table', async () => {
-      const table = findByTestId(wrapper, 'run-history-table');
-      const tableRows = table.find('tbody').findAll('tr[role="row"]');
-      const job0123 = tableRows[0];
-      const JSONExportButton = findByTestId(job0123, 'JSON-export-button');
+    it('emits "export-report" when an export option is clicked from the export dropdown', async () => {
+      await openEllipseMenu(wrapper, 'actions-run-history-export', 'file_download');
+      const jsonExportButton = findByTestId(domWrapper, 'JSON-export-button');
+      await jsonExportButton.trigger('click');
 
-      await JSONExportButton.trigger('click');
-      expect(wrapper.emitted()['export-report'][0]).toBeTruthy();
+      expect(wrapper.emitted()['export-report']?.[0]).toBeTruthy();
     });
 
-    it('emits "view-run-details" if the "Run Details" button is clicked in the ellipse menu', async () => {
-      await toggleActionsMenu(wrapper);
+    it('emits "view-run-details" when the Run Details option is clicked in the ellipse menu', async () => {
+      await openEllipseMenu(wrapper, 'actions-ellipse-menu');
 
-      const RunDetailsDropdownOption = findByTestId(domWrapper, 'view-run-option');
+      const runDetailsDropdownOption = findByTestId(domWrapper, 'view-run-option');
+      await runDetailsDropdownOption.trigger('click');
 
-      await RunDetailsDropdownOption.trigger('click');
-      expect(wrapper.emitted()['view-run-details'][0]).toBeTruthy();
+      expect(wrapper.emitted()['view-run-details']?.[0]).toBeTruthy();
     });
   });
 });

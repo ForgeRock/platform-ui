@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -163,11 +163,13 @@ export function mockScriptDocumentFunctions() {
 }
 
 /**
- * Toggles opened or closed the first actions menu found in the given element.
+ * Toggles opened or closed the actions menu found in the given element.
  * @param {HTMLElement} element The element containing the actions menu button(s).
+ * @param {number} [index=0] Index of the actions menu button to toggle.
+ * @param {string} [icon='more_horiz'] Icon text used to identify the menu button.
  */
-export async function toggleActionsMenu(element, index = 0) {
-  const actionsCellButton = element.findAll('button').filter((item) => item.text().includes('more_horiz'))[index];
+export async function toggleActionsMenu(element, index = 0, icon = 'more_horiz') {
+  const actionsCellButton = element.findAll('button').filter((item) => item.text().includes(icon))[index];
   expect(actionsCellButton).toBeDefined();
   await actionsCellButton.trigger('click');
 }
