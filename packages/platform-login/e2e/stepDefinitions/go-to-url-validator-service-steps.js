@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -14,7 +14,7 @@ this.definedValidGotoDestinations = [];
 Given('user sets Validation Service with valid goto URL {string} on AM console via API', (validGoToDestinationURL) => {
   if (!this.definedValidGotoDestinations.includes(validGoToDestinationURL)) {
     if (!Cypress.env('ACCESS_TOKEN')) {
-      cy.loginAsAdmin();
+      cy.loginAsAdminCachedForCucumber();
     }
     getValidTogoDestinations().then((response) => {
       response.body.validGotoDestinations.push(validGoToDestinationURL);
@@ -29,7 +29,7 @@ Given('user sets Validation Service with valid goto URL {string} on AM console v
 after(() => {
   if (Cypress.spec.relative.includes('go-to-url-validator-service.feature')) {
     if (!Cypress.env('ACCESS_TOKEN')) {
-      cy.loginAsAdmin();
+      cy.loginAsAdminCachedForCucumber();
     }
     cy.log('Reset original Valid GoTo URLs via API').then(() => {
       getValidTogoDestinations().then((response) => {

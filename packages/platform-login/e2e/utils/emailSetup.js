@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -15,7 +15,7 @@ import { setEmailProviderConfigByAccount } from './emailUtils';
  */
 export const setupEmailTesting = () => {
   // Login as admin first
-  cy.loginAsAdmin().then(() => {
+  cy.loginAsAdminCachedForCucumber().then(() => {
     // Backup default email provider
     getDefaultProviderConfig().then((config) => {
       // Store the default config in Cypress environment for later restoration
@@ -47,7 +47,7 @@ export const teardownEmailTesting = () => {
 
   if (defaultEmailConfig) {
     // Login as admin and restore the original email provider
-    cy.loginAsAdmin().then(() => {
+    cy.loginAsAdminCachedForCucumber().then(() => {
       putEmailProviderConfig(defaultEmailConfig).then((result) => {
         expect(result.status).to.equal(200);
       });

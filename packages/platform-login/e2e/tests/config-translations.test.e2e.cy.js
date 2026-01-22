@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -350,7 +350,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     // Add config translation overrides
     before(() => {
       // Login as admin and upload config translation overrides
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         addOverrides('en', enTranslations);
         addOverrides('fr', frTranslations);
         addOverrides('fr-ca', frcaTranslations);
@@ -439,7 +439,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     after(() => {
       // Login as admin and delete config translation overrides after tests
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         deleteOverrides('en');
         deleteOverrides('fr');
         deleteOverrides('fr-ca');

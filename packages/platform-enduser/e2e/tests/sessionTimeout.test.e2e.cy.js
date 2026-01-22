@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -20,7 +20,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     it('when session is about to idle out should show session timeout modal and extend session', () => {
       // Get an admin access token and use it to create the test user
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
           const locationUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/enduser/?realm=alpha#/profile` : `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
 
@@ -65,7 +65,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     it('when session is about to idle out should show session timeout modal and end session', () => {
       // Get an admin access token and use it to create the test user
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
           const locationUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/enduser/?realm=alpha#/profile` : `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
 
@@ -113,7 +113,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     it('when session is about to expire should show session expiration modal and dismiss the warning', () => {
       // Get an admin access token and use it to create the test user
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
           const locationUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/enduser/?realm=alpha#/profile` : `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
 
@@ -158,7 +158,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     it('when session is about to expire should show session expiration modal and end the session', () => {
       // Get an admin access token and use it to create the test user
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
           const locationUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/enduser/?realm=alpha#/profile` : `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
 
@@ -207,7 +207,7 @@ filterTests(['@forgeops', '@cloud'], () => {
     it('should not show session timeout if the date is over 24 days from now', () => {
       // settimeout can have an overflow int issue
       // Get an admin access token and use it to create the test user
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
           const locationUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/enduser/?realm=alpha#/profile` : `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
 

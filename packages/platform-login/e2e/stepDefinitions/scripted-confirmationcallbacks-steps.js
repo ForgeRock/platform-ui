@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -48,7 +48,7 @@ before(() => {
   // Login as admin
   if (Cypress.spec.relative.includes('scripted-confirmationcallbacks.feature')) {
     // Login as admin
-    cy.loginAsAdmin().then(() => {
+    cy.loginAsAdminCachedForCucumber().then(() => {
       // Add translation override config for 'en' locale
       addOverrides('en', translations);
     });
@@ -60,7 +60,7 @@ after(() => {
   // Login as admin
   if (Cypress.spec.relative.includes('scripted-confirmationcallbacks.feature')) {
     // Login as admin
-    cy.loginAsAdmin().then(() => {
+    cy.loginAsAdminCachedForCucumber().then(() => {
       // Delete translation override config for 'en' locale
       deleteOverrides('en');
     });

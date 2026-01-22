@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -48,7 +48,7 @@ before(() => {
     setSecurityQuestionsSettings('must define', 1);
   }
   if (Cypress.spec.relative.includes('security-questions')) {
-    cy.loginAsAdmin()
+    cy.loginAsAdminCachedForCucumber()
       .then(() => getSecurityQuestions())
       .then((response) => {
         expect(response.status).to.equal(200);
