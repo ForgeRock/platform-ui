@@ -2,7 +2,7 @@
 Feature: Logout warning before expiration on ID hosted pages
 
   Background:
-    Given admin logs into the tenant
+    Given admin logs into the tenant with fresh session
     And enduser account is created via API
 
   @C14021

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -23,7 +23,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     before(() => {
       // Login as admin & create testing IDM enduser
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         createIDMUser({
           userName,
           password: defaultPassword,
@@ -38,7 +38,7 @@ filterTests(['@forgeops', '@cloud'], () => {
 
     after(() => {
       // Login as admin & delete testing IDM enduser
-      cy.loginAsAdmin().then(() => {
+      cy.loginAsAdminCached().then(() => {
         deleteIDMUser(userId);
       });
     });

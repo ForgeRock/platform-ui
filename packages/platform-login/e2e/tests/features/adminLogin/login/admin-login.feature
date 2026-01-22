@@ -92,6 +92,6 @@ Feature: Admin Login
   @C29568
   @cloud @forgeops
   Scenario: Admin logs out successfully
-    When admin logs into the tenant
+    When admin logs into the tenant with fresh session
     And user clicks on "Sign out" menu item from top right user menu
     Then page title is "Sign In"

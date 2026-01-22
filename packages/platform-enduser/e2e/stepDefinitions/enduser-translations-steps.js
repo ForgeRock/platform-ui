@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,7 +16,7 @@ import LOCALES from '../support/constants';
 
 before(() => {
   if (Cypress.spec.relative.includes('enduser-translations.feature')) {
-    cy.loginAsAdmin().then(() => {
+    cy.loginAsAdminCachedForCucumber().then(() => {
       createIDMUser().then((res) => {
         Cypress.env('endUserName', res.body.userName);
         Cypress.env('endUserID', res.body._id);
@@ -48,7 +48,7 @@ before(() => {
 after(() => {
   if (Cypress.spec.relative.includes('enduser-translations.feature')) {
     cy.logout();
-    cy.loginAsAdmin().then(() => {
+    cy.loginAsAdminCachedForCucumber().then(() => {
       // Delete locale overrides for all languages added on the test
       deleteOverrides(LOCALES.ja.code);
       deleteOverrides(LOCALES.fr.code, false);

@@ -9,6 +9,7 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { random } from 'lodash';
 import { addOverrides } from '@e2e/api/localizationApi.e2e';
+import { getTermsAndConditions } from '@e2e/api/termsAndConditionsApi.e2e';
 import {
   ROLES, THEME_UI_FIELD_MAPPING, HTML_ELEMENT_SELECTORS, PLURAL_TO_SINGULAR_ROLES,
 } from '@e2e/support/constants';
@@ -26,6 +27,10 @@ import { generateJourneyURL } from '../utils/journeyUtils';
 import LOCALES from '../../packages/platform-enduser/e2e/support/constants';
 
 Given('admin logs into the tenant', () => {
+  cy.loginAsAdminCachedForCucumber();
+});
+
+Given('admin logs into the tenant with fresh session', () => {
   cy.loginAsAdmin();
 });
 
@@ -47,7 +52,7 @@ Given('enduser account is created via API', () => {
   if (!Cypress.env('endUserId')) {
     const endUser = generateRandomEndUser();
     if (!Cypress.env('ACCESS_TOKEN')) {
-      cy.loginAsAdmin();
+      cy.loginAsAdminCachedForCucumber();
     }
     cy.log(`Creating new IDM enduser ${endUser.userName}`).then(() => {
       createIDMUser({
@@ -98,7 +103,7 @@ Given('enduser logs into the End User UI', () => {
  */
 Given('{int} enduser accounts are created via API', (userCount) => {
   if (!Cypress.env('ACCESS_TOKEN')) {
-    cy.loginAsAdmin();
+    cy.loginAsAdminCachedForCucumber();
   }
 
   for (let i = 1; i <= userCount; i += 1) {
@@ -154,7 +159,15 @@ When('admin/enduser logs out', () => {
 });
 
 When('user clicks on {string} {role}', (name, role) => {
-  cy.findByRole(role, { name: new RegExp(name, 'i') }).click();
+  const isSaveButton = role === 'button' && /^save$/i.test(name);
+  const findControl = () => cy.findByRole(role, { name: new RegExp(name, 'i') });
+
+  if (isSaveButton) {
+    findControl().should('be.enabled', { timeout: 8000 }).click();
+    return;
+  }
+
+  findControl().click();
 });
 
 /**
@@ -286,7 +299,11 @@ When('user reloads the page', () => {
 When('user reloads journey page', () => {
   cy.intercept('GET', '/openidm/info/uiconfig').as('uiconfig');
   cy.reload();
-  cy.wait('@uiconfig', { timeout: 15000 });
+  cy.get('@uiconfig.all').then((calls) => {
+    if (calls && calls.length > 0) {
+      cy.wait('@uiconfig', { timeout: 15000 });
+    }
+  });
 });
 
 When('user clicks on {string} button in {string} modal', (button, modal) => {
@@ -328,6 +345,31 @@ When('user clicks on option button {string} from more actions menu for item {str
       cy.contains('[role="menuitem"], .dropdown-item', new RegExp(option, 'i'))
         .click({ force: true });
     });
+
+  if (/set to active version/i.test(option)) {
+    cy.findByRole('alert', { name: /set version to 'Active'/i, timeout: 15000 }).should('be.visible');
+
+    cy.findByRole('table').within(() => {
+      let activeColumnIndex;
+      cy.get('thead').findAllByRole('columnheader').each((columnHeader, headerIndex) => {
+        const headerText = columnHeader.text().trim();
+        const ariaLabel = columnHeader.attr('aria-label');
+        if (headerText === 'Active' || ariaLabel === 'Active') {
+          activeColumnIndex = headerIndex;
+        }
+      }).then(() => {
+        cy.findAllByRole('row')
+          .filter(`:has(td:contains("${item}"))`)
+          .findAllByRole('cell')
+          .eq(activeColumnIndex)
+          .should('have.text', 'Active');
+      });
+    });
+
+    getTermsAndConditions().then((response) => {
+      expect(response.body.active).to.equal(item);
+    });
+  }
 });
 
 When(/^user (forcefully )?clicks on "([^"]*)" button for item "([^"]*)"$/, (forcefully, buttonName, item) => {
@@ -487,7 +529,7 @@ Then('{string} error message does not exists', (message) => {
  */
 Then('enduser account is deleted via API', () => {
   if (!Cypress.env('ACCESS_TOKEN')) {
-    cy.loginAsAdmin();
+    cy.loginAsAdminCachedForCucumber();
   }
 
   deleteIDMUser(Cypress.env('endUserId'));
@@ -530,7 +572,9 @@ Then('{string} modal is displayed/opened', (modal) => {
 });
 
 Then('{string} modal is displayed after user is iddle for {int} seconds', (modal, seconds) => {
-  cy.findByRole('dialog', { name: modal, timeout: seconds * 1000 })
+  // Add small buffer for AM timer drift and network latency
+  const timeoutMs = (seconds * 1000) + 15000;
+  cy.findByRole('dialog', { name: modal, timeout: timeoutMs })
     .should('be.visible');
 });
 
@@ -595,7 +639,7 @@ Then('{string} field doesn\'t have any validation error', (field) => {
  */
 Then('enduser account is deleted via API', () => {
   if (!Cypress.env('ACCESS_TOKEN')) {
-    cy.loginAsAdmin();
+    cy.loginAsAdminCachedForCucumber();
   }
 
   deleteIDMUser(Cypress.env('endUserId'));

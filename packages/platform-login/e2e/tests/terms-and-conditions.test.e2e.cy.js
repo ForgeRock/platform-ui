@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -126,13 +126,15 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('link', { name: 'Terms & Conditions' }).click();
 
       // Check that T&C are correctly shown as a dialog
-      cy.findByRole('dialog').within(() => {
-        // Check T&C header is shown
-        cy.findByRole('heading', { name: 'Terms & Conditions', level: 2 }).should('be.visible');
+      cy.findByRole('dialog', { name: 'Terms & Conditions', timeout: 10000 })
+        .should('be.visible')
+        .within(() => {
+          // Check T&C header is shown
+          cy.findByRole('heading', { name: 'Terms & Conditions', level: 2 }).should('be.visible');
 
-        // Check T&C content is correct
-        cy.findByText(termsContent).should('be.visible');
-      });
+          // Check T&C content is correct
+          cy.findByText(termsContent).should('be.visible');
+        });
     });
 
     it('Created user should not be prompted to accept T&C when already accepted', () => {

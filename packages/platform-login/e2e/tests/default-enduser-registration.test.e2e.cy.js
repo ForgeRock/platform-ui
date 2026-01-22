@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -217,7 +217,7 @@ filterTests(['@cloud', '@smoke'], () => {
 
     before(() => {
       // Initially login to admin
-      cy.loginAsAdmin();
+      cy.loginAsAdminCached();
 
       cy.task('getTestEmailAccount').then((account) => {
         expect(account.user).to.be.a('string');
@@ -234,7 +234,7 @@ filterTests(['@cloud', '@smoke'], () => {
 
     after(() => {
       // Return the email provider back to its default config
-      cy.loginAsAdmin();
+      cy.loginAsAdminCached();
       getDefaultProviderConfig().then((config) => {
         putEmailProviderConfig(config.body);
       });

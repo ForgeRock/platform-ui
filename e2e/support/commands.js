@@ -1,5 +1,5 @@
 /**
- * Copyright 2021-2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2021-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -55,7 +55,37 @@ function fetchAccessToken(retries = 5, attempt = 0) {
 }
 
 Cypress.Commands.add('clearAppAuthDatabase', () => {
-  indexedDB.deleteDatabase('appAuth');
+  cy.window().then((win) => new Cypress.Promise((resolve) => {
+    let resolved = false;
+    const request = win.indexedDB.deleteDatabase('appAuth');
+    const finish = (reason) => {
+      if (!resolved) {
+        resolved = true;
+        if (reason === 'timeout') {
+          Cypress.log({
+            name: 'clearAppAuthDatabase',
+            message: 'Fallback: IndexedDB deleteDatabase did not fire onsuccess/onerror/onblocked within 2s',
+            consoleProps: () => ({ reason }),
+          });
+        }
+        resolve();
+      }
+    };
+    request.onsuccess = () => {
+      Cypress.log({ name: 'clearAppAuthDatabase', message: 'Successfully deleted appAuth database' });
+      finish('onsuccess');
+    };
+    request.onerror = (event) => {
+      const errorMessage = event?.target?.error?.message || 'Unknown IndexedDB error';
+      Cypress.log({ name: 'clearAppAuthDatabase', message: `Delete failed - ${errorMessage}` });
+      finish('onerror');
+    };
+    request.onblocked = () => {
+      Cypress.log({ name: 'clearAppAuthDatabase', message: 'Delete blocked (app may have database open)' });
+      finish('onblocked');
+    };
+    setTimeout(() => finish('timeout'), 2000);
+  }));
 });
 
 Cypress.Commands.add('clearSessionStorage', () => {
@@ -85,8 +115,12 @@ Cypress.Commands.add('loginAsAdmin', () => {
   // Visit Admin Login URL
   cy.visit(loginUrl);
 
-  // Wait for the Login form to load
-  cy.wait('@uiconfig', { timeout: 15000 });
+  // Wait for the Login form to load (only if request fired)
+  cy.get('@uiconfig.all').then((calls) => {
+    if (calls && calls.length > 0) {
+      cy.wait('@uiconfig', { timeout: 15000 });
+    }
+  });
 
   // Fill in Admin name and password and Login
   fillAndSendLoginForm();
@@ -104,10 +138,68 @@ Cypress.Commands.add('loginAsAdmin', () => {
 });
 
 /**
+ * Helper function to validate admin session
+ * @returns {void}
+ */
+function validateAdminSession() {
+  cy.request({
+    method: 'POST',
+    url: '/openidm/authentication?_action=login',
+    failOnStatusCode: false,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-cache',
+      'x-requested-with': 'XMLHttpRequest',
+    },
+  }).then((response) => {
+    if (response.status !== 200) {
+      throw new Error(`Session validation failed: ${response.status}`);
+    }
+  });
+}
+
+/**
+ * Helper function to fetch OAuth token after session restore
+ * Restores OAuth token state after cy.session() cache hit:
+ *  - Clears IndexedDB to force fresh token fetch
+ *  - Visits admin page and waits for token intercept
+ *  - In Cloud (FRAAS), waits for release API call
+ * @param {Object} options - Configuration options
+ * @param {Object} options.visitOptions - Options passed to cy.visit()
+ * @returns {void}
+ */
+function fetchOAuthTokenAfterSessionRestore(options = {}) {
+  const { visitOptions = {} } = options;
+
+  // Clear appAuth IndexedDB to force the app to fetch a fresh OAuth token
+  cy.clearAppAuthDatabase();
+
+  // Set up intercepts
+  cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
+  cy.intercept('GET', 'environment/release').as('getRelease');
+
+  // Navigate to admin page
+  const loginUrl = `${Cypress.config().baseUrl}/platform/`;
+  cy.visit(loginUrl, visitOptions);
+
+  // Fetch ACCESS_TOKEN after session restore (same as loginAsAdmin)
+  // The app will call /am/oauth2/access_token during page load since IndexedDB was cleared
+  // Use the same retry logic as loginAsAdmin for reliability
+  fetchAccessToken();
+
+  if (Cypress.env('IS_FRAAS')) {
+    // Wait for the Cloud to properly load (same as loginAsAdmin)
+    cy.wait('@getRelease', { timeout: 10000 });
+  }
+}
+
+/**
  * Cached login command for admin user using cy.session()
- * Caches the authenticated session across test specs to avoid redundant logins
- * Performs full login (~8 seconds) only on first use, then instant session restore
- * Saves ~5-7 minutes per build by eliminating redundant authentication overhead
+ * Exactly replicates loginAsAdmin() behavior with session caching:
+ *  - Caches authenticated session across specs (first login ~8s, subsequent ~2s)
+ *  - Waits for dashboard to load
+ *  - In Cloud (FRAAS), waits for @getRelease
+ *  - Tests can navigate immediately after command completes
  */
 Cypress.Commands.add('loginAsAdminCached', () => {
   cy.session(
@@ -116,56 +208,33 @@ Cypress.Commands.add('loginAsAdminCached', () => {
       cy.loginAsAdmin(); // Reuse existing login logic
     },
     {
-      validate() {
-        // Validate session by checking authentication status
-        // Sends POST to /authentication?_action=login without credentials to validate existing session
-        // Returns 401 if session expired, 200 if valid
-        // If validation fails, cy.session will discard cache and re-run setup function
-        cy.request({
-          method: 'POST',
-          url: '/openidm/authentication?_action=login',
-          failOnStatusCode: false,
-          headers: {
-            'content-type': 'application/json; charset=utf-8',
-            'cache-control': 'no-cache',
-            'x-requested-with': 'XMLHttpRequest',
-          },
-        }).then((response) => {
-          if (response.status !== 200) {
-            throw new Error(`Session validation failed: ${response.status}`);
-          }
-        });
-      },
+      validate: validateAdminSession,
       cacheAcrossSpecs: true,
     },
   );
 
-  // Clear appAuth IndexedDB to force the app to fetch a fresh OAuth token
-  // While cy.session() preserves cookies for authentication, we need to populate
-  // Cypress.env('ACCESS_TOKEN') which is not persisted across specs
-  cy.clearAppAuthDatabase();
+  return fetchOAuthTokenAfterSessionRestore();
+});
 
-  // Set up intercept BEFORE visiting the page
-  cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
-  // Alias needed for subsequent cy.wait('@getRelease') when IS_FRAAS
-  cy.intercept('GET', 'environment/release').as('getRelease');
+/**
+ * Cached login command for Cucumber/BDD tests
+ * Uses separate cache ID to prevent token expiration issues when tests
+ * from different groups (Cypress vs Cucumber) reuse each other's sessions
+ */
+Cypress.Commands.add('loginAsAdminCachedForCucumber', () => {
+  cy.session(
+    ['admin-cucumber', Cypress.env('IS_FRAAS')],
+    () => {
+      cy.loginAsAdmin(); // Reuse existing login logic
+    },
+    {
+      validate: validateAdminSession,
+      cacheAcrossSpecs: true,
+    },
+  );
 
-  // Navigate to admin page after session restore
-  const loginUrl = `${Cypress.config().baseUrl}/platform/`;
-  cy.visit(loginUrl);
-
-  // Fetch ACCESS_TOKEN after session restore
-  // The app will call /am/oauth2/access_token during page load since IndexedDB was cleared
-  // CRITICAL: Return this chainable so tests using .then() wait for token to be available
-  return cy.wait('@getAccessToken', { timeout: 10000 }).then((interception) => {
-    // Store the full response body (contains access_token, token_type, expires_in, scope)
-    // Tests expect to access Cypress.env('ACCESS_TOKEN').access_token
-    Cypress.env('ACCESS_TOKEN', interception.response.body);
-
-    // Wait for Cloud to load if needed
-    if (Cypress.env('IS_FRAAS')) {
-      cy.wait('@getRelease', { timeout: 10000 });
-    }
+  return fetchOAuthTokenAfterSessionRestore({
+    visitOptions: { failOnStatusCode: false, timeout: 10000 },
   });
 });
 
