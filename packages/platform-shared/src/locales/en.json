@@ -409,6 +409,10 @@
       "number": "Please enter a valid number. A valid number can contain 0-9, . and -",
       "list": "Please provide a valid list. An example of a valid list is: some, strings, separated, by, commas"
     },
+    "validationErrorsLabel": "Validation Errors",
+    "dateTimePicker": {
+      "openCalendar": "Open Calendar"
+    },
     "daysOfWeek": {
       "sundayShort": "Sun",
       "mondayShort": "Mon",
