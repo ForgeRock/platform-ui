@@ -48,12 +48,13 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="isLoading"
         :show-spinner="isLoading"
         :button-text="$t('common.saveAsDraft')"
-        @click="modifyRequestRoleData()" />
+        @click="modifyRequestRoleData(true)" />
       <FrButtonWithSpinner
         v-if="!readOnly"
         variant="primary"
-        :disabled="isLoading"
-        :show-spinner="isLoading"
+        :button-text="isDraft ? $t('common.submit') : $t('common.save')"
+        :disabled="isLoading || savingRequest"
+        :show-spinner="isLoading || savingRequest"
         @click="modifyRequestRoleData()" />
     </div>
   </div>
@@ -73,13 +74,14 @@ import {
   onMounted,
   ref,
 } from 'vue';
+import { useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
 import { map } from 'lodash';
-import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { requestAction, putCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { OOTB_NO_FORM_REQUEST_TYPES } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/utils/governance/glossary';
@@ -89,6 +91,8 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import FrRequestFormManager from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestFormManager';
 import FrRequestRoleDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestRoleDetails';
 import i18n from '@/i18n';
+
+const router = useRouter();
 
 const props = defineProps({
   isApproval: {
@@ -161,11 +165,63 @@ async function getSchemaData() {
 }
 
 /**
+ * Modifies a request with the provided values.
+ * @param {Object} values - The values to modify the request with.
+ */
+async function modifyRequest(requestPayload, saveAsDraft = false) {
+  savingRequest.value = true;
+
+  try {
+    if (saveAsDraft || props.isDraft) {
+      await putCustomRequest(props.item.rawData.id, requestPayload);
+      if (!saveAsDraft) {
+        router.push('/my-requests');
+      }
+    } else {
+      await requestAction(props.item.rawData.id, 'modify', phaseId.value, requestPayload);
+    }
+    displayNotification('success', i18n.global.t('governance.accessRequest.requestSaveSuccess'));
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.accessRequest.requestSaveError'));
+  } finally {
+    savingRequest.value = false;
+  }
+}
+
+/**
+ * Creates the role payload to send in the modifyRole request.
+ * @param {Boolean} saveAsDraft - Flag to determine if the role should be saved as a draft.
+ */
+async function modifyRequestRoleData(saveAsDraft = false) {
+  const { role } = requestRoleData.value;
+  const payload = {
+    role: {
+      ...role,
+      object: {
+        ...role.object,
+        entitlements: map(requestRoleData.value.entitlements?.result || requestRoleData.value.entitlements, (entitlement) => entitlement._id || entitlement.id),
+        addedRoleMembers: map(requestRoleData.value.members?.result || requestRoleData.value.members, (member) => member._id || member.id),
+      },
+      glossary: requestRoleData.value.glossary,
+    },
+    common: {
+      ...role.common,
+      isDraft: saveAsDraft,
+    },
+  };
+  await modifyRequest(payload, saveAsDraft);
+}
+
+/**
  * Updates the locally saved request role data.
  * @param {Object} roleData - The new role data for the request.
+ * @param {Boolean} triggerSave - Flag to determine if the draft role should be saved.
  */
-function updateRoleData(roleData) {
+async function updateRoleData(roleData, triggerSave = false) {
   requestRoleData.value = roleData;
+  if (triggerSave) {
+    await modifyRequestRoleData(props.isDraft);
+  }
 }
 /**
  * Return a properly formatted date to display
@@ -177,42 +233,6 @@ function getFormattedDate(date) {
     return blankValueIndicator;
   }
   return dayjs(date).format('MMM D, YYYY h:mm A');
-}
-/**
- * Modifies a request with the provided values.
- * @param {Object} values - The values to modify the request with.
- */
-async function modifyRequest(requestPayload) {
-  savingRequest.value = true;
-
-  try {
-    await requestAction(props.item.rawData.id, 'modify', phaseId.value, requestPayload);
-    displayNotification('success', i18n.global.t('governance.accessRequest.requestSaveSuccess'));
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.accessRequest.requestSaveError'));
-  } finally {
-    savingRequest.value = false;
-  }
-}
-
-/**
- * Creates the role payload to send in the modifyRole request.
- */
-async function modifyRequestRoleData() {
-  const { role } = requestRoleData.value;
-  const payload = {
-    role: {
-      ...role,
-      object: {
-        ...role.object,
-        entitlements: map(requestRoleData.value.entitlements, 'id'),
-        members: map(requestRoleData.value.members, 'id'),
-      },
-      glossary: requestRoleData.value.glossary,
-    },
-  };
-
-  await modifyRequest(payload);
 }
 
 onMounted(async () => {

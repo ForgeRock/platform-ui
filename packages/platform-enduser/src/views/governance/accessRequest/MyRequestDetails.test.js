@@ -39,7 +39,7 @@ describe('RequestDetails', () => {
   }
 
   beforeEach(() => {
-    mockRouter({ params: { requestId: '1234' } });
+    mockRouter({ path: '', params: { requestId: '1234' } });
     AccessRequestApi.getRequest = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         id: '387b7fa9-c57a-495c-a276-74d025020cdc',

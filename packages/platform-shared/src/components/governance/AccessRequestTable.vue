@@ -172,8 +172,11 @@ async function loadRequests(goToFirstPage) {
     sortKeys: sortKeysMap[sortKeys.value],
     sortDir: sortDir.value,
   };
-
-  if (sortKeys.value === 'date') params.sortType = 'date';
+  if (status.value === 'draft') {
+    params.sortKeys = 'metadata.modifiedDate';
+  } else if (sortKeys.value === 'date') {
+    params.sortType = 'date';
+  }
   emit('load-requests', params, payload);
 }
 

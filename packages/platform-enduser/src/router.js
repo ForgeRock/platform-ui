@@ -121,6 +121,12 @@ const router = createRouter({
               beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.SharedStore.governanceDevEnabled, store.state.govLcmRole]),
             },
             {
+              path: ':requestId/draft',
+              name: 'MyRoleRequestDetails',
+              component: () => import('@/views/governance/accessRequest/MyRequestDetails.vue'),
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.SharedStore.governanceDevEnabled, store.state.govLcmRole]),
+            },
+            {
               path: ':roleId/:roleStatus',
               name: 'RoleDetails',
               component: () => import('@/views/governance/LCM/Roles/RoleDetails'),
@@ -216,7 +222,7 @@ const router = createRouter({
           component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequests'),
         },
         {
-          path: 'details/:requestId',
+          path: 'details/:requestId/:requestType?',
           name: 'MyRequestDetails',
           component: () => import(/* webpackChunkName: "MyRequestDetails" */ '@/views/governance/accessRequest/MyRequestDetails'),
         },

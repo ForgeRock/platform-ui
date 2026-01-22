@@ -8,6 +8,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
+import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as applicationImageResolver from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
@@ -42,6 +43,9 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
 }));
 
 AccessRequestApi.requestAction = jest.fn().mockImplementation(() => Promise.resolve({
+  data: {},
+}));
+AccessRequestApi.putCustomRequest = jest.fn().mockImplementation(() => Promise.resolve({
   data: {},
 }));
 GlossaryApi.getGlossaryAttributes.mockImplementation(() => Promise.resolve({
@@ -179,7 +183,9 @@ applicationImageResolver.onImageError = jest.fn().mockImplementation(() => {});
 jest.spyOn(RequestFormAssignmentsApi, 'getFormAssignmentByRequestType').mockResolvedValue({ data: { result: [] } });
 
 describe('DetailsTab', () => {
+  let routerPush;
   const setup = (propsData = {}) => {
+    routerPush = mockRouter().routerPush;
     const props = {
       item: {
         details: {
@@ -492,6 +498,127 @@ describe('DetailsTab', () => {
         'testPhase',
         expectedPayload,
       );
+    });
+
+    it('calls to save a request as a draft', async () => {
+      const requestSpy = jest.spyOn(AccessRequestApi, 'putCustomRequest').mockResolvedValue({ data: {} });
+
+      const formItem = {
+        item: {
+          details: {
+            id: 'testId',
+          },
+          rawData: {
+            id: 'testId',
+            phases: [{ name: 'testPhase' }],
+            workflow: { id: 'testWorkflowId' },
+            requestType: 'createRole',
+            request: {
+              common: {
+                externalRoleId: 'testExternalRoleId',
+                isDraft: true,
+                blob: {
+                  form: {
+                    existingData: 'existing data',
+                  },
+                },
+              },
+              role: {
+                glossary: {},
+                object: {
+                  entitlements: {},
+                  members: {},
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const wrapper = setup({ isDraft: true, ...formItem });
+      await flushPromises();
+      const saveDraftButton = wrapper.find('button.btn-outline-primary.mr-2');
+      await saveDraftButton.trigger('click');
+      const expectedPayload = {
+        common: {
+          isDraft: true,
+        },
+        role: {
+          glossary: {},
+          object: {
+            addedRoleMembers: [],
+            entitlements: [],
+            members: {},
+          },
+        },
+      };
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        'testId',
+        expectedPayload,
+      );
+    });
+
+    it('calls to publish a saved draft request', async () => {
+      const requestSpy = jest.spyOn(AccessRequestApi, 'putCustomRequest').mockResolvedValue({ data: {} });
+
+      const formItem = {
+        item: {
+          details: {
+            id: 'testId',
+          },
+          rawData: {
+            id: 'testId',
+            phases: [{ name: 'testPhase' }],
+            workflow: { id: 'testWorkflowId' },
+            requestType: 'createRole',
+            request: {
+              common: {
+                externalRoleId: 'testExternalRoleId',
+                isDraft: true,
+                blob: {
+                  form: {
+                    existingData: 'existing data',
+                  },
+                },
+              },
+              role: {
+                glossary: {},
+                object: {
+                  entitlements: {},
+                  members: {},
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const wrapper = setup({ isDraft: true, ...formItem });
+      await flushPromises();
+      const saveDraftButton = wrapper.findAll('button.btn-primary');
+      await saveDraftButton[2].trigger('click');
+      await flushPromises();
+      const expectedPayload = {
+        common: {
+          isDraft: false,
+        },
+        role: {
+          glossary: {},
+          object: {
+            addedRoleMembers: [],
+            entitlements: [],
+            members: {},
+          },
+        },
+      };
+
+      expect(requestSpy).toHaveBeenCalledWith(
+        'testId',
+        expectedPayload,
+      );
+
+      expect(routerPush).toHaveBeenCalledWith('/my-requests');
     });
   });
 });

@@ -119,7 +119,17 @@ describe('RolesList', () => {
     return wrapper;
   }
 
-  it('displays each entitlement in a table row', async () => {
+  it('displays an active and draft tab', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+    await wrapper.vm.$nextTick();
+    const tabs = wrapper.findAll('li.nav-item');
+    expect(tabs.length).toBe(2);
+    expect(tabs[0].text()).toContain('Active');
+    expect(tabs[1].text()).toContain('Draft');
+  });
+
+  it('displays each role in a table row', async () => {
     wrapper = mountComponent();
     await flushPromises();
     await wrapper.vm.$nextTick();

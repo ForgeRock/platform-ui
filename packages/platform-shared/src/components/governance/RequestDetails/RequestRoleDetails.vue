@@ -128,6 +128,7 @@ const glossarySchema = ref(null);
 const roleSchema = ref(null);
 const isInitialized = ref(false);
 const glossaryValues = ref(null);
+const saveOnUpdate = ref(false);
 
 const emit = defineEmits(['update-role']);
 
@@ -200,6 +201,9 @@ async function updateTabData(tabUpdated, operation, data) {
       roleRequestData.value.members.result = newMembers;
     }
   }
+  if (operation !== 'load' && !props.readOnly && (tabUpdated === 'members' || tabUpdated === 'entitlements')) {
+    saveOnUpdate.value = true;
+  }
 }
 
 /**
@@ -208,17 +212,12 @@ async function updateTabData(tabUpdated, operation, data) {
  */
 function updateGlossaryAndEmit(value) {
   glossaryValues.value = value;
-  const bundledFormData = {
-    role: {
-      ...roleRequestData.value.role,
-    },
-    glossary: value,
-  };
-  updateTabData('details', 'update', bundledFormData);
+  roleRequestData.value.glossary = value;
 }
 
 watch(roleRequestData, (newVal) => {
-  emit('update-role', newVal);
+  emit('update-role', newVal, saveOnUpdate.value);
+  saveOnUpdate.value = false;
 }, { deep: true, immediate: true });
 
 onMounted(async () => {
