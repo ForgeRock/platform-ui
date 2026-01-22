@@ -140,3 +140,14 @@ export function updateRequestResumeDate(requestId, phaseName, requestPayload) {
   const url = `/governance/requests/${requestId}/phases/${phaseName}`;
   return generateIgaApi().patch(url, requestPayload);
 }
+
+/**
+ * Updates an existing access request.
+ *
+ * @param {string} requestId - The ID of the request.
+ * @param {object} request - The request object.
+ * @returns {Promise} A promise that contains the updated request.
+ */
+export async function putCustomRequest(requestId, request) {
+  return generateIgaApi().put(`/governance/requests/${requestId}`, request);
+}

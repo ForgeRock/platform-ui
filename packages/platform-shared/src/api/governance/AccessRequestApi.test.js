@@ -10,18 +10,22 @@ import * as AccessRequestApi from './AccessRequestApi';
 
 let get;
 let post;
+let put;
 const data = { result: [], totalCount: 0 };
 
 describe('Access Review API', () => {
   beforeEach(() => {
     post = jest.fn();
     get = jest.fn();
+    put = jest.fn();
     BaseApi.generateIgaApi = jest.fn(() => ({
       get,
       post,
+      put,
     }));
     post.mockReturnValue(Promise.resolve(data));
     get.mockReturnValue(Promise.resolve(data));
+    put.mockReturnValue(Promise.resolve(data));
   });
 
   it('should call requestAction endpoint with correct payload and url', async () => {
@@ -86,7 +90,7 @@ describe('Access Review API', () => {
     expect(get).toBeCalledWith('/governance/requestTypes?_pageSize=10&_pagedResultsOffset=0');
   });
 
-  it('should fetch all request types whit a query filter correctly', async () => {
+  it('should fetch all request types with a query filter correctly', async () => {
     const params = {
       pageSize: 10,
       pagedResultsOffset: 0,
@@ -105,6 +109,19 @@ describe('Access Review API', () => {
     await AccessRequestApi.submitCustomRequest('testId', requestPayload);
     expect(post).toBeCalledWith(
       '/governance/requests/testId?_action=publish',
+      requestPayload,
+    );
+    expect(BaseApi.generateIgaApi).toBeCalled();
+  });
+
+  it('should call putCustomRequest endpoint with correct payload and url', async () => {
+    const requestPayload = {
+      test: 'test',
+    };
+
+    await AccessRequestApi.putCustomRequest('testId', requestPayload);
+    expect(put).toBeCalledWith(
+      '/governance/requests/testId',
       requestPayload,
     );
     expect(BaseApi.generateIgaApi).toBeCalled();

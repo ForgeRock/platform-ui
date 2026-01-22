@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
           width="48"
           height="48" />
         <FrIcon
-          v-else-if="isTypeRole(item.rawData.requestType) || isTypeLcm(item.rawData.requestType)"
+          v-else-if="isTypeRole(item.rawData?.requestType) || isTypeLcm(item.rawData?.requestType)"
           icon-class="mr-1 md-48 rounded-circle"
           :name="item.details.icon" />
         <img
@@ -316,11 +316,11 @@ function getStatusDetails(item) {
   const newDetails = {
     status: setStatusValue(item.rawData?.decision?.status),
     decision: setDecisionValue(item.rawData?.decision?.decision, item.rawData?.decision?.status),
-    outcome: setOutcomeValue(item.rawData.decision?.outcome),
-    externalRequestId: item.rawData.request?.common?.externalRequestId,
-    requestId: item.details.id,
-    priority: item.details.priority || null,
-    justification: item.rawData.request?.common?.justification,
+    outcome: setOutcomeValue(item.rawData?.decision?.outcome),
+    externalRequestId: item.rawData?.request?.common?.externalRequestId,
+    requestId: item.details?.id,
+    priority: item.details?.priority || null,
+    justification: item.rawData?.request?.common?.justification,
   };
 
   return newDetails;

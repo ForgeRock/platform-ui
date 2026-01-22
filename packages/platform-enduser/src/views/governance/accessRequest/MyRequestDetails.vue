@@ -25,6 +25,10 @@ const { requestId } = route.params;
 const autoIdSettings = store.state.govAutoIdSettings;
 
 onMounted(async () => {
-  setBreadcrumb('/my-requests', i18n.global.t('sideMenu.requests'));
+  if (route.path.startsWith('/administer/roles')) {
+    setBreadcrumb('/administer/roles', i18n.global.t('sideMenu.endUser.lcmRoles'));
+  } else {
+    setBreadcrumb('/my-requests', i18n.global.t('sideMenu.requests'));
+  }
 });
 </script>
