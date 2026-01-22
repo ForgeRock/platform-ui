@@ -1,13 +1,14 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import dayjs from 'dayjs';
 import TimeConstraint from './index';
+import { runA11yTest } from '../../utils/testHelpers';
 
 jest.mock('dayjs');
 
@@ -25,8 +26,14 @@ describe('TimeConstraint Component', () => {
         value: '2020-01-02T12:00:00.000Z/2020-01-03T13:00:00.000Z',
       },
     });
+    jest.useFakeTimers().setSystemTime(new Date('2077-01-01'));
   });
-  jest.useFakeTimers().setSystemTime(new Date('2077-01-01'));
+
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount();
+    }
+  });
 
   dayjs.mockImplementation(() => ({
     add: () => dayjs(),
@@ -49,6 +56,12 @@ describe('TimeConstraint Component', () => {
     expect(timepickers[0].exists()).toBe(true);
     expect(timepickers[1].exists()).toBe(true);
     expect(wrapper.findComponent({ name: 'TimezoneOffset' }).exists()).toBe(true);
+  });
+
+  it('should not have any a11y violations', async () => {
+    await flushPromises();
+    jest.useRealTimers();
+    await runA11yTest(wrapper);
   });
 
   // TODO Server has a different timezone so tests that pass locally fail on server.

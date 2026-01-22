@@ -1,18 +1,19 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import DateRangePicker from './index';
+import { runA11yTest } from '../../utils/testHelpers';
 
 describe('Date Range Picker Component', () => {
   let wrapper;
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2077-01-01'));
-    wrapper = shallowMount(DateRangePicker, {
+    wrapper = mount(DateRangePicker, {
       global: {
         mocks: {
           $t: (text) => text,
@@ -43,5 +44,11 @@ describe('Date Range Picker Component', () => {
       },
     });
     expect(wrapper.vm.inputVal.startDate).toBe('2021-12-28T00:00:00-05:00');
+  });
+
+  it('Component does not have any a11y violations', async () => {
+    await flushPromises();
+    jest.useRealTimers();
+    await runA11yTest(wrapper);
   });
 });

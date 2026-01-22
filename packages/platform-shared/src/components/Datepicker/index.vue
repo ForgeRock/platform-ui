@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -15,6 +15,9 @@ of the MIT license. See the LICENSE file for details. -->
     :label-selected="placeholder"
     :placeholder="placeholder">
     <template #button-content>
+      <span class="sr-only">
+        {{ $t('common.dateTimePicker.openCalendar') }}
+      </span>
       <FrIcon
         name="calendar_today"
       />
@@ -47,6 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
   </BFormDatepicker>
   <FrValidationError
     class="error-messages flex-grow-1"
+    :aria-label="$t('common.validationErrorsLabel')"
     :validator-errors="errors" />
 </template>
 
