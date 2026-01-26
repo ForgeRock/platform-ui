@@ -83,6 +83,7 @@
     "autoprefixer": "10.4.5",
     "brace-expansion": "2.0.2",
     "cross-spawn": "7.0.5",
+    "diff": "5.2.2",
     "elliptic": "6.6.0",
     "form-data": "4.0.4",
     "glob@npm:>=10": "10.5.0",
