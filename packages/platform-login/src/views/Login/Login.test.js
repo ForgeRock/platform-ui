@@ -290,6 +290,32 @@ describe('Login.vue', () => {
       });
     });
   });
+
+  describe('redirectToFailure', () => {
+    const originalLocation = window.location;
+
+    afterAll(() => {
+      delete window.location;
+      window.location = originalLocation;
+    });
+
+    it('Calls verifyGotoUrlAndRedirect and sets window.location.href without double-encoding', async () => {
+      const gotoOnFail = 'https://example.com/failure?error=some%20error';
+
+      delete window.location;
+      window.location = {
+        search: `?gotoOnFail=${encodeURIComponent(gotoOnFail)}`,
+        href: '',
+      };
+
+      const verifySpy = jest.spyOn(wrapper.vm, 'verifyGotoUrlAndRedirect').mockResolvedValue(gotoOnFail);
+
+      await wrapper.vm.redirectToFailure({});
+
+      expect(verifySpy).toHaveBeenCalledWith(gotoOnFail, '/', false, true);
+      expect(window.location.href).toBe(gotoOnFail);
+    });
+  });
 });
 
 describe('Component Test', () => {
