@@ -108,7 +108,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :revision="revision"
                 :form-fields="formFields"
                 :display-properties="displayProperties"
-                :resource-path="`${resourceType}/${resourceName}/${id}`"
+                :resource-path="`${resourceType}/${resourceName}/${encodedResourceId}`"
                 :resource-title="getTranslation(resourceTitle)"
                 :is-openidm-admin="isOpenidmAdmin"
                 :disable-save-button="disableSaveButton"
@@ -139,7 +139,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :sub-property-name="objectTypeProperty.propName"
                 :display-properties="getObjectTypeProperyDisplayProperties(objectTypeProperty)"
                 :disable-save-button="objectTypeProperty.readOnly"
-                :resource-path="`${resourceType}/${resourceName}/${id}`"
+                :resource-path="`${resourceType}/${resourceName}/${encodedResourceId}`"
                 :resource-title="getTranslation(resourceTitle)"
                 :is-openidm-admin="isOpenidmAdmin" />
             </BTab>
@@ -148,7 +148,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="internalRolePrivilegesField"
             :disabled="disableSaveButton"
             :privileges-field="internalRolePrivilegesField"
-            :resource-path="`${resourceType}/${resourceName}/${id}`"
+            :resource-path="`${resourceType}/${resourceName}/${encodedResourceId}`"
             :resource-name="resourceName"
             :revision="revision"
             @refresh-data="refreshData" />
@@ -161,7 +161,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :additional-query-filter="relationshipProperty.key === 'assignments' ? assignmentsQueryFilter : ''"
                 :parent-resource="relationshipProperty.key === 'assignments' ? assignmentsParentResource : `${resourceType}/${resourceName}`"
                 :parent-resource-override="relationshipProperty.key === 'assignments' ? `${resourceType}/${resourceName}` : ''"
-                :parent-id="id"
+                :parent-id="encodedResourceId"
                 :relationship-array-property="relationshipProperty"
                 :revision="revision"
                 @refresh-data="refreshData"
@@ -172,7 +172,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="Object.keys(settingsProperties).length > 0"
             :properties="settingsProperties"
             :resource-name="resourceName"
-            :resource-path="`${resourceType}/${resourceName}/${id}`"
+            :resource-path="`${resourceType}/${resourceName}/${encodedResourceId}`"
             :revision="revision"
             @refresh-data="refreshData" />
           <slot name="additional-tabs" />
@@ -184,12 +184,12 @@ of the MIT license. See the LICENSE file for details. -->
                 name="wfApplications"
                 :resource-details="resourceDetails"
                 :relationship-properties="relationshipProperties"
-                :id="id" />
+                :id="encodedResourceId" />
             </BTab>
             <FrLinkedApplicationsTab :linked-applications="linkedApplications" />
             <FrUserDevicesTab
               v-if="!$store.state.SharedStore.idmOnly && resourceIsUser"
-              :user-id="id" />
+              :user-id="encodedResourceId" />
             <FrMetadataTab
               v-if="showMetadataTab"
               :meta="formFields._meta" />
@@ -211,7 +211,7 @@ of the MIT license. See the LICENSE file for details. -->
       id="resetModal"
       :resource-type="resourceType"
       :resource-name="resourceName"
-      :resource-id="id"
+      :resource-id="encodedResourceId"
       @refresh-data="refreshData"
       :resource-data="formFields" />
     <FrClearResourceSessions
@@ -377,7 +377,7 @@ export default {
     loadData() {
       axios.all([
         getSchema(`${this.resourceType}/${this.resourceName}`),
-        getResourceTypePrivilege(`${this.resourceType}/${this.resourceName}/${this.id}`),
+        getResourceTypePrivilege(`${this.resourceType}/${this.resourceName}/${this.encodedResourceId}`),
       ]).then(axios.spread((schema, privilege) => {
         this.resourceTitle = schema.data.title;
         this.resourceSchema = schema.data;
@@ -431,7 +431,7 @@ export default {
     loadLinkedApplicationsData() {
       // Only get linked applications for users with openidm-admin permissions
       if (this.isOpenidmAdmin) {
-        return getLinkedApplications(this.resourceName, this.id).then((result) => {
+        return getLinkedApplications(this.resourceName, this.encodedResourceId).then((result) => {
           this.formatLinkedApplications(result.data);
         })
           .catch((error) => {
@@ -505,7 +505,7 @@ export default {
         params.fields += `,${map(singletons, (prop) => `${prop.propName}/*`).join(',')}`;
       }
 
-      return getFunction(this.resourceName, this.id, params);
+      return getFunction(this.resourceName, this.encodedResourceId, params);
     },
     getObjectTypeProperties(schema, privilege) {
       return pickBy(schema.properties, (property, key) => {
@@ -670,7 +670,7 @@ export default {
       this.isDeleting = true;
       const deleteFunction = this.resourceType === 'managed' ? deleteManagedResource : deleteInternalResource;
 
-      deleteFunction(this.resourceName, this.id)
+      deleteFunction(this.resourceName, this.encodedResourceId)
         .then(() => {
           this.displayNotification('success', this.$t('pages.access.deleteResource', { resource: this.resourceName }));
 
@@ -774,8 +774,11 @@ export default {
     },
   },
   computed: {
+    encodedResourceId() {
+      return encodeURIComponent(this.id);
+    },
     assignmentsParentResource() {
-      return `${this.resourceType}/${this.resourceName}/${this.id}/${this.viewableRelationshipArrayProperties.assignments?.propName}`;
+      return `${this.resourceType}/${this.resourceName}/${this.encodedResourceId}/${this.viewableRelationshipArrayProperties.assignments?.propName}`;
     },
     propertiesAvailable() {
       return this.displayProperties.length > 0 || (this.$store.state.SharedStore.governanceEnabled && this.resourceIsRole);
