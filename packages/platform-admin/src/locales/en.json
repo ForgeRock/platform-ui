@@ -974,22 +974,22 @@
   "configure": {
     "managedListView": {
       "createModal": {
-        "title": "New Identity Profile"
+        "title": "New Managed Object Type"
       },
       "deleteModal": {
-        "title": "Identity Profile",
-        "message": "Are you sure you want to delete the {profile} identity profile?"
+        "title": "Managed Object Type",
+        "message": "Are you sure you want to delete the {profile} object type?"
       },
       "deleteRelationshipModal": {
         "title": "Relationship",
         "message": "Are you sure you want to delete the {relationship} relationship?"
       },
       "id": "Id",
-      "title": "Configure Identities",
-      "description": "Define the properties and settings for each identity profile",
-      "profile": "Profile",
-      "tableEmpty": "No identity profiles found",
-      "getTableDataFail": "Failed to load identity profiles"
+      "title": "Managed Object Types",
+      "description": "Define the schema and settings for managed object types.",
+      "objectType": "Object Type",
+      "tableEmpty": "No object types found",
+      "getTableDataFail": "Failed to load object types"
     },
     "managedObjectSettings": {
       "configurationLoadingFail": "Configuration Not Found",
@@ -999,12 +999,12 @@
       "minimumFilterDescription": "Minimum number of characters required to search.",
       "properties": "Properties",
       "property": "Property",
-      "profileName": "Identity Profile Name",
-      "deleteFail": "Unable to delete identity profile",
-      "deleteProfile": "Delete Identity Profile",
-      "deleteSuccess": "Identity Profile successfully deleted",
+      "profileName": "Object Type Key",
+      "deleteFail": "Unable to delete object type",
+      "deleteProfile": "Delete Object Type",
+      "deleteSuccess": "Object Type successfully deleted",
       "deleteWarning": "Warning this cannot be undone!",
-      "displayName": "Display Name",
+      "displayName": "Display Label",
       "descriptionOptional": "Description (optional)",
       "orderTooltip": "Define the order in which fields are displayed in forms",
       "addProperty": "Add Property",
@@ -1012,9 +1012,9 @@
       "readableTitle": "Readable Title",
       "relationshipDeleteFail": "Unable to delete relationship {relationship}.",
       "relationshipDeleteSuccess": "Successfully deleted relationship {relationship}.",
-      "saveFilterSuccess": "Updated Identity Profile settings",
+      "saveFilterSuccess": "Updated Object Type settings",
       "saveFilterFail": "Unable to save filter settings",
-      "identityProfile": "Identity Profile",
+      "objectType": "Managed Object Type",
       "requireSearch": "Require UI Search Filter",
       "filterHelpText": "Optimize the administration UI for large data sets by requiring administrators to type a search before displaying a list of identities.",
       "disableRelationshipSortAndSearch": "Disable sorting and searching on grids that use this object as a resource collection.",
@@ -1145,7 +1145,7 @@
             "nullable": "Nullable",
             "nullableHelp": "Allow a <code>NULL</code> value.",
             "relationship": "Relationship",
-            "relationshipHelp": "Derived from a related identity profile property.",
+            "relationshipHelp": "Derived from a related object type property.",
             "relationshipProperty": "Relationship Property",
             "returnByDefault": "Return By Default",
             "returnByDefaultHelp": "Return this property in query results, even if it is not explicitly requested.",
@@ -1407,7 +1407,7 @@
     "connectIdentities": {
       "title": "Connect Identities",
       "altText": "Identities Icon",
-      "description": "Create and manage identity profiles across applications and IT infrastructure."
+      "description": "Create and manage object types across applications and IT infrastructure."
     },
     "managedAccess": {
       "title": "Manage Access",
@@ -1630,7 +1630,7 @@
     },
     "identities": {
       "managedIdentities": "Manage Identities",
-      "subTitle": "Create and configure identities.",
+      "subTitle": "Create and manage identity resources.",
       "deleteResource": {
         "title": "Delete {resource}?",
         "body": "Are you sure you want to delete this {resource}?",
@@ -3663,7 +3663,7 @@
       "title": "Advanced Sync",
       "addModal": {
         "flipSyncIconLabel": "Flip sync direction",
-        "identityProfile": "Identity Profile",
+        "objectType": "Object Type",
         "linkedMapping": "Linked Mapping",
         "linkedMappingDescription": "Choose from existing relationship(s) between source and target.",
         "linkMapping": "Link Mapping",
@@ -3918,7 +3918,7 @@
   },
   "mapping": {
     "addProperty": "Add a property",
-    "conditionUpdateDescription": "Update only if script evaluates to true. <code>object</code> represents the complete {sourceApplication} user identity profile.",
+    "conditionUpdateDescription": "Update only if script evaluates to true. <code>object</code> represents the complete {sourceApplication} user object type.",
     "conditionUpdateEnabled": "Apply conditional update",
     "conditionUpdateLabel": "Conditional Update Script",
     "defaultValueDescription": "Default value to apply.",
