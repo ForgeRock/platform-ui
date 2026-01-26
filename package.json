@@ -24,7 +24,7 @@
     "cypress-file-upload": "5.0.8",
     "got": "11.8.5",
     "imap": "^0.8.19",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "nodemailer": "7.0.7"
   },
   "devDependencies": {

@@ -36,7 +36,7 @@
     "d3-simple-slider": "1.10.4",
     "dayjs": "1.11.7",
     "es6-promise": "4.2.4",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "oidcsessioncheck-enduser": "npm:oidcsessioncheck@1.1.0",
     "path-browserify": "1.0.1",
     "pinia": "2.1.6",
