@@ -16,7 +16,7 @@
     "axios": "1.12.2",
     "bootstrap": "4.6.2",
     "bootstrap-vue": "2.23.1",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "pinia": "2.1.6",
     "vee-validate": "4.11.8",
     "vue": "3.3.4",
