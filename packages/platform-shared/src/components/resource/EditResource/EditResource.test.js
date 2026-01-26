@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@ import * as SessionsApi from '@/api/SessionsApi';
 import * as SchemaApi from '@/api/SchemaApi';
 import * as ManagedResourceApi from '@/api/ManagedResourceApi';
 import * as InternalResourceApi from '@/api/InternalResourceApi';
+import * as PrivilegeApi from '@/api/PrivilegeApi';
 import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import EditResource from './index';
 
@@ -241,6 +242,47 @@ describe('EditResource.vue', () => {
           value: [],
           viewable: true,
         },
+      });
+    });
+
+    describe('encodedResourceId in API calls', () => {
+      beforeEach(async () => {
+        jest.spyOn(SchemaApi, 'getSchema').mockResolvedValue({ data: { order: [], properties: {}, title: 'User' } });
+        wrapper.vm.resourceType = 'managed';
+        wrapper.vm.resourceName = 'alpha_user';
+        await wrapper.setProps({ canClearSessions: false });
+      });
+
+      it('uses encoded ID when getting resource type privilege', async () => {
+        wrapper.vm.id = '../../testId';
+        const privilegeSpy = jest.spyOn(PrivilegeApi, 'getResourceTypePrivilege')
+          .mockResolvedValue({ data: { VIEW: { properties: [] }, UPDATE: { properties: [] }, DELETE: { allowed: false } } });
+
+        await wrapper.vm.loadData();
+
+        expect(privilegeSpy).toHaveBeenCalledWith('managed/alpha_user/..%2F..%2FtestId');
+      });
+
+      it('uses encoded ID when getting resource', async () => {
+        wrapper.vm.id = '../../testId';
+        jest.spyOn(PrivilegeApi, 'getResourceTypePrivilege')
+          .mockResolvedValue({ data: { VIEW: { properties: [] }, UPDATE: { properties: [] }, DELETE: { allowed: false } } });
+        const getSpy = jest.spyOn(ManagedResourceApi, 'getManagedResource').mockResolvedValue({ data: { _rev: '1' } });
+
+        await wrapper.vm.getResource();
+
+        expect(getSpy).toHaveBeenCalledWith('alpha_user', '..%2F..%2FtestId', { fields: '*' });
+      });
+
+      it('uses encoded ID when deleting resource', async () => {
+        wrapper.vm.id = '../../testId';
+        jest.spyOn(PrivilegeApi, 'getResourceTypePrivilege')
+          .mockResolvedValue({ data: { VIEW: { properties: [] }, UPDATE: { properties: [] }, DELETE: { allowed: false } } });
+        const deleteSpy = jest.spyOn(ManagedResourceApi, 'deleteManagedResource').mockResolvedValue({ data: { _rev: '1' } });
+
+        await wrapper.vm.deleteResource();
+
+        expect(deleteSpy).toHaveBeenCalledWith('alpha_user', '..%2F..%2FtestId');
       });
     });
 
