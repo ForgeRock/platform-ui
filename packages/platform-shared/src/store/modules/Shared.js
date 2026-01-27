@@ -63,6 +63,7 @@ const defaultState = {
   templateBuilderEnabled: false,
   enableSamlSigningCheckbox: false,
   enableMonitoringUI: false,
+  devAppTemplatesEnabled: false,
 };
 
 const mutations = {
@@ -256,6 +257,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_AI_AGENTS?.toString() === 'true') {
       state.aiAgentsEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_DEV_APP_TEMPLATES?.toString() === 'true') {
+      state.devAppTemplatesEnabled = true;
     }
   },
   // Needed for Login since setFeatureFlags isn't called there
