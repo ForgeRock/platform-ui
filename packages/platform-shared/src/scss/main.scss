@@ -1063,3 +1063,12 @@ dd {
 .rotate-90 {
   transform: rotate(90deg);
 }
+
+/* Fixes upstream from popper (floating-ui) in bootstrap-vue's tooltip
+ * component, see:
+ * https://github.com/floating-ui/floating-ui/issues/457
+ * https://github.com/bootstrap-vue/bootstrap-vue/issues/6076
+ */
+.tooltip {
+  top: 0;
+}
