@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,19 +11,19 @@ of the MIT license. See the LICENSE file for details. -->
     role="heading">
     <div
       v-if="messageType === 'INFORMATION'"
-      class="text-muted w-100"
+      class="text-muted w-100 white-space-pre-line"
       id="message"
       :aria-hidden="!isMfaRegistrationStep && isFirstRenderedCallback"
       v-html="sanitizedMessage" />
     <div
       v-else-if="messageType === 'WARNING'"
-      class="alert w-100 alert-warning"
+      class="alert w-100 alert-warning white-space-pre-line"
       id="message"
       :aria-hidden="isFirstRenderedCallback"
       v-html="sanitizedMessage" />
     <div
       v-else-if="!isFirstRenderedCallback && messageType === 'ERROR'"
-      class="alert w-100 alert-danger"
+      class="alert w-100 alert-danger white-space-pre-line"
       id="message"
       v-html="sanitizedMessage" />
     <div
@@ -170,3 +170,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.white-space-pre-line {
+  white-space: pre-line;
+}
+</style>
