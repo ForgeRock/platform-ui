@@ -1,49 +1,61 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import i18n from '@/i18n';
 
 describe('TextOutputCallback.vue', () => {
+  const defaultProps = {
+    callback: {
+      getMessageType: () => '4',
+      getMessage: () => '',
+    },
+    index: 5,
+    step: {
+      getCallbacksOfType: jest.fn().mockReturnThis(),
+      find: jest.fn().mockReturnThis(),
+      setInputValue: jest.fn(),
+    },
+    isFirstRenderedCallback: false,
+    isMfaRegistrationStep: false,
+  };
+
+  function setup(props = {}) {
+    return mount(TextOutputCallback, {
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $sanitize: (message) => sanitize(message),
+        },
+      },
+      props: {
+        ...defaultProps,
+        ...props,
+      },
+    });
+  }
+
   let wrapper;
   let mountComponent;
 
   beforeEach(() => {
     wrapper = undefined;
     mountComponent = ({
-      messageType, message, isFirstRenderedCallback,
+      messageType, message, isFirstRenderedCallback, isMfaRegistrationStep,
     }) => {
-      const step = {
-        getCallbacksOfType: jest.fn(),
-        find: jest.fn(),
-        setInputValue: jest.fn(),
-      };
-      step.getCallbacksOfType.mockReturnValue(step);
-      step.find.mockReturnValue(step);
-
-      const props = {
+      wrapper = setup({
         callback: {
-          getMessageType: () => messageType || 4,
+          getMessageType: () => messageType || '4',
           getMessage: () => message || '',
         },
-        index: 5,
-        step,
-        isFirstRenderedCallback: isFirstRenderedCallback || false,
-      };
-      wrapper = mount(TextOutputCallback, {
-        global: {
-          plugins: [i18n],
-          mocks: {
-            $sanitize: () => sanitize(message),
-          },
-        },
-        props,
+        isFirstRenderedCallback: isFirstRenderedCallback !== undefined ? isFirstRenderedCallback : false,
+        isMfaRegistrationStep: isMfaRegistrationStep !== undefined ? isMfaRegistrationStep : false,
       });
     };
   });
@@ -163,5 +175,59 @@ describe('TextOutputCallback.vue', () => {
 
     expect(wrapper.vm.$props.step.getCallbacksOfType).toHaveBeenCalledWith('HiddenValueCallback');
     expect(wrapper.vm.$props.step.setInputValue).toHaveBeenCalledWith('callbackValue');
+  });
+
+  describe('multiline message rendering', () => {
+    // Note: white-space-pre-line class preserves newlines in messages (IAM-9916)
+    it('preserves newlines for INFORMATION messages', async () => {
+      const multilineMessage = 'Information: Email on file: test123@example.com';
+      mountComponent({
+        messageType: '0',
+        message: multilineMessage,
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const messageElement = wrapper.find('.text-muted.white-space-pre-line');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.text()).toContain('Information: Email on file');
+      expect(messageElement.classes()).toContain('white-space-pre-line');
+    });
+
+    it('preserves newlines for WARNING messages', async () => {
+      const multilineMessage = 'Warning: Phone number on file: 123-456-789';
+      mountComponent({
+        messageType: '1',
+        message: multilineMessage,
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const alertElement = wrapper.find('.alert-warning.white-space-pre-line');
+      expect(alertElement.exists()).toBe(true);
+      expect(alertElement.text()).toContain('Warning: Phone number on file');
+      expect(alertElement.classes()).toContain('white-space-pre-line');
+    });
+
+    it('preserves newlines for ERROR messages', async () => {
+      const multilineMessage = 'Error: Example error message for testing';
+      mountComponent({
+        messageType: '2',
+        message: multilineMessage,
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const alertElement = wrapper.find('.alert-danger.white-space-pre-line');
+      expect(alertElement.exists()).toBe(true);
+      expect(alertElement.text()).toContain('Error: Example error message');
+      expect(alertElement.classes()).toContain('white-space-pre-line');
+    });
   });
 });
