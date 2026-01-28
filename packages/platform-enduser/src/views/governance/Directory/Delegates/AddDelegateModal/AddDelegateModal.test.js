@@ -168,4 +168,22 @@ describe('AddDelegateModal', () => {
       '2023-02-02',
     );
   });
+
+  it('displays error message when backend returns 412 code in success response', async () => {
+    const response412 = { data: { code: 412, message: 'Duplicate relationship' } };
+    const addTaskProxy = jest.spyOn(DirectoryApi, 'addTaskProxy').mockResolvedValue(response412);
+    const errorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+
+    const userSelect = wrapper.findComponent({ name: 'ResourceSelect' });
+    userSelect.vm.$emit('input', [{ _id: 'testUserId' }]);
+    await flushPromises();
+
+    const saveButton = findByTestId(wrapper, 'save-button');
+    await saveButton.trigger('click');
+    await flushPromises();
+
+    expect(addTaskProxy).toHaveBeenCalledWith('testId', ['managed/user/testUserId'], null, null);
+    expect(errorSpy).toHaveBeenCalledWith(expect.objectContaining({ response: response412 }), 'governance.delegates.preconditionFailed');
+    expect(wrapper.emitted()['delegate-added']).toBeUndefined();
+  });
 });
