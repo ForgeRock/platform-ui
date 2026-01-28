@@ -1,7 +1,7 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright 2020-2026 ForgeRock AS. All Rights Reserved
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
+ * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
@@ -13,5 +13,11 @@ exports.getPackages = function getPackages() {
   const packagesRoot = path.resolve(__dirname, '..', 'packages');
   const packageNames = fs.readdirSync(packagesRoot);
 
-  return packageNames.filter((packageName) => fs.existsSync(path.join(packagesRoot, packageName, 'package.json')));
+  return packageNames.filter((packageName) => {
+    // Exclude idm-enduser as it has its own independent pipeline
+    if (packageName === 'idm-enduser') {
+      return false;
+    }
+    return fs.existsSync(path.join(packagesRoot, packageName, 'package.json'));
+  });
 };

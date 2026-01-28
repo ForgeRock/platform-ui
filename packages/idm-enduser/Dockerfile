@@ -1,5 +1,5 @@
 FROM nginxinc/nginx-unprivileged
 
-COPY dist/ /opt/www
+COPY packages/idm-enduser/dist/ /opt/www
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY packages/idm-enduser/nginx.conf /etc/nginx/conf.d/default.conf
