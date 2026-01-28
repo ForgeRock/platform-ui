@@ -201,7 +201,11 @@ export default {
           : null;
       }
 
-      addTaskProxy(this.userId, this.delegates.map((delegate) => `managed/user/${delegate._id}`), startDate, endDate).then(() => {
+      addTaskProxy(this.userId, this.delegates.map((delegate) => `managed/user/${delegate._id}`), startDate, endDate).then((response) => {
+        if (response.data && response.data.code === 412) {
+          this.showErrorMessage({ response }, this.$t('governance.delegates.preconditionFailed'));
+          return;
+        }
         this.$emit('delegate-added');
         this.displayNotification('success', this.$t('governance.delegates.delegateAdded'));
         ok();
