@@ -3,6 +3,7 @@
     "Accounts": "Accounts",
     "AccountsDetails": "Account Details",
     "AdministerEntitlements": "Administer Entitlements",
+    "AIAgents": "AI Agents",
     "Applications": "Applications",
     "BulkImport": "Import",
     "Certification": "Certification",
@@ -54,6 +55,7 @@
     "Accounts": "Accounts",
     "AccountsDetails": "Account Details",
     "AdministerEntitlements": "Administer Entitlements",
+    "AIAgents": "AI Agents",
     "Applications": "Applications",
     "AutoAccessDataSources": "Data Sources",
     "AutoAccessPipelines": "Pipelines",
@@ -167,6 +169,7 @@
     "accounts": "Accounts",
     "accessManagement": "Access Management",
     "applications": "Applications",
+    "aiAgents": "AI Agents",
     "authentication": "Authentication",
     "authorizationRole": "Internal Role",
     "authBehavior": "Auth Behavior",
@@ -243,6 +246,17 @@
       "suggestion2": "Describe the user flows within this Journey",
       "suggestion3": "At what point in this Journey is the user's identity established?"
     }
+  },
+  "aiAgents": {
+    "title": "AI Agents",
+    "subtitle": "Create, manage, and monitor AI agents that support your customers and teams.",
+    "aiAgent": "AI Agent",
+    "noAgents": "No AI Agents configured",
+    "noAgentsSubtitle": "Create new AI Agents to support your customers and teams",
+    "noSearchResults": "No AI Agents found.",
+    "noResultsHelp": "Try a new search in the box above.",
+    "errorLoading": "Error loading AI Agents",
+    "unnamedAgent": "Unnamed Agent"
   },
   "authentication": {
     "errorRetrievingAuthServices": "There was an error retrieving authentication services.",
