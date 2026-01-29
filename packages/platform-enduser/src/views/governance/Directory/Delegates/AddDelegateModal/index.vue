@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,6 +9,8 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       @hidden="resetModal"
       cancel-variant="link"
+      footer-tag="div"
+      header-tag="div"
       id="add-delegate-modal"
       size="lg"
       title-class="h5"
