@@ -10,6 +10,7 @@ import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 const defaultState = {
   amBaseURL: '',
   analyticsURL: '',
+  aiAgentsEnabled: false,
   autoAccessEnabled: false,
   autoAccessJasUrl: null,
   autoAccessApiUrl: null,
@@ -256,6 +257,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS?.toString() === 'true') {
       state.overrideSessionTimeoutsEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_AI_AGENTS?.toString() === 'true') {
+      state.aiAgentsEnabled = true;
     }
   },
   // Needed for Login since setFeatureFlags isn't called there
