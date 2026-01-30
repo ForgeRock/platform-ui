@@ -28,6 +28,7 @@
     "Glossary": "Glossary",
     "GovernanceEvents": "Governance Events",
     "HostedPages": "Hosted Pages",
+    "HostedPagesEdit": "Edit Hosted Page",
     "Interfaces": "Interfaces",
     "Jobs": "Jobs",
     "Journeys": "Journeys",
@@ -51,6 +52,7 @@
     "SyncIdentityProfileEditor": "Advanced Sync Editor",
     "SyncDataProvisionerEditor": "Advanced Sync Editor",
     "TemplateBuilder": "Application Templates",
+    "TenantSettings": "Tenant Settings",
     "TermsAndConditions": "Terms & Conditions",
     "Workflows": "Workflows"
   },
@@ -4199,22 +4201,21 @@
     "errorLoadingUpdates": "Error loading promotion updates",
     "loadingReportsInProgress": "Loading reports...",
     "locked": {
-      "title": "Tenant locked for promotion",
-      "description": "Tenant will be locked until promotion has completed. Sign in to the {upper} tenant to view details.",
+      "title": "Tenant locked for promotion or rollback",
+      "description": "Tenant will be locked until this action has completed. Sign in to the {upper} tenant to view details.",
       "signInButtonText": "Sign in to {upper}"
     },
     "promoUpgrade": {
       "title": "Upgrade {upper} Environment?",
       "promoUpgradeDescription": "This environment is on a deferred release schedule. Promoting now will <b>upgrade your {upper} environment immediately</b>. If you need to promote without upgrading, contact support.",
-      "proceedAndUpgrade": "Proceed And Upgrade",
-      "errorPromoMetadataState": "Error loading promotion metadata."
+      "proceedAndUpgrade": "Proceed And Upgrade"
     },
     "lockTenants": {
       "errorLoadingLockState": "Error loading tenant lock state.",
       "errorLocking": "Error locking environments.",
       "errorUnlocking": "Error unlocking environments.",
       "lockAndContinue": "Lock And Continue",
-      "lockDescription": "In order to ensure a reliable promotion, both <b>{current} and {upper} tenants will be locked and inaccessible</b> for the duration of the promotion process.",
+      "lockDescription": "In order to ensure a reliable {promotionType}, both <b>{current} and {upper} tenants will be locked and inaccessible</b> for the duration of the {promotionType} process.",
       "lockInProgress": "Locking tenants...",
       "title": "Lock Tenants?",
       "unlockInProgress": "Unlocking tenants..."
@@ -4239,35 +4240,47 @@
     "promote": {
       "blockingErrorDescription": "An error occurred during promotion and your tenant is locked. Please <a target=\"_blank\" href=\"https://backstage.forgerock.com/support/tickets\" data-testid='contact-support'>contact support</a> to resolve the issue.",
       "encryptedSecrets": "Encrypted secrets",
-      "errorDescriptionMissingESV": "You need to cancel this promotion and add the following missing required configuration to your {upper} tenant before proceeding.",
-      "errorDescriptionEncryptedSecrets": "It is recommended that you cancel this promotion and add ESVs for the following encrypted secrets in your configuration before proceeding.",
+      "errorDescriptionMissingESV": "You need to cancel this {type} and add the following missing required configuration to your {upper} tenant before proceeding.",
+      "errorDescriptionEncryptedSecrets": "It is recommended that you cancel this {type} and add ESVs for the following encrypted secrets in your configuration before proceeding.",
+      "errorLoadingReport": "Error loading promotion report",
+      "errorLoadingRollbackReport": "Error loading rollback report",
       "errorStarting": "Error initiating promotion",
       "errorTitle": "Promotion Failed",
+      "errorTitleRollback": "Rollback Failed",
       "inProgress": "Promotion in-progress",
+      "rollbackInProgress": "Rollback in progress",
       "missingEsvs": "Missing ESVs",
       "secretsAndVariables": "Secrets and variables",
       "success": "Promotion successful!",
+      "rollbackSuccess": "Rollback successful!",
       "unexpectedStatus": "Unexpected promotion status encountered",
       "viewReport": "View report"
     },
     "promoteNChanges": "Promote {count} Change | Promote {count} Changes",
+    "promotion": "promotion",
     "promotionHistory": "Promotion History",
     "promotionNotAvailable": "Promotion is currently unavailable as this tenant is locked.",
     "promotionUpdates": "Tenant Updates",
+    "rollback": "Rollback",
     "review": {
       "cancelAndUnlock": "Cancel and Unlock Tenants",
       "cancelPromotion": "Cancel Promotion",
+      "cancelRollback": "Cancel Rollback",
       "continueWithoutFixing": "Continue without fixing",
       "continueWithoutFixingModal": {
         "content": "Continuing without adding ESVs for the encrypted secrets could cause configuration errors in your {upper} tenant.",
         "title": "Continue Without Fixing?"
       },
       "ignoreEncryptedSecrets": "Ignore Encrypted Secrets",
-      "promotionWarning": "Both <b>{current} and {upper}</b> tenants will remain locked and inaccessible for the duration of the promotion.",
+      "promotionWarning": "Both <b>{current} and {upper}</b> tenants will remain locked and inaccessible for the duration of the {type}.",
       "startPromotion": "Start Promotion",
+      "startRollback": "Start Rollback",
       "startPromotionQuestion": "Start Promotion?",
+      "startRollbackQuestion": "Start Rollback?",
       "subTitle": "Confirm changes to be promoted.",
-      "title": "Review Promotion"
+      "subTitleRollback": "Confirm changes to be restored.",
+      "title": "Review Promotion",
+      "titleRollback": "Review Rollback"
     },
     "showAllChanges": "All changes",
     "signinText": "To access promotion information you first need to authenticate to your {upper} tenant",
@@ -4279,7 +4292,7 @@
       "production": "Production",
       "uat": "UAT"
     },
-    "viewHistory": "View promotion history",
+    "viewHistory": "Promotion History",
     "viewUpdates": "View updates"
   },
   "governance": {
