@@ -197,6 +197,12 @@
     text-overflow: ellipsis;
     padding: 12px 12px 12px 16px;
 
+    & span {
+      min-width: 0px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     & button {
       display: none;
     }
