@@ -5,9 +5,9 @@
   "scripts": {
     "build": "vue-cli-service build",
     "dev": "vue-cli-service serve",
-    "unit": "jest --no-cache",
-    "unit:debug": "node --inspect-brk node_modules/.bin/jest --no-cache --watch --runInBand",
-    "coverage": "jest --verbose --coverage --noStackTrace --no-cache --silent"
+    "unit": "../../node_modules/.bin/jest --no-cache",
+    "unit:debug": "node --inspect-brk ../../node_modules/.bin/jest --no-cache --watch --runInBand",
+    "coverage": "../../node_modules/.bin/jest --verbose --coverage --noStackTrace --no-cache --silent"
   },
   "dependencies": {
     "@forgerock/platform-shared": "1.0.0",
@@ -46,9 +46,5 @@
   },
   "browserslist": [
     "defaults"
-  ],
-  "workspaces": [
-    ".",
-    "../platform-shared"
   ]
 }
