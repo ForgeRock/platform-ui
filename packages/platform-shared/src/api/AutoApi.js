@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -331,4 +331,17 @@ export function duplicateAnalyticsReport(payload) {
       displayName,
     },
   });
+}
+
+/**
+ * Import report template from JSON file
+ *
+ * @param {File} file JSON file to import
+ * @returns {Promise<Object>}
+ */
+export function importAnalyticsReport(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return generateAutoAccessReports().post('templates/import', formData);
 }

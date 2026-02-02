@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,7 +9,6 @@ import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import {
   createAppContainer,
   findByText,
-  findByTestId,
   toggleActionsMenu,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
@@ -193,7 +192,7 @@ describe('Reports', () => {
     expect(rows[4].text()).toContain('Template Visible Not Visible');
     expect(rows[4].text()).toContain('Not visible template that should not be shown in the Report table');
 
-    const noData = findByTestId(wrapper, 'no-data');
+    const noData = wrapper.findComponent({ name: 'NoData' });
     expect(noData.exists()).toBe(false);
   });
 
@@ -276,7 +275,7 @@ describe('Reports', () => {
     const table = wrapper.find('table');
     expect(table.exists()).toBe(false);
 
-    const noData = findByTestId(wrapper, 'no-data');
+    const noData = wrapper.findComponent({ name: 'NoData' });
     expect(noData.exists()).toBe(true);
 
     expect(showErrorMessage).toHaveBeenCalledWith(error, 'No Report Template found');
@@ -574,5 +573,67 @@ describe('Reports', () => {
     const rows = wrapper.findAll('table tbody tr');
     expect(rows.length).toBe(1);
     expect(rows[0].text()).toContain('Published Template');
+  });
+
+  describe('Import functionality', () => {
+    it('should show import button when custom reports are enabled', async () => {
+      const { wrapper } = setup();
+      await flushPromises();
+
+      const importButton = findByText(wrapper, 'button', 'Import');
+      expect(importButton).toBeDefined();
+    });
+
+    it('should hide import button when custom reports are disabled', async () => {
+      store.state.SharedStore.autoCustomReportsEnabled = false;
+      const { wrapper } = setup();
+      await flushPromises();
+
+      const importButton = findByText(wrapper, 'button', 'Import');
+      expect(importButton).toBeUndefined();
+
+      // Reset for other tests
+      store.state.SharedStore.autoCustomReportsEnabled = true;
+    });
+
+    it('should open import modal when import button is clicked', async () => {
+      const { wrapper } = setup();
+      await flushPromises();
+
+      const showSpy = jest.spyOn(wrapper.vm.bvModal, 'show');
+      const importButton = findByText(wrapper, 'button', 'Import');
+      await importButton?.trigger('click');
+
+      expect(showSpy).toHaveBeenCalledWith('import-report-modal');
+    });
+
+    it('should navigate to edit page on successful import with report name', async () => {
+      const { wrapper } = setup();
+      await flushPromises();
+
+      const routerPushSpy = jest.spyOn(wrapper.vm.router, 'push');
+      const importModal = wrapper.findComponent({ name: 'ImportReportModal' });
+      importModal.vm.$emit('import-success', 'IMPORTED-REPORT');
+
+      expect(routerPushSpy).toHaveBeenCalledWith({
+        name: 'EditReportTemplate',
+        params: { state: 'draft', template: 'imported-report' },
+      });
+    });
+
+    it('should refresh templates on successful import without report name', async () => {
+      const getReportTemplatesSpy = jest.spyOn(AutoApi, 'getReportTemplates');
+      const { wrapper } = setup();
+      await flushPromises();
+
+      // Clear previous calls
+      getReportTemplatesSpy.mockClear();
+
+      const importModal = wrapper.findComponent({ name: 'ImportReportModal' });
+      importModal.vm.$emit('import-success', null);
+      await flushPromises();
+
+      expect(getReportTemplatesSpy).toHaveBeenCalled();
+    });
   });
 });
