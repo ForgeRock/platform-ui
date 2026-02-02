@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -15,21 +15,34 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="reports.length > 0 || loading"
       no-body>
       <BButtonToolbar class="py-3 px-4 justify-content-between">
-        <BButton
-          v-if="isCustomReportEnabled"
-          class="mb-2 mb-lg-0 w-100 w-lg-auto"
-          variant="primary"
-          @click="$bvModal.show('new-report-modal')">
-          <FrIcon
-            icon-class="mr-2"
-            name="add">
-            {{ $t('common.newObject', { object: $t('common.report') }) }}
-          </FrIcon>
-        </BButton>
+        <div
+          v-if="customReportIsEnabled"
+          class="d-flex flex-wrap">
+          <BButton
+            class="mb-2 mb-lg-0 w-100 w-lg-auto"
+            variant="primary"
+            @click="$bvModal.show('new-report-modal')">
+            <FrIcon
+              icon-class="mr-2"
+              name="add">
+              {{ $t('common.newObject', { object: $t('common.report') }) }}
+            </FrIcon>
+          </BButton>
+          <BButton
+            class="mb-2 mb-lg-0 ml-lg-2 w-100 w-lg-auto"
+            variant="outline-primary"
+            @click="openImportModal">
+            <FrIcon
+              icon-class="mr-2"
+              name="file_upload">
+              {{ $t('common.import') }}
+            </FrIcon>
+          </BButton>
+        </div>
         <FrSearchInput
           class="w-100 pl-lg-2 fr-search"
           v-model="searchTerm"
-          :class="{ 'flex-grow-1': hasFocus, 'w-lg-auto': isCustomReportEnabled }"
+          :class="{ 'flex-grow-1': hasFocus, 'w-lg-auto': customReportIsEnabled }"
           :placeholder="$t('common.search')"
           @clear="searchTerm = ''"
           @search-input-blur="hasFocus = false"
@@ -111,11 +124,11 @@ of the MIT license. See the LICENSE file for details. -->
                 v-else
                 toggle-class="w-42 h-42"
                 wrapper-class="pr-0"
-                :delete-option="isCustomReportEnabled && !item.ootb"
-                :divider="isCustomReportEnabled && !item.ootb"
-                :edit-option="isCustomReportEnabled && item.editable"
+                :delete-option="customReportIsEnabled && !item.ootb"
+                :divider="customReportIsEnabled && !item.ootb"
+                :edit-option="customReportIsEnabled && item.editable"
                 :edit-option-text="$t('reports.menu.editTemplate')"
-                :duplicate-option="isCustomReportEnabled && item.duplicatable"
+                :duplicate-option="customReportIsEnabled && item.duplicatable"
                 @edit-clicked="editTemplate(item.name, item.type)"
                 @duplicate-clicked="openDuplicateModal(item)"
                 @delete-clicked="confirmDeleteTemplate(item.name, item.type)">
@@ -129,7 +142,7 @@ of the MIT license. See the LICENSE file for details. -->
                     </FrIcon>
                   </BDropdownItem>
                   <BDropdownItem
-                    v-if="isCustomReportEnabled && !item.ootb && item.type !== 'published'"
+                    v-if="customReportIsEnabled && !item.ootb && item.type !== 'published'"
                     @click="openAssignViewersModal(item)">
                     <FrIcon
                       icon-class="mr-2"
@@ -140,7 +153,7 @@ of the MIT license. See the LICENSE file for details. -->
                 </template>
                 <template #custom-bottom-actions>
                   <BDropdownItem
-                    v-if="isCustomReportEnabled && item.type === 'draft'"
+                    v-if="customReportIsEnabled && item.type === 'draft'"
                     @click="publishTemplate(item.name, item.type)">
                     <FrIcon
                       icon-class="mr-2"
@@ -169,13 +182,16 @@ of the MIT license. See the LICENSE file for details. -->
       :subtitle="$t('reports.noData')" />
 
     <FrNewReportModal
-      v-if="isCustomReportEnabled"
+      v-if="customReportIsEnabled"
       :report-data-for-duplication="reportBeingProcessed"
       :report-is-saving="saveReportPending || reportIsDuplicating"
       :report-names="allReportNames"
       @new-report-save="saveReport"
       @duplicate-report="duplicateTemplate"
       @hidden="reportBeingProcessed = undefined" />
+    <FrImportReportModal
+      v-if="customReportIsEnabled"
+      @import-success="handleImportSuccess" />
     <FrAssignViewersModal
       :report-viewers="reportBeingProcessed?.viewers"
       :is-saving="savingViewers"
@@ -220,6 +236,7 @@ import { displayNotification, showErrorMessage } from '@forgerock/platform-share
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrNewReportModal from './modals/NewReportModal';
+import FrImportReportModal from './modals/ImportReportModal';
 import useSaveReportTemplate from './composables/SaveReport';
 import i18n from '@/i18n';
 import store from '@/store';
@@ -267,7 +284,7 @@ const tableFields = [
     class: 'w-175px fr-no-resize sticky-right',
   },
 ];
-const isCustomReportEnabled = store.state.SharedStore.currentPackage === 'admin' && store.state.SharedStore.autoCustomReportsEnabled;
+const customReportIsEnabled = computed(() => store.state.SharedStore.currentPackage === 'admin' && store.state.SharedStore.autoCustomReportsEnabled);
 const isPublishing = ref(false);
 const isDeleting = ref(false);
 
@@ -394,6 +411,13 @@ function openDuplicateModal(report) {
 }
 
 /**
+ * Opens the import report modal
+ */
+function openImportModal() {
+  bvModal.value.show('import-report-modal');
+}
+
+/**
  * If report is published and is edited, a draft template is created then routes to the new draft
  * report edit view, otherwise, only routes to the currently existing draft report edit view.
  * @param {String} name template name
@@ -468,6 +492,18 @@ async function assignViewersToReport(report, viewers) {
   saveViewers({ ...report, viewers });
 }
 
+/**
+ * Handles successful import of a report template
+ * @param {String} reportName name of the imported report
+ */
+function handleImportSuccess(reportName) {
+  if (reportName) {
+    router.push({ name: 'EditReportTemplate', params: { state: 'draft', template: reportName.toLowerCase() } });
+  } else {
+    retrieveReportTemplates();
+  }
+}
+
 // Watchers
 watch(saveReportError, (newVal) => showErrorMessage(newVal, i18n.global.t('reports.saveError')));
 
@@ -494,6 +530,12 @@ retrieveReportTemplates();
 <style lang="scss" scoped>
 .fr-search {
   transition: all 0.3s ease 0s;
+}
+
+.btn-primary:hover,
+.btn-outline-primary:hover {
+  background-color: $hover-blue;
+  border-color: $hover-blue;
 }
 
 :deep() {

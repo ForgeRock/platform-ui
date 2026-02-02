@@ -2506,6 +2506,18 @@
     "saveError": "There was an error saving your new report",
     "saveViewersError": "Error saving report viewers",
     "saveViewersSuccess": "Report viewers saved successfully",
+    "importReport": {
+      "title": "Import Report",
+      "jsonFile": "JSON File",
+      "importing": "Importing...",
+      "success": "Report imported successfully",
+      "error": "There was an error importing the report",
+      "dragDrop": "Drag and drop your file here, or",
+      "supportedFormats": "Supports: JSON (.json)",
+      "chooseDifferentFile": "Choose a Different File",
+      "invalidFileType": "Invalid file type. Please select a JSON file.",
+      "invalidJson": "This file doesn't look like a report template. Please export a report template and try again."
+    },
     "subtitle": "The following reports are based on pre-configured queries on events and provide insights in an easily understandable format.",
     "search": "Search reports",
     "tableHeadings": {

@@ -261,12 +261,13 @@ export function generateAutoAccessApi(requestOverride = {}) {
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
  * on extra information or override default properties https://github.com/axios/axios#request-config
  *
- * @returns {AxiosInstance}
+ * @returns {AxiosInstance} Axios instance configured with 60-second timeout to prevent infinite loading states
  */
 export function generateAutoAccessReports(requestOverride = {}) {
   const tenantId = process.env.VUE_APP_AUTO_ACCESS_TENANT_ID;
   const requestDetails = {
     baseURL: store.state.SharedStore.autoAccessReportsUrl,
+    timeout: 60000,
     headers: {
       'X-TENANT-ID': tenantId,
       'Accept-API-Version': 'resource=1.0',

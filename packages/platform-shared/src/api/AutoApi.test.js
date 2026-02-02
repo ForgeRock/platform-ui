@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import * as BaseApi from '@forgerock/platform-shared/src/api/BaseApi';
-import { runAnalyticsTemplate, getReportFieldOptions } from '@forgerock/platform-shared/src/api/AutoApi';
+import { runAnalyticsTemplate, getReportFieldOptions, importAnalyticsReport } from '@forgerock/platform-shared/src/api/AutoApi';
 
 const get = jest.fn();
 BaseApi.generateAutoAccessReports = jest.fn(() => ({ get }));
@@ -103,6 +103,32 @@ describe('AutoApi', () => {
         ],
       },
     );
+
+    expect(result).toEqual(mockResponse);
+  });
+
+  it('imports analytics report using FormData with file payload', async () => {
+    const testFile = new File(['{}'], 'test.json', { type: 'application/json' });
+    const mockResponse = {
+      data: {
+        name: 'imported-report',
+        displayName: 'Imported Report',
+      },
+    };
+
+    mockPost.mockResolvedValue(mockResponse);
+
+    const result = await importAnalyticsReport(testFile);
+
+    expect(BaseApi.generateAutoAccessReports).toHaveBeenCalled();
+    expect(mockPost).toHaveBeenCalledWith(
+      'templates/import',
+      expect.any(FormData),
+    );
+
+    // Verify FormData contains the file
+    const formDataArg = mockPost.mock.calls[0][1];
+    expect(formDataArg.get('file')).toBe(testFile);
 
     expect(result).toEqual(mockResponse);
   });

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -20,6 +20,25 @@ export function displayNotification(notificationType, message) {
     type,
     text: getTranslation(message),
   });
+}
+
+/**
+ * Extracts error message from an Axios-style error response
+ * @param {Error} error - The error object (typically from Axios)
+ * @param {String} [fallbackMessage] - Fallback message if no error message found
+ * @returns {String} The extracted error message or fallback
+ */
+export function getApiErrorMessage(error, fallbackMessage = '') {
+  if (has(error, 'response.data.message') && error.response.data.message.length > 0) {
+    return error.response.data.message;
+  }
+  if (has(error, 'response.data.error') && error.response.data.error.length > 0) {
+    return error.response.data.error;
+  }
+  if (has(error, 'response.data') && typeof error.response.data === 'string' && error.response.data.trim().length > 0) {
+    return error.response.data.trim();
+  }
+  return fallbackMessage;
 }
 
 export function showErrorMessage(error, defaultMessage) {
