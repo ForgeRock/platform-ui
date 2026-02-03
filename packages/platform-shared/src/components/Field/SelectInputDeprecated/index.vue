@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -236,6 +236,27 @@ export default {
     },
   },
   methods: {
+    async handleAriaFlowTo(state) {
+      const selectInput = this.$el.querySelector?.('input');
+      const firstListChildId = this.$el.querySelector('[role="listbox"]')?.children?.[0]?.getAttribute?.('id');
+
+      if (selectInput) {
+        if (state === 'open') {
+          if (firstListChildId) {
+            selectInput.setAttribute('aria-flowto', firstListChildId);
+          }
+        } else {
+          selectInput.setAttribute('aria-flowto', '');
+        }
+      }
+
+      await this.$nextTick();
+      const inputValueElement = this.$el.querySelector?.('.multiselect__single');
+      if (inputValueElement && state === 'close') {
+        inputValueElement.setAttribute('tabindex', '0');
+        inputValueElement.focus();
+      }
+    },
     /**
      * In certain browsers, screen readers are unable to associate a <legend> with the select component
      * this method updates the select html to refer to the correct <legend> element
@@ -257,6 +278,7 @@ export default {
         this.floatLabels = value !== undefined && value !== null && (value.toString().length > 0 || (this.value !== null && this.value.length > 0)) && !!this.label;
       }
 
+      this.handleAriaFlowTo('close');
       this.$emit('close');
     },
     inputValueHandler(newVal) {
@@ -279,6 +301,10 @@ export default {
     openHandler() {
       this.isExpanded = true;
       this.$emit('open');
+
+      if (this.floatingLabel) {
+        this.handleAriaFlowTo('open');
+      }
 
       if (this.searchable) {
         this.$refs.vms.$el.querySelector('input').focus();
