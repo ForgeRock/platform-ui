@@ -46,5 +46,9 @@
   },
   "browserslist": [
     "defaults"
+  ],
+  "workspaces": [
+    ".",
+    "../platform-shared"
   ]
 }
