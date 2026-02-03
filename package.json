@@ -105,7 +105,8 @@
   },
   "workspaces": {
     "packages": [
-      "packages/*"
+      "packages/*",
+      "!packages/idm-enduser"
     ]
   },
   "postcss": {
