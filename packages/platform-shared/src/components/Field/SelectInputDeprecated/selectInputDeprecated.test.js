@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import SelectInput from './index';
 
@@ -114,6 +114,28 @@ describe('SelectInput', () => {
     await wrapper.vm.$refs.vms.$emit('close');
     expect(closeDropDownSpy).not.toHaveBeenCalled();
     expect(wrapper.vm.floatLabels).toBe(false);
+  });
+
+  it('SelectInput component opens dropdown with floating label and sets aria-flowto attribute', async () => {
+    const wrapper = setup({ options: ['a', 'b', 'c'], label: 'testLabel' });
+
+    const multiselect = findByRole(wrapper, 'combobox');
+    expect(multiselect.find('input').attributes('aria-flowto')).not.toBeDefined();
+
+    await multiselect.trigger('focus');
+    expect(multiselect.find('input').attributes('aria-flowto')).toBe(`floatingLabelInput${wrapper.vm._uid}-0`);
+  });
+
+  it('expects the selected option element to have a tabindex of 0', async () => {
+    const wrapper = setup({ options: ['a', 'b', 'c'] });
+    const multiselect = findByRole(wrapper, 'combobox');
+    await multiselect.trigger('focus');
+
+    expect(multiselect.find('.multiselect__single').exists()).toBe(false);
+
+    const [, secondOption] = wrapper.findAll('[role="option"]');
+    await secondOption.find('span').trigger('click');
+    expect(multiselect.find('.multiselect__single').attributes('tabindex')).toBe('0');
   });
 
   it('SelectInput component allows single selections', () => {
