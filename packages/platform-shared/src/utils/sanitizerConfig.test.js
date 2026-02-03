@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { sanitize, svgShapesSanitizerConfig } from './sanitizerConfig';
+import { placeholderSanitizerConfig, sanitize, svgShapesSanitizerConfig } from './sanitizerConfig';
 
 describe('Sanitizer', () => {
   describe('baseSanitizerConfig', () => {
@@ -70,6 +70,28 @@ describe('Sanitizer', () => {
                       <a href="#" target="_blank" class="text-body">My Company, Inc</a>
                       <a href="#" target="_blank" style="color:#0000ee" class="pl-3 text-body">Privacy Policy</a>
                       <a href="#" target="_blank" style="color:#0000ee" class="pl-3 text-body mr-3">Terms &amp; Conditions</a>
+                      Click me
+                    </div>"
+      `);
+    });
+  });
+  describe('placeholderSanitizerConfig', () => {
+    it('should convert placeholder # hrefs to passed string', () => {
+      const content = `
+            <div class="d-flex justify-content-center py-4 w-100">
+              <a href="#" target="_blank" class="text-body">My Company, Inc</a>
+              <a href="#" target="_blank" style="color:#0000ee" class="pl-3 text-body">Privacy Policy</a>
+              <a href="#" target="_blank" style="color:#0000ee" class="pl-3 text-body mr-3">Terms &amp; Conditions</a>
+              <button onclick="alert('Hello')">Click me</button>
+            </div>`;
+
+      expect(sanitize(content, placeholderSanitizerConfig('/test')))
+        .toMatchInlineSnapshot(`
+        "
+                    <div class="d-flex justify-content-center py-4 w-100">
+                      <a href="/test" target="_blank" class="text-body">My Company, Inc</a>
+                      <a href="/test" target="_blank" style="color:#0000ee" class="pl-3 text-body">Privacy Policy</a>
+                      <a href="/test" target="_blank" style="color:#0000ee" class="pl-3 text-body mr-3">Terms &amp; Conditions</a>
                       Click me
                     </div>"
       `);

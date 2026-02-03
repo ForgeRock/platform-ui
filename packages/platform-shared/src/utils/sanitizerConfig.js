@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -86,6 +86,22 @@ export const emailTemplateSanitizerConfig = {
     style: ['type'],
   },
 };
+
+// Transforms placeholder hrefs in anchor tags (#) to the passed route.
+// Can be used to prevent placeholder links causing inadvertent navigation
+// to the dashboard.
+export const placeholderSanitizerConfig = (currentRoute) => ({
+  ...svgShapesSanitizerConfig,
+  transformTags: {
+    ...svgShapesSanitizerConfig.transformTags,
+    a: (tagName, attribs) => {
+      if (attribs && attribs.href === '#') {
+        return { tagName, attribs: { ...attribs, href: currentRoute } };
+      }
+      return { tagName, attribs };
+    },
+  },
+});
 
 export const termsAndConditionsSanitizerConfig = {
   allowedTags: false,
