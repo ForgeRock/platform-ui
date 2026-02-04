@@ -98,7 +98,7 @@ export const placeholderSanitizerConfig = (currentRoute) => ({
       if (attribs && attribs.href === '#') {
         return { tagName, attribs: { ...attribs, href: currentRoute } };
       }
-      return { tagName, attribs };
+      return svgShapesSanitizerConfig.transformTags.a(tagName, attribs);
     },
   },
 });
