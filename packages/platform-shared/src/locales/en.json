@@ -391,6 +391,7 @@
     "uploading": "Uploading",
     "userFullName": "{givenName} {sn}",
     "userFullNameUserName": "{givenName} {sn} ({userName})",
+    "username": "Username",
     "users": "Users",
     "valid": "Valid",
     "validFrom": "Valid From",

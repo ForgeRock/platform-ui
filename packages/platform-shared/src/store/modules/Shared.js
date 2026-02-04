@@ -19,6 +19,7 @@ const defaultState = {
   autoCustomReportsEnabled: false,
   autoReportsEnabled: false,
   currentPackage: '',
+  deploymentType: '',
   applicationPolicyEnabled: false,
   aicConnectionUisEnabled: false,
   fraasEnvironmentUrl: null,
@@ -35,6 +36,7 @@ const defaultState = {
   governanceEnabledV4: false,
   hasAmUrl: false,
   idmBaseURL: '',
+  idmOnly: false,
   igaApiUrl: null,
   igaOrchestrationApiUrl: null,
   helixEnvironmentId: '',
@@ -279,6 +281,13 @@ const mutations = {
   },
   setRiskDashboardEnabled(state, val) {
     state.riskDashboardEnabled = val;
+  },
+  setDeploymentType(state, deploymentType) {
+    state.deploymentType = deploymentType;
+    if (deploymentType === 'IDM') {
+      state.idmOnly = true;
+      state.workforceEnabled = false;
+    }
   },
 };
 
