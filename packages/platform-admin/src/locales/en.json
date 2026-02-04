@@ -126,6 +126,7 @@
     "JourneyTree": "Journey Tree",
     "LockTenant": "Lock Tenant",
     "LogApiKeys": "Log API Keys",
+    "Login": "Login",
     "Monitoring": "Monitoring",
     "ManagedObjectEditProperty": "Edit Managed Object Property",
     "ManagedIdentities": "Managed Identities",
@@ -5521,5 +5522,9 @@
     "errorGettingLogs": "There was an error retrieving logs",
     "queryFilterDocs": "See payload queryFilter documentation.",
     "rateLimitError": "Monitoring api has hit it's rate limit. Retrying request in { retrySeconds } seconds..."
+  },
+  "idm": {
+    "loginAuthError": "Invalid username or password",
+    "loginFailure": "Login failure"
   }
 }
