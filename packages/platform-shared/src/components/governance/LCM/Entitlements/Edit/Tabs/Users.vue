@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="ml-2"
           variant="outline-primary"
           @click="showRemoveModal()">
-          {{ $t('common.remove') }}
+          {{ $t('common.revoke') }}
         </BButton>
         <FrSearchInput
           v-model="searchValue"
@@ -138,7 +138,7 @@ of the MIT license. See the LICENSE file for details. -->
       cancel-variant="outline-secondary"
       ok-variant="danger"
       :static="isTesting"
-      :ok-title="$t('common.remove')"
+      :ok-title="$t('common.revoke')"
       :title="$t('pages.access.removeModalTitle')"
       @cancel="hideRemoveModal()"
       @ok="updateEntitlementMembers('remove')">
@@ -149,7 +149,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrRequestSubmitSuccessModal
       :request-id="requestId[0]"
       router-path="AdministerEntitlements"
-      :success-text="$t('governance.entitlements.modifySuccess')" />
+      :success-text="$t('governance.entitlements.modifyMembersSuccess')" />
   </BCard>
 </template>
 
@@ -408,7 +408,7 @@ async function updateEntitlementMembers(operation) {
     requestId.value = successIds;
     bvModal.value.show('successful-submit');
   } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.requestForm.errorSubmittingRequest'));
+    showErrorMessage(error, i18n.global.t('governance.entitlements.errorSubmittingRequest'));
   } finally {
     isSaving.value = false;
     if (operation === 'remove') {

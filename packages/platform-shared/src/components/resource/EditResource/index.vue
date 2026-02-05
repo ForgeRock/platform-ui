@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -854,7 +854,7 @@ export default {
     },
     canViewUserAccess() {
       // Only show this button if governance is enabled and in admin managed identities view
-      return this.resourceIsUser && this.$store.state.SharedStore.governanceDevEnabled && this.$route.meta.listRoute === 'managed-identities';
+      return this.resourceIsUser && this.$store.state.SharedStore.governanceEnabled && this.$route.meta.listRoute === 'managed-identities';
     },
   },
 };
