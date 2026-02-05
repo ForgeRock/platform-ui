@@ -4,6 +4,7 @@
     "AccountsDetails": "Account Details",
     "AdministerEntitlements": "Administer Entitlements",
     "AIAgents": "AI Agents",
+    "AIAgentEdit": "Edit AI Agent",
     "Applications": "Applications",
     "BulkImport": "Import",
     "Certification": "Certification",
@@ -58,6 +59,7 @@
     "AccountsDetails": "Account Details",
     "AdministerEntitlements": "Administer Entitlements",
     "AIAgents": "AI Agents",
+    "AIAgentEdit": "Edit AI Agent",
     "Applications": "Applications",
     "AutoAccessDataSources": "Data Sources",
     "AutoAccessPipelines": "Pipelines",
@@ -260,6 +262,11 @@
     "noSearchResults": "No AI Agents found.",
     "noResultsHelp": "Try a new search in the box above.",
     "errorLoading": "Error loading AI Agents",
+    "errorLoadingAgent": "Error loading agent",
+    "errorDeleting": "Error deleting agent",
+    "errorSavingAgent": "Error saving agent",
+    "deleted": "Agent successfully deleted",
+    "saveSuccess": "Agent successfully updated",
     "unnamedAgent": "Unnamed Agent"
   },
   "authentication": {

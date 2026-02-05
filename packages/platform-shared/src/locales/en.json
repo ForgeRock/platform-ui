@@ -1,5 +1,6 @@
 {
   "common": {
+    "access": "Access",
     "accessibleMoreActions": "More Actions, press Enter to activate selected item",
     "account": "Account",
     "accountAttribute": "Account Attribute",
