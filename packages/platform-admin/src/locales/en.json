@@ -736,6 +736,10 @@
     "support": "Support",
     "verifiedBy": "Verified by Ping Identity",
     "backstage": "Backstage",
+    "transactionalOnly": "Transactional Only",
+    "transactionalOnlyDescription": "Only allow this journey to be triggered by Application Journeys, Step-up (Authorization), or Backchannel Authentication flows.",
+    "noSession": "No Session",
+    "noSessionDescription": "Create a journey that completes successfully without creating an authenticated session, ideal for tasks like delegated administration.",
     "editModal": {
       "treeCategoryDescription": "Use tags to allow categorization and enhance searchability.",
       "treeNameDescription": "Human-friendly name for this user flow.",
