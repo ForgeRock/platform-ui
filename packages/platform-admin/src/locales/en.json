@@ -3341,7 +3341,8 @@
       "addEndpoint": "New Endpoint",
       "noDataTitle": "You haven't added any custom endpoint scripts yet",
       "subTitle": "Use custom endpoints to extend functionality.",
-      "defaultTableTab": "All Endpoints"
+      "defaultTableTab": "All Endpoints",
+      "noSearchResults": "No Custom Endpoints found."
     },
     "getListDataFail": "Unable to retrieve endpoint script data",
     "getCurrentScriptFail": "Unable to retrieve Script with ID { scriptId }",
