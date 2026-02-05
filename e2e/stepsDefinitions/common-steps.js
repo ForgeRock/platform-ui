@@ -92,6 +92,23 @@ Given('enduser logs into {journey} journey', (journeyName) => {
   );
 });
 
+Given('enduser logs into {journey} journey with security questions', (journeyName) => {
+  const userName = Cypress.env('endUserName');
+  const password = Cypress.env('endUserPassword');
+  const successLogin = true;
+  const loginUrl = generateJourneyURL(journeyName);
+  const givenName = Cypress.env('endUserFirstName');
+
+  cy.loginAsEnduser(
+    userName,
+    password,
+    successLogin,
+    loginUrl,
+    givenName,
+    true, // handleSecurityQuestions
+  );
+});
+
 Given('enduser logs into the End User UI', () => {
   const userName = Cypress.env('endUserName');
   const password = Cypress.env('endUserPassword');
@@ -234,6 +251,10 @@ When('user types the stored value of {string} in {string} field', (storedDataNam
 When(/^user types the following text to the (markdown|css) editor:$/, (editorType, text) => {
   const editorClass = editorType === 'markdown' ? '.markdown-editor' : '.css-editor';
   cy.get(`${editorClass} [role="textbox"]`).clear().type(text, { parseSpecialCharSequences: false });
+});
+
+When('user types the following text to the code editor:', (text) => {
+  cy.get('.modal-content .cm-content').click().clear().type(text, { parseSpecialCharSequences: false });
 });
 
 When('user waits for themerealm request', () => {
@@ -1077,7 +1098,15 @@ Then('elements have following text attributes with values:', (dataTable) => {
   });
 });
 
-// TODO: delete this
-When('user waits for {int} seconds', (seconds) => {
-  cy.wait(seconds * 1000);
+/**
+ * Verifies whether an image with a specific src attribute is visible or not visible
+ * @example
+ * Then the image "https://example.com/logo.png" should be visible
+ * Then the image "https://example.com/logo.png" should not be visible
+ * @param {string} src - The src attribute value (can be partial match)
+ * @param {string} [notCapture] - Optional capture group for "not ". If present, checks that image is not visible
+ */
+Then(/^the image "([^"]*)" should (not )?be visible$/, (src, notCapture) => {
+  const assertion = notCapture ? 'not.exist' : 'be.visible';
+  cy.get(`img[src*="${src}"]`).should(assertion);
 });

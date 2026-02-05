@@ -34,9 +34,11 @@ function fillAndSendLoginForm() {
 // Method to fetch ACCESS_TOKEN with retry option
 function fetchAccessToken(retries = 5, attempt = 0) {
   let retry = attempt;
+  const expectedScope = Cypress.env('IS_FRAAS') ? 'fr:idm:*' : 'openid fr:idm:*';
+
   cy.wait('@getAccessToken').then(({ response }) => {
     // Fetch ACCESS_TOKEN only if the response is successful and the IDM scope is correct
-    if (response.statusCode === 200 && response.body.scope === Cypress.env('IS_FRAAS') ? 'fr:idm:*' : 'openid fr:idm:*') {
+    if (response.statusCode === 200 && response.body.scope === expectedScope) {
       // Use the access token from the admin login as the API access token for this test
       // Note that for code to use this access token it needs to be queued to execute
       // afterwards by Cypress with a then block or similar
@@ -185,7 +187,10 @@ function fetchOAuthTokenAfterSessionRestore(options = {}) {
 
   // Wait for Dashboard to load (same as loginAsAdmin)
   // This ensures theme CSS is applied and page is fully rendered before tests proceed
-  cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
+  // only assert if test didn't fail (the assertion occasionally fail in after hooks)
+  if (!Cypress.state('test').state || Cypress.state('test').state === 'passed') {
+    cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
+  }
 
   if (Cypress.env('IS_FRAAS')) {
     // Wait for the Cloud to properly load (same as loginAsAdmin)
@@ -246,6 +251,7 @@ Cypress.Commands.add(
     sucessLogin = true,
     loginUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=Login#/` : `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Login#/`,
     givenName = 'First',
+    handleSecurityQuestions = false,
   ) => {
     // Clear cookies and local storage
     cy.logout();
@@ -262,6 +268,17 @@ Cypress.Commands.add(
     // Fill in Enduser name and password
     cy.findByLabelText(/User Name/i, { timeout: 10000 }).should('be.visible').type(userName, { force: true });
     cy.findAllByLabelText(/Password/i).first().should('be.visible').type(password, { force: true });
+
+    // Handle security questions if enabled
+    if (handleSecurityQuestions) {
+      // Select first security question from dropdown
+      cy.contains('label', 'Select a security question').parent().find('.multiselect').click({ force: true });
+      cy.get('.multiselect__content').find('.multiselect__element').first().click();
+
+      // Enter answer for the security question
+      cy.findByLabelText("Answer for: What's your favorite color?").should('be.visible').type('Test Answer', { force: true });
+    }
+
     cy.findByRole('button', { name: /Next/i }).click();
 
     // Wait for the spinner div to disappear
@@ -315,7 +332,7 @@ Cypress.Commands.add('visitJourneyUrl', (journeyUrl) => {
  * @param {Boolean} login a boolean to tell if tests should authenticate (in case admin is not already logged in)
  */
 Cypress.Commands.add('importTreesViaAPI', (fixtureArray) => {
-  cy.loginAsAdmin();
+  cy.loginAsAdminCachedForCucumber();
   importJourneysViaAPI(fixtureArray);
 });
 
@@ -327,7 +344,7 @@ Cypress.Commands.add('importTreesViaAPI', (fixtureArray) => {
  */
 Cypress.Commands.add('deleteTreesViaAPI', (fixtureArray) => {
   // Login as admin first
-  cy.loginAsAdmin();
+  cy.loginAsAdminCachedForCucumber();
 
   // Use API to delete all Journeys & required data
   deleteJourneysViaAPI(fixtureArray);
