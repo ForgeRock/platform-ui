@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -273,7 +273,7 @@ async function getGrantForUser(compositeId) {
 async function updateAccessByFilter(updatedQueryFilter) {
   loading.value = true;
   queryFilters.value = updatedQueryFilter;
-  await getGrantsForUser({});
+  await getGrantsForUser({ _pageSize: 1000 });
   loading.value = false;
 }
 
@@ -306,7 +306,7 @@ onMounted(async () => {
       _fields: ['givenName', 'sn', 'mail', 'id', 'userName', 'profileImage'],
     };
     const grantQueryParams = {
-      _pageSize: 100,
+      _pageSize: 1000,
     };
     const userPromises = [
       getManagedResource('alpha_user', userId.value, userQueryParams),
@@ -338,7 +338,7 @@ onMounted(async () => {
 async function toggleSelectedType(type) {
   loading.value = true;
   grantTypes.value[type] = !grantTypes.value[type];
-  await getGrantsForUser({});
+  await getGrantsForUser({ _pageSize: 1000 });
   loading.value = false;
 }
 
