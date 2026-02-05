@@ -2724,22 +2724,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/javascript-sdk@npm:4.8.2, @forgerock/javascript-sdk@npm:^4.8.2":
-  version: 4.8.2
-  resolution: "@forgerock/javascript-sdk@npm:4.8.2"
+"@forgerock/javascript-sdk@npm:4.8.3, @forgerock/javascript-sdk@npm:^4.8.3":
+  version: 4.8.3
+  resolution: "@forgerock/javascript-sdk@npm:4.8.3"
   dependencies:
     "@reduxjs/toolkit": ^2.2.5
     immer: ^10.1.1
-  checksum: 3f0df254348de1a278951b54c1fbc8940b6ac4be428287fc3aaac90640a5f9133ec49baaa626480924750b16937b54d44a4a9d8dd4f7a9b4896a8af5daf4b337
+  checksum: 744468dbf399965322bac51ece59656f4c413a1f7ac54cb1420d0d0a76b0c7be87d4c88b3a771093cec956abae7454f44253433de7558ca994f6aefead686697
   languageName: node
   linkType: hard
 
-"@forgerock/ping-protect@npm:4.6.0-beta.1":
-  version: 4.6.0-beta.1
-  resolution: "@forgerock/ping-protect@npm:4.6.0-beta.1"
+"@forgerock/ping-protect@npm:4.6.2":
+  version: 4.6.2
+  resolution: "@forgerock/ping-protect@npm:4.6.2"
   dependencies:
-    "@forgerock/javascript-sdk": ^4.8.2
-  checksum: 9a4f7115320fe439fae4a1edb23d6bfbc3b53dcee8841e5250fe97a1015b091770d57036e02a344a1761d90e65132a26deefcfc860395eebfe8a14de176e7200
+    "@forgerock/javascript-sdk": ^4.8.3
+  checksum: 5ac1ab9774e0c73f6095ba6f9dac3cf6fef4d0b61194d273fd680483965bff5adc654610cd90b30871cf71fe0c96f65ad461a9577de8576ac5298ddb5c4341c9
   languageName: node
   linkType: hard
 
@@ -11851,8 +11851,8 @@ __metadata:
     "@badeball/cypress-cucumber-preprocessor": 21.0.2
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
     "@faker-js/faker": 9.8.0
-    "@forgerock/javascript-sdk": 4.8.2
-    "@forgerock/ping-protect": 4.6.0-beta.1
+    "@forgerock/javascript-sdk": 4.8.3
+    "@forgerock/ping-protect": 4.6.2
     "@forgerock/platform-shared": 1.0.0
     "@neuralegion/cypress-har-generator": 5.16.4
     "@percy/cli": 1.31.2
