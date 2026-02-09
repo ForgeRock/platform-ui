@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,7 +16,7 @@ export default {
       * @return {string} first initial of realm name
       */
     realmInitial() {
-      return store.state.realm[0];
+      return store.state.realm?.[0]?.toLowerCase() ?? '';
     },
     /**
       * Gives the formal name of the current realm
