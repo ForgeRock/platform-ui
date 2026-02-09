@@ -188,7 +188,7 @@ of the MIT license. See the LICENSE file for details. -->
             </BTab>
             <FrLinkedApplicationsTab :linked-applications="linkedApplications" />
             <FrUserDevicesTab
-              v-if="resourceIsUser"
+              v-if="!$store.state.SharedStore.idmOnly && resourceIsUser"
               :user-id="id" />
             <FrMetadataTab
               v-if="showMetadataTab"

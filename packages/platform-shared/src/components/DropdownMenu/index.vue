@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrMenuItem v-bind="item" />
       </template>
     </template>
-    <template v-if="showProfileLink">
+    <template v-if="!$store.state.SharedStore.idmOnly && showProfileLink">
       <BDropdownDivider
         v-if="enableLogout && dropdownItems.length"
         aria-hidden="true"

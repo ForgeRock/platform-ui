@@ -6,6 +6,7 @@
  */
 
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
+import { DEPLOYMENT_TYPES } from '@forgerock/platform-shared/src/constants/deploymentConstants';
 
 const defaultState = {
   amBaseURL: '',
@@ -284,7 +285,7 @@ const mutations = {
   },
   setDeploymentType(state, deploymentType) {
     state.deploymentType = deploymentType;
-    if (deploymentType === 'IDM') {
+    if (deploymentType === DEPLOYMENT_TYPES.IDM) {
       state.idmOnly = true;
       state.workforceEnabled = false;
     }
