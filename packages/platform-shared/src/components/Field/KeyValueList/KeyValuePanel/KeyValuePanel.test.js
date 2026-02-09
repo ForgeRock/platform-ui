@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,7 @@
 
 import { flushPromises, mount } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
-import { findByText } from '../../../../utils/testHelpers';
+import { findByText, runA11yTest } from '../../../../utils/testHelpers';
 import i18n from '@/i18n';
 import KeyValuePanel from './index';
 
@@ -134,6 +134,29 @@ describe('KeyValuePanel', () => {
 
       expect(wrapper.vm.isTaggable).toBe(true);
       expect(wrapper.vm.availableKeyOptions).toEqual(['option 1']);
+    });
+  });
+
+  describe('@a11y', () => {
+    it('should have no accessibility violations', async () => {
+      setup();
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('should be accessible when keyOptions prop is provided', async () => {
+      setup({
+        value: {
+          key: '',
+          value: '',
+        },
+        keyOptions: [
+          'option 1',
+          'option 2',
+        ],
+      });
+      await flushPromises();
+      await runA11yTest(wrapper);
     });
   });
 });

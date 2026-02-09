@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :style="{ cursor: currentKey ? 'default' : 'pointer' }"
                   variant="none"
                   class="py-0"
+                  :aria-label="`${$t('common.delete')} ${key}`"
                   data-testid="delete-button-node"
                   @click.stop="deleteItem(key)">
                   <FrIcon name="delete" />
@@ -48,6 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :style="{ cursor: currentKey ? 'default' : 'pointer' }"
                   variant="none"
                   class="py-0"
+                  :aria-label="`${$t('common.edit')} ${key}`"
                   data-testid="edit-button-node"
                   @click.stop="editItem(key)">
                   <FrIcon name="edit" />

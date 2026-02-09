@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,8 +9,9 @@ import { mount, shallowMount, flushPromises } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import i18n from '@/i18n';
 import KeyValueList from './index';
+import { runA11yTest } from '../../../utils/testHelpers';
 
-mockValidation(['required']);
+mockValidation(['required', 'unique']);
 
 describe('KeyValueList', () => {
   describe('unit tests', () => {
@@ -164,6 +165,42 @@ describe('KeyValueList', () => {
       await deleteButton.trigger('click');
       expect(wrapper.find('.list-group-item').exists()).toBe(false);
       expect(wrapper.find('#testfield0-error').text()).toBe(i18n.global.t('common.policyValidationMessages.REQUIRED'));
+    });
+  });
+
+  describe('@a11y', () => {
+    function mountComponent(propsData) {
+      const wrapper = mount(KeyValueList, {
+        global: {
+          plugins: [i18n],
+        },
+        props: {
+          value: '',
+          label: 'Test List',
+          name: 'testField',
+          ...propsData,
+        },
+      });
+      return wrapper;
+    }
+    it('is accessible when list is empty', async () => {
+      const wrapper = mountComponent();
+      await runA11yTest(wrapper);
+    });
+
+    it('is accessible when add button is shown', async () => {
+      const wrapper = mountComponent({ showInitialAdd: true, availableKeyOptions: ['option 1', 'option 2'] });
+      await runA11yTest(wrapper);
+    });
+
+    it('is accessible when list is populated', async () => {
+      const wrapper = mountComponent({
+        value: {
+          en: 'value',
+          fr: 'valeur',
+        },
+      });
+      await runA11yTest(wrapper);
     });
   });
 });
