@@ -891,6 +891,9 @@ export default {
     },
     getItems(currentPage) {
       this.isLoading = true;
+      if (this.certificationGrantType === 'entitlementComposition' && this.sortBy === 'user') {
+        this.sortBy = 'entitlement';
+      }
       const urlParams = this.buildUrlParams(currentPage, this.sortBy, this.sortDir);
       const payload = this.buildBodyParams();
 
