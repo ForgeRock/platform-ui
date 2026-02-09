@@ -5524,6 +5524,8 @@
     "rateLimitError": "Monitoring api has hit it's rate limit. Retrying request in { retrySeconds } seconds..."
   },
   "idm": {
+    "identityManagement": "Identity Management",
+    "pageTitle": "Identity Management - {page}",
     "loginAuthError": "Invalid username or password",
     "loginFailure": "Login failure"
   }

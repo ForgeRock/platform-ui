@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,6 +9,7 @@ import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHe
 import { mount, flushPromises } from '@vue/test-utils';
 import SideMenu from './index';
 import { runA11yTest } from '../../utils/testHelpers';
+import store from '@/store';
 
 let wrapper;
 function setup(props = {}) {
@@ -25,11 +26,31 @@ function setup(props = {}) {
   });
 }
 
+jest.mock('@forgerock/platform-shared/src/assets/images/ping-logo-horizontal-color.svg', () => 'ping-logo-horizontal-color.svg');
+jest.mock('@forgerock/platform-shared/src/assets/images/ping-logo-square-color.svg', () => 'ping-logo-square-color.svg');
+
 describe('SideMenu Component', () => {
   afterEach(() => {
     if (wrapper?.unmount) {
       wrapper.unmount();
     }
+  });
+
+  it('shows ping logos in IDM deployment', async () => {
+    store.state.SharedStore.deploymentType = 'IDM';
+    setup();
+    await flushPromises();
+
+    const imageHorizontal = wrapper.find('img');
+    expect(imageHorizontal.exists()).toBe(true);
+    expect(imageHorizontal.attributes('alt')).toContain('Ping Identity Logo');
+    expect(imageHorizontal.attributes('src')).toContain('ping-logo-horizontal-color.svg');
+
+    const imageSquare = wrapper.findAll('img').at(1);
+    expect(imageSquare.exists()).toBe(true);
+    expect(imageSquare.attributes('alt')).toContain('Ping Identity Logo');
+    expect(imageSquare.attributes('src')).toContain('ping-logo-square-color.svg');
+    store.state.SharedStore.deploymentType = 'PLATFORM';
   });
 
   it('Component successfully loaded', async () => {

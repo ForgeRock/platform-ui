@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -23,6 +23,10 @@ export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
     ...requestOverride,
   };
 
+  if (store.state.SharedStore.idmOnly) {
+    requestDetails.headers['x-requested-with'] = 'XMLHttpRequest';
+  }
+
   // Check if web storage exists before trying to use it - see IAM-1873
   if (store.state.SharedStore.webStorageAvailable && sessionStorage.getItem('accessToken')) {
     requestDetails.headers.Authorization = `Bearer ${sessionStorage.getItem('accessToken')}`;
@@ -31,6 +35,12 @@ export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
   const request = axios.create(requestDetails);
 
   request.interceptors.response.use(null, (error) => {
+    // Handle 401 session expiration in IDM-only mode
+    if (store.state.SharedStore.idmOnly && error.response?.status === 401) {
+      window.location.hash = '#/login';
+      return Promise.reject(error);
+    }
+
     // The journeys page is accessible to users with realm-admin priviledges,
     // however as it makes a call to openidm in order to access the Identities
     // Objects, this causes a 403 if the user doesn't also have openidm-admin

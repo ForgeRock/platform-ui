@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,6 +9,7 @@ import { DOMWrapper, flushPromises, mount } from '@vue/test-utils';
 import DropDownMenu from './index';
 import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import { runA11yTest } from '../../utils/testHelpers';
+import i18n from '@/i18n';
 
 let wrapper;
 let mountedComponent;
@@ -20,20 +21,21 @@ function setupApp() {
   return app;
 }
 
-async function setupMount(props = {}) {
+async function setupMount(props = {}, storeOverrides = {}) {
   const target = setupApp();
   setupTestPinia();
   mountedComponent = mount(DropDownMenu, {
     attachTo: target,
     global: {
+      plugins: [i18n],
       mocks: {
-        $t: (msg) => msg,
         $store: {
           state: {
             SharedStore: {
               currentPackage: 'enduser',
             },
           },
+          ...storeOverrides,
         },
       },
     },
@@ -51,6 +53,24 @@ describe('Dropdown Menu Component', () => {
     if (mountedComponent?.unmount) {
       mountedComponent.unmount();
     }
+  });
+
+  it('shows profile link when showProfileLink is true and not in IDM only deployment', async () => {
+    setupMount({ showProfileLink: true }, { state: { SharedStore: { idmOnly: false } } });
+
+    await wrapper.find('button[id^="menu-button-"]').trigger('click');
+    await flushPromises();
+
+    expect(wrapper.find('[role="menuitem"]').text()).toContain('n/a');
+  });
+
+  it('hides profile link in IDM only deployment', async () => {
+    setupMount({ showProfileLink: true }, { state: { SharedStore: { idmOnly: true } } });
+
+    await wrapper.find('button[id^="menu-button-"]').trigger('click');
+    await flushPromises();
+
+    expect(wrapper.find('[role="menuitem"]').exists()).toBe(false);
   });
 
   describe('@a11y', () => {

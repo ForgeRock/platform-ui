@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -134,6 +134,9 @@ import FrDropdownMenu from '@forgerock/platform-shared/src/components/DropdownMe
 import FrMenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import RealmMixin from '@forgerock/platform-shared/src/mixins/RealmMixin';
+import { DEPLOYMENT_TYPES } from '@forgerock/platform-shared/src/constants/deploymentConstants';
+import store from '@/store';
+import i18n from '@/i18n';
 
 /**
  * SideMenu is an expandable menu which contains navigation icons to navigate to different routes.
@@ -209,10 +212,29 @@ export default {
     },
   },
   setup() {
-    const {
-      horizontalLogoAttrs,
-      squareLogoAttrs,
-    } = useLogo();
+    let horizontalLogoAttrs;
+    let squareLogoAttrs;
+
+    switch (store.state.SharedStore.deploymentType) {
+      case DEPLOYMENT_TYPES.IDM:
+        horizontalLogoAttrs = {
+          // eslint-disable-next-line global-require
+          src: require('@forgerock/platform-shared/src/assets/images/ping-logo-horizontal-color.svg'),
+          alt: i18n.global.t('common.pingLogoAltText'),
+          class: 'max-width-150',
+        };
+        squareLogoAttrs = {
+          // eslint-disable-next-line global-require
+          src: require('@forgerock/platform-shared/src/assets/images/ping-logo-square-color.svg'),
+          alt: i18n.global.t('common.pingLogoAltText'),
+          class: 'max-width-25',
+        };
+        break;
+      case DEPLOYMENT_TYPES.PLATFORM:
+      default:
+        ({ horizontalLogoAttrs, squareLogoAttrs } = useLogo());
+        break;
+    }
     return {
       horizontalLogoAttrs,
       squareLogoAttrs,
@@ -226,5 +248,13 @@ export default {
 
 .toggle-side-menu {
   line-height: 1.4rem;
+}
+
+:deep(.max-width-150) {
+  max-width: 150px;
+}
+
+:deep(.max-width-25) {
+  max-width: 25px;
 }
 </style>

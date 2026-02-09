@@ -1,19 +1,60 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import axios from 'axios';
 import { flushPromises } from '@vue/test-utils';
-import store from '../store';
-import { generateHelixApi, generateIgaApi, generateIdmApi } from './BaseApi';
+import axios from 'axios';
+import store from '@/store';
+import {
+  generateHelixApi,
+  generateIgaApi,
+  generateIdmApi,
+} from './BaseApi';
 
 jest.mock('axios');
 jest.mock('dayjs');
 
 describe('BaseApi', () => {
+  describe('generateIdmApi', () => {
+    store.state.SharedStore.idmBaseURL = 'idmBaseUrl';
+    it('should add x-requested-with header to the request in idmOnly mode', () => {
+      store.state.SharedStore.idmOnly = true;
+      axios.create = jest.fn(() => ({
+        interceptors: {
+          response: {
+            use: jest.fn(),
+          },
+        },
+      }));
+      generateIdmApi();
+      expect(axios.create).toBeCalledWith({
+        baseURL: 'idmBaseUrl',
+        headers: { 'x-requested-with': 'XMLHttpRequest' },
+      });
+      store.state.SharedStore.idmOnly = false;
+    });
+
+    it('should not add x-requested-with header to the request when not in idmOnly mode', () => {
+      store.state.SharedStore.idmOnly = false;
+      axios.create = jest.fn(() => ({
+        interceptors: {
+          response: {
+            use: jest.fn(),
+          },
+        },
+      }));
+      generateIdmApi();
+      expect(axios.create).toBeCalledWith({
+        baseURL: 'idmBaseUrl',
+        headers: {},
+      });
+      store.state.SharedStore.idmOnly = true;
+    });
+  });
+
   describe('generateIgaApi', () => {
     const requestDetails = {
       baseURL: store.state.SharedStore.igaApiUrl,
