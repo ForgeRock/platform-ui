@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -92,6 +92,11 @@ module.exports = async (on, config) => {
       // The ensureBrowserFlags function sets the required flags for HAR recording
       // This is necessary because HAR recording relies on specific browser capabilities
       ensureBrowserFlags(browser, launchOptions);
+
+      // Disable HTTP cache to prevent cached responses from breaking Cypress intercepts
+      // This is critical with session caching enabled as HTTP cache persists across tests
+      // causing intercepts to miss network requests that are served from cache
+      launchOptions.args.push('--disk-cache-size=0');
     }
 
     // Disable video recording if the browser is Firefox as currently it is not supported https://github.com/cypress-io/cypress/issues/18415

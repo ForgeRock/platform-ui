@@ -115,12 +115,8 @@ Cypress.Commands.add('loginAsAdmin', () => {
   // Visit Admin Login URL
   cy.visit(loginUrl);
 
-  // Wait for the Login form to load (only if request fired)
-  cy.get('@uiconfig.all').then((calls) => {
-    if (calls && calls.length > 0) {
-      cy.wait('@uiconfig', { timeout: 15000 });
-    }
-  });
+  // Wait for the Login form to load
+  cy.wait('@uiconfig', { timeout: 15000 });
 
   // Fill in Admin name and password and Login
   fillAndSendLoginForm();
@@ -186,6 +182,10 @@ function fetchOAuthTokenAfterSessionRestore(options = {}) {
   // The app will call /am/oauth2/access_token during page load since IndexedDB was cleared
   // Use the same retry logic as loginAsAdmin for reliability
   fetchAccessToken();
+
+  // Wait for Dashboard to load (same as loginAsAdmin)
+  // This ensures theme CSS is applied and page is fully rendered before tests proceed
+  cy.findAllByTestId('dashboard-welcome-title', { timeout: 15000 }).should('be.visible');
 
   if (Cypress.env('IS_FRAAS')) {
     // Wait for the Cloud to properly load (same as loginAsAdmin)
