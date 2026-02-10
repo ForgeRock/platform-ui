@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,10 +22,11 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
           <BButton
             :class="buttonClass"
-            class="btn mr-1 mb-2 mb-lg-0 text-dark"
+            class="mr-1 mb-2 mb-lg-0 none-add"
             data-testid="list-objects-none-add"
             :disabled="disabled"
             :aria-label="$t('common.add')"
+            variant="outline-secondary"
             @click.prevent="addObjectToList(-1)">
             <FrIcon name="add" />
           </BButton>
@@ -114,9 +115,10 @@ of the MIT license. See the LICENSE file for details. -->
                   v-if="listValues.length > 0"
                   :data-testid="`list-objects-remove-${index}`"
                   :class="buttonClass"
-                  class="btn mr-1 mb-2 mb-lg-0 text-dark"
+                  class="mr-1 mb-2 mb-lg-0"
                   :disabled="disabled"
                   :aria-label="$t('common.remove')"
+                  variant="outline-secondary"
                   @click.prevent="removeElementFromList(index)">
                   <FrIcon name="remove" />
                 </BButton>
@@ -124,9 +126,10 @@ of the MIT license. See the LICENSE file for details. -->
                   v-if="multiValued || listValues.length === 0"
                   :data-testid="`list-objects-add-${index}`"
                   :class="buttonClass"
-                  class="btn mr-1 mb-2 mb-lg-0 text-dark"
+                  class="mr-1 mb-2 mb-lg-0"
                   :disabled="disabled"
                   :aria-label="$t('common.add')"
+                  variant="outline-secondary"
                   @click.prevent="addObjectToList(index)">
                   <FrIcon name="add" />
                 </BButton>
@@ -440,3 +443,41 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.btn-outline-secondary {
+  border-color: transparent;
+  color: $gray-800;
+  &.none-add {
+    border-color: $gray-300;
+    color: $gray-500;
+  }
+  &:not(:disabled) {
+    &:hover,
+    &:active,
+    &:focus:active {
+      background: $gray-100;
+      border-color: $gray-100;
+      box-shadow: none;
+      color: $gray-800;
+    }
+
+    &.none-add {
+      &:focus:active {
+        background-color: $gray-500;
+        border-color: $gray-500;
+        color: $white;
+      }
+
+      &:hover {
+        background: transparent;
+        color: $gray-500;
+        border-color: $gray-500;
+      }
+    }
+  }
+
+  &:disabled.none-add:hover.disabled {
+    border-color: $gray-300;
+  }
+}
+</style>
