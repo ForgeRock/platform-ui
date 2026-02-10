@@ -1697,6 +1697,11 @@
     "errorRetrievingApplications": "Error retrieving Applications",
     "errorRetrievingApplicationTemplates": "Error retrieving Application templates",
     "errorLoadingAppTemplate": "Error loading Application template",
+    "developmentTemplate": {
+      "createWarning": "This is a development version of the application and may be subject to changes that affect general functionality. Use the latest stable version to avoid update conflicts.",
+      "editWarning": "This is a development version of the application which may have changed since creation. Create an application using the latest stable version to avoid update conflicts.",
+      "badge": "Development"
+    },
     "templateVersion": "v{version}",
     "listView": {
       "addApp": "Add Application",
