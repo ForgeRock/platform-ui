@@ -163,7 +163,14 @@ When('user clicks on {string} {role}', (name, role) => {
   const findControl = () => cy.findByRole(role, { name: new RegExp(name, 'i') });
 
   if (isSaveButton) {
-    findControl().should('be.enabled', { timeout: 8000 }).click();
+    // Stability check: verify button is enabled and remains enabled
+    // Using multiple .should() calls leverages Cypress's built-in retry mechanism
+    // This handles async validation that might temporarily disable the button
+    findControl()
+      .should('be.enabled', { timeout: 12000 })
+      .and('not.have.class', 'disabled')
+      .should('be.enabled') // Re-check after previous assertions pass
+      .click({ timeout: 8000 });
     return;
   }
 
