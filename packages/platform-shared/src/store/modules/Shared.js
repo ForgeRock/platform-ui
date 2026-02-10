@@ -62,7 +62,6 @@ const defaultState = {
   wsfedEnabled: false,
   templateBuilderEnabled: false,
   enableSamlSigningCheckbox: false,
-  overrideSessionTimeoutsEnabled: false,
   enableMonitoringUI: false,
 };
 
@@ -246,10 +245,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_ANALYTICS_REPORTING?.toString() === 'true') {
       state.autoReportsEnabled = true;
-    }
-
-    if (env.VUE_APP_ENABLE_OVERRIDE_SESSION_TIMEOUTS?.toString() === 'true') {
-      state.overrideSessionTimeoutsEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_AI_AGENTS?.toString() === 'true') {
