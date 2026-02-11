@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BButton
               variant="outline-primary"
               @click="showModal(property)">
-              {{ $t(property.value ? 'common.edit' : 'pages.access.setUp') }}
+              {{ $t(property.value && property.value.length ? 'common.edit' : 'pages.access.setUp') }}
             </BButton>
           </td>
         </tr>
