@@ -351,6 +351,32 @@
         "linked": "Accounts linked",
         "error": "Unable to link accounts"
       }
+    },
+    "workflow": {
+      "assign": "Assign",
+      "assignTo": "Assign to",
+      "assignmentSuccess": "{taskName} successfully assigned to {assignee}",
+      "details": "Details",
+      "myTasks": "My Tasks",
+      "noProcess": "No processes at this time",
+      "noAssignedTasks": "No assigned tasks at this time",
+      "noGroupTasks": "Your group has no tasks at this time",
+      "notAssigned": "Not assigned",
+      "notAvailable": "n/a",
+      "processStartSuccessMessage": "Process started",
+      "me": "Me",
+      "requeue": "Requeue",
+      "start": "Start",
+      "startProcess": "Start a Process",
+      "taskSuccessfullyCompleted": "Task successfully completed",
+      "taskNoLongerAvailable": "{taskName} task deleted by admin",
+      "fetchDefinitionError": "There was an error retrieving process definition.",
+      "taskLoadError": "There was an error retrieving tasks.",
+      "unassignedTasks": "Unassigned Tasks",
+      "cancel": "Cancel",
+      "yes": "Yes",
+      "no": "No",
+      "save": "Save"
     }
   },
   "pagination": {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,6 +17,7 @@ export default createStore({
       returnParams: null,
       linkedProvider: null,
     },
+    workflow: false,
   },
   mutations: {
     setAuthHeaders(state, val) {
@@ -37,6 +38,9 @@ export default createStore({
         returnParams: null,
         linkedProvider: null,
       };
+    },
+    setWorkflowState(state, enabled) {
+      state.workflow = enabled;
     },
   },
   modules: {

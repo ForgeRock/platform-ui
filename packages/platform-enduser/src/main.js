@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -77,6 +77,7 @@ router.beforeEach((to, from, next) => {
           window.location.href = process.env.VUE_APP_ADMIN_URL;
         }
         userStore.userId = userDetails.data.authorization.id;
+        userStore.authenticationId = userDetails.data.authenticationId;
         userStore.managedResource = userDetails.data.authorization.component;
         userStore.idmRoles = userDetails.data.authorization.roles;
 

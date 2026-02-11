@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,8 @@ import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import { getFeatures } from '@forgerock/platform-shared/src/api/ConfigApi';
+import { each } from 'lodash';
 import useSelfService from '@/composables/selfService';
 import {
   getAccessToken, getProfile, login, logout,
@@ -82,19 +84,27 @@ export function useAuth() {
 
     const userStore = getUserStore();
     userStore.userId = data.authorization.id;
+    userStore.authenticationId = data.authenticationId;
     userStore.managedResource = data.authorization.component;
 
     // Get profile information from the IDM API
-    const [userInfo, privileges, schema] = await Promise.all([
+    const [userInfo, privileges, schema, availability] = await Promise.all([
       getProfile(userStore.managedResource, userStore.userId),
       getUserPrivileges(),
       getSchema(userStore.managedResource, { baseURL: idmContext }),
+      getFeatures(),
     ]);
     userStore.privileges = privileges.data;
 
     const enduserStore = getEnduserStore();
     enduserStore.setProfile(userInfo.data);
     enduserStore.managedResourceSchema = schema.data;
+
+    each(availability.data.result, (feature) => {
+      if (feature.name === 'workflow') {
+        store.commit('setWorkflowState', feature.enabled);
+      }
+    });
   }
 
   /**

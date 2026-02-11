@@ -5,19 +5,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
+import contractorForm from '@forgerock/platform-shared/src/testing/resources/contractorForm';
 import Process from './index';
 
 describe('Process.vue', () => {
   let wrapper;
-  const formGenerationTemplate = () => {};
   beforeEach(() => {
     jest.clearAllMocks();
-    wrapper = shallowMount(Process, {
+    wrapper = mount(Process, {
       props: {
-        processDefinition: {
-          formGenerationTemplate,
-        },
+        processDefinition: contractorForm,
         tasks: {},
       },
       global: {
@@ -29,6 +27,16 @@ describe('Process.vue', () => {
   });
 
   it('Process successfully loaded', () => {
-    expect(wrapper.vm.processDefinition).toEqual({ formGenerationTemplate });
+    expect(wrapper.vm.processDefinition).toEqual(contractorForm);
+  });
+
+  it('creates startForm from dynamic form', async () => {
+    await flushPromises();
+
+    expect(wrapper.findAll('b-form-input').length).toBe(10);
+    const buttons = wrapper.findAll('b-button');
+    expect(buttons.length).toBe(2);
+    expect(buttons[0].text()).toBe('Cancel');
+    expect(buttons[1].text()).toBe('Submit');
   });
 });

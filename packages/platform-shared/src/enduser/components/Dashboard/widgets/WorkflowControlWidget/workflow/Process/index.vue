@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
+import compileTemplateToRender from '@forgerock/platform-shared/src/utils/compileDynamicTemplate';
 import GenericProcess from '../GenericProcess';
 
 /**
@@ -51,25 +52,14 @@ export default {
     },
     task: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
   },
   data() {
     return {
       loadingColor: styles.baseColor,
+      startForm: undefined,
     };
-  },
-  computed: {
-    startForm() {
-      let initializeForm;
-      // Fallback to generic component when no provided JS
-      if (this.processDefinition.formGenerationTemplate) {
-        initializeForm = Function(`return ${this.processDefinition.formGenerationTemplate}`); // eslint-disable-line
-        return initializeForm();
-      }
-
-      return null;
-    },
   },
   methods: {
     cancel() {
@@ -81,6 +71,44 @@ export default {
     },
     submit(payload) {
       this.$emit('startProcess', payload);
+    },
+    async loadstartForm() {
+      if (!this.processDefinition || !this.processDefinition.formGenerationTemplate) {
+        return null;
+      }
+
+      try { // executing dynamic code, so wrap in try/catch
+        const initializeForm = Function(`return ${this.processDefinition.formGenerationTemplate}`); // eslint-disable-line
+        const form = initializeForm();
+
+        if (!form || !form.template) {
+          return null;
+        }
+
+        const { template, ...formWithoutTemplate } = form;
+        const render = await compileTemplateToRender(template);
+
+        return {
+          ...formWithoutTemplate,
+          render,
+        };
+      } catch (e) {
+        return null;
+      }
+    },
+  },
+  watch: {
+    processDefinition: {
+      handler() {
+        if (!this.startForm) {
+          this.loadstartForm().then((form) => {
+            if (form) {
+              this.startForm = form;
+            }
+          });
+        }
+      },
+      immediate: true,
     },
   },
 };

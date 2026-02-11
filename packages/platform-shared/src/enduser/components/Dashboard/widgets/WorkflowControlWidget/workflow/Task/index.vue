@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -34,6 +34,7 @@ import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import axios from 'axios';
 import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
+import compileTemplateToRender from '@forgerock/platform-shared/src/utils/compileDynamicTemplate';
 import GenericTask from '../GenericTask';
 
 /**
@@ -64,22 +65,12 @@ export default {
       processDefinition: temporaryProcessInstance,
       task: null,
       variables: null,
+      taskForm: undefined,
     };
   },
   components: {
     GenericTask,
     ClipLoader,
-  },
-  computed: {
-    taskForm() {
-      const { formGenerationTemplate } = this.taskInstance.task.taskDefinition;
-      const initializeForm = formGenerationTemplate ? Function(`return ${formGenerationTemplate}`) : null // eslint-disable-line
-
-      if (initializeForm !== null) {
-        return initializeForm();
-      }
-      return null;
-    },
   },
   methods: {
     submit(formData) {
@@ -87,6 +78,30 @@ export default {
     },
     cancel() {
       this.$emit('cancel', this.taskInstance.task._id);
+    },
+    async loadTaskForm() {
+      if (!this.processDefinition || !this.processDefinition.formGenerationTemplate) {
+        return null;
+      }
+
+      try { // executing dynamic code, so wrap in try/catch
+        const initializeForm = Function(`return ${this.processDefinition.formGenerationTemplate}`); // eslint-disable-line
+        const form = initializeForm();
+
+        if (!form || !form.template) {
+          return null;
+        }
+
+        const { template, ...formWithoutTemplate } = form;
+        const render = await compileTemplateToRender(template);
+
+        return {
+          ...formWithoutTemplate,
+          render,
+        };
+      } catch (e) {
+        return null;
+      }
     },
   },
   watch: {
@@ -100,6 +115,17 @@ export default {
           this.processDefinition = processDetails.data;
         });
       }
+    },
+    processDefinition: {
+      handler() {
+        if (!this.taskForm) {
+          this.loadTaskForm().then((form) => {
+            if (form) {
+              this.taskForm = form;
+            }
+          });
+        }
+      },
     },
   },
 };
