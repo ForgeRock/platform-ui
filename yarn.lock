@@ -3005,6 +3005,7 @@ __metadata:
     "@vue/cli-plugin-babel": 5.0.8
     "@vue/cli-service": 5.0.8
     "@vue/compat": 3.3.4
+    "@vue/compiler-dom": 3.3.4
     "@vue/compiler-sfc": 3.3.4
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6

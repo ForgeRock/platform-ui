@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -36,6 +36,7 @@ export const useUserStore = defineStore('user', () => {
   const sn = ref('');
   const userId = ref('');
   const userName = ref('');
+  const authenticationId = ref('');
 
   const name = computed(() => {
     if (givenName.value || sn.value) {
@@ -104,6 +105,7 @@ export const useUserStore = defineStore('user', () => {
     sn.value = '';
     userId.value = '';
     userName.value = '';
+    authenticationId.value = '';
     amAdmin.value = false;
   }
 
@@ -123,6 +125,7 @@ export const useUserStore = defineStore('user', () => {
     hasIDMUsersViewPrivilege,
     userId,
     userName,
+    authenticationId,
     userDetails,
     setUserDetails,
     setInternalUserDetails,

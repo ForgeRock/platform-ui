@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -31,6 +31,14 @@ export function getUiConfigNoSession() {
       'X-OpenIDM-Password': 'anonymous',
     },
   }).get('/info/uiconfig');
+}
+
+/**
+ * Returns UI features and their availability
+ * @returns {Promise}
+ */
+export function getFeatures() {
+  return generateIdmApi().get('info/features?_queryFilter=true');
 }
 
 /**

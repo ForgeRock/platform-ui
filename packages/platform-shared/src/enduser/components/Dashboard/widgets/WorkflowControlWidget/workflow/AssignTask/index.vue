@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -100,7 +100,7 @@ export default {
 
     return {
       taskDetailsList: [],
-      selected: userStore.userName,
+      selected: userStore.authenticationId,
       uniqueId: null,
     };
   },
@@ -124,7 +124,7 @@ export default {
   },
   methods: {
     assignTask() {
-      this.$emit('assignTask', { id: this.taskDefinition.task._id, assignee: this.userId });
+      this.$emit('assignTask', { id: this.taskDefinition.task._id, assignee: this.selected });
     },
     generateDisplayDetails(formProperties, variables) {
       return formProperties.reduce((acc, property) => acc.concat({ _id: property._id, name: property.name, value: variables[property._id] }), []);
