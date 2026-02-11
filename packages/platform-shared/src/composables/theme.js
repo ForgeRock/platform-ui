@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { cloneDeep } from 'lodash';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import uuid from 'uuid/v4';
 import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
 import {
@@ -14,10 +14,10 @@ import {
   getThemes,
   saveThemes,
 } from '@forgerock/platform-shared/src/api/ThemeApi';
-import i18n from '@forgerock/platform-shared/src/i18n';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
 import { getLocalizedString } from '@forgerock/platform-shared/src/utils/translations';
+import i18n from '@/i18n';
 import {
   addDefaultsToTheme,
   decodeThemes,
@@ -306,10 +306,6 @@ export default function useTheme() {
       throw error;
     }
   }
-
-  watch(themeStore.theme, (newTheme) => {
-    theme.value = newTheme;
-  });
 
   return {
     addTreeTheme,
