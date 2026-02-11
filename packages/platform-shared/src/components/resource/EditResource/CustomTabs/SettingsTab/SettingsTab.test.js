@@ -201,4 +201,19 @@ describe('SettingsTab', () => {
     // Second property has no setting set - should show "Set up"
     expect(buttons[1].text()).toBe('Set up');
   });
+
+  it('shows correct button text for empty array', () => {
+    const wrapperWithButtons = mountComponent({
+      temporalConstraints: {
+        disabled: false,
+        value: [],
+        title: 'Temporal Constraints',
+        propName: 'temporalConstraints',
+      },
+    });
+    const buttons = wrapperWithButtons.findAllComponents(BButton);
+
+    // First property has setting set - should show "Edit"
+    expect(buttons[0].text()).toBe('Set up');
+  });
 });
