@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,7 @@ import { flushPromises } from '@vue/test-utils';
 import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
 import { setupTestPinia } from '../utils/testPiniaHelpers';
 import useTheme from './theme';
+import i18n from '@/i18n';
 
 describe('theme composable', () => {
   ThemeApi.getThemes = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
@@ -57,6 +58,41 @@ describe('theme composable', () => {
       await loadTheme('testRealm', 'nonExistentTheme');
       await flushPromises();
       expect(theme.value._id).toBe('defaultTheme');
+    });
+
+    it('should show the correct locale', async () => {
+      const favicon = {
+        en: 'https://example.com/enduser/fav/en/favicon.ico',
+        de: 'https://example.com/enduser/fav/de/favicon.ico',
+        fr: 'https://example.com/enduser/fav/fr/favicon.ico',
+        it: 'https://example.com/enduser/fav/it/favicon.ico',
+      };
+      ThemeApi.getThemes.mockReturnValue(Promise.resolve({
+        data: {
+          result: [
+            {
+              _id: 'testTheme',
+              primaryColor: '#dddddd',
+              favicon,
+            }],
+        },
+      }));
+      setupTestStore();
+
+      // Set up locales
+      i18n.global.locale = 'it';
+      i18n.global.fallbackLocale = 'fr';
+
+      const { loadTheme, localizedFavicon } = useTheme();
+      await loadTheme('testRealm', 'testTheme');
+
+      // Test primary locale
+      expect(localizedFavicon.value).toBe(favicon.it);
+
+      // Test fallback locale
+      i18n.global.locale = null;
+      await flushPromises();
+      expect(localizedFavicon.value).toBe(favicon.fr);
     });
   });
 
