@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import { getNotFoundBackNavigation } from '@forgerock/platform-shared/src/utils/notFoundNavigation';
 import {
   BButton,
   BContainer,
@@ -47,26 +48,32 @@ export default {
   },
   setup() {
     const { setBreadcrumb } = useBreadcrumb();
-    return { setBreadcrumb };
+    const defaultRoute = {
+      name: 'Dashboard',
+      params: {},
+      path: '/dashboard',
+    };
+    return { setBreadcrumb, defaultRoute };
   },
   data() {
     return {
       ghostMessage: '404',
-      previousRoute: {
-        name: this.$t('routeNames.Dashboard'),
-        params: {},
-        path: '/dashboard',
-      },
+      previousRoute: this.defaultRoute,
     };
   },
-  beforeRouteEnter(to, from, next) {
+  beforeRouteEnter(_to, from, next) {
     next((vm) => {
-      vm.previousRoute = from.name ? from : {
-        name: vm.$t('routeNames.Dashboard'),
-        params: {},
-        path: '/dashboard',
-      };
-      vm.setBreadcrumb(vm.previousRoute.path, vm.$t(`routeNames.${vm.previousRoute.name}`));
+      const backNav = getNotFoundBackNavigation(window.history.state);
+      if (backNav) {
+        vm.previousRoute = {
+          name: backNav.backLabel,
+          path: backNav.backPath,
+        };
+        vm.setBreadcrumb(backNav.backPath, vm.$t(`routeNames.${backNav.backLabel}`));
+      } else {
+        vm.previousRoute = from.name ? from : vm.defaultRoute;
+        vm.setBreadcrumb(vm.previousRoute.path, vm.$t(`routeNames.${vm.previousRoute.name}`));
+      }
     });
   },
 };

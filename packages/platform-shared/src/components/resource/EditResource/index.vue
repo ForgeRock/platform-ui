@@ -420,6 +420,7 @@ export default {
             this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
           }
         }).catch((error) => {
+          this.$emit('loading-error', error);
           this.showErrorMessage(error, this.$t('errors.errorRetrievingResource'));
         });
         this.loadLinkedApplicationsData();
@@ -471,10 +472,10 @@ export default {
           if (app.content) {
             Object.keys(app.content).forEach((key) => {
               if (app.schema[key]
-                  && app.schema[key].nativeName
-                  && app.content[key]
-                  && (app.content[key].length !== 0)
-                  && app.schema[key].type) {
+                && app.schema[key].nativeName
+                && app.content[key]
+                && (app.content[key].length !== 0)
+                && app.schema[key].type) {
                 const prop = {};
                 prop.name = app.schema[key].nativeName;
                 prop.value = app.content[key];
@@ -636,7 +637,7 @@ export default {
           // Try and do some primary detection for a secondary title
           const attribute = createPriv.attribute.toLowerCase();
           if ((attribute === 'title' || attribute === 'email' || attribute === 'type' || attribute === 'username' || attribute === 'mail' || attribute === 'description')
-              && this.displaySecondaryTitleField.length === 0) {
+            && this.displaySecondaryTitleField.length === 0) {
             this.displaySecondaryTitleField = createPriv.attribute;
           }
 
