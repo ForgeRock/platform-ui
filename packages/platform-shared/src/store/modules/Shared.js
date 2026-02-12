@@ -52,7 +52,6 @@ const defaultState = {
   mtlsEnabled: false,
   fraasMtlsFqdn: null,
   pingFederateUrl: null,
-  nodeVersioningEnabled: false,
   promoteAppsViaApi: false,
   riskAdminEnabled: false,
   riskDashboardEnabled: false,
@@ -235,10 +234,6 @@ const mutations = {
       state.templateBuilderEnabled = true;
     } else if (env.VUE_APP_ENABLE_WORKFORCE?.toString() === 'true') {
       state.workforceEnabled = true;
-    }
-
-    if (env.VUE_APP_NODE_VERSIONING_ENABLED?.toString() === 'true') {
-      state.nodeVersioningEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_WSFED?.toString() === 'true') {

@@ -82,9 +82,9 @@ export function getTree(treeId, forExport, realm, fields) {
   *
   * @returns {Promise}
   */
-export function putNode(nodeId, nodeType, nodeDetails, nodeVersion = null) {
-  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}/${nodeId}` : `/nodes/${nodeType}/${nodeId}`;
-  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).put(
+export function putNode(nodeId, nodeType, nodeDetails, nodeVersion) {
+  const path = `/nodes/${nodeType}/${nodeVersion}/${nodeId}`;
+  return generateAmApi(getTreeApiConfig(undefined, true)).put(
     path,
     nodeDetails,
     { withCredentials: true },
@@ -99,9 +99,9 @@ export function putNode(nodeId, nodeType, nodeDetails, nodeVersion = null) {
   *
   * @returns {Promise}
   */
-export function deleteNode(nodeId, nodeType, nodeVersion = null) {
-  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}/${nodeId}` : `/nodes/${nodeType}/${nodeId}`;
-  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).delete(
+export function deleteNode(nodeId, nodeType, nodeVersion) {
+  const path = `/nodes/${nodeType}/${nodeVersion}/${nodeId}`;
+  return generateAmApi(getTreeApiConfig(undefined, true)).delete(
     path,
     { withCredentials: true },
   );
@@ -192,12 +192,11 @@ export function actionNodeListLatestTypes() {
 
 /**
   * Returns a list of available node types
-  * @param {Boolean} useApiV3 whether to use the tree api resource 3.0
   *
   * @returns {Promise}
   */
-export function actionNodeGetAllTypes(useApiV3 = false) {
-  return generateAmApi(getTreeApiConfig(undefined, useApiV3)).post(
+export function actionNodeGetAllTypes() {
+  return generateAmApi(getTreeApiConfig(undefined, true)).post(
     '/nodes?_action=getAllTypes',
     {},
     { withCredentials: true },
@@ -211,9 +210,9 @@ export function actionNodeGetAllTypes(useApiV3 = false) {
   *
   * @returns {Promise}
   */
-export function actionNodeSchema(nodeType, template = {}, nodeVersion = null) {
-  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=schema` : `/nodes/${nodeType}?_action=schema`;
-  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+export function actionNodeSchema(nodeType, template = {}, nodeVersion) {
+  const path = `/nodes/${nodeType}/${nodeVersion}?_action=schema`;
+  return generateAmApi(getTreeApiConfig(undefined, true)).post(
     path,
     template,
     { withCredentials: true },
@@ -227,9 +226,9 @@ export function actionNodeSchema(nodeType, template = {}, nodeVersion = null) {
   *
   * @returns {Promise}
   */
-export function actionNodeTemplate(nodeType, nodeVersion = null) {
-  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=template` : `/nodes/${nodeType}?_action=template`;
-  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+export function actionNodeTemplate(nodeType, nodeVersion) {
+  const path = `/nodes/${nodeType}/${nodeVersion}?_action=template`;
+  return generateAmApi(getTreeApiConfig(undefined, true)).post(
     path,
     {},
     { withCredentials: true },
@@ -244,9 +243,9 @@ export function actionNodeTemplate(nodeType, nodeVersion = null) {
   *
   * @returns {Promise}
   */
-export function getNodeTemplate(nodeType, nodeId, nodeVersion = null) {
-  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}/${nodeId}` : `/nodes/${nodeType}/${nodeId}`;
-  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).get(
+export function getNodeTemplate(nodeType, nodeId, nodeVersion) {
+  const path = `/nodes/${nodeType}/${nodeVersion}/${nodeId}`;
+  return generateAmApi(getTreeApiConfig(undefined, true)).get(
     path,
     { withCredentials: true },
   );
@@ -260,9 +259,9 @@ export function getNodeTemplate(nodeType, nodeId, nodeVersion = null) {
   *
   * @returns {Promise}
   */
-export function actionNodeListOutcomes(nodeType, nodeTypeConfig = {}, nodeVersion = null) {
-  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=listOutcomes` : `/nodes/${nodeType}?_action=listOutcomes`;
-  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+export function actionNodeListOutcomes(nodeType, nodeTypeConfig = {}, nodeVersion) {
+  const path = `/nodes/${nodeType}/${nodeVersion}?_action=listOutcomes`;
+  return generateAmApi(getTreeApiConfig(undefined, true)).post(
     path,
     nodeTypeConfig,
     { withCredentials: true },
@@ -307,9 +306,9 @@ export function actionNodeGetUpgradedConfig(nodeType, currentVersion, targetVers
   *
   * @returns {Promise}
   */
-export function actionNodeGetType(nodeType, nodeVersion = null) {
-  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=getType` : `/nodes/${nodeType}?_action=getType`;
-  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+export function actionNodeGetType(nodeType, nodeVersion) {
+  const path = `/nodes/${nodeType}/${nodeVersion}?_action=getType`;
+  return generateAmApi(getTreeApiConfig(undefined, true)).post(
     path,
     { withCredentials: true },
   );
@@ -322,10 +321,9 @@ export function actionNodeGetType(nodeType, nodeVersion = null) {
   *
   * @returns {Promise}
   */
-export function actionNodeConfigProviderScript(nodeType, nodeVersion = null) {
-  const path = nodeVersion ? `/nodes/${nodeType}/${nodeVersion}?_action=configProviderScript`
-    : `/nodes/${nodeType}?_action=configProviderScript`;
-  return generateAmApi(getTreeApiConfig(undefined, nodeVersion !== null)).post(
+export function actionNodeConfigProviderScript(nodeType, nodeVersion) {
+  const path = `/nodes/${nodeType}/${nodeVersion}?_action=configProviderScript`;
+  return generateAmApi(getTreeApiConfig(undefined, true)).post(
     path, {}, { withCredentials: true },
   );
 }
