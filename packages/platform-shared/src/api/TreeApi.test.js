@@ -106,13 +106,13 @@ describe('Tree API', () => {
 
   it('putNode should call api with correct parameters', async () => {
     const nodeConfig = { config: 'test' };
-    TreeApi.putNode('123', 'mockNodeType', nodeConfig);
-    expect(mockPut).toHaveBeenLastCalledWith('/nodes/mockNodeType/123', nodeConfig, withCreds);
+    TreeApi.putNode('123', 'mockNodeType', nodeConfig, '1.0');
+    expect(mockPut).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0/123', nodeConfig, withCreds);
   });
 
   it('deleteNode should call api with correct parameters', async () => {
-    TreeApi.deleteNode('123', 'mockNodeType');
-    expect(mockDelete).toHaveBeenLastCalledWith('/nodes/mockNodeType/123', withCreds);
+    TreeApi.deleteNode('123', 'mockNodeType', '1.0');
+    expect(mockDelete).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0/123', withCreds);
   });
 
   it('putTree should call api with correct parameters', async () => {
@@ -169,7 +169,7 @@ describe('Tree API', () => {
   it('actionNodeGetAllTypes should call api with correct parameters', async () => {
     const expectedConfig = {
       path: 'realms/root/realms/alpha/realm-config/authentication/authenticationtrees',
-      apiVersion: 'protocol=2.1,resource=1.0',
+      apiVersion: 'protocol=2.1,resource=3.0',
     };
     TreeApi.actionNodeGetAllTypes();
     expect(mockGenerate).toHaveBeenLastCalledWith(expectedConfig);
@@ -177,36 +177,35 @@ describe('Tree API', () => {
   });
 
   it('actionNodeSchema should call api with correct parameters', async () => {
-    TreeApi.actionNodeSchema('mockNodeType');
-    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType?_action=schema', {}, withCreds);
+    TreeApi.actionNodeSchema('mockNodeType', {}, '1.0');
+    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0?_action=schema', {}, withCreds);
   });
 
   it('actionNodeTemplate should call api with correct parameters', async () => {
-    TreeApi.actionNodeTemplate('mockNodeType');
-    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType?_action=template', {}, withCreds);
+    TreeApi.actionNodeTemplate('mockNodeType', '1.0');
+    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0?_action=template', {}, withCreds);
   });
 
   it('getNodeTemplate should call api with correct parameters', async () => {
-    TreeApi.getNodeTemplate('mockNodeType', '123');
-    expect(mockGet).toHaveBeenLastCalledWith('/nodes/mockNodeType/123', withCreds);
+    TreeApi.getNodeTemplate('mockNodeType', '123', '1.0');
+    expect(mockGet).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0/123', withCreds);
   });
 
   it('actionNodeListOutcomes should call api with correct parameters', async () => {
-    TreeApi.actionNodeListOutcomes('mockNodeType');
-    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType?_action=listOutcomes', {}, withCreds);
+    TreeApi.actionNodeListOutcomes('mockNodeType', {}, '1.0');
+    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0?_action=listOutcomes', {}, withCreds);
 
     const mockNodeConfig = { config: 'test' };
-    TreeApi.actionNodeListOutcomes('mockNodeType', mockNodeConfig);
-    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType?_action=listOutcomes', mockNodeConfig, withCreds);
+    TreeApi.actionNodeListOutcomes('mockNodeType', mockNodeConfig, '1.0');
+    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0?_action=listOutcomes', mockNodeConfig, withCreds);
   });
 
-  it('calls endpoints with resource version 3 when useApiV3 is set to true', async () => {
+  it('calls endpoints with resource version 3', async () => {
     const expected = {
       path: 'realms/root/realms/alpha/realm-config/authentication/authenticationtrees',
       apiVersion: 'protocol=2.1,resource=3.0',
     };
 
-    // listLatestTypes is only available in api v3
     TreeApi.actionNodeListLatestTypes();
     expect(mockGenerate).toHaveBeenLastCalledWith(expected);
 
@@ -215,7 +214,7 @@ describe('Tree API', () => {
   });
 
   it('actionNodeConfigProviderScript should call api with correct parameters', async () => {
-    TreeApi.actionNodeConfigProviderScript('mockNodeType');
-    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType?_action=configProviderScript', {}, withCreds);
+    TreeApi.actionNodeConfigProviderScript('mockNodeType', '1.0');
+    expect(mockPost).toHaveBeenLastCalledWith('/nodes/mockNodeType/1.0?_action=configProviderScript', {}, withCreds);
   });
 });
