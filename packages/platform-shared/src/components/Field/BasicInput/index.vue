@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -88,6 +88,7 @@ of the MIT license. See the LICENSE file for details. -->
           <button
             :id="`copyButton-${value}`"
             :data-testid="`btn-copy-${testid}`"
+            :aria-label="$t('common.copy')"
             class="btn btn-outline-secondary"
             name="copyButton"
             @click.prevent="copyValueToClipboard(value)">
