@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,7 @@ import * as AccessibilityUtils from '@forgerock/platform-shared/src/utils/access
 import Notifications from '@kyvg/vue3-notification';
 import BasicInput from './index';
 import i18n from '@/i18n';
-import { findByTestId } from '../../../utils/testHelpers';
+import { findByTestId, runA11yTest } from '../../../utils/testHelpers';
 
 mockValidation(['required']);
 
@@ -567,6 +567,44 @@ describe('BasicInput', () => {
       await flushPromises();
       expect(wrapper.vm.inputValue).toBe('test');
       expect(wrapper.vm.errorMessages).toEqual([]);
+    });
+  });
+
+  describe('@a11y', () => {
+    it('should have no violations when rendered with default props', async () => {
+      const wrapper = setup({ label: 'Default Input' });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('should have no violations when rendered as text input', async () => {
+      const wrapper = setup({ type: 'text', label: 'Text Input' });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('should have no violations when rendered as password input', async () => {
+      const wrapper = setup({ type: 'password', label: 'Password Input' });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('should have no violations when rendered as number input', async () => {
+      const wrapper = setup({ type: 'number', label: 'Number Input' });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('should have no violations when rendered with copy button', async () => {
+      const wrapper = setup({ copy: true, label: 'Input with Copy Button' });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('should have no violations when rendered with floating label', async () => {
+      const wrapper = setup({ floatingLabel: true, label: 'Input with Floating Label' });
+      await flushPromises();
+      await runA11yTest(wrapper);
     });
   });
 });
