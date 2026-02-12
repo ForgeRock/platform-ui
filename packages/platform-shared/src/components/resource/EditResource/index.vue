@@ -214,8 +214,7 @@ of the MIT license. See the LICENSE file for details. -->
       :resource-type="resourceType"
       :resource-name="resourceName"
       :resource-id="encodedResourceId"
-      @refresh-data="refreshData"
-      :resource-data="formFields" />
+      @refresh-data="refreshData" />
     <FrClearResourceSessions
       :show="showClearSessionsModal"
       :resource-name="clearSessionsName"
