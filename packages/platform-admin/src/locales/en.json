@@ -3970,6 +3970,10 @@
         "basicButtonText": "Use basic options",
         "editCorrelation": "Edit Correlation"
       },
+      "deleteModal": {
+        "title": "Correlation Query",
+        "content": "Are you sure you want to delete this correlation query?"
+      },
       "cardHeaderTitle": "Account Correlation",
       "correlationQuery": "Correlation Query",
       "subTitle": "Choose the attribute(s) to use to match {sourceObjectTypeName} in {sourceApplication} to {targetObjectTypeName} in {targetApplication}.",
