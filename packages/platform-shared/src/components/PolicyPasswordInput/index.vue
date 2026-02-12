@@ -196,7 +196,11 @@ export default {
           if (res.data.failedPolicyRequirements) {
             const failedPolicies = [];
             res.data.failedPolicyRequirements.forEach((policy) => {
-              if (policy.property === this.passwordProperty) failedPolicies.push(policy.policyRequirements[0]);
+              // Ignore history from failed policies. History will be evaluated
+              // on submit
+              if (policy.property === this.passwordProperty && policy.policyRequirements[0]?.policyRequirement !== 'HISTORY') {
+                failedPolicies.push(policy.policyRequirements[0]);
+              }
             });
             /**
              * triggered whenever validation occurs

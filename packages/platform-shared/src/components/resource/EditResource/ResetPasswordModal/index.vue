@@ -19,7 +19,8 @@ of the MIT license. See the LICENSE file for details. -->
       :resource-name="resourceName"
       :failures-on-submit="failures"
       validation="required"
-      :payload-data="resourceData" />
+      :validation-endpoint="`policy/managed/${resourceName}/${resourceId}/?_action=validateProperty`"
+      :payload-data="{ password }" />
     <template #modal-footer="{ ok, cancel }">
       <BButton
         variant="link"
@@ -84,13 +85,6 @@ export default {
     resourceId: {
       type: String,
       required: true,
-    },
-    /**
-     * Supplement data of resource to be used in the modal
-     */
-    resourceData: {
-      type: Object,
-      default: null,
     },
   },
   data() {
