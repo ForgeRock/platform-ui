@@ -200,19 +200,19 @@ of the MIT license. See the LICENSE file for details. -->
       <!--
         JOURNEY PAGES STYLES
       -->
-      .card {
-        border-radius: {{ theme.journeyCardBorderRadius || 4 }}px !important;
-      }
-
-      .card .login-header {
+      <template v-if="mock">.fr-theme-preview.login</template> .card .login-header {
         border-radius: {{ theme.journeyCardBorderRadius || 4 }}px {{ theme.journeyCardBorderRadius || 4 }}px 0 0 !important;
       }
 
       <template v-if="mock">.fr-theme-preview.login</template> .card,
-      .journey-card {
+      <template v-if="mock">.fr-theme-preview.login</template> .journey-card {
         background-color: {{ theme.journeyCardBackgroundColor || '#ffffff' }} !important;
         color: {{ theme.journeyCardTextColor || '#5e6d82' }};
         box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.journeyCardShadow !== undefined ? theme.journeyCardShadow : 3 }}px;
+      }
+
+      <template v-if="mock">.fr-theme-preview.login</template> .card {
+        border-radius: {{ theme.journeyCardBorderRadius || 4 }}px !important;
       }
 
       <!--
