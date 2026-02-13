@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrIcon name="add" />
           </BButton>
         </div>
-        <template v-if="isValidJSONString(listValues) && isValidField()">
+        <template v-if="isValidJSONString(listValues) && isValidField() && !forceShowEditor">
           <div
             v-for="(obj, index) in listValues"
             :key="obj.listUniqueIndex"
@@ -139,13 +139,13 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
         <div v-else>
           <FrInlineJsonEditor
-            v-if="showEditor"
+            v-if="showEditor || forceShowEditor"
             v-on="$listeners"
             language="json"
             :line-count="lineCount"
             :read-only="false"
             :value="advancedValue"
-            @update-field="emitInput($event)" />
+            @update-field="advancedValue = $event; emitInput($event)" />
         </div>
       </div>
     </div>
@@ -198,6 +198,10 @@ export default {
       default: '4',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    forceShowEditor: {
       type: Boolean,
       default: false,
     },
@@ -282,15 +286,10 @@ export default {
       objectProperties: {},
       showEditor: false,
       isSmallScreen: false,
+      advancedValue: {},
     };
   },
   computed: {
-    advancedValue() {
-      return this.listValues.map((val) => {
-        delete val.listUniqueIndex;
-        return val;
-      });
-    },
     requiredAndEmpty() {
       const filteredListValues = this.checkEmptyValues(this.listValues);
       return (this.validation?.required || this.validation?.includes('required')) && !filteredListValues.length;
@@ -310,26 +309,23 @@ export default {
       },
       deep: true,
     },
+    forceShowEditor: {
+      handler(newVal) {
+        if (newVal) {
+          const listValues = cloneDeep(this.listValues);
+          this.advancedValue = listValues.map((val) => {
+            delete val.listUniqueIndex;
+            return val;
+          });
+        } else {
+          this.initialiseListValues(this.advancedValue);
+        }
+      },
+      deep: true,
+    },
   },
   mounted() {
-    let listValues = cloneDeep(this.value);
-    const hasValue = this.value?.length || (this.value && Object.keys(this.value).length);
-    this.objectProperties = cloneDeep(this.properties);
-    this.noListValuesOnMount = !listValues?.length;
-
-    if (hasValue) {
-      if (!this.multiValued || !Array.isArray(listValues)) {
-        listValues = [listValues];
-      }
-      listValues.forEach((val) => {
-        val.listUniqueIndex = this.getUniqueIndex();
-      });
-      this.listValues = listValues;
-      this.showEditor = !!listValues.length;
-      this.validateField();
-    } else if (this.showEmptyList) {
-      this.addObjectToList(-1);
-    }
+    this.initialiseListValues(this.value);
 
     // Check screen size and add resize listener
     this.checkScreenSize();
@@ -339,6 +335,29 @@ export default {
     window.removeEventListener('resize', this.checkScreenSize);
   },
   methods: {
+    /**
+     * populate list values on first load or when switching between basic and advanced editors
+     */
+    initialiseListValues(values) {
+      let listValues = cloneDeep(values);
+      const hasValue = this.value?.length || (this.value && Object.keys(this.value).length);
+      this.objectProperties = cloneDeep(this.properties);
+      this.noListValuesOnMount = !listValues?.length;
+
+      if (hasValue) {
+        if (!this.multiValued || !Array.isArray(listValues)) {
+          listValues = [listValues];
+        }
+        listValues.forEach((val) => {
+          val.listUniqueIndex = this.getUniqueIndex();
+        });
+        this.listValues = listValues;
+        this.showEditor = !!listValues.length;
+        this.validateField();
+      } else if (this.showEmptyList) {
+        this.addObjectToList(-1);
+      }
+    },
     /**
      * populate list of objects with new member.  Set defaults for boolean and number properties
      */

@@ -269,4 +269,47 @@ describe('ListOfObjects', () => {
     const labelNotOptional = findByText(wrapper, 'label', 'My label');
     expect(labelNotOptional.exists()).toBe(true);
   });
+
+  it('force shows the json editor', async () => {
+    const wrapper = mount(ListOfObjects, {
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $store: {
+            state: {
+              SharedStore: {
+                isFraas: false,
+              },
+            },
+          },
+        },
+      },
+      props: {
+        properties: {
+          test: {
+            label: 'test',
+            type: 'string',
+          },
+        },
+        label: 'test',
+        value: [{ name: 'test', value: 'test' }],
+      },
+    });
+
+    await flushPromises();
+
+    let jsonEditor = wrapper.find('.code-editor');
+    let rows = wrapper.find('.form-row');
+    expect(rows.exists()).toBeTruthy();
+    expect(jsonEditor.exists()).toBeFalsy();
+
+    await wrapper.setProps({
+      forceShowEditor: true,
+    });
+
+    jsonEditor = wrapper.find('.code-editor');
+    rows = wrapper.find('.form-row');
+    expect(rows.exists()).toBeFalsy();
+    expect(jsonEditor.exists()).toBeTruthy();
+  });
 });
