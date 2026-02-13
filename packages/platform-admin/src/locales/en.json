@@ -213,8 +213,10 @@
       "optionalConfigurationDesc": "These can be configured later under the access tab."
     },
     "addAgentSuccess": "Agent successfully created.",
+    "agentNameDescription": "Human readable name for your agent.",
     "agentSettings": "Agent Settings",
     "aiAgent": "AI Agent",
+    "customAttributes": "Custom Attributes",
     "deleted": "Agent successfully deleted",
     "errorAddingAgent": "Error adding agent",
     "errorDeleting": "Error deleting agent",
@@ -228,7 +230,12 @@
     "saveSuccess": "Agent successfully updated",
     "subtitle": "Create, manage, and monitor AI agents that support your customers and teams.",
     "title": "AI Agents",
-    "unnamedAgent": "Unnamed Agent"
+    "unnamedAgent": "Unnamed Agent",
+    "overviewTab": {
+      "errorLoadingSchema": "Error loading agent schema",
+      "basicEditor": "Use basic editor",
+      "advancedEditor": "Use advanced editor"
+    }
   },
   "authentication": {
     "errorRetrievingAuthServices": "There was an error retrieving authentication services.",
