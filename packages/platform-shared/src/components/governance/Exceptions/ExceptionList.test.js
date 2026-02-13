@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -56,7 +56,7 @@ describe('ExceptionList', () => {
     expect(columns[2].text()).toBe('Initial Violation');
     expect(columns[3].text()).toBe('Latest Violation');
     expect(columns[4].text()).toBe('Expiration');
-    expect(columns[5].text()).toBe('');
+    expect(columns[5].text()).toBe('Actions');
   });
 
   it('shows exceptions in a list with correct columns if is enduser', async () => {
@@ -71,7 +71,7 @@ describe('ExceptionList', () => {
     expect(columns[2].text()).toBe('Initial Violation');
     expect(columns[3].text()).toBe('Latest Violation');
     expect(columns[4].text()).toBe('Expiration');
-    expect(columns[5].classes()).toContain('w-100px');
+    expect(columns[5].classes()).toContain('w-120px');
   });
 
   it('emits handle-search when filter is changed', async () => {

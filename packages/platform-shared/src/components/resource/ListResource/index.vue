@@ -420,13 +420,9 @@ export default {
     pluralizeValue,
     appendActionColumn() {
       if (this.actionsEnabled && !this.columns.find((col) => col.key === 'actions')) {
-        /*
-          * Push a final column for the "actions" menu.
-          * Empty label is intended.
-          */
         this.columns.push({
           key: 'actions',
-          label: '',
+          label: this.$t('common.actions'),
           class: 'fr-no-resize sticky-right w-120px',
         });
       }

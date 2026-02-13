@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -169,9 +169,9 @@ const fields = [
   },
   {
     key: 'actions',
-    label: '',
+    label: i18n.global.t('common.actions'),
     sortable: false,
-    class: 'w-5 justify-content-end col-actions',
+    class: 'fr-no-resize w-5 justify-content-end sticky-right',
   },
 ];
 
