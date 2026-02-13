@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -179,7 +179,7 @@ describe('Users', () => {
     expect(columns[0].text()).toBe('Select');
     expect(columns[1].text()).toBe('Name');
     expect(columns[2].text()).toBe('Account');
-    expect(columns[3].text()).toBe('');
+    expect(columns[3].text()).toBe('Actions');
   });
 
   it('shows users in the table', async () => {

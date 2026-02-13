@@ -230,8 +230,8 @@ const columns = [
   },
   {
     key: 'actions',
-    label: '',
-    class: 'w-70px fr-no-resize sticky-right',
+    label: i18n.global.t('common.actions'),
+    class: 'w-120px fr-no-resize sticky-right',
   },
 ];
 

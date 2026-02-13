@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -179,8 +179,8 @@ export default {
         },
         {
           key: 'edit',
-          class: 'fr-no-resize sticky-right w-100px',
-          label: '',
+          class: 'fr-no-resize sticky-right w-120px',
+          label: this.$t('common.actions'),
         },
       ],
       isLast: true,

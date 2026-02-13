@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -110,7 +110,7 @@ const fields = [
   {
     key: 'actions',
     class: 'w-120px fr-no-resize sticky-right',
-    label: '',
+    label: i18n.global.t('common.actions'),
   },
 ];
 const items = ref([]);

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -128,8 +128,8 @@ const grantTabItems = [
       },
       {
         key: 'actions',
-        label: '',
-        class: 'fr-no-resize sticky-right w-100px',
+        label: i18n.global.t('common.actions'),
+        class: 'fr-no-resize sticky-right w-120px',
       },
     ],
   },
@@ -154,8 +154,8 @@ const grantTabItems = [
       },
       {
         key: 'actions',
-        label: '',
-        class: 'p-3 fr-no-resize sticky-right w-100px',
+        label: i18n.global.t('common.actions'),
+        class: 'fr-no-resize sticky-right w-120px',
         sortable: false,
       },
     ],
@@ -179,8 +179,8 @@ const grantTabItems = [
       },
       {
         key: 'actions',
-        label: '',
-        class: 'p-3 fr-no-resize sticky-right w-100px',
+        label: i18n.global.t('common.actions'),
+        class: 'fr-no-resize sticky-right w-120px',
         sortable: false,
       },
     ],
