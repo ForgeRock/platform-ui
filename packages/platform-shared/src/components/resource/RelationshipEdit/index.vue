@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -75,24 +75,30 @@ of the MIT license. See the LICENSE file for details. -->
         <div
           v-if="option"
           class="multiselect__tag">
-          <div>
-            <span tabindex="0">
-              <span
-                v-for="(displayField, idx) in option.displayFields"
-                :key="`displayField_${displayField}_${idx}`"
-                v-show="idx !== 0"
-                class="pr-1 font-weight-bold">
-                {{ option.resource[displayField] }}
-              </span>
-            </span>
-            <span
-              class="multiselect__tag-icon"
-              tabindex="0"
-              :aria-label="$t('common.remove')"
-              @click.prevent="remove(option)"
-              @keydown.enter="remove(option)" />
-          </div>
-          {{ option.resource[option.displayFields[0]] }}
+          <BMedia class="py-1">
+            <BMediaBody>
+              <div :class="{'mb-1': option.displayFields?.length > 1}">
+                <span tabindex="0">
+                  <span
+                    v-for="(displayField, idx) in option.displayFields"
+                    :key="`displayField_${displayField}_${idx}`"
+                    v-show="idx !== 0"
+                    class="pr-1 text-dark">
+                    {{ option.resource[displayField] }}
+                  </span>
+                </span>
+                <span
+                  class="multiselect__tag-icon"
+                  tabindex="0"
+                  :aria-label="$t('common.remove')"
+                  @click.prevent="remove(option)"
+                  @keydown.enter="remove(option)" />
+              </div>
+              <small class="text-muted">
+                {{ option.resource[option.displayFields[0]] }}
+              </small>
+            </BMediaBody>
+          </BMedia>
         </div>
       </template>
       <template #option="{ option }">
@@ -100,18 +106,17 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="option"
           class="media">
           <div class="media-body">
-            <div class="text-bold">
-              {{ option.resource[option.displayFields[0]] }}
-            </div>
-            <div>
+            <div :class="{'mb-1': option.displayFields?.length > 1}">
               <span
-                v-for="(displayField, idx) in option.displayFields"
+                v-for="(displayField, idx) in option.displayFields.slice(1)"
                 :key="`displayField_${displayField}_${idx}`"
-                v-show="idx !== 0"
-                class="pr-1 text-muted">
+                class="pr-1 text-dark">
                 {{ option.resource[displayField] }}
               </span>
             </div>
+            <small class="text-muted">
+              {{ option.resource[option.displayFields[0]] }}
+            </small>
           </div>
         </div>
       </template>
@@ -141,7 +146,7 @@ import {
   has,
   map,
 } from 'lodash';
-import { BFormGroup } from 'bootstrap-vue';
+import { BFormGroup, BMedia, BMediaBody } from 'bootstrap-vue';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getInternalResourceList } from '@forgerock/platform-shared/src/api/InternalResourceApi';
 import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
@@ -159,6 +164,8 @@ export default {
     VueMultiSelect,
     FrMultiselectBase,
     BFormGroup,
+    BMedia,
+    BMediaBody,
     FrField,
     FrTimeConstraint: TimeConstraint,
   },
