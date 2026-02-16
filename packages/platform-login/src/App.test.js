@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -150,6 +150,17 @@ describe('App.vue', () => {
         expect(wrapper.vm.theme.primaryColor).toBe('#324054');
         expect(wrapper.vm.theme.secondaryColor).toBe('#69788b');
         expect(wrapper.vm.theme.pageTitle).toBe('#23282e');
+      });
+      it('sets themeLoading to false after attempting to set up theme', async () => {
+        const wrapper = shallowMountComponent();
+        // setting themeLoading to true to test that it gets set to false after setupTheme is called
+        wrapper.vm.themeLoading = true;
+        await flushPromises();
+
+        await wrapper.vm.setupTheme('/testRealm', null, null);
+        await flushPromises();
+
+        expect(wrapper.vm.themeLoading).toBe(false);
       });
     });
   });

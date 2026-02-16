@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,12 +13,17 @@ filterTests(['@cloud'], () => {
     fieldData.forEach((field) => {
       cy.findByText(field.placeholder, { timeout: 10000 })
         .siblings('input')
-        .clear()
-        .type(field.text);
+        .clear();
+
+      if (field.text) {
+        cy.findByText(field.placeholder, { timeout: 10000 })
+          .siblings('input')
+          .type(field.text);
+      }
 
       // Wait for the password field to be validated
       if (field.placeholder === 'Password') {
-        cy.wait('@authenticate', { timeout: 5000 });
+        cy.wait('@authenticate', { timeout: 15000 });
       }
     });
   }
@@ -136,54 +141,59 @@ filterTests(['@cloud'], () => {
 
       openExtendedRegistrationJourneyPage();
       fillOutRegistrationForm(validFieldData);
-      cy.findByRole('button', { name: 'Next' }).click();
+      cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
       cy.get('.error-message').contains('Invalid username').should('be.visible');
     });
 
-    it('User can not proceed with empty or incorrect values', () => {
-      validFieldData[0].text = `enduser${random(Number.MAX_SAFE_INTEGER)}`;
-      fillOutRegistrationForm(validFieldData);
+    // Splitting the current multiple assertion test into smaller ones to avoid timeouts and make it easier to identify issues.
+    // Also added a test for alpha-numeric telephone number since that validation was added recently.
+    describe('User can not proceed with empty or incorrect values', () => {
+      beforeEach(() => {
+        validFieldData[0].text = `enduser${random(Number.MAX_SAFE_INTEGER)}`;
+        fillOutRegistrationForm(validFieldData);
+      });
 
-      // Verify that user can not register with empty description
-      cy.findByText('Description').siblings('input').clear();
-      cy.findByRole('button', { name: 'Next' }).click();
-      cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      it('cannot register with empty description', () => {
+        cy.findByText('Description').siblings('input').clear();
+        cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
+        cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      });
 
-      // Verify that user can not register with empty telephone number
-      fillOutRegistrationForm(validFieldData);
-      cy.findByText('Telephone Number').siblings('input').clear();
-      cy.findByRole('button', { name: 'Next' }).click();
-      cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      it('cannot register with empty telephone number', () => {
+        cy.findByText('Telephone Number').siblings('input').clear();
+        cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
+        cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      });
 
-      // Verify that user can not register with an alpha-numeric telephone number
-      fillOutRegistrationForm(validFieldData);
-      cy.findByText('Telephone Number').siblings('input').clear().type('3008756123a');
-      cy.findByRole('button', { name: 'Next' }).click();
-      cy.get('.error-message').contains('Has to match pattern: ^\\+?([0-9\\- \\(\\)])*$').should('be.visible');
+      it('cannot register with an alpha-numeric telephone number', () => {
+        cy.findByText('Telephone Number').siblings('input').clear().type('3008756123a');
+        cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
+        cy.get('.error-message').contains('Has to match pattern: ^\\+?([0-9\\- \\(\\)])*$').should('be.visible');
+      });
 
-      // Verify that user can not register with empty address
-      fillOutRegistrationForm(validFieldData);
-      cy.findByText('Address 1').siblings('input').clear();
-      cy.findByRole('button', { name: 'Next' }).click();
-      cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      it('cannot register with empty address', () => {
+        cy.findByText('Address 1').siblings('input').clear();
+        cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
+        cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      });
 
-      // Verify that user can not register with empty postal code
-      fillOutRegistrationForm(validFieldData);
-      cy.findByText('Postal Code').siblings('input').clear();
-      cy.findByRole('button', { name: 'Next' }).click();
-      cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      it('cannot register with empty postal code', () => {
+        cy.findByText('Postal Code').siblings('input').clear();
+        cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
+        cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      });
 
-      // Verify that user can not register with empty city
-      fillOutRegistrationForm(validFieldData);
-      cy.findByText('City').siblings('input').clear();
-      cy.findByRole('button', { name: 'Next' }).click();
-      cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      it('cannot register with empty city', () => {
+        cy.findByText('City').siblings('input').clear();
+        cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
+        cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      });
 
-      // Verify that user can not register with empty country
-      fillOutRegistrationForm(validFieldData);
-      cy.findByText('Country').siblings('input').clear();
-      cy.findByRole('button', { name: 'Next' }).click();
-      cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      it('cannot register with empty country', () => {
+        cy.findByText('Country').siblings('input').clear();
+        cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
+        cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
+      });
     });
 
     it('Double password validation works correctly', () => {

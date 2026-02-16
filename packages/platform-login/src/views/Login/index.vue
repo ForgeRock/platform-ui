@@ -640,6 +640,7 @@ export default {
   ],
   data() {
     return {
+      autoFocusCleanup: null,
       componentList: [],
       description: '',
       errorMessage: '',
@@ -772,35 +773,77 @@ export default {
         });
       }
     },
-    isFirstStep() {
-      this.handleFocus();
-    },
-    journeyFocusElement() {
-      this.handleFocus();
+    themeLoading(newValue, oldValue) {
+      // Theme has finished loading, set focus
+      if (oldValue && !newValue) {
+        this.handleFocus();
+      }
     },
   },
   methods: {
-    /*
-    * Set timeout to focus on a tag according to the selected theme of the current Step (journey node)
-    * Time out is set to focus after the set-theme was called and established to avoid slow rendering or vue reloads
+    /**
+     * Focus on a tag according to the selected theme of the current Step (journey node).
+     * The order of focus is determined by the following conditions:
+     * - 1. Focus on the main content area - ref `callbackMain` or `main`.
+     *   - a. If `journeyFocusElement` is set to `content`
+     *   - b. If `journeyFocusElement` is set to `headerFirstStep` and it's the first step
+     *   - c. If `journeyFocusFirstFocusableItemEnabled` is true and it's the first step
+     * - 2. Otherwise, focus on the header of the app if it exists; if not, focus on the container element.
+     *
+     * **Note:** `journeyFocusFirstFocusableItemEnabled` was an old property that could be enabled in imported journeys, if enabled it will have the default accessibility behavior of content focused
+     *
+     * This logic ensures that keyboard users and screen readers are directed to the most relevant part of the page.
+     * Additionally, it adds an 'auto-focused' class to the focused element for styling purposes and removes it when the element loses focus.
+     * The setTimeout with a 50ms delay is used to re-apply focus in case other scripts or Vue rendering interfere with the initial focus, ensuring a better user experience for assistive technologies.
     */
     handleFocus() {
-      setTimeout(() => {
-        // refresh accessibility between steps by focusing on the body before the next focus to avoid the application from keeping the same activeElement
-        this.$refs.container.focus();
-        if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
-          /*
-          * This should focus on the card inside either of the main tags
-          * which  after tab would focus on the first focusable item (a description link or form input)
-          *
-          * journeyFocusFirstFocusableItemEnabled was an old property that could be enabled in imported journeys, if enabled it will have the default accessibility behavior of content focused
-          */
-          this.$refs.callbackMain ? this.$refs.callbackMain.focus() : this.$refs.main.focus();
-        } else {
-          // This will always focus on header if it exists or components container
-          this.$refs.callbackAppHeaderContainer ? this.$refs.callbackAppHeaderContainer.focus() : this.$refs.container.focus();
+      const AUTO_FOCUSED_CLASS = 'auto-focused';
+      let focusElement = this.$refs.container;
+
+      if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
+        focusElement = this.$refs.callbackMain || this.$refs.main;
+      } else {
+        focusElement = this.$refs.callbackAppHeaderContainer || focusElement;
+      }
+
+      if (typeof focusElement?.focus === 'function') {
+        // Cleanup any existing event listeners from memory leaks
+        if (this.autoFocusCleanup?.element && this.autoFocusCleanup?.handler) {
+          this.autoFocusCleanup.element.removeEventListener('blur', this.autoFocusCleanup.handler);
         }
-      }, 200);
+
+        // Event handler when focused element loses focus
+        const removeAutoFocusedClass = () => {
+          focusElement.classList.remove(AUTO_FOCUSED_CLASS);
+          focusElement.removeEventListener('blur', removeAutoFocusedClass);
+          // Clear stored cleanup reference if it matches current element
+          if (this.autoFocusCleanup?.element === focusElement && this.autoFocusCleanup?.handler === removeAutoFocusedClass) {
+            this.autoFocusCleanup = null;
+          }
+        };
+
+        if (!focusElement.classList.contains(AUTO_FOCUSED_CLASS)) {
+          focusElement.classList.add(AUTO_FOCUSED_CLASS);
+          focusElement.addEventListener('blur', removeAutoFocusedClass);
+        }
+
+        // Store cleanup reference for future use
+        this.autoFocusCleanup = {
+          element: focusElement,
+          handler: removeAutoFocusedClass,
+        };
+
+        // Apply focus to ensure keyboard users and screen readers notice the content area
+        focusElement.focus();
+
+        // Re-focus after 50ms in case other code attempts to move focus during routing/rendering.
+        // This is necessary because theme application and Vue rendering can trigger competing focus events.
+        setTimeout(() => {
+          if (document.activeElement !== focusElement) {
+            focusElement.focus();
+          }
+        }, 50);
+      }
     },
     /**
      * Redirects user to forbidden if non-root realm & journey pages have been inactivated for hosted pages
@@ -1431,7 +1474,6 @@ export default {
           this.loading = false;
         }).finally(() => {
           this.$emit('set-theme', this.realm, this.treeId, this.nodeThemeId);
-          this.handleFocus();
         });
     },
     /**
@@ -1659,5 +1701,10 @@ export default {
   position: absolute !important;
   height: 1px; width: 1px;
   overflow: hidden;
+}
+
+// remove browsers enforced focus-visible from the auto focused element
+.auto-focused:focus-visible {
+  outline: none;
 }
 </style>

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
             :logo-enabled="theme.logoEnabled"
             :logo-height="theme.logoHeight"
             :logo-path="localizedLogo"
-            :theme-loading="theme === null"
+            :theme-loading="themeLoading"
             @component-ready="themeTransitionHandler"
             @set-theme="setupTheme" />
         </Transition>
@@ -115,6 +115,7 @@ export default {
       localizedJustifiedContent: '',
       localizedLogo: '',
       localizedLogoAltText: '',
+      themeLoading: false,
     };
   },
   created() {
@@ -143,6 +144,7 @@ export default {
      */
     async setupTheme(realm, treeId, nodeThemeId) {
       try {
+        this.themeLoading = true;
         let cleanRealm = realm === 'root' ? '/' : realm;
         if (cleanRealm.length > 1 && cleanRealm.charAt(0) === '/') {
           cleanRealm = cleanRealm.substring(1);
@@ -183,6 +185,7 @@ export default {
         this.localizedLogo = this.localizedLogo || 'images/ping-logo-square-color.svg';
       } finally {
         this.hideAppOnTransition = false;
+        this.themeLoading = false;
       }
     },
     themeTransitionHandler(val) {
