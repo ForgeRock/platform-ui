@@ -239,9 +239,11 @@ const startApp = async () => {
 const addAppAuth = (realm) => {
   const AM_URL = store.state.SharedStore.amBaseURL;
   let postLogoutUrlClaim;
-  let clickSession;
-  let keypressSession;
-  let pageFocus;
+  let clickSessionHandler;
+  let keypressSessionHandler;
+  let pageFocusHandler;
+  let sessionCheck;
+  let routerGuard;
   let realmPath = '';
 
   if (realm !== '/' && realm !== 'root') {
@@ -285,7 +287,16 @@ const addAppAuth = (realm) => {
       userStore.userSearchAttribute = sub;
       // if there is a post_logout_url claim set postLogoutUrlClaim here for use in window.logout()
       postLogoutUrlClaim = claims.post_logout_url;
-      const sessionCheck = new SessionCheck({
+
+      if (sessionCheck) {
+        sessionCheck.destroy();
+      }
+
+      if (routerGuard) {
+        routerGuard();
+      }
+
+      sessionCheck = new SessionCheck({
         clientId: commonSettings.clientId,
         opUrl: commonSettings.authorizationEndpoint,
         subject: claims.sub,
@@ -319,22 +330,35 @@ const addAppAuth = (realm) => {
           store.commit('SharedStore/setMaxSessionExpirationTime', data.maxSessionExpirationTime);
         });
       };
+
+      if (clickSessionHandler) {
+        document.removeEventListener('click', clickSessionHandler);
+      }
+      if (keypressSessionHandler) {
+        document.removeEventListener('keypress', keypressSessionHandler);
+      }
+      if (pageFocusHandler) {
+        document.removeEventListener('focusin', pageFocusHandler);
+      }
+
+      // Define event handlers
+      clickSessionHandler = debounce(triggerSession, 100);
+      keypressSessionHandler = debounce(triggerSession, 100);
+      pageFocusHandler = debounce(triggerSession, 100);
+
       // check the validity of the session immediately
       triggerSession();
 
       // check with every route change thru router
-      router.beforeEach((to, from, next) => {
+      routerGuard = router.beforeEach((to, from, next) => {
         triggerSession();
         next();
       });
 
       // check with every captured event
-      document.removeEventListener('click', clickSession);
-      clickSession = document.addEventListener('click', debounce(triggerSession, 100));
-      document.removeEventListener('keypress', keypressSession);
-      keypressSession = document.addEventListener('keypress', debounce(triggerSession, 100));
-      document.removeEventListener('focusin', pageFocus);
-      pageFocus = document.addEventListener('focusin', debounce(triggerSession, 100));
+      document.addEventListener('click', clickSessionHandler);
+      document.addEventListener('keypress', keypressSessionHandler);
+      document.addEventListener('focusin', pageFocusHandler);
 
       startApp();
     },
