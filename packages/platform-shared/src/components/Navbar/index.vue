@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
           <RouterLink
             :aria-label="$t('common.backTo', {object: returnRouteText})"
             active-class=""
-            class="fr-back-link overflow-hidden pl-4 pl-lg-0 mt-0"
+            class="fr-back-link overflow-hidden text-decoration-none pl-4 pl-lg-2"
             v-show="hasBreadcrumb"
             :to="!checkChangesOnNavigate ? returnRoute : ''">
             <div class="text-truncate h5 d-flex align-items-center font-weight-normal mb-0">
@@ -358,17 +358,7 @@ export default {
   height: $fr-navbar-height;
 
   .fr-back-link {
-    display: inline-block;
-    height: 100%;
-
-    &:hover {
-      text-decoration: none;
-    }
-
-    .h4 {
-      margin-bottom: 0;
-      font-weight: 400;
-      font-size: 1rem;
+    .h5 {
       color: $gray-800;
     }
   }

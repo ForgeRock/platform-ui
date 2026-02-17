@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -559,7 +559,7 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .fr-main-navbar<template v-if="mock">-mock</template> .material-icons-outlined,
-      #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-back-link h4,
+      #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-back-link .h5,
       #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-dropdown-button-content div,
       #app .fr-main-navbar<template v-if="mock">-mock</template> .dropdown-toggle::after {
         color: {{ theme.topBarTextColor || '#324054' }} !important;
