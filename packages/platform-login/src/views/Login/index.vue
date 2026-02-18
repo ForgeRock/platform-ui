@@ -131,6 +131,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :is-required-aria="component.isRequired"
                           :position-button="journeySignInButtonPosition"
                           :aria-label="component?.callbackSpecificProps?.name || 'callback'"
+                          :button-disabled="nextButtonDisabled || !isFormValid"
                           v-bind="{...component.callbackSpecificProps}"
                           v-on="{
                             'next-step': (event, preventClear) => {
