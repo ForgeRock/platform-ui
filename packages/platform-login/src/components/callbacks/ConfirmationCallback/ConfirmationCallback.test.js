@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -91,6 +91,7 @@ describe('ConfirmationCallback', () => {
         expect(cancelButton.classes()).toContain('btn-primary');
       });
     });
+
     describe('when only positive answer', () => {
       const testCases = [
         ['first option as buton', 'primary'],
@@ -146,6 +147,46 @@ describe('ConfirmationCallback', () => {
         const prevButton = findByText(wrapper, '.btn', 'Previous');
         expect(nextButton.exists()).toBe(true);
         expect(prevButton.exists()).toBe(true);
+      });
+    });
+
+    describe('button state based on input props', () => {
+      it('button state should not contain disabled class when buttonDisabled is false', async () => {
+        const propsData = {
+          callback: {
+            getOptions: () => ['common.next', 'common.previous'],
+          },
+          variant: 'primary',
+          positionButton: 'justify-content-end',
+          buttonDisabled: false,
+          stage: { showOnlyPositiveAnswer: false },
+        };
+        const wrapper = setup(propsData);
+        await wrapper.vm.$nextTick();
+
+        const nextButton = findByText(wrapper, '.btn', 'Next');
+        const prevButton = findByText(wrapper, '.btn', 'Previous');
+        expect(nextButton.attributes().disabled).toBeUndefined();
+        expect(prevButton.attributes().disabled).toBeUndefined();
+      });
+
+      it('button state should contain disabled class when buttonDisabled is true', async () => {
+        const propsData = {
+          callback: {
+            getOptions: () => ['common.next', 'common.previous'],
+          },
+          variant: 'primary',
+          positionButton: 'justify-content-end',
+          buttonDisabled: true,
+          stage: { showOnlyPositiveAnswer: false },
+        };
+        const wrapper = setup(propsData);
+        await wrapper.vm.$nextTick();
+
+        const nextButton = findByText(wrapper, '.btn', 'Next');
+        const prevButton = findByText(wrapper, '.btn', 'Previous');
+        expect(nextButton.attributes().disabled).toBe('');
+        expect(prevButton.attributes().disabled).toBe('');
       });
     });
   });

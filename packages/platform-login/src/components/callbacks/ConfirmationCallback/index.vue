@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div :class="[{ 'btn-block mt-3': variant === 'link' },'d-flex',positionButton]">
       <BButton
         class="mt-1"
+        :disabled="buttonDisabled"
         :variant="variant"
         @click="setValue(0)"
         :aria-label="firstOption"
@@ -27,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
       :data-testid="`option-${option.toLowerCase().replace(/\s/g, '')}`">
       <BButton
         :class="setButtonClasses(index)"
+        :disabled="buttonDisabled"
         :variant="variant"
         @click="setValue(index)"
         :aria-label="option"
@@ -68,6 +70,10 @@ export default {
     variant: {
       type: String,
       default: 'primary',
+    },
+    buttonDisabled: {
+      type: Boolean,
+      default: false,
     },
   },
   mounted() {
