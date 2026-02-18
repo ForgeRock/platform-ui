@@ -10,6 +10,7 @@ import { DEPLOYMENT_TYPES } from '@forgerock/platform-shared/src/constants/deplo
 
 const defaultState = {
   accountsEnabled: false,
+  aiDevEnabled: false,
   amBaseURL: '',
   analyticsURL: '',
   aiAgentsEnabled: false,
@@ -38,12 +39,12 @@ const defaultState = {
   governanceEnabledV4: false,
   governanceRoleMiningEnabled: false,
   hasAmUrl: false,
+  helixEnvironmentId: '',
+  helixEnvironmentUrl: '',
   idmBaseURL: '',
   idmOnly: false,
   igaApiUrl: null,
   igaOrchestrationApiUrl: null,
-  helixEnvironmentId: '',
-  helixEnvironmentUrl: '',
   journeyAIAgentVersion: null,
   journeyAIEnabled: false,
   managedObjectMinimumUIFilterLength: {},
@@ -115,10 +116,14 @@ const mutations = {
         }
       }
 
-      if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true') {
+      if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true' || env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
         state.journeyAIAgentVersion = env.VUE_APP_HELIX_JOURNEY_AGENT_VERSION;
         state.helixEnvironmentUrl = getFQDN(env.VUE_APP_HELIX_ENVIRONMENT_URL);
         state.helixEnvironmentId = env.VUE_APP_HELIX_ENVIRONMENT_ID;
+
+        if (env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
+          state.aiDevEnabled = true;
+        }
       }
 
       if (env.VUE_APP_ENABLE_GOVERNANCE?.toString() === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV?.toString() === 'true') {
@@ -208,7 +213,7 @@ const mutations = {
         state.mtlsEnabled = true;
       }
 
-      if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true') {
+      if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true' || env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
         state.journeyAIEnabled = true;
       }
 
