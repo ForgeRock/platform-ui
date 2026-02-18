@@ -68,6 +68,7 @@
     "hostedPagesSettings": "Hosted Pages Settings",
     "Interfaces": "Interfaces",
     "Jobs": "Jobs",
+    "JourneyAIBuildNew": "Build Journey with AI",
     "Journeys": "Journeys",
     "JourneyMetrics": "Journey Metrics",
     "JourneyTree": "Journey Tree",
@@ -189,6 +190,7 @@
       "aiAssistantDescription": "The Ping AI assistant is designed to help you work more efficiently. Use it to troubleshoot issues, or ask questions in natural language to quickly find solutions for your use case.<br/><br/>Enter a prompt below to get started!",
       "aiDisclaimer": "Generative AI is experimental and may contain errors.",
       "enterPrompt": "Enter a prompt here",
+      "errorGettingResponse": "Error getting response from AI assistant",
       "helixChatAi": "Helix Chat AI",
       "innerTreeSuggestion": "What does this Inner Journey do?",
       "nodeContextMultipleName": "{nodeCount} Nodes",
@@ -643,6 +645,108 @@
     }
   },
   "journey": {
+    "addJourney": "Add Journey",
+    "addJourneyModal": {
+      "archetype": {
+        "contentDescription": "Choose an archetype and pick the authentication methods you want to use",
+        "contentTitle": "What type of Journey do you want to create?",
+        "registration": {
+          "title": "Registration",
+          "description": "Enables new users to sign up and create an account. Collects essential profile information and credentials to establish a digital identity."
+        },
+        "mfa": {
+          "title": "Multi-Factor Authentication (MFA)",
+          "description": "Adds a critical layer of security by requiring users to verify their identity with a second factor during login. Protects against unauthorized access.",
+          "authMethodsTitle": "Which authentication methods do you want to enable?"
+        },
+        "mfaEnrollment": {
+          "title": "Multi-Factor Authentication (MFA) Enrollment",
+          "description": "Guides users to set up additional security factors (e.g., authenticator app, security key) for their account. Essential for strengthening login security.",
+          "authMethodsTitle": "Which authentication methods do you want to enable?"
+        },
+        "passwordReset": {
+          "title": "Password Reset / Account Recovery",
+          "description": "Allows users to securely regain access if they've forgotten their password, typically via email, SMS, or security questions. Helps reduce helpdesk calls.",
+          "authMethodsTitle": "How do you want to identify the user?"
+        },
+        "passkeysWebAuthn": {
+          "title": "Passkeys (WebAuthn)",
+          "description": "Phishing-resistant, passwordless login using device biometrics (fingerprint/face) or hardware keys. High security & excellent UX. Requires user enrollment."
+        },
+        "tabTitle": "Archetype"
+      },
+      "authMethods": {
+        "authenticatorAppPush": {
+          "description": "Users approve/deny login via a push notification on their registered smartphone (e.g., ForgeRock Authenticator). Secure and very user-friendly MFA.",
+          "title": "Authenticator App (Push)"
+        },
+        "contentDescription": "Pick the authentication methods you want to use in your Journey.",
+        "contentTitle": "How do you want to authenticate your users?",
+        "deviceIdProfile": {
+          "description": "Uses device characteristics (fingerprint, location) for risk assessment or trusted device login. Enhances security and can reduce friction.",
+          "title": "Device Identification & Profiling"
+        },
+        "kba": {
+          "description": "Users answer pre-set security questions. Traditionally for recovery; generally less secure than modern MFA methods.",
+          "title": "Knowledge-Based Authentication (KBA)"
+        },
+        "magicLink": {
+          "description": "Passwordless login. Users receive a unique, temporary sign-in link via email. Convenient for occasional users; security depends on email integrity.",
+          "title": "Magic Link"
+        },
+        "otpAppTotp": {
+          "description": "Users enter a short, time-sensitive code from an authenticator app (e.g., Google/Microsoft Authenticator). A strong and common MFA factor.",
+          "title": "One-Time Password (OTP) - App (TOTP)"
+        },
+        "otpEmail": {
+          "description": "Users receive a one-time code via email. Convenient for MFA, but can be less secure than app-based OTPs.",
+          "title": "One-Time Password (OTP) - Email"
+        },
+        "otpSms": {
+          "description": "Users receive a one-time code via SMS. Convenient for MFA, but can be less secure than app-based OTPs.",
+          "title": "One-Time Password (OTP) - SMS"
+        },
+        "passkeysWebAuthn": {
+          "description": "Phishing-resistant, passwordless login using device biometrics (fingerprint/face) or hardware keys. High security & excellent UX. Requires user enrollment.",
+          "title": "Passkeys (WebAuthn)"
+        },
+        "registration": {
+          "description": "Registration.",
+          "title": "Registration"
+        },
+        "socialLogin": {
+          "description": "Allows users to sign in with existing accounts from social providers (e.g., Google, Facebook). Reduces registration friction; consider data privacy.",
+          "title": "Social Login"
+        },
+        "ssoFederation": {
+          "description": "Enables users to log in once (here or with an external IdP) and access multiple connected applications. Streamlines access across services.",
+          "title": "SSO (Federation)"
+        },
+        "tabTitle": "Authentication Methods",
+        "usernamePassword": {
+          "description": "Traditional login. Users enter a username and a secret password. Widely understood but susceptible to phishing and password theft.",
+          "title": "Username and Password"
+        }
+      },
+      "errorGeneratingJourney": "Error generating Journey",
+      "errorStartingJourneyBuildSession": "Error starting new build session.",
+      "extraDetails": {
+        "contentDescription": "Provide any additional context or requirements that will help us create the best Journey for you.",
+        "contentTitle": "Preferences and Constraints",
+        "designPreferencesFieldDescription": "e.g. Prioritise passkey login; keep the flow to a single screen",
+        "designPreferencesFieldLabel": "Any flow design preferences?",
+        "tabTitle": "Extra Details",
+        "useCaseContextFieldDescription": "e.g. Internal employees logging into a company dashboard, or customers accessing an ecommerce app",
+        "useCaseContextFieldLabel": "What kind of users and use case is this Journey for?"
+      },
+      "generate": "Generate",
+      "importDescription": "Import a Journey and related data.",
+      "journeyDesigner": "Journey Designer",
+      "journeyDesignerDescription": "Generate a Journey using AI Assistant.",
+      "startFromScratch": "Start from scratch",
+      "startFromScratchDescription": "Create a new Journey from a blank canvas.",
+      "title": "Journey Designer"
+    },
     "allJourneysCategory": "All Journeys",
     "inputFieldCategoryLabel": "Tags (optional)",
     "title": "Journeys",

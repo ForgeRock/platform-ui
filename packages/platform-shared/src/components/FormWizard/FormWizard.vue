@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,7 +14,15 @@ of the MIT license. See the LICENSE file for details. -->
             <h1
               class="h4 font-weight-bold m-0 pl-3 max-lines max-lines-1"
               data-testid="wizard-title">
-              {{ title }}
+              <FrIcon
+                v-if="icon"
+                :icon-class="`color-dark${iconColor} md-24 mr-2`"
+                :name="icon">
+                {{ title }}
+              </FrIcon>
+              <template v-else>
+                {{ title }}
+              </template>
             </h1>
           </slot>
         </template>
@@ -62,7 +70,9 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ tab.title }}
               </div>
             </template>
-            <slot :name="tab.title" />
+            <slot
+              :name="tab.title"
+              :change-step="changeStep" />
           </BTab>
           <BCardFooter
             v-if="!tabs[currentStep].hideFooter"
@@ -87,7 +97,9 @@ of the MIT license. See the LICENSE file for details. -->
                 <FrButtonWithSpinner
                   v-if="isFinalStep || forceShowSaveButton"
                   data-testid="saveButton"
+                  :button-text="saveButtonText || $t('common.save')"
                   :show-spinner="isSaving"
+                  :spinner-text="saveButtonText || $t('common.saving')"
                   :disabled="!valid || !validForm || isSaving"
                   @click="$emit('save')" />
                 <BButton
@@ -120,11 +132,12 @@ import {
   BTabs,
 } from 'bootstrap-vue';
 import { Form as VeeForm } from 'vee-validate';
-import FrNavbar from '@forgerock/platform-shared/src/components/Navbar/';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
 
 // Composables
@@ -147,6 +160,14 @@ const props = defineProps({
   breadcrumbPath: {
     type: String,
     default: '',
+  },
+  icon: {
+    type: String,
+    default: '',
+  },
+  iconColor: {
+    type: String,
+    default: 'blue',
   },
   isLoading: {
     type: Boolean,
@@ -175,6 +196,10 @@ const props = defineProps({
   progressDots: {
     type: Boolean,
     default: false,
+  },
+  saveButtonText: {
+    type: String,
+    default: '',
   },
   /*
    * By default when editting an item, the formWizard will show the Next button.
