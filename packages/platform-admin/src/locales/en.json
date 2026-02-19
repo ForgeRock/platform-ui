@@ -69,6 +69,7 @@
     "Interfaces": "Interfaces",
     "Jobs": "Jobs",
     "JourneyAIBuildNew": "Build Journey with AI",
+    "JourneyAIBuildPreview": "AI Journey Preview",
     "Journeys": "Journeys",
     "JourneyMetrics": "Journey Metrics",
     "JourneyTree": "Journey Tree",
@@ -189,6 +190,32 @@
       "aiAssistantWelcome": "POWERED BY",
       "aiAssistantDescription": "The Ping AI assistant is designed to help you work more efficiently. Use it to troubleshoot issues, or ask questions in natural language to quickly find solutions for your use case.<br/><br/>Enter a prompt below to get started!",
       "aiDisclaimer": "Generative AI is experimental and may contain errors.",
+      "build": {
+        "accept": "Accept",
+        "confirmLeaveModal": {
+          "body": "Are you sure you want to leave this page? Your current journey will not be saved.",
+          "title": "Leave without saving?"
+        },
+        "editRequirements": "Edit requirements",
+        "errorBadRequest": "Bad request - please check your input and try again.",
+        "errorFetchingNodes": "Error fetching node types",
+        "errorForbidden": "You don't have permission to use the AI assistant. Please contact your administrator.",
+        "errorParsingResponse": "Failed to parse response as JSON",
+        "errorRetrievingGeneratedJourney": "Error retrieving generated journey",
+        "errorUnauthorized": "Unauthorized - your session may have expired. Please refresh and try again.",
+        "errorMissingInput": "Agent is missing required input",
+        "errorNoResponse": "No response received from journey generation",
+        "generatingJourney": "Generating Journey...",
+        "iterateToast": "Did this draft Journey not meet your requirements?",
+        "journeyDesigner": "Journey Designer",
+        "saveModal": {
+          "descriptionFieldDescription": "Provide consumers of this Journey with a description of its purpose and functionality.",
+          "nameDescription": "Human friendly name for this user Journey.",
+          "title": "Save Journey",
+          "saveError": "There was an error saving the journey"
+        },
+        "untitledJourney": "Generated Journey"
+      },
       "enterPrompt": "Enter a prompt here",
       "errorGettingResponse": "Error getting response from AI assistant",
       "helixChatAi": "Helix Chat AI",
@@ -651,12 +678,12 @@
         "contentDescription": "Choose an archetype and pick the authentication methods you want to use",
         "contentTitle": "What type of Journey do you want to create?",
         "registration": {
-          "title": "Registration",
-          "description": "Enables new users to sign up and create an account. Collects essential profile information and credentials to establish a digital identity."
+          "title": "Registration / Onboarding",
+          "description": "Enables users to quickly and easily create an account. Captures mandatory information to identify the user and set up an authentication method for their next interaction.  Reduces friction, minimizes abandonment rates."
         },
         "mfa": {
-          "title": "Multi-Factor Authentication (MFA)",
-          "description": "Adds a critical layer of security by requiring users to verify their identity with a second factor during login. Protects against unauthorized access.",
+          "title": "Strong Authentication (MFA)",
+          "description": "Securely identifies a user with a range of strong authentication factors, with a user choice of preferred authentication method. A simple but secure login experience.",
           "authMethodsTitle": "Which authentication methods do you want to enable?"
         },
         "mfaEnrollment": {
@@ -711,7 +738,7 @@
           "title": "Passkeys (WebAuthn)"
         },
         "registration": {
-          "description": "Registration.",
+          "description": "Enables users to quickly and easily create an account. Captures mandatory information to identify the user and set up an authentication method for their next interaction.  Reduces friction, minimizes abandonment rates.",
           "title": "Registration"
         },
         "socialLogin": {
@@ -733,7 +760,7 @@
       "extraDetails": {
         "contentDescription": "Provide any additional context or requirements that will help us create the best Journey for you.",
         "contentTitle": "Preferences and Constraints",
-        "designPreferencesFieldDescription": "e.g. Prioritise passkey login; keep the flow to a single screen",
+        "designPreferencesFieldDescription": "e.g. Prioritise passkey login; keep the number of steps to a minimum.",
         "designPreferencesFieldLabel": "Any flow design preferences?",
         "tabTitle": "Extra Details",
         "useCaseContextFieldDescription": "e.g. Internal employees logging into a company dashboard, or customers accessing an ecommerce app",

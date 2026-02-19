@@ -235,7 +235,7 @@ export function actionNodeSchema(nodeType, template = {}, nodeVersion) {
 /**
   * Returns a node types base data template
   * @param {String} nodeType Id specifiying a specific node type
-* * @param {String} nodeVersion The version of the node
+  * @param {String} nodeVersion The version of the node
   *
   * @returns {Promise}
   */
