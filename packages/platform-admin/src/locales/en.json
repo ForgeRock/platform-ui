@@ -1543,8 +1543,13 @@
       "confirmPasswordDescription": "User must enter identical password in second field to validate.",
       "displayChoiceType": "Field Display Type",
       "displayChoiceTypeDescription": "Specifies the field format that the choice collector is displayed in.",
-      "displayChoiceRadio": "radio",
-      "displayChoiceSelect": "select",
+      "displayChoiceLayout": {
+        "displayChoiceRadio": "Vertical Radio",
+        "displayChoiceHorizontalRadio": "Horizontal Radio",
+        "displayChoiceHorizontalButton": "Horizontal Buttons",
+        "displayChoiceVerticalButton": "Vertical Buttons",
+        "displayChoiceSelect": "Select"
+      },
       "latestVersion": "Latest ({version})",
       "name": "Name",
       "none": "none",

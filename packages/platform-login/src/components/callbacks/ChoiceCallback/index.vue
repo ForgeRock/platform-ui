@@ -1,20 +1,41 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BFormGroup
-      v-if="displayType === 'radio'"
+      v-if="isRadioDisplay"
       class="text-left"
-      :label="getTranslation(selected.label)">
+      :label="selectedLabel">
       <BFormRadioGroup
         v-model="selected.value"
         :options="selected.options"
         :autofocus="autofocus"
+        :aria-label="selectedLabel"
         text-field="text"
-        stacked
+        :stacked="displayType === 'radio'"
         @input="callback.setInputValue($event)" />
+    </BFormGroup>
+    <BFormGroup
+      v-else-if="isButtonDisplay"
+      class="text-center"
+      :label="selectedLabel">
+      <div
+        role="group"
+        :aria-label="selectedLabel"
+        :class="setContainerClasses">
+        <BButton
+          v-for="(option) in selected.options"
+          :variant="variant"
+          :class="setButtonClasses"
+          :key="option.value"
+          :pressed="selected.value === option.value"
+          :aria-label="`${option.text} ${selected.value === option.value ? '(selected)' : ''}`"
+          @click="selected.value = option.value; callback.setInputValue(option.value)">
+          {{ option.text }}
+        </BButton>
+      </div>
     </BFormGroup>
     <FrField
       v-else
@@ -34,6 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BFormGroup,
   BFormRadioGroup,
+  BButton,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
@@ -42,6 +64,7 @@ export default {
   name: 'ChoiceCallback',
   components: {
     FrField,
+    BButton,
     BFormGroup,
     BFormRadioGroup,
   },
@@ -72,6 +95,14 @@ export default {
       type: Object,
       default: null,
     },
+    variant: {
+      type: String,
+      default: 'primary',
+    },
+    positionButton: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     const choices = this.getTranslation(this.callback.getChoices());
@@ -89,6 +120,53 @@ export default {
       },
     };
   },
+  computed: {
+    isButtonDisplay() {
+      return ['verticalButtons', 'horizontalButtons'].includes(this.displayType);
+    },
+    isRadioDisplay() {
+      return ['radio', 'horizontalRadio'].includes(this.displayType);
+    },
+    selectedLabel() {
+      return this.getTranslation(this.selected.label);
+    },
+    setContainerClasses() {
+      let classes = 'd-flex';
+      if (this.displayType === 'verticalButtons') {
+        classes += ' flex-column';
+        if (this.positionButton === 'justify-content-center') {
+          classes += ' align-items-center';
+        } else if (this.positionButton === 'justify-content-start') {
+          classes += ' align-items-start';
+        } else if (this.positionButton === 'justify-content-end') {
+          classes += ' align-items-end';
+        }
+      } else if (this.displayType === 'horizontalButtons') {
+        classes += ' flex-wrap btn-gap';
+        if (this.positionButton !== 'flex-column') {
+          classes += ` ${this.positionButton}`;
+        } else {
+          classes += ' flex-grow-1';
+        }
+      }
+      return classes;
+    },
+    setButtonClasses() {
+      let classes = 'mw-100';
+      if (this.variant === 'link') {
+        classes += ' btn-block';
+      }
+      if (this.displayType === 'verticalButtons') {
+        classes += ' mt-1';
+      }
+      if (this.displayType === 'horizontalButtons') {
+        if (this.positionButton === 'flex-column') {
+          classes += ' flex-grow-1';
+        }
+      }
+      return classes;
+    },
+  },
 };
 </script>
 
@@ -100,5 +178,9 @@ export default {
     white-space: nowrap;
     max-width: 100%;
   }
+}
+
+.btn-gap {
+  gap: 0.5rem;
 }
 </style>
