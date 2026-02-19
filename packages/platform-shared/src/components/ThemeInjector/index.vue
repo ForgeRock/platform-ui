@@ -388,7 +388,8 @@ of the MIT license. See the LICENSE file for details. -->
       #app .card .h4,
       #app .card h5,
       #app .card .h5,
-      #app .card .table.b-table > thead > tr {
+      #app .card .table.b-table > thead > tr,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-header h2 {
         color: {{ theme.accountCardHeaderColor || '#23282e' }};
       }
       #app .card .card-header {
@@ -581,6 +582,10 @@ of the MIT license. See the LICENSE file for details. -->
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .nav-tabs .nav-item .nav-link.active {
         border-bottom-color: {{ theme.primaryColor }};
         color: {{ theme.primaryColor }};
+      }
+
+      #app .accordion dd {
+        color: {{ theme.accountCardTextColor || '#5e6d82' }};
       }
 
       #app .btn-outline-primary {
