@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -236,11 +236,16 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
   const existsInComponentList = (type) => componentList.find((component) => component.type === `Fr${type}`);
   const componentPropsAndEvents = {
     ChoiceCallback: () => {
-      let stage;
-      if (currentStage?.ChoiceCallback) {
-        stage = currentStage.ChoiceCallback.shift();
-      }
-      return { callbackSpecificProps: { stage } };
+      const authStepIsShowingPushChallenge = currentStep.getCallbacksOfType(FrCallbackType.HiddenValueCallback)?.[0]?.getInputValue() === 'pushChallengeNumber';
+      const stage = currentStage?.ChoiceCallback?.shift();
+      const showButtonsAsLinks = stage?.showButtonsAsLinks;
+      const callbackSpecificProps = {
+        stage: stage || {},
+        variant: existsInComponentList(FrCallbackType.WebAuthnComponent) || authStepIsShowingPushChallenge || showButtonsAsLinks ? 'link' : 'primary',
+      };
+      return {
+        callbackSpecificProps,
+      };
     },
     ConfirmationCallback: () => {
       // when the current auth step is showing a push challenge, we want to display the button as a link with the PushChallengeNumber view.
