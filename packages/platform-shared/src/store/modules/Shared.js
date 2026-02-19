@@ -46,6 +46,7 @@ const defaultState = {
   igaApiUrl: null,
   igaOrchestrationApiUrl: null,
   journeyAIAgentVersion: null,
+  journeyAIBuildAgentVersion: null,
   journeyAIEnabled: false,
   managedObjectMinimumUIFilterLength: {},
   maxIdleExpirationTime: null,
@@ -123,6 +124,7 @@ const mutations = {
 
         if (env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
           state.aiDevEnabled = true;
+          state.journeyAIBuildAgentVersion = env.VUE_APP_HELIX_JOURNEY_BUILD_AGENT_VERSION;
         }
       }
 
