@@ -214,11 +214,12 @@ export function backendScriptsIdsContains(matcher, step) {
  * @description  Invokes WebAuthn registration or authentication
  * @param {Number} type enum number that represents WebAuthn type WebAuthnStepType.Authentication or WebAuthnStepType.Registration
  * @param {Object} step the current SDK step
+ * @param {Function} [optionsTransformer] augments the derived options with custom behaviour
  * @returns {Promise} SDK WebAuthn promise resolved when WebAuthn is completed
  */
-export function createWebAuthnCallbackPromise(type, step) {
+export function createWebAuthnCallbackPromise(type, step, optionsTransformer) {
   if (type === WebAuthnStepType.Authentication) {
-    return FRWebAuthn.authenticate(step);
+    return FRWebAuthn.authenticate(step, optionsTransformer);
   }
   return FRWebAuthn.register(step);
 }
@@ -318,9 +319,9 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
     },
     WebAuthnComponent: () => {
       const webAuthnType = FRWebAuthn.getWebAuthnStepType(currentStep);
-      const webAuthnPromise = createWebAuthnCallbackPromise(webAuthnType, currentStep);
+      const webAuthnPromiseFunction = (optionsTransformer) => createWebAuthnCallbackPromise(webAuthnType, currentStep, optionsTransformer);
       return {
-        callbackSpecificProps: { webAuthnType, webAuthnPromise },
+        callbackSpecificProps: { webAuthnType, webAuthnPromiseFunction },
       };
     },
   };
