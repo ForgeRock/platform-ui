@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     :aria-label="buttonText || $t('common.save')"
     :disabled="disabled"
     :variant="variant"
-    @click="$emit('click')"
+    @click="$emit('click', $event)"
     :data-testid="testid">
     <div v-if="!showSpinner">
       <FrIcon

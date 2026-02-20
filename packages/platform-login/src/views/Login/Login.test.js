@@ -278,6 +278,58 @@ describe('Login.vue', () => {
 
       expect(wrapper.vm.componentList.length).toBe(0);
     });
+
+    describe('extractWebAuthnComponents', () => {
+      it('extracts WebAuthn components into webAuthnComponentGroup and updates nextButtonVisible', () => {
+        const step = new FRStep({
+          callbacks: [
+            {
+              type: 'WebAuthnComponent',
+              output: [{ name: 'data', value: { mediation: 'conditional' } }],
+              input: [],
+            },
+            {
+              type: 'HiddenValueCallback',
+              output: [{ name: 'id', value: 'webAuthnOutcome' }],
+              input: [{ name: 'IDToken1', value: '' }],
+            },
+            {
+              type: 'NameCallback',
+              output: [{ name: 'prompt', value: 'Username' }],
+              input: [{ name: 'IDToken2', value: '' }],
+            },
+          ],
+        });
+
+        // Mock extractComponent to simulate component list being updated
+        wrapper.setData({ step, nextButtonVisible: true, loading: true });
+        wrapper.vm.buildTreeForm();
+
+        expect(wrapper.vm.webAuthnComponentGroup.length).toBe(2);
+        expect(wrapper.vm.componentList.length).toBe(1);
+        expect(wrapper.vm.componentList[0].type).toBe('FrField');
+        // Next button should be visible because of NameCallback
+        expect(wrapper.vm.nextButtonVisible).toBe(true);
+      });
+
+      it('sets nextButtonVisible to false if all components are extracted', () => {
+        const step = new FRStep({
+          callbacks: [
+            {
+              type: 'WebAuthnComponent',
+              output: [{ name: 'data', value: { mediation: 'conditional' } }],
+            },
+          ],
+        });
+
+        wrapper.setData({ step, nextButtonVisible: true, loading: true });
+        wrapper.vm.buildTreeForm();
+
+        expect(wrapper.vm.webAuthnComponentGroup.length).toBe(1);
+        expect(wrapper.vm.componentList.length).toBe(0);
+        expect(wrapper.vm.nextButtonVisible).toBe(false);
+      });
+    });
   });
 
   describe('handleIdpComponent', () => {

@@ -157,6 +157,23 @@ of the MIT license. See the LICENSE file for details. -->
                             v-model="rememberMeValue"
                             type="checkbox" />
                         </div>
+                        <Component
+                          v-for="(component) in webAuthnComponentGroup"
+                          class="callback-component"
+                          :callback="component.callback"
+                          :index="component.index"
+                          :is="component.type"
+                          :key="component.key"
+                          :step="step"
+                          :floating-label="journeyFloatingLabels"
+                          :is-required-aria="component.isRequired"
+                          :position-button="journeySignInButtonPosition"
+                          v-bind="{...component.callbackSpecificProps, hasDivider: componentList.length > 0}"
+                          v-on="{
+                            'next-step': (event, preventClear) => {
+                              nextStep(event, preventClear);
+                            },
+                            ...component.listeners}" />
                         <input
                           v-if="showScriptElms"
                           :aria-label="$t('login.displayElementsByScripts')"
@@ -359,6 +376,23 @@ of the MIT license. See the LICENSE file for details. -->
                         v-model="rememberMeValue"
                         type="checkbox" />
                     </div>
+                    <Component
+                      v-for="(component) in webAuthnComponentGroup"
+                      class="callback-component"
+                      :callback="component.callback"
+                      :index="component.index"
+                      :is="component.type"
+                      :key="component.key"
+                      :step="step"
+                      :floating-label="journeyFloatingLabels"
+                      :is-required-aria="component.isRequired"
+                      :position-button="journeySignInButtonPosition"
+                      v-bind="{...component.callbackSpecificProps, hasDivider: componentList.length > 0}"
+                      v-on="{
+                        'next-step': (event, preventClear) => {
+                          nextStep(event, preventClear);
+                        },
+                        ...component.listeners}" />
                     <input
                       v-if="showScriptElms"
                       :aria-label="$t('login.displayElementsByScripts')"
@@ -634,6 +668,7 @@ export default {
       screenReaderMessageType: '',
       screenReaderMessage: '',
       idpComponent: undefined,
+      webAuthnComponentGroup: [],
     };
   },
   setup() {
@@ -904,7 +939,15 @@ export default {
           this.FrCallbackType.WebAuthnComponent,
           this.FrCallbackType.SameDeviceVerificationCallback,
         ];
-        this.nextButtonVisible = hideNextButtonCallbacks.indexOf(type) > -1 ? false : this.nextButtonVisible;
+
+        const isConditionalWebAuthn = type === this.FrCallbackType.WebAuthnComponent
+            && callback.getOutputByName('data')?.mediation === 'conditional';
+
+        const isRecoveryCodeCallback = type === this.FrCallbackType.ConfirmationCallback
+            && callback.getOutputByName('name') === 'webAuthnRecoveryCode';
+
+        this.nextButtonVisible = !isConditionalWebAuthn && !isRecoveryCodeCallback
+            && hideNextButtonCallbacks.indexOf(type) > -1 ? false : this.nextButtonVisible;
 
         componentList.push(component);
       });
@@ -917,7 +960,14 @@ export default {
         this.idpComponent = undefined;
       }
 
+      this.webAuthnComponentGroup = this.extractWebAuthnComponents(componentList);
+
       this.componentList = componentList;
+
+      // In scenarios where we have extracted all components from the list, we no longer want to render a login button (e.g. Select IdP + WebAuthn Nodes)
+      if (componentList.length === 0) {
+        this.nextButtonVisible = false;
+      }
 
       this.setRememberedUsername();
     },
@@ -926,6 +976,33 @@ export default {
 
       this.idpComponent = componentList[idpComponentIndex]; // Note: this is to be rendered in its own fieldset
       componentList.splice(idpComponentIndex, 1); // Note: we first remove the idp from the component list so the rest of the login components can be rendered on their own
+    },
+    extractWebAuthnComponents(componentList) {
+      if (!Array.isArray(componentList)) return [];
+
+      const webAuthnComponentGroup = [];
+      const webAuthnComponentIndex = componentList.findIndex((component) => component.type === 'FrWebAuthnComponent');
+      if (webAuthnComponentIndex !== -1) {
+        webAuthnComponentGroup.push(this.extractComponent(componentList, webAuthnComponentIndex));
+        const webAuthnOutcomeComponentIndex = componentList.findIndex(
+          (component) => component.callback.getType() === this.FrCallbackType.HiddenValueCallback && component.callback.getOutputByName('id') === 'webAuthnOutcome',
+        );
+        if (webAuthnOutcomeComponentIndex !== -1) {
+          webAuthnComponentGroup.push(this.extractComponent(componentList, webAuthnOutcomeComponentIndex));
+        }
+        const recoveryCodeComponentIndex = componentList.findIndex(
+          (component) => component.callback.getType() === this.FrCallbackType.ConfirmationCallback && component.callback.getOutputByName('name') === 'webAuthnRecoveryCode',
+        );
+        if (recoveryCodeComponentIndex !== -1) {
+          webAuthnComponentGroup.push(this.extractComponent(componentList, recoveryCodeComponentIndex));
+        }
+      }
+      return webAuthnComponentGroup;
+    },
+    extractComponent(componentList, componentIndex) {
+      const component = componentList[componentIndex];
+      componentList.splice(componentIndex, 1);
+      return component;
     },
     // needs to happen before other query params are processed
     checkNewSession() {
