@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -67,12 +67,18 @@ export function previewMapping(payload, action = 'eval') {
  * @param {Object} payload Mapping details
  * @returns Promise with mapping details after save or failure results
  */
-export function putConfigMapping(mappingName, payload) {
-  return generateIdmApi().put(`config/mapping/${mappingName}?waitForCompletion=true`, payload);
+export function putConfigMapping(mappingName, payload, waitForCompletion = true) {
+  return generateIdmApi().put(`config/mapping/${mappingName}?waitForCompletion=${waitForCompletion}`, payload);
 }
 
-export function putSyncMappings(payload) {
-  return generateIdmApi().put('config/sync?waitForCompletion=true', payload);
+/**
+ * Updates sync mappings configuration.
+ * @param {Object} payload - The sync mappings configuration payload to be sent.
+ * @param {boolean} [waitForCompletion=true] - Whether to wait for the operation to complete before returning.
+ * @returns {Promise} A promise that resolves with the API response from the sync mappings update request.
+ */
+export function putSyncMappings(payload, waitForCompletion = true) {
+  return generateIdmApi().put(`config/sync?waitForCompletion=${waitForCompletion}`, payload);
 }
 
 /**
