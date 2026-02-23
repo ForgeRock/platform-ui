@@ -4211,6 +4211,7 @@
   },
   "promotions": {
     "downloadReport": "Download Report",
+    "dryRun": "Dry Run",
     "errorLoadingHistory": "Error loading promotion history",
     "errorLoadingReport": "Error loading promotion information",
     "errorLoadingUpdateReportDetails": "Error loading update details",
