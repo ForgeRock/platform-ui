@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -73,12 +73,11 @@ before(() => {
 });
 
 // Cleanup after running Feature file
+// eslint-disable-next-line consistent-return
 after(() => {
   // Login as admin
   if (Cypress.spec.relative.includes('google-captcha-login.feature')) {
-    cy.deleteTreesViaAPI(['QA-Google_Captcha_Login_Default.json', 'QA-Google_Captcha_Login_Theatre_mode.json']).then(() => {
-      deleteIDMUser(Cypress.env('endUserId'));
-    });
+    return cy.deleteTreesViaAPI(['QA-Google_Captcha_Login_Default.json', 'QA-Google_Captcha_Login_Theatre_mode.json']).then(() => deleteIDMUser(Cypress.env('endUserId'), false));
   }
 });
 

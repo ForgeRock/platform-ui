@@ -39,18 +39,19 @@ export function createIDMUser(userBody) {
   return createIDMResource('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user', body);
 }
 
-export function deleteIDMResource(resourceType = 'managed', resourceName, id, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+export function deleteIDMResource(resourceType = 'managed', resourceName, id, accessToken = Cypress.env('ACCESS_TOKEN').access_token, failOnStatusCode = true) {
   return cy.request({
     method: 'DELETE',
     url: `https://${Cypress.env('FQDN')}/openidm/${resourceType}/${resourceName}/${id}`,
     headers: {
       authorization: `Bearer ${accessToken}`,
     },
+    failOnStatusCode,
   });
 }
 
-export function deleteIDMUser(id) {
-  return deleteIDMResource('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user', id);
+export function deleteIDMUser(id, failOnStatusCode = true) {
+  return deleteIDMResource('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user', id, Cypress.env('ACCESS_TOKEN').access_token, failOnStatusCode);
 }
 
 export function addRoleMember(roleId, userId, resourceType = 'internal') {

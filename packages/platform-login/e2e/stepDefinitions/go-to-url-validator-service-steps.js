@@ -26,27 +26,26 @@ Given('user sets Validation Service with valid goto URL {string} on AM console v
   }
 });
 
+// eslint-disable-next-line consistent-return
 after(() => {
   if (Cypress.spec.relative.includes('go-to-url-validator-service.feature')) {
     if (!Cypress.env('ACCESS_TOKEN')) {
       cy.loginAsAdminCachedForCucumber();
     }
-    cy.log('Reset original Valid GoTo URLs via API').then(() => {
-      getValidTogoDestinations().then((response) => {
-        const originalData = response.body.validGotoDestinations.filter((UrlDestination) => !this.definedValidGotoDestinations.includes(UrlDestination));
-        response.body.validGotoDestinations = originalData;
-        putValidTogoDestinations(response.body).then((requestResponse) => {
-          expect(requestResponse.status).to.equal(200);
-        });
+    return cy.log('Reset original Valid GoTo URLs via API').then(() => getValidTogoDestinations().then((response) => {
+      const originalData = response.body.validGotoDestinations.filter((UrlDestination) => !this.definedValidGotoDestinations.includes(UrlDestination));
+      response.body.validGotoDestinations = originalData;
+      return putValidTogoDestinations(response.body).then((requestResponse) => {
+        expect(requestResponse.status).to.equal(200);
       });
-    });
-    cy.log(`Deleting created IDM Enduser ${Cypress.env('endUserName')} via API`).then(() => {
-      deleteIDMUser(Cypress.env('endUserId'));
-      Cypress.env('endUserName', '');
-      Cypress.env('endUserFirstName', '');
-      Cypress.env('endUserLastName', '');
-      Cypress.env('endUserPassword', '');
-      Cypress.env('endUserId', '');
-    });
+    })).then(() => cy.log(`Deleting created IDM Enduser ${Cypress.env('endUserName')} via API`))
+      .then(() => deleteIDMUser(Cypress.env('endUserId'), false))
+      .then(() => {
+        Cypress.env('endUserName', '');
+        Cypress.env('endUserFirstName', '');
+        Cypress.env('endUserLastName', '');
+        Cypress.env('endUserPassword', '');
+        Cypress.env('endUserId', '');
+      });
   }
 });

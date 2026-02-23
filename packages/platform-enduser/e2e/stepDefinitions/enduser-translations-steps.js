@@ -14,6 +14,30 @@ import LOCALES from '../support/constants';
 
 // TODO: Delete Features and env conditionals when https://pingidentity.atlassian.net/browse/IAM-8259 is resolved
 
+/**
+ * Set up cy.intercept() mocks for enduser profile data.
+ * Note: cy.visit() and some session restoration flows clear existing intercepts, so this
+ * function must be (re)called after those operations whenever these mocks need to be active.
+ */
+function setupEnduserProfileMocks() {
+  // Mock requests for social identity providers
+  cy.intercept('GET', '**/am/json/realms/root/realms/alpha/selfservice/socialIdentityProviders', { fixture: 'social-identity-provider-mock.json' });
+  cy.intercept('GET', '**/openidm/managed/alpha_user/**', (req) => {
+    req.continue((res) => {
+      res.body.aliasList = [`google-${random(Number.MAX_SAFE_INTEGER)}`];
+    });
+  });
+
+  // Mock requests for Consent data
+  cy.intercept('GET', '**/openidm/consent*', { fixture: 'enduser-consent-mock.json' });
+
+  // Mock requests for Trusted Devices data
+  cy.intercept('GET', '**/am/json/realms/root/realms/alpha/users/*/devices/profile*', { fixture: 'enduser-trusted-device-data-mock.json' });
+
+  // Mock requests for OAuth Applications data
+  cy.intercept('GET', '**/am/json/realms/root/realms/alpha/users/*/oauth2/applications?_queryFilter=true', { fixture: 'enduser-oauth-applications-mock.json' });
+}
+
 before(() => {
   if (Cypress.spec.relative.includes('enduser-translations.feature')) {
     cy.loginAsAdminCachedForCucumber().then(() => {
@@ -27,21 +51,18 @@ before(() => {
         importJourneysViaAPI(['QA-Default_Login_with_all_enduser_sections_active.json']);
       }
 
-      // Mock requests for social identity providers
-      cy.intercept('GET', '**/am/json/realms/root/realms/alpha/selfservice/socialIdentityProviders', { fixture: 'social-identity-provider-mock.json' });
-      cy.intercept('GET', '**/openidm/managed/alpha_user/**', (req) => {
-        req.continue((res) => {
-          res.body.aliasList = [`google-${random(Number.MAX_SAFE_INTEGER)}`];
-        });
-      });
-
-      // Mock requests for Consent data
-      cy.intercept('GET', '**/openidm/consent*', { fixture: 'enduser-consent-mock.json' });
-
-      // Mock requests for Trusted Devices data
-      cy.intercept('GET', '**/am/json/realms/root/realms/alpha/users/*/devices/profile*', { fixture: 'enduser-trusted-device-data-mock.json' });
+      // Set up intercepts after session restore (cy.visit in fetchOAuthTokenAfterSessionRestore clears them)
+      setupEnduserProfileMocks();
       cy.logout();
     });
+  }
+});
+
+beforeEach(() => {
+  if (Cypress.spec.relative.includes('enduser-translations.feature')) {
+    // Re-establish intercepts before each test
+    // Session caching may have cleared them via cy.visit()
+    setupEnduserProfileMocks();
   }
 });
 
@@ -59,7 +80,7 @@ after(() => {
         deleteJourneysViaAPI(['QA-Default_Login_with_all_enduser_sections_active.json']);
       }
       // Delete enduser created for testing
-      deleteIDMUser(Cypress.env('endUserID'));
+      deleteIDMUser(Cypress.env('endUserID'), false);
 
       // Restore 'en' language on the Cypress browser
       Cypress.env('LOCALE', LOCALES.en.code);
@@ -165,7 +186,8 @@ Then('profile translations are in {string}', (language) => {
       // Oauth Applications card translations
       cy.findByRole('heading', { name: 'Applications autorisées' }).should('be.visible');
       cy.findByText('Applications auxquelles vous avez donné accès à vos informations personnelles.').should('be.visible');
-      cy.findByRole('button', { name: 'endUserUIClient endUserUIClient' }).should('be.visible').click();
+      // Using a regex name matcher to handle UI bug where app name is duplicated in the accessible name
+      cy.findByRole('button', { name: /endUserUIClient/i }).should('be.visible').click();
       cy.findByText('Partagé avec endUserUIClient').should('be.visible');
       cy.findByText('Expirééé').should('be.visible');
       cy.findByRole('button', { name: 'Révoquer l\'accès' }).should('be.visible').click();

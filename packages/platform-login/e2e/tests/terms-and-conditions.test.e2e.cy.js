@@ -95,13 +95,11 @@ filterTests(['@forgeops', '@cloud'], () => {
       loadJourney();
     });
 
-    after(() => {
-      // Login as admin, delete imported testing Journey & delete testing IDM enduser
-      cy.deleteTreesViaAPI([journey]).then(() => {
-        deleteIDMUser(userId);
-        setTerms();
-      });
-    });
+    // Login as admin, delete imported testing Journey & delete testing IDM enduser
+    after(() => cy.deleteTreesViaAPI([journey]).then(() => {
+      deleteIDMUser(userId);
+      setTerms();
+    }));
 
     it('Created user should be prompted to accept T&C if not yet accepted', () => {
       // Login as Enduser

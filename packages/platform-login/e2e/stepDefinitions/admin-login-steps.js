@@ -18,11 +18,11 @@ Before({ tags: '@C29566' }, () => {
   cy.logout();
 });
 
+// eslint-disable-next-line consistent-return
 after(() => {
   if (Cypress.spec.relative.includes('admin-login.feature') && Cypress.env('endUserId')) {
     cy.loginAsAdminCachedForCucumber();
-    cy.log(`Deleting created IDM end user ${Cypress.env('endUserName')} via API`).then(() => {
-      deleteIDMUser(Cypress.env('endUserId'));
+    return cy.log(`Deleting created IDM end user ${Cypress.env('endUserName')} via API`).then(() => deleteIDMUser(Cypress.env('endUserId'), false)).then(() => {
       Cypress.env('endUserName', '');
       Cypress.env('endUserFirstName', '');
       Cypress.env('endUserLastName', '');
