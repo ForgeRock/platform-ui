@@ -20,10 +20,8 @@ filterTests(['@cloud'], () => {
       cy.logout();
     });
 
-    after(() => {
-      // Login as admin and delete test Journey with scripts
-      cy.deleteTreesViaAPI(['IAM-4384.json']);
-    });
+    // Login as admin and delete test Journey with scripts
+    after(() => cy.deleteTreesViaAPI(['IAM-4384.json']));
 
     it('IAM-4383 should resume trees using custom redirect flows correctly following a custom redirect where the tracking cookie is present', () => {
       cy.visit(testTreeUrl);

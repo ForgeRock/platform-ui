@@ -467,10 +467,8 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.visit(locationUrl);
     });
 
-    after(() => {
-      // Login as admin and delete translated Journey with translated Theme
-      cy.deleteTreesViaAPI([preparedJourney]);
-    });
+    // Login as admin and delete translated Journey with translated Theme
+    after(() => cy.deleteTreesViaAPI([preparedJourney]));
 
     it('Check default Theme/Journey translations (EN), create user and verify email message', () => {
       // Select translation for this test

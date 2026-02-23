@@ -50,12 +50,10 @@ filterTests(['@forgeops', '@cloud'], () => {
       waitForJourneyPageLoad();
     });
 
-    after(() => {
-      // Login as admin, delete prepared Journey with Remember Me Themes & delete testing IDM enduser
-      cy.deleteTreesViaAPI(['Remember_me_journey.json']).then(() => {
-        deleteIDMUser(userId);
-      });
-    });
+    // Login as admin, delete prepared Journey with Remember Me Themes & delete testing IDM enduser
+    after(() => cy.deleteTreesViaAPI(['Remember_me_journey.json']).then(() => {
+      deleteIDMUser(userId);
+    }));
 
     it('Username is correctly remembered when Remember Me option is checked', () => {
       // Fill in Username to be remembered

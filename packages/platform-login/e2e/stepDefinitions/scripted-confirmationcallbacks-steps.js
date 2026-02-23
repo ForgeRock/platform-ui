@@ -56,14 +56,13 @@ before(() => {
 });
 
 // Cleanup after running Feature file
+// eslint-disable-next-line consistent-return
 after(() => {
   // Login as admin
   if (Cypress.spec.relative.includes('scripted-confirmationcallbacks.feature')) {
     // Login as admin
-    cy.loginAsAdminCachedForCucumber().then(() => {
-      // Delete translation override config for 'en' locale
-      deleteOverrides('en');
-    });
+    // Delete translation override config for 'en' locale
+    return cy.loginAsAdminCachedForCucumber().then(() => deleteOverrides('en'));
   }
 });
 

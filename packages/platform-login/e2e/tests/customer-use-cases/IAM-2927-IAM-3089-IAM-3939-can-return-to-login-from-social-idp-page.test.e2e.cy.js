@@ -22,10 +22,8 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.logout();
     });
 
-    after(() => {
-      // Login as admin and delete test Journey with scripts
-      cy.deleteTreesViaAPI(['IAM-3089.json', 'IAM-3939.json']);
-    });
+    // Login as admin and delete test Journey with scripts
+    after(() => cy.deleteTreesViaAPI(['IAM-3089.json', 'IAM-3939.json']));
 
     it('IAM-2927, IAM-3089 can return to the login UI following a social IDP redirect without being directed back to the IDP', () => {
       cy.visit(testTreeWithTwoIDPsUrl);

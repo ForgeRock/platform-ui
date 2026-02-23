@@ -1,0 +1,20 @@
+{
+  "result": [
+    {
+      "_id": "endUserUIClient",
+      "name": "endUserUIClient",
+      "logoUri": "",
+      "scopes": [
+        "openid",
+        "profile",
+        "email"
+      ],
+      "expiryDateTime": 1735689600000
+    }
+  ],
+  "resultCount": 1,
+  "pagedResultsCookie": null,
+  "totalPagedResultsPolicy": "NONE",
+  "totalPagedResults": -1,
+  "remainingPagedResults": -1
+}

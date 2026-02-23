@@ -52,12 +52,10 @@ filterTests(['@forgeops', '@cloud'], () => {
       cy.findByRole('heading', { name: 'Choices UI Journey' }).should('be.visible');
     });
 
-    after(() => {
-      // Login as admin, delete imported testing Journey & delete testing IDM enduser
-      cy.deleteTreesViaAPI([journey]).then(() => {
-        deleteIDMUser(userId);
-      });
-    });
+    // Login as admin, delete imported testing Journey & delete testing IDM enduser
+    after(() => cy.deleteTreesViaAPI([journey]).then(() => {
+      deleteIDMUser(userId);
+    }));
 
     function loginEnduser() {
       // Fill in credetials
