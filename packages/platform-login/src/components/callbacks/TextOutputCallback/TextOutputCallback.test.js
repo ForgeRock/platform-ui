@@ -11,12 +11,13 @@ import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import i18n from '@/i18n';
 
 describe('TextOutputCallback.vue', () => {
+  const callBackIndex = 5;
   const defaultProps = {
     callback: {
       getMessageType: () => '4',
       getMessage: () => '',
     },
-    index: 5,
+    index: callBackIndex,
     step: {
       getCallbacksOfType: jest.fn().mockReturnThis(),
       find: jest.fn().mockReturnThis(),
@@ -228,6 +229,163 @@ describe('TextOutputCallback.vue', () => {
       expect(alertElement.exists()).toBe(true);
       expect(alertElement.text()).toContain('Error: Example error message');
       expect(alertElement.classes()).toContain('white-space-pre-line');
+    });
+  });
+
+  describe('Sets aria-labelledby to "message"', () => {
+    it('for INFORMATION message type when not MFA registration and not SCRIPT', async () => {
+      mountComponent({
+        messageType: '0',
+        message: 'Information message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.attributes('aria-labelledby')).toBe(`message-${callBackIndex}`);
+    });
+
+    it('for WARNING message type when not MFA registration and not SCRIPT', async () => {
+      mountComponent({
+        messageType: '1',
+        message: 'Warning message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.attributes('aria-labelledby')).toBe(`message-${callBackIndex}`);
+    });
+
+    it('for ERROR message type when not MFA registration and not SCRIPT', async () => {
+      mountComponent({
+        messageType: '2',
+        message: 'Error message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.attributes('aria-labelledby')).toBe(`message-${callBackIndex}`);
+    });
+  });
+  describe('Omits aria-labelledby', () => {
+    it('for SCRIPT message type', async () => {
+      mountComponent({
+        messageType: '4',
+        message: 'Script message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
+    });
+
+    it('when isMfaRegistrationStep is true', async () => {
+      mountComponent({
+        messageType: '0',
+        message: 'Information message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: true,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
+    });
+
+    it('for WARNING message type and when isMfaRegistrationStep is true', async () => {
+      mountComponent({
+        messageType: '1',
+        message: 'Warning message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: true,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
+    });
+
+    it('for WARNING message type and when isMfaRegistrationStep is false and isFirstRenderedCallback is true', async () => {
+      mountComponent({
+        messageType: '1',
+        message: 'Warning message',
+        isFirstRenderedCallback: true,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
+    });
+
+    it('for ERROR message type and when isMfaRegistrationStep is true', async () => {
+      mountComponent({
+        messageType: '2',
+        message: 'Error message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: true,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
+    });
+  });
+  describe('has correct id "message" for screen readers reference', () => {
+    it('on INFORMATION message element', async () => {
+      mountComponent({
+        messageType: '0',
+        message: 'Information message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const messageElement = wrapper.find(`.text-muted[id="message-${callBackIndex}"]`);
+      expect(messageElement.exists()).toBe(true);
+    });
+
+    it('on WARNING message element', async () => {
+      mountComponent({
+        messageType: '1',
+        message: 'Warning message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const messageElement = wrapper.find(`.alert-warning[id="message-${callBackIndex}"]`);
+      expect(messageElement.exists()).toBe(true);
+    });
+
+    it('on ERROR message element', async () => {
+      mountComponent({
+        messageType: '2',
+        message: 'Error message',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const messageElement = wrapper.find(`.alert-danger[id="message-${callBackIndex}"]`);
+      expect(messageElement.exists()).toBe(true);
     });
   });
 });
