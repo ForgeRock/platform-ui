@@ -179,6 +179,7 @@ When('admin/enduser logs out', () => {
 
 When('user clicks on {string} {role}', (name, role) => {
   const isSaveButton = role === 'button' && /^save$/i.test(name);
+  const isAddButton = role === 'button' && /^add(\s|$)/i.test(name);
   const findControl = () => cy.findByRole(role, { name: new RegExp(name, 'i') });
 
   if (isSaveButton) {
@@ -190,6 +191,16 @@ When('user clicks on {string} {role}', (name, role) => {
       .and('not.have.class', 'disabled')
       .should('be.enabled') // Re-check after previous assertions pass
       .click({ timeout: 8000 });
+    return;
+  }
+
+  if (isAddButton) {
+    // Wait for "Add" buttons to become enabled (e.g., "Add Variable", "Add Secret")
+    // Especially important after fresh session login where page initialization takes longer
+    // Uses moderate timeout to handle fresh session (~8s) + page load time
+    findControl()
+      .should('be.enabled', { timeout: 10000 })
+      .click();
     return;
   }
 
