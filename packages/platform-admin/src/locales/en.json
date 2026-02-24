@@ -4197,10 +4197,12 @@
       "proceedAndUpgrade": "Proceed And Upgrade"
     },
     "lockTenants": {
+      "dryRunLockDescription": "In order to ensure a reliable dry run, both <b>{current} and {upper} tenants will be temporarily locked</b>. No configuration changes will be promoted.",
       "errorLoadingLockState": "Error loading tenant lock state.",
       "errorLocking": "Error locking environments.",
       "errorUnlocking": "Error unlocking environments.",
       "lockAndContinue": "Lock And Continue",
+      "lockAndContinueDryRun": "Lock and Start Dry Run",
       "lockDescription": "In order to ensure a reliable {promotionType}, both <b>{current} and {upper} tenants will be locked and inaccessible</b> for the duration of the {promotionType} process.",
       "lockInProgress": "Locking tenants...",
       "title": "Lock Tenants?",
@@ -4228,6 +4230,8 @@
       "encryptedSecrets": "Encrypted secrets",
       "errorDescriptionMissingESV": "You need to cancel this {type} and add the following missing required configuration to your {upper} tenant before proceeding.",
       "errorDescriptionEncryptedSecrets": "It is recommended that you cancel this {type} and add ESVs for the following encrypted secrets in your configuration before proceeding.",
+      "dryRunInProgress": "Dry run in progress",
+      "dryRunSuccess": "Dry run complete!",
       "errorLoadingReport": "Error loading promotion report",
       "errorLoadingRollbackReport": "Error loading rollback report",
       "errorStarting": "Error initiating promotion",
@@ -4251,14 +4255,20 @@
     "review": {
       "cancelAndUnlock": "Cancel and Unlock Tenants",
       "cancelPromotion": "Cancel Promotion",
+      "cancelDryRun": "Cancel Dry Run",
       "cancelRollback": "Cancel Rollback",
       "continueWithoutFixing": "Continue without fixing",
+      "dryRunSubTitle": "Preview what would be promoted — no changes will be made.",
+      "dryRunTitle": "Review Dry Run",
+      "dryRunWarning": "Both <b>{current} and {upper}</b> tenants will be temporarily locked for the dry run. No configuration will be promoted.",
       "continueWithoutFixingModal": {
         "content": "Continuing without adding ESVs for the encrypted secrets could cause configuration errors in your {upper} tenant.",
         "title": "Continue Without Fixing?"
       },
       "ignoreEncryptedSecrets": "Ignore Encrypted Secrets",
       "promotionWarning": "Both <b>{current} and {upper}</b> tenants will remain locked and inaccessible for the duration of the {type}.",
+      "startDryRun": "Start Dry Run",
+      "startDryRunQuestion": "Start Dry Run?",
       "startPromotion": "Start Promotion",
       "startRollback": "Start Rollback",
       "startPromotionQuestion": "Start Promotion?",
