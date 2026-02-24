@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { shallowMount, flushPromises, mount } from '@vue/test-utils';
 import TextArea from './index';
+import { runA11yTest } from '../../../utils/testHelpers';
 
 const defaultMixinProps = {
   id: '',
@@ -61,5 +62,18 @@ describe('TextArea input', () => {
     expect(wrapper.vm.floatLabels).toBe(false);
     wrapper.vm.inputValueHandler('test');
     expect(wrapper.vm.floatLabels).toBe(true);
+  });
+
+  describe('@a11y', () => {
+    it('TextArea input component is accessible', async () => {
+      const wrapper = mount(TextArea, {
+        props: {
+          ...defaultMixinProps,
+          ...defaultProps,
+          label: 'test',
+        },
+      });
+      await runA11yTest(wrapper);
+    });
   });
 });
