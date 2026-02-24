@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,7 +8,7 @@
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getConfig, getAMConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import { getReportRuns, reportExportRequest } from '@forgerock/platform-shared/src/api/AutoApi';
+import { getReportRuns } from '@forgerock/platform-shared/src/api/AutoApi';
 import { actionGetAllTrees } from '@forgerock/platform-shared/src/api/TreeApi';
 import { getGatewaysOrAgents } from '@forgerock/platform-shared/src/api/AgentsApi';
 import { searchGovernanceResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
@@ -49,29 +49,6 @@ export async function getTeamMembers({ entity, attribute }, term) {
     return data.result || [];
   } catch {
     return [];
-  }
-}
-
-/**
- * Requests a report export file or a download
- * @param {String} runId Report job run ID
- * @param {String} action Action to execute, can be 'export' or 'download'.
- * @param {String} template Report name
- * @param {String} format File type: jsonl || csv
- */
-export async function requestExport(runId, action, template, format) {
-  try {
-    const response = await reportExportRequest(runId, {
-      _action: action,
-      name: template,
-      format,
-    });
-    return response;
-  } catch (error) {
-    if (action === 'download') {
-      showErrorMessage(error, i18n.global.t('reports.tabs.runHistory.errors.errorDownload'));
-    }
-    return error.name;
   }
 }
 
