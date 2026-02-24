@@ -5,26 +5,26 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     :class="[{'hide-polling-spinner': hideSpinner }, 'row', 'mb-2 mx-0']"
-    :aria-labelledby="!isMfaRegistrationStep && messageType !== 'SCRIPT' ? message : false"
+    :aria-labelledby="ariaLabelledbyId"
     :aria-level="isFirstRenderedCallback ? 1 : 2"
     ref="textOutputPanel"
     role="heading">
     <div
       v-if="messageType === 'INFORMATION'"
       class="text-muted w-100 white-space-pre-line"
-      id="message"
+      :id="messageElementId"
       :aria-hidden="!isMfaRegistrationStep && isFirstRenderedCallback"
       v-html="sanitizedMessage" />
     <div
       v-else-if="messageType === 'WARNING'"
       class="alert w-100 alert-warning white-space-pre-line"
-      id="message"
+      :id="messageElementId"
       :aria-hidden="isFirstRenderedCallback"
       v-html="sanitizedMessage" />
     <div
       v-else-if="!isFirstRenderedCallback && messageType === 'ERROR'"
       class="alert w-100 alert-danger white-space-pre-line"
-      id="message"
+      :id="messageElementId"
       v-html="sanitizedMessage" />
     <div
       v-else-if="messageType === 'SCRIPT'"
@@ -65,6 +65,10 @@ export default {
       type: Object,
       required: true,
     },
+    index: {
+      type: Number,
+      default: 0,
+    },
     isFirstRenderedCallback: {
       type: Boolean,
       required: true,
@@ -89,6 +93,36 @@ export default {
     };
   },
   computed: {
+    messageElementId() {
+      return `message-${this.index}`;
+    },
+    ariaLabelledbyId() {
+      // Omit aria-labelledby for SCRIPT messages or MFA registration
+      if (this.messageType === 'SCRIPT' || this.isMfaRegistrationStep) {
+        return false;
+      }
+
+      // Refer message element only when it's visible (not aria-hidden)
+      // INFORMATION: aria-hidden when !isMfaRegistrationStep && isFirstRenderedCallback
+      // So reference it when !isFirstRenderedCallback (isMfaRegistrationStep already false above)
+      if (this.messageType === 'INFORMATION') {
+        return !this.isFirstRenderedCallback ? this.messageElementId : false;
+      }
+
+      // WARNING: aria-hidden when isFirstRenderedCallback
+      // So reference it when !isFirstRenderedCallback
+      if (this.messageType === 'WARNING') {
+        return !this.isFirstRenderedCallback ? this.messageElementId : false;
+      }
+
+      // ERROR: not hidden (no aria-hidden attribute), and only renders when !isFirstRenderedCallback
+      // So always reference it when it exists
+      if (this.messageType === 'ERROR') {
+        return this.messageElementId;
+      }
+
+      return false;
+    },
     sanitizedMessage() {
       return this.$sanitize(this.getTranslation(this.message), baseSanitizerConfig);
     },
