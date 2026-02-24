@@ -874,7 +874,7 @@ Then('the {string} modal contains HTML {string} element', (modalName, expectedHt
 });
 
 Then('{string} button is visible', (button) => {
-  cy.findByRole('button', { name: button }).should('be.visible');
+  cy.findByRole('button', { name: button }).scrollIntoView().should('be.visible');
 });
 
 Then('{string} button does not exist', (button) => {
