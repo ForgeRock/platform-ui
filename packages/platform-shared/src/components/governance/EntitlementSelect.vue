@@ -51,6 +51,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  emitValueAsObject: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 defineEmits(['update:modelValue']);
@@ -81,8 +85,9 @@ async function search() {
     const { data } = await getEntitlementList('resource', searchParameters);
     let options = data.result.map((item) => {
       const displayName = getEntitlementDisplayName(item);
+      const value = props.emitValueAsObject ? item : displayName;
       return {
-        value: displayName,
+        value,
         text: displayName,
       };
     });
@@ -97,8 +102,9 @@ async function search() {
 
       // if the current value is not on the fetched items then get it from the server
       if (!isCurrentValueInOptions && !isCurrentValueInSelectOptions) {
+        const val = props.emitValueAsObject ? props.modelValue?.descriptor?.idx['/entitlement']?.displayName : props.modelValue;
         const searchParams = {
-          queryFilter: `descriptor.idx./entitlement.displayName eq '${props.modelValue}'`,
+          queryFilter: `descriptor.idx./entitlement.displayName eq '${val}'`,
         };
         const { data: dataValue } = await getEntitlementList('resource', searchParams);
         if (!dataValue.result.length) {

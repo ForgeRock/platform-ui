@@ -158,6 +158,12 @@ export const DEFAULT_MENU_ITEMS = [
     routeTo: { name: 'MyRequests' },
   },
   {
+    id: 'accessModeling',
+    icon: 'lan',
+    available: (flag) => flag.governanceDevEnabled,
+    routeTo: { name: 'AccessModeling' },
+  },
+  {
     id: 'profile',
     icon: 'person',
     routeTo: { name: 'Profile' },

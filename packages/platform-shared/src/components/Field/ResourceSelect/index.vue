@@ -81,6 +81,10 @@ export default {
       type: Array,
       required: true,
     },
+    isEmptyByDefault: {
+      type: Boolean,
+      default: false,
+    },
     type: {
       type: String,
       default: 'select',
@@ -98,7 +102,7 @@ export default {
   created() {
     this.getMinimumUIFilterLength(this.resourcePath).then((queryThreshold) => {
       this.queryThreshold = queryThreshold;
-      this.getResourceList(this.type === 'select' && Object.keys(this.value).length === 0);
+      this.getResourceList(this.type === 'select' && Object.keys(this.value).length === 0 && !this.isEmptyByDefault);
     });
   },
   computed: {

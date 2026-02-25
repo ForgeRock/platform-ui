@@ -99,31 +99,35 @@ export function getConfidenceIcon(confidenceLevel) {
  * For example: `04_name_John`.
  * @param {Array} rules Array of rule strings to convert.
  * @param {Array} schema Array of schema objects containing property definitions.
+ * @param {Boolean} hasMultiRules If the rule strings each contain multiple space-delimited rules, i.e. role mining rules
  * @return {Array} Returns an array of objects with keys `key`, `value`, and `displayName`.
  * If a rule cannot be parsed, it returns an object with the original rule string as `key`, an empty `value`, and the rule string as `displayName`.
  */
-export function convertRulesToDisplay(rules, schema) {
+export function convertRulesToDisplay(rules, schema, hasMultiRules) {
   if (!rules) return [];
 
   const normalize = (str) => str.replace(/_/g, '').toLowerCase();
   const displayRules = rules.map((ruleStr) => {
+    const ruleSplit = hasMultiRules ? ruleStr.split(' ') : [ruleStr];
     try {
-      // Split rule string into length, property name, and value, then match the normalized property name to the user schema
-      const [hexLen] = ruleStr.split('_', 2);
-      const propLen = parseInt(hexLen, 16);
-      const remainder = ruleStr.slice(hexLen.length + 1);
-      const property = remainder.slice(0, propLen);
-      const value = remainder.slice(propLen + 1); // skip underscore after prop name
-      const normalizeProperty = normalize(property);
-      const matchedSchema = find(schema, (entry) => normalizeProperty === normalize(entry.key));
+      // Split rule string by space characters and map each one to the current logic
+      return ruleSplit.map((rule) => {
+        const [hexLen] = rule.split('_', 2);
+        const propLen = parseInt(hexLen, 16);
+        const remainder = rule.slice(hexLen.length + 1);
+        const property = remainder.slice(0, propLen);
+        const value = hasMultiRules ? decodeURIComponent(remainder.slice(propLen + 1)) : remainder.slice(propLen + 1); // skip underscore after prop name
+        const normalizeProperty = normalize(property);
+        const matchedSchema = find(schema, (entry) => normalizeProperty === normalize(entry.key));
 
-      if (matchedSchema) return { ...matchedSchema, value };
-      return { key: property, value, displayName: property };
+        if (matchedSchema) return { ...matchedSchema, value };
+        return { key: property, value, displayName: property };
+      });
     } catch (e) {
-      return { key: ruleStr, value: '', displayName: ruleStr };
+      return [{ key: ruleStr, value: '', displayName: ruleStr }];
     }
   });
-  return displayRules;
+  return !hasMultiRules ? displayRules.flat() : displayRules;
 }
 
 /**
