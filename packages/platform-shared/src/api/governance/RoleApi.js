@@ -31,11 +31,13 @@ export async function getRoleList(resource, queryParams = {}) {
  * @param {string} id - The ID of the role to retrieve.
  * @param {string} status - The status of the role.
  * @param {string} dataType - Specific role data to retrieve, such as role members.
+ * @param {Object} queryParams - The query parameters to include in the request.
+ * @param {string} requestId - The ID of the request.
  * @returns {Promise} A promise that resolves to the role details.
  */
 export function getRoleDataById(id, status, dataType, queryParams = {}, requestId) {
   let url = roleUrl;
-  if (requestId) {
+  if (requestId?.length) {
     queryParams.requestId = requestId;
   }
   let encodedQueryParams = encodeQueryString(queryParams, false);
@@ -52,14 +54,59 @@ export function getRoleDataById(id, status, dataType, queryParams = {}, requestI
 }
 
 /**
- * Get role details for a single role by ID.
+ * Delete a single role by ID.
  *
- * @param {string} id - The ID of the role to retrieve.
+ * @param {string} id - The ID of the role to delete.
  * @param {string} status - The status of the role.
- * @param {string} dataType - Specific role data to retrieve, such as role members.
  * @returns {Promise} A promise that resolves to the role details.
  */
 export function deleteRole(id, status) {
   const url = `${roleUrl}/${id}/${status}`;
   return generateIgaApi().delete(url);
+}
+
+/**
+ * Get member attribute distribution for a single role by ID.
+ *
+ * @param {string} id - The ID of the role to retrieve.
+ * @param {string} status - The status of the role.
+ * @returns {Promise} A promise that resolves to the member distribution details.
+ */
+export function getMemberDistribution(id, status) {
+  const url = `${roleUrl}/${id}/${status}/members/distribution`;
+  return generateIgaApi().get(url);
+}
+/**
+ * Create a new role.
+ *
+ * @param {Object} payload - The request payload containing role details.
+ * @returns {Promise} A promise that resolves to the role details.
+ */
+export function createRole(payload) {
+  const url = `${roleUrl}`;
+  return generateIgaApi().post(url, payload);
+}
+/**
+ * Modify an existing role.
+ *
+ * @param {string} id - The ID of the role to modify.
+ * @param {string} status - The status of the role.
+ * @param {Object} payload - The request payload containing role details.
+ * @returns {Promise} A promise that resolves to the role details.
+ */
+export function modifyRole(id, status, payload) {
+  const url = `${roleUrl}/${id}/${status}`;
+  return generateIgaApi().put(url, payload);
+}
+/**
+ * Publish a role.
+ *
+ * @param {string} id - The ID of the role.
+ * @param {string} status - The status of the role.
+ * @param {Object} payload - The request payload containing role details.
+ * @returns {Promise} A promise that resolves to the role details.
+ */
+export function publishRole(id, status, payload) {
+  const url = `${roleUrl}/${id}/${status}`;
+  return generateIgaApi().patch(url, payload);
 }
