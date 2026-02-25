@@ -3860,7 +3860,6 @@
   "jobs": {
     "allJobs": "All Jobs",
     "days": "day(s)",
-    "deactivateButton": "Deactivate",
     "defaultCronDescription": "Enter a valid cron string.",
     "deleteModal": {
       "title": "Scheduled Job",
@@ -3872,6 +3871,14 @@
     "incrementalRecon": "Incremental Reconciliation",
     "indefinitely": "Indefinitely",
     "invalidCron": "Invalid cron",
+    "jobActivated": "Job Activated",
+    "jobDeactivated": "Job Deactivated",
+    "jobActivationModal": {
+      "titleActivate": "Activate Job",
+      "textActivate": "Are you sure you want to activate this job?",
+      "titleDeactivate": "Deactivate Job",
+      "textDeactivate": "Are you sure you want to deactivate this job?"
+    },
     "jobModal": {
       "chooseEntity": "Choose Entity to Scan",
       "chooseJobType": "Choose the type of job to schedule.",
