@@ -386,6 +386,23 @@ const router = createRouter({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
+      path: '/access-modeling',
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
+      meta: { authenticate: true },
+      children: [
+        {
+          path: '',
+          name: 'AccessModeling',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/AccessModeling'),
+        },
+        // {
+        //   path: ':status/:roleId',
+        //   name: 'AccessModelingDetails',
+        //   component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/AccessModelingDetails/AccessModelingDetails'),
+        // },
+      ],
+    },
+    {
       path: '/sharing',
       name: 'Sharing',
       component: () => import('@/components/uma'),

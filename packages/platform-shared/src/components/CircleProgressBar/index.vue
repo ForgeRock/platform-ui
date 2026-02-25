@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <VueEllipseProgress
-    :color="styles.blue"
+    :color="color"
     :empty-color="emptyColor"
     :progress="progress"
     :size="size"
@@ -36,6 +36,7 @@ import styles from '@/scss/main.scss';
  * @param {number}  emptyThickness  - line width for the empty segment 14px by default
  * @param {number}  size            - defines the width and height of the circle, 200px by default
  * @param {number}  emptyColor      - color of the empty segment #f5f7f9 by default
+ * @param {number}  emptyColor      - color of the filled segment, #f5f7f9 by default
  */
 export default {
   name: 'CircleProgressBar',
@@ -62,6 +63,10 @@ export default {
     emptyColor: {
       type: String,
       default: styles.whitesmoke,
+    },
+    color: {
+      type: String,
+      default: styles.blue,
     },
   },
   data() {

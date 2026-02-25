@@ -4,6 +4,8 @@
     "errorLoadingMenuItems": "There was an error loading menu items."
   },
   "routeNames": {
+    "AccessModeling": "Access Modeling",
+    "AccessModelingDetails": "Role Modeling Details",
     "AccessRequestNew": "New Access Request",
     "AccessReviews": "Access Reviews",
     "Accounts": "My Accounts",
@@ -233,6 +235,8 @@
     "violations": "Violations"
   },
   "pageTitles": {
+    "AccessModeling": "Access Modeling",
+    "AccessModelingDetails": "Role Modeling Details",
     "AccessReviews": "Access Reviews",
     "Accounts": "Accounts",
     "AdministerEntitlements": "Entitlements",

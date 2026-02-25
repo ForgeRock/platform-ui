@@ -108,6 +108,14 @@ const data = {
       created: '2025-06-12T23:25:09.04036513Z',
     },
   },
+  roleMining: {
+    prediction: {
+      rule: [
+        '11_FRINDEXEDSTRING11_InfoSYS%20Power%20Gen 11_FRINDEXEDSTRING13_Crew%20Foreman 11_FRINDEXEDSTRING14_Construction 11_FRINDEXEDSTRING12_Environmental%20Management',
+        '11_FRINDEXEDSTRING13_Crew%20Foreman 11_FRINDEXEDSTRING10_InfoSYS%20Power%20Gen 11_FRINDEXEDSTRING14_Construction 11_FRINDEXEDSTRING12_Environmental%20Management',
+      ],
+    },
+  },
 };
 
 const schema = {
@@ -237,6 +245,15 @@ describe('Prediction Utility Functions', () => {
     it('should handle empty rules array', () => {
       const displayRules = convertRulesToDisplay([], schema.user);
       expect(displayRules).toEqual([]);
+    });
+
+    it('should convert rules correctly for role mining multi rules', () => {
+      const displayRules = convertRulesToDisplay(data.roleMining.prediction.rule, schema.user, true);
+      const expectedValue = [
+        [{ ...schema.user[1], value: 'InfoSYS Power Gen' }, { ...schema.user[3], value: 'Crew Foreman' }, { ...schema.user[4], value: 'Construction' }, { ...schema.user[2], value: 'Environmental Management' }],
+        [{ ...schema.user[3], value: 'Crew Foreman' }, { ...schema.user[0], value: 'InfoSYS Power Gen' }, { ...schema.user[4], value: 'Construction' }, { ...schema.user[2], value: 'Environmental Management' }],
+      ];
+      expect(displayRules).toEqual(expectedValue);
     });
   });
 

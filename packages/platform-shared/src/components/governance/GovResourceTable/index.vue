@@ -70,6 +70,7 @@ of the MIT license. See the LICENSE file for details. -->
         responsive
         :selectable="allowSelect"
         @row-selected="onRowSelected"
+        @row-clicked="onRowClicked"
         @sort-changed="sortChanged">
         <template #head(selected)>
           <div
@@ -668,6 +669,13 @@ export default {
       });
       const selectableItemsOnPage = countBy(this.itemsWithAssignment, (itemWithAssignment) => !itemWithAssignment.assignment || itemWithAssignment.assignment === this.directAssignment).true;
       this.allRowsSelected = selectedItems.length === selectableItemsOnPage;
+    },
+    /**
+     * Emit a row clicked event to the parent component
+     * @param {Array} item The table row clicked
+     */
+    onRowClicked(item) {
+      this.$emit('row-clicked', item);
     },
     /**
      * Toggles all checkboxes on or off
