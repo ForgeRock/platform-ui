@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -36,4 +36,32 @@ function createAriaDescribedByList(fieldName, errors) {
   return ariaDescribedBy.trim() || false;
 }
 
-export { createErrorId, createAriaDescribedByList };
+/**
+ * Removes ARIA attributes that are not permitted on elements without a role.
+ *
+ * Removes aria-label from attributes when there is no role defined to avoid accessibility issues
+ * related to "Elements must only use permitted Aria attributes" per ARIA 1.2 specification.
+ *
+ * Why this matters:
+ * - ARIA attributes like aria-label require an element to have a role (implicit or explicit)
+ * - Generic wrapper divs without roles cannot have aria-label
+ * - Non-meaningful generic labels (e.g., callback_1, callback_2) confuse screen reader users
+ * - Removing them allows screen readers to look for other more meaningful content
+ *
+ * @param {Object} attrs - The attributes object to filter
+ * @returns {Object} Filtered attributes object with non-role ARIA attributes removed
+ */
+function removeNonRoleAriaAttributes(attrs = {}) {
+  const newAttrs = { ...attrs };
+  // Remove aria-label if no role is defined (aria-label requires an element with a role)
+  if (!Object.prototype.hasOwnProperty.call(newAttrs, 'role') && Object.prototype.hasOwnProperty.call(newAttrs, 'aria-label')) {
+    delete newAttrs['aria-label'];
+  }
+  return newAttrs;
+}
+
+export {
+  createErrorId,
+  createAriaDescribedByList,
+  removeNonRoleAriaAttributes,
+};

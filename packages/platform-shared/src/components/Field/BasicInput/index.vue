@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
+  <div v-bind="rootAttrs">
     <FrInputLayout
       :id="internalId"
       :name="name"
@@ -125,7 +125,7 @@ import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
+import { createAriaDescribedByList, removeNonRoleAriaAttributes } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import { useField } from 'vee-validate';
 import {
   onMounted,
@@ -146,6 +146,7 @@ import InputMixin from '../Wrapper/InputMixin';
  */
 export default {
   name: 'BasicInput',
+  inheritAttrs: false,
   mixins: [
     NotificationMixin,
     TranslationMixin,
@@ -280,6 +281,14 @@ export default {
     };
   },
   computed: {
+    /**
+     * Computed property to process and create new set of attributes for the root element.
+     *
+     * @returns {Object} An object containing the filtered set of attributes
+     */
+    rootAttrs() {
+      return removeNonRoleAriaAttributes(this.$attrs);
+    },
     showText() {
       return this.$t('common.showLabel', { label: this.getTranslation(this.label) });
     },

@@ -1,12 +1,16 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 /* eslint-disable indent */
-import { createErrorId, createAriaDescribedByList } from './accessibilityUtils';
+import {
+  createErrorId,
+  createAriaDescribedByList,
+  removeNonRoleAriaAttributes,
+} from './accessibilityUtils';
 
 describe('accessibilityUtils', () => {
   describe('createErrorId', () => {
@@ -71,6 +75,39 @@ describe('accessibilityUtils', () => {
 
         expect(ariaDescribedBy).toBe(expectedAriaDescribedBy);
       });
+    });
+  });
+
+  describe('removeNonRoleAriaAttributes', () => {
+    it('should remove aria-label if no role is defined', () => {
+      const attrs = {
+        'aria-label': 'Test Label',
+      };
+      const newAttrs = removeNonRoleAriaAttributes(attrs);
+      expect(newAttrs).not.toHaveProperty('aria-label');
+    });
+
+    it('should keep aria-label if role is defined', () => {
+      const attrs = {
+        role: 'button',
+        'aria-label': 'Test Button',
+      };
+      const newAttrs = removeNonRoleAriaAttributes(attrs);
+      expect(newAttrs).toHaveProperty('aria-label', 'Test Button');
+    });
+
+    it('should not modify attributes that do not have aria-label', () => {
+      const attrs = {
+        role: 'button',
+        'data-test': 'test',
+      };
+      const newAttrs = removeNonRoleAriaAttributes(attrs);
+      expect(newAttrs).toEqual(attrs);
+    });
+
+    it('should return an empty object if no attributes are provided', () => {
+      const newAttrs = removeNonRoleAriaAttributes();
+      expect(newAttrs).toEqual({});
     });
   });
 });

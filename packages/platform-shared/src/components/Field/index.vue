@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,7 +6,8 @@ of the MIT license. See the LICENSE file for details. -->
   <div
     :class="[{'d-flex': booleanOrCheckbox}, 'fr-field']"
     :id="fieldName"
-    :data-testid="`fr-field-${fieldName}`">
+    :data-testid="`fr-field-${fieldName}`"
+    v-bind="rootAttrs">
     <slot
       v-if="!checkboxField"
       name="label"
@@ -56,11 +57,13 @@ import {
   doesValueContainPlaceholder,
   isFieldTypeSupportedForPlaceholderEntry,
 } from '@forgerock/platform-shared/src/utils/esvUtils';
+import { removeNonRoleAriaAttributes } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import uuid from 'uuid/v4';
 import store from '@/store';
 
 export default {
   name: 'FrField',
+  inheritAttrs: false,
   components: {
     FrBasicInput,
     FrCheckbox,
@@ -124,6 +127,14 @@ export default {
     },
   },
   computed: {
+    /**
+     * Computed property to process and create new set of attributes for the root element.
+     *
+     * @returns {Object} An object containing the filtered set of attributes
+     */
+    rootAttrs() {
+      return removeNonRoleAriaAttributes(this.$attrs);
+    },
     attrs() {
       const newAttrs = { ...this.$options.propsData, ...this.$attrs };
       // Don't pass through the attribute associated with v-model listener class, and style,
