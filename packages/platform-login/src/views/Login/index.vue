@@ -130,7 +130,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :floating-label="journeyFloatingLabels"
                           :is-required-aria="component.isRequired"
                           :position-button="journeySignInButtonPosition"
-                          :aria-label="component?.callbackSpecificProps?.name || 'callback'"
+                          :aria-label="component?.callbackSpecificProps?.name || undefined"
                           :button-disabled="nextButtonDisabled || !isFormValid"
                           v-bind="{...component.callbackSpecificProps}"
                           v-on="{

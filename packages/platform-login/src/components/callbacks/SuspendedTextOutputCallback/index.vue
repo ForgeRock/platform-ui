@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,7 +10,6 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="suspend-text-output"
       class="text-center text-muted w-100 white-space-pre-line"
       role="alert"
-      aria-live="polite"
       v-html="sanitizedMessage" />
   </div>
 </template>

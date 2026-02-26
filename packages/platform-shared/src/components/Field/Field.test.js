@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@ import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/moc
 import uuid from 'uuid/v4';
 import i18n from '@/i18n';
 import FrField from './index';
+import { findByTestId } from '../../utils/testHelpers';
 
 jest.mock('uuid/v4');
 
@@ -238,6 +239,49 @@ describe('Field Component', () => {
     const input = wrapper.find('input');
 
     expect(input.attributes('name')).toBe(uuidValue);
+  });
+
+  it('avoid aria-label on root element when no role is set', async () => {
+    const attributesAsProps = {
+      'aria-label': 'test-aria-label',
+      'custom-attribute': 'test-custom-attribute',
+      label: 'stub-label',
+    };
+    wrapper = mount(FrField, {
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+      },
+      props: attributesAsProps,
+    });
+    await flushPromises();
+    const rootElement = findByTestId(wrapper, 'fr-field-stub-label');
+    expect(rootElement.exists()).toBe(true);
+    expect(rootElement.attributes('aria-label')).toBeUndefined();
+    expect(rootElement.attributes('custom-attribute')).toBe('test-custom-attribute');
+  });
+
+  it('accept aria-label on root element when a role is set', async () => {
+    const attributesAsProps = {
+      'aria-label': 'test-aria-label',
+      'custom-attribute': 'test-custom-attribute',
+      label: 'stub-label',
+      role: 'heading',
+    };
+    wrapper = mount(FrField, {
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+      },
+      props: attributesAsProps,
+    });
+    await flushPromises();
+    const rootElement = findByTestId(wrapper, 'fr-field-stub-label');
+    expect(rootElement.exists()).toBe(true);
+    expect(rootElement.attributes('aria-label')).toBe('test-aria-label');
+    expect(rootElement.attributes('custom-attribute')).toBe('test-custom-attribute');
   });
 
   describe('Showing a readonly string input when the field value is a placeholder', () => {

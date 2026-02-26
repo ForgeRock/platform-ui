@@ -410,6 +410,35 @@ describe('BasicInput', () => {
         expect(input.attributes('aria-invalid')).toBe('true');
       });
     });
+
+    it('avoid aria-label on root element when no role is set', async () => {
+      const attributesAsProps = {
+        'aria-label': 'test-aria-label',
+        'custom-attribute': 'test-custom-attribute',
+        'data-testid': 'stub-testid',
+      };
+      const wrapper = setup(attributesAsProps);
+      await flushPromises();
+      const rootElement = findByTestId(wrapper, 'stub-testid');
+      expect(rootElement.exists()).toBe(true);
+      expect(rootElement.attributes('aria-label')).toBeUndefined();
+      expect(rootElement.attributes('custom-attribute')).toBe('test-custom-attribute');
+    });
+
+    it('accept aria-label on root element when a role is set', async () => {
+      const attributesAsProps = {
+        'aria-label': 'test-aria-label',
+        'custom-attribute': 'test-custom-attribute',
+        'data-testid': 'stub-testid',
+        role: 'heading',
+      };
+      const wrapper = setup(attributesAsProps);
+      await flushPromises();
+      const rootElement = findByTestId(wrapper, 'stub-testid');
+      expect(rootElement.exists()).toBe(true);
+      expect(rootElement.attributes('aria-label')).toBe('test-aria-label');
+      expect(rootElement.attributes('custom-attribute')).toBe('test-custom-attribute');
+    });
   });
 
   describe('@actions', () => {
