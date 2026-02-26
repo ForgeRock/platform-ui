@@ -1404,6 +1404,9 @@
       "altText": "Application Icon",
       "description": "Add your application to the platform, and integrate the app with authentication."
     },
+    "configureObjectTypes": {
+      "title": "Configure Object Types"
+    },
     "connectIdentities": {
       "title": "Connect Identities",
       "altText": "Identities Icon",
