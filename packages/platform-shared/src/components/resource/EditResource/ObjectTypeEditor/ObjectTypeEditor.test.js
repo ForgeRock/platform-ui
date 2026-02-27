@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -123,6 +123,60 @@ describe('ObjectTypeEditor', () => {
 
     field.format = 'date';
     expect(wrapper.vm.getFieldType(field)).toBe('date');
+    wrapper.unmount();
+  });
+
+  it('does not set autocomplete="off" by default (end-user self-service is unaffected)', () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'First Name',
+          description: '',
+          value: 'John',
+          key: 'givenName',
+          type: 'string',
+        },
+      ],
+      formFields: { givenName: 'John' },
+    });
+
+    const inputs = wrapper.findAll('input');
+    expect(inputs.length).toBeGreaterThan(0);
+    inputs.forEach((input) => {
+      expect(input.attributes('autocomplete')).toBeUndefined();
+    });
+
+    wrapper.unmount();
+  });
+
+  it('sets autocomplete="off" on all inputs when disableAutocomplete=true (admin Managed Identities)', () => {
+    const wrapper = mountComponent({
+      displayProperties: [
+        {
+          title: 'First Name',
+          description: '',
+          value: 'John',
+          key: 'givenName',
+          type: 'string',
+        },
+        {
+          title: 'Last Name',
+          description: '',
+          value: 'Doe',
+          key: 'sn',
+          type: 'string',
+        },
+      ],
+      formFields: { givenName: 'John', sn: 'Doe' },
+      disableAutocomplete: true,
+    });
+
+    const inputs = wrapper.findAll('input');
+    expect(inputs.length).toBeGreaterThan(0);
+    inputs.forEach((input) => {
+      expect(input.attributes('autocomplete')).toBe('off');
+    });
+
     wrapper.unmount();
   });
 

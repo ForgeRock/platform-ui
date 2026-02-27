@@ -112,6 +112,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :resource-title="getTranslation(resourceTitle)"
                 :is-openidm-admin="isOpenidmAdmin"
                 :disable-save-button="disableSaveButton"
+                :disable-autocomplete="disableAutocomplete"
                 @disable-save-button="disableSaveButton = $event"
                 @refresh-data="$emit('save-clicked', refreshData)">
                 <template
@@ -141,7 +142,8 @@ of the MIT license. See the LICENSE file for details. -->
                 :disable-save-button="objectTypeProperty.readOnly"
                 :resource-path="`${resourceType}/${resourceName}/${encodedResourceId}`"
                 :resource-title="getTranslation(resourceTitle)"
-                :is-openidm-admin="isOpenidmAdmin" />
+                :is-openidm-admin="isOpenidmAdmin"
+                :disable-autocomplete="disableAutocomplete" />
             </BTab>
           </template>
           <FrPrivilegesTab
@@ -316,6 +318,14 @@ export default {
   },
   props: {
     canClearSessions: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * When true, sets autocomplete="off" on all text/number inputs to prevent
+     * browser autofill.
+     */
+    disableAutocomplete: {
       type: Boolean,
       default: false,
     },

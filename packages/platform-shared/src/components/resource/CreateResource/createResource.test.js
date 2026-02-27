@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -308,5 +308,102 @@ describe('CreateResource.vue', () => {
 
     field.format = 'date';
     expect(wrapper.vm.getFieldType(field)).toBe('date');
+  });
+
+  it('does not set autocomplete="off" by default', async () => {
+    const slotStub = { template: '<div><slot></slot></div>' };
+    const localWrapper = shallowMount(CreateResource, {
+      global: {
+        mocks: { $t: (key) => key },
+        plugins: [Notifications],
+        stubs: {
+          VeeForm: { template: '<div><slot :meta="{ valid: true }"></slot></div>' },
+          BModal: slotStub,
+          BRow: slotStub,
+          BCol: slotStub,
+          BForm: slotStub,
+          BFormGroup: slotStub,
+        },
+      },
+      props: {
+        createProperties: [],
+        resourceName: 'user',
+        resourceType: 'managed',
+        resourceTitle: 'User',
+      },
+    });
+
+    await localWrapper.setData({
+      clonedCreateProperties: [
+        {
+          key: 'givenName',
+          isConditional: false,
+          isTemporalConstraint: false,
+          type: 'string',
+          title: 'First Name',
+          value: '',
+          validation: 'required',
+        },
+      ],
+    });
+
+    const html = localWrapper.html();
+    expect(html).not.toContain('autocomplete="off"');
+
+    localWrapper.unmount();
+  });
+
+  it('sets autocomplete="off" on text fields and autocomplete="new-password" on password when disableAutocomplete=true', async () => {
+    const slotStub = { template: '<div><slot></slot></div>' };
+    const localWrapper = shallowMount(CreateResource, {
+      global: {
+        mocks: { $t: (key) => key },
+        plugins: [Notifications],
+        stubs: {
+          VeeForm: { template: '<div><slot :meta="{ valid: true }"></slot></div>' },
+          BModal: slotStub,
+          BRow: slotStub,
+          BCol: slotStub,
+          BForm: slotStub,
+          BFormGroup: slotStub,
+        },
+      },
+      props: {
+        createProperties: [],
+        disableAutocomplete: true,
+        resourceName: 'user',
+        resourceType: 'managed',
+        resourceTitle: 'User',
+      },
+    });
+
+    await localWrapper.setData({
+      clonedCreateProperties: [
+        {
+          key: 'givenName',
+          isConditional: false,
+          isTemporalConstraint: false,
+          type: 'string',
+          title: 'First Name',
+          value: '',
+          validation: 'required',
+        },
+        {
+          key: 'password',
+          isConditional: false,
+          isTemporalConstraint: false,
+          type: 'password',
+          title: 'Password',
+          value: '',
+          validation: 'required',
+        },
+      ],
+    });
+
+    const html = localWrapper.html();
+    expect(html).toContain('autocomplete="off"');
+    expect(html).toContain('autocomplete="new-password"');
+
+    localWrapper.unmount();
   });
 });

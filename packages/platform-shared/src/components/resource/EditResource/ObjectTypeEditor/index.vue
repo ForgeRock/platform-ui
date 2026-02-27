@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,6 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-4">
             <FrField
               v-model="field.value"
+              :autocomplete="disableAutocomplete ? 'off' : undefined"
               :disabled="field.disabled"
               :description="field.type !== 'boolean' ? field.description : ''"
               :label="field.title"
@@ -130,6 +131,14 @@ export default {
       type: String,
       default: null,
       required: false,
+    },
+    /**
+     * When true, sets autocomplete="off" on all text/number inputs to prevent
+     * browser autofill.
+     */
+    disableAutocomplete: {
+      type: Boolean,
+      default: false,
     },
   },
   mixins: [

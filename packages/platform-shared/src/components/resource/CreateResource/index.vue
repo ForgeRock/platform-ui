@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -33,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <BFormGroup v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined">
                   <FrField
                     v-model="field.value"
+                    :autocomplete="disableAutocomplete ? 'off' : undefined"
                     :autofocus="index === 0"
                     :label="field.title"
                     :name="field.key"
@@ -43,6 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <BFormGroup v-else-if="field.type === 'password' && field.encryption === undefined">
                   <FrPolicyPasswordInput
                     v-model="passwordValue"
+                    :autocomplete="disableAutocomplete ? 'new-password' : undefined"
                     @is-valid="passwordValid=$event"
                     :failures-on-submit="passwordFailures"
                     :resource-name="resourceName"
@@ -218,6 +220,14 @@ export default {
     resourceTitle: {
       type: String,
       default: '',
+    },
+    /**
+     * When true, sets autocomplete="off" on all text/number inputs to prevent
+     * browser autofill.
+     */
+    disableAutocomplete: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
