@@ -7,6 +7,7 @@
 
 import { resolveImage } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getApplicationTemplateList } from '@forgerock/platform-shared/src/api/CdnApi';
+
 import {
   ref,
 } from 'vue';
@@ -89,11 +90,14 @@ export function compareVersions(a, b) {
  * @returns single object containing all versions, latest, and penultimate
  */
 export function combineTemplatesWithLatestAndPenultimate(templates) {
-  const versions = Object.keys(templates);
+  const filteredTemplates = Object.fromEntries(
+    Object.entries(templates).filter(([, eachTemplate]) => eachTemplate.stage !== 'development'),
+  );
+  const versions = Object.keys(filteredTemplates);
   const sortedVersions = versions.sort(compareVersions).reverse(); // reverse so latest is first
   const latest = sortedVersions[0];
-  const latestMajorVersion = latest[0];
-  const latestTemplateEntries = Object.entries(templates[latest]);
+  const latestMajorVersion = latest?.[0] ?? '0';
+  const latestTemplateEntries = Object.entries(templates[latest] ?? {});
   latestTemplateEntries.push(['latest', true]);
   const latestTemplate = Object.fromEntries(latestTemplateEntries);
 
@@ -118,7 +122,6 @@ export function buildTemplatesReferenceObject(templateCategory) {
     const templateVersion = getAppVersionFromFileName(key);
     templates[templateVersion] = templateObj;
   });
-
   return combineTemplatesWithLatestAndPenultimate(templates);
 }
 

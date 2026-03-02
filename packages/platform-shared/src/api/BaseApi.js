@@ -137,6 +137,18 @@ export function generateHelixApi(requestOverride = {}) {
 }
 
 /**
+ * Returns the CDN base URL for application templates.
+ * Uses the development template CDN when `devAppTemplatesEnabled` is true,
+ * otherwise defaults to the production template CDN.
+ * @returns {string} CDN base URL ending with a trailing slash.
+ */
+export function getCdnBaseURL() {
+  return store.state.SharedStore.devAppTemplatesEnabled
+    ? 'https://cdn.forgerock.com/platform/app-templates-development/'
+    : 'https://cdn.forgerock.com/platform/app-templates/';
+}
+
+/**
  * Generates an Iga API Axios instance
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
  * on extra information or override default properties https://github.com/axios/axios#request-config
@@ -162,7 +174,7 @@ export function generateIgaApi(requestOverride = {}) {
  */
 export function generateCdnApi(requestOverride = {}) {
   const requestDetails = {
-    baseURL: 'https://cdn.forgerock.com/platform/app-templates',
+    baseURL: getCdnBaseURL(),
     headers: { 'Content-Encoding': 'gzip' },
     ...requestOverride,
   };
