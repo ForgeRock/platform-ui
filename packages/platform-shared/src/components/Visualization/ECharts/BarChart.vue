@@ -12,6 +12,12 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
+/* eslint-disable import/no-unresolved, import/extensions */
+// ECharts uses package.json `exports` subpath maps (e.g. 'echarts/core', 'echarts/charts').
+// eslint-import-resolver-node does not support the `exports` field, so these imports
+// are incorrectly flagged as unresolved. Suppression can be removed once the ESLint
+// import resolver is upgraded to one that supports package.json export maps
+// (e.g. eslint-import-resolver-exports or eslint-import-resolver-node v0.12+).
 import { computed } from 'vue';
 import VChart from 'vue-echarts';
 import { use } from 'echarts/core';
