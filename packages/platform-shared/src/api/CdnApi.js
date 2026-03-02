@@ -1,14 +1,14 @@
 /**
- * Copyright 2024 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
-import { generateCdnApi } from '@forgerock/platform-shared/src/api/BaseApi';
+
+import { generateCdnApi, getCdnBaseURL } from '@forgerock/platform-shared/src/api/BaseApi';
 import i18n from '@/i18n';
 
-const TEMPLATE_SOURCE = 'https://cdn.forgerock.com/platform/app-templates/';
+const TEMPLATE_SOURCE = getCdnBaseURL();
 
 /**
  * Obtains the index file for the application templates, which can be used
@@ -31,7 +31,8 @@ export function getApplicationTemplate(templatePath) {
 
 /**
  * Obtains the list of application templates available on the cdn.
- * CDN url: https://cdn.forgerock.com/platform/app-templates/appTemplates.json.gz
+ * CDN url: https://cdn.forgerock.com/platform/app-templates/appTemplates.json.gz for production appTemplates
+ * CDN url: https://cdn.forgerock.com/platform/app-templates-development/appTemplates.json.gz for development appTemplates
  * @returns {Array} application templates in object keyed by template names
  */
 export async function getApplicationTemplateList() {
