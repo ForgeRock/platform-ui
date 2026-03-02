@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2026 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 import { computed } from 'vue';
 import dayjs from 'dayjs';
 import { useStore } from 'vuex';
@@ -92,24 +99,24 @@ export default function useAnalyticsDateRange() {
     if (selectedIntervalType.value === 'hourly') {
       return {
         current: {
-          startDate: start.utc().format(getDayjsIntervalFormat()),
-          endDate: end.utc().format(getDayjsIntervalFormat()),
+          startDate: start.utc().format(getDayjsIntervalFormat(selectedIntervalType.value)),
+          endDate: end.utc().format(getDayjsIntervalFormat(selectedIntervalType.value)),
         },
         previous: {
-          startDate: start.utc().subtract(diff + 1, diffInterval).format(getDayjsIntervalFormat()),
-          endDate: end.utc().subtract(diff + 1, diffInterval).format(getDayjsIntervalFormat()),
+          startDate: start.utc().subtract(diff + 1, diffInterval).format(getDayjsIntervalFormat(selectedIntervalType.value)),
+          endDate: end.utc().subtract(diff + 1, diffInterval).format(getDayjsIntervalFormat(selectedIntervalType.value)),
         },
       };
     }
 
     return {
       current: {
-        startDate: start.utc().format(getDayjsIntervalFormat()),
-        endDate: end.utc().add(1, 'day').format(getDayjsIntervalFormat()),
+        startDate: start.utc().format(getDayjsIntervalFormat(selectedIntervalType.value)),
+        endDate: end.utc().add(1, 'day').format(getDayjsIntervalFormat(selectedIntervalType.value)),
       },
       previous: {
-        startDate: start.utc().subtract(diff, diffInterval).format(getDayjsIntervalFormat()),
-        endDate: end.utc().add(1, 'day').subtract(diff, diffInterval).format(getDayjsIntervalFormat()),
+        startDate: start.utc().subtract(diff, diffInterval).format(getDayjsIntervalFormat(selectedIntervalType.value)),
+        endDate: end.utc().add(1, 'day').subtract(diff, diffInterval).format(getDayjsIntervalFormat(selectedIntervalType.value)),
       },
     };
   });

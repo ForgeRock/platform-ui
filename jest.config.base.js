@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -41,6 +41,11 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css)$': '<rootDir>/../../node_modules/jest-css-modules',
     d3: '<rootDir>/../../node_modules/d3/dist/d3.min.js',
+    'vue-echarts': '<rootDir>/../../__mocks__/vue-echarts.js',
+    'echarts/renderers': '<rootDir>/../../__mocks__/echarts.js',
+    'echarts/components': '<rootDir>/../../__mocks__/echarts.js',
+    'echarts/core': '<rootDir>/../../__mocks__/echarts.js',
+    'echarts/charts': '<rootDir>/../../__mocks__/echarts.js',
     '^vue$': '@vue/compat',
   },
   testMatch: [
