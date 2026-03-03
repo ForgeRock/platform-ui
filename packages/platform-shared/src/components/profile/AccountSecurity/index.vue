@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
               md="2">
               <a
                 :aria-label="item.ariaLabel"
-                v-if="item.linkUrl"
+                v-if="item.shouldHideLink === false && item.linkUrl"
                 :href="item.linkUrl">
                 {{ item.linkText }}
               </a>
@@ -111,6 +111,13 @@ export default {
   ],
   props: {
     /**
+     * If federation is enforced for all users, UI disables username and password updates
+     */
+    hideUsernameAndPasswordUpdate: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Show kba section
      */
     showKba: {
@@ -163,19 +170,22 @@ export default {
         key: 'password',
         linkText: this.$t('common.reset'),
         linkUrl: '',
+        shouldHideLink: true,
         title: this.$t('common.placeholders.password'),
       },
       mfaItem: {
         iconType: 'OFF',
         key: 'twoStepVerification',
+        shouldHideLink: false,
         title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
         text: this.$t('common.off'),
       },
       usernameItem: {
-        ariaLabel: this.$t('pages.profile.accountSecurity.resetUsername'),
+        ariaLabel: this.$t('pages.profile.accountSecurity.updateUsername'),
         key: 'username',
         linkText: this.$t('common.update'),
         linkUrl: '',
+        shouldHideLink: true,
         text: '',
         title: this.$t('common.placeholders.username'),
       },
@@ -194,6 +204,13 @@ export default {
     this.setUpdateJourneys();
   },
   watch: {
+    hideUsernameAndPasswordUpdate: {
+      handler(newBool) {
+        this.passwordItem.shouldHideLink = newBool;
+        this.usernameItem.shouldHideLink = newBool;
+      },
+      immediate: true,
+    },
     userName: {
       handler(newVal) {
         this.usernameItem.text = newVal;
@@ -209,23 +226,27 @@ export default {
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       this.getRequestService(configOptions).get('/selfservice/trees').then((res) => {
         const realm = this.forceRoot ? '/' : (new URLSearchParams(window.location.search)).get('realm') || '/';
-        const passwordJourney = res.data.mapping.updatePassword;
         const getLinkUrl = (journeyName) => (
           `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${realm}&noSession=true&ForceAuth=true&authIndexType=service&authIndexValue=${journeyName}&goto=${encodeURIComponent(window.location.href)}`
         );
+
+        const passwordJourney = res?.data?.mapping?.updatePassword;
         if (passwordJourney) {
           this.$set(this.passwordItem, 'linkUrl', getLinkUrl(passwordJourney));
         }
-        const usernameJourney = res.data.mapping.updateUsername;
+
+        const usernameJourney = res?.data?.mapping?.updateUsername;
         if (usernameJourney) {
           this.$set(this.usernameItem, 'linkUrl', getLinkUrl(usernameJourney));
         }
-        const addDeviceJourney = res.data.mapping.addDevice;
-        const removeDeviceJourney = res.data.mapping.removeDevice;
+
+        const addDeviceJourney = res?.data?.mapping?.addDevice;
+        const removeDeviceJourney = res?.data?.mapping?.removeDevice;
         if (addDeviceJourney && removeDeviceJourney) {
           this.mfaJourneys.addDevice = getLinkUrl(addDeviceJourney);
           this.mfaJourneys.removeDevice = getLinkUrl(removeDeviceJourney);
         }
+
         // Load authentication devices to determine 2FA status
         this.loadAuthenticationDevices();
       }, () => {
