@@ -45,12 +45,17 @@ const emptyMockData = [
   },
 ];
 
+const styles = {
+  whitesmoke: '#f5f7f9',
+};
+
 const mountComponent = (props, testData = mockData) => shallowMount(PieChart, {
   global: {
     mocks: { $t: () => {} },
   },
   props: {
     data: testData,
+    styles,
     ...props,
   },
 });
@@ -82,12 +87,12 @@ describe('PieChart', () => {
       {
         label: 'No data',
         value: 1,
-        color: undefined,
+        color: styles.whitesmoke,
       },
     ]);
     expect(createChartSpy).toHaveBeenCalledWith({
       0: 1,
-    }, [undefined]);
+    }, [styles.whitesmoke]);
   });
 
   describe('legend', () => {

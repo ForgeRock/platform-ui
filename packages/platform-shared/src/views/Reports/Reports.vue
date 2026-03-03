@@ -76,7 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
             <h2 class="h5 mb-1">
               {{ item.displayName }}
             </h2>
-            <p class="text-body text-truncate mb-0">
+            <p class="text-truncate mb-0">
               {{ item.description }}
             </p>
           </div>

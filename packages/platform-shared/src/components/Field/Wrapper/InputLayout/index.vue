@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -274,7 +274,7 @@ export default {
       margin: 1px 0.75rem 1px 1px;
       padding-right: 0;
       padding-bottom: 3px;
-      background-color: white;
+      background-color: $input-bg;
     }
 
     label:has(~ textarea:disabled) {
@@ -369,8 +369,8 @@ export default {
     }
 
     &:hover {
-      background-color: #dde5ec;
-      color: $input-btn-active-color;
+      background-color: var(--btn-secondary-bg-color) !important;
+      color: var(--btn-secondary-color) !important;
     }
 
     .material-icons {

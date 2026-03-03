@@ -36,7 +36,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import * as d3 from 'd3';
-import styles from '@/scss/main.scss';
 
 /*
  * @description Pie Chart Component used to show data in a pie chart with percentages according the value of each item,
@@ -105,6 +104,9 @@ export default {
   data() {
     return {
       legend: [],
+      styles: {
+        whitesmoke: '#f5f7f9',
+      },
       tooltip: null,
     };
   },
@@ -134,10 +136,10 @@ export default {
           colors = [];
           this.legend = [];
           chartData[0] = 1;
-          colors.push(styles.whitesmoke);
+          colors.push(this.styles.whitesmoke);
           this.legend.push({
             label: this.noDataLabel,
-            color: styles.whitesmoke,
+            color: this.styles.whitesmoke,
             value: 1,
           });
         }

@@ -9,10 +9,17 @@
 import { createAppContainer, findByTestId, toggleActionsMenu } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
 import * as CampaignApi from '@/api/governance/CampaignApi';
-import styles from '@/scss/main.scss';
 import CampaignOverview from './index';
 import i18n from '@/i18n';
 import { uiTypeMap } from '../../../Templates/templateTypes';
+
+const styles = {
+  blue: '#1a73e8',
+  green: '#22a75f',
+  orchid: '#ba4de1',
+  skyblue: '#61e2e2',
+  yellow: '#ffb946',
+};
 
 describe('CampaignOverview Component', () => {
   const campaign = {
@@ -326,6 +333,13 @@ describe('CampaignOverview Component', () => {
           },
         },
       },
+      styles: {
+        blue: '#1a73e8',
+        green: '#22a75f',
+        orchid: '#ba4de1',
+        skyblue: '#61e2e2',
+        yellow: '#ffb946',
+      },
     };
 
     expect(CampaignOverview.computed.campaignUsers.call(localThis)).toEqual([
@@ -335,7 +349,7 @@ describe('CampaignOverview Component', () => {
         value: 1139,
       },
       {
-        color: styles.green,
+        color: styles.blue,
         label: 'governance.certificationDetails.usersChartItemsLabel.previous',
         value: 235,
       },
@@ -362,6 +376,13 @@ describe('CampaignOverview Component', () => {
             noDecision: 7,
           },
         },
+      },
+      styles: {
+        blue: '#1a73e8',
+        green: '#22a75f',
+        orchid: '#ba4de1',
+        skyblue: '#61e2e2',
+        yellow: '#ffb946',
       },
     };
 
@@ -405,6 +426,13 @@ describe('CampaignOverview Component', () => {
             Matrix: 4000,
           },
         },
+      },
+      styles: {
+        blue: '#1a73e8',
+        green: '#22a75f',
+        orchid: '#ba4de1',
+        skyblue: '#61e2e2',
+        yellow: '#ffb946',
       },
     };
 
@@ -614,6 +642,13 @@ describe('CampaignOverview Component', () => {
             previouslyReviewed: 235,
           },
         },
+      },
+      styles: {
+        blue: '#1a73e8',
+        green: '#22a75f',
+        orchid: '#ba4de1',
+        skyblue: '#61e2e2',
+        yellow: '#ffb946',
       },
     };
 

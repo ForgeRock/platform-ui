@@ -124,8 +124,8 @@ export default {
 
     &.alert-primary {
       border-left: 5px solid $primary;
-      background-color: $fr-alert-primary-bg-color;
-      color: $fr-alert-text-color;
+      background-color: var(--alert-primary-bg-color);
+      color: var(--alert-text-color);
     }
 
     &.alert-secondary {

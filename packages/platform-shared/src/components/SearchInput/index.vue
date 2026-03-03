@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -133,7 +133,7 @@ export default {
 <style lang="scss" scoped>
 .fr-search-input-holder {
   .input-group {
-    border: 1px solid $gray-400;
+    border: 1px solid $input-border-color;
     border-radius: 5px;
 
     .input-group-text {

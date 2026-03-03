@@ -242,6 +242,12 @@ export default {
   }
 }
 
+:deep(.input-group-prepend) {
+  .btn {
+    color: inherit;
+  }
+}
+
 .input-group-prepend .disabled {
   background-color: $gray-100;
 }

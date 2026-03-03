@@ -55,6 +55,7 @@
       "str-replace",
       "theme-color",
       "url",
+      "var",
       "math.div"
     ],
     "function-url-quotes": "always",

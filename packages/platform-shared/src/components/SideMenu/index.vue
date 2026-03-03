@@ -14,13 +14,14 @@ of the MIT license. See the LICENSE file for details. -->
           <FrDropdownMenu
             v-if="dropdownItems.length"
             :dropdown-items="dropdownItems"
-            class="mt-3 w-100">
+            class="w-100 h-100"
+            toggle-class="align-items-center">
             <template #button-content>
               <BMedia
                 vertical-align="center"
                 no-body
                 class="text-left fr-dropdown-button w-100">
-                <BMediaAside>
+                <BMediaAside vertical-align="center">
                   <div :class="`letter-${realmInitial} fr-realm-stamp`">
                     <span
                       class="text-white"
@@ -97,17 +98,17 @@ of the MIT license. See the LICENSE file for details. -->
         </ul>
 
         <div class="fr-sidebar-bottom">
-          <div class="fr-sidebar-menuitems flex-grow-1 border-top">
+          <div class="fr-sidebar-menuitems flex-grow-1">
             <button
               @click="toggleMenu"
               @mouseleave="onMouseLeave"
-              class="d-flex align-items-center"
+              class="d-flex align-items-center text-nowrap"
               :aria-expanded="(menuIsExpanded).toString()"
               :aria-label="$t('sideMenu.toggleSidebar')">
               <FrIcon
-                icon-class="icon-flipped mr-3 toggle-side-menu"
+                icon-class="icon-flipped toggle-side-menu"
                 name="chrome_reader_mode">
-                <span class="sidebar-item-text">
+                <span class="sidebar-item-text text-nowrap ml-3">
                   {{ $t('sideMenu.toggleSidebar') }}
                 </span>
               </FrIcon>

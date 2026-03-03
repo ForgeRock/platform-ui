@@ -276,7 +276,7 @@ orderTable();
 :deep {
   #properties-table {
     .chosen-item {
-      background-color: $white;
+      background-color: var(--input-active-bg);
       cursor: grabbing;
       cursor: -moz-grabbing;
       cursor: -webkit-grabbing;

@@ -54,3 +54,13 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+  .b-form-spinbutton {
+    .btn {
+      color: var(--body-color);
+      &:hover {
+        color: inherit;
+      }
+    }
+  }
+</style>

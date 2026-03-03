@@ -166,8 +166,3 @@ function handleStatusChange(status) {
   emit('status-change', status.value);
 }
 </script>
-<style lang="scss" scoped>
-.toolbar-link-text {
-  color: $gray-900;
-}
-</style>

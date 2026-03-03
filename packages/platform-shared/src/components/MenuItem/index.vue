@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -389,10 +389,11 @@ button.btn.btn-secondary.dropdown-toggle {
   width: 100%;
   position: relative;
   border-width: 0;
-  border-left: 3px solid transparent;
+  border-left: $fr-sidemenu-item-border;
+  border-radius: $fr-sidemenu-item-border-radius;
   cursor: pointer;
   display: block;
-  padding: 15px 20px 15px 16px;
+  padding: $fr-sidemenu-item-padding;
   text-decoration: none;
   line-height: 1.5;
   font-size: 0.875rem;

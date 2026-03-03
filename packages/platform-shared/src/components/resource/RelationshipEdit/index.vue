@@ -446,8 +446,8 @@ export default {
 
 <style lang="scss" scoped>
 .red-tag {
-  color: $magenta;
-  background-color: $gray-100;
+  color: var(--input-color);
+  background-color: var(--input-bg-active);
   padding: 0.125rem 0.25rem;
   border-radius: 5px;
 }

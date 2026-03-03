@@ -299,6 +299,6 @@ export default {
 
 .personal-info-field .form-label-group .form-label-group-input .form-control:disabled,
 .personal-info-field .form-label-group .form-label-group-input .disabled {
-  background-color: $gray-100 !important;
+  background-color: $input-disabled-bg !important;
 }
 </style>

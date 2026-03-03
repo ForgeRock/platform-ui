@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
               <!--MENU SLOT -->
               <div
                 ref="menu"
-                class="menu">
+                class="visualization-menu">
                 <slot name="menu" />
               </div>
             </div>
@@ -244,5 +244,9 @@ export default {
 
 .b-tooltip:not([style*='transform']) {
   top: 0;
+}
+
+.visualization-menu {
+  padding: 8px;
 }
 </style>

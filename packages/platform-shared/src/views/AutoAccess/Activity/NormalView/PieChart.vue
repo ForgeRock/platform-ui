@@ -15,7 +15,6 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import * as d3 from 'd3';
 import { isEqual } from 'lodash';
-import styles from '@/scss/main.scss';
 
 /*
  * @description Pie Chart Component used to show data in a pie chart with percentages according the value of each item,
@@ -106,10 +105,10 @@ export default {
           colors = [];
           this.legend = [];
           chartData[0] = 1;
-          colors.push(styles.whitesmoke);
+          colors.push('#f5f7f9');
           this.legend.push({
             label: this.noDataLabel,
-            color: styles.whitesmoke,
+            color: '#f5f7f9',
             value: 1,
             valueFormatted: '1',
           });

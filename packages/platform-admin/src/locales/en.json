@@ -3775,7 +3775,7 @@
       "modalContent": "Are you sure you want to publish changes? Changes will take a few minutes to take effect.",
       "modalTitle": "Publish Changes?",
       "successUpdating": "Successfully updated Content Security Policy",
-      "updatesToPublish": "<span class=\"font-weight-bold mr-1 text-dark\">Publish Changes</span> You have to publish for your changes to take effect."
+      "updatesToPublish": "<span class=\"font-weight-bold mr-1\">Publish Changes</span> You have to publish for your changes to take effect."
     },
     "addDirective": {
       "activateDesc": "In order to activate this policy, you first need to add a directive.",

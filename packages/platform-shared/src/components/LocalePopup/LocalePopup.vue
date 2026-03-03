@@ -220,7 +220,6 @@ setupTranslations();
       background-color: $white !important;
     }
   }
-
 }
 </style>
 <style lang="scss">
@@ -232,6 +231,10 @@ setupTranslations();
   }
   &.bs-popover-bottom {
     margin-top: 1px !important;
+  }
+
+  .popover-header {
+    background-color: var(--popover-bg)!important;
   }
 
   button {

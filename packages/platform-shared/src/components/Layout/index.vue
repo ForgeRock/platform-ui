@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -43,6 +43,9 @@ of the MIT license. See the LICENSE file for details. -->
         :tenant-menu-items="tenantMenuItems"
         :docs-link="docsLink"
         help-url="https://backstage.forgerock.com/"
+        :is-dark-theme="isDarkTheme"
+        :show-theme-toggle="showThemeToggle"
+        @toggle-theme="$emit('toggle-theme', $event)"
         v-show="!hideNavBar" />
       <main
         id="appContent"
@@ -207,6 +210,14 @@ export default {
       default: () => {},
     },
     systemNotificationActive: {
+      type: Boolean,
+      default: false,
+    },
+    isDarkTheme: {
+      type: Boolean,
+      default: false,
+    },
+    showThemeToggle: {
       type: Boolean,
       default: false,
     },
