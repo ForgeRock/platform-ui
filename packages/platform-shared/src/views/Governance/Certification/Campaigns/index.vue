@@ -83,7 +83,7 @@ to such license between the licensee and ForgeRock AS. -->
             :progress="progressPercentage(item.progress)"
             :thickness="6"
             :empty-thickness="6"
-            :empty-color="styles.brightGray"
+            empty-color="#e7ebf0"
             :size="50">
             <template #count="{ count }">
               <small class="font-weight-bold mb-0">
@@ -240,7 +240,6 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
-import styles from '@/scss/main.scss';
 import FrUpdateDeadlineModal from './CampaignDetails/CampaignOverview/UpdateDeadlineModal';
 import FrCampaignDetailsModal from './CampaignDetailsModal';
 
@@ -333,7 +332,6 @@ export default {
       currentPage: 1,
       pageSize: 10,
       creatingCampaign: {},
-      styles,
       totalRows: 0,
       tableLoading: true,
       sortDesc: false,

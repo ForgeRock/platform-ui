@@ -7,7 +7,6 @@
 
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import dayjs from 'dayjs';
-import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import i18n from '@/i18n';
 
 const governanceBaseUrl = '/governance';
@@ -16,7 +15,7 @@ const CAMPAIGNS_BY_TYPE_KEYS_COLORS = {
   identity: '#2ed47a',
   application: '#2ed47a',
   entitlement: '#109cf1',
-  entitlementComposition: styles.red,
+  entitlementComposition: '#da3a2b',
   roleMembership: '#ba4de1',
 };
 

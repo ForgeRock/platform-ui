@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
           <BCol
             sm="8"
-            class="mb-3 text-gray-900">
+            class="mb-3">
             {{ detail || blankValueIndicator }}
           </BCol>
         </BRow>

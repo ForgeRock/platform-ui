@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BFormCheckbox
         v-model="inputValue"
         v-on="$listeners"
+        v-bind="$attrs"
         class="mr-0 zindex-1 align-middle"
         role="checkbox"
         inline

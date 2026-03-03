@@ -231,7 +231,8 @@
       padding-right: 2.25rem;
     }
 
-    li > button, .fr-sidebar-menuitems > button {
+    li > button, 
+    .fr-sidebar-menuitems > button {
       color: inherit;
       background-color: inherit;
       border-color: $white;
@@ -245,7 +246,7 @@
       padding: 0.75rem 1.25rem;
       font-size: 0.9375rem;
       line-height: 1.5;
-      border-radius: 4px;
+      border-radius: $fr-sidemenu-item-border-radius;
       transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
 
       &:hover {
@@ -262,12 +263,13 @@
 
     .fr-sidebar-brand {
       height: 72px;
-
-      &:hover {
-        background-color: $fr-sidemenu-hover;
-      }
+      padding: $fr-sidemenu-padding-x $fr-sidemenu-padding-x;
 
       :deep {
+        button {
+          border-radius: $fr-sidemenu-item-border-radius;
+          padding: $fr-sidemenu-item-padding;
+        }
         .b-dropdown {
           width: 100%;
 
@@ -314,7 +316,7 @@
         }
 
         .fr-dropdown-button {
-          margin-left: 12px;
+          margin-left: 8px;
         }
       }
     }
@@ -330,18 +332,28 @@
       }
     }
 
-    ul.fr-sidebar-menuitems, .fr-sidebar-menuitems > button {
-      font-size: 0.875rem;
+    ul.fr-sidebar-menuitems {
+      padding: $fr-sidemenu-padding-y $fr-sidemenu-padding-x;
       overflow-x: hidden;
       overflow-y: auto;
       white-space: nowrap;
+
+      > button {
+        font-size: 0.875rem;
+      }
     }
   }
 
   .fr-sidebar-bottom {
     border-top: 1px solid $fr-sidemenu-toggler-border-color;
+    padding: $fr-sidemenu-padding-x $fr-sidemenu-padding-x;
 
-    .btn {
+    button {     
+      padding: $fr-sidemenu-item-padding !important; 
+      &:hover,
+      &:active {
+        background-color: $fr-sidemenu-hover;
+      }
       &:focus {
         outline: 2px auto -webkit-focus-ring-color;
       }

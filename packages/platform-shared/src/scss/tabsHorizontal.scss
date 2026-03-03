@@ -9,6 +9,8 @@
 .fr-tabs {
   .nav-link {
     color: $gray-600;
+    border-left: none;
+    border-right: none;
 
     &:focus,
     &:hover {

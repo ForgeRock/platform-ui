@@ -73,13 +73,51 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-hidden="!hasRightContent"
           role="presentation"
           class="flex-row d-flex align-items-center">
+          <!-- Theme Toggle Dropdown -->
+          <BDropdown
+            v-if="showThemeToggle && showDropdown"
+            id="theme-toggle-dropdown"
+            :aria-label="$t('navbar.toggleTheme')"
+            :no-caret="true"
+            variant="link"
+            right>
+            <template #button-content>
+              <FrIcon
+                :name="isDarkTheme ? 'dark_mode' : 'light_mode'"
+                icon-class="md-24 text-dark" />
+              <span class="sr-only">
+                {{ $t('navbar.toggleTheme') }}
+              </span>
+            </template>
+            <BDropdownItem
+              @click="$emit('toggle-theme', 'light')"
+              :link-class="{'active': !isDarkTheme}">
+              <FrIcon
+                icon-class="mr-2 text-dark"
+                name="light_mode" />
+              <span class="p-4">
+                {{ $t('navbar.lightMode') }}
+              </span>
+            </BDropdownItem>
+            <BDropdownItem
+              @click="$emit('toggle-theme', 'dark')"
+              :link-class="{'active': isDarkTheme}">
+              <FrIcon
+                icon-class="mr-2 text-dark"
+                name="dark_mode" />
+              <span class="p-4">
+                {{ $t('navbar.darkMode') }}
+              </span>
+            </BDropdownItem>
+          </BDropdown>
+
           <slot name="right-content">
             <FrNotification v-if="showNotifications" />
             <li
               v-if="showHelpLink"
               class="mr-4 d-none d-sm-block nav-item">
               <a
-                class="nav-link text-dark"
+                class="nav-link"
                 :href="helpUrl"
                 target="_blank">
                 {{ $t('navbar.helpSupport') }}
@@ -89,7 +127,7 @@ of the MIT license. See the LICENSE file for details. -->
               v-if="showDocsLink"
               class="d-none d-sm-block nav-item">
               <a
-                class="nav-link text-dark"
+                class="nav-link"
                 :href="docsLink"
                 target="_blank">
                 {{ $t('navbar.docs') }}
@@ -179,6 +217,8 @@ of the MIT license. See the LICENSE file for details. -->
 import { mapGetters } from 'vuex';
 import {
   BAvatar,
+  BDropdown,
+  BDropdownItem,
   BDropdownDivider,
   BDropdownHeader,
   BLink,
@@ -207,6 +247,8 @@ export default {
     FrDropdownMenu: DropdownMenu,
     FrIcon,
     BAvatar,
+    BDropdown,
+    BDropdownItem,
     BDropdownDivider,
     BDropdownHeader,
     BLink,
@@ -310,6 +352,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    showThemeToggle: {
+      type: Boolean,
+      default: false,
+    },
+    isDarkTheme: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup() {
     const { returnRoute, returnRouteText, hasBreadcrumb } = useBreadcrumb(false);
@@ -392,6 +442,23 @@ export default {
       color: $gray-500;
       letter-spacing: 1px;
       text-transform: uppercase;
+    }
+  }
+
+  :deep(.navbar-nav) .dropdown-menu {
+    position: absolute;
+
+    .dropdown-item.active:after {
+        border: none;
+        content: "check";
+        position: absolute;
+        right: 10px;
+        top: 14px;
+        font-family: Material Icons Outlined;
+        font-size: 1rem;
+        line-height: 1;
+        color: #22a75f;
+        vertical-align: middle;
     }
   }
 

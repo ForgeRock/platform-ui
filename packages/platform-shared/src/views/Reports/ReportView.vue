@@ -8,19 +8,22 @@ of the MIT license. See the LICENSE file for details. -->
     fluid>
     <BRow class="w-100 shadow px-2 py-3 m-0 bg-white align-items-stretch">
       <BCol class="col-2 col-md-3 col-lg-4 d-flex align-items-center">
-        <BLink
-          v-if="!runDataLoading"
-          class="text-decoration-none text-dark"
-          variant="dark"
-          @click="returnToTemplate()">
-          <FrIcon
-            icon-class="mr-3 md-24"
-            name="arrow_back">
-            <span class="d-none d-lg-inline-block">
-              {{ reportName }}
-            </span>
-          </FrIcon>
-        </BLink>
+        <RouterLink
+          :aria-label="$t('common.backTo', {object: returnRouteText})"
+          active-class=""
+          class="fr-back-link overflow-hidden text-decoration-none pl-4 pl-lg-2"
+          v-show="!runDataLoading"
+          :to="{ name: 'ReportHistory', params: { state, template } }">
+          <div class="text-truncate h5 d-flex align-items-center font-weight-normal mb-0">
+            <FrIcon
+              icon-class="md-24 mr-3"
+              name="arrow_back">
+              <span class="align-middle">
+                {{ reportName }}
+              </span>
+            </FrIcon>
+          </div>
+        </RouterLink>
       </BCol>
       <BCol class="col-7 col-md-6 col-lg-4 d-flex flex-column justify-content-center align-items-center">
         <h3
@@ -174,14 +177,13 @@ import { ref, watch } from 'vue'; import {
   BContainer,
   BDropdown,
   BDropdownItemButton,
-  BLink,
   BRow,
   BSkeleton,
 } from 'bootstrap-vue';
 import { getReportRuns } from '@forgerock/platform-shared/src/api/AutoApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { cloneDeep } from 'lodash';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
@@ -198,7 +200,6 @@ import i18n from '@/i18n';
 import store from '@/store';
 
 // Composables
-const router = useRouter();
 const route = useRoute();
 
 const { id, state, template } = route.params;
@@ -306,13 +307,6 @@ async function getRunInfo() {
  */
 async function generateReport(fileType, bvModal) {
   await fetchExport(template, id, getExportFormatType(fileType), bvModal);
-}
-
-/**
- * Routes to the Report History page.
- */
-function returnToTemplate() {
-  router.push({ name: 'ReportHistory', params: { state, template } });
 }
 
 /**

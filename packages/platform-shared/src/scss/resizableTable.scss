@@ -48,7 +48,7 @@
   tr:not(:focus-visible) .sticky-right {
     position: sticky !important;
     z-index: 100;
-    background-color: $white;
+    background-color: inherit;
   }
 
   .table-hover tbody tr:hover,
@@ -77,7 +77,7 @@
 
 .table-hover tbody tr:hover,
 .table-hover tr:hover td.sticky-right {
-  background-color: $gray-100 !important;
+  background-color: inherit !important;
 }
 
 .table-resizable__shared-measure-container {

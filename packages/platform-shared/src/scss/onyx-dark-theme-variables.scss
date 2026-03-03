@@ -1,0 +1,377 @@
+/**
+ * Copyright 2026 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
+$dk-dark-blue: $blue-100;
+$dk-dark-indigo: $indigo-100;
+$dk-dark-purple: $purple-100;
+$dk-dark-pink: $pink-100;
+$dk-dark-red: $red-100;
+$dk-dark-orange: $orange-100;
+$dk-dark-yellow: $yellow-100;
+$dk-dark-green: $green-100;
+$dk-dark-teal: $teal-100;
+$dk-dark-cyan: $cyan-100;
+
+$dk-light-blue: $blue-600;
+$dk-light-indigo: $indigo-700;
+$dk-light-purple: $purple-500;
+$dk-light-pink: $pink-600;
+$dk-light-red: $red-700;
+$dk-light-orange: $orange-700;
+$dk-light-yellow: $yellow-800;
+$dk-light-green: $green-800;
+$dk-light-teal: $teal-700;
+$dk-light-cyan: $cyan-800;
+
+$dk-secondary: $gray-400;
+$dk-light: darken($gray-900, 4%);
+$dk-dark: $gray-500;
+
+
+
+/* General */
+$dk-body-bg: $gray-900;
+$dk-body-color: $gray-100;
+$dk-headings-color: $gray-100;
+$dk-border-color: lighten($gray-900, 10%);
+$dk-fr-border-darkened-color: lighten($dk-border-color, 6%);
+$dk-box-shadow-sm: 0 1px 2px rgba($black, 0.33);
+$dk-box-shadow: 0 1px 3px rgba($black, 0.33);
+$dk-box-shadow-lg: 0 2px 11px rgba($black, 0.33);
+$dk-text-muted: $gray-400;
+$dk-text-danger: $red-300;
+$dk-link-color: $blue-400;
+$dk-link-hover-color: lighten($dk-link-color, 9%);
+$dk-hr-border-color: $gray-600;
+$dk-component-active-color: $white;
+$dk-component-active-bg: lighten($gray-900, 4%);
+$dk-fr-background-color: $dk-body-bg;
+$dk-fr-code-editor-bg: $gray-800;
+$dk-fr-code-bg: $dk-light;
+$dk-code-color: $yellow;
+
+/* Badges */
+$dk-fr-badge-primary-text-color: $black;
+$dk-fr-badge-secondary-text-color: $dk-dark;
+$dk-fr-badge-info-text-color: $dk-body-color;
+$dk-fr-badge-success-text-color: $black;
+$dk-fr-badge-warning-text-color: $black;
+$dk-fr-badge-danger-text-color: $black;
+$dk-fr-badge-light-text-color: $white;
+$dk-fr-badge-dark-text-color: $gray-900;
+$dk-fr-badge-primary-background-color: $primary;
+$dk-fr-badge-secondary-background-color: $gray-800;
+$dk-fr-badge-info-background-color: $gray-800;
+$dk-fr-badge-success-background-color: $green;
+$dk-fr-badge-warning-background-color: $warning;
+$dk-fr-badge-danger-background-color: $danger;
+$dk-fr-badge-light-background-color: $dk-light;
+$dk-fr-badge-dark-background-color: $dk-dark;
+
+/* Inputs */
+$dk-input-bg: $gray-900;
+$dk-input-disabled-bg: lighten($gray-900, 6%);
+$dk-input-color: $dk-body-color;
+$dk-input-border-color: $gray-500;
+$dk-input-placeholder-color: $gray-400;
+$dk-input-focus-bg: $dk-input-bg;
+$dk-input-focus-border-color: $primary;
+$dk-input-focus-color: $dk-body-color;
+$dk-label-color: $gray-400;
+$dk-input-btn-color: $gray-400;
+$dk-input-btn-active-color: $white;
+$dk-input-btn-hover-background-color: $dk-input-bg;
+$dk-btn-link-disabled-color: $gray-400;
+$dk-fr-input-tag-bg: $dk-component-active-bg;
+
+$dk-input-group-addon-color: $gray-200;
+$dk-input-group-addon-bg: $gray-800;
+$dk-input-group-addon-border-color: transparent;
+$dk-progress-bg: $dk-input-bg;
+
+/* Buttons */
+$dk-fr-btn-primary-color: $black;
+$dk-fr-btn-danger-color: $black;
+$dk-fr-btn-outline-primary-color: $dk-link-color;
+$dk-fr-btn-icon-color: $dk-dark;
+
+$dk-fr-btn-secondary-color: $dk-dark;
+$dk-fr-btn-secondary-hover-color: $dk-dark;
+$dk-fr-btn-secondary-border-color: $dk-input-border-color;
+$dk-fr-btn-secondary-hover-border-color: $dk-input-border-color;
+$dk-fr-btn-secondary-bg-color: transparent;
+$dk-fr-btn-secondary-hover-bg-color: lighten($gray-900, 6%);
+
+$dk-fr-btn-light-color: $dk-dark;
+$dk-fr-btn-light-bg-color: $dk-light;
+$dk-fr-btn-light-hover-bg-color: darken($dk-light, 3.5%);
+$dk-fr-btn-light-border-color: $dk-light;
+$dk-fr-btn-light-hover-border-color: darken($dk-light, 3.5%);
+
+$dk-fr-btn-dark-color: $white;
+$dk-fr-btn-dark-bg-color: $dark;
+$dk-fr-btn-dark-hover-bg-color: darken($dark, 3.5%);
+$dk-fr-btn-dark-border-color: $dark;
+$dk-fr-btn-dark-hover-border-color: darken($dark, 3.5%);
+
+$dk-fr-btn-none-color: $dk-dark;
+$dk-fr-btn-none-bg-color: transparent;
+$dk-fr-btn-none-hover-bg-color: $dk-component-active-bg;
+$dk-fr-btn-none-border-color: transparent;
+$dk-fr-btn-none-hover-border-color: $dk-component-active-bg;
+
+/* Allows for customizing button radius independently from global border radius */
+$btn-border-radius:           1.75rem;
+$btn-border-radius-lg:        1.75rem;
+$btn-border-radius-sm:        1.75rem;
+
+/* Cards */
+$dk-card-cap-bg: $dk-body-bg;
+$dk-card-bg: $dk-body-bg;
+$dk-fr-center-card-bg: $dk-card-bg;
+$dk-card-border-color: $dk-border-color;
+$dk-fr-accordion-border-color: darken($gray-900, 3%);
+$dk-fr-center-card-logo-height: 43px;
+$dk-fr-center-card-border: 1px solid $dk-border-color;
+
+/* Form Validation */
+$dk-form-feedback-invalid-color: $red-300;
+
+/* Input range */
+$dk-custom-range-track-bg: $gray-800;
+$dk-custom-range-track-box-shadow: none;
+
+/* Custom form controls */
+$dk-custom-control-indicator-bg: $dk-input-bg;
+$dk-custom-control-indicator-checked-bg: $primary;
+$dk-custom-control-indicator-border-color: $dk-input-border-color;
+$dk-custom-select-focus-border-color: $gray-800;
+$dk-custom-select-bg: $dk-input-bg;
+$dk-custom-select-border-color: $dk-input-border-color;
+$dk-custom-select-color: $dk-input-color;
+$dk-custom-select-indicator-color: $gray-400;
+$dk-custom-control-indicator-checked-color: $white;
+$dk-custom-select-indicator: str-replace(
+	url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='#{$dk-custom-select-indicator-color}' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E"),
+	'#',
+	'%23'
+);
+$dk-custom-control-indicator-active-bg: $gray-600;
+$dk-custom-control-indicator-active-border-color: $gray-600;
+$dk-custom-select-disabled-bg: $gray-800;
+$dk-custom-control-indicator-checked-disabled-bg: rgba(theme-color('primary'), 0.5);
+$dk-custom-control-label-disabled-color: $dk-body-color;
+$dk-fr-custom-control-indicator-switch-handle-color: $gray-400;
+$dk-fr-custom-control-indicator-switch-handle-disabled-color: $gray-500;
+$dk-fr-custom-control-indicator-switch-border-color: $gray-800;
+$dk-fr-custom-control-indicator-switch-background-color: $dk-input-bg;
+$dk-fr-custom-control-indicator-switch-checked-disabled-border-color: $dk-custom-control-indicator-checked-disabled-bg;
+
+/* List group */
+$dk-list-group-item-padding-y: 1.25rem;
+$dk-list-group-item-padding-x: 1.5rem;
+$dk-list-group-active-color: $dk-body-color;
+$dk-fr-hover-list-color: $dk-component-active-bg;
+$dk-list-group-bg: $dk-body-bg;
+$dk-list-group-hover-bg: $dk-component-active-bg;
+$dk-list-group-active-bg: $dk-component-active-bg;
+$dk-list-group-action-active-bg: $dk-component-active-bg;
+$dk-list-group-action-active-color: $dk-body-color;
+$dk-list-group-action-color: $dk-body-color;
+$dk-fr-list-group-active-border-color: $primary;
+$dk-list-group-border-color: $dk-border-color;
+$dk-list-paragraph: $white;
+$dk-list-paragraph-small: $white;
+
+/* Popover */
+$dk-popover-bg: $gray-900;
+$dk-popover-header-color: $headings-color;
+$dk-popover-body-color: $dk-body-color;
+
+/* Skeleton */
+$dk-fr-skeleton-background-color: $dk-border-color;
+
+/* Switches */
+$dk-fr-switch-bg: $gray-800;
+$dk-fr-switch-toggled-bg: $primary;
+
+/* Modals */
+$dk-modal-content-bg: $dk-card-bg;
+$dk-modal-header-border-color: $dk-border-color;
+$dk-modal-footer-border-color: $dk-border-color;
+$dk-fr-modal-header-bg: $dk-modal-content-bg;
+$dk-fr-modal-footer-bg: $dk-fr-modal-header-bg;
+$dk-modal-inner-padding: 1.5rem;
+$dk-modal-header-padding-y: 1rem;
+$dk-modal-header-padding-x: 1.5rem;
+$dk-modal-header-padding: $dk-modal-header-padding-y $dk-modal-header-padding-x;
+$dk-modal-title-line-height: 2.25rem;
+$dk-fr-modal-title-font-size: 1.25rem;
+
+/* Navbar */
+$dk-navbar-inverse-bg: $gray-800;
+$dk-navbar-inverse-border: $gray-700;
+$dk-navbar-inverse-color: $gray-400;
+$dk-fr-navbar-bg: $dk-body-bg;
+$dk-fr-navbar-border: $dk-border-color;
+$dk-fr-navbar-color: $gray-400;
+$dk-navbar-default-color: $dk-fr-navbar-color;
+
+/* Close */
+$dk-close-color: $gray-200;
+$dk-close-text-shadow: none;
+
+/* Dropdown */
+$dk-dropdown-border-color: $dk-border-color;
+$dk-dropdown-bg: $dk-input-bg;
+$dk-dropdown-link-color: $gray-400;
+$dk-dropdown-link-hover-color: $gray-200;
+$dk-dropdown-link-active-color: $gray-200;
+$dk-dropdown-link-disabled-color: $gray-500;
+$dk-dropdown-padding-y: 0.5rem;
+$dk-dropdown-padding-x: 0.5rem;
+$dk-dropdown-header-color: $gray-400;
+$dk-dropdown-link-active-bg: $dk-component-active-bg;
+$dk-dropdown-divider-bg: $dk-border-color;
+$dk-dropdown-link-hover-bg: $dk-dropdown-link-active-bg;
+$dk-fr-dropdown-link-border-radius: $border-radius;
+$dk-fr-dropdown-header-size: $font-size-base;
+
+/* Toolbar */
+$dk-fr-toolbar-background: $dk-card-bg;
+$dk-fr-toolbar-divider-color: $dk-border-color;
+$dk-fr-application-text-color: $gray-100;
+$dk-fr-toolbar-color: $gray-100;
+$dk-fr-toolbar-dropdown-color: $gray-100;
+$dk-fr-toolbar-border-color: $dk-border-color;
+
+/* Sidemenu */
+$dk-fr-sidemenu-background-color: $dk-card-bg;
+$dk-fr-sidemenu-toggler-border-color: transparent;
+$dk-fr-sidemenu-toggler-background-color: $gray-900;
+$dk-fr-sidemenu-font-color: $gray-400;
+$dk-fr-sidemenu-color: $gray-400;
+$dk-fr-sidemenu-active-border-color: $yellow;
+$dk-fr-sidemenu-height: 4.5rem;
+$dk-fr-sidemenu-hover-bg: $dk-component-active-bg;
+$dk-fr-sidemenu-hover: $dk-component-active-bg;
+$dk-fr-sidemenu-active-bg: $dk-component-active-bg;
+$dk-fr-sidemenu-active: $dk-component-active-bg;
+$dk-fr-sidemenu-item-font-weight: 500;
+$dk-fr-sidemenu-active-color: $white;
+$dk-fr-sidemenu-dropdown-heading-color: $dk-headings-color;
+$dk-fr-sidemenu-shadow: none;
+$dk-fr-sidemenu-border: $dk-border-color;
+$dk-fr-sidemenu-icon-fontsize: 1.125rem;
+$dk-fr-sidemenu-bottom-color: $gray-200;
+$dk-fr-sidemenu-bottom-background-color: $gray-900;
+$dk-fr-sidemenu-item-active-border-color: $primary;
+$dk-fr-sidemenu-divider-color: $dk-dropdown-divider-bg;
+
+/* Nav tabs */
+$dk-nav-tabs-border-color: $dk-border-color;
+$dk-nav-tabs-link-color: $gray-400;
+$dk-nav-tabs-link-active-color: $gray-200;
+$dk-nav-highlight-color: $primary;
+$dk-fr-sidetabs-border: $dk-border-color;
+$dk-fr-sidetabs-hover-bg: $dk-component-active-bg;
+$dk-fr-sidetabs-active-bg: $dk-component-active-bg;
+$dk-fr-sidetabs-active-color: $white;
+$dk-fr-sidetabs-border: $dk-border-color;
+$dk-fr-sidetabs-active-border-color: transparent;
+$dk-fr-sidetabs-padding-y: .5rem; 
+$dk-fr-sidetabs-padding-x: .5rem;
+$dk-fr-sidetabs-badge-background-color: $light;
+$dk-fr-sidetabs-badge-color: $dark;
+$dk-fr-sidetabs-active-badge-background-color: $primary;
+$dk-fr-sidetabs-active-badge-color: $black;
+$dk-fr-sidetabs-item-border: none;
+$dk-fr-sidetabs-item-padding-y: .75rem; 
+$dk-fr-sidetabs-item-padding-x: 1rem;
+$dk-fr-sidetabs-item-border-radius: $border-radius;
+
+
+
+/* Alert */
+$dk-alert-padding-y: 1.25rem;
+$dk-alert-padding-x: 1.25rem;
+$dk-alert-border-width: 0;
+$dk-fr-alert-link-text-decoration: underline;
+$dk-fr-alert-primary-bg-color: $dk-light;
+$dk-fr-alert-text-color: $white;
+$dk-fr-alert-info-bg-color: $dk-light;
+$dk-fr-alert-secondary-bg-color: $dk-light;
+$dk-fr-alert-success-bg-color: $dk-light;
+$dk-fr-alert-warning-bg-color: $dk-light;
+$dk-fr-alert-danger-bg-color: $dk-light;
+$dk-fr-alert-light-bg-color: $dk-light;
+$dk-fr-alert-dark-bg-color: $dk-light;
+$dk-fr-alert-box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.75);
+$dk-fr-alert-info-link-color: $dk-fr-alert-text-color;
+$dk-fr-alert-success-link-color: $dk-fr-alert-text-color;
+$dk-fr-alert-warning-link-color: $dk-fr-alert-text-color;
+$dk-fr-alert-danger-link-color: $dk-fr-alert-text-color;
+$dk-fr-alert-light-link-color: $dk-fr-alert-text-color;
+$dk-fr-alert-dark-link-color: $dk-fr-alert-text-color;
+$dk-fr-alert-primary-link-color: $dk-fr-alert-text-color;
+$dk-fr-alert-secondary-link-color: $dk-fr-alert-text-color;
+
+/* Notification Top Bar */
+$dk-fr-notification-topbar-success-bg: $primary;
+$dk-fr-notification-topbar-warning-bg: $primary;
+$dk-fr-notification-topbar-danger-bg: $primary;
+$dk-fr-notification-topbar-info-bg: $primary;
+
+/* Pagination */
+$dk-pagination-color: $gray-400;
+$dk-pagination-bg: $dk-card-bg;
+$dk-pagination-border-color: transparent;
+$dk-pagination-hover-border-color: transparent;
+$dk-pagination-border-radius: $border-radius;
+$dk-pagination-active-border-color: transparent;
+$dk-pagination-disabled-border-color: transparent;
+$dk-pagination-active-color: $white;
+$dk-pagination-active-bg: $dk-component-active-bg;
+$dk-pagination-hover-color: $dk-link-hover-color;
+$dk-pagination-hover-bg: transparent;
+$dk-pagination-disabled-color: $gray-600;
+$dk-pagination-disabled-bg: $dk-card-bg;
+
+/* Table */
+$dk-table-bg: $dk-card-bg;
+$dk-table-accent-bg: $gray-900;
+$dk-table-hover-bg: $dk-component-active-bg;
+$dk-table-color: $dk-body-color;
+$dk-table-border-color: $dk-border-color;
+$dk-fr-table-row-selected-bg: rgba(0, 0, 0, 0.1);
+$dk-fr-table-resize-handle-bg: $gray-700;
+
+/* Input range */
+$dk-custom-range-track-bg: $gray-800;
+$dk-custom-range-track-box-shadow: none;
+
+/* Journeys */
+$dk-fr-journey-thumbnail-bg: darken($dk-body-bg, 3%);
+$dk-fr-journey-thumbnail-overlay-btn-bg: $black;
+$dk-fr-journey-thumbnail-overlay-btn-color: $white;
+
+$dk-fr-node-single-icon-color: $black;
+
+/* Code Editor */
+$dk-fr-scripteditor-bg: $gray-900;
+
+
+
+/* Floating Action Bar */
+$dk-fr-floating-action-bar-bg: darken($dk-body-bg, 7.5%);
+$dk-fr-floating-action-bar-color: $dk-body-color;
+$dk-fr-floating-action-bar-btn-bg: transparent;
+$dk-fr-floating-action-bar-btn-hover-bg: lighten($dk-fr-floating-action-bar-bg, 3.5%);
+$dk-fr-floating-action-bar-btn-border-color: transparent;
+$dk-fr-floating-action-bar-btn-hover-border-color: lighten($dk-fr-floating-action-bar-bg, 3.5%);
+$dk-fr-floating-action-bar-link-color: $dk-link-color;
+$dk-fr-floating-action-bar-link-hover-color: $dk-link-hover-color;

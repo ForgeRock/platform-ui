@@ -49,8 +49,8 @@ of the MIT license. See the LICENSE file for details. -->
                     :progress="unreviewedPercentage"
                     :thickness="7"
                     :empty-thickness="7"
-                    :empty-color="styles.brightGray"
-                    :color="styles.yellow"
+                    empty-color="#e7ebf0"
+                    color="#ffb946"
                     :size="72">
                     <template #count="{}">
                       <small class="font-weight-bold mb-0">
@@ -87,8 +87,8 @@ of the MIT license. See the LICENSE file for details. -->
                     :progress="noCustodiansPercentage"
                     :thickness="7"
                     :empty-thickness="7"
-                    :empty-color="styles.brightGray"
-                    :color="styles.red"
+                    empty-color="#e7ebf0"
+                    color="#da3a2b"
                     :size="72">
                     <template #count="{}">
                       <small class="font-weight-bold mb-0">
@@ -117,13 +117,35 @@ of the MIT license. See the LICENSE file for details. -->
             </BCol>
             <BCol lg="6">
               <BCard>
-                <div class="d-flex flex-column justify-content-center ml-2">
-                  <div class="d-flex flex-row align-items-center">
-                    <FrIcon
-                      :icon-class="`size-28 d-flex align-items-center justify-content-center mr-1 color-blue mt-n25`"
-                      name="how_to_reg" />
-                    <small class="font-weight-bold mb-0">
-                      {{ $t('governance.agents.provisioned') }}
+                <div class="d-flex flex-row">
+                  <FrCircleProgressBar
+                    id="unreviewed-chart"
+                    :progress="unreviewedPercentage"
+                    :thickness="7"
+                    :empty-thickness="7"
+                    empty-color="#e7ebf0"
+                    color="#ffb946"
+                    :size="72">
+                    <template #count="{}">
+                      <small class="font-weight-bold mb-0">
+                        {{ unreviewedPercentage }}%
+                      </small>
+                    </template>
+                  </FrCircleProgressBar>
+                  <div class="d-flex flex-column justify-content-center ml-3">
+                    <div class="d-flex flex-row align-items-center">
+                      <FrIcon
+                        :icon-class="`size-28 d-flex align-items-center justify-content-center mr-1 color-darkyellow mt-n25`"
+                        name="history" />
+                      <small class="font-weight-bold mb-0">
+                        {{ $t('governance.agents.reviewPending') }}
+                      </small>
+                    </div>
+                    <p class="text-muted ml-1 font-weight-bold mb-0 chart-text-large">
+                      {{ $t('governance.agents.agentsCount', { count: counts.unreviewed }) }}
+                    </p>
+                    <small class="text-muted ml-1">
+                      {{ $t('governance.agents.unreviewedAgentsText') }}
                     </small>
                   </div>
                   <p class="text-muted ml-1 font-weight-bold mb-0 chart-text-large">
@@ -318,7 +340,6 @@ import {
   getResource, getIgaUiConfig, getGrants, getUsers,
 } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import agentConstants from './utils/agentConstants';
 import { getAgentDisplayName } from './utils/agentUtility';
 import i18n from '@/i18n';

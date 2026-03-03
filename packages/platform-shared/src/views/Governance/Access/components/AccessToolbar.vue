@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BButtonToolbar
-    class="fr-access-toolbar shadow-sm border-0 justify-content-lg-start px-4 py-3">
+    class="fr-access-toolbar shadow-sm border-1 justify-content-lg-start px-4 py-3">
     <BButtonGroup
       class="mx-1 pr-4 border-right-light"
       v-if="hideFilter">
@@ -158,7 +158,7 @@ function toggleSelectedType(type) {
 
 <style lang="scss" scoped>
 .fr-access-toolbar {
-  background-color: $white;
+  background-color: var(--card-bg);
   padding: 12px;
   z-index: 1;
 

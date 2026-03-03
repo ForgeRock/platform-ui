@@ -67,7 +67,7 @@ import InputMixin from '../Wrapper/InputMixin';
  * @slot append - Checkbox label
  */
 export default {
-  name: 'FrCheckbox',
+  name: 'NewFrCheckbox',
   compatConfig: {
     INSTANCE_LISTENERS: false,
   },

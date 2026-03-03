@@ -460,7 +460,7 @@ export default {
   }
 
   :deep(.within-input-button .btn) {
-    background-color: $white !important;
+    background-color: $input-bg !important;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
     border-left: 0 !important;

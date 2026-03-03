@@ -325,7 +325,7 @@ $border-color: $gray-200;
 $body-bg: $gray-100;
 $body-color: $gray-600;
 $headings-color: $gray-900;
-$font-size-base: 0.9375rem !default;
+$font-size-base: 0.9375rem;
 $font-weight-bold: 600;
 $font-weight-normal: 400;
 $font-weight-light: 300;
@@ -357,7 +357,7 @@ $custom-select-focus-border-color: $gray-500;
 
 $custom-switch-width: ($custom-control-indicator-size * 2) * 1.75;
 $custom-switch-indicator-border-radius: $custom-control-indicator-size;
-$custom-control-indicator-checked-disabled-bg: rgba(theme-color('primary'), 0.5) !default;
+$custom-control-indicator-checked-disabled-bg: rgba(theme-color('primary'), 0.5);
 /* stylelint-disable */
 $custom-switch-indicator-size: calc(
   #{$custom-control-indicator-size * 2} - #{$custom-control-indicator-border-width * 4}
@@ -380,6 +380,7 @@ $input-disabled-bg: $gray-100;
 $input-border-color: $gray-400;
 $input-color: $gray-900;
 $label-color: $gray-600;
+$input-btn-font-size: $font-size-base;
 $input-btn-color: $gray-800;
 $input-btn-active-color: $gray-900;
 $input-group-addon-bg: $input-bg;
@@ -400,8 +401,8 @@ $h4-font-size: $font-size-base * 1.25;
 $h5-font-size: $font-size-base;
 $h6-font-size: $font-size-base * 0.8125;
 
-$h1-font-weight: 300;
-$h2-font-weight: 300;
+$h1-font-weight: 600;
+$h2-font-weight: 600;
 $h3-font-weight: $font-weight-bold;
 $h4-font-weight: $font-weight-bold;
 $h5-font-weight: $font-weight-bold;
@@ -437,6 +438,7 @@ $fr-alert-dark-bg-color: darken($dark, 8%);
 $fr-alert-box-shadow: transparent;
 
 /* Button */
+$btn-font-size: $input-btn-font-size;
 $btn-padding-x: 1.25rem;
 $btn-padding-y: $input-btn-padding-y;
 $btn-padding-y-lg: $input-btn-padding-y-lg;
@@ -470,6 +472,7 @@ $dropdown-link-active-color: $gray-900;
 $dropdown-link-active-bg: lighten($primary, 44%);
 $dropdown-link-hover-bg: $dropdown-link-active-bg;
 $dropdown-header-color: $gray-900;
+$dropdown-padding-x: 0;
 $dropdown-padding-y: 0.25rem;
 $dropdown-item-padding-y: 0.675rem;
 $dropdown-link-color: $gray-700;
@@ -524,6 +527,18 @@ $nav-tabs-border-color: $gray-300;
 $nav-tabs-link-color: inherit;
 $nav-tabs-link-active-color: $primary;
 $nav-highlight-color: inherit !default;
+$fr-sidetabs-item-border: 3px solid transparent;
+$fr-sidetabs-hover-bg: $light;
+$fr-sidetabs-active-bg: $light-blue;
+$fr-sidetabs-active-color: $gray-800;
+$fr-sidetabs-active-border-color: $nav-highlight-color;
+$fr-sidetabs-border: $border-color;
+$fr-sidetabs-padding-y: 0; 
+$fr-sidetabs-padding-x: 0;
+$fr-sidetabs-badge-background-color: $light;
+$fr-sidetabs-badge-color: $dark;
+$fr-sidetabs-active-badge-background-color: $primary;
+$fr-sidetabs-active-badge-color: $white;
 
 /* Pagination */
 $pagination-color: $gray-500;
@@ -590,8 +605,10 @@ $fr-sidemenu-background-color: $white;
 $fr-sidemenu-active-border-color: $gray-800;
 $fr-sidemenu-font-color: $gray-700;
 $fr-sidemenu-height: 4.5rem;
-$fr-sidemenu-hover:  $gray-100;
-$fr-sidemenu-active: $light-blue;
+$fr-sidemenu-color: $gray-400;
+$fr-sidemenu-active-color: $gray-400;
+$fr-sidemenu-hover:  $light;
+$fr-sidemenu-active:  $light-blue;
 $fr-sidemenu-shadow: transparent;
 $fr-sidemenu-border: $gray-200;
 $fr-sidemenu-width-lg: 15em;
@@ -601,6 +618,11 @@ $fr-sidemenu-fontsize: 0.875rem;
 $fr-sidemenu-icon-fontsize: 1.125rem;
 $fr-sidemenu-bottom-color: $gray-200;
 $fr-sidemenu-bottom-background-color: $white;
+$fr-sidemenu-padding-x: .5rem;
+$fr-sidemenu-padding-y: 0;
+$fr-sidemenu-item-border-radius: $border-radius;
+$fr-sidemenu-item-border: 3px solid transparent;
+$fr-sidemenu-item-padding: 15px 20px 15px 16px;
 
 /* Sign up form */
 $fr-signup-header-wrapper-height: 5.25rem;
@@ -614,3 +636,5 @@ $fr-tree-accent: lighten($primary, 25%);
 
 /* System Notification */
 $fr-system-notification-height: 64px;
+
+

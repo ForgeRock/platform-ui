@@ -401,7 +401,6 @@ import FrActivateCampaignModal from './ActivateCampaignModal';
 import FrCancelCampaignModal from './CancelCampaignModal';
 import FrDeleteCampaignModal from './DeleteCampaignModal';
 import FrUpdateDeadlineModal from './UpdateDeadlineModal';
-import styles from '@/scss/main.scss';
 
 export default {
   name: 'CampaignDetailsOverview',
@@ -458,6 +457,13 @@ export default {
         staging: 'light',
         'signed-off': 'success',
       },
+      styles: {
+        blue: '#1a73e8',
+        green: '#22a75f',
+        orchid: '#ba4de1',
+        skyblue: '#61e2e2',
+        yellow: '#ffb946',
+      },
     };
   },
   computed: {
@@ -478,8 +484,8 @@ export default {
     },
     campaignUsers() {
       const usersChartColors = {
-        new: styles.green,
-        previous: styles.blue,
+        new: this.styles.green,
+        previous: this.styles.blue,
       };
       return Object.entries(this.campaign.statistics.userCount)
         .map(([key, value]) => ({
@@ -490,9 +496,9 @@ export default {
     },
     decisionsBreakdown() {
       const decisionsBreakdownChartColors = {
-        certify: styles.green,
-        revoke: styles.blue,
-        exception: styles.yellow,
+        certify: this.styles.green,
+        revoke: this.styles.blue,
+        exception: this.styles.yellow,
       };
       return Object.entries(this.campaign.statistics.currentDecision)
         .filter(([key]) => Object.keys(decisionsBreakdownChartColors).includes(key))
@@ -503,7 +509,7 @@ export default {
         }));
     },
     decisionsByApp() {
-      const colors = [styles.green, styles.blue, styles.yellow, styles.orchid, styles.skyblue];
+      const colors = [this.styles.green, this.styles.blue, this.styles.yellow, this.styles.orchid, this.styles.skyblue];
       return Object.entries(this.campaign.statistics.decisionsByApplication)
         .sort(([, valueA], [, valueB]) => valueB - valueA)
         .reduce((acc, [key, value], index) => {
@@ -536,7 +542,7 @@ export default {
       return this.campaign.certificationType === uiTypeMap.ENTITLEMENTCOMPOSITION;
     },
     previousDecisionChart() {
-      const colors = [styles.green, styles.blue];
+      const colors = [this.styles.green, this.styles.blue];
       const stats = this.campaign.statistics.previousDecision || {};
       const previouslyReviewed = stats.previouslyReviewed || 0;
       const total = stats.total || 0;

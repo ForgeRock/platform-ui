@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -139,14 +139,24 @@ export default {
 </script>
 <style lang="scss">
   .vue-daterange-picker {
+    .reportrange-text {
+      padding: 0px !important;
+      border-radius: 50rem !important;
+    }
     .form-control {
-      background: transparent;
+      background: transparent !important;
       border: none;
       overflow: visible;
     }
 
     > .daterangepicker {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border-color);
       box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.18);
+
+      &::before, &::after {
+        content: none;
+      }
 
       &.show-ranges {
         .drp-calendar.left {
@@ -161,39 +171,68 @@ export default {
         > .ranges {
           > ul {
             li {
+              color: var(--nav-tabs-link-color) !important;
               font-size: 0.9375rem;
               padding: 0.675rem 1.5rem;
               white-space: nowrap;
               width: 100%;
 
+              &:hover {
+                background-color: var(--sidetabs-hover-bg) !important;
+              }
+
               &.active {
-                background-color: $light-blue;
-                color: $gray-900;
+                background-color: var(--bg-light-blue);
+                color: var(--bg-white);
               }
             }
           }
         }
 
         > .calendars-container {
-          border-right: 1px solid $gray-200;
+          border-right: 1px solid var(--card-border-color);
           padding: 1.5rem;
 
           .drp-calendar {
             > .calendar-table {
+              background-color: transparent;
+              border: none;
               thead th {
-                color: $black;
+                background-color: transparent;
                 font-size: 0.9375rem;
+              }
+
+              th {
+                background-color: transparent;
               }
 
               td {
+                background-color: transparent;
                 font-size: 0.9375rem;
                 height: 32px;
                 width: 32px;
+
+                &.in-range {
+                  background-color: var(--bg-light-blue);
+
+                  &.start-date:not(.off) {
+                    color: var(--bg-white);
+                  }
+
+                  &.end-date:not(.off) {
+                    color: var(--bg-white);
+                  }
+                  color: inherit;
+                }
               }
 
               td.active:not(.off) {
-                background-color: $primary;
+                background-color: var(--primary);
               }
+            }
+
+            .next span, .prev span {
+              border-color: var(--body-color);
             }
 
             &.left {
@@ -212,6 +251,7 @@ export default {
       }
 
       > .drp-buttons {
+        border-top: 1px solid var(--card-border-color);
         padding: 1rem 1.5rem;
 
         .btn {
@@ -220,22 +260,13 @@ export default {
           padding: 0.75rem 1.25rem;
 
           &-success {
-            background-color: $primary;
+            background-color: var(--primary);
             margin-left: 0;
-
-            &:hover {
-              background-color: $hover-blue;
-            }
           }
 
           &-secondary {
             background-color: transparent;
-            color: $primary;
-
-            &:hover {
-              color: $hover-blue;
-              text-decoration: underline;
-            }
+            color: var(--primary);
           }
         }
 

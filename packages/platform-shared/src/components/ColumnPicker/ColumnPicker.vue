@@ -489,7 +489,7 @@ watch(() => props.show, (isVisible) => {
   cursor: pointer;
   user-select: none;
   &:hover {
-    background-color: $gray-100;
+    background-color: var(--input-bg-active);
   }
 
   :deep(.custom-control) {
@@ -523,11 +523,11 @@ watch(() => props.show, (isVisible) => {
 
     :deep(tr) {
       &:hover td {
-        background-color: $gray-100;
+        background-color: var(--input-bg-active);
       }
 
       &.chosen-item {
-        background-color: $white;
+        background-color: var(--input-active-bg);
         cursor: grabbing;
         cursor: -moz-grabbing;
         cursor: -webkit-grabbing;

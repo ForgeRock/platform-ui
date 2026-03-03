@@ -267,7 +267,7 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .menu-container {
   position: relative;
   display: inline-flex;
@@ -275,6 +275,11 @@ onBeforeUnmount(() => {
     position: relative;
     overflow: hidden;
     width: 100%;
+  }
+
+  .dropdown-toggle {
+    color: var(--text-dark) !important;
+    text-decoration: none !important;
   }
 }
 

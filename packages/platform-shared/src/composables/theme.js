@@ -218,6 +218,7 @@ export default function useTheme() {
    */
   function loadStaticTheme() {
     themeStore.theme = {
+      buttonRounded: 28,
       logo: `${process.env.BASE_URL}images/ping-logo-square-color.svg`,
       logoHeight: 72,
       favicon: 'favicon.ico',
