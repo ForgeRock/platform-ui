@@ -21,6 +21,15 @@ module.exports = async (on, config) => {
   on('file:preprocessor', createBundler({ plugins: [createEsbuildPlugin(config)] }));
 
   on('task', {
+    async deleteFileIfExists(filePath) {
+      try {
+        await fs.unlink(filePath);
+      } catch (_) { /* file doesn't exist, that's fine */ }
+      return null;
+    },
+  });
+
+  on('task', {
     async readFileWithFallback({ globalFile, projectFile, encoding = 'utf8' }) {
       try {
         const data = await fs.readFile(globalFile, encoding);

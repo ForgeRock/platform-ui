@@ -37,8 +37,13 @@ function fetchAccessToken(retries = 5, attempt = 0) {
   const expectedScope = Cypress.env('IS_FRAAS') ? 'fr:idm:*' : 'openid fr:idm:*';
 
   cy.wait('@getAccessToken').then(({ response }) => {
-    // Fetch ACCESS_TOKEN only if the response is successful and the IDM scope is correct
-    if (response.statusCode === 200 && response.body.scope === expectedScope) {
+    const isFraas = Cypress.env('IS_FRAAS');
+    const { id_token: idToken, scope } = response.body;
+    const idTokenPayload = !isFraas && idToken ? JSON.parse(atob(idToken.split('.')[1])) : null;
+    const isAdminToken = isFraas || idTokenPayload?.aud === 'idm-admin-ui';
+
+    // Fetch ACCESS_TOKEN only if the response is successful, the IDM scope is correct, and the token belongs to the admin UI
+    if (response.statusCode === 200 && scope === expectedScope && isAdminToken) {
       // Use the access token from the admin login as the API access token for this test
       // Note that for code to use this access token it needs to be queued to execute
       // afterwards by Cypress with a then block or similar
@@ -272,11 +277,22 @@ Cypress.Commands.add(
     // Handle security questions if enabled
     if (handleSecurityQuestions) {
       // Select first security question from dropdown
-      cy.contains('label', 'Select a security question').parent().find('.multiselect').click({ force: true });
-      cy.get('.multiselect__content').find('.multiselect__element').first().click();
+      cy.findAllByRole('combobox', { name: 'Select a security question' }).first().click({ force: true });
+      cy.get('.multiselect__content').first().find('.multiselect__element').first()
+        .click();
 
       // Enter answer for the security question
       cy.findByLabelText("Answer for: What's your favorite color?").should('be.visible').type('Test Answer', { force: true });
+
+      if (!Cypress.env('IS_FRAAS')) {
+        // Enter the second security question
+        cy.findAllByRole('combobox', { name: 'Select a security question' }).eq(1).click({ force: true });
+        cy.get('.multiselect__content').eq(1).find('.multiselect__element').first()
+          .click();
+
+        // Enter answer for the second security question
+        cy.findByLabelText('Answer for: Who was your first employer?').should('be.visible').type('Test Answer', { force: true });
+      }
     }
 
     cy.findByRole('button', { name: /Next/i }).click();

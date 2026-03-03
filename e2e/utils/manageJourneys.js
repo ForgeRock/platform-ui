@@ -19,14 +19,20 @@ import { updateThemes } from './themeutils';
 class JourneyCleanupManager {
   constructor() {
     this.journeys = [];
+    this.generatedFiles = [];
   }
 
   add(journey) {
     this.journeys.push(journey);
   }
 
+  addGeneratedFile(filePath) {
+    this.generatedFiles.push(filePath);
+  }
+
   clear() {
     this.journeys = [];
+    this.generatedFiles = [];
   }
 
   getAll() {
@@ -38,6 +44,7 @@ class JourneyCleanupManager {
       const journeysToDelete = this.journeys.map((journey) => journey.fileName);
       cy.log(`Deleting imported journey(s) ${journeysToDelete} via API`).then(() => {
         cy.deleteTreesViaAPI(journeysToDelete);
+        this.generatedFiles.forEach((filePath) => cy.task('deleteFileIfExists', filePath));
         this.clear();
       });
     }
@@ -312,6 +319,9 @@ export function prepareJourneyTemplate(templateName, replaceDict) {
     // Write moditied data back to the template file
     cy.writeFile(preparedJourneyPath, JSON.parse(updatedTemplate));
   });
+
+  // Register generated file for cleanup after tests
+  journeyCleanupManager.addGeneratedFile(preparedJourneyPath);
 
   return preparedJourneyName;
 }

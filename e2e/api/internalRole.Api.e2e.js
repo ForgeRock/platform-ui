@@ -20,11 +20,12 @@ export default function createInternalRole(roleData, accessToken = Cypress.env('
 }
 
 export function addUserToInternalRole(roleId, userId, accessToken = Cypress.env('ACCESS_TOKEN')?.access_token) {
+  const managedUserType = Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user';
   const userAssignmentPatch = [{
     operation: 'add',
     field: '/authzMembers/-',
     value: {
-      _ref: `managed/alpha_user/${userId}`,
+      _ref: `managed/${managedUserType}/${userId}`,
       _refProperties: {},
     },
   }];
