@@ -1,10 +1,9 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div
-    class="text-center">
+  <div class="text-center">
     <div
       :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-medium': size === 'md' }, { 'spinner-small': size === 'sm' }, 'spinner-border', { 'spinner-primary': !buttonSpinner }]"
       :data-testid="testid"
@@ -13,6 +12,11 @@ of the MIT license. See the LICENSE file for details. -->
       <span class="sr-only">
         {{ $t('common.loadingEtc') }}
       </span>
+    </div>
+    <div
+      v-if="$slots.default"
+      class="mt-3">
+      <slot />
     </div>
   </div>
 </template>

@@ -277,6 +277,10 @@ export default {
       background-color: white;
     }
 
+    label:has(~ textarea:disabled) {
+      background-color: $gray-100;
+    }
+
     textarea::placeholder,
     input::placeholder,
     .multiselect__placeholder {
