@@ -293,6 +293,7 @@
     "removed": "Removed",
     "removeObject": "Remove {object}",
     "report": "Report",
+    "request": "Request",
     "requestSubmitted": "Request Submitted",
     "require": "require",
     "required": "Required",
@@ -1716,6 +1717,7 @@
         "decision": "Decision",
         "noCertification": "This access has not been previously certified."
       },
+      "confirmRequestEntitlement": "Are you sure you want to request this entitlement for this user?",
       "confirmRevokeEntitlement": "Are you sure you want to revoke this entitlement from this role? | Are you sure you want to revoke these entitlements from this role?",
       "displayName": {
         "accountGrant": "Account",
@@ -1752,6 +1754,8 @@
       },
       "recommendation": "Access Recommendation",
       "noResultsRole": "No {grantType} for this role.",
+      "requestEntitlement": "Request Recommended Entitlement?",
+      "requesting": "requesting",
       "revokeEntitlement": "Revoke Entitlement? | Revoke Entitlements?",
       "revoking": "Revoking",
       "startDate": "Access Start Date",

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -172,6 +172,33 @@ describe('GovResourceTable', () => {
     expect(actionOptionsMenu.exists()).toBeTruthy();
   });
 
+  it('shows the actions menu if showRequest is true', async () => {
+    const { wrapper } = await mountComponent({ showViewDetails: true, showRequest: true, parentResourceName: 'role' });
+    wrapper.setProps({
+      grantType: 'entitlement',
+      items: [
+        {
+          item: {
+            type: '',
+          },
+          user: {
+            accountStatus: 'active',
+          },
+          account: {
+            userPrincipalName: 'test1@forgerock.com',
+          },
+          application: {
+            name: 'test',
+            templateName: 'test',
+          },
+        },
+      ],
+    });
+    await flushPromises();
+    const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    expect(actionOptionsMenu.exists()).toBeTruthy();
+  });
+
   it('does not have the actions menu if account assignment is not direct', async () => {
     const { wrapper } = await mountComponent();
     let actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
@@ -225,6 +252,17 @@ describe('GovResourceTable', () => {
     await domWrapper.find('#app > .menu li:nth-of-type(2) > a').trigger('click'); // Revoke menu item
 
     expect(revoke).toHaveBeenCalled();
+  });
+
+  it('should open request modal when request is clicked', async () => {
+    const { wrapper, domWrapper } = await mountComponent({ showViewDetails: true, showRequest: true, grantType: 'entitlement' });
+    const request = jest.spyOn(wrapper.vm, 'showRequestModal');
+    await wrapper.setProps({ items: mockItems });
+    const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    await actionOptionsMenu.find('button').trigger('click');
+    await domWrapper.find('#app > .menu li:nth-of-type(2) > a').trigger('click'); // Request menu item
+
+    expect(request).toHaveBeenCalled();
   });
 
   it('should show floating bar when row is selected, and show revoke modal when revoke button is clicked', async () => {
