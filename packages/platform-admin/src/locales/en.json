@@ -85,6 +85,7 @@
     "OAuthReturn": "OAuth Return",
     "pageTitle": "Platform Admin - {page}",
     "PasswordPolicy": "Password Policy",
+    "PingOneIntegrations": "PingOne Integrations",
     "Profile": "Profile",
     "Promotion": "Promotion",
     "PromotionAuthentication": "Promotion Authentication",
@@ -147,12 +148,14 @@
     "hostedPages": "Hosted Pages",
     "identities": "Identities",
     "identityManagement": "Identity Management",
+    "integrations": "Integrations",
     "jobs": "Jobs",
     "journeys": "Journeys",
     "managed": "Manage",
     "monitoring": "Monitoring",
     "nativeConsoles": "Native Consoles",
     "oauthClients": "OAuth2 Clients",
+    "pingOneIntegrations": "PingOne Integrations",
     "pipelines": "Pipelines",
     "provider": "Provider",
     "provisioners": "Provisioners",
@@ -5518,6 +5521,43 @@
     "errorGettingLogs": "There was an error retrieving logs",
     "queryFilterDocs": "See payload queryFilter documentation.",
     "rateLimitError": "Monitoring api has hit it's rate limit. Retrying request in { retrySeconds } seconds..."
+  },
+  "integrations": {
+    "pingOneIntegrations": {
+      "listView": {
+        "addModal": {
+          "addingEnvironment": "Adding Environment",
+          "credentialDescription": "Paste the full credential string generated in PingOne.",
+          "credentialLabel": "Credential",
+          "decodedClaims": "Decoded Claims",
+          "description": "To connect to PingOne Services, first create a credential in your PingOne Console. After the credential is created, copy the entire token value shown in PingOne and paste it below.",
+          "integrating": "Integrating with PingOne",
+          "integrationNameDescription": "Human-readable name for your integration.",
+          "title": "Add a PingOne Integration"
+        },
+        "detailsModal": {
+          "credentialId": "Credential ID",
+          "detailsTabContent": "Environment Details",
+          "environmentId": "Environment ID",
+          "environmentName": "Environment Name",
+          "integrationSettings": "Integration Settings",
+          "organizationName": "Organization Name",
+          "pingOneIntegrationName": "PingOne Integration Name",
+          "region": "Region"
+        },
+        "addFirstIntegrationText": "Add your first PingOne environment to get started.",
+        "noIntegrationsText": "No PingOne integrations yet",
+        "subtitle": "Add PingOne environments to integrate with PingOne services in Advanced Identity Cloud.",
+        "title": "PingOne Integrations"
+      },
+      "errors": {
+        "creationError": "An error occurred while creating the PingOne integration",
+        "deleteError": "An error occurred while deleting the PingOne integration",
+        "fetchError": "An error occurred while retrieving PingOne integration",
+        "loadError": "An error occurred while loading PingOne integrations"
+      },
+      "pingOneIntegration": "PingOne Integration"
+    }
   },
   "idm": {
     "identityManagement": "Identity Management",

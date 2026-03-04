@@ -194,6 +194,10 @@ const mutations = {
         }
       }
 
+      if (env.VUE_APP_ENABLE_PINGONE_INTEGRATION?.toString() === 'true') {
+        state.pingOneIntegrationsEnabled = true;
+      }
+
       if (env.VUE_APP_ENABLE_PROXY_CONNECT?.toString() === 'true') {
         state.proxyConnectEnabled = true;
       }

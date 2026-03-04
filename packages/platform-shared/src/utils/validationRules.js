@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -51,6 +51,12 @@ export function getRules(i18n) {
     }
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.customValidation.message', { ruleNames });
   };
+
+  // Starts with letter rule
+  function start_alpha(value) {
+    const regex = /^[a-zA-Z]/g;
+    return regex.test(value) || i18n.global.t('common.policyValidationMessages.startsWithLetter');
+  }
 
   const alpha = (value) => rules.alpha(value) || i18n.global.t('common.policyValidationMessages.alphaOnly');
 
@@ -376,6 +382,16 @@ export function getRules(i18n) {
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.validJSVariable');
   };
 
+  /**
+   * Validates whether a value is a valid JWT. A valid JWT is a string consisting of three parts separated by dots,
+   * where each part contains only alphanumeric characters, hyphens, or underscores.
+   * @param {String} value - The value to validate.
+   * @returns {Boolean|String} - Returns true if the value is a valid JWT, otherwise returns a descriptive message.
+   */
+  function valid_jwt(value) {
+    return customValidators.validJWT(value) || i18n.global.t('common.policyValidationMessages.validJWT');
+  }
+
   const regex = (value, { pattern, message }) => {
     const customRegex = new RegExp(pattern);
     return customRegex.test(value) || message;
@@ -450,6 +466,7 @@ export function getRules(i18n) {
     secret_label_identifier,
     single_spaces,
     start_end_space,
+    start_alpha,
     starts_with_case_insensitive,
     text_without_fragment,
     unique_email_template_id,
@@ -462,6 +479,7 @@ export function getRules(i18n) {
     url_without_path,
     url,
     valid_js_variable_name,
+    valid_jwt,
     validBookmarkUrl,
     valid_url_or_esv_variable,
     whitespace,

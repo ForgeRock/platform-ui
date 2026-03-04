@@ -607,10 +607,12 @@
       "whitespace": "Space characters prohibited",
       "srOnlyMet": "Met {policy}",
       "srOnlyNotMet": "Not met {policy}",
+      "startsWithLetter": "Must start with a letter",
       "formRowOversized": "Row is too large, the total of columns and offsets cannot exceed 12",
       "validJSVariable": "Must be a valid variable name",
       "notStartsWithNumber": "Cannot start with a number",
-      "noMicrosoftRealm": "Cannot be Microsoft 365 realm. Use the Microsoft 365 catalog application instead."
+      "noMicrosoftRealm": "Cannot be Microsoft 365 realm. Use the Microsoft 365 catalog application instead.",
+      "validJWT": "Must be a valid JWT"
     },
     "themes": {
       "errorLinkingTree": "There was an error linking tree to theme",

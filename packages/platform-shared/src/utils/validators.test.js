@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,7 +8,14 @@
 import * as esvApi from '@forgerock/platform-shared/src/api/EsvApi';
 import i18n from '@/i18n';
 import {
-  urlDomainOnly, validEmail, urlWithoutPath, urlWithPath, isValidESV, minimumItems, validBookmarkUrl,
+  urlDomainOnly,
+  validEmail,
+  urlWithoutPath,
+  urlWithPath,
+  isValidESV,
+  validJWT,
+  minimumItems,
+  validBookmarkUrl,
 } from './validators';
 
 const nonEnglishEmailAddresses = [
@@ -190,6 +197,18 @@ describe('ESV validators', () => {
     expect(getVariableSpy).toHaveBeenCalled();
     expect(getSecretSpy).toHaveBeenCalled();
     expect(result).toBe(true);
+  });
+});
+
+describe('JWT validators', () => {
+  it('isValidJWT should return true when value is a valid JWT', () => {
+    const result = validJWT('eyJraWQiOiIwOWVlZmRiOC0xNmM3LTQ4ZjktYWU5Zi00ZTA3NDk0NDc5YzYiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczovL2FwaS5waW5nb25lLmV1IiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC5waW5nb25lLmV1IiwiY29uc29sZVVybCI6Imh0dHBzOi8vY29uc29sZS5waW5nb25lLmV1IiwiZW52aXJvbm1lbnROYW1lIjoiQWRtaW5pc3RyYXRvcnMiLCJlbnZpcm9ubWVudElkIjoiZDM3MTE4ODYtNmYyNS00YjdlLTk3NWMtZWM4ZmRhNWRiMWVkIiwib3JnYW5pemF0aW9uTmFtZSI6ImludGVybmFsX2FuZHJld2hlcnRlbF82MzM1MzQyNTIiLCJvcmdhbml6YXRpb25JZCI6ImQwNzM1MzExLTRjNWMtNGFhMi1iNWE0LTQ2NWRmMWEwMWRiMyIsImdhdGV3YXlOYW1lIjoiUGluZ0ZlZGVyYXRlMyIsImdhdGV3YXlJZCI6IjY0YzQ3YjQ3LTgyNTktNDVjMS05MzBiLTk1NzdmNTI5YjgyZSIsImdhdGV3YXlUeXBlIjoiUElOR19GRURFUkFURSIsInRhcmdldENsdXN0ZXJFbnZpcm9ubWVudCI6IlBST0QiLCJ0YXJnZXRHZW9ncmFwaHkiOiJFVSIsInJlZ2lvbiI6IkV1cm9wZSIsImRpcmVjdExkYXBVcmwiOiJodHRwczovL2FwaS5waW5nb25lLmV1IiwianRpIjoiOTFlYWEzYzctMjM5Yi00M2I5LWI4ZGYtNzk2ZDllNzI1ZWE1IiwiaXNzIjoid3NzOi8vZ2F0ZXdheXMucGluZ29uZS5ldSIsImlhdCI6MTc3MzE0MjQ3Nn0.F4tUTRdMWpMfStlTuF4VUG4OiegLf5npT4VPPKHcZahhvSzfR9q0Ws2Og_dHMNztST9C-JGpIP71y8xdyYJ_O_ckO2EOUtebMzitqFAKgptgwGrc25aJ4oBlRlB4gowApUODnlAra21f_KLNZxy38V6Bymwyx__Df7AavFqC6YybOfU4Uxh_QyBHLyK8wDPoCxU3Vy-g7fye1A6B0zVOvtaS4pmndB5yOPY48zfd7fkQxnYP_nKRZq8Wt_PJSjV8AyibK04Zs0e2EahAzHIP-4XHB6LPWxi3dkZSTjwiKQ-2CWcwa1WMv4e_tXcdrlK4wUkYLrXfmTatghERM-KCTw');
+    expect(result).toBe(true);
+  });
+
+  it('isValidJWT should return false when value is not a valid JWT', () => {
+    const result = validJWT('&{esv.test.failure}');
+    expect(result).toBe(false);
   });
 });
 

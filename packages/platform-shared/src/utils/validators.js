@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -235,6 +235,24 @@ export const validBookmarkUrl = (value) => {
   } catch (e) {
     return false;
   }
+};
+
+/**
+ * validates a text field is a valid JWT
+ * @param {String} value
+ * @returns {Boolean} Whether validation passed or not.
+ */
+export const validJWT = (value) => {
+  // Treat null/undefined or empty (after trimming) as "no value" and therefore valid
+  if (value === null || value === undefined) {
+    return true;
+  }
+  const trimmedValue = String(value).trim();
+  if (!trimmedValue) {
+    return true;
+  }
+  const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]*$/;
+  return jwtRegex.test(trimmedValue);
 };
 
 export function testUniqueness(value, { otherValues }) {
