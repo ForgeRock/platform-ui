@@ -55,7 +55,6 @@ const defaultState = {
   promoteAppsViaApi: false,
   riskAdminEnabled: false,
   riskDashboardEnabled: false,
-  showEsvUi: false,
   uiConfig: null,
   webStorageAvailable: true,
   workforceEnabled: false,
@@ -180,10 +179,6 @@ const mutations = {
     }
 
     if (env.VUE_APP_FRAAS === 'true') {
-      if (env.VUE_APP_SHOW_ESV_UI?.toString() === 'true') {
-        state.showEsvUi = true;
-      }
-
       if (env.VUE_APP_ENABLE_GOVERNANCE_DEV?.toString() === 'true') {
         state.governanceEnabled = true;
         state.governanceDevEnabled = true;
