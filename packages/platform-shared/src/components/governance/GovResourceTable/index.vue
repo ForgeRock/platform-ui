@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -191,7 +191,6 @@ of the MIT license. See the LICENSE file for details. -->
               :prediction="getPredictionDisplay(item)"
               :auto-id-settings="this.$store.state.govAutoIdSettings"
               type="recommendation"
-              :test="(console.log('prediction', item))"
               :id="item.ent_id || item.id" />
           </div>
         </template>
@@ -210,6 +209,15 @@ of the MIT license. See the LICENSE file for details. -->
                   icon-class="mr-2"
                   name="list_alt">
                   {{ $t('common.viewDetails') }}
+                </FrIcon>
+              </BDropdownItem>
+              <BDropdownItem
+                v-if="showRequest"
+                @click="showRequestModal(item)">
+                <FrIcon
+                  icon-class="mr-2"
+                  name="list_alt">
+                  {{ $t('common.request') }}
                 </FrIcon>
               </BDropdownItem>
               <BDropdownItem
@@ -253,8 +261,8 @@ of the MIT license. See the LICENSE file for details. -->
       id="revoke-from-role-modal"
       no-close-on-backdrop
       no-close-on-esc
-      :title="$tc('governance.access.revokeEntitlement', itemsToRevoke.length)">
-      {{ $tc('governance.access.confirmRevokeEntitlement', itemsToRevoke.length) }}
+      :title="$t('governance.access.revokeEntitlement', itemsToRevoke.length)">
+      {{ $t('governance.access.confirmRevokeEntitlement', itemsToRevoke.length) }}
       <template #modal-footer="{ cancel }">
         <BButton
           variant="link"
@@ -269,6 +277,26 @@ of the MIT license. See the LICENSE file for details. -->
           :spinner-text="$t('governance.access.revoking')"
           variant="danger"
           @click="$emit('revoke-items', itemsToRevoke)" />
+      </template>
+    </BModal>
+    <BModal
+      :id="`${modalId}-request`"
+      no-close-on-backdrop
+      no-close-on-esc
+      :title="$t('governance.access.requestEntitlement')">
+      {{ $t('governance.access.confirmRequestEntitlement') }}
+      <template #modal-footer="{ cancel }">
+        <BButton
+          variant="link"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <FrButtonWithSpinner
+          :button-text="$t('common.request')"
+          :disabled="assigningResource"
+          :show-spinner="assigningResource"
+          :spinner-text="$t('governance.access.requesting')"
+          @click="$emit('assign-resources', itemToRequest)" />
       </template>
     </BModal>
     <FrUserEntitlementModal
@@ -407,6 +435,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showRequest: {
+      type: Boolean,
+      default: false,
+    },
     totalCount: {
       type: Number,
       default: 0,
@@ -439,6 +471,7 @@ export default {
       paginationPage: 1,
       paginationPageSize: 10,
       itemsToRevoke: [],
+      itemToRequest: [],
       roleBasedAssignment: this.$t('pages.assignment.roleBased'),
       ruleBasedAssignment: this.$t('pages.assignment.ruleBased'),
       searchQuery: '',
@@ -667,6 +700,18 @@ export default {
         }
       });
     },
+    /**
+     * Shows the request modal
+     * @param {object} item list of items that are being revoked
+     */
+    showRequestModal(item) {
+      // ActionsMenu component manages focus on trigger elements when modals are opened/closed.
+      // To avoid conflicts, we defer showing the modal until the next tick.
+      this.$nextTick(() => {
+        this.itemToRequest = [item?.catalog?.id];
+        this.$bvModal.show(`${this.modalId}-request`, [item?.catalog?.id]);
+      });
+    },
     sortChanged(event) {
       const { sortBy, sortDesc } = event;
       this.loadData({ sortBy, sortDesc, paginationPage: 1 });
@@ -677,6 +722,7 @@ export default {
       if (status === 'success') {
         this.onToggleSelectAll(false);
         this.$bvModal.hide(`${this.modalId}-show`);
+        this.$bvModal.hide(`${this.modalId}-request`);
         this.loadData();
       } else if (status === 'requestsRevoked') {
         this.onToggleSelectAll(false);
@@ -685,6 +731,8 @@ export default {
         this.onToggleSelectAll(false);
         this.$bvModal.hide('revoke-from-role-modal');
         this.loadData();
+      } else if (status === 'error') {
+        this.$bvModal.hide(`${this.modalId}-request`);
       }
     },
     items(items) {
