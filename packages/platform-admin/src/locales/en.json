@@ -2813,7 +2813,7 @@
     },
     "regenerateKeyModal": {
       "title": "Regenerate Key",
-      "areYouSure": "Are you sure you want to regenerate key?",
+      "areYouSure": "Are you sure you want to regenerate this key?",
       "additionalInfo": "Anything using this service account will need to be updated with the new key to maintain API access.",
       "actions": {
         "cancel": "Cancel",
