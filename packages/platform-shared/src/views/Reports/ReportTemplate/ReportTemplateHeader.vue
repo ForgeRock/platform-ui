@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -51,7 +51,7 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import i18n from '@/i18n';
 
 // Locals
-useBreadcrumb().setBreadcrumb('/reports', i18n.global.t('routeNames.Reports'));
+useBreadcrumb().setBreadcrumb('/reports', i18n.global.t('pageTitles.Reports'));
 defineEmits(['save', 'delete']);
 
 // Props

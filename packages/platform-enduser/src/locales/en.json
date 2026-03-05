@@ -1,24 +1,6 @@
 {
-
   "errors": {
     "errorLoadingMenuItems": "There was an error loading menu items."
-  },
-  "routeNames": {
-    "AccessModeling": "Access Modeling",
-    "AccessModelingDetails": "Role Modeling Details",
-    "AccessRequestNew": "New Access Request",
-    "AccessReviews": "Access Reviews",
-    "Accounts": "My Accounts",
-    "Approvals": "Approvals",
-    "Delegates": "My Delegates",
-    "DirectReports": "Direct Reports",
-    "Entitlements": "My Entitlements",
-    "MachineAccounts": "My Machine Accounts",
-    "MyRequests": "My Requests",
-    "Roles": "My Roles",
-    "Reports": "Reports",
-    "Tasks": "Tasks",
-    "Violations": "Violations"
   },
   "user": {
     "profile": {
@@ -213,7 +195,7 @@
     }
   },
   "sideMenu": {
-    "accessReviews":"Access Reviews",
+    "accessReviews": "Access Reviews",
     "accounts": "Accounts",
     "administer": "Administer",
     "administerEntitlements": "Entitlements",
@@ -366,7 +348,7 @@
         "results": "{totalCount} Result | {totalCount} Results",
         "role": "role",
         "showIf": "Show if",
-        "sodViolation" : {
+        "sodViolation": {
           "violationMessage": "Granting access to these entitlement(s) will result in a Segregation of Duties (SoD) violation",
           "modalTitle": "Violations Found",
           "modalDescription": "The following violations were found when attempting to submit the request.",
@@ -411,7 +393,7 @@
         "subtitle": "Create and manage your user identities."
       }
     },
-    "approval":{
+    "approval": {
       "subtitle": "View and take action on your pending access requests.",
       "errorGettingApprovals": "Error getting user approvals",
       "errorGettingPendingApprovals": "Error getting pending approvals number",

@@ -15,7 +15,7 @@ const NOT_FOUND_BACK_KEY = '__notFoundBack';
  * @param {Object} router - Vue Router instance
  * @param {Object} options - Navigation options
  * @param {String} options.backPath - Path to navigate back to (default: '/')
- * @param {String} options.backLabel - routeNames key for the back button (default: 'Dashboard')
+ * @param {String} options.backLabel - pageTitles key for the back button (default: 'Dashboard')
  */
 export function navigateToNotFound(router, {
   backPath = '/dashboard/overview',

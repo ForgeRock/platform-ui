@@ -376,7 +376,7 @@ export default {
   },
   mounted() {
     this.loadAuthenticationDevices();
-    this.setBreadcrumb('/profile', this.$t('routeNames.Profile'));
+    this.setBreadcrumb('/profile', this.$t('pageTitles.Profile'));
   },
 };
 </script>
