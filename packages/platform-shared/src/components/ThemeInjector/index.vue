@@ -737,6 +737,23 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ getContrastColor(theme.darkColor) }};
         background-color: {{ theme.darkColor }};
       }
+
+      <!-- Styles success, danger, and warning alert notifications to follow the theme colors -->
+      #app <template v-if="mock">.fr-theme-preview</template> .fr-alert.alert-success {
+        border-left-color: {{ theme.successColor }};
+        background-color: {{ `color-mix(in srgb, ${theme.successColor} 15%, white)` }};
+      }
+
+      #app <template v-if="mock">.fr-theme-preview</template> .fr-alert.alert-danger,
+      #app <template v-if="mock">.fr-theme-preview</template> .fr-alert.alert-error {
+        border-left-color: {{ theme.dangerColor }};
+        background-color: {{ `color-mix(in srgb, ${theme.dangerColor} 15%, white)` }};
+      }
+
+      #app <template v-if="mock">.fr-theme-preview</template> .fr-alert.alert-warning {
+        border-left-color: {{ theme.warningColor }};
+        background-color: {{ `color-mix(in srgb, ${theme.warningColor} 15%, white)` }};
+      }
     </Component>
   </div>
 </template>
