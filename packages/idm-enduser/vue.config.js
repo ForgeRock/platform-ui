@@ -1,14 +1,14 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 /* eslint import/no-extraneous-dependencies: 0 */
 const webpack = require('webpack');
 const path = require('path');
+const dotenv = require('dotenv');
 
 function generateTheme() {
   let variableLoad = `
@@ -82,6 +82,30 @@ module.exports = {
         ...options,
         rootMode: 'upward',
       }));
+
+    /**
+     * Regenerates the environment variables using the define plugin of webpack in non-development environments
+     *   - before building load the environment variables from .env file using dotenv module
+     *   - format those variables to fit the string format required by define plugin
+     *   - overwrites the formated variables to the webpack definitions
+     * This is required due to an error replacing environment variables on the final bundle where they are replaced by empty values
+     */
+    if (process.env.NODE_ENV !== 'development') {
+      config
+        .plugin('define')
+        .tap((definitions) => {
+          const envs = dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+          const envsFormatted = Object.entries(envs.parsed).reduce((newEnvs, [key, value]) => {
+            newEnvs[key] = JSON.stringify(value);
+            return newEnvs;
+          }, {});
+          definitions[0]['process.env'] = {
+            ...definitions[0]['process.env'],
+            ...envsFormatted,
+          };
+          return definitions;
+        });
+    }
   },
   configureWebpack: {
     plugins: getPlugins(),

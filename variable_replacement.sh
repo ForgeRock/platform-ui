@@ -74,6 +74,7 @@ echo "Setting ENABLE SAML SIGNING CHECKBOX as $ENABLE_SAML_SIGNING_CHECKBOX"
 echo "Setting ENABLE MONITORING_UI as $ENABLE_MONITORING_UI"
 echo "Setting ENABLE SDK FEATURE as $ENABLE_SDK_FEATURE"
 echo "Setting DEPLOYMENT TYPE AS $DEPLOYMENT_TYPE"
+echo "Setting ENABLE SELF SERVICE as $ENABLE_SELF_SERVICE"
 
 # Replace env vars in JavaScript files
 for file in $@
@@ -152,5 +153,6 @@ do
     $ROUTES_FILE
     $SALESFORCE_ID
     $UPPER_CONFIG_EGRESS
+    $ENABLE_SELF_SERVICE
   ' < "/tmp/$(basename $file).tmpl" > "$file"
 done

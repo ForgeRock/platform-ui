@@ -38,9 +38,16 @@ The development server runs on `http://localhost:8889` (auto-increments if port 
 ```env
 VUE_APP_IDM_URL=/openidm
 VUE_APP_ADMIN_URL=http://localhost:8080/admin
+VUE_APP_DEPLOYMENT_TYPE=IDM
 THEME=default
 VUE_APP_ENABLE_SELF_SERVICE=false
 ```
+
+**Production overrides**: `.env.production` maps build-time variables to runtime
+placeholder tokens (e.g. `VUE_APP_IDM_URL=$IDM_REST_URL`). When `yarn build` runs
+with `NODE_ENV=production`, Webpack bakes these tokens into the JS bundles.
+`variable_replacement.sh` then uses `envsubst` at container startup to replace
+them with real values.
 
 The dev server proxies `/openidm` requests to `https://localhost:8443/openidm` by default (configurable in `vue.config.js`).
 
@@ -209,7 +216,14 @@ Theme files should be in `@forgerock/platform-shared/src/scss/`.
 Enable self-service (for IDM 7.5.x and below):
 
 ```bash
-VUE_APP_ENABLE_SELF_SERVICE=true yarn build
+# Local dev
+VUE_APP_ENABLE_SELF_SERVICE=true yarn dev
+```
+
+In Docker, set the runtime variable instead:
+
+```bash
+docker run -e ENABLE_SELF_SERVICE=true ... idm-enduser:latest
 ```
 
 ## Troubleshooting
