@@ -127,4 +127,45 @@ describe('Theme Injector Component', () => {
       expect(wrapper.html()).toContain('.fr-search-input-holder .input-group:focus-within');
     });
   });
+
+  describe('alert notification theming', () => {
+    it('renders success alert styles using theme successColor', () => {
+      const successColor = '#ff0000';
+      const wrapper = shallowMount(ThemeInjector, {
+        props: {
+          isEnduser: true,
+          theme: { successColor },
+        },
+      });
+      const html = wrapper.html();
+      expect(html).toContain(`border-left-color: ${successColor}`);
+      expect(html).toContain(`color-mix(in srgb, ${successColor} 15%, white)`);
+    });
+
+    it('renders danger alert styles using theme dangerColor', () => {
+      const dangerColor = '#0000ff';
+      const wrapper = shallowMount(ThemeInjector, {
+        props: {
+          isEnduser: true,
+          theme: { dangerColor },
+        },
+      });
+      const html = wrapper.html();
+      expect(html).toContain(`border-left-color: ${dangerColor}`);
+      expect(html).toContain(`color-mix(in srgb, ${dangerColor} 15%, white)`);
+    });
+
+    it('renders warning alert styles using theme warningColor', () => {
+      const warningColor = '#ff8800';
+      const wrapper = shallowMount(ThemeInjector, {
+        props: {
+          isEnduser: true,
+          theme: { warningColor },
+        },
+      });
+      const html = wrapper.html();
+      expect(html).toContain(`border-left-color: ${warningColor}`);
+      expect(html).toContain(`color-mix(in srgb, ${warningColor} 15%, white)`);
+    });
+  });
 });
