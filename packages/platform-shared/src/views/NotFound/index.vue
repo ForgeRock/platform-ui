@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BButton
               class="mt-2"
               variant="primary">
-              {{ $t('pages.notFound.returnRoute', {returnRoute: $t(`routeNames.${previousRoute.name}`)}) }}
+              {{ getButtonLabel(previousRoute.name) }}
             </BButton>
           </RouterLink>
         </div>
@@ -37,11 +37,16 @@ import {
   BButton,
   BContainer,
 } from 'bootstrap-vue';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+
 /**
  * @description The default 404 page when Vue router is unable to locate a route.
  */
 export default {
   name: 'NotFound',
+  mixins: [
+    TranslationMixin,
+  ],
   components: {
     BButton,
     BContainer,
@@ -61,6 +66,18 @@ export default {
       previousRoute: this.defaultRoute,
     };
   },
+  methods: {
+    getRouteTitle(name) {
+      const key = `pageTitles.${name}`;
+      return this.translationExists(key) ? this.$t(key) : null;
+    },
+    getButtonLabel(name) {
+      const title = this.getRouteTitle(name);
+      return title
+        ? this.$t('pages.notFound.returnRoute', { returnRoute: title })
+        : this.$t('common.back');
+    },
+  },
   beforeRouteEnter(_to, from, next) {
     next((vm) => {
       const backNav = getNotFoundBackNavigation(window.history.state);
@@ -69,10 +86,10 @@ export default {
           name: backNav.backLabel,
           path: backNav.backPath,
         };
-        vm.setBreadcrumb(backNav.backPath, vm.$t(`routeNames.${backNav.backLabel}`));
+        vm.setBreadcrumb(backNav.backPath, vm.getRouteTitle(backNav.backLabel) ?? vm.$t('common.back'));
       } else {
         vm.previousRoute = from.name ? from : vm.defaultRoute;
-        vm.setBreadcrumb(vm.previousRoute.path, vm.$t(`routeNames.${vm.previousRoute.name}`));
+        vm.setBreadcrumb(vm.previousRoute.path, vm.getRouteTitle(vm.previousRoute.name) ?? vm.$t('common.back'));
       }
     });
   },

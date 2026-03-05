@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -54,7 +54,7 @@ import i18n from '@/i18n';
 /**
  * LOCALS
  */
-useBreadcrumb().setBreadcrumb('/reports', i18n.global.t('routeNames.Reports'));
+useBreadcrumb().setBreadcrumb('/reports', i18n.global.t('pageTitles.Reports'));
 
 // Composables
 const router = useRouter();

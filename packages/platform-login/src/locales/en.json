@@ -1,7 +1,4 @@
 {
-  "routeNames": {
-    "service": "Service"
-  },
   "login": {
     "agreeToTerms": "By clicking 'Next' you agree to our ",
     "displayElementsByScripts": "Display elements defined by scripts",

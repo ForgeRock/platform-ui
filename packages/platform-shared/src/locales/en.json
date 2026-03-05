@@ -1149,7 +1149,10 @@
   "pageTitles": {
     "AccessViewer": "User Access Graph",
     "ComplianceExceptionDetails": "Exception Details",
-    "AdministerEntitlements": "Administer Entitlements"
+    "AdministerEntitlements": "Administer Entitlements",
+    "Profile": "Profile",
+    "Reports": "Reports"
+
   },
   "pagination": {
     "dropdown": {
@@ -1176,15 +1179,6 @@
     "properties": "{propertyName} properties",
     "queryFilterAddDropDown": "Add Rule from Dropdown",
     "queryFilterRemoveButton": "Remove Rule"
-  },
-  "routeNames": {
-    "Applications": "Applications",
-    "Dashboard": "Dashboard",
-    "EditResource": "Edit Resource",
-    "ListResource": "List Resource",
-    "Login": "Login",
-    "Profile": "Profile",
-    "Configure": "Configure Identities"
   },
   "scriptEditor": {
     "title": "Script",
