@@ -1442,17 +1442,15 @@ export default {
       } else if (hash.includes('service')) {
         const hashSplit = hash.split('/');
         const serviceIndex = hashSplit.indexOf('service');
-        // makes sure that the hashSplit array has at least one more element after 'service'
-        const serviceValueExists = (serviceIndex + 2) >= hashSplit.length;
+        // makes sure that the hashSplit array has at least one more valid element after 'service'
+        const serviceValueExists = (serviceIndex + 1) < hashSplit.length && hashSplit[serviceIndex + 1].length > 0;
 
         if (serviceIndex !== -1 && serviceValueExists) {
-          const title = hashSplit[serviceIndex + 1];
-          // in the event that the remaining url contains query params
-          if (title.includes('?')) {
-            const titleSplitByParam = title.split('?')[0];
-            document.title = titleSplitByParam;
-          } else {
-            document.title = title;
+          const [title] = hashSplit[serviceIndex + 1].split('?');
+          try {
+            document.title = decodeURIComponent(title);
+          } catch (error) {
+            document.title = title; // fallback to non-decoded title in case of URIError from decodeURIComponent
           }
         }
       }
