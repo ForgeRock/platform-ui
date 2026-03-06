@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,7 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
+import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import Login from './Login';
 import i18n from '@/i18n';
 import * as AuthenticationApi from '../api/AuthenticationApi';
@@ -79,6 +80,11 @@ describe('Login', () => {
             type: 'string',
           },
         },
+      },
+    });
+    ConfigApi.getFeatures = jest.fn().mockResolvedValue({
+      data: {
+        result: [],
       },
     });
 
