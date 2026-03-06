@@ -225,12 +225,14 @@
     "errorDeleting": "Error deleting agent",
     "errorLoading": "Error loading AI Agents",
     "errorLoadingAgent": "Error loading agent",
+    "errorLoadingSchema": "Error loading schema",
     "errorSavingAgent": "Error saving agent",
     "noAgents": "No AI Agents configured",
     "noAgentsSubtitle": "Create new AI Agents to support your customers and teams",
     "noSearchResults": "No AI Agents found.",
     "noResultsHelp": "Try a new search in the box above.",
     "saveSuccess": "Agent successfully updated",
+    "saveSecretSuccess": "Agent secret successfully updated",
     "subtitle": "Create, manage, and monitor AI agents that support your customers and teams.",
     "title": "AI Agents",
     "unnamedAgent": "Unnamed Agent",
@@ -238,6 +240,12 @@
       "errorLoadingSchema": "Error loading agent schema",
       "basicEditor": "Use basic editor",
       "advancedEditor": "Use advanced editor"
+    },
+    "accessTab": {
+      "clientCredentials": "Client Credentials",
+      "clientId": "Client ID",
+      "clientSecretLabel": "Client Secret",
+      "description": "Manage the OAuth credentials this AI Agent uses to authenticate and request tokens."
     }
   },
   "authentication": {
