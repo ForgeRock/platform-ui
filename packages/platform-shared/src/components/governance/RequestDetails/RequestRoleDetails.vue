@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -179,7 +179,6 @@ async function getSchemaData() {
  * @param {Object} data - The data associated with the operation.
  */
 async function updateTabData(tabUpdated, operation, data) {
-  console.log(tabUpdated, operation, data);
   if (tabUpdated === 'entitlements') {
     if (operation === 'add') {
       const idsToAdd = map(data, 'id');
@@ -221,25 +220,38 @@ function updateGlossaryAndEmit(value) {
  */
 async function queryRoleEntitlements(params = {}) {
   isQuerying.value = true;
-  try {
-    entitlementList.value = [];
-    if (params.queryString) {
-      params._queryFilter = `descriptor.idx./entitlement.displayName co '${params.queryString}'`;
-      delete params.queryString;
-    }
-    if (params.sortBy) {
-      params.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy}`;
-    }
-    if (params.currentPage) {
-      params._pagedResultsOffset = (params.currentPage - 1) * (params.pageSize || 10);
-    }
+  entitlementList.value = [];
+  if (params.queryString) {
+    params._queryFilter = `descriptor.idx./entitlement.displayName co '${params.queryString}'`;
+    delete params.queryString;
+  }
+  if (params.sortBy) {
+    params.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy}`;
+  }
+  if (params.currentPage) {
+    params._pagedResultsOffset = (params.currentPage - 1) * (params.pageSize || 10);
+  }
 
-    const queryParams = omit(params, ['queryString', 'sortBy', 'sortDir', 'grantType']);
-    queryParams._fields = 'application,catalog,descriptor,entitlement,entitlementOwner,glossary,item,keys,relationship';
-    const newRequestId = !roleRequestData.value.role.roleId ? props.request.id : null; // Draft requests have no role id, so we need to pass the request id to fetch the correct entitlements
+  const queryParams = omit(params, ['queryString', 'sortBy', 'sortDir', 'grantType']);
+  queryParams._fields = 'application,catalog,descriptor,entitlement,entitlementOwner,glossary,item,keys,relationship';
+  const newRequestId = !roleRequestData.value.role.roleId ? props.request.id : null; // Draft requests have no role id, so we need to pass the request id to fetch the correct entitlements
+  try {
     const { data } = await getRoleDataById(roleRequestData.value.role.roleId, roleRequestData.value.role.status, 'entitlements', queryParams, newRequestId);
     entitlementList.value = data?.result;
     entitlementTotalCount.value = data?.totalCount;
+  } catch (error) {
+    // temporary check until API removes "pending" role request status
+    try {
+      if (error?.status === 404) {
+        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, 'pending', 'entitlements', queryParams, newRequestId);
+        entitlementList.value = data?.result;
+        entitlementTotalCount.value = data?.totalCount;
+      } else {
+        showErrorMessage(error, i18n.global.t('governance.accessRequest.queryEntitlementsError'));
+      }
+    } catch (innerError) {
+      showErrorMessage(innerError, i18n.global.t('governance.accessRequest.queryEntitlementsError'));
+    }
   } finally {
     isQuerying.value = false;
   }
@@ -265,19 +277,32 @@ function enrichMemberList(members) {
  */
 async function queryRoleMembers(params = {}) {
   isQuerying.value = true;
+  if (params.queryString) {
+    params._queryFilter = `userName co '${params.queryString}' or givenName co '${params.queryString}' or sn co '${params.queryString}'`;
+    delete params.queryString;
+  }
+  params._sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy || 'userName'}`;
+  if (params.currentPage) {
+    params._pagedResultsOffset = (params.currentPage - 1) * (params.pageSize || 10);
+  }
+  const newRequestId = !roleRequestData.value.role.roleId ? props.request.id : null; // Draft requests have no role id, so we need to pass the request id to fetch the correct members
   try {
-    if (params.queryString) {
-      params._queryFilter = `userName co '${params.queryString}' or givenName co '${params.queryString}' or sn co '${params.queryString}'`;
-      delete params.queryString;
-    }
-    params._sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy || 'userName'}`;
-    if (params.currentPage) {
-      params._pagedResultsOffset = (params.currentPage - 1) * (params.pageSize || 10);
-    }
-    const newRequestId = !roleRequestData.value.role.roleId ? props.request.id : null; // Draft requests have no role id, so we need to pass the request id to fetch the correct members
     const { data } = await getRoleDataById(roleRequestData.value.role.roleId, roleRequestData.value.role.status, 'members', params, newRequestId);
     enrichMemberList(data?.result);
     membersCurrentCount.value = data?.totalHits;
+  } catch (error) {
+    // temporary check until API removes "pending" role request status
+    try {
+      if (error?.status === 404) {
+        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, 'pending', 'members', params, newRequestId);
+        enrichMemberList(data?.result);
+        membersCurrentCount.value = data?.totalHits;
+      } else {
+        showErrorMessage(error, i18n.global.t('governance.accessRequest.queryMembersError'));
+      }
+    } catch (innerError) {
+      showErrorMessage(innerError, i18n.global.t('governance.accessRequest.queryMembersError'));
+    }
   } finally {
     isQuerying.value = false;
   }
