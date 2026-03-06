@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <FrRequestRoleDetails
     v-if="isRoleRequestType && props.item?.rawData"
     @save="modifyRequest"
-    @update-role="updateRoleData"
+    :update-role="updateRoleData"
     :saving-request="savingRequest"
     :is-approval="props.isApproval"
     :item="props.item || {}"
@@ -80,7 +80,7 @@ import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
-import { map } from 'lodash';
+import { compact, map } from 'lodash';
 import { requestAction, putCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { OOTB_NO_FORM_REQUEST_TYPES } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
@@ -199,8 +199,8 @@ async function modifyRequestRoleData(saveAsDraft = false) {
       ...role,
       object: {
         ...role.object,
-        entitlements: map(requestRoleData.value.entitlements?.result || requestRoleData.value.entitlements, (entitlement) => entitlement._id || entitlement.id),
-        addedRoleMembers: map(requestRoleData.value.members?.result || requestRoleData.value.members, (member) => member._id || member.id),
+        entitlements: compact(requestRoleData.value.entitlements),
+        addedRoleMembers: compact(requestRoleData.value.members),
       },
       glossary: requestRoleData.value.glossary,
     },

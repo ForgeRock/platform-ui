@@ -219,13 +219,19 @@ describe('RoleDetails', () => {
           entitlements: [],
           justifications: [],
           addedRoleMembers: [],
-          name: '',
+          name: 'Test',
         },
         status: 'active',
       },
     };
     mockRouter({ params: { roleId: 'new', roleStatus: 'active' } });
     wrapper = mountComponent();
+    await flushPromises();
+    wrapper.vm.updateTabData('details', null, {
+      role: {
+        name: 'Test',
+      },
+    });
     await flushPromises();
     const saveDraftBtn = wrapper.find('div.d-flex.justify-content-end > button');
     expect(saveDraftBtn.exists()).toBe(true);
@@ -244,13 +250,19 @@ describe('RoleDetails', () => {
           entitlements: [],
           justifications: [],
           addedRoleMembers: [],
-          name: '',
+          name: 'Test',
         },
         status: 'active',
       },
     };
     mockRouter({ params: { roleId: 'new', roleStatus: 'active' } });
     wrapper = mountComponent();
+    await flushPromises();
+    wrapper.vm.updateTabData('details', null, {
+      role: {
+        name: 'Test',
+      },
+    });
     await flushPromises();
     const saveBtns = wrapper.findAll('div.d-flex.justify-content-end > button');
     expect(saveBtns.length).toBe(2);

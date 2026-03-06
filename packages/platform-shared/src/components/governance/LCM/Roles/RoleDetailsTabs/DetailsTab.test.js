@@ -133,11 +133,8 @@ describe('Role Details DetailsTab', () => {
     wrapper = mountComponent();
     await flushPromises();
     // await wrapper.vm.$nextTick();
-    const glossaryAttributesHeader = wrapper.find('h3');
     const requestableCheckbox = wrapper.find('input#checkbox-requestable');
     const roleOwnerField = wrapper.find('span.multiselect__single');
-    expect(glossaryAttributesHeader.exists()).toBe(true);
-    expect(glossaryAttributesHeader.text()).toBe('Glossary Attributes');
     expect(requestableCheckbox.exists()).toBe(true);
     expect(requestableCheckbox.element.checked).toBe(true);
     expect(roleOwnerField.exists()).toBe(true);

@@ -32,9 +32,6 @@ of the MIT license. See the LICENSE file for details. -->
     </BCardHeader>
     <div v-if="isLoading">
       <FrSpinner class="py-5" />
-      <div class="text-center pb-4 font-bold">
-        {{ $t('common.loading') }}
-      </div>
     </div>
     <FrNoData
       v-else-if="items.length === 0"
@@ -50,11 +47,12 @@ of the MIT license. See the LICENSE file for details. -->
       v-model:sort-by="sortBy"
       v-model:sort-desc="sortDesc"
       :busy="isLoading"
-      class="mb-0"
+      class="mb-0 mt-2"
       :class="{ 'cursor-pointer': true }"
-      :fields="memberColumns"
+      :fields="columns"
       :items="props.items"
       no-local-sorting
+      no-select-on-click
       no-sort-reset
       responsive
       selectable
@@ -77,7 +75,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(selected)="data">
         <BFormCheckbox
-          v-if="!readOnly"
+          v-if="!readOnly && data.item.editable"
           class="pl-3"
           :id="`rowSelectCheckbox_user_${data.index}`"
           @change="onCheckboxClicked(data)"
@@ -88,6 +86,12 @@ of the MIT license. See the LICENSE file for details. -->
         </BFormCheckbox>
       </template>
     </BTable>
+    <FrPagination
+      :value="currentPage"
+      :per-page="currentPageSize"
+      :total-rows="count"
+      @input="pageChange($event)"
+      @on-page-size-change="pageSizeChange($event)" />
     <BModal
       cancel-variant="link"
       id="addMembersModal"
@@ -144,9 +148,10 @@ import { find } from 'lodash';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import { getRoleDataById } from '@forgerock/platform-shared/src/api/governance/RoleApi';
 
 import i18n from '@/i18n';
 
@@ -156,7 +161,8 @@ const { bvModal } = useBvModal();
 const grid = ref(null);
 const removeMembersModal = ref(null);
 const relationshipProperty = ref(null);
-const isFirstLoad = ref(true);
+const currentPage = ref(1);
+const currentPageSize = ref(10);
 const selected = ref([]);
 const allRowsSelected = ref(false);
 const newMembers = ref([]);
@@ -188,7 +194,7 @@ const memberColumns = [
 ];
 
 // emits
-const emit = defineEmits(['update-tab-data']);
+const emit = defineEmits(['load-data', 'update-tab-data']);
 
 const props = defineProps({
   items: {
@@ -199,9 +205,9 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-  isActive: {
-    type: Boolean,
-    default: false,
+  customColumns: {
+    type: Array,
+    default: () => [],
   },
   isLoading: {
     type: Boolean,
@@ -223,21 +229,9 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  role: {
-    type: Object,
-    default: () => ({}),
-  },
-  roleId: {
-    type: String,
-    default: '',
-  },
   roleSchema: {
     type: Array,
     default: () => [],
-  },
-  roleStatus: {
-    type: String,
-    default: '',
   },
   createRolePermission: {
     type: Boolean,
@@ -246,25 +240,36 @@ const props = defineProps({
 });
 
 const relationshipArrayProperty = computed(() => find(props.roleSchema, (schema) => schema.propName === 'members'));
+const columns = computed(() => (props.customColumns.length ? props.customColumns : memberColumns));
 
 /**
- * Get the role's members.
+ * Update the sorting used in the table and call to get updated data
+ * @event sort-changed
+ * @param {Object} sort Current context of table sorting (sortDesc & sortBy)
  */
-async function loadRoleMembers() {
-  if (props.request?.id) {
-    const { data } = await getRoleDataById(props.roleId, props.roleStatus, 'members', { pageSize: 100 }, props.request.id);
-    emit('update-tab-data', 'members', 'load', data);
-  } else if (isFirstLoad.value && props.roleId !== 'new') {
-    const { data } = await getRoleDataById(props.roleId, props.roleStatus, 'members', { pageSize: 100 });
-    emit('update-tab-data', 'members', 'load', data);
-    isFirstLoad.value = false;
-    return { data };
-  }
-  return {
-    data: {
-      results: props.items,
-    },
-  };
+function sortChanged(sort) {
+  emit('load-data', { sortDir: sort.sortDesc ? 'desc' : 'asc', sortBy: sort.sortBy });
+}
+
+/**
+ * Handles the change in page for the resource list.
+ *
+ * @param {number} pageNum - The new page number selected by the user.
+ */
+function pageChange(pageNum) {
+  currentPage.value = pageNum;
+  emit('load-data', { currentPage: pageNum, pageSize: currentPageSize.value });
+}
+
+/**
+ * Handles the change in page size for the resource list.
+ *
+ * @param {number} size - The new page size selected by the user.
+ */
+function pageSizeChange(size) {
+  currentPageSize.value = size;
+  currentPage.value = 1;
+  emit('load-data', { currentPage: 1, pageSize: size });
 }
 
 /**
@@ -295,7 +300,8 @@ function onCheckboxClicked(row) {
  */
 function onRowSelected(selectedItems) {
   selected.value = selectedItems;
-  allRowsSelected.value = selectedItems.length === props.items.length;
+  const editableItems = props.items.filter((item) => item.editable);
+  allRowsSelected.value = selectedItems.length === editableItems.length && editableItems.length > 0;
 }
 
 /**
@@ -303,7 +309,10 @@ function onRowSelected(selectedItems) {
  */
 function toggleSelectAll() {
   if (!allRowsSelected.value) {
-    grid.value.selectAllRows();
+    const editableIndices = props.items
+      .map((item, index) => (item.editable ? index : -1))
+      .filter((index) => index !== -1);
+    editableIndices.forEach((index) => grid.value.selectRow(index));
   } else {
     grid.value.clearSelected();
   }
@@ -330,7 +339,6 @@ async function onSelectAdditionalMembers(val) {
 
 onMounted(() => {
   relationshipProperty.value = find(props.roleSchema, { propName: 'members' });
-  loadRoleMembers();
 });
 
 </script>

@@ -42,29 +42,27 @@ of the MIT license. See the LICENSE file for details. -->
     </BTab>
     <BTab :title="$t('governance.administer.roles.entitlements')">
       <FrEntitlementsTab
-        :items="roleRequestData.entitlements?.result"
-        :count="roleRequestData.entitlements?.totalCount"
-        is-active
-        :is-loading="savingRequest"
+        :items="entitlementList"
+        :count="entitlementTotalCount"
+        :is-loading="savingRequest || isQuerying"
         :request="request"
         :read-only="props.readOnly"
         :role-id="roleRequestData.role.roleId"
         :role-schema="glossarySchema"
         :role-status="roleRequestData.role.status"
+        @load-data="queryRoleEntitlements"
         @update-tab-data="updateTabData" />
     </BTab>
     <BTab
       :title="$t('governance.administer.roles.members')">
       <FrMembersTab
-        :items="roleRequestData.members?.result || []"
-        :count="roleRequestData.members?.totalCount || 0"
-        is-active
-        :is-loading="savingRequest"
+        :items="memberList"
+        :count="membersCurrentCount"
+        :is-loading="savingRequest || isQuerying"
         :read-only="props.readOnly"
         :request="request"
-        :role-id="roleRequestData.role.roleId"
         :role-schema="roleSchema"
-        :role-status="roleRequestData.role.status"
+        @load-data="queryRoleMembers"
         @update-tab-data="updateTabData" />
     </BTab>
   </BTabs>
@@ -89,11 +87,14 @@ import {
   BTab,
   BTabs,
 } from 'bootstrap-vue';
-import { filter, forEach, map } from 'lodash';
+import {
+  filter, map, omit, uniq,
+} from 'lodash';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/utils/governance/glossary';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import { getRoleDataById } from '@forgerock/platform-shared/src/api/governance/RoleApi';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
 import FrEntitlementsTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/EntitlementsTab';
@@ -117,6 +118,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  updateRole: {
+    type: Function,
+    required: true,
+  },
 });
 
 const { bvModal } = useBvModal();
@@ -127,10 +132,13 @@ const roleRequestData = ref(null);
 const glossarySchema = ref(null);
 const roleSchema = ref(null);
 const isInitialized = ref(false);
+const isQuerying = ref(false);
 const glossaryValues = ref(null);
 const saveOnUpdate = ref(false);
-
-const emit = defineEmits(['update-role']);
+const memberList = ref([]);
+const membersCurrentCount = ref(0);
+const entitlementList = ref([]);
+const entitlementTotalCount = ref(0);
 
 /**
  * Extracts role request details from the request object.
@@ -142,7 +150,7 @@ function getRoleRequestDetails(request) {
     role: request.role,
     glossary: request.role.glossary,
     entitlements: request.role.object.entitlements,
-    members: request.role.object.members,
+    members: request.role.object.addedRoleMembers,
   };
 }
 
@@ -171,43 +179,35 @@ async function getSchemaData() {
  * @param {Object} data - The data associated with the operation.
  */
 async function updateTabData(tabUpdated, operation, data) {
+  console.log(tabUpdated, operation, data);
   if (tabUpdated === 'entitlements') {
-    if (operation === 'load') {
-      roleRequestData.value.entitlements = data;
-    } else if (operation === 'add') {
-      forEach(data, (entitlement) => {
-        roleRequestData.value.entitlements.result.push(entitlement);
-      });
+    if (operation === 'add') {
+      const idsToAdd = map(data, 'id');
+      roleRequestData.value.entitlements = uniq([...roleRequestData.value.entitlements, ...idsToAdd]);
       bvModal.value.hide('govCreateResourceModal');
     } else if (operation === 'remove') {
       const idsToRemove = map(data, 'id');
-      const newEntitlements = filter(roleRequestData.value.entitlements.result, (entitlement) => idsToRemove.indexOf(entitlement.id) < 0);
-      roleRequestData.value.entitlements.result = newEntitlements;
+      const newEntitlements = filter(roleRequestData.value.entitlements, (entitlement) => idsToRemove.indexOf(entitlement) < 0);
+      roleRequestData.value.entitlements = newEntitlements;
       bvModal.value.hide('revoke-from-role-modal');
     }
   } else if (tabUpdated === 'members') {
-    if (operation === 'load') {
-      roleRequestData.value.members = data;
-    } else if (operation === 'add') {
-      const existingIds = map(roleRequestData.value.members.result, 'id');
-      forEach(data, (member) => {
-        if (existingIds.indexOf(member._id) < 0) {
-          roleRequestData.value.members.result.push(member);
-        }
-      });
+    if (operation === 'add') {
+      const idsToAdd = map(data, (member) => member.id || member._id);
+      roleRequestData.value.members = uniq([...roleRequestData.value.members, ...idsToAdd]);
     } else if (operation === 'remove') {
-      const idsToRemove = map(data, 'id');
-      const newMembers = filter(roleRequestData.value.members.result, (member) => idsToRemove.indexOf(member.id) < 0);
-      roleRequestData.value.members.result = newMembers;
+      const idsToRemove = map(data, (member) => member.id || member._id);
+      const newMembers = filter(roleRequestData.value.members, (member) => idsToRemove.indexOf(member) < 0);
+      roleRequestData.value.members = newMembers;
     }
   }
-  if (operation !== 'load' && !props.readOnly && (tabUpdated === 'members' || tabUpdated === 'entitlements')) {
+  if (!props.readOnly && (tabUpdated === 'members' || tabUpdated === 'entitlements')) {
     saveOnUpdate.value = true;
   }
 }
 
 /**
- * Updates the glossary with the provided value and emits an event.
+ * Updates the glossary with the provided value
  * @param {Object} value - new glossary value.
  */
 function updateGlossaryAndEmit(value) {
@@ -215,14 +215,90 @@ function updateGlossaryAndEmit(value) {
   roleRequestData.value.glossary = value;
 }
 
-watch(roleRequestData, (newVal) => {
-  emit('update-role', newVal, saveOnUpdate.value);
-  saveOnUpdate.value = false;
+/**
+ * Queries the entitlements that belong to the given role
+ * @param params query parameters
+ */
+async function queryRoleEntitlements(params = {}) {
+  isQuerying.value = true;
+  try {
+    entitlementList.value = [];
+    if (params.queryString) {
+      params._queryFilter = `descriptor.idx./entitlement.displayName co '${params.queryString}'`;
+      delete params.queryString;
+    }
+    if (params.sortBy) {
+      params.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy}`;
+    }
+    if (params.currentPage) {
+      params._pagedResultsOffset = (params.currentPage - 1) * (params.pageSize || 10);
+    }
+
+    const queryParams = omit(params, ['queryString', 'sortBy', 'sortDir', 'grantType']);
+    queryParams._fields = 'application,catalog,descriptor,entitlement,entitlementOwner,glossary,item,keys,relationship';
+    const newRequestId = !roleRequestData.value.role.roleId ? props.request.id : null; // Draft requests have no role id, so we need to pass the request id to fetch the correct entitlements
+    const { data } = await getRoleDataById(roleRequestData.value.role.roleId, roleRequestData.value.role.status, 'entitlements', queryParams, newRequestId);
+    entitlementList.value = data?.result;
+    entitlementTotalCount.value = data?.totalCount;
+  } finally {
+    isQuerying.value = false;
+  }
+}
+
+/**
+ * Update the member list with the members that have been added directly
+ * @param members the updated list of members to set
+ */
+function enrichMemberList(members) {
+  const addedRoleMembers = roleRequestData.value.role?.addedRoleMembers || [];
+  const isDraftRequest = !roleRequestData.value.role?.roleId;
+  memberList.value = map(members, (member) => {
+    const isAddedMember = addedRoleMembers.includes(member.id);
+    member.editable = isAddedMember || isDraftRequest;
+    return member;
+  });
+}
+
+/**
+ * Queries the members that belong to the given role
+ * @param params query parameters
+ */
+async function queryRoleMembers(params = {}) {
+  isQuerying.value = true;
+  try {
+    if (params.queryString) {
+      params._queryFilter = `userName co '${params.queryString}' or givenName co '${params.queryString}' or sn co '${params.queryString}'`;
+      delete params.queryString;
+    }
+    params._sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy || 'userName'}`;
+    if (params.currentPage) {
+      params._pagedResultsOffset = (params.currentPage - 1) * (params.pageSize || 10);
+    }
+    const newRequestId = !roleRequestData.value.role.roleId ? props.request.id : null; // Draft requests have no role id, so we need to pass the request id to fetch the correct members
+    const { data } = await getRoleDataById(roleRequestData.value.role.roleId, roleRequestData.value.role.status, 'members', params, newRequestId);
+    enrichMemberList(data?.result);
+    membersCurrentCount.value = data?.totalHits;
+  } finally {
+    isQuerying.value = false;
+  }
+}
+
+watch(roleRequestData, async (newVal) => {
+  try {
+    savingRequest.value = true;
+    await props.updateRole(newVal, saveOnUpdate.value);
+    if (saveOnUpdate.value) {
+      await Promise.all([queryRoleMembers(), queryRoleEntitlements()]);
+    }
+    saveOnUpdate.value = false;
+  } finally {
+    savingRequest.value = false;
+  }
 }, { deep: true, immediate: true });
 
 onMounted(async () => {
   roleRequestData.value = await getRoleRequestDetails(props.item.rawData.request);
-  await getSchemaData();
+  await Promise.all([getSchemaData(), queryRoleMembers(), queryRoleEntitlements()]);
   isInitialized.value = true;
 });
 </script>

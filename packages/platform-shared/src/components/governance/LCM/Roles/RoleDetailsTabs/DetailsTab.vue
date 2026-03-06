@@ -6,41 +6,44 @@ of the MIT license. See the LICENSE file for details. -->
   <BCard
     v-if="roleValues"
     class="d-flex form-section p-4">
-    <BRow class="pb-0">
-      <BCol
-        xs="12"
-        class="mt-2">
-        <FrField
-          v-model="roleValues.name"
-          class="mb-3"
-          :disabled="readOnly"
-          :label="$t('common.name')"
-          @input="updateRoleAndEmit('name', $event)"
-        />
-      </BCol>
-    </BRow>
-    <BRow>
-      <BCol xs="12">
-        <FrField
-          v-model="roleValues.description"
-          type="textarea"
-          class="mb-3"
-          :disabled="readOnly"
-          :label="$t('common.description')"
-          @input="updateRoleAndEmit('description', $event)"
-        />
-      </BCol>
-    </BRow>
-    <h3 class="h5 mb-4">
-      {{ $t('governance.entitlements.glossaryAttributes') }}
-    </h3>
-    <FrGlossaryEditForm
-      v-if="isInitialized"
-      class="mb-2"
-      :glossary-schema="glossarySchema"
-      :model-value="glossaryValues"
-      :read-only="readOnly || isLoading"
-      @update:modelValue="updateGlossaryAndEmit" />
+    <template
+      v-if="isLoading">
+      <FrSpinner class="py-5" />
+    </template>
+    <template v-else>
+      <BRow class="pb-0">
+        <BCol
+          xs="12"
+          class="mt-2">
+          <FrField
+            v-model="roleValues.name"
+            class="mb-3"
+            :disabled="readOnly || isLoading"
+            :label="$t('common.name')"
+            @input="updateRoleAndEmit('name', $event)"
+          />
+        </BCol>
+      </BRow>
+      <BRow>
+        <BCol xs="12">
+          <FrField
+            v-model="roleValues.description"
+            type="textarea"
+            :class="`mb-3 ${!readOnly && !isLoading ? '' : 'multi-line-field'}`"
+            :disabled="readOnly || isLoading"
+            :label="$t('common.description')"
+            @input="updateRoleAndEmit('description', $event)"
+          />
+        </BCol>
+      </BRow>
+      <FrGlossaryEditForm
+        v-if="isInitialized"
+        class="mb-2"
+        :glossary-schema="glossarySchema"
+        :model-value="glossaryValues"
+        :read-only="readOnly || isLoading"
+        @update:modelValue="updateGlossaryAndEmit" />
+    </template>
   </BCard>
 </template>
 
@@ -67,6 +70,7 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import { getGlossarySchema } from '@forgerock/platform-shared/src/utils/governance/glossary';
 import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import i18n from '@/i18n';
 
 const emit = defineEmits(['updateTabData']);
@@ -172,3 +176,12 @@ onMounted(() => {
   getSchemaData();
 });
 </script>
+
+<style lang="scss" scoped>
+
+.multi-line-field {
+  :deep(label) {
+    background-color: #f7f8fc !important
+  }
+}
+</style>
