@@ -3,36 +3,49 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="d-flex justify-content-end">
+  <div>
     <BButtonToolbar
       justify
       class="px-4 py-3 border-bottom-0">
-      <FrActionsMenu
-        v-if="!hideStatusFilter"
-        data-testid="status-menu"
-        variant="link"
-        :selected-item-index="selectedStatusIndex"
-        toggle-class="text-dark px-0 d-flex">
-        <template #button-content>
-          <div
-            class="p-0 toolbar-link-text"
-            data-testid="status-dropdown-button">
-            <span class="font-weight-bold mr-1">
-              {{ `${$t('common.status')}:` }}
-            </span>
-            {{ selectedStatus.text }}
-          </div>
-        </template>
-        <template #default>
-          <BDropdownItem
-            v-for="status in statusOptions"
-            :active="status.value === selectedStatus.value"
-            @click="handleStatusChange(status)"
-            :key="status.value">
-            {{ status.text }}
-          </BDropdownItem>
-        </template>
-      </FrActionsMenu>
+      <div>
+        <FrActionsMenu
+          v-if="!hideStatusFilter"
+          data-testid="status-menu"
+          variant="link"
+          :selected-item-index="selectedStatusIndex"
+          toggle-class="text-dark px-0 d-flex">
+          <template #button-content>
+            <div
+              class="p-0 toolbar-link-text"
+              data-testid="status-dropdown-button">
+              <span class="font-weight-bold mr-1">
+                {{ `${$t('common.status')}:` }}
+              </span>
+              {{ selectedStatus.text }}
+            </div>
+          </template>
+          <template #default>
+            <BDropdownItem
+              v-for="status in statusOptions"
+              :active="status.value === selectedStatus.value"
+              @click="handleStatusChange(status)"
+              :key="status.value">
+              {{ status.text }}
+            </BDropdownItem>
+          </template>
+        </FrActionsMenu>
+      </div>
+      <div
+        class="flex-grow-1"
+        :class="{ 'ml-2': !hideStatusFilter }">
+        <FrSearchInput
+          v-if="!hideSearchFilter"
+          v-model="filters.nameFilter"
+          class="w-100"
+          :placeholder="$t('common.search')"
+          @clear="handleFilterChange('nameFilter', '')"
+          @search="handleFilterChange('nameFilter', filters.nameFilter)" />
+      </div>
       <div>
         <BButton
           @click="showRoleFiltersModal()"
@@ -180,7 +193,9 @@ import {
   BBadge,
   BButton,
   BButtonToolbar,
+  BCol,
   BDropdownItem,
+  BImg,
   BMedia,
   BMediaBody,
   BModal,
@@ -189,11 +204,11 @@ import {
 import { onMounted, ref } from 'vue';
 import { isEmpty } from 'lodash';
 import FrActionsMenu from '@forgerock/platform-shared/src/components/ActionsMenu/ActionsMenu';
+import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrResourceSelect from '@forgerock/platform-shared/src/components/Field/ResourceSelect';
 import FrEntitlementSelect from '@forgerock/platform-shared/src/components/governance/EntitlementSelect';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { BCol } from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
 
 const emit = defineEmits([
   'filter-change',
@@ -206,6 +221,10 @@ const props = defineProps({
   hideStatusFilter: {
     type: Boolean,
     default: false,
+  },
+  hideSearchFilter: {
+    type: Boolean,
+    default: true,
   },
   numFilters: {
     type: Number,
@@ -223,6 +242,7 @@ const props = defineProps({
 
 const roleFiltersModal = ref(null);
 const filters = ref({
+  nameFilter: '',
   applicationFilter: '',
   entitlementFilter: '',
   statusFilter: 'candidate',
@@ -267,6 +287,9 @@ function emitFilter() {
   if (filters.value.minEntitlementsFilter > 0) {
     queryFilterParams.minEntitlementsFilter = filters.value.minEntitlementsFilter;
   }
+  if (filters.value.nameFilter) {
+    queryFilterParams.nameFilter = filters.value.nameFilter;
+  }
   emit('filter-change', isEmpty(queryFilterParams) ? null : queryFilterParams);
   roleFiltersModal.value.hide();
   showFilters.value = false;
@@ -277,6 +300,7 @@ function emitFilter() {
  */
 function clearFilters() {
   filters.value = {
+    nameFilter: filters.value.nameFilter || '', // Preserve the name filter value in the input field
     applicationFilter: '',
     entitlementFilter: '',
     statusFilter: 'candidate',
@@ -305,6 +329,9 @@ function handleStatusChange(status) {
 function handleFilterChange(filter, value) {
   if (filter === 'userFilter' && !userFieldInitialized.value) {
     userFieldInitialized.value = true;
+  } else if (filter === 'nameFilter') {
+    filters.value.nameFilter = value;
+    emitFilter();
   } else {
     filters.value[filter] = value;
   }

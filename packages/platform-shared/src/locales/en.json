@@ -1772,6 +1772,9 @@
       }
     },
     "accessModeling": {
+      "attributeDistribution": "Attribute Distribution",
+      "attributeNone": "(No value)",
+      "attributeUniqueValueCount": "{count} unique values",
       "charts": {
         "assignmentCoverage": {
           "title": "Assignment Coverage",
@@ -1794,6 +1797,8 @@
           "removeRedundant": "Remove Redundant Access Patterns"
         }
       },
+      "deleteSuccess": "Role successfully deleted",
+      "draftSuccess": "Draft role successfully created",
       "filters": {
         "applyFilters": "Apply Filters",
         "clearFilters": "Clear Filters",
@@ -1806,14 +1811,21 @@
       "failedGettingRole": "There was an error reading this role.",
       "failedGettingRoles": "There was an error retrieving roles.",
       "failedGettingMetrics": "There was an error retrieving role metrics.",
-      "failedRunningJob": "There was an error running the role mining job.",
-      "failedDeletingRole": "There was an error deleting this role.",
-      "attributeDistribution": "Attribute Distribution",
-      "attributeUniqueValueCount": "{count} unique values",
+      "failedToRunJob": "There was an error running the role mining job.",
       "members": "Members",
       "noResults": "No {status} roles found",
       "patterns": {
+        "addPattern": "Add Pattern",
+        "addPatternMessage": "Set the values for any of the attributes below to create a new access pattern.",
+        "addPatternTitle": "Add Access Pattern",
+        "deletePatternMessage": "Are you sure you want to remove this access pattern?",
+        "deletePatternTitle": "Remove Access Pattern",
+        "pattern": "pattern",
         "title": "Access Patterns"
+      },
+      "recommendations": {
+        "updateEntitlements": "Update Entitlements",
+        "updatePatterns": "Update Access Patterns"
       },
       "roleDetails": {
         "accessPatterns": {
@@ -1830,7 +1842,8 @@
           "assignmentConfidence": {
             "title": "Average Assignment Confidence",
             "percentSubtitle": "{total} Entitlements"
-          }
+          },
+          "candidateRoleComparison": "{percent}% from candidate role"
         },
         "idDisplay": "ID: {id}",
         "lastUpdated": "Last updated: {date}",
@@ -1845,10 +1858,21 @@
           "recommendations": "Recommendations",
           "confidence": "Confidence",
           "noResultsTitle": "No {items} found",
+          "noRecommendations": "No additional recommendations",
           "noResultsSubtitle": "There are no {items} currently assigned to this role."
         },
         "saveSuccess": "Role successfully saved"
       },
+      "tooltips": {
+        "assignmentCoverage": "Entitlement grants covered in the most recent role mining run compared to total number of grants",
+        "assignmentConfidence": "Average confidence score",
+        "assignmentConfidenceDetails": "Average confidence score of entitlement grants in the role",
+        "identityCoverageDetails": "Percentage of identities covered by the role",
+        "jobInfo": "Configuration parameters for the most recent role mining run",
+        "confidenceThreshold": "Confidence score threshold for grants to be considered for role mining",
+        "entitlementsThreshold": "Minimum number of entitlement grants in a role"
+      },
+      "roleMiningJobLaunched": "Role mining job successfully launched",
       "title": "Access Modeling",
       "subtitle": "Discover, analyze, and compose business roles."
     },
@@ -1947,6 +1971,8 @@
       "changeResumeDate": "Change Resume Date",
       "customRequestAltText": "Custom Request",
       "noRequests": "No {status} Access Requests",
+      "queryEntitlementsError": "There was an error querying the entitlements for this request",
+      "queryMembersError": "There was an error querying the members for this request",
       "recommended": "Recommended",
       "requestedFor": "Requested For",
       "requestDate": "Request Date",

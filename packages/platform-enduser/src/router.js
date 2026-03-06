@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -395,11 +395,11 @@ const router = createRouter({
           name: 'AccessModeling',
           component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/AccessModeling'),
         },
-        // {
-        //   path: ':status/:roleId',
-        //   name: 'AccessModelingDetails',
-        //   component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/AccessModelingDetails/AccessModelingDetails'),
-        // },
+        {
+          path: ':status/:roleId/:tab',
+          name: 'AccessModelingDetails',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/AccessModeling/AccessModelingDetails/AccessModelingDetails'),
+        },
       ],
     },
     {

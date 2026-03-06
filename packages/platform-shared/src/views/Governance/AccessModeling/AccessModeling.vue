@@ -18,13 +18,20 @@ of the MIT license. See the LICENSE file for details. -->
                   {{ i18n.global.t('governance.accessModeling.charts.assignmentCoverage.title') }}
                 </h2>
                 <div
-                  :id="`assignmentCoverage-tooltip`"
+                  id="assignmentCoverage-tooltip"
                   class="tooltip-button"
                   tabindex="0">
                   <FrIcon
                     icon-class="ml-1 mt-1"
                     name="info" />
                 </div>
+                <BTooltip
+                  no-fade
+                  target="assignmentCoverage-tooltip"
+                  triggers="hover"
+                  position="top">
+                  {{ $t('governance.accessModeling.tooltips.assignmentCoverage') }}
+                </BTooltip>
               </div>
               <div>
                 <small>
@@ -63,6 +70,13 @@ of the MIT license. See the LICENSE file for details. -->
                   <FrIcon
                     icon-class="ml-1 mt-1"
                     name="info" />
+                  <BTooltip
+                    no-fade
+                    target="assignmentConfidence-tooltip"
+                    triggers="hover"
+                    position="top">
+                    {{ $t('governance.accessModeling.tooltips.assignmentConfidence') }}
+                  </BTooltip>
                 </div>
               </div>
               <div>
@@ -104,6 +118,13 @@ of the MIT license. See the LICENSE file for details. -->
                     <FrIcon
                       icon-class="ml-1 mt-1"
                       name="info" />
+                    <BTooltip
+                      no-fade
+                      target="jobInfo-tooltip"
+                      triggers="hover"
+                      position="top">
+                      {{ $t('governance.accessModeling.tooltips.jobInfo') }}
+                    </BTooltip>
                   </div>
                 </div>
                 <BButton
@@ -138,6 +159,13 @@ of the MIT license. See the LICENSE file for details. -->
                         <FrIcon
                           icon-class="ml-1 mb-2"
                           name="info" />
+                        <BTooltip
+                          no-fade
+                          :target="`jobInfo-${key}-tooltip`"
+                          triggers="hover"
+                          position="top">
+                          {{ $t(`governance.accessModeling.tooltips.${key}`) }}
+                        </BTooltip>
                       </div>
                     </div>
                     {{ value }}
@@ -163,10 +191,12 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
+  BButton,
   BCard,
   BCol,
   BContainer,
   BRow,
+  BTooltip,
 } from 'bootstrap-vue';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
