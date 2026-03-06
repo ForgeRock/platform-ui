@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -69,6 +69,7 @@ describe('GovResourceList', () => {
       wrapper = mountComponent({
         resource: 'user',
         columns,
+        queryThreshold: 0,
         resourceFunction: mockResourceFunction,
       });
 
@@ -199,7 +200,7 @@ describe('GovResourceList', () => {
           fields: 'userName,givenName,sn,mail',
           pageSize: 10,
           pagedResultsOffset: 0,
-          queryFilter: '/userName co "test" or /givenName co "test" or /sn co "test" or /mail co "test"',
+          queryFilter: 'userName sw "test" OR givenName sw "test" OR sn sw "test" OR mail sw "test"',
           totalPagedResultsPolicy: 'EXACT',
         },
       );
