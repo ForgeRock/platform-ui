@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
             @property {string} the value (id) of the item to view/edit
           -->
           <BButton
-            @mousedown.stop
+            @mouseup.stop
             @click.stop="$emit('edit-item-clicked', option.value)"
             v-if="showEdit(option)"
             :aria-label="editLabelOrFallback"
@@ -56,7 +56,6 @@ of the MIT license. See the LICENSE file for details. -->
           @event add-item-clicked
         -->
         <BButton
-          @mousedown.stop
           @mouseup.stop
           @click.stop="$emit('add-item-clicked')"
           :aria-label="addLabelOrFallback"
@@ -91,7 +90,6 @@ of the MIT license. See the LICENSE file for details. -->
             @property {string} the value (id) of the item to view/edit
           -->
           <BButton
-            @mousedown.stop
             @mouseup.stop
             @click.stop="$emit('edit-item-clicked', option.value)"
             v-if="option.value !== '[Empty]'"
