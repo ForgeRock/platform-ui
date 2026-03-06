@@ -34,7 +34,6 @@ describe('Login.vue', () => {
       tree: undefined,
     },
   };
-
   beforeEach(() => {
     jest.spyOn(LoginMixin.methods, 'getConfigurationInfo').mockImplementation(() => Promise.resolve({ data: { realm: '/' } }));
     wrapper = shallowMount(Login, {
@@ -137,26 +136,64 @@ describe('Login.vue', () => {
     });
   });
 
-  it('Sets page title if url hash includes "service" or authIndexType && authIndexValue params', () => {
-    const windowHash = '#/service/ResetPassword';
-    const windowHashWithParams = '#/service/Login?goto=https%3A%2F%2Fdefault.iam.example.com';
-    const windowSearch = '&authIndexType=service&authIndexValue=Registration';
-    const URLSearchParamsMock = {
-      get: (param) => {
-        if (param === 'authIndexType') return 'service';
-        if (param === 'authIndexValue') return 'Registration';
-        return null;
-      },
-    };
+  describe('validate and set proper page title when', () => {
+    afterEach(() => {
+      document.title = 'Login';
+    });
 
-    wrapper.vm.setPageTitle(windowSearch, URLSearchParamsMock);
-    expect(document.title).toEqual('Registration');
+    it('authIndexType and authIndexValue are present in the journey url hash', () => {
+      const windowHashWithAuthIndex = '#/service/ResetPassword';
+      wrapper.vm.setPageTitle(windowHashWithAuthIndex);
+      expect(document.title).toEqual('ResetPassword');
+    });
 
-    wrapper.vm.setPageTitle(windowHash);
-    expect(document.title).toEqual('ResetPassword');
+    it('authIndexType and authIndexValue are present in the journey url query params', () => {
+      const windowSearch = '&authIndexType=service&authIndexValue=Registration';
+      const URLSearchParamsMock = {
+        get: (param) => {
+          if (param === 'authIndexType') return 'service';
+          if (param === 'authIndexValue') return 'Registration';
+          return null;
+        },
+      };
 
-    wrapper.vm.setPageTitle(windowHashWithParams);
-    expect(document.title).toEqual('Login');
+      wrapper.vm.setPageTitle(windowSearch, URLSearchParamsMock);
+      expect(document.title).toEqual('Registration');
+    });
+
+    it('authIndexValue contains encoded characters', () => {
+      const windowHashEncoded = '#/service/Reset%20Password';
+      // Sets title to decoded value if the hash includes encoded characters
+      wrapper.vm.setPageTitle(windowHashEncoded);
+      expect(document.title).toEqual('Reset Password');
+    });
+
+    it('authIndexType and authIndexValue are not present in the journey url', () => {
+      const windowHashPlain = '#/';
+      // Defaults to title set in index.html if authIndexValue and authIndexType is missing
+      wrapper.vm.setPageTitle(windowHashPlain);
+      expect(document.title).toEqual('Login');
+    });
+
+    it('authIndexType and authIndexValue are present in the journey url hash with query params', () => {
+      const windowHashWithParams = '#/service/Login?goto=https%3A%2F%2Fdefault.iam.example.com';
+      wrapper.vm.setPageTitle(windowHashWithParams);
+      expect(document.title).toEqual('Login');
+    });
+
+    it('authIndexValue are present in the journey url hash with malformed encoded characters', () => {
+      const windowHashWithMalformedAuthIndexValue = '#/service/Reset%2Password';
+      // Fallbacks to undecoded title if malformed percent-encoded sequences are present
+      wrapper.vm.setPageTitle(windowHashWithMalformedAuthIndexValue);
+      expect(document.title).toEqual(windowHashWithMalformedAuthIndexValue.split('/service/')[1]);
+    });
+
+    it('authIndexType and authIndexValue are present in the journey url hash with no authIndexValue', () => {
+      const windowHashWithNoAuthIndexValue = '#/service/';
+      // Fallbacks to title set in index.html if authIndexValue is missing
+      wrapper.vm.setPageTitle(windowHashWithNoAuthIndexValue);
+      expect(document.title).toEqual('Login');
+    });
   });
 
   it('keeps params like noSession when is a link from an Email URL', () => {
