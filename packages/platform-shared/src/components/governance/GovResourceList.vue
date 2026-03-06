@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,6 +19,31 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
         </div>
         <FrSearchInput
+          :value="searchValue"
+          v-if="queryThreshold > 0"
+          :placeholder="$t('common.search')"
+          @clear="search('')"
+          v-model="searchValue"
+          @search="search(searchValue)"
+          @input="filterChange"
+          @search-input-focus="setHelpTextFromSearchLength"
+          @search-input-blur="removeHelpText"
+          class="ml-auto"
+          :class="{'fr-search-focus': hasFocus, 'flex-grow-1': showDivider}">
+          <template #append>
+            <BInputGroupText>
+              <small
+                role="searchbox"
+                class="d-none d-md-block text-muted">
+                <div :class="{'text-danger': submitBeforeLengthValid, shake: submitBeforeLengthValid}">
+                  {{ searchHelpText }}
+                </div>
+              </small>
+            </BInputGroupText>
+          </template>
+        </FrSearchInput>
+        <FrSearchInput
+          v-else
           class="ml-auto"
           v-model="searchValue"
           @clear="search('')"
@@ -78,6 +103,8 @@ of the MIT license. See the LICENSE file for details. -->
       :value="currentPage"
       :per-page="currentPageSize"
       :total-rows="totalRows"
+      :last-page="lastPage"
+      :dataset-size="datasetSize"
       @input="pageChange($event)"
       @on-page-size-change="pageSizeChange($event)" />
   </BCard>
@@ -108,6 +135,8 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
+import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
+import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import i18n from '@/i18n';
 
 defineEmits(['add-clicked', 'delete-clicked', 'row-clicked']);
@@ -141,6 +170,14 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  queryThreshold: {
+    type: Number,
+    default: 0,
+  },
+  datasetSize: {
+    type: String,
+    default: DatasetSize.LARGE,
+  },
 });
 
 const isLoading = ref(false);
@@ -151,6 +188,10 @@ const searchValue = ref('');
 const totalRows = ref(0);
 const sortBy = ref('');
 const sortDesc = ref(null);
+const lastPage = ref(null);
+const searchHelpText = ref('');
+const hasFocus = ref(false);
+const submitBeforeLengthValid = ref(false);
 
 const resourceName = computed(() => {
   switch (props.resource) {
@@ -237,6 +278,33 @@ function getQueryStringFields(resourceType) {
   }
 }
 
+function setHelpTextFromSearchLength() {
+  hasFocus.value = true;
+
+  if (!props.queryThreshold && searchValue.value.length === 0) {
+    searchHelpText.value = '';
+  } else if (searchValue.value.length < props.queryThreshold) {
+    searchHelpText.value = i18n.global.t('listResource.searchInProgressText', { queryThreshold: props.queryThreshold });
+  } else {
+    searchHelpText.value = i18n.global.t('listResource.searchActiveText');
+  }
+
+  if (searchValue.value.length === 0) {
+    submitBeforeLengthValid.value = false;
+  } else if (searchValue.value.length >= props.queryThreshold) {
+    submitBeforeLengthValid.value = false;
+  }
+}
+
+function filterChange(filter) {
+  searchValue.value = filter;
+  setHelpTextFromSearchLength();
+}
+function removeHelpText() {
+  hasFocus.value = false;
+  searchHelpText.value = '';
+}
+
 /**
  * Generates a query parameter string for a given resource type.
  *
@@ -255,7 +323,12 @@ function queryParamFunction(resourceType, queryString, page, pageSize) {
   // handle query string and additional query params
   let queryFilter;
   if (queryString) {
-    const tempQuery = getQueryStringFields(resourceType).map((field) => `${field} co "${queryString}"`).join(' or ');
+    let tempQuery;
+    if (resourceType === 'user') {
+      tempQuery = generateSearchQuery(queryString, getQueryFields(resourceType).filter((item) => item !== 'accountStatus'));
+    } else {
+      tempQuery = getQueryStringFields(resourceType).map((field) => `${field} co "${queryString}"`).join(' or ');
+    }
     queryFilter = props.additionalQueryParams
       ? [`(${tempQuery})`, `(${props.additionalQueryParams})`].join(' and ')
       : tempQuery;
@@ -284,6 +357,15 @@ function queryParamFunction(resourceType, queryString, page, pageSize) {
  */
 async function loadData() {
   isLoading.value = true;
+  props.columns.forEach((column) => {
+    if (props.queryThreshold && 'sortable' in column) {
+      if (searchValue.value.length > props.queryThreshold) {
+        column.sortable = true;
+      } else {
+        column.sortable = false;
+      }
+    }
+  });
   try {
     const queryParams = queryParamFunction(props.resource, searchValue.value, currentPage.value, currentPageSize.value);
     const { data } = await props.resourceFunction(resourcePath.value, queryParams);
@@ -298,6 +380,11 @@ async function loadData() {
           canDelete: userPermissions?.permissions?.deleteUser,
         };
       });
+      if (data.pagedResultsCookie) {
+        lastPage.value = false;
+      } else {
+        lastPage.value = true;
+      }
     } else {
       items.value = data.result;
     }
@@ -364,7 +451,7 @@ function handleSort({ sortBy: newSortBy, sortDesc: newSortDesc }) {
  */
 function setInitialSort() {
   const initialSort = props.columns.find((column) => column.initialSort);
-  if (initialSort) {
+  if (initialSort && (!props.queryThreshold && !props.queryThreshold > 0)) {
     sortBy.value = initialSort.sortKey || initialSort.key;
     sortDesc.value = false;
   }

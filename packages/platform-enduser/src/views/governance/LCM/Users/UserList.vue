@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
       :query-fields="queryFields"
       :resource-function="getManagedResourceList"
       :show-add-button="allowCreate"
+      :query-threshold="queryThreshold"
       @row-clicked="navigateToUserDetails"
       @add-clicked="showAddUserModal"
       @delete-clicked="showDeleteModal">
@@ -54,6 +55,7 @@ import {
   BBadge,
   BContainer,
 } from 'bootstrap-vue';
+import { has } from 'lodash';
 import FrGovResourceList from '@forgerock/platform-shared/src/components/governance/GovResourceList';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroupList/UserBasicInfo';
@@ -63,6 +65,7 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useGovernanceStore } from '@forgerock/platform-shared/src/stores/governance';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import store from '@/store';
 import FrAddUserModal from './Add/AddUserModal';
 import FrDeleteUserModal from './Delete/DeleteUserModal';
 import i18n from '@/i18n';
@@ -77,6 +80,7 @@ const { setPrivileges, privileges } = useGovernanceStore();
 const allowCreate = ref(false);
 const deleteUserId = ref(null);
 const userViewPrivileges = ref([]);
+const queryThreshold = ref(0);
 const availableColumns = [
   {
     column: {
@@ -195,7 +199,22 @@ async function getIdmAndIgaPrivileges() {
   }
 }
 
+/**
+ * Gets the minimumUIFilterLength setting from uiConfig and if no setting exists there does a _countOnly query
+ * on the specified managed object then if the number of records exceeds 1000 the minimumUIFilterLength is set to 3
+ * else it is set to 0.
+ *
+ * @param {string} managedObjectName - Required name of managed object to get minimumUIFilterLength for
+ * @returns {number} number representing minimumUIFilterLength
+ */
+async function getMinimumUIFilterLength(managedObjectName) {
+  const defaultMinimumUIFilterLength = 3;
+  const { uiConfig } = store.state.SharedStore;
+  queryThreshold.value = uiConfig && has(uiConfig.configuration?.platformSettings?.managedObjectsSettings, `${managedObjectName}.minimumUIFilterLength`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[managedObjectName].minimumUIFilterLength : defaultMinimumUIFilterLength;
+}
+
 getIdmAndIgaPrivileges();
+getMinimumUIFilterLength('alpha_user');
 
 </script>
 
