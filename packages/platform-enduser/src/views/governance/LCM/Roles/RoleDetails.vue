@@ -134,7 +134,7 @@ import { getRoleDataById } from '@forgerock/platform-shared/src/api/governance/R
 import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrEntitlementsTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/EntitlementsTab';
 import FrMembersTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/MembersTab';
-import FrDetailsTab from './RoleDetailsTabs/DetailsTab';
+import FrDetailsTab from '@forgerock/platform-shared/src/components/governance/LCM/Roles/RoleDetailsTabs/DetailsTab';
 import FrRequestSubmitSuccessModal from '@/views/governance/LCM/RequestSubmitSuccessModal';
 import i18n from '@/i18n';
 
@@ -226,12 +226,26 @@ async function loadRoleEntitlements() {
 }
 
 /**
+ * Update the member list with the members that have been added directly
+ * @param memberList the updated list of members to set
+ */
+function enrichMemberList(memberList) {
+  const addedRoleMembers = role.value?.addedRoleMembers || [];
+  const enrichedList = memberList.map((member) => {
+    const isAddedMember = addedRoleMembers.includes(member.id);
+    member.editable = isAddedMember || roleStatus.value === 'active';
+    return member;
+  });
+  return enrichedList;
+}
+
+/**
  * Get the role's members.
  */
 async function loadRoleMembers() {
   isLoading.value = true;
   const { data } = await getRoleDataById(roleId.value, roleStatus.value, 'members');
-  members.value = data.result;
+  members.value = enrichMemberList(data.result);
   memberCount.value = data.totalHits;
   isLoading.value = false;
 }

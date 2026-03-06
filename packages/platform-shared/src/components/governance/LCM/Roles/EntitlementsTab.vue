@@ -33,9 +33,6 @@ of the MIT license. See the LICENSE file for details. -->
     </BCardHeader>
     <div v-if="isLoading">
       <FrSpinner class="py-5" />
-      <div class="text-center pb-4 font-bold">
-        {{ $t('common.loading') }}
-      </div>
     </div>
     <FrNoData
       v-else-if="items.length === 0"
@@ -50,16 +47,18 @@ of the MIT license. See the LICENSE file for details. -->
       v-model:sort-by="sortBy"
       v-model:sort-desc="sortDesc"
       :busy="isLoading"
-      class="mb-0"
+      class="mb-0 mt-2"
       :class="{ 'cursor-pointer': true }"
       :fields="entitlementColumns"
       :items="entitlements"
       no-local-sorting
+      no-select-on-click
       no-sort-reset
       responsive
       selectable
       :read-only="readOnly"
       @row-selected="onRowSelected"
+      @row-clicked="onRowClicked"
       @sort-changed="sortChanged">
       <template #head(selected)>
         <div
@@ -108,6 +107,12 @@ of the MIT license. See the LICENSE file for details. -->
         </BMedia>
       </template>
     </BTable>
+    <FrPagination
+      :value="currentPage"
+      :per-page="currentPageSize"
+      :total-rows="count"
+      @input="pageChange($event)"
+      @on-page-size-change="pageSizeChange($event)" />
     <BModal
       id="addEntitlementsModal"
       :ref="(e) => addEntitlementsModal = e"
@@ -137,7 +142,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           v-if="step === 1"
           variant="btn-link"
-          @click="step = 0">
+          @click="clickPrevious()">
           {{ $t('common.previous') }}
         </BButton>
         <BButton
@@ -149,6 +154,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           v-if="step === 0"
           variant="primary"
+          :disabled="nextButtonDisabled"
           @click="step = 1">
           {{ $t('common.next') }}
         </BButton>
@@ -214,11 +220,12 @@ import {
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import { getEntitlementList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
-import { getRoleDataById } from '@forgerock/platform-shared/src/api/governance/RoleApi';
 import FrAppAndObjectType from '@forgerock/platform-shared/src/components/governance/LCM/Entitlements/Add/Steps/AppAndObjectType';
 
 import i18n from '@/i18n';
@@ -229,6 +236,10 @@ const addEntitlementsModal = ref(null);
 const allRowsSelected = ref(false);
 const application = ref({});
 const applicationId = ref('');
+const currentPage = ref(1);
+const currentPageSize = ref(10);
+const sortBy = ref(null);
+const sortDesc = ref(false);
 const entitlements = ref([]);
 const entitlementCount = ref(0);
 const entitlementOptions = ref([]);
@@ -265,13 +276,15 @@ const objectType = ref('');
 const removeEntitlementsModal = ref(null);
 const selected = ref([]);
 const step = ref(0);
+const isQuerying = ref(false);
 
 const newEntitlementIds = computed(() => map(newEntitlements.value, 'id'));
+const nextButtonDisabled = computed(() => !applicationId.value || !objectType.value);
 
 let debouncedSearch;
 
 // emits
-const emit = defineEmits(['update-tab-data']);
+const emit = defineEmits(['load-data', 'update-tab-data', 'row-clicked']);
 
 const props = defineProps({
   items: {
@@ -325,21 +338,6 @@ const props = defineProps({
 });
 
 /**
- * Get the role's entitlements.
- */
-async function loadRoleEntitlements() {
-  if (props.request?.id) {
-    const { data } = await getRoleDataById(props.roleId, props.roleStatus, 'entitlements', { pageSize: 100 }, props.request.id);
-    emit('update-tab-data', 'entitlements', 'load', data);
-  } else if (props.roleId !== 'new') {
-    const { data } = await getRoleDataById(props.roleId, props.roleStatus, 'entitlements', { pageSize: 100 });
-    emit('update-tab-data', 'entitlements', 'load', data);
-  } else {
-    emit('update-tab-data', 'entitlements', 'load', { result: [], totalHits: 0 });
-  }
-}
-
-/**
  * Update the role's entitlements.
  * @param {string} operation - The operation to perform ('add' or 'remove').
  */
@@ -373,6 +371,13 @@ function onRowSelected(selectedItems) {
 }
 
 /**
+ * Emit a row clicked event to the parent component
+ * @param {Array} item The table row clicked
+ */
+function onRowClicked(item) {
+  emit('row-clicked', item);
+}
+/**
  * Handle checkbox click to select row.
  * @param {Object} row - The row with the selected checkbox.
  */
@@ -395,26 +400,70 @@ function toggleSelectAll() {
   }
 }
 
+function clickPrevious() {
+  step.value = 0;
+  applicationId.value = '';
+  objectType.value = '';
+}
+
 /**
  * Query entitlements based on application, object type, and search value.
  * @param {string} searchValue - The search query to filter entitlements.
  */
 async function queryEntitlements(searchValue) {
-  const query = {
-    _pageSize: 10,
-    _pagedResultsOffset: 0,
-    _fields: 'application,assignment,descriptor,glossary,entitlement,catalog.id,item',
-    _queryFilter: `application.id eq '${applicationId.value}' and item.objectType eq '${objectType.value}'`,
-  };
-  if (searchValue) {
-    query._queryFilter += ` and descriptor.idx./entitlement.displayName co '${searchValue}'`;
+  isQuerying.value = true;
+  try {
+    const query = {
+      _pageSize: currentPageSize.value,
+      _pagedResultsOffset: (currentPage.value - 1) * currentPageSize.value,
+      _fields: 'application,assignment,descriptor,glossary,entitlement,catalog.id,item',
+      _queryFilter: `application.id eq '${applicationId.value}' and item.objectType eq '${objectType.value}'`,
+    };
+    if (searchValue) {
+      query._queryFilter += ` and descriptor.idx./entitlement.displayName co '${searchValue}'`;
+    }
+    const { data } = await getEntitlementList(null, query);
+    const results = filter(data.result, (ent) => !newEntitlementIds.value.includes(ent.id));
+    let newOptions = map(results, (ent) => ({
+      text: ent.descriptor.idx['/entitlement'].displayName,
+      value: ent,
+    }));
+    if (entitlements.value.length) {
+      const currentEntitlementIds = map(entitlements.value, 'id');
+      newOptions = filter(newOptions, (option) => !currentEntitlementIds.includes(option.value.id));
+    }
+    entitlementOptions.value = newOptions;
+  } finally {
+    isQuerying.value = false;
   }
-  const { data } = await getEntitlementList(null, query);
-  const results = filter(data.result, (ent) => !newEntitlementIds.value.includes(ent.id));
-  entitlementOptions.value = map(results, (ent) => ({
-    text: ent.descriptor.idx['/entitlement'].displayName,
-    value: ent,
-  }));
+}
+
+/**
+ * Handles the change in page for the resource list.
+ *
+ * @param {number} pageNum - The new page number selected by the user.
+ */
+async function pageChange(pageNum) {
+  currentPage.value = pageNum;
+  emit('load-data', { currentPage: pageNum, pageSize: currentPageSize.value });
+}
+
+/**
+ * Get current entitlements based on sort query params
+ */
+async function sortChanged(sort) {
+  emit('load-data', { sortDir: sort.sortDesc ? 'desc' : 'asc', sortBy: sort.sortBy });
+}
+
+/**
+ * Handles the change in page size for the resource list.
+ *
+ * @param {number} size - The new page size selected by the user.
+ */
+async function pageSizeChange(size) {
+  currentPageSize.value = size;
+  currentPage.value = 1;
+  emit('load-data', { currentPage: 1, pageSize: size });
 }
 
 /**
@@ -436,7 +485,6 @@ watch(() => props.items, () => {
 
 onMounted(() => {
   debouncedSearch = debounce(queryEntitlements, 500);
-  loadRoleEntitlements();
 });
 
 </script>

@@ -16,7 +16,6 @@ of the MIT license. See the LICENSE file for details. -->
       content-class="mt-3"
       nav-class="fr-tabs"
       v-model="tabIndex"
-      data-testid="cert-tabs"
       @activate-tab="tabActivated">
       <BTab
         :title="$t('common.active')"
@@ -102,8 +101,6 @@ of the MIT license. See the LICENSE file for details. -->
               </template>
             </BTable>
           </div>
-          <br>
-          <br>
         </BCard>
       </BTab>
       <BTab

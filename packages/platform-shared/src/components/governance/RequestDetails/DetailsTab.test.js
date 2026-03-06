@@ -233,7 +233,6 @@ describe('DetailsTab', () => {
               },
             },
           },
-          requestType: 'modifyRole',
         },
       },
       type: 'adminRequest',
@@ -526,8 +525,8 @@ describe('DetailsTab', () => {
               role: {
                 glossary: {},
                 object: {
-                  entitlements: {},
-                  members: {},
+                  entitlements: [],
+                  addedRoleMembers: [],
                 },
               },
             },
@@ -548,7 +547,6 @@ describe('DetailsTab', () => {
           object: {
             addedRoleMembers: [],
             entitlements: [],
-            members: {},
           },
         },
       };
@@ -585,8 +583,8 @@ describe('DetailsTab', () => {
               role: {
                 glossary: {},
                 object: {
-                  entitlements: {},
-                  members: {},
+                  entitlements: [],
+                  addedRoleMembers: [],
                 },
               },
             },
@@ -608,7 +606,6 @@ describe('DetailsTab', () => {
           object: {
             addedRoleMembers: [],
             entitlements: [],
-            members: {},
           },
         },
       };
