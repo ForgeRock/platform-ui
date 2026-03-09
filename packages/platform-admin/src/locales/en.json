@@ -246,6 +246,29 @@
       "clientId": "Client ID",
       "clientSecretLabel": "Client Secret",
       "description": "Manage the OAuth credentials this AI Agent uses to authenticate and request tokens."
+    },
+    "applicationsTab": {
+      "addNewApplication": "Add new Application",
+      "editApplication": "Edit Application",
+      "addNewApplicationDescription": "Choose an application to assign to this agent.",
+      "actingOnBehalfOf": "Acting On Behalf Of",
+      "actingOnBehalfOfDescription": "Choose the users and groups this AI Agent is allowed to represent while interacting with the selected application. Some actions may still require the user’s explicit consent.",
+      "description": "Choose the applications this AI Agent is authorized to access when performing automated tasks.",
+      "errorAddingApplication": "Error adding application",
+      "errorLoadingApplication": "Error loading application",
+      "errorLoadingPrivileges": "Error loading privileges",
+      "errorLoadingPermissions": "Error loading permissions",
+      "errorLoadingRelationships": "Error loading relationships",
+      "errorLoadingSchema": "Error loading schema",
+      "revokeSuccess": "Successfully revoked agent access to application",
+      "revokeError": "Error revoking agent access to application",
+      "permissions": "Permissions",
+      "permissionsDescription": "Limit what the agent can do within the selected application. If you leave this blank, the agent receives the default application permissions.",
+      "noApplicationsFound": "No Applications found.",
+      "usersCount": "{count} User | {count} Users",
+      "permissionsCount": "{count} Permission | {count} Permissions",
+      "subjects": "Subjects",
+      "subjectGroups": "Subject Groups"
     }
   },
   "authentication": {
