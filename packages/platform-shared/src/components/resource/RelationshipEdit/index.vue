@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
       :preserve-search="isRelationshipArray"
       :show-labels="false"
       :show-no-results="false"
-      :show-no-options="false"
+      :show-no-options="showNoOptions"
       :searchable="true"
       :type="relationshipField.type"
       :validation="relationshipField.validation"
@@ -220,6 +220,10 @@ export default {
     singleSelection: {
       type: Boolean,
       required: false,
+    },
+    showNoOptions: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
