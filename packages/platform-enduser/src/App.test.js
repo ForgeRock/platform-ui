@@ -257,5 +257,15 @@ describe('App.vue', () => {
       expect(administerMenuGroup).toBeTruthy();
       expect(administerMenuGroup.subItems.find((item) => item.id === 'lcmEntitlements')).toBeTruthy();
     });
+
+    it('adds access modeling menu item when role mining is enabled', async () => {
+      const roleMiningEnabled = cloneDeep(governanceEnabledStore);
+      roleMiningEnabled.state.SharedStore.governanceRoleMiningEnabled = true; // Feature flag is enabled
+      roleMiningEnabled.state.govRoleMining = true; // User has role mining privilege
+
+      await shallowMountComponent(roleMiningEnabled);
+      const accessModelingMenuItem = wrapper.vm.menuItems.find((item) => item.id === 'accessModeling');
+      expect(accessModelingMenuItem).toBeTruthy();
+    });
   });
 });

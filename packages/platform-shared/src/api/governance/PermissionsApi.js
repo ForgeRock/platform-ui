@@ -29,3 +29,7 @@ export function getPermissionsForUsers(userIds, scopePermission) {
 export function getPrivileges(userId) {
   return generateIgaApi().get(`governance/user/${userId}/privileges`);
 }
+
+export function getIgaUserInfo() {
+  return generateIgaApi().get('governance/info/login');
+}

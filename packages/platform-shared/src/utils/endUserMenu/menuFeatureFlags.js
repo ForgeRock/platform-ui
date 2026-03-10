@@ -17,6 +17,7 @@ export function generateFeatureFlags(store) {
     govLcmUser,
     govLcmEntitlement,
     govLcmRole,
+    govRoleMining,
     realm,
     SharedStore = {},
   } = store.state;
@@ -27,6 +28,7 @@ export function generateFeatureFlags(store) {
     governanceDevEnabled,
     governanceEnabled,
     workforceEnabled,
+    governanceRoleMiningEnabled,
   } = SharedStore;
 
   const ifGovernance = governanceEnabled && realm === 'alpha'; // governance menu items are only available in alpha realm
@@ -40,6 +42,8 @@ export function generateFeatureFlags(store) {
     govLcmEntitlement,
     govLcmRole,
     govLcmUser,
+    govRoleMining,
+    governanceRoleMiningEnabled,
     ifGovernance,
     realm,
     workforceEnabled,

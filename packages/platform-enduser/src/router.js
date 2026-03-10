@@ -387,7 +387,7 @@ const router = createRouter({
     },
     {
       path: '/access-modeling',
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceRoleMiningEnabled, store.state.govRoleMining]),
       meta: { authenticate: true },
       children: [
         {
