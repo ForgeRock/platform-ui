@@ -25,6 +25,7 @@ import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import { getIgaUiConfig, getIgaAutoIdConfig } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getIgaUserInfo } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import { getSessionTimeoutInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
@@ -226,6 +227,10 @@ const startApp = async () => {
       // User recommendations and predictions
       const { data: autoIdData } = await getIgaAutoIdConfig();
       store.commit('setGovAutoIdSettings', autoIdData);
+
+      // User privileges info for role mining
+      const { data: userInfoData } = await getIgaUserInfo();
+      store.commit('setGovRoleMining', userInfoData);
     }
 
     // Analytics flags initialization

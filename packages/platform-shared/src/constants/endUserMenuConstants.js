@@ -160,7 +160,7 @@ export const DEFAULT_MENU_ITEMS = [
   {
     id: 'accessModeling',
     icon: 'lan',
-    available: (flag) => flag.governanceDevEnabled,
+    available: (flag) => flag.governanceRoleMiningEnabled,
     routeTo: { name: 'AccessModeling' },
   },
   {

@@ -35,6 +35,7 @@ const defaultState = {
   googleMapsApiKey: '',
   governanceEnabled: false,
   governanceEnabledV4: false,
+  governanceRoleMiningEnabled: false,
   hasAmUrl: false,
   idmBaseURL: '',
   idmOnly: false,
@@ -184,6 +185,13 @@ const mutations = {
         state.governanceDevEnabled = true;
       } else if (env.VUE_APP_ENABLE_GOVERNANCE?.toString() === 'true') {
         state.governanceEnabled = true;
+      }
+
+      // Enable sub components of governance based on additional flags
+      if (state.governanceEnabled) {
+        if (env.VUE_APP_ENABLE_GOVERNANCE_ROLE_MINING?.toString() === 'true') {
+          state.governanceRoleMiningEnabled = true;
+        }
       }
 
       if (env.VUE_APP_ENABLE_PROXY_CONNECT?.toString() === 'true') {
