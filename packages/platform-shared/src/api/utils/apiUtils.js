@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import createRealmPath from '@forgerock/platform-shared/src/utils/createRealmPath';
+import { getRealmFullPath } from '@forgerock/platform-shared/src/utils/realm';
 import store from '@/store';
 
 /**
@@ -33,7 +34,16 @@ function getCurrentRealmConfigPath() {
   return getRealmConfigPath(store.state.realm);
 }
 
+/**
+ * Computes the full realm path (with a leading slash) for the current realm.
+ * @returns {string} The full realm path, e.g. '/', '/alpha', or '/level1/level2'.
+ */
+function getCurrentRealmFullPath() {
+  return getRealmFullPath(store.state.realm, store.state.realms);
+}
+
 export default {
   getRealmConfigPath,
   getCurrentRealmConfigPath,
+  getCurrentRealmFullPath,
 };
