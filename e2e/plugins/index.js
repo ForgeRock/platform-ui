@@ -14,6 +14,7 @@ const createBundler = require('@bahmutov/cypress-esbuild-preprocessor');
 const { createEsbuildPlugin } = require('@badeball/cypress-cucumber-preprocessor/esbuild');
 const fs = require('fs').promises;
 const { createEmailAccount, getLatestEmail } = require('./email-account');
+const { signCsr } = require('../util/signCsr').default;
 
 module.exports = async (on, config) => {
   await addCucumberPreprocessorPlugin(on, config);
@@ -26,6 +27,17 @@ module.exports = async (on, config) => {
         await fs.unlink(filePath);
       } catch (_) { /* file doesn't exist, that's fine */ }
       return null;
+    },
+  });
+
+  on('task', {
+    /**
+     * Signs a CSR PEM string with the test CA and returns the chain PEM content.
+     * @param {string} csrPem - PEM-encoded CSR (typically from storedCsr.request)
+     * @returns {{ chainPemContent: string }}
+     */
+    signCsr({ csrPem }) {
+      return signCsr({ csrPem });
     },
   });
 
