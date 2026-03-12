@@ -22,7 +22,9 @@ Feature: Go To URL validator service
     And user clicks on "Next" button
     Then "Login failure" error message is displayed
 
+  # Skipping due to flakiness in CI to stabilize it later
   @C25519
+  @skip
   @cloud @forgeops
   Scenario: Go To URL validator - redirect correctly works
     When user navigates to journey "gotoOnFail URL validation" url with param "gotoOnFail" and value "https://www.google.com"

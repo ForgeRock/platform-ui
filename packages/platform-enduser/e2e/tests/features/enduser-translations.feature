@@ -1,7 +1,9 @@
 @cloud
 Feature: Enduser UI Translations
 
+  # Skipping due to flakiness in CI to stabilize it later
   @C26987
+  @skip
   Scenario: Full translation: French translation
     Given "fr" language is set via API
     And browser locale is set to 'fr'

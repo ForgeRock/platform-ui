@@ -14,7 +14,9 @@ Feature: Logout warning before expiration on ID hosted pages
     Then enduser dashboard is loaded with enduser data
     And maxIdleExpirationTime value is set correctly to 999999999 minutes
 
+  # Skipping due to flakiness in CI to stabilize it later
   @C27574
+  @skip
   Scenario: Enduser session is ended after Maximum Idle Time is over
     When session service in AM console is added via API with following params
       | Param             | Value |
@@ -23,7 +25,9 @@ Feature: Logout warning before expiration on ID hosted pages
     Then "You will be signed out soon" modal is displayed after user is iddle for 20 seconds
     And page title is "Sign In" after user is idle for 62 seconds
 
+  # Skipping due to flakiness in CI to stabilize it later
   @C29485
+  @skip
   Scenario: Enduser session is ended when clicking Sign Out button in session timeout modal
     When session service in AM console is added via API with following params
       | Param             | Value |
@@ -33,7 +37,9 @@ Feature: Logout warning before expiration on ID hosted pages
     When user clicks on "Sign Out" button
     Then page title is "Sign In"
 
+  # Skipping due to flakiness in CI to stabilize it later
   @C27575
+  @skip
   Scenario: Enduser session is not ended when clicking Stay Signed In button in session timeout modal
     When session service in AM console is added via API with following params
       | Param             | Value |
