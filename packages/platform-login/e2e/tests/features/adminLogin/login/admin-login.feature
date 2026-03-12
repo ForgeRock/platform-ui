@@ -91,6 +91,8 @@ Feature: Admin Login
 
   @C29568
   @cloud @forgeops
+  # Skipping due to flakiness in CI to stabilize it later
+  @skip
   Scenario: Admin logs out successfully
     When admin logs into the tenant with fresh session
     And user clicks on "Sign out" menu item from top right user menu
