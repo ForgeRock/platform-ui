@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, flushPromises } from '@vue/test-utils';
+import { mount, shallowMount, flushPromises } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import StringDisplay from './StringDisplay';
 
@@ -23,11 +23,17 @@ describe('StringDisplay', () => {
     path: 'testField',
   };
 
-  function mountComponent(props = {}) {
-    return mount(StringDisplay, {
+  function mountComponent(props = {}, storeState = {}, mountFn = mount) {
+    return mountFn(StringDisplay, {
       global: {
         mocks: {
           $t: () => {},
+          $store: {
+            state: {
+              isFraas: true,
+              ...storeState,
+            },
+          },
         },
       },
       props: {
@@ -76,6 +82,45 @@ describe('StringDisplay', () => {
         path: 'testField',
       });
       expect(wrapper.vm.fieldName).toBe('testId');
+    });
+  });
+
+  describe('can-enter-placeholders prop', () => {
+    it('sets canEnterPlaceholders to false when app is not Fraas', () => {
+      wrapper = mountComponent(
+        {
+          uiSchema: {
+            ...defaultProps.uiSchema,
+            canEnterPlaceholders: true,
+          },
+          path: 'testField',
+        },
+        {
+          isFraas: false,
+        },
+      );
+
+      const frField = wrapper.findComponent({ name: 'FrField' });
+      expect(frField.props('canEnterPlaceholders')).toBe(false);
+    });
+
+    it('sets canEnterPlaceholders to true when app is Fraas and uiSchema allows it', () => {
+      wrapper = mountComponent(
+        {
+          uiSchema: {
+            ...defaultProps.uiSchema,
+            canEnterPlaceholders: true,
+          },
+          path: 'testField',
+        },
+        {
+          isFraas: true,
+        },
+        shallowMount,
+      );
+
+      const frField = wrapper.findComponent({ name: 'FrField' });
+      expect(frField.props('canEnterPlaceholders')).toBe(true);
     });
   });
 
