@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrField
-    :can-enter-placeholders="uiSchema.canEnterPlaceholders"
+    :can-enter-placeholders="uiSchema.canEnterPlaceholders && $store?.state?.isFraas"
     class="pb-1 mb-4"
     :autocomplete="uiSchema.autocomplete || ''"
     :copy="uiSchema.append"
