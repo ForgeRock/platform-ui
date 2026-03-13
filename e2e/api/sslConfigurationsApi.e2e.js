@@ -7,6 +7,7 @@
  */
 
 const CSR_BASE_URL = () => `https://${Cypress.env('FQDN')}/environment/csrs`;
+const CERT_BASE_URL = () => `https://${Cypress.env('FQDN')}/environment/certificates`;
 const CSR_HEADERS = (accessToken) => ({
   Authorization: `Bearer ${accessToken}`,
   'Content-Type': 'application/json',
@@ -81,5 +82,52 @@ export function getCsrs(accessToken = Cypress.env('ACCESS_TOKEN').access_token) 
     url: CSR_BASE_URL(),
     headers: CSR_HEADERS(accessToken),
     failOnStatusCode: false,
+  });
+}
+
+/**
+ * Activates a certificate via API
+ * @param {string} certificateId - The ID of the certificate to activate
+ * @param {string} [accessToken] - The access token to use for authentication
+ * @returns {Promise} Cypress request promise
+ */
+export function activateCertificate(certificateId, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return cy.request({
+    method: 'PATCH',
+    url: `${CERT_BASE_URL()}/${certificateId}`,
+    headers: CSR_HEADERS(accessToken),
+    body: { active: true },
+  });
+}
+
+/**
+ * Deletes a certificate via API.
+ * Note: deletion may return 400 for active or recently used certificates — this is expected
+ * backend behaviour. Callers should use failOnStatusCode: false and tolerate 400 responses.
+ * @param {string} certificateId - The ID of the certificate to delete
+ * @param {string} [accessToken] - The access token to use for authentication
+ * @param {Object} [options] - Additional request options (e.g., { failOnStatusCode: false })
+ * @returns {Promise} Cypress request promise
+ */
+export function deleteCertificate(certificateId, accessToken = Cypress.env('ACCESS_TOKEN').access_token, options = {}) {
+  return cy.request({
+    method: 'DELETE',
+    url: `${CERT_BASE_URL()}/${certificateId}`,
+    headers: CSR_HEADERS(accessToken),
+    ...options,
+  });
+}
+
+/**
+ * Gets a single certificate by ID via API
+ * @param {string} certificateId - The ID of the certificate to retrieve
+ * @param {string} [accessToken] - The access token to use for authentication
+ * @returns {Promise} Cypress request promise
+ */
+export function getCertificate(certificateId, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return cy.request({
+    method: 'GET',
+    url: `${CERT_BASE_URL()}/${certificateId}`,
+    headers: CSR_HEADERS(accessToken),
   });
 }

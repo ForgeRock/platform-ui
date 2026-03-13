@@ -812,6 +812,7 @@ Then('the following values have been populated into fields:', (dataTable) => {
 });
 
 Then('the item {string} does not exist in the current table', (itemName) => {
+  cy.get('[aria-busy="true"]', { timeout: 15000 }).should('not.exist');
   cy.findByRole('cell', { name: itemName, timeout: 5000 }).should('not.exist');
 });
 
@@ -820,6 +821,7 @@ Then('the item {string} is visible in the current table', (itemName) => {
 });
 
 Then('the following items do not exist in the current table:', (dataTable) => {
+  cy.get('[aria-busy="true"]', { timeout: 15000 }).should('not.exist');
   dataTable.raw().forEach((itemName) => {
     cy.findByRole('cell', { name: itemName, timeout: 5000 }).should('not.exist');
   });
