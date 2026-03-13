@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -93,6 +93,38 @@ describe('Theme Injector Component', () => {
     it('should use the provided target ratio', () => {
       // Example: #808080 (gray) has a contrast ratio of 3:1 with white, which is sufficient for large text
       expect(wrapper.vm.getContrastColor('#808080', 3, '#ffffff', '#000000')).toBe('#ffffff');
+    });
+  });
+
+  describe('enduser stylesheet', () => {
+    it('includes .fr-search-input-holder .input-group:focus-within styled with accountCardInputFocusBorderColor', () => {
+      const accountCardInputFocusBorderColor = '#ff0000';
+      const wrapper = shallowMount(ThemeInjector, {
+        props: {
+          isEnduser: true,
+          theme: {
+            accountCardInputFocusBorderColor,
+          },
+        },
+      });
+
+      const html = wrapper.html();
+      expect(html).toContain('.fr-search-input-holder .input-group:focus-within');
+      expect(wrapper.vm.accountCardInputFocusBorderColor).toBe(accountCardInputFocusBorderColor);
+      expect(html).toContain(accountCardInputFocusBorderColor);
+    });
+
+    it('falls back to primaryColor for .fr-search-input-holder focus style when accountCardInputFocusBorderColor is unset', () => {
+      const primaryColor = '#0000ff';
+      const wrapper = shallowMount(ThemeInjector, {
+        props: {
+          isEnduser: true,
+          theme: { primaryColor },
+        },
+      });
+
+      expect(wrapper.vm.accountCardInputFocusBorderColor).toBe(primaryColor);
+      expect(wrapper.html()).toContain('.fr-search-input-holder .input-group:focus-within');
     });
   });
 });
