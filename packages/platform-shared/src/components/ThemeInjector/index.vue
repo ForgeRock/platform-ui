@@ -685,7 +685,8 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
-      <template v-if="mock">.fr-theme-preview</template> .form-control .multiselect:focus .multiselect__tags {
+      <template v-if="mock">.fr-theme-preview</template> .form-control .multiselect:focus .multiselect__tags,
+      <template v-if="mock">.fr-theme-preview</template> .fr-search-input-holder .input-group:focus-within {
         border-color: {{ accountCardInputFocusBorderColor }} !important;
         -webkit-box-shadow: 0 0 0 0.0625rem {{ accountCardInputFocusBorderColor }} !important;
         box-shadow: 0 0 0 0.0625rem {{ accountCardInputFocusBorderColor }} !important;
