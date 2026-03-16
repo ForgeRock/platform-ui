@@ -779,6 +779,8 @@
         }
       },
       "import": {
+        "errorFetchingSchema": "Error fetching journey schema",
+        "errorImportingDependencies": "Error importing journey dependencies",
         "importing": "Importing",
         "imported": "Imported",
         "journey": "journey",

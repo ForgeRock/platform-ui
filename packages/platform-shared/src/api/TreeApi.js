@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -172,6 +172,19 @@ export function deleteTree(treeId) {
 export function actionTreeTemplate() {
   return generateAmApi(getTreeApiConfig()).post(
     '/trees?_action=template',
+    {},
+    { withCredentials: true },
+  );
+}
+
+/**
+  * Returns the schema for trees
+  *
+  * @returns {Promise}
+  */
+export function actionTreeSchema() {
+  return generateAmApi(getTreeApiConfig()).post(
+    '/trees?_action=schema',
     {},
     { withCredentials: true },
   );
