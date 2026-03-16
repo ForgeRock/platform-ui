@@ -35,11 +35,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-
-.white-space-pre-line {
-  white-space: pre-line;
-}
-
-</style>
