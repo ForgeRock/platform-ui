@@ -52,6 +52,7 @@ import { CallbackType } from '@forgerock/javascript-sdk';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { hasInteractiveContent } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
+import { normalizeMessageLineBreaks } from '@forgerock/platform-shared/src/utils/stringUtils';
 
 export default {
   name: 'TextOutputCallback',
@@ -159,7 +160,8 @@ export default {
       return false;
     },
     sanitizedMessage() {
-      return this.$sanitize(this.getTranslation(this.message), baseSanitizerConfig);
+      const message = this.getTranslation(this.message);
+      return this.$sanitize(this.normalizeMessageLineBreaks(message), baseSanitizerConfig);
     },
   },
   mounted() {
@@ -186,6 +188,7 @@ export default {
     }
   },
   methods: {
+    normalizeMessageLineBreaks,
     invokeScriptWithHelpers() {
       const loginHelpers = {
         disableNextButton: (bool) => { this.$emit('disable-next-button', bool); },
@@ -238,9 +241,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.white-space-pre-line {
-  white-space: pre-line;
-}
-</style>

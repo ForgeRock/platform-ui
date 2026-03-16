@@ -75,7 +75,9 @@ of the MIT license. See the LICENSE file for details. -->
                       :dismissible="false"
                       variant="error"
                       class="p-3 text-left">
-                      <div v-html="screenReaderMessage" />
+                      <div
+                        class="white-space-pre-line"
+                        v-html="screenReaderMessage" />
                     </FrAlert>
                     <div v-if="loginFailure && linkToTreeStart">
                       <a :href="linkToTreeStart">
@@ -297,7 +299,9 @@ of the MIT license. See the LICENSE file for details. -->
                   :dismissible="false"
                   variant="error"
                   class="p-3 text-left">
-                  <div v-html="screenReaderMessage" />
+                  <div
+                    class="white-space-pre-line"
+                    v-html="screenReaderMessage" />
                 </FrAlert>
                 <div v-if="loginFailure && linkToTreeStart">
                   <a :href="linkToTreeStart">

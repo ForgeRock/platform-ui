@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -48,4 +48,34 @@ export function stripPemCertificateHeaders(pem) {
   return pem?.replace('-----BEGIN CERTIFICATE-----', '')
     .replace('-----END CERTIFICATE-----', '')
     .replaceAll('\n', '') || '';
+}
+
+/**
+ * Normalizes message text by removing newlines immediately before and/or after <br> tags.
+ * This prevents double line breaks when rendering with CSS white-space: pre-line.
+ *
+ * When customers write messages with <br> tags and format them on multiple lines,
+ * both the <br> and the \n create line breaks, resulting in unwanted double spacing.
+ * This function removes newlines adjacent to <br> tags to ensure consistent single line breaks.
+ *
+ * Examples:
+ * - "Line 1<br>\nLine 2" → "Line 1<br>Line 2" (single line break)
+ * - "Line 1\n<br>Line 2" → "Line 1<br>Line 2" (single line break)
+ * - "Line 1\n<br>\nLine 2" → "Line 1<br>Line 2" (single line break)
+ * - "Para 1\n\nPara 2" → unchanged (intentional paragraph spacing preserved)
+ * - "Line 1<br>\n\nLine 2" → "Line 1<br>\nLine 2" (one blank line preserved)
+ *
+ * @param {string} message - The message text to normalize.
+ * @returns {string} The normalized message with newlines around <br> tags removed.
+ */
+export function normalizeMessageLineBreaks(message) {
+  if (!message || typeof message !== 'string') {
+    return message;
+  }
+  // Remove single newline before and/or after <br> tags
+  // \n? matches optional newline before <br>
+  // <br\s*\/?>  matches <br>, <br/>, <br />, <BR> (case-insensitive)
+  // [ \t]* matches optional spaces/tabs after tag
+  // \n? matches optional newline after tag
+  return message.replace(/\n?<br\s*\/?>[ \t]*\n?/gi, '<br>');
 }
