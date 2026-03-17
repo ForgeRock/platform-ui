@@ -243,7 +243,8 @@ async function queryRoleEntitlements(params = {}) {
     // temporary check until API removes "pending" role request status
     try {
       if (error?.status === 404) {
-        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, 'pending', 'entitlements', queryParams, newRequestId);
+        const status = props.item?.rawData?.decision?.status === 'complete' ? 'active' : 'pending';
+        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, status, 'entitlements', queryParams, newRequestId);
         entitlementList.value = data?.result;
         entitlementTotalCount.value = data?.totalCount;
       } else {
@@ -294,7 +295,8 @@ async function queryRoleMembers(params = {}) {
     // temporary check until API removes "pending" role request status
     try {
       if (error?.status === 404) {
-        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, 'pending', 'members', params, newRequestId);
+        const status = props.item?.rawData?.decision?.status === 'complete' ? 'active' : 'pending';
+        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, status, 'members', params, newRequestId);
         enrichMemberList(data?.result);
         membersCurrentCount.value = data?.totalHits;
       } else {
