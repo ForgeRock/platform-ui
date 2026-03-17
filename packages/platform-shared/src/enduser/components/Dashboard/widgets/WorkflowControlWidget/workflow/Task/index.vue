@@ -80,12 +80,13 @@ export default {
       this.$emit('cancel', this.taskInstance.task._id);
     },
     async loadTaskForm() {
-      if (!this.processDefinition || !this.processDefinition.formGenerationTemplate) {
+      const formGenerationTemplate = this.taskInstance?.task?.taskDefinition?.formGenerationTemplate;
+      if (!formGenerationTemplate) {
         return null;
       }
 
       try { // executing dynamic code, so wrap in try/catch
-        const initializeForm = Function(`return ${this.processDefinition.formGenerationTemplate}`); // eslint-disable-line
+        const initializeForm = Function(`return ${formGenerationTemplate}`); // eslint-disable-line
         const form = initializeForm();
 
         if (!form || !form.template) {
