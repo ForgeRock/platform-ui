@@ -67,11 +67,13 @@ then
   export CYPRESS_ROUTES_FILE="routes.platform"
   export CYPRESS_IS_FRAAS="false"
   export CYPRESS_TAGS="@forgeops"
+  export CYPRESS_grepTags="@forgeops+-@skip"
 else
   export CYPRESS_MENUS_FILE="menus.idcloud"
   export CYPRESS_ROUTES_FILE="routes.idcloud"
   export CYPRESS_IS_FRAAS="true"
   export CYPRESS_TAGS="@cloud"
+  export CYPRESS_grepTags="@cloud+-@skip"
 fi
 
 # Allow cypress-har-generator to run in electron browser
