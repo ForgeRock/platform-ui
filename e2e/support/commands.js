@@ -459,3 +459,45 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('getIframeBody', (iframeSelector) => cy.get(iframeSelector).its('0.contentDocument.body').should('not.be.empty').then(cy.wrap));
+
+/**
+ * Custom command to click a button within a dialog/modal by its name.
+ * It searches for a dialog role and then finds the button with the specified name within that dialog.
+ *
+ * @param {string} buttonName - The name of the button to click (case-insensitive regex match).
+ */
+Cypress.Commands.add('clickButtonInDialog', (buttonName) => {
+  cy.findByRole('dialog').findByRole('button', { name: new RegExp(buttonName, 'i') }).click();
+});
+
+/**
+ * Clicks an option from the "More Actions" dropdown menu for a given table row or card.
+ *
+ * @param {string} item - The row/card identifier used to locate the target element.
+ * @param {string} option - The menu item label to click (case-insensitive regex match).
+ * @param {object} [options]
+ * @param {function} [options.afterClick] - Optional callback for additional assertions after the click.
+ *
+ * @example
+ * cy.clickMoreActionsOption('My Certificate', 'Delete');
+ */
+Cypress.Commands.add('clickMoreActionsOption', (item, option, { afterClick } = {}) => {
+  cy.contains('tr, .card-header', item)
+    .within(() => {
+      cy.get('button[aria-label="More Actions"], .dropdown-toggle')
+        .should('exist')
+        .click();
+    });
+
+  cy.get('ul[role="menu"], .dropdown-menu')
+    .filter(':visible')
+    .should('be.visible')
+    .within(() => {
+      cy.contains('[role="menuitem"], .dropdown-item', new RegExp(option, 'i'))
+        .click({ force: true });
+    });
+
+  if (afterClick) {
+    afterClick();
+  }
+});

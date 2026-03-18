@@ -446,6 +446,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/helper-plugin-utils@npm:^7.28.6":
+  version: 7.28.6
+  resolution: "@babel/helper-plugin-utils@npm:7.28.6"
+  checksum: a0b4caab5e2180b215faa4d141ceac9e82fad9d446b8023eaeb8d82a6e62024726675b07fe8e616dd12f34e2bb59747e8d57aa8adab3e0717d1b8d691b118379
+  languageName: node
+  linkType: hard
+
 "@babel/helper-remap-async-to-generator@npm:^7.22.5, @babel/helper-remap-async-to-generator@npm:^7.22.9":
   version: 7.22.17
   resolution: "@babel/helper-remap-async-to-generator@npm:7.22.17"
@@ -965,6 +972,17 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 7a5ca629d8ca1e1ee78705a78e58c12920d07ed8006d7e7232b31296a384ff5e41d7b649bde5561196041037bbb9f9715be1d1c20975df87ca204f34ad15b965
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-syntax-jsx@npm:^7.27.1":
+  version: 7.28.6
+  resolution: "@babel/plugin-syntax-jsx@npm:7.28.6"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.28.6
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 572e38f5c1bb4b8124300e7e3dd13e82ae84a21f90d3f0786c98cd05e63c78ca1f32d1cfe462dfbaf5e7d5102fa7cd8fd741dfe4f3afc2e01a3b2877dcc8c866
   languageName: node
   linkType: hard
 
@@ -2432,6 +2450,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cypress/grep@npm:5":
+  version: 5.1.0
+  resolution: "@cypress/grep@npm:5.1.0"
+  dependencies:
+    debug: ^4.3.4
+    find-test-names: ^1.28.18
+    globby: ^11.0.4
+  peerDependencies:
+    cypress: ">=10"
+  checksum: 6d71f79d234e9a09a675c78d4fb60e14372f0a4c686d8afe120ad1a45de3383f3d71f12c39ac46fd9fd598dcf5e6693cd9af7d9a31b217eb96742c9ae7fbefad
+  languageName: node
+  linkType: hard
+
 "@cypress/request@npm:^3.0.6":
   version: 3.0.6
   resolution: "@cypress/request@npm:3.0.6"
@@ -2758,6 +2789,7 @@ __metadata:
     "@codemirror/lint": 6.4.2
     "@codemirror/theme-one-dark": 6.1.2
     "@codemirror/view": 6.22.1
+    "@cypress/grep": 5
     "@forgerock/platform-login": 1.0.0
     "@forgerock/platform-shared": 1.0.0
     "@kyvg/vue3-notification": 3.0.2
@@ -11667,6 +11699,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fdir@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "fdir@npm:6.5.0"
+  peerDependencies:
+    picomatch: ^3 || ^4
+  peerDependenciesMeta:
+    picomatch:
+      optional: true
+  checksum: bd537daa9d3cd53887eed35efa0eab2dbb1ca408790e10e024120e7a36c6e9ae2b33710cb8381e35def01bc9c1d7eaba746f886338413e68ff6ebaee07b9a6e8
+  languageName: node
+  linkType: hard
+
 "figures@npm:^2.0.0":
   version: 2.0.0
   resolution: "figures@npm:2.0.0"
@@ -11817,6 +11861,24 @@ __metadata:
     print-tests: bin/print-tests.js
     update-test-count: bin/update-test-count.js
   checksum: 26804859bac72ac8dbfbe7f15ba3630877f2176fe1065b8e9b2ef1778b168940b2ef98d37da620e2cae75ce768ab6ac0c28bb3d732e77a6af6b48b849043f9dc
+  languageName: node
+  linkType: hard
+
+"find-test-names@npm:^1.28.18":
+  version: 1.29.19
+  resolution: "find-test-names@npm:1.29.19"
+  dependencies:
+    "@babel/parser": ^7.27.2
+    "@babel/plugin-syntax-jsx": ^7.27.1
+    acorn-walk: ^8.2.0
+    debug: ^4.3.3
+    simple-bin-help: ^1.8.0
+    tinyglobby: ^0.2.13
+  bin:
+    find-test-names: bin/find-test-names.js
+    print-tests: bin/print-tests.js
+    update-test-count: bin/update-test-count.js
+  checksum: d723c75dc282faa7af7235a78b3f1f1cfab55deee41800a509f54e15e551ffb5c44da16514d3f3bc47a383b85f05ea5c32467064cb84f71f8184f893649d5790
   languageName: node
   linkType: hard
 
@@ -18111,6 +18173,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"picomatch@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "picomatch@npm:4.0.3"
+  checksum: 6817fb74eb745a71445debe1029768de55fd59a42b75606f478ee1d0dc1aa6e78b711d041a7c9d5550e042642029b7f373dc1a43b224c4b7f12d23436735dba0
+  languageName: node
+  linkType: hard
+
 "pify@npm:^2.0.0, pify@npm:^2.2.0, pify@npm:^2.3.0":
   version: 2.3.0
   resolution: "pify@npm:2.3.0"
@@ -21640,6 +21709,16 @@ __metadata:
     fdir: ^6.4.2
     picomatch: ^4.0.2
   checksum: 7e2ffe262ebc149036bdef37c56b32d02d52cf09efa7d43dbdab2ea3c12844a4da881058835ce4c74d1891190e5ad5ec5133560a11ec8314849b68ad0d99d3f4
+  languageName: node
+  linkType: hard
+
+"tinyglobby@npm:^0.2.13":
+  version: 0.2.15
+  resolution: "tinyglobby@npm:0.2.15"
+  dependencies:
+    fdir: ^6.5.0
+    picomatch: ^4.0.3
+  checksum: 0e33b8babff966c6ab86e9b825a350a6a98a63700fa0bb7ae6cf36a7770a508892383adc272f7f9d17aaf46a9d622b455e775b9949a3f951eaaf5dfb26331d44
   languageName: node
   linkType: hard
 
