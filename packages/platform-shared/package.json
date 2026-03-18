@@ -27,6 +27,7 @@
     "dayjs": "1.11.7",
     "echarts": "6.1.0",
     "exceljs": "4.4.0",
+    "intl-tel-input": "26.9.1",
     "jose": "4.15.5",
     "jspdf": "4.2.1",
     "jspdf-autotable": "5.0.7",

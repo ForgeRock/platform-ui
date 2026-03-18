@@ -1729,6 +1729,8 @@
             "validNameFormatHelp": "Tests for a valid name format.",
             "validNumber": "Valid number",
             "validNumberHelp": "Tests for a valid number.",
+            "validCountryPhoneNumberHelp": "Tests for a valid phone number with country code format.",
+            "validCountryPhoneNumber": "Valid phone number",
             "validTime": "Valid time",
             "validTimeHelp": "Tests for a valid time.",
             "validUsername": "Valid username",

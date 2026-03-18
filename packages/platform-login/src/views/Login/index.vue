@@ -1032,11 +1032,11 @@ export default {
         };
 
         if (component.type === 'FrField' || component.type === 'FrPasswordCallback') {
-          const policyRequirements = callback.getOutputByName('policies')?.policyRequirements || [];
+          const { policyRequirements = [], policies = [] } = { ...callback.getOutputByName('policies') };
           const {
             defaultText, fieldType, label, name, value,
           } = this.getField(callback, index);
-          const fieldDataType = getAlternateFieldType(policyRequirements) || fieldType;
+          const fieldDataType = getAlternateFieldType(policyRequirements, policies) || fieldType;
           const errors = this.getTranslatedPolicyFailures(callback);
           const validation = getFieldValidation(policyRequirements);
           const autocompleteValues = callback.getOutputByName('autocompleteValues');

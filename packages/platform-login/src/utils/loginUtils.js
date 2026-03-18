@@ -1,9 +1,11 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
+import { checkPhonePolicy } from '@forgerock/platform-shared/src/utils/fieldTypeUtils';
 
 /**
  * Contains the list of form labels and their corresponding `autocomplete` value.
@@ -48,10 +50,11 @@ export function decodeJwt(token) {
 /**
  * Gets an alternate field type based on policy requirements
  *
- * @param {Array} policyRequirements
+ * @param {Array} policyRequirements - Policy requirement of a field type
+ * @param {Array} policies - List of all policies of current field
  * @returns {String} - dataType string
  */
-export function getAlternateFieldType(policyRequirements) {
+export function getAlternateFieldType(policyRequirements, policies = []) {
   let dataType = '';
   // Check policyRequirements for date policies and set dataType accordingly
   if (policyRequirements.includes('VALID_DATE_TIME_FORMAT')) {
@@ -62,6 +65,12 @@ export function getAlternateFieldType(policyRequirements) {
     dataType = 'time';
   } else if (policyRequirements.includes('VALID_ENUM_VALUE')) {
     dataType = 'select';
+  } else if (policyRequirements.includes('VALID_PHONE_FORMAT')) {
+    // return dataType as `telephone` if the policy is `valid-phone-format` and it has require-country-code set to true
+    const { requireCountryCode } = checkPhonePolicy(policies);
+    if (requireCountryCode) {
+      dataType = 'telephone';
+    }
   }
   return dataType;
 }

@@ -3191,6 +3191,7 @@ __metadata:
     echarts: 6.1.0
     eslint-plugin-import: 2.18.2
     exceljs: 4.4.0
+    intl-tel-input: 26.9.1
     jest: 29.6.3
     jose: 4.15.5
     jspdf: 4.2.1
@@ -13960,6 +13961,13 @@ __metadata:
   dependencies:
     intl-messageformat-parser: ^1.8.1
   checksum: f8e91e5515523c93d061bdb07efab4a921589fb1288a7f37f6251b1235f16f29242c3af6757fa5058eede8941768a0224abd183fe56e783eb50703b39db170e8
+  languageName: node
+  linkType: hard
+
+"intl-tel-input@npm:26.9.1":
+  version: 26.9.1
+  resolution: "intl-tel-input@npm:26.9.1"
+  checksum: 2f921a717394e53e7525fd993c82b020809d0c17e00f5ac30d359249ec18fcc4e1c5d7c8ae9a91e9a55a08df44758e1149880040b455a15fa7cb5c525914c83e
   languageName: node
   linkType: hard
 

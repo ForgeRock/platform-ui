@@ -183,8 +183,9 @@ describe('EditPersonalInfo', () => {
     });
 
     describe('getFieldType', () => {
-      it('should return the correct field type', () => {
-        const wrapper = shallowMount(EditPersonalInfo, {
+      let wrapper;
+      beforeEach(() => {
+        wrapper = shallowMount(EditPersonalInfo, {
           global: {
             plugins: [i18n],
           },
@@ -192,7 +193,14 @@ describe('EditPersonalInfo', () => {
             ...defaultProps,
           },
         });
+      });
 
+      afterEach(() => {
+        if (wrapper && wrapper.unmount) {
+          wrapper.unmount();
+        }
+      });
+      it('should return the correct field type', () => {
         const field = {
           type: 'string',
         };
@@ -203,6 +211,33 @@ describe('EditPersonalInfo', () => {
 
         field.format = 'date';
         expect(wrapper.vm.getFieldType(field)).toBe('date');
+      });
+
+      it('should return `telephone` format when the the field name is telephoneNumber and has valid phone policies', () => {
+        const telephoneField = {
+          type: 'string',
+          policies: [{
+            policyId: 'valid-phone-format',
+            params: {
+              'require-country-code': true,
+            },
+          }],
+        };
+        expect(wrapper.vm.getFieldType(telephoneField)).toBe('telephone');
+      });
+
+      it('should not return `telephone` format when the field has telephone format but no require-country-code', () => {
+        const telephoneField = {
+          type: 'string',
+          format: 'telephone',
+          policies: [{
+            policyId: 'valid-phone-format',
+            params: {
+              'require-country-code': false,
+            },
+          }],
+        };
+        expect(wrapper.vm.getFieldType(telephoneField)).toBe('string');
       });
     });
   });

@@ -407,6 +407,17 @@
     "task": "Task",
     "tasks": "Tasks",
     "tableNavigation": "Table Navigation",
+    "telephone": "Telephone",
+    "telephoneInput": {
+      "selectCountry": "Select country code",
+      "selectedCountryAriaLabel": "Change country, selected {countryName} ({dialCode})",
+      "noCountrySelected": "Select country",
+      "countryListAriaLabel": "List of countries",
+      "searchPlaceholder": "Search",
+      "clearSearchAriaLabel": "Clear search",
+      "searchEmptyState": "No results found",
+      "searchSummaryAria": "{count} results found"
+    },
     "temporalConstraint": "{startDate} to {endDate}",
     "tenant": "Tenant",
     "text": "Text",
@@ -455,7 +466,13 @@
       "int": "Please enter a valid integer. A valid integer can contain 0-9 and -",
       "number": "Please enter a valid number. A valid number can contain 0-9, . and -",
       "list": "Please provide a valid list. An example of a valid list is: some, strings, separated, by, commas",
-      "durationInput": "Must be a number greater than or equal to zero."
+      "durationInput": "Must be a number greater than or equal to zero.",
+      "telephone": {
+        "invalid": "Please enter a valid telephone number",
+        "invalidCountryCode": "Please enter a valid country code",
+        "tooShort": "The telephone number is too short",
+        "tooLong": "The telephone number is too long"
+      }
     },
     "validationErrorsLabel": "Validation Errors",
     "dateTimePicker": {
@@ -523,6 +540,10 @@
       "GENERIC_FIELD_REQUIRED": "{_field_} is required",
       "VALID_ENUM_VALUE": "Must be one of the following values: {enumValues}",
       "VALID_PHONE_FORMAT": "Must be a valid phone number",
+      "NOT_A_NUMBER": "Must be a valid phone number",
+      "INVALID_COUNTRY": "Must be a valid country code",
+      "TOO_SHORT": "Phone number is too short",
+      "TOO_LONG": "Phone number is too long",
       "VALID_NAME_FORMAT": "Must have valid name characters",
       "VALID_TIME_FORMAT": "Must be a valid time",
       "VALID_DATE_FORMAT": "Must be a valid date",

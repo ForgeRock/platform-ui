@@ -113,6 +113,7 @@ import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 import createEscConfirm from '@forgerock/platform-shared/src/utils/escConfirm';
 import { setFieldError } from '@forgerock/platform-shared/src/utils/veeValidateUtils';
+import { checkPhonePolicy } from '@forgerock/platform-shared/src/utils/fieldTypeUtils';
 
 /**
  * @description Displays a users profile, auto generates fields based off of resource schema. Currently only displays strings, numbers and booleans. In the case of a policy
@@ -213,6 +214,7 @@ export default {
           format: property.format,
           validation: isRequired ? 'required' : '',
           userEditable: property.userEditable,
+          policies: property?.policies ?? [],
         };
         return formField;
       });
@@ -295,6 +297,14 @@ export default {
      * @returns {String} - The type of the field.
      */
     getFieldType(field) {
+      const { hasPhonePolicy, requireCountryCode } = checkPhonePolicy(field.policies);
+      // `telephone` renders the TelephoneInput.vue; it applies only when the
+      // valid-phone-format policy opts in via param `require-country-code`, otherwise
+      // the underlying field type is used.
+      if (hasPhonePolicy) {
+        return requireCountryCode ? 'telephone' : field.type;
+      }
+
       if (field.format) {
         return field.format;
       }

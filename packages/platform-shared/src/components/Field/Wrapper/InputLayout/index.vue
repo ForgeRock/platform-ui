@@ -26,7 +26,9 @@ of the MIT license. See the LICENSE file for details. -->
           :class="['pe-none', {'overflow-hidden text-nowrap': !labelHeight, 'readonly-label': readonlyLabel}]">
           {{ labelTranslation }}
         </label>
-        <slot :label-height="labelHeight" />
+        <slot
+          :label-height="labelHeight"
+          :label-id="labelId" />
       </div>
       <div
         v-else
@@ -44,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="pe-none overflow-hidden text-nowrap">
           {{ labelTranslation }}
         </label>
-        <slot />
+        <slot :label-id="labelId" />
       </div>
       <span
         class="d-flex input-buttons"
@@ -228,9 +230,9 @@ export default {
     margin-bottom: 0 !important;
     border: none !important;
 
-    input:not(.multiselect__input):not(.fr-tag-input),
+    input:not(.multiselect__input):not(.fr-tag-input):not(.iti__search-input),
     textarea,
-    button:not(.btn-sm),
+    button:not(.btn-sm, .iti__selected-country),
     .multiselect .multiselect__tags,
     .b-form-tags {
       border-color: $danger !important;
@@ -281,7 +283,7 @@ export default {
     }
 
     textarea::placeholder,
-    input::placeholder,
+    input:not(.iti__search-input)::placeholder,
     .multiselect__placeholder {
       color: transparent !important;
     }
@@ -295,12 +297,26 @@ export default {
     }
 
     label:has(~ .polyfill-placeholder,
-      ~ input:not(:placeholder-shown) input:focus,
-      ~ input:autofill,
-      ~ input:-webkit-autofill) {
+      ~ input.form-control:not(:placeholder-shown):focus,
+      ~ input.form-control:autofill,
+      ~ input:-webkit-autofill,
+      ~ .iti .iti__tel-input:focus,
+      ~ .iti .iti__tel-input:not(:placeholder-shown)) {
         &:not([placeholder=""]) {
           transform: scale(.85) translateY(-0.5rem) translateX(0.15rem);
         }
+    }
+
+    // When it is floating label and telephone input is in focus with no placeholder,
+    // adjust the users input cursor position by adding vertical padding.
+    .form-label-group-input {
+      .iti .iti__tel-input:focus,
+      .iti .iti__tel-input:not(:placeholder-shown) {
+        &:not([placeholder=""]) {
+          padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
+          padding-bottom: calc($input-btn-padding-y / 3);
+        }
+      }
     }
   }
   .form-label-group-input {
@@ -311,18 +327,24 @@ export default {
 
     /* stylelint-disable */
     .polyfill-placeholder,
-    input:not(:placeholder-shown)
-    input:focus,
-    input:autofill {
+    input.form-control:not(:placeholder-shown):focus,
+    input.form-control:autofill {
 
       /*
        * if there is no placeholder, we do not need to apply padding to move
-       * the users input below the placeholder/label
+       * the users input below the placeholder/label.
+       * Ignore Telephone input here as it has its own padding adjustment
       */
-      &:not([placeholder=""]) {
+      &:not([placeholder=""]):not(.iti__tel-input):not(.iti__search-input):not(textarea) {
         padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
         padding-bottom: calc($input-btn-padding-y / 3);
       }
+    }
+
+    // override autofill background color
+    input.form-control:autofill {
+      box-shadow: 0 0 0 1000px var(--input-bg, #{$input-bg}) inset !important;
+      -webkit-text-fill-color: var(--input-color, #{$input-color}) !important;
     }
 
     label:has(~ textarea.polyfill-placeholder:not([placeholder=""])) {

@@ -48,6 +48,7 @@ import FrSpinButton from '@forgerock/platform-shared/src/components/Field/SpinBu
 import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
+import FrTelephoneInput from '@forgerock/platform-shared/src/components/Field/TelephoneInput';
 import FrTimeInput from '@forgerock/platform-shared/src/components/Field/TimeInput';
 import FrReadonlyPlaceholderInput from '@forgerock/platform-shared/src/components/Field/ReadonlyPlaceholderInput';
 import FrEsvInputWrapper from '@forgerock/platform-shared/src/components/Field/EsvInputWrapper';
@@ -76,6 +77,7 @@ export default {
     FrSwitch,
     FrTag,
     FrTextArea,
+    FrTelephoneInput,
     FrTimeInput,
     FrReadonlyPlaceholderInput,
     FrEsvInputWrapper,
@@ -239,6 +241,7 @@ export default {
         spinbutton: 'FrSpinButton',
         string: 'FrBasicInput',
         tag: 'FrTag',
+        telephone: 'FrTelephoneInput',
         textarea: 'FrTextArea',
         time: 'FrTimeInput',
       };

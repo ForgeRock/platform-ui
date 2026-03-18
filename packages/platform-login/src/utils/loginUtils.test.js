@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -76,6 +76,26 @@ describe('loginUtils', () => {
     });
     it('should return empty string for unknown requirements', () => {
       expect(getAlternateFieldType(['UNKNOWN'])).toBe('');
+    });
+    it('should return "telephone" for phone policy and when country code is required', () => {
+      const policyRequirements = ['VALID_PHONE_FORMAT'];
+      const policies = [{
+        policyId: 'valid-phone-format',
+        params: {
+          'require-country-code': true,
+        },
+      }];
+      expect(getAlternateFieldType(policyRequirements, policies)).toBe('telephone');
+    });
+    it('should not return "telephone" for phone policy when country code is not required', () => {
+      const policyRequirements = ['VALID_PHONE_FORMAT'];
+      const policies = [{
+        policyId: 'valid-phone-format',
+        params: {
+          'require-country-code': false,
+        },
+      }];
+      expect(getAlternateFieldType(policyRequirements, policies)).not.toBe('telephone');
     });
   });
 

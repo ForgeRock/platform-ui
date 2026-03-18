@@ -182,7 +182,7 @@ of the MIT license. See the LICENSE file for details. -->
         color: {{ theme.primaryColor }};
       }
 
-      #app <template v-if="mock">.fr-theme-preview</template> .form-label-group.fr-field-error input:not(.multiselect__input):not(.fr-tag-input),
+      #app <template v-if="mock">.fr-theme-preview</template> .form-label-group.fr-field-error input:not(.multiselect__input):not(.fr-tag-input):not(.iti__search-input),
       #app <template v-if="mock">.fr-theme-preview</template> .form-label-group.fr-field-error .btn {
         border-color: {{ theme.dangerColor }} !important;
       }
@@ -190,6 +190,13 @@ of the MIT license. See the LICENSE file for details. -->
       #app <template v-if="mock">.fr-theme-preview</template> .form-label-group.fr-field-error .form-control:focus,
       #app <template v-if="mock">.fr-theme-preview</template> .form-label-group:focus-within.fr-field-error .input-buttons:not(:focus-within) .within-input-button .btn {
         box-shadow: 0 0 0 0.0625rem {{ theme.dangerColor }} !important;
+      }
+
+      <!--
+        Styling Telephone Input field rendered by `intl-tel-input` library
+      -->
+      #app <template v-if="mock">.fr-theme-preview</template> .iti .iti__country-container .iti__selected-country:focus-visible .iti__selected-country-primary {
+        outline-color: {{ buttonFocusBorderColor }} !important;
       }
 
       <!-- Styles success, danger, and warning alert notifications to follow the theme colors -->
@@ -269,13 +276,53 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.login</template> .form-label-group .within-input-button .btn,
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__tags,
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__select,
-      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__select::before {
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__select::before,
+      <!-- apply theme to the telephone input element -->
+      <template v-if="mock">.fr-theme-preview.login</template> .iti .iti__country-container .iti__selected-country .iti__selected-country-primary,
+      <template v-if="mock">.fr-theme-preview.login</template> .iti .iti__country-container .iti__selected-country .iti__selected-dial-code,
+      <template v-if="mock">.fr-theme-preview.login</template> .iti .iti__country-container .iti__search-input {
         background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
         border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
         color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
-      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__element {
+      <template v-if="mock">.fr-theme-preview.login</template> input:-webkit-autofill,
+      <template v-if="mock">.fr-theme-preview.login</template> input:-webkit-autofill:focus,
+      <template v-if="mock">.fr-theme-preview.login</template> input:-webkit-autofill:hover,
+      <template v-if="mock">.fr-theme-preview.login</template> input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0px 1000px {{ theme.journeyInputBackgroundColor || '#ffffff' }} inset !important;
+        box-shadow: 0 0 0px 1000px {{ theme.journeyInputBackgroundColor || '#ffffff' }} inset !important;
+        -webkit-text-fill-color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.login</template> .iti__country.iti__highlight {
+        background-color: {{ theme.journeyInputSelectHoverColor || '#f6f8fa' }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.login</template> .iti__country[aria-selected="true"] {
+        background-color: {{ theme.journeyInputSelectColor || '#e4f4fd' }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.login</template> .iti .iti__country-container .iti__selected-country .iti__arrow::after {
+        color: {{ theme.journeyInputLabelColor || '#5e6d82' }} !important;
+      }
+      <template v-if="mock">.fr-theme-preview.login</template> .iti__search-icon-svg {
+        stroke: {{ theme.journeyInputLabelColor || '#5e6d82' }} !important;
+      }
+
+      <template v-if="newMultiselectEnabled">
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
+      <template v-if="mock">.fr-theme-preview</template> .form-control .multiselect:focus .multiselect__tags {
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ journeyInputFocusBorderColor }} !important;
+        box-shadow: 0 0 0 0.0625rem {{ journeyInputFocusBorderColor }} !important;
+        outline: 0 none;
+      }
+      </template>
+
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__element,
+      <template v-if="mock">.fr-theme-preview.login</template> .iti__country {
         background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
         color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
@@ -419,6 +466,10 @@ of the MIT license. See the LICENSE file for details. -->
       #app .card input,
       #app .card .form-label-group .form-label-group-input input,
       #app .card .form-label-group .form-label-group-input .form-control,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .iti__country,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .iti .iti__country-container .iti__selected-country .iti__selected-dial-code,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .iti .iti__country-container .iti__selected-country .iti__selected-country-primary,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .iti .iti__country-container .iti__search-input,
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__element,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content input,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .form-control,
@@ -444,6 +495,22 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__tag .text-dark,
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__tag .multiselect__tag-icon::after {
         color: {{ theme.accountCardInputTextColor || '#23282e' }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.enduser</template> .iti__country.iti__highlight {
+        background-color: {{ theme.accountCardInputSelectHoverColor || '#f6f8fa' }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.enduser</template> .iti__country[aria-selected="true"] {
+        background-color: {{ theme.accountCardInputSelectColor || '#e4f4fd' }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.enduser</template> .iti .iti__country-container .iti__selected-country .iti__arrow::after {
+        color: {{ theme.accountCardInputLabelColor || '#5e6d82' }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.enduser</template> .iti__search-icon-svg {
+        stroke: {{ theme.accountCardInputLabelColor || '#5e6d82' }} !important;
       }
 
       .modal-content .input-group-text {

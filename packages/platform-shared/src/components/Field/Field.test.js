@@ -224,6 +224,24 @@ describe('Field Component', () => {
     expect(wrapper.find('.b-form-spinbutton')).toBeTruthy();
   });
 
+  it('uses telephoneInput component for telephone type', async () => {
+    wrapper = mount(FrField, {
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        stubs: ['FrTelephoneInput'],
+      },
+      props: {
+        type: 'telephone',
+      },
+    });
+    await wrapper.setProps({
+      type: 'telephone',
+    });
+    expect(wrapper.findComponent({ name: 'FrTelephoneInput' }).exists()).toBe(true);
+  });
+
   it('generates a name using uuid when the name and label properties are empty', async () => {
     const uuidValue = 'b0e688a4-9345-4ace-9864-4a8276794e83';
     uuid.mockImplementation(() => uuidValue);

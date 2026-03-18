@@ -126,6 +126,48 @@ describe('ObjectTypeEditor', () => {
     wrapper.unmount();
   });
 
+  it('getFieldType should not return telephone format for a field without a policy', () => {
+    const wrapper = mountComponent();
+    const field = {
+      type: 'string',
+    };
+    expect(wrapper.vm.getFieldType(field)).not.toBe('telephone');
+  });
+
+  it('getFieldType should not return telephone format for a field with phone policy but no require-country-code', () => {
+    const wrapper = mountComponent();
+    const field = {
+      type: 'string',
+      policies: [
+        { policyId: 'valid-phone-format', params: { 'require-country-code': false } },
+      ],
+    };
+    expect(wrapper.vm.getFieldType(field)).not.toBe('telephone');
+  });
+
+  it('getFieldType should return telephone format for a field with valid phone policy and require-country-code set to true', () => {
+    const wrapper = mountComponent();
+    const field = {
+      type: 'string',
+      policies: [
+        { policyId: 'valid-phone-format', params: { 'require-country-code': true } },
+      ],
+    };
+    expect(wrapper.vm.getFieldType(field)).toBe('telephone');
+  });
+
+  it('getFieldType should fall back to the underlying field type when phone policy without require-country-code', () => {
+    const wrapper = mountComponent();
+    const field = {
+      type: 'string',
+      format: 'telephone',
+      policies: [
+        { policyId: 'valid-phone-format', params: { 'require-country-code': false } },
+      ],
+    };
+    expect(wrapper.vm.getFieldType(field)).toBe('string');
+  });
+
   it('does not set autocomplete="off" by default (end-user self-service is unaffected)', () => {
     const wrapper = mountComponent({
       displayProperties: [
