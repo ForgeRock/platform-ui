@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -24,6 +24,7 @@ const cleaningPlaceholder = '{{fr-breakline}}';
  * @returns {string} cleanedHtml
  */
 function protectSpecialCharacters(html) {
+  if (!html) return '';
   return html.replace(new RegExp('</?br */?>', 'gi'), cleaningPlaceholder);
 }
 
@@ -34,7 +35,7 @@ function protectSpecialCharacters(html) {
  * @returns {string} the restored markdown string
  */
 function restoreSpecialCharacters(markdown) {
-  if (markdown === '') return markdown;
+  if (!markdown) return '';
   const changes = [
     { pattern: `${cleaningPlaceholder} `, flags: ['g'], change: '<br>\n' },
     { pattern: `${cleaningPlaceholder}`, flags: ['g'], change: '<br>' },
@@ -48,6 +49,7 @@ function restoreSpecialCharacters(markdown) {
  * @returns {string} The string representing the HTML content wrapped in a div element with a "content" class
  */
 export function wrapContent(html) {
+  if (!html) return '';
   const domparser = new DOMParser();
   const doc = domparser.parseFromString(html, 'text/html');
   const hasContentDiv = doc.getElementsByClassName('content').length > 0;
@@ -68,6 +70,7 @@ export function wrapContent(html) {
  * @returns The innerHTML inside of the div with class "content"
  */
 export function getContentChildren(content) {
+  if (!content) return '';
   const domparser = new DOMParser();
   const doc = domparser.parseFromString(content, 'text/html');
   const contentDiv = doc.getElementsByClassName('content');
@@ -115,5 +118,17 @@ export function markdown2Html(markdown, wrapInDivContent) {
 export function markdown2HtmlPreview(markdown, styles) {
   const wrapedHtml = markdown2Html(markdown, true);
   const parsedHtml = `<style>${styles}</style>${wrapedHtml}`;
+  return sanitize(parsedHtml, baseSanitizerConfig);
+}
+
+/**
+ * Combines existing HTML content with CSS styles to create a full HTML document for preview in an iframe container.
+ * @param {string} html HTML content to be previewed
+ * @param {string} styles Styles represented in CSS format to be applied to the HTML content
+ * @returns {string} Full sanitized HTML string with styles applied
+ */
+export function html2HtmlPreview(html, styles) {
+  const wrappedHtml = wrapContent(html);
+  const parsedHtml = `<style>${styles}</style>${wrappedHtml}`;
   return sanitize(parsedHtml, baseSanitizerConfig);
 }
