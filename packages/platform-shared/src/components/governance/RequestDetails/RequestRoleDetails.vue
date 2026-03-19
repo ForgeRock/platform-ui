@@ -234,9 +234,8 @@ async function queryRoleEntitlements(params = {}) {
 
   const queryParams = omit(params, ['queryString', 'sortBy', 'sortDir', 'grantType']);
   queryParams._fields = 'application,catalog,descriptor,entitlement,entitlementOwner,glossary,item,keys,relationship';
-  const newRequestId = !roleRequestData.value.role.roleId ? props.request.id : null; // Draft requests have no role id, so we need to pass the request id to fetch the correct entitlements
   try {
-    const { data } = await getRoleDataById(roleRequestData.value.role.roleId, roleRequestData.value.role.status, 'entitlements', queryParams, newRequestId);
+    const { data } = await getRoleDataById(roleRequestData.value.role.roleId, roleRequestData.value.role.status, 'entitlements', queryParams, props.request?.id);
     entitlementList.value = data?.result;
     entitlementTotalCount.value = data?.totalCount;
   } catch (error) {
@@ -244,7 +243,7 @@ async function queryRoleEntitlements(params = {}) {
     try {
       if (error?.status === 404) {
         const status = props.item?.rawData?.decision?.status === 'complete' ? 'active' : 'pending';
-        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, status, 'entitlements', queryParams, newRequestId);
+        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, status, 'entitlements', queryParams, props.request?.id);
         entitlementList.value = data?.result;
         entitlementTotalCount.value = data?.totalCount;
       } else {
@@ -263,7 +262,7 @@ async function queryRoleEntitlements(params = {}) {
  * @param members the updated list of members to set
  */
 function enrichMemberList(members) {
-  const addedRoleMembers = roleRequestData.value.role?.addedRoleMembers || [];
+  const addedRoleMembers = roleRequestData.value.members || [];
   const isDraftRequest = !roleRequestData.value.role?.roleId;
   memberList.value = map(members, (member) => {
     const isAddedMember = addedRoleMembers.includes(member.id);
@@ -286,9 +285,8 @@ async function queryRoleMembers(params = {}) {
   if (params.currentPage) {
     params._pagedResultsOffset = (params.currentPage - 1) * (params.pageSize || 10);
   }
-  const newRequestId = !roleRequestData.value.role.roleId ? props.request.id : null; // Draft requests have no role id, so we need to pass the request id to fetch the correct members
   try {
-    const { data } = await getRoleDataById(roleRequestData.value.role.roleId, roleRequestData.value.role.status, 'members', params, newRequestId);
+    const { data } = await getRoleDataById(roleRequestData.value.role.roleId, roleRequestData.value.role.status, 'members', params, props.request?.id);
     enrichMemberList(data?.result);
     membersCurrentCount.value = data?.totalHits;
   } catch (error) {
@@ -296,7 +294,7 @@ async function queryRoleMembers(params = {}) {
     try {
       if (error?.status === 404) {
         const status = props.item?.rawData?.decision?.status === 'complete' ? 'active' : 'pending';
-        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, status, 'members', params, newRequestId);
+        const { data } = await getRoleDataById(roleRequestData.value.role.roleId, status, 'members', params, props.request?.id);
         enrichMemberList(data?.result);
         membersCurrentCount.value = data?.totalHits;
       } else {
