@@ -561,6 +561,11 @@ Then('notification is displayed with text {string}', (message) => {
     .should('be.visible');
 });
 
+Then('notification with text {string} is no longer displayed', (message) => {
+  cy.findByRole('alert', { name: message })
+    .should('not.exist');
+});
+
 Then('{string} error message is displayed', (message) => {
   cy.findAllByRole('alert').contains(message).should('be.visible');
 });
