@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,52 +8,82 @@ of the MIT license. See the LICENSE file for details. -->
     @hidden="query = ''"
     right
     no-caret
+    role=""
     variant="link"
     boundary="scrollParent"
     menu-class="w-100"
     :toggle-class="`text-decoration-none ${isWithinInput ? '' : 'py-0 px-1'}`"
     :class="`field-type-${fieldType}`"
-    data-testid="esv-dropdown">
+    data-testid="esv-dropdown"
+  >
+    <!-- Toggle -->
     <template #button-content>
       <FrIcon
         icon-class="placeholder-dropdown"
-        name="token" />
+        name="token"
+      />
       <span class="sr-only">
         {{ $t('esvInput.title') }}
       </span>
     </template>
-    <BDropdownText>
-      <h5 class="my-0">
-        {{ secretsVisible ? $t('esvInput.secretsAndVariables') : $t('common.variables') }}
-      </h5>
-    </BDropdownText>
-    <FrSpinner
+
+    <!-- Header -->
+    <li>
+      <div class="b-dropdown-text">
+        <h5 class="my-0">
+          {{ secretsVisible ? $t('esvInput.secretsAndVariables') : $t('common.variables') }}
+        </h5>
+      </div>
+    </li>
+
+    <!-- Loading -->
+    <li
       v-if="isLoading"
-      size="sm"
-      class="py-2" />
+      class="py-2 text-center">
+      <FrSpinner size="sm" />
+    </li>
+
+    <!-- Content -->
     <template v-else>
-      <BDropdownForm
-        @submit.stop.prevent
-        @click.stop.prevent>
-        <FrSearchInput
-          v-model="query"
-          :placeholder="secretsVisible ? $t('esvInput.searchSecretsAndVariables') : $t('esvInput.searchVariables')"
-          class="border-bottom border-top"
-        />
-      </BDropdownForm>
-      <BDropdownItem
+      <!-- Search -->
+      <li>
+        <form
+          @submit.stop.prevent
+          @click.stop>
+          <FrSearchInput
+            v-model="query"
+            :placeholder="secretsVisible
+              ? $t('esvInput.searchSecretsAndVariables')
+              : $t('esvInput.searchVariables')"
+            class="border-bottom border-top"
+          />
+        </form>
+      </li>
+
+      <!-- Items -->
+      <li
         v-for="item in filteredEsvs"
         :key="item._id"
         class="text-monospace"
-        @click="esvClicked(item)">
-        {{ item.placeholder }}
-      </BDropdownItem>
-      <BDropdownText v-if="!filteredEsvs.length">
-        <span
-          class="text-muted">
-          {{ secretsVisible ? $t('esvInput.noSecretsOrVariables') : $t('esvInput.noVariables') }}
-        </span>
-      </BDropdownText>
+      >
+        <a
+          href="#"
+          class="dropdown-item"
+          @click.prevent="esvClicked(item)"
+        >
+          {{ item.placeholder }}
+        </a>
+      </li>
+
+      <!-- Empty state -->
+      <li v-if="!filteredEsvs.length">
+        <div class="b-dropdown-text">
+          <span
+            class="text-muted">
+            {{ secretsVisible ? $t('esvInput.noSecretsOrVariables') : $t('esvInput.noVariables') }}
+          </span>
+        </div>
+      </li>
     </template>
   </BDropdown>
 </template>
@@ -63,12 +93,7 @@ of the MIT license. See the LICENSE file for details. -->
  * EsvDropdown component, presents a dropdown list of ESV secrets and variables for users to choose from
  * for the current field.
  */
-import {
-  BDropdown,
-  BDropdownForm,
-  BDropdownText,
-  BDropdownItem,
-} from 'bootstrap-vue';
+import { BDropdown } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
@@ -79,9 +104,6 @@ export default {
   name: 'EsvDropdown',
   components: {
     BDropdown,
-    BDropdownForm,
-    BDropdownText,
-    BDropdownItem,
     FrIcon,
     FrSearchInput,
     FrSpinner,

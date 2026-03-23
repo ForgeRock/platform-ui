@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import EsvDropdown from './index';
 import i18n from '@/i18n';
 
@@ -56,11 +57,10 @@ describe('EsvDropdown', () => {
 
   it('shows a spinner when esvs are loading', async () => {
     const wrapper = setup({ loading: true });
-
     const dropdownButton = wrapper.find('button');
     await dropdownButton.trigger('click');
-
-    expect(wrapper.findAll('li').length).toBe(1);
+    // Updated to 2, as the loading state is also an <li> element now.
+    expect(wrapper.findAll('li').length).toBe(2);
     expect(wrapper.html()).toContain('Loading...');
   });
 
@@ -123,5 +123,51 @@ describe('EsvDropdown', () => {
 
     expect(wrapper.emitted('esv-selected')).toBeDefined();
     expect(wrapper.emitted('esv-selected')[0][0]).toBe('&{esv.myBool}');
+  });
+
+  describe('@a11y', () => {
+    it('has no accessibility violations when dropdown is closed', async () => {
+      const wrapper = setup();
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
+
+    it('has no accessibility violations when dropdown is open', async () => {
+      const wrapper = setup();
+      const dropdownButton = wrapper.find('button');
+      await dropdownButton.trigger('click');
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
+
+    it('has no accessibility violations when loading', async () => {
+      const wrapper = setup({ loading: true });
+      const dropdownButton = wrapper.find('button');
+      await dropdownButton.trigger('click');
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
+
+    it('has no accessibility violations with search results', async () => {
+      const wrapper = setup();
+      const dropdownButton = wrapper.find('button');
+      await dropdownButton.trigger('click');
+      const items = wrapper.findAll('li');
+      const searchInput = items[1].find('input');
+      await searchInput.setValue('your');
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
+
+    it('has no accessibility violations with no search results', async () => {
+      const wrapper = setup();
+      const dropdownButton = wrapper.find('button');
+      await dropdownButton.trigger('click');
+      const items = wrapper.findAll('li');
+      const searchInput = items[1].find('input');
+      await searchInput.setValue('zzz');
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
   });
 });
