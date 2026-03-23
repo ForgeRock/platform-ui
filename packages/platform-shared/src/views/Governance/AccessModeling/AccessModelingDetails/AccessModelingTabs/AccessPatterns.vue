@@ -348,7 +348,7 @@ function convertObjectToPattern(obj) {
         .toString(16)
         .toUpperCase()
         .padStart(2, '0');
-      return `${hexLength}_${key.toUpperCase()}_${value}`;
+      return `${hexLength}_${key.toUpperCase()}_${encodeURIComponent(value)}`;
     })
     .join(' ');
 }
