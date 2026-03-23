@@ -183,7 +183,7 @@ describe('AccessPatterns.vue', () => {
     await flushPromises();
 
     wrapper.vm.addPattern = {
-      department: 'IT',
+      department: 'IT Services',
       location: '',
       country: 'US',
     };
@@ -195,7 +195,7 @@ describe('AccessPatterns.vue', () => {
     await flushPromises();
 
     expect(savePatterns).toHaveBeenCalledWith('justifications', '', [
-      { id: '0A_DEPARTMENT_IT 07_COUNTRY_US', operation: 'add' },
+      { id: '0A_DEPARTMENT_IT%20Services 07_COUNTRY_US', operation: 'add' },
     ]);
     expect(wrapper.vm.addPatternModalVisible).toBe(false);
     expect(wrapper.vm.addPattern).toEqual({});
