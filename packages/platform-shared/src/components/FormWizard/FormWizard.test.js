@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -44,9 +44,9 @@ describe('FormWizard', () => {
       });
       await flushPromises();
 
-      const breadcrumb = wrapper.find('routerlink');
+      const breadcrumb = wrapper.findComponent('.fr-back-link');
       expect(breadcrumb.text()).toBe('arrow_backtest');
-      expect(breadcrumb.attributes('to')).toBe('/test/1');
+      expect(breadcrumb.props('to')).toBe('/test/1');
     });
 
     it('displays the title', async () => {

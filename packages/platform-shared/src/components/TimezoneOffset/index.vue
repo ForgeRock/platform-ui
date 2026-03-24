@@ -33,9 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
       placement="bottomleft"
       :target="getTargetElement"
       triggers="click blur"
-      v-model:show="popoverShow"
-      @shown="onPopoverShown"
-      @hidden="onPopoverHidden">
+      v-model:show="popoverShow">
       <output class="timezone-output form-control form-control-sm text-center">
         {{ offsetString }}
       </output>

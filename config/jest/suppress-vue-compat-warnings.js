@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -63,6 +63,51 @@ const SUPPRESS_PATTERNS = [
   'configureCompat({', // Vue compat configuration suggestions
 ];
 
+// CI-only warning allowlist for deterministic unit-test harness noise.
+// Keep first-N occurrences visible to preserve debuggability.
+const CI_WARNING_ALLOWLIST = [
+  {
+    key: 'Failed to resolve directive: resizable-table',
+    type: 'includes',
+    pattern: 'Failed to resolve directive: resizable-table',
+    maxOccurrences: 20,
+  },
+  {
+    key: 'Failed to resolve directive: b-toggle',
+    type: 'includes',
+    pattern: 'Failed to resolve directive: b-toggle',
+    maxOccurrences: 20,
+  },
+  {
+    key: 'Failed to resolve component: RouterLink',
+    type: 'includes',
+    pattern: 'Failed to resolve component: RouterLink',
+    maxOccurrences: 20,
+  },
+  {
+    key: 'BootstrapVue missing target copyButton',
+    type: 'regex',
+    pattern: /\[BootstrapVue warn\].*Unable to find target element by ID "#copyButton-/,
+    maxOccurrences: 20,
+  },
+  {
+    key: 'BootstrapVue missing target properties',
+    type: 'includes',
+    pattern: 'Unable to find target element by ID "#properties"',
+    maxOccurrences: 20,
+  },
+  {
+    key: 'BootstrapVue missing target documents',
+    type: 'includes',
+    pattern: 'Unable to find target element by ID "#documents"',
+    maxOccurrences: 20,
+  },
+];
+
+const ciWarningCounts = new Map();
+
+const isCI = process.env.CI === 'true' || Boolean(process.env.JENKINS_HOME);
+
 /**
  * Check if a console.warn message should be suppressed
  * @param {*} message - The console.warn message to check
@@ -94,6 +139,16 @@ function shouldSuppressWarning(message) {
   }
 
   return false;
+}
+
+function getCiAllowlistRule(message) {
+  return CI_WARNING_ALLOWLIST.find((rule) => {
+    if (rule.type === 'regex') {
+      return rule.pattern.test(message);
+    }
+
+    return message.includes(rule.pattern);
+  });
 }
 
 /**
@@ -148,7 +203,7 @@ function shouldSuppressError(message) {
 
 // Only suppress in CI environments (not in local development)
 /* eslint-disable no-console */
-if (process.env.CI === 'true' || process.env.JENKINS_HOME) {
+if (isCI) {
   const originalError = console.error;
 
   // Conservative suppression for console.error
@@ -169,6 +224,25 @@ if (process.env.CI === 'true' || process.env.JENKINS_HOME) {
 const originalWarn = console.warn;
 
 console.warn = function warn(...args) {
+  if (isCI && typeof args[0] === 'string') {
+    const message = args[0];
+    const allowlistRule = getCiAllowlistRule(message);
+
+    if (allowlistRule) {
+      const currentCount = (ciWarningCounts.get(allowlistRule.key) || 0) + 1;
+      ciWarningCounts.set(allowlistRule.key, currentCount);
+
+      if (currentCount > allowlistRule.maxOccurrences) {
+        if (currentCount === allowlistRule.maxOccurrences + 1) {
+          originalWarn(
+            `[Jest warn filter] Suppressing further occurrences of CI-allowlisted warning: "${allowlistRule.key}" after ${allowlistRule.maxOccurrences} logs.`,
+          );
+        }
+        return;
+      }
+    }
+  }
+
   if (shouldSuppressWarning(args[0])) {
     return;
   }

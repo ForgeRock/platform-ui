@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-model="currentStep"
           :lazy="lazy"
           content-class="fr-wizard-content"
-          :active-nav-item-class="progressDots && 'fr-active-nav-item'"
+          :active-nav-item-class="progressDots ? 'fr-active-nav-item' : ''"
           :nav-wrapper-class="[progressDots && 'progress-dots-padding', 'fr-wizard pt-3']"
           pills
           vertical

@@ -159,6 +159,10 @@ const props = defineProps({
     type: Function,
     required: true,
   },
+  listName: {
+    type: String,
+    default: '',
+  },
   additionalQueryParams: {
     type: String,
     default: '',

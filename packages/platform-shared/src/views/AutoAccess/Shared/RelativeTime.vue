@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -21,7 +21,7 @@ export default {
   name: 'RelativeTime',
   props: {
     timestamp: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
     /*  Maximum amount of relative time, after which full date is shown

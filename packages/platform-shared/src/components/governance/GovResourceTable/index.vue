@@ -432,6 +432,10 @@ export default {
       type: String,
       default: '',
     },
+    showRemoveButton: {
+      type: Boolean,
+      default: false,
+    },
     showViewDetails: {
       type: Boolean,
       default: false,
