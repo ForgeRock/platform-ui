@@ -229,13 +229,10 @@
     "errorSavingAgent": "Error saving agent",
     "noAgents": "No AI Agents configured",
     "noAgentsSubtitle": "Create new AI Agents to support your customers and teams",
-    "noSearchResults": "No AI Agents found.",
-    "noResultsHelp": "Try a new search in the box above.",
     "saveSuccess": "Agent successfully updated",
     "saveSecretSuccess": "Agent secret successfully updated",
     "subtitle": "Create, manage, and monitor AI agents that support your customers and teams.",
     "title": "AI Agents",
-    "unnamedAgent": "Unnamed Agent",
     "overviewTab": {
       "errorLoadingSchema": "Error loading agent schema",
       "basicEditor": "Use basic editor",
