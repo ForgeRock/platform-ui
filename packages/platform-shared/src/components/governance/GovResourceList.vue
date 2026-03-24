@@ -19,7 +19,6 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
         </div>
         <FrSearchInput
-          :value="searchValue"
           v-if="queryThreshold > 0"
           :placeholder="$t('common.search')"
           @clear="search('')"
@@ -28,13 +27,14 @@ of the MIT license. See the LICENSE file for details. -->
           @input="filterChange"
           @search-input-focus="setHelpTextFromSearchLength"
           @search-input-blur="removeHelpText"
-          class="ml-auto"
-          :class="{'fr-search-focus': hasFocus, 'flex-grow-1': showDivider}">
+          class="ml-auto w-50"
+          :class="{'fr-search-focus': hasFocus, 'flex-grow-1': false}">
           <template #append>
             <BInputGroupText>
               <small
                 role="searchbox"
-                class="d-none d-md-block text-muted">
+                class="d-none d-md-block text-muted"
+                :class="{'pr-3': searchValue.length > 0, 'mr-3': searchValue.length > 0}">
                 <div :class="{'text-danger': submitBeforeLengthValid, shake: submitBeforeLengthValid}">
                   {{ searchHelpText }}
                 </div>
@@ -121,6 +121,7 @@ import {
   BCardHeader,
   BDropdownItem,
   BTable,
+  BInputGroupText,
 } from 'bootstrap-vue';
 import {
   computed,
@@ -387,8 +388,8 @@ async function loadData() {
       }
     } else {
       items.value = data.result;
+      totalRows.value = data[totalResultsPath.value];
     }
-    totalRows.value = data[totalResultsPath.value];
   } catch (error) {
     if (props.showErrors) showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: props.resource }));
     items.value = [];
@@ -404,9 +405,21 @@ async function loadData() {
  * @param {string} query - The search query to filter resources.
  */
 function search(query) {
-  searchValue.value = query;
-  currentPage.value = 1;
-  loadData();
+  if (query === '') {
+    submitBeforeLengthValid.value = false;
+    currentPage.value = 1;
+    searchValue.value = query;
+    loadData();
+    return;
+  }
+  if (searchValue.value.length >= props.queryThreshold) {
+    submitBeforeLengthValid.value = false;
+    currentPage.value = 1;
+    searchValue.value = query;
+    loadData();
+  } else {
+    submitBeforeLengthValid.value = true;
+  }
 }
 
 /**
@@ -469,3 +482,55 @@ watch(
 );
 
 </script>
+
+<style lang="scss" scoped>
+:deep(.table tr:not(.b-table-empty-row) td) {
+    cursor: pointer;
+  }
+
+.toolbar-divider {
+  background-color: $gray-200;
+  width: 1px;
+}
+
+.fr-icon-input-right {
+  margin-top: 5px;
+}
+
+.input-group-text {
+  border: none;
+}
+.shake {
+    animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  @keyframes shake {
+    10%,
+    90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+      transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }
+
+:deep(.btn-link.text-dark:hover) {
+  background-color: #f6f8fa;
+}
+</style>
