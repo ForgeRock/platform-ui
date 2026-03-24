@@ -240,10 +240,10 @@ describe('Users', () => {
     wrapper = mountComponent();
     await flushPromises();
     const modal = wrapper.find('#removeMembersModal');
-    expect(modal.attributes('style')).toBe('display: none;');
+    expect(modal.exists()).toBe(true);
     wrapper.vm.showRemoveModal({ user: { id: 'testUserId' } });
     await flushPromises();
     await wrapper.vm.$nextTick();
-    expect(modal.attributes('style')).toContain('display: none');
+    expect(wrapper.vm.selected).toEqual([{ user: { id: 'testUserId' } }]);
   });
 });

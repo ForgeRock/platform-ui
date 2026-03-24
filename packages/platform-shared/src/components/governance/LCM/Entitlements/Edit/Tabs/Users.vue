@@ -163,6 +163,7 @@ import {
   BButtonToolbar,
   BCard,
   BCardHeader,
+  BFormCheckbox,
   BDropdownItem,
   BModal,
   BTable,

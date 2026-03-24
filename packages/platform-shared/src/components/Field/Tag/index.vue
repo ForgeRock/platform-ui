@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -54,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
                   </span>
                   <BTooltip
                     :target="`fr-tags-tag_${element.toString().replace(/\s/g, '_')}`"
-                    :title="element"
+                    :title="String(element)"
                     :delay="{ show: 1500, hide: 0 }"
                     triggers="hover"
                     position="top"
