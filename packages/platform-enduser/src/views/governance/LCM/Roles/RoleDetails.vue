@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -38,24 +38,25 @@ of the MIT license. See the LICENSE file for details. -->
           class="mr-2"
           v-if="getSavingPermissions() && roleId === 'new'"
           variant="outline-secondary"
-          :disabled="!isFormChanged"
+          :disabled="!isFormChanged || isLoading || isSaving"
           @click="saveRoleData('save')">
           {{ $t('common.saveAsDraft') }}
         </BButton>
         <BButton
           class="mr-2"
-          v-if="roleStatus === 'draft'"
+          v-if="roleStatus === 'draft' && roleId !== 'new'"
           variant="outline-secondary"
-          :disabled="isLoading"
+          :disabled="isLoading || isSaving"
           @click="saveRoleData('publish', true)">
           {{ $t('common.publish') }}
         </BButton>
-        <FrButtonWithSpinner
+        <BButton
           v-if="getSavingPermissions()"
           variant="primary"
-          :disabled="!isFormChanged || isLoading"
-          :show-spinner="isSaving"
-          @click="saveRoleData()" />
+          :disabled="!isFormChanged || isLoading || isSaving"
+          @click="saveRoleData()">
+          {{ $t('common.save') }}
+        </BButton>
       </div>
     </BMedia>
     <BCard class="d-flex card-tabs-vertical role-tab-card">
@@ -125,7 +126,6 @@ import {
   filter, forEach, isUndefined, map,
 } from 'lodash';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import { getPrivileges } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
@@ -375,15 +375,16 @@ async function updateTabData(tabUpdated, operation, data) {
       formData.value.members = data.result;
       memberCount.value = data.totalHits;
     } else if (operation === 'add') {
-      const existingIds = map(formData.value.members, 'usr_id');
+      const existingIds = map(formData.value.members, (member) => member.id || member._id);
       forEach(data, (member) => {
+        member.editable = true;
         if (existingIds.indexOf(member.usr_id) < 0) {
           formData.value.members.push(member);
         }
       });
     } else if (operation === 'remove') {
-      const idsToRemove = map(data, 'userId');
-      const newMembers = filter(formData.value.members, (member) => idsToRemove.indexOf(member.userId) < 0);
+      const idsToRemove = map(data, (member) => member.id || member._id);
+      const newMembers = filter(formData.value.members, (member) => idsToRemove.indexOf(member.id || member._id) < 0);
       formData.value.members = newMembers;
     }
   }
