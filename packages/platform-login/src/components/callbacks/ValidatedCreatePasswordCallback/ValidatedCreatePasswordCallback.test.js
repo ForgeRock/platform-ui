@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -299,5 +299,84 @@ describe('ValidatedCreatePasswordCallback', () => {
     await confirmInput.trigger('blur');
 
     expect(confirmInput.attributes('aria-invalid')).toBe('false');
+  });
+
+  it('next-step-callback promise should resolve only after validation is fully complete with updated authId', async () => {
+    jest.useFakeTimers();
+    // Setup a controlled promise for the SDK call so we can decide when it "finishes"
+    let resolveNext;
+    const nextPromise = new Promise((resolve) => {
+      resolveNext = resolve;
+    });
+
+    const step = {
+      payload: {
+        authId: 'old-auth-id',
+      },
+      getCallbackOfType: () => ({
+        getFailedPolicies: () => ([]),
+        setInputValue: () => ({}),
+        getPolicies: () => ({ policies: [] }),
+      }),
+    };
+
+    // Mock the SDK to return our controlled promise
+    jest.spyOn(SDK.FRAuth, 'next').mockImplementation(() => nextPromise.then(() => ({
+      getCallbackOfType: () => ({
+        getFailedPolicies: () => ([]),
+        setInputValue: () => ({}),
+        getPolicies: () => ({ policies: [] }),
+      }),
+      payload: {
+        authId: 'new-auth-id',
+      },
+    })));
+
+    wrapper = mountComponent({
+      callback: {
+        getPrompt: () => 'Password',
+        setValidateOnly: jest.fn(),
+        setPassword: jest.fn(),
+        getPolicies: () => ({ policies: [] }),
+        getFailedPolicies: () => [],
+      },
+      step,
+      realm: 'alpha',
+    });
+
+    // Trigger a password validation. This starts an asynchronous background request.
+    wrapper.vm.updateCallback('newPassword123');
+    wrapper.vm.debounceValidatePassword.flush();
+    expect(wrapper.vm.isValidating).toBe(true);
+
+    // Capture the "Gatekeeper" callback that Login/index.vue uses to wait for us.
+    const nextStepEvent = wrapper.emitted('next-step-callback');
+    const nextStepCallback = nextStepEvent[0][0];
+
+    // Simulate Login/index.vue calling this gatekeeper.
+    // It should return a promise that stays pending.
+    let resolved = false;
+    nextStepCallback().then(() => {
+      resolved = true;
+    });
+
+    // Advance timers but the SDK call is still pending
+    jest.advanceTimersByTime(100);
+    await Promise.resolve(); // flush microtasks
+    expect(resolved).toBe(false);
+    expect(step.payload.authId).toBe('old-auth-id');
+
+    // Finally resolve the SDK call (simulating a successful network response).
+    resolveNext();
+
+    // Run all pending timers and their associated microtasks (promises)
+    // until the recursion terminates naturally.
+    await jest.runAllTimersAsync();
+
+    // Verify that the gatekeeper promise has finally resolved and the authId
+    // on the step object has been updated via direct mutation.
+    expect(resolved).toBe(true);
+    expect(step.payload.authId).toBe('new-auth-id');
+    jest.useRealTimers();
   });
 });

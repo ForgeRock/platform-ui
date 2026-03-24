@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -130,6 +130,7 @@ export default {
       failuresForPanel: [],
       isValidating: false,
       lastPass: '',
+      latestAuthId: null,
       lostFocus: false,
       password: {
         label: this.callback.getPrompt(),
@@ -141,9 +142,37 @@ export default {
     };
   },
   mounted() {
-    // need to set validateOnly flag to true so that tree does not advance when validating input
+    // Need to set validateOnly flag to true so that tree does not advance when validating input
     this.callback.setValidateOnly(true);
-    this.$emit('next-step-callback', () => { this.callback.setValidateOnly(false); });
+    this.$emit('next-step-callback', () => {
+      this.debounceValidatePassword.flush();
+      return new Promise((resolve) => {
+        /**
+         * We need to ensure that the password validation has finished before we
+         * proceed to the next step. If we don't, the next step will be called
+         * with an old authId and the whitelisting will fail.
+         */
+        const checkValidation = () => {
+          if (!this.isValidating && this.curPass === this.lastPass) {
+            this.callback.setValidateOnly(false);
+            /**
+             * We directly mutate the step object here to ensure that the
+             * next step is called with the correct authId. This is necessary
+             * because the component may be unmounted before the update-auth-id
+             * event is processed by the parent.
+             */
+            if (this.latestAuthId) {
+              // eslint-disable-next-line vue/no-mutating-props
+              this.step.payload.authId = this.latestAuthId;
+            }
+            resolve();
+          } else {
+            setTimeout(checkValidation, 50);
+          }
+        };
+        checkValidation();
+      });
+    });
 
     if (this.overrideInitialPolicies) {
       this.setPoliciesFromFailures(this.step);
@@ -197,6 +226,7 @@ export default {
           this.policies = this.normalizePolicies(failures);
           this.setFailingPolicies(this.policies);
 
+          this.latestAuthId = step2.payload.authId;
           this.$emit('update-auth-id', step2.payload.authId);
         }).catch(() => {});
       }).catch(() => {});
@@ -282,8 +312,10 @@ export default {
             const normalizedFailures = this.normalizePolicies(failingPolicies);
             this.setFailingPolicies(normalizedFailures);
 
-            // update auth id in the event of authentication tree whitelisting
+            // Update auth id in the event of authentication tree whitelisting
+            this.latestAuthId = step.payload.authId;
             this.$emit('update-auth-id', step.payload.authId);
+
             this.isValidating = false;
             this.validatePassword(this.curPass);
           }).catch(() => {
