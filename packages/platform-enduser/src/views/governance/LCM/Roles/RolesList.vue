@@ -26,80 +26,87 @@ of the MIT license. See the LICENSE file for details. -->
           no-body
           class="mb-4 p-0"
           body-class="p-3">
-          <FrSpinner
-            v-if="isLoading"
-            class="py-5" />
-          <div v-else>
-            <BButtonToolbar class="p-3 border-bottom-0">
-              <BButton
-                v-if="showAddButton"
-                class="ml-2 mr-2"
-                variant="primary"
-                @click="navigateToRoleDetails()">
-                <FrIcon
-                  icon-class="mr-2"
-                  name="add">
-                  {{ $t('common.newObject', { object: 'role' }) }}
-                </FrIcon>
-              </BButton>
-              <FrSearchInput
-                v-model="searchValue"
-                class="ml-auto"
-                @clear="search('')"
-                @search="search(searchValue)" />
-            </BButtonToolbar>
+          <BButtonToolbar class="p-3 border-bottom-0">
+            <BButton
+              v-if="showAddButton"
+              class="ml-2 mr-2"
+              variant="primary"
+              @click="navigateToRoleDetails()">
+              <FrIcon
+                icon-class="mr-2"
+                name="add">
+                {{ $t('common.newObject', { object: 'role' }) }}
+              </FrIcon>
+            </BButton>
+            <FrSearchInput
+              v-model="searchValue"
+              class="ml-auto"
+              @clear="search('')"
+              @search="search(searchValue)" />
+          </BButtonToolbar>
+          <div>
+            <FrSpinner
+              v-if="isLoading"
+              class="py-5" />
             <FrNoData
-              v-if="items.length === 0"
+              v-else-if="items.length === 0"
               class="border-0 shadow-none"
               icon="assignment_ind"
               body-class="mb-5"
               :title="$t('governance.access.noRecordFound', { grantType: 'roles' })"
               :subtitle="$t('governance.access.noResultsRole', { grantType: 'role' })" />
-            <BTable
-              v-else
-              :ref="(el) => grid = el"
-              v-resizable-table="{ persistKey: 'gov-resource-managed/alpha_role', showColumnResizer: true }"
-              v-model:sort-by="sortBy"
-              v-model:sort-desc="sortDesc"
-              :busy="isLoading"
-              table-class="mb-0 cursor-pointer"
-              tbody-tr-class="fit-content tr-gov-resource-list text-break"
-              details-td-class="fit-content"
-              :fields="roleColumns"
-              :items="items"
-              no-local-sorting
-              no-sort-reset
-              hover
-              responsive
-              @row-clicked="navigateToRoleDetails"
-              @sort-changed="sortChanged">
-              <template #cell(name)="{ item }">
-                <div class="h5">
-                  {{ item?.name || blankValueIndicator }}
-                </div>
-              </template>
-              <template #cell(description)="{ item }">
-                {{ item?.description || blankValueIndicator }}
-              </template>
-              <template #cell(actions)="{ item }">
-                <FrActionsCell
-                  :divider="false"
-                  @edit-clicked="navigateToRoleDetails(item)"
-                  @delete-clicked="showDeleteModal([item])">
-                  <template #custom-top-actions>
-                    <BDropdownItem
-                      v-if="roleStatus === 'draft'"
-                      @click="publishRole(item)">
-                      <FrIcon
-                        icon-class="mr-2"
-                        name="publish">
-                        {{ $t('common.publish') }}
-                      </FrIcon>
-                    </BDropdownItem>
-                  </template>
-                </FrActionsCell>
-              </template>
-            </BTable>
+            <div v-else>
+              <BTable
+                :ref="(el) => grid = el"
+                v-resizable-table="{ persistKey: 'gov-resource-managed/alpha_role', showColumnResizer: true }"
+                v-model:sort-by="sortBy"
+                v-model:sort-desc="sortDesc"
+                :busy="isLoading"
+                table-class="mb-0 cursor-pointer"
+                tbody-tr-class="fit-content tr-gov-resource-list text-break"
+                details-td-class="fit-content"
+                :fields="roleColumns"
+                :items="items"
+                no-local-sorting
+                no-sort-reset
+                hover
+                responsive
+                @row-clicked="navigateToRoleDetails"
+                @sort-changed="sortChanged">
+                <template #cell(name)="{ item }">
+                  <div class="h5">
+                    {{ item?.name || blankValueIndicator }}
+                  </div>
+                </template>
+                <template #cell(description)="{ item }">
+                  {{ item?.description || blankValueIndicator }}
+                </template>
+                <template #cell(actions)="{ item }">
+                  <FrActionsCell
+                    :divider="false"
+                    @edit-clicked="navigateToRoleDetails(item)"
+                    @delete-clicked="showDeleteModal([item])">
+                    <template #custom-top-actions>
+                      <BDropdownItem
+                        v-if="roleStatus === 'draft'"
+                        @click="publishRole(item)">
+                        <FrIcon
+                          icon-class="mr-2"
+                          name="publish">
+                          {{ $t('common.publish') }}
+                        </FrIcon>
+                      </BDropdownItem>
+                    </template>
+                  </FrActionsCell>
+                </template>
+              </BTable>
+              <FrPagination
+                :value="currentPage"
+                :per-page="currentPageSize"
+                :total-rows="totalRows"
+                @input="pageChange($event)"
+                @on-page-size-change="pageSizeChange($event)" />
+            </div>
           </div>
         </BCard>
       </BTab>
@@ -112,37 +119,36 @@ of the MIT license. See the LICENSE file for details. -->
           no-body
           class="mb-4 p-0"
           body-class="p-3">
+          <BButtonToolbar class="p-3 border-bottom-0">
+            <BButton
+              v-if="showAddButton"
+              class="ml-2 mr-2"
+              variant="primary"
+              @click="navigateToRoleDetails()">
+              <FrIcon
+                icon-class="mr-2"
+                name="add">
+                {{ $t('common.newObject', { object: 'role' }) }}
+              </FrIcon>
+            </BButton>
+            <FrSearchInput
+              v-model="searchValue"
+              class="ml-auto"
+              @clear="search('')"
+              @search="search(searchValue)" />
+          </BButtonToolbar>
           <FrSpinner
             v-if="isLoading"
             class="py-5" />
+          <FrNoData
+            v-else-if="items.length === 0"
+            class="border-0 shadow-none"
+            icon="assignment_ind"
+            body-class="mb-5"
+            :title="$t('governance.access.noRecordFound', { grantType: 'roles' })"
+            :subtitle="$t('governance.access.noResultsRole', { grantType: 'role' })" />
           <div v-else>
-            <BButtonToolbar class="p-3 border-bottom-0">
-              <BButton
-                v-if="showAddButton"
-                class="ml-2 mr-2"
-                variant="primary"
-                @click="navigateToRoleDetails()">
-                <FrIcon
-                  icon-class="mr-2"
-                  name="add">
-                  {{ $t('common.newObject', { object: 'role' }) }}
-                </FrIcon>
-              </BButton>
-              <FrSearchInput
-                v-model="searchValue"
-                class="ml-auto"
-                @clear="search('')"
-                @search="search(searchValue)" />
-            </BButtonToolbar>
-            <FrNoData
-              v-if="items.length === 0"
-              class="border-0 shadow-none"
-              icon="assignment_ind"
-              body-class="mb-5"
-              :title="$t('governance.access.noRecordFound', { grantType: 'roles' })"
-              :subtitle="$t('governance.access.noResultsRole', { grantType: 'role' })" />
             <BTable
-              v-else
               :ref="(el) => grid = el"
               v-resizable-table="{ persistKey: 'gov-resource-managed/alpha_role', showColumnResizer: true }"
               v-model:sort-by="sortBy"
@@ -174,6 +180,12 @@ of the MIT license. See the LICENSE file for details. -->
                   @delete-clicked="showDeleteModal([item])" />
               </template>
             </BTable>
+            <FrPagination
+              :value="currentPage"
+              :per-page="currentPageSize"
+              :total-rows="totalRows"
+              @input="pageChange($event)"
+              @on-page-size-change="pageSizeChange($event)" />
           </div>
         </BCard>
       </BTab>
@@ -234,6 +246,7 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import { getPrivileges } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
@@ -266,6 +279,11 @@ const prop = defineProps({
 
 const items = ref([]);
 const isLoading = ref(false);
+const currentPage = ref(1);
+const currentPageSize = ref(10);
+const totalRows = ref(0);
+const sortBy = ref('role.name');
+const sortDesc = ref(false);
 const roleStatus = ref('active');
 const isMounted = ref(false);
 const deleteRoleIds = ref(null);
@@ -279,13 +297,13 @@ const showAddButton = ref(false);
 const showDeleteButton = ref(false);
 const tabIndex = ref(0);
 const requestId = ref('');
-const roleColumns = [
+const roleColumns = ref([
   {
     key: 'name',
     label: i18n.global.t('common.name'),
     initialSort: true,
     sortable: true,
-    sortKey: 'name',
+    sortKey: 'role.name',
   },
   {
     key: 'description',
@@ -296,7 +314,7 @@ const roleColumns = [
     label: i18n.global.t('common.actions'),
     class: 'w-120px fr-no-resize sticky-right',
   },
-];
+]);
 
 /**
  * Set which role permissions the user has.
@@ -313,58 +331,97 @@ async function getPermissions() {
  */
 async function queryRoles(resource = 'role') {
   isLoading.value = true;
-  const roleSearchParams = {
-    pageSize: 10,
-    roleStatus: roleStatus.value,
-    sortBy: roleStatus.value === 'active' ? 'role.name' : 'name',
-  };
-  const requestSortParams = {
-    pagedResultsOffset: 0,
-    pageSize: 10,
-    sortKeys: 'metadata.modifiedDate',
-    sortDir: 'desc',
-    sortType: 'date',
-  };
-  if (searchValue.value) {
-    roleSearchParams.queryFilter = queryFields.map((field) => `${field} co "${searchValue.value}"`).join(' or ');
-    requestSortParams.queryFilter = queryFields.map((field) => `${field} co "${searchValue.value}"`).join(' or ');
-  }
-  let response = {};
-  if (roleStatus.value === 'active') {
-    response = await getRoleList(resource, roleSearchParams);
-  } else {
-    const filter = {
-      operand: [
-        {
-          operator: 'EQUALS',
-          operand: {
-            targetName: 'request.common.isDraft',
-            targetValue: true,
+  try {
+    let response = {};
+    if (roleStatus.value === 'active') {
+      const roleSearchParams = {
+        _pageSize: currentPageSize.value,
+        _pagedResultsOffset: (currentPage.value - 1) * currentPageSize.value,
+        roleStatus: roleStatus.value,
+        _sortKeys: `${sortDesc.value ? '-' : ''}${sortBy.value}`,
+      };
+      if (searchValue.value) {
+        roleSearchParams._queryFilter = queryFields.map((field) => `${field} co "${searchValue.value}"`).join(' or ');
+      }
+      response = await getRoleList(resource, roleSearchParams);
+    } else {
+      const requestSortParams = {
+        pagedResultsOffset: (currentPage.value - 1) * currentPageSize.value,
+        pageSize: currentPageSize.value,
+        sortKeys: `${sortDesc.value ? '-' : ''}${sortBy.value}`,
+      };
+      const filter = {
+        operand: [
+          {
+            operator: 'EQUALS',
+            operand: {
+              targetName: 'request.common.isDraft',
+              targetValue: true,
+            },
           },
-        },
-        {
-          operator: 'IN',
-          operand: {
-            targetName: 'requestType',
-            targetValue: ['createRole', 'deleteRole', 'modifyRole', 'publishRole'],
+          {
+            operator: 'IN',
+            operand: {
+              targetName: 'requestType',
+              targetValue: ['createRole', 'deleteRole', 'modifyRole', 'publishRole'],
+            },
           },
-        },
-      ],
-      operator: 'AND',
-    };
-    response = await getUserRequests(userId, requestSortParams, filter);
+        ],
+        operator: 'AND',
+      };
+      if (searchValue.value) {
+        filter.operand.push({
+          operator: 'CONTAINS',
+          operand: {
+            targetName: 'request.role.object.name',
+            targetValue: searchValue.value,
+          },
+        });
+      }
+      response = await getUserRequests(userId, requestSortParams, filter);
+    }
+    const { data } = response;
+    queriedRoles.value = data.result;
+    items.value = map(data.result, (item) => ({
+      ...item?.role,
+      ...item?.request?.role?.object,
+      request: item?.request,
+      status: roleStatus.value,
+      id: item.id || item.role.id,
+    }));
+    totalRows.value = data.totalHits ?? data.totalCount ?? 0;
+    await getPermissions();
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: i18n.global.t('common.roles') }));
+  } finally {
+    isLoading.value = false;
   }
-  const { data } = response;
-  queriedRoles.value = data.result;
-  items.value = map(data.result, (item) => ({
-    ...item?.role,
-    ...item?.request?.role?.object,
-    request: item?.request,
-    status: roleStatus.value,
-    id: item.id || item.role.id,
-  }));
-  await getPermissions();
-  isLoading.value = false;
+}
+
+/**
+ * Handles the change in page
+ * @param {number} pageNum - The new page number selected by the user.
+ */
+function pageChange(pageNum) {
+  currentPage.value = pageNum;
+  queryRoles();
+}
+
+/**
+ * Handles the change in page size
+ * @param {number} size - The new page size selected by the user.
+ */
+function pageSizeChange(size) {
+  currentPageSize.value = size;
+  currentPage.value = 1;
+  queryRoles();
+}
+
+function sortChanged(newSort) {
+  currentPage.value = 1;
+  sortBy.value = newSort.sortBy;
+  sortDesc.value = newSort.sortDesc;
+  queryRoles();
 }
 
 /**
@@ -372,6 +429,12 @@ async function queryRoles(resource = 'role') {
  */
 function tabActivated(tab) {
   roleStatus.value = statusOptions.value[tab];
+  const sortKeyBase = roleStatus.value === 'active' ? 'role' : 'request.role.object';
+  roleColumns.value[0].sortKey = `${sortKeyBase}.name`; // Update sort key for name based on active tab
+  sortBy.value = `${sortKeyBase}.name`; // Reset sort by to name when tab changes
+  sortDesc.value = false; // Reset sort direction when tab changes
+  searchValue.value = '';
+  currentPage.value = 1;
   queryRoles();
 }
 
@@ -413,6 +476,7 @@ async function deleteRoles() {
  * @param {string} query - The search query to filter resources.
  */
 function search(query) {
+  currentPage.value = 1;
   searchValue.value = query;
   queryRoles();
 }
@@ -427,14 +491,16 @@ function navigateToRoleDetails(role) {
   if (role) {
     roleId = role.id;
   }
-  if (status === 'draft') {
+  if (status === 'draft' && roleId !== 'new') {
+    // Push existing draft role to details page
     router.push(`/administer/roles/${roleId}/draft`);
   } else {
+    // Active roles or new role creation
     router.push({
       name: 'RoleDetails',
       params: {
         roleId,
-        roleStatus: status,
+        roleStatus: 'active',
       },
     });
   }
