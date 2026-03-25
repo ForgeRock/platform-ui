@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
                 @check-progress="checkInProgress"
                 @refresh-complete="refreshTasks = false"
                 @signed-off="hideSignOff = true;"
-                @set-totals="totals = $event"
+                @set-totals="setTotals"
                 @update-details="getCertificationDetails" />
             </BTab>
           </BTabs>
@@ -69,7 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
           @check-progress="checkInProgress"
           @refresh-complete="refreshTasks = false"
           @signed-off="hideSignOff = true;"
-          @set-totals="totals = $event"
+          @set-totals="setTotals"
           @update-details="getCertificationDetails"
         />
         <FrField
@@ -82,6 +82,11 @@ of the MIT license. See the LICENSE file for details. -->
           :label="$t('governance.certificationTask.certificationTabs.groupByAccount')" />
       </div>
     </template>
+    <FrDecisionsCompleteModal
+      modal-id="certification-task-decisions-complete-modal"
+      :campaign="campaignDetails"
+      :totals="totals"
+      :ok-function="signOff" />
   </div>
 </template>
 
@@ -101,6 +106,7 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrCertificationDetails from './TaskHeader/CertificationDetails';
 import FrCertificationToolbar from './TaskHeader/CertificationToolbar';
 import FrTaskList from './TaskList';
+import FrDecisionsCompleteModal from './TaskList/modals/DecisionsCompleteModal/DecisionsCompleteModal';
 import FrTaskListGroupBy from './TaskListGroupBy';
 
 export default {
@@ -113,6 +119,7 @@ export default {
     BTabs,
     FrCertificationDetails,
     FrCertificationToolbar,
+    FrDecisionsCompleteModal,
     FrField,
     FrTaskList,
     FrTaskListGroupBy,
@@ -143,6 +150,7 @@ export default {
       isGroupByAccount: false,
       showGroupByAccount: true,
       backUrl: '/access-reviews',
+      notifiedUserOfCompletion: false,
     };
   },
   computed: {
@@ -233,6 +241,7 @@ export default {
     },
     signOff() {
       this.setSaving();
+      this.$bvModal.hide('certification-task-decisions-complete-modal'); // Close modal if open
       signOffCertificationTasks(this.campaignDetails.id, this.actorId)
         .catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.errors.signOffError'));
@@ -257,6 +266,16 @@ export default {
      */
     isGrantType(type) {
       return this.campaignDetails.targetFilter?.type?.includes(type);
+    },
+    setTotals(totals) {
+      const areAllItemsCompleted = totals?.total > 0 && (totals?.NONE === 0 || totals?.NONE === undefined);
+      const isActiveTask = this.taskStatus === 'active';
+      // If task is active, all items are completed, and user has not been notified on this visit, show the modal.
+      if (!this.notifiedUserOfCompletion && isActiveTask && areAllItemsCompleted) {
+        this.$bvModal.show('certification-task-decisions-complete-modal');
+        this.notifiedUserOfCompletion = true; // Once set to true the modal will not show again unless the user leaves and comes back or reloads
+      }
+      this.totals = totals;
     },
   },
   mounted() {

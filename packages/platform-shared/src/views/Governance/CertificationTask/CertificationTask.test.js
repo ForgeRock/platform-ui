@@ -11,9 +11,11 @@ import * as CertificationApi from '@forgerock/platform-shared/src/api/governance
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import Notifications from '@kyvg/vue3-notification';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import CertificationTask from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
+const { modalHide, modalShow } = mockModal();
 
 describe('CertificationTask', () => {
   let wrapper;
@@ -114,6 +116,7 @@ describe('CertificationTask', () => {
               taskStatus: 'active',
             },
           },
+          $bvModal: { show: modalShow, hide: modalHide },
           $router: { push: jest.fn() },
         },
         plugins: [Notifications],
