@@ -2025,6 +2025,7 @@
         "errorGettingData": "There was an error retrieving form data.",
         "errorGettingEntityIds": "Error retrieving partner realms. Ensure your partner realm is unique.",
         "errorSettingUpSso": "There was an error setting up SSO. Check your configuration and try again. {error}",
+        "errorRetrievingData": "There was an error retrieving necessary application data. Use caution when making changes.",
         "errorUpdatingCookie": "There was an error updating the cookie name for the Microsoft 365 application. Please try again.",
         "errorUpdatingPfCertId": "There was an error updating the PingFederate certificate ID. Please try again.",
         "errorUpdatingPfVirtualHosts": "There was an error updating the PingFederate virtual hostnames. Check your configuration and try again.",
