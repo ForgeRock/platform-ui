@@ -1268,8 +1268,15 @@ export default {
         this.showScriptElms = false;
         this.hiddenValueCallbacksRefs = [];
       }
-      this.loginFailure = false;
-      this.linkToTreeStart = '';
+      // Only clear error state on user-initiated submits (isTrusted events).
+      // Auto-submitting callbacks (e.g. PingOneProtect, DeviceProfile) call nextStep without
+      // an event, so we preserve the error message across those automatic transitions.
+      const isUserSubmit = event?.isTrusted;
+      if (isUserSubmit || !this.loginFailure) {
+        this.loginFailure = false;
+        this.errorMessage = '';
+        this.linkToTreeStart = '';
+      }
 
       if (this.mutationObserver) {
         this.mutationObserver.disconnect();

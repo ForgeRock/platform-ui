@@ -332,6 +332,41 @@ describe('Login.vue', () => {
     });
   });
 
+  describe('IAM-10071 - error state across auto-submitting and user-initiated nextStep calls', () => {
+    // isTrusted is read-only on real Event instances so we use a mock object instead.
+    const trustedEvent = { isTrusted: true, preventDefault: jest.fn() };
+
+    beforeEach(() => {
+      jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep({ callbacks: [] })));
+    });
+
+    it('preserves error when called without an event (auto-submitting callback)', () => {
+      wrapper.setData({ loginFailure: true, errorMessage: 'AUTHN002', linkToTreeStart: '/some/link' });
+      wrapper.vm.nextStep(undefined, false);
+
+      expect(wrapper.vm.loginFailure).toBe(true);
+      expect(wrapper.vm.errorMessage).toBe('AUTHN002');
+      expect(wrapper.vm.linkToTreeStart).toBe('/some/link');
+    });
+
+    it('clears error when called with a trusted event (user submit)', () => {
+      wrapper.setData({ loginFailure: true, errorMessage: 'AUTHN002', linkToTreeStart: '/some/link' });
+      wrapper.vm.nextStep(trustedEvent, false);
+
+      expect(wrapper.vm.loginFailure).toBe(false);
+      expect(wrapper.vm.errorMessage).toBe('');
+      expect(wrapper.vm.linkToTreeStart).toBe('');
+    });
+
+    it('stays clean when called without an event and no prior error', () => {
+      wrapper.setData({ loginFailure: false, errorMessage: '', linkToTreeStart: '' });
+      wrapper.vm.nextStep(undefined, false);
+
+      expect(wrapper.vm.loginFailure).toBe(false);
+      expect(wrapper.vm.errorMessage).toBe('');
+    });
+  });
+
   describe('handleIdpComponent', () => {
     describe('given idp component ', () => {
       it('should remove idp component from componentsList to the `idpComponent` field', () => {
