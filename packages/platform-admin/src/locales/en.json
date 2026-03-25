@@ -1254,6 +1254,10 @@
               "description": "Define properties on each related profile to reference to its related managed object type.",
               "displayProperties": "Display Properties",
               "displayPropertiesDescription": "<strong>{objectTitle}</strong> properties to display in the context of this relationship.",
+              "notify": "Notify",
+              "notifyDescription": "Specifies if related users should be notified on modification of this property value.",
+              "notifySelf": "Notify Self",
+              "notifySelfDescription": "Specifies if the managed object type which owns this relationship should be notified upon modification.",
               "propertyName": "Property Name",
               "propertyNameDescription": "Name of {objectTitle} property that references {relatedObjectName}.",
               "title": "Relationship Property"
@@ -1272,8 +1276,6 @@
           }
         }
       },
-      "saveProfile": "Save Profile",
-      "savingProfile": "Saving Profile",
       "saveSuccess": "Managed object type saved",
       "saveFail": "Error creating managed object type"
     }
