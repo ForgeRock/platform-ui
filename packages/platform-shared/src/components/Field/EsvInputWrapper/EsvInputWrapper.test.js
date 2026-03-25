@@ -10,6 +10,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import EsvInputWrapper from './index';
 import i18n from '@/i18n';
 
@@ -22,6 +23,7 @@ const defaultProps = {
   autofocus: false,
   type: 'string',
   originalType: 'string',
+  label: 'Stub Label',
 };
 
 describe('EsvInputWrapper', () => {
@@ -144,6 +146,15 @@ describe('EsvInputWrapper', () => {
       expect(emittedInput).toBeTruthy();
       expect(emittedInput[0][0]).toEqual({ $array: '&{esv.array}' });
 
+      wrapper.unmount();
+    });
+  });
+
+  describe('@a11y', () => {
+    it('should have no accessibility violations', async () => {
+      const wrapper = setup();
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
       wrapper.unmount();
     });
   });
