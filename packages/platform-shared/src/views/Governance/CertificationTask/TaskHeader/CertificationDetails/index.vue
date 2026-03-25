@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -184,7 +184,7 @@ export default {
       if (date) return dayjs(date).format('MMM D, YYYY');
       return blankValueIndicator;
     },
-    setChartInfo(revoked, certified) {
+    setChartInfo(revoked, certified, exception) {
       this.chartDecisions = [{
         label: this.$t('governance.certificationTask.certified'),
         color: styles.green,
@@ -195,17 +195,26 @@ export default {
         color: styles.blue,
         value: revoked,
       }];
+      if (this.campaignDetails.exceptionDuration > 0) {
+        // If exceptions are enabled on the campaign, add to chart
+        this.chartDecisions.push({
+          label: this.$t('governance.certificationTask.exception'),
+          color: styles.yellow,
+          value: exception,
+        });
+      }
     },
     getProgress(totals) {
       if (!totals) return;
 
       const certified = totals.certify || 0;
       const revoke = totals.revoke || 0;
+      const exception = totals.exception || 0;
       const notActed = totals.NONE || 0;
       this.total = totals.total || 0;
 
       this.sumOfDecisions = this.total - notActed;
-      this.setChartInfo(revoke, certified);
+      this.setChartInfo(revoke, certified, exception);
     },
 
     /**
