@@ -110,6 +110,8 @@
     "glob@npm:10.5.0/minimatch": "9.0.7",
     "@typescript-eslint/typescript-estree/minimatch": "9.0.7",
     "nanoid": "3.3.8",
+    "picomatch@npm:^2": "2.3.2",
+    "picomatch@npm:^4": "4.0.4",
     "ramda@npm:^0.25.0": "0.27.1",
     "semver": "7.5.4",
     "socks": "2.8.7",
