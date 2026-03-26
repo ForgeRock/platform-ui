@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-4">
         <template v-if="!isAdmin">
           <BButton
-            @click="bvModal.show('ExceptionModal')"
+            @click="bvModal.show('FrExceptionModal')"
             class="mr-1"
             variant="outline-secondary">
             <FrIcon
@@ -119,7 +119,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrViolationConflictModal
       :violation="violation" />
 
-    <ExceptionModal
+    <FrExceptionModal
       hide-details
       :violation="{...violation, phaseId}"
       :extend-exception="isEnduserException"
@@ -162,7 +162,7 @@ import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrComments from '@forgerock/platform-shared/src/components/governance/RequestDetails/Comments';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import ExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
+import FrExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
 import FrRevokeExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/RevokeExceptionModal';
 import FrViolationActivity from './ViolationActivity';
 import FrViolationConflictModal from '../ViolationConflictModal';

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-slot="{ meta: { valid } }"
     as="span">
     <BModal
-      id="ExceptionModal"
+      id="FrExceptionModal"
       size="lg"
       title-class="h5"
       title-tag="h2"
@@ -99,7 +99,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script setup>
 /**
  * Modal in which exceptions to violations may be allowed or extended.
- * @component ExceptionModal
+ * @component FrExceptionModal
  * @prop {Boolean} extendException - Determine if the action is extend
  * @prop {Boolean} isTesting - Determines if the component is in a test environment
  * @prop {Object} violation - Violation information
@@ -115,11 +115,18 @@ import {
 } from 'bootstrap-vue';
 import { Form as VeeForm } from 'vee-validate';
 import { isEmpty } from 'lodash';
-import { computed, ref, watch } from 'vue';
+import {
+  computed,
+  defineOptions,
+  ref,
+  watch,
+} from 'vue';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
+
+defineOptions({ name: 'FrExceptionModal' });
 
 const emit = defineEmits(['action', 'viewViolationDetails']);
 

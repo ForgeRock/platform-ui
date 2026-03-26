@@ -193,7 +193,7 @@ describe('ExceptionList', () => {
     });
     await flushPromises();
 
-    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    const exceptionModal = wrapper.findComponent({ name: 'FrExceptionModal' });
     exceptionModal.vm.$emit('action', {
       violationId: '002bd665-3946-465c-b444-de470fa04254',
       phaseId: 'testPhase',
@@ -224,7 +224,7 @@ describe('ExceptionList', () => {
     });
     await flushPromises();
 
-    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    const exceptionModal = wrapper.findComponent({ name: 'FrExceptionModal' });
     exceptionModal.vm.$emit('action', {
       violationId: '002bd665-3946-465c-b444-de470fa04254',
       phaseId: 'testPhase',

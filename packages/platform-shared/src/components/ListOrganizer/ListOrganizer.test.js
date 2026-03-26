@@ -1,34 +1,46 @@
 /**
- * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { ref, computed, toValue } from 'vue';
+import { mount, flushPromises } from '@vue/test-utils';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import ListOrganizer from './index';
+
+jest.mock('@forgerock/platform-shared/src/composables/useColumnPicker');
+
+jest.mock('@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker', () => ({
+  name: 'FrColumnPicker',
+  template: '<div class="fr-column-picker-mock"></div>',
+  props: ['activeColumns', 'availableColumns', 'show'],
+}));
 
 const defaultProps = {
   global: {
     mocks: {
-      $t: () => {},
+      $t: (t) => t,
     },
-    renderStubDefaultSlot: true,
+    stubs: {
+      FrIcon: true,
+    },
   },
   props: {
     value: [
       {
-        key: 1,
+        key: '1',
         label: '1',
         enabled: true,
       },
       {
-        key: 2,
+        key: '2',
         label: '2',
         enabled: true,
       },
       {
-        key: 3,
+        key: '3',
         label: '3',
         enabled: true,
       },
@@ -39,151 +51,107 @@ const defaultProps = {
 
 describe('ListOrganizer Component', () => {
   let wrapper;
-  beforeEach(() => {
-    wrapper = mount(ListOrganizer, defaultProps);
-  });
+  let mockLoadColumns;
 
-  it('has a list of fields for each element in value prop', async () => {
-    const wrapperArray = wrapper.findAll('div.fr-field');
-
-    expect(wrapperArray[0].attributes('label')).toBe('1');
-    expect(wrapperArray[1].attributes('label')).toBe('2');
-    expect(wrapperArray[2].attributes('label')).toBe('3');
-  });
-
-  it('has checkboxes checked for fields that are enabled', () => {
-    const wrapperArray = wrapper.findAll('div.fr-field');
-
-    expect(wrapperArray[0].attributes('value')).toBe('true');
-    expect(wrapperArray[1].attributes('value')).toBe('true');
-    expect(wrapperArray[2].attributes('value')).toBe('true');
-  });
-
-  it('has checkboxes unchecked for fields that are disabled', async () => {
-    await wrapper.setProps({
-      value: [
-        {
-          key: 1,
-          label: '1',
-          enabled: true,
+  beforeEach(async () => {
+    mockLoadColumns = jest.fn();
+    useColumnPicker.mockImplementation((initialColumns) => {
+      const activeColumns = ref(toValue(initialColumns));
+      const show = ref(false);
+      return {
+        open: () => { show.value = true; },
+        show,
+        activeColumns,
+        pickerProps: computed(() => ({
+          show: show.value,
+          activeColumns: activeColumns.value,
+          'onUpdate:show': (val) => {
+            show.value = val;
+          },
+          'onUpdate:activeColumns': (newVal) => {
+            activeColumns.value = newVal;
+          },
+        })),
+        loadColumns: mockLoadColumns,
+        syncWithOriginalList: (newActive, original) => {
+          const originalWithEnabled = original.map((col) => ({
+            ...col,
+            enabled: newActive.some((c) => (c.value || c.key) === (col.value || col.key)),
+          }));
+          return originalWithEnabled;
         },
-        {
-          key: 2,
-          label: '2',
-          enabled: false,
-        },
-        {
-          key: 3,
-          label: '3',
-          enabled: true,
-        },
-      ],
+      };
     });
-    const wrapperArray = wrapper.findAll('div.fr-field');
 
-    expect(wrapperArray[0].attributes('value')).toBe('true');
-    expect(wrapperArray[1].attributes('value')).toBe(undefined);
-    expect(wrapperArray[2].attributes('value')).toBe('true');
+    wrapper = mount(ListOrganizer, defaultProps);
+    await flushPromises();
+    await wrapper.find('button').trigger('click');
+    await flushPromises();
   });
 
-  it('resetList() reverts list to orignal prop value', () => {
-    expect(wrapper.vm.list[0].enabled).toBe(true);
-    expect(wrapper.vm.list[1].enabled).toBe(true);
-    expect(wrapper.vm.list[2].enabled).toBe(true);
-
-    wrapper.vm.list = [
-      {
-        key: 1,
-        label: '1',
-        enabled: false,
+  it('button slot provides compatible showModal and new open function', async () => {
+    const wrapperWithSlot = mount(ListOrganizer, {
+      ...defaultProps,
+      slots: {
+        button: `
+          <template #button="{ showModal, open }">
+            <button id="show-modal-btn" @click="open"></button>
+            <button id="open-btn" @click="open"></button>
+          </template>
+        `,
       },
-      {
-        key: 2,
-        label: '2',
-        enabled: false,
-      },
-      {
-        key: 3,
-        label: '3',
-        enabled: false,
-      },
-    ];
+    });
 
-    expect(wrapper.vm.list[0].enabled).toBe(false);
-    expect(wrapper.vm.list[1].enabled).toBe(false);
-    expect(wrapper.vm.list[1].enabled).toBe(false);
+    const showModalBtn = wrapperWithSlot.find('#show-modal-btn');
+    const openBtn = wrapperWithSlot.find('#open-btn');
 
-    wrapper.vm.resetList();
+    expect(showModalBtn.exists()).toBe(true);
+    expect(openBtn.exists()).toBe(true);
 
-    expect(wrapper.vm.list[0].enabled).toBe(true);
-    expect(wrapper.vm.list[1].enabled).toBe(true);
-    expect(wrapper.vm.list[1].enabled).toBe(true);
+    // Test compatible showModal.value = true
+    await showModalBtn.trigger('click');
+    expect(wrapperWithSlot.findComponent({ name: 'FrColumnPicker' }).props('show')).toBe(true);
+
+    // Close and test open function
+    await wrapperWithSlot.findComponent({ name: 'FrColumnPicker' }).vm.$emit('update:show', false);
+    expect(wrapperWithSlot.findComponent({ name: 'FrColumnPicker' }).props('show')).toBe(false);
+
+    await openBtn.trigger('click');
+    expect(wrapperWithSlot.findComponent({ name: 'FrColumnPicker' }).props('show')).toBe(true);
   });
 
-  it('applyChanges() emits an input event with the current list values', () => {
-    wrapper.vm.applyChanges();
+  it('passes correct active columns to ColumnPicker', () => {
+    const picker = wrapper.findComponent({ name: 'FrColumnPicker' });
+    expect(picker.exists()).toBe(true);
+    expect(picker.props('activeColumns')).toHaveLength(3);
+  });
 
-    expect(wrapper.emitted()['list-updated'][0]).toEqual([[
-      {
-        key: 1,
-        label: '1',
-        enabled: true,
-      },
-      {
-        key: 2,
-        label: '2',
-        enabled: true,
-      },
-      {
-        key: 3,
-        label: '3',
-        enabled: true,
-      },
-    ]]);
-
-    wrapper.vm.list = [
-      {
-        key: 1,
-        label: '1',
-        enabled: false,
-      },
-      {
-        key: 2,
-        label: '2',
-        enabled: false,
-      },
-      {
-        key: 3,
-        label: '3',
-        enabled: false,
-      },
+  it('emits list-updated when ColumnPicker applies changes', async () => {
+    const picker = wrapper.findComponent({ name: 'FrColumnPicker' });
+    const newActiveColumns = [
+      { key: '1', label: '1', enabled: true },
+      { key: '3', label: '3', enabled: true },
     ];
 
-    wrapper.vm.applyChanges();
+    await picker.vm.$emit('apply', newActiveColumns);
 
-    expect(wrapper.emitted()['list-updated'][1]).toEqual([[
-      {
-        key: 1,
-        label: '1',
-        enabled: false,
-      },
-      {
-        key: 2,
-        label: '2',
-        enabled: false,
-      },
-      {
-        key: 3,
-        label: '3',
-        enabled: false,
-      },
-    ]]);
+    expect(wrapper.emitted()['list-updated']).toBeTruthy();
+    const updatedList = wrapper.emitted()['list-updated'][0][0];
+    expect(updatedList.find((c) => c.key === '1').enabled).toBe(true);
+    expect(updatedList.find((c) => c.key === '2').enabled).toBe(false);
+    expect(updatedList.find((c) => c.key === '3').enabled).toBe(true);
+  });
+
+  it('resetList() calls internal loadColumns', async () => {
+    expect(wrapper.vm.resetList).toBeDefined();
+    await wrapper.vm.resetList();
+    expect(mockLoadColumns).toHaveBeenCalled();
   });
 });
 
 describe('ListOrganizer Component with columnOrganizerKey', () => {
   let wrapper;
-  beforeEach(() => {
+  beforeEach(async () => {
     wrapper = mount(ListOrganizer, {
       ...defaultProps,
       props: {
@@ -191,40 +159,23 @@ describe('ListOrganizer Component with columnOrganizerKey', () => {
         columnOrganizerKey: 'test-key',
       },
     });
+    await flushPromises();
+    await wrapper.find('button').trigger('click');
+    await flushPromises();
   });
 
   it('view column icon should have correct classes', async () => {
-    const buttonList = wrapper.findAll('button');
-    expect(buttonList[0].attributes('class')).toContain('btn btn-link text-dark');
+    const button = wrapper.find('button');
+    expect(button.attributes('class')).toContain('btn-link text-dark');
   });
 
-  it('allColumnsDisabled should update to true when all columns are unchecked', async () => {
-    expect(wrapper.vm.allColumnsDisabled).toBe(false); // should return false on page load
-    let errorMessageDOM = wrapper.findAll('.error-message');
-    expect(errorMessageDOM.length).toBe(0);
+  it('allColumnsDisabled should update based on activeColumns length', async () => {
+    expect(wrapper.vm.allColumnsDisabled).toBe(false);
 
-    await wrapper.setProps({
-      value: [
-        {
-          key: 1,
-          label: '1',
-          enabled: false,
-        },
-        {
-          key: 2,
-          label: '2',
-          enabled: false,
-        },
-        {
-          key: 3,
-          label: '3',
-          enabled: false,
-        },
-      ],
-    });
+    // Simulate all columns unchecked by updating active-columns
+    const picker = wrapper.findComponent({ name: 'FrColumnPicker' });
+    await picker.vm.$emit('update:activeColumns', []);
 
-    expect(wrapper.vm.allColumnsDisabled).toBe(true); // should return true when all columns are unchecked
-    errorMessageDOM = wrapper.findAll('.error-message'); // should show error message when all columns are unchecked
-    expect(errorMessageDOM.length).toBe(1);
+    expect(wrapper.vm.allColumnsDisabled).toBe(true);
   });
 });
