@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -81,6 +81,7 @@ function isRightToLeft(table) {
 function syncColumnWidthsToComputed() {
   COLUMN_PROPS_MAP.forEach((columnProps, key) => {
     const persistedWidthsInPixel = getPersistedColumnWidth(key);
+    if (!persistedWidthsInPixel.length) return;
     columnProps.columnMinWidth = getColumnMinWidthInPx();
     columnProps.cols.forEach((col, colIndex) => {
       const restoredWidthInPx = persistedWidthsInPixel[colIndex] || parseInt(getComputedStyle(col).width, 10) || col.offsetWidth;
@@ -165,7 +166,8 @@ function createResizableColumn(colIndex, columnProps, table) {
       document.removeEventListener('click', suppressClick, true);
     };
     document.addEventListener('click', suppressClick, true);
-    persistCurrentWidths(COLUMN_PROPS_MAP.get(persistKey));
+    const currentColumnProps = COLUMN_PROPS_MAP.get(persistKey);
+    if (currentColumnProps) persistCurrentWidths(currentColumnProps);
   }
 
   /**
@@ -259,6 +261,7 @@ function createResizableTable(table, options) {
   if (persistedColumnWidths?.length > 0) {
     applyFixedTableLayout(table); // Ensure table-layout is fixed when the modified column widths are being restored
   }
+
   // Adds column properties to the Map based on the table persistKey
   COLUMN_PROPS_MAP.set(persistKey, {
     persistKey,
@@ -332,7 +335,7 @@ export default {
    * Cleans up event listeners, observers, and resizer handles.
    * @param {HTMLElement} el - The element the directive is bound to.
    */
-  unmounted(el) {
+  unmounted(el, binding) {
     const table = el.tagName === 'TABLE' ? el : el.querySelector('table');
     const cols = Array.from(table.querySelectorAll('th'));
     if (!table) return;
@@ -362,7 +365,12 @@ export default {
       table.__resizeObserver.disconnect();
       delete table.__resizeObserver;
     }
-    COLUMN_PROPS_MAP.clear();
+    const { persistKey } = binding?.value || {};
+    if (persistKey) {
+      COLUMN_PROPS_MAP.delete(persistKey);
+    } else {
+      COLUMN_PROPS_MAP.clear();
+    }
 
     // Remove window resize listener
     window.removeEventListener('resize', syncColumnWidthsToComputed);

@@ -133,15 +133,14 @@ of the MIT license. See the LICENSE file for details. -->
       :total-rows="totalRowCount"
       @input="paginationChange"
       @on-page-size-change="updatePageSize" />
-    <FrColumnOrganizer
-      @update-columns="updateColumns"
-      :active-columns="violationColumns"
-      :available-columns="columnCategories"
-      :is-testing="isTesting" />
+    <FrColumnPicker
+      v-bind="pickerProps"
+      :allow-view-mode-toggle="true"
+      :available-columns="columnPickerAvailableColumns" />
     <!-- Forward Modal -->
     <FrViolationForwardModal
       @forward-item="forwardItem" />
-    <ExceptionModal
+    <FrExceptionModal
       :violation="selectedViolation"
       @action="extendException"
       @view-violation-details="$emit('viewViolationDetails', selectedViolation)" />
@@ -155,7 +154,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * List of SOD violations. Can filter by status, policy rule, user, and date range.
  */
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import {
   BCard,
   BDropdown,
@@ -165,9 +164,7 @@ import {
   BButton,
 } from 'bootstrap-vue';
 import {
-  cloneDeep,
   groupBy,
-  some,
 } from 'lodash';
 import dayjs from 'dayjs';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
@@ -175,15 +172,16 @@ import { forwardViolation, allowException } from '@forgerock/platform-shared/src
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
-import ExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
+import FrExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
 import FrAvatarGroup from '@forgerock/platform-shared/src/components/AvatarGroup/AvatarGroup';
-import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrViolationForwardModal from '@forgerock/platform-shared/src/components/governance/Violations/ViolationForwardModal';
 import FrViolationReviewersModal from '@forgerock/platform-shared/src/components/governance/Violations/ViolationReviewersModal';
 import FrViolationToolbar from '@forgerock/platform-shared/src/components/governance/Violations/ViolationToolbar';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import i18n from '@/i18n';
 import store from '@/store';
 
@@ -198,10 +196,6 @@ const props = defineProps({
     default: false,
   },
   isAdmin: {
-    type: Boolean,
-    default: false,
-  },
-  isTesting: {
     type: Boolean,
     default: false,
   },
@@ -278,11 +272,6 @@ const tableFields = [
 const formatedColumns = groupBy(tableFields, 'category');
 const categories = [
   {
-    name: 'violation',
-    header: i18n.global.t('common.violation'),
-    items: formatedColumns.violation,
-  },
-  {
     name: 'user',
     header: i18n.global.t('common.user.user'),
     items: formatedColumns.user,
@@ -292,6 +281,11 @@ const categories = [
     header: i18n.global.t('governance.violations.rule'),
     items: formatedColumns.rule,
   },
+  {
+    name: 'violation',
+    header: i18n.global.t('common.violation'),
+    items: formatedColumns.violation,
+  },
 ];
 
 const tableFieldsEnduser = tableFields.filter((col) => col.key !== 'reviewers');
@@ -300,11 +294,37 @@ const categoriesEnduser = categories.map((category) => ({
   items: category.items.filter((item) => item.key !== 'reviewers'),
 }));
 
-const violationColumns = props.isAdmin ? ref(tableFields) : ref(tableFieldsEnduser);
-const columnCategories = props.isAdmin ? ref(categories) : ref(categoriesEnduser);
-
-const violationColumnsToShow = computed(() => violationColumns.value.filter((col) => col.show));
 const isComplete = computed(() => filters.value.status === 'complete');
+
+const defaultColumns = computed(() => (props.isAdmin ? tableFields : tableFieldsEnduser));
+
+const {
+  activeColumns,
+  visibleColumns,
+  open: openColumnsModal,
+  pickerProps,
+} = useColumnPicker(
+  defaultColumns,
+  {
+    storageKey: () => `governance-violations-column-picker-${props.isAdmin ? 'admin' : 'user'}`,
+    ignoredColumnKeys: () => (isComplete.value ? ['reviewers'] : []),
+    tableHiddenColumnKeys: () => (isComplete.value ? ['actions', 'reviewers'] : []),
+  },
+);
+
+const columnCategories = computed(() => {
+  const baseCategories = props.isAdmin ? categories : categoriesEnduser;
+  if (isComplete.value) {
+    return baseCategories.map((category) => ({
+      ...category,
+      // 'reviewers' column should not be available for complete violations
+      items: category.items.filter((item) => item.key !== 'reviewers'),
+    }));
+  }
+  return baseCategories;
+});
+
+const violationColumnsToShow = computed(() => visibleColumns.value);
 
 const items = computed(() => {
   if (!props.tableRows?.length) return [];
@@ -318,39 +338,6 @@ const items = computed(() => {
     status: violation.decision?.status,
     user: violation.user,
   }));
-});
-
-// show/hide the reviewers column according to the status filter
-watch(() => filters.value.status, (newStatus) => {
-  // if it is enduser no change is made
-  if (!props.isAdmin) return;
-
-  // on the other hand, verify the change to pending or completed
-  const columnsClone = cloneDeep(violationColumns.value);
-  const categoriesClone = cloneDeep(columnCategories.value);
-  const hasReviewersCategory = some(categoriesClone, (section) => some(section.items, { key: 'reviewers' }));
-  if (newStatus === 'complete') {
-    // hide reviewers column for completed violations
-    violationColumns.value = columnsClone.filter((col) => col.key !== 'reviewers');
-    columnCategories.value = categoriesClone.map((category) => ({
-      ...category,
-      items: category.items.filter((item) => item.key !== 'reviewers'),
-    }));
-  } else {
-    // add the reviewers category only if it was previously removed
-    if (hasReviewersCategory) return;
-    const reviewersColumn = {
-      key: 'reviewers',
-      category: 'user',
-      label: i18n.global.t('common.reviewers'),
-      show: true,
-    };
-    columnsClone.splice(1, 0, reviewersColumn);
-    violationColumns.value = columnsClone;
-    const userSection = categoriesClone.find((category) => category.name === 'user');
-    userSection.items.push(reviewersColumn);
-    columnCategories.value = categoriesClone;
-  }
 });
 
 /**
@@ -458,7 +445,9 @@ async function forwardItem({ actorId, comment }) {
       remediate: true,
     };
     await forwardViolation(itemToForward.value.id, phaseId, actorId, permissions, comment);
-    store.commit('setViolationsCount', store.state.violationsCount - 1);
+    if (store?.state?.violationsCount !== undefined) {
+      store.commit('setViolationsCount', store.state.violationsCount - 1);
+    }
     displayNotification('success', i18n.global.t('governance.violations.successForwardingViolation'));
     getData(filters.value);
   } catch (error) {
@@ -466,23 +455,14 @@ async function forwardItem({ actorId, comment }) {
   }
 }
 
-/**
- * Updates the columns of the list in their corresponding order
- * @param {Object} columns all the information on the columns and their categories
- * @param {Array} columns.activeColumns active columns to be displayed
- * @param {Array} columns.availableColumns available columns separated by category
- */
-function updateColumns({ activeColumns, availableColumns }) {
-  violationColumns.value = activeColumns || cloneDeep(tableFields);
-  columnCategories.value = availableColumns || cloneDeep(categories);
-}
-
-/**
- * Opens column organizer modal
- */
-function openColumnsModal() {
-  bvModal.value.show('ColumnOrganizerModal');
-}
+const columnPickerAvailableColumns = computed(() => columnCategories.value.map((category) => ({
+  key: category.name,
+  label: category.header,
+  children: category.items.map((item) => ({
+    ...item,
+    value: item.key,
+  })),
+})));
 
 /**
  * Open forward modal
@@ -580,7 +560,7 @@ function updatePageSize(newPageSize) {
  */
 function openExceptionModal(item) {
   selectedViolation.value = item;
-  bvModal.value.show('ExceptionModal');
+  bvModal.value.show('FrExceptionModal');
 }
 
 /**
@@ -594,12 +574,12 @@ async function extendException({ violationId, phaseId, payload }) {
   try {
     await allowException(violationId, phaseId, payload);
     // if the violation is allowed forever, it will be removed from the list
-    if (!payload.exceptionExpirationDate) {
+    if (!payload.exceptionExpirationDate && store?.state?.violationsCount !== undefined) {
       store.commit('setViolationsCount', store.state.violationsCount - 1);
     }
     displayNotification('success', i18n.global.t('governance.violations.successAllowingException'));
     getData(filters.value);
-    bvModal.value.hide('ExceptionModal');
+    bvModal.value.hide('FrExceptionModal');
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.violations.errorAllowingException'));
   }
@@ -607,4 +587,7 @@ async function extendException({ violationId, phaseId, payload }) {
 
 getData(filters.value);
 
+defineExpose({
+  activeColumns,
+});
 </script>

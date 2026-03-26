@@ -30,6 +30,9 @@ describe('ListResource Component', () => {
         stubs: {
           'router-link': true,
         },
+        directives: {
+          'resizable-table': true,
+        },
         plugins: [i18n],
         mocks: {
           $route,

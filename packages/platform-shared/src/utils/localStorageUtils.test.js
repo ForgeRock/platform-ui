@@ -8,6 +8,7 @@
 import {
   getValueFromLocalStorage,
   setLocalStorageValue,
+  removeLocalStorageValue,
 } from './localStorageUtils';
 
 const store = require('@/store');
@@ -74,5 +75,28 @@ describe('setLocalStorageValue', () => {
     expect(localStorage.getItem('boolKey')).toBe('true');
     setLocalStorageValue('strKey', 'hello');
     expect(localStorage.getItem('strKey')).toBe('"hello"');
+  });
+});
+
+describe('removeLocalStorageValue', () => {
+  it('removes value from localStorage when webStorageAvailable is true and key is string', () => {
+    localStorage.setItem('removeKey', JSON.stringify({ foo: 'bar' }));
+    expect(localStorage.getItem('removeKey')).not.toBeNull();
+    removeLocalStorageValue('removeKey');
+    expect(localStorage.getItem('removeKey')).toBeNull();
+  });
+
+  it('does not remove value if webStorageAvailable is false', () => {
+    localStorage.setItem('removeKey', JSON.stringify({ foo: 'bar' }));
+    store.state.SharedStore.webStorageAvailable = false;
+    removeLocalStorageValue('removeKey');
+    expect(localStorage.getItem('removeKey')).not.toBeNull();
+    store.state.SharedStore.webStorageAvailable = true; // reset for other tests
+  });
+
+  it('does not remove value if key is not a string', () => {
+    localStorage.setItem('123', JSON.stringify({ foo: 'bar' }));
+    removeLocalStorageValue(123);
+    expect(localStorage.getItem('123')).not.toBeNull();
   });
 });

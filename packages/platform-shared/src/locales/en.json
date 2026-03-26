@@ -91,6 +91,7 @@
     "create": "Create",
     "created": "Created",
     "createDate": "Create Date",
+    "categories": "Categories",
     "custom": "Custom",
     "customizeColumns": "Customize Columns",
     "customizeObject": "Customize {object}",
@@ -203,6 +204,7 @@
     "lastUpdatedAtTime": "Last updated {time}",
     "lastUpdatedBy": "Last Updated By",
     "learnMore": "Learn more",
+    "list": "List",
     "loading": "Loading",
     "loadingEtc": "Loading...",
     "loginCount": "Login Count",
@@ -3384,5 +3386,16 @@
     "conflictError": "Error importing - {itemTypePlural} with the following ids already exist: <br/>{ids}",
     "genericConflictError": "Error importing - item already exists",
     "genericError": "Error importing items"
+  },
+  "columnPicker": {
+    "customizeColumns": "Customize Columns",
+    "availableColumns": "Available Columns",
+    "activeColumns": "Active Columns",
+    "activeColumnsTableCaption": "Active columns, drag to reorder",
+    "noColumnsSelected": "No columns selected",
+    "reset": "Reset",
+    "removeColumn": "Remove {columnName} column",
+    "categories": "Categories",
+    "list": "List"
   }
 }

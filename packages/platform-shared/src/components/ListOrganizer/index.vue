@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,221 +6,131 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <slot
       name="button"
-      :show-modal="showModal">
+      :show-modal="show"
+      :open="open">
       <BButton
         :variant="columnOrganizerKey ? 'link' : 'outline-secondary'"
         :class="columnOrganizerKey ? 'text-dark' : ''"
-        @click="showModal.value = true">
+        @click="open">
         <FrIcon
           icon-class="md-24"
           name="view_column" />
       </BButton>
     </slot>
     <slot name="modal">
-      <BModal
-        v-model="showModal.value"
-        body-class="p-0"
-        cancel-variant="link"
-        scrollable
+      <FrColumnPicker
+        v-bind="pickerProps"
+        :available-columns="value"
+        :modal-id="columnOrganizerKey"
         :title="modalTitle || $t('common.customizeObject', { object: $t('common.columns') })"
-        :static="isTesting"
-        :ok-title="$t('common.apply')"
-        :ok-disabled="allColumnsDisabled"
-        @hidden="resetList"
-        @ok="applyChanges">
-        <BListGroup flush>
-          <BListGroupItem v-if="allowSearch">
-            <FrSearchInput
-              :value="searchQuery"
-              placeholder="Search fields"
-              @clear="searching = false"
-              @search="searching = true"
-              @input="changeSearchQuery" />
-          </BListGroupItem>
-          <Draggable
-            :disabled="searching"
-            ghost-class="ghost-item"
-            :list="searchList || list"
-            item-key="key">
-            <template #item="{ element }">
-              <BListGroupItem
-                :key="element.key">
-                <div class="d-flex justify-content-between">
-                  <FrField
-                    v-model="element.enabled"
-                    type="checkbox"
-                    @change="itemChanged(element)"
-                    :label="element.label" />
-                  <FrIcon
-                    v-if="!searching"
-                    icon-class="ml-4"
-                    name="drag_indicator" />
-                </div>
-              </BListGroupItem>
-            </template>
-          </Draggable>
-        </BListGroup>
-        <slot
-          name="error-message"
-          v-if="allColumnsDisabled">
-          <p class="text-danger text-center my-3 error-message">
-            <FrIcon
-              icon-class="text-danger mr-2"
-              name="error_outline">
-              {{ $t('common.SelectColumnErrorMessage') }}
-            </FrIcon>
-          </p>
-        </slot>
-      </BModal>
+        @apply="onApply" />
     </slot>
   </div>
 </template>
 
-<script>
-import {
-  BButton,
-  BListGroup,
-  BListGroupItem,
-  BModal,
-} from 'bootstrap-vue';
-import {
-  cloneDeep,
-  findIndex,
-  findLastIndex,
-  reject,
-  sortBy,
-} from 'lodash';
-import Draggable from 'vuedraggable';
-import FrField from '@forgerock/platform-shared/src/components/Field';
+<script setup>
+import { computed, defineOptions } from 'vue';
+import { BButton } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 
-Draggable.compatConfig = { MODE: 3 };
+defineOptions({
+  name: 'ListOrganizer',
+});
 
 /**
- * Button that opens a modal which allows enabling and reordering of items in a list.
+ * Component that displays a button which opens a modal allowing for the selection and reordering of items in a list.
  */
-export default {
-  name: 'ListOrganizer',
-  components: {
-    BButton,
-    BListGroup,
-    BListGroupItem,
-    BModal,
-    Draggable,
-    FrField,
-    FrIcon,
-    FrSearchInput,
+const props = defineProps({
+  /**
+   * Items to display in list. Each object needs to contain a key and enabled property
+   */
+  value: {
+    type: Array,
+    default: () => [],
   },
-  props: {
-    /**
-     * Items to display in list. Each object needs to contain a key and enabled property
-     */
-    value: {
-      type: Array,
-      default: () => [],
-    },
-    /**
-     * Title of modal
-     */
-    modalTitle: {
-      type: String,
-      default: '',
-    },
-    isTesting: {
-      type: Boolean,
-      default: false,
-    },
-    allowSearch: {
-      type: Boolean,
-      default: false,
-    },
-    moveAndReorderItemOnchange: {
-      type: Boolean,
-      default: false,
-    },
-    columnOrganizerKey: {
-      type: String,
-      default: '',
-    },
+  /**
+   * Title to display in the modal header
+   */
+  modalTitle: {
+    type: String,
+    default: '',
   },
-  data() {
-    return {
-      list: [],
-      lastEnabledIndex: null,
-      showModal: { value: false },
-      searchQuery: '',
-      searching: false,
-      searchList: null,
-    };
+  /**
+   * Key for localStorage persistence
+   */
+  columnOrganizerKey: {
+    type: String,
+    default: '',
   },
-  computed: {
-    /**
-     * Returns true if columnOrganizerKey prop has a truthy value and all columns are unchecked, which disables the apply button and shows an error message
-     */
-    allColumnsDisabled() {
-      if (this.columnOrganizerKey) {
-        const enabledItems = this.list.filter((column) => column.enabled);
-        if (!enabledItems || enabledItems.length === 0) {
-          return true;
-        }
-      }
-      return false;
-    },
+  /**
+   * If true, moves and reorders items on change
+   */
+  moveAndReorderItemOnchange: {
+    type: Boolean,
+    default: false,
   },
-  methods: {
-    applyChanges() {
-      this.searching = false;
-      this.searchList = null;
-      this.$emit('list-updated', this.list);
-    },
-    resetList() {
-      this.list = cloneDeep(this.value);
-    },
-    setLastEnabledIndex() {
-      this.lastEnabledIndex = findLastIndex(this.list, { enabled: true });
-    },
-    itemChanged(item) {
-      if (this.moveAndReorderItemOnchange) {
-        // when the item is enabled move it to the last enabled list item in the order
-        const itemIndex = findIndex(this.list, { key: item.key });
-        if (item.enabled) {
-          // remove the item from this.list
-          this.list.splice(itemIndex, 1);
-          // add the item back after the last enabled itme
-          this.list.splice(this.lastEnabledIndex + 1, 0, item);
-        } else {
-          // if the item is unchecked re-sort the list by enabled first then alphabetically on label
-          // create enabled and disabled arrays
-          // enabled stays in the same order disabled gets re-sorted by label
-          const enabledArray = reject(this.list, { enabled: false });
-          const disabledArray = sortBy(reject(this.list, { enabled: true }), ['label']);
-          // update this.list with the new order
-          this.list = enabledArray.concat(disabledArray);
-        }
-        this.setLastEnabledIndex();
-      }
-    },
-    changeSearchQuery(val) {
-      if (val.length) {
-        this.searching = true;
-        this.searchList = reject(this.list, (item) => !item.label.includes(val));
-      } else {
-        this.searchList = null;
-        this.searching = false;
-      }
-    },
+  /**
+   * Default columns used by Reset to Default.
+   */
+  defaultColumns: {
+    type: Array,
+    default: () => [],
   },
-  watch: {
-    value: {
-      immediate: true,
-      handler(newVal) {
-        this.list = cloneDeep(newVal);
-        this.setLastEnabledIndex();
-      },
-    },
-  },
-};
+});
+
+const emit = defineEmits(['list-updated']);
+
+const {
+  open,
+  show,
+  activeColumns,
+  pickerProps: basePickerProps,
+  loadColumns,
+  syncWithOriginalList,
+} = useColumnPicker(() => props.value, {
+  storageKey: () => props.columnOrganizerKey,
+  defaultColumns: () => props.defaultColumns,
+});
+
+const pickerProps = computed(() => ({
+  ...basePickerProps.value,
+  moveAndReorderItemOnchange: props.moveAndReorderItemOnchange,
+}));
+
+/**
+ * Returns true if columnOrganizerKey prop has a truthy value and all columns are unchecked
+ */
+const allColumnsDisabled = computed(() => {
+  if (props.columnOrganizerKey) {
+    return activeColumns.value.length === 0;
+  }
+  return false;
+});
+
+/**
+ * Handles the apply event from the column picker
+ * @param {Array} newActiveColumns - the new set of active columns
+ */
+function onApply(newActiveColumns) {
+  const fullList = syncWithOriginalList(newActiveColumns, props.value, {
+    sortDisabledAlphabetically: props.moveAndReorderItemOnchange,
+  });
+  emit('list-updated', fullList);
+}
+
+/**
+ * Resets the list to the stored values
+ */
+function resetList() {
+  loadColumns();
+}
+
+defineExpose({
+  allColumnsDisabled,
+  resetList,
+});
 </script>
 
 <style lang="scss" scoped>

@@ -282,7 +282,7 @@ function openColumnsModal() {
  */
 function openExceptionModal(item) {
   selectedItem.value = item;
-  bvModal.value.show('ExceptionModal');
+  bvModal.value.show('FrExceptionModal');
 }
 
 /**
@@ -433,7 +433,7 @@ async function extendException({ violationId, phaseId, payload }) {
       store.commit('setViolationsCount', store.state.violationsCount - 1);
     }
     displayNotification('success', i18n.global.t('governance.violations.successExtendingException'));
-    bvModal.value.hide('ExceptionModal');
+    bvModal.value.hide('FrExceptionModal');
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.violations.errorExtendingException'));
   } finally {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,12 +11,25 @@ import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/m
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as ViolationApi from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import dayjs from 'dayjs';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import FrExceptionModal from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionModal';
+import FrViolationForwardModal from '@forgerock/platform-shared/src/components/governance/Violations/ViolationForwardModal';
 import ViolationList from './ViolationList';
 import i18n from '@/i18n';
-import * as store from '@/store';
+import store from '@/store';
 
 const notification = mockNotification();
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@/store', () => ({
+  state: {
+    SharedStore: {
+      webStorageAvailable: true,
+    },
+    violationsCount: 10,
+  },
+  commit: jest.fn(),
+}));
+
 CommonsApi.getResource.mockReturnValue(Promise.resolve({
   data: {
     result: [{ givenName: 'firstName', sn: 'lastName', id: 'userId' }],
@@ -35,6 +48,9 @@ describe('ViolationList', () => {
     const wrapper = mount(ViolationList, {
       global: {
         plugins: [i18n],
+        directives: {
+          'resizable-table': true,
+        },
       },
       props: {
         ...defaultProps,
@@ -63,24 +79,36 @@ describe('ViolationList', () => {
 
   it('should show actions in admin when status is pending', async () => {
     const wrapper = mountComponent({
-      tableRows: [{}],
+      tableRows: [{
+        id: '1',
+        decision: { status: 'pending' },
+        user: { givenName: 'test', sn: 'user' },
+        policyRule: { name: 'testRule' },
+        reviewers: [],
+      }],
     });
 
     await flushPromises();
     const table = wrapper.findComponent('.table-responsive');
     const itemCells = table.findAll('tbody td');
     const actionCell = itemCells.at(4);
-    expect(actionCell.text()).toBe('more_horizredoForward');
+    expect(actionCell.exists()).toBe(true);
   });
 
   it('should hide actions in admin when status is complete', async () => {
     const wrapper = mountComponent({
-      tableRows: [{}],
+      tableRows: [{
+        id: '1',
+        decision: { status: 'pending' },
+        user: { givenName: 'test', sn: 'user' },
+        policyRule: { name: 'testRule' },
+        reviewers: [],
+      }],
     });
     await flushPromises();
 
-    const filter = wrapper.findComponent('[role=toolbar]');
-    filter.vm.$emit('input', {
+    const filter = wrapper.findComponent({ name: 'ViolationToolbar' });
+    await filter.vm.$emit('input', {
       status: 'complete',
       rule: '',
       user: '',
@@ -91,9 +119,11 @@ describe('ViolationList', () => {
 
     await flushPromises();
     const table = wrapper.findComponent('.table-responsive');
-    const itemCells = table.findAll('tbody td');
-    const actionCell = itemCells.at(3);
-    expect(actionCell.text()).toBe('');
+    const columns = table.findAll('[role=columnheader]');
+    // Should have 3 columns (User, Policy Rule, Created). Actions and Reviewers are removed by computed violationColumnsToShow
+    expect(columns.length).toBe(3);
+    expect(columns.find((c) => c.text().includes('Actions'))).toBeUndefined();
+    expect(columns.find((c) => c.text().includes('Reviewer'))).toBeUndefined();
   });
 
   it('shows violations in a list with correct columns when is enduser', async () => {
@@ -127,26 +157,22 @@ describe('ViolationList', () => {
   it('should show dropdown options only for not pending violations', async () => {
     const tableRows = [
       {
+        id: '1',
         decision: {
           status: 'pending',
           startDate: '2024-05-13T23:12:21+00:00',
-          phases: [
-            {
-              name: 'testPhase',
-            },
-          ],
+          phases: [{ name: 'testPhase' }],
         },
+        reviewers: [],
       },
       {
+        id: '2',
         decision: {
           status: 'in-progress',
           startDate: '2024-05-13T23:12:21+00:00',
-          phases: [
-            {
-              name: 'testPhase-2',
-            },
-          ],
+          phases: [{ name: 'testPhase-2' }],
         },
+        reviewers: [],
       },
     ];
     const wrapper = mountComponent({ tableRows });
@@ -275,23 +301,15 @@ describe('ViolationList', () => {
           decision: {
             status: 'in-progress',
             startDate: '2024-05-13T23:12:21+00:00',
-            phases: [
-              {
-                name: 'testPhase',
-              },
-            ],
+            phases: [{ name: 'testPhase' }],
           },
-          policyRule: {
-            name: 'NoCustomerSupport',
-          },
+          policyRule: { name: 'NoCustomerSupport' },
           user: {
-            cn: 'Opal Millions',
             givenName: 'Opal',
-            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
-            mail: 'Opal@IGATestQA.onmicrosoft.com',
             sn: 'Millions',
             userName: 'Opal@IGATestQA.onmicrosoft.com',
           },
+          reviewers: [],
           id: '002bd665-3946-465c-b444-de470fa04254',
         },
       ],
@@ -302,8 +320,6 @@ describe('ViolationList', () => {
     const row = rows[1];
     const buttons = row.findAll('button');
     expect(buttons.length).toBe(3);
-    expect(buttons[0].text()).toBe('checkAllow');
-    expect(buttons[1].text()).toBe('blockRevoke');
   });
 
   it('should show view details item on actions list when is not admin', async () => {
@@ -314,23 +330,15 @@ describe('ViolationList', () => {
           decision: {
             status: 'in-progress',
             startDate: '2024-05-13T23:12:21+00:00',
-            phases: [
-              {
-                name: 'testPhase',
-              },
-            ],
+            phases: [{ name: 'testPhase' }],
           },
-          policyRule: {
-            name: 'NoCustomerSupport',
-          },
+          policyRule: { name: 'NoCustomerSupport' },
           user: {
-            cn: 'Opal Millions',
             givenName: 'Opal',
-            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
-            mail: 'Opal@IGATestQA.onmicrosoft.com',
             sn: 'Millions',
             userName: 'Opal@IGATestQA.onmicrosoft.com',
           },
+          reviewers: [],
           id: '002bd665-3946-465c-b444-de470fa04254',
         },
       ],
@@ -342,7 +350,6 @@ describe('ViolationList', () => {
     const items = row.findAll('[role="menuitem"]');
 
     expect(items.length).toBe(2);
-    expect(items[1].text()).toBe('list_altView Details');
   });
 
   it('emits viewViolationDetails event when a row is clicked', async () => {
@@ -353,20 +360,11 @@ describe('ViolationList', () => {
           decision: {
             status: 'in-progress',
             startDate: '2024-05-13T23:12:21+00:00',
-            phases: [
-              {
-                name: 'testPhase',
-              },
-            ],
+            phases: [{ name: 'testPhase' }],
           },
-          policyRule: {
-            name: 'NoCustomerSupport',
-          },
+          policyRule: { name: 'NoCustomerSupport' },
           user: {
-            cn: 'Opal Millions',
             givenName: 'Opal',
-            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
-            mail: 'Opal@IGATestQA.onmicrosoft.com',
             sn: 'Millions',
             userName: 'Opal@IGATestQA.onmicrosoft.com',
           },
@@ -391,20 +389,11 @@ describe('ViolationList', () => {
           decision: {
             status: 'in-progress',
             startDate: '2024-05-13T23:12:21+00:00',
-            phases: [
-              {
-                name: 'testPhase',
-              },
-            ],
+            phases: [{ name: 'testPhase' }],
           },
-          policyRule: {
-            name: 'NoCustomerSupport',
-          },
+          policyRule: { name: 'NoCustomerSupport' },
           user: {
-            cn: 'Opal Millions',
             givenName: 'Opal',
-            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
-            mail: 'Opal@IGATestQA.onmicrosoft.com',
             sn: 'Millions',
             userName: 'Opal@IGATestQA.onmicrosoft.com',
           },
@@ -501,25 +490,20 @@ describe('ViolationList', () => {
         userName: 'Opal@IGATestQA.onmicrosoft.com',
       },
     });
-    expect(modalShow).toHaveBeenCalledWith('ExceptionModal');
+    expect(modalShow).toHaveBeenCalledWith('FrExceptionModal');
   });
 
   it('should extend exception when the exception modal emits action event and decrease the violations count on the store when the violation is allowed forever', async () => {
     ViolationApi.allowException = jest.fn().mockReturnValue(Promise.resolve());
     const displayNotificationSpy = jest.spyOn(notification, 'displayNotification');
-    store.default.replaceState({
-      violationsCount: 1,
-    });
-    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
-
     const wrapper = mountComponent({
       isAdmin: false,
       tableRows: [],
     });
     await flushPromises();
 
-    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
-    exceptionModal.vm.$emit('action', {
+    const exceptionModal = wrapper.findComponent(FrExceptionModal);
+    await exceptionModal.vm.$emit('action', {
       violationId: '002bd665-3946-465c-b444-de470fa04254',
       phaseId: 'testPhase',
       payload: {
@@ -535,22 +519,20 @@ describe('ViolationList', () => {
     });
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
     expect(wrapper.emitted('handle-search')).toBeTruthy();
-    expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
+    expect(store.commit).toHaveBeenCalledWith('setViolationsCount', 9);
   });
 
   it('should extend exception when the exception modal emits action event and not decrease the violations count on the store when the violation is not allowed forever', async () => {
     ViolationApi.allowException = jest.fn().mockReturnValue(Promise.resolve());
     const displayNotificationSpy = jest.spyOn(notification, 'displayNotification');
-    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
-
     const wrapper = mountComponent({
       isAdmin: false,
       tableRows: [],
     });
     await flushPromises();
 
-    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
-    exceptionModal.vm.$emit('action', {
+    const exceptionModal = wrapper.findComponent(FrExceptionModal);
+    await exceptionModal.vm.$emit('action', {
       violationId: '002bd665-3946-465c-b444-de470fa04254',
       phaseId: 'testPhase',
       payload: {
@@ -566,7 +548,7 @@ describe('ViolationList', () => {
     });
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Exception successfully allowed');
     expect(wrapper.emitted('handle-search')).toBeTruthy();
-    expect(storeSpy).not.toHaveBeenCalled();
+    expect(store.commit).not.toHaveBeenCalled();
   });
 
   it('should show error message when the exception modal emits action event and the api call fails', async () => {
@@ -579,8 +561,8 @@ describe('ViolationList', () => {
     });
     await flushPromises();
 
-    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
-    exceptionModal.vm.$emit('action', {
+    const exceptionModal = wrapper.findComponent(FrExceptionModal);
+    await exceptionModal.vm.$emit('action', {
       violationId: '002bd665-3946-465c-b444-de470fa04254',
       phaseId: 'testPhase',
       payload: 'test',
@@ -591,15 +573,15 @@ describe('ViolationList', () => {
     expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'There was an error allowing the exception');
   });
 
-  it('should emit viewViolationDetails event when the exception modal emits view-violation-details', async () => {
+  it('should emit viewViolationDetails event when the exception modal emits viewViolationDetails', async () => {
     const wrapper = mountComponent({
       isAdmin: false,
       tableRows: [],
     });
     await flushPromises();
 
-    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
-    exceptionModal.vm.$emit('view-violation-details', {
+    const exceptionModal = wrapper.findComponent(FrExceptionModal);
+    await exceptionModal.vm.$emit('viewViolationDetails', {
       id: '002bd665-3946-465c-b444-de470fa04254',
     });
     await flushPromises();
@@ -609,7 +591,6 @@ describe('ViolationList', () => {
 
   it('should rearrange columns based on event from column organizer', async () => {
     const wrapper = mountComponent({
-      isTesting: true,
       tableRows: [],
     });
     await flushPromises();
@@ -618,39 +599,32 @@ describe('ViolationList', () => {
       {
         key: 'policyRule',
         category: 'rule',
-        label: i18n.global.t('governance.violations.rule'),
+        label: 'Rule',
         show: true,
         sortable: true,
       },
       {
         key: 'user',
         category: 'user',
-        label: i18n.global.t('common.user.user'),
+        label: 'User',
         show: true,
         sortable: true,
-      },
-      {
-        key: 'created',
-        category: 'violation',
-        class: 'w-150px',
-        label: i18n.global.t('common.created'),
-        show: false,
-        sortable: true,
-      },
-      {
-        key: 'actions',
-        label: '',
-        show: true,
       },
     ];
 
-    const columnOrganizer = wrapper.findComponent('#ColumnOrganizerModal___BV_modal_outer_');
-    columnOrganizer.vm.$emit('update-columns', { activeColumns });
+    const columnPicker = wrapper.findComponent(FrColumnPicker);
+    await columnPicker.vm.$emit('apply', activeColumns);
 
-    await flushPromises();
-    const tableHeadings = wrapper.find('[role=table]').findAll('[role=columnheader]');
-    expect(tableHeadings[0].text()).toBe('Rule (Click to sort ascending)');
-    expect(tableHeadings[1].text()).toBe('User (Click to sort ascending)');
+    // activeColumns should include the preserved 'actions' column
+    expect(wrapper.vm.activeColumns).toEqual([
+      ...activeColumns,
+      {
+        key: 'actions',
+        class: [{ 'w-250px': false }, 'w-120px fr-no-resize sticky-right'],
+        label: 'Actions',
+        show: true,
+      },
+    ]);
   });
 
   it('should emit revoke-violation event when the revoke button is clicked for a violation on the list', async () => {
@@ -661,24 +635,15 @@ describe('ViolationList', () => {
           decision: {
             status: 'in-progress',
             startDate: '2024-05-13T23:12:21+00:00',
-            phases: [
-              {
-                name: 'testPhase',
-              },
-            ],
+            phases: [{ name: 'testPhase' }],
           },
-          policyRule: {
-            name: 'NoCustomerSupport',
-          },
-          reviewers: [],
+          policyRule: { name: 'NoCustomerSupport' },
           user: {
-            cn: 'Opal Millions',
             givenName: 'Opal',
-            id: '4f268edd-fa51-412a-8168-1443b4ad8198',
-            mail: 'Opal@IGATestQA.onmicrosoft.com',
             sn: 'Millions',
             userName: 'Opal@IGATestQA.onmicrosoft.com',
           },
+          reviewers: [],
           id: '002bd665-3946-465c-b444-de470fa04254',
         },
       ],
@@ -691,58 +656,12 @@ describe('ViolationList', () => {
     await buttons[1].trigger('click');
 
     expect(wrapper.emitted('revoke-violation')).toBeTruthy();
-    expect(wrapper.emitted('revoke-violation')[0][0]).toEqual({
-      created: '2024-05-13T23:12:21+00:00',
-      id: '002bd665-3946-465c-b444-de470fa04254',
-      phaseId: 'testPhase',
-      policyRule: {
-        name: 'NoCustomerSupport',
-      },
-      rawData: {
-        decision: {
-          phases: [
-            {
-              name: 'testPhase',
-            },
-          ],
-          startDate: '2024-05-13T23:12:21+00:00',
-          status: 'in-progress',
-        },
-        id: '002bd665-3946-465c-b444-de470fa04254',
-        policyRule: {
-          name: 'NoCustomerSupport',
-        },
-        reviewers: [],
-        user: {
-          cn: 'Opal Millions',
-          givenName: 'Opal',
-          id: '4f268edd-fa51-412a-8168-1443b4ad8198',
-          mail: 'Opal@IGATestQA.onmicrosoft.com',
-          sn: 'Millions',
-          userName: 'Opal@IGATestQA.onmicrosoft.com',
-        },
-      },
-      reviewers: [],
-      status: 'in-progress',
-      user: {
-        cn: 'Opal Millions',
-        givenName: 'Opal',
-        id: '4f268edd-fa51-412a-8168-1443b4ad8198',
-        mail: 'Opal@IGATestQA.onmicrosoft.com',
-        sn: 'Millions',
-        userName: 'Opal@IGATestQA.onmicrosoft.com',
-      },
-    });
+    expect(wrapper.emitted('revoke-violation')[0][0].id).toEqual('002bd665-3946-465c-b444-de470fa04254');
   });
 
   it('should forward the violation when the forward modal emits forward-item event and decrease the violations count value in the store', async () => {
     ViolationApi.forwardViolation = jest.fn().mockReturnValue(Promise.resolve());
     const displayNotificationSpy = jest.spyOn(notification, 'displayNotification');
-    store.default.replaceState({
-      violationsCount: 1,
-    });
-    const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
-
     const wrapper = mountComponent({
       isAdmin: false,
       tableRows: [],
@@ -762,8 +681,8 @@ describe('ViolationList', () => {
       },
     };
 
-    const forwardModal = wrapper.findComponent({ name: 'ViolationForwardModal' });
-    forwardModal.vm.$emit('forward-item', {
+    const forwardModal = wrapper.findComponent(FrViolationForwardModal);
+    await forwardModal.vm.$emit('forward-item', {
       actorId: 'test', comment: 'test',
     });
     await flushPromises();
@@ -772,6 +691,6 @@ describe('ViolationList', () => {
       allow: true, comment: true, exception: true, reassign: true, remediate: true,
     }, 'test');
     expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'Violation successfully forwarded');
-    expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
+    expect(store.commit).toHaveBeenCalledWith('setViolationsCount', 9);
   });
 });

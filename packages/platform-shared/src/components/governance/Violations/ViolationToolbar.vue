@@ -127,7 +127,7 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import i18n from '@/i18n';
 
 // Emits
-const emit = defineEmits(['get-policy-rule-options', 'input']);
+const emit = defineEmits(['get-policy-rule-options', 'input', 'open-columns-modal']);
 
 // Props
 defineProps({

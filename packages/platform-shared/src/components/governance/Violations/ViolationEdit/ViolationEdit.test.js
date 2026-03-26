@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -194,7 +194,7 @@ describe('Violation Edit', () => {
     const wrapper = mountComponent();
     await flushPromises();
 
-    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    const exceptionModal = wrapper.findComponent({ name: 'FrExceptionModal' });
     exceptionModal.vm.$emit('action', {
       violationId: '002bd665-3946-465c-b444-de470fa04254',
       phaseId: 'testPhase',
@@ -222,7 +222,7 @@ describe('Violation Edit', () => {
     const wrapper = mountComponent();
     await flushPromises();
 
-    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    const exceptionModal = wrapper.findComponent({ name: 'FrExceptionModal' });
     exceptionModal.vm.$emit('action', {
       violationId: '002bd665-3946-465c-b444-de470fa04254',
       phaseId: 'testPhase',
@@ -250,7 +250,7 @@ describe('Violation Edit', () => {
     const wrapper = mountComponent();
     await flushPromises();
 
-    const exceptionModal = wrapper.findComponent({ name: 'ExceptionModal' });
+    const exceptionModal = wrapper.findComponent({ name: 'FrExceptionModal' });
     exceptionModal.vm.$emit('action', 'allow');
     await flushPromises();
 

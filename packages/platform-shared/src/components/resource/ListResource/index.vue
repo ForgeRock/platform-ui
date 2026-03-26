@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="d-flex justify-content-end flex-grow-1"
         v-if="columnOrganizerKey"
         :column-organizer-key="columnOrganizerKey"
+        :default-columns="defaultColumns"
         v-model="availableColumnList"
         @list-updated="updateColumnList" />
     </div>
@@ -175,7 +176,6 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { generateSearchQuery, filterFieldsForSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
 import FrListOrganizer from '@forgerock/platform-shared/src/components/ListOrganizer';
-import { setLocalStorageValue } from '@forgerock/platform-shared/src/utils/localStorageUtils';
 import FrClearResourceSessions from '../ClearResourceSessions';
 
 Vue.directive('b-modal', VBModal);
@@ -292,6 +292,10 @@ export default {
     columnOrganizerKey: {
       type: String,
       default: '',
+    },
+    defaultColumns: {
+      type: Array,
+      default: () => [],
     },
     /**
      * Minimum page size for table
@@ -611,14 +615,13 @@ export default {
     },
     /**
      * Handler method for the ListOrganizer list-updated event.
-     * Updates the local storage with the new column list for the corresponding columnOrganizerKey.
-     * updates the availableColumnList which is used to render the column organizer modal,
+     * Updates the availableColumnList which is used to render the column organizer modal,
      * updates the columns based on the enabled columns from updatedColumnList which are used to render the table,
-     * Finally append the action column to the columns list for the table view.
+     * and appends the action column to the columns list for the table view.
+     * Note: localStorage persistence is handled by useColumnPicker via ListOrganizer.
      * @param {Object[]} updatedColumnList - The updated list of columns from the ListOrganizer component.
      */
     updateColumnList(updatedColumnList) {
-      setLocalStorageValue(this.columnOrganizerKey, updatedColumnList);
       this.availableColumnList = updatedColumnList;
       const previousDisplayFields = this.displayFields;
       this.columns = updatedColumnList.filter((column) => column.enabled);
