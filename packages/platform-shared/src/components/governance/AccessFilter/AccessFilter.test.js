@@ -1,14 +1,17 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { ref } from 'vue';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import i18n from '@/i18n';
 import AccessFilter from './AccessFilter';
+import accessConstants from '../../../views/Governance/Access/utils/accessConstants';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
@@ -31,14 +34,86 @@ const mockApplications = [
     templateName: 'azure.ad',
   },
 ];
+const createInputData = () => ref({
+  neverCertified: {
+    value: false,
+    grantTypes: [
+      accessConstants.GRANT_TYPES.ACCOUNT,
+      accessConstants.GRANT_TYPES.ENTITLEMENT,
+      accessConstants.GRANT_TYPES.ROLE,
+    ],
+  },
+  roleBased: {
+    value: false,
+    grantTypes: [
+      accessConstants.GRANT_TYPES.ACCOUNT,
+      accessConstants.GRANT_TYPES.ENTITLEMENT,
+    ],
+  },
+});
 
-const mountComponent = (useQueryFilter = true) => mount(AccessFilter, {
-  global: {
-    plugins: [i18n],
+const createFields = (inputData) => ({
+  general: {
+    name: i18n.global.t('governance.access.filter.generalFilters'),
+    filters: {
+      neverCertified: {
+        not: true,
+        operator: 'EXISTS',
+        path: 'item.decision.certification.decision',
+        value: null,
+      },
+      roleBased: {
+        operator: 'EQUALS',
+        path: 'relationship.properties.grantTypes.grantType',
+        value: 'role',
+        conditional: false,
+      },
+    },
+    components: [
+      {
+        id: 'never-certified',
+        component: FrField,
+        modelKey: 'neverCertified',
+        props: {
+          value: inputData.value.neverCertified.value,
+          type: 'checkbox',
+          class: 'mr-2',
+          label: i18n.global.t('governance.access.filter.neverCertified'),
+          name: 'neverCertified',
+        },
+      },
+      {
+        id: 'role-based',
+        component: FrField,
+        modelKey: 'roleBased',
+        props: {
+          value: inputData.value.roleBased.value,
+          type: 'checkbox',
+          class: 'mr-2',
+          label: i18n.global.t('governance.access.filter.roleBased'),
+          name: 'roleBased',
+        },
+      }],
   },
-  props: {
-    useQueryFilter,
-  },
+});
+
+const mountComponent = (useQueryFilter = true) => {
+  const inputData = createInputData();
+
+  return mount(AccessFilter, {
+    global: {
+      plugins: [i18n],
+      components: { FrField },
+    },
+    props: {
+      useQueryFilter,
+      inputFilterData: inputData,
+      inputFields: createFields(inputData),
+    },
+  });
+};
+afterEach(() => {
+  jest.clearAllMocks();
 });
 
 describe('Access Filter functionality', () => {

@@ -1,98 +1,34 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="d-flex flex-column h-100">
     <div class="flex-grow-1">
-      <ul class="px-4 pb-4 list-unstyled fr-filters-nav mt-2">
+      <ul
+        v-for="field in inputFields"
+        :key="field.name"
+        class="px-4 pb-4 list-unstyled fr-filters-nav mt-2">
         <h3 class="text-secondary mb-3">
-          {{ $t('governance.access.filter.generalFilters') }}
+          {{ field.name }}
         </h3>
-        <li class="w-100 mb-2">
+        <li
+          class="w-100 mb-2">
           <div class="d-flex flex-column">
-            <FrField
-              v-model="filterData.neverCertified.value"
-              class="mr-2"
-              aria-labelledby="label-revoke"
-              name="neverCertified"
-              :label="$t('governance.access.filter.neverCertified')"
-              type="checkbox" />
-          </div>
-        </li>
-        <li class="w-100 mb-2">
-          <div class="d-flex flex-column">
-            <FrField
-              v-model="filterData.roleBased.value"
-              class="mr-2"
-              aria-labelledby="label-revoke"
-              name="roleBased"
-              :label="$t('governance.access.filter.roleBased')"
-              type="checkbox" />
-          </div>
-        </li>
-      </ul>
-      <ul class="px-4 pb-4 list-unstyled fr-filters-nav mb-2">
-        <h3 class="text-secondary mb-3">
-          {{ $t('common.role') }}
-        </h3>
-        <li class="w-100 mb-2">
-          <div class="d-flex flex-column">
-            <FrSearchInput
-              :value="filterData.roleName.value"
-              class="w-100 mb-2"
-              :placeholder="$t('common.role')"
-              @input="debouncedTextSearch('roleName', $event)" />
-          </div>
-        </li>
-        <li class="w-100 mb-2">
-          <div class="d-flex flex-column">
-            <FrField
-              v-model="filterData.conditionalRoles.value"
-              class="mr-2"
-              aria-labelledby="label-revoke"
-              name="conditionalRoles"
-              :label="$t('governance.access.filter.conditional')"
-              type="checkbox" />
-          </div>
-        </li>
-        <li class="w-100 mb-2">
-          <div class="d-flex flex-column">
-            <FrField
-              v-model="filterData.directRoles.value"
-              class="mr-2"
-              aria-labelledby="label-revoke"
-              name="directRoles"
-              :label="$t('governance.access.filter.direct')"
-              type="checkbox" />
-          </div>
-        </li>
-      </ul>
-      <ul class="px-4 pb-4 list-unstyled fr-filters-nav mb-2">
-        <h3 class="text-secondary mb-3">
-          {{ $t('common.application') }}
-        </h3>
-        <li class="w-100 mb-2">
-          <div class="d-flex flex-column">
-            <FrApplicationSearch
+            <component
+              v-for="item in field.components"
+              :key="item.id"
+              :is="item.component"
+              :value="item.props.value"
+              :display-text="filterData[item.props.name]?.value"
+              v-bind="item.props"
+              v-model="filterData[item.props.name].value"
+              v-on="item.on"
+              @input="debouncedTextSearch(item.props.name, $event)"
               @search:applications="searchApplications"
               @update:applications="updateApplications"
-              :applications="filterData.applications.value"
-              :application-search-results="applicationSearchResults" />
-          </div>
-        </li>
-      </ul>
-      <ul class="px-4 pb-4 list-unstyled fr-filters-nav mb-2">
-        <h3 class="text-secondary mb-3">
-          {{ $t('common.entitlement') }}
-        </h3>
-        <li class="w-100 mb-2">
-          <div class="d-flex flex-column">
-            <FrSearchInput
-              :value="filterData.entitlementName.value"
-              class="w-100 mb-4"
-              :placeholder="$t('common.entitlement')"
-              @input="debouncedTextSearch('entitlementName', $event)" />
+              :application-search-results="applicationSearchResults"
+            />
           </div>
         </li>
       </ul>
@@ -115,16 +51,16 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BButton,
 } from 'bootstrap-vue';
-import { debounce } from 'lodash';
-import { ref, watch } from 'vue';
+import {
+  debounce,
+  merge,
+  cloneDeep,
+} from 'lodash';
+import { ref, watch, isRef } from 'vue';
 import { getBasicFilter, getBasicNotFilter, getBasicBooleanFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
-import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
-import FrApplicationSearch from '@forgerock/platform-shared/src/components/governance/ApplicationSearch/ApplicationSearch';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { convertTargetFilterToQueryFilter } from '../../../utils/governance/filters';
-import accessConstants from '../../../views/Governance/Access/utils/accessConstants';
 import i18n from '@/i18n';
 
 const emit = defineEmits([
@@ -132,53 +68,38 @@ const emit = defineEmits([
   'update-filter',
 ]);
 
-/**
- * Returns the default filter data contents
- */
-function getInitialFilterData() {
-  return {
-    neverCertified: {
-      value: false,
-      grantTypes: [accessConstants.GRANT_TYPES.ACCOUNT, accessConstants.GRANT_TYPES.ENTITLEMENT, accessConstants.GRANT_TYPES.ROLE],
-    },
-    roleBased: {
-      value: false,
-      grantTypes: [accessConstants.GRANT_TYPES.ACCOUNT, accessConstants.GRANT_TYPES.ENTITLEMENT],
-    },
-    conditionalRoles: {
-      value: false,
-      grantTypes: [accessConstants.GRANT_TYPES.ROLE],
-    },
-    directRoles: {
-      value: false,
-      grantTypes: [accessConstants.GRANT_TYPES.ROLE],
-    },
-    roleName: {
-      value: null,
-      grantTypes: [accessConstants.GRANT_TYPES.ROLE],
-    },
-    applications: {
-      value: [],
-      grantTypes: [accessConstants.GRANT_TYPES.ACCOUNT, accessConstants.GRANT_TYPES.ENTITLEMENT],
-    },
-    entitlementName: {
-      value: null,
-      grantTypes: [accessConstants.GRANT_TYPES.ENTITLEMENT],
-    },
-  };
-}
-const filterData = ref(getInitialFilterData());
-const debouncedTextSearch = debounce((field, value) => {
-  filterData.value[field].value = value;
-}, 300);
-
-const applicationSearchResults = ref([]);
 const props = defineProps({
   useQueryFilter: {
     type: Boolean,
     default: false,
   },
+  inputFields: {
+    type: Array,
+    default: () => [],
+  },
+  inputFilterData: {
+    type: Object,
+    default: () => ({}),
+  },
 });
+const normalizedFilterData = isRef(props.inputFilterData)
+  ? props.inputFilterData.value
+  : props.inputFilterData;
+const filterData = ref(normalizedFilterData);
+const initialData = cloneDeep(normalizedFilterData);
+const debouncedTextSearch = debounce((field, value) => {
+  filterData.value[field].value = value;
+}, 300);
+function getInputFilters() {
+  const obj = {};
+  Object.keys(props.inputFields).forEach((item) => {
+    merge(obj, props.inputFields[item].filters);
+  });
+  return obj;
+}
+const inputFilters = getInputFilters();
+
+const applicationSearchResults = ref([]);
 
 /**
  * Builds unique filters based on filter type and value
@@ -186,26 +107,14 @@ const props = defineProps({
  * @param value Value to be used for filter
  */
 function getSpecificFilter(filter, value) {
-  if (filter === 'neverCertified') {
-    return getBasicNotFilter('EXISTS', 'item.decision.certification.decision', null);
+  if (inputFilters[filter] && inputFilters[filter].operator === 'IN' && value.length > 0) {
+    const specificFilter = inputFilters[filter];
+    return getBasicFilter(specificFilter.operator, specificFilter.path, value);
   }
-  if (filter === 'roleBased') {
-    return getBasicFilter('EQUALS', 'relationship.properties.grantTypes.grantType', 'role');
-  }
-  if (filter === 'conditionalRoles') {
-    return getBasicFilter('EQUALS', 'relationship.properties.grantTypes.conditional', true);
-  }
-  if (filter === 'directRoles') {
-    return getBasicNotFilter('EXISTS', 'relationship.properties.grantTypes.conditional', null);
-  }
-  if (filter === 'applications' && value.length > 0) {
-    return getBasicFilter('IN', 'application.id', value);
-  }
-  if (filter === 'roleName' && value) {
-    return getBasicFilter('CONTAINS', 'role.name', value);
-  }
-  if (filter === 'entitlementName' && value) {
-    return getBasicFilter('CONTAINS', 'descriptor.idx./entitlement.displayName', value);
+
+  if (inputFilters[filter] && inputFilters[filter].operator !== 'IN') {
+    const specificFilter = inputFilters[filter];
+    return specificFilter.not ? getBasicNotFilter(specificFilter.operator, specificFilter.path, specificFilter.value) : getBasicFilter(specificFilter.operator, specificFilter.path, specificFilter.value || value);
   }
   return null;
 }
@@ -256,7 +165,9 @@ function updateAccessFilter() {
  * Triggers an emit to clear all filters to default
  */
 function clearFilters() {
-  filterData.value = getInitialFilterData();
+  Object.keys(initialData).forEach((key) => {
+    filterData.value[key].value = initialData[key].value;
+  });
   emit('clear-filters');
 }
 

@@ -53,6 +53,8 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="border-top p-2 flex-grow-1 overflow-auto">
             <FrAccessFilter
               use-query-filter
+              :input-fields="accessFilter"
+              :input-filter-data="filterData"
               @update-filter="updateAccessByFilter"
               @clear-filters="clearAccessFilters" />
           </div>
@@ -155,6 +157,9 @@ import FrRoleModal from '@forgerock/platform-shared/src/components/governance/Ob
 import { getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrUserDetails from '@forgerock/platform-shared/src/components/governance/UserDetails';
+import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrApplicationSearch from '@forgerock/platform-shared/src/components/governance/ApplicationSearch/ApplicationSearch';
 import FrAccessToolbar from './components/AccessToolbar';
 import FrAccessDetailPanel from './components/AccessDetailPanel';
 import FrAccessCanvas from './components/AccessCanvas';
@@ -198,6 +203,181 @@ const selectedNode = computed(() => {
     return panelNode;
   }
   return {};
+});
+
+function getInitialFilterData() {
+  return {
+    neverCertified: {
+      value: false,
+      grantTypes: [accessConstants.GRANT_TYPES.ACCOUNT, accessConstants.GRANT_TYPES.ENTITLEMENT, accessConstants.GRANT_TYPES.ROLE],
+    },
+    roleBased: {
+      value: false,
+      grantTypes: [accessConstants.GRANT_TYPES.ACCOUNT, accessConstants.GRANT_TYPES.ENTITLEMENT],
+    },
+    conditionalRoles: {
+      value: false,
+      grantTypes: [accessConstants.GRANT_TYPES.ROLE],
+    },
+    directRoles: {
+      value: false,
+      grantTypes: [accessConstants.GRANT_TYPES.ROLE],
+    },
+    roleName: {
+      value: '',
+      grantTypes: [accessConstants.GRANT_TYPES.ROLE],
+    },
+    applications: {
+      value: [],
+      grantTypes: [accessConstants.GRANT_TYPES.ACCOUNT, accessConstants.GRANT_TYPES.ENTITLEMENT],
+    },
+    entitlementName: {
+      value: '',
+      grantTypes: [accessConstants.GRANT_TYPES.ENTITLEMENT],
+    },
+  };
+}
+const filterData = ref(getInitialFilterData());
+const accessFilter = ref({
+  general: {
+    name: i18n.global.t('governance.access.filter.generalFilters'),
+    filters: {
+      neverCertified: {
+        not: true,
+        operator: 'EXISTS',
+        path: 'item.decision.certification.decision',
+        value: null,
+      },
+      roleBased: {
+        operator: 'EQUALS',
+        path: 'relationship.properties.grantTypes.grantType',
+        value: 'role',
+        conditional: false,
+      },
+    },
+    components: [
+      {
+        id: 'never-certified',
+        component: FrField,
+        modelKey: 'neverCertified',
+        props: {
+          value: filterData.value.neverCertified.value,
+          type: 'checkbox',
+          class: 'mr-2',
+          label: i18n.global.t('governance.access.filter.neverCertified'),
+          name: 'neverCertified',
+        },
+      },
+      {
+        id: 'role-based',
+        component: FrField,
+        modelKey: 'roleBased',
+        props: {
+          value: filterData.value.roleBased.value,
+          type: 'checkbox',
+          class: 'mr-2',
+          label: i18n.global.t('governance.access.filter.roleBased'),
+          name: 'roleBased',
+        },
+      }],
+  },
+  role: {
+    name: i18n.global.t('common.role'),
+    filters: {
+      roleName: {
+        operator: 'CONTAINS',
+        path: 'role.name',
+        conditional: false,
+      },
+      conditionalRoles: {
+        operator: 'EQUALS',
+        path: 'relationship.properties.grantTypes.conditional',
+        value: true,
+        conditional: false,
+      },
+      directRoles: {
+        not: true,
+        operator: 'EQUALS',
+        path: 'relationship.properties.grantTypes.conditional',
+        value: null,
+        conditional: false,
+      },
+    },
+    components: [
+      {
+        id: 'role-search',
+        component: FrSearchInput,
+        modelKey: 'roleName',
+        props: {
+          'display-text': filterData.value.roleName.value,
+          placeholder: i18n.global.t('common.role'),
+          class: 'w-100 mb-4',
+          name: 'roleName',
+        },
+      },
+      {
+        id: 'conditional-roles',
+        component: FrField,
+        modelKey: 'conditionalRoles',
+        props: {
+          type: 'checkbox',
+          class: 'mr-2',
+          label: i18n.global.t('governance.access.filter.conditional'),
+          value: filterData.value.conditionalRoles.value,
+          name: 'conditionalRoles',
+        },
+      },
+      {
+        id: 'direct-roles',
+        component: FrField,
+        modelKey: 'directRoles',
+        props: {
+          type: 'checkbox',
+          class: 'mr-2',
+          label: i18n.global.t('governance.access.filter.direct'),
+          value: filterData.value.directRoles.value,
+          name: 'directRoles',
+        },
+      },
+    ],
+  },
+  application: {
+    name: i18n.global.t('common.application'),
+    filters: {
+      neverCertified: {
+        operator: 'CONTAINS',
+        path: 'descriptor.idx./entitlement.displayName',
+      },
+    },
+    components: [{
+      id: 'application-search',
+      component: FrApplicationSearch,
+      props: {
+        value: filterData.value.applications.value,
+        class: 'w-100 mb-4',
+        name: 'applications',
+      },
+    }],
+  },
+  entitlement: {
+    name: i18n.global.t('common.entitlement'),
+    filters: {
+      entitlementName: {
+        operator: 'CONTAINS',
+        path: 'descriptor.idx./entitlement.displayName',
+      },
+    },
+    components: [{
+      id: 'entitlement-search',
+      component: FrSearchInput,
+      props: {
+        'display-text': filterData.value.entitlementName.value,
+        placeholder: i18n.global.t('common.entitlement'),
+        class: 'w-100 mb-4',
+        name: 'entitlementName',
+      },
+    }],
+  },
 });
 
 /**
