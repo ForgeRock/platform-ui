@@ -16,8 +16,8 @@
   "dependencies": {
     "@badeball/cypress-cucumber-preprocessor": "21.0.2",
     "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
-    "@forgerock/javascript-sdk": "4.8.3",
-    "@forgerock/ping-protect": "4.6.2",
+    "@forgerock/javascript-sdk": "4.9.0",
+    "@forgerock/ping-protect": "4.7.0",
     "@forgerock/platform-shared": "1.0.0",
     "@neuralegion/cypress-har-generator": "5.16.4",
     "@testing-library/cypress": "10.0.1",
