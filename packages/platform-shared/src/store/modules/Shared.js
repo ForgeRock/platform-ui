@@ -60,6 +60,7 @@ const defaultState = {
   riskAdminEnabled: false,
   riskDashboardEnabled: false,
   uiConfig: null,
+  uiLocalizationEnabled: false,
   webStorageAvailable: true,
   workforceEnabled: false,
   wsfedEnabled: false,
@@ -261,6 +262,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_AI_AGENTS?.toString() === 'true') {
       state.aiAgentsEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_UI_LOCALIZATION?.toString() === 'true') {
+      state.uiLocalizationEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_DEV_APP_TEMPLATES?.toString() === 'true') {
