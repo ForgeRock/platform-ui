@@ -3260,6 +3260,10 @@
         "name": "SAML2 NameID Mapper",
         "description": "Script to customize or generate the SAML Name ID mapping for a given SP when Ping Indentity is the Identity Provider."
       },
+      "SAML2_SP_ACCOUNT_MAPPER": {
+        "name": "SAML2 SP Account Mapper",
+        "description": "Script to customize or generate the SAML Account mapping for a given IdP when Ping Identity is the Service Provider."
+      },
       "OAUTH2_SCRIPTED_JWT_ISSUER": {
         "name": "OAuth2 Trusted JWT Issuer",
         "description": "Script to dynamically retrieve the details of an issuer during the JWT profile for authorization grant."
