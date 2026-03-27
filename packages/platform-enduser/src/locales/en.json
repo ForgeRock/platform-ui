@@ -261,6 +261,7 @@
     "Sharing": "Sharing",
     "TaskDetails": "Task Details",
     "Tasks": "Tasks",
+    "UserAdminRequests": "Requests",
     "UserDetails": "User Details",
     "Violations": "Violations",
     "Violation": "Violation",
@@ -358,6 +359,9 @@
         "title": "New Request",
         "userImageAltText": "Profile Picture - {userName}",
         "yourRequest": "Your Request"
+      },
+      "userAdminRequests": {
+        "subTitle": "View and manage access requests."
       },
       "noRequests": "No {status} Access Requests",
       "requestedFor": "Requested For",

@@ -180,7 +180,6 @@ export function generateEndUserMenuItems({
         return undefined; // Skip Access Modeling menu item if govRoleMining is not enabled
       }
     }
-
     // handle enduser ui specific processing
     let routeObject = {};
     let managedObjectInfo = { isManagedObject: menuItem.isManagedObject };
