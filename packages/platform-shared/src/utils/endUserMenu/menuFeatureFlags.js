@@ -18,6 +18,7 @@ export function generateFeatureFlags(store) {
     govLcmEntitlement,
     govLcmRole,
     govRoleMining,
+    govAccessRequests,
     realm,
     SharedStore = {},
   } = store.state;
@@ -44,6 +45,7 @@ export function generateFeatureFlags(store) {
     govLcmUser,
     govRoleMining,
     governanceRoleMiningEnabled,
+    govAccessRequests,
     ifGovernance,
     realm,
     workforceEnabled,

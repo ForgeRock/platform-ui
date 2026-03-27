@@ -41,6 +41,7 @@ export default createStore({
     govLcmUser: false,
     govLcmRole: false,
     govRoleMining: false,
+    govAccessRequests: false,
 
     // governance autoid settings
     govAutoIdSettings: {},
@@ -136,6 +137,10 @@ export default createStore({
 
     setGovRoleMining(state, { groups }) {
       state.govRoleMining = Array.isArray(groups) && groups.includes('access-modeling-administrator');
+    },
+
+    setGovAccessRequests(state, { groups }) {
+      state.govAccessRequests = Array.isArray(groups) && groups.includes('access-request-admin');
     },
   },
   modules: {

@@ -1153,8 +1153,8 @@
     "ComplianceExceptionDetails": "Exception Details",
     "AdministerEntitlements": "Administer Entitlements",
     "Profile": "Profile",
-    "Reports": "Reports"
-
+    "Reports": "Reports",
+    "Requests": "Requests"
   },
   "pagination": {
     "dropdown": {
@@ -1199,6 +1199,7 @@
   },
   "sideMenu": {
     "accounts": "Accounts",
+    "adminRequests": "Requests",
     "authorizationRole": "Internal Role",
     "dashboard": "Dashboard",
     "dataSources": "Data Sources",
@@ -2046,6 +2047,9 @@
       "user": "User"
     },
     "administer": {
+      "requests": {
+        "errorGettingRequests": "There was an error retrieving the requests"
+      },
       "roles": {
         "members": "Members",
         "entitlements": "Entitlements",

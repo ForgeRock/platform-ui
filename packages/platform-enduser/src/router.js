@@ -403,6 +403,23 @@ const router = createRouter({
       ],
     },
     {
+      path: '/requests/:requestsTab?',
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled, store.state.govAccessRequests]),
+      meta: { authenticate: true },
+      children: [
+        {
+          path: '',
+          name: 'UserAdminRequests',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/Requests/UserAdminRequests'),
+        },
+        {
+          path: 'details/:requestId',
+          name: 'RequestDetails',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/Requests/RequestDetails'),
+        },
+      ],
+    },
+    {
       path: '/sharing',
       name: 'Sharing',
       component: () => import('@/components/uma'),

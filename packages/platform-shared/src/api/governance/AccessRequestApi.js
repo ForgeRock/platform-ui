@@ -30,7 +30,7 @@ export function getUserRequests(userId, params, filter) {
 export function getRequests(params, filter) {
   params.action = 'search';
   const queryString = encodeQueryString(params, true);
-  return generateIgaApi().post(`/governance/requests${queryString}`, { targetFilter: filter });
+  return generateIgaApi().post(`/governance/requests/search${queryString}`, { targetFilter: filter });
 }
 
 /**

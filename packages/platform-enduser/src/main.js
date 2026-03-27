@@ -231,6 +231,7 @@ const startApp = async () => {
       // User privileges info for role mining
       const { data: userInfoData } = await getIgaUserInfo();
       store.commit('setGovRoleMining', userInfoData);
+      store.commit('setGovAccessRequests', userInfoData);
     }
 
     // Analytics flags initialization

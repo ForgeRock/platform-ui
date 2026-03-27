@@ -6,6 +6,7 @@
  */
 
 const END_USER_MENU_CONSTANTS = Object.freeze({
+  ADMIN_REQUESTS: 'adminRequests',
   CUSTOM: 'custom',
   DIVIDER: 'divider',
   INTERNAL_ROLE: 'internal/role',
@@ -182,6 +183,11 @@ export const DEFAULT_MENU_ITEMS = [
         routeTo: { name: 'AdministerEntitlements' },
       },
       {
+        id: END_USER_MENU_CONSTANTS.ADMIN_REQUESTS,
+        available: (flag) => flag.governanceDevEnabled,
+        routeTo: { name: 'UserAdminRequests' },
+      },
+      {
         id: END_USER_MENU_CONSTANTS.LCM_ROLES,
         routeTo: { name: 'AdministerRoles' },
         available: (flag) => flag.governanceDevEnabled,
@@ -197,4 +203,5 @@ export const LCM_SUBITEMS_ID_FLAG_MAP = {
   [END_USER_MENU_CONSTANTS.LCM_USERS]: 'govLcmUser',
   [END_USER_MENU_CONSTANTS.LCM_ENTITLEMENTS]: 'govLcmEntitlement',
   [END_USER_MENU_CONSTANTS.LCM_ROLES]: 'govLcmRole',
+  [END_USER_MENU_CONSTANTS.ADMIN_REQUESTS]: 'govAccessRequests',
 };
