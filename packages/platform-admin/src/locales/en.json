@@ -1376,8 +1376,6 @@
               "editPropertyTitle": "Edit Derived Property",
               "errorUpdatingDerivedProperties": "Error updating derived properties",
               "flattenPropertiesDescription": "Flatten to return array of plain fields rather than as JSON objects.",
-              "notifyObjectType": "Notify Related Managed Object Type",
-              "notifyObjectTypeDescription": "Notify specified related managed object types on modification of these properties.",
               "propertiesTitle": "Derived {objectTitle} Properties",
               "searchableDescription": "Display this property as a column in administration tables.",
               "subtitle": "Derived Properties (optional)",
@@ -1411,7 +1409,9 @@
         }
       },
       "saveSuccess": "Managed object type saved",
-      "saveFail": "Error creating managed object type"
+      "saveFail": "Error creating managed object type",
+      "notifyRelationships": "Notify Relationships",
+      "notifyRelationshipsDescription": "Notify specified relationship properties when this property is modified."
     }
   },
   "dashboard": {
