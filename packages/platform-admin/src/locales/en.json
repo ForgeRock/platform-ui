@@ -1000,6 +1000,7 @@
       "properties": "Properties",
       "property": "Property",
       "profileName": "Object Type Key",
+      "managedObjNotFound": "Unable to find the managed object type to delete",
       "deleteFail": "Unable to delete object type",
       "deleteProfile": "Delete Object Type",
       "deleteSuccess": "Object Type successfully deleted",
