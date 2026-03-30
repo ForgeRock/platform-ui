@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -82,7 +82,6 @@ import FrRequestToolbar from '@forgerock/platform-shared/src/components/governan
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrUpdateResumeDateModal from '@forgerock/platform-shared/src/components/governance/RequestDetails/UpdateResumeDateModal';
 import i18n from '@/i18n';
-import store from '@/store';
 
 /**
  * Displays the list of Requests and the corresponding filters.
@@ -253,7 +252,7 @@ async function updateResumeDate(newResumeTime, justification) {
 }
 
 onMounted(() => {
-  if (!props.isAdmin && store.state.SharedStore.governanceDevEnabled) {
+  if (!props.isAdmin) {
     statusOptions.value = [...statusOptions.value, {
       text: i18n.global.t('common.draft'),
       value: 'draft',
