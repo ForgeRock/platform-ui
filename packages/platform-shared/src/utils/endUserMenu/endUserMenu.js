@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -162,9 +162,6 @@ export function generateEndUserMenuItems({
 
       // If LCM menu item is present, ensure it has eligible subItems populated
       finalSubItems = finalSubItems.filter((subItem) => {
-        if (!flags.governanceDevEnabled && subItem.id === 'lcmRoles') {
-          return undefined;
-        }
         const flag = LCM_SUBITEMS_ID_FLAG_MAP[subItem.id];
         return flags[flag]; // Only include subItems if the corresponding flag is true
       });
