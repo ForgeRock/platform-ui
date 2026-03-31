@@ -2130,6 +2130,7 @@
           "updateSigningCertificateLabel": "Update Signing Certificate Only"
         },
         "errors": {
+          "getAppDataFail": "There was an error retrieving application data.",
           "creatingIdpFailed": "Creating IDP Failed",
           "uniqueEntityId": "Metadata must contain a unique entityID",
           "generic": "There has been an error uploading your file. Please try again",
@@ -3388,6 +3389,10 @@
         "description": "Script to be included in an authentication module within a chain and executed on the server during authentication."
       },
       "POLICY_CONDITION": {
+        "name": "Policy Condition",
+        "description": "Script to be used as conditions within authorization policies."
+      },
+      "POLICY_CONDITION_NEXT_GEN": {
         "name": "Policy Condition",
         "description": "Script to be used as conditions within authorization policies."
       },

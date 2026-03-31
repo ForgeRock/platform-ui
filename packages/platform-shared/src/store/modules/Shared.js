@@ -23,7 +23,6 @@ const defaultState = {
   autoReportsEnabled: false,
   currentPackage: '',
   deploymentType: '',
-  applicationPolicyEnabled: false,
   aicConnectionUisEnabled: false,
   fraasEnvironmentUrl: null,
   fraasFederationUrl: null,
@@ -238,10 +237,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX?.toString() === 'true') {
       state.enableSamlSigningCheckbox = true;
-    }
-
-    if (env.VUE_APP_ENABLE_APPLICATION_POLICY?.toString() === 'true') {
-      state.applicationPolicyEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_TEMPLATE_BUILDER?.toString() === 'true') {
