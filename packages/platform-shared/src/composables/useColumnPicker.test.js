@@ -6,7 +6,9 @@
  */
 
 import { mount } from '@vue/test-utils';
-import { defineComponent, toRef } from 'vue';
+import {
+  defineComponent, nextTick, ref, toRef,
+} from 'vue';
 import * as localStorageUtils from '@forgerock/platform-shared/src/utils/localStorageUtils';
 import useColumnPicker from './useColumnPicker';
 
@@ -104,7 +106,40 @@ describe('useColumnPicker', () => {
     expect(wrapper.vm.activeColumns[0].value).toBe('user.name');
   });
 
-  it('always preserves "actions" column even if not in validIds (it is handled internally)', () => {
+  it('preserves the "actions" column from source when it is missing from the column registry', () => {
+    // Real-world setup for the certification table: source (initialColumns/tasksFields) carries
+    // the Actions column with its full definition (CSS classes, label etc), but the columnRegistry
+    // only contains user-pickable columns. Actions is an ignored key, so it's resolved against source.
+    const stored = ['user.name', 'actions'];
+    localStorageUtils.getValueFromLocalStorage.mockReturnValue(stored);
+
+    const actionsCol = {
+      value: 'actions',
+      key: 'actions',
+      class: 'cert-actions fr-no-resize sticky-right',
+      label: 'Actions',
+    };
+    const source = [{ value: 'user.name' }, actionsCol];
+
+    const wrapper = mount(TestComponent, {
+      props: {
+        initialColumns: source,
+        options: {
+          storageKey: 'test-key',
+          columnRegistry: [{ value: 'user.name' }],
+        },
+      },
+    });
+
+    const actionsResult = wrapper.vm.activeColumns.find((c) => c.value === 'actions');
+    expect(actionsResult).toBeDefined();
+    expect(actionsResult.class).toBe(actionsCol.class);
+    expect(actionsResult.label).toBe(actionsCol.label);
+  });
+
+  it('silently drops a stored ignored-key id that is missing from both registry and source', () => {
+    // No placeholder synthesis: if neither source nor registry knows about the id,
+    // it is dropped rather than producing a zombie row in the table.
     const stored = ['user.name', 'actions'];
     localStorageUtils.getValueFromLocalStorage.mockReturnValue(stored);
 
@@ -115,7 +150,7 @@ describe('useColumnPicker', () => {
       },
     });
 
-    expect(wrapper.vm.activeColumns.map((c) => c.value)).toContain('actions');
+    expect(wrapper.vm.activeColumns.map((c) => c.value)).toEqual(['user.name']);
   });
 
   it('reacts to dynamic initialColumns changes', async () => {
@@ -341,5 +376,123 @@ describe('useColumnPicker', () => {
     wrapper.vm.open();
     expect(wrapper.vm.show).toBe(true);
     expect(wrapper.vm.pickerProps.show).toBe(true);
+  });
+
+  describe('columnRegistry option', () => {
+    const ootbColumns = [
+      { value: 'user.user', key: 'user', label: 'User' },
+      { value: 'review.comments', key: 'comments', label: 'Comments' },
+    ];
+
+    const dynamicColumns = [
+      { value: 'user.mail', key: 'mail', label: 'Email' },
+      { value: 'user.givenName', key: 'givenName', label: 'First Name' },
+    ];
+
+    const allColumns = [...ootbColumns, ...dynamicColumns];
+
+    it('resolves stored dynamic column keys that are absent from initialColumns', () => {
+      // Simulates: user saved "user.mail" via the column picker (a dynamic filter-property column),
+      // but initialColumns (tasksFields) only contains OOTB columns.
+      const stored = ['user.user', 'user.mail', 'review.comments'];
+      localStorageUtils.getValueFromLocalStorage.mockReturnValue(stored);
+
+      const wrapper = mount(TestComponent, {
+        props: {
+          initialColumns: ootbColumns,
+          options: {
+            storageKey: 'test-key',
+            columnRegistry: allColumns,
+          },
+        },
+      });
+
+      const activeValues = wrapper.vm.activeColumns.map((c) => c.value);
+      expect(activeValues).toContain('user.user');
+      expect(activeValues).toContain('user.mail');
+      expect(activeValues).toContain('review.comments');
+    });
+
+    it('drops stored keys that are absent from both initialColumns and columnRegistry', () => {
+      const stored = ['user.mail', 'stale.column'];
+      localStorageUtils.getValueFromLocalStorage.mockReturnValue(stored);
+
+      const wrapper = mount(TestComponent, {
+        props: {
+          initialColumns: ootbColumns,
+          options: {
+            storageKey: 'test-key',
+            columnRegistry: allColumns,
+          },
+        },
+      });
+
+      const activeValues = wrapper.vm.activeColumns.map((c) => c.value);
+      expect(activeValues).toContain('user.mail');
+      expect(activeValues).not.toContain('stale.column');
+    });
+
+    it('preserves stored column order from localStorage when using columnRegistry', () => {
+      const stored = ['review.comments', 'user.givenName', 'user.user'];
+      localStorageUtils.getValueFromLocalStorage.mockReturnValue(stored);
+
+      const wrapper = mount(TestComponent, {
+        props: {
+          initialColumns: ootbColumns,
+          options: {
+            storageKey: 'test-key',
+            columnRegistry: allColumns,
+          },
+        },
+      });
+
+      const activeValues = wrapper.vm.activeColumns.map((c) => c.value);
+      expect(activeValues).toEqual(['review.comments', 'user.givenName', 'user.user']);
+    });
+
+    it('falls back to initialColumns for lookup when columnRegistry is not provided', () => {
+      const stored = ['user.user', 'user.mail'];
+      localStorageUtils.getValueFromLocalStorage.mockReturnValue(stored);
+
+      const wrapper = mount(TestComponent, {
+        props: {
+          initialColumns: ootbColumns,
+          options: { storageKey: 'test-key' },
+          // No columnRegistry — dynamic column should be dropped
+        },
+      });
+
+      const activeValues = wrapper.vm.activeColumns.map((c) => c.value);
+      expect(activeValues).toContain('user.user');
+      expect(activeValues).not.toContain('user.mail');
+    });
+
+    it('reloads columns when columnRegistry becomes populated (async pattern)', async () => {
+      const stored = ['user.mail'];
+      localStorageUtils.getValueFromLocalStorage.mockReturnValue(stored);
+
+      // Pass columnRegistry as a getter so toValue() tracks the ref as a dependency.
+      // When registry.value changes, useColumnPicker's columnRegistry computed
+      // re-evaluates and the watch fires loadColumns automatically.
+      const registry = ref([]);
+
+      const wrapper = mount(TestComponent, {
+        props: {
+          initialColumns: ootbColumns,
+          options: { storageKey: 'test-key', columnRegistry: () => registry.value },
+        },
+      });
+
+      // Registry is empty — user.mail cannot be resolved yet
+      expect(wrapper.vm.activeColumns.map((c) => c.value)).not.toContain('user.mail');
+
+      // Simulate async fetch completing
+      registry.value = allColumns;
+      await nextTick();
+      await nextTick();
+
+      // Now that the registry is populated, user.mail should be resolved
+      expect(wrapper.vm.activeColumns.map((c) => c.value)).toContain('user.mail');
+    });
   });
 });

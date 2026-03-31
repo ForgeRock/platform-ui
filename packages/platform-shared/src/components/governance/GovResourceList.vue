@@ -478,7 +478,7 @@ function handleSort({ sortBy: newSortBy, sortDesc: newSortDesc }) {
  */
 function setInitialSort() {
   const initialSort = props.columns.find((column) => column.initialSort);
-  if (initialSort && (!props.queryThreshold && !props.queryThreshold > 0)) {
+  if (initialSort && (!props.queryThreshold && !props.queryThreshold > 0) && !sortBy.value) {
     sortBy.value = initialSort.sortKey || initialSort.key;
     sortDesc.value = false;
   }
@@ -486,6 +486,26 @@ function setInitialSort() {
 
 setInitialSort();
 loadData();
+
+watch(
+  () => props.columns,
+  () => {
+    if (sortBy.value) {
+      const sortColumnExists = props.columns.some(
+        (column) => (column.sortKey || column.key) === sortBy.value,
+      );
+      if (!sortColumnExists) {
+        sortBy.value = '';
+        sortDesc.value = null;
+        // If the current sort column is removed, reset to initial sort if it exists
+        setInitialSort();
+        loadData();
+        return;
+      }
+    }
+    setInitialSort();
+  },
+);
 
 watch(
   () => props.additionalQueryParams,

@@ -164,6 +164,103 @@ describe('ColumnPicker', () => {
     expect(emitted.some((c) => c.key === 'col2')).toBe(true);
   });
 
+  it('deduplicates items with the same value across categories in list view', async () => {
+    const wrapper = mountComponent({
+      availableColumns: [
+        {
+          key: 'application',
+          label: 'Application',
+          children: [
+            { label: 'Application Description', value: 'application.description' },
+          ],
+        },
+        {
+          key: 'account',
+          label: 'Account',
+          children: [
+            { label: 'Application Description', value: 'application.description' },
+            { label: 'Account Name', value: 'account.name' },
+          ],
+        },
+      ],
+      activeColumns: [],
+      defaultColumns: [],
+    });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    const flatList = wrapper.vm.allAvailableColumns;
+    const values = flatList.map((c) => c.value);
+    expect(values.filter((v) => v === 'application.description')).toHaveLength(1);
+  });
+
+  it('keeps items with the same value in both categories in category view', async () => {
+    // The same column legitimately placed in two categories should appear once per category
+    // in the accordion. List view dedups; category view doesn't.
+    const wrapper = mountComponent({
+      availableColumns: [
+        {
+          key: 'application',
+          label: 'Application',
+          children: [
+            { label: 'Application Description', value: 'application.description' },
+          ],
+        },
+        {
+          key: 'account',
+          label: 'Account',
+          children: [
+            { label: 'Application Description', value: 'application.description' },
+          ],
+        },
+      ],
+      activeColumns: [],
+      defaultColumns: [],
+    });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    const totalAccordionItems = wrapper.vm.accordionItems.flatMap((cat) => cat.items);
+    expect(totalAccordionItems).toHaveLength(2);
+    expect(totalAccordionItems.every((i) => i.value === 'application.description')).toBe(true);
+    // Each accordion item carries its own categoryKey so :key bindings don't collide.
+    const categoryKeys = totalAccordionItems.map((i) => i.categoryKey);
+    expect(categoryKeys).toEqual(['application', 'account']);
+  });
+
+  it('does not duplicate items in the flat list when search is typed and cleared', async () => {
+    const wrapper = mountComponent({
+      availableColumns: [
+        {
+          key: 'application',
+          label: 'Application',
+          children: [
+            { label: 'Application Description', value: 'application.description' },
+            { label: 'Application Name', value: 'application.name' },
+          ],
+        },
+      ],
+      activeColumns: [],
+      defaultColumns: [],
+    });
+    await wrapper.setProps({ show: false });
+    await wrapper.setProps({ show: true });
+
+    const initialLength = wrapper.vm.allAvailableColumns.length;
+    expect(initialLength).toBe(2);
+
+    // Repeatedly type and clear search — the underlying data should not grow.
+    const cycle = async () => {
+      wrapper.vm.listSearchQuery = 'description';
+      await wrapper.vm.$nextTick();
+      wrapper.vm.listSearchQuery = '';
+      await wrapper.vm.$nextTick();
+    };
+    await Promise.all(Array.from({ length: 5 }, () => cycle()));
+
+    expect(wrapper.vm.allAvailableColumns.length).toBe(initialLength);
+  });
+
   it('disables the Apply button when there are no active columns', async () => {
     const wrapper = mountComponent({ activeColumns: [] });
     // Ensure show is triggered

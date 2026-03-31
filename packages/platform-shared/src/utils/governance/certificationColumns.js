@@ -59,6 +59,7 @@ function parseColumn(columnItem, category) {
     noCategoryLabel: columnItem.displayName,
     show: false,
     sortable: false,
+    value: `${category}.${columnItem.key}`,
   };
 }
 
@@ -105,6 +106,7 @@ const OOTBColumns = {
     show: true,
     showFor: ['accounts', 'entitlements', 'roles'],
     exportFields: ['user.userName', 'user.givenName', 'user.sn', 'user.mail'],
+    value: 'user.user',
   },
   role: {
     key: 'role',
@@ -115,6 +117,7 @@ const OOTBColumns = {
     show: true,
     showFor: ['roles'],
     exportFields: ['role.name'],
+    value: 'role.role',
   },
   application: {
     key: 'application',
@@ -125,6 +128,7 @@ const OOTBColumns = {
     show: true,
     showFor: ['accounts', 'entitlements', 'entitlementComposition'],
     exportFields: ['application.name'],
+    value: 'application.application',
   },
   entitlement: {
     key: 'entitlement',
@@ -135,6 +139,7 @@ const OOTBColumns = {
     show: true,
     showFor: ['entitlements', 'accountEntitlement', 'entitlementComposition'],
     exportFields: ['descriptor.idx./entitlement.displayName'],
+    value: 'entitlement.entitlement',
   },
   account: {
     key: 'account',
@@ -145,6 +150,7 @@ const OOTBColumns = {
     show: true,
     showFor: ['accounts', 'entitlements'],
     exportFields: ['descriptor.idx./account.displayName'],
+    value: 'account.account',
   },
   prediction: {
     key: 'prediction',
@@ -156,6 +162,7 @@ const OOTBColumns = {
     showFor: ['entitlements', 'accountEntitlement'],
     autoId: true,
     exportFields: ['prediction.confidence'],
+    value: 'review.prediction',
   },
   flags: {
     key: 'flags',
@@ -165,6 +172,7 @@ const OOTBColumns = {
     class: 'w-175px text-truncate fr-access-cell',
     show: true,
     showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
+    value: 'review.flags',
   },
   comments: {
     key: 'comments',
@@ -174,6 +182,7 @@ const OOTBColumns = {
     class: 'w-140px fr-access-cell',
     show: true,
     showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
+    value: 'review.comments',
   },
   actions: {
     key: 'actions',
@@ -182,6 +191,7 @@ const OOTBColumns = {
     sortable: false,
     show: true,
     showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
+    value: 'actions',
   },
 };
 
@@ -239,6 +249,7 @@ function getCustomColumns(columns, columnCategories) {
       class: 'text-truncate fr-access-cell',
       category,
       show: true,
+      value: column,
     };
   });
 
@@ -281,15 +292,13 @@ export function getInitialColumns(grantType, entitlementUserId, showAccountDrill
     { ...OOTBColumns.prediction },
     { ...OOTBColumns.flags },
     { ...OOTBColumns.comments },
-    {
-      key: 'actions',
-      class: `${showAccountDrilldown ? 'w-230px' : 'w-200px'} cert-actions border-left fr-access-cell fr-no-resize sticky-right`,
-      label: i18n.global.t('common.actions'),
-      sortable: false,
-      show: true,
-      showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
-    },
+    { ...OOTBColumns.actions },
   ];
+
+  if (showAccountDrilldown) {
+    const actionsIndex = fields.findIndex((f) => f.key === 'actions');
+    fields[actionsIndex].class = 'w-230px cert-actions border-left fr-access-cell fr-no-resize sticky-right';
+  }
 
   const type = accountEntitlement ? 'accountEntitlement' : grantType || 'accounts';
   const autoIdEnabled = autoIdSettings?.enableAutoId;
@@ -381,7 +390,15 @@ export function getAllColumnCategories(grantType = 'accounts', filterProperties,
     }
     category.items = category.items.filter((item) => autoIdEnabled || !item.autoId);
     category.items.forEach((item) => {
+      item.value = item.value || `${category.name}.${item.key}`;
       delete item.autoId;
+    });
+    // Remove duplicates by value (can arise when filter properties overlap with OOTB columns)
+    const seen = new Set();
+    category.items = category.items.filter((item) => {
+      if (seen.has(item.value)) return false;
+      seen.add(item.value);
+      return true;
     });
     delete category.showFor;
   });

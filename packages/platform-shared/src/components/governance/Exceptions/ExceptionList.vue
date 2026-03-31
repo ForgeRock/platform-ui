@@ -81,10 +81,10 @@ of the MIT license. See the LICENSE file for details. -->
       :total-rows="totalRowCount"
       @input="paginationChange"
       @on-page-size-change="updatePageSize" />
-    <FrColumnOrganizer
-      @update-columns="updateColumns"
-      :active-columns="exceptionColumns"
-      :available-columns="columnCategories" />
+    <FrColumnPicker
+      v-bind="pickerProps"
+      :allow-view-mode-toggle="true"
+      :available-columns="columnPickerAvailableColumns" />
     <FrExceptionModal
       extend-exception
       @action="extendException"
@@ -108,13 +108,13 @@ import {
   BTable,
 } from 'bootstrap-vue';
 import {
-  cloneDeep,
   groupBy,
 } from 'lodash';
 import dayjs from 'dayjs';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
-import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrExceptionToolbar from '@forgerock/platform-shared/src/components/governance/Exceptions/ExceptionToolbar';
@@ -225,9 +225,18 @@ const categories = [
   },
 ];
 
+const {
+  activeColumns,
+  open: openColumnsModal,
+  pickerProps,
+} = useColumnPicker(
+  () => tableFields,
+  {
+    storageKey: () => `governance-exceptions-column-picker-${props.isAdmin ? 'admin' : 'user'}`,
+  },
+);
+
 const currentPage = ref(1);
-const exceptionColumns = ref(tableFields);
-const columnCategories = ref(categories);
 const pageSize = ref(10);
 const selectedItem = ref({});
 const selectedItemId = ref('');
@@ -256,25 +265,16 @@ const items = computed(() => {
 });
 
 // exception columns to show
-const exceptionColumnsToShow = computed(() => exceptionColumns.value.filter((col) => col.show));
+const exceptionColumnsToShow = computed(() => (activeColumns.value.length === 0 ? tableFields : activeColumns.value));
 
-/**
- * Updates the columns of the list in their corresponding order
- * @param {Object} columns all the information on the columns and their categories
- * @param {Array} columns.activeColumns active columns to be displayed
- * @param {Array} columns.availableColumns available columns separated by category
- */
-function updateColumns({ activeColumns, availableColumns }) {
-  exceptionColumns.value = activeColumns || cloneDeep(tableFields);
-  columnCategories.value = availableColumns || cloneDeep(categories);
-}
-
-/**
- * Opens column organizer modal
- */
-function openColumnsModal() {
-  bvModal.value.show('ColumnOrganizerModal');
-}
+const columnPickerAvailableColumns = computed(() => categories.map((category) => ({
+  key: category.name,
+  label: category.header,
+  children: category.items.map((item) => ({
+    ...item,
+    value: item.key,
+  })),
+})));
 
 /**
  * Opens exception modal

@@ -15,6 +15,8 @@ import {
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import Notifications from '@kyvg/vue3-notification';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
+import store from '@/store';
+import i18n from '@/i18n';
 import Delegates from './index';
 
 jest.mock('@/api/governance/DirectoryApi');
@@ -29,13 +31,12 @@ describe('AccessReviews', () => {
       attachTo: createAppContainer(),
       global: {
         mocks: {
-          $t: (t) => t,
           $bvModal: {
             show: jest.fn(),
             hide: jest.fn(),
           },
         },
-        plugins: [Notifications],
+        plugins: [Notifications, i18n],
         stubs: ['AddDelegateModal'],
       },
     });
@@ -43,6 +44,11 @@ describe('AccessReviews', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    store.replaceState({
+      SharedStore: {
+        webStorageAvailable: true,
+      },
+    });
     DirectoryApi.getTaskProxies = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         result: [
@@ -92,6 +98,34 @@ describe('AccessReviews', () => {
       expect(wrapper.vm.searchQuery).toBe('');
       expect(wrapper.vm.paginationPage).toBe(1);
       expect(loadSpy).toHaveBeenCalled();
+    });
+
+    it('clicking column picker button should show the column picker modal', async () => {
+      wrapper.vm.openColumnsModal();
+      expect(wrapper.vm.pickerProps.show).toBe(true);
+    });
+
+    it('should maintain all available columns in the picker when some are deselected and preserve actions column', async () => {
+      // Total fields defined in tableFields is 4 (user, start, end, actions)
+      expect(wrapper.vm.tableFields.length).toBe(4);
+      expect(wrapper.vm.activeColumns.length).toBe(4);
+
+      // Simulate unticking 'start', 'end' AND 'actions' columns (keeping only 'user')
+      // The columns being sent from the modal WON'T have 'actions' because it's filtered out
+      const updatedColumns = [wrapper.vm.tableFields[0]];
+      expect(updatedColumns.find((c) => c.key === 'actions')).toBeUndefined();
+
+      const columnPicker = wrapper.findComponent({ name: 'ColumnPicker' });
+      await columnPicker.vm.$emit('update:activeColumns', updatedColumns);
+
+      // activeColumns should now have 2 (the 1 sent + the preserved 'actions')
+      expect(wrapper.vm.activeColumns.length).toBe(2);
+      expect(wrapper.vm.activeColumns.find((c) => c.key === 'actions')).toBeDefined();
+
+      // Table fields should remain 4
+      expect(wrapper.vm.tableFields.length).toBe(4);
+      // Available columns passed to picker should still be 4
+      expect(columnPicker.props('availableColumns').length).toBe(4);
     });
 
     it('clicking delete should open delete modal', async () => {
@@ -240,7 +274,7 @@ describe('AccessReviews', () => {
       ];
       it('start date is calculated properly', () => {
         const date = wrapper.vm.getStartDate(duration);
-        expect(date).toBe('common.months.february 10, 2023');
+        expect(date).toBe('February 10, 2023');
       });
 
       it('no start date returns -', () => {
@@ -250,7 +284,7 @@ describe('AccessReviews', () => {
 
       it('end date is calculated properly', () => {
         const date = wrapper.vm.getEndDate(duration);
-        expect(date).toBe('common.months.february 15, 2023');
+        expect(date).toBe('February 15, 2023');
       });
 
       it('no end date returns -', () => {

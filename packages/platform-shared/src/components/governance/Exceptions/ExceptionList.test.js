@@ -42,6 +42,12 @@ describe('ExceptionList', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    store.default.replaceState({
+      violationsCount: 1,
+      SharedStore: {
+        webStorageAvailable: true,
+      },
+    });
   });
 
   it('shows exceptions in a list with correct columns', async () => {
@@ -142,9 +148,6 @@ describe('ExceptionList', () => {
   it('should forward the violation when the forward modal emits forward-item event and decrease the violations count value in the store', async () => {
     ViolationApi.forwardViolation = jest.fn().mockReturnValue(Promise.resolve());
     const displayNotificationSpy = jest.spyOn(notification, 'displayNotification').mockImplementation(() => {});
-    store.default.replaceState({
-      violationsCount: 1,
-    });
     const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
 
     const wrapper = mountComponent({
@@ -182,9 +185,6 @@ describe('ExceptionList', () => {
   it('should extend exception when the exception modal emits action event and decrease the violations count on the store when the violation is allowed forever', async () => {
     ViolationApi.allowException = jest.fn().mockReturnValue(Promise.resolve());
     const displayNotificationSpy = jest.spyOn(notification, 'displayNotification').mockImplementation(() => {});
-    store.default.replaceState({
-      violationsCount: 1,
-    });
     const storeSpy = jest.spyOn(store.default, 'commit').mockImplementation();
 
     const wrapper = mountComponent({

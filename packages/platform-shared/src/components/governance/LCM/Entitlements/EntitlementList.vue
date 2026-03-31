@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-5"
       resource="entitlement"
       :additional-query-params="queryFilter"
-      :columns="entitlementColumns"
+      :columns="currentColumns"
       :resource-function="getEntitlementList"
       :show-add-button="showAddButton"
       :show-errors="false"
@@ -26,6 +26,14 @@ of the MIT license. See the LICENSE file for details. -->
           @click="showFilters = !showFilters"
           variant="link">
           <FrIcon name="filter_list" />
+        </BButton>
+        <BButton
+          class="ml-2 toolbar-link-text"
+          @click="openColumnsModal"
+          variant="link">
+          <FrIcon
+            icon-class="md-24"
+            name="view_column" />
         </BButton>
       </template>
       <template #toolbar-expanded>
@@ -105,6 +113,9 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </template>
     </FrGovResourceList>
+    <FrColumnPicker
+      v-bind="pickerProps"
+      :available-columns="tableFields" />
     <FrAddEntitlementModal />
   </BContainer>
 </template>
@@ -114,7 +125,12 @@ of the MIT license. See the LICENSE file for details. -->
  * This component is used to display the entitlements list.
  * Supports searching and pagination
  */
-import { onMounted, ref, watch } from 'vue';
+import {
+  computed,
+  onMounted,
+  ref,
+  watch,
+} from 'vue';
 import {
   BButton,
   BCol,
@@ -139,24 +155,15 @@ import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platfo
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import FrAddEntitlementModal from '@forgerock/platform-shared/src/components/governance/LCM/Roles/AddEntitlementModal';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import i18n from '@/i18n';
 
 // composables
 const router = useRouter();
 const { bvModal } = useBvModal();
 
-// data
-const applicationFilter = ref('');
-const ownerFilter = ref('');
-const queryFilter = ref('');
-const showFilters = ref(false);
-const showAddButton = ref(false);
-
-const allApplicationsOption = {
-  text: i18n.global.t('common.allApplications'),
-  value: 'all',
-};
-const entitlementColumns = [
+const tableFields = [
   {
     key: 'entitlement',
     label: i18n.global.t('common.entitlement'),
@@ -190,6 +197,30 @@ const entitlementColumns = [
     class: 'w-120px fr-no-resize sticky-right',
   },
 ];
+
+const {
+  activeColumns,
+  open: openColumnsModal,
+  pickerProps,
+} = useColumnPicker(
+  () => tableFields,
+  {
+    storageKey: () => 'governance-entitlements-column-picker',
+  },
+);
+
+// data
+const applicationFilter = ref('');
+const ownerFilter = ref('');
+const queryFilter = ref('');
+const showFilters = ref(false);
+const showAddButton = ref(false);
+
+const allApplicationsOption = {
+  text: i18n.global.t('common.allApplications'),
+  value: 'all',
+};
+const currentColumns = computed(() => activeColumns.value);
 
 /**
  * Navigates to the details page of the specified entitlement.

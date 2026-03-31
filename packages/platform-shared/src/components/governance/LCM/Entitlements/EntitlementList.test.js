@@ -10,8 +10,10 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { createAppContainer } from '@forgerock/platform-shared/src/utils/testHelpers';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import { createRouter, createWebHistory } from 'vue-router';
 import EntitlementList from './EntitlementList';
 import i18n from '@/i18n';
+import store from '@/store';
 import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
@@ -23,12 +25,32 @@ jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
 
 describe('EntitlementList', () => {
   let wrapper;
+  const router = createRouter({
+    history: createWebHistory(),
+    routes: [
+      {
+        path: '/entitlements',
+        name: 'Entitlements',
+        component: EntitlementList,
+      },
+    ],
+  });
+
   function mountComponent() {
     setupTestPinia({ user: {} });
+    store.replaceState({
+      SharedStore: {
+        webStorageAvailable: true,
+      },
+    });
+    router.push('/entitlements');
     return mount(EntitlementList, {
       attachTo: createAppContainer(),
       global: {
-        plugins: [i18n],
+        plugins: [i18n, router],
+        directives: {
+          'resizable-table': jest.fn(),
+        },
       },
     });
   }
@@ -106,6 +128,40 @@ describe('EntitlementList', () => {
     const entitlementRow = wrapper.find('tbody tr');
     expect(entitlementRow.text()).toMatch('Christian Marnell');
     expect(entitlementRow.text()).toMatch('christian.marnell');
+  });
+
+  it('clicking column picker button should show the column picker modal', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    wrapper.vm.openColumnsModal();
+    expect(wrapper.vm.pickerProps.show).toBe(true);
+  });
+
+  it('should maintain all available columns in the picker when some are deselected and preserve actions column', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    // Total fields defined in tableFields is 6 (including actions)
+    expect(wrapper.vm.tableFields.length).toBe(6);
+    expect(wrapper.vm.activeColumns.length).toBe(6);
+
+    // Simulate unticking a column by emitting update:activeColumns with only 4 columns (excluding actions and one other)
+    // The columns being sent from the modal WON'T have actions
+    const updatedColumns = wrapper.vm.tableFields.slice(0, 4);
+    expect(updatedColumns.find((c) => c.key === 'actions')).toBeUndefined();
+
+    const columnPicker = wrapper.findComponent({ name: 'ColumnPicker' });
+    await columnPicker.vm.$emit('update:activeColumns', updatedColumns);
+
+    // activeColumns should now have 5 (the 4 sent + the preserved actions)
+    expect(wrapper.vm.activeColumns.length).toBe(5);
+    expect(wrapper.vm.activeColumns.find((c) => c.key === 'actions')).toBeDefined();
+
+    // Table fields should remain 6
+    expect(wrapper.vm.tableFields.length).toBe(6);
+    // Available columns passed to picker should still be 6
+    expect(columnPicker.props('availableColumns').length).toBe(6);
   });
 
   it('shows account attribute', async () => {

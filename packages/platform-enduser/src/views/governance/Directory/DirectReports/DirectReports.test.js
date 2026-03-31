@@ -9,6 +9,8 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import Notifications from '@kyvg/vue3-notification';
+import store from '@/store';
+import i18n from '@/i18n';
 import DirectReports from './index';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
 
@@ -60,14 +62,18 @@ describe('DirectReports Component', () => {
   };
   beforeEach(() => {
     jest.clearAllMocks();
+    store.replaceState({
+      SharedStore: {
+        webStorageAvailable: true,
+      },
+    });
     DirectoryApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
     setupTestPinia({ user: { userId: 'testId' } });
 
     wrapper = mount(DirectReports, {
       global: {
-        plugins: [Notifications],
+        plugins: [Notifications, i18n],
         mocks: {
-          $t: (t) => t,
           $router: mockRouter,
         },
       },
@@ -105,6 +111,28 @@ describe('DirectReports Component', () => {
     expect(loadSpy).toHaveBeenCalled();
   });
 
+  it('clicking column picker button should show the column picker modal', async () => {
+    wrapper.vm.openColumnsModal();
+    expect(wrapper.vm.pickerProps.show).toBe(true);
+  });
+
+  it('should maintain all available columns in the picker when some are deselected', async () => {
+    // Total fields defined in tableFields is 2 (userName, accountStatus)
+    expect(wrapper.vm.tableFields.length).toBe(2);
+
+    // Simulate unticking a column by emitting apply with only 1 column
+    const updatedColumns = wrapper.vm.tableFields.slice(0, 1);
+    const columnPicker = wrapper.findComponent({ name: 'ColumnPicker' });
+    await columnPicker.vm.$emit('apply', updatedColumns);
+
+    // Table fields should remain 2
+    expect(wrapper.vm.tableFields.length).toBe(2);
+    // Available columns passed to picker should still be 2
+    expect(columnPicker.props('availableColumns').length).toBe(2);
+    // Active columns should now be 1
+    expect(wrapper.vm.activeColumns.length).toBe(1);
+  });
+
   it('can set page size', () => {
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     wrapper.vm.pageSizeChange(20);
@@ -132,7 +160,7 @@ describe('DirectReports Component', () => {
     DirectoryApi.getDirectReports.mockImplementation(() => Promise.reject(error));
     const spyNotification = jest.spyOn(wrapper.vm, 'showErrorMessage');
     await wrapper.vm.loadData();
-    expect(spyNotification).toHaveBeenCalledWith(error, 'governance.directReports.errorGettingDirectReports');
+    expect(spyNotification).toHaveBeenCalledWith(error, 'Error getting direct reports.');
   });
 
   it('adjusting search input adjusts search query', async () => {

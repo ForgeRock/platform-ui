@@ -14,6 +14,7 @@ import {
 } from 'vue';
 import { cloneDeep, sortBy } from 'lodash';
 import { getValueFromLocalStorage, setLocalStorageValue, removeLocalStorageValue } from '@forgerock/platform-shared/src/utils/localStorageUtils';
+import { getColumnId } from '@forgerock/platform-shared/src/components/ColumnPicker/utils';
 
 // Keys that indicate a column has visibility - this is not always a uniform name so we check for multiple common options
 const VISIBILITY_KEYS = ['enabled', 'show'];
@@ -55,15 +56,20 @@ function setColumnEnabled(col) {
  * Headless orchestrator for the ColumnPicker component.
  * This hook is intended to be used by the component managing the table.
  *
- * @param {Array|Ref|Function} initialColumns - The full list of available columns used as the source for resolving stored keys (can be reactive)
+ * @param {Array|Ref|Function} initialColumns - The default columns shown when no stored state exists (can be reactive)
  * @param {Object} options - Configuration options
  * @param {String|Ref|Function} options.storageKey - Key for localStorage persistence (can be reactive)
  * @param {Array|Ref|Function} [options.defaultColumns] - Columns to restore when "Reset to Default" is clicked. If omitted, falls back to initialColumns.
+ * @param {Array|Ref|Function} [options.columnRegistry] - Full lookup table of all possible columns (including dynamic ones).
+ *   Used to resolve stored column keys that may not appear in initialColumns. Falls back to initialColumns when not provided.
  */
 export default function useColumnPicker(initialColumns = [], options = {}) {
   const activeColumns = ref([]);
   const showModal = ref(false);
   const currentStorageKey = computed(() => toValue(options.storageKey));
+  // columnRegistry provides the full lookup table for resolving stored column keys.
+  // Falls back to initialColumns when not provided.
+  const columnRegistry = computed(() => toValue(options.columnRegistry) || toValue(initialColumns));
   // ignoredColumnKeys should always be a string array and include 'actions' as a default ignored key.
   const ignoredColumnKeys = computed(() => {
     const additional = toValue(options.ignoredColumnKeys) || [];
@@ -78,12 +84,15 @@ export default function useColumnPicker(initialColumns = [], options = {}) {
 
   /**
    * Loads columns from local storage or defaults to defaultColumns (or initialColumns as fallback).
-   * Handles both flat arrays and  "enabled" flag arrays.
-   * Also prunes columns that are no longer available in the source list.
+   * Handles both flat arrays and "enabled" flag arrays.
+   * Also prunes columns that are no longer available in the registry.
+   * Uses columnRegistry (when provided) as the full lookup table so that
+   * dynamic columns not present in initialColumns can still be resolved.
    */
   function loadColumns() {
     const stored = currentStorageKey.value ? getValueFromLocalStorage(currentStorageKey.value) : null;
     const source = toValue(initialColumns);
+    const registry = columnRegistry.value;
     const optionDefaults = toValue(options.defaultColumns);
     // If no default options are provided, fall back to source columns as the default
     const defaults = optionDefaults?.length ? optionDefaults : source;
@@ -94,16 +103,18 @@ export default function useColumnPicker(initialColumns = [], options = {}) {
 
     if (isValidFormat && stored.length) {
       baseColumns = stored.map((id) => {
-        const found = source.find((c) => (c.value || c.key) === id);
+        const found = registry.find((c) => getColumnId(c) === id);
         if (found) {
           const cloned = cloneDeep(found);
           setColumnEnabled(cloned);
           return cloned;
         }
-        // If a stored column isn't found but is part of the ignored column keys we return a placeholder object.
-        // This should never happen since ignored columns are filtered out before saving, but this is a safeguard against stale storage values.
+        // Ignored columns (e.g. 'actions') are intentionally absent from the registry,
+        // so look them up in the source list to preserve their full definition
+        // (CSS classes like fr-no-resize, label, etc).
         if (ignoredColumnKeys.value.includes(id)) {
-          return { value: id, key: id };
+          const fromSource = source.find((c) => getColumnId(c) === id);
+          return fromSource ? cloneDeep(fromSource) : null;
         }
         return null;
       }).filter(Boolean);
@@ -119,10 +130,10 @@ export default function useColumnPicker(initialColumns = [], options = {}) {
       activeColumns.value = [];
     }
 
-    // Prune stale columns that no longer exist in the current source
-    const validIds = new Set(source.map((c) => c.value || c.key));
+    // Prune stale columns that no longer exist in the registry
+    const validIds = new Set(registry.map((c) => getColumnId(c)));
     activeColumns.value = activeColumns.value.filter((c) => {
-      const id = c.value || c.key;
+      const id = getColumnId(c);
       return ignoredColumnKeys.value.includes(id) || validIds.has(id);
     });
 
@@ -138,33 +149,33 @@ export default function useColumnPicker(initialColumns = [], options = {}) {
     const source = toValue(initialColumns);
     const rawDefaults = toValue(options.defaultColumns);
     const defaults = rawDefaults?.length ? rawDefaults : source;
-    const hiddenInState = activeColumns.value.filter((c) => ignoredColumnKeys.value.includes(c.value || c.key));
+    const hiddenInState = activeColumns.value.filter((c) => ignoredColumnKeys.value.includes(getColumnId(c)));
     const columnsToSave = cloneDeep(newColumns);
     columnsToSave.forEach(setColumnEnabled);
 
     hiddenInState.forEach((hiddenCol) => {
-      const id = hiddenCol.value || hiddenCol.key;
-      if (!columnsToSave.find((c) => (c.value || c.key) === id)) {
+      const id = getColumnId(hiddenCol);
+      if (!columnsToSave.find((c) => getColumnId(c) === id)) {
         columnsToSave.push(hiddenCol);
       }
     });
 
     if (currentStorageKey.value) {
-      const validIds = new Set(source.map((c) => c.value || c.key));
-      const isVisible = (c) => !ignoredColumnKeys.value.includes(c.value || c.key);
+      const validIds = new Set(source.map((c) => getColumnId(c)));
+      const isVisible = (c) => !ignoredColumnKeys.value.includes(getColumnId(c));
       const normalizedDefaults = (defaults.length > 0 && hasEnabledProp(defaults[0])
         ? defaults.filter((c) => isColumnEnabled(c))
         : defaults)
-        .filter((c) => isVisible(c) && validIds.has(c.value || c.key));
+        .filter((c) => isVisible(c) && validIds.has(getColumnId(c)));
 
-      const defaultVisibleIds = normalizedDefaults.map((c) => c.value || c.key).join(',');
-      const newVisibleIds = columnsToSave.filter(isVisible).map((c) => c.value || c.key).join(',');
+      const defaultVisibleIds = normalizedDefaults.map((c) => getColumnId(c)).join(',');
+      const newVisibleIds = columnsToSave.filter(isVisible).map((c) => getColumnId(c)).join(',');
 
       // Only persist if there is a difference from defaults to avoid unnecessary localStorage usage.
       if (defaultVisibleIds === newVisibleIds) {
         removeLocalStorageValue(currentStorageKey.value);
       } else {
-        setLocalStorageValue(currentStorageKey.value, columnsToSave.map((c) => c.value || c.key || c));
+        setLocalStorageValue(currentStorageKey.value, columnsToSave.map((c) => getColumnId(c)));
       }
     }
     activeColumns.value = columnsToSave;
@@ -180,15 +191,16 @@ export default function useColumnPicker(initialColumns = [], options = {}) {
    * @returns {Array} Combined list with enabled flags
    */
   function syncWithOriginalList(active, original, syncOptions = {}) {
-    const activeKeys = active.map((ac) => ac.value || ac.key);
+    const activeKeys = active.map((ac) => getColumnId(ac));
     const activePart = active.map((ac) => {
-      const found = original.find((v) => (v.value || v.key) === (ac.value || ac.key));
+      const id = getColumnId(ac);
+      const found = original.find((v) => getColumnId(v) === id);
       return { ...found, enabled: true };
     });
     let inactivePart = original
-      .filter((col) => !activeKeys.includes(col.value || col.key))
+      .filter((col) => !activeKeys.includes(getColumnId(col)))
       .map((col) => {
-        const isIgnored = ignoredColumnKeys.value.includes(col.value || col.key);
+        const isIgnored = ignoredColumnKeys.value.includes(getColumnId(col));
         return { ...col, enabled: isIgnored ? (col.enabled !== false) : false };
       });
 
@@ -212,11 +224,11 @@ export default function useColumnPicker(initialColumns = [], options = {}) {
     'onUpdate:show': (val) => { showModal.value = val; },
     'onUpdate:activeColumns': (val) => {
       const source = toValue(initialColumns);
-      const hiddenInSource = source.filter((c) => ignoredColumnKeys.value.includes(c.value || c.key));
+      const hiddenInSource = source.filter((c) => ignoredColumnKeys.value.includes(getColumnId(c)));
       const newVal = cloneDeep(val);
       hiddenInSource.forEach((hiddenCol) => {
-        const id = hiddenCol.value || hiddenCol.key;
-        if (!newVal.find((c) => (c.value || c.key) === id)) {
+        const id = getColumnId(hiddenCol);
+        if (!newVal.find((c) => getColumnId(c) === id)) {
           newVal.push(hiddenCol);
         }
       });
@@ -233,6 +245,12 @@ export default function useColumnPicker(initialColumns = [], options = {}) {
     loadColumns();
   }, { deep: true });
 
+  // When the column registry changes (e.g. after an async fetch populates dynamic columns),
+  // reload so that previously unresolvable stored keys can now be matched.
+  watch(columnRegistry, () => {
+    loadColumns();
+  }, { deep: true });
+
   onMounted(() => {
     loadColumns();
   });
@@ -240,7 +258,7 @@ export default function useColumnPicker(initialColumns = [], options = {}) {
   // The list of columns to actually show in the table, filtering out any that are hidden via tableHiddenColumnKeys
   const visibleColumns = computed(() => {
     const current = activeColumns.value.length === 0 ? toValue(initialColumns) : activeColumns.value;
-    return current.filter((c) => !tableHiddenColumnKeys.value.includes(c.value || c.key));
+    return current.filter((c) => !tableHiddenColumnKeys.value.includes(getColumnId(c)));
   });
 
   return {
