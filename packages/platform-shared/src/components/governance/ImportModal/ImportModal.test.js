@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -33,6 +33,13 @@ describe('ImportModal', () => {
         ...props,
       },
     });
+  }
+
+  // Helper to wait for async FileReader operations
+  async function waitForFileReader() {
+    await flushPromises();
+    await flushPromises();
+    await new Promise((resolve) => setTimeout(resolve, 0));
   }
 
   beforeEach(() => {
@@ -81,9 +88,8 @@ describe('ImportModal', () => {
       let spinner = findByTestId(wrapper, 'import-spinner');
       expect(spinner.exists()).toBeTruthy();
 
-      // both flushPromises are required here
-      await flushPromises();
-      await flushPromises();
+      // Wait for FileReader to complete
+      await waitForFileReader();
       expect(mockValidateFunctionSuccess).toHaveBeenCalled();
       expect(mockImportFunctionSuccess).toHaveBeenCalled();
 
@@ -120,9 +126,8 @@ describe('ImportModal', () => {
       const importBtn = wrapper.find('.btn-primary');
       await importBtn.trigger('click');
 
-      // both flushPromises are required here
-      await flushPromises();
-      await flushPromises();
+      // Wait for FileReader to complete
+      await waitForFileReader();
       expect(mockValidateFunctionFailure).toHaveBeenCalled();
       expect(mockImportFunctionSuccess).not.toHaveBeenCalled(); // Does not try to import
 
@@ -149,9 +154,9 @@ describe('ImportModal', () => {
       const importBtn = wrapper.find('.btn-primary');
       await importBtn.trigger('click');
 
-      // both flushPromises are required here
-      await flushPromises();
-      await flushPromises();
+      // Wait for FileReader to complete
+      await waitForFileReader();
+
       expect(mockValidateFunctionGenericError).toHaveBeenCalled();
       expect(mockImportFunctionSuccess).not.toHaveBeenCalled(); // Does not try to import
 
@@ -178,9 +183,8 @@ describe('ImportModal', () => {
       const importBtn = wrapper.find('.btn-primary');
       await importBtn.trigger('click');
 
-      // both flushPromises are required here
-      await flushPromises();
-      await flushPromises();
+      // Wait for FileReader to complete
+      await waitForFileReader();
       expect(mockValidateFunctionSuccess).toHaveBeenCalled();
       expect(mockImportFunctionGenericError).toHaveBeenCalled();
 

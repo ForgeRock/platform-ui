@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -33,6 +33,13 @@ describe('ImportModal', () => {
         ...props,
       },
     });
+  }
+
+  // Helper to wait for async FileReader operations
+  async function waitForFileReader() {
+    await flushPromises();
+    await flushPromises();
+    await new Promise((resolve) => setTimeout(resolve, 0));
   }
 
   describe('@renders', () => {
@@ -77,9 +84,9 @@ describe('ImportModal', () => {
       let spinner = findByTestId(wrapper, 'import-spinner');
       expect(spinner.exists()).toBeTruthy();
 
-      // both flushPromises are required here
-      await flushPromises();
-      await flushPromises();
+      // Wait for FileReader to complete
+      await waitForFileReader();
+
       expect(mockImportFunctionSuccess).toHaveBeenCalled();
 
       spinner = findByTestId(wrapper, 'import-spinner');
@@ -115,9 +122,9 @@ describe('ImportModal', () => {
       const importBtn = wrapper.find('.btn-primary');
       await importBtn.trigger('click');
 
-      // all flushPromises are required here
-      await flushPromises();
-      await flushPromises();
+      // Wait for FileReader to complete
+      await waitForFileReader();
+
       await flushPromises();
       expect(mockImportFunctionGenericError).toHaveBeenCalled();
 
@@ -145,9 +152,9 @@ describe('ImportModal', () => {
       const importBtn = wrapper.find('.btn-primary');
       await importBtn.trigger('click');
 
-      // both flushPromises are required here
-      await flushPromises();
-      await flushPromises();
+      // Wait for FileReader to complete
+      await waitForFileReader();
+
       expect(mockImportFunctionConflictError).toHaveBeenCalled();
 
       const errorMessage = wrapper.find('.error-message');
@@ -174,8 +181,9 @@ describe('ImportModal', () => {
       const importBtn = wrapper.find('.btn-primary');
       await importBtn.trigger('click');
 
-      await flushPromises();
-      await flushPromises();
+      // Wait for FileReader to complete
+      await waitForFileReader();
+
       expect(mockImportFunctionSuccessGeneralError).toHaveBeenCalled();
 
       const importComplete = wrapper.find('h3');
