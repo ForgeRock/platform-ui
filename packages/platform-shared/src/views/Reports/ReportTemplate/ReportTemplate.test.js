@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -35,7 +35,13 @@ describe('Component for creating custom analytics reports', () => {
     return mount(ReportTemplate, {
       attachTo: createAppContainer(),
       global: {
+        directives: {
+          'resizable-table': {},
+        },
         plugins: [i18n],
+        stubs: {
+          RouterLink: true,
+        },
       },
       props: {
         isTesting: true,
@@ -895,12 +901,16 @@ describe('Component for creating custom analytics reports', () => {
           const [,, applicationsRoles] = dataSourceContainer.findAll('.card');
           await toggleActionsMenu(applicationsRoles.find('.menu-container'));
           await findByText(domWrapper, 'a', 'deleteDelete').trigger('click');
+          await flushPromises();
+          await nextTick();
+
           // opens filter modal to ensure that the second rule that had the deleted data source selection is also deleted
           filterSettingsContainer = findByTestId(wrapper, 'filter-settings-container');
           await toggleActionsMenu(filterSettingsContainer);
           editFilterOptionButton = findByText(domWrapper, 'a', 'editEdit Filter');
           await editFilterOptionButton.trigger('click');
           await flushPromises();
+          await nextTick();
 
           // should now only be one rule
           const rules = filtersModal.findAll('.queryfilter-row');
