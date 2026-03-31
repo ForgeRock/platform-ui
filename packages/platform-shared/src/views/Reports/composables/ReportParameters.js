@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -55,6 +55,7 @@ export default function useReportParameters() {
           inputType,
           inputLabel: val.label,
           multivalued: !!val.item,
+          optional: !!val.optional,
           parameterName: key,
           source: val.source || val.parameterType,
           ...dataSourceProperties,
@@ -84,6 +85,7 @@ export default function useReportParameters() {
             inputLabel,
             helpText,
             multivalued,
+            optional,
             source,
           } = definition;
           const dataSourceProperties = {
@@ -100,6 +102,7 @@ export default function useReportParameters() {
               description: helpText,
               type: multivalued ? 'array' : inputType,
               ...dataSourceProperties,
+              ...(optional && { optional: true }),
               ...(multivalued && { item: { type: inputType } }),
               ...(enumeratedValues?.length && inputType.toLowerCase() === 'string' && { enum: enumeratedValues }),
             },

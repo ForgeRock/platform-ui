@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -25,6 +25,7 @@ describe('@useReportParameters', () => {
     inputType: 'string',
     inputLabel: 'paramOne label',
     multivalued: true,
+    optional: false,
     parameterName: 'paramOne',
     source: 'basic',
   };
@@ -59,6 +60,29 @@ describe('@useReportParameters', () => {
       },
     };
 
+    it('outputs optional: true in UI data set when API config has optional set', async () => {
+      const optionalParameter = {
+        myOptionalParam: {
+          label: 'My Optional Parameter',
+          description: '',
+          type: 'string',
+          source: 'basic',
+          optional: true,
+        },
+      };
+
+      const result = await parameterDefinitions(optionalParameter);
+      expect(result).toEqual([{
+        helpText: '',
+        inputType: 'string',
+        inputLabel: 'My Optional Parameter',
+        multivalued: false,
+        optional: true,
+        parameterName: 'myOptionalParam',
+        source: 'basic',
+      }]);
+    });
+
     it('outputs a UI friendly data set from an expected API input', async () => {
       const firstDefinition = await parameterDefinitions(parametersAPIBasicEnum);
       expect(firstDefinition).toEqual([userProvidedEnumeratedMultivalued]);
@@ -78,6 +102,7 @@ describe('@useReportParameters', () => {
         inputType: 'string',
         inputLabel: 'My Basic Parameter',
         multivalued: false,
+        optional: false,
         parameterName: 'mySecondParam',
         source: 'basic',
       }]);
@@ -158,6 +183,28 @@ describe('@useReportParameters', () => {
               [userProvidedEnumeratedMultivalued.parameterName]: payload,
             },
           });
+        });
+
+        it('includes optional: true in payload when parameter is optional', () => {
+          const optionalDefinition = {
+            ...userProvidedEnumeratedMultivalued,
+            enumeratedValues: [],
+            multivalued: false,
+            optional: true,
+          };
+          const result = parametersPayload([optionalDefinition]);
+          expect(result.parameters[optionalDefinition.parameterName].optional).toBe(true);
+        });
+
+        it('does not include optional in the payload when parameter is not optional', () => {
+          const nonOptionalDefinition = {
+            ...userProvidedEnumeratedMultivalued,
+            enumeratedValues: [],
+            multivalued: false,
+            optional: false,
+          };
+          const result = parametersPayload([nonOptionalDefinition]);
+          expect(result.parameters[nonOptionalDefinition.parameterName]).not.toHaveProperty('optional');
         });
       });
 

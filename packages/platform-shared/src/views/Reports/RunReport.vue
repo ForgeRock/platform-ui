@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="d-none d-md-flex align-items-center fr-run-report-label "
               md="3"
               :data-testid="`label-${field.label}`">
-              {{ field.label }}
+              {{ field.optional ? $t('common.optionalFieldTitle', { fieldTitle: field.label }) : field.label }}
             </BCol>
             <BCol md="9">
               <FrTimeframeField
@@ -52,10 +52,10 @@ of the MIT license. See the LICENSE file for details. -->
                 :taggable="field.taggable"
                 :testid="field.testId"
                 :type="field.type"
+                :validation="field.optional ? '' : 'required'"
                 @search-change="searchDebounce($event, fieldKey)"
                 @tag="field.selectOptionsSetter($event)"
-                open-direction="bottom"
-                validation="required">
+                open-direction="bottom">
                 <template
                   v-if="field.type === 'multiselect'"
                   #tag="{ option, remove }">

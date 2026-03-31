@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,6 +18,11 @@ of the MIT license. See the LICENSE file for details. -->
               class="h5 mb-0"
               title-tag="h4">
               {{ definition.parameterName }}
+              <small
+                v-if="definition.optional"
+                class="text-muted">
+                {{ $t('common.optional') }}
+              </small>
               <small class="d-block text-muted">
                 {{ definition.source }}
               </small>
