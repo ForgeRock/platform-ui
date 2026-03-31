@@ -75,7 +75,7 @@ of the MIT license. See the LICENSE file for details. -->
             <template #body="slotData">
               <div
                 v-for="item in slotData.items"
-                :key="item.value || item.key"
+                :key="`${item.categoryKey}.${getColumnId(item)}`"
                 class="d-flex align-items-center column-row">
                 <FrField
                   :value="isColumnActive(item)"
@@ -102,7 +102,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="column-list pl-4">
             <div
               v-for="column in filteredAvailableColumns"
-              :key="column.key || column.value"
+              :key="getColumnId(column)"
               class="d-flex align-items-center column-row">
               <FrField
                 :value="isColumnActive(column)"
@@ -151,7 +151,7 @@ of the MIT license. See the LICENSE file for details. -->
               ghost-class="draggable-ghost-tag"
               tag="tbody"
               :list="pendingColumns"
-              :item-key="(item) => item.value || item.key"
+              :item-key="(item) => getColumnId(item)"
               @end="onDragChange">
               <template #item="{ element }">
                 <BTr class="cursor-pointer d-flex align-items-center">
@@ -217,6 +217,7 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
+import { getColumnId } from './utils';
 
 Draggable.compatConfig = { MODE: 3 };
 
@@ -279,6 +280,12 @@ watch(viewMode, () => {
   listSearchQuery.value = '';
 });
 
+// If availableColumns arrives asynchronously, isCategorized may be false at setup.
+// Switch to category view the first time categorized columns appear, unless the user has already toggled manually.
+watch(isCategorized, (val) => {
+  if (val) viewMode.value = VIEW_MODE_CATEGORIES;
+}, { once: true });
+
 // Combine default ignored 'actions' key with any additional ones provided via props, ensuring all are strings for consistent comparison.
 const computedIgnoredColumnKeys = computed(() => {
   const additional = props.ignoredColumnKeys || [];
@@ -294,35 +301,60 @@ const computedIgnoredColumnKeys = computed(() => {
 const isIgnored = (column) => computedIgnoredColumnKeys.value.includes(column.key) || computedIgnoredColumnKeys.value.includes(column.value);
 
 /**
- * Computes the items to be displayed in the accordion (categorized view).
+ * Single normalisation pass over availableColumns. Produces an array of
+ * categories (a single synthetic category for flat lists) where each item
+ * carries its canonical `value` and the `categoryKey` it came from. All
+ * downstream computeds derive from this so the two views can never disagree.
  */
-const accordionItems = computed(() => props.availableColumns
-  .filter((col) => !isIgnored(col))
-  .map((col) => ({
-    header: col.label,
-    items: (col.children || [])
-      .filter((opt) => !isIgnored(opt))
-      .map((opt) => ({
-        ...opt,
-        value: opt.value || opt.key,
-      })),
-  })));
+const normalizedCategories = computed(() => {
+  const buildItems = (items, categoryKey) => items
+    .filter((opt) => !isIgnored(opt))
+    .map((opt) => ({
+      ...opt,
+      value: getColumnId(opt),
+      categoryKey,
+    }));
 
-/**
- * Normalizes all available columns into a flat list.
- */
-const allAvailableColumns = computed(() => {
   if (!isCategorized.value) {
-    return props.availableColumns.filter((col) => !isIgnored(col));
+    return [{
+      categoryKey: null,
+      header: null,
+      items: buildItems(props.availableColumns, null),
+    }];
   }
+
   return props.availableColumns
     .filter((col) => !isIgnored(col))
-    .flatMap((col) => (col.children || [])
-      .filter((opt) => !isIgnored(opt))
-      .map((opt) => ({
-        ...opt,
-        value: opt.value || opt.key,
-      })));
+    .map((col) => {
+      const categoryKey = getColumnId(col);
+      return {
+        categoryKey,
+        header: col.label,
+        items: buildItems(col.children || [], categoryKey),
+      };
+    });
+});
+
+/**
+ * Items to render in the accordion (categorised view). Same shape as
+ * normalizedCategories — same `value` may legitimately appear in more than
+ * one category.
+ */
+const accordionItems = computed(() => normalizedCategories.value);
+
+/**
+ * Flat, deduplicated list of available columns. List view has no category
+ * context to disambiguate, so we keep first-occurrence dedup by canonical id.
+ */
+const allAvailableColumns = computed(() => {
+  const seen = new Set();
+  return normalizedCategories.value
+    .flatMap((cat) => cat.items)
+    .filter((opt) => {
+      if (seen.has(opt.value)) return false;
+      seen.add(opt.value);
+      return true;
+    });
 });
 
 /**
@@ -352,8 +384,8 @@ function onApply() {
  * @returns {Boolean} - True if the column is active.
  */
 function isColumnActive(column) {
-  const id = column.value || column.key;
-  return pendingColumns.value.some((c) => (c.value || c.key) === id);
+  const id = getColumnId(column);
+  return pendingColumns.value.some((c) => getColumnId(c) === id);
 }
 
 /**
@@ -362,11 +394,12 @@ function isColumnActive(column) {
  * @param {Boolean} active - Whether the column should be active.
  */
 function toggleColumn(column, active) {
+  const id = getColumnId(column);
   if (active) {
-    const exists = pendingColumns.value.some((c) => (c.value || c.key) === (column.value || column.key));
+    const exists = pendingColumns.value.some((c) => getColumnId(c) === id);
     if (!exists) pendingColumns.value.push(cloneDeep(column));
   } else {
-    const index = pendingColumns.value.findIndex((c) => (c.value || c.key) === (column.value || column.key));
+    const index = pendingColumns.value.findIndex((c) => getColumnId(c) === id);
     if (index !== -1) pendingColumns.value.splice(index, 1);
   }
   if (props.moveAndReorderItemOnchange) onApply();
@@ -392,10 +425,10 @@ function onDragChange() {
  * Resets the pending columns to the default/initial columns
  */
 function resetToDefault() {
-  const availableKeys = allAvailableColumns.value.map((c) => c.value || c.key);
+  const availableKeys = allAvailableColumns.value.map((c) => getColumnId(c));
   pendingColumns.value = cloneDeep(props.defaultColumns)
     .filter((c) => !isIgnored(c))
-    .filter((c) => availableKeys.includes(c.value || c.key));
+    .filter((c) => availableKeys.includes(getColumnId(c)));
   if (props.moveAndReorderItemOnchange) onApply();
 }
 
@@ -420,13 +453,13 @@ function onHidden() {
  */
 watch(() => props.show, (isVisible) => {
   if (isVisible) {
-    const availableKeys = allAvailableColumns.value.map((c) => c.value || c.key);
+    const availableKeys = allAvailableColumns.value.map((c) => getColumnId(c));
     hiddenColumns.value = cloneDeep(props.activeColumns).filter((c) => isIgnored(c));
     pendingColumns.value = cloneDeep(props.activeColumns)
       .filter((c) => !isIgnored(c))
-      .filter((c) => availableKeys.includes(c.value || c.key));
+      .filter((c) => availableKeys.includes(getColumnId(c)));
   }
-});
+}, { immediate: true });
 
 </script>
 

@@ -100,11 +100,16 @@ describe('formatColumns', () => {
       class: 'text-truncate fr-access-cell',
       show: false,
       sortable: false,
+      value: 'user.name',
     });
     expect(result.application[0].category).toBe('application');
+    expect(result.application[0].value).toBe('application.app');
     expect(result.entitlement[0].category).toBe('entitlement');
+    expect(result.entitlement[0].value).toBe('entitlement.ent');
     expect(result.account[0].category).toBe('account');
+    expect(result.account[0].value).toBe('account.acc');
     expect(result.role[0].category).toBe('role');
+    expect(result.role[0].value).toBe('role.role');
   });
 
   it('filters out user columns with "Generic" in the label', () => {
@@ -147,20 +152,24 @@ describe('getInitialColumns', () => {
     const columnCategories = [
       {
         name: 'user',
-        items: [{ key: 'name', label: 'User Name', category: 'user' }],
+        items: [{
+          key: 'name', label: 'User Name', category: 'user', value: 'user.name',
+        }],
       },
       {
         name: 'account',
-        items: [{ key: 'email', label: 'Account Email', category: 'account' }],
+        items: [{
+          key: 'email', label: 'Account Email', category: 'account', value: 'account.email',
+        }],
       },
     ];
     const result = getInitialColumns('accounts', null, false, customColumnConfig, columnCategories);
     expect(result).toEqual([
       {
-        key: 'name', label: 'User Name', category: 'user', show: true,
+        key: 'name', label: 'User Name', category: 'user', show: true, value: 'user.name',
       },
       {
-        key: 'email', label: 'Account Email', category: 'account', show: true,
+        key: 'email', label: 'Account Email', category: 'account', show: true, value: 'account.email',
       },
       {
         key: 'actions',
@@ -168,6 +177,7 @@ describe('getInitialColumns', () => {
         label: 'Actions',
         sortable: false,
         show: true,
+        value: 'actions',
       },
     ]);
   });
@@ -183,30 +193,34 @@ describe('getInitialColumns', () => {
             key: 'name',
             label: 'User Name',
             category: 'user',
+            value: 'user.name',
           },
           {
             key: 'manager._ref',
             label: 'User manager',
             category: 'user',
             class: 'text-truncate fr-access-cell',
+            value: 'user.manager._ref',
           },
         ],
       },
       {
         name: 'account',
-        items: [{ key: 'email', label: 'Account Email', category: 'account' }],
+        items: [{
+          key: 'email', label: 'Account Email', category: 'account', value: 'account.email',
+        }],
       },
     ];
     const result = getInitialColumns('accounts', null, false, customColumnConfig, columnCategories);
     expect(result).toEqual([
       {
-        key: 'name', label: 'User Name', category: 'user', show: true,
+        key: 'name', label: 'User Name', category: 'user', show: true, value: 'user.name',
       },
       {
-        key: 'manager._ref', label: 'User manager', category: 'user', show: true, class: 'text-truncate fr-access-cell',
+        key: 'manager._ref', label: 'User manager', category: 'user', show: true, class: 'text-truncate fr-access-cell', value: 'user.manager._ref',
       },
       {
-        key: 'email', label: 'Account Email', category: 'account', show: true,
+        key: 'email', label: 'Account Email', category: 'account', show: true, value: 'account.email',
       },
       {
         key: 'actions',
@@ -214,6 +228,7 @@ describe('getInitialColumns', () => {
         label: 'Actions',
         sortable: false,
         show: true,
+        value: 'actions',
       },
     ]);
   });
@@ -314,6 +329,19 @@ describe('getAllColumnCategories', () => {
     const categories = getAllColumnCategories('accounts', undefined);
     expect(Array.isArray(categories)).toBe(true);
     expect(categories.length).toBeGreaterThan(0);
+  });
+
+  it('deduplicates items with the same value when filter properties overlap with OOTB columns', () => {
+    const filterProperties = {
+      application: [{ key: 'description', displayName: 'Description' }],
+    };
+    // Add the same key twice to simulate backend returning duplicate filter properties
+    filterProperties.application.push({ key: 'description', displayName: 'Description' });
+    const categories = getAllColumnCategories('accounts', filterProperties);
+    const appCategory = categories.find((cat) => cat.name === 'application');
+    const values = appCategory.items.map((item) => item.value);
+    const uniqueValues = [...new Set(values)];
+    expect(values).toEqual(uniqueValues);
   });
 });
 

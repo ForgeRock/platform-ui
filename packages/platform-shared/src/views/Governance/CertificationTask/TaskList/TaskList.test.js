@@ -22,6 +22,7 @@ import {
 import { cloneDeep } from 'lodash';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import store from '@/store';
 import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import TaskList from './index';
 import i18n from '@/i18n';
@@ -50,6 +51,7 @@ let loadItemsListSpy;
 let buildUrlParamsSpy;
 let showErrorMessageSpy;
 let displayNotificationSpy;
+let createdWrappers = [];
 function shallowMountComponent(data = {}, propsData = {}) {
   const wrapper = shallowMount(TaskList, {
     global: {
@@ -62,21 +64,21 @@ function shallowMountComponent(data = {}, propsData = {}) {
       },
       plugins: [Notifications],
     },
-    data() {
-      return {
-        ...data,
-      };
-    },
     props: {
       campaignId: 'test-id',
       campaignDetails: {},
       ...propsData,
     },
   });
+  // Manually set refs from setup if needed for tests that rely on data property initialization
+  // but better to rely on actual wrapper.vm which has them from setup
+  Object.assign(wrapper.vm, data);
+
   loadItemsListSpy = jest.spyOn(wrapper.vm, 'loadItemsList');
   buildUrlParamsSpy = jest.spyOn(wrapper.vm, 'buildUrlParams');
   showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
   displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+  createdWrappers.push(wrapper);
   return wrapper;
 }
 
@@ -102,11 +104,21 @@ function mountComponent(propOverrides = {}) {
       ...propOverrides,
     },
   });
+  createdWrappers.push(wrapper);
   return { wrapper, domWrapper: new DOMWrapper(document.body) };
 }
 
 describe('TaskList', () => {
+  afterEach(() => {
+    createdWrappers.forEach((w) => w.unmount());
+    createdWrappers = [];
+  });
   beforeEach(() => {
+    store.replaceState({
+      SharedStore: {
+        webStorageAvailable: true,
+      },
+    });
     CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
     CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: 'results' }));
     CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
@@ -118,6 +130,8 @@ describe('TaskList', () => {
     CertificationApi.getUserDetails.mockImplementation(() => Promise.resolve({ data: { results: [] } }));
     CertificationApi.getUserDetailsByType.mockImplementation(() => Promise.resolve('data'));
     jest.spyOn(CommonsApi, 'getGlossarySchema').mockImplementation(() => Promise.resolve({ data: {} }));
+    jest.spyOn(CommonsApi, 'getFilterSchema').mockImplementation(() => Promise.resolve({ data: {} }));
+    jest.spyOn(CommonsApi, 'getIgaAutoIdConfig').mockImplementation(() => Promise.resolve({ data: {} }));
   });
 
   describe('Account column display', () => {
@@ -180,13 +194,30 @@ describe('TaskList', () => {
     });
   });
 
-  describe('openSortModal', () => {
-    it('should emit the bv::show::modal to show the certification task sort', () => {
+  describe('openColumnsModal', () => {
+    it('should show the column picker modal', () => {
       const wrapper = shallowMountComponent();
-      wrapper.vm.openSortModal();
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-sort');
+      wrapper.vm.openColumnsModal();
+      expect(wrapper.vm.pickerProps.show).toBe(true);
     });
   });
+
+  describe('column picker storageKey', () => {
+    it('uses a key scoped to campaignId and certificationGrantType so different campaigns and types do not share column preferences', () => {
+      const getItemSpy = jest.spyOn(Storage.prototype, 'getItem');
+
+      shallowMountComponent({}, { campaignId: 'campaign-abc', certificationGrantType: 'roles' });
+      expect(getItemSpy).toHaveBeenCalledWith('certification-tasklist-column-picker-campaign-abc-roles');
+
+      getItemSpy.mockClear();
+
+      shallowMountComponent({}, { campaignId: 'campaign-xyz', certificationGrantType: 'entitlements' });
+      expect(getItemSpy).toHaveBeenCalledWith('certification-tasklist-column-picker-campaign-xyz-entitlements');
+
+      getItemSpy.mockRestore();
+    });
+  });
+
   describe('isItemSelected', () => {
     it('should return true if the allSelected variable is true', () => {
       const wrapper = shallowMountComponent();
@@ -1682,22 +1713,22 @@ describe('TaskList', () => {
 
       // Initialize the columns as would happen in mounted()
       wrapper.vm.tasksFields = wrapper.vm.getInitialColumns('entitlements', null, false, null, null, {});
-      wrapper.vm.updateColumns({});
+      wrapper.vm.activeColumns = wrapper.vm.tasksFields;
 
-      expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['user.userName', 'user.givenName', 'user.sn', 'user.mail'], show: true,
+      expect(wrapper.vm.certificationListColumnsToShow).toEqual([{
+        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['user.userName', 'user.givenName', 'user.sn', 'user.mail'], show: true, value: 'user.user',
       }, {
-        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['application.name'], show: true,
+        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['application.name'], show: true, value: 'application.application',
       }, {
-        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./entitlement.displayName'], show: true,
+        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./entitlement.displayName'], show: true, value: 'entitlement.entitlement',
       }, {
-        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./account.displayName'], show: true,
+        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./account.displayName'], show: true, value: 'account.account',
       }, {
-        key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+        key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true, value: 'review.flags',
       }, {
-        key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+        key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true, value: 'review.comments',
       }, {
-        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: 'Actions', sortable: false, show: true,
+        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: 'Actions', sortable: false, show: true, value: 'actions',
       }]);
     });
     it('openAddCommentModalFromCommentsModal called hides CertificationTaskCommentsModal and shows CertificationTaskAddCommentModal', async () => {
@@ -1963,8 +1994,8 @@ describe('TaskList', () => {
       wrapper.vm.currentPage = 2;
       wrapper.vm.sortBy = 'name';
       wrapper.vm.sortDir = 'asc';
-      wrapper.vm.openSortModal();
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-sort');
+      wrapper.vm.openColumnsModal();
+      expect(wrapper.vm.pickerProps.show).toBe(true);
     });
     it('should emit the bv::show::modal to show the certification reasign modal', async () => {
       const { wrapper } = mountComponent({ modalPrefix: 'entitlement' });
@@ -2000,20 +2031,20 @@ describe('TaskList', () => {
 
       // Initialize the columns as would happen in mounted()
       wrapper.vm.tasksFields = wrapper.vm.getInitialColumns('accounts', null, true, null, null, {});
-      wrapper.vm.updateColumns({});
+      wrapper.vm.activeColumns = wrapper.vm.tasksFields;
 
-      expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['user.userName', 'user.givenName', 'user.sn', 'user.mail'], show: true,
+      expect(wrapper.vm.certificationListColumnsToShow).toEqual([{
+        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['user.userName', 'user.givenName', 'user.sn', 'user.mail'], show: true, value: 'user.user',
       }, {
-        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['application.name'], show: true,
+        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['application.name'], show: true, value: 'application.application',
       }, {
-        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./account.displayName'], show: true,
+        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./account.displayName'], show: true, value: 'account.account',
       }, {
-        key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+        key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true, value: 'review.flags',
       }, {
-        key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+        key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true, value: 'review.comments',
       }, {
-        key: 'actions', class: 'w-230px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: 'Actions', sortable: false, show: true,
+        key: 'actions', class: 'w-230px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: 'Actions', sortable: false, show: true, value: 'actions',
       }]);
     });
     it('should have selectable as true', async () => {
@@ -2158,16 +2189,16 @@ describe('TaskList', () => {
 
       // Initialize the columns as would happen in mounted()
       wrapper.vm.tasksFields = wrapper.vm.getInitialColumns('entitlements', '66f3b405-60db-42a6-8a7a-59f6470348f6', false, null, null, {});
-      wrapper.vm.updateColumns({});
+      wrapper.vm.activeColumns = wrapper.vm.tasksFields;
 
-      expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./entitlement.displayName'], show: true,
+      expect(wrapper.vm.certificationListColumnsToShow).toEqual([{
+        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./entitlement.displayName'], show: true, value: 'entitlement.entitlement',
       }, {
-        key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+        key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true, value: 'review.flags',
       }, {
-        key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+        key: 'comments', category: 'review', label: 'Comments', sortable: false, class: 'w-140px fr-access-cell', show: true, value: 'review.comments',
       }, {
-        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: 'Actions', sortable: false, show: true,
+        key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell fr-no-resize sticky-right', label: 'Actions', sortable: false, show: true, value: 'actions',
       }]);
     });
     it('should have the right base filter for account', () => {

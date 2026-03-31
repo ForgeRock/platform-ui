@@ -24,12 +24,22 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t('governance.delegates.addDelegates') }}
             </FrIcon>
           </BButton>
-          <FrSearchInput
-            v-model="searchQuery"
-            data-testid="search-delegate"
-            :placeholder="$t('common.search')"
-            @clear="clear"
-            @search="paginationPage = 1; loadData()" />
+          <div class="d-flex">
+            <FrSearchInput
+              v-model="searchQuery"
+              data-testid="search-delegate"
+              :placeholder="$t('common.search')"
+              @clear="clear"
+              @search="paginationPage = 1; loadData()" />
+            <BButton
+              @click="openColumnsModal"
+              variant="link-dark"
+              class="ml-2">
+              <FrIcon
+                icon-class="md-24"
+                name="view_column" />
+            </BButton>
+          </div>
         </div>
       </BCardHeader>
       <BTable
@@ -63,7 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
             </BMediaBody>
           </BMedia>
         </template>
-        <template #cell(edit)="{ item }">
+        <template #cell(actions)="{ item }">
           <FrActionsCell
             :delete-option="false"
             :edit-option="false"
@@ -101,6 +111,9 @@ of the MIT license. See the LICENSE file for details. -->
     <FrAddDelegateModal
       v-if="hasIDMUsersViewPrivilege"
       @delegate-added="loadData()" />
+    <FrColumnPicker
+      v-bind="pickerProps"
+      :available-columns="tableFields" />
     <FrDeleteModal
       @delete-item="removeDelegate()"
       translated-item-type="delegate"
@@ -124,6 +137,8 @@ import {
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -133,6 +148,7 @@ import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getTaskProxies, deleteTaskProxy } from '@/api/governance/DirectoryApi';
+import i18n from '@/i18n';
 import FrAddDelegateModal from './AddDelegateModal';
 
 export default {
@@ -150,6 +166,7 @@ export default {
     BTable,
     FrActionsCell,
     FrAddDelegateModal,
+    FrColumnPicker,
     FrDeleteModal,
     FrHeader,
     FrIcon,
@@ -157,31 +174,51 @@ export default {
     FrPagination,
     FrSearchInput,
   },
+  setup() {
+    const tableFields = [
+      {
+        key: 'user',
+        label: i18n.global.t('common.user.user'),
+      },
+      {
+        key: 'start',
+        label: i18n.global.t('governance.delegates.startDate'),
+      },
+      {
+        key: 'end',
+        label: i18n.global.t('governance.delegates.endDate'),
+      },
+      {
+        key: 'actions',
+        class: 'fr-no-resize sticky-right w-120px',
+        label: i18n.global.t('common.actions'),
+      },
+    ];
+
+    const {
+      activeColumns,
+      open: openColumnsModal,
+      pickerProps,
+    } = useColumnPicker(
+      () => tableFields,
+      {
+        storageKey: () => 'governance-delegates-column-picker',
+      },
+    );
+
+    return {
+      activeColumns,
+      openColumnsModal,
+      pickerProps,
+      tableFields,
+    };
+  },
   mixins: [
     DateMixin,
     NotificationMixin,
   ],
   data() {
     return {
-      fields: [
-        {
-          key: 'user',
-          label: this.$t('common.user.user'),
-        },
-        {
-          key: 'start',
-          label: this.$t('governance.delegates.startDate'),
-        },
-        {
-          key: 'end',
-          label: this.$t('governance.delegates.endDate'),
-        },
-        {
-          key: 'edit',
-          class: 'fr-no-resize sticky-right w-120px',
-          label: this.$t('common.actions'),
-        },
-      ],
       isLast: true,
       items: [],
       paginationPage: 1,
@@ -193,6 +230,9 @@ export default {
   },
   computed: {
     ...mapState(useUserStore, ['userId', 'hasIDMUsersViewPrivilege']),
+    fields() {
+      return this.activeColumns;
+    },
   },
   mounted() {
     this.loadData();

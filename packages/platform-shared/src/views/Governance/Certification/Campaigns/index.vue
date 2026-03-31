@@ -27,6 +27,14 @@ to such license between the licensee and ForgeRock AS. -->
               </BDropdownItem>
             </template>
           </BDropdown>
+          <BButton
+            @click="openColumnsModal"
+            variant="link-dark"
+            class="ml-2">
+            <FrIcon
+              icon-class="md-24"
+              name="view_column" />
+          </BButton>
         </div>
       </BCardHeader>
       <FrSpinner
@@ -84,7 +92,7 @@ to such license between the licensee and ForgeRock AS. -->
             </template>
           </FrCircleProgressBar>
         </template>
-        <template #cell(edit)="{ item }">
+        <template #cell(actions)="{ item }">
           <FrActionsCell
             :edit-option="false"
             :delete-option="false"
@@ -182,6 +190,9 @@ to such license between the licensee and ForgeRock AS. -->
         </template>
       </BModal>
     </VeeField>
+    <FrColumnPicker
+      v-bind="pickerProps"
+      :available-columns="tableFields" />
     <FrUpdateDeadlineModal
       :loading="isRequestLoading"
       :current-deadline="currentDeadline"
@@ -209,7 +220,10 @@ import {
   BModal,
   BTable,
 } from 'bootstrap-vue';
+import { useI18n } from 'vue-i18n';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
@@ -248,12 +262,67 @@ export default {
     FrButtonWithSpinner,
     FrCampaignDetailsModal,
     FrCircleProgressBar,
+    FrColumnPicker,
     FrIcon,
     FrNoData,
     FrPagination,
     FrSpinner,
     FrUpdateDeadlineModal,
     VeeField,
+  },
+  setup() {
+    const { t } = useI18n();
+    const tableFields = [
+      {
+        key: 'name',
+        label: t('common.name'),
+        sortable: true,
+      },
+      {
+        key: 'formattedStartDate',
+        label: t('common.startDate'),
+        sortable: true,
+      },
+      {
+        key: 'formattedDeadline',
+        class: 'w-140px',
+        label: t('common.deadline'),
+        sortable: true,
+      },
+      {
+        key: 'status',
+        class: 'w-140px',
+        label: t('common.status'),
+      },
+      {
+        key: 'progress',
+        class: 'w-140px',
+        label: t('common.progress'),
+      },
+      {
+        key: 'actions',
+        class: 'w-120px fr-no-resize sticky-right',
+        label: t('common.actions'),
+      },
+    ];
+
+    const {
+      activeColumns,
+      open: openColumnsModal,
+      pickerProps,
+    } = useColumnPicker(
+      () => tableFields,
+      {
+        storageKey: () => 'governance-certification-campaigns-column-picker',
+      },
+    );
+
+    return {
+      activeColumns,
+      openColumnsModal,
+      pickerProps,
+      tableFields,
+    };
   },
   mixins: [
     CertificationMixin,
@@ -273,41 +342,12 @@ export default {
       isRequestLoading: false,
       modalType: null,
       currentDeadline: '',
-      fields: [
-        {
-          key: 'name',
-          label: this.$t('common.name'),
-          sortable: true,
-        },
-        {
-          key: 'formattedStartDate',
-          label: this.$t('common.startDate'),
-          sortable: true,
-        },
-        {
-          key: 'formattedDeadline',
-          class: 'w-140px',
-          label: this.$t('common.deadline'),
-          sortable: true,
-        },
-        {
-          key: 'status',
-          class: 'w-140px',
-          label: this.$t('common.status'),
-        },
-        {
-          key: 'progress',
-          class: 'w-140px',
-          label: this.$t('common.progress'),
-        },
-        {
-          key: 'edit',
-          class: 'w-120px fr-no-resize sticky-right',
-          label: this.$t('common.actions'),
-        }],
     };
   },
   computed: {
+    fields() {
+      return this.activeColumns;
+    },
     campaignModal() {
       if (this.modalType === 'activate') {
         return ({

@@ -53,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.filters') }}
         </BTooltip>
         <BButton
-          @click="openSortModal()"
+          @click="openColumnsModal()"
           :aria-label="$t('common.customizeColumns')"
           class="mr-2"
           variant="link-dark">
@@ -365,11 +365,10 @@ of the MIT license. See the LICENSE file for details. -->
       @forward="(triggerEl) => openForwardModal(null, true, true, triggerEl)"
       @clearDecisions="bulkReset()" />
     <!-- Modals -->
-    <FrColumnOrganizer
-      @update-columns="updateColumns"
-      @hidden="closeSortModal"
-      :active-columns="tasksFieldsToSort"
-      :available-columns="availableColumns"
+    <FrColumnPicker
+      v-bind="pickerProps"
+      :allow-view-mode-toggle="true"
+      :available-columns="columnPickerAvailableColumns"
       :modal-id="getModalId('sort')" />
     <FrForwardModal
       :id="currentItemId"
@@ -458,12 +457,12 @@ import {
   BTable,
   BTooltip,
 } from 'bootstrap-vue';
+import { ref, computed } from 'vue';
 import {
   cloneDeep,
   countBy,
   filter,
   get,
-  isEmpty,
   pick,
   sortBy as lodashSortBy,
   startCase,
@@ -506,7 +505,6 @@ import {
   getAllColumnCategories,
   getInitialColumns,
   processItemsForExport,
-  setSelectedCategories,
 } from '@forgerock/platform-shared/src/utils/governance/certificationColumns';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
@@ -523,7 +521,8 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
-import FrColumnOrganizer from '@forgerock/platform-shared/src/components/ColumnOrganizer/ColumnOrganizer';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
 import FrAccountModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/AccountModal';
 import FrEntitlementModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/EntitlementModal';
@@ -581,7 +580,7 @@ export default {
     FrActivityModal,
     FrForwardModal,
     FrAccountModal,
-    FrColumnOrganizer,
+    FrColumnPicker,
     FrConfirmActionModal,
     FrAddCommentModal,
     FrApplicationModal,
@@ -602,6 +601,30 @@ export default {
     FrTaskFilters,
     FrTaskMultiSelect,
     FrRecommendationIcon,
+  },
+  setup(props) {
+    const tasksFields = ref([]);
+    const columnCategories = ref([]);
+    const allAvailableColumns = computed(() => columnCategories.value.flatMap((cat) => cat.items || []));
+    const {
+      activeColumns,
+      open: openColumnsModal,
+      pickerProps,
+    } = useColumnPicker(
+      tasksFields,
+      {
+        storageKey: () => `certification-tasklist-column-picker-${props.campaignId}-${props.certificationGrantType}`,
+        columnRegistry: allAvailableColumns,
+      },
+    );
+
+    return {
+      activeColumns,
+      columnCategories,
+      openColumnsModal,
+      pickerProps,
+      tasksFields,
+    };
   },
   mixins: [NotificationMixin],
   props: {
@@ -720,13 +743,8 @@ export default {
       blankValueIndicator,
       bulkCertifyModalProps,
       autoIdSettings: {},
-      availableColumns: [],
-      updatedColumCategories: [],
       bulkExceptionModalProps,
       bulkRevokeModalProps,
-      certificationListColumns: [],
-      columnCategories: [],
-      tasksFields: [],
       confirmActionModalProps: {},
       contentAccountSelectedModal: {},
       currentAccountSelectedModal: null,
@@ -754,7 +772,6 @@ export default {
       isLoading: true,
       isDeletingReviewer: false,
       isSavingReviewer: false,
-      isStaged: false,
       items: [],
       refocusItemId: null,
       selectTriggerEl: null,
@@ -791,13 +808,35 @@ export default {
     };
   },
   computed: {
+    isStaged() {
+      return this.campaignDetails?.status === 'staging';
+    },
     certificationListColumnsToShow() {
-      return this.certificationListColumns.filter((col) => col.show).map((col) => {
+      const columns = cloneDeep(this.activeColumns);
+
+      if (this.campaignDetails.allowBulkCertify && !this.isStaged) {
+        columns.unshift({
+          key: 'selector',
+          label: '',
+          sortable: false,
+          class: 'selector-column fr-no-resize sticky-left',
+          show: true,
+        });
+      }
+
+      return columns.map((col) => {
         if (col.key === 'manager._ref') {
-          col.key = 'manager';
+          return { ...col, key: 'manager' };
         }
         return col;
       });
+    },
+    columnPickerAvailableColumns() {
+      return this.columnCategories.map((category) => ({
+        key: category.name,
+        label: category.header,
+        children: category.items,
+      }));
     },
     isGroupByAccounts() {
       return this.showGroupBy && this.certificationGrantType === 'accounts';
@@ -836,8 +875,6 @@ export default {
       this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
     }
 
-    this.isStaged = this.campaignDetails.status === 'staging';
-
     try {
       // User recommendations and predictions
       const { data: autoIdData } = await getIgaAutoIdConfig();
@@ -853,20 +890,18 @@ export default {
       // We don't need to show an error here
     }
 
-    // build column categories using the filter schema
-    let filterProperties;
+    let filterProperties = {};
     try {
       const { data } = await getFilterSchema();
-      filterProperties = data;
-      this.filterSchema.user = data.user;
-    } catch {
-      filterProperties = {};
-    } finally {
-      const allColumnCategories = getAllColumnCategories(this.certificationGrantType, filterProperties, this.autoIdSettings);
-      this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories, this.autoIdSettings);
-      this.columnCategories = setSelectedCategories(allColumnCategories, this.tasksFields);
-      this.updateColumns({});
+      filterProperties = data || {};
+      this.filterSchema.user = filterProperties.user || [];
+    } catch (error) {
+      this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
     }
+
+    const allColumnCategories = getAllColumnCategories(this.certificationGrantType || 'accounts', filterProperties, this.autoIdSettings);
+    this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories, this.autoIdSettings);
+    this.columnCategories = allColumnCategories;
 
     try {
       await this.getItems(this.paginationPage);
@@ -881,7 +916,6 @@ export default {
     getCellData,
     getAllColumnCategories,
     getInitialColumns,
-    setSelectedCategories,
     startCase,
     toggleSaving() {
       this.$emit('change-saving');
@@ -974,19 +1008,6 @@ export default {
       this.sortBy = sortBy;
       this.paginationPage = 1;
       this.getItems(this.paginationPage);
-    },
-    updateColumns({ activeColumns, availableColumns }) {
-      this.certificationListColumns = activeColumns || this.tasksFields;
-      this.updatedColumCategories = availableColumns;
-      if (this.campaignDetails.allowBulkCertify) {
-        this.certificationListColumns.unshift({
-          key: 'selector',
-          label: '',
-          sortable: false,
-          class: 'selector-column fr-no-resize sticky-left',
-          show: true,
-        });
-      }
     },
     isItemSelected(itemId) {
       return this.allSelected || this.selectedItems.some((item) => item.id === itemId);
@@ -1667,31 +1688,6 @@ export default {
       this.isBulk = isBulk;
       this.showConfirm = showConfirm;
       this.$bvModal.show(this.getModalId('forward'), triggerEl);
-    },
-    openSortModal() {
-      this.tasksFieldsToSort = cloneDeep(this.certificationListColumns);
-      const columnsForSort = isEmpty(this.updatedColumCategories)
-        ? cloneDeep(this.columnCategories)
-        : cloneDeep(this.updatedColumCategories);
-
-      if (this.userDisplayProperties.length > 0) {
-        // If user property filtering is enabled, filter the available column options for 'user' to be only what is
-        // allowed by the cert's own uiConfig or the global user displayProperties config
-        const userCategoryKeys = this.tasksFields
-          .filter((field) => field.category === 'user')
-          .map((field) => field.key)
-          .concat(this.userDisplayProperties);
-        const userCategory = columnsForSort.find((category) => category.name === 'user');
-        if (userCategory) {
-          userCategory.items = userCategory.items.filter((item) => userCategoryKeys.includes(item.key));
-        }
-      }
-      this.availableColumns = columnsForSort;
-      this.$bvModal.show(this.getModalId('sort'));
-    },
-    closeSortModal() {
-      this.tasksFieldsToSort = [];
-      this.availableColumns = [];
     },
     openUserModal(lineItemId, manager) {
       getUserDetails(this.campaignId, lineItemId)

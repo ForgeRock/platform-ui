@@ -9,6 +9,8 @@
 import { mount } from '@vue/test-utils';
 import { createAppContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import store from '@/store';
+import i18n from '@/i18n';
 import Campaigns from './index';
 
 describe('Campaigns', () => {
@@ -39,11 +41,17 @@ describe('Campaigns', () => {
         test: 'test',
       },
     }));
+    store.replaceState({
+      SharedStore: {
+        webStorageAvailable: true,
+      },
+    });
     wrapper = mount(Campaigns, {
       attachTo: createAppContainer(),
       global: {
-        mocks: {
-          $t: (id) => id,
+        plugins: [i18n],
+        directives: {
+          'resizable-table': jest.fn(),
         },
       },
     });
@@ -78,6 +86,33 @@ describe('Campaigns', () => {
     expect(CertificationApi.getAdminCertificationItems).toHaveBeenCalledWith({
       pageNumber: 0, pageSize: 10, queryString: '', sortBy: 'name', sortDesc: true, status: 'active',
     });
+  });
+
+  it('clicking column picker button should show the column picker modal', async () => {
+    wrapper.vm.openColumnsModal();
+    expect(wrapper.vm.pickerProps.show).toBe(true);
+  });
+
+  it('should maintain all available columns in the picker when some are deselected and preserve actions column', async () => {
+    // Total fields defined in tableFields is 6 (including actions)
+    expect(wrapper.vm.tableFields.length).toBe(6);
+    expect(wrapper.vm.activeColumns.length).toBe(6);
+
+    // Simulate unticking a column by emitting update:activeColumns with only 4 columns (excluding actions and one other)
+    const updatedColumns = wrapper.vm.tableFields.slice(0, 4);
+    expect(updatedColumns.find((c) => c.key === 'actions')).toBeUndefined();
+
+    const columnPicker = wrapper.findComponent({ name: 'ColumnPicker' });
+    await columnPicker.vm.$emit('update:activeColumns', updatedColumns);
+
+    // activeColumns should now have 5 (the 4 sent + the preserved actions)
+    expect(wrapper.vm.activeColumns.length).toBe(5);
+    expect(wrapper.vm.activeColumns.find((c) => c.key === 'actions')).toBeDefined();
+
+    // Table fields should remain 6
+    expect(wrapper.vm.tableFields.length).toBe(6);
+    // Available columns passed to picker should still be 6
+    expect(columnPicker.props('availableColumns').length).toBe(6);
   });
 
   it('Calling openModal resets modal values', () => {

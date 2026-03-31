@@ -45,6 +45,14 @@ of the MIT license. See the LICENSE file for details. -->
                 </template>
               </BDropdown>
             </div>
+            <BButton
+              @click="openColumnsModal"
+              variant="link-dark"
+              class="ml-2">
+              <FrIcon
+                icon-class="md-24"
+                name="view_column" />
+            </BButton>
           </div>
         </BCardHeader>
         <BTable
@@ -124,6 +132,9 @@ of the MIT license. See the LICENSE file for details. -->
           :per-page="pageSize"
           @input="paginationChange"
           @on-page-size-change="pageSizeChange" />
+        <FrColumnPicker
+          v-bind="pickerProps"
+          :available-columns="tableFields" />
       </BCard>
     </div>
   </BContainer>
@@ -134,6 +145,7 @@ import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BBadge,
+  BButton,
   BCard,
   BCardHeader,
   BContainer,
@@ -150,17 +162,22 @@ import {
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
+import i18n from '@/i18n';
 import styles from '@/scss/main.scss';
 
 export default {
   name: 'AccessReviews',
   components: {
     BBadge,
+    BButton,
     BCard,
     BCardHeader,
     BContainer,
@@ -170,11 +187,64 @@ export default {
     BPopover,
     BTable,
     FrCircleProgressBar,
+    FrColumnPicker,
     FrHeader,
+    FrIcon,
     FrNoData,
     FrPagination,
     FrSpinner,
   },
+  setup() {
+    const tableFields = [
+      {
+        key: 'name',
+        label: i18n.global.t('common.name'),
+        sortable: true,
+      },
+      {
+        key: 'formattedStartDate',
+        label: i18n.global.t('common.startDate'),
+        sortable: true,
+      },
+      {
+        key: 'formattedDeadline',
+        label: i18n.global.t('common.deadline'),
+        sortable: true,
+      },
+      {
+        key: 'status',
+        class: 'w-140px',
+        label: i18n.global.t('common.status'),
+      },
+      {
+        key: 'progress',
+        class: 'w-140px',
+        label: i18n.global.t('common.progress'),
+      },
+    ];
+
+    const {
+      activeColumns,
+      open: openColumnsModal,
+      pickerProps,
+    } = useColumnPicker(
+      () => tableFields,
+      {
+        storageKey: () => 'governance-access-reviews-column-picker',
+      },
+    );
+
+    return {
+      activeColumns,
+      openColumnsModal,
+      pickerProps,
+      tableFields,
+    };
+  },
+  mixins: [
+    CertificationMixin,
+    NotificationMixin,
+  ],
   data() {
     return {
       pageSize: 10,
@@ -183,39 +253,9 @@ export default {
       tableLoading: true,
       selectedCertId: null,
       accessReviewList: [],
-      fields: [
-        {
-          key: 'name',
-          label: this.$t('common.name'),
-          sortable: true,
-        },
-        {
-          key: 'formattedStartDate',
-          label: this.$t('common.startDate'),
-          sortable: true,
-        },
-        {
-          key: 'formattedDeadline',
-          label: this.$t('common.deadline'),
-          sortable: true,
-        },
-        {
-          key: 'status',
-          class: 'w-140px',
-          label: this.$t('common.status'),
-        },
-        {
-          key: 'progress',
-          class: 'w-140px',
-          label: this.$t('common.progress'),
-        }],
       styles,
     };
   },
-  mixins: [
-    CertificationMixin,
-    NotificationMixin,
-  ],
   mounted() {
     this.getList();
   },
@@ -224,7 +264,11 @@ export default {
     currentUserId() {
       return `managed/user/${this.userId}`;
     },
+    fields() {
+      return this.activeColumns;
+    },
   },
+
   methods: {
     pageSizeChange(newPageSize) {
       this.pageSize = newPageSize;

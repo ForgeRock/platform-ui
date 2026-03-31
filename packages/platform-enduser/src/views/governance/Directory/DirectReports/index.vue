@@ -17,13 +17,23 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="!isNoResultsFirstLoad"
           data-testid="search-container-directreports"
         >
-          <FrSearchInput
-            v-model="searchQuery"
-            data-testid="search-directreports"
-            :placeholder="$t('common.search')"
-            @clear="clear"
-            @search="$event => loadData()"
-          />
+          <div class="d-flex">
+            <FrSearchInput
+              v-model="searchQuery"
+              data-testid="search-directreports"
+              :placeholder="$t('common.search')"
+              @clear="clear"
+              @search="$event => loadData()"
+            />
+            <BButton
+              @click="openColumnsModal"
+              variant="link-dark"
+              class="ml-2">
+              <FrIcon
+                icon-class="md-24"
+                name="view_column" />
+            </BButton>
+          </div>
         </div>
       </BCardHeader>
       <div
@@ -109,12 +119,16 @@ of the MIT license. See the LICENSE file for details. -->
         @on-page-size-change="pageSizeChange"
       />
     </BCard>
+    <FrColumnPicker
+      v-bind="pickerProps"
+      :available-columns="tableFields" />
   </BContainer>
 </template>
 
 <script>
 import {
   BBadge,
+  BButton,
   BCard,
   BCardHeader,
   BCol,
@@ -128,12 +142,17 @@ import {
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getDirectReports } from '@/api/governance/DirectoryApi';
+import i18n from '@/i18n';
+
 /*
  * @description view to show a list of direct reports
  */
@@ -141,6 +160,7 @@ export default {
   name: 'DirectReports',
   components: {
     BBadge,
+    BButton,
     BCard,
     BCardHeader,
     BCol,
@@ -150,27 +170,49 @@ export default {
     BMediaAside,
     BMediaBody,
     BTable,
+    FrColumnPicker,
     FrHeader,
+    FrIcon,
     FrNoData,
     FrPagination,
     FrSearchInput,
     FrSpinner,
+  },
+  setup() {
+    const tableFields = [
+      {
+        key: 'userName',
+        label: i18n.global.t('common.user.user'),
+      },
+      {
+        key: 'accountStatus',
+        label: i18n.global.t('common.status'),
+      },
+    ];
+
+    const {
+      activeColumns,
+      open: openColumnsModal,
+      pickerProps,
+    } = useColumnPicker(
+      () => tableFields,
+      {
+        storageKey: () => 'governance-directreports-column-picker',
+      },
+    );
+
+    return {
+      activeColumns,
+      openColumnsModal,
+      pickerProps,
+      tableFields,
+    };
   },
   mixins: [
     NotificationMixin,
   ],
   data() {
     return {
-      fields: [
-        {
-          key: 'userName',
-          label: this.$t('common.user.user'),
-        },
-        {
-          key: 'accountStatus',
-          label: this.$t('common.status'),
-        },
-      ],
       items: [],
       totalCount: 0,
       isLoading: true,
@@ -184,6 +226,9 @@ export default {
   },
   computed: {
     ...mapState(useUserStore, ['userId']),
+    fields() {
+      return this.activeColumns;
+    },
   },
   async mounted() {
     await this.loadData();
@@ -209,7 +254,6 @@ export default {
       if (this.searchQuery) {
         params.queryString = this.searchQuery;
       }
-
       /* Removing sort on this component pending a fix for OPENIDM-20595, leaving commented to potentially re-enable in future
       //
       // Checks sort and adds to params

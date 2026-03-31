@@ -131,6 +131,48 @@ describe('GovResourceList', () => {
         },
       );
     });
+
+    it('reloads data without stale sortKeys when the sorted column is removed', async () => {
+      const mockFn = jest.fn();
+      wrapper = mountComponent({
+        resource: 'user',
+        columns,
+        queryThreshold: 0,
+        resourceFunction: mockFn,
+      });
+
+      const table = wrapper.findComponent({ name: 'BTable' });
+      await table.vm.$emit('sort-changed', { sortBy: 'mail', sortDesc: false });
+      mockFn.mockClear();
+
+      await wrapper.setProps({ columns: columns.filter((col) => col.key !== 'email') });
+      await flushPromises();
+
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      expect(mockFn).not.toHaveBeenCalledWith(
+        'alpha_user',
+        expect.objectContaining({ sortKeys: 'mail' }),
+      );
+    });
+
+    it('does not reload data when columns change but the sorted column still exists', async () => {
+      const mockFn = jest.fn();
+      wrapper = mountComponent({
+        resource: 'user',
+        columns,
+        resourceFunction: mockFn,
+      });
+
+      const table = wrapper.findComponent({ name: 'BTable' });
+      await table.vm.$emit('sort-changed', { sortBy: 'mail', sortDesc: false });
+      mockFn.mockClear();
+
+      const extendedColumns = [...columns, { key: 'org', label: 'Org', sortable: true }];
+      await wrapper.setProps({ columns: extendedColumns });
+      await flushPromises();
+
+      expect(mockFn).not.toHaveBeenCalled();
+    });
   });
 
   describe('user', () => {
