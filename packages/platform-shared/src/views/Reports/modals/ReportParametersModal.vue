@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -112,6 +112,13 @@ of the MIT license. See the LICENSE file for details. -->
             name="multivalued"
             type="checkbox"
             :label="$t('common.multivalued')" />
+        </BFormGroup>
+        <BFormGroup v-if="showOptionalCheckbox">
+          <FrField
+            v-model="optional"
+            name="optional"
+            type="checkbox"
+            :label="$t('reports.template.optional')" />
         </BFormGroup>
         <BFormGroup
           v-if="showEnumsCheckbox"
@@ -286,6 +293,7 @@ const helpText = ref('');
 const inputLabel = ref('');
 const inputType = ref('');
 const multivalued = ref(false);
+const optional = ref(false);
 const showEnumeratedValues = ref(false);
 
 // Functions
@@ -315,6 +323,7 @@ function resetValues() {
   inputType.value = '';
   helpText.value = '';
   multivalued.value = false;
+  optional.value = false;
   showEnumeratedValues.value = false;
   enumeratedValues.value = [{
     name: '',
@@ -356,6 +365,10 @@ const showEnumsCheckbox = computed(() => {
   }
   return false;
 });
+const showOptionalCheckbox = computed(() => {
+  if (inputTypeParameter.value === 'datasource') return true;
+  return inputType.value?.type !== 'boolean';
+});
 const formValues = computed(() => {
   const dataSourceInputType = {
     ...(inputTypeParameter.value === 'datasource' && {
@@ -374,6 +387,7 @@ const formValues = computed(() => {
     inputType: dataType,
     helpText: helpText.value,
     multivalued: showMultivaluedCheckbox.value && multivalued.value,
+    optional: showOptionalCheckbox.value && optional.value,
     source: inputTypeParameter.value,
     ...dataSourceInputType,
     ...(enumsCondition && { enumeratedValues: enumeratedValues.value }),
@@ -406,6 +420,7 @@ watch(() => props.existingParameter, (parameter) => {
     inputTypeParameter.value = definition.source === 'user_provided' ? 'basic' : definition.source;
     helpText.value = definition.helpText || '';
     multivalued.value = definition.multivalued || false;
+    optional.value = definition.optional || false;
     showEnumeratedValues.value = !!definition.enumeratedValues?.length;
     enumeratedValues.value = definition.enumeratedValues?.length ? definition.enumeratedValues : [{
       name: '',

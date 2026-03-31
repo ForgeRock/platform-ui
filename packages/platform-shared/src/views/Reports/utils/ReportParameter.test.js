@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -74,6 +74,16 @@ describe('ReportParameter', () => {
     expect(instance.options).toBeDefined();
     expect(instance.request).toBeUndefined();
     expect(instance.enums).toBeUndefined();
+  });
+
+  it('should set optional to true when args.optional is truthy', () => {
+    const instance = new ReportParameter({ ...requestSelectArgs, optional: true });
+    expect(instance.optional).toBe(true);
+  });
+
+  it('should not set optional property when args.optional is falsy', () => {
+    const instance = new ReportParameter(requestSelectArgs);
+    expect(instance).not.toHaveProperty('optional');
   });
 
   it('should set unique select data correctly', () => {
@@ -167,5 +177,49 @@ describe('ReportParameter', () => {
     const enums = [{ name: 'enum1', value: 'enum1' }];
     const mutatedEnums = ReportParameter.enumMutation(enums);
     expect(mutatedEnums).toEqual([{ text: 'enum1', value: 'enum1' }]);
+  });
+
+  describe('optional parameter payload', () => {
+    it('returns null for an optional string parameter with an empty string model', () => {
+      const instance = new ReportParameter({
+        _id: 'optStr', model: '', type: 'string', optional: true,
+      });
+      expect(instance.payload()).toEqual({ optStr: null });
+    });
+
+    it('returns null for an optional multiselect parameter with an empty array model', () => {
+      const instance = new ReportParameter({
+        _id: 'optMulti', model: [], type: 'multiselect', optional: true,
+      });
+      expect(instance.payload()).toEqual({ optMulti: null });
+    });
+
+    it('returns null for an optional parameter whose model is already null', () => {
+      const instance = new ReportParameter({
+        _id: 'optNum', model: null, type: 'number', optional: true,
+      });
+      expect(instance.payload()).toEqual({ optNum: null });
+    });
+
+    it('returns the actual value for an optional parameter that has a value', () => {
+      const instance = new ReportParameter({
+        _id: 'optStr', model: 'hello', type: 'string', optional: true,
+      });
+      expect(instance.payload()).toEqual({ optStr: 'hello' });
+    });
+
+    it('returns the actual value for an optional multiselect parameter that has selections', () => {
+      const instance = new ReportParameter({
+        _id: 'optMulti', model: ['a', 'b'], type: 'multiselect', optional: true,
+      });
+      expect(instance.payload()).toEqual({ optMulti: ['a', 'b'] });
+    });
+
+    it('does not affect a non-optional parameter with an empty string model', () => {
+      const instance = new ReportParameter({
+        _id: 'reqStr', model: '', type: 'string',
+      });
+      expect(instance.payload()).toEqual({ reqStr: '' });
+    });
   });
 });

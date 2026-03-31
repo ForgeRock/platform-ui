@@ -3544,6 +3544,7 @@
       "parameterType": "Parameter Type",
       "propertyType": "{property} Property",
       "nameAndValue": "Name and value for each select item.",
+      "optional": "Optional",
       "noColumns": "No columns",
       "noColumnsAdded": "No columns added",
       "noDataSourcesFound": "No data sources found",

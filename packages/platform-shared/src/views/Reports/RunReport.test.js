@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -343,6 +343,96 @@ describe('Run Report component', () => {
 
       const footerDescription = findByText(runReportContainer, 'p', 'Run Report');
       expect(footerDescription.exists()).toBe(true);
+    });
+
+    it('appends "(optional)" to the label of an optional parameter in the run report view', async () => {
+      jest.clearAllMocks();
+      wrapper = setup({
+        reportConfig: {
+          parameters: {
+            Color: {
+              label: 'Color',
+              source: 'basic',
+              type: 'string',
+              optional: true,
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      const labelCol = wrapper.find('[data-testid="label-Color"]');
+      expect(labelCol.text()).toBe('Color (optional)');
+    });
+
+    it('does not disable the Run Report button when only optional parameters exist and none are filled', async () => {
+      jest.clearAllMocks();
+      wrapper = setup({
+        templateName: 'TEMPLATE-NAME',
+        templateState: 'draft',
+        reportConfig: {
+          parameters: {
+            Color: {
+              label: 'Color',
+              source: 'basic',
+              type: 'string',
+              optional: true,
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      const submitButton = findByTestId(wrapper, 'run-report-button');
+      expect(submitButton.attributes('disabled')).toBeUndefined();
+    });
+
+    it('submits null for optional string parameters that have no value', async () => {
+      jest.clearAllMocks();
+      const runReportSpy = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockImplementation(() => Promise.resolve({}));
+      wrapper = setup({
+        templateName: 'TEMPLATE-NAME',
+        templateState: 'draft',
+        reportConfig: {
+          parameters: {
+            Color: {
+              label: 'Color',
+              source: 'basic',
+              type: 'string',
+              optional: true,
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      await findByText(wrapper, 'button', 'Run Report').trigger('click');
+      expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { Color: null });
+    });
+
+    it('submits the actual value for an optional parameter that has been filled in', async () => {
+      jest.clearAllMocks();
+      const runReportSpy = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockImplementation(() => Promise.resolve({}));
+      wrapper = setup({
+        templateName: 'TEMPLATE-NAME',
+        templateState: 'draft',
+        reportConfig: {
+          parameters: {
+            Color: {
+              label: 'Color',
+              source: 'basic',
+              type: 'string',
+              optional: true,
+            },
+          },
+        },
+      });
+      await flushPromises();
+
+      await findByTestId(wrapper, 'input-fr-field-Color').setValue('red');
+      await flushPromises();
+      await findByText(wrapper, 'button', 'Run Report').trigger('click');
+      expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', 'draft', { Color: 'red' });
     });
   });
 });

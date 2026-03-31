@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -48,6 +48,34 @@ describe('Report Settings Definition component', () => {
 
       definitionHeading = wrapper.find('h4');
       expect(definitionHeading.text()).toBe('Parameter Definition Name basic');
+    });
+
+    it('displays "(optional)" label when parameter definition has optional set to true', () => {
+      ({ wrapper } = setup({
+        settingId: 'parameters',
+        definition: {
+          parameterName: 'Color',
+          source: 'basic',
+          optional: true,
+        },
+      }));
+
+      const heading = wrapper.find('h4');
+      expect(heading.text()).toContain('(optional)');
+    });
+
+    it('does not display "(optional)" label when parameter definition has optional set to false', () => {
+      ({ wrapper } = setup({
+        settingId: 'parameters',
+        definition: {
+          parameterName: 'Color',
+          source: 'basic',
+          optional: false,
+        },
+      }));
+
+      const heading = wrapper.find('h4');
+      expect(heading.text()).not.toContain('(optional)');
     });
 
     it('displays the "Filter Active" state definition', () => {

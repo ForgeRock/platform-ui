@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -21,6 +21,9 @@ export default class ReportParameter {
     this.description = args.description;
     this.internalSearch = args.internalSearch;
     this.label = args.label;
+    if (args.optional) {
+      this.optional = true;
+    }
     this.placeholder = args.label;
     this.taggable = args.taggable;
     this.testId = `fr-field-${args._id}`;
@@ -79,6 +82,10 @@ export default class ReportParameter {
   payload() {
     let payload = this.model;
     if (this.type === 'date') payload = ReportParameter.dateToISO(payload);
+    if (this.optional === true) {
+      const isEmpty = payload === '' || payload === null || (Array.isArray(payload) && payload.length === 0);
+      if (isEmpty) payload = null;
+    }
     return { [this._id]: payload };
   }
 

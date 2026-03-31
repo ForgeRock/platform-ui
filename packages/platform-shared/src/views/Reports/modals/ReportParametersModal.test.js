@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -303,6 +303,7 @@ describe('Report Parameters Modal component', () => {
           inputType: 'string',
           helpText: 'my parameter description',
           multivalued: true,
+          optional: false,
           enumeratedValues: [{ name: 'enum name', value: 'enum value' }],
           source: 'basic',
         },
@@ -353,6 +354,105 @@ describe('Report Parameters Modal component', () => {
 
       const userNameOption = attributeField.find('[role="option"]');
       expect(userNameOption.text()).toBe('User Name');
+    });
+
+    it('ensures that the "Optional" checkbox is present and emits optional: true when checked', async () => {
+      // Fill in required fields to make form valid
+      await wrapper.find('input[name="parameter-name"]').setValue('MyParameter');
+      await wrapper.find('input[name="parameter-label"]').setValue('My label');
+      const inputTypeSelect = findByRole(wrapper, 'listbox');
+      await inputTypeSelect.trigger('click');
+      await inputTypeSelect.findAll('li')[0].find('span').trigger('click');
+      await flushPromises();
+
+      // Optional checkbox should be present
+      const optionalCheckbox = wrapper.find('input[name="optional"]');
+      expect(optionalCheckbox.exists()).toBe(true);
+      expect(optionalCheckbox.element.checked).toBe(false);
+
+      // Check the optional checkbox
+      await optionalCheckbox.setValue(true);
+      await flushPromises();
+
+      // Save and verify optional: true is in the emitted payload
+      await findByText(wrapper, 'button', 'Save').trigger('click');
+      const emitted = wrapper.emitted('update-parameter');
+      expect(emitted[0][1].optional).toBe(true);
+    });
+
+    it('emits optional: false when the "Optional" checkbox is not checked', async () => {
+      // Fill in required fields to make form valid
+      await wrapper.find('input[name="parameter-name"]').setValue('MyParameter');
+      await wrapper.find('input[name="parameter-label"]').setValue('My label');
+      const inputTypeSelect = findByRole(wrapper, 'listbox');
+      await inputTypeSelect.trigger('click');
+      await inputTypeSelect.findAll('li')[0].find('span').trigger('click');
+      await flushPromises();
+
+      // Save without checking optional
+      await findByText(wrapper, 'button', 'Save').trigger('click');
+      const emitted = wrapper.emitted('update-parameter');
+      expect(emitted[0][1].optional).toBe(false);
+    });
+
+    it('pre-checks the "Optional" checkbox when editing an existing optional parameter', async () => {
+      await wrapper.setProps({
+        existingParameter: {
+          index: 0,
+          definition: {
+            parameterName: 'Color',
+            inputLabel: 'Color',
+            inputType: 'string',
+            source: 'basic',
+            helpText: '',
+            multivalued: false,
+            optional: true,
+          },
+        },
+      });
+      await flushPromises();
+
+      const optionalCheckbox = wrapper.find('input[name="optional"]');
+      expect(optionalCheckbox.element.checked).toBe(true);
+    });
+
+    it('does not show the "Optional" checkbox when the "Boolean" input type is selected', async () => {
+      await wrapper.find('input[name="parameter-name"]').setValue('MyBooleanParam');
+      await wrapper.find('input[name="parameter-label"]').setValue('My boolean label');
+
+      // Select the Boolean type (index 1 in the basicParameterTypes list)
+      const inputTypeSelect = findByRole(wrapper, 'listbox');
+      await inputTypeSelect.trigger('click');
+      const booleanOption = inputTypeSelect.findAll('li')[1].find('span');
+      expect(booleanOption.text()).toBe('Boolean');
+      await booleanOption.trigger('click');
+      await flushPromises();
+
+      const optionalCheckbox = wrapper.find('input[name="optional"]');
+      expect(optionalCheckbox.exists()).toBe(false);
+    });
+
+    it('emits optional: false for a boolean parameter even if optional was previously set to true', async () => {
+      // First select string type and mark as optional
+      await wrapper.find('input[name="parameter-name"]').setValue('MyParam');
+      await wrapper.find('input[name="parameter-label"]').setValue('My label');
+      const inputTypeSelect = findByRole(wrapper, 'listbox');
+      await inputTypeSelect.trigger('click');
+      await inputTypeSelect.findAll('li')[0].find('span').trigger('click');
+      await flushPromises();
+      await wrapper.find('input[name="optional"]').setValue(true);
+
+      // Now switch to boolean type
+      await inputTypeSelect.trigger('click');
+      const booleanOption = inputTypeSelect.findAll('li')[1].find('span');
+      expect(booleanOption.text()).toBe('Boolean');
+      await booleanOption.trigger('click');
+      await flushPromises();
+
+      // Save and verify optional is false in the emitted payload
+      await findByText(wrapper, 'button', 'Save').trigger('click');
+      const emitted = wrapper.emitted('update-parameter');
+      expect(emitted[0][1].optional).toBe(false);
     });
   });
 });
