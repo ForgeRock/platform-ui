@@ -58,7 +58,7 @@ module.exports = defineConfig({
               console.log(`[Lighthouse] Auditing ${url} on CDP port ${cdpPort}`);
 
               // Use Puppeteer to connect to Chrome and create a new page in the same browser context
-              // eslint-disable-next-line global-require
+              // eslint-disable-next-line global-require, import/no-unresolved
               const puppeteer = require('puppeteer-core');
               browser = await puppeteer.connect({
                 browserURL: `http://localhost:${cdpPort}`,
