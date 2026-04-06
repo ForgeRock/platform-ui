@@ -9,6 +9,7 @@ import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import { DEPLOYMENT_TYPES } from '@forgerock/platform-shared/src/constants/deploymentConstants';
 
 const defaultState = {
+  accountsEnabled: false,
   amBaseURL: '',
   analyticsURL: '',
   aiAgentsEnabled: false,
@@ -261,6 +262,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_DEV_APP_TEMPLATES?.toString() === 'true') {
       state.devAppTemplatesEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_ACCOUNTS?.toString() === 'true') {
+      state.accountsEnabled = true;
     }
   },
   // Needed for Login since setFeatureFlags isn't called there
