@@ -24,7 +24,7 @@
     "cypress-file-upload": "5.0.8",
     "got": "11.8.5",
     "imap": "^0.8.19",
-    "lodash": "4.17.23",
+    "lodash": "4.18.1",
     "nodemailer": "7.0.12"
   },
   "devDependencies": {
@@ -95,6 +95,7 @@
     "glob@npm:>=10": "10.5.0",
     "istanbul-lib-instrument": "5.2.0",
     "js-yaml": "4.1.1",
+    "lodash": "4.18.1",
     "eslint/minimatch": "3.1.5",
     "eslint-plugin-import/minimatch": "3.1.5",
     "find-cypress-specs/minimatch": "3.1.5",
