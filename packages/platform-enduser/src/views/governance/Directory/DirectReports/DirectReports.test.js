@@ -105,29 +105,6 @@ describe('DirectReports Component', () => {
     expect(loadSpy).toHaveBeenCalled();
   });
 
-  it('can sort table by descending', async () => {
-    const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-    await wrapper.vm.sortChanged();
-
-    expect(wrapper.vm.sortDesc).toBeTruthy();
-    expect(loadSpy).toBeCalled();
-    expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
-      pageNumber: 1, pageSize: 10, sortBy: 'userName', sortDir: 'desc',
-    });
-  });
-
-  it('can sort table by ascending', async () => {
-    wrapper.setData({ sortDesc: true });
-    const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-    await wrapper.vm.sortChanged();
-
-    expect(wrapper.vm.sortDesc).toBeFalsy();
-    expect(loadSpy).toBeCalled();
-    expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
-      pageNumber: 1, pageSize: 10, sortBy: 'userName', sortDir: 'asc',
-    });
-  });
-
   it('can set page size', () => {
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     wrapper.vm.pageSizeChange(20);
@@ -135,7 +112,7 @@ describe('DirectReports Component', () => {
     expect(wrapper.vm.paginationPageSize).toBe(20);
     expect(loadSpy).toBeCalled();
     expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
-      pageNumber: 1, pageSize: 20, sortBy: 'userName', sortDir: 'asc',
+      pageNumber: 1, pageSize: 20,
     });
   });
 
@@ -146,7 +123,7 @@ describe('DirectReports Component', () => {
     expect(wrapper.vm.paginationPage).toBe(2);
     expect(loadSpy).toBeCalled();
     expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
-      pageNumber: 2, pageSize: 10, sortBy: 'userName', sortDir: 'asc',
+      pageNumber: 2, pageSize: 10,
     });
   });
 
@@ -162,7 +139,7 @@ describe('DirectReports Component', () => {
     wrapper.setData({ searchQuery: 'test' });
     await wrapper.vm.searchDirectReports();
     expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
-      pageNumber: 1, pageSize: 10, sortBy: 'userName', sortDir: 'asc', queryString: 'test',
+      pageNumber: 1, pageSize: 10, queryString: 'test',
     });
   });
 

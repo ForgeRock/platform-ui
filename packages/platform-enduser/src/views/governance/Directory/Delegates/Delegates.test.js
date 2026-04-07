@@ -107,22 +107,6 @@ describe('AccessReviews', () => {
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('delegate-delete-modal');
     });
 
-    it('can sort table by descending', () => {
-      const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-      wrapper.vm.sortChanged({ sortDesc: true });
-
-      expect(wrapper.vm.sortDesc).toBeTruthy();
-      expect(loadSpy).toBeCalled();
-    });
-
-    it('can sort table by ascending', () => {
-      const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-      wrapper.vm.sortChanged({ sortDesc: false });
-
-      expect(wrapper.vm.sortDesc).toBeFalsy();
-      expect(loadSpy).toBeCalled();
-    });
-
     it('can set page size', () => {
       const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
       wrapper.vm.pageSizeChange(20);
@@ -166,27 +150,6 @@ describe('AccessReviews', () => {
         expect(getTaskProxies).toBeCalledWith('testId', {
           pageNumber: 1,
           pageSize: 10,
-        });
-      });
-
-      it('gets task proxies sorted by userName', () => {
-        const getTaskProxies = jest.spyOn(DirectoryApi, 'getTaskProxies');
-        wrapper.vm.sortDesc = true;
-        wrapper.vm.loadData();
-        expect(getTaskProxies).toBeCalledWith('testId', {
-          pageNumber: 1,
-          pageSize: 10,
-          sortBy: 'userName',
-          sortDir: 'desc',
-        });
-
-        wrapper.vm.sortDesc = false;
-        wrapper.vm.loadData();
-        expect(getTaskProxies).toBeCalledWith('testId', {
-          pageNumber: 1,
-          pageSize: 10,
-          sortBy: 'userName',
-          sortDir: 'asc',
         });
       });
 

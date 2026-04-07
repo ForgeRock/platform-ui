@@ -167,7 +167,6 @@ export default {
         {
           key: 'user',
           label: this.$t('common.user.user'),
-          sortable: true,
         },
         {
           key: 'start',
@@ -230,12 +229,13 @@ export default {
 
       if (this.searchQuery) params.queryString = this.searchQuery;
 
+      /* Removing sort on this component pending a fix for OPENIDM-20595, leaving commented to potentially re-enable in future
       if (this.sortDesc !== null) {
         params.sortBy = 'userName';
         params.sortDir = this.sortDesc
           ? 'desc'
           : 'asc';
-      }
+      } */
 
       getTaskProxies(this.userId, params).then(({ data }) => {
         this.items = data.result.map((delegate) => ({
