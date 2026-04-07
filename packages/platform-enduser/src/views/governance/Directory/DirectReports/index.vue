@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -165,8 +165,6 @@ export default {
         {
           key: 'userName',
           label: this.$t('common.user.user'),
-          sortable: true,
-          sortDirection: 'asc',
         },
         {
           key: 'accountStatus',
@@ -211,6 +209,9 @@ export default {
       if (this.searchQuery) {
         params.queryString = this.searchQuery;
       }
+
+      /* Removing sort on this component pending a fix for OPENIDM-20595, leaving commented to potentially re-enable in future
+      //
       // Checks sort and adds to params
       if (this.sortDesc) {
         params.sortDir = 'desc';
@@ -219,7 +220,7 @@ export default {
         params.sortDir = 'asc';
       }
       // Adds sortby to params
-      params.sortBy = this.sortBy;
+      params.sortBy = this.sortBy; */
 
       await getDirectReports(this.userId, params).then(({ data }) => {
         this.items = data.result;
