@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -137,7 +137,13 @@ const loadApp = () => {
   const app = createApp(App);
   app.use(Notifications);
   app.use(Vue3Sanitize, baseSanitizerConfig);
-  app.use(VueReCaptcha);
+  app.use(VueReCaptcha, {
+    loaderOptions: {
+      renderParameters: {
+        hl: i18n.global.locale || 'en', // initial locale on app load
+      },
+    },
+  });
   app.use(router);
   app.use(i18n);
   app.use(store);

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -43,7 +43,7 @@ async function executeAndSetToken() {
  * callback's result.
  * */
 function injectRecaptchaScript() {
-  const scriptSrc = `${recaptchaApiUrl}?render=${recaptchaSiteKey}`;
+  const scriptSrc = `${recaptchaApiUrl}?render=${recaptchaSiteKey}&hl=${i18n.global.locale || 'en'}`;
   // Ensure script has not already been added to the page
   if (!document.querySelector(`script[src='${scriptSrc}']`)) {
     // Create the script

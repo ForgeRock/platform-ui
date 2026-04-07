@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -60,7 +60,7 @@ describe('CustomNodesView', () => {
   beforeEach(() => {
     setup();
     headWrap = new DOMWrapper(document.head);
-    scriptSrc = `${API_URL}?render=${SITE_KEY}`;
+    scriptSrc = `${API_URL}?render=${SITE_KEY}&hl=${i18n.global.locale}`;
     recaptchaScript = headWrap.find(`script[src='${scriptSrc}']`);
   });
 

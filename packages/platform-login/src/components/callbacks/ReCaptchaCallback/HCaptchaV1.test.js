@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -19,6 +19,13 @@ describe('HCaptchaV1.vue', () => {
         plugins: [i18n],
         stubs: {
           'router-link': true,
+          VueHcaptcha: true,
+        },
+        mocks: {
+          // Mock initial locale
+          $i18n: {
+            locale: 'en',
+          },
         },
       },
       props: {
@@ -44,5 +51,19 @@ describe('HCaptchaV1.vue', () => {
     const spyDisplayNotification = jest.spyOn(wrapper.vm, 'displayNotification').mockImplementation();
     wrapper.vm.handleCaptchaError();
     expect(spyDisplayNotification).toHaveBeenCalled();
+  });
+
+  it('passes the current locale as language and key prop to VueHcaptcha', async () => {
+    const initialId = wrapper.findComponent({ name: 'VueHcaptcha' }).vm._.uid;
+
+    // Update the locale which updates key and trigger re-render
+    i18n.global.locale = 'fr';
+    await wrapper.vm.$nextTick();
+
+    const vueHcaptchaStub = wrapper.findComponent({ name: 'VueHcaptcha' });
+    expect(vueHcaptchaStub.props('language')).toBe('fr');
+
+    const newId = vueHcaptchaStub.vm._.uid;
+    expect(newId).not.toBe(initialId);
   });
 });

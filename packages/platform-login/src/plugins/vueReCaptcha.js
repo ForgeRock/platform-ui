@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -33,8 +33,16 @@ export default {
      * @memberof VueReCaptchaPlugin
      *
      * @param {string} siteKey - The site key for the reCaptcha service.
+     * @param {string} locale - The locale code used to set the reCaptcha language.
      */
-    app.config.globalProperties.$loadVueRecaptcha = (siteKey) => {
+    app.config.globalProperties.$loadVueRecaptcha = (siteKey, locale) => {
+      const currentLocale = typeof locale === 'string' && locale.length > 0 ? locale : 'en';
+      const loaderOptions = options?.loaderOptions;
+
+      if (currentLocale && loaderOptions && typeof loaderOptions === 'object') {
+        loaderOptions.renderParameters ??= {};
+        loaderOptions.renderParameters.hl = currentLocale; // set the locale when loading the reCaptcha script
+      }
       app.use(VueReCaptcha, { ...options, siteKey });
     };
   },
