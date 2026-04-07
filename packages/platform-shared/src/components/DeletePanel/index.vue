@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -21,6 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BCard>
     <FrDeleteModal
       :custom-message="customModalMessage"
+      :id="modalId"
       :is-deleting="isDeleting"
       :is-testing="isTesting"
       :translated-item-type="translatedItemType"
@@ -47,6 +48,10 @@ export default {
     FrDeleteModal,
   },
   props: {
+    modalId: {
+      type: String,
+      default: 'deleteModal',
+    },
     /**
      * Custom message to show in modal body
      */
@@ -84,7 +89,7 @@ export default {
       this.$emit('delete-item');
     },
     showModal() {
-      this.$root.$emit('bv::show::modal', 'deleteModal');
+      this.$root.$emit('bv::show::modal', this.modalId);
     },
   },
 };
