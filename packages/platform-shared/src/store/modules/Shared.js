@@ -14,6 +14,7 @@ const defaultState = {
   amBaseURL: '',
   analyticsURL: '',
   aiAgentsEnabled: false,
+  devIdmEnabled: false,
   autoAccessEnabled: false,
   autoAccessJasUrl: null,
   autoAccessApiUrl: null,
@@ -268,6 +269,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_ACCOUNTS?.toString() === 'true') {
       state.accountsEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_DEV_IDM?.toString() === 'true') {
+      state.devIdmEnabled = true;
     }
   },
   // Needed for Login since setFeatureFlags isn't called there
