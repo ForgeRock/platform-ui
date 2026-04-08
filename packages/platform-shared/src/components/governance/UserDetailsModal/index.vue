@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="mr-3 rounded-circle"
           height="36"
           width="36"
-          :alt="userFullName"
+          alt=""
           :src="(user && user.profileImage) || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
           fluid />
         <div class="media-body">
