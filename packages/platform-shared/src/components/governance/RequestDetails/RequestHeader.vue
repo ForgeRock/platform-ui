@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="align-self-center"
           :onerror="onImageError"
           :src="item.details.icon"
-          :alt="$t('common.logo')">
+          alt="">
       </div>
     </template>
     <BMediaBody class="align-self-center text-truncate">
