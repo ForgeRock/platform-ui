@@ -14,6 +14,7 @@
     "AutoAccessRiskConfig": "RiskConfig",
     "AutoAccessTenantBehavior": "Tenant Authentication Behavior",
     "AutoAccessUserBehavior": "User Authentication Behavior",
+    "Authentication": "Authentication",
     "BulkImport": "Bulk Import",
     "CampaignDetails": "Campaign Details",
     "CampaignDetailsTask": "Access Reviews",
@@ -303,7 +304,16 @@
   },
   "authentication": {
     "errorRetrievingAuthServices": "There was an error retrieving authentication services.",
-    "errorRetrievingTemplatesData": "There was an error retrieving templates data."
+    "errorRetrievingTemplatesData": "There was an error retrieving templates data.",
+    "authentication": "Authentication",
+    "modules": {
+      "title": "Modules",
+      "subtitle": "Configure desired Authentication Modules to verify identities. OpenIDM evaluates these modules in the order specified."
+    },
+    "session": {
+      "title": "Session",
+      "subtitle": "The Session Module sets token life and idle time limits on user sessions."
+    }
   },
   "connect": {
     "connectIdentities": "Connect Identities",
