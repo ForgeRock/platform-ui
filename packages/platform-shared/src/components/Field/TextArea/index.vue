@@ -35,7 +35,8 @@ of the MIT license. See the LICENSE file for details. -->
       @click="handleFocusEvent"
       @focus="handleFocusEvent"
       @keydown="$emit('keydown', $event)"
-      @blur="inputValueHandler(inputValue)" />
+      @blur="onBlur($event, inputValue)"
+    />
     <template #defaultButtons>
       <BInputGroupAppend v-if="copy">
         <button
@@ -205,6 +206,18 @@ export default {
       }
       this.$emit('focus', event);
     },
+
+    /**
+     * Handles blur event on the textarea.
+     *
+     * @param {Event} event - The native blur event
+     * @param {Array|Object|Number|String} inputValue - input value to be set for internal model
+     */
+    onBlur(event, inputValue) {
+      this.inputValueHandler(inputValue);
+      this.$emit('blur', event);
+    },
+
     /**
     * Default inputValueHandler method.
     *
