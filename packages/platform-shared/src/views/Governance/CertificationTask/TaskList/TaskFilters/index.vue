@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -161,7 +161,7 @@ of the MIT license. See the LICENSE file for details. -->
                     class="mr-4 size-28"
                     :onerror="onImageError"
                     :src="getLogo(option)"
-                    :alt="$t('common.logo')">
+                    alt="">
                   <div class="media-body align-self-center overflow-hidden text-nowrap">
                     <span class="text-dark">
                       {{ option.text }}
@@ -184,7 +184,7 @@ of the MIT license. See the LICENSE file for details. -->
                     class="mr-4 size-28"
                     :onerror="onImageError"
                     :src="getLogo(option)"
-                    :alt="$t('common.logo')">
+                    alt="">
                   <div class="media-body align-self-center overflow-hidden text-nowrap">
                     <span class="text-dark">
                       {{ option.name }}
