@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -39,12 +39,13 @@ export default function floatingElementPosition({
     const targetPaddingBottom = parseFloat(targetStyles.paddingBottom) || 0;
     const targetPaddingTop = parseFloat(targetStyles.paddingTop) || 0;
 
-    const floatingRect = floating.getBoundingClientRect();
-    const floatingHeight = floatingRect.height;
+    const floatingHeight = floating.getBoundingClientRect().height;
     const viewportHeight = window.innerHeight;
 
     const spaceBelow = viewportHeight - targetRect.bottom;
-    const showAbove = spaceBelow < floatingHeight;
+    // open above only when there is more space above than below
+    const spaceAbove = targetRect.top - targetPaddingTop;
+    const showAbove = spaceBelow < floatingHeight && spaceAbove > spaceBelow;
 
     const translateY = showAbove
       ? targetRect.top - floatingHeight + targetPaddingTop
@@ -60,6 +61,8 @@ export default function floatingElementPosition({
       top: '0',
       left: '0',
       transform: `translate(${translateX}px, ${translateY}px)`,
+      maxHeight: `${showAbove ? spaceAbove : spaceBelow}px`,
+      overflowY: 'auto',
     };
   }
 
