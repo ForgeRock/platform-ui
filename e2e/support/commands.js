@@ -298,7 +298,7 @@ Cypress.Commands.add(
     cy.findByRole('button', { name: /Next/i }).click();
 
     // Wait for the spinner div to disappear
-    cy.findByRole('status', { timeout: 3000 }).should('not.exist');
+    cy.findByRole('status', { timeout: 10000 }).should('not.exist');
 
     // Every third Login user is asked about preferences on the default Login Journey
     cy.get('body').then(($body) => {

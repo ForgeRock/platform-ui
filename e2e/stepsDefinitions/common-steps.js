@@ -232,7 +232,7 @@ When('user fills the following fields', (dataTable) => {
 });
 
 When('user clicks on the item {string} from the current table', (itemName) => {
-  cy.findAllByRole('cell', { name: itemName }).click();
+  cy.findAllByRole('cell', { name: itemName }).should('be.visible').click();
 });
 
 When('user navigates back with browser Back arrow', () => {

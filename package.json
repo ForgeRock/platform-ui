@@ -14,7 +14,7 @@
     "coverage-diff": "yarn g:coverage-diff"
   },
   "dependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "21.0.2",
+    "@badeball/cypress-cucumber-preprocessor": "24.0.1",
     "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
     "@forgerock/javascript-sdk": "4.9.0",
     "@forgerock/ping-protect": "4.7.0",

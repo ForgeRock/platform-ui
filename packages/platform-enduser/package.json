@@ -20,7 +20,7 @@
     "test:lighthouse": "../../e2e/passwords.sh cypress run --spec e2e/tests/lighthouse.suite.js --config ignoreTestFiles=''"
   },
   "dependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "21.0.2",
+    "@badeball/cypress-cucumber-preprocessor": "24.0.1",
     "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
     "@braintree/sanitize-url": "6.0.2",
     "@forgerock/platform-shared": "1.0.0",

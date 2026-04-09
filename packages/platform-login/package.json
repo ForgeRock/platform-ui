@@ -20,7 +20,7 @@
     "test:cb": "jest --config=../../jest.config.crossbrowser.js"
   },
   "dependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "21.0.2",
+    "@badeball/cypress-cucumber-preprocessor": "24.0.1",
     "@bahmutov/cypress-esbuild-preprocessor": "2.2.3",
     "@forgerock/platform-shared": "1.0.0",
     "@hcaptcha/vue-hcaptcha": "0.3.2",
