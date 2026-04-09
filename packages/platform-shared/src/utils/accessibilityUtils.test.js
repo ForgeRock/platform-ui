@@ -5,10 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable indent */
 import {
   createErrorId,
   createAriaDescribedByList,
+  hasInteractiveContent,
   removeNonRoleAriaAttributes,
 } from './accessibilityUtils';
 
@@ -108,6 +108,54 @@ describe('accessibilityUtils', () => {
     it('should return an empty object if no attributes are provided', () => {
       const newAttrs = removeNonRoleAriaAttributes();
       expect(newAttrs).toEqual({});
+    });
+  });
+
+  describe('hasInteractiveContent', () => {
+    describe('should return false', () => {
+      const testCases = [
+        ['given null', null],
+        ['given undefined', undefined],
+        ['given false', false],
+        ['given a number', 42],
+        ['given an empty string', ''],
+        ['given plain text with no elements', 'Just some plain text'],
+        ['given an anchor without href', '<a>not a link</a>'],
+        ['given a disabled button', '<button disabled>Click</button>'],
+        ['given a hidden input', '<input type="hidden" value="secret">'],
+        ['given a disabled input', '<input type="text" disabled>'],
+        ['given a disabled select', '<select disabled><option>opt</option></select>'],
+        ['given a disabled textarea', '<textarea disabled></textarea>'],
+        ['given tabindex="-1"', '<div tabindex="-1">not in tab order</div>'],
+        ['given contenteditable="false"', '<div contenteditable="false">not editable</div>'],
+        ['given audio without controls', '<audio src="test.mp3"></audio>'],
+        ['given video without controls', '<video src="test.mp4"></video>'],
+      ];
+      it.each(testCases)('%s', (name, htmlString) => {
+        expect(hasInteractiveContent(htmlString)).toBe(false);
+      });
+    });
+
+    describe('should return true', () => {
+      const testCases = [
+        ['given an anchor with href', '<a href="/path">link</a>'],
+        ['given an enabled button', '<button>Click</button>'],
+        ['given an enabled text input', '<input type="text">'],
+        ['given an enabled select', '<select><option>opt</option></select>'],
+        ['given an enabled textarea', '<textarea></textarea>'],
+        ['given a summary element', '<details><summary>Toggle</summary><p>Content</p></details>'],
+        ['given an iframe', '<iframe src="about:blank"></iframe>'],
+        ['given audio with controls', '<audio controls src="test.mp3"></audio>'],
+        ['given video with controls', '<video controls src="test.mp4"></video>'],
+        ['given contenteditable="true"', '<div contenteditable="true">editable</div>'],
+        ['given contenteditable="" (empty value)', '<div contenteditable="">editable</div>'],
+        ['given tabindex="0"', '<div tabindex="0">focusable</div>'],
+        ['given tabindex="1"', '<div tabindex="1">focusable</div>'],
+        ['given a link nested inside paragraph text', '<p>Read the <a href="/terms">terms</a> here.</p>'],
+      ];
+      it.each(testCases)('%s', (name, htmlString) => {
+        expect(hasInteractiveContent(htmlString)).toBe(true);
+      });
     });
   });
 });

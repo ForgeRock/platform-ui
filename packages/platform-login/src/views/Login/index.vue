@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
                       <p
                         v-if="description"
                         v-html="description" />
-                      <p
+                      <div
                         v-if="screenReaderMessageType !== 'ERROR'"
                         class="sr-only"
                         v-html="screenReaderMessage" />
@@ -272,7 +272,7 @@ of the MIT license. See the LICENSE file for details. -->
                   v-html="description" />
               </BCol>
             </BRow>
-            <p
+            <div
               v-if="screenReaderMessageType !== 'ERROR'"
               class="sr-only"
               v-html="screenReaderMessage" />
