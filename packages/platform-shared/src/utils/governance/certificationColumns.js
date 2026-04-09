@@ -104,6 +104,7 @@ const OOTBColumns = {
     class: 'text-truncate fr-access-cell',
     show: true,
     showFor: ['accounts', 'entitlements', 'roles'],
+    exportFields: ['user.userName', 'user.givenName', 'user.sn', 'user.mail'],
   },
   role: {
     key: 'role',
@@ -113,6 +114,7 @@ const OOTBColumns = {
     class: 'text-truncate fr-access-cell',
     show: true,
     showFor: ['roles'],
+    exportFields: ['role.name'],
   },
   application: {
     key: 'application',
@@ -122,6 +124,7 @@ const OOTBColumns = {
     class: 'text-truncate fr-access-cell',
     show: true,
     showFor: ['accounts', 'entitlements', 'entitlementComposition'],
+    exportFields: ['application.name'],
   },
   entitlement: {
     key: 'entitlement',
@@ -131,6 +134,7 @@ const OOTBColumns = {
     class: 'text-truncate fr-access-cell',
     show: true,
     showFor: ['entitlements', 'accountEntitlement', 'entitlementComposition'],
+    exportFields: ['descriptor.idx./entitlement.displayName'],
   },
   account: {
     key: 'account',
@@ -140,6 +144,7 @@ const OOTBColumns = {
     class: 'text-truncate fr-access-cell',
     show: true,
     showFor: ['accounts', 'entitlements'],
+    exportFields: ['descriptor.idx./account.displayName'],
   },
   prediction: {
     key: 'prediction',
@@ -150,6 +155,7 @@ const OOTBColumns = {
     show: true,
     showFor: ['entitlements', 'accountEntitlement'],
     autoId: true,
+    exportFields: ['prediction.confidence'],
   },
   flags: {
     key: 'flags',
@@ -398,4 +404,137 @@ export function setSelectedCategories(columnCategories, selectedColumns) {
     });
   });
   return clonedCategories;
+}
+
+// Default fields to always export with certification items
+const DEFAULT_EXPORT_FIELDS = [
+  'decision.certification.decision',
+  'decision.certification.status',
+  'decision.certification.decisionDate',
+  'decision.certification.decisionBy.userName',
+  'decision.certification.completionDate',
+  'decision.certification.completedBy.userName',
+  'id',
+];
+
+/**
+ * Converts an array of active column strings (in the format "category.key") to an array of query field strings for export.
+ *
+ * @param {Array<string>} activeColumnStrings - An array of active column strings (category + key).
+ * @returns {Array<string>} An array of strings representing the query fields corresponding to the active columns.
+ */
+export function convertColumnsToQueryFields(activeColumnStrings) {
+  const columnFields = activeColumnStrings.flatMap((columnString) => {
+    const categoryIndex = columnString.indexOf('.');
+    const category = columnString.substring(0, categoryIndex);
+    const key = columnString.substring(categoryIndex + 1);
+
+    const ootbColumn = Object.values(OOTBColumns).find((c) => `${c.category}.${c.key}` === columnString);
+
+    if (ootbColumn) {
+      // If it's an OOTB column, return exportFields if they exist, otherwise return empty array
+      // this takes a field formatted in the UI e.g. "user" and converts it to the appropriate query fields for export e.g. ["user.userName", "user.givenName", "user.sn", "user.mail"]
+      return ootbColumn.exportFields || [];
+    }
+
+    if (['selector'].includes(key)) { return []; } // Ignore virtual fields
+
+    // If it's not an OOTB column, return category.key which is the value to query for (handling glossary special case)
+    if (key.startsWith('glossary.')) {
+      const glossaryKey = key.substring('glossary.'.length);
+      return `glossary.idx./${category}.${glossaryKey}`;
+    }
+    return columnString;
+  });
+
+  // Always include default export fields
+  columnFields.push(...DEFAULT_EXPORT_FIELDS);
+  return columnFields;
+}
+
+/**
+ * Generates a mapping of field keys to their corresponding labels so that the export file can have display friendly headers
+ *
+ * @param {Array<Object>} currentColumns - An array of column objects representing the current columns.
+ * @returns {Object} An object mapping field keys to their labels.
+ */
+function getLabelsForFields(currentColumns) {
+  const fieldLabels = {};
+  const allColumns = { ...OOTBColumns, ...currentColumns };
+  // Iterate over all OOTB and currently selected columns
+  Object.values(allColumns).forEach((col) => {
+    // Add main field label
+    fieldLabels[`${col.category}.${col.key}`] = col.label;
+
+    // If present, add export field labels
+    if (col.exportFields) {
+      if (col.exportFields.length === 1) {
+        // Use the main label for fields with single exports
+        fieldLabels[col.exportFields[0]] = col.label;
+      } else {
+        // For fields with multiple export fields, create labels based on the main label and the specific export field
+        col.exportFields.forEach((exportField) => {
+          fieldLabels[exportField] = i18n.global.t(`governance.certificationTask.exportModal.defaultColumns.${exportField.replace(/\./g, '_')}`);
+        });
+      }
+    }
+  });
+
+  // Add labels for default export fields
+  DEFAULT_EXPORT_FIELDS.forEach((exportField) => {
+    if (!fieldLabels[exportField]) {
+      fieldLabels[exportField] = i18n.global.t(`governance.certificationTask.exportModal.defaultColumns.${exportField.replace(/\./g, '_')}`);
+    }
+  });
+  return fieldLabels;
+}
+
+/**
+ * Processes an array of items for export by flattening nested objects and omitting specified keys.
+ *
+ * @param {Array<Object>} items - The array of items to process for export.
+ * @param {Array<string>} fields - An array of field strings (category.key) representing the active columns, used to determine which fields to include in the export.
+ * @param {Array<Object>} columnList - An array of column objects representing the active columns, used to determine labels to include in the export.
+ * @param {Array<string>} omitKeys - An optional array of keys to omit from the root level of the flattened objects. Defaults to ['permissions'].
+ * @returns {Array<Object>} An array of processed items ready for export, with nested objects flattened and specified keys omitted.
+ */
+export function processItemsForExport(items, fields, columnList, omitKeys = ['permissions']) {
+  const ignoreSet = new Set(omitKeys);
+  const fieldLabels = getLabelsForFields(columnList);
+  const sortedFields = [ // Push default export fields to end of list to preserve order of user provided columns
+    ...fields.filter((field) => !DEFAULT_EXPORT_FIELDS.includes(field)),
+    ...fields.filter((field) => DEFAULT_EXPORT_FIELDS.includes(field)),
+  ];
+
+  // Transform each certification item by flattening all properties to top level keys
+  const transformItem = (item) => {
+    const flatten = (obj, prefix = '', res = {}) => {
+      const entries = Object.entries(obj);
+      entries.forEach(([key, val]) => {
+        if (!prefix && ignoreSet.has(key)) { return; } // Skip keys in the root object that are in the omit list
+        const newKey = prefix ? `${prefix}.${key}` : key;
+
+        if (Array.isArray(val)) {
+          res[newKey] = JSON.stringify(val);
+        } else if (val && typeof val === 'object') {
+          flatten(val, newKey, res);
+        } else {
+          res[newKey] = val;
+        }
+      });
+
+      return res;
+    };
+    const flattenedItem = flatten(item);
+
+    // Creates a new object, converting the flattened keys to the user friendly display labels
+    const returnItem = {};
+    sortedFields.forEach((field) => {
+      const label = fieldLabels[field] || field;
+      returnItem[label] = flattenedItem[field] ?? null;
+    });
+    return returnItem;
+  };
+
+  return items.map((item) => transformItem(item));
 }

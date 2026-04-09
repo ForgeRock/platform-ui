@@ -16,6 +16,23 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <div>
         <BButton
+          v-if="governanceDevEnabled && !isGroupByAccounts"
+          class="mr-2"
+          variant="link-dark"
+          :aria-label="$t('governance.certificationTask.export')"
+          @click="openDownloadModal()">
+          <FrIcon
+            id="export-icon"
+            icon-class="mr-1"
+            name="file_download" />
+        </BButton>
+        <BTooltip
+          target="export-icon"
+          triggers="hover"
+          placement="top">
+          {{ $t('governance.certificationTask.export') }}
+        </BTooltip>
+        <BButton
           v-if="!entitlementUserId"
           @click="showFiltersSection = !showFiltersSection"
           aria-controls="filters-section"
@@ -24,15 +41,31 @@ of the MIT license. See the LICENSE file for details. -->
           class="mr-2"
           data-testid="cert-filter-button"
           variant="link-dark">
-          <FrIcon name="filter_list" />
+          <FrIcon
+            id="filter-icon"
+            name="filter_list" />
         </BButton>
+        <BTooltip
+          target="filter-icon"
+          triggers="hover"
+          placement="top">
+          {{ $t('common.filters') }}
+        </BTooltip>
         <BButton
           @click="openSortModal()"
           :aria-label="$t('common.customizeColumns')"
           class="mr-2"
           variant="link-dark">
-          <FrIcon name="view_column" />
+          <FrIcon
+            id="column-icon"
+            name="view_column" />
         </BButton>
+        <BTooltip
+          target="column-icon"
+          triggers="hover"
+          placement="top">
+          {{ $t('common.customizeColumns') }}
+        </BTooltip>
       </div>
     </div>
     <BCollapse :visible="showFiltersSection">
@@ -395,6 +428,12 @@ of the MIT license. See the LICENSE file for details. -->
       :manager="manager"
       :user="currentUserSelectedModal"
       :user-details="currentUserDetails" />
+    <FrDownloadItemsModal
+      modal-id="certification-task-download-items-modal"
+      :grant-type="certificationGrantType"
+      :is-loading="isDownloadModalLoading"
+      :totals="{ all: totalRows, currentPage: items.length }"
+      :ok-function="exportItemsToFile" />
   </div>
 </template>
 <script>
@@ -447,17 +486,19 @@ import { getGlossarySchema, getFilterSchema, getIgaAutoIdConfig } from '@forgero
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { ADMIN_REVIEWER_PERMISSIONS, blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import {
+  convertColumnsToQueryFields,
   getCellData,
   getAllColumnCategories,
   getInitialColumns,
+  processItemsForExport,
   setSelectedCategories,
 } from '@forgerock/platform-shared/src/utils/governance/certificationColumns';
-
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
 import { getPredictionDisplayInfo } from '@forgerock/platform-shared/src/utils/governance/prediction';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
+import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrForwardModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/ForwardModal';
@@ -483,6 +524,8 @@ import FrReassignModal from './modals/ReassignModal';
 import FrTaskActionsCell from './TaskActionsCell';
 import FrTaskFilters from './TaskFilters';
 import FrTaskMultiSelect from './TaskMultiSelect';
+import FrDownloadItemsModal from './modals/DownloadItemsModal/DownloadItemsModal';
+import store from '@/store';
 
 const userRequiredParams = [
   'userName',
@@ -529,6 +572,7 @@ export default {
     FrAddCommentModal,
     FrApplicationModal,
     FrCommentsModal,
+    FrDownloadItemsModal,
     FrEditReviewerModal,
     FrEntitlementModal,
     FrReassignModal,
@@ -675,6 +719,7 @@ export default {
       currentApplicationSelectedModal: null,
       currentCommentsSelectedModal: [],
       currentEntitlementSelected: null,
+      currentFilters: {},
       currentItemId: '',
       currentLineItemActivity: [],
       currentLineItemIdSelectedModal: null,
@@ -691,6 +736,7 @@ export default {
       enableAddComments: true,
       flagIcons: icons,
       isBulk: false,
+      isDownloadModalLoading: false,
       isLoading: true,
       isDeletingReviewer: false,
       isSavingReviewer: false,
@@ -735,6 +781,9 @@ export default {
         }
         return col;
       });
+    },
+    governanceDevEnabled() {
+      return store.state.SharedStore.governanceDevEnabled;
     },
     isGroupByAccounts() {
       return this.showGroupBy && this.certificationGrantType === 'accounts';
@@ -904,7 +953,11 @@ export default {
         });
 
       return getCertificationTasksListByCampaign(urlParams, this.campaignId, payload)
-        .then((resourceData) => this.loadItemsList(resourceData, currentPage))
+        .then((resourceData) => {
+          // Keep track of the current search parameters to be referenced in other operations like export
+          this.currentFilters = { urlParams, payload };
+          this.loadItemsList(resourceData, currentPage);
+        })
         .catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.errors.certificationListError'));
         })
@@ -1595,6 +1648,45 @@ export default {
         return el.offsetWidth < el.scrollWidth;
       }
       return false;
+    },
+    openDownloadModal() {
+      this.$bvModal.show('certification-task-download-items-modal');
+    },
+    async exportItemsToFile(downloadOptions) {
+      this.isDownloadModalLoading = true;
+      try {
+        // Get the download options chosen
+        const { format, rows } = downloadOptions;
+        // Build the file name and title for export file
+        const { name } = this.campaignDetails;
+        const exportTitle = this.$t('governance.certificationTask.exportModal.exportTitle', { certificationName: name });
+        // Convert the current columns into query fields
+        const currentColumnFields = this.certificationListColumns.map((column) => `${column.category}.${column.key}`);
+        const exportFields = convertColumnsToQueryFields(currentColumnFields);
+        let exportItems = this.items.map((item) => {
+          const { // Remove virtual fields
+            flags, selected, isAcknowledge, ...rest
+          } = item;
+          return rest;
+        });
+        if (rows === 'all') {
+          // If selecting all rows to export, execute a query for all items with only the specific fields required
+          const { urlParams, payload } = this.currentFilters;
+          const queryFields = this.isAdmin ? exportFields : ['decision.certification.actors', ...exportFields]; // actors field required for end users
+          urlParams.pageSize = format === 'pdf' ? 1000 : 10000; // limit to 10k for non-pdf exports, 1k for pdf
+          urlParams.pageNumber = 0;
+          urlParams.fields = queryFields.join(',');
+          const { data } = await getCertificationTasksListByCampaign(urlParams, this.campaignId, payload);
+          exportItems = data.result;
+        }
+        // Format data for export and trigger download
+        const finalExportItems = processItemsForExport(exportItems, exportFields, this.certificationListColumns);
+        downloadAsType(finalExportItems, format, `${exportTitle}.${format}`, exportTitle);
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.certificationTask.errors.exportError'));
+      } finally {
+        this.isDownloadModalLoading = false;
+      }
     },
   },
   watch: {
