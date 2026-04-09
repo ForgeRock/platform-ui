@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2026 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrFormWizard
     v-if="showWizard"
@@ -52,7 +51,7 @@ import FrFormWizard from '@forgerock/platform-shared/src/components/FormWizard/F
 import FrEventDetails from '@forgerock/platform-shared/src/views/Governance/Events/EventEdit/EventDetails';
 import { postTemplate, updateTemplate } from '@forgerock/platform-shared/src/api/governance/TemplateApi';
 import { buildSavePayload, getFormValuesFromTemplate } from '@forgerock/platform-shared/src/views/Governance/utils/certification';
-import { getEmailTemplates } from '@forgerock/platform-shared/src/api/EmailApi';
+import { getEmailNotificationTemplates } from '@forgerock/platform-shared/src/api/governance/NotificationTemplateApi';
 import FrAdditionalOptions from './AdditionalOptions';
 import FrDetailsForm from './DetailsForm';
 import FrNotifications from './Notifications';
@@ -432,11 +431,11 @@ export default {
     }
 
     // get email template list
-    getEmailTemplates()
+    getEmailNotificationTemplates()
       .then(({ data }) => {
         this.emailTemplateOptions = data?.result.map((x) => ({
-          text: x.displayName || startCase(x._id.split('/')[1]),
-          value: x._id,
+          text: x.displayName ? startCase(x.displayName) : startCase(x._id.split('/')[1]),
+          value: 'emailTemplate/'.concat(x._id),
         })).sort((a, b) => a.text.trim().toLowerCase().localeCompare(b.text.trim().toLowerCase()));
       })
       .catch((err) => {

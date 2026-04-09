@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -42,6 +42,8 @@ export default createStore({
     govLcmRole: false,
     govRoleMining: false,
     govAccessRequests: false,
+    govCertAdmin: false,
+    govCertAdminGroup: false,
 
     // governance autoid settings
     govAutoIdSettings: {},
@@ -141,6 +143,10 @@ export default createStore({
 
     setGovAccessRequests(state, { groups }) {
       state.govAccessRequests = Array.isArray(groups) && groups.includes('access-request-admin');
+    },
+    setGovCertAdmin(state, { groups, owner }) {
+      state.govCertAdminGroup = Array.isArray(groups) && groups.includes('certification-admin');
+      state.govCertAdmin = (state.govCertAdminGroup) || (owner && owner.certification === true);
     },
   },
   modules: {

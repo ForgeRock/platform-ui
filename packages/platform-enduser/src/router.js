@@ -420,6 +420,38 @@ const router = createRouter({
       ],
     },
     {
+      path: '/certification/:certificationTab?',
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled, store.state.govCertAdmin]),
+      meta: { authenticate: true },
+      children: [
+        {
+          path: '',
+          name: 'Certification',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/Certification'),
+        },
+        {
+          path: 'campaigns/:campaignId/:tab',
+          name: 'CampaignDetails',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/Certification/Campaigns/CampaignDetails'),
+        },
+        {
+          path: '/certification/templates/creation/:type?',
+          name: 'CertificationTemplate',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/Certification/Templates/EditTemplate'),
+          meta: { hideNavBar: true, hideSideMenu: true },
+          // this supplies the route parameter as a prop to the component
+          props: true,
+        },
+        {
+          path: '/certification/campaigns/:campaignId/certification-task',
+          name: 'CampaignDetailsTask',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/CertificationTask'),
+          meta: { hideNavBar: true, hideSideMenu: true },
+          props: { isAdmin: true },
+        },
+      ],
+    },
+    {
       path: '/sharing',
       name: 'Sharing',
       component: () => import('@/components/uma'),
