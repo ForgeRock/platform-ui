@@ -286,6 +286,7 @@ describe('TextOutputCallback.vue', () => {
 
       await flushPromises();
       const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
       expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
     });
 
@@ -300,6 +301,7 @@ describe('TextOutputCallback.vue', () => {
       await flushPromises();
 
       const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
       expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
     });
 
@@ -314,6 +316,7 @@ describe('TextOutputCallback.vue', () => {
       await flushPromises();
 
       const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
       expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
     });
 
@@ -328,6 +331,7 @@ describe('TextOutputCallback.vue', () => {
       await flushPromises();
 
       const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
       expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
     });
 
@@ -342,6 +346,22 @@ describe('TextOutputCallback.vue', () => {
       await flushPromises();
 
       const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
+      expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
+    });
+
+    it('for first-callback ERROR message type when visible ERROR element is not rendered', async () => {
+      mountComponent({
+        messageType: '2',
+        message: 'Error message',
+        isFirstRenderedCallback: true,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
       expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
     });
   });
@@ -386,6 +406,100 @@ describe('TextOutputCallback.vue', () => {
 
       const messageElement = wrapper.find(`.alert-danger[id="message-${callBackIndex}"]`);
       expect(messageElement.exists()).toBe(true);
+    });
+  });
+
+  describe('interactive message accessibility behavior', () => {
+    it('keeps first-rendered INFORMATION with interactive content visible to AT and avoids duplicate live region emission', async () => {
+      mountComponent({
+        messageType: '0',
+        message: '<a href="https://example.com">Continue</a>',
+        isFirstRenderedCallback: true,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      const messageElement = wrapper.find('.text-muted.white-space-pre-line');
+
+      expect(messageElement.attributes('aria-hidden')).toBeUndefined();
+      expect(headingDiv.attributes('aria-labelledby')).toBe(`message-${callBackIndex}`);
+      expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
+    });
+
+    it('keeps first-rendered WARNING with interactive content visible to AT and avoids duplicate live region emission', async () => {
+      mountComponent({
+        messageType: '1',
+        message: '<a href="https://example.com">Review warning details</a>',
+        isFirstRenderedCallback: true,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
+      const messageElement = wrapper.find('.alert-warning.white-space-pre-line');
+
+      expect(messageElement.attributes('aria-hidden')).toBeUndefined();
+      expect(headingDiv.attributes('aria-labelledby')).toBe(`message-${callBackIndex}`);
+      expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
+    });
+
+    it('keeps first-rendered WARNING without interactive content hidden from AT and emits live region message', async () => {
+      mountComponent({
+        messageType: '1',
+        message: 'Plain warning text',
+        isFirstRenderedCallback: true,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      const messageElement = wrapper.find('.alert-warning.white-space-pre-line');
+
+      expect(messageElement.attributes('aria-hidden')).toBe('true');
+      expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
+      expect(wrapper.emitted()['update-screen-reader-message'].pop()).toEqual(['WARNING', 'Plain warning text']);
+    });
+
+    it('does not hide first-rendered INFORMATION during MFA registration and does not emit duplicate live region message', async () => {
+      mountComponent({
+        messageType: '0',
+        message: 'MFA enrollment instructions',
+        isFirstRenderedCallback: true,
+        isMfaRegistrationStep: true,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
+      const messageElement = wrapper.find('.text-muted.white-space-pre-line');
+
+      expect(messageElement.attributes('aria-hidden')).toBeUndefined();
+      expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
+      expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
+    });
+
+    it('emits live region message for first-callback ERROR fallback when visible error block is not rendered', async () => {
+      mountComponent({
+        messageType: '2',
+        message: 'Critical error text',
+        isFirstRenderedCallback: true,
+        isMfaRegistrationStep: false,
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
+      const visibleErrorElement = wrapper.find('.alert-danger.white-space-pre-line');
+      expect(visibleErrorElement.exists()).toBe(false);
+      expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
+      expect(wrapper.emitted()['update-screen-reader-message'].pop()).toEqual(['ERROR', 'Critical error text']);
     });
   });
 });

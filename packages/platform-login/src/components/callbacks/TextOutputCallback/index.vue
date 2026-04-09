@@ -13,16 +13,16 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="messageType === 'INFORMATION'"
       class="text-muted w-100 white-space-pre-line"
       :id="messageElementId"
-      :aria-hidden="!isMfaRegistrationStep && isFirstRenderedCallback"
+      :aria-hidden="!isMfaRegistrationStep && isAriaHidden"
       v-html="sanitizedMessage" />
     <div
       v-else-if="messageType === 'WARNING'"
       class="alert w-100 alert-warning white-space-pre-line"
       :id="messageElementId"
-      :aria-hidden="isFirstRenderedCallback"
+      :aria-hidden="isAriaHidden"
       v-html="sanitizedMessage" />
     <div
-      v-else-if="!isFirstRenderedCallback && messageType === 'ERROR'"
+      v-else-if="shouldRenderErrorElement"
       class="alert w-100 alert-danger white-space-pre-line"
       :id="messageElementId"
       v-html="sanitizedMessage" />
@@ -51,6 +51,7 @@ import addAttributesToDomNodeString from '@forgerock/platform-shared/src/utils/s
 import { CallbackType } from '@forgerock/javascript-sdk';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { hasInteractiveContent } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 
 export default {
   name: 'TextOutputCallback',
@@ -93,31 +94,65 @@ export default {
     };
   },
   computed: {
+    isAriaHidden() {
+      return this.isFirstRenderedCallback && !hasInteractiveContent(this.sanitizedMessage);
+    },
+    // Only render the ERROR element after the first callback.
+    shouldRenderErrorElement() {
+      return this.messageType === 'ERROR' && !this.isFirstRenderedCallback;
+    },
+    /**
+     * Determines when the live region should announce the message.
+     *
+     * Returns true only when assistive technology cannot read the inline message directly:
+     * - ERROR on the first callback (the inline ERROR element is not rendered yet)
+     * - INFORMATION/WARNING on the first callback only when the inline message is aria-hidden
+     *
+     * Returns false for all other cases.
+     * @returns {boolean}
+     */
+    shouldEmitScreenReaderMessage() {
+      if (!this.isFirstRenderedCallback) {
+        return false;
+      }
+
+      if (this.messageType === 'ERROR') {
+        return true;
+      }
+
+      return this.isAriaHidden
+        && (this.messageType === 'WARNING' || (this.messageType === 'INFORMATION' && !this.isMfaRegistrationStep));
+    },
     messageElementId() {
       return `message-${this.index}`;
     },
+    /**
+     * Returns the element id to be used by the heading container's aria-labelledby.
+     * Returns false when the aria-labelledby should not be applied, which happens when the message is either not rendered or is rendered but aria-hidden.
+     * In both cases, the heading container should not reference the message element because assistive technology cannot access it, and referencing a non-existent or aria-hidden element would create confusion.
+     *
+     * Rules:
+     * - messageType === 'SCRIPT' or MFA registration step: return false
+     * - ERROR: reference message id only when shouldRenderErrorElement is true (i.e. not the
+     *   first rendered callback), because the ERROR element is not rendered on the first callback.
+     * - INFORMATION/WARNING: reference message id only when isAriaHidden is false.
+     *   isAriaHidden is only true when isFirstRenderedCallback AND the message contains
+     *   no interactive content. If a first-rendered callback contains interactive content,
+     *   aria-hidden is intentionally not applied (WCAG 2.1 § 4.1.2), so the element is visible
+     *   to assistive technology and must be referenced.
+     * - Default: return false.
+     *
+     * This keeps the heading label source aligned with what assistive technology can access.
+     * @returns {string|boolean}
+     */
     ariaLabelledbyId() {
       // Omit aria-labelledby for SCRIPT messages or MFA registration
       if (this.messageType === 'SCRIPT' || this.isMfaRegistrationStep) {
         return false;
       }
 
-      // Refer message element only when it's visible (not aria-hidden)
-      // INFORMATION: aria-hidden when !isMfaRegistrationStep && isFirstRenderedCallback
-      // So reference it when !isFirstRenderedCallback (isMfaRegistrationStep already false above)
-      if (this.messageType === 'INFORMATION') {
-        return !this.isFirstRenderedCallback ? this.messageElementId : false;
-      }
-
-      // WARNING: aria-hidden when isFirstRenderedCallback
-      // So reference it when !isFirstRenderedCallback
-      if (this.messageType === 'WARNING') {
-        return !this.isFirstRenderedCallback ? this.messageElementId : false;
-      }
-
-      // ERROR: not hidden (no aria-hidden attribute), and only renders when !isFirstRenderedCallback
-      // So always reference it when it exists
-      if (this.messageType === 'ERROR') {
+      if (this.shouldRenderErrorElement
+        || ((this.messageType === 'INFORMATION' || this.messageType === 'WARNING') && !this.isAriaHidden)) {
         return this.messageElementId;
       }
 
@@ -146,8 +181,7 @@ export default {
       this.$emit('has-scripts', this.invokeScriptWithHelpers);
     }
 
-    // Populate screenReaderMessage with callback text only if the message callback is the first TextOutputCallback rendered and is not a script.
-    if (this.isFirstRenderedCallback && (this.messageType === 'INFORMATION' || this.messageType === 'ERROR' || this.messageType === 'WARNING')) {
+    if (this.shouldEmitScreenReaderMessage) {
       this.$emit('update-screen-reader-message', this.messageType, this.sanitizedMessage);
     }
   },

@@ -5,6 +5,12 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+// Native interactive element tags
+const NATIVE_INTERACTIVE_TAGS = ['BUTTON', 'INPUT', 'TEXTAREA', 'SELECT', 'SUMMARY', 'DETAILS', 'IFRAME', 'AUDIO', 'VIDEO'];
+
+// ARIA interactive roles
+const ARIA_INTERACTIVE_ROLES = ['button', 'link', 'checkbox', 'menuitem', 'option', 'radio', 'switch', 'textbox'];
+
 /**
  * Creates a string id for errors. This enables form fields to reference this for accessibility. See: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-describedby
  * @param {String} fieldName the name of the form field
@@ -60,8 +66,66 @@ function removeNonRoleAriaAttributes(attrs = {}) {
   return newAttrs;
 }
 
+/**
+ * Detects whether an HTML string contains any interactive (keyboard-focusable) elements.
+ * Use this to guard aria-hidden: a container should not be aria-hidden when it has
+ * focusable descendants, as that creates a WCAG 2.1 § 4.1.2 mismatch between
+ * keyboard accessibility and screen-reader visibility.
+ *
+ * Checks for:
+ *   - Native interactive tags: button, input (non-hidden), select, textarea, details, summary, iframe, audio, video
+ *   - Anchor tags with href attribute
+ *   - Contenteditable elements
+ *   - Elements with non-negative tabindex
+ *   - ARIA interactive roles (button, link, checkbox, menuitem, option, radio, switch, textbox)
+ *
+ * @param {String} htmlString Raw HTML string to inspect
+ * @returns {Boolean} true when at least one interactive element is present
+ */
+function hasInteractiveContent(htmlString) {
+  if (!htmlString || typeof htmlString !== 'string') return false;
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlString, 'text/html');
+  const elements = Array.from(doc.body.querySelectorAll('*'));
+
+  return elements.some((el) => {
+    const tag = el.tagName;
+    const role = el.getAttribute('role');
+    const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true';
+
+    // Check if element is not disabled
+    if (isDisabled) return false;
+
+    // Native interactive tag
+    if (NATIVE_INTERACTIVE_TAGS.includes(tag)) {
+      if (tag === 'INPUT' && el.getAttribute('type') === 'hidden') return false;
+      if ((tag === 'AUDIO' || tag === 'VIDEO') && !el.hasAttribute('controls')) return false;
+      return true;
+    }
+
+    // Anchor with href
+    if (tag === 'A' && el.hasAttribute('href')) return true;
+
+    // Contenteditable (true or empty string both enable editing)
+    if (el.hasAttribute('contenteditable') && el.getAttribute('contenteditable') !== 'false') return true;
+
+    // Keyboard focusable (non-negative tabindex)
+    if (el.hasAttribute('tabindex')) {
+      const tabindex = parseInt(el.getAttribute('tabindex'), 10);
+      if (!Number.isNaN(tabindex) && tabindex >= 0) return true;
+    }
+
+    // ARIA interactive role
+    if (role && ARIA_INTERACTIVE_ROLES.includes(role)) return true;
+
+    return false;
+  });
+}
+
 export {
   createErrorId,
   createAriaDescribedByList,
+  hasInteractiveContent,
   removeNonRoleAriaAttributes,
 };
