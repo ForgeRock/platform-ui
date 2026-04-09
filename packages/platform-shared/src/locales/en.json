@@ -712,6 +712,34 @@
   "editor": {
     "accessibilityHelp": "Press ESC followed by tab for keyboard navigation out of editor"
   },
+  "email": {
+    "templates": {
+      "duplicateTemplate": "Duplicate Template",
+      "emailTemplate": "Email Template",
+      "emailTemplates": "Email Templates",
+      "subTitle": "Customize email templates for welcome, password reset, and account verification.",
+      "noTemplatesTitle": "You haven't added any email templates yet",
+      "newTemplate": "New Template",
+      "template": "Template",
+      "list": {
+        "displayName": "Name",
+        "description": "Description"
+      },
+      "errorRetrievingList": "Error retrieving email template list.",
+      "errorRetrievingTemplate": "Error retrieving email template.",
+      "errorRetrievingProviderConfig": "Error retrieving email provider config. You may need to set this up.",
+      "errorSaving": "Error saving email template",
+      "errorDeleting": "Error deleting email template",
+      "errorCreating": "Error creating email template",
+      "errorDuplicating": "Error duplicating email template",
+      "successDelete": "Successfully deleted email template.",
+      "successSaving": "Successfully saved email template.",
+      "successDuplicating": "Successfully duplicated email template.",
+      "createModal": {
+        "title": "New Template"
+      }
+    }
+  },
   "errors": {
     "errorSaving": "Error saving list",
     "ErrorSavingResource": "Error saving resource. {error}",
@@ -1212,6 +1240,7 @@
       "agents": "My Agents",
       "applications": "My Applications",
       "approvals": "Approvals",
+      "adminCertifications": "Certifications",
       "custom": "Custom Link",
       "dataSources": "Data Sources",
       "dashboard": "Dashboard",
@@ -2074,7 +2103,25 @@
         "subtitle": "Create and manage your user identities."
       }
     },
+    "campaignTemplateTypeModal": {
+      "campaignType": "Campaign Type",
+      "chooseType": "Choose the type of campaign template to create.",
+      "entitlementAssignmentCertification": "Entitlement Assignment Certification",
+      "entitlementAssignmentCertificationMessage": "Certify users who have been assigned specified entitlements.",
+      "identityCertificationMessage": "Certify user accounts and entitlements granted on specified applications.",
+      "newCertificationCampaignTemplate": "New Certification Campaign Template",
+      "roleMembershipCertification": "Role Membership Certification",
+      "roleMembershipCertificationMessage": "Certify roles granted to users.",
+      "entitlementCompositionCertification": "Entitlement Composition Certification",
+      "entitlementCompositionCertificationMessage": "Certify the technical details and glossary metadata of entitlements."
+    },
     "certification": {
+      "accessReviewHistory": "Access Review History",
+      "activeCampaigns": "Active Campaigns",
+      "activeCampaignsTooltip": "Total active certification campaigns",
+      "activeReviews": "Active Reviews",
+      "activeReviewsTooltip": "Total access reviews currently in-progress",
+      "allOrganizations": "All Organizations",
       "accessReviewHistoryLabels": {
         "certify": "Certified",
         "revoke": "Revoked"
@@ -2090,6 +2137,36 @@
         "in-progress": "Active",
         "staging": "Staged",
         "signed-off": "Signed Off"
+      },
+      "getTemplateFieldValuesError": "There was an error parsing certification template.",
+      "campaignsByStatus": "Campaigns By Status",
+      "campaignsByType": "Campaigns By Type",
+      "certificationType": "{type} Certification",
+      "certifyUserType": "Certify User {type}",
+      "errors": {
+        "errorDeadline": "Deadline must be a future date"
+      },
+      "expiringCampaigns": "Expiring Campaigns",
+      "expiringCampaignsTooltip": "Total campaigns expiring within the next 2 weeks",
+      "includeChildOrganizations": "Include Child Organizations",
+      "title": "Certification",
+      "subtitle": "Create certification campaigns to certify identities.",
+      "overview": "Overview",
+      "campaigns": "Campaigns",
+      "updateDeadline": "Update Deadline",
+      "noCampaigns": "No {type} Campaigns",
+      "modal": {
+        "activateCampaign": "Activate Campaign?",
+        "activateCampaignDescription": "Are you sure you want to activate this campaign?",
+        "activateCampaignButton": "Activate Campaign",
+        "cancelCampaign": "Cancel Campaign?",
+        "cancelCampaignDescription": "Are you sure you want to cancel this campaign?",
+        "cancelCampaignButton": "Cancel Campaign",
+        "deleteCampaign": "Delete Staged Campaign?",
+        "deleteCampaignDescription": "Are you sure you want to delete this staged campaign?",
+        "deleteCampaignButton": "Delete Campaign",
+        "updateCampaignDeadline": "Update Campaign Deadline",
+        "chooseNewDeadline": "Choose a new deadline for this campaign"
       }
     },
     "certificationDetails": {
@@ -2945,8 +3022,37 @@
       "overdue": "Overdue"
     },
     "templates": {
+      "title": "Templates",
+      "newTemplate": "New Template",
+      "run": "Run",
+      "viewDetails": "View Details",
+      "duplicate": "Duplicate",
+      "template": "Template",
+      "noData": "No Data",
+      "nextRunDate": "Next Run Date",
+      "status": "Status",
+      "pending": "Pending",
+      "unused": "Unused",
+      "runNow": "Run Now",
+      "scheduleCampaign": "Schedule Campaign",
+      "editSchedule": "Edit Schedule",
+      "editTemplate": "Edit Template",
+      "noTemplates": "No Templates",
+      "runPublishedTemplateConfirm": "Are you sure you want to run this campaign now? This will send notifications to all certifiers.",
+      "errors": {
+        "errorDeletingTemplate": "Error deleting template",
+        "errorSavingTemplate": "Error saving template",
+        "errorSearchingTemplates": "Error obtaining existing templates"
+      },
       "notifications": {
+        "deleteSuccess": "Template deleted successfully",
         "savingSuccess": "Template saved successfully"
+      },
+      "scheduleModal": {
+        "editSchedule": "Edit Schedule",
+        "runEvery": "Run every",
+        "timeZoneMessage": "Time zone offset based on how many hours a location is from GMT.",
+        "deleteSchedule": "Delete Schedule"
       }
     },
     "timespans": {

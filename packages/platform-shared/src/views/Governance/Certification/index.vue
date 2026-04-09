@@ -17,6 +17,7 @@ to such license between the licensee and ForgeRock AS. -->
         data-testid="cert-tabs"
         @activate-tab="tabActivated">
         <BTab
+          v-if="govCertAdminGroup || isAdmin"
           :title="$t('governance.certification.overview')"
           key="overview"
           :active="tabIndex === 0"
@@ -30,6 +31,7 @@ to such license between the licensee and ForgeRock AS. -->
           <FrCampaigns data-testid="cert-campaigns" />
         </BTab>
         <BTab
+          v-if="govCertAdminGroup || isAdmin"
           :title="$t('governance.templates.title')"
           key="template"
           lazy>
@@ -50,6 +52,7 @@ import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrCampaigns from './Campaigns';
 import FrOverview from './Overview';
 import FrTemplates from './Templates';
+import store from '@/store';
 
 export default {
   name: 'Certification',
@@ -62,8 +65,15 @@ export default {
     FrOverview,
     FrTemplates,
   },
+  props: {
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
+      govCertAdminGroup: store.state.govCertAdminGroup,
       tabIndex: 0,
       tabMap: [
         'overview', 'campaigns', 'templates',
@@ -74,7 +84,11 @@ export default {
     const tabIndex = this.tabMap.findIndex((key) => key === this.$route.params.certificationTab);
     this.tabIndex = tabIndex !== -1 ? tabIndex : 0;
     const certificationTab = this.tabMap[this.tabIndex];
-    window.history.pushState(window.history.state, '', `#/certification/${certificationTab}`);
+    if (this.govCertAdminGroup || this.isAdmin) {
+      window.history.pushState(window.history.state, '', `#/certification/${certificationTab}`);
+    } else {
+      window.history.pushState(window.history.state, '', '#/certification/campaigns');
+    }
   },
   methods: {
     /**

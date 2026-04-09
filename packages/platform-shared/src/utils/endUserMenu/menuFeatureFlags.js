@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
+/**
  * Generates a set of feature flags based on the provided store's state.
  * Governance menu items are only available in the alpha realm under governance environment.
  *
@@ -19,6 +26,7 @@ export function generateFeatureFlags(store) {
     govLcmRole,
     govRoleMining,
     govAccessRequests,
+    govCertAdmin,
     realm,
     SharedStore = {},
   } = store.state;
@@ -46,6 +54,7 @@ export function generateFeatureFlags(store) {
     govRoleMining,
     governanceRoleMiningEnabled,
     govAccessRequests,
+    govCertAdmin,
     ifGovernance,
     realm,
     workforceEnabled,

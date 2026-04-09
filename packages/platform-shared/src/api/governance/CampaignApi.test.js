@@ -55,7 +55,7 @@ describe('Campaigns API', () => {
     const expectedDate = dayjs(mockedDate).add(2, 'week');
     jest.useFakeTimers().setSystemTime(mockedDate);
     const query = {
-      entityPath: 'repo/governance/certification',
+      entityPath: '/repo/governance/certification',
       targetFilter: {
         operator: 'AND',
         operand: [

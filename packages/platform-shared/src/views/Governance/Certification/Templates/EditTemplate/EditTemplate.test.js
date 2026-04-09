@@ -1,9 +1,8 @@
 /**
- * Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount, mount, flushPromises } from '@vue/test-utils';
@@ -14,8 +13,8 @@ import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/moc
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import * as NotificationTemplateApi from '@forgerock/platform-shared/src/api/governance/NotificationTemplateApi';
 import * as CertificationUtils from '@/views/Governance/utils/certification';
-import * as EmailApi from '@/api/EmailApi';
 import * as TemplateApi from '@/api/governance/TemplateApi';
 import EditTemplate from './index';
 import i18n from '@/i18n';
@@ -53,7 +52,7 @@ describe('EditTemplate View', () => {
     CommonsApi.getResource.mockReturnValue(Promise.resolve({ data: {} }));
     CommonsApi.getIgaAutoIdConfig = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
     CommonsApi.getFilterSchema.mockImplementation(() => Promise.resolve({ data: { result: [] } }));
-    EmailApi.getEmailTemplates = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [{ _id: 'test/templateTest' }, { displayName: 'Display Name', _id: 'test/templateTest2' }] } }));
+    NotificationTemplateApi.getEmailNotificationTemplates = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [{ _id: 'test/templateTest' }, { displayName: 'Display Name', _id: 'test/templateTest2' }] } }));
     TemplateApi.getDecisionCount = jest.fn().mockReturnValue(Promise.resolve({ data: { objects: [] } }));
 
     beforeEach(() => {

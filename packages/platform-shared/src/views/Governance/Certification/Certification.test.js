@@ -23,7 +23,17 @@ describe('Certification View', () => {
               certificationTab: 'overview',
             },
           },
+          $store: {
+            state: {
+              govCertAdminGroup: true,
+            },
+          },
         },
+      },
+      data() {
+        return {
+          govCertAdminGroup: true,
+        };
       },
     });
   });

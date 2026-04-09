@@ -232,6 +232,7 @@ const startApp = async () => {
       const { data: userInfoData } = await getIgaUserInfo();
       store.commit('setGovRoleMining', userInfoData);
       store.commit('setGovAccessRequests', userInfoData);
+      store.commit('setGovCertAdmin', userInfoData);
     }
 
     // Analytics flags initialization
