@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -59,8 +59,8 @@ describe('EntitlementsList', () => {
     expect(appName).toBe('testAppName');
     const description = listItem1.find('small').text();
     expect(description).toBe('testDescription');
-    const image = listItem1.find('img').attributes('alt');
-    expect(image).toBe('Application Logo - testApp');
+    const listItem1mage = listItem1.find('img');
+    expect(listItem1mage.attributes('alt')).toBe('');
 
     const listItem2 = listItems[1];
     const name2 = listItem2.find('h3').text();
@@ -69,7 +69,7 @@ describe('EntitlementsList', () => {
     expect(appName2).toBe('testAppName2');
     const description2 = listItem2.find('small').text();
     expect(description2).toBe('testDescription2');
-    const image2 = listItem2.find('img').attributes('alt');
-    expect(image2).toBe('Application Logo - testApp2');
+    const listItem2Image = listItem2.find('img');
+    expect(listItem2Image.attributes('alt')).toBe('');
   });
 });
