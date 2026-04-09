@@ -70,7 +70,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="rounded-circle"
                 height="36"
                 width="36"
-                :alt="item.givenName"
+                alt=""
                 :aria-hidden="true"
                 :src="item.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
             </BMediaAside>

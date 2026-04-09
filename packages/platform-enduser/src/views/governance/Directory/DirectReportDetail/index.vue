@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="rounded-circle"
             height="104"
             width="104"
-            :alt="directReportUserInfo.name"
+            alt=""
             :aria-hidden="true"
             :src="directReportUserInfo.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
         </BMediaAside>

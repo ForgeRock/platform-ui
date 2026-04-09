@@ -107,9 +107,9 @@ of the MIT license. See the LICENSE file for details. -->
           <BMedia no-body>
             <BMediaAside class="mr-4 align-self-center">
               <img
-                :alt="$t('common.logo')"
+                alt=""
                 :src="getApplicationLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
-                aria-hidden
+                aria-hidden="true"
                 :onerror="onImageError"
                 width="24"
                 height="24">
@@ -128,9 +128,9 @@ of the MIT license. See the LICENSE file for details. -->
           <BMedia no-body>
             <BMediaAside class="mr-4 align-self-center">
               <img
-                :alt="$t('common.logo')"
+                alt=""
                 :src="getApplicationLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
-                aria-hidden
+                aria-hidden="true"
                 :onerror="onImageError"
                 width="24"
                 height="24">
