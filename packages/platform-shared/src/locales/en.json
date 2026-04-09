@@ -2224,6 +2224,7 @@
       "selectAllTasksThisPage": "All on this page",
       "deselectAll": "Deselect all",
       "roleDetails": "Role Details",
+      "export": "Export Items",
       "actions": {
         "addComment": "Add Comment",
         "acknowledge": "Acknowledge",
@@ -2291,6 +2292,45 @@
         "reassignTo": "Reassign To",
         "warningDataMayBeInaccurate": "Allow a few moments for bulk actions to properly reflect changes."
       },
+      "exportModal": {
+        "title": "Export Certification Items",
+        "buttons": {
+          "export": "Export",
+          "next": "Next"
+        },
+        "allItemsTitle": "All Rows",
+        "allItemsDescription": "Export all {type} currently filtered. ({count} items)",
+        "currentPageTitle": "Current Page",
+        "currentPageDescription": "Export only items on the current page. ({count} items)",
+        "csv": "CSV",
+        "csvDescription": "Export in CSV format. Maximum: 10,000 rows",
+        "defaultColumns": {
+          "user_userName": "User Name",
+          "user_givenName": "First Name",
+          "user_sn": "Last Name",
+          "user_mail": "Email",
+          "decision_certification_decision": "Decision",
+          "decision_certification_status": "Status",
+          "decision_certification_decisionDate": "Decision Date",
+          "decision_certification_decisionBy_userName": "Decision By",
+          "decision_certification_completionDate": "Completion Date",
+          "decision_certification_completedBy_userName": "Completed By",
+          "id": "ID"
+        },
+        "descriptionRows": "Choose the scope of your {type} export.",
+        "descriptionFormat": "Choose the format of your export. Note that if the total items selected exceeds the maximum supported, the export will only include the maximum number of rows allowed.",
+        "exportTitle": "{certificationName} - Certification Task",
+        "pdf": "PDF",
+        "pdfDescription": "Export in PDF format. Maximum: 1,000 rows",
+        "types": {
+          "accounts": "account grants",
+          "entitlements": "entitlement grants",
+          "entitlementComposition": "entitlements",
+          "roles": "role grants"
+        },
+        "xlsx": "XLSX",
+        "xlsxDescription": "Export in XLSX format. Maximum: 10,000 rows"
+      },
       "permissions": {
         "title": "Permissions",
         "view": "View",
@@ -2317,6 +2357,7 @@
         "certificationDetailError": "There was an error getting the certification details",
         "certificationListError": "There was an error getting the list of certifications",
         "certifyError": "There was an error certifying this item",
+        "exportError": "There was an error trying to export the certification items",
         "filterError": "There was an error trying to get the filters",
         "forwardItemError": "There was an error forwarding this item.",
         "getUserEntitlementsError": "There was an error getting the entitlements user details",

@@ -1539,13 +1539,13 @@ describe('TaskList', () => {
       wrapper.vm.updateColumns({});
 
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['user.userName', 'user.givenName', 'user.sn', 'user.mail'], show: true,
       }, {
-        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['application.name'], show: true,
       }, {
-        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./entitlement.displayName'], show: true,
       }, {
-        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./account.displayName'], show: true,
       }, {
         key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {
@@ -1856,11 +1856,11 @@ describe('TaskList', () => {
       wrapper.vm.updateColumns({});
 
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'user', category: 'user', label: 'User', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['user.userName', 'user.givenName', 'user.sn', 'user.mail'], show: true,
       }, {
-        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'application', category: 'application', label: 'Application', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['application.name'], show: true,
       }, {
-        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'account', category: 'account', label: 'Account', sortable: false, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./account.displayName'], show: true,
       }, {
         key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {
@@ -2014,7 +2014,7 @@ describe('TaskList', () => {
       wrapper.vm.updateColumns({});
 
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'entitlement', category: 'entitlement', label: 'Entitlement', sortable: true, class: 'text-truncate fr-access-cell', exportFields: ['descriptor.idx./entitlement.displayName'], show: true,
       }, {
         key: 'flags', category: 'review', label: 'Flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {

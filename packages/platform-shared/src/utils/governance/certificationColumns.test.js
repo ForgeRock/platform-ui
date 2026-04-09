@@ -7,10 +7,12 @@
 
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import {
+  convertColumnsToQueryFields,
   formatColumns,
   getCellData,
   getInitialColumns,
   getAllColumnCategories,
+  processItemsForExport,
 } from './certificationColumns';
 
 describe('getCellData', () => {
@@ -312,5 +314,174 @@ describe('getAllColumnCategories', () => {
     const categories = getAllColumnCategories('accounts', undefined);
     expect(Array.isArray(categories)).toBe(true);
     expect(categories.length).toBeGreaterThan(0);
+  });
+});
+
+describe('convertColumnsToQueryFields', () => {
+  const defaultQueryFields = [
+    'decision.certification.decision',
+    'decision.certification.status',
+    'decision.certification.decisionDate',
+    'decision.certification.decisionBy.userName',
+    'decision.certification.completionDate',
+    'decision.certification.completedBy.userName',
+    'id',
+  ];
+
+  it('converts column keys to query fields', () => {
+    const columns = [
+      'user.user',
+      'application.application',
+      'account.account',
+      'entitlement.glossary.entitlementOwner',
+    ];
+    const result = convertColumnsToQueryFields(columns);
+    expect(result).toEqual([
+      'user.userName',
+      'user.givenName',
+      'user.sn',
+      'user.mail',
+      'application.name',
+      'descriptor.idx./account.displayName',
+      'glossary.idx./entitlement.entitlementOwner',
+      ...defaultQueryFields,
+    ]);
+  });
+
+  it('handles empty columns array', () => {
+    const result = convertColumnsToQueryFields([]);
+    expect(result).toEqual(defaultQueryFields);
+  });
+});
+
+describe('processItemsForExport', () => {
+  const items = [
+    {
+      decision: {
+        certification: {
+          status: 'in-progress',
+          decision: 'certify',
+          decisionDate: '2026-03-30T18:11:43+00:00',
+          decisionBy: {
+            userName: 'bob.rodgers@pingidentity.com',
+          },
+        },
+      },
+      id: '0d30e84d-3c0e-4fda-83e2-4f476b25aa31',
+      role: {
+        name: 'MK Test Role J0-R1004',
+      },
+      user: {
+        givenName: 'Cameron',
+        mail: 'cameron.hill@company.com',
+        sn: 'Hill',
+        userName: 'cameronhill',
+        city: 'New York',
+      },
+      permissions: {
+        certify: true,
+      },
+    },
+    {
+      decision: {
+        certification: {
+          status: 'in-progress',
+          decision: 'certify',
+          decisionDate: '2026-03-30T18:11:51+00:00',
+          decisionBy: {
+            userName: 'bob.rodgers@pingidentity.com',
+          },
+        },
+      },
+      id: '024fb86c-9f19-437f-af38-d59427202ca0',
+      role: {
+        name: 'MK Role J0-R143 Test 2',
+      },
+      user: {
+        givenName: 'Christine',
+        mail: 'christine.moore@company.com',
+        sn: 'Moore',
+        userName: 'christinemoore',
+        city: 'Chicago',
+      },
+    },
+    {
+      decision: {
+        certification: {
+          status: 'in-progress',
+          decision: 'revoke',
+          decisionDate: '2026-03-30T18:12:00+00:00',
+          decisionBy: {
+            userName: 'bob.rodgers@pingidentity.com',
+          },
+        },
+      },
+      id: '2199da47-d2ee-45b4-b4b9-b1564a1243c0',
+      role: {
+        name: 'MK Test Role J0-R1004',
+      },
+      user: {
+        givenName: 'Christopher',
+        mail: 'christopher.walker@company.com',
+        sn: 'Walker',
+        userName: 'christopherwalker',
+        city: 'Los Angeles',
+      },
+    },
+  ];
+
+  it('returns items with only fields corresponding to active columns', () => {
+    const queryFields = ['user.userName', 'role.name', 'user.city'];
+    const selectedColumns = [
+      {
+        key: 'city',
+        name: 'city',
+        displayName: 'City',
+        description: 'City',
+        type: 'string',
+        isMultiValue: false,
+        category: 'user',
+        class: 'text-truncate fr-access-cell',
+        label: 'User City',
+        noCategoryLabel: 'City',
+        show: true,
+        sortable: false,
+      },
+    ];
+    const result = processItemsForExport(items, queryFields, selectedColumns);
+    expect(result).toEqual([
+      {
+        'User Name': 'cameronhill', Role: 'MK Test Role J0-R1004', 'User City': 'New York',
+      },
+      {
+        'User Name': 'christinemoore', Role: 'MK Role J0-R143 Test 2', 'User City': 'Chicago',
+      },
+      {
+        'User Name': 'christopherwalker', Role: 'MK Test Role J0-R1004', 'User City': 'Los Angeles',
+      },
+    ]);
+  });
+
+  it('handles items with missing fields gracefully', () => {
+    const itemsWithMissingFields = [
+      {
+        id: '1',
+        user: { userName: 'user1' },
+      },
+      {
+        id: '2',
+        role: { name: 'Role 2' },
+      },
+    ];
+    const activeColumns = ['user.userName', 'role.name'];
+    const result = processItemsForExport(itemsWithMissingFields, activeColumns);
+    expect(result).toEqual([
+      {
+        'User Name': 'user1', Role: null,
+      },
+      {
+        'User Name': null, Role: 'Role 2',
+      },
+    ]);
   });
 });
