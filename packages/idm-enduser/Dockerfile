@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:stable-alpine-slim
+FROM nginxinc/nginx-unprivileged:1.29.5-alpine-slim
 
 ARG WEB_ROOT_LOCATION=www/enduser
 ARG NGINX_CONF=nginx.docker.conf
