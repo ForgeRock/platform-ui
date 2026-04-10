@@ -10,6 +10,22 @@ import { findByTestId, findByRole } from '@forgerock/platform-shared/src/utils/t
 import i18n from '@/i18n';
 import SelectInput from './index';
 
+// Mock the UAParser module
+const mockGetBrowser = jest.fn();
+
+jest.mock('ua-parser-js', () => jest.fn().mockImplementation(() => ({
+  getBrowser: mockGetBrowser,
+})));
+
+/**
+ * Sets up mock browser for testing
+ *
+ * @param {string} browserName - The name of the browser to mock
+ */
+function setupBrowser(browserName = 'Chrome') {
+  mockGetBrowser.mockReturnValue({ name: browserName });
+}
+
 describe('SelectInput', () => {
   const defaultProps = {
     name: 'stub-name',
@@ -28,6 +44,10 @@ describe('SelectInput', () => {
       },
     });
   }
+
+  beforeEach(() => {
+    setupBrowser('Chrome');
+  });
 
   describe('@renders', () => {
     it('default', () => {
@@ -49,6 +69,29 @@ describe('SelectInput', () => {
       const multiselect = findByTestId(wrapper, 'stub-testid');
       const multiSelectInput = multiselect.find(`[id=floatingLabelInput${wrapper.vm._uid}]`);
       expect(multiSelectInput.attributes('aria-labelledby')).toBe('stub-input-labelledby');
+    });
+
+    it('sets the autocomplete attribute to "off" for searchable fields in non-Firefox browsers', async () => {
+      const wrapper = setup({ searchable: true });
+      await flushPromises();
+
+      expect(wrapper.find('input[type="text"]').attributes('autocomplete')).toBe('off');
+    });
+
+    it('sets the autocomplete attribute to "new-password" for searchable fields in Firefox browsers', async () => {
+      setupBrowser('Firefox');
+      const wrapper = setup({ searchable: true });
+      await flushPromises();
+
+      expect(wrapper.find('input[type="text"]').attributes('autocomplete')).toBe('new-password');
+    });
+
+    it('does not throw or attempt to set autocomplete when the field is not searchable', async () => {
+      const mountNonSearchable = () => setup({ searchable: false });
+      expect(mountNonSearchable).not.toThrow();
+      const wrapper = mountNonSearchable();
+      await flushPromises();
+      expect(wrapper.find('input[type="text"]').exists()).toBe(false);
     });
   });
 
