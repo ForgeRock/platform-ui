@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2026 ForgeRock. All rights reserved.
+ * Copyright 2026 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 import BaseAdminPage from '../../BaseAdminPage';
@@ -43,5 +44,13 @@ export default class CspReportOnlyPolicyPage extends BaseAdminPage {
 
   static directiveRowCell(directiveName, cellName) {
     return CspReportOnlyPolicyPage.directiveRow(directiveName).findByRole('cell', { name: cellName });
+  }
+
+  static get directiveColumnHeader() {
+    return CspReportOnlyPolicyPage.pageTable.findByRole('columnheader', { name: /directive/i });
+  }
+
+  static get firstDirectiveCell() {
+    return CspReportOnlyPolicyPage.pageTable.find('td.directive-column').first();
   }
 }

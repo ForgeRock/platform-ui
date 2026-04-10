@@ -6,11 +6,12 @@
  */
 
 const CSP_REPORT_ONLY_URL = `https://${Cypress.env('FQDN')}/environment/content-security-policy/report-only`;
+const CSP_ENFORCED_URL = `https://${Cypress.env('FQDN')}/environment/content-security-policy/enforced`;
 
-export function getDirectives(accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+export function getDirectives(isEnforced = false, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
   return cy.request({
     method: 'GET',
-    url: CSP_REPORT_ONLY_URL,
+    url: isEnforced ? CSP_ENFORCED_URL : CSP_REPORT_ONLY_URL,
     headers: {
       authorization: `Bearer ${accessToken}`,
       'accept-api-version': 'protocol=1.0,resource=1.0',
@@ -19,8 +20,8 @@ export function getDirectives(accessToken = Cypress.env('ACCESS_TOKEN').access_t
   });
 }
 
-export function addDirective(directiveName, sources, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
-  return getDirectives(accessToken).then(({ body }) => {
+export function addDirective(directiveName, sources, isEnforced = false, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return getDirectives(isEnforced, accessToken).then(({ body }) => {
     const updatedDirectives = {
       ...body.directives,
       [directiveName]: sources,
@@ -28,7 +29,7 @@ export function addDirective(directiveName, sources, accessToken = Cypress.env('
 
     return cy.request({
       method: 'PUT',
-      url: CSP_REPORT_ONLY_URL,
+      url: isEnforced ? CSP_ENFORCED_URL : CSP_REPORT_ONLY_URL,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'accept-api-version': 'protocol=1.0,resource=1.0',
@@ -43,14 +44,14 @@ export function addDirective(directiveName, sources, accessToken = Cypress.env('
   });
 }
 
-export function deleteDirectives(directiveNames, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
-  return getDirectives(accessToken).then(({ body }) => {
+export function deleteDirectives(directiveNames, isEnforced = false, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return getDirectives(isEnforced, accessToken).then(({ body }) => {
     const cleanedDirectives = { ...body.directives };
     directiveNames.forEach((name) => { delete cleanedDirectives[name]; });
 
     return cy.request({
       method: 'PUT',
-      url: CSP_REPORT_ONLY_URL,
+      url: isEnforced ? CSP_ENFORCED_URL : CSP_REPORT_ONLY_URL,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'accept-api-version': 'protocol=1.0,resource=1.0',
@@ -65,10 +66,10 @@ export function deleteDirectives(directiveNames, accessToken = Cypress.env('ACCE
   });
 }
 
-export function setActivationStatus(active, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
-  return getDirectives(accessToken).then(({ body }) => cy.request({
+export function setActivationStatus(active, isEnforced = false, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return getDirectives(isEnforced, accessToken).then(({ body }) => cy.request({
     method: 'PUT',
-    url: CSP_REPORT_ONLY_URL,
+    url: isEnforced ? CSP_ENFORCED_URL : CSP_REPORT_ONLY_URL,
     headers: {
       authorization: `Bearer ${accessToken}`,
       'accept-api-version': 'protocol=1.0,resource=1.0',
