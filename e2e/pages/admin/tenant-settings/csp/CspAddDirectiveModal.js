@@ -29,7 +29,7 @@ export default class CspAddDirectiveModal {
   }
 
   static directiveOption(directiveName) {
-    return cy.findByRole('option', { name: directiveName });
+    return CspAddDirectiveModal.modal.findByRole('option', { name: directiveName });
   }
 
   static get nextButton() {
@@ -46,6 +46,18 @@ export default class CspAddDirectiveModal {
 
   static get hostsInput() {
     return CspAddDirectiveModal.modal.findByRole('textbox', { name: /hosts/i });
+  }
+
+  static get reportingEndpointInput() {
+    return CspAddDirectiveModal.modal.findByRole('textbox', { name: /reporting endpoint/i });
+  }
+
+  static get reportingGroupInput() {
+    return CspAddDirectiveModal.modal.findByRole('textbox', { name: /reporting group/i });
+  }
+
+  static get pluginTypesInput() {
+    return CspAddDirectiveModal.modal.findByRole('textbox', { name: /plugin types/i });
   }
 
   static get saveButton() {
