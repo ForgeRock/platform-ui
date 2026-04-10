@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2026 ForgeRock. All rights reserved.
+ * Copyright 2026 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 export default class GlobalSettingsPage {
@@ -40,5 +41,9 @@ export default class GlobalSettingsPage {
 
   static get endUserUIItem() {
     return cy.findByRole('button', { name: /end user ui/i }, { timeout: 10000 });
+  }
+
+  static get contentSecurityPolicyStatus() {
+    return GlobalSettingsPage.contentSecurityPolicyItem.find('.col-md-6 > span');
   }
 }

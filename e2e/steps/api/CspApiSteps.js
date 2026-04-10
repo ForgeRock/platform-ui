@@ -1,8 +1,9 @@
 /**
- * Copyright (c) 2026 ForgeRock. All rights reserved.
+ * Copyright 2026 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 import {
@@ -12,32 +13,57 @@ import {
 export default class CspApiSteps {
   static createdDirectiveNames = [];
 
-  static getDirectives() {
-    return getDirectives();
+  static createdEnforcedDirectiveNames = [];
+
+  static getDirectives(isEnforced = false) {
+    return getDirectives(isEnforced);
   }
 
   static addDirective(directiveName, sources) {
-    return addDirective(directiveName, sources).then((response) => {
+    return addDirective(directiveName, sources, false).then((response) => {
       CspApiSteps.createdDirectiveNames.push(directiveName);
       return response;
     });
   }
 
-  static deleteCreatedDirectives() {
-    return cy.wrap(CspApiSteps.createdDirectiveNames).then((directiveNames) => {
-      if (!directiveNames.length) return null;
-
-      return deleteDirectives(directiveNames).then(() => {
-        CspApiSteps.createdDirectiveNames = [];
-      });
+  static addEnforcedDirective(directiveName, sources) {
+    return addDirective(directiveName, sources, true).then((response) => {
+      CspApiSteps.createdEnforcedDirectiveNames.push(directiveName);
+      return response;
     });
   }
 
-  static activatePolicy() {
-    return setActivationStatus(true);
+  static deleteCreatedDirectives() {
+    return cy.wrap(null).then(() => {
+      const reportOnlyPromise = CspApiSteps.createdDirectiveNames.length
+        ? deleteDirectives(CspApiSteps.createdDirectiveNames, false).then(() => {
+          CspApiSteps.createdDirectiveNames = [];
+        })
+        : cy.wrap(null);
+
+      const enforcedPromise = CspApiSteps.createdEnforcedDirectiveNames.length
+        ? deleteDirectives(CspApiSteps.createdEnforcedDirectiveNames, true).then(() => {
+          CspApiSteps.createdEnforcedDirectiveNames = [];
+        })
+        : cy.wrap(null);
+
+      return reportOnlyPromise.then(() => enforcedPromise);
+    });
   }
 
-  static deactivatePolicy() {
-    return setActivationStatus(false);
+  static activateReportOnlyPolicy() {
+    return setActivationStatus(true, false);
+  }
+
+  static deactivateReportOnlyPolicy() {
+    return setActivationStatus(false, false);
+  }
+
+  static activateEnforcedPolicy() {
+    return setActivationStatus(true, true);
+  }
+
+  static deactivateEnforcedPolicy() {
+    return setActivationStatus(false, true);
   }
 }

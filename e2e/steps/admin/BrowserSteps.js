@@ -1,12 +1,28 @@
 /**
- * Copyright (c) 2026 ForgeRock. All rights reserved.
+ * Copyright 2026 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 export default class BrowserSteps {
   static refreshPage() {
     cy.reload();
+  }
+
+  static spyOnConsoleErrors() {
+    cy.window().then((win) => {
+      cy.spy(win.console, 'error').as('consoleError');
+    });
+  }
+
+  static assertNoCspErrors() {
+    cy.get('@consoleError').should((spy) => {
+      const cspErrors = spy.getCalls()
+        .map((call) => call.args[0])
+        .filter((msg) => typeof msg === 'string' && (msg.includes('Content Security Policy') || msg.includes('CSP')));
+      expect(cspErrors).to.have.length(0);
+    });
   }
 }
