@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import FrKeyValueField from '@forgerock/platform-shared/src/components/KeyValueField/KeyValueField';
 import i18n from '@/i18n';
 import AmFormGenerator from './AmFormGenerator';
 
@@ -58,7 +59,7 @@ function setup(props = {}) {
 
 describe('AmFormGenerator', () => {
   describe('@renders', () => {
-    it('renders one FrField per schema entry', () => {
+    it('renders one FrField per non-object schema entry', () => {
       const wrapper = setup();
 
       // Each FrField wrapper carries a data-testid of `fr-field-<key>`.
@@ -82,6 +83,33 @@ describe('AmFormGenerator', () => {
     it('renders an empty list when schema is empty', () => {
       const wrapper = setup({ schema: [], value: {} });
       expect(wrapper.findAll('[data-testid^="fr-field-"]').length).toBe(0);
+    });
+
+    it('renders FrKeyValueField for object-type schema entries', () => {
+      const objectSchema = [
+        {
+          key: 'headers',
+          title: 'Custom Headers',
+          description: 'Key-value pairs sent with each request.',
+          type: 'object',
+          required: true,
+        },
+      ];
+      const wrapper = setup({ schema: objectSchema, value: { headers: { Accept: 'application/json' } } });
+
+      const kvField = wrapper.findComponent(FrKeyValueField);
+      expect(kvField.exists()).toBe(true);
+      // FrField must NOT be rendered for this entry
+      expect(wrapper.findAll('[data-testid^="fr-field-"]').length).toBe(0);
+    });
+
+    it('passes the correct value to FrKeyValueField', () => {
+      const objectSchema = [{ key: 'headers', title: 'Headers', type: 'object' }];
+      const headers = { Accept: 'application/json' };
+      const wrapper = setup({ schema: objectSchema, value: { headers } });
+
+      const kvField = wrapper.findComponent(FrKeyValueField);
+      expect(kvField.props('value')).toEqual(headers);
     });
   });
 
@@ -110,6 +138,18 @@ describe('AmFormGenerator', () => {
         tokenLifetime: 60,
       });
     });
+
+    it('emits input with merged value when FrKeyValueField emits input', async () => {
+      const objectSchema = [{ key: 'headers', title: 'Headers', type: 'object' }];
+      const wrapper = setup({ schema: objectSchema, value: { headers: {} } });
+
+      const kvField = wrapper.findComponent(FrKeyValueField);
+      await kvField.vm.$emit('input', { Accept: 'application/json' });
+
+      const inputEvents = wrapper.emitted('input');
+      expect(inputEvents).toHaveLength(1);
+      expect(inputEvents[0][0]).toEqual({ headers: { Accept: 'application/json' } });
+    });
   });
 
   describe('disableRequiredValidation prop', () => {
@@ -127,6 +167,16 @@ describe('AmFormGenerator', () => {
 
       const clientIdField = findByTestId(wrapper, 'fr-field-clientId').getComponent({ name: 'FrField' });
       expect(clientIdField.vm.$attrs.validation).toMatchObject({ required: false });
+    });
+
+    it('suppresses required on FrKeyValueField when disableRequiredValidation is true', () => {
+      const objectSchema = [{
+        key: 'headers', title: 'Headers', type: 'object', required: true,
+      }];
+      const wrapper = setup({ schema: objectSchema, value: { headers: {} }, disableRequiredValidation: true });
+
+      const kvField = wrapper.findComponent(FrKeyValueField);
+      expect(kvField.vm.$attrs.validation).toMatchObject({ required: false });
     });
   });
 });

@@ -3,41 +3,38 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
-    <template
-      v-for="property in schema"
-      :key="property.key">
-      <FrKeyValueField
-        v-if="property.type === 'object'"
-        class="mb-4"
-        is-html
-        :name="property.key"
-        :label="sanitize(property.title)"
-        :description="sanitize(property.description)"
-        :value="value[property.key]"
-        :validation="{
-          required: !disableRequiredValidation && property.required,
-          ...property.validation,
-        }"
-        @input="$emit('input', { ...value, [property.key]: $event })" />
-      <FrField
-        v-else
-        class="mb-4"
-        is-html
-        :key="property.key"
-        :name="property.key"
-        :value="value[property.key]"
-        :type="getFieldTypeForProperty(property)"
-        :label="sanitize(property.title)"
-        :description="sanitize(property.description)"
-        :options="getSelectFieldOptions(property)"
-        :validation="{
-          required: !disableRequiredValidation && property.required,
-          ...property.validation,
-        }"
-        @input="$emit('input', { ...value, [property.key]: $event })" />
-    </template>
-  </div>
+  <template
+    v-for="property in schema"
+    :key="property.key">
+    <FrKeyValueField
+      v-if="property.type === 'object'"
+      class="mb-4"
+      is-html
+      :name="property.key"
+      :label="sanitize(property.title)"
+      :description="sanitize(property.description)"
+      :value="value[property.key]"
+      :validation="{
+        required: !disableRequiredValidation && property.required,
+        ...property.validation,
+      }"
+      @input="$emit('input', { ...value, [property.key]: $event })" />
+    <FrField
+      v-else
+      class="mb-4"
+      is-html
+      :name="property.key"
+      :value="value[property.key]"
+      :type="getFieldTypeForProperty(property)"
+      :label="sanitize(property.title)"
+      :description="sanitize(property.description)"
+      :options="getSelectFieldOptions(property)"
+      :validation="{
+        required: !disableRequiredValidation && property.required,
+        ...property.validation,
+      }"
+      @input="$emit('input', { ...value, [property.key]: $event })" />
+  </template>
 </template>
 
 <script setup>

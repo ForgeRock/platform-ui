@@ -55,6 +55,8 @@
     "EmailProvider": "Email Provider",
     "EmailTemplatePreview": "Email Template Preview",
     "EmailTemplates": "Email Templates",
+    "ExternalIdentityProviders": "Identity Providers",
+    "ExternalIdentityProviderEdit": "Edit Identity Provider",
     "EditTenantAdmin": "Edit Tenant Admin",
     "Entitlements": "Entitlements",
     "EntitlementsDetails": "Entitlement Details",
@@ -152,6 +154,7 @@
     "dataSources": "Data Sources",
     "email": "Email",
     "entitlements": "Entitlements",
+    "externalIdentityProviders": "Identity Providers",
     "forms": "Forms",
     "glossary": "Glossary",
     "governance": "Governance",
@@ -1920,7 +1923,7 @@
       "useSecretStore": "Use Secret Store for { passwordType }",
       "useSecretStoreDesc": "Use a configured secret store for the { appType } { passwordType }. When active the { appType } will first check configured secret stores for a value before using the manually entered { passwordType }.",
       "secretIdentifier": "Secret Label Identifier",
-      "secretIdentifierDesc": "Secret Label Identifier is used to construct references to secrets in a configured secret store.<br/>eg. <code>am.applications.{ appTypeShort }.&lt;identifier&gt;.secret</code> <a href='{ docsLink }' target='_blank'>View docs</a>"
+      "secretIdentifierDesc": "Secret Label Identifier is used to construct references to secrets in a configured secret store.<br/>eg. <code>{ examplePath }.&lt;identifier&gt;.secret</code> <a href='{ docsLink }' target='_blank'>View docs</a>"
     }
   },
   "pages": {
@@ -5775,6 +5778,68 @@
     "rateLimitError": "Monitoring api has hit it's rate limit. Retrying request in { retrySeconds } seconds..."
   },
   "integrations": {
+    "externalIdentityProviders": {
+      "title": "Identity Providers",
+      "description": "Allow users to sign in and register using identity providers.",
+      "newProvider": "New identity provider",
+      "headers": {
+        "provider": "Identity Provider",
+        "status": "Status"
+      },
+      "addFirstProviderText": "Add your first identity provider to get started.",
+      "noProvidersText": "No external identity providers configured yet",
+      "noSearchResults": "No identity providers found.",
+      "noResultsHelp": "Try a new search in the box above.",
+      "providers": {
+        "amazonConfig": "Amazon",
+        "appleConfig": "Apple",
+        "facebookConfig": "Facebook",
+        "googleConfig": "Google",
+        "instagramConfig": "Instagram",
+        "itsmeConfig": "itsme",
+        "lineBrowserConfig": "LINE (Browser)",
+        "lineNativeConfig": "LINE (Native)",
+        "linkedInConfig": "LinkedIn (Legacy)",
+        "linkedInV2Config": "LinkedIn",
+        "microsoftConfig": "Microsoft",
+        "oauth2Config": "OAuth2",
+        "oidcConfig": "OpenID Connect",
+        "salesforceConfig": "Salesforce",
+        "twitterConfig": "Twitter",
+        "vkConfig": "Vkontakte",
+        "weChatConfig": "WeChat",
+        "wordpressConfig": "WordPress",
+        "yahooConfig": "Yahoo"
+      },
+      "serviceDisabledTitle": "Identity Provider Service is disabled",
+      "serviceDisabledSubtitle": "Enable the service to configure and use identity providers.",
+      "enableService": "Enable service",
+      "errors": {
+        "loadError": "An error occurred while loading identity providers",
+        "loadSchemaError": "An error occurred while loading the service schema",
+        "creationError": "An error occurred while creating the identity provider",
+        "deleteError": "An error occurred while deleting the identity provider",
+        "saveError": "An error occurred while saving the identity provider",
+        "enableError": "An error occurred while enabling the identity provider service"
+      },
+      "success": {
+        "providerCreated": "Identity provider created successfully",
+        "providerDeleted": "Identity provider deleted successfully",
+        "saveSuccess": "Identity provider saved successfully",
+        "serviceEnabled": "Identity provider service enabled successfully"
+      },
+      "generalSettings": "General Settings",
+      "modalTitle": "Identity Provider Details",
+      "socialIdentityProvider": "Social Identity Provider",
+      "name": "Name",
+      "nameDescription": "Human-friendly identifier for this identity provider.",
+      "provider": "Identity Provider",
+      "providerLower": "identity provider",
+      "editUiConfig": "Edit UI Configuration",
+      "buttonPreview": "Button preview",
+      "signInWith": "Sign in with {buttonDisplayName}",
+      "clientSecret": "Client Secret"
+    },
     "pingOneIntegrations": {
       "listView": {
         "addModal": {
