@@ -64,6 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import UAParser from 'ua-parser-js';
 import {
   onBeforeUnmount,
   onMounted,
@@ -166,8 +167,25 @@ export default {
     }
 
     onMounted(() => {
+      const parser = new UAParser();
+      const browserName = parser.getBrowser().name;
+
       if (props.searchable) {
-        vms.value.$refs.search.setAttribute('autocomplete', 'off');
+        const searchInput = vms.value?.$refs?.search;
+
+        if (searchInput) {
+          if (browserName !== 'Firefox') {
+            searchInput.setAttribute('autocomplete', 'off');
+          } else {
+            // Setting autocomplete to 'off' does not work for Firefox in some
+            // cases, particularly in the login package for the KBA select
+            // combobox. So we detect the browser and set autocomplete to
+            // 'new-password', which prevents Firefox from showing the
+            // password autocomplete functionality since this was breaking
+            // the up / down arrow navigation of the options.
+            searchInput.setAttribute('autocomplete', 'new-password');
+          }
+        }
       }
 
       if (vms.value?.$el) {
