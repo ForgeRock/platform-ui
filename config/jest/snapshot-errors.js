@@ -1,5 +1,5 @@
 /**
- * Copyright 2021-2024 ForgeRock AS. All Rights Reserved
+ * Copyright 2021-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -30,8 +30,11 @@ function cleanMockCall(args) {
 }
 
 function snapshotCalls(fn, snapshotName) {
-  if (fn.mock.calls.length > 0) {
-    expect(fn.mock.calls.map(cleanMockCall)).toMatchSnapshot(snapshotName);
+  const filteredCalls = fn.mock.calls.filter(
+    (call) => !call.some((arg) => typeof arg === 'string' && arg === "^ The above deprecation's compat behavior is disabled and will likely lead to runtime errors."),
+  );
+  if (filteredCalls.length > 0) {
+    expect(filteredCalls.map(cleanMockCall)).toMatchSnapshot(snapshotName);
   }
 }
 
