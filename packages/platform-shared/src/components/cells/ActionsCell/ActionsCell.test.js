@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -230,6 +230,18 @@ describe('Actions cell actions and renders', () => {
     await menuButton.trigger('click');
     const dropdownEdit = findByTestId(domWrapper, 'dropdown-edit-0');
     expect(dropdownEdit.text()).toContain('Custom Edit');
+  });
+
+  it('custom delete option text correctly rendered', async () => {
+    const { wrapper, domWrapper } = setup({
+      testId: '0',
+      deleteOption: true,
+      deleteOptionText: 'Custom Delete',
+    });
+    const menuButton = wrapper.find('.dropdown-toggle');
+    await menuButton.trigger('click');
+    const dropdownDelete = findByTestId(domWrapper, 'dropdown-delete-0');
+    expect(dropdownDelete.text()).toContain('Custom Delete');
   });
 
   it('emits export-clicked event when Export dropdown toggle item is clicked', async () => {

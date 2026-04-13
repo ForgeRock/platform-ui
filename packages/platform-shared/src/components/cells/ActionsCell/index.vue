@@ -98,7 +98,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrIcon
           icon-class="mr-2"
           name="delete">
-          {{ $t('common.delete') }}
+          {{ deleteOptionText || $t('common.delete') }}
         </FrIcon>
       </BDropdownItem>
     </FrActionsMenu>
@@ -132,6 +132,13 @@ export default {
     deleteOption: {
       default: true,
       type: Boolean,
+    },
+    /**
+     * Text to display for the delete option
+     */
+    deleteOptionText: {
+      default: '',
+      type: String,
     },
     /**
      * Enables a divider to appear above the delete option
