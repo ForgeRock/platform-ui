@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -21,6 +21,15 @@
 // ***********************************************************
 
 import '@e2e/support';
+
+const { register: registerCypressGrep } = require('@cypress/grep');
+
+// Only apply grep filtering to .cy.js files. .feature files are filtered
+// by the cucumber preprocessor via CYPRESS_TAGS — registering grep for them
+// would cause scenarios to be skipped when CYPRESS_grepTags is set.
+if (!Cypress.spec.relative.endsWith('.feature')) {
+  registerCypressGrep();
+}
 
 Cypress.on('window:before:load', (window) => {
   Object.defineProperty(window.navigator, 'language', { value: Cypress.env('LOCALE') });

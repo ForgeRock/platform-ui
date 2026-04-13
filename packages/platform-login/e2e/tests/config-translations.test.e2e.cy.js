@@ -6,7 +6,7 @@
  */
 
 import { random } from 'lodash';
-import { filterTests, retryableBeforeEach } from '@e2e/util';
+import { retryableBeforeEach } from '@e2e/util';
 import { addOverrides, deleteOverrides } from '@e2e/api/localizationApi.e2e';
 import { prepareJourneyTemplate } from '@e2e/utils/manageJourneys';
 
@@ -343,217 +343,215 @@ function fillOutTranslatedRegistrationForm(userName, userEmail) {
   }
 }
 
-filterTests(['@forgeops', '@cloud'], () => {
-  describe('Login config translations', () => {
-    const loginBaseUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login`;
+describe('Login config translations', { tags: ['@forgeops', '@cloud'] }, () => {
+  const loginBaseUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Login`;
 
-    // Add config translation overrides
-    before(() => {
-      // Login as admin and upload config translation overrides
-      cy.loginAsAdminCached().then(() => {
-        addOverrides('en', enTranslations);
-        addOverrides('fr', frTranslations);
-        addOverrides('fr-ca', frcaTranslations);
-        cy.logout();
-      });
-    });
-
-    it('Should override the text of the next button, username placeholder, and password placeholder', () => {
-      // Set up intercept
-      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
-
-      // Visit base page of our Login Journey with default locale
-      cy.visit(`${loginBaseUrl}#/`);
-
-      // Wait for a Journey page to fully load
-      cy.wait('@getTheme', { timeout: 10000 });
-
-      // Check override translations are applied correctly for default locale
-      cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible');
-      cy.findByLabelText('User Name Test').should('be.visible');
-      cy.findByLabelText('Password Test').should('be.visible');
-    });
-
-    it('Should override the text of the login failure message', () => {
-      // Set up how many times we should click on the Next button to trigger the 'Loginfailure' message
-      const timesClicked = Cypress.env('IS_FRAAS') ? 6 : 1;
-
-      // Set up intercept
-      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
-
-      // Visit base page of our Login Journey with default locale
-      cy.visit(`${loginBaseUrl}#/`);
-
-      // Wait for a Journey page to fully load
-      cy.wait('@getTheme', { timeout: 10000 });
-
-      // Click on the Next button to trigger the 'Loginfailure' message
-      for (let i = 0; i < timesClicked; i += 1) {
-        // Check override translations are applied correctly for default locale
-        cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible').click();
-
-        // Wait for a Journey page to fully load
-        cy.wait('@getTheme', { timeout: 10000 });
-      }
-
-      // Check override translations are applied correctly for default locale
-      cy.findAllByRole('alert').should('be.visible').contains('Login Failure Override');
-    });
-
-    it('Should display French overrides when locale query parameter is "fr"', () => {
-      // Set up intercept
-      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
-
-      // Visit base page of our Login Journey with added locale
-      cy.visit(`${loginBaseUrl}&locale=fr#/`);
-
-      // Wait for a Journey page to fully load
-      cy.wait('@getTheme', { timeout: 10000 });
-
-      // Check override translations are applied correctly for added locale
-      cy.findByRole('button', { name: 'Suivant Test', timeout: 10000 }).should('be.visible');
-      cy.findByLabelText('Nom d\'utilisateur Test').should('be.visible');
-
-      // English fallback is used when french is not present
-      cy.findByLabelText('Password Test').should('be.visible');
-    });
-
-    it('Should fallback to a general locale when a specific one is not present', () => {
-      // Set up intercept
-      cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
-
-      // Visit base page of our Login Journey with added locale
-      cy.visit(`${loginBaseUrl}&locale=fr-ca#/`);
-
-      // Wait for a Journey page to fully load
-      cy.wait('@getTheme', { timeout: 10000 });
-
-      // Check override translations are applied correctly for added locale and fallback locale
-      // fr-ca
-      cy.findByRole('button', { name: 'Suivant Test frca', timeout: 10000 }).should('be.visible');
-      // fr
-      cy.findByLabelText('Nom d\'utilisateur Test').should('be.visible');
-      // en
-      cy.findByLabelText('Password Test').should('be.visible');
-    });
-
-    after(() => {
-      // Login as admin and delete config translation overrides after tests
-      cy.loginAsAdminCached().then(() => {
-        deleteOverrides('en');
-        deleteOverrides('fr');
-        deleteOverrides('fr-ca');
-      });
+  // Add config translation overrides
+  before(() => {
+    // Login as admin and upload config translation overrides
+    cy.loginAsAdminCached().then(() => {
+      addOverrides('en', enTranslations);
+      addOverrides('fr', frTranslations);
+      addOverrides('fr-ca', frcaTranslations);
+      cy.logout();
     });
   });
 
-  describe('Checks correct behavior of translated Theme/Journey with pages and nodes', () => {
-    const journeyTemplate = 'Registration_translated_journey_template.json';
-    const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated#/`;
-    const defaultLocale = 'en';
-    let preparedJourney;
+  it('Should override the text of the next button, username placeholder, and password placeholder', () => {
+    // Set up intercept
+    cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
-    before(() => {
-      // Prepare Journey template with correct Realm redirects and Identity Resources
-      preparedJourney = prepareJourneyTemplate(journeyTemplate, { loginRealm, userRealm });
+    // Visit base page of our Login Journey with default locale
+    cy.visit(`${loginBaseUrl}#/`);
 
-      // Login as admin and import translated Journey with translated Theme
-      cy.importTreesViaAPI([preparedJourney]);
-      cy.logout();
+    // Wait for a Journey page to fully load
+    cy.wait('@getTheme', { timeout: 10000 });
+
+    // Check override translations are applied correctly for default locale
+    cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible');
+    cy.findByLabelText('User Name Test').should('be.visible');
+    cy.findByLabelText('Password Test').should('be.visible');
+  });
+
+  it('Should override the text of the login failure message', () => {
+    // Set up how many times we should click on the Next button to trigger the 'Loginfailure' message
+    const timesClicked = Cypress.env('IS_FRAAS') ? 6 : 1;
+
+    // Set up intercept
+    cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
+
+    // Visit base page of our Login Journey with default locale
+    cy.visit(`${loginBaseUrl}#/`);
+
+    // Wait for a Journey page to fully load
+    cy.wait('@getTheme', { timeout: 10000 });
+
+    // Click on the Next button to trigger the 'Loginfailure' message
+    for (let i = 0; i < timesClicked; i += 1) {
+      // Check override translations are applied correctly for default locale
+      cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible').click();
+
+      // Wait for a Journey page to fully load
+      cy.wait('@getTheme', { timeout: 10000 });
+    }
+
+    // Check override translations are applied correctly for default locale
+    cy.findAllByRole('alert').should('be.visible').contains('Login Failure Override');
+  });
+
+  it('Should display French overrides when locale query parameter is "fr"', () => {
+    // Set up intercept
+    cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
+
+    // Visit base page of our Login Journey with added locale
+    cy.visit(`${loginBaseUrl}&locale=fr#/`);
+
+    // Wait for a Journey page to fully load
+    cy.wait('@getTheme', { timeout: 10000 });
+
+    // Check override translations are applied correctly for added locale
+    cy.findByRole('button', { name: 'Suivant Test', timeout: 10000 }).should('be.visible');
+    cy.findByLabelText('Nom d\'utilisateur Test').should('be.visible');
+
+    // English fallback is used when french is not present
+    cy.findByLabelText('Password Test').should('be.visible');
+  });
+
+  it('Should fallback to a general locale when a specific one is not present', () => {
+    // Set up intercept
+    cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
+
+    // Visit base page of our Login Journey with added locale
+    cy.visit(`${loginBaseUrl}&locale=fr-ca#/`);
+
+    // Wait for a Journey page to fully load
+    cy.wait('@getTheme', { timeout: 10000 });
+
+    // Check override translations are applied correctly for added locale and fallback locale
+    // fr-ca
+    cy.findByRole('button', { name: 'Suivant Test frca', timeout: 10000 }).should('be.visible');
+    // fr
+    cy.findByLabelText('Nom d\'utilisateur Test').should('be.visible');
+    // en
+    cy.findByLabelText('Password Test').should('be.visible');
+  });
+
+  after(() => {
+    // Login as admin and delete config translation overrides after tests
+    cy.loginAsAdminCached().then(() => {
+      deleteOverrides('en');
+      deleteOverrides('fr');
+      deleteOverrides('fr-ca');
     });
+  });
+});
 
-    retryableBeforeEach(() => {
-      // Visit base page of our translated Journey
-      cy.visit(locationUrl);
-    });
+describe('Checks correct behavior of translated Theme/Journey with pages and nodes', { tags: ['@forgeops', '@cloud'] }, () => {
+  const journeyTemplate = 'Registration_translated_journey_template.json';
+  const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${loginRealm}&authIndexType=service&authIndexValue=Registration%20-%20Translated#/`;
+  const defaultLocale = 'en';
+  let preparedJourney;
 
-    // Login as admin and delete translated Journey with translated Theme
-    after(() => cy.deleteTreesViaAPI([preparedJourney]));
+  before(() => {
+    // Prepare Journey template with correct Realm redirects and Identity Resources
+    preparedJourney = prepareJourneyTemplate(journeyTemplate, { loginRealm, userRealm });
 
-    it('Check default Theme/Journey translations (EN), create user and verify email message', () => {
-      // Select translation for this test
-      const locale = 'en';
-      const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-      const userEmail = `${userName}@test.com`;
+    // Login as admin and import translated Journey with translated Theme
+    cy.importTreesViaAPI([preparedJourney]);
+    cy.logout();
+  });
 
-      // Check main page of translated Journey
-      verifyMainPageTranslations(locale);
+  retryableBeforeEach(() => {
+    // Visit base page of our translated Journey
+    cy.visit(locationUrl);
+  });
 
-      // Move to the next page of Journey
-      cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[locale] }).click();
+  // Login as admin and delete translated Journey with translated Theme
+  after(() => cy.deleteTreesViaAPI([preparedJourney]));
 
-      // Check registration page of translated Journey
-      verifyRegistrationPageTranslations(locale);
+  it('Check default Theme/Journey translations (EN), create user and verify email message', () => {
+    // Select translation for this test
+    const locale = 'en';
+    const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
+    const userEmail = `${userName}@test.com`;
 
-      // Fill out registration form for the user
-      fillOutTranslatedRegistrationForm(userName, userEmail);
+    // Check main page of translated Journey
+    verifyMainPageTranslations(locale);
 
-      // Proceed with registering user
-      cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[locale] }).click();
+    // Move to the next page of Journey
+    cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[locale] }).click();
 
-      // Check success registration page of translated Journey
-      verifySuccessRegistrationPageTranslations(locale);
-    });
+    // Check registration page of translated Journey
+    verifyRegistrationPageTranslations(locale);
 
-    it('Check CS Theme/Journey translations, create user and verify email message', () => {
-      // Select translation for this test
-      const locale = 'cs';
-      const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-      const userEmail = `${userName}@test.com`;
+    // Fill out registration form for the user
+    fillOutTranslatedRegistrationForm(userName, userEmail);
 
-      // Wait for a page to load
-      cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[defaultLocale], timeout: 10000 }).should('be.visible');
+    // Proceed with registering user
+    cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[locale] }).click();
 
-      // Switch to CS locale
-      cy.findByRole('link', { name: '| Čeština |' }).click();
+    // Check success registration page of translated Journey
+    verifySuccessRegistrationPageTranslations(locale);
+  });
 
-      // Check main page of translated Journey
-      verifyMainPageTranslations(locale);
+  it('Check CS Theme/Journey translations, create user and verify email message', () => {
+    // Select translation for this test
+    const locale = 'cs';
+    const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
+    const userEmail = `${userName}@test.com`;
 
-      // Move to the next page of Journey
-      cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[locale] }).click();
+    // Wait for a page to load
+    cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[defaultLocale], timeout: 10000 }).should('be.visible');
 
-      // Check registration page of translated Journey
-      verifyRegistrationPageTranslations(locale);
+    // Switch to CS locale
+    cy.findByRole('link', { name: '| Čeština |' }).click();
 
-      // Fill out registration form for the user
-      fillOutTranslatedRegistrationForm(userName, userEmail);
+    // Check main page of translated Journey
+    verifyMainPageTranslations(locale);
 
-      // Proceed with registering user
-      cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[locale] }).click();
+    // Move to the next page of Journey
+    cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[locale] }).click();
 
-      // Check success registration page of translated Journey
-      verifySuccessRegistrationPageTranslations(locale);
-    });
+    // Check registration page of translated Journey
+    verifyRegistrationPageTranslations(locale);
 
-    // TODO: Re-enable this test when https://bugster.forgerock.org/jira/browse/OPENAM-21997 gets fixed
-    xit('Check default fallback Theme/Journey translations (EN), create user and verify email message', () => {
-      const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-      const userEmail = `${userName}@test.com`;
+    // Fill out registration form for the user
+    fillOutTranslatedRegistrationForm(userName, userEmail);
 
-      // Wait for a page to load
-      cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[defaultLocale], timeout: 10000 }).should('be.visible');
+    // Proceed with registering user
+    cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[locale] }).click();
 
-      // Switch to ES locale
-      cy.findByRole('link', { name: '| Undefined locale |' }).click();
+    // Check success registration page of translated Journey
+    verifySuccessRegistrationPageTranslations(locale);
+  });
 
-      // Check main page of translated Journey
-      verifyMainPageTranslations(defaultLocale);
+  // TODO: Re-enable this test when https://bugster.forgerock.org/jira/browse/OPENAM-21997 gets fixed
+  xit('Check default fallback Theme/Journey translations (EN), create user and verify email message', () => {
+    const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
+    const userEmail = `${userName}@test.com`;
 
-      // Move to the next page of Journey
-      cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[defaultLocale] }).click();
+    // Wait for a page to load
+    cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[defaultLocale], timeout: 10000 }).should('be.visible');
 
-      // Check registration page of translated Journey
-      verifyRegistrationPageTranslations(defaultLocale);
+    // Switch to ES locale
+    cy.findByRole('link', { name: '| Undefined locale |' }).click();
 
-      // Fill out registration form for the user
-      fillOutTranslatedRegistrationForm(userName, userEmail);
+    // Check main page of translated Journey
+    verifyMainPageTranslations(defaultLocale);
 
-      // Proceed with registering user
-      cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[defaultLocale] }).click();
+    // Move to the next page of Journey
+    cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[defaultLocale] }).click();
 
-      // Check success registration page of translated Journey
-      verifySuccessRegistrationPageTranslations(defaultLocale);
-    });
+    // Check registration page of translated Journey
+    verifyRegistrationPageTranslations(defaultLocale);
+
+    // Fill out registration form for the user
+    fillOutTranslatedRegistrationForm(userName, userEmail);
+
+    // Proceed with registering user
+    cy.findByRole('button', { name: mainPageTranslations.messageNodePositiveButton[defaultLocale] }).click();
+
+    // Check success registration page of translated Journey
+    verifySuccessRegistrationPageTranslations(defaultLocale);
   });
 });

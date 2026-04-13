@@ -2450,7 +2450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/grep@npm:5":
+"@cypress/grep@npm:5.1.0":
   version: 5.1.0
   resolution: "@cypress/grep@npm:5.1.0"
   dependencies:
@@ -2818,7 +2818,7 @@ __metadata:
     "@codemirror/lint": 6.4.2
     "@codemirror/theme-one-dark": 6.1.2
     "@codemirror/view": 6.22.1
-    "@cypress/grep": 5
+    "@cypress/grep": 5.1.0
     "@forgerock/platform-login": 1.0.0
     "@forgerock/platform-shared": 1.0.0
     "@kyvg/vue3-notification": 3.0.2
@@ -2903,6 +2903,7 @@ __metadata:
     "@badeball/cypress-cucumber-preprocessor": 21.0.2
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
     "@braintree/sanitize-url": 6.0.2
+    "@cypress/grep": 5.1.0
     "@forgerock/platform-shared": 1.0.0
     "@kyvg/vue3-notification": 3.0.2
     "@neuralegion/cypress-har-generator": 5.16.4
@@ -2957,6 +2958,7 @@ __metadata:
   dependencies:
     "@badeball/cypress-cucumber-preprocessor": 21.0.2
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
+    "@cypress/grep": 5.1.0
     "@forgerock/platform-shared": 1.0.0
     "@hcaptcha/vue-hcaptcha": 0.3.2
     "@kyvg/vue3-notification": 3.0.2
