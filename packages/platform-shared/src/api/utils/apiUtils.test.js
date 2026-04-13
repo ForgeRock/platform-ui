@@ -35,9 +35,9 @@ describe('apiUtils', () => {
       expect(apiUtils.getRealmConfigPath('beta')).toBe('realms/root/realms/alpha/realms/beta/realm-config');
     });
 
-    it('returns root realm-config path when realm is not found in store', () => {
+    it('returns simple sub-realm path when realm is not found in store', () => {
       store.state.realms = [];
-      expect(apiUtils.getRealmConfigPath('unknown')).toBe('realms/root/realm-config');
+      expect(apiUtils.getRealmConfigPath('unknown')).toBe('realms/root/realms/unknown/realm-config');
     });
   });
 

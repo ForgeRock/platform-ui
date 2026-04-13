@@ -23,6 +23,11 @@ function getRealmConfigPath(realm) {
     const realmPath = createRealmPath(slashSeparatedPath);
     return `realms/root/${realmPath}/realm-config`;
   }
+  // For non-root realms not yet in the store (e.g. during realm creation), fall back
+  // to the simple sub-realm path to avoid incorrectly targeting the root realm.
+  if (realm !== 'root' && realmName !== '/') {
+    return `realms/root/realms/${realm}/realm-config`;
+  }
   return 'realms/root/realm-config';
 }
 
