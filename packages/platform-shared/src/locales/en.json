@@ -1209,6 +1209,7 @@
     "endUser": {
       "accessModeling": "Access Modeling",
       "accessReviews": "Access Reviews",
+      "agents": "My Agents",
       "applications": "My Applications",
       "approvals": "Approvals",
       "custom": "Custom Link",
@@ -1751,6 +1752,7 @@
       "noAccessFoundSubtitle": "Try a new filter in the panel to the left.",
       "noRecordFound": "No {grantType} found.",
       "noResultsAccount": "No {grantType} for this account.",
+      "noResultsAgent": "No {grantType} for this agent.",
       "noResultsUser": "No {grantType} for this user.",
       "panelTitle": {
         "accountGrant": "Account Details",
@@ -2014,7 +2016,7 @@
         "entitlementsTab": {
           "title": "Users",
           "notFound": "No actors found",
-          "notFoundDescription": "Try a new search in the seach box above.",
+          "notFoundDescription": "Try a new search in the search box above.",
           "failedToLoad": "Failed to load account's actors"
         },
         "objectPropertiesTab": {
@@ -2189,6 +2191,87 @@
         "title": "About This Campaign"
       },
       "statusCardLabel": "Status"
+    },
+    "agents": {
+      "agentId": "Agent ID",
+      "agentName": "Agent Name",
+      "accountSubType": "Agent Subtype",
+      "accountType": "Agent Type",
+      "actionRequired": "Action Required",
+      "agentTypes": {
+        "machine": "Machine",
+        "user": "User"
+      },
+      "agentsCount": "{count} Agents",
+      "changeMachine": "Change to Machine Agent",
+      "credentials": {
+        "header": "Credentials",
+        "button": "+ Add Credential"
+      },
+      "custodians": "Custodians",
+      "failedToLoad": "Failed to load agents",
+      "failedToLoadCustodians": "Failed to load custodians",
+      "default": "Default",
+      "details": {
+        "detailsTab": {
+          "accountSaved": "Agent saved successfully",
+          "accountSaveErrorMessage": "Error saving agent, please try again",
+          "notLoadErrorMessage": "Error loading the details of the agent",
+          "title": "Agent Details",
+          "user": "User"
+        },
+        "entitlementsTab": {
+          "title": "Users",
+          "notFound": "No actors found",
+          "notFoundDescription": "Try a new search in the search box above.",
+          "failedToLoad": "Failed to load agent's actors"
+        },
+        "noAssociatedEntities": "No associated {entities} found",
+        "objectPropertiesTab": {
+          "title": "Agent Properties"
+        },
+        "tabs": {
+          "details": "Details",
+          "activity": "Activity",
+          "entitlements": "Entitlements"
+        }
+      },
+      "editMachine": "Edit Machine Agent",
+      "errors": {
+        "errorSearchingAccounts": "There was an error searching agents"
+      },
+      "guardrails": "Guardrails",
+      "identity": "Identity Bindings",
+      "knowledge": "Knowledge Bases",
+      "machine": "Machine",
+      "modal": {
+        "set": "Set",
+        "setMachineDescription": "This action will change this agent to a machine agent. Select any custodians that you want to assign to this machine agent below. Note that this operation may not immediately reflect changes",
+        "title": "{action} Machine Agent",
+        "update": "Update",
+        "updateMachineDescription": "Add or remove the custodians that are assigned to this machine agent."
+      },
+      "owner": "Owner",
+      "principals": {
+        "header": "Principals",
+        "button": "+ Add Principal"
+      },
+      "reviewPending": "Review Pending",
+      "subtitle": "View and manage AI agents.",
+      "tabs": {
+        "all": "All agents",
+        "awsBedrock": "AWS Bedrock",
+        "azureAiFoundry": "Azure AI Foundry",
+        "googleVertexAi": "Google Vertex AI",
+        "pingAiAgents": "Ping AI Agents",
+        "custom": "Custom"
+      },
+      "title": "Agents",
+      "tools": "Tools",
+      "type": "Type",
+      "unreviewedAgentsText": "Have never been reviewed",
+      "user": "User",
+      "withoutCustodians": "Without assigned custodians"
     },
     "certificationTask": {
       "hideTechnicalDetails": "Hide technical details",

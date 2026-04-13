@@ -595,6 +595,9 @@ export default {
       if (this.parentResourceName && this.parentResourceName === 'account') {
         return this.$t('governance.access.noResultsAccount', { grantType: this.pluralizedGrantType });
       }
+      if (this.parentResourceName && this.parentResourceName === 'agent') {
+        return this.$t('governance.access.noResultsAgent', { grantType: this.pluralizedGrantType });
+      }
       return this.$t('governance.access.noResultsUser', { grantType: this.pluralizedGrantType });
     },
     /**
