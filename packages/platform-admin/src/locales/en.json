@@ -3,6 +3,8 @@
     "Accounts": "Accounts",
     "AccountsDetails": "Account Details",
     "AdministerEntitlements": "Administer Entitlements",
+    "Agents": "Agents",
+    "AgentsDetails": "Agent Details",
     "AIAgents": "AI Agents",
     "AIAgentEdit": "Edit AI Agent",
     "Applications": "Applications",
@@ -125,6 +127,7 @@
   "sideMenu": {
     "accounts": "Accounts",
     "accessManagement": "Access Management",
+    "agents": "Agents",
     "applications": "Applications",
     "aiAgents": "AI Agents",
     "authentication": "Authentication",
@@ -4751,7 +4754,7 @@
         "users": {
           "title": "Users",
           "notFound": "No entitlements found",
-          "notFoundDescription": "Try a new search in the seach box above.",
+          "notFoundDescription": "Try a new search in the search box above.",
           "failedToLoad": "Failed to load entitlement's users"
         }
       }

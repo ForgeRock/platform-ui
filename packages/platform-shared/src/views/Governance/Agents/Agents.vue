@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,26 +6,100 @@ of the MIT license. See the LICENSE file for details. -->
   <BContainer fluid>
     <div class="mt-5">
       <FrHeader
-        :title="i18n.global.t('common.accounts')"
-        :subtitle="i18n.global.t('governance.accounts.subtitle')" />
+        :title="$t('governance.agents.title')"
+        :subtitle="$t('governance.agents.subtitle')" />
       <div>
         <div class="my-5">
+          <BRow class="mb-4">
+            <BCol lg="6">
+              <BCard>
+                <div class="d-flex flex-row">
+                  <FrCircleProgressBar
+                    id="no-custodians-chart"
+                    :progress="noCustodiansPercentage"
+                    :thickness="7"
+                    :empty-thickness="7"
+                    :empty-color="styles.brightGray"
+                    :color="styles.red"
+                    :size="72">
+                    <template #count="{}">
+                      <small class="font-weight-bold mb-0">
+                        {{ noCustodiansPercentage }}%
+                      </small>
+                    </template>
+                  </FrCircleProgressBar>
+                  <div class="d-flex flex-column justify-content-center ml-3">
+                    <div class="d-flex flex-row align-items-center">
+                      <FrIcon
+                        :icon-class="`size-28 d-flex align-items-center justify-content-center mr-1 color-darkred mt-n25`"
+                        name="warning" />
+                      <small class="font-weight-bold mb-0">
+                        {{ $t('governance.agents.actionRequired') }}
+                      </small>
+                    </div>
+                    <p class="text-muted ml-1 font-weight-bold mb-0 chart-text-large">
+                      {{ $t('governance.agents.agentsCount', { count: counts.noCustodians }) }}
+                    </p>
+                    <small class="text-muted ml-1">
+                      {{ $t('governance.agents.withoutCustodians') }}
+                    </small>
+                  </div>
+                </div>
+              </BCard>
+            </BCol>
+            <BCol lg="6">
+              <BCard>
+                <div class="d-flex flex-row">
+                  <FrCircleProgressBar
+                    id="unreviewed-chart"
+                    :progress="unreviewedPercentage"
+                    :thickness="7"
+                    :empty-thickness="7"
+                    :empty-color="styles.brightGray"
+                    :color="styles.yellow"
+                    :size="72">
+                    <template #count="{}">
+                      <small class="font-weight-bold mb-0">
+                        {{ unreviewedPercentage }}%
+                      </small>
+                    </template>
+                  </FrCircleProgressBar>
+                  <div class="d-flex flex-column justify-content-center ml-3">
+                    <div class="d-flex flex-row align-items-center">
+                      <FrIcon
+                        :icon-class="`size-28 d-flex align-items-center justify-content-center mr-1 color-darkyellow mt-n25`"
+                        name="history" />
+                      <small class="font-weight-bold mb-0">
+                        {{ $t('governance.agents.reviewPending') }}
+                      </small>
+                    </div>
+                    <p class="text-muted ml-1 font-weight-bold mb-0 chart-text-large">
+                      {{ $t('governance.agents.agentsCount', { count: counts.unreviewed }) }}
+                    </p>
+                    <small class="text-muted ml-1">
+                      {{ $t('governance.agents.unreviewedAgentsText') }}
+                    </small>
+                  </div>
+                </div>
+              </BCard>
+            </BCol>
+          </BRow>
           <BCard
             no-body
             class="card-tabs-vertical">
             <BTabs
-              ref="accountTabs"
+              ref="agentTabs"
               v-if="selectedTab !== null"
               v-model="selectedTab"
               @activate-tab="tabActivated"
-              nav-wrapper-class="d-none d-md-block account-tabs"
+              nav-wrapper-class="d-none d-md-block agent-tabs"
               content-class="overflow-hidden position-inherit"
               pills
               vertical>
               <BTab
                 v-for="(tab, index) in tabItems"
                 class="nav-item"
-                :key="`${tab.resourceName}_${index}`"
+                :key="tab.key"
                 :title="tab.displayName">
                 <template #title>
                   <div class="d-flex justify-content-between">
@@ -50,7 +124,7 @@ of the MIT license. See the LICENSE file for details. -->
                       </div>
                       <FrSearchInput
                         v-model="searchQuery"
-                        :placeholder="i18n.global.t('common.search')"
+                        :placeholder="$t('common.search')"
                         @clear="clear"
                         @search="search(1)" />
                     </BButtonToolbar>
@@ -59,14 +133,14 @@ of the MIT license. See the LICENSE file for details. -->
                     <FrSpinner class="py-5" />
                   </template>
                   <BTable
-                    v-else-if="accounts.length"
+                    v-else-if="agents.length"
                     class="mb-0"
-                    v-resizable-table="{ persistKey: 'accounts' }"
+                    v-resizable-table="{ persistKey: 'agents' }"
                     responsive
                     hover
                     tbody-tr-class="cursor-pointer"
                     :fields="fields"
-                    :items="accounts"
+                    :items="agents"
                     @row-clicked="navigateToEdit($event.id)"
                     no-local-sorting
                     no-sort-reset
@@ -116,20 +190,10 @@ of the MIT license. See the LICENSE file for details. -->
                         </div>
                       </div>
                     </template>
-                    <template #cell(type)="{ item }">
-                      <BBadge
-                        class="w-100px"
-                        :variant="getAccountTypeVariant(item.type)">
-                        {{ item.type }}
-                      </BBadge>
-                    </template>
-                    <template #cell(accountSubType)="{ item }">
+                    <template #cell(agentId)="{ item }">
                       <div
                         class="w-100px d-flex">
-                        <FrIcon
-                          :icon-class="`size-28 rounded-circle d-flex align-items-center justify-content-center mr-3 color-dark${getIcon(item, 'iconColor')} bg-light${getIcon(item, 'iconColor')} mt-n25`"
-                          :name="getIcon(item, 'icon')" />
-                        {{ getAccountSubType(item) }}
+                        {{ item.account?.agentId || blankValueIndicator }}
                       </div>
                     </template>
                     <template #cell(actions)="{ item }">
@@ -143,7 +207,7 @@ of the MIT license. See the LICENSE file for details. -->
                               <FrIcon
                                 icon-class="mr-2"
                                 name="list_alt">
-                                {{ i18n.global.t('common.viewDetails') }}
+                                {{ $t('common.viewDetails') }}
                               </FrIcon>
                             </template>
                           </BDropdownItem>
@@ -156,7 +220,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :card="false"
                     class="mb-4"
                     icon="inbox"
-                    :subtitle="i18n.global.t('common.noResultsFound')" />
+                    :subtitle="$t('common.noResultsFound')" />
                   <FrPagination
                     v-if="totalPagedResults > entriesPerPage"
                     :value="currentPage"
@@ -176,7 +240,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
-  BBadge,
   BButtonToolbar,
   BCard,
   BCardHeader,
@@ -190,7 +253,8 @@ import {
 } from 'bootstrap-vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { capitalize, find } from 'lodash';
+import { capitalize } from 'lodash';
+import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -205,8 +269,9 @@ import { getAccounts } from '@forgerock/platform-shared/src/api/governance/Accou
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import accountConstants from './utils/accountConstants';
-import { getAccountTypeVariant, getAccountDisplayName } from './utils/accountUtility';
+import styles from '@forgerock/platform-shared/src/scss/main.scss';
+import agentConstants from './utils/agentConstants';
+import { getAgentDisplayName } from './utils/agentUtility';
 import i18n from '@/i18n';
 
 const router = useRouter();
@@ -214,7 +279,7 @@ const currentPage = ref(1);
 const entriesPerPage = ref(10);
 const totalPagedResults = ref(0);
 const tableLoading = ref(true);
-const accounts = ref([]);
+const agents = ref([]);
 const sortBy = ref('displayName');
 const sortDesc = ref(false);
 const searchQuery = ref('');
@@ -237,70 +302,73 @@ const fields = computed(() => {
       sortable: true,
     },
     {
-      key: 'type',
+      key: 'agentId',
       class: 'w-160px',
-      label: i18n.global.t('governance.accounts.type'),
-      sortable: false,
-    },
-    {
-      key: 'user',
-      class: 'w-240px',
-      label: i18n.global.t('governance.accounts.user'),
-      sortable: false,
-    },
-    {
-      key: 'accountSubType',
-      class: 'w-240px',
-      label: i18n.global.t('governance.accounts.accountSubType'),
+      label: i18n.global.t('governance.agents.agentId'),
       sortable: false,
     },
     {
       key: 'actions',
-      label: i18n.global.t('common.actions'),
+      label: '',
       sortable: false,
-      class: 'w-120px justify-content-end fr-no-resize sticky-right',
+      class: 'w-5 justify-content-end col-actions',
     },
   ];
-  // Don't show type or user for machine tab
-  if (selectedTab.value === 3) {
-    return tableFields.filter((field) => field.key !== 'type' && field.key !== 'user');
-  }
-  // Don't show user for uncorrelated tab
-  if (selectedTab.value === 2) {
-    return tableFields.filter((field) => field.key !== 'user' && field.key !== 'accountSubType');
-  }
-  if (selectedTab.value === 1 || selectedTab.value === 0) {
-    return tableFields.filter((field) => field.key !== 'accountSubType');
-  }
   return tableFields;
 });
 const tabItems = [
   {
-    displayName: i18n.global.t('governance.accounts.tabs.all'),
+    displayName: i18n.global.t('governance.agents.tabs.all'),
     key: 'all',
     queryFilter: '',
   },
   {
-    displayName: i18n.global.t('governance.accounts.tabs.correlated'),
-    key: 'correlated',
-    queryFilter: 'user.id sw ""',
+    displayName: i18n.global.t('governance.agents.tabs.awsBedrock'),
+    key: 'awsBedrock',
+    queryFilter: 'application.templateName sw "aws.bedrock"',
   },
   {
-    displayName: i18n.global.t('governance.accounts.tabs.uncorrelated'),
-    key: 'uncorrelated',
-    queryFilter: `!(user.id co "") and !(glossary.idx./account.accountType eq "${accountConstants.ACCOUNT_TYPES.MACHINE}")`,
+    displayName: i18n.global.t('governance.agents.tabs.azureAiFoundry'),
+    key: 'azureAiFoundry',
+    queryFilter: 'application.templateName sw "azure.aifoundry"',
   },
   {
-    displayName: i18n.global.t('governance.accounts.tabs.machine'),
-    key: 'machine',
-    queryFilter: `glossary.idx./account.accountType eq "${accountConstants.ACCOUNT_TYPES.MACHINE}"`,
+    displayName: i18n.global.t('governance.agents.tabs.googleVertexAi'),
+    key: 'googleVertexAi',
+    queryFilter: 'application.templateName sw "google.vertex"',
+  },
+  {
+    displayName: i18n.global.t('governance.agents.tabs.pingAiAgents'),
+    key: 'pingAiAgents',
+    queryFilter: 'application.templateName sw "salesforce.agentforce"',
+  },
+  {
+    displayName: i18n.global.t('governance.agents.tabs.custom'),
+    key: 'custom',
+    queryFilter: '!(application.templateName sw "aws.bedrock" or application.templateName sw "azure.aifoundry" or application.templateName sw "google.vertex" or application.templateName sw "salesforce.agentforce")',
   },
 ];
 const counts = ref({
   all: 0,
-  correlated: 0,
-  uncorrelated: 0,
-  machine: 0,
+  awsBedrock: 0,
+  azureAiFoundry: 0,
+  googleVertexAi: 0,
+  pingAiAgents: 0,
+  custom: 0,
+  noCustodians: 0,
+  unreviewed: 0,
+});
+const noCustodiansPercentage = computed(() => {
+  const { key } = tabItems[selectedTab.value];
+  if (counts.value[key] === 0) return 0;
+  const percentage = Math.round((counts.value.noCustodians / counts.value[key]) * 100);
+  return Number.isNaN(percentage) ? 0 : percentage;
+});
+const unreviewedPercentage = computed(() => {
+  const { key } = tabItems[selectedTab.value];
+  if (counts.value[key] === 0) return 0;
+  const percentage = Math.round((counts.value.unreviewed / counts.value[key]) * 100);
+  return Number.isNaN(percentage) ? 0 : percentage;
 });
 
 /**
@@ -321,10 +389,10 @@ function getSortParam(sortByVal) {
 }
 
 /**
- * Builds the query filter for accounts based on the current search query, selected applications, and the active tab
+ * Builds the query filter for agents based on the current search query, selected applications, and the active tab
  * @param tab integer The tab key index to get the query filter for
  */
-function getQueryFilterForAccounts(tab) {
+function getQueryFilterForAgents(tab, additionalFilters = []) {
   const searchQueryFilter = searchQuery.value
     ? `(user.userName co '${searchQuery.value}' or descriptor.idx./account.displayName co '${searchQuery.value}')`
     : '';
@@ -334,9 +402,9 @@ function getQueryFilterForAccounts(tab) {
 
   const tabQueryFilter = tabItems[tab]?.queryFilter || '';
 
-  const nonAgentFilter = `!(glossary.idx./account.accountType eq "${accountConstants.ACCOUNT_TYPES.AGENT}")`;
+  const agentFilter = `(glossary.idx./account.accountType eq "${agentConstants.ACCOUNT_TYPES.AGENT}")`;
 
-  const filters = [searchQueryFilter, selectedApplicationQueryFilter, tabQueryFilter, nonAgentFilter].filter(Boolean);
+  const filters = [searchQueryFilter, selectedApplicationQueryFilter, tabQueryFilter, agentFilter, ...additionalFilters].filter(Boolean);
   return filters.length > 0 ? filters.join(' and ') : 'true';
 }
 
@@ -354,11 +422,13 @@ function setCounts(results) {
       newCounts[tab.key] = counts.value[tab.key] || 0;
     }
   }
+  newCounts.noCustodians = results[results.length - 2]?.data?.totalCount || 0;
+  newCounts.unreviewed = results[results.length - 1]?.data?.totalCount || 0;
   counts.value = newCounts;
 }
 
 /**
- * Search accounts
+ * Search agents
  * @param page number|null The page number to search for, if null current page is used
  */
 async function search(page = null) {
@@ -370,7 +440,7 @@ async function search(page = null) {
     pageSize: entriesPerPage.value,
     sortKeys: getSortParam(sortBy),
     sortDir: sortDesc.value ? 'desc' : 'asc',
-    queryFilter: getQueryFilterForAccounts(selectedTab.value),
+    queryFilter: getQueryFilterForAgents(selectedTab.value),
   };
 
   if (previousQuery.value !== searchQuery.value) {
@@ -380,21 +450,23 @@ async function search(page = null) {
   }
 
   try {
-    const accountPromises = tabItems.map((tab, index) => {
+    const agentPromises = tabItems.map((tab, index) => {
       if (index === selectedTab.value) {
         return getAccounts(searchParameters);
       }
       if (queryAll.value) {
         return getAccounts({
           pageSize: 0,
-          queryFilter: getQueryFilterForAccounts(index),
+          queryFilter: getQueryFilterForAgents(index),
         });
       }
       return null;
     });
-    const accountResults = await Promise.all(accountPromises);
-    const { data } = accountResults[selectedTab.value];
-    const processedData = data?.result.map((item) => {
+    agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(glossary.idx./account.actors co '')"]) })); // Get the no custodians count for the chart display
+    agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(item.decision.certification.status eq 'signed-off')"]) })); // Get the unreviewed count for the chart display
+    const agentResults = await Promise.all(agentPromises);
+    const { data } = agentResults[selectedTab.value];
+    const processedData = data?.result?.map((item) => {
       const processedItem = {
         ...item,
       };
@@ -407,18 +479,18 @@ async function search(page = null) {
         }).trim();
         if (fullName) processedItem.user.fullName = fullName;
       }
-      processedItem.displayName = getAccountDisplayName(processedItem);
-      processedItem.type = capitalize(processedItem?.glossary?.idx?.['/account']?.accountType || accountConstants.ACCOUNT_TYPES.DEFAULT);
+      processedItem.displayName = getAgentDisplayName(processedItem);
+      processedItem.type = capitalize(processedItem?.glossary?.idx?.['/account']?.accountType || agentConstants.ACCOUNT_TYPES.DEFAULT);
       return processedItem;
     });
     totalPagedResults.value = data.totalCount;
-    accounts.value = processedData;
-    setCounts(accountResults);
+    agents.value = processedData || [];
+    setCounts(agentResults);
     queryAll.value = false;
   } catch (error) {
-    showErrorMessage(error, error?.response?.data?.message || i18n.global.t('governance.accounts.failedToLoad'));
+    showErrorMessage(error, error?.response?.data?.message || i18n.global.t('governance.agents.failedToLoad'));
     totalPagedResults.value = 0;
-    accounts.value = [];
+    agents.value = [];
     queryAll.value = true;
   } finally {
     tableLoading.value = false;
@@ -442,38 +514,19 @@ function sortingChanged(ctx) {
 }
 
 /**
- * Navigate to the given account by id
- * @param accountId string The account ID to navigate to
+ * Navigate to the given agent by id
+ * @param agentId string The agent ID to navigate to
  */
-function navigateToEdit(accountId) {
-  router.push({
-    name: 'AccountsDetails',
-    params: {
-      accountId,
-      tab: 'details',
-    },
-  });
-}
-
-/**
- * Navigate to the given account by id
- * @param item Account Object
- */
-function getAccountSubType(item) {
-  if (!item.glossary.idx['/account'].accountSubtype) {
-    return blankValueIndicator;
+function navigateToEdit(agentId) {
+  if (false) { // ****Disabling temporarily until follow up MR
+    router.push({
+      name: 'AgentsDetails',
+      params: {
+        agentId,
+        tab: 'details',
+      },
+    });
   }
-  return find(accountConstants.ACCOUNT_SUBTYPES, { value: item.glossary.idx['/account'].accountSubtype })?.text;
-}
-
-/**
- * Handle getting icon
- * @param item Account object
- * @param type Type of icon data being retrieved
- */
-function getIcon(item, type) {
-  if (type === 'iconColor') return find(accountConstants.ACCOUNT_SUBTYPES, { value: item.glossary.idx['/account'].accountSubtype })?.iconColor;
-  return find(accountConstants.ACCOUNT_SUBTYPES, { value: item.glossary.idx['/account'].accountSubtype })?.icon;
 }
 
 /**
@@ -511,7 +564,7 @@ async function updateApplications(applications) {
     queryAll.value = true;
     search(1);
   } catch (error) {
-    showErrorMessage(error, i18n.global.t('governance.accounts.errors.errorSearchingAccounts'));
+    showErrorMessage(error, i18n.global.t('governance.agents.errors.errorSearchingAgents'));
   }
 }
 
@@ -541,7 +594,11 @@ onMounted(async () => {
   }
 }
 
-:deep(.account-tabs) {
+.chart-text-large {
+  font-size: 1.275rem;
+}
+
+:deep(.agent-tabs) {
   li {
     a {
       &.active {

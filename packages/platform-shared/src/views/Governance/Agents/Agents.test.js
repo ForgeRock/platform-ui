@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
+ * Copyright (c) 2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,7 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
-import Accounts from './Accounts';
+import Agents from './Agents';
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
@@ -35,7 +35,7 @@ const createData = (params = {}, totalCount = 100) => {
         glossary: {
           idx: {
             '/account': {
-              accountType: 'default',
+              accountType: 'agent',
             },
           },
         },
@@ -52,9 +52,9 @@ const createData = (params = {}, totalCount = 100) => {
   return { data: { result: pageSize === 0 ? [] : sampleData, totalCount } };
 };
 
-describe('Accounts Unit', () => {
+describe('Agents Unit', () => {
   function mountComponent() {
-    const wrapper = mount(Accounts, {
+    const wrapper = mount(Agents, {
       global: {
         stubs: {
           ApplicationSearch: true,
@@ -80,21 +80,25 @@ describe('Accounts Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
 
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
-    expect(AccountApi.getAccounts).toHaveBeenCalledTimes(4);
+    expect(AccountApi.getAccounts).toHaveBeenCalledTimes(8);
 
-    expect(wrapper.vm.accounts.length).toBe(10);
-    expect(wrapper.vm.accounts[0]).toEqual(expect.objectContaining(
+    expect(wrapper.vm.agents.length).toBe(10);
+    expect(wrapper.vm.agents[0]).toEqual(expect.objectContaining(
       {
         application: { icon: 'test', name: ' application name 0', templateName: 'templateName' },
         id: 'id-0',
         displayName: ' name 0',
-        type: 'Default',
+        type: 'Agent',
         user: {
           id: '123',
           userName: 'jDoe',
@@ -105,7 +109,7 @@ describe('Accounts Unit', () => {
         glossary: {
           idx: {
             '/account': {
-              accountType: 'default',
+              accountType: 'agent',
             },
           },
         },
@@ -121,9 +125,13 @@ describe('Accounts Unit', () => {
 
     expect(wrapper.vm.counts).toEqual({
       all: 100,
-      correlated: 10,
-      uncorrelated: 5,
-      machine: 3,
+      awsBedrock: 10,
+      azureAiFoundry: 5,
+      googleVertexAi: 3,
+      pingAiAgents: 1,
+      custom: 0,
+      noCustodians: 9,
+      unreviewed: 25,
     });
     await flushPromises();
   });
@@ -134,7 +142,11 @@ describe('Accounts Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
 
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
@@ -144,12 +156,12 @@ describe('Accounts Unit', () => {
     wrapper.vm.pageSizeChange(20);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(5, {
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(9, {
       pagedResultsOffset: 0,
       pageSize: 20,
       sortKeys: 'descriptor.idx./account.displayName',
       sortDir: 'asc',
-      queryFilter: '!(glossary.idx./account.accountType eq "agent")',
+      queryFilter: '(glossary.idx./account.accountType eq "agent")',
     });
     expect(wrapper.vm.tableLoading).toBe(false);
   });
@@ -160,7 +172,11 @@ describe('Accounts Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
@@ -169,12 +185,12 @@ describe('Accounts Unit', () => {
     wrapper.vm.tabActivated(1);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(5, {
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(9, {
       pagedResultsOffset: 0,
       pageSize: 10,
       sortKeys: 'descriptor.idx./account.displayName',
       sortDir: 'asc',
-      queryFilter: 'user.id sw "" and !(glossary.idx./account.accountType eq "agent")',
+      queryFilter: 'application.templateName sw "aws.bedrock" and (glossary.idx./account.accountType eq "agent")',
     });
     expect(wrapper.vm.tableLoading).toBe(false);
   });
@@ -185,7 +201,11 @@ describe('Accounts Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
 
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
@@ -195,12 +215,12 @@ describe('Accounts Unit', () => {
     wrapper.vm.updateApplications(['271fbe6672-780c-4226-af35-01a2546723c1']);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(5, {
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(9, {
       pagedResultsOffset: 0,
       pageSize: 10,
       sortKeys: 'descriptor.idx./account.displayName',
       sortDir: 'asc',
-      queryFilter: '(application.id eq \'271fbe6672-780c-4226-af35-01a2546723c1\') and !(glossary.idx./account.accountType eq "agent")',
+      queryFilter: '(application.id eq \'271fbe6672-780c-4226-af35-01a2546723c1\') and (glossary.idx./account.accountType eq "agent")',
     });
     expect(wrapper.vm.tableLoading).toBe(false);
   });
@@ -211,7 +231,11 @@ describe('Accounts Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData()))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 10)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 5)))
-      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)));
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 3)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
     wrapper.vm.navigateToEdit = jest.fn();
 
     await flushPromises();
