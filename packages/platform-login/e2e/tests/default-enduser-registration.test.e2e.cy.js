@@ -7,7 +7,7 @@
 
 import { random } from 'lodash';
 import { recurse } from 'cypress-recurse';
-import { filterTests, retryableBeforeEach } from '@e2e/util';
+import { retryableBeforeEach } from '@e2e/util';
 import { deleteIDMUser } from '@e2e/api/managedApi.e2e';
 import {
   putEmailProviderConfig,
@@ -18,7 +18,7 @@ import {
   extractLinkFromEmail,
 } from '../utils/emailUtils';
 
-filterTests(['@forgeops', '@smoke'], () => {
+describe('Enduser Default Registration', { tags: ['@forgeops', '@smoke'] }, () => {
   function fillOutRegistrationForm(fieldData) {
     fieldData.forEach((field) => {
       cy.findByLabelText(field.placeholder)
@@ -157,7 +157,7 @@ filterTests(['@forgeops', '@smoke'], () => {
   });
 });
 
-filterTests(['@cloud', '@smoke'], () => {
+describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
   /**
    * This function is created to select the default security question "What's your favorite color?" And filling the answer field with the word "orange, which is a valid setting for the journey"
    */

@@ -6,9 +6,9 @@
  */
 
 import { random } from 'lodash';
-import { filterTests, retryableBeforeEach } from '@e2e/util';
+import { retryableBeforeEach } from '@e2e/util';
 
-filterTests(['@cloud'], () => {
+describe('Extended Enduser Registration', { tags: '@cloud' }, () => {
   function fillOutRegistrationForm(fieldData) {
     fieldData.forEach((field) => {
       cy.findByText(field.placeholder, { timeout: 10000 })
