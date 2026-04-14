@@ -169,17 +169,23 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
 
   function fillOutRegistrationForm(fieldData) {
     fieldData.forEach((field) => {
-      cy.findByLabelText(field.placeholder)
-        .clear()
-        .type(field.text);
+      if (field.placeholder === 'Country') {
+        cy.findAllByLabelText(new RegExp(field.placeholder, 'i'), { timeout: 10000 }).first()
+          .type(field.text);
+      } else {
+        cy.findAllByLabelText(new RegExp(field.placeholder, 'i'), { timeout: 10000 }).first()
+          .clear()
+          .type(field.text);
+      }
     });
     fillOutKBADefaultColorKBA();
   }
 
-  describe.skip('Enduser default registration journey, successful registration and negative verifications', () => {
+  describe('Enduser default registration journey, successful registration and negative verifications', () => {
     const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha&authIndexType=service&authIndexValue=Registration#/`;
     const userPassword = 'Rg_GRg9k&e';
     let emailAccount;
+    let validFieldData;
 
     const invalidFieldData = [
       {
@@ -208,8 +214,8 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
       recurse(() => cy.task('getLatestEmail', emailAccount),
         Cypress._.isObject, // keep retrying until the task returns an object
         {
-          timeout: 3000, // Give up after 3 seconds assuming email will be in inbox by then
-          delay: 1000, // Will try a maximum of 3 times
+          timeout: 5000, // Give up after 3 seconds assuming email will be in inbox by then
+          delay: 1000, // Will try a maxium of 5 times
         }).then((email) => {
         cy.wrap(email).as('emailObject');
       });
@@ -222,6 +228,29 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
       cy.task('getTestEmailAccount').then((account) => {
         expect(account.user).to.be.a('string');
         emailAccount = account;
+
+        validFieldData = [
+          {
+            placeholder: 'Username',
+            text: emailAccount.user + random(Number.MAX_SAFE_INTEGER),
+          },
+          {
+            placeholder: 'Password',
+            text: userPassword,
+          },
+          {
+            placeholder: 'First Name',
+            text: emailAccount.user,
+          },
+          {
+            placeholder: 'Last Name',
+            text: emailAccount.user,
+          },
+          {
+            placeholder: 'Email Address',
+            text: emailAccount.user,
+          },
+        ];
 
         // Set the default email provider to be the provider of the test account
         // just created
@@ -240,30 +269,7 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
       });
     });
 
-    it('Creates new user, sends registration email and logs in', () => {
-      const validFieldData = [
-        {
-          placeholder: 'Username',
-          text: emailAccount.user + random(Number.MAX_SAFE_INTEGER),
-        },
-        {
-          placeholder: 'Password',
-          text: userPassword,
-        },
-        {
-          placeholder: 'First Name',
-          text: emailAccount.user,
-        },
-        {
-          placeholder: 'Last Name',
-          text: emailAccount.user,
-        },
-        {
-          placeholder: 'Email Address',
-          text: emailAccount.user,
-        },
-      ];
-
+    it('[C19755] Creates new user, sends registration email and logs in', () => {
       // Go to registration journey
       cy.visit(locationUrl);
 
@@ -318,25 +324,24 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
       });
     });
 
-    it('Can not proceed with empty or incorrect credentials', () => {
+    it('[C19749] Cannot proceed with empty or incorrect credentials', () => {
       cy.visit(locationUrl);
 
       // Verify that the submit button is disabled when the form is empty
-      cy.get('[type="submit"]').should('be.disabled');
+      cy.get('[type="submit"]').should('be.visible').and('be.disabled');
 
       // Verify that Submit button does not get enabled by filling a single field of the form
-      cy.findByLabelText('Username').type(random(Number.MAX_SAFE_INTEGER));
+      cy.findAllByLabelText(/username/i, { timeout: 10000 }).first().type(String(random(Number.MAX_SAFE_INTEGER)));
       cy.get('[type="submit"]').should('be.disabled');
 
       // Verify that the form shows an error message when the email format is incorrect
       fillOutRegistrationForm(invalidFieldData);
-      cy.get('[type="submit"]').click();
       cy.get('.error-message').contains('Invalid email format').should('be.visible');
 
       // Validate that the form correctly shows policies when the password does not meet requirements
-      cy.findByLabelText('Email Address').clear().type('Valid@email.format');
+      cy.findByLabelText(new RegExp('Email Address', 'i')).clear().type('Valid@email.format');
       fillOutKBADefaultColorKBA();
-      cy.findByLabelText('Password').type('0');
+      cy.findByLabelText('Password').clear().type('0');
       cy.get('[type="submit"]').should('be.disabled');
       cy.get('li:contains("Must be at least 8 characters long")')
         .should('not.have.class', 'fr-valid').and('be.visible');
@@ -360,9 +365,9 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
       cy.get('[type="submit"]').should('be.enabled');
     });
 
-    it('Can not proceed with empty KBA question/answer', () => {
+    it('[TC-12058] Cannot proceed with empty KBA question/answer', () => {
       cy.visit(locationUrl);
-      fillOutRegistrationForm(invalidFieldData);
+      fillOutRegistrationForm(validFieldData);
       cy.get('[type="submit"]').should('be.enabled');
       cy.findAllByLabelText('Answer for: What\'s your favorite color?').first().clear();
       cy.get('[type="submit"]').should('be.disabled');
@@ -390,7 +395,7 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
       cy.get('[type="submit"]').should('be.enabled');
     });
 
-    it('Terms and Conditions modal is displayed', () => {
+    it('[C19754] Terms and Conditions modal is displayed', () => {
       cy.visit(locationUrl);
       cy.findByRole('link', { name: 'Terms & Conditions' }).click();
       cy.findByRole('heading', { name: 'Terms & Conditions' }).should('be.visible');
