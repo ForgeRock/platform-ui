@@ -1900,7 +1900,7 @@
         "highPriority": "High Priority",
         "noPriority": "No Priority"
       },
-      "priorityImageAltText": "{priority} Priority icon",
+      "priorityImageAltText": "{priority} Priority",
       "allRequesters": "All Requesters",
       "idLabel": "ID: {id}",
       "myRequests": {

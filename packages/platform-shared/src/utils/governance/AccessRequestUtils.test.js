@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -362,19 +362,19 @@ describe('getPriorityImageAltText', () => {
   it('returns the alt text for a high priority', () => {
     const priority = 'high';
     const result = getPriorityImageAltText(priority);
-    expect(result).toEqual('High Priority icon');
+    expect(result).toEqual('High Priority');
   });
 
   it('returns the alt text for a medium priority', () => {
     const priority = 'medium';
     const result = getPriorityImageAltText(priority);
-    expect(result).toEqual('Medium Priority icon');
+    expect(result).toEqual('Medium Priority');
   });
 
   it('returns the alt text for a low priority', () => {
     const priority = 'low';
     const result = getPriorityImageAltText(priority);
-    expect(result).toEqual('Low Priority icon');
+    expect(result).toEqual('Low Priority');
   });
 
   it('returns an empty string for an invalid priority', () => {
