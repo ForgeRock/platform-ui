@@ -1265,6 +1265,13 @@
   "centerCard": {
     "logoAltText": "Ping Identity logo"
   },
+  "configure": {
+    "managedObjectSettings": {
+      "createAnother": "Create another",
+      "successCreateDescription": "{objectName} has been created.",
+      "viewObject": "View {objectType}"
+    }
+  },
   "dataTable": {
     "dropdownMenuOptions": "Dropdown Menu Options"
   },

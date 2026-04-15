@@ -16,12 +16,53 @@ of the MIT license. See the LICENSE file for details. -->
         cancel-variant="outline-secondary"
         no-close-on-backdrop
         no-close-on-esc
+        :title="modalTitle"
+        title-tag="h2"
+        :title-class="modalTitleClass"
         @hide="hideModal"
-        @hidden="stepIndex = -1"
+        @hidden="onModalHidden"
         @show="initialiseData"
-        :body-class="[{ 'p-0' : stepIndex > -1 }]"
-        :title="modalTitle">
-        <BRow>
+        :body-class="[{ 'p-0' : stepIndex > -1 || enablePostSaveStep }]">
+        <template v-if="enablePostSaveStep">
+          <div class="py-4 px-3 text-center d-flex flex-column align-items-center justify-content-center">
+            <BAspect>
+              <BImg
+                :src="require('@forgerock/platform-shared/src/assets/images/check.svg')"
+                alt=""
+                class="w-160px m-4" />
+            </BAspect>
+            <h3
+              class="h4 mb-2 font-weight-bold">
+              {{ $t('pages.access.successCreate', { resource: capitalize(objectType) }) }}
+            </h3>
+            <p
+              v-if="newObjectName"
+              class="mb-4 text-muted">
+              {{ $t('configure.managedObjectSettings.successCreateDescription', { objectName: newObjectName }) }}
+            </p>
+            <div class="d-inline-flex align-items-center flex-wrap justify-content-center">
+              <BButton
+                class="mx-1"
+                variant="primary"
+                @click="navigateToDetailView">
+                <FrIcon
+                  name="arrow_forward"
+                  icon-class="mr-2" />
+                {{ $t('configure.managedObjectSettings.viewObject', { objectType }) }}
+              </BButton>
+              <BButton
+                class="mx-1"
+                variant="outline-primary"
+                @click="createAnotherResource">
+                <FrIcon
+                  name="add"
+                  icon-class="mr-2" />
+                {{ $t('configure.managedObjectSettings.createAnother') }}
+              </BButton>
+            </div>
+          </div>
+        </template>
+        <BRow v-else>
           <BCol v-if="stepIndex === -1">
             <!-- Creating resource currently only supports Array, String, Number, Boolean, and singleton relationships -->
             <BForm
@@ -98,34 +139,41 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
         </BRow>
 
-        <template #modal-footer>
-          <div class="flex-grow-1">
+        <template #modal-footer="{ close }">
+          <template v-if="enablePostSaveStep">
+            <BButton
+              variant="primary"
+              @click="close">
+              {{ $t('common.done') }}
+            </BButton>
+          </template>
+          <template v-else>
             <BButton
               v-if="stepIndex >= 0"
               @click="loadPreviousStep"
               variant="link">
               {{ $t('common.previous') }}
             </BButton>
-          </div>
-          <BButton
-            variant="link"
-            @click="hideModal">
-            {{ $t('common.cancel') }}
-          </BButton>
-          <BButton
-            v-if="!isLastStep"
-            @click="loadNextStep"
-            variant="primary"
-            :disabled="!slotProps.meta.valid">
-            {{ $t('common.next') }}
-          </BButton>
-          <FrButtonWithSpinner
-            v-if="isLastStep || !steps.length"
-            :button-text="$t('common.save')"
-            :disabled="formFields.length === 0 || !slotProps.meta.valid || (passwordValue !== '' && !passwordValid) || isSaving"
-            :show-spinner="isSaving"
-            :spinner-text="$t('common.saving')"
-            @click="saveForm" />
+            <BButton
+              variant="link"
+              @click="hideModal">
+              {{ $t('common.cancel') }}
+            </BButton>
+            <BButton
+              v-if="!isLastStep"
+              @click="loadNextStep"
+              variant="primary"
+              :disabled="!slotProps.meta.valid">
+              {{ $t('common.next') }}
+            </BButton>
+            <FrButtonWithSpinner
+              v-if="isLastStep || !steps.length"
+              :button-text="$t('common.save')"
+              :disabled="formFields.length === 0 || !slotProps.meta.valid || (passwordValue !== '' && !passwordValid) || isSaving"
+              :show-spinner="isSaving"
+              :spinner-text="$t('common.saving')"
+              @click="saveForm" />
+          </template>
         </template>
       </component>
     </slot>
@@ -146,15 +194,18 @@ import {
   startCase,
 } from 'lodash';
 import {
+  BAspect,
   BButton,
   BFormGroup,
   BForm,
+  BImg,
   BRow,
   BCol,
   BModal,
 } from 'bootstrap-vue';
 import { Form as VeeForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -183,19 +234,22 @@ import CustomStep from './CustomStep/index';
 export default {
   name: 'CreateResource',
   components: {
-    FrButtonWithSpinner,
-    FrCustomStep: CustomStep,
-    FrField,
-    FrRelationshipEdit: RelationshipEdit,
+    BAspect,
     BButton,
     BFormGroup,
     BForm,
+    BImg,
     BRow,
     BCol,
     BModal,
-    VeeForm,
+    FrButtonWithSpinner,
+    FrCustomStep: CustomStep,
+    FrField,
+    FrIcon,
     FrListField,
     FrPolicyPasswordInput,
+    FrRelationshipEdit: RelationshipEdit,
+    VeeForm,
   },
   mixins: [
     ResourceMixin,
@@ -210,6 +264,13 @@ export default {
       type: Array,
       required: true,
       default: () => [],
+    },
+    /**
+     * Shows a `Post Save Modal step` to decide whether to create another resource or view the details of the created resource.
+     * */
+    showPostSaveStep: {
+      type: Boolean,
+      default: false,
     },
     resourceName: {
       type: String,
@@ -238,13 +299,16 @@ export default {
   },
   data() {
     return {
-      formFields: {},
+      enablePostSaveStep: false,
       clonedCreateProperties: [],
-      stepIndex: -1,
+      formFields: {},
+      isSaving: false,
+      newObjectName: '',
+      newObjectResponseData: null,
       passwordValue: '',
       passwordValid: false,
       passwordFailures: [],
-      isSaving: false,
+      stepIndex: -1,
     };
   },
   mounted() {
@@ -275,6 +339,9 @@ export default {
       return this.stepIndex === this.steps.length - 1;
     },
     modalTitle() {
+      if (this.enablePostSaveStep) {
+        return this.$t('pages.access.successCreate', { resource: capitalize(this.objectType) });
+      }
       const name = capitalize(this.resourceTitle || this.resourceName);
       if (this.steps.length && this.stepIndex > -1) {
         const step = this.steps[this.stepIndex];
@@ -293,14 +360,38 @@ export default {
       }
       return this.$t('common.newObject', { object: this.getTranslation(name) });
     },
+    modalTitleClass() {
+      return this.enablePostSaveStep ? 'sr-only' : 'h5';
+    },
     annotatedCreateProperties() {
       return this.clonedCreateProperties.map((property) => {
         property.isAcceptedProperty = this.isAcceptedProperty(property);
         return property;
       });
     },
+    objectType() {
+      // Expecting resource title to be like "Alpha realm - Users".
+      const resourceTitleSplit = this.resourceTitle.split(' - ');
+      return resourceTitleSplit[1] || resourceTitleSplit[0] || this.resourceName;
+    },
   },
   methods: {
+    capitalize,
+    /**
+     * User decides to create another resource after successfully creating a resource,
+     * so reset the form and go back to the first step of the modal.
+     */
+    createAnotherResource() {
+      this.enablePostSaveStep = false;
+      this.initialiseData();
+    },
+    /**
+     * User decides to view the `new`ly created resource.
+     */
+    navigateToDetailView() {
+      this.$emit('show-details', this.newObjectResponseData);
+      this.hideModal();
+    },
     isCloseOnSelect(field) {
       return !has(field, 'items');
     },
@@ -309,6 +400,15 @@ export default {
           || property.type?.includes('number')
           || property.type === 'boolean')
           && property.encryption === undefined;
+    },
+    onModalHidden() {
+      this.stepIndex = -1;
+      this.enablePostSaveStep = false;
+
+      if (this.showPostSaveStep && this.newObjectResponseData) {
+        this.newObjectResponseData = null;
+        this.$emit('refresh-data');
+      }
     },
     saveForm() {
       if (this.isSaving) {
@@ -337,10 +437,18 @@ export default {
           const saveData = this.cleanData(clone(this.formFields));
 
           idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then((newObjectResponse) => {
-            this.$emit('show-details', newObjectResponse.data);
-            this.hideModal();
-
+            this.newObjectResponseData = newObjectResponse.data;
+            const {
+              displayName, userName, name, _id,
+            } = newObjectResponse.data;
+            this.newObjectName = displayName || userName || name || _id || '';
             this.displayNotification('success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));
+            if (this.showPostSaveStep) {
+              this.enablePostSaveStep = true;
+            } else {
+              this.$emit('show-details', this.newObjectResponseData);
+              this.hideModal();
+            }
           },
           (error) => {
             /**
@@ -465,7 +573,9 @@ export default {
       this.formFields = tempFormFields;
     },
     initialiseData() {
+      this.stepIndex = -1;
       this.isSaving = false;
+      this.newObjectName = '';
       this.passwordValue = '';
       this.passwordValid = false;
       this.passwordFailures = [];

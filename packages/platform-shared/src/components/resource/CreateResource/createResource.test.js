@@ -6,7 +6,7 @@
  */
 
 import { BModal } from 'bootstrap-vue';
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
 import CreateResource from './index';
 
@@ -324,6 +324,86 @@ describe('CreateResource.vue', () => {
       numberNullTest: 'numberDefault',
     });
     expect(displayNotificationSpy).toHaveBeenCalled();
+
+    // showPostSaveStep=false (default): emits show-details and calls hideModal on success
+    jest.spyOn(wrapper.vm.$refs.observer, 'validate').mockImplementation(() => Promise.resolve({ valid: true }));
+    wrapper.vm.isSaving = false;
+    const hideModalSpy = jest.spyOn(wrapper.vm, 'hideModal');
+    await wrapper.vm.saveForm();
+    expect(wrapper.emitted('show-details')).toBeTruthy();
+    expect(hideModalSpy).toHaveBeenCalled();
+
+    jest.resetAllMocks();
+  });
+
+  it('sets enablePostSaveStep when showPostSaveStep prop is true after successful save', async () => {
+    const localWrapper = shallowMount(CreateResource, {
+      global: {
+        mocks: { $t: (key) => key },
+        stubs,
+        plugins: [Notifications],
+      },
+      props: {
+        createProperties: [],
+        resourceName: 'testName',
+        resourceType: 'testType',
+        resourceTitle: 'testTitle',
+        showPostSaveStep: true,
+      },
+    });
+    await localWrapper.vm.$nextTick();
+    localWrapper.vm.$refs.observer.validate = jest.fn().mockImplementation(() => Promise.resolve({ valid: true }));
+    jest.spyOn(localWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { _id: '123' } }) }));
+    localWrapper.vm.saveForm();
+    await flushPromises();
+    expect(localWrapper.vm.enablePostSaveStep).toBe(true);
+    expect(localWrapper.emitted('show-details')).toBeFalsy();
+    localWrapper.unmount();
+  });
+
+  it('createAnotherResource resets post-save step and reinitializes form', () => {
+    wrapper.vm.enablePostSaveStep = true;
+    const initializeDataSpy = jest.spyOn(wrapper.vm, 'initialiseData');
+    wrapper.vm.createAnotherResource();
+    expect(wrapper.vm.enablePostSaveStep).toBe(false);
+    expect(initializeDataSpy).toHaveBeenCalled();
+  });
+
+  it('navigateToDetailView emits show-details with response data and hides modal', () => {
+    const responseData = { _id: 'abc123' };
+    wrapper.vm.newObjectResponseData = responseData;
+    const hideModalSpy = jest.spyOn(wrapper.vm, 'hideModal');
+    wrapper.vm.navigateToDetailView();
+    expect(wrapper.emitted('show-details')).toBeTruthy();
+    expect(wrapper.emitted('show-details')[0]).toEqual([responseData]);
+    expect(hideModalSpy).toHaveBeenCalled();
+  });
+
+  it('onModalHidden emits refresh-data and clears response data when a resource was created with postSave step', async () => {
+    wrapper.setProps({ showPostSaveStep: true });
+    await wrapper.vm.$nextTick();
+    wrapper.vm.newObjectResponseData = { _id: 'abc' };
+    wrapper.vm.onModalHidden();
+    expect(wrapper.emitted('refresh-data')).toBeTruthy();
+    expect(wrapper.vm.newObjectResponseData).toBeNull();
+  });
+
+  it('onModalHidden does not emit refresh-data when no resource was created', async () => {
+    wrapper.setProps({ showPostSaveStep: true });
+    await wrapper.vm.$nextTick();
+    wrapper.vm.newObjectResponseData = null;
+    wrapper.vm.onModalHidden();
+    expect(wrapper.emitted('refresh-data')).toBeFalsy();
+  });
+
+  it('onModalHidden emits refresh-data after createAnotherResource when modal is closed without a second save', async () => {
+    wrapper.setProps({ showPostSaveStep: true });
+    await wrapper.vm.$nextTick();
+    wrapper.vm.newObjectResponseData = { _id: 'abc' };
+    wrapper.vm.createAnotherResource(); // resets form but keeps newObjectResponseData
+    expect(wrapper.vm.newObjectResponseData).toEqual({ _id: 'abc' });
+    wrapper.vm.onModalHidden();
+    expect(wrapper.emitted('refresh-data')).toBeTruthy();
   });
 
   it('sets relationship value', async () => {
