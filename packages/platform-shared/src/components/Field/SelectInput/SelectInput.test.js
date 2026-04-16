@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import SelectInput from './index';
 
@@ -288,5 +288,25 @@ describe('SelectInput', () => {
     expect(options[0].classes('multiselect__option--highlight')).toBe(true);
     expect(options[1].classes('multiselect__option--highlight')).toBe(false);
     expect(options[2].classes('multiselect__option--selected')).toBe(true);
+  });
+
+  describe('@a11y', () => {
+    it('SelectInput component is accessible', async () => {
+      const wrapper = setup({ options: ['a', 'b', 'c'], label: 'testLabel' });
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
+
+    it('SelectInput is accessible when allowEmpty is true', async () => {
+      const wrapper = setup({ options: ['a', 'b', 'c'], allowEmpty: true, label: 'testLabel' });
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
+
+    it('SelectInput is accessible when disabled is true', async () => {
+      const wrapper = setup({ options: ['a', 'b', 'c'], disabled: true, label: 'testLabel' });
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
   });
 });
