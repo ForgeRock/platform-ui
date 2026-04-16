@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -77,7 +77,7 @@ const uiSchemaExample = [
       columns: 6,
       model: 'advancedOAuth2ClientConfig.requestUris',
       label: 'oauth.generalSettings.redirectionUrisLabel',
-      description: 'oauth.generalSettings.redirectionUrisHelp',
+      description: 'Allowlist for sign-in redirect URLs. eg. http://www.example.com/signin',
     },
   ],
   [
@@ -85,7 +85,7 @@ const uiSchemaExample = [
       columns: 6,
       model: 'advancedOAuth2ClientConfig.subjectType',
       label: 'oauth.generalSettings.postLogoutRedirectUriLabel',
-      description: 'oauth.generalSettings.postLogoutRedirectUriHelp',
+      description: 'Allowlist for sign-out redirect URLs. eg. http://www.example.com/signout',
     },
   ],
   [
@@ -149,7 +149,7 @@ const expectedCombinedSchema = [
       columns: 6,
       model: 'advancedOAuth2ClientConfig.requestUris',
       label: 'oauth.generalSettings.redirectionUrisLabel',
-      description: 'oauth.generalSettings.redirectionUrisHelp',
+      description: 'Allowlist for sign-in redirect URLs. eg. http://www.example.com/signin',
       arrayType: 'addMany',
       options: [],
       title: 'Request uris',
@@ -161,7 +161,7 @@ const expectedCombinedSchema = [
       columns: 6,
       model: 'advancedOAuth2ClientConfig.subjectType',
       label: 'oauth.generalSettings.postLogoutRedirectUriLabel',
-      description: 'oauth.generalSettings.postLogoutRedirectUriHelp',
+      description: 'Allowlist for sign-out redirect URLs. eg. http://www.example.com/signout',
       options: [
         {
           text: 'pairwise',

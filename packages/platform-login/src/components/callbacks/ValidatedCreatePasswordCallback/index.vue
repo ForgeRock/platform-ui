@@ -150,7 +150,7 @@ export default {
         /**
          * We need to ensure that the password validation has finished before we
          * proceed to the next step. If we don't, the next step will be called
-         * with an old authId and the whitelisting will fail.
+         * with an old authId and the allowlisting will fail.
          */
         const checkValidation = () => {
           if (!this.isValidating && this.curPass === this.lastPass) {
@@ -206,7 +206,7 @@ export default {
     /**
      * Sends two sample strings which combined will fail all ds policy
      * Then use the response to populate initial list of policy. Must be
-     * two separate requests if whitelisting is enabled for authentication trees
+     * two separate requests if allowlisting is enabled for authentication trees
      * @param {Object} step current auth step
      */
     setPoliciesFromFailures(step) {
@@ -312,7 +312,7 @@ export default {
             const normalizedFailures = this.normalizePolicies(failingPolicies);
             this.setFailingPolicies(normalizedFailures);
 
-            // Update auth id in the event of authentication tree whitelisting
+            // Update auth id in the event of authentication tree allowlisting
             this.latestAuthId = step.payload.authId;
             this.$emit('update-auth-id', step.payload.authId);
 
