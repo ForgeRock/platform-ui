@@ -1512,7 +1512,7 @@ export default {
     },
     /**
     * AllowListings is a AM auth tree setting that can be enabled. When it is
-    * enabled an extra whitelist-state parameter is sent in the authId of every
+    * enabled an extra allowlist-state parameter is sent in the authId of every
     * Authentication request to AM. This function determines whether that
     * setting is enabled or not.
     * @param {String} authId - the authId to test for AllowListings
