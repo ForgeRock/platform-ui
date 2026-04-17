@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     align="right"
     :class="wrapperClass ? wrapperClass : 'pr-3'">
     <FrActionsMenu
+      :disabled="disabled"
       use-floating-menu
       no-caret
       right
@@ -139,6 +140,13 @@ export default {
     deleteOptionText: {
       default: '',
       type: String,
+    },
+    /**
+     * Disables the component and all interactions
+     */
+    disabled: {
+      default: false,
+      type: Boolean,
     },
     /**
      * Enables a divider to appear above the delete option
