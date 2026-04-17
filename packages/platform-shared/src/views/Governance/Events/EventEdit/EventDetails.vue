@@ -1,8 +1,7 @@
-<!-- Copyright 2024-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     class="p-4 flex-grow-1 overflow-auto h-100"
@@ -62,7 +61,8 @@ to such license between the licensee and ForgeRock AS. -->
             class="py-1">
             <BImg
               :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-              :alt="$t('governance.accessRequest.newRequest.userImageAltText', { userName: option.value.userName })"
+              alt=""
+              aria-hidden="true"
               class="mr-2 align-self-center rounded rounded-circle"
               width="24" />
             <BMediaBody>
@@ -82,7 +82,8 @@ to such license between the licensee and ForgeRock AS. -->
               class="py-1">
               <BImg
                 :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                :alt="$t('governance.accessRequest.newRequest.userImageAltText', { userName: option.value.userName })"
+                alt=""
+                aria-hidden="true"
                 class="mr-2 align-self-center rounded rounded-circle"
                 width="24" />
               <BMediaBody>
