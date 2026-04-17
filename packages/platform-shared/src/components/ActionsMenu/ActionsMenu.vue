@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <button
       aria-haspopup="true"
       :class="buttonClasses"
+      :disabled="disabled"
       ref="menuButtonRef"
       :aria-controls="menuListId"
       :aria-expanded="isOpen.toString()"
@@ -56,6 +57,11 @@ import {
 import floatingElementPosition from '@forgerock/platform-shared/src/composables/floatingElementPosition';
 
 const props = defineProps({
+  // Disables the menu and all interactions
+  disabled: {
+    default: false,
+    type: Boolean,
+  },
   // Index of the item to be focused when menu is opened
   selectedItemIndex: {
     type: Number,

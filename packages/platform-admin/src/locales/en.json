@@ -2537,6 +2537,7 @@
         },
         "correlationQuery": "Correlation Query",
         "createTemplate": "Create Template",
+        "deleteAccountObjectTypeDisabled": "Account object type cannot be deleted when non-account object types are present.",
         "editTemplate": "Edit {templateName} Template",
         "mappingRules": "Mapping Rules",
         "newTemplate": "New Application Template",
@@ -2592,13 +2593,13 @@
           "importDescription": "Provide valid JSON containing the application template to import.",
           "title": "Import Application Template"
         },
-        "configureManuallyOption": "Configure Manually",
+        "configureManuallyOption": "Paste JSON",
         "importing": "Importing",
         "import": "Import",
         "jsonFile": "JSON File",
         "provisioner": {
           "import": "Import Provisioner",
-          "importDescription": " Provide a valid JSON containing the provisioner configuration to import.",
+          "importDescription": "Provide a valid JSON containing the provisioner configuration to import.",
           "title": "Import Provisioner Configuration"
         },
         "uploadOption": "Upload File"
