@@ -159,7 +159,18 @@ of the MIT license. See the LICENSE file for details. -->
             v-for="(relationshipProperty) in viewableRelationshipArrayProperties"
             :key="`${relationshipProperty.propName}_tab`">
             <BTab :title="getTranslation(relationshipProperty.title)">
+              <slot
+                v-if="$slots[`relationship-tab(${relationshipProperty.propName})`]"
+                :name="`relationship-tab(${relationshipProperty.propName})`"
+                :resource-type="resourceType"
+                :resource-name="resourceName"
+                :encoded-resource-id="encodedResourceId"
+                :relationship-property="relationshipProperty"
+                :revision="revision"
+                :refresh-data="refreshData"
+              />
               <FrRelationshipArray
+                v-else
                 :additional-query-filter="relationshipProperty.key === 'assignments' ? assignmentsQueryFilter : ''"
                 :parent-resource="relationshipProperty.key === 'assignments' ? assignmentsParentResource : `${resourceType}/${resourceName}`"
                 :parent-resource-override="relationshipProperty.key === 'assignments' ? `${resourceType}/${resourceName}` : ''"

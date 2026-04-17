@@ -763,6 +763,7 @@
     "idInUse": "That ID is already in use, please choose a different ID",
     "errorRetrievingLinkedApplications": "There was an error retrieving linked applications.",
     "errorRetrievingRelationships": "There was an error retrieving relationships.",
+    "errorRemovingRelationships": "There was an error removing relationships.",
     "errorRetrievingResource": "There was an error retrieving the resource.",
     "errorRetrievingResources": "There was an error retrieving {resource}.",
     "themeSaveError": "There was an error saving theme",
