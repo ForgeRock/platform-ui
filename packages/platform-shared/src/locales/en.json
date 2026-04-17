@@ -1996,7 +1996,6 @@
         "role": "role",
         "showIf": "Show if",
         "title": "New Request",
-        "userImageAltText": "Profile Picture - {userName}",
         "yourRequest": "Your Request"
       },
       "changeResumeDate": "Change Resume Date",

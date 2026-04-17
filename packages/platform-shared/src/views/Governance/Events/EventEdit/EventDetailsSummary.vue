@@ -1,8 +1,7 @@
-<!-- Copyright 2024 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BRow class="mb-3">
     <BCol lg="3">
@@ -50,7 +49,8 @@ to such license between the licensee and ForgeRock AS. -->
               class="mb-3">
               <BImg
                 :src="owner.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                :alt="$t('governance.accessRequest.newRequest.userImageAltText', { userName: owner.userName })"
+                alt=""
+                aria-hidden="true"
                 class="mr-3 align-self-center rounded-circle"
                 width="24" />
               <BMediaBody>

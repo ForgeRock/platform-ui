@@ -97,7 +97,8 @@ of the MIT license. See the LICENSE file for details. -->
                     class="py-1">
                     <BImg
                       :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                      :alt="$t('governance.accessRequest.newRequest.userImageAltText', { userName: option.value.userName })"
+                      alt=""
+                      aria-hidden="true"
                       class="mr-2 align-self-center rounded rounded-circle"
                       width="24" />
                     <BMediaBody>
@@ -117,7 +118,8 @@ of the MIT license. See the LICENSE file for details. -->
                       class="py-1">
                       <BImg
                         :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                        :alt="$t('governance.accessRequest.newRequest.userImageAltText', { userName: option.value.userName })"
+                        alt=""
+                        aria-hidden="true"
                         class="mr-2 align-self-center rounded rounded-circle"
                         width="24" />
                       <BMediaBody>

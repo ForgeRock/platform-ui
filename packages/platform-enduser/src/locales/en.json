@@ -357,7 +357,6 @@
           "submitWithViolations": "Submit with Violation"
         },
         "title": "New Request",
-        "userImageAltText": "Profile Picture - {userName}",
         "yourRequest": "Your Request"
       },
       "userAdminRequests": {
