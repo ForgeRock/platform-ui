@@ -518,15 +518,13 @@ function sortingChanged(ctx) {
  * @param agentId string The agent ID to navigate to
  */
 function navigateToEdit(agentId) {
-  if (false) { // ****Disabling temporarily until follow up MR
-    router.push({
-      name: 'AgentsDetails',
-      params: {
-        agentId,
-        tab: 'details',
-      },
-    });
-  }
+  router.push({
+    name: 'AgentsDetails',
+    params: {
+      agentId,
+      tab: 'details',
+    },
+  });
 }
 
 /**

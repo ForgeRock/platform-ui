@@ -2269,7 +2269,13 @@
       },
       "statusCardLabel": "Status"
     },
+    "activity": {
+      "activityLogsFailedToLoad": "Failed to load activity logs",
+      "logs": "activity logs",
+      "user": "User"
+    },
     "agents": {
+      "agent": "agent",
       "agentId": "Agent ID",
       "agentName": "Agent Name",
       "accountSubType": "Agent Subtype",
@@ -2286,6 +2292,7 @@
         "button": "+ Add Credential"
       },
       "custodians": "Custodians",
+      "entitlement": "entitlement",
       "failedToLoad": "Failed to load agents",
       "failedToLoadCustodians": "Failed to load custodians",
       "default": "Default",
@@ -2303,7 +2310,7 @@
           "notFoundDescription": "Try a new search in the search box above.",
           "failedToLoad": "Failed to load agent's actors"
         },
-        "noAssociatedEntities": "No associated {entities} found",
+        "noAssociatedEntities": "No associated {entities} found on this agent.",
         "objectPropertiesTab": {
           "title": "Agent Properties"
         },
