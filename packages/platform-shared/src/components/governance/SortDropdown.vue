@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -24,20 +24,20 @@ of the MIT license. See the LICENSE file for details. -->
       </h2>
     </BDropdownText>
     <BDropdownForm>
-      <FrField
-        v-model="sortField"
+      <FrSelectInput
+        :value="sortField"
         class="mb-2"
         name="sortField"
-        type="select"
+        :searchable="false"
         :options="sortByOptions"
-        @input="$emit('sort-field-change', $event)" />
-      <FrField
-        v-model="sortDirection"
+        @input="sortField = $event; $emit('sort-field-change', $event)" />
+      <FrSelectInput
+        :value="sortDirection"
         class="mb-3"
         name="sortDirection"
-        type="select"
+        :searchable="false"
         :options="sortDirectionOptions"
-        @input="$emit('sort-direction-change', $event)">
+        @input="sortDirection = $event; $emit('sort-direction-change', $event)">
         <template
           v-for="slotName in ['singleLabel', 'option']"
           :key="slotName"
@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
             </FrIcon>
           </div>
         </template>
-      </FrField>
+      </FrSelectInput>
     </BDropdownForm>
   </BDropdown>
 </template>
@@ -66,7 +66,7 @@ import {
   BDropdownText,
 } from 'bootstrap-vue';
 import { computed, ref, watch } from 'vue';
-import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
 
@@ -130,5 +130,8 @@ watch(() => props.selectedItem, (newValue) => {
   div {
     text-decoration: underline;
   }
+}
+:deep(.dropdown-menu.show) {
+  z-index: 101;
 }
 </style>

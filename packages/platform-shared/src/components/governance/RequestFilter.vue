@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,13 +18,14 @@ of the MIT license. See the LICENSE file for details. -->
           testid="request-query" />
       </BCol>
       <BCol lg="12">
-        <FrField
-          v-model="formFields.requestType"
-          class="mb-4"
+        <FrSelectInput
+          :value="formFields.requestType"
+          class="mb-4 request-type-select"
+          name="request-type"
           :label="$t('governance.accessRequest.requestType')"
           :options="requestTypeOptions"
           testid="request-type"
-          type="select" />
+          @input="formFields.requestType = $event" />
       </BCol>
     </BRow>
   </div>
@@ -40,6 +41,7 @@ import {
 import { computed, ref, watch } from 'vue';
 import { debounce } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrPriorityFilter from '@forgerock/platform-shared/src/components/governance/PriorityFilter';
 import { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
@@ -162,3 +164,9 @@ watch(() => formFields.value, () => {
   emitFilterChange();
 }, { deep: true });
 </script>
+
+<style lang="scss" scoped>
+:deep(.request-type-select .multiselect.multiselect--active) {
+  z-index: 101;
+}
+</style>
