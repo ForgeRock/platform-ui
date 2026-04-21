@@ -606,7 +606,7 @@ describe('Glossary', () => {
       viewReviewersButton.trigger('click');
       await wrapper.vm.$nextTick();
 
-      expect(modalShow).toHaveBeenCalledWith('certification-account-add-comment');
+      expect(modalShow).toHaveBeenCalledWith('certification-account-add-comment', expect.anything());
     });
     it('should open add comments for entitlement table', async () => {
       const { domWrapper, wrapper } = setup();
@@ -617,7 +617,7 @@ describe('Glossary', () => {
       viewReviewersButton.trigger('click');
       await wrapper.vm.$nextTick();
 
-      expect(modalShow).toHaveBeenCalledWith('certification-entitlement-add-comment');
+      expect(modalShow).toHaveBeenCalledWith('certification-entitlement-add-comment', expect.anything());
     });
     it('should open comments modal on accounts table', async () => {
       const { wrapper } = setup();
@@ -642,7 +642,7 @@ describe('Glossary', () => {
       viewReviewersButton.trigger('click');
       await wrapper.vm.$nextTick();
 
-      expect(modalShow).toHaveBeenCalledWith('certification-account-view-reviewers');
+      expect(modalShow).toHaveBeenCalledWith('certification-account-view-reviewers', expect.anything());
     });
     it('should open reviewers modal on entitlements table', async () => {
       const { domWrapper, wrapper } = setup();
@@ -653,7 +653,7 @@ describe('Glossary', () => {
       viewReviewersButton.trigger('click');
       await wrapper.vm.$nextTick();
 
-      expect(modalShow).toHaveBeenCalledWith('certification-entitlement-view-reviewers');
+      expect(modalShow).toHaveBeenCalledWith('certification-entitlement-view-reviewers', expect.anything());
     });
   });
   describe('@units', () => {

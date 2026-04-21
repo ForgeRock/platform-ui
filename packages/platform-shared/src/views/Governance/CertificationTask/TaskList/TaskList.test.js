@@ -577,6 +577,48 @@ describe('TaskList', () => {
       wrapper.vm.selectTasks(false);
       expect(wrapper.vm.items).toStrictEqual(expectedValue);
     });
+    it('should schedule focusActionBarDeselect in $nextTick when selectTasks is called with true', async () => {
+      const wrapper = shallowMountComponent();
+      const focusSpy = jest.spyOn(wrapper.vm, 'focusActionBarDeselect');
+      wrapper.vm.items = [{ id: 'test-id' }];
+      wrapper.vm.selectTasks(true);
+      await flushPromises();
+      expect(focusSpy).toHaveBeenCalled();
+    });
+    it('should not schedule focusActionBarDeselect when selectTasks is called with false', () => {
+      const wrapper = shallowMountComponent();
+      const focusSpy = jest.spyOn(wrapper.vm, 'focusActionBarDeselect');
+      wrapper.vm.items = [{ id: 'test-id' }];
+      wrapper.vm.selectTasks(false);
+      expect(focusSpy).not.toHaveBeenCalled();
+    });
+    it('should call saveSelectTrigger when selectTasks is called with true', () => {
+      const wrapper = shallowMountComponent();
+      const saveSpy = jest.spyOn(wrapper.vm, 'saveSelectTrigger');
+      wrapper.vm.items = [{ id: 'test-id' }];
+      wrapper.vm.selectTasks(true);
+      expect(saveSpy).toHaveBeenCalled();
+    });
+    it('should restore focus to selectTriggerEl when selectTasks is called with false and selectTriggerEl is set', async () => {
+      const wrapper = shallowMountComponent();
+      const mockFocus = jest.fn();
+      wrapper.vm.selectTriggerEl = { focus: mockFocus };
+      wrapper.vm.selectTasks(false);
+      await flushPromises();
+      expect(mockFocus).toHaveBeenCalled();
+    });
+    it('should clear selectTriggerEl after restoring focus', async () => {
+      const wrapper = shallowMountComponent();
+      wrapper.vm.selectTriggerEl = { focus: jest.fn() };
+      wrapper.vm.selectTasks(false);
+      await flushPromises();
+      expect(wrapper.vm.selectTriggerEl).toBeNull();
+    });
+    it('should not throw when selectTasks is called with false and selectTriggerEl is null', () => {
+      const wrapper = shallowMountComponent();
+      wrapper.vm.selectTriggerEl = null;
+      expect(() => wrapper.vm.selectTasks(false)).not.toThrow();
+    });
   });
   describe('updateItemList', () => {
     it('should call display notification with the success message', () => {
@@ -691,8 +733,9 @@ describe('TaskList', () => {
     });
     it('should emit event to show confirm action modal', () => {
       const wrapper = shallowMountComponent({}, { campaignId: 'test-id' });
-      wrapper.vm.openActionConfirmModal({});
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-confirm-action');
+      const returnFocusEl = document.createElement('button');
+      wrapper.vm.openActionConfirmModal({}, null, returnFocusEl);
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-confirm-action', returnFocusEl);
     });
   });
 
@@ -937,7 +980,7 @@ describe('TaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(lineItemId);
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-add-comment');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-add-comment', undefined);
     });
 
     it('addComment calls governance api properly', async () => {
@@ -1039,7 +1082,7 @@ describe('TaskList', () => {
       expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(id);
       expect(wrapper.vm.currentReviewersSelectedModal).toEqual(actors);
       expect(wrapper.vm.currentLineItemReassignPermission).toBe(reassign);
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-view-reviewers');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-view-reviewers', undefined);
     });
 
     it('closeEditReviewerModal should close edit reviewer modal and open view reviewers modal', async () => {
@@ -1052,9 +1095,112 @@ describe('TaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('certification-account-edit-reviewers');
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-view-reviewers');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-view-reviewers', undefined);
       expect(wrapper.vm.currentReviewerSelectedModal).toBeNull();
       expect(wrapper.vm.currentUserPermissions).toEqual({});
+    });
+
+    describe('focusFirstFilterElement', () => {
+      it('moves focus to the first focusable element inside the filters section', () => {
+        const wrapper = shallowMountComponent();
+        const focusSpy = jest.fn();
+        const mockFirstFocusable = { focus: focusSpy };
+        jest.spyOn(wrapper.vm.$refs.filtersSectionRef, 'querySelector').mockReturnValue(mockFirstFocusable);
+
+        wrapper.vm.focusFirstFilterElement();
+
+        expect(focusSpy).toHaveBeenCalled();
+      });
+
+      it('does nothing when the filters section has no focusable elements', () => {
+        const wrapper = shallowMountComponent();
+        jest.spyOn(wrapper.vm.$refs.filtersSectionRef, 'querySelector').mockReturnValue(null);
+
+        expect(() => wrapper.vm.focusFirstFilterElement()).not.toThrow();
+      });
+    });
+
+    describe('focus return after modal close', () => {
+      it('getActionMenuTrigger walks up to the menu toggle button via aria-labelledby', () => {
+        const wrapper = shallowMountComponent();
+
+        const menuButton = document.createElement('button');
+        menuButton.id = 'menu-button-test';
+        document.body.appendChild(menuButton);
+
+        const menuList = document.createElement('ul');
+        menuList.setAttribute('role', 'menu');
+        menuList.setAttribute('aria-labelledby', 'menu-button-test');
+        document.body.appendChild(menuList);
+
+        const menuItem = document.createElement('button');
+        menuItem.setAttribute('role', 'menuitem');
+        menuList.appendChild(menuItem);
+        menuItem.focus();
+
+        expect(wrapper.vm.getActionMenuTrigger()).toBe(menuButton);
+
+        document.body.removeChild(menuButton);
+        document.body.removeChild(menuList);
+      });
+
+      it('getActionMenuTrigger falls back to document.activeElement when not inside a menu', () => {
+        const wrapper = shallowMountComponent();
+
+        const button = document.createElement('button');
+        document.body.appendChild(button);
+        button.focus();
+
+        expect(wrapper.vm.getActionMenuTrigger()).toBe(button);
+
+        document.body.removeChild(button);
+      });
+
+      it('handleAction passes the captured trigger element to openForwardModal', () => {
+        const wrapper = shallowMountComponent();
+        const triggerButton = document.createElement('button');
+        document.body.appendChild(triggerButton);
+        triggerButton.focus();
+
+        const openForwardSpy = jest.spyOn(wrapper.vm, 'openForwardModal');
+        wrapper.vm.handleAction('forward', { id: 'item-1' });
+
+        expect(openForwardSpy).toHaveBeenCalledWith('item-1', false, false, triggerButton);
+
+        document.body.removeChild(triggerButton);
+      });
+
+      it('openForwardModal forwards the trigger element to $bvModal.show as return-focus', () => {
+        const wrapper = shallowMountComponent();
+        const triggerButton = document.createElement('button');
+
+        wrapper.vm.openForwardModal('item-1', false, false, triggerButton);
+
+        expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-forward', triggerButton);
+      });
+
+      it('openEditReviewerModal forwards the stored reviewers trigger to BV as return-focus', () => {
+        const wrapper = shallowMountComponent();
+        const triggerButton = document.createElement('button');
+        wrapper.vm._reviewersTriggerEl = triggerButton;
+        wrapper.vm.currentReviewersSelectedModal = [{ id: wrapper.vm.actorId, permissions: {} }];
+
+        wrapper.vm.openEditReviewerModal({ id: '/managed/user/123' });
+
+        expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('certification-account-view-reviewers');
+        expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-edit-reviewers', triggerButton);
+      });
+
+      it('closeEditReviewerModal re-shows view-reviewers with the stored trigger as return-focus', () => {
+        const wrapper = shallowMountComponent();
+        const triggerButton = document.createElement('button');
+        wrapper.vm._reviewersTriggerEl = triggerButton;
+
+        wrapper.vm.closeEditReviewerModal();
+
+        expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('certification-account-edit-reviewers');
+        expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-view-reviewers', triggerButton);
+      });
     });
 
     describe('edit reviewer', () => {
@@ -1442,7 +1588,7 @@ describe('TaskList', () => {
           signoff: true,
         });
         expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('certification-account-view-reviewers');
-        expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-edit-reviewers');
+        expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-edit-reviewers', undefined);
       });
     });
 
@@ -1504,7 +1650,7 @@ describe('TaskList', () => {
           signoff: false,
         });
         expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('certification-account-view-reviewers');
-        expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-edit-reviewers');
+        expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-edit-reviewers', undefined);
       });
     });
   });
@@ -1582,7 +1728,7 @@ describe('TaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(lineItemId);
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-add-comment');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-add-comment', undefined);
     });
     it('openEntitlementModal should open entitlement modal with data setted', async () => {
       const wrapper = shallowMountComponent({}, {
@@ -1686,7 +1832,7 @@ describe('TaskList', () => {
       expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(id);
       expect(wrapper.vm.currentReviewersSelectedModal).toEqual(actors);
       expect(wrapper.vm.currentLineItemReassignPermission).toBe(reassign);
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-reviewers');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-reviewers', undefined);
     });
     it('openEditReviewerModal should open edit reviewer modal with data setted', async () => {
       const wrapper = shallowMountComponent({}, {
@@ -1752,7 +1898,7 @@ describe('TaskList', () => {
 
       expect(wrapper.vm.currentReviewerSelectedModal).toEqual(reviewer);
       expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('certification-entitlement-view-reviewers');
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-edit-reviewers');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-edit-reviewers', undefined);
     });
 
     it('closeEditReviewerModal should close edit reviewer modal and open reviewers modal', async () => {
@@ -1770,7 +1916,7 @@ describe('TaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.$bvModal.hide).toHaveBeenCalledWith('certification-entitlement-edit-reviewers');
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-reviewers');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-reviewers', undefined);
     });
     it('addComment calls governance api properly', async () => {
       const wrapper = shallowMountComponent({}, {
@@ -1827,7 +1973,7 @@ describe('TaskList', () => {
       const floatingActionBar = wrapper.findComponent('[name="slide-fade"]');
       const reassignButton = floatingActionBar.findAll('a').find((a) => a.text().toLowerCase().includes('reassign'));
       await reassignButton.trigger('click');
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-reassign');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-reassign', expect.anything());
     });
     it('should emit the bv::show::modal to show the certification reasign modal', () => {
       const wrapper = shallowMountComponent({}, {
@@ -1836,8 +1982,9 @@ describe('TaskList', () => {
       wrapper.vm.currentPage = 2;
       wrapper.vm.sortBy = 'name';
       wrapper.vm.sortDir = 'asc';
-      wrapper.vm.openActionConfirmModal({});
-      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-confirm-action');
+      const returnFocusEl = document.createElement('button');
+      wrapper.vm.openActionConfirmModal({}, null, returnFocusEl);
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-confirm-action', returnFocusEl);
     });
   });
 
@@ -1951,7 +2098,7 @@ describe('TaskList', () => {
         },
       };
       wrapper.vm.openActivityModal(item);
-      expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-account-activity');
+      expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-account-activity', undefined);
     });
     it('should raise activity modal event with right modal id and set the right activity items', () => {
       const wrapper = shallowMountComponent({}, {
@@ -1988,7 +2135,7 @@ describe('TaskList', () => {
         certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
       });
       wrapper.vm.openForwardModal('1234', true);
-      expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-account-forward');
+      expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-account-forward', undefined);
     });
   });
 
@@ -2097,7 +2244,7 @@ describe('TaskList', () => {
         },
       };
       wrapper.vm.openActivityModal(item);
-      expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-entitlement-activity');
+      expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-entitlement-activity', undefined);
     });
     it('should raise forward modal event with right modal id', () => {
       const wrapper = shallowMountComponent({}, {
@@ -2109,7 +2256,7 @@ describe('TaskList', () => {
         modalPrefix: 'entitlement',
       });
       wrapper.vm.openForwardModal('1234', true);
-      expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-entitlement-forward');
+      expect(wrapper.vm.$bvModal.show).toBeCalledWith('certification-entitlement-forward', undefined);
     });
   });
   describe('Verify items', () => {
@@ -2160,8 +2307,6 @@ describe('TaskList', () => {
       wrapper.vm.loadItemsList(resource, 1);
       await flushPromises();
 
-      const bulkSelectBtn = findByTestId(wrapper, 'bulk-select-btn');
-      expect(bulkSelectBtn.exists()).toBeFalsy();
       const bulkSelectDropdown = findByTestId(wrapper, 'bulk-select-dropdown');
       expect(bulkSelectDropdown.exists()).toBeFalsy();
       const itemSelectCheckbox = findByTestId(wrapper, 'multiselect-test-id-0');
@@ -2194,8 +2339,6 @@ describe('TaskList', () => {
       wrapper.vm.loadItemsList(resource, 1);
       await flushPromises();
 
-      const bulkSelectBtn = findByTestId(wrapper, 'bulk-select-btn');
-      expect(bulkSelectBtn.exists()).toBeTruthy();
       const bulkSelectDropdown = findByTestId(wrapper, 'bulk-select-dropdown');
       expect(bulkSelectDropdown.exists()).toBeTruthy();
       const itemSelectCheckbox = findByTestId(wrapper, 'multiselect-test-id-0');
@@ -2245,6 +2388,107 @@ describe('TaskList', () => {
       wrapper.vm.loadItemsList(resource, 1);
       const selectEntitlementBtn = findByTestId(wrapper, 'btnSelectEntitlement-test-id-0');
       expect(selectEntitlementBtn.exists()).toBeFalsy();
+    });
+  });
+
+  describe('rowAttrs', () => {
+    it('returns a data-item-id attribute for row type', () => {
+      const wrapper = shallowMountComponent();
+      expect(wrapper.vm.rowAttrs({ id: 'abc-123' }, 'row')).toEqual({ 'data-item-id': 'abc-123' });
+    });
+
+    it('returns empty object for non-row type', () => {
+      const wrapper = shallowMountComponent();
+      expect(wrapper.vm.rowAttrs({ id: 'abc-123' }, 'row-details')).toEqual({});
+    });
+  });
+
+  describe('restoreFocus', () => {
+    it('is a no-op when itemId is falsy', () => {
+      const wrapper = shallowMountComponent();
+      wrapper.vm.$refs.selectableTable = null;
+      expect(() => wrapper.vm.restoreFocus(null)).not.toThrow();
+    });
+
+    it('focuses the more-actions button in the matching row', () => {
+      const wrapper = shallowMountComponent();
+      const tableEl = document.createElement('div');
+      const row = document.createElement('tr');
+      row.setAttribute('data-item-id', 'item-999');
+      const btn = document.createElement('button');
+      btn.setAttribute('aria-haspopup', 'true');
+      row.appendChild(btn);
+      tableEl.appendChild(row);
+      const focusSpy = jest.spyOn(btn, 'focus').mockImplementation(() => {});
+
+      wrapper.vm.restoreFocus('item-999', tableEl);
+
+      expect(focusSpy).toHaveBeenCalled();
+    });
+
+    it('falls back to the first table more-actions button when the item row is no longer in the list', () => {
+      const wrapper = shallowMountComponent();
+      const tableEl = document.createElement('div');
+      const row = document.createElement('tr');
+      row.setAttribute('data-item-id', 'other-item');
+      const btn = document.createElement('button');
+      btn.setAttribute('aria-haspopup', 'true');
+      row.appendChild(btn);
+      tableEl.appendChild(row);
+      const focusSpy = jest.spyOn(btn, 'focus').mockImplementation(() => {});
+
+      wrapper.vm.restoreFocus('missing-item', tableEl);
+
+      expect(focusSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('focus restoration after item list reload', () => {
+    it('handleAction sets refocusItemId to the acting item id', () => {
+      const wrapper = shallowMountComponent();
+      jest.spyOn(wrapper.vm, 'openForwardModal').mockImplementation(() => {});
+      wrapper.vm.handleAction('forward', { id: 'item-abc' });
+      expect(wrapper.vm.refocusItemId).toBe('item-abc');
+    });
+
+    it('updateItemList captures refocusItemId and passes it to restoreFocus after reload', async () => {
+      const wrapper = shallowMountComponent();
+      const restoreFocusSpy = jest.spyOn(wrapper.vm, 'restoreFocus').mockImplementation(() => {});
+      wrapper.vm.refocusItemId = 'item-xyz';
+      wrapper.vm.updateItemList('saveSuccessful', 1);
+      await flushPromises();
+      expect(restoreFocusSpy).toHaveBeenCalledWith('item-xyz');
+    });
+
+    it('updateItemList clears refocusItemId before the reload fires', () => {
+      const wrapper = shallowMountComponent();
+      jest.spyOn(wrapper.vm, 'restoreFocus').mockImplementation(() => {});
+      wrapper.vm.refocusItemId = 'item-xyz';
+      wrapper.vm.updateItemList('saveSuccessful', 1);
+      expect(wrapper.vm.refocusItemId).toBe(null);
+    });
+
+    it('updateItemList passes null to restoreFocus when called from a bulk action path', async () => {
+      const wrapper = shallowMountComponent();
+      const restoreFocusSpy = jest.spyOn(wrapper.vm, 'restoreFocus').mockImplementation(() => {});
+      // refocusItemId is never set by bulk action handlers
+      wrapper.vm.updateItemList('certifySuccess', 1);
+      await flushPromises();
+      expect(restoreFocusSpy).toHaveBeenCalledWith(null);
+    });
+
+    it('addComment calls restoreFocus with the stored item id after the list reloads', async () => {
+      const wrapper = shallowMountComponent();
+      const restoreFocusSpy = jest.spyOn(wrapper.vm, 'restoreFocus').mockImplementation(() => {});
+      wrapper.vm.refocusItemId = 'comment-item';
+      wrapper.vm.currentLineItemIdSelectedModal = '1';
+      wrapper.vm.items = [{
+        id: '1',
+        decision: { certification: { comments: [] } },
+      }];
+      wrapper.vm.addComment('test comment');
+      await flushPromises();
+      expect(restoreFocusSpy).toHaveBeenCalledWith('comment-item');
     });
   });
 });

@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="d-flex justify-content-start">
         <FrTaskMultiSelect
           v-if="campaignDetails.allowBulkCertify && !isStaged"
+          ref="taskMultiSelect"
           @select-tasks="selectTasks($event)"
           @select-all-tasks="selectAllTasks"
           :campaign-details="campaignDetails"
@@ -35,8 +36,8 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           v-if="!entitlementUserId"
           @click="showFiltersSection = !showFiltersSection"
-          aria-controls="filters-section"
           :aria-expanded="showFiltersSection"
+          aria-controls="filters-section"
           :aria-label="filterButtonLabel"
           class="mr-2"
           data-testid="cert-filter-button"
@@ -68,14 +69,19 @@ of the MIT license. See the LICENSE file for details. -->
         </BTooltip>
       </div>
     </div>
-    <BCollapse :visible="showFiltersSection">
-      <FrTaskFilters
-        v-if="!entitlementUserId"
-        id="filters-section"
-        @filter-certification-items="filterItems"
-        :actor-id="actorId"
-        :cert-id="campaignId" />
-    </BCollapse>
+    <div
+      id="filters-section"
+      ref="filtersSectionRef">
+      <BCollapse
+        :visible="showFiltersSection"
+        @shown="focusFirstFilterElement">
+        <FrTaskFilters
+          v-if="!entitlementUserId"
+          @filter-certification-items="filterItems"
+          :actor-id="actorId"
+          :cert-id="campaignId" />
+      </BCollapse>
+    </div>
     <FrSpinner
       v-if="isLoading"
       class="py-5" />
@@ -97,7 +103,8 @@ of the MIT license. See the LICENSE file for details. -->
       :per-page="pageSize"
       :selectable="isSelectable"
       :sort-by="sortBy"
-      :sort-desc="sortDir === 'desc'">
+      :sort-desc="sortDir === 'desc'"
+      :tbody-tr-attr="rowAttrs">
       <template #cell(selector)="{ item }">
         <FrField
           v-if="item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
@@ -345,15 +352,16 @@ of the MIT license. See the LICENSE file for details. -->
       @input="paginationChange"
       @on-page-size-change="pageSizeChange" />
     <FrFloatingActionBar
+      ref="floatingActionBar"
       :buttons="actionBarButtons"
       :count="selectedCount"
       :menu-items="actionBarMenuItems"
       @deselect="selectTasks(false)"
-      @certify="openActionConfirmModal(bulkCertifyModalProps)"
-      @revoke="openActionConfirmModal(bulkRevokeModalProps)"
-      @exception="openActionConfirmModal(bulkExceptionModalProps)"
-      @reassign="$bvModal.show(getModalId('reassign'))"
-      @forward="openForwardModal(null, true, true)"
+      @certify="(triggerEl) => openActionConfirmModal(bulkCertifyModalProps, null, triggerEl)"
+      @revoke="(triggerEl) => openActionConfirmModal(bulkRevokeModalProps, null, triggerEl)"
+      @exception="(triggerEl) => openActionConfirmModal(bulkExceptionModalProps, null, triggerEl)"
+      @reassign="(triggerEl) => $bvModal.show(getModalId('reassign'), triggerEl)"
+      @forward="(triggerEl) => openForwardModal(null, true, true, triggerEl)"
       @clearDecisions="bulkReset()" />
     <!-- Modals -->
     <FrColumnOrganizer
@@ -747,6 +755,8 @@ export default {
       isSavingReviewer: false,
       isStaged: false,
       items: [],
+      refocusItemId: null,
+      selectTriggerEl: null,
       listFilters: null,
       manager: {},
       pageSize: 10,
@@ -875,6 +885,56 @@ export default {
     toggleSaving() {
       this.$emit('change-saving');
     },
+    /**
+     * Returns the element that should receive focus after a modal opened from
+     * a row-level action closes. When the active element is inside a floating
+     * ARIA menu (role="menu" with aria-labelledby pointing to its toggle
+     * button), the menu item is removed when the menu closes — so we walk up
+     * to the toggle button instead of the (soon-removed) menu item.
+     * @returns {HTMLElement|null}
+     */
+    getActionMenuTrigger() {
+      const active = document.activeElement;
+      const menuList = active?.closest('[role="menu"]');
+      const menuButtonId = menuList?.getAttribute('aria-labelledby');
+      return (menuButtonId && document.getElementById(menuButtonId)) || active || null;
+    },
+    /**
+     * Returns the BTable row attributes for a given item, stamping each row
+     * with a stable data-item-id attribute so focus can be restored to the
+     * correct row after the item list reloads.
+     * @param {Object} item the row item object
+     * @param {String} type the row type ('row', 'row-details', 'row-selected', etc.)
+     * @returns {Object} attributes to apply to the <tr> element
+     */
+    rowAttrs(item, type) {
+      return type === 'row' ? { 'data-item-id': item.id } : {};
+    },
+    /**
+     * Restores keyboard focus to the "more actions" toggle button for the item
+     * that triggered a list-reloading action. Falls back to the first such
+     * button in the table when the item has been removed from the list (e.g.
+     * after a forward or reassign). No-op when itemId is falsy (bulk actions,
+     * pagination, sort/filter changes).
+     * @param {String|null} itemId the id of the item that triggered the action
+     */
+    restoreFocus(itemId, tableEl = this.$refs.selectableTable?.$el) {
+      if (!itemId) return;
+      if (!tableEl) return;
+      const btn = tableEl.querySelector(`tr[data-item-id="${itemId}"] button[aria-haspopup="true"]`);
+      const fallback = tableEl.querySelector('button[aria-haspopup="true"]');
+      if (btn || fallback) (btn || fallback).focus();
+    },
+    /**
+     * Moves focus to the first focusable element inside the filter section
+     * after the collapse animation completes (WCAG 2.4.3).
+     */
+    focusFirstFilterElement() {
+      const firstFocusable = this.$refs.filtersSectionRef?.querySelector(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (firstFocusable) firstFocusable.focus();
+    },
     filterItems(filters) {
       this.listFilters = { ...filters };
       this.getItems(1).then(() => {
@@ -981,10 +1041,15 @@ export default {
      * @param {Number} page number of page to reload
      */
     updateItemList(message, page = 1) {
+      const itemId = this.refocusItemId;
+      this.refocusItemId = null;
+      this.selectTriggerEl = null;
       this.displayNotification('success', this.$t(`governance.certificationTask.success.${message}`));
       this.selectTasks(false);
       this.clearRowSelected();
-      this.getItems(page);
+      this.getItems(page).then(() => {
+        this.$nextTick(() => this.restoreFocus(itemId));
+      });
       this.$emit('update-details');
     },
     getFilterGrantType(certificationGrantType = '') {
@@ -1138,6 +1203,31 @@ export default {
           selected: selectValue,
         };
       });
+      if (selectValue) {
+        this.saveSelectTrigger();
+        this.$nextTick(this.focusActionBarDeselect);
+      } else if (this.selectTriggerEl) {
+        this.$nextTick(() => {
+          if (this.selectTriggerEl) this.selectTriggerEl.focus();
+          this.selectTriggerEl = null;
+        });
+      }
+    },
+    /**
+     * Moves focus to the Deselect button in the floating action bar after
+     * a bulk-select action, so keyboard users land in the updated region (WCAG 2.4.3).
+     */
+    focusActionBarDeselect() {
+      const bar = this.$refs.floatingActionBar;
+      if (bar && typeof bar.focusDeselectButton === 'function') bar.focusDeselectButton();
+    },
+    /**
+     * Saves a reference to the TaskMultiSelect toggle button so focus can be
+     * returned to it when the floating action bar is dismissed (WCAG 2.4.3).
+     */
+    saveSelectTrigger() {
+      const multiSelectEl = this.$refs.taskMultiSelect?.$el;
+      this.selectTriggerEl = multiSelectEl?.querySelector('button') || null;
     },
     /**
      * Select all tasks for bulk actions
@@ -1187,6 +1277,8 @@ export default {
      * @param {Object} item single certification item
      */
     handleAction(type, item) {
+      this.refocusItemId = item.id;
+      const triggerEl = this.getActionMenuTrigger();
       if (this.pressedButton(item, type)) {
         this.resetLineItem(item.id);
         return;
@@ -1205,22 +1297,22 @@ export default {
           });
           break;
         case 'revoke':
-          this.openActionConfirmModal(this.revokeModalProps, item.id);
+          this.openActionConfirmModal(this.revokeModalProps, item.id, triggerEl);
           break;
         case 'exception':
-          this.openActionConfirmModal(this.exceptionModalProps, item.id);
+          this.openActionConfirmModal(this.exceptionModalProps, item.id, triggerEl);
           break;
         case 'viewReviewers':
-          this.openReviewersModal(item);
+          this.openReviewersModal(item, triggerEl);
           break;
         case 'forward':
-          this.openForwardModal(item.id, false, false);
+          this.openForwardModal(item.id, false, false, triggerEl);
           break;
         case 'comment':
-          this.openAddCommentModal(item.id);
+          this.openAddCommentModal(item.id, triggerEl);
           break;
         case 'activity':
-          this.openActivityModal(item);
+          this.openActivityModal(item, triggerEl);
           break;
         default:
           break;
@@ -1296,6 +1388,8 @@ export default {
         });
     },
     addComment(comment) {
+      const itemId = this.refocusItemId;
+      this.refocusItemId = null;
       saveComment(this.campaignId, this.currentLineItemIdSelectedModal, comment).then(() => {
         this.getItems(this.paginationPage)
           .then(() => {
@@ -1303,6 +1397,7 @@ export default {
             const taskActivity = currentTask?.decision?.certification?.comments;
             const comments = filter(taskActivity, { action: 'comment' });
             this.currentCommentsSelectedModal = comments;
+            this.$nextTick(() => this.restoreFocus(itemId));
           });
         this.displayNotification('success', this.$t('governance.certificationTask.lineItemAddCommentModal.addCommentSuccessfullyMessage'));
         this.$bvModal.hide(this.getModalId('add-comment'));
@@ -1488,7 +1583,7 @@ export default {
       requireJustification,
       noConfirmation,
       textArgs,
-    }, currentItemId = null) {
+    }, currentItemId = null, triggerEl) {
       this.currentItemId = currentItemId;
       this.confirmActionModalProps = {
         title,
@@ -1503,13 +1598,13 @@ export default {
         noConfirmation,
         textArgs,
       };
-      this.$bvModal.show(this.getModalId('confirm-action'));
+      this.$bvModal.show(this.getModalId('confirm-action'), triggerEl);
     },
     /**
      * Parse the activity information in the item and open the corresponding modal
      * @param {Object} item all item information
      */
-    openActivityModal(item) {
+    openActivityModal(item, triggerEl) {
       const lineItemActivity = item?.decision?.certification;
       const activityList = get(lineItemActivity, 'comments', []);
 
@@ -1526,7 +1621,7 @@ export default {
       }
       const sortedActivity = lodashSortBy(activityList, 'timeStamp');
       this.currentLineItemActivity = sortedActivity;
-      this.$bvModal.show(this.getModalId('activity'));
+      this.$bvModal.show(this.getModalId('activity'), triggerEl);
     },
     openViewCommentsModal(activity, lineItem) {
       this.enableAddComments = lineItem.permissions?.comment;
@@ -1537,19 +1632,20 @@ export default {
         this.$bvModal.show(this.getModalId('view-comments'));
       });
     },
-    openAddCommentModal(lineItemId) {
+    openAddCommentModal(lineItemId, triggerEl) {
       this.currentLineItemIdSelectedModal = lineItemId;
-      this.$bvModal.show(this.getModalId('add-comment'));
+      this.$bvModal.show(this.getModalId('add-comment'), triggerEl);
     },
     openAddCommentModalFromCommentsModal() {
       this.$bvModal.hide(this.getModalId('view-comments'));
       this.$bvModal.show(this.getModalId('add-comment'));
     },
-    openReviewersModal({ id, decision: { certification: { actors } }, permissions: { reassign } }) {
+    openReviewersModal({ id, decision: { certification: { actors } }, permissions: { reassign } }, triggerEl) {
       this.currentLineItemIdSelectedModal = id;
       this.currentReviewersSelectedModal = actors;
       this.currentLineItemReassignPermission = reassign;
-      this.$bvModal.show(this.getModalId('view-reviewers'));
+      this._reviewersTriggerEl = triggerEl;
+      this.$bvModal.show(this.getModalId('view-reviewers'), triggerEl);
     },
     openEditReviewerModal(reviewer) {
       this.currentReviewerSelectedModal = reviewer;
@@ -1557,19 +1653,19 @@ export default {
         ? ADMIN_REVIEWER_PERMISSIONS
         : this.currentReviewersSelectedModal.find((currentReviewer) => currentReviewer.id === this.actorId)?.permissions;
       this.$bvModal.hide(this.getModalId('view-reviewers'));
-      this.$bvModal.show(this.getModalId('edit-reviewers'));
+      this.$bvModal.show(this.getModalId('edit-reviewers'), this._reviewersTriggerEl);
     },
     closeEditReviewerModal() {
       this.$bvModal.hide(this.getModalId('edit-reviewers'));
-      this.$bvModal.show(this.getModalId('view-reviewers'));
+      this.$bvModal.show(this.getModalId('view-reviewers'), this._reviewersTriggerEl);
       this.currentReviewerSelectedModal = null;
       this.currentUserPermissions = {};
     },
-    openForwardModal(id, isBulk, showConfirm) {
+    openForwardModal(id, isBulk, showConfirm, triggerEl) {
       this.currentItemId = id;
       this.isBulk = isBulk;
       this.showConfirm = showConfirm;
-      this.$bvModal.show(this.getModalId('forward'));
+      this.$bvModal.show(this.getModalId('forward'), triggerEl);
     },
     openSortModal() {
       this.tasksFieldsToSort = cloneDeep(this.certificationListColumns);
