@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@ import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/govern
 import UserDetailsTab from './index';
 
 describe('UserDetailsTab', () => {
-  function mountComponent(user) {
+  function mountComponent(user, displayProperties) {
     return shallowMount(UserDetailsTab, {
       global: {
         mocks: {
@@ -20,6 +20,7 @@ describe('UserDetailsTab', () => {
       },
       props: {
         user,
+        displayProperties,
       },
     });
   }
@@ -41,6 +42,25 @@ describe('UserDetailsTab', () => {
       expect(elem.exists()).toBe(true);
       expect(elem.find('dt').text()).toBe('common.user.userProp');
       expect(elem.find('dd').text()).toBe(value);
+    });
+  });
+
+  describe('should only show those values listed in displayProperties', () => {
+    it('should only display properties listed in displayProperties', () => {
+      const user = { name: 'John', age: 30, email: 'john@example.com' };
+      const displayProperties = ['name', 'email'];
+      const wrapper = mountComponent(user, displayProperties);
+
+      displayProperties.forEach((prop) => {
+        const elem = findByTestId(wrapper, prop);
+        expect(elem.exists()).toBe(true);
+      });
+
+      const hiddenProperties = Object.keys(user).filter((prop) => !displayProperties.includes(prop));
+      hiddenProperties.forEach((prop) => {
+        const elem = findByTestId(wrapper, prop);
+        expect(elem.exists()).toBe(false);
+      });
     });
   });
 });

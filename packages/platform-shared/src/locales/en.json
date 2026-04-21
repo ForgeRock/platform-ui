@@ -2534,7 +2534,8 @@
         "reassignError": "There was an error trying to reassign the certifications",
         "revokeError": "There was an error revoking access to this item",
         "signOffError": "There was an error trying to sign off the certification",
-        "resetError": "There was an error trying to clear decisions"
+        "resetError": "There was an error trying to clear decisions",
+        "uiConfigError": "There was an error getting certification display configuration"
       },
       "lineItemActivityModal": {
         "certifiedItem": "Certified item",

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="p-4">
     <dl
       class="row"
-      v-for="(detail, name) in user"
+      v-for="name in propertiesToDisplay"
       :key="name"
       :data-testid="name">
       <dt class="col-lg-4">
@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BMedia>
         </template>
         <template v-else>
-          {{ detail || blankValueIndicator }}
+          {{ user[name] || blankValueIndicator }}
         </template>
       </dd>
     </dl>
@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
+import { isEmpty, uniq } from 'lodash';
 import { BImg, BMedia } from 'bootstrap-vue';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 
@@ -59,6 +59,10 @@ export default {
     BMedia,
   },
   props: {
+    displayProperties: {
+      type: Array,
+      default: () => [],
+    },
     manager: {
       type: Object,
       default: () => ({}),
@@ -72,6 +76,14 @@ export default {
     return {
       blankValueIndicator,
     };
+  },
+  computed: {
+    propertiesToDisplay() {
+      if (this.displayProperties.length) {
+        return this.displayProperties;
+      }
+      return uniq(Object.keys(this.user));
+    },
   },
   methods: {
     isEmpty,
