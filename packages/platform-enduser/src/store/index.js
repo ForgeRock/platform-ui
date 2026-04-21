@@ -33,6 +33,7 @@ export default createStore({
     violationsCount: null,
     inboxTotalCount: null,
     requestCartUsers: [],
+    govUserDisplayProperties: [],
 
     // governance lcm settings
     govLcmSettings: {},
@@ -123,6 +124,10 @@ export default createStore({
       } else {
         state.govAutoIdEnabled = false;
       }
+    },
+
+    setGovUserDisplayProperties(state, displayProperties) {
+      state.govUserDisplayProperties = displayProperties;
     },
 
     setGovLcmEntitlement(state, { createEntitlement, viewEntitlement }) {

@@ -427,7 +427,8 @@ of the MIT license. See the LICENSE file for details. -->
     <FrGovernanceUserDetailsModal
       :manager="manager"
       :user="currentUserSelectedModal"
-      :user-details="currentUserDetails" />
+      :user-details="currentUserDetails"
+      :display-properties="userDisplayProperties" />
     <FrDownloadItemsModal
       modal-id="certification-task-download-items-modal"
       :grant-type="certificationGrantType"
@@ -482,7 +483,12 @@ import {
   saveComment,
   updateActors,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
-import { getGlossarySchema, getFilterSchema, getIgaAutoIdConfig } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import {
+  getGlossarySchema,
+  getFilterSchema,
+  getIgaAutoIdConfig,
+  getIgaUiConfig,
+} from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { ADMIN_REVIEWER_PERMISSIONS, blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import {
@@ -753,6 +759,7 @@ export default {
       sortBy: 'user',
       tasksFieldsToSort: [],
       totalRows: 0,
+      userDisplayProperties: [],
       glossarySchema: {
         application: [],
         entitlement: [],
@@ -830,6 +837,13 @@ export default {
       this.autoIdSettings = autoIdData;
     } catch (error) {
       this.showErrorMessage(error, this.$t('governance.certificationTask.errors.autoIdError'));
+    }
+
+    try {
+      const { data: uiConfigData } = await getIgaUiConfig();
+      this.userDisplayProperties = uiConfigData?.user?.displayProperties || [];
+    } catch (error) {
+      // We don't need to show an error here
     }
 
     // build column categories using the filter schema
@@ -1563,9 +1577,23 @@ export default {
     },
     openSortModal() {
       this.tasksFieldsToSort = cloneDeep(this.certificationListColumns);
-      this.availableColumns = isEmpty(this.updatedColumCategories)
+      const columnsForSort = isEmpty(this.updatedColumCategories)
         ? cloneDeep(this.columnCategories)
         : cloneDeep(this.updatedColumCategories);
+
+      if (this.userDisplayProperties.length > 0) {
+        // If user property filtering is enabled, filter the available column options for 'user' to be only what is
+        // allowed by the cert's own uiConfig or the global user displayProperties config
+        const userCategoryKeys = this.tasksFields
+          .filter((field) => field.category === 'user')
+          .map((field) => field.key)
+          .concat(this.userDisplayProperties);
+        const userCategory = columnsForSort.find((category) => category.name === 'user');
+        if (userCategory) {
+          userCategory.items = userCategory.items.filter((item) => userCategoryKeys.includes(item.key));
+        }
+      }
+      this.availableColumns = columnsForSort;
       this.$bvModal.show(this.getModalId('sort'));
     },
     closeSortModal() {
