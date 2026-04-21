@@ -44,8 +44,8 @@
     background: $gray-300;
   }
 
-  .sticky-left,
-  .sticky-right {
+  tr:not(:focus-visible) .sticky-left,
+  tr:not(:focus-visible) .sticky-right {
     position: sticky !important;
     z-index: 100;
     background-color: $white;

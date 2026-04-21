@@ -15,6 +15,8 @@ of the MIT license. See the LICENSE file for details. -->
       v-resizable-table="{ persistKey: `governance-access-request-list-${listName}` }"
       responsive
       hover
+      selectable
+      select-mode="single"
       tbody-tr-class="cursor-pointer"
       :fields="fields"
       :items="items"

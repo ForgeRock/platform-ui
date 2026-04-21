@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -81,10 +81,9 @@ describe('RequestFilter', () => {
     const expectedFilter = cloneDeep(baseFilter);
     expectedFilter.requestType = wrapper.vm.requestTypeOptions[1].value;
 
-    findByTestId(wrapper, 'request-type')
-      .findAll('li')[1]
-      .find('span')
-      .trigger('click');
+    const requestTypeSelect = wrapper.find('.multiselect');
+    requestTypeSelect.trigger('click');
+    requestTypeSelect.findAll('.multiselect__option')[1].trigger('click');
     await flushPromises();
     // debounce timer
     jest.runAllTimers();
