@@ -66,13 +66,14 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <div class="d-flex justify-content-between">
         <div class="w-100 m-4">
-          <FrField
-            v-model="formFields.user"
+          <FrSelectInput
+            :value="formFields.user"
             class="text-muted w-100 certification-task-filter-dropdown certification-task-filter-list"
             id="certificationTaskUser"
-            type="select"
+            name="certification-task-user"
             :label="$t('governance.certificationTask.user')"
             :options="users"
+            @input="formFields.user = $event"
             @search-change="debounceUserSearch">
             <template #singleLabel="{ option }">
               <div
@@ -134,16 +135,16 @@ of the MIT license. See the LICENSE file for details. -->
                 </BMedia>
               </div>
             </template>
-          </FrField>
+          </FrSelectInput>
         </div>
         <div class="w-100 m-4">
-          <FrField
-            v-model="formFields.application"
+          <FrSelectInput
+            :value="formFields.application"
             class="text-muted w-100 certification-task-filter-dropdown certification-task-filter-list"
-            variant="outline-secondary"
-            type="select"
+            name="certification-task-application"
             :label="$t('governance.certificationTask.application')"
             :options="applications"
+            @input="formFields.application = $event"
             @search-change="debounceAppSearch">
             <template #singleLabel="{ option }">
               <div
@@ -193,7 +194,7 @@ of the MIT license. See the LICENSE file for details. -->
                 </BMedia>
               </div>
             </template>
-          </FrField>
+          </FrSelectInput>
         </div>
       </div>
     </BFormGroup>
@@ -210,6 +211,7 @@ import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appShar
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { debounce } from 'lodash';
 import {
@@ -222,6 +224,7 @@ export default {
   components: {
     FrIcon,
     FrField,
+    FrSelectInput,
     BFormGroup,
     BMedia,
     BImg,
@@ -354,5 +357,9 @@ export default {
 
 :deep(.certification-task-filter-list ul) {
   width: 100%;
+}
+
+:deep(.certification-task-filter-dropdown .multiselect.multiselect--active) {
+  z-index: 101;
 }
 </style>
