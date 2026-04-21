@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2019-2024 ForgeRock AS. All Rights Reserved
+# Copyright 2019-2026 ForgeRock AS. All Rights Reserved
 #
 # Use of this code requires a commercial software license with ForgeRock AS.
 # or with one of its affiliates. All use shall be exclusively subject
@@ -80,6 +80,10 @@ echo "Setting DEPLOYMENT TYPE AS $DEPLOYMENT_TYPE"
 echo "Setting ENABLE DEV APP TEMPLATES as $ENABLE_DEV_APP_TEMPLATES"
 echo "Setting ENABLE SELF SERVICE as $ENABLE_SELF_SERVICE"
 echo "Setting ENABLE ACCOUNTS as $ENABLE_ACCOUNTS"
+echo "Setting AUTHORIZATION ENDPOINT as $AUTHORIZATION_ENDPOINT"
+echo "Setting TOKEN ENDPOINT as $TOKEN_ENDPOINT"
+echo "Setting REVOCATION ENDPOINT as $REVOCATION_ENDPOINT"
+echo "Setting END SESSION ENDPOINT as $END_SESSION_ENDPOINT"
 
 # Replace env vars in JavaScript files
 for file in $@
@@ -164,5 +168,9 @@ do
     $SALESFORCE_ID
     $UPPER_CONFIG_EGRESS
     $ENABLE_SELF_SERVICE
+    $AUTHORIZATION_ENDPOINT
+    $TOKEN_ENDPOINT
+    $REVOCATION_ENDPOINT
+    $END_SESSION_ENDPOINT
   ' < "/tmp/$(basename $file).tmpl" > "$file"
 done
