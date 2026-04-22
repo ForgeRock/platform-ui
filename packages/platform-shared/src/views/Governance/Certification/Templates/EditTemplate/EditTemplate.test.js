@@ -110,7 +110,7 @@ describe('EditTemplate View', () => {
     });
 
     it('should load the email template list with the correct format', () => {
-      expect(wrapper.vm.emailTemplateOptions).toStrictEqual([{ text: 'Display Name', value: 'test/templateTest2' }, { text: 'Template Test', value: 'test/templateTest' }]);
+      expect(wrapper.vm.emailTemplateOptions).toStrictEqual([{ text: 'Display Name', value: 'emailTemplate/test/templateTest2' }, { text: 'Template Test', value: 'emailTemplate/test/templateTest' }]);
     });
   });
 
