@@ -9,9 +9,11 @@
 import CspApiSteps from './api/CspApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import UserApiSteps from './api/UserApiSteps';
+import CustomDomainApiSteps from './api/CustomDomainApiSteps';
 
 export default {
   csp: CspApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
   user: UserApiSteps,
+  customDomain: CustomDomainApiSteps,
 };
