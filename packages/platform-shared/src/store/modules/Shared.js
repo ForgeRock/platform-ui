@@ -260,7 +260,7 @@ const mutations = {
       state.autoReportsEnabled = true;
     }
 
-    if (env.VUE_APP_ENABLE_AI_AGENTS?.toString() === 'true') {
+    if (env.VUE_APP_ENABLE_AI_AGENTS?.toString() === 'true' || (env.VUE_APP_FRAAS?.toString() === 'true' && !env.VUE_APP_FRAAS_PROMOTION_CONFIG_INGRESS_URL)) {
       state.aiAgentsEnabled = true;
     }
 
