@@ -4502,6 +4502,7 @@
     "reconIdentity": "Reconcile Identity",
     "reconNow": "Reconcile Now",
     "refreshAssociations": "Refresh Associations",
+    "message": "Message",
     "result": "Result",
     "saveError": "Error saving changes",
     "searchPlaceholder": "Search {sourceAppName} {sourceObject}s",
