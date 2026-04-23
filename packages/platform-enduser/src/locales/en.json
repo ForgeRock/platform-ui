@@ -202,6 +202,7 @@
     "administerUsers": "Users",
     "applications": "My Applications",
     "approvals": "Approvals",
+    "agents": "My Agents",
     "delegates": "Delegates",
     "directory": "My Directory",
     "directReports": "Direct Reports",
@@ -224,6 +225,8 @@
     "AdministerEntitlements": "Entitlements",
     "AdministerRoles": "Roles",
     "AdministerUsers": "Users",
+    "Agents":"My Agents",
+    "AgentsDetails": "Agent Details",
     "Applications": "Applications",
     "ApprovalDetails": "Approval Details",
     "Approvals": "Approvals",
@@ -403,6 +406,9 @@
       "errorGettingPendingApprovals": "Error getting pending approvals number",
       "errorGettingUpdatedItem": "Error getting updated item"
     },
+    "agents": {
+      "agentId": "Agent ID"
+    },
     "delegates": {
       "addDelegates": "Add Delegates",
       "addModalTitle": "Choose users to add as delegates.",
@@ -424,7 +430,7 @@
       "errorGettingDirectReports": "Error getting direct reports.",
       "errorGettingDirectReportUserInfo": "Error getting direct report user information.",
       "noDirectReportsFound": "No direct reports found.",
-      "noResultsHelp": "Try a new search in the seach box above.",
+      "noResultsHelp": "Try a new search in the search box above.",
       "noResultsUser": "No direct reports for this user.",
       "requestSubmitted": "Request Submitted",
       "subtitle": "View your direct reports.",
@@ -435,7 +441,7 @@
       "errorGettingMachineAccounts": "Error getting machine accounts.",
       "errorGettingMachineAccountInfo": "Error getting machine account information.",
       "noMachineAccountsFound": "No machine accounts found.",
-      "noResultsHelp": "Try a new search in the seach box above.",
+      "noResultsHelp": "Try a new search in the search box above.",
       "noResultsUser": "No machine accounts for this user.",
       "requestSubmitted": "Request Submitted",
       "subtitle": "View your machine accounts.",

@@ -163,6 +163,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  customFilter: {
+    type: String,
+    default: null,
+  },
   additionalQueryParams: {
     type: String,
     default: '',
@@ -350,6 +354,12 @@ function queryParamFunction(resourceType, queryString, page, pageSize) {
       : sortBy.value;
   }
   queryParams.queryFilter = queryFilter;
+  if (props.customFilter) {
+    // Allows the parent component to pass in a filter that is always applied to this component
+    queryParams.queryFilter = queryFilter === true
+      ? props.customFilter
+      : `(${queryFilter}) and ${props.customFilter}`;
+  }
 
   if (resourceType !== 'entitlement') queryParams.totalPagedResultsPolicy = 'EXACT';
 

@@ -172,6 +172,12 @@ const route = useRoute();
 const { bvModal } = useBvModal();
 const { setBreadcrumb } = useBreadcrumb();
 
+const props = defineProps({
+  returnRoute: {
+    type: String,
+    default: '/managed-identities/managed/alpha_user',
+  },
+});
 // Data
 const activeNodeId = ref(null);
 const fullscreen = ref(false);
@@ -387,7 +393,7 @@ const accessFilter = ref({
  */
 async function getGrantsForUser(params, specificGrantTypes) {
   try {
-    const commonFields = ['compositeId', 'descriptor', 'keys', 'item', 'metadata', 'relationship', 'prediction'];
+    const commonFields = ['compositeId', 'descriptor', 'keys', 'item', 'metadata', 'relationship', 'prediction', 'manager.id'];
     const paramsMap = {
       [accessConstants.GRANT_TYPES.ACCOUNT]: {
         _fields: [...commonFields, 'application', 'account.__NAME__'],
@@ -479,11 +485,15 @@ async function openGrantDetailsModal() {
  * Set breadcrumb and query for all the initial required data, including user data, user grants, schema config, and IGA configurations
  */
 onMounted(async () => {
-  setBreadcrumb(`/managed-identities/managed/alpha_user/${userId.value}`, i18n.global.t('governance.access.backToUser'));
+  let returnPath = `${props.returnRoute}/${userId.value}`;
+  if (props.returnRoute === '/my-reports') {
+    returnPath += '/account';
+  }
+  setBreadcrumb(returnPath, i18n.global.t('governance.access.backToUser'));
   try {
     loading.value = true;
     const userQueryParams = {
-      _fields: ['givenName', 'sn', 'mail', 'id', 'userName', 'profileImage'],
+      _fields: ['givenName', 'sn', 'mail', 'userName', 'profileImage'],
     };
     const grantQueryParams = {
       _pageSize: 1000,

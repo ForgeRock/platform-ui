@@ -207,6 +207,49 @@ describe('GovResourceList', () => {
     });
   });
 
+  describe('userWithCustomFilter', () => {
+    let userResourceFunction;
+    beforeEach(() => {
+      userResourceFunction = jest.fn();
+      wrapper = mountComponent({
+        resource: 'user',
+        resourceFunction: userResourceFunction,
+        customFilter: 'test eq "value"',
+      });
+    });
+
+    it('calls resource function with correct query params', async () => {
+      expect(userResourceFunction).toHaveBeenCalledWith(
+        'alpha_user',
+        {
+          fields: 'userName,givenName,sn,mail',
+          pageSize: 10,
+          pagedResultsOffset: 0,
+          queryFilter: 'test eq "value"',
+          totalPagedResultsPolicy: 'EXACT',
+        },
+      );
+    });
+
+    it('searching calls api with correct query params', async () => {
+      const search = wrapper.findComponent(FrSearchInput);
+      await search.vm.$emit('input', 'test');
+      await flushPromises();
+      await search.vm.$emit('search');
+
+      expect(userResourceFunction).toHaveBeenCalledWith(
+        'alpha_user',
+        {
+          fields: 'userName,givenName,sn,mail',
+          pageSize: 10,
+          pagedResultsOffset: 0,
+          queryFilter: '(userName sw "test" OR givenName sw "test" OR sn sw "test" OR mail sw "test") and test eq "value"',
+          totalPagedResultsPolicy: 'EXACT',
+        },
+      );
+    });
+  });
+
   describe('entitlement', () => {
     let entitlementResourceFunction;
     beforeEach(() => {
