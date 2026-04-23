@@ -16,7 +16,7 @@ describe('Enduser Dashboard View', { tags: ['@forgeops', '@cloud'] }, () => {
     cy.logout();
   });
 
-  it('when session is about to idle out should show session timeout modal and extend session', () => {
+  it('[TC-12115] When session is about to idle out should show session timeout modal and extend session', () => {
     // Get an admin access token and use it to create the test user
     cy.loginAsAdminCached().then(() => {
       createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
@@ -61,7 +61,7 @@ describe('Enduser Dashboard View', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('when session is about to idle out should show session timeout modal and end session', () => {
+  it('[TC-12116] When session is about to idle out should show session timeout modal and end session', () => {
     // Get an admin access token and use it to create the test user
     cy.loginAsAdminCached().then(() => {
       createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
@@ -109,7 +109,7 @@ describe('Enduser Dashboard View', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('when session is about to expire should show session expiration modal and dismiss the warning', () => {
+  it('[TC-12117] When session is about to expire should show session expiration modal and dismiss the warning', () => {
     // Get an admin access token and use it to create the test user
     cy.loginAsAdminCached().then(() => {
       createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
@@ -154,7 +154,7 @@ describe('Enduser Dashboard View', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('when session is about to expire should show session expiration modal and end the session', () => {
+  it('[TC-12118] When session is about to expire should show session expiration modal and end the session', () => {
     // Get an admin access token and use it to create the test user
     cy.loginAsAdminCached().then(() => {
       createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
@@ -202,7 +202,7 @@ describe('Enduser Dashboard View', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('should not show session timeout if the date is over 24 days from now', () => {
+  it('[TC-12119] Should not show session timeout if the date is over 24 days from now', () => {
     // settimeout can have an overflow int issue
     // Get an admin access token and use it to create the test user
     cy.loginAsAdminCached().then(() => {

@@ -17,7 +17,7 @@ describe('Enduser Dashboard View', { tags: ['@forgeops', '@cloud'] }, () => {
     cy.logout();
   });
 
-  it('should show basic dashboard functionality', () => {
+  it('[TC-12107] Should show basic dashboard functionality', () => {
     // Get an admin access token and use it to create the test user
     cy.loginAsAdminCached().then(() => {
       createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {
@@ -71,7 +71,7 @@ describe('Enduser Dashboard View', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it.skip('should show compact header on enduser login with applications dashboard enabled', () => {
+  it.skip('[TC-12108] Should show compact header on enduser login with applications dashboard enabled', () => {
     const dashboards = ['Google', 'Zendesk', 'salesforce'];
 
     // Get an admin access token and use it to create the test user

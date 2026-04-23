@@ -33,12 +33,12 @@ describe('Enduser Dashboard - Visual Tests', { tags: '@forgeops' }, () => {
     cy.loginAsEnduser(userName);
   });
 
-  it('should capture dashboard page', () => {
+  it('[TC-12102] Should capture dashboard page', () => {
     cy.findByRole('link', { name: 'Dashboard' }).should('be.visible');
     cy.percySnapshot('Enduser - Dashboard');
   });
 
-  it('should capture profile page', () => {
+  it('[TC-12103] Should capture profile page', () => {
     cy.findByRole('link', { name: 'Profile' }).click();
     cy.findByRole('link', { name: 'Profile' }).should('have.class', 'router-link-active');
     cy.location('href').should('contain', '#/profile');

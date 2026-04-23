@@ -84,7 +84,7 @@ describe('Enduser Profile View', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('Should show basic data on the profile view, allow downloading user data, and allow account deletion', () => {
+  it('[TC-12114] Should show basic data on the profile view, allow downloading user data, and allow account deletion', () => {
     // Log in to the enduser UI and check that the Theme changes have been correctly applied
     cy.loginAsEnduser(userName);
 

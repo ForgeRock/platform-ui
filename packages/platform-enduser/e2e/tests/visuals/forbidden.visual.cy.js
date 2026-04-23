@@ -30,7 +30,7 @@ describe('Forbidden Page - Visual Tests', { tags: '@forgeops' }, () => {
     });
   });
 
-  it('should capture forbidden page layout', () => {
+  it('[TC-12106] Should capture forbidden page layout', () => {
     // Login as enduser first
     cy.loginAsEnduser(userName);
 
