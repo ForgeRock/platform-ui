@@ -210,7 +210,7 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
     cy.logout();
   });
 
-  it('can view managed resources w/ appropriate columns and appropriate actions', () => {
+  it('[TC-12109] Can view managed resources w/ appropriate columns and appropriate actions', () => {
     const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
 
     // Create internal role
@@ -258,7 +258,7 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('Should be able to search a resource and be limited by DA available resources', () => {
+  it('[TC-12110] Should be able to search a resource and be limited by DA available resources', () => {
     const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
     const testUserLastName = `Last${random(Number.MAX_SAFE_INTEGER)}`;
 
@@ -284,7 +284,7 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('can edit resource & see (not edit) read fields, edit read/write fields, & not see none fields', () => {
+  it('[TC-12111] Can edit resource & see (not edit) read fields, edit read/write fields, & not see none fields', () => {
     const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
     const postalCodeValue = 'e2eTestPostalCode';
 
@@ -306,7 +306,7 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('can edit a user and see relationships and have appropriate interaction with that relationship\'s permissions', () => {
+  it('[TC-12112] Can edit a user and see relationships and have appropriate interaction with that relationship\'s permissions', () => {
     const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
     const managedRoleName = `e2eManagedRole${random(Number.MAX_SAFE_INTEGER)}`;
 
@@ -365,7 +365,7 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('can add & delete a resource (based on permissions) and properly display errors when a required field is not met', () => {
+  it('[TC-12113] Can add & delete a resource (based on permissions) and properly display errors when a required field is not met', () => {
     const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
     let testUserId;
     cy.intercept('POST', `/openidm/managed/${Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user'}?_action=create`).as('saveManagedUser');
