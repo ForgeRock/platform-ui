@@ -17,6 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
       :columns="userColumns"
       :query-fields="queryFields"
       :resource-function="getManagedResourceList"
+      :custom-filter="customUserFilter"
       :show-add-button="allowCreate"
       :query-threshold="queryThreshold"
       @row-clicked="navigateToUserDetails"
@@ -75,6 +76,8 @@ const router = useRouter();
 const { bvModal } = useBvModal();
 const { userId } = useUserStore();
 const { setPrivileges, privileges } = useGovernanceStore();
+const userAgentProperty = store.state.govAgentProperty;
+const customUserFilter = computed(() => (userAgentProperty ? `!(${userAgentProperty} eq 'agent')` : null)); // Filter out a subset of users automatically
 
 // data
 const allowCreate = ref(false);

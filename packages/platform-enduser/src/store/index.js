@@ -48,6 +48,9 @@ export default createStore({
     // governance autoid settings
     govAutoIdSettings: {},
     govAutoIdEnabled: false,
+
+    // governance agent settings
+    govAgentProperty: null,
   },
   mutations: {
     setEnvironment(state, env) {
@@ -130,6 +133,12 @@ export default createStore({
     setGovLcmUser(state, { viewUser }) {
       state.govLcmUser = viewUser;
       if (state.govLcmUser) state.govLcmEnabled = true;
+    },
+
+    setGovAgentProperty(state, { userProperty }) {
+      if (userProperty) {
+        state.govAgentProperty = userProperty;
+      }
     },
 
     setGovLcmRole(state, { viewRole }) {

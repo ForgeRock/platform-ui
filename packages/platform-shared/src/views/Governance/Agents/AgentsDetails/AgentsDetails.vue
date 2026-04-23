@@ -56,6 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
             @revoke-items="revokeEntitlement" />
         </BTab>
         <BTab
+          v-if="!props.isEndUser"
           :title="$t('governance.agents.details.tabs.activity')"
           key="activity"
           lazy>
@@ -106,7 +107,7 @@ const props = defineProps({
   },
   isEndUser: {
     type: Boolean,
-    default: true,
+    default: false,
   },
 });
 const { setBreadcrumb } = useBreadcrumb();

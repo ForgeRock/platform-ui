@@ -37,6 +37,17 @@ of the MIT license. See the LICENSE file for details. -->
           </span>
         </BMediaBody>
       </BMedia>
+      <BButton
+        v-if="viewUserAccess"
+        class="mb-4"
+        variant="outline-primary"
+        @click="goToUserAccess">
+        <FrIcon
+          icon-class="mr-2 text-nowrap"
+          name="account_box">
+          {{ $t('pages.access.viewUserAccess') }}
+        </FrIcon>
+      </BButton>
       <BCard no-body>
         <BTabs
           class="card-tabs-vertical"
@@ -78,6 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { isEmpty } from 'lodash';
 import { ref, onMounted } from 'vue';
 import {
+  BButton,
   BCard,
   BContainer,
   BImg,
@@ -264,6 +276,13 @@ function handleAdd(grantType) {
 
   store.commit('setRequestCartUsers', [userToRequest]);
   router.push({ name: 'AccessRequestNew', params: { catalogTab, returnPath: route.path } });
+}
+
+/**
+ * Navigates to the Access Viewer for the user.
+ */
+function goToUserAccess() {
+  router.push({ name: 'AccessViewer', params: { resourceId: userId.value } });
 }
 
 </script>

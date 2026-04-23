@@ -177,6 +177,10 @@ export function generateEndUserMenuItems({
         return undefined; // Skip Access Modeling menu item if govRoleMining is not enabled
       }
     }
+
+    if (menuItem.id === 'myAccess') {
+      finalSubItems = finalSubItems.filter((subItem) => subItem.id !== 'agents' || flags.governanceDevEnabled);
+    }
     // handle enduser ui specific processing
     let routeObject = {};
     let managedObjectInfo = { isManagedObject: menuItem.isManagedObject };

@@ -109,6 +109,14 @@ const router = createRouter({
               component: () => import('@/views/governance/LCM/Users/Edit/UserDetails'),
               beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.govLcmUser]),
             },
+            {
+              path: ':resourceId/access',
+              name: 'AccessViewer',
+              component: () => import('@forgerock/platform-shared/src/views/Governance/Access/AccessViewer'),
+              meta: { hideNavBar: true, hideSideMenu: true },
+              beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.govLcmUser]),
+              props: { returnRoute: '/administer/users' },
+            },
           ],
         },
         {
@@ -314,6 +322,13 @@ const router = createRouter({
           component: () => import('@/views/governance/Directory/DirectReports'),
         },
         {
+          path: ':resourceId/access/view',
+          name: 'AccessViewerReports',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/Access/AccessViewer'),
+          meta: { hideNavBar: true, hideSideMenu: true },
+          props: { returnRoute: '/my-reports' },
+        },
+        {
           path: ':userId/:grantType',
           name: 'DirectReportDetail',
           component: () => import('@/views/governance/Directory/DirectReportDetail'),
@@ -334,6 +349,24 @@ const router = createRouter({
           path: '/:accountId',
           name: 'MachineAccountDetails',
           component: () => import('@forgerock/platform-shared/src/views/Governance/Accounts/AccountsDetails/AccountsDetails'),
+        },
+      ],
+    },
+    {
+      path: '/my-agents',
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled]),
+      meta: { authenticate: true },
+      children: [
+        {
+          path: '',
+          name: 'Agents',
+          component: () => import('@/views/governance/Directory/Agents/Agents'),
+        },
+        {
+          path: ':agentId',
+          name: 'AgentsDetails',
+          component: () => import('@forgerock/platform-shared/src/views/Governance/Agents/AgentsDetails/AgentsDetails'),
+          props: { readOnly: true, isEndUser: true },
         },
       ],
     },

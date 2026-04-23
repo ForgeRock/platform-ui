@@ -51,7 +51,7 @@ const testAgent = {
   },
 };
 
-function mountComponent() {
+function mountComponent(props = {}) {
   const agent = cloneDeep(testAgent);
   AccountsApi.getAccountById = jest.fn().mockReturnValue(Promise.resolve({
     data: agent,
@@ -72,6 +72,7 @@ function mountComponent() {
         $t: (t) => t,
       },
     },
+    props,
   });
 }
 
@@ -95,5 +96,15 @@ describe('AgentsDetails', () => {
     const tabs = tabContainer.findAll('li');
 
     expect(tabs.length).toBe(3);
+  });
+
+  it('should not display the activity tab for end users', async () => {
+    mountComponent({ isEndUser: true });
+    await flushPromises();
+
+    const tabContainer = wrapper.find('.tabs');
+    const tabs = tabContainer.findAll('li');
+
+    expect(tabs.length).toBe(2);
   });
 });

@@ -192,6 +192,11 @@ const startApp = async () => {
       const { data } = await getIgaUiConfig();
       store.commit('setGovLcmSettings', data.lcmSettings);
 
+      // Agent user indicator
+      if (data.agents?.userProperty) {
+        store.commit('setGovAgentProperty', { userProperty: data.agents.userProperty });
+      }
+
       // user lcm
       if (data.lcmSettings?.user?.enabled) {
         // check if user can see any users

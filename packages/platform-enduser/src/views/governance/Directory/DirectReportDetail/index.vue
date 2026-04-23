@@ -26,6 +26,16 @@ of the MIT license. See the LICENSE file for details. -->
             :subtitle="directReportUserInfo.userName" />
         </BMediaBody>
       </BMedia>
+      <BButton
+        class="mb-4"
+        variant="outline-primary"
+        @click="goToUserAccess">
+        <FrIcon
+          icon-class="mr-2 text-nowrap"
+          name="account_box">
+          {{ $t('pages.access.viewUserAccess') }}
+        </FrIcon>
+      </BButton>
       <BCard
         no-body
         class="card-tabs-vertical">
@@ -305,6 +315,16 @@ export default {
         const { grantType, userId } = this.$route.params;
         window.history.pushState(window.history.state, '', `#/my-reports/${userId}/${grantType}`);
       }
+    },
+    goToUserAccess() {
+      const { userId } = this.$route.params;
+      const params = {
+        resourceId: userId,
+      };
+      this.$router.push({
+        name: 'AccessViewerReports',
+        params,
+      });
     },
   },
 };
