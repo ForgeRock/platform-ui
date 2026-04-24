@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,6 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-model:model-value="formValue"
         :form="form.form"
         :read-only="readOnly"
+        :privilege-data="form.form?.config?.applyAttributePrivileges ? privilegeData : null"
         @is-valid="isValidForm = $event" />
       <FrModifyUserForm
         v-else
@@ -50,6 +51,7 @@ import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrModifyUserForm from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/User/ModifyUserForm';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { getResourceTypePrivilege } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import FrRequestSubmitSuccessModal from '@/views/governance/LCM/RequestSubmitSuccessModal';
 import i18n from '@/i18n';
 
@@ -77,6 +79,7 @@ const {
 const isSaving = ref(false);
 const originalUser = ref({});
 const requestId = ref('');
+const privilegeData = ref({});
 const { bvModal } = useBvModal();
 
 /**
@@ -137,13 +140,25 @@ async function submitRequest() {
 }
 
 /**
+ * Gets signed in user's privileges
+ */
+async function getUserPrivileges() {
+  try {
+    const res = await getResourceTypePrivilege(`managed/alpha_user/${props.user._id}`);
+    privilegeData.value = res.data;
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.requestForm.errorRetrievingUserPrivileges'));
+  }
+}
+
+/**
  * Initializes the form with necessary data and configurations.
  * Gets a form if it exists, otherwise uses the default user form.
  */
 async function initializeForm() {
   // get user schema
   await setSchema('managed/alpha_user');
-
+  await getUserPrivileges();
   // get form definition
   const options = {
     lcmType: 'user',
@@ -151,7 +166,6 @@ async function initializeForm() {
     setInitialModel: false,
   };
   await getFormDefinitionByType(formTypes.LCM, options);
-
   // initialize user values
   const convertedUser = convertRelationshipPropertiesToFormBuilder(props.user, schema['managed/alpha_user'].properties);
   formValue.value = { user: convertedUser };
