@@ -379,6 +379,7 @@ describe('Login config translations', { tags: ['@forgeops', '@cloud'] }, () => {
 
     // Set up intercept
     cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
+    cy.intercept('POST', '**/authenticate*').as('authenticate');
 
     // Visit base page of our Login Journey with default locale
     cy.visit(`${loginBaseUrl}#/`);
@@ -392,7 +393,7 @@ describe('Login config translations', { tags: ['@forgeops', '@cloud'] }, () => {
       cy.findByRole('button', { name: 'Next Test', timeout: 10000 }).should('be.visible').click();
 
       // Wait for a Journey page to fully load
-      cy.wait('@getTheme', { timeout: 10000 });
+      cy.wait('@authenticate', { timeout: 10000 });
     }
 
     // Check override translations are applied correctly for default locale

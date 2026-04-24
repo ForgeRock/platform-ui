@@ -346,7 +346,7 @@ of the MIT license. See the LICENSE file for details. -->
                       </fieldset>
                     </template>
                     <Component
-                      v-for="(component) in componentList "
+                      v-for="(component) in componentList"
                       class="callback-component"
                       :callback="component.callback"
                       :index="component.index"
@@ -356,6 +356,8 @@ of the MIT license. See the LICENSE file for details. -->
                       :floating-label="journeyFloatingLabels"
                       :is-required-aria="component.isRequired"
                       :position-button="journeySignInButtonPosition"
+                      :aria-label="component?.callbackSpecificProps?.name || undefined"
+                      :button-disabled="nextButtonDisabled || !isFormValid"
                       v-bind="{...component.callbackSpecificProps}"
                       v-on="{
                         'next-step': (event, preventClear) => {
@@ -484,6 +486,7 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
 import { svgShapesSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { useForm } from 'vee-validate';
+import useTheme from '@forgerock/platform-shared/src/composables/theme';
 import i18n from '@/i18n';
 import {
   resumingTreeFollowingRedirect,
@@ -677,8 +680,9 @@ export default {
     };
   },
   setup() {
+    const { setThemeLoading } = useTheme();
     const { meta } = useForm();
-    return { meta };
+    return { meta, setThemeLoading };
   },
   computed: {
     /**
@@ -1304,16 +1308,19 @@ export default {
     /**
      * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
      * this.step is defined. Then determines based on step.type what action to take.
+     * @param {Event} event the event that triggered this function, if any
+     * @param {boolean} preventClear whether to prevent clearing of callbacks and loading state for this step transition,
+     * used for when no change is expected between steps (stops a flash of white from rerender)
      */
     nextStep(event, preventClear) {
       if (event) {
         event.preventDefault();
       }
-      // for when no change is expected between steps (stops a flash of white from rerender)
       if (!preventClear) {
         this.loading = true;
         this.showScriptElms = false;
         this.hiddenValueCallbacksRefs = [];
+        this.setThemeLoading(true);
       }
       // Only clear error state on user-initiated submits (isTrusted events).
       // Auto-submitting callbacks (e.g. PingOneProtect, DeviceProfile) call nextStep without

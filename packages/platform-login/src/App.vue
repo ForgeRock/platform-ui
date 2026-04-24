@@ -89,21 +89,25 @@ export default {
   ],
   setup() {
     const {
+      setThemeLoading,
       loadStaticTheme,
       loadTheme,
       loadTreeTheme,
       localizedFavicon,
       theme,
+      themeLoading,
     } = useTheme();
 
     const validTheme = computed(() => theme.value !== null && theme.value !== undefined && Object.keys(theme.value).length > 0);
 
     return {
+      setThemeLoading,
       loadStaticTheme,
       loadTheme,
       loadTreeTheme,
       localizedFavicon,
       theme,
+      themeLoading,
       validTheme,
     };
   },
@@ -115,7 +119,6 @@ export default {
       localizedJustifiedContent: '',
       localizedLogo: '',
       localizedLogoAltText: '',
-      themeLoading: false,
     };
   },
   created() {
@@ -144,7 +147,6 @@ export default {
      */
     async setupTheme(realm, treeId, nodeThemeId) {
       try {
-        this.themeLoading = true;
         let cleanRealm = realm === 'root' ? '/' : realm;
         if (cleanRealm.length > 1 && cleanRealm.charAt(0) === '/') {
           cleanRealm = cleanRealm.substring(1);
@@ -152,14 +154,16 @@ export default {
         if (this.$store.state.SharedStore.isFraas && cleanRealm === '/') {
           this.loadStaticTheme();
         } else {
+          let themeSetByNodeOrTree = false;
           if (nodeThemeId) {
             // First choice is setting theme from page node theme
             await this.loadTheme(cleanRealm, nodeThemeId);
+            themeSetByNodeOrTree = !!this.theme?.name;
           } else if (treeId) {
             // Second choice is theme assigned to tree, so we need to check if the tree is linked to a theme
-            await this.loadTreeTheme(cleanRealm, treeId);
+            themeSetByNodeOrTree = await this.loadTreeTheme(cleanRealm, treeId);
           }
-          if (this.theme?.name) {
+          if (themeSetByNodeOrTree) {
             // A theme was set by a node or tree, so save it to local storage
             this.saveToLocalStorage(this.theme._id || this.theme.name);
           } else if (this.$store.state.SharedStore.webStorageAvailable) {
@@ -184,8 +188,9 @@ export default {
       } catch {
         this.localizedLogo = this.localizedLogo || 'images/ping-logo-square-color.svg';
       } finally {
+        // Fallback clear themeLoading in case of any errors to prevent spinner from showing indefinitely
+        this.setThemeLoading(false);
         this.hideAppOnTransition = false;
-        this.themeLoading = false;
       }
     },
     themeTransitionHandler(val) {
