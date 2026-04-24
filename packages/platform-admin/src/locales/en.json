@@ -5014,6 +5014,8 @@
       "scope": "Scope"
     },
     "forms": {
+      "attributeTitle": "Apply Attribute Privileges",
+      "attributeDesc": "When selected, this form will only allow specific attributes to be edited if the user has the privileges to do so.",
       "form": "Form",
       "listView": {
         "actions": {

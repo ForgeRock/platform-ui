@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -102,6 +102,10 @@ const props = defineProps({
   transformSchema: {
     type: Boolean,
     default: true,
+  },
+  privilegeData: {
+    type: Object,
+    default: null,
   },
 });
 
@@ -217,7 +221,7 @@ function setValidSection({ sectionId, isValid }) {
 
 watch(() => props.form, async (newVal) => {
   const schema = props.transformSchema
-    ? transformSchemaToFormGenerator(newVal?.fields, props.readOnly, props.includeDefaults)
+    ? transformSchemaToFormGenerator(newVal?.fields, props.readOnly, props.includeDefaults, props.privilegeData)
     : newVal?.fields || [];
 
   // check for onLoad event script in the form
