@@ -12,6 +12,7 @@ import { email, required } from '@vee-validate/rules';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { URLSearchParams } from 'url';
+import { createTestingPinia } from '@pinia/testing';
 import {
   FRStep,
   FRAuth,
@@ -35,9 +36,11 @@ describe('Login.vue', () => {
     },
   };
   beforeEach(() => {
+    const pinia = createTestingPinia();
     jest.spyOn(LoginMixin.methods, 'getConfigurationInfo').mockImplementation(() => Promise.resolve({ data: { realm: '/' } }));
     wrapper = shallowMount(Login, {
       global: {
+        plugins: [pinia],
         stubs: {
           'router-link': true,
         },

@@ -40,6 +40,7 @@ describe('Tests for Journey Choice collector', { tags: ['@forgeops', '@cloud'] }
   retryableBeforeEach(() => {
     // Set up intercept
     cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
+    cy.intercept('POST', '**/authenticate*').as('authenticate');
 
     // Load base Journey URL
     cy.visit(locationUrl);
@@ -129,7 +130,7 @@ describe('Tests for Journey Choice collector', { tags: ['@forgeops', '@cloud'] }
     cy.findByRole('button', { name: 'Yes!' }).click();
 
     // Wait for successfull login
-    cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
+    cy.findAllByRole('heading', { timeout: 20000 }).contains(`${userName}`).should('be.visible');
   });
 
   it('Page Node with Message Node - Negative answer works correctly', () => {
@@ -148,7 +149,7 @@ describe('Tests for Journey Choice collector', { tags: ['@forgeops', '@cloud'] }
     cy.findByRole('button', { name: 'No!' }).click();
 
     // Wait for a Journey page to fully load
-    cy.wait('@getTheme', { timeout: 10000 });
+    cy.wait('@authenticate', { timeout: 10000 });
 
     // Journey returns back to Choice Collector page
     cy.findByRole('heading', { name: 'Radio Choice Collector!' }).should('be.visible');
@@ -172,7 +173,7 @@ describe('Tests for Journey Choice collector', { tags: ['@forgeops', '@cloud'] }
     cy.findByRole('button', { name: 'OK!' }).click();
 
     // Wait for successfull login
-    cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
+    cy.findAllByRole('heading', { timeout: 20000 }).contains(`${userName}`).should('be.visible');
   });
 
   it('Message Node - Negative answer works correctly', () => {
@@ -191,7 +192,7 @@ describe('Tests for Journey Choice collector', { tags: ['@forgeops', '@cloud'] }
     cy.findByRole('button', { name: 'NOT OK!' }).click();
 
     // Wait for a Journey page to fully load
-    cy.wait('@getTheme', { timeout: 10000 });
+    cy.wait('@authenticate', { timeout: 10000 });
 
     // Journey returns back to Choice Collector page
     cy.findByRole('heading', { name: 'Radio Choice Collector!' }).should('be.visible');
@@ -199,7 +200,7 @@ describe('Tests for Journey Choice collector', { tags: ['@forgeops', '@cloud'] }
     cy.findByRole('radio', { name: 'Go back :/' }).should('be.checked');
   });
 
-  xit('Page Node with Select Choice Collector - Happy path works correctly', () => {
+  it('Page Node with Select Choice Collector - Happy path works correctly', () => {
     const nodeToLoad = 'Select Choice Collector!';
 
     // Login as Enduser
@@ -219,7 +220,7 @@ describe('Tests for Journey Choice collector', { tags: ['@forgeops', '@cloud'] }
     cy.findByRole('button', { name: 'Next' }).click();
 
     // Wait for successfull login
-    cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
+    cy.findAllByRole('heading', { timeout: 20000 }).contains(`${userName}`).should('be.visible');
   });
 
   it('Page Node with Select Choice Collector - Unhappy path works correctly', () => {
@@ -239,7 +240,7 @@ describe('Tests for Journey Choice collector', { tags: ['@forgeops', '@cloud'] }
     cy.findByRole('button', { name: 'Next' }).click();
 
     // Wait for a Journey page to fully load
-    cy.wait('@getTheme', { timeout: 10000 });
+    cy.wait('@authenticate', { timeout: 10000 });
 
     // Journey returns back to Choice Collector page
     cy.findByRole('heading', { name: 'Radio Choice Collector!' }).should('be.visible');

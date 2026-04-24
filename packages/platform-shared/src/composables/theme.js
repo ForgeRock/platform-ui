@@ -34,8 +34,18 @@ import {
 export default function useTheme() {
   const themeStore = useThemeStore();
   const theme = computed(() => themeStore.theme || themeConstants.DEFAULT_THEME_PARAMS);
+  const themeLoading = computed(() => themeStore.themeLoading);
+  const previouslyQueriedTreeId = computed(() => themeStore.previouslyQueriedTreeId);
   const realmThemes = computed(() => themeStore.realmThemes);
   const localizedFavicon = computed(() => getLocalizedString(theme.value.favicon, i18n.global.locale, i18n.global.fallbackLocale));
+
+  /**
+   * Sets the theme loading state in the store
+   * @param {Boolean} loading Whether the theme is currently loading or not, default is true
+   */
+  function setThemeLoading(loading = true) {
+    themeStore.themeLoading = loading;
+  }
 
   /**
    * Addes defaults to all themes on current realm and brings old formats to current format
@@ -181,24 +191,26 @@ export default function useTheme() {
   }
 
   /**
-   * Gets the theme linked to a specific tree
+   * Gets the theme linked to a specific tree if the current theme is not already this theme
    * @param {String} realm The realm that the theme is located in
    * @param {String} treeId The id of the tree to get the theme for
    * @returns
    */
   async function loadTreeTheme(realm = '/', treeId) {
-    let decodedTheme = {};
-    try {
-      const { data: { result } } = await getThemes({ realm, _queryFilter: `linkedTrees eq "${treeId}"` });
-      if (result[0]) {
-        decodedTheme = decodeThemeScripts(result[0]);
-        themeStore.theme = addDefaultsToTheme(decodedTheme);
-      } else {
-        themeStore.theme.name = '';
+    if (previouslyQueriedTreeId.value !== treeId) {
+      try {
+        const { data: { result } } = await getThemes({ realm, _queryFilter: `linkedTrees eq "${treeId}"` });
+        themeStore.previouslyQueriedTreeId = treeId;
+        if (result[0]) {
+          themeStore.theme = addDefaultsToTheme(decodeThemeScripts(result[0]));
+          return true;
+        }
+      } catch {
+        // No error needed, just no theme linked to tree
       }
-    } catch {
-      // No error needed, just no theme linked to tree
+      return false;
     }
+    return !!themeStore.theme?.name;
   }
 
   /**
@@ -210,23 +222,34 @@ export default function useTheme() {
       logoHeight: 72,
       favicon: 'favicon.ico',
     };
+    themeStore.themeLoading = false;
+    themeStore.previouslyQueriedTreeId = null;
   }
 
   /**
-   * Gets specified theme and saves it to store
+   * Gets specified theme if the current theme is not already this theme and saves it to store
    * @param {String} realm The realm that the theme is located in
    * @param {String} themeIdentifier The id or name of the theme to get
    */
-  async function loadTheme(realm = '/', themeIdentifier, showError = false) {
-    let loadedTheme = {};
-    if (!themeIdentifier) {
-      loadedTheme = await getTheme(realm, 'isDefault eq true', null, [], showError) || {};
-    } else {
-      const returnedTheme = await getTheme(realm, `_id eq "${themeIdentifier}" or name eq "${themeIdentifier}"`, themeIdentifier, [], showError);
-      loadedTheme = returnedTheme || {};
+  async function loadTheme(realm = '/', themeIdentifier, showError = false, circumventCache = false) {
+    try {
+      if (!themeIdentifier) {
+        if (circumventCache || !theme.value?.isDefault || !theme.value.name) {
+          // if the current theme in the store is default with a name, we know it
+          // is the user-defined default theme and can use it instead of making an API call
+          themeStore.themeLoading = true;
+          themeStore.theme = await getTheme(realm, 'isDefault eq true', null, [], showError) || {};
+        }
+      } else if (circumventCache || (theme.value?._id !== themeIdentifier && theme.value?.name !== themeIdentifier)) {
+        // else if the current theme in the store matches the theme we are trying to load, use it instead of making an API call
+        themeStore.themeLoading = true;
+        const returnedTheme = await getTheme(realm, `_id eq "${themeIdentifier}" or name eq "${themeIdentifier}"`, themeIdentifier, [], showError);
+        themeStore.theme = returnedTheme || {};
+      }
+    } finally {
+      themeStore.themeLoading = false;
+      themeStore.previouslyQueriedTreeId = null;
     }
-
-    themeStore.theme = loadedTheme;
   }
 
   /**
@@ -309,6 +332,7 @@ export default function useTheme() {
 
   return {
     addTreeTheme,
+    setThemeLoading,
     deleteTheme,
     getRealmThemes,
     getAllThemes,
@@ -323,5 +347,6 @@ export default function useTheme() {
     saveTheme,
     setThemeAsDefault,
     theme,
+    themeLoading,
   };
 }
