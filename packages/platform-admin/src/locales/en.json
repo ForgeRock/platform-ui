@@ -2326,11 +2326,21 @@
         "multipleAssignmentError": "Multiple override assignments found."
       },
       "accountsTab": {
+        "accountAssigned": "Account successfully assigned",
+        "accountModalTitle": "{appName} Account Details",
+        "accountUpdated": "Account successfully updated",
         "assignUsers": "Assign Users",
+        "chooseUsers": "Choose users to assign to this application.",
+        "errorAssigningAccount": "Error assigning account.",
+        "errorLoadingNonAccountObjects": "Error loading non-account objects.",
         "errorLoadingAccounts": "Error loading accounts.",
+        "errorLoadingAccountForm": "Error loading account form.",
+        "errorUpdatingAccount": "Error updating account.",
         "noAccounts": "No accounts found.",
         "roleBased": "Role-Based",
-        "title": "Accounts"
+        "title": "Accounts",
+        "userData": "User Data",
+        "userDataDescription": "Specify account details as they should exist in {appName}"
       },
       "provisioningTab": {
         "updateMappingSuccess": "Mappings set successfully",
