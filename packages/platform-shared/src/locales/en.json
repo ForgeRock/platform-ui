@@ -3152,6 +3152,19 @@
       "reportDetails": "Report Details",
       "runHistory": "Run History"
     },
+    "modal": {
+      "downloadReport": "Download Report ({fileType})",
+      "heading": "Export {fileType} Report",
+      "title": "Generating {fileType} Report...",
+      "exportReportMessage": "Your report is being generated and will be available for download here when it's ready. This may take several minutes.",
+      "done": "Done",
+      "success": {
+        "title": "Download Generated",
+        "subtitle": "Your report is now available for download."
+      },
+      "errorTitle": "There was an error generating the {fileType}",
+      "errorMessage": "Please try again or contact your administrator."
+    },
     "newDraft": "A new draft has been created",
     "newReportModal": {
       "descriptionInputLabel": "Description (optional)",
@@ -3270,10 +3283,16 @@
       },
       "runHistory": {
         "title": "Run History",
+        "downloadReady": "Download successfully generated",
         "table": {
           "downloadFile": "Download {fileType}",
           "downloadReport": "Download Report",
           "downloadingFile": "Downloading {fileType}",
+          "errorFile": "{fileType} Error",
+          "exportFile": "Export {fileType}",
+          "exportingReport": "Exporting report",
+          "exportingFile": "Exporting {fileType}",
+          "exportingFileDownload": "Requesting a {fileType} Download",
           "runDetails": "Run Details",
           "viewReport": "View Report"
         },

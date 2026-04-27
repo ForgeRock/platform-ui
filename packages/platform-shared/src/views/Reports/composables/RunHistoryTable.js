@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,7 +13,7 @@ export default function useRunHistoryTable() {
    * @param {String} type File type
    * @returns {String}
    */
-  function getDownloadFormatType(type) {
+  function getExportFormatType(type) {
     switch (type) {
       case 'JSON':
         return 'jsonl';
@@ -42,33 +42,68 @@ export default function useRunHistoryTable() {
       EXPIRED: 'expired',
     };
 
+    const exportStatus = {
+      EXPORT_PENDING: 'exporting',
+      EXPORT_SUCCESS: 'download',
+      EXPORT_FAILED: 'error',
+    };
+
     return runs.map((run) => ({
       date: run.createDate,
       runId: run.runId,
       reportStatus: reportStatus[run.status],
-      download: {
-        JSON: 'download',
-        CSV: 'download',
+      export: {
+        JSON: exportStatus[run.exportJsonStatus] || 'export',
+        CSV: exportStatus[run.exportCsvStatus] || 'export',
+      },
+      canDownload(_exportStatus) {
+        return _exportStatus === 'download' || _exportStatus === 'downloading';
+      },
+      filterByExportStatus(_exportStatus) {
+        const allExports = this.export;
+        return Object.keys(allExports).filter((fileType) => allExports[fileType] === _exportStatus);
       },
       hasAnyActiveDownloads() {
-        return Object.values(this.download).includes('downloading');
+        return !!this.filterByExportStatus('downloading').length;
+      },
+      hasAnyActiveExports() {
+        return !!this.filterByExportStatus('exporting').length;
+      },
+      hasAnyDownloads() {
+        return !!this.filterByExportStatus('download').length || !!this.filterByExportStatus('downloading').length;
+      },
+      hasAnyErrors() {
+        return !!this.filterByExportStatus('error').length;
+      },
+      reportIsExpiredAndFileTypeHasDownload(_exportStatus) {
+        return this.reportStatus === 'expired' && this.canDownload(_exportStatus);
+      },
+      reportIsExpiredAndHasAtLeastOneDownload() {
+        return this.reportStatus === 'expired' && this.hasAnyDownloads();
       },
       statusLabel(_exportStatus, fileType) {
         switch (_exportStatus) {
+          case 'exporting':
+            return i18n.global.t('reports.tabs.runHistory.table.exportingFile', { fileType });
+          case 'download':
+            return i18n.global.t('reports.tabs.runHistory.table.downloadFile', { fileType });
           case 'downloading':
             return i18n.global.t('reports.tabs.runHistory.table.downloadingFile', { fileType });
           default:
-            return i18n.global.t('reports.tabs.runHistory.table.downloadFile', { fileType });
+            return i18n.global.t('reports.tabs.runHistory.table.exportFile', { fileType });
         }
       },
       tooltipId() {
         return `tooltip-${this.runId.split('-').pop()}`;
       },
       tooltipLabel() {
+        if (this.hasAnyActiveExports()) {
+          return i18n.global.t('reports.tabs.runHistory.table.exportingFile', { fileType: '' });
+        }
         if (this.hasAnyActiveDownloads()) {
           return i18n.global.t('reports.tabs.runHistory.table.downloadingFile', { fileType: '' });
         }
-        return i18n.global.t('reports.tabs.runHistory.table.downloadFile', { fileType: '' });
+        return i18n.global.t('reports.tabs.runHistory.table.exportFile', { fileType: '' });
       },
     }));
   }
@@ -101,7 +136,7 @@ export default function useRunHistoryTable() {
     * property, while maintaining the rest of the original values
     * (as shallow references) and returning a new object.
     * @param {Object} collection source object
-    * @param {String} path target path in period delimeter format: 'download.JSON'
+    * @param {String} path target path in period delimeter format: 'export.JSON'
     * @param {*} value replacement value
     * @returns {Object}
     */
@@ -125,7 +160,7 @@ export default function useRunHistoryTable() {
   }
 
   return {
-    getDownloadFormatType,
+    getExportFormatType,
     reportHistoryTableDataGenerator,
     tableColumns,
     updateValueInNestedObject,
