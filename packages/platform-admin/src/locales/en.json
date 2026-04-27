@@ -312,7 +312,39 @@
     "authentication": "Authentication",
     "modules": {
       "title": "Modules",
-      "subtitle": "Configure desired Authentication Modules to verify identities. OpenIDM evaluates these modules in the order specified."
+      "subtitle": "Configure desired Authentication Modules to verify identities. IDM evaluates these modules in the order specified.",
+      "name": "Name",
+      "module": "Module",
+      "noModulesText": "No authentication modules configured",
+      "deleteModule": "Delete Module",
+      "deleteWarning": "Are you sure you want to delete the module '{moduleName}'? This cannot be undone.",
+      "dragDropHelp": "Modules are evaluated in the order shown",
+      "saveError": "There was an error saving the module.",
+      "saveSuccess": "Module saved successfully.",
+      "deleteError": "There was an error deleting the module.",
+      "deleteSuccess": "Module deleted successfully.",
+      "moduleTypes": {
+        "STATIC_USER": {
+          "name": "Static User",
+          "msg": "Anonymous authentication"
+        },
+        "CLIENT_CERT": {
+          "name": "Client Cert",
+          "msg": "Enables authentication with a certificate"
+        },
+        "MANAGED_USER": {
+          "name": "Managed User",
+          "msg": "Queries the OpenIDM repository for external users"
+        },
+        "INTERNAL_USER": {
+          "name": "Internal User",
+          "msg": "Queries the internal OpenIDM repository"
+        },
+        "PASSTHROUGH": {
+          "name": "Passthrough",
+          "msg": "Queries an external system for authentication"
+        }
+      }
     },
     "session": {
       "title": "Session",
