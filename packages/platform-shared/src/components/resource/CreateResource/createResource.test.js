@@ -73,6 +73,24 @@ describe('CreateResource.vue', () => {
             title: 'arrayTest',
             value: [],
           },
+          {
+            key: 'stringNullTest',
+            default: 'stringDefault',
+            isConditional: false,
+            isTemporalConstraint: false,
+            type: ['string', 'null'],
+            title: 'Email Address',
+            value: '',
+          },
+          {
+            key: 'numberNullTest',
+            isConditional: false,
+            isTemporalConstraint: false,
+            type: ['number', 'null'],
+            title: 'Number Field',
+            validation: 'required',
+            value: 'numberDefault',
+          },
         ],
         resourceName: 'testName',
         resourceType: 'testType',
@@ -133,6 +151,8 @@ describe('CreateResource.vue', () => {
       boolTest: false,
       password: '',
       privileges: '',
+      stringNullTest: '',
+      numberNullTest: '',
     });
   });
 
@@ -222,6 +242,8 @@ describe('CreateResource.vue', () => {
       password: '',
       privileges: '',
       arrayTest: [],
+      stringNullTest: '',
+      numberNullTest: '',
     });
     wrapper.vm.isSaving = true;
     wrapper.vm.saveForm();
@@ -274,11 +296,32 @@ describe('CreateResource.vue', () => {
       title: 'arrayTest',
       validation: 'required',
       value: [],
+    },
+    {
+      key: 'stringNullTest',
+      default: 'stringDefault',
+      isConditional: false,
+      isTemporalConstraint: false,
+      type: ['string', 'null'],
+      title: 'Email Address',
+      validation: 'required',
+      value: 'stringDefault',
+    },
+    {
+      key: 'numberNullTest',
+      isConditional: false,
+      isTemporalConstraint: false,
+      type: ['number', 'null'],
+      title: 'Number Field',
+      validation: 'required',
+      value: 'numberDefault',
     }]);
     expect(wrapper.vm.formFields).toStrictEqual({
       boolTest: false,
       arrayTest: [],
       privileges: 'testDefault',
+      stringNullTest: 'stringDefault',
+      numberNullTest: 'numberDefault',
     });
     expect(displayNotificationSpy).toHaveBeenCalled();
   });
@@ -290,6 +333,8 @@ describe('CreateResource.vue', () => {
       password: '',
       privileges: '',
       arrayTest: [],
+      stringNullTest: '',
+      numberNullTest: '',
     });
     expect(wrapper.vm.clonedCreateProperties[1].value).toBe(null);
     wrapper.vm.setRelationshipValue('testData', 'password');

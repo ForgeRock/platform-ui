@@ -28,9 +28,9 @@ of the MIT license. See the LICENSE file for details. -->
               class="mb-3"
               name="edit-personal-form">
               <template
-                v-for="(field, index) in clonedCreateProperties"
+                v-for="(field, index) in annotatedCreateProperties"
                 :key="`createResource${index}`">
-                <BFormGroup v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined">
+                <BFormGroup v-if="field.isAcceptedProperty">
                   <FrField
                     v-model="field.value"
                     :autocomplete="disableAutocomplete ? 'off' : undefined"
@@ -284,10 +284,22 @@ export default {
       }
       return this.$t('common.newObject', { object: this.getTranslation(name) });
     },
+    annotatedCreateProperties() {
+      return this.clonedCreateProperties.map((property) => {
+        property.isAcceptedProperty = this.isAcceptedProperty(property);
+        return property;
+      });
+    },
   },
   methods: {
     isCloseOnSelect(field) {
       return !has(field, 'items');
+    },
+    isAcceptedProperty(property) {
+      return (((property.type?.includes('string')) && !property.isConditional)
+          || property.type?.includes('number')
+          || property.type === 'boolean')
+          && property.encryption === undefined;
     },
     saveForm() {
       if (this.isSaving) {
@@ -370,6 +382,7 @@ export default {
       });
       return data;
     },
+
     setRelationshipValue(data, fieldKey) {
       const property = this.clonedCreateProperties.find((prop) => prop.key === fieldKey);
       property.value = data;
@@ -402,7 +415,7 @@ export default {
         if (Object.prototype.hasOwnProperty.call(prop, 'default') && prop.default !== null) {
           prop.value = prop.default;
         }
-        if (prop.type === 'string' || prop.type === 'number') {
+        if (prop.type === 'string' || prop.type?.includes('string') || prop.type === 'number' || prop.type?.includes('number')) {
           tempFormFields[prop.key] = '';
         } else if (prop.type === 'array' && prop.items.type === 'relationship') {
           tempFormFields[prop.key] = [];
@@ -467,6 +480,15 @@ export default {
       }
       if (field.type === 'boolean') {
         return 'checkbox';
+      }
+      if (Array.isArray(field.type)) {
+        // When properties are set to NULL in the schema,
+        // they are returned as an array of types, e.g.
+        // ["string", "null"]. In this case, we want to
+        // use the first type in the array to determine the
+        // field type since the list is limited to two entries.
+        const [fieldType] = field.type;
+        return fieldType;
       }
       if (has(field, 'enum')) {
         return 'select';
