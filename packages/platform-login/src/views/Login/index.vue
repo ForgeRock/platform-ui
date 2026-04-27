@@ -63,7 +63,10 @@ of the MIT license. See the LICENSE file for details. -->
                     v-if="!loading && !themeLoading"
                     id="callbacksPanel"
                     data-testid="callbacks_panel">
+                    <!-- Intentional duplicate id: only one layout variant is rendered at a time;
+                         loginFailureAlert is the stable aria-describedby target for the first input. -->
                     <FrAlert
+                      id="loginFailureAlert"
                       :show="loginFailure"
                       :dismissible="false"
                       variant="error"
@@ -287,7 +290,10 @@ of the MIT license. See the LICENSE file for details. -->
               v-if="!loading && !themeLoading"
               class="m-0">
               <BCol xl="9">
+                <!-- Intentional duplicate id: only one layout variant is rendered at a time;
+                     loginFailureAlert is the stable aria-describedby target for the first input. -->
                 <FrAlert
+                  id="loginFailureAlert"
                   :show="loginFailure"
                   :dismissible="false"
                   variant="error"
@@ -789,64 +795,100 @@ export default {
   },
   methods: {
     /**
-     * Focus on a tag according to the selected theme of the current Step (journey node).
-     * The order of focus is determined by the following conditions:
-     * - 1. Focus on the main content area - ref `callbackMain` or `main`.
-     *   - a. If `journeyFocusElement` is set to `content`
-     *   - b. If `journeyFocusElement` is set to `headerFirstStep` and it's the first step
-     *   - c. If `journeyFocusFirstFocusableItemEnabled` is true and it's the first step
-     * - 2. Otherwise, focus on the header of the app if it exists; if not, focus on the container element.
+     * Sets focus after the current journey step renders.
      *
-     * **Note:** `journeyFocusFirstFocusableItemEnabled` was an old property that could be enabled in imported journeys, if enabled it will have the default accessibility behavior of content focused
+     * Focus priority:
+     * - If server-returned inline field errors are present, focus the first invalid field.
+     * - If a global login failure is present, focus the first visible form input and associate it with the failure alert.
+     * - Otherwise, focus the configured journey target: main content, header, or container.
      *
-     * This logic ensures that keyboard users and screen readers are directed to the most relevant part of the page.
-     * Additionally, it adds an 'auto-focused' class to the focused element for styling purposes and removes it when the element loses focus.
-     * The setTimeout with a 50ms delay is used to re-apply focus in case other scripts or Vue rendering interfere with the initial focus, ensuring a better user experience for assistive technologies.
-    */
-    handleFocus() {
-      const AUTO_FOCUSED_CLASS = 'auto-focused';
+     * This keeps error focus from competing with the default header/content focus behavior,
+     * especially when theme loading temporarily hides and re-renders the form.
+     */
+    async handleFocus() {
+      // Route error states through handleFocus so error focus takes
+      // precedence over the default header/content focus after theme loading.
+      const hasInlineErrors = this.componentList.some(
+        (c) => (c.callbackSpecificProps?.errors?.length || 0) > 0,
+      );
 
-      // Defer the entire focus operation by 200ms so the aria-live="assertive" first-insertion
-      setTimeout(() => {
-        // Re-read refs inside the timeout — they may not exist at call time (e.g. during theme load).
-        let focusElement = this.$refs.container;
+      let focusElement;
+      if (hasInlineErrors) {
+        focusElement = await this.focusFirstInvalidField();
+      } else if (this.loginFailure) {
+        focusElement = await this.focusFirstInputAfterLoginFailure();
+      }
 
+      if (!focusElement) {
         if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
           focusElement = this.$refs.callbackMain || this.$refs.main;
         } else {
-          focusElement = this.$refs.callbackAppHeaderContainer || focusElement;
+          focusElement = this.$refs.callbackAppHeaderContainer || this.$refs.container;
         }
+      }
 
-        if (typeof focusElement?.focus !== 'function') return;
-        // Cleanup any existing event listeners from memory leaks
+      if (typeof focusElement?.focus === 'function') {
+        const AUTO_FOCUSED_CLASS = 'auto-focused';
         if (this.autoFocusCleanup?.element && this.autoFocusCleanup?.handler) {
           this.autoFocusCleanup.element.removeEventListener('blur', this.autoFocusCleanup.handler);
+          this.autoFocusCleanup.element.classList.remove(AUTO_FOCUSED_CLASS);
         }
 
-        // Event handler when focused element loses focus
         const removeAutoFocusedClass = () => {
           focusElement.classList.remove(AUTO_FOCUSED_CLASS);
-          focusElement.removeEventListener('blur', removeAutoFocusedClass);
-          // Clear stored cleanup reference if it matches current element
-          if (this.autoFocusCleanup?.element === focusElement && this.autoFocusCleanup?.handler === removeAutoFocusedClass) {
-            this.autoFocusCleanup = null;
-          }
+          this.autoFocusCleanup = null;
         };
 
-        if (!focusElement.classList.contains(AUTO_FOCUSED_CLASS)) {
-          focusElement.classList.add(AUTO_FOCUSED_CLASS);
-          focusElement.addEventListener('blur', removeAutoFocusedClass);
-        }
-
-        // Store cleanup reference for future use
-        this.autoFocusCleanup = {
-          element: focusElement,
-          handler: removeAutoFocusedClass,
-        };
+        focusElement.classList.add(AUTO_FOCUSED_CLASS);
+        focusElement.addEventListener('blur', removeAutoFocusedClass, { once: true });
+        this.autoFocusCleanup = { element: focusElement, handler: removeAutoFocusedClass };
 
         // Apply focus to ensure keyboard users and screen readers notice the content area
         focusElement.focus();
-      }, 200);
+      }
+    },
+    /**
+     * After a global login failure (server returns LoginFailure), sets aria-describedby on the
+     * first field component to associate it with the loginFailureAlert banner, then returns the
+     * corresponding DOM input so handleFocus can apply focus and the 50ms re-focus guard.
+     * Satisfies WCAG 2.4.3 (Focus Order).
+     *
+     * Order matters: describedbyId must be set on the component BEFORE the DOM is queried
+     * so that aria-describedby is already in the DOM when the screen reader announces the field.
+     */
+    async focusFirstInputAfterLoginFailure() {
+      const firstFieldComponent = this.componentList.find(
+        (c) => c.type === 'FrField' || c.type === 'FrPasswordCallback',
+      );
+      if (firstFieldComponent) {
+        firstFieldComponent.callbackSpecificProps = {
+          ...firstFieldComponent.callbackSpecificProps,
+          describedbyId: 'loginFailureAlert',
+        };
+      }
+      await this.$nextTick();
+      const fieldName = firstFieldComponent?.callbackSpecificProps?.name;
+      return (fieldName && this.$el.querySelector(`[name="${fieldName}"]`))
+        || this.$el.querySelector('#wrapper input:not([type="hidden"]):not([hidden]):not([disabled]):not([readonly])');
+    },
+    /**
+     * Resolves the first invalid field DOM input after server-returned inline errors (WCAG 2.4.3)
+     * and returns it so handleFocus can apply focus and the 50ms re-focus guard.
+     * FrField wires aria-describedby to its inline error internally, so focusing is sufficient.
+     */
+    async focusFirstInvalidField() {
+      const firstErrorComponent = this.componentList.find(
+        (c) => (c.callbackSpecificProps?.errors?.length || 0) > 0,
+      );
+      if (!firstErrorComponent) return null;
+      await this.$nextTick();
+      const errorName = firstErrorComponent.callbackSpecificProps?.name;
+      const escapedName = errorName && window.CSS?.escape
+        ? CSS.escape(errorName)
+        : errorName;
+
+      return (escapedName && this.$el.querySelector(`[name="${escapedName}"]`))
+        || this.$el.querySelector('#wrapper input[aria-invalid="true"]:not([type="hidden"]):not([disabled]):not([readonly])');
     },
     /**
      * Redirects user to forbidden if non-root realm & journey pages have been inactivated for hosted pages
@@ -1461,10 +1503,12 @@ export default {
                       this.step.payload.authId = authId;
                       this.loading = false;
                       this.loginFailure = true;
+                      this.$nextTick(() => this.handleFocus());
                     });
                   } else {
                     this.loading = false;
                     this.loginFailure = true;
+                    this.$nextTick(() => this.handleFocus());
                   }
                 });
               }
@@ -1487,6 +1531,11 @@ export default {
               // setup the form based on callback info/values obtained from this.step
               this.buildTreeForm();
               this.loading = false;
+
+              // WCAG 2.4.3: if the server returned field-level errors, move focus to the first invalid field.
+              if (this.componentList.some((c) => (c.callbackSpecificProps?.errors?.length || 0) > 0)) {
+                this.$nextTick(() => this.handleFocus());
+              }
               break;
           }
         },

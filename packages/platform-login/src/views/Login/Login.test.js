@@ -1256,20 +1256,16 @@ describe('Component Test', () => {
         expect(focusedElement.classList.contains('auto-focused')).toBe(true);
       });
 
-      it('does not add "auto-focused" class twice if already present', async () => {
+      it('removes previous auto-focused class before re-adding it', async () => {
         wrapper = createWrapper();
         await flushPromises();
 
         const focusedElement = wrapper.vm.$refs.container;
         focusedElement.classList.add('auto-focused');
 
-        const addSpy = jest.spyOn(focusedElement.classList, 'add');
+        await wrapper.vm.handleFocus();
 
-        wrapper.vm.handleFocus();
-        jest.advanceTimersByTime(200);
-
-        expect(addSpy).not.toHaveBeenCalled();
-        addSpy.mockRestore();
+        expect(focusedElement.classList.contains('auto-focused')).toBe(true);
       });
 
       it('removes "auto-focused" class when element loses focus', async () => {
@@ -1296,10 +1292,9 @@ describe('Component Test', () => {
         const focusedElement = wrapper.vm.$refs.container;
         const addEventListenerSpy = jest.spyOn(focusedElement, 'addEventListener');
 
-        wrapper.vm.handleFocus();
-        jest.advanceTimersByTime(200);
+        await wrapper.vm.handleFocus();
 
-        expect(addEventListenerSpy).toHaveBeenCalledWith('blur', expect.any(Function));
+        expect(addEventListenerSpy).toHaveBeenCalledWith('blur', expect.any(Function), { once: true });
         addEventListenerSpy.mockRestore();
       });
 
@@ -1350,18 +1345,15 @@ describe('Component Test', () => {
       });
     });
 
-    describe('handleFocus() - Timeout Re-focus Logic', () => {
-      it('focuses element after 200ms timeout', async () => {
+    describe('handleFocus() - Focus Invocation', () => {
+      it('focuses element synchronously when called', async () => {
         wrapper = createWrapper();
         await flushPromises();
 
         const focusedElement = wrapper.vm.$refs.container;
         const focusSpy = jest.spyOn(focusedElement, 'focus');
 
-        wrapper.vm.handleFocus();
-        expect(focusSpy).not.toHaveBeenCalled(); // not yet — deferred
-
-        jest.advanceTimersByTime(200);
+        await wrapper.vm.handleFocus();
 
         expect(focusSpy).toHaveBeenCalledTimes(1);
         focusSpy.mockRestore();
@@ -1479,6 +1471,276 @@ describe('Component Test', () => {
 
         expect(headerFocusSpy).not.toHaveBeenCalled();
         expect(mainFocusSpy).toHaveBeenCalled();
+      });
+    });
+    describe('focusFirstInputAfterLoginFailure()', () => {
+      it('returns the first visible input via fallback selector when no named component exists', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+        await wrapper.setData({ componentList: [] });
+
+        const mockInput = { focus: jest.fn() };
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector').mockReturnValue(mockInput);
+
+        const result = await wrapper.vm.focusFirstInputAfterLoginFailure();
+
+        expect(querySelectorSpy).toHaveBeenCalledWith(
+          '#wrapper input:not([type="hidden"]):not([hidden]):not([disabled]):not([readonly])',
+        );
+        expect(result).toBe(mockInput);
+        querySelectorSpy.mockRestore();
+      });
+
+      it('returns input by component name so describedbyId and focus target are always the same element', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { label: 'Username', name: 'callback_0' } },
+          ],
+        });
+
+        const mockInput = { focus: jest.fn() };
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector').mockReturnValue(mockInput);
+
+        const result = await wrapper.vm.focusFirstInputAfterLoginFailure();
+
+        expect(querySelectorSpy).toHaveBeenCalledWith('[name="callback_0"]');
+        expect(result).toBe(mockInput);
+        querySelectorSpy.mockRestore();
+      });
+
+      it('does not throw when no input is found in the form', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector').mockReturnValue(null);
+
+        expect(() => {
+          wrapper.vm.focusFirstInputAfterLoginFailure();
+        }).not.toThrow();
+        querySelectorSpy.mockRestore();
+      });
+
+      it('sets describedbyId on the first FrField component to link it to the error alert', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { label: 'Username', name: 'username' } },
+            { type: 'FrPasswordCallback', callbackSpecificProps: { label: 'Password', name: 'password' } },
+          ],
+        });
+
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector').mockReturnValue({ focus: jest.fn() });
+
+        wrapper.vm.focusFirstInputAfterLoginFailure();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.componentList[0].callbackSpecificProps.describedbyId).toBe('loginFailureAlert');
+        expect(wrapper.vm.componentList[1].callbackSpecificProps.describedbyId).toBeUndefined();
+        querySelectorSpy.mockRestore();
+      });
+
+      it('sets describedbyId on the first FrPasswordCallback when it appears before FrField', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrPasswordCallback', callbackSpecificProps: { label: 'Password', name: 'password' } },
+          ],
+        });
+
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector').mockReturnValue({ focus: jest.fn() });
+
+        wrapper.vm.focusFirstInputAfterLoginFailure();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.componentList[0].callbackSpecificProps.describedbyId).toBe('loginFailureAlert');
+        querySelectorSpy.mockRestore();
+      });
+
+      it('does not set describedbyId when componentList has no text input callbacks', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({ componentList: [] });
+
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector').mockReturnValue(null);
+
+        wrapper.vm.focusFirstInputAfterLoginFailure();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.componentList).toHaveLength(0);
+        querySelectorSpy.mockRestore();
+      });
+
+      it('preserves existing callbackSpecificProps when setting describedbyId', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { label: 'Username', name: 'username', value: 'testuser' } },
+          ],
+        });
+
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector').mockReturnValue({ focus: jest.fn() });
+
+        wrapper.vm.focusFirstInputAfterLoginFailure();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.componentList[0].callbackSpecificProps).toEqual({
+          label: 'Username',
+          name: 'username',
+          value: 'testuser',
+          describedbyId: 'loginFailureAlert',
+        });
+        querySelectorSpy.mockRestore();
+      });
+    });
+
+    describe('focusFirstInvalidField()', () => {
+      it('does nothing when no component has errors', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { name: 'callback_0', errors: [] } },
+          ],
+        });
+
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector');
+
+        wrapper.vm.focusFirstInvalidField();
+        await wrapper.vm.$nextTick();
+        await wrapper.vm.$nextTick();
+
+        expect(querySelectorSpy).not.toHaveBeenCalled();
+        querySelectorSpy.mockRestore();
+      });
+
+      it('returns the input matched by the error component name', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { name: 'callback_2', errors: ['Has to match pattern'] } },
+          ],
+        });
+
+        const mockInput = { focus: jest.fn() };
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector').mockReturnValue(mockInput);
+
+        const result = await wrapper.vm.focusFirstInvalidField();
+
+        expect(querySelectorSpy).toHaveBeenCalledWith('[name="callback_2"]');
+        expect(result).toBe(mockInput);
+        querySelectorSpy.mockRestore();
+      });
+
+      it('falls back to aria-invalid selector when name-based query returns null', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { name: 'callback_2', errors: ['error'] } },
+          ],
+        });
+
+        const mockInput = { focus: jest.fn() };
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector')
+          .mockImplementation((selector) => {
+            if (selector === '[name="callback_2"]') return null;
+            return mockInput;
+          });
+
+        const result = await wrapper.vm.focusFirstInvalidField();
+
+        expect(querySelectorSpy).toHaveBeenCalledWith('#wrapper input[aria-invalid="true"]:not([type="hidden"]):not([disabled]):not([readonly])');
+        expect(result).toBe(mockInput);
+        querySelectorSpy.mockRestore();
+      });
+
+      it('does not throw when both selectors return null', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { name: 'callback_2', errors: ['error'] } },
+          ],
+        });
+
+        const querySelectorSpy = jest.spyOn(wrapper.vm.$el, 'querySelector').mockReturnValue(null);
+
+        try {
+          wrapper.vm.focusFirstInvalidField();
+          await wrapper.vm.$nextTick();
+          await wrapper.vm.$nextTick();
+        } finally {
+          querySelectorSpy.mockRestore();
+        }
+      });
+    });
+
+    describe('handleFocus() - inline error and loginFailure guards', () => {
+      it('calls focusFirstInvalidField instead of container focus when componentList has errors', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { name: 'callback_2', errors: ['Has to match pattern'] } },
+          ],
+        });
+
+        const focusFirstInvalidFieldSpy = jest.spyOn(wrapper.vm, 'focusFirstInvalidField').mockImplementation(() => {});
+        const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
+
+        wrapper.vm.handleFocus();
+
+        expect(focusFirstInvalidFieldSpy).toHaveBeenCalled();
+        expect(containerFocusSpy).not.toHaveBeenCalled();
+        focusFirstInvalidFieldSpy.mockRestore();
+        containerFocusSpy.mockRestore();
+      });
+
+      it('calls focusFirstInputAfterLoginFailure instead of container focus when loginFailure is true', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({ loginFailure: true });
+
+        const focusFirstInputSpy = jest.spyOn(wrapper.vm, 'focusFirstInputAfterLoginFailure').mockImplementation(() => {});
+        const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
+
+        wrapper.vm.handleFocus();
+
+        expect(focusFirstInputSpy).toHaveBeenCalled();
+        expect(containerFocusSpy).not.toHaveBeenCalled();
+        focusFirstInputSpy.mockRestore();
+        containerFocusSpy.mockRestore();
+      });
+
+      it('focuses container normally when there are no errors and no loginFailure', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({ loginFailure: false, componentList: [] });
+
+        const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
+
+        wrapper.vm.handleFocus();
+
+        expect(containerFocusSpy).toHaveBeenCalled();
+        containerFocusSpy.mockRestore();
       });
     });
   });
