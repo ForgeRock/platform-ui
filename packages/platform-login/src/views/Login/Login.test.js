@@ -282,6 +282,102 @@ describe('Login.vue', () => {
       expect(wrapper.vm.componentList.length).toBe(0);
     });
 
+    it('sets ariaLabelledbyId on ConfirmationCallback when preceded by TextOutputCallback', () => {
+      const step = new FRStep({
+        callbacks: [
+          {
+            type: 'TextOutputCallback',
+            output: [
+              { name: 'message', value: 'Are you okay?' },
+              { name: 'messageType', value: '0' },
+            ],
+          },
+          {
+            type: 'ConfirmationCallback',
+            output: [
+              { name: 'options', value: ['Absolutely', 'I need oxygen'] },
+              { name: 'defaultOption', value: 0 },
+            ],
+            input: [
+              { name: 'IDToken2', value: 0 },
+            ],
+          },
+        ],
+      });
+
+      wrapper.setData({ step, loading: true });
+      wrapper.vm.buildTreeForm();
+
+      const textOutputComponent = wrapper.vm.componentList.find((component) => component.type === 'FrTextOutputCallback');
+      const confirmationComponent = wrapper.vm.componentList.find((component) => component.type === 'FrConfirmationCallback');
+      expect(textOutputComponent).toBeTruthy();
+      expect(textOutputComponent.callbackSpecificProps.hideTextOutput).toBe(false);
+      expect(confirmationComponent).toBeTruthy();
+      expect(confirmationComponent.callbackSpecificProps.ariaLabelledbyId).toBe(`message-${textOutputComponent.index}`);
+    });
+
+    it('does not set ariaLabelledbyId on ConfirmationCallback when preceding TextOutputCallback is SCRIPT', () => {
+      const step = new FRStep({
+        callbacks: [
+          {
+            type: 'TextOutputCallback',
+            output: [
+              { name: 'message', value: 'window.loginHelpers.nextStep();' },
+              { name: 'messageType', value: '4' },
+            ],
+          },
+          {
+            type: 'ConfirmationCallback',
+            output: [
+              { name: 'options', value: ['Absolutely', 'I need oxygen'] },
+              { name: 'defaultOption', value: 0 },
+            ],
+            input: [
+              { name: 'IDToken2', value: 0 },
+            ],
+          },
+        ],
+      });
+
+      wrapper.setData({ step, loading: true });
+      wrapper.vm.buildTreeForm();
+
+      const confirmationComponent = wrapper.vm.componentList.find((component) => component.type === 'FrConfirmationCallback');
+      expect(confirmationComponent).toBeTruthy();
+      expect(confirmationComponent.callbackSpecificProps.ariaLabelledbyId).toBeUndefined();
+    });
+
+    it('does not set ariaLabelledbyId when preceding TextOutputCallback is not INFORMATION type', () => {
+      const step = new FRStep({
+        callbacks: [
+          {
+            type: 'TextOutputCallback',
+            output: [
+              { name: 'message', value: 'Warning message' },
+              { name: 'messageType', value: '1' },
+            ],
+          },
+          {
+            type: 'ConfirmationCallback',
+            output: [
+              { name: 'options', value: ['Retry', 'Cancel'] },
+              { name: 'defaultOption', value: 0 },
+            ],
+            input: [
+              { name: 'IDToken2', value: 0 },
+            ],
+          },
+        ],
+      });
+
+      wrapper.setData({ step, loading: true });
+      wrapper.vm.buildTreeForm();
+
+      const confirmationComponent = wrapper.vm.componentList.find((component) => component.type === 'FrConfirmationCallback');
+      expect(confirmationComponent).toBeTruthy();
+      expect(confirmationComponent.callbackSpecificProps.ariaLabelledbyId).toBeUndefined();
+    });
+
     describe('extractWebAuthnComponents', () => {
       it('extracts WebAuthn components into webAuthnComponentGroup and updates nextButtonVisible', () => {
         const step = new FRStep({

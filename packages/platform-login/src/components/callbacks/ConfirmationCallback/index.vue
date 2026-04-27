@@ -5,6 +5,8 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     v-if="showOnlyPositiveAnswer"
+    role="group"
+    :aria-labelledby="groupAriaLabelledby"
     :class="[{ 'd-flex': variant === 'link' }]">
     <div :class="[{ 'btn-block mt-3': variant === 'link' },'d-flex',positionButton]">
       <BButton
@@ -20,6 +22,8 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
   <div
     v-else
+    role="group"
+    :aria-labelledby="groupAriaLabelledby"
     :class="[{ 'd-flex': variant === 'link' || positionButton }, positionButton]">
     <div
       v-for="(option, index) in options"
@@ -75,6 +79,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    /** Aria-labelledby for the button group.
+     * This is typically used to reference the preceding TextOutputCallback message when available. */
+    ariaLabelledbyId: {
+      type: String,
+      default: '',
+    },
   },
   mounted() {
     this.options = this.getTranslation(this.callback.getOptions());
@@ -88,6 +98,12 @@ export default {
       showOnlyPositiveAnswer: this.stage?.showOnlyPositiveAnswer,
       firstOption: '',
     };
+  },
+  computed: {
+    /** Add aria-labelledby to the button group when a preceding TextOutputCallback exists. */
+    groupAriaLabelledby() {
+      return this.ariaLabelledbyId || undefined;
+    },
   },
   methods: {
     setValue(value) {

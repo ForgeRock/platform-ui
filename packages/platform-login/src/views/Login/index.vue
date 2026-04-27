@@ -997,6 +997,25 @@ export default {
         const isRecoveryCodeCallback = type === this.FrCallbackType.ConfirmationCallback
             && callback.getOutputByName('name') === 'webAuthnRecoveryCode';
 
+        // Refer: IAM-9388
+        // MessageNode pattern: TextOutputCallback followed by ConfirmationCallback.
+        // Use the text output message as the confirmation action group's aria-labelledby.
+        if (component.type === `Fr${this.FrCallbackType.ConfirmationCallback}`) {
+          const previousComponent = componentList[componentList.length - 1];
+          const previousCallback = this.step.callbacks[i - 1];
+          const isPreviousCallbackTextOutput = previousComponent?.type === `Fr${this.FrCallbackType.TextOutputCallback}`
+            && previousCallback?.getType?.() === this.FrCallbackType.TextOutputCallback;
+          // MessageNode always uses INFORMATION type ('0') for its prompt.
+          const isInformationMessage = previousCallback?.getMessageType?.() === '0';
+
+          if (isPreviousCallbackTextOutput && isInformationMessage) {
+            // Confirmation action group will be labelled by the preceding text output message when available.
+            component.callbackSpecificProps.ariaLabelledbyId = `message-${previousComponent.index}`;
+            // Override the text output message visibility through `hideTextOutput` only in case when next Callback is ConfirmationCallback.
+            previousComponent.callbackSpecificProps.hideTextOutput = false;
+          }
+        }
+
         this.nextButtonVisible = !isConditionalWebAuthn && !isRecoveryCodeCallback
             && hideNextButtonCallbacks.indexOf(type) > -1 ? false : this.nextButtonVisible;
 

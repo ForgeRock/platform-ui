@@ -40,6 +40,30 @@ describe('ConfirmationCallback', () => {
   }
 
   describe('@renders', () => {
+    describe('button group accessibility semantics', () => {
+      it('renders role group and omits aria-labelledby when no label id is provided', async () => {
+        const wrapper = setup({ stage: { showOnlyPositiveAnswer: false } });
+        await wrapper.vm.$nextTick();
+
+        const group = wrapper.find('[role="group"]');
+        expect(group.exists()).toBe(true);
+        expect(group.attributes('aria-labelledby')).toBeUndefined();
+      });
+
+      it('renders role group with aria-labelledby when label id is provided', async () => {
+        const labelledById = 'message-1';
+        const wrapper = setup({
+          stage: { showOnlyPositiveAnswer: false },
+          ariaLabelledbyId: labelledById,
+        });
+        await wrapper.vm.$nextTick();
+
+        const group = wrapper.find('[role="group"]');
+        expect(group.exists()).toBe(true);
+        expect(group.attributes('aria-labelledby')).toBe(labelledById);
+      });
+    });
+
     describe('displaying buttons based on variant property', () => {
       it('displays button as a link', async () => {
         const propsData = {

@@ -67,6 +67,10 @@ export default {
       type: Object,
       required: true,
     },
+    hideTextOutput: {
+      type: Boolean,
+      default: true,
+    },
     index: {
       type: Number,
       default: 0,
@@ -95,8 +99,10 @@ export default {
     };
   },
   computed: {
+    /** Hides message from screen readers when it's the first callback, has no interactive content, and hideTextOutput is true.
+     * */
     isAriaHidden() {
-      return this.isFirstRenderedCallback && !hasInteractiveContent(this.sanitizedMessage);
+      return this.isFirstRenderedCallback && !hasInteractiveContent(this.sanitizedMessage) && this.hideTextOutput;
     },
     // Only render the ERROR element after the first callback.
     shouldRenderErrorElement() {
