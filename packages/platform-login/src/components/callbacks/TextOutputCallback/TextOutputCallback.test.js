@@ -48,13 +48,14 @@ describe('TextOutputCallback.vue', () => {
   beforeEach(() => {
     wrapper = undefined;
     mountComponent = ({
-      messageType, message, isFirstRenderedCallback, isMfaRegistrationStep,
+      messageType, message, isFirstRenderedCallback, isMfaRegistrationStep, hideTextOutput,
     }) => {
       wrapper = setup({
         callback: {
           getMessageType: () => messageType || '4',
           getMessage: () => message || '',
         },
+        hideTextOutput,
         isFirstRenderedCallback: isFirstRenderedCallback !== undefined ? isFirstRenderedCallback : false,
         isMfaRegistrationStep: isMfaRegistrationStep !== undefined ? isMfaRegistrationStep : false,
       });
@@ -482,6 +483,24 @@ describe('TextOutputCallback.vue', () => {
       expect(messageElement.attributes('aria-hidden')).toBeUndefined();
       expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
       expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
+    });
+
+    it('does not hide first-rendered INFORMATION when followed by ConfirmationCallback', async () => {
+      mountComponent({
+        messageType: '0',
+        message: 'I am a ConfirmationCallback message',
+        isFirstRenderedCallback: true,
+        hideTextOutput: false, // This is set to false only when TextOutputCallback is followed by ConfirmationCallback in the callback list. Refer to Login/index.vue for details.
+      });
+
+      await flushPromises();
+
+      const headingDiv = wrapper.find('[role="heading"]');
+      expect(headingDiv.exists()).toBe(true);
+      const messageElement = wrapper.find('.text-muted.white-space-pre-line');
+
+      expect(messageElement.attributes('aria-hidden')).toBeUndefined();
+      expect(headingDiv.attributes('aria-labelledby')).toBeDefined();
     });
 
     it('emits live region message for first-callback ERROR fallback when visible error block is not rendered', async () => {
