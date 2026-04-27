@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -39,10 +39,10 @@ of the MIT license. See the LICENSE file for details. -->
           right
           toggle-class="text-nowrap d-flex align-items-center"
           variant="primary"
-          :disabled="loadingDownload || (runDataLoading || tableLoading || isExpired || !tableItems.length)">
+          :disabled="loadingExport || (runDataLoading || tableLoading || isExpired || !tableItems.length)">
           <template #button-content>
             <FrSpinner
-              v-if="loadingDownload"
+              v-if="loadingExport"
               class="justify-content-center mr-2"
               :button-spinner="true"
               size="sm" />
@@ -51,44 +51,56 @@ of the MIT license. See the LICENSE file for details. -->
               icon-class="mr-md-2"
               name="file_download" />
             <span class="d-none d-md-block">
-              {{ $t('common.download') }}
+              {{ $t('reports.export') }}
             </span>
           </template>
           <BDropdownItemButton
             button-class="d-flex align-items-center"
-            :disabled="loadingJson"
-            @click.stop="generateReport('JSON')">
+            @click.stop="generateReport('JSON', $bvModal)">
             <template v-if="loadingJson">
               <FrSpinner
                 class="justify-content-center mr-2"
                 :button-spinner="true"
                 size="sm" />
-              {{ $t('reports.downloadingFile', { fileType: 'JSON' }) }}
+              {{ $t('reports.exportingFile', { fileType: 'JSON' }) }}
             </template>
-            <template v-else>
+            <template v-else-if="jsonStatus">
               <FrIcon
                 icon-class="mr-2"
                 name="file_download">
                 {{ $t('reports.downloadFile', { fileType: 'JSON' }) }}
               </FrIcon>
             </template>
+            <template v-else>
+              <FrIcon
+                icon-class="mr-2"
+                name="sync">
+                {{ $t('reports.exportFile', { fileType: 'JSON' }) }}
+              </FrIcon>
+            </template>
           </BDropdownItemButton>
           <BDropdownItemButton
             button-class="d-flex align-items-center"
-            :disabled="loadingCsv"
-            @click.stop="generateReport('CSV')">
+            @click.stop="generateReport('CSV', $bvModal)">
             <template v-if="loadingCsv">
               <FrSpinner
                 class="justify-content-center mr-2"
                 :button-spinner="true"
                 size="sm" />
-              {{ $t('reports.downloadingFile', { fileType: 'CSV' }) }}
+              {{ $t('reports.exportingFile', { fileType: 'CSV' }) }}
             </template>
-            <template v-else>
+            <template v-else-if="csvStatus">
               <FrIcon
                 icon-class="mr-2"
                 name="file_download">
                 {{ $t('reports.downloadFile', { fileType: 'CSV' }) }}
+              </FrIcon>
+            </template>
+            <template v-else>
+              <FrIcon
+                icon-class="mr-2"
+                name="sync">
+                {{ $t('reports.exportFile', { fileType: 'CSV' }) }}
               </FrIcon>
             </template>
           </BDropdownItemButton>
@@ -148,6 +160,11 @@ of the MIT license. See the LICENSE file for details. -->
           @on-page-size-change="onPageSizeChange" />
       </BCol>
     </BRow>
+    <FrReportExportModal
+      :data="modalData.value"
+      :file-type="type"
+      :status="status"
+      @download-report="generateReport($event.fileType, $bvModal)" />
   </BContainer>
 </template>
 
@@ -171,8 +188,9 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrReportDetails from './ReportDetails';
+import FrReportExportModal from './modals/ReportExportModal';
 import FrReportViewTable from './ReportViewTable';
-import useDownloadReport from './composables/DownloadReport';
+import useExportReport from './composables/ExportReport';
 import useViewReportTable from './composables/ViewReportTable';
 import useRunHistoryTable from './composables/RunHistoryTable';
 import ParametersSchema from './utils/ParametersSchema';
@@ -194,12 +212,16 @@ const {
   totalRows,
 } = useViewReportTable();
 const {
-  fetchDownload,
-  loadingDownload,
+  fetchExport,
+  loadingExport,
   loadingCsv,
   loadingJson,
-} = useDownloadReport();
-const { getDownloadFormatType } = useRunHistoryTable();
+  csvStatus,
+  jsonStatus,
+  type,
+  status,
+} = useExportReport(template, id);
+const { getExportFormatType, reportHistoryTableDataGenerator } = useRunHistoryTable();
 const currentPage = ref(1);
 const runDataLoading = ref(false);
 const runDataLoadingComplete = ref(false);
@@ -211,6 +233,7 @@ const reportTime = ref('');
 const sortDetails = ref({ sortBy: null, sortDirection: 'desc' });
 const tableFields = ref([]);
 const tableItems = ref([]);
+const modalData = ref({});
 
 /**
  * Gets all the data to display at the top of the report from the Report Run object
@@ -221,6 +244,8 @@ async function setConfigInfo(report) {
   reportDate.value = dayjs(report.createDate).format('MM/D/YYYY');
   reportTime.value = dayjs(report.createDate).format('h:mm A');
   reportName.value = report.displayName;
+  csvStatus.value = report.exportCsvStatus === 'EXPORT_SUCCESS';
+  jsonStatus.value = report.exportJsonStatus === 'EXPORT_SUCCESS';
 
   const reportConfig = JSON.parse(report.reportConfig);
   const reportConfigParameters = reportConfig.parameters;
@@ -244,6 +269,8 @@ async function setConfigInfo(report) {
   });
 
   params.value = parametersWithLabels;
+  const data = reportHistoryTableDataGenerator([report]);
+  modalData.value = data.flat();
 }
 
 /**
@@ -273,11 +300,12 @@ async function getRunInfo() {
 }
 
 /**
- * Downloads the report in CSV or JSON format.
- * @param {String} fileType Format to be downloaded.
+ * Exports or downloads the report in CSV or JSON format.
+ * @param {String} fileType Format to be exported or downloaded.
+ * @param {Object} bvModal Modal
  */
-async function generateReport(fileType) {
-  await fetchDownload(template, id, getDownloadFormatType(fileType));
+async function generateReport(fileType, bvModal) {
+  await fetchExport(template, id, getExportFormatType(fileType), bvModal);
 }
 
 /**

@@ -14,6 +14,7 @@ import {
   findByTestId,
   toggleActionsMenu,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as ReportsApiHelper from './utils/ReportsApiHelper';
@@ -22,6 +23,7 @@ import RunHistory from './RunHistory';
 import HistoryStubs from './ReportHistoryStubs';
 
 mockRouter({ params: { template: 'template-name', state: 'draft' } });
+mockModal();
 jest.mock('@forgerock/platform-shared/src/utils/downloadFile');
 
 // Mock implementations must come after jest.mock()
@@ -202,15 +204,18 @@ describe('Run History component', () => {
         expect(ellipseMenu.exists()).toBe(false);
       });
 
-      it('hides the view details and download buttons for a report that is in an expired state', () => {
+      it('hides the view details and export buttons for a report that is in an expired state', () => {
         const table = findByTestId(wrapper, 'run-history-table');
         const tableRows = table.find('tbody').findAll('tr[role="row"]');
         const tableRowExpired = tableRows[2];
         const viewReportButton = findByTestId(tableRowExpired, 'view-report-button');
-        const actionsDropdown = findByTestId(tableRowExpired, 'actions-run-history-export');
 
         expect(viewReportButton.exists()).toBe(false);
-        expect(actionsDropdown.exists()).toBe(false);
+      });
+
+      it('shows available download buttons for a report that is in an expired state', async () => {
+        await openEllipseMenu(wrapper, { rowIndex: 2, testId: 'actions-run-history-export', icon: 'file_download' });
+        expect(findByTestId(domWrapper, 'CSV-download-button').exists()).toBe(true);
       });
 
       it('does not display the "vanity" loading state on the first table entry if there is a missing newReportJobId prop value', async () => {
@@ -244,8 +249,57 @@ describe('Run History component', () => {
       expect(viewReportButton.exists()).toBe(true);
     });
 
+    it('makes an export request network call when an export button is clicked and ensures that the button state updates from loading to download upon resolution', async () => {
+      const requestReportResponseStub = [HistoryStubs[0]].map((stub) => ({
+        ...stub,
+        exportJsonStatus: 'EXPORT_SUCCESS',
+      }));
+
+      ReportsApiHelper.requestExport = jest.fn().mockReturnValue(Promise.resolve({ data: { message: '' } }));
+      ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(requestReportResponseStub));
+      const requestExportSpy = jest.spyOn(ReportsApiHelper, 'requestExport');
+      const requestReportRunsSpy = jest.spyOn(ReportsApiHelper, 'requestReportRuns');
+
+      await openEllipseMenu(wrapper, { rowIndex: 0, testId: 'actions-run-history-export', icon: 'file_download' });
+      const JSONExportButton = findByTestId(domWrapper, 'JSON-export-button');
+      await JSONExportButton.trigger('click');
+      await nextTick();
+      expect(requestExportSpy).toHaveBeenCalledWith('job_0123', 'export', 'TEMPLATE-NAME', 'jsonl');
+      expect(requestReportRunsSpy).toHaveBeenCalledWith({
+        name: 'TEMPLATE-NAME',
+        runId: 'job_0123',
+        templateType: 'published',
+        realm: undefined,
+      });
+
+      await flushPromises();
+      await openEllipseMenu(wrapper, { rowIndex: 0, testId: 'actions-run-history-export', icon: 'file_download' });
+      const JSONDownloadButton = findByTestId(domWrapper, 'JSON-download-button');
+      expect(JSONDownloadButton.find('.material-icons-outlined').text()).toBe('file_download');
+    });
+
+    it('should only allow one export request at a time for the same report', async () => {
+      const requestReportResponseStub = [HistoryStubs[1]].map((stub) => ({
+        ...stub,
+        exportJsonStatus: 'EXPORT_PENDING',
+      }));
+
+      ReportsApiHelper.requestExport = jest.fn().mockReturnValue(Promise.resolve({ data: { message: '' } }));
+      ReportsApiHelper.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(requestReportResponseStub));
+
+      await openEllipseMenu(wrapper, { tooltipId: 'tooltip-job_4567', testId: 'actions-run-history-export', icon: '' });
+      const JSONExportButton = findByTestId(domWrapper, 'JSON-export-button');
+      await JSONExportButton.trigger('click');
+      await nextTick();
+      await openEllipseMenu(wrapper, { tooltipId: 'tooltip-job_4567', testId: 'actions-run-history-export', icon: '' });
+      const refreshedCSVExportButton = findByTestId(domWrapper, 'CSV-export-button');
+      const disabledAttr = refreshedCSVExportButton.attributes('disabled')
+        || refreshedCSVExportButton.attributes('aria-disabled');
+      expect(disabledAttr).toBeTruthy();
+    });
+
     it('makes a download request network call when a download button is clicked', async () => {
-      AutoApi.downloadReport = jest.fn().mockReturnValue(Promise.resolve({
+      AutoApi.fetchDownload = jest.fn().mockReturnValue(Promise.resolve({
         status: 200,
         headers: {
           get: jest.fn(() => 'filename=my-informative-report.csv'),
@@ -254,17 +308,17 @@ describe('Run History component', () => {
         text: jest.fn(() => ''),
       }));
 
-      const requestDownloadSpy = jest.spyOn(AutoApi, 'downloadReport');
+      const requestDownloadSpy = jest.spyOn(AutoApi, 'fetchDownload');
 
       await openEllipseMenu(wrapper, { rowIndex: 0, testId: 'actions-run-history-export', icon: 'file_download' });
       const CSVDownloadButton = findByTestId(domWrapper, 'CSV-download-button');
       expect(CSVDownloadButton.find('.material-icons-outlined').text()).toBe('file_download');
       await CSVDownloadButton.trigger('click');
-      expect(requestDownloadSpy).toHaveBeenCalledWith('template-name', 'job_0123', 'csv');
+      expect(requestDownloadSpy).toHaveBeenCalledWith('job_0123', { _action: 'download', format: 'csv', name: 'template-name' });
     });
 
     it('shows error if download request fails', async () => {
-      AutoApi.downloadReport = jest.fn().mockReturnValue(Promise.resolve({
+      AutoApi.fetchDownload = jest.fn().mockReturnValue(Promise.resolve({
         status: 500,
         headers: {
           get: jest.fn(() => 'filename=my-informative-report.csv'),
@@ -279,7 +333,6 @@ describe('Run History component', () => {
       expect(CSVDownloadButton.find('.material-icons-outlined').text()).toBe('file_download');
 
       await CSVDownloadButton.trigger('click');
-      await flushPromises();
       expect(showErrorMessage).toHaveBeenCalled();
     });
 

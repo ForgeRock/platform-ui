@@ -51,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
             @click="emit('view-report', item.runId)">
             {{ $t('reports.tabs.runHistory.table.viewReport') }}
           </BButton>
-          <template v-if="props.templateState !== 'draft' && item.reportStatus === 'complete'">
+          <template v-if="props.templateState !== 'draft' && (item.reportStatus === 'complete' || item.reportIsExpiredAndHasAtLeastOneDownload())">
             <BTooltip :target="item.tooltipId()">
               {{ item.tooltipLabel() }}
             </BTooltip>
@@ -65,28 +65,29 @@ of the MIT license. See the LICENSE file for details. -->
                   class="p-2"
                   :id="item.tooltipId()">
                   <BSpinner
-                    v-if="item.hasAnyActiveDownloads()"
+                    v-if="item.hasAnyActiveExports() || item.hasAnyActiveDownloads()"
                     small
                     :label="$t('common.loadingEtc')" />
                   <FrIcon
                     v-else
-                    icon-class="text-dark md-24"
-                    name="file_download" />
+                    :icon-class="`${item.hasAnyErrors() ? 'text-danger' : 'text-dark'} md-24`"
+                    :name="item.hasAnyErrors() ? 'error_outline' : 'file_download'" />
                 </div>
               </template>
               <template #custom-top-actions>
                 <template
-                  v-for="(downloadStatus, fileType) in item.download"
+                  v-for="(exportStatus, fileType) in item.export"
                   :key="fileType">
                   <BDropdownItem
+                    v-if="item.reportStatus === 'complete' || item.reportIsExpiredAndFileTypeHasDownload(exportStatus)"
                     class="fr-run-history-table-options"
-                    :disabled="downloadStatus === 'downloading'"
-                    :data-testid="`${fileType}-${downloadStatus}-button`"
-                    @click="downloadHandler(fileType, item)">
-                    <FrReportDownloadButtons
+                    :disabled="exportStatus === 'downloading' || ((exportStatus === 'export' || exportStatus === 'error') && item.hasAnyActiveExports())"
+                    :data-testid="`${fileType}-${exportStatus}-button`"
+                    @click="exportHandler(fileType, item, exportStatus)">
+                    <FrReportExportButtons
                       :file-type="fileType"
-                      :download-status="downloadStatus"
-                      :label="item.statusLabel(downloadStatus, fileType)" />
+                      :export-status="exportStatus"
+                      :label="item.statusLabel(exportStatus, fileType)" />
                   </BDropdownItem>
                 </template>
               </template>
@@ -148,7 +149,7 @@ import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
-import FrReportDownloadButtons from './RunHistoryDownloadButtons';
+import FrReportExportButtons from './RunHistoryExportButtons';
 import FrRunReportBadges from './RunReportBadges';
 import useRunHistoryTable from './composables/RunHistoryTable';
 
@@ -169,6 +170,7 @@ const props = defineProps({
 
 const emit = defineEmits([
   'download-report',
+  'export-report',
   'table-data-ready',
   'view-report',
   'view-run-details',
@@ -189,7 +191,7 @@ const tableRows = ref([]);
  * @description
  * .Change in how many results to show
  * .Page change
- * .Download request
+ * .Export request
  * .Updates a single table data row
  * .Updates a complete list of table data
  */
@@ -213,12 +215,17 @@ function paginationChange(page) {
 }
 
 /**
- * Emits a request to download a report file.
+ * Emits a request to export or download a report file.
  * @param {String} fileType report type: JSON || CSV
  * @param {Object} item Report job table item
+ * @param {String} exportStatus Report status: 'export' || 'exporting' || 'download' || 'downloading' || 'error'
  */
-function downloadHandler(fileType, item) {
-  emit('download-report', { fileType, item });
+function exportHandler(fileType, item, exportStatus) {
+  if (exportStatus === 'download' || exportStatus === 'downloading') {
+    emit('download-report', { fileType, item, exportStatus });
+  } else {
+    emit('export-report', { fileType, item, exportStatus });
+  }
 }
 
 /**
@@ -269,6 +276,9 @@ watch(() => props.updatedRow, (newRow) => updateTableRow(newRow));
     }
     .fr-report-history-status {
       width: auto;
+    }
+    .fr-report-export-button {
+      width: 90px;
     }
 
     .fr-run-history-table-options {

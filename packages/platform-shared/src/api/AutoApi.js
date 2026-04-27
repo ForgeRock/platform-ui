@@ -202,6 +202,27 @@ export async function fetchDownload(runId, params) {
 }
 
 /**
+  * Exports or download a report in JSON or CSV format.
+  * @param {String} template Name of the report template.
+  * @param {String} id Job ID of the report run.
+  * @param {String} action Action to execute, can be export or download.
+  * @param {String} format Format of the report to be exported.
+  * @returns {Object} Contains the data to be placed in a download file.
+  */
+export function exportReport(template, id, action, format) {
+  const params = {
+    _action: action,
+    name: template,
+    format,
+  };
+
+  if (action === 'export') {
+    return generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`);
+  }
+  return fetchDownload(id, params);
+}
+
+/**
  * Gets a run report result
  *
  * @param {String} userName Platform user's username
@@ -343,20 +364,4 @@ export function exportAnalyticsReportTemplate(reportName, templateType = 'publis
       },
     },
   );
-}
-
-/**
-  * Downloads a report in JSON or CSV format in a single step.
-  * @param {String} template Name of the report template.
-  * @param {String} runId Job ID of the report run.
-  * @param {String} format Format of the report: 'jsonl' or 'csv'.
-  * @returns {Promise} Contains the data to be placed in a download file.
-  */
-export function downloadReport(template, runId, format) {
-  const params = {
-    _action: 'downloadreport',
-    name: template,
-    format,
-  };
-  return fetchDownload(runId, params);
 }

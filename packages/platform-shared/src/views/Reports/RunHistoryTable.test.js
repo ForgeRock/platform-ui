@@ -88,12 +88,20 @@ describe('Run History Table component', () => {
       expect(wrapper.emitted()['view-report']?.[0]).toEqual(['job_0123']);
     });
 
-    it('emits "download-report" when a download option is clicked from the dropdown', async () => {
+    it('emits "download-report" when a download option is clicked from the export dropdown', async () => {
       await openEllipseMenu(wrapper, 'actions-run-history-export', 'file_download');
       const csvDownloadButton = findByTestId(domWrapper, 'CSV-download-button');
       await csvDownloadButton.trigger('click');
 
       expect(wrapper.emitted()['download-report']?.[0]).toBeTruthy();
+    });
+
+    it('emits "export-report" when an export option is clicked from the export dropdown', async () => {
+      await openEllipseMenu(wrapper, 'actions-run-history-export', 'file_download');
+      const jsonExportButton = findByTestId(domWrapper, 'JSON-export-button');
+      await jsonExportButton.trigger('click');
+
+      expect(wrapper.emitted()['export-report']?.[0]).toBeTruthy();
     });
 
     it('emits "view-run-details" when the Run Details option is clicked in the ellipse menu', async () => {
