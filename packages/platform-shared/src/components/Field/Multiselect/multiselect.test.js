@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,7 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import i18n from '@/i18n';
 import MultiSelect from './index';
-import { findByTestId } from '../../../utils/testHelpers';
+import { findByTestId, runA11yTest } from '../../../utils/testHelpers';
 
 describe('Multiselect', () => {
   const defaultProps = {
@@ -294,5 +294,41 @@ describe('Multiselect', () => {
     await wrapper.vm.inputHandler([{ text: 'a', value: 'a', multiselectId: 0 }]);
     await flushPromises();
     expect(wrapper.emitted('input')[1]).toBeFalsy();
+  });
+
+  describe('@a11y', () => {
+    it('MultiSelect component is accessible', async () => {
+      const wrapper = setup({ label: 'Multiselect closed', options: ['a', 'b', 'c'] });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('MultiSelect component is accessible if disabled is true', async () => {
+      const wrapper = setup({ label: 'Multiselect disabled', options: ['a', 'b', 'c'], disabled: true });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('MultiSelect component is accessible when open', async () => {
+      const wrapper = setup({ label: 'Multiselect open', options: ['a', 'b', 'c'] });
+      await findByTestId(wrapper, 'stub-testid').trigger('click');
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('MultiSelect component is accessible with selected tags', async () => {
+      const wrapper = setup({ label: 'Multiselect with tags', options: ['a', 'b', 'c'], taggable: true });
+      await wrapper.vm.inputHandler([{ multiselectId: 0, text: 'a', value: 'a' }, { multiselectId: 1, text: 'b', value: 'b' }]);
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('MultiSelect component is accessible when no results match search', async () => {
+      const wrapper = setup({ label: 'Multiselect no results', options: ['a', 'b', 'c'] });
+      await findByTestId(wrapper, 'stub-testid').trigger('click');
+      wrapper.vm.searchChange('zzz');
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
   });
 });
