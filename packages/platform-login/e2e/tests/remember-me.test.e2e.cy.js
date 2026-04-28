@@ -54,7 +54,7 @@ xdescribe('Check Remember Me theme feature functionality', { tags: ['@forgeops',
     deleteIDMUser(userId);
   }));
 
-  it('Username is correctly remembered when Remember Me option is checked', () => {
+  it('[TC-12163] Username is correctly remembered when Remember Me option is checked', () => {
     // Fill in Username to be remembered
     cy.findByLabelText('User Name').type(userName);
 
@@ -87,7 +87,7 @@ xdescribe('Check Remember Me theme feature functionality', { tags: ['@forgeops',
     cy.findByRole('checkbox', { name: 'Remember my username but with a really longer text here!' }).should('be.checked');
   });
 
-  it('Username is not remembered when Remember Me option is not checked', () => {
+  it('[TC-12164] Username is not remembered when Remember Me option is not checked', () => {
     // Fill in Username to be remembered
     cy.findByLabelText('User Name').type(userName);
 
@@ -119,7 +119,7 @@ xdescribe('Check Remember Me theme feature functionality', { tags: ['@forgeops',
     cy.findByRole('checkbox', { name: 'Remember my username but with a really longer text here!' }).should('not.be.checked');
   });
 
-  it('Username is remembered after page reload when Remember Me option is checked', () => {
+  it('[TC-12165] Username is remembered after page reload when Remember Me option is checked', () => {
     // Fill in Username to be remembered
     cy.findByLabelText('User Name').type(userName);
 
@@ -152,7 +152,7 @@ xdescribe('Check Remember Me theme feature functionality', { tags: ['@forgeops',
   });
 
   // // TODO: Re-enable this test when https://bugster.forgerock.org/jira/browse/IAM-5915 gets fixed
-  xit('Username is not remembered when switching to a theme with Remember Me option disabled', () => {
+  xit('[TC-12166] Username is not remembered when switching to a theme with Remember Me option disabled', () => {
     // Fill in Username to be remembered
     cy.findByLabelText('User Name').type(userName);
 
@@ -184,7 +184,7 @@ xdescribe('Check Remember Me theme feature functionality', { tags: ['@forgeops',
     cy.findByRole('checkbox', { name: 'Remember my username but with a really longer text here!' }).should('not.be.checked');
   });
 
-  it('Username is remembered after failed login when Remember Me option is checked', () => {
+  it('[TC-12167] Username is remembered after failed login when Remember Me option is checked', () => {
     // Switch to the other testing page node with Remember Me feature enabled and working Login page
     cy.findByRole('radio', { name: 'Login - Remember Me' }).click({ force: true });
 
@@ -219,7 +219,7 @@ xdescribe('Check Remember Me theme feature functionality', { tags: ['@forgeops',
     cy.findByLabelText('Password').should('be.visible').should('have.value', '');
   });
 
-  it('Username is remembered after logout when Remember Me option is checked', () => {
+  it('[TC-12168] Username is remembered after logout when Remember Me option is checked', () => {
     // Switch to the other testing page node with Remember Me feature enabled and working Login page
     cy.findByRole('radio', { name: 'Login - Remember Me' }).click({ force: true });
 

@@ -357,7 +357,7 @@ describe('Login config translations', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('Should override the text of the next button, username placeholder, and password placeholder', () => {
+  it('[TC-12142] Should override the text of the next button, username placeholder, and password placeholder', () => {
     // Set up intercept
     cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
@@ -373,7 +373,7 @@ describe('Login config translations', { tags: ['@forgeops', '@cloud'] }, () => {
     cy.findByLabelText('Password Test').should('be.visible');
   });
 
-  it('Should override the text of the login failure message', () => {
+  it('[TC-12143] Should override the text of the login failure message', () => {
     // Set up how many times we should click on the Next button to trigger the 'Loginfailure' message
     const timesClicked = Cypress.env('IS_FRAAS') ? 6 : 1;
 
@@ -400,7 +400,7 @@ describe('Login config translations', { tags: ['@forgeops', '@cloud'] }, () => {
     cy.findAllByRole('alert').should('be.visible').contains('Login Failure Override');
   });
 
-  it('Should display French overrides when locale query parameter is "fr"', () => {
+  it('[TC-12144] Should display French overrides when locale query parameter is "fr"', () => {
     // Set up intercept
     cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
@@ -418,7 +418,7 @@ describe('Login config translations', { tags: ['@forgeops', '@cloud'] }, () => {
     cy.findByLabelText('Password Test').should('be.visible');
   });
 
-  it('Should fallback to a general locale when a specific one is not present', () => {
+  it('[TC-12145] Should fallback to a general locale when a specific one is not present', () => {
     // Set up intercept
     cy.intercept('GET', '/openidm/ui/theme/**').as('getTheme');
 
@@ -470,7 +470,7 @@ describe('Checks correct behavior of translated Theme/Journey with pages and nod
   // Login as admin and delete translated Journey with translated Theme
   after(() => cy.deleteTreesViaAPI([preparedJourney]));
 
-  it('Check default Theme/Journey translations (EN), create user and verify email message', () => {
+  it('[TC-12146] Check default Theme/Journey translations (EN), create user and verify email message', () => {
     // Select translation for this test
     const locale = 'en';
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
@@ -495,7 +495,7 @@ describe('Checks correct behavior of translated Theme/Journey with pages and nod
     verifySuccessRegistrationPageTranslations(locale);
   });
 
-  it('Check CS Theme/Journey translations, create user and verify email message', () => {
+  it('[TC-12147] Check CS Theme/Journey translations, create user and verify email message', () => {
     // Select translation for this test
     const locale = 'cs';
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
@@ -527,7 +527,7 @@ describe('Checks correct behavior of translated Theme/Journey with pages and nod
   });
 
   // TODO: Re-enable this test when https://bugster.forgerock.org/jira/browse/OPENAM-21997 gets fixed
-  xit('Check default fallback Theme/Journey translations (EN), create user and verify email message', () => {
+  xit('[TC-12148] Check default fallback Theme/Journey translations (EN), create user and verify email message', () => {
     const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
     const userEmail = `${userName}@test.com`;
 

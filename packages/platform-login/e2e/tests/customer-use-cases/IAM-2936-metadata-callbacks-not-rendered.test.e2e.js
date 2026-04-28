@@ -21,7 +21,7 @@ describe('IAM-2936 Metadata callbacks are not rendered', { tags: ['@forgeops', '
     cy.deleteTreesViaAPI(['IAM-2936.json']);
   });
 
-  it('IAM-2936 other callbacks still render in a page node with a metadata callback', () => {
+  it('[TC-12180] Should render other callbacks in a page node with a metadata callback', () => {
     cy.visit(testTreeUrl);
 
     cy.log('Check that TextOuput callback is still rendered');

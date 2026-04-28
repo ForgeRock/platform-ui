@@ -73,7 +73,7 @@ Feature: Default enduser login
 
   @C29488
   @forgeops @cloud
-  Scenario Outline: attempt to login 6 times in a row with empty or wrong credentials - Login Failure
+  Scenario Outline: Attempt to login 6 times in a row with empty or wrong credentials - Login Failure
     When user tries to login 6 times with "<userName>" username and "<password>" password
     Then "Login failure" error message is displayed
     And page url does not contain "/dashboard"
@@ -81,10 +81,10 @@ Feature: Default enduser login
     And text "Welcome" does not exist
     And the message "Sign In" should be present
     Examples:
-    | userName     | password         |
-    | empty        | empty            |
-    | wronguser    | WrongPassword1.  |
-    | empty        | WrongPassword1.  |
+      | userName  | password        |
+      | empty     | empty           |
+      | wronguser | WrongPassword1. |
+      | empty     | WrongPassword1. |
 
   @C20750
   @cloud
@@ -107,7 +107,7 @@ Feature: Default enduser login
 
   @C29494
   @forgeops @cloud
-  Scenario: Create an account link navigation 
+  Scenario: Create an account link navigation
     When user clicks on "Create an account" link
     Then the message "Sign Up" should be present
     And page url contains "Login#/service/Registration"
@@ -118,7 +118,7 @@ Feature: Default enduser login
 
   @C29497
   @forgeops @cloud
-  Scenario: Forgot username link navigation 
+  Scenario: Forgot username link navigation
     When user clicks on "Forgot username?" link
     Then the message "Forgotten Username" should be present
     And page url contains "Login#/service/ForgottenUsername"
@@ -129,7 +129,7 @@ Feature: Default enduser login
 
   @C29498
   @forgeops @cloud
-  Scenario: Forgot password link navigation 
+  Scenario: Forgot password link navigation
     When user clicks on "Forgot password?" link
     Then the message "Reset Password" should be present
     And page url contains "Login#/service/ResetPassword"
