@@ -52,13 +52,11 @@ export const retryableBeforeEach = (beforeEachFunction) => {
   });
 
   Cypress.on('test:after:run', (result) => {
-    // If a test fails, set runBeforeEach to true. Cypress then retries, calling
-    // beforeEach(), which calls beforeEachFunction(), and then the test that failed
-    if (result.state === 'failed') {
-      if (result.currentRetry < result.retries) {
-        shouldRun = true;
-      }
-    } else if (result.state === 'passed') {
+    // Re-run beforeEach for the next test attempt or next test.
+    // When a test fails mid-retry cycle, shouldRun = true so the retry gets a
+    // fresh beforeEach. When retries are exhausted (or the test passed), shouldRun
+    // must also be reset so the NEXT (different) test gets a fresh beforeEach.
+    if (result.state === 'failed' || result.state === 'passed') {
       shouldRun = true;
     }
   });
