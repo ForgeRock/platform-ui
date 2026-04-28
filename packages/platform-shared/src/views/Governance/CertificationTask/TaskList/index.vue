@@ -109,9 +109,10 @@ of the MIT license. See the LICENSE file for details. -->
         <FrField
           v-if="item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
           @change="selectTask($event, item)"
-          name="columnSelected"
           type="checkbox"
+          :name="`columnSelected-${item.id}`"
           :testid="`multiselect-${item.id}`"
+          :aria-label="$t('governance.certificationTask.actions.selectRow', {identifier: item.user.userName})"
           :value="item.selected" />
       </template>
       <template #cell(user)="{ item }">
@@ -1842,6 +1843,12 @@ export default {
 }
 
 :deep {
+  .task-list-table .selector-column {
+    overflow: visible !important;
+    .custom-checkbox {
+      padding-left: 2.25rem;
+    }
+  }
   .fr-access-cell {
     padding: 0.5rem 1.5rem !important;
   }
