@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mr-0 zindex-1 align-middle"
         role="checkbox"
         inline
-        :aria-label="switchLabel"
+        :aria-label="ariaLabel"
         :disabled="disabled"
         :name="name"
         :data-testid="testid"
@@ -103,6 +103,9 @@ export default {
     },
     combinedErrors() {
       return this.errors.concat(this.fieldErrors);
+    },
+    ariaLabel() {
+      return this.$attrs['aria-label'] || this.switchLabel;
     },
   },
 };
