@@ -164,7 +164,7 @@ of the MIT license. See the LICENSE file for details. -->
                       <span>{{ element.label || element.listLabel || element.value || startCase(element.key) }}</span>
                     </div>
                   </BTd>
-                  <BTd class="py-2 pl-0 pr-2 border-0">
+                  <BTd class="py-2 pl-0 pr-2 border-0 flex-shrink-0">
                     <BButton
                       :aria-label="$t('columnPicker.removeColumn', { columnName: element.label || element.listLabel || element.value || startCase(element.key) })"
                       variant="link"
@@ -517,6 +517,8 @@ watch(() => props.show, (isVisible) => {
 
     :deep(td) {
       border: none;
+      min-width: 0;
+      word-break: break-word;
     }
 
     :deep(tr) {
