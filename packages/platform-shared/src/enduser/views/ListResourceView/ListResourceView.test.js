@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -40,6 +40,11 @@ describe('ListResource.vue', () => {
         },
         mocks: {
           $route,
+          $store: {
+            state: {
+              realm: 'alpha',
+            },
+          },
         },
       },
     });
@@ -59,8 +64,34 @@ describe('ListResource.vue', () => {
     });
   });
 
+  it('computes columnOrganizerKey from realm and route params', () => {
+    expect(wrapper.vm.columnOrganizerKey).toBe('list-resource-alpha-test-test');
+  });
+
+  it('returns columnOrganizerKey without realm when realm is missing', () => {
+    const noRealmWrapper = shallowMount(ListResource, {
+      global: {
+        plugins: [i18n],
+        stubs: {
+          'router-link': true,
+        },
+        mocks: {
+          $route: {
+            path: '/test',
+            meta: {},
+            params: {
+              resourceName: 'test',
+              resourceType: 'test',
+            },
+          },
+          $store: { state: {} },
+        },
+      },
+    });
+    expect(noRealmWrapper.vm.columnOrganizerKey).toBe('list-resource-test-test');
+  });
+
   it('Builds URL Parameters', () => {
-    // with a queryFilter
     expect(wrapper.vm.buildUrlParams('name+sw+"test"+OR+description+sw+"test"', ['name', 'description'], 'name', 0, 10)).toEqual({
       fields: 'name,description',
       pageSize: 10,

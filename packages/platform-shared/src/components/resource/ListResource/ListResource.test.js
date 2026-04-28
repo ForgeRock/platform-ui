@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
+import * as listOrganizerUtils from '@forgerock/platform-shared/src/utils/listOrganizerUtils';
 import generateIDMAPI from './__mocks__/generateIDMAPI';
 import ListResource from './index';
 import i18n from '@/i18n';
@@ -429,6 +430,130 @@ describe('ListResource Component', () => {
         pageSize: 10,
         sortField: 'userName',
       });
+    });
+  });
+
+  describe('buildColumnListFromRouterParams', () => {
+    const routerParamsWithColumns = {
+      resourceName: 'alpha_user',
+      resourceType: 'managed',
+      managedProperties: {
+        userName: { type: 'string', searchable: true, title: 'Username' },
+        givenName: { type: 'string', searchable: true, title: 'First Name' },
+        sn: { type: 'string', searchable: true, title: 'Last Name' },
+        mail: { type: 'string', searchable: true, title: 'Email' },
+        extra: { type: 'string', searchable: true, title: 'Extra' },
+      },
+      order: ['userName', 'givenName', 'sn', 'mail', 'extra'],
+    };
+
+    it('sets availableColumnList and columns from routerParameters when columnOrganizerKey is set', async () => {
+      jest.spyOn(listOrganizerUtils, 'getManagedObjectColumnList').mockReturnValue([
+        { key: 'userName', label: 'Username', enabled: true },
+        { key: 'givenName', label: 'First Name', enabled: true },
+        { key: 'sn', label: 'Last Name', enabled: false },
+      ]);
+      jest.spyOn(listOrganizerUtils, 'getDefaultManagedObjectColumnList').mockReturnValue([
+        { key: 'userName', label: 'Username', enabled: true },
+        { key: 'givenName', label: 'First Name', enabled: true },
+      ]);
+
+      await wrapper.setProps({ columnOrganizerKey: 'test-key', routerParameters: routerParamsWithColumns });
+      wrapper.vm.buildColumnListFromRouterParams();
+
+      expect(wrapper.vm.availableColumnList).toHaveLength(3);
+      expect(wrapper.vm.columns).toHaveLength(2);
+      expect(wrapper.vm.columns.map((c) => c.key)).toEqual(['userName', 'givenName']);
+      expect(wrapper.vm.internalDefaultColumns).toHaveLength(2);
+    });
+
+    it('falls back to loadTableDefs when getManagedObjectColumnList returns empty', async () => {
+      jest.spyOn(listOrganizerUtils, 'getManagedObjectColumnList').mockReturnValue([]);
+      jest.spyOn(listOrganizerUtils, 'getDefaultManagedObjectColumnList').mockReturnValue([]);
+      const loadTableDefsSpy = jest.spyOn(wrapper.vm, 'loadTableDefs');
+
+      await wrapper.setProps({ columnOrganizerKey: 'test-key', routerParameters: routerParamsWithColumns });
+      wrapper.vm.buildColumnListFromRouterParams();
+
+      expect(loadTableDefsSpy).toHaveBeenCalled();
+    });
+
+    it('resolvedDefaultColumns returns internalDefaultColumns when set', () => {
+      wrapper.vm.internalDefaultColumns = [{ key: 'userName' }];
+      expect(wrapper.vm.resolvedDefaultColumns).toEqual([{ key: 'userName' }]);
+    });
+
+    it('resolvedDefaultColumns falls back to defaultColumns prop when internalDefaultColumns is empty', async () => {
+      wrapper.vm.internalDefaultColumns = [];
+      await wrapper.setProps({ defaultColumns: [{ key: 'fallback' }] });
+      expect(wrapper.vm.resolvedDefaultColumns).toEqual([{ key: 'fallback' }]);
+    });
+
+    it('does not set internalDefaultColumns when defaultColumns prop is provided', async () => {
+      jest.spyOn(listOrganizerUtils, 'getManagedObjectColumnList').mockReturnValue([
+        { key: 'userName', label: 'Username', enabled: true },
+      ]);
+      jest.spyOn(listOrganizerUtils, 'getDefaultManagedObjectColumnList').mockReturnValue([
+        { key: 'userName', label: 'Username', enabled: true },
+      ]);
+
+      await wrapper.setProps({
+        columnOrganizerKey: 'test-key',
+        routerParameters: routerParamsWithColumns,
+        defaultColumns: [{ key: 'external-default' }],
+      });
+      wrapper.vm.buildColumnListFromRouterParams();
+
+      expect(wrapper.vm.internalDefaultColumns).toHaveLength(0);
+      expect(wrapper.vm.resolvedDefaultColumns).toEqual([{ key: 'external-default' }]);
+    });
+
+    it('falls back to loadTableDefs when routerParameters is missing managedProperties', async () => {
+      const loadTableDefsSpy = jest.spyOn(wrapper.vm, 'loadTableDefs');
+      await wrapper.setProps({
+        columnOrganizerKey: 'test-key',
+        routerParameters: { resourceName: 'alpha_user', resourceType: 'managed' },
+      });
+      wrapper.vm.buildColumnListFromRouterParams();
+      expect(loadTableDefsSpy).toHaveBeenCalled();
+    });
+
+    it('mounted calls buildColumnListFromRouterParams when columnOrganizerKey set and columnOrganizerList empty', () => {
+      const getMock = jest.spyOn(listOrganizerUtils, 'getManagedObjectColumnList').mockReturnValue([
+        { key: 'userName', label: 'Username', enabled: true },
+        { key: 'givenName', label: 'First Name', enabled: false },
+      ]);
+      const getDefaultMock = jest.spyOn(listOrganizerUtils, 'getDefaultManagedObjectColumnList').mockReturnValue([
+        { key: 'userName', label: 'Username', enabled: true },
+      ]);
+
+      // Restore the beforeEach spy so the real mounted lifecycle runs
+      ListResource.mounted.mockRestore();
+
+      const localWrapper = mount(ListResource, {
+        global: {
+          stubs: { 'router-link': true },
+          directives: { 'resizable-table': true },
+          plugins: [i18n],
+          mocks: {
+            $route,
+            $store: { state: { realm: 'alpha' } },
+            pluralizeValue: () => {},
+          },
+        },
+        props: {
+          resourceTitle: 'Resource title',
+          columnOrganizerKey: 'test-key',
+          routerParameters: routerParamsWithColumns,
+        },
+      });
+
+      getMock.mockRestore();
+      getDefaultMock.mockRestore();
+
+      expect(localWrapper.vm.availableColumnList).toHaveLength(2);
+      expect(localWrapper.vm.columns.map((c) => c.key)).toContain('userName');
+      expect(localWrapper.vm.columns.map((c) => c.key)).not.toContain('givenName');
     });
   });
 });

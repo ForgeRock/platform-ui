@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -15,6 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrListResource
           v-if="routerParameters"
           :current-page="currentPage"
+          :column-organizer-key="columnOrganizerKey"
           :router-parameters="routerParameters"
           :resource-title="displayName"
           :table-data="tableData"
@@ -108,6 +109,16 @@ export default {
   },
   directives: {
     'b-modal': VBModal,
+  },
+  computed: {
+    columnOrganizerKey() {
+      const realm = this.$store?.state?.realm;
+      const { resourceType, resourceName } = this.$route.params;
+      if (!realm) {
+        return `list-resource-${resourceType}-${resourceName}`;
+      }
+      return `list-resource-${realm}-${resourceType}-${resourceName}`;
+    },
   },
   data() {
     return {

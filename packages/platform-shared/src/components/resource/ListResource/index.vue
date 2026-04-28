@@ -25,7 +25,6 @@ of the MIT license. See the LICENSE file for details. -->
         <template #append>
           <BInputGroupText>
             <small
-              role="searchbox"
               class="d-none d-md-block text-muted"
               :class="{'pr-3': filter.length > 0, 'mr-3': filter.length > 0}">
               <div :class="{'text-danger': submitBeforeLengthValid, shake: submitBeforeLengthValid}">
@@ -39,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="d-flex justify-content-end flex-grow-1"
         v-if="columnOrganizerKey"
         :column-organizer-key="columnOrganizerKey"
-        :default-columns="defaultColumns"
+        :default-columns="resolvedDefaultColumns"
         v-model="availableColumnList"
         @list-updated="updateColumnList" />
     </div>
@@ -176,6 +175,7 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { generateSearchQuery, filterFieldsForSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
 import FrListOrganizer from '@forgerock/platform-shared/src/components/ListOrganizer';
+import { getManagedObjectColumnList, getDefaultManagedObjectColumnList } from '@forgerock/platform-shared/src/utils/listOrganizerUtils';
 import FrClearResourceSessions from '../ClearResourceSessions';
 
 Vue.directive('b-modal', VBModal);
@@ -346,9 +346,13 @@ export default {
       resourceToClearSessionsForName: '',
       searchHasFocus: true,
       availableColumnList: [],
+      internalDefaultColumns: [],
     };
   },
   computed: {
+    resolvedDefaultColumns() {
+      return this.defaultColumns.length ? this.defaultColumns : this.internalDefaultColumns;
+    },
     defaultSort() {
       // queryThreshold means we do not want to sort desc on the first grid column when there is no filter
       if (this.queryThreshold && this.filter === '') {
@@ -370,16 +374,20 @@ export default {
   /**
    * Sets the displayFields and columns based on the provided props to the component.
    * If propColumns are provided, displayFields is derived by using the keys from propColumns and the columns are set to propColumns.
-   * If columnOrganizerKey is provided, it fetches the default column list using the utils method based on the key and router parameters.
-   * If neither propColumns nor columnOrganizerKey is provided, it loads the table definitions using the loadTableDefs method.
+   * If no columnOrganizerList is provided, it fetches the column list using buildColumnListFromRouterParams when columnOrganizerKey is set,
+   * otherwise it loads the table definitions using the loadTableDefs method.
    * Finally, it appends the action column if actionsEnabled is true and loads the data with default parameters.
    */
   mounted() {
     this.resourceName = this.getResourceName(this.routerParameters.resourceName);
     if (this.propColumns.length) {
       this.columns = this.propColumns;
-    } else if (!this.columnOrganizerList || this.columnOrganizerList.length === 0) {
-      this.loadTableDefs();
+    } else if (!this.columnOrganizerList?.length) {
+      if (this.columnOrganizerKey) {
+        this.buildColumnListFromRouterParams();
+      } else {
+        this.loadTableDefs();
+      }
     }
     this.appendActionColumn();
     this.loadData('true', this.displayFields, this.defaultSort, 1, this.paginationPageSize);
@@ -429,6 +437,34 @@ export default {
           label: this.$t('common.actions'),
           class: 'fr-no-resize sticky-right w-120px',
         });
+      }
+    },
+    /**
+     * Builds the available column list from routerParameters when columnOrganizerKey is set
+     * but no columnOrganizerList is provided externally. Reads localStorage to restore any
+     * saved column selection and sets default columns for the "Reset to Default" action.
+     */
+    buildColumnListFromRouterParams() {
+      if (!this.routerParameters || !this.routerParameters.managedProperties || !this.routerParameters.order) {
+        this.loadTableDefs();
+        return;
+      }
+      const columnList = getManagedObjectColumnList(
+        this.columnOrganizerKey,
+        this.routerParameters.managedProperties,
+        this.routerParameters.order,
+      );
+      if (!this.defaultColumns.length) {
+        this.internalDefaultColumns = getDefaultManagedObjectColumnList(
+          this.routerParameters.managedProperties,
+          this.routerParameters.order,
+        );
+      }
+      if (columnList.length) {
+        this.availableColumnList = columnList;
+        this.columns = columnList.filter((col) => col.enabled);
+      } else {
+        this.loadTableDefs();
       }
     },
     filterChange(filter) {
