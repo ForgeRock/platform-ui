@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,7 +10,6 @@ of the MIT license. See the LICENSE file for details. -->
     aria-live="assertive">
     <template #dismiss>
       <FrIcon
-        icon-class="fr-alert-dismiss"
         :aria-label="$t('common.close')"
         :outlined="false"
         name="close" />
@@ -173,12 +172,11 @@ export default {
     }
 
     :deep(.close) {
-      height: 24px;
-      padding: 0 12px 4px 0;
-      outline: none;
-
-      .fr-alert-dismiss {
-        font-size: 16px;
+      opacity: 0.85;
+      top: 4px;
+      right: 4px;
+      &:not(:disabled):not(.disabled):hover {
+        opacity: 1;
       }
     }
   }
