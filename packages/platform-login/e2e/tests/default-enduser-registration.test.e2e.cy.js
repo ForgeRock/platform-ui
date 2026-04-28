@@ -89,7 +89,7 @@ describe('Enduser Default Registration', { tags: ['@forgeops', '@smoke'] }, () =
       cy.visit(locationUrl);
     });
 
-    it('incorrect credentials should show error', () => {
+    it('[C19749] incorrect credentials should show error', () => {
       fillOutRegistrationForm(fieldData);
       // set short and long passwords - check policy
       cy.findByLabelText('Password')
@@ -105,20 +105,7 @@ describe('Enduser Default Registration', { tags: ['@forgeops', '@smoke'] }, () =
         .should('have.class', 'fr-valid');
     });
 
-    it('creates new user and logs in', () => {
-      fillOutRegistrationForm(fieldData);
-      // set valid password - submit form
-      cy.findByLabelText('Password')
-        .type(userPassword)
-        .get('[type="submit"]')
-        .click();
-
-      cy.location().should((location) => {
-        expect(location.pathname).to.eq('/enduser/');
-      });
-    });
-
-    it('next button is disabled until all required fields are filled in', () => {
+    it('[TC-12149] next button is disabled until all required fields are filled in', () => {
       const onlyUserName = [
         {
           placeholder: 'Username',
@@ -146,7 +133,7 @@ describe('Enduser Default Registration', { tags: ['@forgeops', '@smoke'] }, () =
       });
     });
 
-    it('validates email and required fields', () => {
+    it('[TC-12150] validates email and required fields', () => {
       fillOutRegistrationForm(fieldData);
 
       validateEmailField('invalidEmail', 'valid@example.com');
@@ -186,29 +173,6 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
     const userPassword = 'Rg_GRg9k&e';
     let emailAccount;
     let validFieldData;
-
-    const invalidFieldData = [
-      {
-        placeholder: 'Username',
-        text: random(Number.MAX_SAFE_INTEGER),
-      },
-      {
-        placeholder: 'Password',
-        text: `Aa.1${random(Number.MAX_SAFE_INTEGER)}`,
-      },
-      {
-        placeholder: 'First Name',
-        text: random(Number.MAX_SAFE_INTEGER),
-      },
-      {
-        placeholder: 'Last Name',
-        text: random(Number.MAX_SAFE_INTEGER),
-      },
-      {
-        placeholder: 'Email Address',
-        text: 'incorrectEmail',
-      },
-    ];
 
     const getLastEmail = () => {
       recurse(() => cy.task('getLatestEmail', emailAccount),
@@ -322,47 +286,6 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
           deleteIDMUser(userId);
         });
       });
-    });
-
-    it('[C19749] Cannot proceed with empty or incorrect credentials', () => {
-      cy.visit(locationUrl);
-
-      // Verify that the submit button is disabled when the form is empty
-      cy.get('[type="submit"]').should('be.visible').and('be.disabled');
-
-      // Verify that Submit button does not get enabled by filling a single field of the form
-      cy.findAllByLabelText(/username/i, { timeout: 10000 }).first().type(String(random(Number.MAX_SAFE_INTEGER)));
-      cy.get('[type="submit"]').should('be.disabled');
-
-      // Verify that the form shows an error message when the email format is incorrect
-      fillOutRegistrationForm(invalidFieldData);
-      cy.get('.error-message').contains('Invalid email format').should('be.visible');
-
-      // Validate that the form correctly shows policies when the password does not meet requirements
-      cy.findByLabelText(new RegExp('Email Address', 'i')).clear().type('Valid@email.format');
-      fillOutKBADefaultColorKBA();
-      cy.findByLabelText('Password').clear().type('0');
-      cy.get('[type="submit"]').should('be.disabled');
-      cy.get('li:contains("Must be at least 8 characters long")')
-        .should('not.have.class', 'fr-valid').and('be.visible');
-      cy.get('li:contains("One lowercase character, one uppercase character, one number, one special character")')
-        .should('not.have.class', 'fr-valid').and('be.visible');
-
-      // Validate that the form correctly shows policies when the password meets some but not all requirements
-      cy.findByLabelText('Password').type('longenoughtopass');
-      cy.get('li:contains("Must be at least 8 characters long")')
-        .should('have.class', 'fr-valid').and('be.visible');
-      cy.get('li:contains("One lowercase character, one uppercase character, one number, one special character")')
-        .should('not.have.class', 'fr-valid').and('be.visible');
-      cy.get('[type="submit"]').should('be.disabled');
-
-      // Validate that the form correctly shows policies and Submit button is enabled when the password meets all requirements
-      cy.findByLabelText('Password').type(userPassword);
-      cy.get('li:contains("Must be at least 8 characters long")')
-        .should('have.class', 'fr-valid').and('be.visible');
-      cy.get('li:contains("One lowercase character, one uppercase character, one number, one special character")')
-        .should('have.class', 'fr-valid').and('be.visible');
-      cy.get('[type="submit"]').should('be.enabled');
     });
 
     it('[TC-12058] Cannot proceed with empty KBA question/answer', () => {

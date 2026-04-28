@@ -21,7 +21,7 @@ describe('IAM-4383 Login supports custom redirects in auth scripts', { tags: '@c
   // Login as admin and delete test Journey with scripts
   after(() => cy.deleteTreesViaAPI(['IAM-4384.json']));
 
-  it('IAM-4383 should resume trees using custom redirect flows correctly following a custom redirect where the tracking cookie is present', () => {
+  it('[TC-12179] Should resume trees using custom redirect flows correctly following a custom redirect where the tracking cookie is present', () => {
     cy.visit(testTreeUrl);
 
     cy.log('Check that the initial platform username node is shown and proceed');

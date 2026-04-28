@@ -15,7 +15,7 @@ describe('Forbidden Page - Visual Tests', { tags: '@forgeops' }, () => {
   });
 
   describe('Forbidden View States', () => {
-    it('should capture forbidden page layout', () => {
+    it('[TC-12106] Should capture forbidden page layout', () => {
       // Ensure img has loaded
       cy.get('img', { timeout: 5000 }).should('be.visible');
 

@@ -111,7 +111,7 @@ describe('Extended Enduser Registration', { tags: '@cloud' }, () => {
       openExtendedRegistrationJourneyPage();
     });
 
-    it('Creates new user, sends registration email and logs in', () => {
+    it('[TC-12152] Creates new user, sends registration email and logs in', () => {
       // Submit button is disabled when navigating to the journey
       cy.findByRole('button', { name: 'Next' }).should('be.disabled');
 
@@ -153,50 +153,50 @@ describe('Extended Enduser Registration', { tags: '@cloud' }, () => {
         fillOutRegistrationForm(validFieldData);
       });
 
-      it('cannot register with empty description', () => {
+      it('[TC-12153] Cannot register with empty description', () => {
         cy.findByText('Description').siblings('input').clear();
         cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
         cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
       });
 
-      it('cannot register with empty telephone number', () => {
+      it('[TC-12154] Cannot register with empty telephone number', () => {
         cy.findByText('Telephone Number').siblings('input').clear();
         cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
         cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
       });
 
-      it('cannot register with an alpha-numeric telephone number', () => {
+      it('[TC-12155] Cannot register with an alpha-numeric telephone number', () => {
         cy.findByText('Telephone Number').siblings('input').clear().type('3008756123a');
         cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
         cy.get('.error-message').contains('Has to match pattern: ^\\+?([0-9\\- \\(\\)])*$').should('be.visible');
       });
 
-      it('cannot register with empty address', () => {
+      it('[TC-12156] Cannot register with empty address', () => {
         cy.findByText('Address 1').siblings('input').clear();
         cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
         cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
       });
 
-      it('cannot register with empty postal code', () => {
+      it('[TC-12157] Cannot register with empty postal code', () => {
         cy.findByText('Postal Code').siblings('input').clear();
         cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
         cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
       });
 
-      it('cannot register with empty city', () => {
+      it('[TC-12158] Cannot register with empty city', () => {
         cy.findByText('City').siblings('input').clear();
         cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
         cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
       });
 
-      it('cannot register with empty country', () => {
+      it('[TC-12159] Cannot register with empty country', () => {
         cy.findByText('Country').siblings('input').clear();
         cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
         cy.findByTestId('FrAlert').should('be.visible').and('contain.text', 'Invalid Attribute Syntax');
       });
     });
 
-    it('Double password validation works correctly', () => {
+    it('[TC-12160] Double password validation works correctly', () => {
       fillOutRegistrationForm(validFieldData);
 
       // User can not proceed with empty confirm password
@@ -210,7 +210,7 @@ describe('Extended Enduser Registration', { tags: '@cloud' }, () => {
     });
 
     // TODO: Skip test due it's constantly failing in pipeline execution. Ticket IAM-9677 was created to solve the issue.
-    it.skip('Password checkmarks are displayed correctly', () => {
+    it.skip('[TC-12161] Password checkmarks are displayed correctly', () => {
       fillOutRegistrationForm(validFieldData);
 
       // Validate that only user data policy is checked and all others are marked as X and using red text

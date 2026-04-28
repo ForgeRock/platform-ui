@@ -100,7 +100,7 @@ describe('Login tests for Terms and Conditions', { tags: ['@forgeops', '@cloud']
     setTerms();
   }));
 
-  it('Created user should be prompted to accept T&C if not yet accepted', () => {
+  it('[C4464] Login with user who has not accepted T&C yet', () => {
     // Login as Enduser
     loginEnduser();
 
@@ -134,7 +134,7 @@ describe('Login tests for Terms and Conditions', { tags: ['@forgeops', '@cloud']
       });
   });
 
-  it('Created user should not be prompted to accept T&C when already accepted', () => {
+  it('[C4462] Login with user who has already accepted T&C during registration', () => {
     // Login as Enduser
     loginEnduser();
 
@@ -144,7 +144,7 @@ describe('Login tests for Terms and Conditions', { tags: ['@forgeops', '@cloud']
     // Accept T&C
     cy.findByRole('button', { name: 'Next' }).click();
 
-    // Wait for successfull login
+    // Wait for successful login
     cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
 
     // Logout to proceed with the next step
@@ -156,7 +156,7 @@ describe('Login tests for Terms and Conditions', { tags: ['@forgeops', '@cloud']
     // Again Login as Enduser
     loginEnduser();
 
-    // Wait for successfull login (user should not be prompted to accept T&C again)
+    // Wait for successful login (user should not be prompted to accept T&C again)
     cy.findByRole('heading', { timeout: 20000 }).contains(`Hello, ${userName}`).should('be.visible');
   });
 });

@@ -17,7 +17,7 @@ describe('Login Page - Visual Tests', { tags: '@forgeops' }, () => {
     cy.get('.fr-company-logo').should('be.visible');
   });
 
-  it('should capture default login form', () => {
+  it('[TC-12169] Should capture default login form', () => {
     // Ensure all elements are loaded and visible
     cy.get('.fr-center-card').should('be.visible');
     cy.findByLabelText(/User Name/i, { timeout: 10000 }).should('be.visible');
@@ -27,7 +27,7 @@ describe('Login Page - Visual Tests', { tags: '@forgeops' }, () => {
     cy.percySnapshot('Login - Default State');
   });
 
-  it('should capture loading spinner state', () => {
+  it('[TC-12170] Should capture loading spinner state', () => {
     let interceptResolve;
 
     // Intercept authentication requests and hold them to capture spinner
@@ -54,7 +54,7 @@ describe('Login Page - Visual Tests', { tags: '@forgeops' }, () => {
     });
   });
 
-  it('should capture error state', () => {
+  it('[TC-12171] Should capture error state', () => {
     // Fill form with wrong credentials
     cy.findByLabelText(/User Name/i).type(userName, { force: true });
     cy.findAllByLabelText(/Password/i).first().type('wrongpassword', { force: true });

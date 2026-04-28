@@ -15,7 +15,7 @@ const setupRegistrationPage = (locationUrl) => {
 describe('Registration Page - Visual Tests', { tags: '@forgeops' }, () => {
   const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Registration#/`;
   // Visual regression tests for registration page
-  it('should capture registration form states', () => {
+  it('[TC-12174] Should capture registration form states', () => {
     setupRegistrationPage(locationUrl);
     cy.findByLabelText('Username').type('testuser123');
     cy.findByLabelText('First Name').type('Test');
@@ -30,7 +30,7 @@ describe('Registration Page - Visual Tests', { tags: '@forgeops' }, () => {
     cy.percySnapshot('Login - Terms Modal');
   });
 
-  it('should capture first security questions dropdown', () => {
+  it('[TC-12175] Should capture first security questions dropdown', () => {
     setupRegistrationPage(locationUrl);
 
     // Click the first security question dropdown using combobox role
@@ -39,7 +39,7 @@ describe('Registration Page - Visual Tests', { tags: '@forgeops' }, () => {
     cy.percySnapshot('Login - Security Questions Dropdown');
   });
 
-  it('should capture security question selection - favorite color', () => {
+  it('[TC-12176] Should capture security question selection - favorite color', () => {
     setupRegistrationPage(locationUrl);
 
     // Click the first security question dropdown using combobox role
@@ -55,7 +55,7 @@ describe('Registration Page - Visual Tests', { tags: '@forgeops' }, () => {
     cy.percySnapshot('Login - Security Question Selected');
   });
 
-  it('should capture custom security question input', () => {
+  it('[TC-12177] Should capture custom security question input', () => {
     setupRegistrationPage(locationUrl);
 
     // Click the first security question dropdown using combobox role
@@ -68,7 +68,7 @@ describe('Registration Page - Visual Tests', { tags: '@forgeops' }, () => {
     cy.percySnapshot('Login - Custom Security Question');
   });
 
-  it('should capture second security questions dropdown', function captureSecondSecurityQuestionDropdown() {
+  it('[TC-12178] Should capture second security questions dropdown', function captureSecondSecurityQuestionDropdown() {
     setupRegistrationPage(locationUrl);
 
     // Only test second security question if not in FRaaS (Cloud) environment

@@ -22,7 +22,7 @@ describe('IAM-2927, IAM-3089, and IAM-3939 can return to login from social IDP p
   // Login as admin and delete test Journey with scripts
   after(() => cy.deleteTreesViaAPI(['IAM-3089.json', 'IAM-3939.json']));
 
-  it('IAM-2927, IAM-3089 can return to the login UI following a social IDP redirect without being directed back to the IDP', () => {
+  it('[TC-12181] Should return to the login UI following a social IDP redirect without being directed back to the IDP', () => {
     cy.visit(testTreeWithTwoIDPsUrl);
 
     cy.log('Check that the two social IDP choices are shown');
@@ -36,7 +36,7 @@ describe('IAM-2927, IAM-3089, and IAM-3939 can return to login from social IDP p
     cy.findByLabelText('User Name', { timeout: 20000 }).should('exist');
   });
 
-  it('IAM-3939 can return to the login UI following a social IDP redirect from a tree with one IDP option', () => {
+  it('[TC-12182] Should return to the login UI following a social IDP redirect from a tree with one IDP option', () => {
     cy.visit(testTreeWithOneIDPUrl);
 
     cy.log('IAM-3939 - can navigate directly to another tree following a social IDP redirect');
