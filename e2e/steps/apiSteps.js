@@ -10,10 +10,12 @@ import CspApiSteps from './api/CspApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import UserApiSteps from './api/UserApiSteps';
 import CustomDomainApiSteps from './api/CustomDomainApiSteps';
+import EventHookApiSteps from './api/EventHookApiSteps';
 
 export default {
   csp: CspApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
   user: UserApiSteps,
   customDomain: CustomDomainApiSteps,
+  eventHooks: EventHookApiSteps,
 };
