@@ -116,7 +116,7 @@
     "nanoid": "3.3.12",
     "picomatch@npm:^2": "2.3.2",
     "picomatch@npm:^4": "4.0.4",
-    "postcss@npm:^8": "8.5.10",
+    "postcss@npm:^8": "8.5.14",
     "ramda@npm:^0.25.0": "0.27.1",
     "semver": "7.5.4",
     "serialize-javascript": "7.0.5",
