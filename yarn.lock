@@ -2797,7 +2797,7 @@ __metadata:
     "@vue/compiler-sfc": 3.3.4
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
-    axios: 1.15.0
+    axios: 1.15.1
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -2869,7 +2869,7 @@ __metadata:
     "@vueuse/core": 10.9.0
     appauthhelper: 1.0.1
     assert: 2.0.0
-    axios: 1.15.0
+    axios: 1.15.1
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -2950,7 +2950,7 @@ __metadata:
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
     appauthhelper-enduser: "npm:appauthhelper@0.5.0"
-    axios: 1.15.0
+    axios: 1.15.1
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -3004,7 +3004,7 @@ __metadata:
     "@vue/compiler-sfc": 3.3.4
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
-    axios: 1.15.0
+    axios: 1.15.1
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -3057,7 +3057,7 @@ __metadata:
     "@vue/compiler-sfc": 3.3.4
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
-    axios: 1.15.0
+    axios: 1.15.1
     axios-mock-adapter: 1.17.0
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
@@ -3103,7 +3103,7 @@ __metadata:
     "@vue/test-utils": 2.4.1
     "@vue/vue3-jest": 29.2.6
     "@vueuse/core": 10.9.0
-    axios: 1.15.0
+    axios: 1.15.1
     babel-core: 7.0.0-bridge.0
     bootstrap: 4.6.2
     bootstrap-vue: 2.23.1
@@ -6861,7 +6861,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.15.0, axios@npm:^1.7.7":
+"axios@npm:1.15.1":
+  version: 1.15.1
+  resolution: "axios@npm:1.15.1"
+  dependencies:
+    follow-redirects: ^1.15.11
+    form-data: ^4.0.5
+    proxy-from-env: ^2.1.0
+  checksum: 5195540056a14b54cb85aa0d22aa672afda6317dd36d4d04f4e257da935c9f27404fb5abc6dd07c9c5fd6489b9763b5623e2b2da926999015e82321119da71eb
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.7.7":
   version: 1.15.0
   resolution: "axios@npm:1.15.0"
   dependencies:
