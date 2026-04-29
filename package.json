@@ -92,6 +92,7 @@
     "diff": "5.2.2",
     "dompurify": "3.4.0",
     "elliptic": "6.6.0",
+    "follow-redirects": "1.16.0",
     "form-data": "4.0.4",
     "glob@npm:>=10": "10.5.0",
     "istanbul-lib-instrument": "5.2.0",
