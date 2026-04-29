@@ -67,6 +67,7 @@ const defaultState = {
   wsfedEnabled: false,
   templateBuilderEnabled: false,
   enableSamlSigningCheckbox: false,
+  enableSamlSkipMetadataSignatureVerification: false,
   enableMonitoringUI: false,
   devAppTemplatesEnabled: false,
 };
@@ -239,6 +240,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_SAML_SIGNING_CHECKBOX?.toString() === 'true') {
       state.enableSamlSigningCheckbox = true;
+    }
+
+    if (env.VUE_APP_ENABLE_SAML_SKIP_METADATA_SIGNATURE_VERIFICATION?.toString() === 'true') {
+      state.enableSamlSkipMetadataSignatureVerification = true;
     }
 
     if (env.VUE_APP_ENABLE_TEMPLATE_BUILDER?.toString() === 'true') {
