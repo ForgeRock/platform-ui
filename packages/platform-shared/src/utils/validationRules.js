@@ -281,6 +281,24 @@ export function getRules(i18n) {
     return i18n.global.t('common.policyValidationMessages.validIp');
   }
 
+  // Rule to check whether value is a valid IPv4 or IPv6 address with an optional cidr extension
+  function ipv4_ipv6_cidr(value) {
+    let arrayValid = true;
+    if (Array.isArray(value)) {
+      value.forEach((singleValue) => {
+        if (singleValue !== '' && !customValidators.ipv4Cidr(singleValue) && !customValidators.ipv6Cidr(singleValue)) {
+          arrayValid = false;
+        }
+      });
+      if (arrayValid) {
+        return true;
+      }
+    } else if (value === '' || customValidators.ipv4Cidr(value) || customValidators.ipv6Cidr(value)) {
+      return true;
+    }
+    return i18n.global.t('common.policyValidationMessages.validIp');
+  }
+
   const text_without_fragment = (value) => (Array.isArray(value) ? !value.some((element) => element.includes('#')) : !value.includes('#')) || i18n.global.t('common.policyValidationMessages.url_with_fragment');
 
   // Rule to check whether url is valid
@@ -458,6 +476,7 @@ export function getRules(i18n) {
     isList,
     isNumber,
     ipv4_ipv6,
+    ipv4_ipv6_cidr,
     json,
     lower_case_alpha_numeric_underscore_hyphen_only,
     max_value,
