@@ -13,7 +13,7 @@
     "@forgerock/platform-shared": "1.0.0",
     "@kyvg/vue3-notification": "3.0.2",
     "@vue/compat": "3.3.4",
-    "axios": "1.15.1",
+    "axios": "1.15.2",
     "bootstrap": "4.6.2",
     "bootstrap-vue": "2.23.1",
     "lodash": "4.18.1",
