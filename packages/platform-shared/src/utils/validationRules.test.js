@@ -535,6 +535,41 @@ describe('ip validators', () => {
   it('should return true when all array elements valid', () => {
     expect(rules.ipv4_ipv6(['1.2.3.4', '5.6.7.8'])).toBe(true);
   });
+
+  it('default validator should return error message when unpermitted CIDR range provided', () => {
+    expect(rules.ipv4_ipv6('1.1.1.1/32')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6('2001:db8:3333:4444:5555:6666:7777:8888/128')).toBe('Please provide a valid IPv4 or IPv6 address');
+  });
+
+  it('should return corresponding error message when invalid CIDR range ipv4', () => {
+    expect(rules.ipv4_ipv6_cidr('1.1.1.1/blah')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('1.1.1.1/33')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('1.1.1.1/33test')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('1.1.1.1/128')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('1.1.1.1/-1')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('1.2.3./0.4')).toBe('Please provide a valid IPv4 or IPv6 address');
+  });
+
+  it('should return corresponding error message when invalid CIDR range ipv6', () => {
+    expect(rules.ipv4_ipv6_cidr('2001:db8:3333:4444:5555:6666:7777:8888/blah')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('2001:db8:3333:4444:5555:6666:7777:8888/129')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('2001:db8:3333:4444:5555:6666:7777:8888/1023')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('2001:db8:3333:4444:5555:6666:7777:8888/10test3')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('2001:db8:3333:4444:5555:6666:7777:8888/-1')).toBe('Please provide a valid IPv4 or IPv6 address');
+    expect(rules.ipv4_ipv6_cidr('2001:db8:3333:4444:5555:6666:./0:7777:8888')).toBe('Please provide a valid IPv4 or IPv6 address');
+  });
+
+  it('should return true when CIDR range valid ipv4', () => {
+    expect(rules.ipv4_ipv6_cidr('1.1.1.1/32')).toBe(true);
+    expect(rules.ipv4_ipv6_cidr('1.1.1.1/0')).toBe(true);
+    expect(rules.ipv4_ipv6_cidr('1.1.1.1/24')).toBe(true);
+  });
+
+  it('should return true when CIDR range valid ipv6', () => {
+    expect(rules.ipv4_ipv6_cidr('2001:db8:3333:4444:5555:6666:7777:8888/0')).toBe(true);
+    expect(rules.ipv4_ipv6_cidr('2001:db8:3333:4444:5555:6666:7777:8888/128')).toBe(true);
+    expect(rules.ipv4_ipv6_cidr('2001:db8:3333:4444:5555:6666:7777:8888/64')).toBe(true);
+  });
 });
 
 describe('other validation Rules', () => {

@@ -73,7 +73,7 @@
     "HostedPages": "Hosted Pages",
     "HostedPagesEdit": "Edit Hosted Pages",
     "hostedPagesSettings": "Hosted Pages Settings",
-    "Interfaces": "Interfaces",
+    "NetworkSecurity": "Network Security",
     "Jobs": "Jobs",
     "JourneyAIBuildNew": "Build Journey with AI",
     "JourneyAIBuildPreview": "AI Journey Preview",
@@ -3948,9 +3948,9 @@
       "primaryDomainHelpTextWithHtml": "Include at least one fully qualified domain name to be included in the certificate signing request. You cannot use special characters (?, $, % and so on), IP addresses, Port numbers, or \"http:// or https://\" in your common name or SANs. Eg. <code>mydomain.com</code>"
     }
   },
-  "interfaces": {
-    "title": "Interfaces",
-    "description": "Configure security, access and network interfaces for your tenant",
+  "networkSecurity": {
+    "title": "Network Security",
+    "description": "Configure network security and access for your tenant",
     "mtls": {
       "title": "MTLS",
       "enable": "Configure",
@@ -4013,7 +4013,7 @@
         "updateWarning": "Changes may take up to 10 minutes to propagate, during which time you will not be able to make further updates."
       }
     },
-    "errorRetrievingInterfacesConfig": "Could not retrieve interfaces config"
+    "errorRetrievingNetworkSecurityConfig": "Could not retrieve network security config"
   },
   "securityQuestions": {
     "subtitle": "Define security questions to use for verification purposes.",
