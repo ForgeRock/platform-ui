@@ -17,7 +17,8 @@
 
     &:focus-visible {
       background: $gray-500;
-      outline-offset: 3px;
+      outline: 2px solid $outline-blue;
+      outline-offset: 2px;
       margin: 0 4px;
     }
   }
