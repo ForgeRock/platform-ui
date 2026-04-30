@@ -263,6 +263,7 @@ $orchid: #ba4de1;
 $sky-blue: #61e2e2;
 $white-smoke: #f5f7f9;
 $bright-gray: #e7ebf0;
+$outline-blue: #0672cb;
 
 $primary: $blue;
 $secondary: $gray-500;
@@ -544,6 +545,16 @@ $table-cell-padding: 1.25rem 1.5rem;
 $table-cell-padding-sm: 0.5rem;
 $table-color: $gray-900;
 $table-border-color: $gray-200;
+
+/* Table sort icon overrides: inactive arrows use $gray-500 (4.51:1 on white) to meet WCAG SC 1.4.11.
+   Matches resizer icon color for consistent theme-driven styling. */
+
+$table-sort-icon-inactive-fill: '%23#{str-slice(inspect($gray-500), 2)}';
+$table-sort-icon-active-fill: '%23#{str-slice(inspect($table-color), 2)}';
+
+$table-sort-icon-none: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='M51 1l25 23 24 22H1l25-22zM51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
+$table-sort-icon-ascending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
+$table-sort-icon-descending: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='#{$table-sort-icon-inactive-fill}' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='#{$table-sort-icon-active-fill}' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
 
 /* Forgerock specific table variables */
 $fr-table-head-weight: 600;

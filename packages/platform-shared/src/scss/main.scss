@@ -541,6 +541,24 @@ a.card {
   }
 }
 
+/* Override BootstrapVue sort icon SVGs so inactive arrows meet WCAG SC 1.4.11 (min 3:1 contrast). */
+.table.b-table {
+  > thead > tr > [aria-sort=none],
+  > tfoot > tr > [aria-sort=none] {
+    background-image: $table-sort-icon-none;
+  }
+
+  > thead > tr > [aria-sort=ascending],
+  > tfoot > tr > [aria-sort=ascending] {
+    background-image: $table-sort-icon-ascending;
+  }
+
+  > thead > tr > [aria-sort=descending],
+  > tfoot > tr > [aria-sort=descending] {
+    background-image: $table-sort-icon-descending;
+  }
+}
+
 .checkbox-column {
   width: 30px;
   padding-right: 0 !important;
