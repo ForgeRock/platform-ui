@@ -38,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
           lazy>
           <FrDetailsTab
             :agent="agent"
+            :is-end-user="props.isEndUser"
             :read-only="readOnly" />
         </BTab>
         <BTab
@@ -107,7 +108,7 @@ const props = defineProps({
   },
   isEndUser: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 });
 const { setBreadcrumb } = useBreadcrumb();

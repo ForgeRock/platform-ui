@@ -46,6 +46,15 @@ const agentValues = {
   accountType: 'agent',
 };
 
+const identityDetails = [
+  { _id: '456', __NAME__: 'identity1', description: 'Identity description 1' },
+  { _id: '789', __NAME__: 'identity2', description: 'Identity description 2' },
+];
+
+const guardrailDetails = [
+  { __id: '123', guardrailName: 'Guardrail 1', guardrailDescription: 'Guardrail description 1' },
+];
+
 function getAgent() {
   const testAccount = {
     id: 'system/Target/User/102',
@@ -62,7 +71,7 @@ function getAgent() {
     },
     account: {
       guardrailId: ['123'],
-      agentPrincipals: ['456', '789'],
+      identityBindingIds: ['456', '789'],
       knowledgeBases: [],
       tools: [],
     },
@@ -113,6 +122,7 @@ describe('DetailsTab', () => {
       props: {
         agent: getAgent(),
         readOnly,
+        isEndUser: false,
         ...additionalProps,
       },
       global: {
@@ -138,7 +148,7 @@ describe('DetailsTab', () => {
       await flushPromises();
 
       const cards = wrapper.findAll('.card');
-      expect(cards.length).toBe(6);
+      expect(cards.length).toBe(7);
 
       const ownerTitle = cards[1].find('.h5');
       expect(ownerTitle.text()).toBe('governance.agents.custodians');
@@ -155,7 +165,7 @@ describe('DetailsTab', () => {
       await wrapper.vm.$nextTick();
 
       const cards = wrapper.findAll('.card');
-      expect(cards.length).toBe(6);
+      expect(cards.length).toBe(7);
 
       const button = cards[0].find('.btn-link');
       expect(button.exists()).toBe(false);
@@ -177,13 +187,29 @@ describe('DetailsTab', () => {
 
     it('agent entity details are populated correctly', async () => {
       const wrapper = await mountComponent('default', false, {});
+      wrapper.vm.resourceData = {
+        guardrails: { pageNumber: 0, pageSize: 10, result: guardrailDetails },
+        identity: { pageNumber: 0, pageSize: 10, result: identityDetails },
+        knowledge: { pageNumber: 0, pageSize: 10, result: [] },
+        tools: { pageNumber: 0, pageSize: 10, result: [] },
+        toolCredentials: { pageNumber: 0, pageSize: 10, result: [] },
+      };
+      await wrapper.vm.$nextTick();
+
       const cards = wrapper.findAll('.card-body');
       const visibleCollapse = cards[2].find('.collapse.show');
       expect(visibleCollapse.exists()).toBe(true);
 
-      const identityProfilesCard = cards[5];
+      const guardrailCard = cards[2];
+      const guardrailRows = guardrailCard.findAll('.entity-row');
+      expect(guardrailRows.length).toBe(1);
+      expect(guardrailRows[0].text()).toContain('Guardrail 1');
+
+      const identityProfilesCard = cards[3];
       const entityRows = identityProfilesCard.findAll('.entity-row');
       expect(entityRows.length).toBe(2);
+      expect(entityRows[0].text()).toContain('identity1');
+      expect(entityRows[1].text()).toContain('identity2');
 
       const knowledgeBasesCard = cards[4];
       expect(knowledgeBasesCard.text()).toContain('governance.agents.details.noAssociatedEntities');

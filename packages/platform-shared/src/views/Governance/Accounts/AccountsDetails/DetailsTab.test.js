@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -183,7 +183,8 @@ describe('DetailsTab', () => {
       expect(ownerText.text()).toBe('common.userFullName');
 
       const button = cards[0].find('.btn-link');
-      expect(button.exists()).toBe(false);
+      expect(button.exists()).toBe(true);
+      expect(button.text()).toBe('governance.accounts.modal.update');
     });
 
     it('should display an orphan account correctly', async () => {
@@ -195,7 +196,7 @@ describe('DetailsTab', () => {
 
       const button = cards[0].find('.btn-link');
       expect(button.exists()).toBe(true);
-      expect(button.text()).toBe('Change to Machine Account');
+      expect(button.text()).toBe('governance.accounts.modal.update');
     });
 
     it('should display a machine account correctly', async () => {
@@ -213,7 +214,7 @@ describe('DetailsTab', () => {
 
       const button = cards[0].find('.btn-link');
       expect(button.exists()).toBe(true);
-      expect(button.text()).toBe('Edit Machine Account');
+      expect(button.text()).toBe('governance.accounts.modal.update');
     });
 
     it('should not display actions on read only mode', async () => {

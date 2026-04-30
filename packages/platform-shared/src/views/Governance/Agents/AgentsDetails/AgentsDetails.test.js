@@ -89,7 +89,7 @@ describe('AgentsDetails', () => {
   });
 
   it('should display all tabs', async () => {
-    mountComponent();
+    mountComponent({ isEndUser: false });
     await flushPromises();
 
     const tabContainer = wrapper.find('.tabs');
