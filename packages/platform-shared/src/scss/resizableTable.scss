@@ -4,7 +4,7 @@
     right: 0;
     top: 4px;
     bottom: 4px;
-    width: 5px;
+    width: 4px;
     cursor: col-resize;
     user-select: none;
     z-index: 2;
@@ -12,20 +12,19 @@
     transition: background 0.3s ease;
 
     &:hover {
-      background: $gray-300;
+      background: $gray-500;
     }
 
     &:focus-visible {
-      background: $gray-300;
-      outline: 2px solid #1976d2;
-      outline-offset: 2px;
+      background: $gray-500;
+      outline-offset: 3px;
       margin: 0 4px;
     }
   }
 
   th {
     &:hover .resizer {
-      background: $gray-300;
+      background: $gray-500;
     }
 
     &:focus {
@@ -41,7 +40,7 @@
   }
 
   .table-resizable--resizing {
-    background: $gray-300;
+    background: $gray-500;
   }
 
   tr:not(:focus-visible) .sticky-left,
