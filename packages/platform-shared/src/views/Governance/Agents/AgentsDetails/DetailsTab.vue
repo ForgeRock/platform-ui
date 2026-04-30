@@ -4,9 +4,24 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrSpinner
-    v-if="loading"
+    v-if="isLoading.all"
     class="py-5" />
   <template v-else>
+    <div
+      class="d-flex">
+      <BButton
+        v-if="!props.readOnly"
+        variant="primary"
+        class="mb-4 mr-2"
+        :disabled="isLoading.all"
+        @click="editAgentDetails">
+        <FrIcon
+          icon-class="mr-2 text-nowrap"
+          name="edit">
+          {{ $t('governance.agents.editAgent') }}
+        </FrIcon>
+      </BButton>
+    </div>
     <FrAccountObjectProperties
       @toggle-collapse="isVisible.properties = !isVisible.properties"
       enable-collapse
@@ -30,6 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BRow>
           <BCol
             v-for="actor in actors"
+            class="mb-2"
             :key="actor._id"
             sm="3">
             <FrUserDetails :user-object="actor" />
@@ -37,110 +53,102 @@ of the MIT license. See the LICENSE file for details. -->
         </BRow>
       </BCollapse>
     </BCard>
-    <BCard
-      class="mb-3">
-      <div
-        class="d-flex justify-content-between section-header"
-        @click="isVisible.guardrails = !isVisible.guardrails">
-        <h1 class="h5">
-          {{ i18n.global.t('governance.agents.guardrails') }}
-        </h1>
-        <FrIcon
-          :name="isVisible.guardrails ? 'keyboard_arrow_down' : 'chevron_right'"
-          class="ml-2" />
-      </div>
-      <BCollapse :visible="isVisible.guardrails">
-        <FrEntityList
-          :entities="getAgentPropList('guardrails')"
-          :type="i18n.global.t('governance.agents.guardrails')"
-          :icon="agentConstants.AGENT_ICONS.guardrails" />
-      </BCollapse>
-    </BCard>
-    <BCard
-      class="mb-3">
-      <div
-        class="d-flex justify-content-between section-header"
-        @click="isVisible.tools = !isVisible.tools">
-        <h1 class="h5">
-          {{ i18n.global.t('governance.agents.tools') }}
-        </h1>
-        <FrIcon
-          :name="isVisible.tools ? 'keyboard_arrow_down' : 'chevron_right'"
-          class="ml-2" />
-      </div>
-      <BCollapse :visible="isVisible.tools">
-        <FrEntityList
-          :entities="getAgentPropList('tools')"
-          :type="i18n.global.t('governance.agents.tools')"
-          :icon="agentConstants.AGENT_ICONS.tools" />
-      </BCollapse>
-    </BCard>
-    <BCard
-      class="mb-3">
-      <div
-        class="d-flex justify-content-between section-header"
-        @click="isVisible.knowledge = !isVisible.knowledge">
-        <h1 class="h5">
-          {{ i18n.global.t('governance.agents.knowledge') }}
-        </h1>
-        <FrIcon
-          :name="isVisible.knowledge ? 'keyboard_arrow_down' : 'chevron_right'"
-          class="ml-2" />
-      </div>
-      <BCollapse :visible="isVisible.knowledge">
-        <FrEntityList
-          :entities="getAgentPropList('knowledge')"
-          :type="i18n.global.t('governance.agents.knowledge')"
-          :icon="agentConstants.AGENT_ICONS.knowledge" />
-      </BCollapse>
-    </BCard>
-    <BCard
-      class="mb-3">
-      <div
-        class="d-flex justify-content-between section-header"
-        @click="isVisible.identity = !isVisible.identity">
-        <h1 class="h5">
-          {{ i18n.global.t('governance.agents.identity') }}
-        </h1>
-        <FrIcon
-          :name="isVisible.identity ? 'keyboard_arrow_down' : 'chevron_right'"
-          class="ml-2" />
-      </div>
-      <BCollapse :visible="isVisible.identity">
-        <FrEntityList
-          :entities="getAgentPropList('identity')"
-          :type="i18n.global.t('governance.agents.identity')"
-          :icon="agentConstants.AGENT_ICONS.identity" />
-      </BCollapse>
-    </BCard>
+    <template
+      v-if="!props.isEndUser">
+      <BCard
+        v-for="agentProp in Object.keys(agentApplicationProps)"
+        :key="agentApplicationProps[agentProp].accountAttribute"
+        class="mb-3">
+        <div
+          class="d-flex justify-content-between section-header"
+          @click="isVisible[agentProp] = !isVisible[agentProp]">
+          <h1 class="h5">
+            {{ i18n.global.t(`governance.agents.${agentProp}`) }}
+          </h1>
+          <FrIcon
+            :name="isVisible[agentProp] ? 'keyboard_arrow_down' : 'chevron_right'"
+            class="ml-2" />
+        </div>
+        <BCollapse :visible="isVisible[agentProp]">
+          <FrEntityList
+            :entities="resourceData[agentProp]?.result || []"
+            :total-entities="getAgentPropList(agentProp)?.length"
+            :agent-property="agentApplicationProps[agentProp]"
+            :is-loading="isLoading[agentProp]"
+            :type="agentProp"
+            :icon="agentConstants.AGENT_ICONS[agentProp]"
+            @pagination-change="handleEntityPaginationChange" />
+        </BCollapse>
+      </BCard>
+    </template>
   </template>
+  <BModal
+    id="UpdateAgentModal"
+    no-close-on-backdrop
+    no-close-on-esc
+    size="lg"
+    title-class="h5"
+    title-tag="h2"
+    :title="$t('governance.agents.modal.title')">
+    <div class="mb-4 d-block">
+      {{ $t('governance.agents.modal.updateDescription') }}
+    </div>
+    <FrGlossaryEditForm
+      :glossary-schema="updateSchema"
+      :model-value="glossaryValues"
+      user-resource-name="alpha_user"
+      @update:modelValue="updateGlossaryValues" />
+    <template #modal-footer>
+      <div class="d-flex justify-content-end">
+        <BButton
+          variant="link"
+          @click="closeModal()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <FrButtonWithSpinner
+          class="d-block ml-auto"
+          :show-spinner="isSaving"
+          :disabled="isLoading.all"
+          @click="save()" />
+      </div>
+    </template>
+  </BModal>
 </template>
 
 <script setup>
 import {
-  onMounted, ref, computed,
+  onMounted, ref, computed, watch,
 } from 'vue';
-import { isArray } from 'lodash';
+import { isArray, map, cloneDeep } from 'lodash';
 import {
-  BCard, BCollapse, BRow, BCol,
+  BButton, BCard, BCollapse, BModal, BRow, BCol,
 } from 'bootstrap-vue';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrUserDetails from '@forgerock/platform-shared/src/components/governance/UserDetails';
-import { getAccountGlossaryAttributesData } from '@forgerock/platform-shared/src/api/governance/AccountApi';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { getAccountGlossaryAttributesData, saveAccountGlossaryAttributesData } from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getAgentResourcesByIds } from '@forgerock/platform-shared/src/api/governance/AgentApi';
+import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
 import FrAccountObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrEntityList from './AgentEntityList';
 
 import i18n from '@/i18n';
 import agentConstants from '../utils/agentConstants';
+import { adjustAccountGlossaryForDisplay } from '../../Accounts/utils/accountUtility';
 
 const props = defineProps({
   agent: {
     type: Object,
     required: true,
+  },
+  isEndUser: {
+    type: Boolean,
+    default: true,
   },
   readOnly: {
     type: Boolean,
@@ -148,17 +156,27 @@ const props = defineProps({
   },
 });
 
+const { bvModal } = useBvModal();
 const glossarySchema = ref([]);
 const glossaryValues = ref({});
+const updateSchema = computed(() => adjustAccountGlossaryForDisplay(glossaryValues.value.accountType, glossarySchema.value));
 const actors = ref([]);
-const loading = ref(true);
 const isVisible = ref({
+  ...Object.keys(agentConstants.AGENT_APPLICATION_PROPS.default || {}).reduce((acc, key) => {
+    acc[key] = true;
+    return acc;
+  }, {}),
   custodians: true,
-  guardrails: true,
-  identity: true,
-  knowledge: true,
-  tools: true,
   properties: true,
+});
+const resourceData = ref({});
+const isSaving = ref(false);
+const isLoading = ref({
+  ...Object.keys(agentConstants.AGENT_APPLICATION_PROPS.default || {}).reduce((acc, key) => {
+    acc[key] = false;
+    return acc;
+  }, {}),
+  all: false,
 });
 const templateName = computed(() => props.agent.application?.templateName?.replace(/-override$/, ''));
 const agentApplicationProps = computed(() => agentConstants.AGENT_APPLICATION_PROPS[templateName.value] || agentConstants.AGENT_APPLICATION_PROPS.default);
@@ -167,7 +185,7 @@ const agentData = computed(() => {
   const data = props.agent?.account || {};
 
   // Filter out unwanted keys based on agentApplicationProps values
-  const keysToRemove = Object.values(agentApplicationProps.value);
+  const keysToRemove = map(agentApplicationProps.value, 'accountAttribute');
 
   const filteredData = Object.keys(data).reduce((acc, key) => {
     if (!keysToRemove.includes(key)) {
@@ -184,7 +202,7 @@ const agentData = computed(() => {
  * @param propName Key of property
  */
 function getAgentPropList(propName) {
-  const propKey = agentApplicationProps.value[propName];
+  const propKey = agentApplicationProps.value[propName]?.accountAttribute;
   const val = props.agent?.account?.[propKey];
   if (!val) { return []; }
   return isArray(val) ? val : [val];
@@ -236,6 +254,7 @@ async function getGlossaryValues() {
  */
 async function getGlossary() {
   try {
+    isLoading.value.all = true;
     const [glossaryValuesResult, glossarySchemaResult] = await Promise.all([
       getGlossaryValues(),
       getGlossarySchema(),
@@ -245,13 +264,101 @@ async function getGlossary() {
     actors.value = await getActorsInfo();
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.glossary.queryAttrError', { resourceType: i18n.global.t('common.agent') }));
+  } finally {
+    isLoading.value.all = false;
   }
-  loading.value = false;
+}
+
+async function queryResourceInformation(resources = []) {
+  try {
+    const promises = resources.map((key) => {
+      isLoading.value[key] = true;
+      // Since we are using an array of ids on the source object to make the queryFilter, we are paginating here in the event of a large lists of ids
+      const { pageNumber, pageSize } = resourceData.value[key];
+      const agentApplicationProp = agentApplicationProps.value[key];
+      const allIds = getAgentPropList(key);
+      const startIndex = pageNumber * pageSize;
+      const endIndex = startIndex + pageSize;
+      const ids = allIds.slice(startIndex, endIndex);
+      if (ids.length === 0) return null;
+      return getAgentResourcesByIds({}, props.agent.application, agentApplicationProp.objectType, ids);
+    });
+    const results = await Promise.all(promises);
+    results.forEach((response, index) => {
+      const key = resources[index];
+      if (response) {
+        resourceData.value[key].result = response.data.result;
+      }
+    });
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.agents.errors.errorLoadingResources'));
+  } finally {
+    resources.forEach((key) => {
+      isLoading.value[key] = false;
+    });
+  }
+}
+
+/**
+ * Updates the pagination parameters for a given resource, then queries for the display data
+ * @param params Object containing pagination parameters for a given resource
+ */
+function handleEntityPaginationChange(params) {
+  resourceData.value[params.resource].pageNumber = params.pageNumber;
+  resourceData.value[params.resource].pageSize = params.pageSize;
+  queryResourceInformation([params.resource]);
+}
+
+/**
+ * Updates glossary values from form
+ * @param value New glossary values
+ */
+function updateGlossaryValues(value) {
+  glossaryValues.value = value;
+}
+
+function editAgentDetails() {
+  bvModal.value.show('UpdateAgentModal');
+}
+
+function closeModal() {
+  bvModal.value.hide('UpdateAgentModal');
+}
+
+/**
+ * Save agent details to glossary
+ */
+async function save() {
+  isSaving.value = true;
+  try {
+    const payload = cloneDeep(glossaryValues.value);
+    if (payload.accountType !== agentConstants.ACCOUNT_TYPES.MACHINE) {
+      // Currently subtype should only be persisted for machine accounts
+      delete payload.accountSubtype;
+    }
+    await saveAccountGlossaryAttributesData(props.agent?.keys?.accountId, payload);
+    displayNotification('success', i18n.global.t('governance.agents.details.detailsTab.agentSaved'));
+    await getGlossary();
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.agents.details.detailsTab.agentSaveErrorMessage'));
+  } finally {
+    closeModal();
+    isSaving.value = false;
+  }
 }
 
 onMounted(() => {
   getGlossary();
 });
+
+watch(() => agentApplicationProps.value, async () => {
+  if (props.isEndUser) return;
+  const resources = Object.keys(agentApplicationProps.value);
+  resources.forEach((key) => {
+    resourceData.value[key] = { pageNumber: 0, pageSize: 10, result: [] };
+  });
+  await queryResourceInformation(resources);
+}, { immediate: true });
 </script>
 <style lang="scss" scoped>
 

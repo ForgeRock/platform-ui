@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -23,13 +23,13 @@ of the MIT license. See the LICENSE file for details. -->
           </BBadge>
         </BCol>
         <BCol
-          v-if="!isCorrelated && !readOnly"
+          v-if="!readOnly"
           class="d-flex justify-content-end"
           sm="4">
           <BButton
             variant="link"
             @click="editAccountDetails">
-            {{ accountTypeText.button }}
+            {{ $t('governance.accounts.modal.update') }}
           </BButton>
         </BCol>
       </BRow>
@@ -71,6 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BRow>
         <BCol
           v-for="actor in actors"
+          class="mb-2"
           :key="actor._id"
           sm="3">
           <FrUserDetails :user-object="actor" />
@@ -130,9 +131,9 @@ of the MIT license. See the LICENSE file for details. -->
     title-class="h5"
     title-tag="h2"
     :static="isTesting"
-    :title="$t('governance.accounts.modal.title', { action: accountTypeText.action })">
+    :title="$t('governance.accounts.modal.title')">
     <div class="mb-4 d-block">
-      {{ accountTypeText.description }}
+      {{ $t('governance.accounts.modal.updateDescription') }}
     </div>
     <FrGlossaryEditForm
       :glossary-schema="updateSchema"
@@ -160,7 +161,9 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   onMounted, ref, computed,
 } from 'vue';
-import { capitalize, find } from 'lodash';
+import {
+  capitalize, cloneDeep, find,
+} from 'lodash';
 import {
   BButton, BCard, BCollapse, BModal, BRow, BCol, BBadge,
 } from 'bootstrap-vue';
@@ -176,7 +179,7 @@ import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance
 import dayjs from 'dayjs';
 import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { getAccountTypeVariant } from '../utils/accountUtility';
+import { getAccountTypeVariant, adjustAccountGlossaryForDisplay } from '../utils/accountUtility';
 
 import i18n from '@/i18n';
 import accountConstants from '../utils/accountConstants';
@@ -222,37 +225,7 @@ const accountSubTypeObject = ref({});
 
 const isCorrelated = computed(() => props.account?.user);
 const isMachine = computed(() => accountType.value.toLowerCase() === accountConstants.ACCOUNT_TYPES.MACHINE);
-const updateSchema = computed(() => glossarySchema.value.filter((entry) => {
-  // Convert existing glossary property to be used as custodians with typeahead
-  if (entry.name === 'actors') {
-    entry.displayName = i18n.global.t('governance.accounts.custodians');
-    entry.type = 'managedObject';
-    entry.managedObjectType = '/openidm/managed/user';
-    return true;
-  }
-  if (entry.name === 'accountSubtype') {
-    entry.displayName = i18n.global.t('governance.accounts.accountSubType');
-    entry.type = 'string';
-    entry.enumeratedValues = accountConstants.ACCOUNT_SUBTYPES;
-    return true;
-  }
-  return false;
-}));
-
-const accountTypeText = computed(() => {
-  if (accountType.value.toLowerCase() === accountConstants.ACCOUNT_TYPES.MACHINE) {
-    return {
-      action: i18n.global.t('governance.accounts.modal.update'),
-      button: i18n.global.t('governance.accounts.editMachine'),
-      description: i18n.global.t('governance.accounts.modal.updateMachineDescription'),
-    };
-  }
-  return {
-    action: i18n.global.t('governance.accounts.modal.set'),
-    button: i18n.global.t('governance.accounts.changeMachine'),
-    description: i18n.global.t('governance.accounts.modal.setMachineDescription'),
-  };
-});
+const updateSchema = computed(() => adjustAccountGlossaryForDisplay(glossaryValues.value.accountType || accountType.value, glossarySchema.value));
 
 /**
  * Returns display friendly values for glossary attributes
@@ -376,8 +349,6 @@ function updateGlossaryValues(value) {
 }
 
 function editAccountDetails() {
-  // Currently editing account details will always be saving the account as a machine account, so adjustment is made here
-  glossaryValues.value.accountType = accountConstants.ACCOUNT_TYPES.MACHINE;
   bvModal.value.show('UpdateAccountModal');
 }
 
@@ -388,7 +359,12 @@ function closeModal() {
 async function save() {
   saving.value = true;
   try {
-    await saveAccountGlossaryAttributesData(props.account?.keys?.accountId, glossaryValues.value);
+    const payload = cloneDeep(glossaryValues.value);
+    if (payload.accountType !== accountConstants.ACCOUNT_TYPES.MACHINE) {
+      // Currently subtype should only be persisted for machine accounts
+      delete payload.accountSubtype;
+    }
+    await saveAccountGlossaryAttributesData(props.account?.keys?.accountId, payload);
     displayNotification('success', i18n.global.t('governance.accounts.details.detailsTab.accountSaved'));
     await getGlossary();
   } catch (error) {

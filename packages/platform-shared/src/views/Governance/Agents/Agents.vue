@@ -322,41 +322,26 @@ const tabItems = [
     key: 'all',
     queryFilter: '',
   },
-  {
-    displayName: i18n.global.t('governance.agents.tabs.awsBedrock'),
-    key: 'awsBedrock',
-    queryFilter: 'application.templateName sw "aws.bedrock"',
-  },
-  {
-    displayName: i18n.global.t('governance.agents.tabs.azureAiFoundry'),
-    key: 'azureAiFoundry',
-    queryFilter: 'application.templateName sw "azure.aifoundry"',
-  },
-  {
-    displayName: i18n.global.t('governance.agents.tabs.googleVertexAi'),
-    key: 'googleVertexAi',
-    queryFilter: 'application.templateName sw "google.vertex"',
-  },
-  {
-    displayName: i18n.global.t('governance.agents.tabs.pingAiAgents'),
-    key: 'pingAiAgents',
-    queryFilter: 'application.templateName sw "salesforce.agentforce"',
-  },
+  ...Object.values(agentConstants.AGENT_TEMPLATES).map((template) => ({
+    displayName: i18n.global.t(`governance.agents.tabs.${template.replace(/\./g, '-')}`),
+    key: template,
+    queryFilter: `application.templateName sw "${template}"`,
+  })),
   {
     displayName: i18n.global.t('governance.agents.tabs.custom'),
     key: 'custom',
-    queryFilter: '!(application.templateName sw "aws.bedrock" or application.templateName sw "azure.aifoundry" or application.templateName sw "google.vertex" or application.templateName sw "salesforce.agentforce")',
+    queryFilter: `!(${Object.values(agentConstants.AGENT_TEMPLATES).map((template) => `application.templateName sw "${template}"`).join(' or ')})`,
   },
 ];
 const counts = ref({
   all: 0,
-  awsBedrock: 0,
-  azureAiFoundry: 0,
-  googleVertexAi: 0,
-  pingAiAgents: 0,
   custom: 0,
   noCustodians: 0,
   unreviewed: 0,
+  ...Object.values(agentConstants.AGENT_TEMPLATES).reduce((acc, template) => {
+    acc[template] = 0;
+    return acc;
+  }, {}),
 });
 const noCustodiansPercentage = computed(() => {
   const { key } = tabItems[selectedTab.value];

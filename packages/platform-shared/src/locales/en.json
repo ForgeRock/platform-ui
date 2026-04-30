@@ -2025,10 +2025,11 @@
       "accountSubType": "Account Subtype",
       "accountType": "Account Type",
       "accountTypes": {
+        "agent": "Agent",
+        "default": "Default",
         "machine": "Machine",
         "user": "User"
       },
-      "changeMachine": "Change to Machine Account",
       "custodians": "Custodians",
       "failedToLoad": "Failed to load accounts",
       "failedToLoadCustodians": "Failed to load custodians",
@@ -2056,17 +2057,15 @@
           "objectProperties": "Object Properties"
         }
       },
-      "editMachine": "Edit Machine Account",
+      "editAccount": "Update Account",
       "errors": {
         "errorSearchingAccounts": "There was an error searching accounts"
       },
       "machine": "Machine",
       "modal": {
-        "set": "Set",
-        "setMachineDescription": "This action will change this account to a machine account. Select any custodians that you want to assign to this machine account below. Note that this operation may not immediately reflect changes",
-        "title": "{action} Machine Account",
-        "update": "Update",
-        "updateMachineDescription": "Add or remove the custodians that are assigned to this machine account."
+        "title": "Update Account",
+        "update": "Update Account",
+        "updateDescription": "Enter the account information below that you wish to update. Note that this operation may not immediately reflect changes."
       },
       "owner": "Owner",
       "subtitle": "View and manage accounts across all your configured applications.",
@@ -2285,7 +2284,7 @@
         "user": "User"
       },
       "agentsCount": "{count} Agents",
-      "changeMachine": "Change to Machine Agent",
+      "connection": "Connection",
       "credentials": {
         "header": "Credentials",
         "button": "+ Add Credential"
@@ -2297,8 +2296,8 @@
       "default": "Default",
       "details": {
         "detailsTab": {
-          "accountSaved": "Agent saved successfully",
-          "accountSaveErrorMessage": "Error saving agent, please try again",
+          "agentSaved": "Agent saved successfully",
+          "agentSaveErrorMessage": "Error saving agent, please try again",
           "notLoadErrorMessage": "Error loading the details of the agent",
           "title": "Agent Details",
           "user": "User"
@@ -2319,8 +2318,9 @@
           "entitlements": "Entitlements"
         }
       },
-      "editMachine": "Edit Machine Agent",
+      "editAgent": "Edit Agent",
       "errors": {
+        "errorLoadingResources": "There was an error loading resources",
         "errorSearchingAccounts": "There was an error searching agents"
       },
       "guardrails": "Guardrails",
@@ -2328,11 +2328,9 @@
       "knowledge": "Knowledge Bases",
       "machine": "Machine",
       "modal": {
-        "set": "Set",
-        "setMachineDescription": "This action will change this agent to a machine agent. Select any custodians that you want to assign to this machine agent below. Note that this operation may not immediately reflect changes",
-        "title": "{action} Machine Agent",
-        "update": "Update",
-        "updateMachineDescription": "Add or remove the custodians that are assigned to this machine agent."
+        "title": "Edit Agent",
+        "update": "Edit Agent",
+        "updateDescription": "Enter the agent information below that you wish to update. Note that this operation may not immediately reflect changes."
       },
       "owner": "Owner",
       "principals": {
@@ -2340,20 +2338,26 @@
         "button": "+ Add Principal"
       },
       "reviewPending": "Review Pending",
+      "serviceAccount": "Service Account",
       "subtitle": "View and manage AI agents.",
       "tabs": {
         "all": "All agents",
-        "awsBedrock": "AWS Bedrock",
-        "azureAiFoundry": "Azure AI Foundry",
-        "googleVertexAi": "Google Vertex AI",
-        "pingAiAgents": "Ping AI Agents",
+        "aws-bedrock": "AWS Bedrock",
+        "aws-bedrock-agentcore": "AWS AgentCore",
+        "azure-aifoundry": "Azure AI Foundry",
+        "google-vertexai": "Google Vertex AI",
+        "m365-copilot": "Microsoft Copilot",
+        "sf-agentforce": "Salesforce AgentForce",
+        "ping-aiagent": "Ping AI Agents",
         "custom": "Custom"
       },
       "title": "Agents",
       "tools": "Tools",
+      "toolCredentials": "Tool Credentials",
       "type": "Type",
       "unreviewedAgentsText": "Have never been reviewed",
       "user": "User",
+      "viewAgentAccess": "View Agent Access",
       "withoutCustodians": "Without assigned custodians"
     },
     "certificationTask": {
