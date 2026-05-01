@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -164,6 +164,7 @@ describe('Glossary', () => {
     jest.spyOn(CommonsApi, 'getGlossarySchema').mockReturnValue(Promise.resolve({ data: { result: [] } }));
     jest.spyOn(CommonsApi, 'getFilterSchema').mockReturnValue(Promise.resolve({ data: { user: [] } }));
     jest.spyOn(CommonsApi, 'getIgaAutoIdConfig').mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    jest.spyOn(CommonsApi, 'getIgaUiConfig').mockReturnValue(Promise.resolve({ data: {} }));
     jest.spyOn(CertificationApi, 'getCertificationCounts').mockReturnValue(Promise.resolve({
       data: {
         result: [],
