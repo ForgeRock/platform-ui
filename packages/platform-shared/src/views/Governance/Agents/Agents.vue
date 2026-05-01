@@ -13,37 +13,31 @@ of the MIT license. See the LICENSE file for details. -->
           <BRow class="mb-4">
             <BCol lg="6">
               <BCard>
-                <div class="d-flex flex-row">
-                  <FrCircleProgressBar
-                    id="no-custodians-chart"
-                    :progress="noCustodiansPercentage"
-                    :thickness="7"
-                    :empty-thickness="7"
-                    :empty-color="styles.brightGray"
-                    :color="styles.red"
-                    :size="72">
-                    <template #count="{}">
-                      <small class="font-weight-bold mb-0">
-                        {{ noCustodiansPercentage }}%
-                      </small>
-                    </template>
-                  </FrCircleProgressBar>
-                  <div class="d-flex flex-column justify-content-center ml-3">
-                    <div class="d-flex flex-row align-items-center">
-                      <FrIcon
-                        :icon-class="`size-28 d-flex align-items-center justify-content-center mr-1 color-darkred mt-n25`"
-                        name="warning" />
-                      <small class="font-weight-bold mb-0">
-                        {{ $t('governance.agents.actionRequired') }}
-                      </small>
-                    </div>
-                    <p class="text-muted ml-1 font-weight-bold mb-0 chart-text-large">
-                      {{ $t('governance.agents.agentsCount', { count: counts.noCustodians }) }}
-                    </p>
-                    <small class="text-muted ml-1">
-                      {{ $t('governance.agents.withoutCustodians') }}
+                <div class="d-flex flex-column justify-content-center ml-2">
+                  <div class="d-flex flex-row align-items-center">
+                    <FrIcon
+                      icon-class="size-28 d-flex align-items-center justify-content-center mr-1 color-darkgreen mt-n25"
+                      name="travel_explore" />
+                    <small class="font-weight-bold mb-0">
+                      {{ $t('governance.agents.recentlyDiscovered') }}
                     </small>
                   </div>
+                  <div class="d-flex align-items-end">
+                    <p class="font-weight-bold mb-0 chart-text-large ml-1">
+                      {{ $t('governance.agents.agentsCount', { count: counts.recentlyDiscovered }) }}
+                    </p>
+                    <small
+                      v-if="recentlyDiscoveredIncrease !== 0"
+                      class="d-flex align-items-end mr-2 align-self-center pb-1">
+                      <FrIcon
+                        icon-class="ml-1 mt-2 color-green"
+                        name="arrow_drop_up" />
+                      {{ $t('governance.agents.percentChange', { percent: Math.abs(recentlyDiscoveredIncrease) }) }}
+                    </small>
+                  </div>
+                  <small class="text-muted ml-1">
+                    {{ $t('governance.agents.recentlyDiscoveredText') }}
+                  </small>
                 </div>
               </BCard>
             </BCol>
@@ -80,6 +74,64 @@ of the MIT license. See the LICENSE file for details. -->
                       {{ $t('governance.agents.unreviewedAgentsText') }}
                     </small>
                   </div>
+                </div>
+              </BCard>
+            </BCol>
+          </BRow>
+          <BRow class="mb-4">
+            <BCol lg="6">
+              <BCard>
+                <div class="d-flex flex-row">
+                  <FrCircleProgressBar
+                    id="no-custodians-chart"
+                    :progress="noCustodiansPercentage"
+                    :thickness="7"
+                    :empty-thickness="7"
+                    :empty-color="styles.brightGray"
+                    :color="styles.red"
+                    :size="72">
+                    <template #count="{}">
+                      <small class="font-weight-bold mb-0">
+                        {{ noCustodiansPercentage }}%
+                      </small>
+                    </template>
+                  </FrCircleProgressBar>
+                  <div class="d-flex flex-column justify-content-center ml-3">
+                    <div class="d-flex flex-row align-items-center">
+                      <FrIcon
+                        :icon-class="`size-28 d-flex align-items-center justify-content-center mr-1 color-darkred mt-n25`"
+                        name="warning" />
+                      <small class="font-weight-bold mb-0">
+                        {{ $t('governance.agents.actionRequired') }}
+                      </small>
+                    </div>
+                    <p class="text-muted ml-1 font-weight-bold mb-0 chart-text-large">
+                      {{ $t('governance.agents.agentsCount', { count: counts.noCustodians }) }}
+                    </p>
+                    <small class="text-muted ml-1">
+                      {{ $t('governance.agents.withoutCustodians') }}
+                    </small>
+                  </div>
+                </div>
+              </BCard>
+            </BCol>
+            <BCol lg="6">
+              <BCard>
+                <div class="d-flex flex-column justify-content-center ml-2">
+                  <div class="d-flex flex-row align-items-center">
+                    <FrIcon
+                      :icon-class="`size-28 d-flex align-items-center justify-content-center mr-1 color-blue mt-n25`"
+                      name="how_to_reg" />
+                    <small class="font-weight-bold mb-0">
+                      {{ $t('governance.agents.provisioned') }}
+                    </small>
+                  </div>
+                  <p class="text-muted ml-1 font-weight-bold mb-0 chart-text-large">
+                    {{ $t('governance.agents.accountsCount', { count: provisionedCount }) }}
+                  </p>
+                  <small class="text-muted ml-1">
+                    {{ $t('governance.agents.provisionedAgentsText') }}
+                  </small>
                 </div>
               </BCard>
             </BCol>
@@ -190,12 +242,6 @@ of the MIT license. See the LICENSE file for details. -->
                         </div>
                       </div>
                     </template>
-                    <template #cell(agentId)="{ item }">
-                      <div
-                        class="w-100px d-flex">
-                        {{ item.account?.agentId || blankValueIndicator }}
-                      </div>
-                    </template>
                     <template #cell(actions)="{ item }">
                       <FrActionsCell
                         :divider="false"
@@ -224,6 +270,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <FrPagination
                     v-if="totalPagedResults > entriesPerPage"
                     :value="currentPage"
+                    :page-sizes="[10, 20, 30]"
                     :per-page="entriesPerPage"
                     :total-rows="totalPagedResults"
                     @input="search($event)"
@@ -267,7 +314,9 @@ import { onImageError } from '@forgerock/platform-shared/src/utils/applicationIm
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getAccounts } from '@forgerock/platform-shared/src/api/governance/AccountApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import {
+  getResource, getIgaUiConfig, getGrants, getUsers,
+} from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import agentConstants from './utils/agentConstants';
@@ -288,6 +337,9 @@ const selectedTab = ref(0);
 const applicationSearchResults = ref([]);
 const selectedApplications = ref([]);
 const queryAll = ref(true);
+const chartTotalsSet = ref(false);
+const chartTotalAll = ref(0);
+const provisionedCount = ref(0);
 const fields = computed(() => {
   const tableFields = [
     {
@@ -302,9 +354,9 @@ const fields = computed(() => {
       sortable: true,
     },
     {
-      key: 'agentId',
+      key: 'description',
       class: 'w-160px',
-      label: i18n.global.t('governance.agents.agentId'),
+      label: i18n.global.t('governance.agents.description'),
       sortable: false,
     },
     {
@@ -337,6 +389,7 @@ const counts = ref({
   all: 0,
   custom: 0,
   noCustodians: 0,
+  recentlyDiscovered: 0,
   unreviewed: 0,
   ...Object.values(agentConstants.AGENT_TEMPLATES).reduce((acc, template) => {
     acc[template] = 0;
@@ -344,15 +397,19 @@ const counts = ref({
   }, {}),
 });
 const noCustodiansPercentage = computed(() => {
-  const { key } = tabItems[selectedTab.value];
-  if (counts.value[key] === 0) return 0;
-  const percentage = Math.round((counts.value.noCustodians / counts.value[key]) * 100);
+  if (chartTotalAll.value === 0) return 0;
+  const percentage = Math.round((counts.value.noCustodians / chartTotalAll.value) * 100);
   return Number.isNaN(percentage) ? 0 : percentage;
 });
 const unreviewedPercentage = computed(() => {
-  const { key } = tabItems[selectedTab.value];
-  if (counts.value[key] === 0) return 0;
-  const percentage = Math.round((counts.value.unreviewed / counts.value[key]) * 100);
+  if (chartTotalAll.value === 0) return 0;
+  const percentage = Math.round((counts.value.unreviewed / chartTotalAll.value) * 100);
+  return Number.isNaN(percentage) ? 0 : percentage;
+});
+const recentlyDiscoveredIncrease = computed(() => {
+  const previous = chartTotalAll.value - counts.value.recentlyDiscovered;
+  if (previous <= 0) return 0;
+  const percentage = Math.round((counts.value.recentlyDiscovered / previous) * 100);
   return Number.isNaN(percentage) ? 0 : percentage;
 });
 
@@ -407,8 +464,18 @@ function setCounts(results) {
       newCounts[tab.key] = counts.value[tab.key] || 0;
     }
   }
-  newCounts.noCustodians = results[results.length - 2]?.data?.totalCount || 0;
-  newCounts.unreviewed = results[results.length - 1]?.data?.totalCount || 0;
+  if (!chartTotalsSet.value) {
+    // Only set the chart values once per page, do not reset them on every following search
+    chartTotalAll.value = newCounts.all || 0;
+    newCounts.recentlyDiscovered = results[results.length - 3]?.data?.totalCount || 0;
+    newCounts.noCustodians = results[results.length - 2]?.data?.totalCount || 0;
+    newCounts.unreviewed = results[results.length - 1]?.data?.totalCount || 0;
+    chartTotalsSet.value = true;
+  } else {
+    newCounts.recentlyDiscovered = counts.value.recentlyDiscovered;
+    newCounts.noCustodians = counts.value.noCustodians;
+    newCounts.unreviewed = counts.value.unreviewed;
+  }
   counts.value = newCounts;
 }
 
@@ -447,8 +514,11 @@ async function search(page = null) {
       }
       return null;
     });
-    agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(glossary.idx./account.actors co '')"]) })); // Get the no custodians count for the chart display
-    agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(item.decision.certification.status eq 'signed-off')"]) })); // Get the unreviewed count for the chart display
+    if (!chartTotalsSet.value) {
+      agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, [`metadata.createdDate gt '${new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()}'`]) })); // Get the recently discovered count for the chart display
+      agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(glossary.idx./account.actors co '')"]) })); // Get the no custodians count for the chart display
+      agentPromises.push(getAccounts({ pageSize: 0, queryFilter: getQueryFilterForAgents(selectedTab.value, ["!(item.decision.certification.status eq 'signed-off')"]) })); // Get the unreviewed count for the chart display
+    }
     const agentResults = await Promise.all(agentPromises);
     const { data } = agentResults[selectedTab.value];
     const processedData = data?.result?.map((item) => {
@@ -465,6 +535,7 @@ async function search(page = null) {
         if (fullName) processedItem.user.fullName = fullName;
       }
       processedItem.displayName = getAgentDisplayName(processedItem);
+      processedItem.description = item.account?.description || blankValueIndicator;
       processedItem.type = capitalize(processedItem?.glossary?.idx?.['/account']?.accountType || agentConstants.ACCOUNT_TYPES.DEFAULT);
       return processedItem;
     });
@@ -564,8 +635,35 @@ async function searchApplications(queryString) {
   }
 }
 
+/**
+ * Calculates the number of additional account grants that are held by agents (i.e. not the agents themselves)
+ */
+async function queryProvisionedCount() {
+  try {
+    const { data: config } = await getIgaUiConfig();
+    const userProperty = config?.agents?.userProperty;
+    if (!userProperty) return;
+    const [{ data }, { data: grantsData }] = await Promise.all([
+      getUsers({
+        _pageSize: 0,
+        _queryFilter: `${userProperty} eq 'agent'`,
+      }),
+      getGrants({
+        _pageSize: 0,
+        _queryFilter: `user.${userProperty} eq 'agent' and item.type eq 'accountGrant'`,
+      }),
+    ]);
+    const agentUsers = data?.totalCount || 0;
+    const agentAccountGrants = grantsData?.totalCount || 0;
+    provisionedCount.value = Math.max(0, agentAccountGrants - agentUsers);
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.agents.errors.errorLoadingProvisionedCount'));
+  }
+}
+
 onMounted(async () => {
   await loadAppTemplates();
+  queryProvisionedCount();
   search();
 });
 

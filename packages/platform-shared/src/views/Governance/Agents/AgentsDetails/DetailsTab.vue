@@ -283,11 +283,13 @@ async function queryResourceInformation(resources = []) {
       if (ids.length === 0) return null;
       return getAgentResourcesByIds({}, props.agent.application, agentApplicationProp.objectType, ids);
     });
-    const results = await Promise.all(promises);
-    results.forEach((response, index) => {
+    const results = await Promise.allSettled(promises);
+    results.forEach((result, index) => {
       const key = resources[index];
-      if (response) {
-        resourceData.value[key].result = response.data.result;
+      if (result.status === 'fulfilled' && result.value) {
+        resourceData.value[key].result = result.value.data.result;
+      } else if (result.status === 'rejected') {
+        showErrorMessage(result.reason, i18n.global.t('governance.agents.errors.errorLoadingResource', { resource: i18n.global.t(`governance.agents.${key}`) }));
       }
     });
   } catch (error) {

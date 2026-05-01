@@ -2286,12 +2286,13 @@
         "user": "User"
       },
       "agentsCount": "{count} Agents",
-      "connection": "Connection",
+      "connection": "Connections",
       "credentials": {
         "header": "Credentials",
         "button": "+ Add Credential"
       },
       "custodians": "Custodians",
+      "description": "Description",
       "entitlement": "entitlement",
       "failedToLoad": "Failed to load agents",
       "failedToLoadCustodians": "Failed to load custodians",
@@ -2322,12 +2323,17 @@
       },
       "editAgent": "Edit Agent",
       "errors": {
+        "errorLoadingProvisionedCount": "There was an error loading the provisioned agent count",
+        "errorLoadingResource": "There was an error loading the {resource} resource.",
         "errorLoadingResources": "There was an error loading resources",
         "errorSearchingAccounts": "There was an error searching agents"
       },
       "guardrails": "Guardrails",
+      "guardrailsDetails": "Guardrail Details",
       "identity": "Identity Bindings",
+      "identityDetails": "Identity Binding Details",
       "knowledge": "Knowledge Bases",
+      "knowledgeDetails": "Knowledge Base Details",
       "machine": "Machine",
       "modal": {
         "title": "Edit Agent",
@@ -2339,8 +2345,15 @@
         "header": "Principals",
         "button": "+ Add Principal"
       },
+      "percentChange": "{percent}% increase",
+      "accountsCount": "{count} Accounts",
+      "provisioned": "Provisioned",
+      "provisionedAgentsText": "Provisioned to agents",
+      "recentlyDiscovered": "Recently Discovered",
+      "recentlyDiscoveredText": "Discovered in the last 30 days",
       "reviewPending": "Review Pending",
-      "serviceAccount": "Service Account",
+      "serviceAccount": "Service Accounts",
+      "serviceAccountDetails": "Service Account Details",
       "subtitle": "View and manage AI agents.",
       "tabs": {
         "all": "All agents",
@@ -2355,7 +2368,10 @@
       },
       "title": "Agents",
       "tools": "Tools",
+      "toolsDetails": "Tool Details",
       "toolCredentials": "Tool Credentials",
+      "toolCredentialsDetails": "Tool Credential Details",
+      "connectionDetails": "Connection Details",
       "type": "Type",
       "unreviewedAgentsText": "Have never been reviewed",
       "user": "User",

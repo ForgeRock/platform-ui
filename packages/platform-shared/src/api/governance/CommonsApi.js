@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -52,6 +52,26 @@ export async function getIgaAutoIdConfig() {
  */
 export async function getIgaUiConfig() {
   return generateIgaApi().get('commons/config/iga_ui_config');
+}
+
+/**
+ * Query users in IGA
+ * @param {Object} params - parameters to filter the list
+ * @returns {Promise} User results
+ */
+export function getUsers(params = {}) {
+  const queryString = encodeQueryString(params, false);
+  return generateIgaApi().get(`/governance/user${queryString}`);
+}
+
+/**
+ * Query grants in IGA
+ * @param {Object} params - parameters to filter the list
+ * @returns {Promise} Grant results
+ */
+export function getGrants(params = {}) {
+  const queryString = encodeQueryString(params, false);
+  return generateIgaApi().get(`/governance/grants${queryString}`);
 }
 
 /**

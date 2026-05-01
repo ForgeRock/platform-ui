@@ -62,12 +62,6 @@ of the MIT license. See the LICENSE file for details. -->
                   </BMediaBody>
                 </BMedia>
               </template>
-              <template #cell(agentId)="{ item }">
-                <div
-                  class="w-100px d-flex">
-                  {{ item.account?.agentId || blankValueIndicator }}
-                </div>
-              </template>
               <template #cell(actions)="{ item }">
                 <FrActionsCell
                   :divider="false"
@@ -159,9 +153,9 @@ const fields = [
     sortable: true,
   },
   {
-    key: 'agentId',
+    key: 'description',
     class: 'w-240px',
-    label: i18n.global.t('governance.agents.agentId'),
+    label: i18n.global.t('governance.agents.description'),
     sortable: false,
   },
   {
@@ -231,6 +225,7 @@ async function search(page = null) {
       if (applicationIcon) processedItem.application.icon = applicationIcon;
       processedItem.displayName = processedItem?.descriptor?.idx?.['/account']?.displayName || blankValueIndicator;
       processedItem.type = capitalize(agentConstants.ACCOUNT_TYPES.MACHINE);
+      processedItem.description = item.account.description || blankValueIndicator;
       return processedItem;
     });
     totalPagedResults.value = data.totalCount;

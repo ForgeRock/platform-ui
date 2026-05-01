@@ -7,6 +7,7 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import Agents from './Agents';
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
@@ -54,6 +55,10 @@ const createData = (params = {}, totalCount = 100) => {
 
 describe('Agents Unit', () => {
   function mountComponent() {
+    CommonsApi.getIgaUiConfig = jest.fn().mockImplementation(() => Promise.resolve({ data: { agents: { userProperty: 'custom_iga_identity_type' } } }));
+    CommonsApi.getUsers = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [], totalCount: 0 } }));
+    CommonsApi.getGrants = jest.fn().mockImplementation(() => Promise.resolve({ data: { result: [], totalCount: 0 } }));
+
     const wrapper = mount(Agents, {
       global: {
         stubs: {
@@ -86,6 +91,7 @@ describe('Agents Unit', () => {
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 6)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 8)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 0)))
+      .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 1)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 9)))
       .mockResolvedValueOnce(Promise.resolve(createData({ pageSize: 0 }, 25)));
 
@@ -93,7 +99,8 @@ describe('Agents Unit', () => {
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
     await wrapper.vm.$nextTick();
-    expect(AccountApi.getAccounts).toHaveBeenCalledTimes(11);
+    await flushPromises();
+    expect(AccountApi.getAccounts).toHaveBeenCalledTimes(12);
 
     expect(wrapper.vm.agents.length).toBe(10);
     expect(wrapper.vm.agents[0]).toEqual(expect.objectContaining(
@@ -137,6 +144,7 @@ describe('Agents Unit', () => {
       custom: 0,
       noCustodians: 9,
       unreviewed: 25,
+      recentlyDiscovered: 1,
     });
     await flushPromises();
   });
@@ -163,7 +171,7 @@ describe('Agents Unit', () => {
     wrapper.vm.pageSizeChange(20);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(12, {
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(13, {
       pagedResultsOffset: 0,
       pageSize: 20,
       sortKeys: 'descriptor.idx./account.displayName',
@@ -195,7 +203,7 @@ describe('Agents Unit', () => {
     wrapper.vm.tabActivated(1);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(12, {
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(13, {
       pagedResultsOffset: 0,
       pageSize: 10,
       sortKeys: 'descriptor.idx./account.displayName',
@@ -228,7 +236,7 @@ describe('Agents Unit', () => {
     wrapper.vm.updateApplications(['271fbe6672-780c-4226-af35-01a2546723c1']);
     await flushPromises();
 
-    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(12, {
+    expect(AccountApi.getAccounts).toHaveBeenNthCalledWith(13, {
       pagedResultsOffset: 0,
       pageSize: 10,
       sortKeys: 'descriptor.idx./account.displayName',
