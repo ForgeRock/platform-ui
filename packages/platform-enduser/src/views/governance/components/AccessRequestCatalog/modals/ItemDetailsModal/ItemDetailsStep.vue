@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,35 +8,39 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="!isLoaded"
       class="my-3" />
     <template v-else>
-      <!-- Description field (for all types) -->
-      <BRow>
-        <BCol>
-          <small class="mb-1 h5">{{ $t('common.description') }}</small>
-          <p
-            class="mb-4"
-            data-testid="description">
-            {{ item.description || blankValueIndicator }}
-          </p>
-        </BCol>
-      </BRow>
+      <dl
+        class="mb-0"
+        tabindex="0">
+        <!-- Description field (for all types) -->
+        <BRow>
+          <BCol>
+            <dt class="mb-1 h5 font-weight-normal">
+              {{ $t('common.description') }}
+            </dt>
+            <dd class="mb-4">
+              {{ item.description || blankValueIndicator }}
+            </dd>
+          </BCol>
+        </BRow>
 
-      <!-- Dynamic glossary fields -->
-      <BRow data-testid="glossary-fields">
-        <BCol
-          md="6"
-          class="mb-4"
-          v-for="(glossary, key) in glossaryValues"
-          :key="key">
-          <small
-            class="mb-1 h5"
-            :data-testid="`glossary-title-${key}`">
-            {{ glossary.displayName }}
-          </small>
-          <p :data-testid="`glossary-item-${key}`">
-            {{ glossary.value }}
-          </p>
-        </BCol>
-      </BRow>
+        <!-- Dynamic glossary fields -->
+        <BRow>
+          <BCol
+            md="6"
+            class="mb-4"
+            v-for="(glossary, key) in glossaryValues"
+            :key="key">
+            <dt
+              class="mb-1 h5 font-weight-normal"
+              :data-testid="`glossary-title-${key}`">
+              {{ glossary.displayName }}
+            </dt>
+            <dd :data-testid="`glossary-item-${key}`">
+              {{ glossary.value }}
+            </dd>
+          </BCol>
+        </BRow>
+      </dl>
     </template>
   </div>
 </template>
