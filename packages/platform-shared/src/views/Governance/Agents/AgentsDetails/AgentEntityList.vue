@@ -18,13 +18,19 @@ of the MIT license. See the LICENSE file for details. -->
       </BCol>
     </BRow>
     <template v-else>
-      <BRow
-        v-for="entity in entities"
-        class="entity-row"
-        :key="entity">
+      <BRow>
         <BCol
-          sm="12">
-          <div class="d-flex flex-row align-items-center">
+          v-for="entity in entities"
+          cols="12"
+          xl="6"
+          class="mb-2"
+          :key="entity._id">
+          <div
+            role="button"
+            tabindex="0"
+            class="entity-row cursor-pointer d-flex flex-row align-items-center ml-2"
+            @click="openEntityModal(entity)"
+            @keydown.enter.space.prevent="openEntityModal(entity)">
             <FrIcon
               :icon-class="`size-28 rounded-circle d-flex align-items-center justify-content-center mr-3 color-dark${icon.color} bg-light${icon.color} mt-n25`"
               :name="icon.icon" />
@@ -50,12 +56,45 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </template>
   </div>
+  <BModal
+    v-if="selectedEntity"
+    id="entity-detail-modal"
+    visible
+    size="lg"
+    title-class="h5"
+    title-tag="h2"
+    :title="$t(`governance.agents.${type}Details`)"
+    @hide="selectedEntity = null">
+    <BRow>
+      <template
+        v-for="(value, key) in selectedEntity"
+        :key="key">
+        <BCol
+          sm="3"
+          class="font-weight-bold text-truncate mb-3">
+          {{ key }}
+        </BCol>
+        <BCol
+          sm="9"
+          class="text-muted mb-3">
+          {{ value }}
+        </BCol>
+      </template>
+    </BRow>
+    <template #modal-footer>
+      <BButton
+        variant="primary"
+        @click="selectedEntity = null">
+        {{ $t('common.close') }}
+      </BButton>
+    </template>
+  </BModal>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import {
-  BRow, BCol,
+  BButton, BModal, BRow, BCol,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -96,6 +135,11 @@ const emit = defineEmits([
 ]);
 const currentPage = ref(1);
 const entriesPerPage = ref(10);
+const selectedEntity = ref(null);
+
+function openEntityModal(entity) {
+  selectedEntity.value = entity;
+}
 
 /**
  * Handle page size changes
@@ -138,8 +182,7 @@ function getDisplayInformation(entity) {
 .entity-row {
   border: 1px solid;
   border-color: $gray-200;
-  margin: .5rem;
   padding: 1rem;
-  padding-left: 0rem;
+  height: 100%;
 }
 </style>

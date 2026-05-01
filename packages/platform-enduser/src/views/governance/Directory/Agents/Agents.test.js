@@ -8,7 +8,12 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
+import { useRouter } from 'vue-router';
 import Agents from './Agents';
+
+jest.mock('vue-router', () => ({
+  useRouter: jest.fn(),
+}));
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
@@ -21,6 +26,9 @@ const sampleData = [
       name: 'app name',
       templateName: 'aws.bedrock',
       icon: 'test',
+    },
+    account: {
+      description: 'agent description',
     },
     user: {
       id: '123',
@@ -50,6 +58,9 @@ const sampleData = [
       templateName: 'aws.bedrock',
       icon: 'test',
     },
+    account: {
+      description: 'agent description',
+    },
     user: {
       id: '124',
       userName: 'jDoe2',
@@ -74,6 +85,8 @@ const sampleData = [
 ];
 
 describe('Agents Unit', () => {
+  let mockPush;
+
   function mountComponent() {
     const wrapper = mount(Agents, {
       global: {
@@ -97,34 +110,36 @@ describe('Agents Unit', () => {
   }
 
   beforeEach(async () => {
+    mockPush = jest.fn();
+    useRouter.mockReturnValue({ push: mockPush });
+
     setupTestPinia({ user: { userId: 'testId' } });
     AccountApi.getAccounts = jest.fn()
-      .mockResolvedValueOnce(Promise.resolve({ data: { result: sampleData, totalCount: 2 } }));
+      .mockResolvedValue({ data: { result: sampleData, totalCount: 2 } });
   });
 
   it('Agents load on mount', async () => {
     const wrapper = mountComponent();
-    await wrapper.vm.$nextTick();
     await flushPromises();
 
     expect(AccountApi.getAccounts).toHaveBeenCalledTimes(1);
-
     expect(wrapper.vm.agents.length).toBe(2);
-    expect(wrapper.vm.agents[0]).toEqual(expect.objectContaining(
-      sampleData[0],
-    ));
+    expect(wrapper.vm.agents[0]).toEqual(expect.objectContaining({
+      id: sampleData[0].id,
+      application: sampleData[0].application,
+    }));
   });
 
   it('Click on row loads details page', async () => {
     const wrapper = mountComponent();
-    wrapper.vm.navigateToEdit = jest.fn();
-
     await flushPromises();
 
     const rows = wrapper.findAll('tr');
     const rowToClick = rows[2];
-    rowToClick.trigger('click');
+    await rowToClick.trigger('click');
 
-    expect(wrapper.vm.navigateToEdit).toHaveBeenCalledWith('system/Target/User/103');
+    expect(mockPush).toHaveBeenCalledWith(expect.objectContaining({
+      params: expect.objectContaining({ agentId: 'system/Target/User/103' }),
+    }));
   });
 });

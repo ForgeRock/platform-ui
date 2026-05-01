@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -41,6 +41,26 @@ describe('Commons API', () => {
   it('should call getIgaAccessRequest', async () => {
     const res = await CommonsApi.getIgaAccessRequest();
     expect(get).toBeCalledWith('commons/config/iga_access_request');
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('should call User API with correct payload and url', async () => {
+    const params = {
+      pageNumber: 0, pageSize: 10,
+    };
+    const res = await CommonsApi.getUsers(params);
+    expect(get).toBeCalledWith('/governance/user?pageNumber=0&pageSize=10');
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
+
+  it('should call Grants API with correct payload and url', async () => {
+    const params = {
+      pageNumber: 0, pageSize: 10,
+    };
+    const res = await CommonsApi.getGrants(params);
+    expect(get).toBeCalledWith('/governance/grants?pageNumber=0&pageSize=10');
     expect(BaseApi.generateIgaApi).toBeCalled();
     expect(res).toEqual(data);
   });
