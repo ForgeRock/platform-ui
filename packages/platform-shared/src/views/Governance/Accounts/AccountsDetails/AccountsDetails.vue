@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -155,6 +155,10 @@ async function queryAccountEntitlements(params = {}) {
   }
   if (params.sortBy) {
     params.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy}`;
+  }
+  if (params.pageNumber != null && params.pageSize != null) {
+    params.pagedResultsOffset = params.pageNumber * params.pageSize;
+    delete params.pageNumber;
   }
 
   const queryParams = omit(params, ['queryString', 'sortBy', 'sortDir', 'grantType']);

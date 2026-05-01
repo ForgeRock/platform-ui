@@ -8,7 +8,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="border-0 shadow-none"
       no-body>
       <BCardHeader class="p-0">
-        <BButtonToolbar class="justify-content-between p-3 border-bottom-0">
+        <BButtonToolbar
+          v-if="allowAdd || allowSearch"
+          class="justify-content-between p-3 border-bottom-0">
           <BButton
             v-if="allowAdd"
             variant="primary"
@@ -20,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
             </FrIcon>
           </BButton>
           <FrSearchInput
+            v-if="allowSearch"
             v-model="searchQuery"
             class="col-12 col-lg-auto p-0"
             data-testid="search-gov-resource-table"
@@ -194,6 +197,19 @@ of the MIT license. See the LICENSE file for details. -->
               type="recommendation"
               :id="item.ent_id || item.id" />
           </div>
+        </template>
+        <template #row-details="{ item }">
+          <slot
+            name="row-details"
+            :item="item" />
+        </template>
+        <template
+          v-for="(_, name) in cellSlots"
+          #[name]="slotData"
+          :key="name">
+          <slot
+            :name="name"
+            v-bind="slotData" />
         </template>
         <template #cell(actions)="{ item }">
           <FrActionsCell
@@ -396,6 +412,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    allowSearch: {
+      type: Boolean,
+      default: true,
+    },
     entitlementOptions: {
       type: Array,
       default: () => [],
@@ -456,6 +476,18 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    defaultSortDesc: {
+      type: Boolean,
+      default: null,
+    },
+    useFieldForSort: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
+      type: Boolean,
+      default: null,
+    },
   },
   data() {
     return {
@@ -481,7 +513,7 @@ export default {
       ruleBasedAssignment: this.$t('pages.assignment.ruleBased'),
       searchQuery: '',
       selectedItems: [],
-      sortDesc: null,
+      sortDesc: this.defaultSortDesc,
       sortBy: null,
       staticAssignment: this.$t('common.static'),
     };
@@ -500,6 +532,21 @@ export default {
   computed: {
     assigningResource() {
       return this.savingStatus === 'saving';
+    },
+    // Forwards any cell(*) slots from the parent through to BTable, excluding slots
+    // GovResourceTable already owns to prevent parents from accidentally overriding them.
+    cellSlots() {
+      const ownedSlots = new Set([
+        'row-details', 'cell(selected)', 'cell(accountName)', 'cell(appName)',
+        'cell(entitlementNameAppName)', 'cell(entitlementName)', 'cell(roleName)',
+        'cell(status)', 'cell(timeConstraint)', 'cell(assignment)',
+        'cell(prediction)', 'cell(actions)',
+      ]);
+      return Object.fromEntries(
+        Object.keys(this.$slots)
+          .filter((name) => name.startsWith('cell(') && !ownedSlots.has(name))
+          .map((name) => [name, true]),
+      );
     },
     capitalizedPluralGrantType() {
       return capitalize(this.pluralizedGrantType);
@@ -575,7 +622,7 @@ export default {
         roleName: 'role.name',
         status: '',
       };
-      return this.resourceIsRole ? 'name' : sortByUser[fieldName] ?? null;
+      return this.resourceIsRole ? 'name' : sortByUser[fieldName] ?? (this.useFieldForSort ? fieldName : null);
     },
     formatConstraintDate,
     getApplicationLogo,
@@ -678,10 +725,14 @@ export default {
       this.allRowsSelected = selectedItems.length === selectableItemsOnPage;
     },
     /**
-     * Emit a row clicked event to the parent component
-     * @param {Array} item The table row clicked
+     * Emit a row clicked event to the parent component. If a row-details slot
+     * is provided, also toggle the inline detail expansion for the clicked row.
+     * @param {Object} item The table row clicked
      */
     onRowClicked(item) {
+      if (this.$slots['row-details']) {
+        item._showDetails = !item._showDetails;
+      }
       this.$emit('row-clicked', item);
     },
     /**
@@ -753,6 +804,11 @@ export default {
     items(items) {
       this.isNoResultsFirstLoad = !items.length && this.isNoResultsFirstLoad === null;
       this.isLoading = false;
+    },
+    loading(val) {
+      if (val !== null) {
+        this.isLoading = val;
+      }
     },
   },
 };

@@ -131,7 +131,7 @@ import { getAccountGlossaryAttributesData, saveAccountGlossaryAttributesData } f
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import { getAgentResourcesByIds } from '@forgerock/platform-shared/src/api/governance/AgentApi';
+import { getAgentResourcesByIds, getAgentResourceById } from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
 import FrAccountObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -270,6 +270,7 @@ async function getGlossary() {
 }
 
 async function queryResourceInformation(resources = []) {
+  const partialFailures = new Set();
   try {
     const promises = resources.map((key) => {
       isLoading.value[key] = true;
@@ -281,6 +282,21 @@ async function queryResourceInformation(resources = []) {
       const endIndex = startIndex + pageSize;
       const ids = allIds.slice(startIndex, endIndex);
       if (ids.length === 0) return null;
+      const isDisconnected = props.agent.application?.isDisconnected;
+      if (!isDisconnected) {
+        // IDM System APIs for these connectors do not support complex query filters, so grabbing each by ID
+        // Also tracking if any call fails within a group of resources so we can show one error message per group
+        return Promise.allSettled(
+          ids.map((id) => getAgentResourceById(props.agent.application, agentApplicationProp.objectType, id)),
+        ).then((results) => {
+          const result = results.map((res, i) => {
+            if (res.status === 'fulfilled') return res.value.data;
+            partialFailures.add(key);
+            return { _id: ids[i], __NAME__: ids[i], description: '' };
+          });
+          return { data: { result } };
+        });
+      }
       return getAgentResourcesByIds({}, props.agent.application, agentApplicationProp.objectType, ids);
     });
     const results = await Promise.allSettled(promises);
@@ -288,6 +304,9 @@ async function queryResourceInformation(resources = []) {
       const key = resources[index];
       if (result.status === 'fulfilled' && result.value) {
         resourceData.value[key].result = result.value.data.result;
+        if (partialFailures.has(key)) {
+          showErrorMessage(null, i18n.global.t('governance.agents.errors.errorLoadingResource', { resource: i18n.global.t(`governance.agents.${key}`) }));
+        }
       } else if (result.status === 'rejected') {
         showErrorMessage(result.reason, i18n.global.t('governance.agents.errors.errorLoadingResource', { resource: i18n.global.t(`governance.agents.${key}`) }));
       }

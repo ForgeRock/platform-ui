@@ -2271,8 +2271,28 @@
     },
     "activity": {
       "activityLogsFailedToLoad": "Failed to load activity logs",
+      "eventType": "Event Type",
       "logs": "activity logs",
-      "user": "User"
+      "user": "User",
+      "details": {
+        "actor": "Actor Details",
+        "environment": "Environment",
+        "rawEventJson": "Raw Event JSON",
+        "resultContext": "Result",
+        "fields": {
+          "actorId": "Actor ID",
+          "actorGlobalId": "Global ID",
+          "username": "Username",
+          "email": "Email",
+          "location": "Location",
+          "userAgent": "User Agent",
+          "device": "Device",
+          "cloudRegion": "Cloud Region",
+          "responseCode": "Response Code",
+          "riskScore": "Risk Score",
+          "bytes": "Bytes In / Out"
+        }
+      }
     },
     "agents": {
       "agent": "agent",

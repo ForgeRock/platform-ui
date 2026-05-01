@@ -41,6 +41,23 @@ async function getSystemResourceList(connectorId, objectTypeName, params) {
 }
 
 /**
+ ***** NOTE: This is being used in place of an in-progress IGA API.  It is calling an openidm/system API, so
+ ***** calling this can only be done from the platform-admin usage of a shared component.  This will be updated
+ ***** as soon as possible
+ *
+ * Get a single system resource
+ *
+ * @param {String} connectorId ID of connector
+ * @param {String} objectTypeName name of object type
+ * @param {String} id system resource id
+ * @returns {Promise}
+ */
+export function getSystemResource(connectorId, objectTypeName, id) {
+  const resourceUrl = `system/${connectorId}/${objectTypeName}/${id}`;
+  return generateIdmApi().get(resourceUrl);
+}
+
+/**
  * Given a connector, object type, and id list, fetch the matching system resources
  * @param {object} queryParams IDM query parameters
  * @param {string} connectorId ID of application connector
@@ -92,4 +109,23 @@ export async function getAgentResourcesByIds(queryParams = {}, application, reso
     return getApplicationObjectsByIds(queryParams, application.id, resourceType, idList);
   }
   return getConnectorObjectsByIds(queryParams, application.connectorId, resourceType, idList);
+}
+
+/**
+ * Given an application object, resource type, and id, fetch the matching resource
+ * @param {object} application Application object
+ * @param {string} resourceType Resource type ID
+ * @param {string} id ID of the resource to fetch
+ * @returns {Promise} Resource object
+ */
+// eslint-disable-next-line import/prefer-default-export
+export async function getAgentResourceById(application, resourceType, id) {
+  if (application.isDisconnected) {
+    const response = await getApplicationObjectsByIds({}, application.id, resourceType, [id]);
+    return {
+      ...response,
+      data: response?.data?.result?.[0],
+    };
+  }
+  return getSystemResource(application.connectorId, resourceType, encodeURIComponent(id));
 }
