@@ -67,12 +67,11 @@ describe('ItemDetailsModal', () => {
     await flushPromises();
 
     // Assert modal title
-    const title = findByTestId(wrapper, 'modal-title');
-    expect(title.text()).toBe('Request Role Access');
+    expect(wrapper.find('small.text-muted').text()).toBe('Request Role Access');
 
     // Assert item name and description
-    expect(findByTestId(wrapper, 'item-name').text()).toBe(propsData.item.name);
-    expect(findByTestId(wrapper, 'description').text()).toBe(propsData.item.description);
+    expect(wrapper.find('#accessRequestItemModal-title').text()).toBe(propsData.item.name);
+    expect(wrapper.find('.modal-body dd').text()).toBe(propsData.item.description);
 
     // Assert glossary fields
     const { glossarySchema, item } = propsData;
@@ -95,6 +94,20 @@ describe('ItemDetailsModal', () => {
     expect(wrapper.emitted()).toHaveProperty('toggle-item');
     expect(wrapper.emitted()['toggle-item']).toHaveLength(1);
     expect(wrapper.emitted()['toggle-item'][0]).toEqual([propsData.item, {}]);
+  });
+
+  it('moves focus to the close button when the modal opens', async () => {
+    wrapper = setup();
+    await flushPromises();
+
+    const closeButton = wrapper.find('button[aria-label="Close"]');
+    const focusSpy = jest.spyOn(closeButton.element, 'focus');
+
+    // BModal emits 'shown' after its enter transition completes — no DOM action triggers this in isolation
+    wrapper.findComponent({ name: 'BModal' }).vm.$emit('shown');
+    await flushPromises();
+
+    expect(focusSpy).toHaveBeenCalled();
   });
 
   describe('application items', () => {
