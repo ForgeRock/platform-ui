@@ -52,14 +52,14 @@ const AGENT_APPLICATION_PROPS = {
       descriptionProperty: 'description',
     },
     [APPLICATION_PROPS.TOOLS]: {
-      accountAttribute: 'toolIds',
+      accountAttribute: 'tools',
       objectType: 'agentTool',
       nameProperty: '__NAME__',
       descriptionProperty: 'description',
     },
     [APPLICATION_PROPS.TOOL_CREDENTIALS]: {
       accountAttribute: 'toolCredentialIds',
-      objectType: 'agentToolCredential',
+      objectType: 'agentToolCredentials',
       nameProperty: '__NAME__',
       descriptionProperty: 'description',
     },

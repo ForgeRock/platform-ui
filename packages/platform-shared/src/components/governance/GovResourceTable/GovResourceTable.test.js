@@ -414,6 +414,45 @@ describe('GovResourceTable', () => {
     });
   });
 
+  describe('loading prop behaviour', () => {
+    it('loading prop set to true shows the spinner', async () => {
+      const { wrapper } = await mountComponent();
+      await wrapper.setProps({ loading: true });
+      await flushPromises();
+      const spinner = wrapper.find('[role="status"]');
+      expect(spinner.exists()).toBeTruthy();
+    });
+
+    it('loading prop set to false hides the spinner and shows the table', async () => {
+      const { wrapper } = await mountComponent();
+      await wrapper.setProps({ items: mockItems, loading: false });
+      await flushPromises();
+      const table = findByTestId(wrapper, 'gov-resource-table');
+      expect(table.exists()).toBeTruthy();
+      const spinner = wrapper.find('[role="status"]');
+      expect(spinner.exists()).toBeFalsy();
+    });
+
+    it('loading prop null (default) does not override internal isLoading state', async () => {
+      // Mount without a loading prop — internal isLoading starts true (spinner visible)
+      const { wrapper } = await mountComponent();
+      expect(wrapper.find('[role="status"]').exists()).toBeTruthy();
+
+      // Providing items drives isLoading to false via the items watcher
+      await wrapper.setProps({ items: mockItems });
+      await flushPromises();
+      expect(wrapper.find('[role="status"]').exists()).toBeFalsy();
+      const table = findByTestId(wrapper, 'gov-resource-table');
+      expect(table.exists()).toBeTruthy();
+    });
+  });
+
+  it('hides the search input when allowSearch is false', async () => {
+    const { wrapper } = await mountComponent({ allowSearch: false });
+    const searchInput = findByTestId(wrapper, 'search-gov-resource-table');
+    expect(searchInput.exists()).toBeFalsy();
+  });
+
   describe('method getResourceDisplayName should return correct displayName', () => {
     it('item with descriptor should return property displayName value', async () => {
       const { wrapper } = await mountComponent();

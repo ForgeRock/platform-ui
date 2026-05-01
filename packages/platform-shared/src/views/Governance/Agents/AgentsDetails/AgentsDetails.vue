@@ -61,14 +61,10 @@ of the MIT license. See the LICENSE file for details. -->
           :title="$t('governance.agents.details.tabs.activity')"
           key="activity"
           lazy>
-          <FrGovResourceTable
-            :fields="activityTableFields"
-            :grant-type="$t('governance.activity.logs')"
-            :items="activityLogList"
-            :parent-resource-name="$t('common.agent')"
-            show-view-details
-            :total-count="activityLogTotalCount"
-            @load-data="queryAgentActivity" />
+          <FrActivity
+            :object-id="id"
+            :object-types="['agent', 'account']"
+            :parent-resource-name="$t('common.agent')" />
         </BTab>
       </BTabs>
     </div>
@@ -85,18 +81,17 @@ import {
 import { ref, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
 import { omit } from 'lodash';
-import dayjs from 'dayjs';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getAccountById, getAccountEntitlements } from '@forgerock/platform-shared/src/api/governance/AccountApi';
-import { getActivityLogs } from '@forgerock/platform-shared/src/api/governance/ActivityApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import { revokeResourcesFromIGA } from '@forgerock/platform-shared/src/utils/governance/resource';
 import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
+import FrActivity from '@forgerock/platform-shared/src/views/Governance/Activity/Activity';
 import FrDetailsTab from './DetailsTab';
 import { getAgentDisplayName } from '../utils/agentUtility';
 import i18n from '@/i18n';
@@ -118,8 +113,6 @@ const agent = ref({});
 const isLoading = ref(true);
 const entitlementList = ref([]);
 const entitlementTotalCount = ref(0);
-const activityLogList = ref([]);
-const activityLogTotalCount = ref(0);
 const id = route.params.agentId;
 const savingGovernanceResourcesStatus = ref('');
 const tabs = ['details', 'entitlements', 'activity'];
@@ -151,65 +144,6 @@ const entitlementTableFields = [
     class: 'col-actions',
   },
 ];
-const activityTableFields = [
-  {
-    key: 'actor.display_name',
-    label: i18n.global.t('governance.activity.user'),
-    sortable: true,
-    class: 'w-25',
-  },
-  {
-    key: 'event_time',
-    label: i18n.global.t('common.date'),
-    class: 'w-25',
-  },
-  {
-    key: 'action',
-    label: i18n.global.t('common.action'),
-    class: 'w-25',
-  },
-  {
-    key: 'outcome',
-    label: i18n.global.t('common.outcome'),
-    class: 'w-25',
-  },
-  {
-    key: 'actions',
-    label: '',
-    class: 'col-actions',
-  },
-];
-
-function transformActivityLog(log) {
-  return {
-    ...log,
-    event_time: dayjs(log.event_time).format('MMM DD, YYYY h:mm:ss A'),
-  };
-}
-
-/**
- * Queries the activity logs that belong to the given agent
- * @param params query parameters
- */
-async function queryAgentActivity(params = {}) {
-  params.queryFilter = `(object_id eq "${id}" and (object_type eq "agent" or object_type eq "account"))`;
-  if (params.queryString) {
-    params.queryFilter += ` and actor.display_name co '${params.queryString.replace(/'/g, "\\'")}'`; // Decide what fields are best as default search for activity
-  }
-  if (params.sortBy) {
-    params.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy}`;
-  }
-
-  const queryParams = omit(params, ['queryString', 'sortBy', 'sortDir', 'grantType']);
-  try {
-    const { data } = await getActivityLogs(queryParams);
-    activityLogList.value = data?.result?.map(transformActivityLog);
-    activityLogTotalCount.value = data?.totalCount;
-  } catch (e) {
-    showErrorMessage(e, i18n.global.t('governance.activity.activityLogsFailedToLoad'));
-  }
-}
-
 /**
  * Sets the routing url
  * @param {number} index - currently selected tab index
@@ -242,6 +176,10 @@ async function queryAgentEntitlements(params = {}) {
   }
   if (params.sortBy) {
     params.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortBy}`;
+  }
+  if (params.pageNumber != null && params.pageSize != null) {
+    params.pagedResultsOffset = params.pageNumber * params.pageSize;
+    delete params.pageNumber;
   }
 
   const queryParams = omit(params, ['queryString', 'sortBy', 'sortDir', 'grantType']);

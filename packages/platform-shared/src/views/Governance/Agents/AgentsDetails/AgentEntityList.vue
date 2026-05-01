@@ -21,8 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BRow>
         <BCol
           v-for="entity in entities"
-          cols="12"
-          xl="6"
+          sm="12"
           class="mb-2"
           :key="entity._id">
           <div
