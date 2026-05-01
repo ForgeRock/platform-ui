@@ -43,15 +43,7 @@
      }
   ],
   "defaultCertifierId":null,
-  "assignmentNotification":"certificationAssigned",
   "assignmentNotificationIncludeManager":false,
-  "reassignNotification":null,
-  "expirationNotification":null,
-  "reminderNotification":null,
-  "reminderFrequency":0,
-  "escalationNotification":null,
-  "escalationFrequency":null,
-  "escalationOwner":null,
   "remediationDelay":0,
   "targetFilter":{
      "user":{
