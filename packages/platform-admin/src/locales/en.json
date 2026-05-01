@@ -4192,6 +4192,11 @@
     "selectNonAccountObjectDescription": "Object type from which to populate enumerated values for this property",
     "sourceOfValues": "Source of Values",
     "string": "String",
+    "unlinkedAccounts": {
+      "createNew": "Create New User",
+      "linkToExisting": "Link to Existing User",
+      "title": "Unlinked Accounts"
+    },
     "updatable": "Updatable",
     "userSpecific": "User-specific",
     "userSpecificHelpText": "Property is specific to individual users and not applicable to roles.",
