@@ -7,11 +7,19 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import AdditionalOptions from './index';
+
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
+mockValidation(['required', 'min_value']);
 
 describe('AdditionalOptions View', () => {
   let wrapper;
+
+  CommonsApi.getResource.mockReturnValue(Promise.resolve({ data: {} }));
 
   describe('initializes with default values', () => {
     beforeEach(() => {
@@ -27,15 +35,28 @@ describe('AdditionalOptions View', () => {
             allowExceptions: false,
             allowPartialSignoff: false,
             allowSelfCert: false,
+            closeAction: 'revoke',
+            closeActionDuration: 0,
+            closeActionTime: '',
             enableForward: false,
             enableReassign: false,
             enableReassignmentDelegation: false,
+            escalation: false,
+            escalationAction: 'notification',
+            escalationEmail: '',
+            escalationFrequency: 7,
+            escalationOwner: '',
+            escalationOwnerInfo: {},
+            escalateToSelector: 'role',
+            expireOption: 2,
             reassignPermissions: {
               comment: false,
               makeDecision: false,
               reassign: false,
               signoff: false,
             },
+            reassignUser: '',
+            reassignUserInfo: {},
             exceptionDuration: 1,
             exceptionTimespan: 'governance.timespans.weeks',
             processRemediation: true,
@@ -103,15 +124,28 @@ describe('AdditionalOptions View', () => {
             allowExceptions: true,
             allowPartialSignoff: true,
             allowSelfCert: true,
+            closeAction: 'revoke',
+            closeActionDuration: 0,
+            closeActionTime: '',
             enableForward: true,
             enableReassign: true,
+            enableReassignmentDelegation: true,
+            escalation: false,
+            escalationAction: 'notification',
+            escalationEmail: '',
+            escalationFrequency: 7,
+            escalationOwner: '',
+            escalationOwnerInfo: {},
+            escalateToSelector: 'role',
+            expireOption: 2,
             reassignPermissions: {
               comment: false,
               makeDecision: false,
               reassign: false,
               signoff: false,
             },
-            enableReassignmentDelegation: true,
+            reassignUser: '',
+            reassignUserInfo: {},
             exceptionDuration: 1,
             exceptionTimespan: 'governance.timespans.weeks',
             processRemediation: true,
@@ -151,6 +185,72 @@ describe('AdditionalOptions View', () => {
       expect(findByTestId(wrapper, 'input-remediation-duration').element.value).toBe('10');
       expect(findByTestId(wrapper, 'remediation-timespan').exists()).toBeTruthy();
       expect(findByTestId(wrapper, 'remediation-timespan').find('span').text()).toBe('day(s)');
+    });
+  });
+
+  describe('escalation', () => {
+    beforeEach(() => {
+      wrapper = mount(AdditionalOptions, {
+        global: {
+          mocks: {
+            $t: (text) => (text),
+          },
+        },
+        props: {
+          value: {
+            allowBulkCertify: false,
+            allowExceptions: false,
+            allowPartialSignoff: false,
+            allowSelfCert: false,
+            closeAction: 'revoke',
+            closeActionDuration: 0,
+            closeActionTime: '',
+            enableForward: false,
+            enableReassign: false,
+            enableReassignmentDelegation: false,
+            escalation: false,
+            escalationAction: 'notification',
+            escalationEmail: '',
+            escalationFrequency: 7,
+            escalationOwner: '',
+            escalationOwnerInfo: {},
+            escalateToSelector: 'role',
+            expireOption: 2,
+            reassignPermissions: {
+              comment: false,
+              makeDecision: false,
+              reassign: false,
+              signoff: false,
+            },
+            reassignUser: '',
+            reassignUserInfo: {},
+            exceptionDuration: 1,
+            exceptionTimespan: 'governance.timespans.weeks',
+            processRemediation: false,
+            requireJustification: { revoke: false, exceptionAllowed: false },
+            selfCertFilter: 'governance.editTemplate.allCertifiers',
+          },
+        },
+      });
+    });
+
+    it('enabling escalation shows escalation options', async () => {
+      findByTestId(wrapper, 'escalation').setChecked(true);
+      await flushPromises();
+      expect(findByTestId(wrapper, 'escalation').attributes('value')).toBe('true');
+      expect(findByTestId(wrapper, 'input-escalation-frequency').exists()).toBeTruthy();
+      expect(findByTestId(wrapper, 'escalation-action').exists()).toBeTruthy();
+    });
+
+    it('handleUserInfo updates escalationOwnerInfo', () => {
+      const userInfo = {
+        givenName: 'Kristy',
+        profileImage: undefined,
+        sn: 'sn',
+        userName: 'Kristy.Crawley@autoidzoran.onmicrosoft.com',
+      };
+      wrapper.vm.handleUserInfo(userInfo);
+      expect(wrapper.vm.formFields.escalationOwnerInfo).toStrictEqual(userInfo);
     });
   });
 });

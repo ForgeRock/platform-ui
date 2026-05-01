@@ -219,15 +219,8 @@ export default {
           userSelection: this.$t('governance.editTemplate.allUsers'),
         },
         FrWhen: {
-          closeAction: 'revoke',
-          closeActionDuration: 10,
-          closeActionTime: this.$t('governance.timespans.immediately'),
           duration: 2,
           enableSchedule: false,
-          expireOption: 2,
-          reassignUser: '',
-          reassignUserInfo: {},
-          reassignToSelector: this.$t('governance.editTemplate.role'),
           scheduleConstraint: '',
           scheduleDuration: 30,
           scheduleTimespan: this.$t('governance.timespans.days'),
@@ -244,12 +237,6 @@ export default {
           certifierPath: '',
         },
         FrNotifications: {
-          escalation: false,
-          escalationDuration: 1,
-          escalationEmail: '',
-          escalationOwner: '',
-          escalationOwnerInfo: {},
-          escalationTimespan: this.$t('governance.timespans.days'),
           expirationDays: 1,
           expirationEmail: '',
           expirationNotification: false,
@@ -272,14 +259,26 @@ export default {
           allowPartialSignoff: false,
           allowSelfCert: false,
           allowSelfCertification: false,
+          closeAction: 'revoke',
+          closeActionDuration: 10,
+          closeActionTime: this.$t('governance.timespans.immediately'),
+          escalation: false,
+          escalationFrequency: 7,
+          escalationEmail: '',
+          escalationOwner: '',
+          escalationOwnerInfo: {},
           enableForward: true,
           enableReassign: true,
+          expireOption: 2,
           reassignPermissions: {
             comment: true,
             makeDecision: true,
             reassign: true,
             signoff: true,
           },
+          reassignUser: '',
+          reassignUserInfo: {},
+          reassignToSelector: this.$t('governance.editTemplate.role'),
           enableReassignmentDelegation: true,
           exceptionDuration: 2,
           exceptionTimespan: this.$t('governance.timespans.weeks'),
@@ -341,6 +340,14 @@ export default {
           allowBulkCertify: this.forms.FrAdditionalOptions.allowBulkCertify,
           allowPartialSignoff: this.forms.FrAdditionalOptions.allowPartialSignoff,
           processRemediationWorkFlow: this.forms.FrAdditionalOptions.processRemediation,
+          escalation: this.forms.FrAdditionalOptions.escalation,
+          escalationFrequency: this.forms.FrAdditionalOptions.escalationFrequency,
+          escalationOwnerInfo: {
+            sn: this.forms.FrAdditionalOptions.escalationOwnerInfo?.sn,
+            givenName: this.forms.FrAdditionalOptions.escalationOwnerInfo?.givenName,
+            profileImage: this.forms.FrAdditionalOptions.escalationOwnerInfo?.profileImage,
+            userName: this.forms.FrAdditionalOptions.escalationOwnerInfo?.userName,
+          },
         },
         description: this.forms.FrDetailsForm.description,
         name: this.forms.FrDetailsForm.name,
@@ -354,12 +361,12 @@ export default {
           timespan: this.forms.FrWhen.timespan,
         },
         onCampaignExpiration: {
-          closeAction: this.forms.FrWhen.closeAction,
-          closeActionDuration: this.forms.FrWhen.closeActionDuration,
-          closeActionTime: this.forms.FrWhen.closeActionTime,
-          expireOption: this.forms.FrWhen.expireOption,
-          reassignUser: this.forms.FrWhen.reassignUser,
-          reassignRole: this.forms.FrWhen.reassignRole,
+          closeAction: this.forms.FrAdditionalOptions.closeAction,
+          closeActionDuration: this.forms.FrAdditionalOptions.closeActionDuration,
+          closeActionTime: this.forms.FrAdditionalOptions.closeActionTime,
+          expireOption: this.forms.FrAdditionalOptions.expireOption,
+          reassignUser: this.forms.FrAdditionalOptions.reassignUser,
+          reassignRole: this.forms.FrAdditionalOptions.reassignRole,
           reassignToSelector: this.$t('governance.editTemplate.role'),
         },
         when: {
@@ -380,20 +387,19 @@ export default {
         enableRoleGrant: this.forms.FrWhat.enableRoleGrant,
         notifications: {
           assignmentNotification: this.forms.FrNotifications.initialNotification,
-          escalation: this.forms.FrNotifications.escalation,
-          escalationDuration: this.forms.FrNotifications.escalationDuration,
-          escalationTimespan: this.forms.FrNotifications.escalationTimespan,
-          expirationDays: this.forms.FrNotifications.expirationDays,
-          expirationNotification: this.forms.FrNotifications.expirationNotification,
+          escalation: this.forms.FrAdditionalOptions.escalation,
+          escalationFrequency: this.forms.FrAdditionalOptions.escalationFrequency,
+          expirationDays: this.forms.FrAdditionalOptions.expirationDays,
+          expirationNotification: this.forms.FrAdditionalOptions.expirationNotification,
           reassignNotification: this.forms.FrNotifications.reassignNotification,
           reminders: this.forms.FrNotifications.reminders,
           remindersDuration: this.forms.FrNotifications.remindersDuration,
           remindersTimespan: this.forms.FrNotifications.remindersTimespan,
           escalationOwnerInfo: {
-            sn: this.forms.FrNotifications.escalationOwnerInfo?.sn,
-            givenName: this.forms.FrNotifications.escalationOwnerInfo?.givenName,
-            profileImage: this.forms.FrNotifications.escalationOwnerInfo?.profileImage,
-            userName: this.forms.FrNotifications.escalationOwnerInfo?.userName,
+            sn: this.forms.FrAdditionalOptions.escalationOwnerInfo?.sn,
+            givenName: this.forms.FrAdditionalOptions.escalationOwnerInfo?.givenName,
+            profileImage: this.forms.FrAdditionalOptions.escalationOwnerInfo?.profileImage,
+            userName: this.forms.FrAdditionalOptions.escalationOwnerInfo?.userName,
           },
         },
         eventDetails: {
@@ -420,7 +426,6 @@ export default {
       }).finally(() => {
         this.grantFilterPropertiesLoaded = true;
       });
-
     if (!isEmpty(this.template) && !this.eventBased) {
       try {
         this.forms = cloneDeep(getFormValuesFromTemplate(this.template));
@@ -463,7 +468,6 @@ export default {
         const saveFunction = this.existingTemplateId !== null
           ? updateTemplate(this.existingTemplateId, saveObj)
           : postTemplate(saveObj);
-
         try {
           this.isSaving = true;
           await saveFunction;

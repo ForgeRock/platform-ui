@@ -313,7 +313,8 @@ describe('SummaryStep Component', () => {
       await wrapper.setProps({
         summary: {
           ...summary,
-          notifications: {
+          additionalOptions: {
+            ...additionalOptions,
             escalation: true,
             escalationOwnerInfo: {
               sn: 'test sn',
@@ -322,17 +323,19 @@ describe('SummaryStep Component', () => {
               userName: 'test user name',
             },
           },
+          notifications: {},
         },
       });
       expect(findByTestId(wrapper, 'summary-notification-escalation').find('span')
         .text())
         .toBe('governance.editTemplate.notificationsSummary.sendEscalation');
     });
-    it('should not render reassign notification when its property is false', () => {
+    it('should not render escalation notification when its property is false', () => {
       wrapper.setProps({
         summary: {
           ...summary,
-          notifications: {
+          additionalOptions: {
+            ...additionalOptions,
             escalation: false,
             escalationOwnerInfo: {
               sn: 'test sn',
@@ -341,6 +344,7 @@ describe('SummaryStep Component', () => {
               userName: 'test user name',
             },
           },
+          notifications: {},
         },
       });
       expect(findByTestId(wrapper, 'summary-notification-escalation').exists()).toBeFalsy();

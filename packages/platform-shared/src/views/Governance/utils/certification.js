@@ -8,6 +8,8 @@
 
 import {
   cloneDeep,
+  get,
+  has,
   isEmpty,
   isEqual,
   isNil,
@@ -257,17 +259,6 @@ export function buildSavePayload(type, forms, eventBased) {
     saveObj.schedule = schedule;
   }
   saveObj.stageDuration = getDayDuration(when.duration, when.timespan);
-  if (when.expireOption === 0) {
-    saveObj.expirationAction = when.closeAction;
-    saveObj.expirationActionDelay = when.closeActionTime === i18n.global.t('governance.timespans.immediately')
-      ? 0
-      : when.closeActionDuration;
-  } else if (when.expireOption === 1) {
-    saveObj.expirationAction = 'reassign';
-    saveObj.expirationReassignee = when.reassignUser;
-  } else {
-    saveObj.expirationAction = null;
-  }
 
   // Who will certify
   const who = forms.FrWho;
@@ -295,29 +286,20 @@ export function buildSavePayload(type, forms, eventBased) {
 
   // Notifications
   const notif = forms.FrNotifications;
-  saveObj.assignmentNotification = notif.initialNotification === false
-    ? null
-    : notif.initialEmail;
-  saveObj.reassignNotification = notif.reassignNotification === false
-    ? null
-    : notif.reassignEmail;
-  saveObj.expirationNotification = notif.expirationNotification === false
-    ? null
-    : notif.expirationEmail;
-  if (notif.expirationNotification) saveObj.expirationNotificationDay = notif.expirationDays;
-  saveObj.reminderNotification = notif.reminders === false
-    ? null
-    : notif.remindersEmail;
-  if (notif.reminders) {
-    saveObj.reminderFrequency = getDayDuration(notif.remindersDuration, notif.remindersTimespan);
+  saveObj.events = saveObj.events || {};
+  if (notif.initialNotification) {
+    saveObj.events.assignment = saveObj.events.assignment || {};
+    saveObj.events.assignment.notification = notif.initialEmail;
   }
-
-  saveObj.escalationNotification = notif.escalation === false
-    ? null
-    : notif.escalationEmail;
-  if (notif.escalation) {
-    saveObj.escalationFrequency = getDayDuration(notif.escalationDuration, notif.escalationTimespan);
-    saveObj.escalationOwner = notif.escalationOwner;
+  if (notif.reassignNotification) {
+    saveObj.events.reassign = saveObj.events.reassign || {};
+    saveObj.events.reassign.notification = notif.reassignEmail;
+  }
+  if (notif.reminders) {
+    saveObj.events.reminder = saveObj.events.reminder || {};
+    saveObj.events.reminder.notification = notif.remindersEmail;
+    saveObj.events.reminder.frequency = getDayDuration(notif.remindersDuration, notif.remindersTimespan);
+    saveObj.events.reminder.includeActor = true;
   }
 
   // Additional Options
@@ -345,6 +327,45 @@ export function buildSavePayload(type, forms, eventBased) {
       reset: addOptions.reassignPermissions.makeDecision,
       revoke: addOptions.reassignPermissions.makeDecision,
     };
+  }
+
+  if (addOptions.expireOption === 0) {
+    saveObj.expirationAction = addOptions.closeAction;
+    saveObj.expirationActionDelay = addOptions.closeActionTime === i18n.global.t('governance.timespans.immediately')
+      ? 0
+      : addOptions.closeActionDuration;
+  } else if (addOptions.expireOption === 1) {
+    saveObj.expirationAction = 'reassign';
+    saveObj.expirationReassignee = addOptions.reassignUser;
+  } else {
+    saveObj.expirationAction = null;
+  }
+
+  if (notif.expirationNotification) {
+    saveObj.events = saveObj.events || {};
+    saveObj.events.expirationNotification = saveObj.events.expirationNotification || {};
+    saveObj.events.expirationNotification = {
+      ...saveObj.events.expirationNotification,
+      notification: notif.expirationEmail,
+      day: notif.expirationDays,
+      includeActor: true,
+    };
+  }
+
+  if (addOptions.escalation) {
+    saveObj.events = saveObj.events || {};
+    saveObj.events.escalation = {
+      action: addOptions.escalationAction,
+      frequency: addOptions.escalationFrequency,
+      notification: addOptions.escalationEmail?.value,
+    };
+    const actors = [];
+    if (addOptions.escalateToSelector === 'manager') {
+      actors.push({ type: 'manager' });
+    } else {
+      actors.push({ type: addOptions.escalateToSelector, id: addOptions.escalationOwner });
+    }
+    saveObj.events.escalation.actors = actors;
   }
   saveObj.exceptionDuration = addOptions.allowExceptions
     ? getDayDuration(addOptions.exceptionDuration, addOptions.exceptionTimespan)
@@ -521,20 +542,9 @@ export function getFormValuesFromTemplate(template, eventBased) {
   };
 
   // When
-  let expireOption = 0;
-  if (template.expirationAction === 'reassign') expireOption = 1;
-  if (template.expirationAction === null) expireOption = 2;
-
   forms.FrWhen = {
-    closeAction: template.expirationAction !== 'reassign' ? template.expirationAction : null,
-    closeActionDuration: template.expirationActionDelay,
-    closeActionTime: template.expirationActionDelay === 0 ? i18n.global.t('governance.timespans.immediately') : i18n.global.t('governance.timespans.afterADuration'),
     duration: template.stageDuration,
     enableSchedule: (template.scheduleId !== null && template.schedule !== null && template.schedule !== ''),
-    expireOption,
-    reassignUser: template.expirationReassignee,
-    reassignToSelector: template.expirationReassignee?.includes('user') ? 'User' : 'Role',
-    reassignUserInfo: template.expirationReassigneeInfo,
     scheduleDuration: 30,
     scheduleTimespan: i18n.global.t('governance.timespans.days'),
     timespan: i18n.global.t('governance.timespans.days'),
@@ -605,22 +615,13 @@ export function getFormValuesFromTemplate(template, eventBased) {
 
   // Notifications
   forms.FrNotifications = {
-    escalation: template.escalationFrequency > 0,
-    escalationDuration: template.escalationFrequency,
-    escalationEmail: template.escalationNotification,
-    escalationOwner: template.escalationOwner,
-    escalationOwnerInfo: template.escalationOwnerInfo || {},
-    escalationTimespan: i18n.global.t('governance.timespans.days'),
-    expirationDays: template.expirationNotificationDay,
-    expirationEmail: template.expirationNotification,
-    expirationNotification: template.expirationNotification !== null,
-    initialNotification: template.assignmentNotification !== null,
-    initialEmail: template.assignmentNotification,
-    reassignEmail: template.reassignNotification,
-    reassignNotification: template.reassignNotification !== null,
-    reminders: template.reminderFrequency > 0,
-    remindersDuration: template.reminderFrequency,
-    remindersEmail: template.reminderNotification,
+    initialNotification: !isNil(template.events?.assignment?.notification),
+    initialEmail: template.events?.assignment?.notification,
+    reassignEmail: template.events?.reassign?.notification,
+    reassignNotification: !isNil(template.events?.reassign?.notification),
+    reminders: template.events?.reminder?.frequency > 0,
+    remindersDuration: template.events?.reminder?.frequency,
+    remindersEmail: template.events?.reminder?.notification,
     remindersTimespan: i18n.global.t('governance.timespans.days'),
   };
   const {
@@ -633,14 +634,41 @@ export function getFormValuesFromTemplate(template, eventBased) {
   } = template.reassignPermissions;
 
   // Additional Options
+  let expireOption = 0;
+  let escalateToSelector = 'role';
+  if (template.expirationAction === 'reassign') expireOption = 1;
+  if (template.expirationAction === null) expireOption = 2;
+
+  const actors = get(template, 'events.escalation.actors', []);
+  if (actors.length > 0) {
+    escalateToSelector = actors[0].type;
+  }
+
   forms.FrAdditionalOptions = {
     allowBulkCertify: template.allowBulkCertify,
     requireJustification: template.requireJustification || { revoke: false, exceptionAllowed: false },
     allowExceptions: template.exceptionDuration > 0,
     allowPartialSignoff: template.allowPartialSignoff,
     allowSelfCert: template.allowSelfCertification,
+    closeAction: template.expirationAction !== 'reassign' ? template.expirationAction : null,
+    closeActionDuration: template.expirationActionDelay,
+    closeActionTime: template.expirationActionDelay === 0 ? i18n.global.t('governance.timespans.immediately') : i18n.global.t('governance.timespans.afterADuration'),
+    expirationDays: template.events?.expirationNotification?.day,
+    expirationEmail: template.events?.expirationNotification?.notification,
+    expirationNotification: !isNil(template.events?.expirationNotification?.notification),
+    escalateToSelector,
+    escalation: has(template, 'events.escalation'),
+    escalationFrequency: template.events?.escalation?.frequency,
+    escalationEmail: template.events?.escalation?.notification,
+    escalationOwner: template.events?.escalation?.actors?.[0],
+    escalationOwnerInfo: template.escalationOwnerInfo?.id || {},
+    escalationTimespan: i18n.global.t('governance.timespans.days'),
     enableForward: template.enableForward,
     enableReassign: template.enableReassign,
+    expireOption,
+    reassignUser: template.expirationReassignee,
+    reassignToSelector: template.expirationReassignee?.includes('user') ? 'User' : 'Role',
+    reassignUserInfo: template.expirationReassigneeInfo,
     reassignPermissions: {
       comment: template.reassignPermissions.comment,
       makeDecision: certify || exception || reset || revoke,
@@ -665,7 +693,6 @@ export function getFormValuesFromTemplate(template, eventBased) {
       roles: template.uiConfig?.columnConfig?.roles || [],
     },
   };
-
   return forms;
 }
 

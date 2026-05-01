@@ -28,14 +28,8 @@ describe('When View', () => {
         },
         props: {
           value: {
-            closeAction: '',
-            closeActionDuration: 0,
-            closeActionTime: '',
             duration: 0,
             enableSchedule: false,
-            expireOption: 0,
-            reassignUser: '',
-            reassignUserInfo: {},
             scheduleConstraint: '',
             scheduleDuration: 0,
             scheduleTimespan: '',
@@ -61,14 +55,8 @@ describe('When View', () => {
         },
         props: {
           value: {
-            closeAction: 'revoke',
-            closeActionDuration: 4,
-            closeActionTime: 'governance.timespans.afterADuration',
             duration: 1,
             enableSchedule: true,
-            expireOption: 0,
-            reassignUser: '',
-            reassignUserInfo: {},
             scheduleConstraint: '2020-04-25T07:00:00.000Z/2020-04-30T07:00:00.000Z',
             scheduleDuration: 2,
             scheduleTimespan: 'governance.timespans.months',
@@ -85,9 +73,6 @@ describe('When View', () => {
       expect(findByTestId(wrapper, 'schedule-timespan').find('span').text()).toBe('month(s)');
       expect(findByTestId(wrapper, 'input-duration').element.value).toBe('1');
       expect(findByTestId(wrapper, 'timespan').find('span').text()).toBe('day(s)');
-      expect(findByTestId(wrapper, 'close-action').find('span').text()).toBe('governance.editTemplate.closeActions.revoke');
-      expect(findByTestId(wrapper, 'close-action-time').find('span').text()).toBe('after a duration');
-      expect(findByTestId(wrapper, 'input-close-action-duration').element.value).toBe('4');
       expect(wrapper.vm.isExistingSchedule).toBe(true);
     });
   });
@@ -101,14 +86,8 @@ describe('When View', () => {
       },
       props: {
         value: {
-          closeAction: '',
-          closeActionDuration: 0,
-          closeActionTime: '',
           duration: 0,
           enableSchedule: false,
-          expireOption: 0,
-          reassignUser: '',
-          reassignUserInfo: {},
           scheduleConstraint: '',
           scheduleDuration: 0,
           scheduleTimespan: '',

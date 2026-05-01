@@ -68,84 +68,6 @@ to such license between the licensee and ForgeRock AS. -->
         type="select"
         :options="timespanOptions"
         :searchable="false" />
-      <hr>
-      <h5>{{ $t('governance.editTemplate.whenCampaignExpires') }}</h5>
-      <BFormRadioGroup
-        v-model="formFields.expireOption"
-        name="expire-options">
-        <div class="d-flex align-items-center mb-3">
-          <BFormRadio
-            class="mr-0"
-            :value="0">
-            {{ $t('governance.editTemplate.closeAnd') }}
-          </BFormRadio>
-          <div class="d-inline ml-2">
-            <FrField
-              v-model="formFields.closeAction"
-              class="form-control-inline width-191 w-100"
-              name="closeAction"
-              testid="close-action"
-              type="select"
-              :options="closeActionOptions"
-              :searchable="false" />
-          </div>
-          <span class="mx-2">
-            {{ $t('governance.editTemplate.openItems') }}
-          </span>
-          <div class="d-inline">
-            <FrField
-              v-model="formFields.closeActionTime"
-              class="form-control-inline width-191 w-100"
-              name="closeActionTime"
-              testid="close-action-time"
-              type="select"
-              :options="closeActionTimeOptions"
-              :searchable="false" />
-          </div>
-          <template v-if="formFields.closeActionTime === $t('governance.timespans.afterADuration')">
-            <span class="mx-2">
-              {{ $t('governance.editTemplate.of') }}
-            </span>
-            <FrField
-              v-model="formFields.closeActionDuration"
-              class="mb-0 mr-3 d-inline-block"
-              name="closeActionDuration"
-              style="max-width: 70px;"
-              testid="close-action-duration"
-              type="number" />
-            <span>
-              {{ $t('date.days') }}
-            </span>
-          </template>
-        </div>
-        <div class="d-flex w-100">
-          <div class="mb-3 w-auto align-items-center pt-2">
-            <BFormRadio :value="1">
-              {{ $t('governance.editTemplate.reassignToCertify') }}
-            </BFormRadio>
-          </div>
-          <div class="d-flex w-50">
-            <FrField
-              v-model="formFields.reassignToSelector"
-              class="form-control-inline w-50 mr-2"
-              name="reassignAction"
-              type="select"
-              :options="reassignToOptions"
-              :searchable="false" />
-            <FrGovResourceSelect
-              v-model="formFields.reassignUser"
-              :initial-data="formFields.reassignUserInfo"
-              name="reassignUser"
-              class="mb-5 w-100"
-              :resource-path="formFields.reassignToSelector === this.$t('governance.editTemplate.user') ? 'user' : 'role'" />
-          </div>
-        </div>
-        <div class="mb-3">
-          <BFormRadio :value="2">
-            {{ $t('governance.editTemplate.doNothing') }}
-          </BFormRadio>
-        </div>
-      </BFormRadioGroup>
     </BContainer>
   </div>
 </template>
@@ -154,24 +76,18 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   BCollapse,
   BContainer,
-  BFormRadio,
-  BFormRadioGroup,
 } from 'bootstrap-vue';
 import { cloneDeep } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrTimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
-import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 
 export default {
   name: 'When',
   components: {
     BCollapse,
     BContainer,
-    BFormRadio,
-    BFormRadioGroup,
     FrField,
     FrTimeConstraint,
-    FrGovResourceSelect,
   },
   props: {
     value: {

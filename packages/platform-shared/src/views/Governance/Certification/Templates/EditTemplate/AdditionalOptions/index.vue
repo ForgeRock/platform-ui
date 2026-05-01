@@ -188,6 +188,167 @@ to such license between the licensee and ForgeRock AS. -->
           </template>
         </div>
       </BCollapse>
+      <FrField
+        v-model="formFields.escalation"
+        class="mb-4"
+        name="escalation"
+        testid="escalation"
+        type="checkbox"
+        :description="$t('governance.editTemplate.enableEscalationDescription')"
+        :label="$t('governance.editTemplate.enableEscalation')" />
+      <BCollapse
+        :visible="formFields.escalation"
+        class="position-relative">
+        <div class="p-4 rounded bg-light mb-4">
+          <div class="d-flex w-100 mb-4 align-items-center">
+            <div class="mr-1">
+              {{ $t('governance.editTemplate.escalateEvery') }}
+            </div>
+            <FrField
+              v-model="formFields.escalationFrequency"
+              class="mb-0 mr-3 pr-2 d-inline-block"
+              name="escalationFrequency"
+              :min="1"
+              style="max-width: 70px;"
+              testid="escalation-frequency"
+              type="number"
+              :validation="formFields.escalation ? { required: true, min_value: { min: 1 } } : {}" />
+            <div class="mr-1">
+              {{ $t('date.days') }}
+            </div>
+          </div>
+          <div class="d-flex w-100 mb-4 align-items-center">
+            <div class="mb-3 mr-1 w-auto pt-2 align-items-center">
+              {{ $t('governance.editTemplate.escalateTo') }}
+            </div>
+            <div class="d-flex w-50 align-items-center">
+              <FrField
+                v-model="formFields.escalateToSelector"
+                class="d-flex form-control-inline w-50 mr-2 align-items-center"
+                name="formFields.escalateToSelector"
+                type="select"
+                :options="escalateToOptions"
+                :searchable="false" />
+              <FrGovResourceSelect
+                v-if="formFields.escalateToSelector !== 'manager'"
+                v-model="formFields.escalationOwner"
+                :initial-data="formFields.escalationOwnerInfo"
+                name="escalationOwner"
+                class="w-100 align-items-center"
+                @get-user-info="handleUserInfo"
+                :resource-path="formFields.escalateToSelector" />
+            </div>
+          </div>
+          <div class="d-flex w-100 mb-4 align-items-center">
+            <div class="mr-1">
+              {{ $t('governance.editTemplate.onEscalation') }}
+            </div>
+            <FrField
+              v-model="formFields.escalationAction"
+              class="d-inline-block mr-1"
+              name="escalationAction"
+              style="min-width: 200px;"
+              testid="escalation-action"
+              type="select"
+              validation="required"
+              :options="escalationActionOptions"
+              :searchable="false" />
+            <FrField
+              v-model="formFields.escalationEmail"
+              class="d-inline-block mr-1"
+              name="escalationEmail"
+              style="min-width: 200px;"
+              testid="escalation-email"
+              type="select"
+              validation="required"
+              :label="$t('governance.editTemplate.emailTemplate')"
+              :options="emailTemplateOptions"
+              :searchable="false" />
+          </div>
+        </div>
+      </BCollapse>
+      <div class="mb-1 text-secondary">
+        {{ $t('governance.editTemplate.whenCampaignExpires') }}
+      </div>
+      <small class="mb-4 form-text text-muted">{{ $t('governance.editTemplate.whenCampaignExpiresDescription') }}</small>
+      <div class="p-4 rounded bg-light mb-4">
+        <BFormRadioGroup
+          v-model="formFields.expireOption"
+          name="expire-options">
+          <div class="d-flex align-items-center mb-3">
+            <BFormRadio
+              class="mr-0"
+              :value="0">
+              {{ $t('governance.editTemplate.closeAnd') }}
+            </BFormRadio>
+            <div class="d-inline ml-2">
+              <FrField
+                v-model="formFields.closeAction"
+                class="form-control-inline width-191 w-100"
+                name="closeAction"
+                testid="close-action"
+                type="select"
+                :options="closeActionOptions"
+                :searchable="false" />
+            </div>
+            <span class="mx-2">
+              {{ $t('governance.editTemplate.openItems') }}
+            </span>
+            <div class="d-inline">
+              <FrField
+                v-model="formFields.closeActionTime"
+                class="form-control-inline width-191 w-100"
+                name="closeActionTime"
+                testid="close-action-time"
+                type="select"
+                :options="closeActionTimeOptions"
+                :searchable="false" />
+            </div>
+            <template v-if="formFields.closeActionTime === $t('governance.timespans.afterADuration')">
+              <span class="mx-2">
+                {{ $t('governance.editTemplate.of') }}
+              </span>
+              <FrField
+                v-model="formFields.closeActionDuration"
+                class="mb-0 mr-3 d-inline-block"
+                name="closeActionDuration"
+                style="max-width: 70px;"
+                testid="close-action-duration"
+                type="number" />
+              <span>
+                {{ $t('date.days') }}
+              </span>
+            </template>
+          </div>
+          <div class="d-flex w-100 align-items-center mb-3">
+            <div class="w-auto align-items-center pt-2">
+              <BFormRadio :value="1">
+                {{ $t('governance.editTemplate.reassignToCertify') }}
+              </BFormRadio>
+            </div>
+            <div class="d-flex w-50 align-items-center">
+              <FrField
+                v-model="reassignToSelector"
+                class="form-control-inline w-50 mr-2"
+                name="reassignAction"
+                type="select"
+                :options="reassignToOptions"
+                :searchable="false" />
+              <FrGovResourceSelect
+                v-model="formFields.reassignUser"
+                :initial-data="formFields.reassignUserInfo"
+                name="reassignUser"
+                class="w-100"
+                :resource-path="reassignToSelector === this.$t('governance.editTemplate.user') ? 'user' : 'role'" />
+            </div>
+          </div>
+          <div class="mb-3">
+            <BFormRadio :value="2">
+              {{ $t('governance.editTemplate.doNothing') }}
+            </BFormRadio>
+          </div>
+        </BFormRadioGroup>
+      </div>
     </BContainer>
   </div>
 </template>
@@ -196,9 +357,12 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   BCollapse,
   BContainer,
+  BFormRadio,
+  BFormRadioGroup,
 } from 'bootstrap-vue';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, find } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import { types } from '../../templateTypes';
 
 export default {
@@ -206,9 +370,16 @@ export default {
   components: {
     BCollapse,
     BContainer,
+    BFormRadio,
+    BFormRadioGroup,
     FrField,
+    FrGovResourceSelect,
   },
   props: {
+    emailTemplateOptions: {
+      type: Array,
+      default: () => [],
+    },
     value: {
       type: Object,
       default: () => {},
@@ -234,13 +405,75 @@ export default {
         this.$t('governance.timespans.weeks'),
         this.$t('governance.timespans.days'),
       ],
+      closeActionOptions: [
+        {
+          text: this.$t('governance.editTemplate.closeActions.revoke'),
+          value: 'revoke',
+        },
+        {
+          text: this.$t('governance.editTemplate.closeActions.certify'),
+          value: 'certify',
+        },
+        {
+          text: this.$t('governance.editTemplate.closeActions.allowException'),
+          value: 'exception',
+        },
+      ],
+      escalationActionOptions: [
+        {
+          text: this.$t('governance.editTemplate.notify'),
+          value: 'notification',
+        },
+        {
+          text: this.$t('governance.editTemplate.reassign'),
+          value: 'reassign',
+        },
+      ],
+      closeActionTimeOptions: [
+        this.$t('governance.timespans.immediately'),
+        this.$t('governance.timespans.afterADuration'),
+      ],
+      escalateToOptions: [
+        {
+          text: this.$t('governance.editTemplate.role'),
+          value: 'role',
+        },
+        {
+          text: this.$t('governance.editTemplate.user'),
+          value: 'user',
+        },
+        {
+          text: this.$t('governance.editTemplate.manager'),
+          value: 'manager',
+        },
+      ],
+      reassignToOptions: [
+        this.$t('governance.editTemplate.role'),
+        this.$t('governance.editTemplate.user'),
+      ],
+      reassignToSelector: this.$t('governance.editTemplate.role'),
       formFields: {
         allowBulkCertify: true,
         allowExceptions: true,
         allowPartialSignoff: false,
         allowSelfCert: false,
+        escalateToSelector: 'role',
+        escalation: false,
+        escalationAction: 'notification',
+        escalationFrequency: this.value.escalationFrequency || 7,
+        escalationEmail: 'emailTemplate/certificationEscalated',
+        escalationOwner: '',
+        escalationOwnerInfo: {},
+        escalationTimespan: '',
+        closeAction: 'revoke',
+        closeActionDuration: 0,
+        closeActionTime: '',
+        expireOption: 2,
         enableReassign: true,
         enableForward: true,
+        reassignUser: '',
+        reassignRole: '',
+        reassignUserInfo: {},
         reassignPermissions: {
           comment: true,
           makeDecision: true,
@@ -263,10 +496,22 @@ export default {
       },
     };
   },
+  methods: {
+    /**
+     * Adds userInfo to formFields
+     * @param {Object} userInfo Data corresponding to the selected user
+     */
+    handleUserInfo(userInfo) {
+      this.formFields.escalationOwnerInfo = userInfo;
+    },
+  },
   mounted() {
     Object.keys(this.value).forEach((field) => {
       this.formFields[field] = cloneDeep(this.value[field]);
     });
+    if (!this.formFields.escalationEmail) {
+      this.formFields.escalationEmail = find(this.emailTemplateOptions, { value: 'emailTemplate/certificationEscalated' });
+    }
   },
   computed: {
     isEntitlementComposition() {
@@ -287,6 +532,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+:deep(.fr-field) {
+  .form-control{
+    width: 100%;
+  }
+}
 
 .maxWidth70 {
   max-width: 70px;

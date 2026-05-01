@@ -152,68 +152,6 @@ to such license between the licensee and ForgeRock AS. -->
             :searchable="false" />
         </div>
       </BCollapse>
-      <FrField
-        v-model="formFields.escalation"
-        class="mb-4"
-        name="escalation"
-        testid="escalation"
-        type="checkbox"
-        :description="$t('governance.editTemplate.enableEscalationDescription')"
-        :label="$t('governance.editTemplate.enableEscalation')" />
-      <BCollapse
-        :visible="formFields.escalation"
-        class="position-relative">
-        <div
-          v-if="formFields.escalation"
-          class="p-4 rounded bg-light mb-4 form-inline">
-          <div class="mr-1">
-            {{ $t('common.send') }}
-          </div>
-          <FrField
-            v-model="formFields.escalationEmail"
-            class="d-inline-block mr-1"
-            name="escalationEmail"
-            style="min-width: 200px;"
-            testid="escalation-email"
-            type="select"
-            validation="required"
-            :label="$t('governance.editTemplate.emailTemplate')"
-            :options="emailTemplateOptions"
-            :searchable="false" />
-          <div class="mr-1">
-            {{ $t('governance.editTemplate.every') }}
-          </div>
-          <FrField
-            v-model="formFields.escalationDuration"
-            class="mb-0 mr-3 d-inline-block"
-            name="escalationDuration"
-            style="max-width: 70px;"
-            testid="escalation-duration"
-            type="number"
-            validation="required" />
-          <FrField
-            v-model="formFields.escalationTimespan"
-            class="mb-0 d-inline-block mr-1"
-            name="escalationTimespan"
-            style="min-width: 120px;"
-            testid="escalation-timespan"
-            type="select"
-            validation="required"
-            :options="timespanOptions"
-            :searchable="false" />
-          <div class="mr-1">
-            {{ $t('governance.editTemplate.to') }}
-          </div>
-          <FrGovResourceSelect
-            v-model="formFields.escalationOwner"
-            :initial-data="formFields.escalationOwnerInfo"
-            name="escalationOwner"
-            @get-user-info="handleUserInfo"
-            style="max-width: 400px;"
-            class="d-inline-block"
-            resource-path="user" />
-        </div>
-      </BCollapse>
     </BContainer>
   </div>
 </template>
@@ -227,7 +165,6 @@ import {
   cloneDeep,
 } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 
 export default {
   name: 'Notifications',
@@ -235,7 +172,6 @@ export default {
     BCollapse,
     BContainer,
     FrField,
-    FrGovResourceSelect,
   },
   props: {
     emailTemplateOptions: {
@@ -256,12 +192,6 @@ export default {
         this.$t('governance.timespans.days'),
       ],
       formFields: {
-        escalation: false,
-        escalationDuration: 0,
-        escalationEmail: '',
-        escalationOwner: '',
-        escalationOwnerInfo: {},
-        escalationTimespan: '',
         expirationDays: 0,
         expirationEmail: '',
         expirationNotification: false,

@@ -37,12 +37,6 @@ describe('Notifications View', () => {
         },
         propsData: {
           value: {
-            escalation: false,
-            escalationDuration: 1,
-            escalationEmail: '',
-            escalationOwner: '',
-            escalationOwnerInfo: {},
-            escalationTimespan: '',
             expirationDays: 1,
             expirationEmail: '',
             expirationNotification: false,
@@ -89,28 +83,6 @@ describe('Notifications View', () => {
       expect(findByTestId(wrapper, 'input-reminders-duration').exists()).toBeTruthy();
       expect(findByTestId(wrapper, 'reminders-timespan').exists()).toBeTruthy();
     });
-
-    it('enabling escalation notification shows exalation email, duration, and timespan', async () => {
-      findByTestId(wrapper, 'escalation').setChecked(true);
-      await flushPromises();
-      expect(findByTestId(wrapper, 'escalation').attributes('value')).toBe('true');
-      expect(findByTestId(wrapper, 'escalation-email').exists()).toBeTruthy();
-      expect(findByTestId(wrapper, 'input-escalation-duration').exists()).toBeTruthy();
-      expect(findByTestId(wrapper, 'escalation-timespan').exists()).toBeTruthy();
-    });
-  });
-
-  describe('handleUserInfo', () => {
-    it('should set the scalationOwnerInfo with the params', () => {
-      const selectedUser = {
-        givenName: 'Kristy',
-        profileImage: undefined,
-        sn: 'sn',
-        userName: 'Kristy.Crawley@autoidzoran.onmicrosoft.com',
-      };
-      wrapper.vm.handleUserInfo(selectedUser);
-      expect(wrapper.vm.formFields.escalationOwnerInfo).toStrictEqual(selectedUser);
-    });
   });
 
   describe('initializes with non default values', () => {
@@ -130,12 +102,6 @@ describe('Notifications View', () => {
         },
         propsData: {
           value: {
-            escalation: true,
-            escalationDuration: 2,
-            escalationEmail: 'temp1',
-            escalationOwner: '',
-            escalationOwnerInfo: {},
-            escalationTimespan: 'governance.timespans.months',
             expirationDays: 5,
             expirationEmail: 'temp1',
             expirationNotification: true,
@@ -172,13 +138,6 @@ describe('Notifications View', () => {
       expect(findByTestId(wrapper, 'input-reminders-duration').element.value).toBe('3');
       expect(findByTestId(wrapper, 'reminders-timespan').exists()).toBeTruthy();
       expect(findByTestId(wrapper, 'reminders-timespan').find('span').text()).toBe('week(s)');
-      expect(findByTestId(wrapper, 'escalation').attributes('value')).toBe('true');
-      expect(findByTestId(wrapper, 'escalation-email').exists()).toBeTruthy();
-      expect(findByTestId(wrapper, 'escalation-email').find('span').text()).toBe('temp1');
-      expect(findByTestId(wrapper, 'input-escalation-duration').exists()).toBeTruthy();
-      expect(findByTestId(wrapper, 'input-escalation-duration').element.value).toBe('2');
-      expect(findByTestId(wrapper, 'escalation-timespan').exists()).toBeTruthy();
-      expect(findByTestId(wrapper, 'escalation-timespan').find('span').text()).toBe('month(s)');
     });
   });
 });

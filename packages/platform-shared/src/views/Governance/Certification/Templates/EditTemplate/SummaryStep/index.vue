@@ -143,16 +143,6 @@ to such license between the licensee and ForgeRock AS. -->
               </dd>
             </template>
             <dt class="mb-1">
-              <small>{{ $t('governance.editTemplate.onCampaignExpiration') }}</small>
-            </dt>
-            <dd>
-              {{ onCampaignExpiration }}
-            </dd>
-          </dl>
-        </BCol>
-        <BCol lg="4">
-          <dl>
-            <dt class="mb-1">
               <small>{{ $t('governance.editTemplate.duration') }}</small>
             </dt>
             <dd class="mb-4">
@@ -232,43 +222,6 @@ to such license between the licensee and ForgeRock AS. -->
             <dd v-else>
               {{ blankValueIndicator }}
             </dd>
-            <dt class="mb-1">
-              <small>{{ $t('governance.editTemplate.notificationsSummary.escalation') }}</small>
-            </dt>
-            <dd
-              v-if="summary.notifications.escalation"
-              data-testid="summary-notification-escalation"
-              class="mb-4">
-              <span
-                v-html="$t('governance.editTemplate.notificationsSummary.sendEscalation', {
-                  duration: summary.notifications.escalationDuration,
-                  timeSpan: summary.notifications.escalationTimespan,
-                })" />
-            </dd>
-            <dd
-              v-if="summary.notifications.escalation"
-              data-testid="summary-notification-escalation-image">
-              <div class="owner-info media align-items-center">
-                <BImg
-                  class="mr-3 rounded-circle size-28"
-                  :alt="campaignOwnerName"
-                  :src="summary.notifications.escalationOwnerInfo.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                />
-                <div class="owner-name media-body">
-                  <div class="mb-0">
-                    {{ campaignOwnerName }}
-                  </div>
-                  <div>
-                    <small class="text-secondary m-0">
-                      {{ summary.notifications.escalationOwnerInfo.userName }}
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </dd>
-            <dd v-else>
-              {{ blankValueIndicator }}
-            </dd>
           </dl>
         </BCol>
       </BRow>
@@ -299,6 +252,43 @@ to such license between the licensee and ForgeRock AS. -->
             </dt>
             <dd class="mb-4">
               {{ getYesOrNoLabel(summary.additionalOptions.allowPartialSignoff) }}
+            </dd>
+            <dt class="mb-1">
+              <small>{{ $t('governance.editTemplate.notificationsSummary.escalation') }}</small>
+            </dt>
+            <dd
+              v-if="summary.additionalOptions.escalation"
+              data-testid="summary-notification-escalation"
+              class="mb-4">
+              <span
+                v-html="$t('governance.editTemplate.notificationsSummary.sendEscalation', {
+                  duration: summary.additionalOptions.escalationDuration,
+                  timeSpan: summary.additionalOptions.escalationTimespan,
+                })" />
+            </dd>
+            <dd
+              v-if="summary.additionalOptions.escalation"
+              data-testid="summary-notification-escalation-image">
+              <div class="owner-info media align-items-center">
+                <BImg
+                  class="mr-3 rounded-circle size-28"
+                  :alt="campaignOwnerName"
+                  :src="summary.additionalOptions.escalationOwnerInfo.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                />
+                <div class="owner-name media-body">
+                  <div class="mb-0">
+                    {{ campaignOwnerName }}
+                  </div>
+                  <div>
+                    <small class="text-secondary m-0">
+                      {{ summary.additionalOptions.escalationOwnerInfo.userName }}
+                    </small>
+                  </div>
+                </div>
+              </div>
+            </dd>
+            <dd v-else>
+              {{ blankValueIndicator }}
             </dd>
           </dl>
         </BCol>
@@ -350,6 +340,12 @@ to such license between the licensee and ForgeRock AS. -->
             </dd>
             <dd v-else>
               {{ blankValueIndicator }}
+            </dd>
+            <dt class="mb-1">
+              <small>{{ $t('governance.editTemplate.onCampaignExpiration') }}</small>
+            </dt>
+            <dd>
+              {{ onCampaignExpiration }}
             </dd>
           </dl>
         </BCol>
