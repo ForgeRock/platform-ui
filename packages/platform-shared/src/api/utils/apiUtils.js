@@ -11,10 +11,10 @@ import store from '@/store';
 
 /**
  * Get the api path to access the realm-config for a given realm
- * @param {*} realm the realm to obtain the path for
+ * @param {*} realm the realm to obtain the path for, defaults to 'root' if not provided
  * @returns {String} a realm config path
  */
-function getRealmConfigPath(realm) {
+function getRealmConfigPath(realm = 'root') {
   const realmName = (realm === 'root') ? '/' : realm;
   const realmConfig = store.state.realms.find((stateRealm) => stateRealm.name === realmName);
 

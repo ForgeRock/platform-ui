@@ -39,6 +39,11 @@ describe('apiUtils', () => {
       store.state.realms = [];
       expect(apiUtils.getRealmConfigPath('unknown')).toBe('realms/root/realms/unknown/realm-config');
     });
+
+    it('returns root realm-config path when called with no argument', () => {
+      store.state.realms = [];
+      expect(apiUtils.getRealmConfigPath()).toBe('realms/root/realm-config');
+    });
   });
 
   describe('getCurrentRealmConfigPath', () => {
