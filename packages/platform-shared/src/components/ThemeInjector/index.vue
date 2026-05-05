@@ -28,7 +28,8 @@ of the MIT license. See the LICENSE file for details. -->
         background-attachment: fixed;
       }
 
-      <template v-if="mock">.fr-theme-preview</template> .btn:not(.within-input-button .btn, .fr-menu-item-group .btn, .skip-to-content-popover) {
+      <template v-if="mock">.fr-theme-preview</template> .btn:not(.within-input-button .btn, .fr-menu-item-group .btn, .skip-to-content-popover),
+      <template v-if="mock">.fr-theme-preview</template> .pagination-buttons button.page-link {
         border-radius: {{ theme.buttonRounded }}px !important;
       }
 

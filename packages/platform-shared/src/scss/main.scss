@@ -643,95 +643,6 @@ a.card {
   background-color: $gray-100;
 }
 
-.pagination-material-buttons {
-  .page-item {
-    &.active .page-link {
-      background-color: $gray-100;
-    }
-
-    button[role=menuitem]:focus-visible {
-      outline: none !important;
-    }
-
-    &.hide-last-number:nth-last-of-type(3) .page-link {
-      pointer-events: none;
-    }
-
-    &.show-ellipsis {
-      z-index: 3;
-
-      .page-link::before {
-        content: '...';
-        position: absolute;
-        color: $gray-500;
-        margin-left: -2.95rem;
-        margin-top: -0.7rem;
-        pointer-events: none;
-        cursor: default;
-        background-color: white;
-        padding: 0.7rem 0.75rem;
-      }
-    }
-
-    .page-link {
-      background-color: transparent;
-
-      &:focus,
-      &:focus-visible {
-        box-shadow: none;
-
-        &::after {
-          outline: 2px solid $black;
-        }
-      }
-
-      &:hover,
-      &:hover::after {
-        background-color: $gray-100;
-      }
-
-      &::after {
-        color: $gray-500;
-        position: absolute;
-        padding: 0.4rem 0.75rem;
-        top: 0;
-        font-size: 1.125rem;
-      }
-    }
-
-    &:first-of-type .page-link,
-    &:nth-of-type(2) .page-link,
-    &:nth-last-of-type(2) .page-link,
-    &:last-of-type .page-link {
-      font-family: 'Material Icons Outlined', serif;
-      color: transparent;
-    }
-
-    &:first-of-type .page-link::after {
-      content: 'first_page';
-      right: 1rem;
-    }
-
-    &:nth-of-type(2) .page-link::after {
-      content: 'keyboard_arrow_left';
-      right: 0;
-    }
-
-    &:nth-last-of-type(2) .page-link::after {
-      content: 'keyboard_arrow_right';
-      right: -0.75rem;
-    }
-
-    &:last-of-type .page-link::after {
-      content: 'last_page';
-      right: -1.75rem;
-    }
-
-    &[role=separator] {
-      display: none;
-    }
-  }
-}
 
 .media {
   .fr-realm-stamp {
@@ -982,7 +893,7 @@ a.card {
 button:focus-visible,
 a:focus-visible {
   outline-offset: -2px;
-  outline: 2px solid $primary !important;
+  outline: 2px solid $outline-blue !important;
   background: transparent;
 }
  
@@ -1002,7 +913,7 @@ button:not(.fr-sidebar-menuitems button, .skip-to-content-popover):focus-visible
     button:focus,
     a:focus {
       outline-offset: -2px;
-      outline: 2px solid $primary !important;
+      outline: 2px solid $outline-blue !important;
       background: transparent;
     }
 
@@ -1072,7 +983,7 @@ dd {
 }
 
 .fr-search-focus {
-  box-shadow: 0 0 0 1pt $blue;
+  box-shadow: 0 0 0 2px $outline-blue;
   outline: 0;
   border-radius: 5px;
 }

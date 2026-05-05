@@ -402,8 +402,9 @@ async function loadData() {
       }
     } else {
       items.value = data.result;
-      totalRows.value = data[totalResultsPath.value];
     }
+    // totalRows should be set irrespective of the resource type, as the pagination component relies on this value to determine the number of pages.
+    totalRows.value = data[totalResultsPath.value];
   } catch (error) {
     if (props.showErrors) showErrorMessage(error, i18n.global.t('errors.errorRetrievingResources', { resource: props.resource }));
     items.value = [];
