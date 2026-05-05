@@ -32,23 +32,23 @@ of the MIT license. See the LICENSE file for details. -->
     <BPagination
       class="m-0 pagination-buttons"
       id="pagination"
-      :tabindex="totalRows <= perPage ? undefined : 0"
       :aria-label="ariaLabel"
       :disabled="disabled"
       :size="size"
       :ellipsis-class="['d-flex align-items-center', ellipsisClass]"
-      :first-class="hideGoToFirstPageButton ? 'd-none': firstClass"
+      :first-class="[hideGoToFirstPageButton ? 'd-none' : null, 'fr-pagination-first', firstClass]"
       :hide-ellipsis="datasetSize === DatasetSize.LARGE || hidePageNumbers || hideEllipsis"
       :label-first-page="labelFirstPage"
       :label-last-page="labelLastPage"
       :label-next-page="labelNextPage"
       :label-page="labelPage"
       :label-prev-page="labelPrevPage"
-      :last-class="totalRows <= 0 || hideGoToLastPageButton ? 'd-none': lastClass"
+      :last-class="[totalRows <= 0 || hideGoToLastPageButton ? 'd-none' : null, 'fr-pagination-last', lastClass]"
       :limit="limit"
+      :next-class="'fr-pagination-next'"
       :page-class="pageClasses"
       :per-page="perPage"
-      :prev-class="prevClass"
+      :prev-class="['fr-pagination-prev', prevClass]"
       :total-rows="totalRows > 0 ? totalRows : totalRowsOnDemand"
       :value="value"
       @change="$emit('change', $event)"
@@ -286,6 +286,40 @@ export default {
      */
       this.$emit('on-page-size-change', pageSize);
     },
+    /**
+     * Ensures first/prev/next/last navigation buttons are keyboard reachable by setting tabindex="0" on enabled controls.
+     * Disabled items are rendered as <span> by BPagination and are naturally non-focusable, so they are skipped.
+     * Called via watchers on the props that determine disabled state (value, totalRows, perPage).
+     *
+     * Note: BPagination hardcodes tabindex="-1" on all enabled nav buttons as part of its internal roving tabindex
+     * implementation and exposes no prop or callback API to override this, so setAttribute on the rendered element
+     * is the only viable approach.
+     */
+    setNavigationButtonsTabbable() {
+      this.$nextTick(() => {
+        const selectors = [
+          '.fr-pagination-first .page-link',
+          '.fr-pagination-prev .page-link',
+          '.fr-pagination-next .page-link',
+          '.fr-pagination-last .page-link',
+        ];
+
+        selectors.forEach((selector) => {
+          const navButton = this.$el.querySelector(selector);
+          // BPagination renders disabled items as <span> — naturally non-focusable, skip
+          if (!navButton || !['BUTTON', 'A'].includes(navButton.tagName)) return;
+          navButton.setAttribute('tabindex', '0');
+        });
+      });
+    },
+  },
+  watch: {
+    /**
+     * Re-evaluates navigation button tab reachability whenever pagination state changes using targeted watchers
+     */
+    value: { handler: 'setNavigationButtonsTabbable', immediate: true },
+    totalRows: { handler: 'setNavigationButtonsTabbable', immediate: true },
+    perPage: { handler: 'setNavigationButtonsTabbable', immediate: true },
   },
   computed: {
     /**
@@ -347,7 +381,6 @@ export default {
     &:focus,
     &:focus-visible {
       box-shadow: none;
-      outline: 2px solid $black;
     }
   }
 
@@ -367,11 +400,6 @@ export default {
 }
 
 .pagination-buttons {
-  &:focus,
-  &:focus-visible {
-    outline: 2px solid $black;
-  }
-
   &:deep(.page-item) {
     &.active .page-link {
       background-color: $gray-100;
@@ -379,13 +407,19 @@ export default {
       cursor: default;
     }
 
+    &:not(.disabled) {
+      opacity: 1;
+    }
+
     .page-link {
       background-color: transparent;
+      border-radius: $border-radius;
 
       &:focus,
       &:focus-visible {
         box-shadow: none;
-        outline: 2px solid $black;
+        outline: 2px solid $outline-blue;
+        outline-offset: -2px;
       }
 
       &:hover {
@@ -412,7 +446,7 @@ export default {
       }
     }
     &.disabled {
-      opacity: 0.5;
+      opacity: 0.7;
     }
   }
 }

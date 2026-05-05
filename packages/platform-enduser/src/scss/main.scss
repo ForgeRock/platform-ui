@@ -197,22 +197,6 @@ label {
   padding-right: 1.875rem;
 }
 
-/*
-  Paginator Styles
- */
-.pagination {
-  border-radius: 0;
-
-  .page-link {
-    border-radius: $pagination-border-radius;
-    margin-left: 4px;
-  }
-
-  .disabled.page-item {
-    opacity: 0.5;
-  }
-}
-
 .form-label-group {
   position: relative;
 }

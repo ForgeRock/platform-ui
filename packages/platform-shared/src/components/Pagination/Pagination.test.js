@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -67,7 +67,6 @@ describe('Pagination Component', () => {
     const wrapper = mountPagination();
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
-    expect(pagination.attributes(['tabindex'])).toBe(undefined);
     const buttons = pagination.findAll('.page-item');
     expect(buttons[0].classes('disabled')).toBe(true);
     expect(buttons[1].classes('disabled')).toBe(true);
@@ -83,7 +82,6 @@ describe('Pagination Component', () => {
     });
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
-    expect(pagination.attributes(['tabindex'])).toBe('0');
     const buttons = pagination.findAll('.page-item');
     expect(buttons[0].classes('disabled')).toBe(true);
     expect(buttons[1].classes('disabled')).toBe(true);
@@ -201,6 +199,83 @@ describe('Pagination Component', () => {
     expect(wrapper.emitted('input')[0]).toEqual([2]);
   });
 
+  it('Only next button is tabbable for the 1st page', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 20,
+        value: 1,
+      },
+    });
+
+    await flushPromises();
+
+    const prevButton = wrapper.find('.fr-pagination-prev .page-link');
+    expect(prevButton.exists()).toBe(true);
+    expect(prevButton.attributes('tabindex')).toBe(undefined);
+
+    const nextButton = wrapper.find('.fr-pagination-next .page-link');
+    expect(nextButton.exists()).toBe(true);
+    expect(nextButton.attributes('tabindex')).toBe('0');
+  });
+
+  it('Previous and next buttons are tabbable when enabled', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 30,
+        value: 2,
+      },
+    });
+
+    await flushPromises();
+
+    const prevButton = wrapper.find('.fr-pagination-prev .page-link');
+    const nextButton = wrapper.find('.fr-pagination-next .page-link');
+
+    expect(prevButton.exists()).toBe(true);
+    expect(nextButton.exists()).toBe(true);
+    expect(prevButton.attributes('tabindex')).toBe('0');
+    expect(nextButton.attributes('tabindex')).toBe('0');
+  });
+
+  it('Only prev button is tabbable for the last page', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 14,
+        value: 2,
+      },
+    });
+
+    await flushPromises();
+
+    const prevButton = wrapper.find('.fr-pagination-prev .page-link');
+    expect(prevButton.exists()).toBe(true);
+    expect(prevButton.attributes('tabindex')).toBe('0');
+
+    const nextButton = wrapper.find('.fr-pagination-next .page-link');
+    expect(nextButton.exists()).toBe(true);
+    expect(nextButton.attributes('tabindex')).toBe(undefined);
+  });
+
+  it('Previous and next buttons are not tabbable when disabled', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 0,
+      },
+    });
+
+    await flushPromises();
+
+    const prevButton = wrapper.find('.fr-pagination-prev .page-link');
+    const nextButton = wrapper.find('.fr-pagination-next .page-link');
+
+    expect(prevButton.exists()).toBe(true);
+    expect(nextButton.exists()).toBe(true);
+    expect(prevButton.element.tagName).toBe('SPAN');
+    expect(nextButton.element.tagName).toBe('SPAN');
+    expect(prevButton.attributes('tabindex')).toBe(undefined);
+    expect(nextButton.attributes('tabindex')).toBe(undefined);
+  });
+
   describe('pagination SMALL type verification', () => {
     function mountPaginationSmall(setup = {}) {
       return mountPagination(setup, DatasetSize.SMALL);
@@ -229,7 +304,6 @@ describe('Pagination Component', () => {
         },
       });
       const pagination = wrapper.find('#pagination');
-      expect(pagination.attributes(['tabindex'])).toBe(undefined);
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
       expect(buttons[4].classes('d-none')).toBe(true);
