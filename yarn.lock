@@ -2817,32 +2817,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@forgerock/javascript-sdk@npm:0.0.0-beta-20260505164724":
-  version: 0.0.0-beta-20260505164724
-  resolution: "@forgerock/javascript-sdk@npm:0.0.0-beta-20260505164724"
+"@forgerock/javascript-sdk@npm:4.9.1, @forgerock/javascript-sdk@npm:^4.9.1":
+  version: 4.9.1
+  resolution: "@forgerock/javascript-sdk@npm:4.9.1"
   dependencies:
     "@reduxjs/toolkit": ^2.2.5
     immer: ^10.1.1
-  checksum: 38c16585f659458aa3b829ebc15b080b83583f3deef4dd56bc441b888b3afcecfee0698a038d20cfa43c1dbf8f532cdf535ce02a55be370632246c30c8fb5357
+  checksum: 9043eb9ec2bacc76ddda6da92e1027170c624a47b0f5a2987ea5991692b1a9491c8214b1ade96d15bc91d521300a366e13e3129af4a612dc5b954f8dbe4680f2
   languageName: node
   linkType: hard
 
-"@forgerock/javascript-sdk@npm:^4.9.0":
-  version: 4.9.0
-  resolution: "@forgerock/javascript-sdk@npm:4.9.0"
+"@forgerock/ping-protect@npm:4.7.1":
+  version: 4.7.1
+  resolution: "@forgerock/ping-protect@npm:4.7.1"
   dependencies:
-    "@reduxjs/toolkit": ^2.2.5
-    immer: ^10.1.1
-  checksum: 95be216fad6432c7435c872d70f970689c5113bd54446efaeaeff824a010668bbc336ca6348f17c1b441e80b2e31095b21a5160143e6b3844b027e37896a1c4a
-  languageName: node
-  linkType: hard
-
-"@forgerock/ping-protect@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@forgerock/ping-protect@npm:4.7.0"
-  dependencies:
-    "@forgerock/javascript-sdk": ^4.9.0
-  checksum: 0808b9fc13694076134e367ef53b67e429b58c9e6530ab34572bb9572ad3e0b67e828a0c53d525c1d06019ad077286e022bf751aa292a4e9d0c2f0206ad28940
+    "@forgerock/javascript-sdk": ^4.9.1
+  checksum: b0f5dcd7336c6dfb9a8d2ee0f2de0791cf7ca3efa8b28d620885782f79c0c9894b13c89fe75d38a9aad0b537621cc395178c6670281c63b887d44434d6254758
   languageName: node
   linkType: hard
 
@@ -12388,8 +12378,8 @@ __metadata:
     "@badeball/cypress-cucumber-preprocessor": 24.0.1
     "@bahmutov/cypress-esbuild-preprocessor": 2.2.3
     "@faker-js/faker": 9.8.0
-    "@forgerock/javascript-sdk": 0.0.0-beta-20260505164724
-    "@forgerock/ping-protect": 4.7.0
+    "@forgerock/javascript-sdk": 4.9.1
+    "@forgerock/ping-protect": 4.7.1
     "@forgerock/platform-shared": 1.0.0
     "@neuralegion/cypress-har-generator": 5.16.4
     "@percy/cli": 1.31.7
