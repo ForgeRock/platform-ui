@@ -763,11 +763,6 @@ export default {
       });
   },
   watch: {
-    // on page load journeyRememberMeEnabled will be false, it will
-    // update when the theme is loaded
-    journeyRememberMeEnabled() {
-      this.setRememberedUsername();
-    },
     // on page load journeyShowAsteriskForRequiredFields will be false, it will
     // update when the theme is loaded
     journeyShowAsteriskForRequiredFields(value) {
@@ -781,12 +776,13 @@ export default {
         });
       }
     },
-    themeLoading(newValue, oldValue) {
+    themeLoading(isLoading, wasLoading) {
       // $nextTick defers handleFocus() until after Vue re-renders with the new theme props,
       // so $refs point to the correct DOM elements (e.g. callbackMain in Theater Mode).
-      if (oldValue && !newValue) {
+      if (wasLoading && !isLoading) {
         this.$nextTick(() => {
           this.handleFocus();
+          this.setRememberedUsername();
         });
       }
     },
@@ -1037,8 +1033,6 @@ export default {
       if (componentList.length === 0) {
         this.nextButtonVisible = false;
       }
-
-      this.setRememberedUsername();
     },
     handleIdpComponent(componentList, idpComponentIndex) {
       if (!Array.isArray(componentList)) return;
@@ -1638,6 +1632,7 @@ export default {
             .getCallbacksOfType(this.FrCallbackType.NameCallback)[0]
             .getInputValue();
           localStorage.setItem('frUsername', usernameValue);
+          this.rememberMeValue = false;
         } else if (this.rememberMeVisible && this.rememberMeValue === false) {
           localStorage.removeItem('frUsername');
         }
@@ -1653,10 +1648,6 @@ export default {
       let username = null;
       if (this.$store.state.SharedStore.webStorageAvailable) {
         username = localStorage.getItem('frUsername');
-        // If username exists in local storage, set the checkbox value to true
-        if (username) {
-          this.rememberMeValue = true;
-        }
       }
       return username;
     },
@@ -1666,14 +1657,16 @@ export default {
      *
      */
     setRememberedUsername() {
-      const hasNameCallback = this.componentList.find((component) => component.callback.getType() === this.FrCallbackType.NameCallback);
-      if (this.journeyRememberMeEnabled && hasNameCallback) {
+      if (this.journeyRememberMeEnabled) {
         this.rememberMeVisible = true;
-        const remembered = this.getRememberedUsernameIfExists();
-        if (remembered) {
-          this.componentList.find((component) => component.callback.getType() === this.FrCallbackType.NameCallback).callbackSpecificProps.value = remembered;
+        const userName = this.getRememberedUsernameIfExists();
+        const nameCallback = this.componentList.find((component) => component.callback.getType() === this.FrCallbackType.NameCallback);
+        if (userName && nameCallback) {
+          nameCallback.callbackSpecificProps.value = userName;
         }
+        this.rememberMeValue = !!userName;
       } else {
+        this.rememberMeValue = false;
         this.rememberMeVisible = false;
       }
     },
