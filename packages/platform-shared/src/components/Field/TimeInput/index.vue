@@ -37,7 +37,11 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       :id="internalId"
       :name="name"
-      :aria-label="labelTranslation"
+      :aria-label="fieldLabel || labelTranslation"
+      :placeholder="fieldLabel || labelTranslation"
+      :label-hours="timePickerHoursLabel"
+      :label-minutes="timePickerMinutesLabel"
+      :label-ampm="timePickerAmpmLabel"
       @input="debounceEmitValidTime" />
   </div>
 </template>
@@ -78,6 +82,10 @@ export default {
     adjustForTimezone: {
       default: true,
       type: Boolean,
+    },
+    fieldLabel: {
+      default: '',
+      type: String,
     },
     dropleft: {
       default: true,
@@ -185,6 +193,15 @@ export default {
   computed: {
     labelTranslation() {
       return this.getTranslation(this.label);
+    },
+    timePickerHoursLabel() {
+      return `${this.fieldLabel} ${this.$t('date.hours')}`;
+    },
+    timePickerMinutesLabel() {
+      return `${this.fieldLabel} ${this.$t('date.minutes')}`;
+    },
+    timePickerAmpmLabel() {
+      return `${this.fieldLabel} ${this.$t('date.ampm')}`;
     },
     combinedErrors() {
       return this.errors.concat(this.fieldErrors);

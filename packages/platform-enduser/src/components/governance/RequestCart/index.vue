@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -46,12 +46,11 @@ of the MIT license. See the LICENSE file for details. -->
     </BFormGroup>
     <!-- Priority dropdown select -->
     <BFormGroup>
-      <div class="mb-2 text-muted">
-        {{ $t('common.priority') }}
-      </div>
       <FrField
         v-model="selectedPriority"
         type="select"
+        :label="$t('common.priority')"
+        :floating-label="false"
         :aria-label="$t('common.priority')"
         name="Priority"
         :options="priorityOptions"
@@ -74,28 +73,26 @@ of the MIT license. See the LICENSE file for details. -->
     </BFormGroup>
     <!-- Access Start Date / End Date -->
     <BFormGroup>
-      <div class="mb-2 text-muted">
-        {{ $t('governance.accessRequest.newRequest.accessStartDate') }}
-      </div>
       <FrField
         class="mr-1 date-time"
         v-model="startDate"
         name="startDate"
         type="datetime"
+        :label="$t('governance.accessRequest.newRequest.accessStartDate')"
+        :floating-label="false"
         :min-date="minExpirationDate"
         :placeholder="$t('governance.accessRequest.newRequest.accessStartDate')"
         :adjust-for-timezone="false"
         :show-seconds="false" />
     </BFormGroup>
     <BFormGroup>
-      <div class="mb-2 text-muted">
-        {{ $t('governance.accessRequest.newRequest.accessEndDate') }}
-      </div>
       <FrField
         class="mr-1 date-time"
         v-model="endDate"
         name="endDate"
         type="datetime"
+        :label="$t('governance.accessRequest.newRequest.accessEndDate')"
+        :floating-label="false"
         :min-date="minExpirationDate"
         :placeholder="$t('governance.accessRequest.newRequest.accessEndDate')"
         :adjust-for-timezone="false"
@@ -104,10 +101,13 @@ of the MIT license. See the LICENSE file for details. -->
     </BFormGroup>
     <!-- Expiration Datepicker -->
     <BFormGroup>
-      <div class="mb-2 text-muted">
+      <label
+        for="expirationDate"
+        class="mb-2 text-muted">
         {{ $t('governance.accessRequest.newRequest.applyExpirationDate') }}
-      </div>
+      </label>
       <FrDatepicker
+        id="expirationDate"
         name="expirationDate"
         v-model="expirationDate"
         :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"

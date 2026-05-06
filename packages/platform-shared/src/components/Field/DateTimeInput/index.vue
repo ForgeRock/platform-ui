@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,6 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
           ref="timeInput"
           :adjust-for-timezone="adjustForTimezone"
           :aria-label="labelTranslation"
+          :field-label="labelTranslation"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :dropleft="dropleft"
           :disabled="disabled"
