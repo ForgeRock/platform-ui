@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -35,6 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
       :tabindex="totalRows <= perPage ? undefined : 0"
       :aria-label="ariaLabel"
       :disabled="disabled"
+      :size="size"
       :ellipsis-class="['d-flex align-items-center', ellipsisClass]"
       :first-class="hideGoToFirstPageButton ? 'd-none': firstClass"
       :hide-ellipsis="datasetSize === DatasetSize.LARGE || hidePageNumbers || hideEllipsis"
@@ -258,6 +259,10 @@ export default {
       default: 10,
     },
     prevClass: {
+      type: String,
+      default: null,
+    },
+    size: {
       type: String,
       default: null,
     },
