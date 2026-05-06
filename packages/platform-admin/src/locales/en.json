@@ -284,6 +284,15 @@
       "suggestion3": "At what point in this Journey is the user's identity established?"
     }
   },
+  "reports": {
+    "echarts": {
+      "downloadPng": "Download PNG",
+      "noChartFallback": "Chart visualization is not available. Showing table data below.",
+      "pageOf": "Page {current} of {total}",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
   "aiAgents": {
     "addAgentModal": {
       "addNewAgent": "Add new AI Agent",
