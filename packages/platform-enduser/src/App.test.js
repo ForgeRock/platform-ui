@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { cloneDeep } from 'lodash';
 import { flushPromises, shallowMount } from '@vue/test-utils';
+import { createRouter, createMemoryHistory } from 'vue-router';
 import { createStore } from 'vuex';
 import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import * as ServerinfoApi from '@forgerock/platform-shared/src/api/ServerinfoApi';
@@ -70,11 +71,17 @@ let storePlugin;
 
 async function shallowMountComponent(storeMock) {
   storePlugin = createStore(storeMock);
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [{ path: '/', component: { template: '<div/>' } }],
+  });
+  await router.push('/');
+  await router.isReady();
 
   wrapper = shallowMount(App, {
     mixins: [NotificationMixin],
     global: {
-      plugins: [i18n, storePlugin],
+      plugins: [i18n, storePlugin, router],
       stubs: ['RouterLink', 'RouterView'],
       mocks: {
         $route: { meta: { hideSideMenu: true } },
