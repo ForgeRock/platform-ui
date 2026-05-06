@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,7 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
       <RouterView v-slot="{ Component }">
         <Transition
           name="fade"
-          mode="out-in">
+          mode="out-in"
+          @after-enter="handleRouteAfterEnter">
           <Component
             :is="Component"
             :key="$route.fullPath"
@@ -44,6 +45,7 @@ import { getUserApprovals } from '@forgerock/platform-shared/src/api/governance/
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import useTheme from '@forgerock/platform-shared/src/composables/theme';
+import useRouteFocus from '@forgerock/platform-shared/src/composables/useRouteFocus';
 import { removeThemeIdFromLocalStorage } from '@forgerock/platform-shared/src/utils/themeUtils';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import {
@@ -77,7 +79,10 @@ export default {
       theme,
     } = useTheme();
 
+    const { handleRouteAfterEnter } = useRouteFocus();
+
     return {
+      handleRouteAfterEnter,
       loadTheme,
       localizedFavicon,
       theme,
