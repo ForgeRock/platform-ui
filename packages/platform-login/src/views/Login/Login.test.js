@@ -539,6 +539,92 @@ describe('Login.vue', () => {
       expect(window.location.href).toBe(gotoOnFail);
     });
   });
+
+  describe('decideToRememberUsername', () => {
+    let localStorageSetSpy;
+    let localStorageRemoveSpy;
+
+    const stepWithNameCallback = new FRStep({
+      callbacks: [{
+        type: 'NameCallback',
+        output: [{ name: 'prompt', value: 'Username' }],
+        input: [{ name: 'IDToken1', value: 'testuser' }],
+      }],
+    });
+
+    beforeEach(() => {
+      localStorageSetSpy = jest.spyOn(Storage.prototype, 'setItem');
+      localStorageRemoveSpy = jest.spyOn(Storage.prototype, 'removeItem');
+    });
+
+    afterEach(() => {
+      localStorageSetSpy.mockRestore();
+      localStorageRemoveSpy.mockRestore();
+      localStorage.clear();
+    });
+
+    it('saves username to localStorage when rememberMe is checked and NameCallback is present', () => {
+      wrapper.setData({
+        rememberMeValue: true,
+        step: stepWithNameCallback,
+      });
+      wrapper.vm.decideToRememberUsername();
+      expect(localStorageSetSpy).toHaveBeenCalledWith('frUsername', 'testuser');
+    });
+
+    it('removes username from localStorage when rememberMe is unchecked', () => {
+      wrapper.setData({
+        rememberMeValue: false,
+        rememberMeVisible: true,
+        step: stepWithNameCallback,
+      });
+      wrapper.vm.decideToRememberUsername();
+      expect(localStorageRemoveSpy).toHaveBeenCalledWith('frUsername');
+    });
+  });
+
+  describe('setRememberedUsername', () => {
+    afterEach(() => {
+      localStorage.clear();
+    });
+
+    it('shows rememberMe checkbox when journeyRememberMeEnabled is true', async () => {
+      await wrapper.setProps({ journeyRememberMeEnabled: true });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(true);
+    });
+
+    it('shows rememberMe checkbox even when no NameCallback is present', async () => {
+      wrapper.setData({ componentList: [{ callback: { getType: () => 'PasswordCallback' }, callbackSpecificProps: { value: '' } }] });
+      await wrapper.setProps({ journeyRememberMeEnabled: true });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(true);
+    });
+
+    it('hides rememberMe checkbox when journeyRememberMeEnabled is false', async () => {
+      await wrapper.setProps({ journeyRememberMeEnabled: false });
+      wrapper.vm.setRememberedUsername();
+      expect(wrapper.vm.rememberMeVisible).toBe(false);
+    });
+
+    it('populates username field from localStorage when NameCallback is present', async () => {
+      localStorage.setItem('frUsername', 'savedUser');
+      const component = { callback: { getType: () => 'NameCallback' }, callbackSpecificProps: { value: '' } };
+      wrapper.setData({ componentList: [component] });
+      await wrapper.setProps({ journeyRememberMeEnabled: true });
+      wrapper.vm.setRememberedUsername();
+      expect(component.callbackSpecificProps.value).toBe('savedUser');
+    });
+
+    it('does not populate username field when no NameCallback is present', async () => {
+      localStorage.setItem('frUsername', 'savedUser');
+      const component = { callback: { getType: () => 'PasswordCallback' }, callbackSpecificProps: { value: '' } };
+      wrapper.setData({ componentList: [component] });
+      await wrapper.setProps({ journeyRememberMeEnabled: true });
+      wrapper.vm.setRememberedUsername();
+      expect(component.callbackSpecificProps.value).toBe('');
+    });
+  });
 });
 
 describe('Component Test', () => {
@@ -776,68 +862,69 @@ describe('Component Test', () => {
 
     describe('@renders', () => {
       it('Displays remember my login checkbox if its enabled in the theme', async () => {
-        const wrapper = setup();
+        const wrapperOff = setup({ themeLoading: true });
+        await flushPromises();
+        await wrapperOff.setProps({ themeLoading: false });
+        await wrapperOff.vm.$nextTick();
+        expect(wrapperOff.find('input[name="rememberMe"]').exists()).toBeFalsy();
+
+        const wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
+        await flushPromises();
+        await wrapper.setProps({ themeLoading: false });
         await flushPromises();
 
-        let rememberMe = wrapper.find('input[name="rememberMe"]');
-        expect(rememberMe.exists()).toBeFalsy();
-
-        await wrapper.setProps({ journeyRememberMeEnabled: true });
-        await wrapper.vm.$nextTick();
-
-        rememberMe = wrapper.find('input[name="rememberMe"]');
+        const rememberMe = wrapper.find('input[name="rememberMe"]');
         expect(rememberMe.exists()).toBeTruthy();
 
         let rememberMeLabel = wrapper.find('#rememberMe label');
         expect(rememberMeLabel.text()).toBe('Remember Me');
 
         await wrapper.setProps({ journeyRememberMeLabel: 'test' });
-        await wrapper.vm.$nextTick();
+        await flushPromises();
         rememberMeLabel = wrapper.find('#rememberMe label');
         expect(rememberMeLabel.text()).toBe('test');
       });
     });
 
     describe('@actions', () => {
+      let localStorageSetSpy;
+      let localStorageRemoveSpy;
+
+      beforeEach(() => {
+        localStorageSetSpy = jest.spyOn(Storage.prototype, 'setItem');
+        localStorageRemoveSpy = jest.spyOn(Storage.prototype, 'removeItem');
+      });
+
+      afterEach(() => {
+        localStorageSetSpy.mockRestore();
+        localStorageRemoveSpy.mockRestore();
+        localStorage.clear();
+      });
+
       it('Saves username to localstorage if rememberMe is enabled', async () => {
-        const wrapper = setup();
+        const wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
+        await flushPromises();
+        await wrapper.setProps({ themeLoading: false });
         await flushPromises();
 
-        await wrapper.setProps({ journeyRememberMeEnabled: true });
-        await wrapper.vm.$nextTick();
-
-        const localStorageSpy = jest.spyOn(Storage.prototype, 'setItem');
-        let usernameInput = wrapper.find('div[label="User Name"] input');
-        let nextBtn = wrapper.find('button[type="submit"]');
+        const usernameInput = wrapper.find('div[label="User Name"] input');
+        const rememberMe = wrapper.find('input[name="rememberMe"]');
+        const nextBtn = wrapper.find('button[type="submit"]');
 
         await usernameInput.setValue('test');
-
-        await nextBtn.trigger('click');
-        await wrapper.vm.$nextTick();
-        expect(localStorageSpy).not.toHaveBeenCalled();
-
-        // Page will reload with the same callbacks because of the mocked FrAuth
-
-        usernameInput = wrapper.find('div[label="User Name"] input');
-        nextBtn = wrapper.find('button[type="submit"]');
-        const rememberMe = wrapper.find('input[name="rememberMe"]');
-
-        await usernameInput.setValue('test2');
         await rememberMe.setChecked();
         await nextBtn.trigger('click');
         await wrapper.vm.$nextTick();
 
-        expect(localStorageSpy).toHaveBeenCalledWith('frUsername', 'test2');
+        expect(localStorageSetSpy).toHaveBeenCalledWith('frUsername', 'test');
       });
 
-      it('Removes username to localstorage if rememberMe is disabled', async () => {
-        const wrapper = setup();
+      it('Removes username from localStorage if rememberMe is disabled', async () => {
+        const wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
+        await flushPromises();
+        await wrapper.setProps({ themeLoading: false });
         await flushPromises();
 
-        await wrapper.setProps({ journeyRememberMeEnabled: true });
-        await wrapper.vm.$nextTick();
-
-        const localStorageSpy = jest.spyOn(Storage.prototype, 'removeItem');
         const usernameInput = wrapper.find('div[label="User Name"] input');
         const rememberMe = wrapper.find('input[name="rememberMe"]');
         const nextBtn = wrapper.find('button[type="submit"]');
@@ -847,7 +934,7 @@ describe('Component Test', () => {
 
         await nextBtn.trigger('click');
         await wrapper.vm.$nextTick();
-        expect(localStorageSpy).toHaveBeenCalled();
+        expect(localStorageRemoveSpy).toHaveBeenCalled();
       });
     });
     describe('callbacks', () => {
