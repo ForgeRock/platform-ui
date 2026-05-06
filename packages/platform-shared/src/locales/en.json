@@ -700,6 +700,7 @@
     "hours": "hours",
     "hoursAgo": "{elapsed} hours ago",
     "minuteAgo": "a minute ago",
+    "ampm": "AM/PM",
     "minutes": "minutes",
     "minutesAgo": "{elapsed} minutes ago",
     "weeks": "weeks",
