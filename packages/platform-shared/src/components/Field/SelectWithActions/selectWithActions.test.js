@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import SelectWithActions from './index';
 
 const defaultProps = {
@@ -105,5 +106,45 @@ describe('SelectWithActions input', () => {
     expect(options.length).toBe(2);
     expect(options[0].text()).toBe('a badge_aedit');
     expect(options[1].text()).toBe('b edit');
+  });
+
+  describe('@a11y', () => {
+    function setup(props) {
+      return mount(SelectWithActions, {
+        global: {
+          mocks: {
+            $t: (t) => t,
+          },
+        },
+        props: {
+          ...defaultProps,
+          label: 'Select an item',
+          ...props,
+        },
+      });
+    }
+
+    it('is accessible in default state', async () => {
+      const wrapper = setup();
+      await runA11yTest(wrapper);
+    });
+
+    it('is accessible with a selected value and collapsed edit button visible', async () => {
+      const wrapper = setup({
+        value: 'ID_a',
+        showCollapsedEdit: true,
+      });
+      await runA11yTest(wrapper);
+    });
+
+    it('is accessible when an option has badge text', async () => {
+      const wrapper = setup({
+        options: [
+          { text: 'a', value: 'ID_a', badgeText: 'badge_a' },
+          { text: 'b', value: 'ID_b' },
+        ],
+      });
+      await runA11yTest(wrapper);
+    });
   });
 });
