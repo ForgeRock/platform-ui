@@ -11,11 +11,11 @@ import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/govern
 import UserDetailsTab from './index';
 
 describe('UserDetailsTab', () => {
-  function mountComponent(user, displayProperties) {
+  function mountComponent(user, displayProperties, tMock = (t) => t) {
     return shallowMount(UserDetailsTab, {
       global: {
         mocks: {
-          $t: (t) => t,
+          $t: tMock,
         },
       },
       props: {
@@ -36,12 +36,27 @@ describe('UserDetailsTab', () => {
       ['given valid string', 'test', 'test'],
       ['given valid number', 10, '10'],
     ];
-    it.each(testCases)('%s', (name, userProp, value) => {
+    it.each(testCases)('%s', (_name, userProp, value) => {
       const wrapper = mountComponent({ userProp });
       const elem = findByTestId(wrapper, 'userProp');
       expect(elem.exists()).toBe(true);
-      expect(elem.find('dt').text()).toBe('common.user.userProp');
       expect(elem.find('dd').text()).toBe(value);
+    });
+  });
+
+  describe('getLabelForProperty', () => {
+    it('returns the translated label when an i18n key exists', () => {
+      const tMock = (key) => (key === 'common.user.givenName' ? 'First Name' : key);
+      const wrapper = mountComponent({ givenName: 'Alice' }, [], tMock);
+      const elem = findByTestId(wrapper, 'givenName');
+      expect(elem.find('dt').text()).toBe('First Name');
+    });
+
+    it('falls back to the raw property name when no i18n key exists', () => {
+      // $t returns the key unchanged — same as the fallback condition
+      const wrapper = mountComponent({ customField: 'value' });
+      const elem = findByTestId(wrapper, 'customField');
+      expect(elem.find('dt').text()).toBe('customField');
     });
   });
 

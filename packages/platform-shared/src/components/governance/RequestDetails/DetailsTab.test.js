@@ -16,8 +16,7 @@ import * as RequestFormsApi from '@forgerock/platform-shared/src/api/governance/
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as EntitlementApi from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import * as RoleApi from '@forgerock/platform-shared/src/api/governance/RoleApi';
-import * as GlossaryApi from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
-import * as Glossary from '@forgerock/platform-shared/src/utils/governance/glossary';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import DetailsTab from './DetailsTab';
 import i18n from '@/i18n';
@@ -29,9 +28,16 @@ jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormsApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/RoleApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/EntitlementApi');
-jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi', () => ({
+  getGlossaryAttributes: jest.fn().mockResolvedValue({
+    data: { result: [], resultCount: 0, totalCount: 0 },
+  }),
+}));
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
+jest.mock('@forgerock/platform-shared/src/api/SchemaApi', () => ({
+  getSchema: jest.fn().mockResolvedValue({ data: { properties: {} } }),
+}));
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
     consumer: {
@@ -48,51 +54,42 @@ AccessRequestApi.requestAction = jest.fn().mockImplementation(() => Promise.reso
 AccessRequestApi.putCustomRequest = jest.fn().mockImplementation(() => Promise.resolve({
   data: {},
 }));
-GlossaryApi.getGlossaryAttributes.mockImplementation(() => Promise.resolve({
+CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({
   data: {
-    result: [
+    '/openidm/managed/application': [],
+    '/openidm/managed/assignment': [],
+    '/openidm/managed/role': [
       {
-        name: 'testGlossaryProperty',
-        type: 'string',
-        displayName: 'test glossary property',
+        allowedValues: [],
+        isIndexed: true,
+        isMultiValue: false,
+        managedObjectType: null,
+        searchable: true,
+        isInternal: true,
+        displayName: 'Requestable',
+        name: 'requestable',
+        description: 'Can the role be requested',
+        objectType: '/openidm/managed/role',
+        type: 'boolean',
+        id: 'testId001',
+      },
+      {
+        id: 'testId002',
+        displayName: 'Role Owner',
+        name: 'roleOwner',
+        description: 'Role Owner of Object',
+        objectType: '/openidm/managed/role',
+        type: 'managedObject',
+        managedObjectType: '/openidm/managed/user',
+        allowedValues: [],
+        isIndexed: true,
+        isMultiValue: false,
+        searchable: true,
+        isInternal: true,
       },
     ],
   },
-}));
-Glossary.getGlossarySchema = jest.fn().mockImplementation(() => Promise.resolve([
-  {
-    allowedValues: [],
-    isIndexed: true,
-    isMultiValue: false,
-    managedObjectType: null,
-    searchable: true,
-    isInternal: true,
-    displayName: 'Requestable',
-    name: 'requestable',
-    description: 'Can the role be requested',
-    objectType: '/openidm/managed/role',
-    type: 'boolean',
-    id: 'testId001',
-  },
-  {
-    id: 'testId002',
-    displayName: 'Role Owner',
-    name: 'roleOwner',
-    description: 'Role Owner of Object',
-    objectType: '/openidm/managed/role',
-    type: 'managedObject',
-    managedObjectType: '/openidm/managed/user',
-    allowedValues: [],
-    isIndexed: true,
-    isMultiValue: false,
-    searchable: true,
-    isInternal: true,
-    metadata: {
-      modifiedDate: '2025-11-06T16:47:06.809946805Z',
-      createdDate: '2025-11-06T16:47:06.809940423Z',
-    },
-  },
-]));
+});
 
 EntitlementApi.getEntitlementSchema.mockImplementation(() => Promise.resolve({
   data: {
