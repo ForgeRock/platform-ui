@@ -782,9 +782,12 @@ export default {
       }
     },
     themeLoading(newValue, oldValue) {
-      // Theme has finished loading, set focus
+      // $nextTick defers handleFocus() until after Vue re-renders with the new theme props,
+      // so $refs point to the correct DOM elements (e.g. callbackMain in Theater Mode).
       if (oldValue && !newValue) {
-        this.handleFocus();
+        this.$nextTick(() => {
+          this.handleFocus();
+        });
       }
     },
   },
@@ -806,15 +809,19 @@ export default {
     */
     handleFocus() {
       const AUTO_FOCUSED_CLASS = 'auto-focused';
-      let focusElement = this.$refs.container;
 
-      if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
-        focusElement = this.$refs.callbackMain || this.$refs.main;
-      } else {
-        focusElement = this.$refs.callbackAppHeaderContainer || focusElement;
-      }
+      // Defer the entire focus operation by 200ms so the aria-live="assertive" first-insertion
+      setTimeout(() => {
+        // Re-read refs inside the timeout — they may not exist at call time (e.g. during theme load).
+        let focusElement = this.$refs.container;
 
-      if (typeof focusElement?.focus === 'function') {
+        if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
+          focusElement = this.$refs.callbackMain || this.$refs.main;
+        } else {
+          focusElement = this.$refs.callbackAppHeaderContainer || focusElement;
+        }
+
+        if (typeof focusElement?.focus !== 'function') return;
         // Cleanup any existing event listeners from memory leaks
         if (this.autoFocusCleanup?.element && this.autoFocusCleanup?.handler) {
           this.autoFocusCleanup.element.removeEventListener('blur', this.autoFocusCleanup.handler);
@@ -843,15 +850,7 @@ export default {
 
         // Apply focus to ensure keyboard users and screen readers notice the content area
         focusElement.focus();
-
-        // Re-focus after 50ms in case other code attempts to move focus during routing/rendering.
-        // This is necessary because theme application and Vue rendering can trigger competing focus events.
-        setTimeout(() => {
-          if (document.activeElement !== focusElement) {
-            focusElement.focus();
-          }
-        }, 50);
-      }
+      }, 200);
     },
     /**
      * Redirects user to forbidden if non-root realm & journey pages have been inactivated for hosted pages
