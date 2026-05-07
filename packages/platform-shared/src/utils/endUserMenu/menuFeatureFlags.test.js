@@ -17,7 +17,6 @@ describe('generateFeatureFlags', () => {
         govLcmEntitlement: false,
         realm: 'alpha',
         SharedStore: {
-          autoAccessEnabled: true,
           autoReportsEnabled: false,
           governanceEnabled: true,
           workforceEnabled: true,
@@ -25,7 +24,6 @@ describe('generateFeatureFlags', () => {
       },
     };
     expect(generateFeatureFlags(store)).toEqual({
-      autoAccessEnabled: true,
       autoReportsEnabled: false,
       govLcmEnabled: true,
       govLcmEntitlement: false,
@@ -44,7 +42,6 @@ describe('generateFeatureFlags', () => {
         govLcmEntitlement: false,
         realm: 'beta',
         SharedStore: {
-          autoAccessEnabled: false,
           autoReportsEnabled: false,
           governanceEnabled: false,
           workforceEnabled: false,
@@ -52,7 +49,6 @@ describe('generateFeatureFlags', () => {
       },
     };
     expect(generateFeatureFlags(store)).toEqual({
-      autoAccessEnabled: false,
       autoReportsEnabled: false,
       govLcmEnabled: false,
       govLcmEntitlement: false,
@@ -73,7 +69,6 @@ describe('generateFeatureFlags', () => {
       },
     };
     expect(generateFeatureFlags(store)).toEqual({
-      autoAccessEnabled: undefined,
       autoReportsEnabled: undefined,
       govLcmEnabled: true,
       govLcmEntitlement: true,

@@ -17,11 +17,6 @@ const defaultState = {
   analyticsReportsAiAssistantEnabled: false,
   devIdmEnabled: false,
   idmWorkflowEnabled: false,
-  autoAccessEnabled: false,
-  autoAccessJasUrl: null,
-  autoAccessApiUrl: null,
-  autoAccessReportsUrl: null,
-  autoAccessTenantId: null,
   autoCustomReportsEnabled: false,
   autoReportsEnabled: false,
   currentPackage: '',
@@ -61,8 +56,6 @@ const defaultState = {
   fraasMtlsFqdn: null,
   pingFederateUrl: null,
   promoteAppsViaApi: false,
-  riskAdminEnabled: false,
-  riskDashboardEnabled: false,
   uiConfig: null,
   uiLocalizationEnabled: false,
   webStorageAvailable: true,
@@ -109,18 +102,6 @@ const mutations = {
 
       if (env.VUE_APP_FRAAS_MONITORING_URL) {
         state.fraasMonitoringURL = getFQDN(env.VUE_APP_FRAAS_MONITORING_URL);
-      }
-
-      if (env.VUE_APP_ENABLE_AUTO_ACCESS?.toString() === 'true') {
-        if (env.VUE_APP_AUTO_ACCESS_API_URL) {
-          state.autoAccessApiUrl = getFQDN(env.VUE_APP_AUTO_ACCESS_API_URL);
-        }
-        if (env.VUE_APP_AUTO_ACCESS_JAS_URL) {
-          state.autoAccessJasUrl = getFQDN(env.VUE_APP_AUTO_ACCESS_JAS_URL);
-        }
-        if (env.VUE_APP_AUTO_ACCESS_TENANT_ID) {
-          state.autoAccessTenantId = env.VUE_APP_AUTO_ACCESS_TENANT_ID;
-        }
       }
 
       if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true' || env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true' || env.VUE_APP_ENABLE_ANALYTICS_REPORT_AI_ASSISTANT?.toString() === 'true') {
@@ -231,10 +212,6 @@ const mutations = {
         state.journeyAIEnabled = true;
       }
 
-      if (env.VUE_APP_ENABLE_AUTO_ACCESS?.toString() === 'true') {
-        state.autoAccessEnabled = true;
-      }
-
       if (env.VUE_APP_ENABLE_AIC_CONNECTION_UIS?.toString() === 'true') {
         state.aicConnectionUisEnabled = true;
       }
@@ -317,12 +294,6 @@ const mutations = {
   },
   setMaxSessionExpirationTime(state, val) {
     state.maxSessionExpirationTime = val;
-  },
-  setRiskAdminEnabled(state, val) {
-    state.riskAdminEnabled = val;
-  },
-  setRiskDashboardEnabled(state, val) {
-    state.riskDashboardEnabled = val;
   },
   setDeploymentType(state, deploymentType) {
     state.deploymentType = deploymentType;

@@ -259,26 +259,6 @@ export function generateAnalyticsApi(requestOverride = {}) {
 }
 
 /**
- * Generates an Analytics API Axios instance
- * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
- * on extra information or override default properties https://github.com/axios/axios#request-config
- *
- * @returns {AxiosInstance}
- */
-export function generateAutoAccessApi(requestOverride = {}) {
-  const tenantId = process.env.VUE_APP_AUTO_ACCESS_TENANT_ID;
-  const requestDetails = {
-    baseURL: store.state.SharedStore.autoAccessApiUrl,
-    headers: {
-      'X-TENANT-ID': tenantId,
-    },
-    ...requestOverride,
-  };
-
-  return axios.create(requestDetails);
-}
-
-/**
  * Generates an Analytics Reports API Axios instance
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
  * on extra information or override default properties https://github.com/axios/axios#request-config
@@ -293,26 +273,6 @@ export function generateAutoAccessReports(requestOverride = {}) {
     headers: {
       'X-TENANT-ID': tenantId,
       'Accept-API-Version': 'resource=1.0',
-    },
-    ...requestOverride,
-  };
-
-  return axios.create(requestDetails);
-}
-
-/**
- * Generates an Analytics Jas Axios instance
- * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
- * on extra information or override default properties https://github.com/axios/axios#request-config
- *
- * @returns {AxiosInstance}
- */
-export function generateAutoAccessJas(requestOverride = {}) {
-  const tenantId = process.env.VUE_APP_AUTO_ACCESS_TENANT_ID;
-  const requestDetails = {
-    baseURL: store.state.SharedStore.autoAccessJasUrl,
-    headers: {
-      'X-TENANT-ID': tenantId,
     },
     ...requestOverride,
   };

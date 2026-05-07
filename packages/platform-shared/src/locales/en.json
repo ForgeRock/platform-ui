@@ -192,6 +192,7 @@
     "hideLabel": "Hide {label}",
     "hideMore": "Hide {count} more",
     "hideText": "Hide text",
+    "high": "High",
     "host": "Host",
     "hosts": "Hosts",
     "id": "ID",
@@ -221,6 +222,8 @@
     "loginCount": "Login Count",
     "logo": "Logo",
     "makeDefault": "Make Default",
+    "low": "low",
+    "medium": "medium",
     "metadata": "Metadata",
     "method": "Method",
     "moreActions": "More Actions",
@@ -1296,9 +1299,6 @@
       "realmOrganizations": "Realm - Organizations",
       "realmRoles": "Realm - Roles",
       "realmUsers": "Realm - Users",
-      "riskAdministration": "Risk Administration",
-      "riskConfig": "Risk Config",
-      "riskDashboard": "Risk Dashboard",
       "tasks": "Tasks",
       "violations": "Violations"
     },
@@ -1307,9 +1307,6 @@
     "profile": "Profile",
     "reports": "Reports",
     "risk": "Risk",
-    "riskConfig": "Risk Config",
-    "riskAdministration": "Risk Administration",
-    "riskDashboard": "Risk Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
     "sidebarNavigation": "Sidebar navigation",
     "toggleSidebar": "Toggle sidebar"
@@ -1366,295 +1363,6 @@
       "this_week": "This Week",
       "this_month": "This Month",
       "custom": "Custom"
-    }
-  },
-  "autoAccess": {
-    "access": {
-      "activity": {
-        "header": "Activity",
-        "ipAddress": "IP Address",
-        "riskScore": "Risk Score",
-        "eventTime": "Event Time",
-        "time": "Time",
-        "user": "User",
-        "device": "Device",
-        "userAgent": "Browser Family",
-        "result": "Result",
-        "location": "Location",
-        "transactionId": "Transaction ID",
-        "eventId": "Event ID",
-        "detailModal": {
-          "header": "Activity Detail",
-          "doneBtn": "Done",
-          "previousAuthentications": "User's Last 5 Risky Authentication Attempts"
-        },
-        "apply": "Apply",
-        "viewRecentBehavior": "View recent behavior"
-      },
-      "errors": {
-        "retrievingActivity": "There was an error retrieving the Activity Log"
-      },
-      "normalView": {
-        "authenticationAttempts": "Authentication Attempts",
-        "compareLabel": "Compare to tenant",
-        "dataTimePeriod": "Data reflects the last 6 months",
-        "featuresSelectedTitle": "View:",
-        "featuresSelectedAll": "All Features",
-        "featuresSelected": "{count} Feature | {count} Features",
-        "retrievingDataError": "There was an error retrieving normal data.",
-        "userBehaviorHeader": "Tenant Access Behvior",
-        "userInformationRequestError": "Unable to retrieve user information",
-        "userNormalViewTitle": "User Access Behavior",
-        "userQueryNotFound": "User not found",
-        "viewMore": "View More",
-        "filterModal": {
-          "title": "View Options"
-        }
-      },
-      "heuristics": {
-        "is_automated_user_agent": "Automated User Agent",
-        "is_brute_force": "Brute Force",
-        "is_credential_stuffing": "Credential Stuffing",
-        "is_impossible_travel": "Impossible Travel",
-        "is_suspicious_ip": "Suspicious IP"
-      },
-      "reasons": {
-        "is_automated_user_agent": "Automated User Agent",
-        "is_advanced_bot_detection": "Advanced Bot Detection",
-        "is_brute_force": "Brute Force",
-        "is_credential_stuffing": "Credential Stuffing",
-        "is_distributed_attack": "Distributed Attack",
-        "is_impossible_travel": "Impossible Travel",
-        "is_ip_blocked": "IP Blocklist",
-        "is_suspicious_ip": "Suspicious IP",
-        "browser": "Browser",
-        "city": "City",
-        "component": "Component",
-        "country": "Country",
-        "day_of_week": "Day of Week",
-        "dayparting": "Time of Day",
-        "device": "Device",
-        "deviceType": "Device Type",
-        "goto": "Goto",
-        "model": "Device",
-        "no_explainable": "No Explainable Reason",
-        "os": "OS",
-        "os_version": "OS Version",
-        "referer": "referer",
-        "origin": "Origin",
-        "osWithVersion": "OS Version",
-        "userAgentType": "Browser Family",
-        "user_agent": "Browser Family",
-        "userId": "User ID",
-        "weekday": "Day of Week"
-      },
-      "dataSources": {
-        "title": "Data Sources",
-        "subtitle": "Define mappings to auto access features",
-        "buttons": {
-          "addDataSource": "Add Data Source"
-        },
-        "table": {
-          "dropdown": {
-            "delete": "Delete",
-            "edit": "Edit",
-            "createMapping": "Create or Edit Mapping",
-            "viewMapping": "View Mapping"
-          }
-        },
-        "addDataSourceModal": {
-          "header": "Add Data Source",
-          "buttons": {
-            "cancel": "Cancel",
-            "back": "Back",
-            "save": "Save",
-            "define": "Define Data Source"
-          },
-          "helpText": "Select bucket, object, or use prefix.",
-          "helpTextDefine": "Enter name that will be associated with data source.",
-          "helpTextPreview": "Preview first object in JSON file.",
-          "table": {
-            "headers": {
-              "name": "Object",
-              "size": "Size",
-              "created": "Created",
-              "updated": "Updated"
-            },
-            "dropdown": {
-              "preview": "Preview",
-              "define": "Define Data Source"
-            }
-          },
-          "saveConfig": "Save Config"
-        },
-        "dataSourcesAPI": {
-          "fileError": "File not found",
-          "bucketError": "Bucket not found",
-          "errorInvalidJSON": "Invalid JSONL. Cannot be used as Data Source.",
-          "errorFetchData": "An error occurred when fetching data source definition.",
-          "errorFetchDataSources": "An error occurred when fetching data sources."
-        },
-        "createMappingModal": {
-          "header": "Data Source Mapping",
-          "helpText": "Define mapping between data source and auto access features"
-        },
-        "editDataSourceModal": {
-          "header": "Edit Data Source",
-          "helpText": "Update data source"
-        },
-        "errorMessages": {
-          "invalidJSONL": "Invalid JSONL. Cannot be used as Data Source."
-        },
-        "emptyTable": "No Data Sources",
-        "emptyTableObjects": "No Objects"
-      },
-      "pipelines": {
-        "title": "Pipelines",
-        "subtitle": "Define pipelines for auto access",
-        "emptyTable": "No Pipelines",
-        "buttons": {
-          "addPipeline": "Add Pipeline",
-          "selectType": "Select Type"
-        },
-        "types": {
-          "Training": "Training",
-          "Prediction": "Prediction"
-        },
-        "addPipelineModal": {
-          "header": "Add Pipeline",
-          "buttons": {
-            "cancel": "Cancel",
-            "save": "Save"
-          },
-          "helpTextDefault": "Define training or prediction pipeline.",
-          "helpTextTraining": "Update training pipeline parameters.",
-          "helpTextPrediction": "Update prediction pipeline parameters"
-        }
-      },
-      "userDetails": {
-        "riskScoreChart": "Risk Score"
-      },
-      "filters": {
-        "predictionResult.features.browserData.userAgentType": "User Agent",
-        "predictionResult.features.browserData.osVersion": "OS Version",
-        "predictionResult.features.geoData.country": "Country",
-        "predictionResult.features.browserData.deviceType": "Device Type",
-        "predictionResult.features.geoData.city": "City",
-        "predictionResult.features.browserData.os": "OS",
-        "predictionResult.features.browserData.device": "Device",
-        "predictionResult.features.dayparting": "Time of Day",
-        "predictionResult.features.userId": "User ID",
-        "predictionResult.features.rawUserId": "User ID",
-        "predictionResult.features.weekday": "Day of Week",
-        "sections": {
-          "riskReason": "Risk Reason",
-          "attribute": "Attribute Filters"
-        }
-      },
-      "sideMenu": {
-        "entityDefinitions": "Entity Definitions",
-        "dashboard": "Dashboard",
-        "devConsole": "Dev Console",
-        "administration": "Administration",
-        "dataSources": "Data Sources",
-        "pipelines": "Pipelines",
-        "featureExploration": "Feature Exploration",
-        "models": "Models",
-        "settings": "Settings",
-        "activity": "Activity",
-        "riskConfig": "Risk Config"
-      },
-      "settings": {
-        "title": "Settings",
-        "subTitle": "Manage auto access settings",
-        "loadbaseline": "Load Baseline Datasets",
-        "saveIngestSuccess": "Baseline Ingest successfully started",
-        "saveIngestError": "Baseline Ingest failed"
-      },
-      "models": {
-        "title": "Training results",
-        "optionTitle": "Select a model",
-        "riskConfigSuccess": "Risk threshold of {value} saved for {model}",
-        "noDataError": "No data available",
-        "fetchDataError": "An error occurred fetching model data."
-      },
-      "riskConfig": {
-        "title": "Risk Configuration",
-        "subtitle": "Adjust YAML processes for training and prediction pipelines",
-        "riskConfigPreviewModal": {
-          "header": "Preview Risk Evaluation",
-          "helpText": "Select bucket, object, or use prefix to preview risk evaluation.",
-          "table": {
-            "dropdown": {
-              "preview": "Preview Object",
-              "previewConfiguration": "Preview Risk Evaluation"
-            }
-          },
-          "buttons": {
-            "define": "Preview Risk Evaluation"
-          }
-        }
-      },
-      "date_range_picker": {
-        "custom": "Custom",
-        "this_week": "This Week",
-        "this_month": "This Month",
-        "today": "Today"
-      },
-      "dashboard": {
-        "title": "Autonomous Access Dashboard",
-        "clientAccess": "Client Access Location",
-        "clientAccessInfo": "Showing high risk events of {model} with risk threshold between {low} and {high}. Click {here} to configure risk thresholds.",
-        "transactionId": "Transaction ID",
-        "accessScore": "Access Score",
-        "addLabel": "Add Label",
-        "modelOptions": "Select Model",
-        "fullLog": "Full Log Details",
-        "filters": "Filters",
-        "timeRange": "Time Range",
-        "oneHour": "Last one hour",
-        "6hour": "Last 6 hours",
-        "week": "Last 1 week",
-        "range": "Date Range",
-        "startDate": "Start Date",
-        "endDate": "End Date",
-        "startTime": "Start Time",
-        "endTime": "End Time",
-        "risk": "Risk",
-        "riskRange": "Risk Range",
-        "riskModel": "Risk Model",
-        "anonymous": "Allow anonymous locations",
-        "selectLabels": "Select Labels",
-        "subtitle": "Here's a look at what's going on.",
-        "riskyAccessHeader": "Risky Access Attempts",
-        "normalAccessHeader": "Normal Access Attempts",
-        "riskiestUsersHeader": "Riskiest Users",
-        "bruteForce": "brute force",
-        "unusualBehavior": "unusual behavior",
-        "impossibleTravel": "impossible travel"
-      },
-      "identities": {
-        "analysis": "Analysis",
-        "features": "Features",
-        "selectCause": "Select a Cause",
-        "frequency": "Frequency",
-        "eventLog": "Event Log",
-        "causeFrequency": "Cause Frequency",
-        "count": "Count"
-      },
-      "info": {
-        "professionalUseOnly": "This view is intended to help Ping Identity Professional Services to understand the ability of the tool to detect anomalies and help tune AI/ML Models. It is based on test data and intended for context only."
-      },
-      "risk": {
-        "allRisk": "Risk Score",
-        "high": "High",
-        "low": "Low",
-        "medium": "Medium",
-        "riskScore": "Risk Score",
-        "riskScoreDefinition": "Risk Score Definition",
-        "selectedRisk": "{minSelectedRisk} - {maxSelectedRisk} Risk",
-        "tooltip": "Slide to Filter Events Based on Risk Score"
-      }
     }
   },
   "forms": {
