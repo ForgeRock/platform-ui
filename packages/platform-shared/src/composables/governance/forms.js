@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -37,7 +37,7 @@ export default function useForm() {
     try {
       switch (type) {
         case formTypes.APPLICATION:
-          form.value = await getApplicationRequestForm(options.application, options.applicationId);
+          form.value = await getApplicationRequestForm(options.application, options.applicationId, options.objectType, options.operation);
           break;
         case formTypes.WORKFLOW:
           form.value = await getWorkflowRequestForm(options.workflowId, options.phaseId);

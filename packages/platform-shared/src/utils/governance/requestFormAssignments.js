@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -120,13 +120,16 @@ function getObjectType(application) {
  * @param {string} applicationId - The application ID.
  * @returns {Promise<object|null>} A promise that resolves to the request form data if found, or null if not found.
  */
-export async function getApplicationRequestForm(application, applicationId) {
+export async function getApplicationRequestForm(application, applicationId, objectType = null, operation) {
   try {
-    const objectType = getObjectType(application);
-    if (!objectType) return Promise.resolve(null);
+    if (!objectType) {
+      // eslint-disable-next-line no-param-reassign
+      objectType = getObjectType(application);
+      if (!objectType) return Promise.resolve(null);
+    }
 
     // check for a form for this application and object type
-    const { data } = await getApplicationRequestFormAssignment(applicationId, objectType);
+    const { data } = await getApplicationRequestFormAssignment(applicationId, objectType, operation);
     if (data.result.length) {
       const { formId } = data.result[0];
       const { data: formData } = await getRequestForm(formId);

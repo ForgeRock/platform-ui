@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -424,7 +424,7 @@ describe('DetailsTab', () => {
         await flushPromises();
 
         expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
-        expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account');
+        expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account', undefined);
         expect(formSpy).toHaveBeenCalledWith('someForm');
         expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
       });
@@ -439,7 +439,7 @@ describe('DetailsTab', () => {
         await flushPromises();
 
         expect(assignmentSpy).toHaveBeenCalledWith('testWorkflowId', 'testPhase');
-        expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account');
+        expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account', undefined);
         expect(wrapper.find('[label="testLabel"]').exists()).toBe(false);
       });
     });

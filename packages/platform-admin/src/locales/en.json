@@ -5055,6 +5055,10 @@
     "forms": {
       "attributeTitle": "Apply Attribute Privileges",
       "attributeDesc": "When selected, this form will only allow specific attributes to be edited if the user has the privileges to do so.",
+      "applicationTypes": {
+        "objectType": "{type}",
+        "typeOperations": "{type} Operations"
+      },
       "form": "Form",
       "listView": {
         "actions": {
@@ -5448,6 +5452,8 @@
       "requestTypeAssignmentDescription": "Request types for which this form will be used.",
       "requestTypeAssignmentSuccess": "Request type added.",
       "requestTypeAssignmentsError": "Error getting request type assignments",
+      "getApplicationError": "Error getting application data",
+      "getAssigmentGlossaryError": "Error assignments glossary attributes",
       "settings": "Form Settings",
       "types": {
         "checkbox": {
