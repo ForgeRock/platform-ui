@@ -15,6 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-model="inputValue"
       v-on="$listeners"
       add-on-change
+      @input="syncOldValue"
       :autofocus="autofocus"
       :class="{'polyfill-placeholder': floatLabels}"
       :disabled="disabled"
@@ -139,12 +140,27 @@ export default {
   },
   methods: {
     /**
-     * Toggles floating label state depending on input values
+     * Syncs oldValue when BFormTags emits input (normal add/remove), so that
+     * the InputMixin watcher's subsequent inputValueHandler call is a no-op.
+     * Drag-reorder via Draggable does not fire this, so oldValue stays stale
+     * and inputValueHandler correctly emits for drag changes.
+     * @param {Array} value The updated tag array from BFormTags
+     */
+    syncOldValue(value) {
+      this.oldValue = cloneDeep(value);
+    },
+    /**
+     * Toggles floating label state depending on input values, and emits the
+     * updated value so drag-reorder mutations are propagated to the parent.
      * @param inputValue The current input value
      * @param toggle Whether there was a value added
      */
     inputValueHandler(inputValue, toggle) {
       this.floatLabels = (toggle || inputValue.toString().length > 0) && !!this.label;
+      if (!isEqual(this.oldValue, inputValue)) {
+        this.oldValue = cloneDeep(inputValue);
+        this.$emit('input', inputValue);
+      }
     },
     /**
     * onBlur event handler
