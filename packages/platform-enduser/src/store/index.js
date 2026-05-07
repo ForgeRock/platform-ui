@@ -7,7 +7,6 @@
 
 import { createStore } from 'vuex';
 import Shared from '@forgerock/platform-shared/src/store/modules/Shared';
-import AutoAccess from '@forgerock/platform-shared/src/store/modules/AutoAccess';
 
 export default createStore({
   state: {
@@ -164,7 +163,6 @@ export default createStore({
     },
   },
   modules: {
-    ...AutoAccess,
     SharedStore: {
       namespaced: true,
       state: Shared.state,

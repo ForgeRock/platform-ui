@@ -52,7 +52,11 @@ import {
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { Form as VeeForm } from 'vee-validate';
+
+// Required to handle UTC dates
+dayjs.extend(utc);
 
 export default {
   name: 'FrUpdateDeadlineModal',

@@ -29,7 +29,9 @@ of the MIT license. See the LICENSE file for details. -->
     height="8px"
     :interval="props.interval"
     @update:modelValue="$emit('input', $event)">
-    <template v-if="showRangeLabels" #process="{ start, end }">
+    <template
+      v-if="showRangeLabels"
+      #process="{ start, end }">
       <div
         class="vue-slider-process low"
         :style="{ width: `${start}%` }" />
@@ -85,15 +87,15 @@ const props = defineProps({
 });
 const rangeLabels = [
   {
-    text: i18n.global.t('autoAccess.access.risk.low'),
+    text: i18n.global.t('common.low'),
     indicatorColorVariant: 'bg-danger',
   },
   {
-    text: i18n.global.t('autoAccess.access.risk.medium'),
+    text: i18n.global.t('common.medium'),
     indicatorColorVariant: 'bg-warning',
   },
   {
-    text: i18n.global.t('autoAccess.access.risk.high'),
+    text: i18n.global.t('common.high'),
     indicatorColorVariant: 'bg-success',
   },
 ];

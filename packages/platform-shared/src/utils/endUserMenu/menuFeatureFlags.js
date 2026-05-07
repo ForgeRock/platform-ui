@@ -31,7 +31,6 @@ export function generateFeatureFlags(store) {
   } = store.state;
 
   const {
-    autoAccessEnabled,
     autoReportsEnabled,
     governanceAgentsEnabled,
     governanceEnabled,
@@ -43,7 +42,6 @@ export function generateFeatureFlags(store) {
 
   // flag object which contains all the specific flags for filtering the enduser menu items
   return {
-    autoAccessEnabled,
     autoReportsEnabled,
     governanceAgentsEnabled,
     govLcmEnabled,

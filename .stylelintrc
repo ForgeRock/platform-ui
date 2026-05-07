@@ -4,7 +4,6 @@
   ],
   "ignoreFiles": [
     "./**/coverage/**/*.{html,css}",
-    "./packages/platform-shared/src/views/AutoAccess/**/*"
   ],
   "rules": {
     "at-rule-no-vendor-prefix": true,

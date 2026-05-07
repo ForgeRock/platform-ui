@@ -45,12 +45,6 @@ export const DEFAULT_MENU_ITEMS = [
     routeTo: { name: 'Dashboard' },
   },
   {
-    id: 'riskDashboard',
-    routeTo: { name: 'RiskDashboard' },
-    icon: 'show_chart',
-    available: (flag) => flag.autoAccessEnabled && flag.riskDashboardEnabled,
-  },
-  {
     id: 'reports',
     icon: 'summarize',
     available: (flag) => flag.autoReportsEnabled,
@@ -137,25 +131,6 @@ export const DEFAULT_MENU_ITEMS = [
       },
     ],
     available: (flag) => flag.ifGovernance,
-  },
-  {
-    id: 'riskAdministration',
-    icon: 'settings',
-    available: (flag) => flag.autoAccessEnabled && flag.riskAdminEnabled,
-    subItems: [
-      {
-        id: 'dataSources',
-        routeTo: { name: 'AutoAccessDataSources' },
-      },
-      {
-        id: 'pipelines',
-        routeTo: { name: 'AutoAccessPipelines' },
-      },
-      {
-        id: 'riskConfig',
-        routeTo: { name: 'AutoAccessRiskConfig' },
-      },
-    ],
   },
   {
     id: 'requests',

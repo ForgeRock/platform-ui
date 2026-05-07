@@ -194,7 +194,6 @@ export async function fetchDownload(runId, params) {
   return fetch(`${baseURL}/${path}`, {
     method: 'POST',
     headers: {
-      'X-TENANT-ID': store.state.SharedStore.autoAccessTenantId,
       'Accept-API-Version': 'resource=1.0',
       Authorization: `Bearer ${token}`,
     },
@@ -220,30 +219,6 @@ export function exportReport(template, id, action, format) {
     return generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`);
   }
   return fetchDownload(id, params);
-}
-
-/**
- * Gets a run report result
- *
- * @param {String} userName Platform user's username
- * @param {Array} dateRange Array containing the start date (index 0) and end date (index 1)
- * @param {String} template Name of the template
- * @param {Number} numberOfItems Number of results
- * @param {Boolean} isEnableUsers True for the request on a specific user, false for a request of the tenant only
- * @param {Boolean} isEnableAll True for the request on the teant, false for a request of a user
- * @returns {Object} Contains report count results, and array of results
- */
-export async function getAutoAccessReportResult(userName, dateRange, template, numberOfItems = 2, isEnableUsers = true, isEnableAll = false) {
-  const params = {
-    userName, startDate: dateRange[0], endDate: dateRange[1], numberOfItems, enable_users: isEnableUsers, enable_all: isEnableAll,
-  };
-
-  const { id, status } = await runAnalyticsTemplate(template, 'published', params);
-  if (!status === 'COMPLETED_SUCCESS') {
-    throw new Error(status);
-  }
-  const { data: res } = await generateAutoAccessReports().post(`runs/${id}?_action=view&name=${template}`);
-  return res;
 }
 
 /**

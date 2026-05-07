@@ -32,30 +32,6 @@ const router = createRouter({
       redirect: '/dashboard',
     },
     {
-      path: '/risk-dashboard',
-      name: 'RiskDashboard',
-      meta: { authenticate: true },
-      component: () => import('@forgerock/platform-shared/src/views/AutoAccess/Activity'),
-    },
-    {
-      path: '/autoaccess/data-sources',
-      name: 'AutoAccessDataSources',
-      meta: { authenticate: true },
-      component: () => import('@forgerock/platform-shared/src/views/AutoAccess/DataSources'),
-    },
-    {
-      path: '/autoaccess/pipelines',
-      name: 'AutoAccessPipelines',
-      meta: { authenticate: true },
-      component: () => import('@forgerock/platform-shared/src/views/AutoAccess/Pipelines'),
-    },
-    {
-      path: '/autoaccess/risk-config',
-      name: 'AutoAccessRiskConfig',
-      meta: { authenticate: true },
-      component: () => import('@forgerock/platform-shared/src/views/AutoAccess/RiskConfig'),
-    },
-    {
       path: '/handleOAuth/:amData',
       component: () => import('@/components/OAuthReturn'),
       meta: { hideSideMenu: true, bodyClass: 'fr-body-image' },

@@ -8,12 +8,6 @@
     "AIAgents": "AI Agents",
     "AIAgentEdit": "Edit AI Agent",
     "Applications": "Applications",
-    "AutoAccessDataSources": "Data Sources",
-    "AutoAccessPipelines": "Pipelines",
-    "AutoAccessRisk": "Risk",
-    "AutoAccessRiskConfig": "RiskConfig",
-    "AutoAccessTenantBehavior": "Tenant Authentication Behavior",
-    "AutoAccessUserBehavior": "User Authentication Behavior",
     "Authentication": "Authentication",
     "AuthenticationMethods": "Authentication Methods",
     "PushAuthentication": "Push Authentication",
@@ -1195,7 +1189,6 @@
       "body": "Set this journey as the default for identities authenticating to this realm?"
     },
     "tag": {
-      "autonomousAccess": "Autonomous Access",
       "basicAuthentication": "Basic Authentication",
       "mfa": "Multi Factor Auth",
       "risk": "Risk",
@@ -1833,17 +1826,6 @@
         "receivingJourneys": "Error receiving journeys"
       },
       "realmOverview": "Realm Overview"
-    },
-    "autonomousAccess": {
-      "normalView": {
-        "filterModal": {
-          "activeApplied": "No filters applied | {count} filter applied | {count} filters applied",
-          "labelFiltersClear": "Clear filters and show all features",
-          "labelFiltersDropdown": "Filter by Feature",
-          "modalDescription": "Add filters to narrow authentication attempts shown.",
-          "modalTitle": "Filter Authentication Attempts"
-        }
-      }
     },
     "cardCount": {
       "applications": "Applications",
