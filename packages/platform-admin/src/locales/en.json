@@ -903,7 +903,21 @@
     "packageShared": "Global",
     "packageEnduser": "User",
     "packageLogin": "Login",
-    "showAll": "Show all"
+    "showAll": "Show all",
+    "activeLanguages": "Active Languages",
+    "inactiveLanguages": "Inactive Languages",
+    "addLanguage": "Add Language",
+    "defaultLanguage": "Default Language",
+    "incompleteTranslations": "Incomplete Translations",
+    "addSuccess": "Language added successfully",
+    "addError": "Error adding language",
+    "statusSuccess": "Status changed successfully",
+    "statusError": "Error changing status",
+    "makeDefaultError": "Error setting default",
+    "makeDefaultSuccess": "Default set successfully",
+    "makeDefaultRollbackError": "Error during default rollback",
+    "errorFetchingLocales": "Error fetching locales",
+    "editTranslations": "Edit Translations"
   },
   "journey": {
     "addJourney": "Add Journey",
