@@ -77,6 +77,32 @@ describe('Tag', () => {
       wrapper.vm.inputValueHandler('', false);
       expect(wrapper.vm.floatLabels).toBe(false);
     });
+
+    it('inputValueHandler emits input when the value changes (drag reorder)', async () => {
+      const wrapper = setup();
+      wrapper.vm.setInputValue(['a', 'b', 'c']);
+      await flushPromises();
+
+      wrapper.vm.inputValueHandler(['c', 'a', 'b'], false);
+      await flushPromises();
+
+      const emitted = wrapper.emitted('input');
+      expect(emitted).toBeTruthy();
+      expect(emitted[emitted.length - 1][0]).toEqual(['c', 'a', 'b']);
+    });
+
+    it('inputValueHandler does not emit input when the value is unchanged', async () => {
+      const wrapper = setup();
+      wrapper.vm.setInputValue(['a', 'b', 'c']);
+      await flushPromises();
+
+      const emittedBefore = (wrapper.emitted('input') || []).length;
+      wrapper.vm.inputValueHandler(['a', 'b', 'c'], false);
+      await flushPromises();
+
+      const emittedAfter = (wrapper.emitted('input') || []).length;
+      expect(emittedAfter).toBe(emittedBefore);
+    });
   });
 
   describe('@a11y', () => {

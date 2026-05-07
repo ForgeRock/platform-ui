@@ -421,40 +421,68 @@
     "errorRetrievingTemplatesData": "There was an error retrieving templates data.",
     "authentication": "Authentication",
     "modules": {
-      "title": "Modules",
-      "subtitle": "Configure desired Authentication Modules to verify identities. IDM evaluates these modules in the order specified.",
-      "name": "Name",
-      "module": "Module",
-      "noModulesText": "No authentication modules configured",
+      "addCustomProperty": "Add Custom Property",
+      "addModule": "Add Module",
+      "addRole": "Add Role",
+      "allowedAuthenticationIdPatterns": "Allowed Authentication ID Patterns",
+      "augmentSecurityContext": "Augment Security Context",
+      "authenticationId": "Authentication ID",
+      "basicProperties": "Basic Properties",
+      "customProperties": "Custom Properties",
+      "defaultUserRoles": "Default User Roles",
+      "deleteError": "There was an error deleting the module.",
       "deleteModule": "Delete Module",
+      "deleteSuccess": "Module deleted successfully.",
       "deleteWarning": "Are you sure you want to delete the module '{moduleName}'? This cannot be undone.",
       "dragDropHelp": "Modules are evaluated in the order shown",
-      "saveError": "There was an error saving the module.",
-      "saveSuccess": "Module saved successfully.",
-      "deleteError": "There was an error deleting the module.",
-      "deleteSuccess": "Module deleted successfully.",
+      "editModuleType": "Edit Module: {type}",
+      "groupMembership": "Group Membership",
+      "groupMappings": "Group Mappings",
+      "groupRoleMapping": "Group Role Mapping",
+      "loadResourcesError": "There was an error loading available resources.",
+      "module": "Module",
+      "moduleEnabled": "Module Enabled",
       "moduleTypes": {
-        "STATIC_USER": {
-          "name": "Static User",
-          "msg": "Anonymous authentication"
-        },
         "CLIENT_CERT": {
           "name": "Client Cert",
           "msg": "Enables authentication with a certificate"
         },
-        "MANAGED_USER": {
-          "name": "Managed User",
-          "msg": "Queries the OpenIDM repository for external users"
-        },
         "INTERNAL_USER": {
           "name": "Internal User",
-          "msg": "Queries the internal OpenIDM repository"
+          "msg": "Queries the internal IDM repository"
+        },
+        "MANAGED_USER": {
+          "name": "Managed User",
+          "msg": "Queries the IDM repository for external users"
         },
         "PASSTHROUGH": {
           "name": "Passthrough",
           "msg": "Queries an external system for authentication"
+        },
+        "STATIC_USER": {
+          "name": "Static User",
+          "msg": "Anonymous authentication"
         }
-      }
+      },
+      "name": "Name",
+      "noModulesText": "No authentication modules configured",
+      "propertyMappings": "Property Mappings",
+      "propertyName": "Property Name",
+      "propertyType": "Property Type",
+      "queryId": "Query ID",
+      "queryOnResource": "Query On Resource",
+      "removeRole": "Remove Role",
+      "rolesGroupMembership": "User Roles / Group Membership",
+      "roleName": "Role Name",
+      "saveError": "There was an error saving the module.",
+      "saveSuccess": "Module saved successfully.",
+      "selectType": "Select Module Type",
+      "selectTypeHelp": "Select the type of authentication module to add.",
+      "simpleArray": "Simple Array",
+      "subtitle": "Configure desired Authentication Modules to verify identities. IDM evaluates these modules in the order specified.",
+      "title": "Modules",
+      "userCredential": "User Credential",
+      "userRoles": "User Roles"
     },
     "session": {
       "title": "Session",

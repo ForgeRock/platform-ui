@@ -32,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="showFileUpload"
           v-model="uploadFileToggle"
           :disabled="disabled"
+          class="ml-3"
           type="boolean"
           :label="$t('scriptEditor.uploadFile')"
           size="sm" />
