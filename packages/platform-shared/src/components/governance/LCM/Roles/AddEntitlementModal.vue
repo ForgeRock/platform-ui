@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -58,13 +58,23 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="step === 0"
         @selected:application="application = $event"
         @input="updateAppAndObjectType" />
-      <FrDefaultEntitlementForm
-        v-if="step === 1"
-        type="CREATE"
-        :application-id="applicationId"
-        :object-type="objectType"
-        @update:glossaryValues="glossaryValues = $event"
-        @update:entitlementValues="entitlementValues = $event" />
+      <template
+        v-if="step === 1">
+        <FrFormBuilder
+          v-if="form && !userStore.adminUser"
+          v-model:model-value="formValue"
+          :form="form.form"
+          :read-only="false"
+          @is-valid="isValidForm = $event"
+          @update:model-value="handleFormValueUpdate" />
+        <FrDefaultEntitlementForm
+          v-else
+          type="CREATE"
+          :application-id="applicationId"
+          :object-type="objectType"
+          @update:glossaryValues="glossaryValues = $event"
+          @update:entitlementValues="entitlementValues = $event" />
+      </template>
       <FrRequestSubmitSuccess
         v-if="step === 2"
         :request-id="requestId"
@@ -114,6 +124,8 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrAppAndObjectType from '@forgerock/platform-shared/src/components/governance/LCM/Entitlements/Add/Steps/AppAndObjectType';
 import FrRequestSubmitSuccess from '@forgerock/platform-shared/src/components/governance/LCM/RequestSubmitSuccess';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import useForm from '@forgerock/platform-shared/src/composables/governance/forms';
+import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
 import i18n from '@/i18n';
 
 const userStore = useUserStore();
@@ -135,6 +147,15 @@ const step = ref(0);
 const entitlementValues = ref({});
 const glossaryValues = ref({});
 const CREATE_ENTITLEMENT_REQUEST_TYPE = 'createEntitlement';
+const {
+  isLoadingForm,
+  isValidForm,
+  form,
+  formTypes,
+  formValue,
+  getFormDefinitionByType,
+  setDefaultFormValues,
+} = useForm();
 
 const modalProperties = computed(() => {
   if (step.value === 0) {
@@ -162,6 +183,7 @@ const modalProperties = computed(() => {
  * Resets the state of the modal.
  */
 function resetModal() {
+  setDefaultFormValues();
   application.value = {};
   applicationId.value = '';
   isSaving.value = false;
@@ -173,12 +195,46 @@ function resetModal() {
 }
 
 /**
+ * Initializes the form with necessary data and configurations.
+ * Gets a form if it exists, otherwise uses the default entitlement form.
+ */
+async function initializeForm() {
+  // get form definition
+  const options = {
+    applicationId: applicationId.value,
+    operation: 'create',
+    setInitialModel: false,
+    application: application.value,
+    objectType: objectType.value,
+  };
+  await getFormDefinitionByType(formTypes.APPLICATION, options);
+  isLoadingForm.value = false;
+}
+
+async function checkApplicationForm() {
+  if (applicationId.value && objectType.value) {
+    await initializeForm();
+  }
+}
+
+/**
  * Update the selected application ID and object type
  * @param {Object} value - application id and object type values.
  */
-function updateAppAndObjectType(value) {
+async function updateAppAndObjectType(value) {
   applicationId.value = value?.applicationId || '';
   objectType.value = value?.objectType || '';
+  await checkApplicationForm();
+}
+
+/**
+ * Splits the FormBuilder model value into entitlement and glossary values.
+ * @param {Object} object - Entitlement field values keyed by field name.
+ * @param {Object} glossary - Glossary field values keyed by attribute name.
+ */
+function handleFormValueUpdate({ object = {}, glossary = {}, ...rest } = {}) {
+  entitlementValues.value = { ...object, ...rest };
+  glossaryValues.value = glossary;
 }
 
 /**
@@ -211,6 +267,7 @@ async function submitRequest() {
 async function nextStep(ok) {
   switch (step.value) {
     case 0:
+      await initializeForm();
       step.value += 1;
       break;
     case 1:

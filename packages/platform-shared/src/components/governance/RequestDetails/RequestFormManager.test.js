@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -212,7 +212,7 @@ describe('RequestFormManager', () => {
       const wrapper = setup({ request: applicationRequestItem });
       await flushPromises();
 
-      expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account');
+      expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account', undefined);
       expect(formSpy).toHaveBeenCalledWith('someForm');
       expect(wrapper.find('[label="testLabel"]').exists()).toBe(true);
     });
@@ -224,7 +224,7 @@ describe('RequestFormManager', () => {
       const wrapper = setup(applicationRequestItem);
       await flushPromises();
 
-      expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account');
+      expect(applicationAssignmentSpy).toHaveBeenCalledWith('testApp', 'Account', undefined);
       expect(wrapper.find('[label="testLabel"]').exists()).toBe(false);
     });
   });

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -121,7 +121,7 @@ export function getFormApplications(formId) {
  * @param {string} objectType - The connector object type.
  * @returns {Promise} A promise that resolves to the request form assignment.
  */
-export function getApplicationRequestFormAssignment(applicationId, objectType) {
-  const objectId = `application/${applicationId}/${objectType}/create`;
+export function getApplicationRequestFormAssignment(applicationId, objectType, operation = 'create') {
+  const objectId = `application/${applicationId}/${objectType}/${operation}`;
   return generateIgaApi().get(`${formsUrl}?_queryFilter=objectId eq "${objectId}"`);
 }
