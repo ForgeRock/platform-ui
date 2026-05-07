@@ -3,12 +3,14 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <VeeForm
+  <component
+    :is="isModal ? 'VeeForm' : 'span'"
     ref="observer"
-    v-slot="{ meta: { valid } }"
+    v-slot="slotProps"
     as="span">
     <slot>
-      <BModal
+      <component
+        :is="isModal ? 'BModal' : 'div'"
         id="createResourceModal"
         size="lg"
         cancel-variant="outline-secondary"
@@ -114,20 +116,20 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="!isLastStep"
             @click="loadNextStep"
             variant="primary"
-            :disabled="!valid">
+            :disabled="!slotProps.meta.valid">
             {{ $t('common.next') }}
           </BButton>
           <FrButtonWithSpinner
             v-if="isLastStep || !steps.length"
             :button-text="$t('common.save')"
-            :disabled="formFields.length === 0 || !valid || (passwordValue !== '' && !passwordValid) || isSaving"
+            :disabled="formFields.length === 0 || !slotProps.meta.valid || (passwordValue !== '' && !passwordValid) || isSaving"
             :show-spinner="isSaving"
             :spinner-text="$t('common.saving')"
             @click="saveForm" />
         </template>
-      </BModal>
+      </component>
     </slot>
-  </VeeForm>
+  </component>
 </template>
 
 <script>
@@ -229,6 +231,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isModal: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -240,6 +246,9 @@ export default {
       passwordFailures: [],
       isSaving: false,
     };
+  },
+  mounted() {
+    if (!this.isModal) this.initialiseData();
   },
   watch: {
     passwordValue(newVal) {
@@ -307,7 +316,9 @@ export default {
       }
       this.isSaving = true;
       const idmInstance = this.getRequestService();
-      const validateSave = this.$refs.observer.validate();
+      const validateSave = this.isModal
+        ? this.$refs.observer.validate()
+        : Promise.resolve({ valid: true });
 
       validateSave.then(({ valid }) => {
         if (valid) {
