@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     body-class="p-0"
     content-class="border-0"
-    id="CertificationTaskApplicationModal"
+    :id="modalId"
     no-close-on-backdrop
     no-close-on-esc
     ok-only
@@ -100,6 +100,13 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+/**
+ * Modal displaying application details including owner info and glossary attributes.
+ * @component ApplicationModal
+ * @prop {Object} application - Application object (name, description, applicationOwners, glossary)
+ * @prop {Array} glossarySchema - Glossary attribute schema for the display form
+ * @prop {String} modalId - BModal id used to programmatically show/hide the modal
+ */
 import {
   BButtonClose,
   BImg,
@@ -134,6 +141,10 @@ export default {
     glossarySchema: {
       type: Array,
       default: () => ([]),
+    },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskApplicationModal',
     },
   },
   data() {

@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       :key="name"
       :data-testid="name">
       <dt class="col-lg-4">
-        {{ $t(`common.user.${name}`) }}
+        {{ getLabelForProperty(name) }}
       </dt>
       <dd class="col-lg-8 mb-4">
         <template v-if="name === 'manager' && !isEmpty(manager)">
@@ -87,6 +87,13 @@ export default {
   },
   methods: {
     isEmpty,
+    getLabelForProperty(property) {
+      let label = this.$t(`common.user.${property}`);
+      if (label === `common.user.${property}`) {
+        label = property;
+      }
+      return label;
+    },
   },
 };
 </script>

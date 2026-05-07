@@ -12,13 +12,26 @@ import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRou
 import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModal';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import * as RequestFormAssignmentsApi from '@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi';
 import i18n from '@/i18n';
 import ApprovalDetails from './ApprovalDetails';
 
 mockRouter({ params: { requestId: '1234', status: 'active' } });
 
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi', () => ({
+  getGlossaryAttributes: jest.fn().mockResolvedValue({
+    data: { result: [], resultCount: 0, totalCount: 0 },
+  }),
+}));
+jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi', () => ({
+  getFormAssignmentByRequestType: jest.fn().mockResolvedValue({ data: { result: [] } }),
+  getFormAssignmentByWorkflowNode: jest.fn().mockResolvedValue({ data: { result: [] } }),
+  getApplicationRequestFormAssignment: jest.fn().mockResolvedValue({ data: { result: [] } }),
+}));
+jest.mock('@forgerock/platform-shared/src/api/SchemaApi', () => ({
+  getSchema: jest.fn().mockResolvedValue({ data: { properties: {} } }),
+}));
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
@@ -30,7 +43,7 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   }),
 }));
 
-CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.resolve({
+CommonsApi.getIgaAccessRequest.mockResolvedValue({
   data: {
     requireRequestJustification: false,
     requireRejectJustification: false,
@@ -38,7 +51,9 @@ CommonsApi.getIgaAccessRequest = jest.fn().mockImplementation(() => Promise.reso
     defaultApprover: '',
     allowSelfApproval: true,
   },
-}));
+});
+CommonsApi.getGlossarySchema.mockResolvedValue({ data: {} });
+CommonsApi.getIgaUiConfig.mockResolvedValue({ data: {} });
 
 AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promise.resolve({
   data: {
@@ -145,7 +160,6 @@ describe('ApprovalDetails', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(Promise.resolve({
       data: { result: [accessRequest] },
     }));
-    RequestFormAssignmentsApi.getFormAssignmentByWorkflowNode = jest.fn().mockResolvedValue({ data: { result: [] } });
   });
 
   describe('@Component Tests', () => {

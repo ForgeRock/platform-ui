@@ -13,6 +13,23 @@ import i18n from '@/i18n';
 import AccessRequestDetails from './AccessRequestDetails';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi', () => ({
+  getGlossarySchema: jest.fn().mockResolvedValue({ data: {} }),
+  getIgaUiConfig: jest.fn().mockResolvedValue({ data: {} }),
+}));
+jest.mock('@forgerock/platform-shared/src/api/governance/GlossaryApi', () => ({
+  getGlossaryAttributes: jest.fn().mockResolvedValue({
+    data: { result: [], resultCount: 0, totalCount: 0 },
+  }),
+}));
+jest.mock('@forgerock/platform-shared/src/api/governance/RequestFormAssignmentsApi', () => ({
+  getFormAssignmentByRequestType: jest.fn().mockResolvedValue({ data: { result: [] } }),
+  getFormAssignmentByWorkflowNode: jest.fn().mockResolvedValue({ data: { result: [] } }),
+  getApplicationRequestFormAssignment: jest.fn().mockResolvedValue({ data: { result: [] } }),
+}));
+jest.mock('@forgerock/platform-shared/src/api/SchemaApi', () => ({
+  getSchema: jest.fn().mockResolvedValue({ data: { properties: {} } }),
+}));
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({
     consumer: {

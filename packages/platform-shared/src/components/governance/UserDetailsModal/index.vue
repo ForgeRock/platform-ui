@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     :ok-title="$t('common.done')"
     body-class="p-0"
     content-class="border-0"
-    id="GovernanceUserDetailsModal"
+    :id="modalId"
     no-close-on-backdrop
     no-close-on-esc
     ok-only
@@ -72,6 +72,16 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+/**
+ * Modal displaying user details with optional roles, accounts, and entitlements tabs.
+ * @component GovernanceUserDetailsModal
+ * @prop {Array} displayProperties - User attribute keys to display in the details tab
+ * @prop {Object} manager - Optional manager object passed to the user details tab
+ * @prop {Object} user - User object (givenName, sn, userName, profileImage)
+ * @prop {Object} userDetails - Object containing userRoles, userAccounts, userEntitlements result sets
+ * @prop {String} modalId - BModal id used to programmatically show/hide the modal
+ * @prop {Boolean} onlyDetails - When true, hides the roles, accounts, and entitlements tabs
+ */
 import {
   BButtonClose,
   BModal,
@@ -122,6 +132,10 @@ export default {
         userEntitlements: {},
         userRoles: {},
       }),
+    },
+    modalId: {
+      type: String,
+      default: 'GovernanceUserDetailsModal',
     },
     onlyDetails: {
       type: Boolean,

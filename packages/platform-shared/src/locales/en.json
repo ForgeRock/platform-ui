@@ -2978,7 +2978,10 @@
         "requestSubmitted": "Request Submitted",
         "startDate": "Access Start Date",
         "status": "Status",
-        "outcome": "Outcome"
+        "outcome": "Outcome",
+        "applicationInformation": "Application Information",
+        "entitlementInformation": "Entitlement Information",
+        "roleInformation": "Role Information"
       },
       "titles": {
         "addComment": "Add a Comment",

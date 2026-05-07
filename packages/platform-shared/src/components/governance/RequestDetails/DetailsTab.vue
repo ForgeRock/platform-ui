@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,9 +12,31 @@ of the MIT license. See the LICENSE file for details. -->
     :item="props.item || {}"
     :request="props.item?.rawData || {}"
     :read-only="props.readOnly" />
+  <BRow
+    v-else-if="isOotbNoFormRequestType"
+    class="mb-2">
+    <BCol
+      class="mb-2"
+      sm="12"
+      :md="props.item?.rawData?.user ? '6' : '12'">
+      <FrRequestedItemCard
+        :request="props.item?.rawData || {}"
+        :glossary-schema="glossarySchema"
+        :request-type="requestType" />
+    </BCol>
+    <BCol
+      v-if="props.item?.rawData?.user"
+      class="mb-2"
+      sm="12"
+      md="6">
+      <FrUserInfoCard
+        :manager="props.item.rawData.manager || null"
+        :user="props.item.rawData.user" />
+    </BCol>
+  </BRow>
   <div
-    v-else-if="isOOTBNoFormRequestType && details"
-    class="bg-light p-4 m-4 rounded mb-3">
+    v-if="!isRoleRequestType && isOOTBNoFormRequestType && details"
+    class="bg-light p-4 mt-4 rounded mb-3">
     <BRow class="mb-4">
       <BCol lg="6">
         <small class="d-block mb-2">
@@ -84,10 +106,12 @@ import { compact, map } from 'lodash';
 import { requestAction, putCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { OOTB_NO_FORM_REQUEST_TYPES } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
-import { getGlossarySchema } from '@forgerock/platform-shared/src/utils/governance/glossary';
+import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
+import FrRequestedItemCard from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestedItemCard';
+import FrUserInfoCard from '@forgerock/platform-shared/src/components/governance/RequestDetails/UserInfoCard';
 import FrRequestFormManager from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestFormManager';
 import FrRequestRoleDetails from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestRoleDetails';
 import i18n from '@/i18n';
@@ -122,12 +146,13 @@ const savingRequest = ref(false);
 const isLoading = ref(false);
 const phaseId = computed(() => props.item.rawData.phases?.[0]?.name);
 const requestType = computed(() => props.item.rawData.requestType);
-const glossarySchema = ref(null);
+const glossarySchema = ref({ application: [], entitlement: [], role: [] });
 const roleSchema = ref(null);
 const requestRoleData = ref(null);
 const isInitialized = ref(false);
 const isOOTBNoFormRequestType = computed(() => OOTB_NO_FORM_REQUEST_TYPES.some((type) => type?.value === requestType?.value));
 const isRoleRequestType = computed(() => ['createRole', 'modifyRole', 'publishRole', 'deleteRole'].includes(requestType.value));
+const isOotbNoFormRequestType = computed(() => OOTB_NO_FORM_REQUEST_TYPES.some((type) => type?.value === requestType.value));
 /**
  * Retrieves the details for a given item.
  * @param {Object} item - The item for which to retrieve the details.
@@ -151,14 +176,19 @@ function getDetails(item) {
  */
 async function getSchemaData() {
   try {
-    // get glossary schema and values
-    const glossaryData = await getGlossarySchema('role');
-    glossarySchema.value = glossaryData;
-    const roleData = await getSchema('managed/alpha_role');
-    roleSchema.value = map(roleData?.data.properties, (prop, key) => ({
-      ...prop,
-      propName: key,
-    }));
+    const glossaryData = await getGlossarySchema();
+    glossarySchema.value = {
+      application: glossaryData.data['/openidm/managed/application'] || [],
+      entitlement: glossaryData.data['/openidm/managed/assignment'] || [],
+      role: glossaryData.data['/openidm/managed/role'] || [],
+    };
+    if (isRoleRequestType.value) {
+      const roleData = await getSchema('managed/alpha_role');
+      roleSchema.value = map(roleData?.data.properties, (prop, key) => ({
+        ...prop,
+        propName: key,
+      }));
+    }
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.certificationTask.errors.glossaryError'));
   }
@@ -237,7 +267,7 @@ function getFormattedDate(date) {
 
 onMounted(async () => {
   details.value = getDetails(props.item);
-  if (isRoleRequestType.value) {
+  if (isRoleRequestType.value || isOotbNoFormRequestType.value) {
     await getSchemaData();
     isInitialized.value = true;
   }
