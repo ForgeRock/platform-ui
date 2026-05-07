@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
+import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ReadonlyPlaceholderInput from './index';
 import i18n from '@/i18n';
 
@@ -84,6 +85,26 @@ describe('ReadonlyPlaceholderInput', () => {
       const clearButton = wrapper.find('button');
       clearButton.trigger('click');
       expect(wrapper.emitted().input).toStrictEqual([['']]);
+    });
+  });
+
+  describe('@a11y', () => {
+    it('has no accessibility violations', async () => {
+      const wrapper = setup({ value: '&{esv-test}', label: 'Test Input' });
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
+
+    it('has no accessibility violations when clear button is hidden', async () => {
+      const wrapper = setup({ value: '&{esv-test}', label: 'Test Input' }, { showClearField: false });
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
+    });
+
+    it('has no accessibility violations when an error message is shown', async () => {
+      const wrapper = setup({ label: 'Test Input', errorMessage: 'This field is required' });
+      await wrapper.vm.$nextTick();
+      await runA11yTest(wrapper);
     });
   });
 });
