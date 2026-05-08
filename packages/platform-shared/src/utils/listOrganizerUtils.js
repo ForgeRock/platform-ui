@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -51,6 +51,7 @@ export function getDefaultManagedObjectColumnList(managedProperties, orderList) 
         enabled: true,
         sortDirection: 'desc',
         class: 'text-truncate',
+        searchable: column.searchable,
       });
     }
   });
@@ -62,9 +63,10 @@ export function getDefaultManagedObjectColumnList(managedProperties, orderList) 
  * @param {string} localStorageKey - String representing the key for the local storage
  * @param {Object} managedProperties - Object value representing the current tab data for managed resources
  * @param {string[]} orderList - The ordered list of available properties for the managed resources
+ * @param {string[]} includeNonSearchableColumns - List of column keys to consider even if they are not searchable
  * @returns {Array} List of columns to be used for customize column modal
  */
-export function getManagedObjectColumnList(localStorageKey, managedProperties, orderList) {
+export function getManagedObjectColumnList(localStorageKey, managedProperties, orderList, includeNonSearchableColumns = []) {
   if (!localStorageKey || !orderList || !managedProperties) {
     return [];
   }
@@ -79,19 +81,22 @@ export function getManagedObjectColumnList(localStorageKey, managedProperties, o
     const column = managedProperties[columnName];
     if (column
       && ['string', 'boolean', 'number'].includes(column.type)
-      && column.searchable
+      && (column.searchable || includeNonSearchableColumns.includes(columnName))
     ) {
+      // A column is enabled if it is included in the local storage value,
+      // otherwise it is decided based on whether the column list has reached the default maximum number of enabled columns (4) or whether the column is included in the list of non-searchable columns to include.
       const isEnabled = localStorageValue?.length > 0
         ? localStorageValue.some((item) => item === columnName)
-        : columnList.length < 4;
+        : columnList.length < 4 || includeNonSearchableColumns.includes(columnName);
 
       columnList.push({
         key: columnName,
         label: getTranslation(column.title),
-        sortable: true,
+        sortable: column.searchable, // look at searchable property to determine if column is sortable, to avoid making non-searchable columns sortable
         enabled: isEnabled,
         sortDirection: 'desc',
         class: 'text-truncate',
+        searchable: column.searchable,
       });
     }
   });

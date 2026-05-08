@@ -364,8 +364,17 @@ export default {
     capitalizedResourceName() {
       return pluralize(capitalize(this.resourceTitle || this.resourceName));
     },
+    /**
+     * Determines which fields should be used for display based on the columns that are set up for the table, excluding the action column
+     */
     displayFields() {
       return this.columns.filter((field) => field.key !== 'actions').map((field) => field.key);
+    },
+    /**
+     * Determines which fields should be used for search query based on the columns that are set up for the table, excluding the action column and non-searchable fields.
+     */
+    searchableFields() {
+      return this.columns.filter((field) => field.key !== 'actions' && field.searchable).map((field) => field.key);
     },
     pageSizes() {
       return [...new Set([this.minimumPageSize, ...[10, 20, 50, 100]])].filter((pageSize) => pageSize >= this.minimumPageSize);
@@ -555,7 +564,7 @@ export default {
       }
     },
     /*
-     * @description listener of the on-page-size-change event emmited by the pagination component when the size of
+     * @description listener of the on-page-size-change event emitted by the pagination component when the size of
      * results is changed
      */
     pageSizeChange(pageSize) {
@@ -583,11 +592,11 @@ export default {
       this.resourceToDeleteId = '';
     },
     /**
-     * fetch and return the search query string based on the current filter, display fields, managed properties and column organizer key
+     * fetch and return the search query string based on the current filter, searchable fields, managed properties and column organizer key
      * @returns {string} the search query string to be used in the API call
      */
     fetchSearchQueryString() {
-      const searchQueryFields = this.columnOrganizerKey ? filterFieldsForSearchQuery(this.displayFields) : this.displayFields;
+      const searchQueryFields = this.columnOrganizerKey ? filterFieldsForSearchQuery(this.searchableFields) : this.searchableFields;
       return generateSearchQuery(this.filter, searchQueryFields, this.routerParameters.managedProperties, this.columnOrganizerKey);
     },
     /**
