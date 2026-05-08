@@ -215,6 +215,12 @@ export default {
     :deep(.b-dropdown) {
       display: inline-flex;
     }
+    :deep(.prepend-button:has(+ .input-group-append) .b-dropdown) {
+      z-index: 3;
+    }
+    :deep(.prepend-button:has(+ .input-group-append) .b-dropdown .dropdown-toggle) {
+      border-right: none;
+    }
   }
 }
 
@@ -239,12 +245,12 @@ export default {
 .form-label-group:focus-within {
    .input-buttons:not(:focus-within) .within-input-button:not(.field-type-selectWithActions):not(.field-type-select):not(.field-type-array) :deep(.btn) {
         border-color: $primary !important;
-        clip-path: inset(-1px -1px -1px 0px) !important;
+        clip-path: inset(-1px 0px -1px 0px) !important;
         box-shadow: 0 0 0 0.0625rem $primary !important;
    }
    &.fr-field-error .input-buttons:not(:focus-within) .within-input-button:not(.field-type-selectWithActions):not(.field-type-select):not(.field-type-array) :deep(.btn) {
         border-color: $danger !important;
-        clip-path: inset(-1px -1px -1px 0px) !important;
+        clip-path: inset(-1px 0px -1px 0px) !important;
         box-shadow: 0 0 0 0.0625rem $danger !important;
    }
 }
