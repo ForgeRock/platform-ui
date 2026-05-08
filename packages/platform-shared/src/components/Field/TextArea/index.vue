@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -65,7 +65,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { useField } from 'vee-validate';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import { ref, toRef, watch } from 'vue';
 import * as clipboard from 'clipboard-polyfill/text';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';

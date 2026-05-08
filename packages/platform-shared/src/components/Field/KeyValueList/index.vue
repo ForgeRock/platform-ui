@@ -112,7 +112,7 @@ import {
   xor,
 } from 'lodash';
 import { useField } from 'vee-validate';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';

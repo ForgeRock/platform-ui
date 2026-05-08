@@ -90,7 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { cloneDeep, isEqual } from 'lodash';
 import { BFormTags, BTooltip } from 'bootstrap-vue';
 import { useField } from 'vee-validate';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import Draggable from 'vuedraggable';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { toRef } from 'vue';

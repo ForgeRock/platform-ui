@@ -2906,7 +2906,7 @@ __metadata:
     style-resources-loader: 1.2.1
     ua-parser-js: 1.0.38
     url: 0.11.0
-    uuid: 3.3.3
+    uuid: 14.0.0
     vee-validate: 4.11.8
     vue: 3.3.4
     vue-3-sanitize: 0.1.4
@@ -3028,7 +3028,7 @@ __metadata:
     sass: 1.52.1
     sass-loader: 8.0.2
     style-resources-loader: 1.2.1
-    uuid: 3.3.3
+    uuid: 14.0.0
     vee-validate: 4.11.8
     vue: 3.3.4
     vue-3-sanitize: 0.1.4
@@ -3134,7 +3134,7 @@ __metadata:
     turndown: 7.2.2
     ua-parser-js: 1.0.33
     util: 0.12.5
-    uuid: 3.3.3
+    uuid: 14.0.0
     validator: 13.11.0
     vee-validate: 4.11.8
     vkbeautify: 0.99.3
@@ -12425,7 +12425,7 @@ __metadata:
     style-resources-loader: 1.2.1
     stylelint: 14.1.0
     stylelint-config-html: 1.0.0
-    uuid: 3.3.3
+    uuid: 14.0.0
     vue: 3.3.4
     vue-demi: 0.14.5
   languageName: unknown
@@ -23272,12 +23272,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:3.3.3":
-  version: 3.3.3
-  resolution: "uuid@npm:3.3.3"
+"uuid@npm:14.0.0":
+  version: 14.0.0
+  resolution: "uuid@npm:14.0.0"
   bin:
-    uuid: ./bin/uuid
-  checksum: 21133d0e8a85e607f59a66913bf4f1dd79bdc4a80979a872b913f7ec75f530255edfe8bc6b69ce32017b8367f0d60a8b24ccd2af99156dc1ef2b8b9fe0ec8065
+    uuid: dist-node/bin/uuid
+  checksum: 08608584a79e987cdae000fa8eb724fa51dd8aafc136cd9fa9a8c87d07b246c56eec5fd9027fdb3e49a863eedf758bc19e325909ce281955c7a027fed67dc89e
   languageName: node
   linkType: hard
 
@@ -23291,11 +23291,11 @@ __metadata:
   linkType: hard
 
 "uuid@npm:^13.0.0":
-  version: 13.0.0
-  resolution: "uuid@npm:13.0.0"
+  version: 13.0.2
+  resolution: "uuid@npm:13.0.2"
   bin:
     uuid: dist-node/bin/uuid
-  checksum: 7510ee1ab371be5339ef26ff8cabc2f4a2c60640ff880652968f758072f53bd4f4af1c8b0e671a8c9bb29ef926a24dec3ef0e3861d78183b39291a85743a9f96
+  checksum: b8ca7da03b5563ad7ee9a9e38f5c6d63709183d5ae5c8f4c638fcf6f7349e7f3f0e4d1699f24f42d9f7b0f2f6e376a11c032750d2fc4a45e2dfab70142c9caf1
   languageName: node
   linkType: hard
 

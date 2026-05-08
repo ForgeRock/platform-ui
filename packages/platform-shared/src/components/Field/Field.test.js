@@ -8,12 +8,12 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { createTestingPinia } from '@pinia/testing';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import i18n from '@/i18n';
 import FrField from './index';
 import { findByTestId } from '../../utils/testHelpers';
 
-jest.mock('uuid/v4');
+jest.mock('uuid', () => ({ v4: jest.fn() }));
 
 mockValidation(['required', 'email']);
 

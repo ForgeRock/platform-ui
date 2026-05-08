@@ -1,5 +1,5 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2025-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -8,7 +8,7 @@
 
 import { ENV_VALUES } from '@e2e/support/constants';
 import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import { faker } from '@faker-js/faker';
 import { getIDMThemes, putIDMResource } from '../api/journeyApi.e2e';
 

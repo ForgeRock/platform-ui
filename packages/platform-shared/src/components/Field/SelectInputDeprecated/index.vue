@@ -79,7 +79,7 @@ import vueMultiSelectOverrides from '@forgerock/platform-shared/src/composables/
 import { getEnumTranslation } from '@forgerock/platform-shared/src/utils/translations';
 
 import { useField } from 'vee-validate';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
 import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 import FrInputLayout from '../Wrapper/InputLayout';

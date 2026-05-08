@@ -134,7 +134,7 @@ import {
   watch,
   getCurrentInstance,
 } from 'vue';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
