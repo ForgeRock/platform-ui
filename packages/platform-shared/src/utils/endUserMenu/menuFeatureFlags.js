@@ -34,7 +34,7 @@ export function generateFeatureFlags(store) {
   const {
     autoAccessEnabled,
     autoReportsEnabled,
-    governanceDevEnabled,
+    governanceAgentsEnabled,
     governanceEnabled,
     workforceEnabled,
     governanceRoleMiningEnabled,
@@ -46,7 +46,7 @@ export function generateFeatureFlags(store) {
   return {
     autoAccessEnabled,
     autoReportsEnabled,
-    governanceDevEnabled,
+    governanceAgentsEnabled,
     govLcmEnabled,
     govLcmEntitlement,
     govLcmRole,
