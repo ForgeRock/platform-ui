@@ -1,10 +1,11 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import i18n from '@/i18n';
 
 export default {
   name: 'PasswordPolicyMixin',
@@ -23,18 +24,18 @@ export default {
     getSetTranslations(sets) {
       const translatedSets = [];
       sets.forEach((set) => {
-        if (set.includes(this.lowerSet)) translatedSets.push(this.$t('common.policyValidationMessages.sets.lowercase'));
-        if (set.includes(this.upperSet)) translatedSets.push(this.$t('common.policyValidationMessages.sets.uppercase'));
-        if (set.includes(this.numberSet)) translatedSets.push(this.$t('common.policyValidationMessages.sets.number'));
-        if (set.includes(this.symbolSet)) translatedSets.push(this.$t('common.policyValidationMessages.sets.symbol'));
+        if (set.includes(this.lowerSet)) translatedSets.push(i18n.global.t('common.policyValidationMessages.sets.lowercase'));
+        if (set.includes(this.upperSet)) translatedSets.push(i18n.global.t('common.policyValidationMessages.sets.uppercase'));
+        if (set.includes(this.numberSet)) translatedSets.push(i18n.global.t('common.policyValidationMessages.sets.number'));
+        if (set.includes(this.symbolSet)) translatedSets.push(i18n.global.t('common.policyValidationMessages.sets.symbol'));
       });
 
       // force the ordering of the sets
       const order = [
-        this.$t('common.policyValidationMessages.sets.lowercase'),
-        this.$t('common.policyValidationMessages.sets.uppercase'),
-        this.$t('common.policyValidationMessages.sets.number'),
-        this.$t('common.policyValidationMessages.sets.symbol'),
+        i18n.global.t('common.policyValidationMessages.sets.lowercase'),
+        i18n.global.t('common.policyValidationMessages.sets.uppercase'),
+        i18n.global.t('common.policyValidationMessages.sets.number'),
+        i18n.global.t('common.policyValidationMessages.sets.symbol'),
       ];
       translatedSets.sort((a, b) => (order.indexOf(a) - order.indexOf(b)));
       if (translatedSets.length) translatedSets[0] = translatedSets[0].charAt(0).toUpperCase() + translatedSets[0].slice(1);
@@ -126,7 +127,7 @@ export default {
                     params: {
                       disallowedFields: validator.matchAttribute.map((attribute) => {
                         if (this.translationExists(`common.policyValidationMessages.attributes.${attribute}`)) {
-                          return this.$t(`common.policyValidationMessages.attributes.${attribute}`);
+                          return i18n.global.t(`common.policyValidationMessages.attributes.${attribute}`);
                         }
                         return attribute;
                       }).join(', '),
@@ -176,7 +177,7 @@ export default {
               policy.params['match-attributes'].forEach((attribute) => {
               // translate attribute names if possible
                 if (this.translationExists(`common.policyValidationMessages.attributes.${attribute}`)) {
-                  attributes.push(this.$t(`common.policyValidationMessages.attributes.${attribute}`));
+                  attributes.push(i18n.global.t(`common.policyValidationMessages.attributes.${attribute}`));
                 } else {
                   attributes.push(attribute);
                 }
