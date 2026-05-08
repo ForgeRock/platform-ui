@@ -390,22 +390,34 @@ describe('ListResource Component', () => {
       expect(columnOrganizerIcon.text()).toBe('view_column');
     });
 
-    it('fetchSearchQueryString should include all columns if columnOrganizerKey is not present', () => {
-      wrapper.vm.columns = [{ key: 'userName' }, { key: 'email' }, { key: 'phone' }];
+    it('fetchSearchQueryString should include all searchable columns if columnOrganizerKey is not present', () => {
+      wrapper.vm.columns = [{ key: 'userName', searchable: true }, { key: 'email', searchable: true }, { key: 'phone', searchable: true }, { key: 'non-searchable-column' }];
+      wrapper.vm.filter = 'test';
+      const results = wrapper.vm.fetchSearchQueryString();
+      expect(results).toBe('userName sw "test" OR email sw "test" OR phone sw "test"');
+      expect(results).not.toContain('non-searchable-column');
+    });
+
+    it('fetchSearchQueryString should exclude non-searchable fields like password management, date, and integer fields', async () => {
+      await wrapper.setProps({
+        columnOrganizerKey: 'test-key',
+      });
+      await flushPromises();
+      wrapper.vm.columns = [{ key: 'userName', searchable: true }, { key: 'passwordLastChangedTime', searchable: true }, { key: 'frIndexedInteger', searchable: true }, { key: 'frIndexedDate1', searchable: true }, { key: 'email', searchable: true }, { key: 'phone', searchable: true }];
       wrapper.vm.filter = 'test';
       const results = wrapper.vm.fetchSearchQueryString();
       expect(results).toBe('userName sw "test" OR email sw "test" OR phone sw "test"');
     });
 
-    it('fetchSearchQueryString should filter displayFields if columnOrganizerKey is present', async () => {
+    it('fetchSearchQueryString should filter on searchable fields if columnOrganizerKey is present', async () => {
       await wrapper.setProps({
         columnOrganizerKey: 'test-key',
       });
       await flushPromises();
-      wrapper.vm.columns = [{ key: 'userName' }, { key: 'passwordLastChangedTime' }, { key: 'frIndexedInteger' }, { key: 'frIndexedDate1' }, { key: 'email' }, { key: 'phone' }];
+      wrapper.vm.columns = [{ key: 'userName', searchable: true }, { key: 'otherCol1' }];
       wrapper.vm.filter = 'test';
       const results = wrapper.vm.fetchSearchQueryString();
-      expect(results).toBe('userName sw "test" OR email sw "test" OR phone sw "test"');
+      expect(results).toBe('userName sw "test"');
     });
 
     it('Only loads data from visible fields', async () => {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -47,6 +47,7 @@ describe('getManagedObjectColumnList', () => {
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
+        searchable: true,
       },
       {
         key: 'col2',
@@ -55,6 +56,7 @@ describe('getManagedObjectColumnList', () => {
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
+        searchable: true,
       },
       {
         key: 'col3',
@@ -63,6 +65,7 @@ describe('getManagedObjectColumnList', () => {
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
+        searchable: true,
       },
       {
         key: 'col5',
@@ -71,6 +74,7 @@ describe('getManagedObjectColumnList', () => {
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
+        searchable: true,
       },
       {
         key: 'col7',
@@ -79,8 +83,22 @@ describe('getManagedObjectColumnList', () => {
         sortable: true,
         enabled: false, // Only the first 4 columns are enabled by default, This is to maintain consistency with the table display data
         sortDirection: 'desc',
+        searchable: true,
       },
     ]);
+  });
+
+  it('adds a non searchable column only if it is passed in as an additional column to include', () => {
+    // col6 is non-searchable, so it should not be included by default.
+    // However, if we include it in the list of additional columns to include, then it should be included and enabled
+    const result = getManagedObjectColumnList(
+      'identities_test_1',
+      resourceTabData.managedProperties,
+      resourceTabData.order,
+      ['col6'],
+    );
+    expect(result.find((c) => c.key === 'col6')).toBeDefined();
+    expect(result.find((c) => c.key === 'col6').enabled).toBe(true);
   });
 
   it('treats invalid object-array storage format as absent and falls back to default enabled behavior', () => {
@@ -143,6 +161,7 @@ describe('getDefaultManagedObjectColumnList', () => {
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
+        searchable: true,
       },
       {
         key: 'col2',
@@ -151,6 +170,7 @@ describe('getDefaultManagedObjectColumnList', () => {
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
+        searchable: true,
       },
       {
         key: 'col3',
@@ -159,6 +179,7 @@ describe('getDefaultManagedObjectColumnList', () => {
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
+        searchable: true,
       },
       {
         key: 'col5',
@@ -167,6 +188,7 @@ describe('getDefaultManagedObjectColumnList', () => {
         sortable: true,
         enabled: true,
         sortDirection: 'desc',
+        searchable: true,
       },
     ]);
 

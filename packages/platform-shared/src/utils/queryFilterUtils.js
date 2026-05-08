@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,16 +9,16 @@
  * Builds API URL using a search value
  *
  * @param {string} filterString - Required current search value
- * @param {array} displayFields - Required array of field names that we want to query on
+ * @param {array} searchableFields - Required array of field names that we want to query on
  * @param {object} schemaProps - Required metadata of current schema
  */
 // eslint-disable-next-line import/prefer-default-export
-export function generateSearchQuery(filterString, displayFields, schemaProps) {
+export function generateSearchQuery(filterString, searchableFields, schemaProps) {
   let filterUrl = '';
 
   if (filterString.length > 0) {
     // remove nested properties
-    const filteredFields = displayFields.filter((field) => (!field.includes('/')));
+    const filteredFields = searchableFields.filter((field) => (!field.includes('/')));
 
     filteredFields.forEach((field, index) => {
       let type = 'string';
@@ -60,10 +60,10 @@ export function generateSearchQuery(filterString, displayFields, schemaProps) {
 /**
  * Filters out fields that are causing API failures when used in search queries.
  * Removes fields related to password management, date, and integer fields
- * @param {Array} displayFields - Array containing available display fields for the resource.
- * @returns {Array} The Filtered display fields array.
+ * @param {Array} searchableFields - Array containing available searchable fields for the resource.
+ * @returns {Array} The Filtered searchable fields array.
  */
-export function filterFieldsForSearchQuery(displayFields) {
+export function filterFieldsForSearchQuery(searchableFields) {
   const passwordFields = ['passwordLastChangedTime', 'passwordExpirationTime'];
-  return displayFields.filter((field) => !passwordFields.includes(field) && !field.startsWith('frIndexedDate') && !field.startsWith('frUnindexedDate') && !field.startsWith('frIndexedInteger') && !field.startsWith('frUnindexedInteger'));
+  return searchableFields.filter((field) => !passwordFields.includes(field) && !field.startsWith('frIndexedDate') && !field.startsWith('frUnindexedDate') && !field.startsWith('frIndexedInteger') && !field.startsWith('frUnindexedInteger'));
 }
