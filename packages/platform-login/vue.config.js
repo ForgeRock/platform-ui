@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -137,6 +137,11 @@ module.exports = {
     if (!process.env.VUE_CLI_MODERN_BUILD) {
       config.resolve = {
         exportsFields: [],
+        // uuid v14 ships ESM-only with no `main` field; alias it directly so webpack
+        // can find it when exportsFields is disabled (the nanoid/IE11 workaround above).
+        alias: {
+          uuid: path.resolve(__dirname, '../../node_modules/uuid/dist/index.js'),
+        },
       };
     }
 

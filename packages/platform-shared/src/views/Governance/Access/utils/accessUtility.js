@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,7 +9,7 @@ import { getApplicationDisplayName, getApplicationLogo, loadAppTemplates } from 
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { cloneDeep } from 'lodash';
 import dayjs from 'dayjs';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import accessConstants from './accessConstants';
 import i18n from '@/i18n';
 

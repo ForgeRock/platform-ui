@@ -58,7 +58,7 @@ import {
   isFieldTypeSupportedForPlaceholderEntry,
 } from '@forgerock/platform-shared/src/utils/esvUtils';
 import { removeNonRoleAriaAttributes } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import store from '@/store';
 
 export default {

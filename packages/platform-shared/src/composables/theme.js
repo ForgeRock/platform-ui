@@ -7,7 +7,7 @@
 
 import { cloneDeep } from 'lodash';
 import { computed } from 'vue';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import { useThemeStore } from '@forgerock/platform-shared/src/stores/theme';
 import {
   getThemerealm,

@@ -36,7 +36,7 @@
     "pinia": "2.1.6",
     "qrcode-generator": "1.4.4",
     "regenerator-runtime": "0.13.3",
-    "uuid": "3.3.3",
+    "uuid": "14.0.0",
     "vee-validate": "4.11.8",
     "vue": "3.3.4",
     "vue-3-sanitize": "0.1.4",

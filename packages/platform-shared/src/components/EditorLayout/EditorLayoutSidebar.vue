@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { BButtonClose, BCard, BTooltip } from 'bootstrap-vue';
 import VueDraggableResizable from 'vue-draggable-resizable';
 import { ref, computed } from 'vue';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import FrIcon from '../Icon';
 import {
   EDITOR_LAYOUT_SIDEBAR_DEFAULT_MAX_WIDTH, EDITOR_LAYOUT_SIDEBAR_DEFAULT_MIN_WIDTH, EDITOR_LAYOUT_SIDEBAR_DEFAULT_WIDTH, EDITOR_LAYOUT_SIDEBAR_POSITION,
