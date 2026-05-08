@@ -930,7 +930,6 @@
     "saveError": "Error saving translations",
     "loadError": "Error loading translation data",
     "loadLanguageDataError": "Error loading language data",
-    "loadComparisonDataError": "Error loading comparison data",
     "languageNotFound": "Language not found. Please create it on the list view.",
     "compareError": "Error loading comparison data",
     "languagesLoadError": "Error loading available languages",
@@ -949,7 +948,7 @@
     "noMatchingTranslations": "No matching translations",
     "tryDifferentSearch": "Try a different search term or clear the current filter.",
     "clearSearch": "Clear search",
-    "missing": "Missing",
+    "missing": "{count} Missing",
     "keyColumn": "Key",
     "translationColumn": "Translation",
     "compareToColumn": "Compare to",
@@ -1008,7 +1007,24 @@
     },
     "export": {
       "exportFailed": "Export failed"
-    }
+    },
+    "addCustomTranslation": "Add Custom Translation",
+    "customTranslation": "custom translation",
+    "deleteCustomTranslation": "Delete custom translation",
+    "deleteCustomTranslationMessage": "<p>Are you sure you want to delete <strong>{key}</strong>?</p><p class=\"mb-0\">Deleting this translation may affect UI labels or messages that reference this key. This action cannot be undone.</p>",
+    "translationKey": "Translation Key",
+    "currentLanguageValue": "Current Language Value",
+    "newOverrideValue": "{language} Value",
+    "translationKeyHelp": "Auto-generated from the current value. Must be unique within custom translations.",
+    "currentLanguageValueHelp": "Current translation value that will be replaced by your new {language} translation.",
+    "createTranslation": "Create Translation",
+    "overrides": "Overrides",
+    "customTranslations": "Custom translations",
+    "noCustomTranslations": "No custom translations",
+    "noCustomTranslationsDescription": "Add a custom translation key to get started.",
+    "customTranslationsDescription": "Customer-created literal keys for unlocalized phrases, server messages, journey nodes, and any undefined UI text.",
+    "viewDocs": "View docs",
+    "addTranslation": "Add Translation"
   },
   "journey": {
     "addJourney": "Add Journey",
