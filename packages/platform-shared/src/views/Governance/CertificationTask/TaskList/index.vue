@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <div>
         <BButton
-          v-if="governanceDevEnabled && !isGroupByAccounts"
+          v-if="!isGroupByAccounts"
           class="mr-2"
           variant="link-dark"
           :aria-label="$t('governance.certificationTask.export')"
@@ -531,7 +531,6 @@ import FrTaskActionsCell from './TaskActionsCell';
 import FrTaskFilters from './TaskFilters';
 import FrTaskMultiSelect from './TaskMultiSelect';
 import FrDownloadItemsModal from './modals/DownloadItemsModal/DownloadItemsModal';
-import store from '@/store';
 
 const userRequiredParams = [
   'userName',
@@ -788,9 +787,6 @@ export default {
         }
         return col;
       });
-    },
-    governanceDevEnabled() {
-      return store.state.SharedStore.governanceDevEnabled;
     },
     isGroupByAccounts() {
       return this.showGroupBy && this.certificationGrantType === 'accounts';

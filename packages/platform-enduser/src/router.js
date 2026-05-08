@@ -437,7 +437,7 @@ const router = createRouter({
     },
     {
       path: '/requests/:requestsTab?',
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled, store.state.govAccessRequests]),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.govAccessRequests]),
       meta: { authenticate: true },
       children: [
         {
@@ -454,7 +454,7 @@ const router = createRouter({
     },
     {
       path: '/certification/:certificationTab?',
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceDevEnabled, store.state.govCertAdmin]),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.govCertAdmin]),
       meta: { authenticate: true },
       children: [
         {
