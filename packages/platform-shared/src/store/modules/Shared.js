@@ -35,6 +35,7 @@ const defaultState = {
   fraasPromotionEgressUrl: null,
   googleFontsApiKey: '',
   googleMapsApiKey: '',
+  governanceAgentsEnabled: false,
   governanceEnabled: false,
   governanceEnabledV4: false,
   governanceRoleMiningEnabled: false,
@@ -201,6 +202,9 @@ const mutations = {
       if (state.governanceEnabled) {
         if (env.VUE_APP_ENABLE_GOVERNANCE_ROLE_MINING?.toString() === 'true') {
           state.governanceRoleMiningEnabled = true;
+        }
+        if (env.VUE_APP_ENABLE_GOVERNANCE_AGENTS?.toString() === 'true') {
+          state.governanceAgentsEnabled = true;
         }
       }
 

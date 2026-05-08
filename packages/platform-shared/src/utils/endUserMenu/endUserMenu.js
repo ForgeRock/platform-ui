@@ -179,7 +179,7 @@ export function generateEndUserMenuItems({
     }
 
     if (menuItem.id === 'myAccess') {
-      finalSubItems = finalSubItems.filter((subItem) => subItem.id !== 'agents' || flags.governanceDevEnabled);
+      finalSubItems = finalSubItems.filter((subItem) => subItem.id !== 'agents' || flags.governanceAgentsEnabled);
     }
     // handle enduser ui specific processing
     let routeObject = {};
