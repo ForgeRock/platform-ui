@@ -189,12 +189,10 @@ export const DEFAULT_MENU_ITEMS = [
       },
       {
         id: END_USER_MENU_CONSTANTS.ADMIN_REQUESTS,
-        available: (flag) => flag.governanceDevEnabled,
         routeTo: { name: 'UserAdminRequests' },
       },
       {
         id: END_USER_MENU_CONSTANTS.ADMIN_CERTIFICATIONS,
-        available: (flag) => flag.governanceDevEnabled,
         routeTo: { name: 'Certification' },
       },
       {
