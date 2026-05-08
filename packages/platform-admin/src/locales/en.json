@@ -407,7 +407,22 @@
     },
     "session": {
       "title": "Session",
-      "subtitle": "The Session Module sets token life and idle time limits on user sessions."
+      "subtitle": "The Session Module sets token life and idle time limits on user sessions.",
+      "logoutUrlTitle": "Logout URL",
+      "logoutUrlDescription": "URL to redirect users to after logout.",
+      "maxLifeTitle": "Max Token Life",
+      "maxLifeDescription": "Maximum amount of time a session token is valid.",
+      "idleTimeTitle": "Token Idle Time",
+      "idleTimeDescription": "Maximum inactive time before a session token expires.",
+      "sessionOnlyTitle": "Browser Session Only",
+      "sessionOnlyDescription": "If enabled, tokens are only valid for browser session duration.",
+      "enableDynamicRolesTitle": "Enable Dynamic Roles",
+      "enableDynamicRolesDescription": "If enabled, user roles are recalculated on every request instead of only at authentication time.",
+      "minutes": "Minutes",
+      "seconds": "Seconds",
+      "saveSuccess": "Session settings saved",
+      "errorLoading": "There was an error loading session settings",
+      "errorSaving": "There was an error saving session settings"
     }
   },
   "connect": {
