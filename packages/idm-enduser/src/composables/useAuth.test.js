@@ -15,6 +15,7 @@ import * as ConfigApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import { useAuth } from './useAuth';
 import * as AuthenticationApi from '../api/AuthenticationApi';
+import store from '@/store';
 
 mockRouter();
 
@@ -251,5 +252,83 @@ describe('useAuth composable', () => {
     const enduserStore = useEnduserStore();
     expect(enduserStore.managedResourceSchema).toEqual({});
     expect(window.location.hash).toBe('/login');
+  });
+
+  it('should redirect to logoutUrl when a valid logoutUrl is configured', async () => {
+    window.location = { href: '', hash: '' };
+    store.state.SharedStore.uiConfig = {
+      configuration: { logoutUrl: 'https://example.com/logout' },
+    };
+
+    AuthenticationApi.logout = jest.fn().mockResolvedValue();
+    const { initializeLogout } = useAuth();
+    initializeLogout();
+
+    await window.logout();
+
+    expect(window.location.href).toBe('https://example.com/logout');
+    expect(window.location.hash).toBe('');
+
+    // restore uiConfig so other tests are unaffected
+    store.state.SharedStore.uiConfig = null;
+  });
+
+  it('should fall back to hash login when logoutUrl is null', async () => {
+    window.location = { href: '', hash: '' };
+    store.state.SharedStore.uiConfig = {
+      configuration: { logoutUrl: null },
+    };
+
+    AuthenticationApi.logout = jest.fn().mockResolvedValue();
+    const { initializeLogout } = useAuth();
+    initializeLogout();
+
+    await window.logout();
+
+    expect(window.location.hash).toBe('/login');
+    expect(window.location.href).toBe('');
+
+    store.state.SharedStore.uiConfig = null;
+  });
+
+  it('should fall back to hash login when logoutUrl is undefined', async () => {
+    window.location = { href: '', hash: '' };
+    store.state.SharedStore.uiConfig = {
+      configuration: {},
+    };
+
+    AuthenticationApi.logout = jest.fn().mockResolvedValue();
+    const { initializeLogout } = useAuth();
+    initializeLogout();
+
+    await window.logout();
+
+    expect(window.location.hash).toBe('/login');
+    expect(window.location.href).toBe('');
+
+    store.state.SharedStore.uiConfig = null;
+  });
+
+  it('should fall back to hash login when logoutUrl is a javascript: URL (about:blank guard)', async () => {
+    window.location = { href: '', hash: '' };
+    // Use a computed string to avoid triggering the no-script-url ESLint rule;
+    // the value exercises the sanitizeUrl about:blank path
+    const maliciousUrl = `${'javascript'}:alert(document.cookie)`;
+    store.state.SharedStore.uiConfig = {
+      configuration: { logoutUrl: maliciousUrl },
+    };
+
+    AuthenticationApi.logout = jest.fn().mockResolvedValue();
+    const { initializeLogout } = useAuth();
+    initializeLogout();
+
+    await window.logout();
+
+    // sanitizeUrl returns 'about:blank' for javascript: URLs;
+    // the guard must prevent the redirect and fall back to /login
+    expect(window.location.href).toBe('');
+    expect(window.location.hash).toBe('/login');
+
+    store.state.SharedStore.uiConfig = null;
   });
 });

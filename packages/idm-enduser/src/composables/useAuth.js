@@ -13,6 +13,7 @@ import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import { getFeatures } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { each } from 'lodash';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import useSelfService from '@/composables/selfService';
 import {
   getAccessToken, getProfile, login, logout,
@@ -156,7 +157,13 @@ export function useAuth() {
       const enduserStore = getEnduserStore();
       enduserStore.$reset();
 
-      window.location.hash = '/login';
+      const logoutUrl = store.state.SharedStore?.uiConfig?.configuration?.logoutUrl;
+      const sanitizedLogoutUrl = logoutUrl ? sanitizeUrl(logoutUrl) : '';
+      if (sanitizedLogoutUrl && sanitizedLogoutUrl !== 'about:blank') {
+        window.location.href = sanitizedLogoutUrl;
+      } else {
+        window.location.hash = '/login';
+      }
     };
   }
 

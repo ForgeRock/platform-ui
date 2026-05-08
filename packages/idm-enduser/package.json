@@ -10,6 +10,7 @@
     "coverage": "../../node_modules/.bin/jest --verbose --coverage --noStackTrace --no-cache --silent"
   },
   "dependencies": {
+    "@braintree/sanitize-url": "6.0.2",
     "@forgerock/platform-shared": "1.0.0",
     "@kyvg/vue3-notification": "3.0.2",
     "@vue/compat": "3.3.4",
