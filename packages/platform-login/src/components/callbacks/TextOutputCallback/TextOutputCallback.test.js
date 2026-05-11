@@ -180,56 +180,133 @@ describe('TextOutputCallback.vue', () => {
   });
 
   describe('multiline message rendering', () => {
-    // Note: white-space-pre-line class preserves newlines in messages (IAM-9916)
-    it('preserves newlines for INFORMATION messages', async () => {
-      const multilineMessage = 'Information: Email on file: test123@example.com';
+    // isFirstRenderedCallback is always false here: this block tests the CSS class discriminator
+    // only. Using isFirstRenderedCallback=true would trigger aria-hidden / live-region logic that
+    // is unrelated to the white-space-pre-line behaviour being verified (those paths are covered
+    // in the 'interactive message accessibility behavior' describe block below).
+    async function mountMessage(messageType, message) {
       mountComponent({
-        messageType: '0',
-        message: multilineMessage,
+        messageType,
+        message,
         isFirstRenderedCallback: false,
         isMfaRegistrationStep: false,
       });
-
       await flushPromises();
+    }
+
+    // Note: white-space-pre-line class preserves newlines in messages (IAM-9916)
+    it('preserves newlines for INFORMATION messages', async () => {
+      await mountMessage('0', 'line one\nline two');
 
       const messageElement = wrapper.find('.text-muted.white-space-pre-line');
       expect(messageElement.exists()).toBe(true);
-      expect(messageElement.text()).toContain('Information: Email on file');
       expect(messageElement.classes()).toContain('white-space-pre-line');
+      expect(wrapper.vm.sanitizedMessage).toContain('\n');
     });
 
     it('preserves newlines for WARNING messages', async () => {
-      const multilineMessage = 'Warning: Phone number on file: 123-456-789';
-      mountComponent({
-        messageType: '1',
-        message: multilineMessage,
-        isFirstRenderedCallback: false,
-        isMfaRegistrationStep: false,
-      });
-
-      await flushPromises();
+      await mountMessage('1', 'line one\nline two');
 
       const alertElement = wrapper.find('.alert-warning.white-space-pre-line');
       expect(alertElement.exists()).toBe(true);
-      expect(alertElement.text()).toContain('Warning: Phone number on file');
       expect(alertElement.classes()).toContain('white-space-pre-line');
+      expect(wrapper.vm.sanitizedMessage).toContain('\n');
     });
 
     it('preserves newlines for ERROR messages', async () => {
-      const multilineMessage = 'Error: Example error message for testing';
-      mountComponent({
-        messageType: '2',
-        message: multilineMessage,
-        isFirstRenderedCallback: false,
-        isMfaRegistrationStep: false,
-      });
-
-      await flushPromises();
+      await mountMessage('2', 'line one\nline two');
 
       const alertElement = wrapper.find('.alert-danger.white-space-pre-line');
       expect(alertElement.exists()).toBe(true);
-      expect(alertElement.text()).toContain('Error: Example error message');
       expect(alertElement.classes()).toContain('white-space-pre-line');
+      expect(wrapper.vm.sanitizedMessage).toContain('\n');
+    });
+
+    // Content-type discriminator: `white-space-pre-line` must be omitted when
+    // the sanitized message contains HTML elements, so customer journeys that
+    // pass custom HTML render as authored (pre-IAM-9916 behaviour).
+    it('omits white-space-pre-line for INFORMATION messages containing HTML with inter-tag newlines', async () => {
+      await mountMessage('0', '<a href="#">A</a>\n|\n<a href="#">B</a>');
+
+      const messageElement = wrapper.find('.text-muted');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.classes()).not.toContain('white-space-pre-line');
+    });
+
+    it('omits white-space-pre-line for WARNING messages containing HTML', async () => {
+      await mountMessage('1', '<a href="https://example.com">Review warning details</a>');
+
+      const messageElement = wrapper.find('.alert-warning');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.classes()).not.toContain('white-space-pre-line');
+    });
+
+    it('omits white-space-pre-line for ERROR messages containing HTML', async () => {
+      await mountMessage('2', '<a href="https://example.com">See details</a>');
+
+      const messageElement = wrapper.find('.alert-danger');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.classes()).not.toContain('white-space-pre-line');
+    });
+
+    it('applies white-space-pre-line for INFORMATION messages containing a br tag (br is preceded by a text node so content is treated as plain text; the visual break is produced by the br element independently of white-space-pre-line)', async () => {
+      await mountMessage('0', 'line1<br>line2');
+
+      const messageElement = wrapper.find('.text-muted');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.classes()).toContain('white-space-pre-line');
+    });
+
+    it('preserves newlines for INFORMATION messages containing mixed plain text and inline HTML (e.g. plain text before a strong tag)', async () => {
+      await mountMessage('0', 'Your email: test@example.com\nYour <strong>phone</strong>: 123');
+
+      const messageElement = wrapper.find('.text-muted.white-space-pre-line');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.classes()).toContain('white-space-pre-line');
+    });
+
+    it('applies white-space-pre-line for INFORMATION messages that contain only HTML entities (entity-only content is plain text)', async () => {
+      await mountMessage('0', 'A &amp; B');
+
+      const messageElement = wrapper.find('.text-muted');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.classes()).toContain('white-space-pre-line');
+    });
+
+    it('applies white-space-pre-line for INFORMATION messages that are empty or whitespace-only and does not throw', async () => {
+      expect(() => mountComponent({
+        messageType: '0',
+        message: '',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      })).not.toThrow();
+
+      await flushPromises();
+
+      let messageElement = wrapper.find('.text-muted');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.classes()).toContain('white-space-pre-line');
+
+      expect(() => mountComponent({
+        messageType: '0',
+        message: '   ',
+        isFirstRenderedCallback: false,
+        isMfaRegistrationStep: false,
+      })).not.toThrow();
+
+      await flushPromises();
+
+      messageElement = wrapper.find('.text-muted');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.classes()).toContain('white-space-pre-line');
+    });
+
+    it('omits white-space-pre-line for INFORMATION messages containing HTML with no newlines (locks in the discriminator)', async () => {
+      await mountMessage('0', '<a href="#">link</a>');
+
+      const messageElement = wrapper.find('.text-muted');
+      expect(messageElement.exists()).toBe(true);
+      expect(messageElement.classes()).not.toContain('white-space-pre-line');
     });
   });
 
@@ -422,9 +499,10 @@ describe('TextOutputCallback.vue', () => {
       await flushPromises();
 
       const headingDiv = wrapper.find('[role="heading"]');
-      const messageElement = wrapper.find('.text-muted.white-space-pre-line');
+      const messageElement = wrapper.find('.text-muted');
 
       expect(messageElement.attributes('aria-hidden')).toBeUndefined();
+      expect(messageElement.classes()).not.toContain('white-space-pre-line');
       expect(headingDiv.attributes('aria-labelledby')).toBe(`message-${callBackIndex}`);
       expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
     });
@@ -441,9 +519,10 @@ describe('TextOutputCallback.vue', () => {
 
       const headingDiv = wrapper.find('[role="heading"]');
       expect(headingDiv.exists()).toBe(true);
-      const messageElement = wrapper.find('.alert-warning.white-space-pre-line');
+      const messageElement = wrapper.find('.alert-warning');
 
       expect(messageElement.attributes('aria-hidden')).toBeUndefined();
+      expect(messageElement.classes()).not.toContain('white-space-pre-line');
       expect(headingDiv.attributes('aria-labelledby')).toBe(`message-${callBackIndex}`);
       expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
     });
@@ -515,7 +594,7 @@ describe('TextOutputCallback.vue', () => {
 
       const headingDiv = wrapper.find('[role="heading"]');
       expect(headingDiv.exists()).toBe(true);
-      const visibleErrorElement = wrapper.find('.alert-danger.white-space-pre-line');
+      const visibleErrorElement = wrapper.find('.alert-danger');
       expect(visibleErrorElement.exists()).toBe(false);
       expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
       expect(wrapper.emitted()['update-screen-reader-message'].pop()).toEqual(['ERROR', 'Critical error text']);
