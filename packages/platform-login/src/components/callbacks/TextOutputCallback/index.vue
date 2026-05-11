@@ -11,19 +11,19 @@ of the MIT license. See the LICENSE file for details. -->
     role="heading">
     <div
       v-if="messageType === 'INFORMATION'"
-      class="text-muted w-100 white-space-pre-line"
+      :class="['text-muted', 'w-100', { 'white-space-pre-line': !containsHtml }]"
       :id="messageElementId"
       :aria-hidden="!isMfaRegistrationStep && isAriaHidden"
       v-html="sanitizedMessage" />
     <div
       v-else-if="messageType === 'WARNING'"
-      class="alert w-100 alert-warning white-space-pre-line"
+      :class="['alert', 'w-100', 'alert-warning', { 'white-space-pre-line': !containsHtml }]"
       :id="messageElementId"
       :aria-hidden="isAriaHidden"
       v-html="sanitizedMessage" />
     <div
       v-else-if="shouldRenderErrorElement"
-      class="alert w-100 alert-danger white-space-pre-line"
+      :class="['alert', 'w-100', 'alert-danger', { 'white-space-pre-line': !containsHtml }]"
       :id="messageElementId"
       v-html="sanitizedMessage" />
     <div
@@ -103,6 +103,19 @@ export default {
      * */
     isAriaHidden() {
       return this.isFirstRenderedCallback && !hasInteractiveContent(this.sanitizedMessage) && this.hideTextOutput;
+    },
+    /**
+     * Returns true when the sanitized message is HTML-authored content.
+     * Used to avoid applying `white-space-pre-line` to HTML content, where
+     * source formatting newlines should not create visual line breaks.
+     *
+     * @returns {boolean}
+     */
+    containsHtml() {
+      if (!this.sanitizedMessage || typeof this.sanitizedMessage !== 'string') return false;
+      const doc = new DOMParser().parseFromString(this.sanitizedMessage, 'text/html');
+      const { firstChild } = doc.body;
+      return firstChild !== null && firstChild.nodeType !== 3;
     },
     // Only render the ERROR element after the first callback.
     shouldRenderErrorElement() {
