@@ -500,6 +500,43 @@ describe('BasicInput', () => {
       expect(showErrorMessageSpy).toHaveBeenCalledWith(writeTextError, 'Failed to copy');
     });
 
+    describe('when readonly', () => {
+      it('still emits blur when the input is blurred', async () => {
+        const wrapper = setup({ readonly: true });
+        const input = findByTestId(wrapper, 'input-stub-testid');
+
+        await input.trigger('blur');
+
+        expect(wrapper.emitted().blur).toBeTruthy();
+      });
+
+      it('still updates floatLabels on blur', async () => {
+        const wrapper = setup({
+          readonly: true,
+          floatingLabel: true,
+          label: 'stub-label',
+          value: 'some value',
+        });
+        await wrapper.vm.$nextTick();
+        const input = findByTestId(wrapper, 'input-stub-testid');
+
+        expect(wrapper.vm.floatLabels).toBe(true);
+        await input.trigger('blur');
+        expect(wrapper.vm.floatLabels).toBe(true);
+      });
+
+      it('does not run stringToNumber on blur for number type', async () => {
+        const wrapper = setup({ readonly: true, type: 'number', value: '&{esv.my-value}' });
+        await wrapper.vm.$nextTick();
+
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        await input.trigger('blur');
+        await flushPromises();
+
+        expect(wrapper.vm.inputValue).toBe('&{esv.my-value}');
+      });
+    });
+
     describe('when number field', () => {
       const testCases = [
         ['should allow input given numeric value', '583', '583'],

@@ -400,7 +400,7 @@ export default {
       if (this.floatingLabel && this.label) {
         this.floatLabels = this.inputValue?.toString().length > 0;
       }
-      if (this.fieldType === 'number') {
+      if (this.fieldType === 'number' && !this.readonly) {
         this.inputValue = this.stringToNumber(newVal);
       }
     },
