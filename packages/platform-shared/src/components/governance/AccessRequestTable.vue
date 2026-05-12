@@ -3,48 +3,99 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BCard no-body>
-    <FrAccessRequestList
-      :is-loading="isLoading"
-      :list-name="title"
-      :request-status="status"
-      :requests="accessRequests"
-      @open-detail="$emit('navigate-to-details', $event)">
-      <template #header>
-        <FrRequestToolbar
-          v-model:num-filters="numFilters"
-          :sort-by-options="sortByOptions"
-          :status-options="statusOptions"
-          @filter-change="filterHandler({ filter: $event })"
-          @sort-change="filterHandler({ sortKeys: $event })"
-          @sort-direction-change="filterHandler({ sortDir: $event })"
-          @status-change="filterHandler({ status: $event })" />
-      </template>
-      <template #no-data>
-        <FrNoData
-          class="mb-4 border-top"
-          icon="person_add"
-          :card="false"
-          :subtitle="$t('governance.accessRequest.noRequests', { status: getStatusText(statusOptions, status) })" />
-      </template>
-      <template #actions="{ item }">
-        <FrRequestActionsCell
-          v-if="status === 'in-progress' || status === 'suspended'"
-          class="mr-3"
-          :item="item"
-          :status="status"
-          :type="props.isAdmin ? detailTypes.ADMIN_REQUEST : detailTypes.USER_REQUEST"
-          @action="handleAction($event, item)" />
-      </template>
-    </FrAccessRequestList>
-    <FrPagination
-      v-if="totalRows"
-      v-model="currentPage"
-      :per-page="pageSize"
-      :total-rows="totalRows"
-      @input="filterHandler({ currentPage: $event })"
-      @on-page-size-change="filterHandler({ pageSize: $event })" />
-  </BCard>
+  <div class="d-flex flex-wrap h-100 w-100">
+    <FrFilterSidePanel
+      v-if="showFilters"
+      :title="$t('governance.access.filter.requestFilter')">
+      <FrAccessFilter
+        :input-fields="accessFilter"
+        :input-filter-data="filterData"
+      />
+    </FrFilterSidePanel>
+    <div class="d-flex h-100 table-container fr-table-panel">
+      <BCard
+        class="h-100 d-flex"
+        no-body>
+        <div class="d-flex flex-grow-1 table-container">
+          <FrAccessRequestList
+            :is-loading="isLoading"
+            :list-name="title"
+            :request-status="status"
+            :requests="accessRequests"
+            @open-detail="$emit('navigate-to-details', $event)">
+            <template #header>
+              <BButtonToolbar
+                class="px-4 py-3 border-bottom-0 justify-content-end">
+                <FrSortDropdown
+                  class="px-3"
+                  :selected-item="sortField"
+                  :hide-labels-on-mobile="true"
+                  :sort-by-options="sortByOptions"
+                  @sort-field-change="handleSortChange"
+                  @sort-direction-change="handleSortDirectionChange" />
+                <BButton
+                  @click="showFilters = !showFilters"
+                  class="toolbar-link-text"
+                  :pressed="showFilters"
+                  aria-labelledby="filter-toggle-label"
+                  data-testid="filter-toggle"
+                  variant="link">
+                  <FrIcon
+                    icon-class="mr-lg-2"
+                    name="filter_list">
+                    <span
+                      class="d-none d-lg-inline"
+                      id="filter-toggle-label">
+                      {{ showFilters ? $t('governance.hideFilters') : $t('governance.showFilters') }}
+                    </span>
+                  </FrIcon>
+                  <BBadge
+                    v-if="numFilters > 0"
+                    pill
+                    class="ml-1"
+                    data-testid="filter-badge"
+                    variant="primary">
+                    {{ numFilters }}
+                  </BBadge>
+                </BButton>
+              </BButtonToolbar>
+              <!-- <FrRequestToolbar
+                v-model:num-filters="numFilters"
+                :sort-by-options="sortByOptions"
+                :status-options="statusOptions"
+                @filter-change="filterHandler({ filter: $event })"
+                @sort-change="filterHandler({ sortKeys: $event })"
+                @sort-direction-change="filterHandler({ sortDir: $event })"
+                @status-change="filterHandler({ status: $event })" /> -->
+            </template>
+            <template #no-data>
+              <FrNoData
+                class="mb-4 border-top"
+                icon="person_add"
+                :card="false"
+                :subtitle="$t('governance.accessRequest.noRequests', { status: getStatusText(statusOptions, status) })" />
+            </template>
+            <template #actions="{ item }">
+              <FrRequestActionsCell
+                v-if="status === 'in-progress' || status === 'suspended'"
+                class="mr-3"
+                :item="item"
+                :status="status"
+                :type="props.isAdmin ? detailTypes.ADMIN_REQUEST : detailTypes.USER_REQUEST"
+                @action="handleAction($event, item)" />
+            </template>
+          </FrAccessRequestList>
+        </div>
+        <FrPagination
+          v-if="totalRows"
+          v-model="currentPage"
+          :per-page="pageSize"
+          :total-rows="totalRows"
+          @input="filterHandler({ currentPage: $event })"
+          @on-page-size-change="filterHandler({ pageSize: $event })" />
+      </BCard>
+    </div>
+  </div>
   <FrRequestModal
     :type="modalType"
     :item="modalItem"
@@ -60,16 +111,26 @@ of the MIT license. See the LICENSE file for details. -->
 <script setup>
 import {
   BCard,
+  BButton,
+  BBadge,
+  BButtonToolbar,
+  BFormRadioGroup,
 } from 'bootstrap-vue';
-import { nextTick, onMounted, ref } from 'vue';
-import { find, startsWith } from 'lodash';
+import {
+  computed, nextTick, onMounted, ref, watch,
+} from 'vue';
+import { debounce, find, startsWith } from 'lodash';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import {
   detailTypes,
+  getAccessFilterConfig,
+  getInitialRequestFilterData,
+  getNumFilters,
   getRequestFilter,
+  getRequestTypeOptions,
   getStatusText,
   sortByOptions,
   sortKeysMap,
@@ -78,9 +139,16 @@ import { requestAction, updateRequestResumeDate } from '@forgerock/platform-shar
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrAccessRequestList from '@forgerock/platform-shared/src/components/governance/AccessRequestList';
 import FrRequestActionsCell from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActionsCell';
-import FrRequestToolbar from '@forgerock/platform-shared/src/components/governance/RequestToolbar';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
 import FrUpdateResumeDateModal from '@forgerock/platform-shared/src/components/governance/RequestDetails/UpdateResumeDateModal';
+import FrAccessFilter from '@forgerock/platform-shared/src/components/governance/AccessFilter/AccessFilter';
+import FrFilterSidePanel from '@forgerock/platform-shared/src/components/governance/FilterSidePanel';
+import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
+import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
+import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
+import FrPriorityFilter from '@forgerock/platform-shared/src/components/governance/PriorityFilter';
 import i18n from '@/i18n';
 
 /**
@@ -122,13 +190,14 @@ const currentPage = ref(1);
 const filter = ref({});
 const modalItem = ref({});
 const modalType = ref(REQUEST_MODAL_TYPES.CANCEL);
-const numFilters = ref(0);
 const pageSize = ref(10);
 const resumeDate = ref(null);
 const sortDir = ref('desc');
+const sortField = ref('date');
 const sortKeys = ref('date');
 const status = ref('in-progress');
 const isSaving = ref(false);
+const showFilters = ref(false);
 const statusOptions = ref([
   {
     text: i18n.global.t('governance.status.pending'),
@@ -159,6 +228,24 @@ const componentRefs = new Map([
   ['totalRows', props.totalRows],
 ]);
 
+const requestTypeOptions = ref(getRequestTypeOptions());
+const filterData = ref(getInitialRequestFilterData(statusOptions.value[0].value));
+const numFilters = computed(() => getNumFilters(filterData.value));
+const accessFilter = ref(getAccessFilterConfig(
+  {
+    BFormRadioGroup,
+    FrPriorityFilter,
+    FrSelectInput,
+    FrField,
+    FrGovResourceSelect,
+  },
+  {
+    statusOptions,
+    requestTypeOptions,
+    filterData: filterData.value,
+  },
+));
+
 /**
  * Get current users access requests based on query params and target filter
  */
@@ -178,6 +265,32 @@ async function loadRequests(goToFirstPage) {
   }
   emit('load-requests', params, payload);
 }
+
+/**
+ * Debounced handler that syncs filterData values into local state and triggers a fresh request load.
+ * Resets pagination to the first page on each filter change.
+ */
+const syncFilterDataAndReload = debounce(() => {
+  const {
+    status: statusField,
+    priorities,
+    requestType,
+    query,
+    requester,
+    user,
+  } = filterData.value;
+  status.value = statusField.value;
+  filter.value = {
+    priorities: priorities.value,
+    requestType: requestType.value !== 'all' ? requestType.value : null,
+    query: query.value || null,
+    requester: requester.value || null,
+    user: user.value || null,
+  };
+  loadRequests(true);
+}, 300);
+
+watch(filterData, syncFilterDataAndReload, { deep: true });
 
 /**
  * Opens a modal based on the provided item and type.
@@ -221,6 +334,15 @@ function filterHandler(property) {
   loadRequests(resetPaging);
 }
 
+function handleSortChange(field) {
+  sortField.value = field;
+  filterHandler({ sortKeys: field });
+}
+
+function handleSortDirectionChange(direction) {
+  filterHandler({ sortDir: direction });
+}
+
 /**
  * Updates a suspended request's resume date.
  *
@@ -260,3 +382,31 @@ onMounted(() => {
   }
 });
 </script>
+
+<style lang="scss" scoped>
+.table-container {
+    flex: 1 1 auto;
+    min-width: 0 !important;
+    min-height: 300px;
+
+    :deep(> div) {
+      width: 100%;
+    }
+  }
+.toolbar-link-text {
+  color: $gray-900;
+}
+
+.fr-table-panel {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+  .table-container > * {
+    overflow-x: auto;
+  }
+
+  .fr-access-viewer {
+    padding-bottom: 72px;
+  }
+</style>

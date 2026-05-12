@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,6 +16,7 @@ import {
 import { mockNotification } from '@forgerock/platform-shared/src/testing/utils/mockNotification';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import FrAccessRequestTable from '@forgerock/platform-shared/src/components/governance/AccessRequestTable';
 import MyRequests from './MyRequests';
 import i18n from '@/i18n';
 
@@ -279,26 +280,23 @@ describe('MyRequests', () => {
     const { wrapper } = setup();
     await flushPromises();
 
+    const completePayload = { targetFilter: { operator: 'AND', operand: [{ operator: 'EQUALS', operand: { targetName: 'decision.status', targetValue: 'complete' } }] } };
     AccessRequestApi.getUserRequests = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         result: mockAccessRequests('complete'),
+        totalCount: 1,
       },
     }));
 
-    const statusMenu = findByTestId(wrapper, 'status-menu');
-    const statusMenuButton = statusMenu.find('button');
-    await statusMenuButton.trigger('click');
-    const completedOption = statusMenu.findAll('ul li a')[1];
-    await completedOption.trigger('click');
+    const accessRequestTable = wrapper.findComponent(FrAccessRequestTable);
+    await accessRequestTable.vm.$emit('load-requests', { pageSize: 10, pagedResultsOffset: 0 }, completePayload);
     await flushPromises();
 
-    const requestRows = wrapper.findAll('table tbody [role="row"]');
-    expect(requestRows).toHaveLength(1);
-    const cellsFirstRow = requestRows[0].findAll('td');
-    expect(cellsFirstRow[0].text()).toContain('Grant Application');
-    expect(cellsFirstRow[0].text()).toContain('Test Application');
-    expect(cellsFirstRow[0].text()).toContain('Test User');
-    expect(cellsFirstRow[0].text()).toContain('ID: 387b7fa9-c57a-495c-a276-74d025020cdc');
+    expect(AccessRequestApi.getUserRequests).toHaveBeenCalledWith(
+      '1234',
+      { pageSize: 10, pagedResultsOffset: 0 },
+      completePayload,
+    );
     expect(wrapper.vm.isLoading).toBe(false);
   });
 

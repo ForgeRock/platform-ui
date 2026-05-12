@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
               v-model="filterData[item.props.name].value"
               v-on="item.on"
               @input="debouncedTextSearch(item.props.name, $event)"
+              @update:value="filterData[item.props.name].value = $event"
               @search:applications="searchApplications"
               @update:applications="updateApplications"
               :application-search-results="applicationSearchResults"
