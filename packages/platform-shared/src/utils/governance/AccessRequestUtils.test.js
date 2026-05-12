@@ -36,21 +36,37 @@ AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promis
 describe('RequestToolbar', () => {
   describe('getRequestFilter', () => {
     it('request id, requester, and requestee', () => {
-      const filter = { query: 'testId' };
+      const filter = {
+        query: 'testId',
+        requester: 'john',
+        user: 'jane',
+      };
       expect(getRequestFilter(filter)).toEqual({
         operator: 'AND',
-        operand: [{
-          operator: 'OR',
-          operand: [
-            getBasicFilter('CONTAINS', 'user.userName', 'testId'),
-            getBasicFilter('CONTAINS', 'user.givenName', 'testId'),
-            getBasicFilter('CONTAINS', 'user.sn', 'testId'),
-            getBasicFilter('CONTAINS', 'requester.userName', 'testId'),
-            getBasicFilter('CONTAINS', 'requester.givenName', 'testId'),
-            getBasicFilter('CONTAINS', 'requester.sn', 'testId'),
-            getBasicFilter('EQUALS', 'id', 'testId'),
-          ],
-        }],
+        operand: [
+          {
+            operator: 'OR',
+            operand: [
+              getBasicFilter('EQUALS', 'id', 'testId'),
+            ],
+          },
+          {
+            operator: 'OR',
+            operand: [
+              getBasicFilter('CONTAINS', 'user.userName', 'jane'),
+              getBasicFilter('CONTAINS', 'user.givenName', 'jane'),
+              getBasicFilter('CONTAINS', 'user.sn', 'jane'),
+            ],
+          },
+          {
+            operator: 'OR',
+            operand: [
+              getBasicFilter('CONTAINS', 'requester.userName', 'john'),
+              getBasicFilter('CONTAINS', 'requester.givenName', 'john'),
+              getBasicFilter('CONTAINS', 'requester.sn', 'john'),
+            ],
+          },
+        ],
       });
     });
 

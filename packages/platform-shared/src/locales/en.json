@@ -1777,7 +1777,9 @@
         "hideFilters": "Hide Filters",
         "neverCertified": "Never Certified",
         "roleBased": "Role-based Access",
-        "showIf": "Show if"
+        "requestFilter": "Filter Requests",
+        "showIf": "Show if",
+        "status": "Status"
       },
       "loadingAccess": "Loading user access",
       "noAccessFound": "No access found for user",
@@ -1930,6 +1932,7 @@
         "roleRemove": "Remove Role"
       },
       "priorities": {
+        "priorities": "Priorities",
         "lowPriority": "Low Priority",
         "mediumPriority": "Medium Priority",
         "highPriority": "High Priority",
@@ -2009,8 +2012,11 @@
       "recommended": "Recommended",
       "requestedFor": "Requested For",
       "requestDate": "Request Date",
+      "requestDetails": "Request Details",
       "requestedBy": "Requested By",
       "requestId": "Request ID",
+      "requestee": "Requestee",
+      "requester": "Requester",
       "requestSaveError": "Error saving request",
       "requestSaveSuccess": "Request saved successfully",
       "requestType": "Request Type",

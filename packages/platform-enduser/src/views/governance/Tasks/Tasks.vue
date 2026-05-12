@@ -1,90 +1,141 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer
-    fluid
-    class="my-5">
+  <div class="d-flex flex-column h-100 w-100 px-4 pt-5">
     <FrHeader
       :title="$t('governance.tasks.title')"
       :subtitle="$t('governance.tasks.subtitle')" />
-    <BCard no-body>
-      <FrTaskList
-        :is-loading="isLoading"
-        :tasks="fulfillmentTasks"
-        @open-detail="viewDetails">
-        <template #header>
-          <FrRequestToolbar
-            :num-filters="numFilters"
-            :sort-by-options="sortByOptions"
-            :status-options="statusOptions"
-            @sort-change="filterHandler({ sortKeys: $event })"
-            @sort-direction-change="filterHandler({ sortDir: $event })"
-            @status-change="filterHandler({ status: $event })">
-            <template #filter>
-              <FrTaskFilter
-                @filter-change="filterHandler({ filter: $event.filter }); numFilters = $event.count" />
-            </template>
-          </FrRequestToolbar>
-        </template>
-        <template #no-data>
-          <FrNoData
-            :card="false"
-            class="mb-4 border-top"
-            icon="inbox"
-            :subtitle="$t('governance.tasks.noTasks')" />
-        </template>
-        <template #actions="{ item }">
-          <FrRequestActionsCell
-            v-if="status === 'pending'"
-            :item="item"
-            :status="status"
-            :type="detailTypes.FULFILLMENT"
-            @action="handleAction($event, item)" />
-        </template>
-        <template #footer>
+    <div class="d-flex flex-wrap flex-grow-1 w-100">
+      <FrFilterSidePanel
+        v-if="showFilters"
+        :title="$t('governance.access.filter.requestFilter')">
+        <FrAccessFilter
+          :input-fields="accessFilter"
+          :input-filter-data="filterData"
+        />
+      </FrFilterSidePanel>
+      <div class="d-flex h-100 table-container fr-table-panel">
+        <BCard
+          class="h-100 d-flex"
+          no-body>
+          <div class="d-flex flex-grow-1 table-container">
+            <FrTaskList
+              :is-loading="isLoading"
+              :tasks="fulfillmentTasks"
+              @open-detail="viewDetails">
+              <template #header>
+                <BButtonToolbar
+                  class="px-4 py-3 border-bottom-0 justify-content-end">
+                  <FrSortDropdown
+                    class="px-3"
+                    :selected-item="sortField"
+                    :hide-labels-on-mobile="true"
+                    :sort-by-options="sortByOptions"
+                    @sort-field-change="handleSortChange"
+                    @sort-direction-change="handleSortDirectionChange" />
+                  <BButton
+                    @click="showFilters = !showFilters"
+                    class="toolbar-link-text"
+                    :pressed="showFilters"
+                    aria-labelledby="filter-toggle-label"
+                    data-testid="filter-toggle"
+                    variant="link">
+                    <FrIcon
+                      icon-class="mr-lg-2"
+                      name="filter_list">
+                      <span
+                        class="d-none d-lg-inline"
+                        id="filter-toggle-label">
+                        {{ showFilters ? $t('governance.hideFilters') : $t('governance.showFilters') }}
+                      </span>
+                    </FrIcon>
+                    <BBadge
+                      v-if="numFilters > 0"
+                      pill
+                      class="ml-1"
+                      data-testid="filter-badge"
+                      variant="primary">
+                      {{ numFilters }}
+                    </BBadge>
+                  </BButton>
+                </BButtonToolbar>
+              </template>
+              <template #no-data>
+                <FrNoData
+                  :card="false"
+                  class="mb-4 border-top"
+                  icon="inbox"
+                  :subtitle="$t('governance.tasks.noTasks')" />
+              </template>
+              <template #actions="{ item }">
+                <FrRequestActionsCell
+                  v-if="status === 'pending'"
+                  :item="item"
+                  :status="status"
+                  :type="detailTypes.FULFILLMENT"
+                  @action="handleAction($event, item)" />
+              </template>
+            </FrTaskList>
+          </div>
           <FrPagination
             v-model="currentPage"
             :per-page="pageSize"
             :total-rows="totalCount"
             @input="filterHandler({ currentPage: $event })"
             @on-page-size-change="filterHandler({ pageSize: $event })" />
-        </template>
-      </FrTaskList>
-    </BCard>
+        </BCard>
+      </div>
+    </div>
     <FrRequestModal
       is-task
       :type="modalType"
       :item="modalItem"
       @modal-closed="modalType = null; modalItem = null"
       @update-list="loadFulfillmentTasksAndUpdateBadge" />
-  </BContainer>
+  </div>
 </template>
 
 <script setup>
 /**
  * View to display fulfillment tasks. Includes the ability to select a status, sort, and filter tasks.
  */
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { debounce } from 'lodash';
 import { useRouter } from 'vue-router';
 import {
   BCard,
-  BContainer,
+  BButtonToolbar,
+  BButton,
+  BFormRadioGroup,
 } from 'bootstrap-vue';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrRequestActionsCell from '@forgerock/platform-shared/src/components/governance/RequestDetails/RequestActionsCell';
 import FrRequestModal from '@forgerock/platform-shared/src/components/governance/RequestModal/RequestModal';
-import FrRequestToolbar from '@forgerock/platform-shared/src/components/governance/RequestToolbar';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
-import { detailTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+// import { detailTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getTaskFilter } from '@forgerock/platform-shared/src/utils/governance/fulfillmentTasks';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { REQUEST_MODAL_TYPES } from '@forgerock/platform-shared/src/utils/governance/constants';
-import FrTaskFilter from './TaskFilter';
+// import FrTaskFilter from './TaskFilter';
+import {
+  detailTypes,
+  getInitialTaskFilterData,
+  getNumFilters,
+  getTaskFilterConfig,
+  sortByOptions,
+  sortKeysMap,
+} from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
+import FrFilterSidePanel from '@forgerock/platform-shared/src/components/governance/FilterSidePanel';
+import FrAccessFilter from '@forgerock/platform-shared/src/components/governance/AccessFilter/AccessFilter';
+import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrPriorityFilter from '@forgerock/platform-shared/src/components/governance/PriorityFilter';
 import FrTaskList from './TaskList';
 import { getUserFulfillmentTasks } from '@/api/governance/TasksApi';
 import i18n from '@/i18n';
@@ -100,7 +151,7 @@ const currentPage = ref(1);
 const filter = ref({});
 const fulfillmentTasks = ref([]);
 const isLoading = ref(false);
-const numFilters = ref(0);
+// const numFilters = ref(0);
 const modalItem = ref({});
 const modalType = ref('');
 const pageSize = ref(10);
@@ -108,6 +159,7 @@ const sortDir = ref('desc');
 const sortKeys = ref('date');
 const status = ref('pending');
 const totalCount = ref(0);
+const showFilters = ref(false);
 
 const componentRefs = new Map([
   ['currentPage', currentPage],
@@ -120,41 +172,16 @@ const componentRefs = new Map([
 ]);
 
 const statusOptions = [
-  {
-    text: i18n.global.t('governance.status.pending'),
-    value: 'pending',
-  },
-  {
-    text: i18n.global.t('governance.status.complete'),
-    value: 'complete',
-  },
+  { text: i18n.global.t('governance.status.pending'), value: 'pending' },
+  { text: i18n.global.t('governance.status.complete'), value: 'complete' },
 ];
-
-const sortByOptions = [
-  {
-    value: 'date',
-    text: i18n.global.t('governance.tasks.dateAssigned'),
-  },
-  {
-    value: 'assignee',
-    text: i18n.global.t('governance.tasks.assignedTo'),
-  },
-  {
-    value: 'priority',
-    text: i18n.global.t('common.priority'),
-  },
-  {
-    value: 'id',
-    text: i18n.global.t('governance.accessRequest.requestId'),
-  },
-];
-
-const sortKeysMap = {
-  date: 'decision.phases.startDate',
-  assignee: 'decision.actors.active.userName',
-  priority: 'request.common.priority',
-  id: 'metadata.primaryKey',
-};
+const sortField = ref('date');
+const filterData = ref(getInitialTaskFilterData(statusOptions[0].value));
+const numFilters = computed(() => getNumFilters(filterData.value));
+const accessFilter = ref(getTaskFilterConfig(
+  { BFormRadioGroup, FrPriorityFilter, FrField },
+  { statusOptions, filterData: filterData.value },
+));
 
 /**
  * Updates the badge with the latest tasks count.
@@ -203,6 +230,25 @@ async function loadTasks(goToFirstPage) {
 }
 
 /**
+ * Debounced handler that syncs filterData values into local state and triggers a fresh task load.
+ * Resets pagination to the first page on each filter change.
+ */
+const syncFilterDataAndReload = debounce(() => {
+  const {
+    status: statusField, priorities, query, assignee,
+  } = filterData.value;
+  status.value = statusField.value;
+  filter.value = {
+    priorities: priorities.value,
+    query: query.value || null,
+    assignee: assignee.value || null,
+  };
+  loadTasks(true);
+}, 300);
+
+watch(filterData, syncFilterDataAndReload, { deep: true });
+
+/**
  * Loads the fulfillment tasks and updates the badge count accordingly.
  * This function is responsible for fetching the latest fulfillment tasks
  * and ensuring that the badge count reflects the current number of tasks.
@@ -221,6 +267,15 @@ function filterHandler(property) {
   componentRefs.get(key).value = value;
   const resetPaging = (key !== 'currentPage');
   loadTasks(resetPaging);
+}
+
+function handleSortChange(field) {
+  sortField.value = field;
+  filterHandler({ sortKeys: field });
+}
+
+function handleSortDirectionChange(direction) {
+  filterHandler({ sortDir: direction });
 }
 
 /**
@@ -258,8 +313,24 @@ function handleAction(action, item) {
 loadFulfillmentTasksAndUpdateBadge();
 
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .dropdown-padding {
   padding: 0 20px;
+}
+.table-container {
+  flex: 1 1 auto;
+  min-width: 0 !important;
+  min-height: 300px;
+
+  :deep(> div) {
+    width: 100%;
+  }
+}
+.fr-table-panel {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.toolbar-link-text {
+  color: $gray-900;
 }
 </style>

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -183,13 +183,27 @@ export function getRequestFilter(filter, status) {
     allFilters.push({
       operator: 'OR',
       operand: [
-        getBasicFilter('CONTAINS', 'user.userName', filter.query),
-        getBasicFilter('CONTAINS', 'user.givenName', filter.query),
-        getBasicFilter('CONTAINS', 'user.sn', filter.query),
-        getBasicFilter('CONTAINS', 'requester.userName', filter.query),
-        getBasicFilter('CONTAINS', 'requester.givenName', filter.query),
-        getBasicFilter('CONTAINS', 'requester.sn', filter.query),
         getBasicFilter('EQUALS', 'id', filter.query),
+      ],
+    });
+  }
+  if (filter.user) {
+    allFilters.push({
+      operator: 'OR',
+      operand: [
+        getBasicFilter('CONTAINS', 'user.userName', filter.user),
+        getBasicFilter('CONTAINS', 'user.givenName', filter.user),
+        getBasicFilter('CONTAINS', 'user.sn', filter.user),
+      ],
+    });
+  }
+  if (filter.requester) {
+    allFilters.push({
+      operator: 'OR',
+      operand: [
+        getBasicFilter('CONTAINS', 'requester.userName', filter.requester),
+        getBasicFilter('CONTAINS', 'requester.givenName', filter.requester),
+        getBasicFilter('CONTAINS', 'requester.sn', filter.requester),
       ],
     });
   }
@@ -503,4 +517,273 @@ export function isTypeRole(requestType) {
 
 export function isTypeLcm(requestType) {
   return getRequestObjectType(requestType) === 'lcmUser';
+}
+
+/**
+ * Returns the list of request type filter options.
+ * @returns {Array} request type select options
+ */
+export function getRequestTypeOptions() {
+  return [
+    { text: i18n.global.t('governance.accessRequest.requestTypes.all'), value: 'all' },
+    { text: i18n.global.t(requestTypes.ACCOUNT_GRANT.label), value: requestTypes.ACCOUNT_GRANT.value },
+    { text: i18n.global.t(requestTypes.ACCOUNT_REVOKE.label), value: requestTypes.ACCOUNT_REVOKE.value },
+    { text: i18n.global.t(requestTypes.ENTITLEMENT_GRANT.label), value: requestTypes.ENTITLEMENT_GRANT.value },
+    { text: i18n.global.t(requestTypes.ENTITLEMENT_REVOKE.label), value: requestTypes.ENTITLEMENT_REVOKE.value },
+    { text: i18n.global.t(requestTypes.CREATE_ENTITLEMENT.label), value: requestTypes.CREATE_ENTITLEMENT.value },
+    { text: i18n.global.t(requestTypes.MODIFY_ENTITLEMENT.label), value: requestTypes.MODIFY_ENTITLEMENT.value },
+    { text: i18n.global.t(requestTypes.ROLE_GRANT.label), value: requestTypes.ROLE_GRANT.value },
+    { text: i18n.global.t(requestTypes.ROLE_REVOKE.label), value: requestTypes.ROLE_REVOKE.value },
+    { text: i18n.global.t(requestTypes.CREATE_USER.label), value: requestTypes.CREATE_USER.value },
+    { text: i18n.global.t(requestTypes.MODIFY_USER.label), value: requestTypes.MODIFY_USER.value },
+    { text: i18n.global.t(requestTypes.DELETE_USER.label), value: requestTypes.DELETE_USER.value },
+  ];
+}
+
+/**
+ * Returns the initial filter data shape for the access request filter panel.
+ * @param {String} defaultStatus - The default status value to pre-select.
+ * @returns {Object} initial filter data keyed by filter field name
+ */
+export function getInitialRequestFilterData(defaultStatus) {
+  return {
+    status: {
+      value: defaultStatus,
+    },
+    priorities: {
+      value: {
+        high: true,
+        medium: true,
+        low: true,
+        none: true,
+      },
+    },
+    requestType: {
+      value: 'all',
+    },
+    query: {
+      value: '',
+    },
+    requester: {
+      value: '',
+    },
+    user: {
+      value: '',
+    },
+  };
+}
+
+/**
+ * Counts the number of active filters from the filter data object.
+ * @param {Object} filterData - The current filter data state.
+ * @returns {Number} count of active filters
+ */
+export function getNumFilters(filterData) {
+  if (!filterData) return 0;
+  let count = 0;
+  const { priorities, requestType, query } = filterData;
+  if (priorities) {
+    const p = priorities.value;
+    if (!p.high) count += 1;
+    if (!p.medium) count += 1;
+    if (!p.low) count += 1;
+    if (!p.none) count += 1;
+  }
+  if (requestType?.value && requestType.value !== 'all') count += 1;
+  if (query?.value?.length) count += 1;
+  return count;
+}
+
+/**
+ * Builds the accessFilter config object for FrAccessFilter.
+ * Accepts Vue component classes and reactive options so the utility stays framework-agnostic.
+ * @param {Object} components - Vue component references: { BFormRadioGroup, FrPriorityFilter, FrSelectInput, FrField, FrGovResourceSelect }
+ * @param {Object} options - Reactive data: { statusOptions, requestTypeOptions, filterData }
+ * @returns {Object} accessFilter config
+ */
+export function getAccessFilterConfig(components, options) {
+  const {
+    BFormRadioGroup, FrPriorityFilter, FrSelectInput, FrField,
+  } = components;
+  const { statusOptions, requestTypeOptions, filterData } = options;
+
+  return {
+    status: {
+      name: i18n.global.t('governance.access.filter.status'),
+      components: [
+        {
+          id: 'statuses',
+          component: BFormRadioGroup,
+          modelKey: 'statuses',
+          props: {
+            value: filterData.status.value,
+            stacked: true,
+            class: 'mr-2',
+            options: statusOptions,
+            label: i18n.global.t('governance.access.filter.status'),
+            name: 'status',
+          },
+        },
+      ],
+    },
+    priorities: {
+      name: i18n.global.t('governance.accessRequest.priorities.priorities'),
+      components: [
+        {
+          id: 'priorities',
+          component: FrPriorityFilter,
+          props: {
+            name: 'priorities',
+            value: filterData.priorities.value,
+            class: 'mb-4 mt-2',
+          },
+        },
+      ],
+    },
+    requestType: {
+      name: i18n.global.t('governance.accessRequest.requestDetails'),
+      components: [
+        {
+          id: 'requestType',
+          component: FrSelectInput,
+          props: {
+            name: 'requestType',
+            value: filterData.requestType.value,
+            label: i18n.global.t('governance.accessRequest.requestType'),
+            options: requestTypeOptions,
+            class: 'mb-4 request-type-select',
+          },
+        },
+        {
+          id: 'query',
+          component: FrField,
+          props: {
+            name: 'query',
+            value: filterData.query.value,
+            label: i18n.global.t('governance.accessRequest.requestId'),
+            class: 'mb-4',
+            testid: 'request-query',
+          },
+        },
+        {
+          id: 'requester',
+          component: FrField,
+          props: {
+            name: 'requester',
+            value: filterData.requester.value,
+            label: i18n.global.t('governance.accessRequest.requester'),
+            class: 'mb-4',
+          },
+        },
+        {
+          id: 'user',
+          component: FrField,
+          props: {
+            name: 'user',
+            value: filterData.user.value,
+            label: i18n.global.t('governance.accessRequest.requestee'),
+            class: 'mb-4',
+          },
+        },
+      ],
+    },
+  };
+}
+
+/**
+ * Returns initial filter data for the task filter (status, priorities, query, assignee).
+ * @param {string} defaultStatus - The default status value.
+ * @returns {Object} initial task filter data
+ */
+export function getInitialTaskFilterData(defaultStatus) {
+  return {
+    status: {
+      value: defaultStatus,
+    },
+    priorities: {
+      value: {
+        high: true,
+        medium: true,
+        low: true,
+        none: true,
+      },
+    },
+    query: {
+      value: '',
+    },
+    assignee: {
+      value: '',
+    },
+  };
+}
+
+/**
+ * Builds the filter config for the task filter panel (status, priorities, query, assignee).
+ * @param {Object} components - Vue component references: { BFormRadioGroup, FrPriorityFilter, FrField }
+ * @param {Object} options - { statusOptions, filterData }
+ * @returns {Object} task filter config
+ */
+export function getTaskFilterConfig(components, options) {
+  const { BFormRadioGroup, FrPriorityFilter, FrField } = components;
+  const { statusOptions, filterData } = options;
+
+  return {
+    status: {
+      name: i18n.global.t('governance.access.filter.status'),
+      components: [
+        {
+          id: 'statuses',
+          component: BFormRadioGroup,
+          props: {
+            value: filterData.status.value,
+            stacked: true,
+            class: 'mr-2',
+            options: statusOptions,
+            label: i18n.global.t('governance.access.filter.status'),
+            name: 'status',
+          },
+        },
+      ],
+    },
+    priorities: {
+      name: i18n.global.t('governance.accessRequest.priorities.priorities'),
+      components: [
+        {
+          id: 'priorities',
+          component: FrPriorityFilter,
+          props: {
+            name: 'priorities',
+            value: filterData.priorities.value,
+            class: 'mb-4 mt-2',
+          },
+        },
+      ],
+    },
+    requestDetails: {
+      name: i18n.global.t('governance.accessRequest.requestDetails'),
+      components: [
+        {
+          id: 'query',
+          component: FrField,
+          props: {
+            name: 'query',
+            value: filterData.query.value,
+            label: i18n.global.t('governance.accessRequest.requestId'),
+            class: 'mb-4',
+            testid: 'request-query',
+          },
+        },
+        {
+          id: 'assignee',
+          component: FrField,
+          props: {
+            name: 'assignee',
+            value: filterData.assignee.value,
+            label: i18n.global.t('governance.tasks.assignedTo'),
+            class: 'mb-4',
+          },
+        },
+      ],
+    },
+  };
 }

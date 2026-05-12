@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,11 +12,12 @@ import i18n from '@/i18n';
 /**
  * Generates a filter object for tasks based on the provided criteria.
  * @param {Object} filter - The parameters for filtering tasks.
- * @param {string} filter.query - The name of the task or assignee to filter by.
+ * @param {string} filter.query - The request ID to filter by.
  * @param {Array<string>} filter.priorities - The list of priorities to filter tasks by.
+ * @param {string} filter.assignee - The name or username of the assignee to filter by.
  * @returns {Object} The filter object containing the filters to be applied.
  */
-export function getTaskFilter({ query, priorities }) {
+export function getTaskFilter({ query, priorities, assignee }) {
   const allFilters = [];
 
   if (priorities) {
@@ -34,6 +35,17 @@ export function getTaskFilter({ query, priorities }) {
         getBasicFilter('CONTAINS', 'decision.actors.active.userName', query),
         getBasicFilter('CONTAINS', 'decision.actors.active.givenName', query),
         getBasicFilter('CONTAINS', 'decision.actors.active.sn', query),
+      ],
+    });
+  }
+
+  if (assignee) {
+    allFilters.push({
+      operator: 'OR',
+      operand: [
+        getBasicFilter('CONTAINS', 'decision.actors.active.userName', assignee),
+        getBasicFilter('CONTAINS', 'decision.actors.active.givenName', assignee),
+        getBasicFilter('CONTAINS', 'decision.actors.active.sn', assignee),
       ],
     });
   }

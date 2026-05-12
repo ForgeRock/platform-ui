@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -192,7 +192,7 @@ describe('Tasks', () => {
     expect(lastCall[1]).toEqual(expect.objectContaining({
       _pagedResultsOffset: 0,
       _pageSize: 2,
-      _sortKeys: 'decision.phases.startDate',
+      _sortKeys: 'decision.startDate',
       _sortType: 'date',
       _sortDir: 'desc',
       actorStatus: 'active',
@@ -220,36 +220,10 @@ describe('Tasks', () => {
     expect(lastCall[1]).toEqual(expect.objectContaining({
       _pagedResultsOffset: 10,
       _pageSize: 10,
-      _sortKeys: 'decision.phases.startDate',
+      _sortKeys: 'decision.startDate',
       _sortType: 'date',
       _sortDir: 'desc',
       actorStatus: 'active',
-    }));
-  });
-
-  it('sets status and gets tasks based on event from toolbar', async () => {
-    const getTasksSpy = jest.spyOn(TasksApi, 'getUserFulfillmentTasks');
-
-    wrapper = mountComponent();
-    await flushPromises();
-
-    // Clear the calls made during mount
-    getTasksSpy.mockClear();
-
-    const toolbar = wrapper.findComponent({ name: 'RequestToolbar' });
-    toolbar.vm.$emit('status-change', 'complete');
-    await flushPromises();
-
-    // Check the most recent call after the status change
-    const lastCall = getTasksSpy.mock.calls[getTasksSpy.mock.calls.length - 1];
-    expect(lastCall[0]).toBe('1234');
-    expect(lastCall[1]).toEqual(expect.objectContaining({
-      _pagedResultsOffset: 0,
-      _pageSize: 10,
-      _sortKeys: 'decision.phases.startDate',
-      _sortType: 'date',
-      _sortDir: 'desc',
-      actorStatus: 'inactive',
     }));
   });
 

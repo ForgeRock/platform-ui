@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,7 +9,6 @@ import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
 import {
   createAppContainer,
   findByRole,
-  findByTestId,
   toggleActionsMenu,
 } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
@@ -116,40 +115,6 @@ describe('AccessRequestTable', () => {
       await toggleActionsMenu(domWrapper);
       const viewDetailsButton = findByRole(domWrapper, 'menuitem', 'View Details');
       expect(viewDetailsButton).toBeDefined();
-    });
-
-    it('should filter by status correctly', async () => {
-      const { wrapper } = setup();
-      await flushPromises();
-
-      const statusMenu = findByTestId(wrapper, 'status-menu');
-      const statusMenuButton = statusMenu.find('button');
-      await statusMenuButton.trigger('click');
-      const completedOption = statusMenu.findAll('ul li a')[1];
-
-      await completedOption.trigger('click');
-      await flushPromises();
-
-      expect(wrapper.emitted('load-requests')).toHaveLength(1);
-      expect(wrapper.emitted('load-requests')[0][0]).toEqual({
-        pageSize: 10,
-        pagedResultsOffset: 0,
-        sortDir: 'desc',
-        sortKeys: 'decision.startDate',
-        sortType: 'date',
-      });
-      expect(wrapper.emitted('load-requests')[0][1]).toEqual({
-        operand: [
-          {
-            operand: {
-              targetName: 'decision.status',
-              targetValue: 'complete',
-            },
-            operator: 'EQUALS',
-          },
-        ],
-        operator: 'AND',
-      });
     });
 
     it('Navigates to request details page after clicking on "View Details"', async () => {

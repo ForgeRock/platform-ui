@@ -128,4 +128,5 @@ watch(() => prop.tasks, (newTasks) => {
 :deep(.w-65) {
   width: 65% !important;
 }
+
 </style>

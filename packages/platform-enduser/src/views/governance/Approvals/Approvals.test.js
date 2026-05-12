@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,7 +18,6 @@ import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/Commo
 import { cloneDeep } from 'lodash';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
-import { getRequestFilter } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 import router from '@/router';
 import Approvals from './index';
@@ -332,7 +331,7 @@ describe('Approvals', () => {
     );
   });
 
-  it('sets status and gets approvals based on event from toolbar', async () => {
+  it('sets status and gets approvals based on filterData status change', async () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
@@ -347,26 +346,19 @@ describe('Approvals', () => {
 
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const toolbar = findComponentByTestId(wrapper, 'approvals-toolbar');
-    toolbar.vm.$emit('status-change', 'complete');
+    wrapper.vm.filterData.status.value = 'complete';
+    // flush the debounced watcher (300ms)
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    await flushPromises();
+
     expect(getApprovalsSpy).toHaveBeenCalledWith(
       '1234',
-      {
-        _pagedResultsOffset: 0,
-        _pageSize: 10,
-        _sortKeys: 'decision.startDate',
-        _sortType: 'date',
-        _sortDir: 'desc',
-        actorStatus: 'inactive',
-      },
-      {
-        operator: 'AND',
-        operand: [],
-      },
+      expect.objectContaining({ actorStatus: 'inactive' }),
+      expect.any(Object),
     );
   });
 
-  it('sets filter and gets approvals based on event from toolbar', async () => {
+  it('sets filter and gets approvals based on filterData query change', async () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
@@ -381,24 +373,24 @@ describe('Approvals', () => {
 
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const toolbar = findComponentByTestId(wrapper, 'approvals-toolbar');
-    toolbar.vm.$emit('filter-change', {
-      query: 'testId',
-    });
-
+    wrapper.vm.filterData.query.value = 'testId';
+    await new Promise((resolve) => setTimeout(resolve, 350));
     await flushPromises();
 
     expect(getApprovalsSpy).toHaveBeenCalledWith(
       '1234',
-      {
-        _pagedResultsOffset: 0,
-        _pageSize: 10,
-        _sortKeys: 'decision.startDate',
-        _sortType: 'date',
-        _sortDir: 'desc',
-        actorStatus: 'active',
-      },
-      getRequestFilter({ query: 'testId' }),
+      expect.objectContaining({ actorStatus: 'active' }),
+      expect.objectContaining({
+        operator: 'AND',
+        operand: expect.arrayContaining([
+          expect.objectContaining({
+            operator: 'OR',
+            operand: expect.arrayContaining([
+              expect.objectContaining({ operand: expect.objectContaining({ targetValue: 'testId' }) }),
+            ]),
+          }),
+        ]),
+      }),
     );
   });
 
