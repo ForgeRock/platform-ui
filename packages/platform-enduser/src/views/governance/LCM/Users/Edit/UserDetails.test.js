@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -115,6 +115,13 @@ describe('UserDetails', () => {
     expect(wrapper.find('.media-body').exists()).toBe(true);
     expect(wrapper.find('.media-body').text()).toContain('Mike Test');
     expect(wrapper.find('.media-body').text()).toContain('mikeTest');
+  });
+
+  it('renders the user full name in an h1', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    expect(wrapper.find('h1').text()).toContain('Mike Test');
   });
 
   it('has a tab for the user profile', async () => {

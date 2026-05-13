@@ -23,15 +23,15 @@ of the MIT license. See the LICENSE file for details. -->
             :src="user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
         </BMediaAside>
         <BMediaBody class="align-self-center overflow-hidden text-nowrap">
-          <h3 class="h5 text-muted">
+          <p class="h5 text-muted">
             {{ $t('common.user.user') }}
-          </h3>
-          <h2 class="h1 mb-2">
+          </p>
+          <h1 class="mb-2">
             {{ $t('common.userFullName', {
               givenName: user.givenName,
               sn: user.sn,
             }) }}
-          </h2>
+          </h1>
           <span class="text-muted">
             {{ user.userName }}
           </span>
