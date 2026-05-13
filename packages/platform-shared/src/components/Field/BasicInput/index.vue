@@ -206,6 +206,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * For number fields, emit `null` (instead of `''`) when the input is cleared,
+     * and leave the displayed value empty on blur instead of coercing it to `0`.
+     * Opt-in to preserve the legacy behaviour for existing callers.
+     */
+    nullOnEmpty: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -387,7 +396,8 @@ export default {
         this.floatLabels = newVal.toString().length > 0 && !!this.label;
       }
 
-      this.$emit('input', newVal);
+      const emitValue = (this.nullOnEmpty && this.fieldType === 'number' && newVal === '') ? null : newVal;
+      this.$emit('input', emitValue);
     },
     /**
     * onBlur event handler
@@ -401,7 +411,11 @@ export default {
         this.floatLabels = this.inputValue?.toString().length > 0;
       }
       if (this.fieldType === 'number' && !this.readonly) {
-        this.inputValue = this.stringToNumber(newVal);
+        if (this.nullOnEmpty) {
+          this.inputValue = newVal ? this.stringToNumber(newVal) : '';
+        } else {
+          this.inputValue = this.stringToNumber(newVal);
+        }
       }
     },
     /**

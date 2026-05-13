@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     :description="uiSchema.description"
     :label="uiSchema.label"
     :name="nameProp ? uiSchema[nameProp] : uiSchema.label || uiSchema.id"
+    :null-on-empty="uiSchema.nullOnEmpty"
     :validation="uiSchema.validation"
     :value="uiSchema.value"
     @input="updateValue" />

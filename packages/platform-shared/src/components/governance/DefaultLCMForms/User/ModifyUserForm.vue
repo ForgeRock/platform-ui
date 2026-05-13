@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -106,6 +106,12 @@ function getFilteredSchema(schemaData, privilegeData, userObject) {
       disabled: props.readOnly || !privilegeData.UPDATE?.properties?.includes(key),
     };
 
+    // Pair with `default-value-for-integer="null"` on FrFormGenerator so a
+    // cleared integer field stays null instead of being coerced to 0.
+    if (formProperty.type === 'integer') {
+      formProperty.nullOnEmpty = true;
+    }
+
     // need to check for alpha_user only
     if (property.type === 'relationship') {
       // Handle object relationships
@@ -157,11 +163,9 @@ async function loadSchema() {
  * @param {Event} event - The event object containing details about the field change.
  */
 function fieldChanged(event) {
-  if (schema['managed/alpha_user'].properties[event.path].type === 'number' && event.value === 0) {
-    modelValue.value[event.path] = null;
-    return;
-  }
   modelValue.value[event.path] = event.value;
+  const field = schemaFormGenerator.value.flat().find((f) => f.model === event.path);
+  if (field) field.value = event.value;
   emit('update:modelValue', modelValue.value);
 }
 

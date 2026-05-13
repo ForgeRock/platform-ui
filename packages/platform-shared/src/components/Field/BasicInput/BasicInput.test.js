@@ -627,6 +627,38 @@ describe('BasicInput', () => {
     });
   });
 
+  describe('number input nullOnEmpty prop', () => {
+    it('emits empty string when input is cleared and nullOnEmpty is false (default)', async () => {
+      const wrapper = setup({ type: 'number', value: 5 });
+      await flushPromises();
+      wrapper.vm.inputValue = '';
+      await flushPromises();
+      const emitted = wrapper.emitted().input;
+      expect(emitted[emitted.length - 1][0]).toBe('');
+    });
+
+    it('coerces blurred empty value to 0 when nullOnEmpty is false (default)', () => {
+      const wrapper = setup({ type: 'number' });
+      wrapper.vm.onBlur({ target: { value: '' } });
+      expect(wrapper.vm.inputValue).toBe(0);
+    });
+
+    it('emits null when input is cleared and nullOnEmpty is true', async () => {
+      const wrapper = setup({ type: 'number', nullOnEmpty: true, value: 5 });
+      await flushPromises();
+      wrapper.vm.inputValue = '';
+      await flushPromises();
+      const emitted = wrapper.emitted().input;
+      expect(emitted[emitted.length - 1][0]).toBeNull();
+    });
+
+    it('leaves inputValue empty on blur with empty value when nullOnEmpty is true', () => {
+      const wrapper = setup({ type: 'number', nullOnEmpty: true });
+      wrapper.vm.onBlur({ target: { value: '' } });
+      expect(wrapper.vm.inputValue).toBe('');
+    });
+  });
+
   describe('validation immediate with required rule and value is provided', () => {
     it('should not show validation error', async () => {
       const wrapper = setup({ validationImmediate: true, validation: { required: true }, value: 'test' });
