@@ -130,7 +130,6 @@ import {
   getInitialRequestFilterData,
   getNumFilters,
   getRequestFilter,
-  getRequestTypeOptions,
   getStatusText,
   sortByOptions,
   sortKeysMap,
@@ -228,7 +227,6 @@ const componentRefs = new Map([
   ['totalRows', props.totalRows],
 ]);
 
-const requestTypeOptions = ref(getRequestTypeOptions());
 const filterData = ref(getInitialRequestFilterData(statusOptions.value[0].value));
 const numFilters = computed(() => getNumFilters(filterData.value));
 const accessFilter = ref(getAccessFilterConfig(
@@ -241,7 +239,6 @@ const accessFilter = ref(getAccessFilterConfig(
   },
   {
     statusOptions,
-    requestTypeOptions,
     filterData: filterData.value,
   },
 ));

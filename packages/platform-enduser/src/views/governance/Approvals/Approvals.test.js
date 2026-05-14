@@ -53,6 +53,8 @@ AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promis
   },
 }));
 
+AccessRequestApi.getRequestTypes = jest.fn().mockResolvedValue({ data: { result: [] } });
+
 const mountComponent = () => {
   setupTestPinia({ user: { userId: '1234' } });
   const wrapper = mount(Approvals, {
