@@ -933,13 +933,16 @@
       "errorGeneratingJourney": "Error generating Journey",
       "errorStartingJourneyBuildSession": "Error starting new build session.",
       "extraDetails": {
-        "contentDescription": "Provide any additional context or requirements that will help us create the best Journey for you.",
-        "contentTitle": "Preferences and Constraints",
-        "designPreferencesFieldDescription": "e.g. Prioritise passkey login; keep the number of steps to a minimum.",
-        "designPreferencesFieldLabel": "Any flow design preferences?",
-        "tabTitle": "Extra Details",
-        "useCaseContextFieldDescription": "e.g. Internal employees logging into a company dashboard, or customers accessing an ecommerce app",
-        "useCaseContextFieldLabel": "What kind of users and use case is this Journey for?"
+        "constraintsSectionLabel": "Optimise the Journey for:",
+        "contentTitle": "Preferences & Constraints",
+        "contextFieldDescription": "Describe your use case, user expectations, or specific requirements.",
+        "contextFieldLabel": "Additional Context (Optional)",
+        "tabTitle": "Preferences & Constraints",
+        "constraintOptions": {
+          "fewer_steps": "Fewer steps",
+          "progressive_profiling": "Collect less information up front",
+          "reduce_friction": "Reduce friction for returning users"
+        }
       },
       "generate": "Generate",
       "importDescription": "Import a Journey and related data.",
