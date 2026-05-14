@@ -5,7 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { flushPromises } from '@vue/test-utils';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import * as Notification from '@forgerock/platform-shared/src/utils/notification';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import {
   getRequestFilter,
@@ -20,10 +22,16 @@ import {
   addPredictionDataToRequest,
   isRecommendationRequestType,
   showRecommendationBanner,
+  useRequestTypeOptions,
+  getAccessFilterConfig,
 } from './AccessRequestUtils';
 
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
   getApplicationLogo: jest.fn().mockReturnValue('app_logo.png'),
+}));
+
+jest.mock('@forgerock/platform-shared/src/utils/notification', () => ({
+  showErrorMessage: jest.fn(),
 }));
 
 AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promise.resolve({
@@ -32,6 +40,10 @@ AccessRequestApi.getRequestType = jest.fn().mockImplementation((value) => Promis
     displayName: `${value}-displayName`,
   },
 }));
+
+AccessRequestApi.getRequestTypes = jest.fn().mockResolvedValue({
+  data: { result: [] },
+});
 
 describe('RequestToolbar', () => {
   describe('getRequestFilter', () => {
@@ -563,5 +575,199 @@ describe('getPriorityImageAltText', () => {
       const shouldShow = { rawData: { requestType: 'entitlementGrant' }, details: { prediction: undefined } };
       expect(showRecommendationBanner(shouldShow, autoIdSettings)).toBe(false);
     });
+  });
+});
+
+describe('useRequestTypeOptions', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    AccessRequestApi.getRequestTypes.mockResolvedValue({ data: { result: [] } });
+    Notification.showErrorMessage.mockClear();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('initializes requestTypeOptions ref with the "All" option only', () => {
+    const { requestTypeOptions } = useRequestTypeOptions();
+    expect(requestTypeOptions.value).toHaveLength(1);
+    expect(requestTypeOptions.value[0].value).toBe('all');
+  });
+
+  it('populates requestTypeOptions with mapped results after a successful fetch', async () => {
+    AccessRequestApi.getRequestTypes.mockResolvedValueOnce({
+      data: {
+        result: [
+          { id: 'applicationGrant', displayName: 'Grant Application' },
+          { id: 'roleGrant', displayName: '' },
+        ],
+      },
+    });
+
+    const { requestTypeOptions, searchRequestTypes } = useRequestTypeOptions();
+    searchRequestTypes('');
+
+    // Advance debounce timer
+    jest.runAllTimers();
+    await flushPromises();
+
+    expect(requestTypeOptions.value).toEqual([
+      { value: 'all', text: 'All request types' },
+      { value: 'applicationGrant', text: 'Grant Application' },
+      { value: 'roleGrant', text: 'roleGrant' },
+    ]);
+  });
+
+  it('calls showErrorMessage when getRequestTypes rejects', async () => {
+    const error = new Error('API failure');
+    AccessRequestApi.getRequestTypes.mockRejectedValueOnce(error);
+
+    const { searchRequestTypes } = useRequestTypeOptions();
+    searchRequestTypes('foo');
+
+    jest.runAllTimers();
+    await flushPromises();
+
+    expect(Notification.showErrorMessage).toHaveBeenCalledWith(error, expect.any(String));
+  });
+
+  it('retains [allOption] until the fetch resolves, then repopulates on searchRequestTypes', async () => {
+    AccessRequestApi.getRequestTypes.mockResolvedValueOnce({
+      data: { result: [{ id: 'entitlementGrant', displayName: 'Grant Entitlement' }] },
+    });
+
+    const { requestTypeOptions, searchRequestTypes } = useRequestTypeOptions();
+
+    // Trigger a search change
+    searchRequestTypes('entitlement');
+
+    // Before the debounce fires, options should still be the initial value (all)
+    expect(requestTypeOptions.value).toEqual([{ value: 'all', text: 'All request types' }]);
+
+    jest.runAllTimers();
+    await flushPromises();
+
+    expect(requestTypeOptions.value).toEqual([
+      { value: 'all', text: 'All request types' },
+      { value: 'entitlementGrant', text: 'Grant Entitlement' },
+    ]);
+    expect(AccessRequestApi.getRequestTypes).toHaveBeenCalledWith(undefined, 'entitlement');
+  });
+
+  it('does not clear options to [allOption] before the fetch resolves when a search is triggered', async () => {
+    // This is a regression test for a bug where searchRequestTypes would synchronously
+    // reset requestTypeOptions to [allOption] before the API call resolved, causing
+    // SelectInput's options watcher to fire twice and incorrectly clear a selected value.
+    AccessRequestApi.getRequestTypes.mockResolvedValueOnce({
+      data: { result: [{ id: 'applicationGrant', displayName: 'Grant Application' }] },
+    });
+
+    const { requestTypeOptions, searchRequestTypes } = useRequestTypeOptions();
+
+    // Simulate the component mounting: initial fetch populates the list
+    searchRequestTypes('');
+    jest.runAllTimers();
+    await flushPromises();
+
+    expect(requestTypeOptions.value).toEqual([
+      { value: 'all', text: 'All request types' },
+      { value: 'applicationGrant', text: 'Grant Application' },
+    ]);
+
+    // User types a new search that returns no results
+    AccessRequestApi.getRequestTypes.mockResolvedValueOnce({ data: { result: [] } });
+    searchRequestTypes('xyz');
+
+    // Options must NOT be cleared synchronously before the fetch resolves —
+    // clearing would cause SelectInput's options watcher to call processValue and
+    // wipe the current selection.
+    expect(requestTypeOptions.value).toEqual([
+      { value: 'all', text: 'All request types' },
+      { value: 'applicationGrant', text: 'Grant Application' },
+    ]);
+
+    jest.runAllTimers();
+    await flushPromises();
+
+    // After the fetch resolves with empty results, options collapse back to [allOption]
+    expect(requestTypeOptions.value).toEqual([{ value: 'all', text: 'All request types' }]);
+  });
+
+  it('discards stale results when a later fetch resolves before an earlier one', async () => {
+    let resolveFirst;
+    let resolveSecond;
+    const firstPromise = new Promise((resolve) => { resolveFirst = resolve; });
+    const secondPromise = new Promise((resolve) => { resolveSecond = resolve; });
+
+    AccessRequestApi.getRequestTypes
+      .mockReturnValueOnce(firstPromise)
+      .mockReturnValueOnce(secondPromise);
+
+    const { requestTypeOptions, searchRequestTypes } = useRequestTypeOptions();
+
+    // Trigger first search (e.g. initial fetch)
+    searchRequestTypes('');
+    jest.runAllTimers();
+
+    // Trigger second search before first resolves
+    searchRequestTypes('role');
+    jest.runAllTimers();
+
+    // Second call resolves first with "role" results
+    resolveSecond({ data: { result: [{ id: 'roleGrant', displayName: 'Grant Role' }] } });
+    await flushPromises();
+
+    expect(requestTypeOptions.value).toEqual([
+      { value: 'all', text: 'All request types' },
+      { value: 'roleGrant', text: 'Grant Role' },
+    ]);
+
+    // First (stale) call resolves with unfiltered results — should be discarded
+    resolveFirst({ data: { result: [{ id: 'applicationGrant', displayName: 'Grant Application' }] } });
+    await flushPromises();
+
+    // Options must still show "role" results, not the stale unfiltered results
+    expect(requestTypeOptions.value).toEqual([
+      { value: 'all', text: 'All request types' },
+      { value: 'roleGrant', text: 'Grant Role' },
+    ]);
+  });
+});
+
+describe('getAccessFilterConfig requestType field', () => {
+  const components = {
+    BFormRadioGroup: {},
+    FrPriorityFilter: {},
+    FrSelectInput: {},
+    FrField: {},
+  };
+  const filterData = {
+    status: { value: 'in-progress' },
+    priorities: {
+      value: {
+        high: true, medium: true, low: true, none: true,
+      },
+    },
+    requestType: { value: 'all' },
+    query: { value: '' },
+    requester: { value: '' },
+    user: { value: '' },
+  };
+
+  it('has internalSearch: false on the requestType item props', () => {
+    const config = getAccessFilterConfig(components, { statusOptions: [], filterData });
+    const requestTypeItem = config.requestType.components.find((c) => c.id === 'requestType');
+    expect(requestTypeItem.props.internalSearch).toBe(false);
+  });
+
+  it('does not have an options key on the requestType item props', () => {
+    const config = getAccessFilterConfig(components, { statusOptions: [], filterData });
+    const requestTypeItem = config.requestType.components.find((c) => c.id === 'requestType');
+    expect(requestTypeItem.props).not.toHaveProperty('options');
   });
 });

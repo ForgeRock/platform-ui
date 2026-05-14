@@ -139,7 +139,6 @@ import {
   getInitialRequestFilterData,
   getNumFilters,
   getRequestFilter,
-  getRequestTypeOptions,
   getStatusText,
   sortByOptions,
   sortKeysMap,
@@ -192,7 +191,6 @@ export default {
         value: 'complete',
       },
     ];
-    const requestTypeOptions = getRequestTypeOptions();
     const filterData = getInitialRequestFilterData(statusOptions[0].value);
     const accessFilter = getAccessFilterConfig(
       {
@@ -204,7 +202,6 @@ export default {
       },
       {
         statusOptions,
-        requestTypeOptions,
         filterData,
       },
     );

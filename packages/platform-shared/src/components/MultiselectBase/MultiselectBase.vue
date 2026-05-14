@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -108,7 +108,7 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="disabled"
         tabindex="0"
         :data-testid="testid ? `multi-select-input-${testid}` : null "
-        @input="updateSearch($event.target.value)"
+        @input.stop="updateSearch($event.target.value)"
         @click="activate()"
         @blur.prevent="deactivate()"
         @keydown.esc.prevent.stop="deactivate()"

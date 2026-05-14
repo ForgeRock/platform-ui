@@ -21,13 +21,15 @@ of the MIT license. See the LICENSE file for details. -->
               :is="item.component"
               :value="item.props.value"
               :display-text="filterData[item.props.name]?.value"
-              v-bind="item.props"
+              v-bind="item.id === 'requestType' ? { ...item.props, options: requestTypeOptions } : item.props"
               v-model="filterData[item.props.name].value"
               v-on="item.on"
-              @input="debouncedTextSearch(item.props.name, $event)"
+              @input="item.id !== 'requestType' ? debouncedTextSearch(item.props.name, $event) : undefined"
               @update:value="filterData[item.props.name].value = $event"
               @search:applications="searchApplications"
               @update:applications="updateApplications"
+              @search-change="item.id === 'requestType' ? handleRequestTypeSearchChange($event) : undefined"
+              @closed="item.id === 'requestType' ? handleRequestTypeClosed() : undefined"
               :application-search-results="applicationSearchResults"
             />
           </div>
@@ -57,10 +59,13 @@ import {
   merge,
   cloneDeep,
 } from 'lodash';
-import { ref, watch, isRef } from 'vue';
+import {
+  ref, watch, isRef, onMounted,
+} from 'vue';
 import { getBasicFilter, getBasicNotFilter, getBasicBooleanFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { useRequestTypeOptions } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { convertTargetFilterToQueryFilter } from '../../../utils/governance/filters';
 import i18n from '@/i18n';
 
@@ -90,7 +95,7 @@ const filterData = ref(normalizedFilterData);
 const initialData = cloneDeep(normalizedFilterData);
 const debouncedTextSearch = debounce((field, value) => {
   filterData.value[field].value = value;
-}, 300);
+}, 500);
 function getInputFilters() {
   const obj = {};
   Object.keys(props.inputFields).forEach((item) => {
@@ -101,6 +106,34 @@ function getInputFilters() {
 const inputFilters = getInputFilters();
 
 const applicationSearchResults = ref([]);
+
+const hasRequestTypeField = Object.values(props.inputFields).some(
+  (group) => group.components?.some((c) => c.id === 'requestType'),
+);
+
+const { requestTypeOptions, searchRequestTypes } = hasRequestTypeField
+  ? useRequestTypeOptions()
+  : { requestTypeOptions: ref([]), searchRequestTypes: () => {} };
+
+let requestTypeDropdownClosing = false;
+
+function handleRequestTypeSearchChange(query) {
+  if (requestTypeDropdownClosing) {
+    requestTypeDropdownClosing = false;
+    return;
+  }
+  searchRequestTypes(query);
+}
+
+function handleRequestTypeClosed() {
+  requestTypeDropdownClosing = true;
+}
+
+onMounted(() => {
+  if (hasRequestTypeField) {
+    searchRequestTypes('');
+  }
+});
 
 /**
  * Builds unique filters based on filter type and value

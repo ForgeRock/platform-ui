@@ -6,9 +6,10 @@
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
-import { ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import * as AccessRequestUtils from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 import AccessFilter from './AccessFilter';
 import accessConstants from '../../../views/Governance/Access/utils/accessConstants';
@@ -17,6 +18,16 @@ jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils', () => ({
   getApplicationLogo: jest.fn().mockReturnValue('app_logo.png'),
   getApplicationDisplayName: jest.fn().mockReturnValue('app display name'),
+}));
+
+const mockSearchRequestTypes = jest.fn();
+const mockRequestTypeOptions = ref([{ text: 'All request types', value: 'all' }]);
+
+jest.mock('@forgerock/platform-shared/src/utils/governance/AccessRequestUtils', () => ({
+  useRequestTypeOptions: jest.fn(() => ({
+    requestTypeOptions: mockRequestTypeOptions,
+    searchRequestTypes: mockSearchRequestTypes,
+  })),
 }));
 
 const mockApplications = [
@@ -112,8 +123,190 @@ const mountComponent = (useQueryFilter = true) => {
     },
   });
 };
+// Stub component for FrSelectInput that emits search-change, closed, and input
+const FrSelectInputStub = defineComponent({
+  name: 'FrSelectInput',
+  props: {
+    options: { type: Array, default: () => [] },
+    internalSearch: { type: Boolean, default: true },
+    name: { type: String, default: '' },
+    value: { default: '' },
+    label: { type: String, default: '' },
+  },
+  emits: ['search-change', 'update:value', 'closed', 'input'],
+  template: `<div>
+    <input :name="name" @input="$emit('search-change', $event.target.value)" />
+    <button class="close-btn" @click="$emit('closed'); $emit('search-change', '')" />
+    <button class="select-btn" @click="$emit('input', 'accountGrant')" />
+  </div>`,
+});
+
 afterEach(() => {
   jest.clearAllMocks();
+});
+
+describe('AccessFilter — useRequestTypeOptions wiring', () => {
+  const createRequestTypeInputData = () => ref({
+    requestType: { value: 'all' },
+  });
+
+  const createRequestTypeFields = (inputData) => ({
+    requestType: {
+      name: 'Request Details',
+      filters: {},
+      components: [
+        {
+          id: 'requestType',
+          component: FrSelectInputStub,
+          props: {
+            name: 'requestType',
+            value: inputData.value.requestType.value,
+            label: 'Request Type',
+            internalSearch: false,
+          },
+        },
+      ],
+    },
+  });
+
+  it('calls searchRequestTypes("") on mount to trigger initial fetch', async () => {
+    const inputData = createRequestTypeInputData();
+    mount(AccessFilter, {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
+        inputFilterData: inputData,
+        inputFields: createRequestTypeFields(inputData),
+      },
+    });
+
+    await flushPromises();
+    expect(mockSearchRequestTypes).toHaveBeenCalledWith('');
+  });
+
+  it('calls searchRequestTypes with search text when search-change emitted on requestType field', async () => {
+    const inputData = createRequestTypeInputData();
+    const wrapper = mount(AccessFilter, {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
+        inputFilterData: inputData,
+        inputFields: createRequestTypeFields(inputData),
+      },
+    });
+
+    await flushPromises();
+
+    // Simulate the FrSelectInputStub emitting search-change with a search string
+    const input = wrapper.find('input[name="requestType"]');
+    await input.setValue('approval');
+
+    expect(mockSearchRequestTypes).toHaveBeenCalledWith('approval');
+  });
+
+  it('passes requestTypeOptions from composable as options to the requestType component', async () => {
+    const inputData = createRequestTypeInputData();
+    const wrapper = mount(AccessFilter, {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
+        inputFilterData: inputData,
+        inputFields: createRequestTypeFields(inputData),
+      },
+    });
+
+    await flushPromises();
+
+    // The FrSelectInputStub is bound with options from the composable
+    const selectInputStub = wrapper.findComponent(FrSelectInputStub);
+    expect(selectInputStub.props('options')).toEqual(mockRequestTypeOptions.value);
+  });
+
+  it('does not call searchRequestTypes when dropdown closes (search-change "" after closed event)', async () => {
+    const inputData = createRequestTypeInputData();
+    const wrapper = mount(AccessFilter, {
+      global: { plugins: [i18n] },
+      props: {
+        inputFilterData: inputData,
+        inputFields: createRequestTypeFields(inputData),
+      },
+    });
+    await flushPromises();
+    mockSearchRequestTypes.mockClear();
+
+    // Simulate multiselect closing: emits 'closed' then 'search-change' with ''
+    const closeBtn = wrapper.find('.close-btn');
+    await closeBtn.trigger('click');
+
+    expect(mockSearchRequestTypes).not.toHaveBeenCalledWith('');
+  });
+
+  it('calls searchRequestTypes normally after a close-triggered suppression', async () => {
+    const inputData = createRequestTypeInputData();
+    const wrapper = mount(AccessFilter, {
+      global: { plugins: [i18n] },
+      props: {
+        inputFilterData: inputData,
+        inputFields: createRequestTypeFields(inputData),
+      },
+    });
+    await flushPromises();
+    mockSearchRequestTypes.mockClear();
+
+    // Close the dropdown (suppresses the next search-change '')
+    const closeBtn = wrapper.find('.close-btn');
+    await closeBtn.trigger('click');
+
+    // A subsequent user-initiated search should still go through
+    const input = wrapper.find('input[name="requestType"]');
+    await input.setValue('role');
+
+    expect(mockSearchRequestTypes).toHaveBeenCalledWith('role');
+  });
+
+  it('updates filterData when input event carries a valid string selection', async () => {
+    const inputData = createRequestTypeInputData();
+    const wrapper = mount(AccessFilter, {
+      global: { plugins: [i18n] },
+      props: {
+        inputFilterData: inputData,
+        inputFields: createRequestTypeFields(inputData),
+      },
+    });
+    await flushPromises();
+
+    // Simulate selecting an option — stub emits 'input' with a string value
+    const selectBtn = wrapper.find('.select-btn');
+    await selectBtn.trigger('click');
+
+    expect(inputData.value.requestType.value).toBe('accountGrant');
+  });
+
+  it('does not call useRequestTypeOptions or searchRequestTypes when no requestType field exists', async () => {
+    AccessRequestUtils.useRequestTypeOptions.mockClear();
+    mockSearchRequestTypes.mockClear();
+
+    // Mount with fields that do NOT include a requestType field
+    const inputData = createInputData();
+    mount(AccessFilter, {
+      global: {
+        plugins: [i18n],
+        components: { FrField },
+      },
+      props: {
+        inputFilterData: inputData,
+        inputFields: createFields(inputData),
+      },
+    });
+
+    await flushPromises();
+
+    expect(AccessRequestUtils.useRequestTypeOptions).not.toHaveBeenCalled();
+    expect(mockSearchRequestTypes).not.toHaveBeenCalled();
+  });
 });
 
 describe('Access Filter functionality', () => {

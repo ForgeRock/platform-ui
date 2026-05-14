@@ -5,11 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { cloneDeep, uniq, find } from 'lodash';
+import {
+  cloneDeep, debounce, uniq, find,
+} from 'lodash';
+import { ref } from 'vue';
 import { getBasicFilter, getPriorityFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getPredictionDisplayInfo, isHighConfidence, isLowConfidence } from '@forgerock/platform-shared/src/utils/governance/prediction';
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import { getRequestType } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getRequestType, getRequestTypes } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import dayjs from 'dayjs';
 import i18n from '@/i18n';
 
@@ -520,6 +524,40 @@ export function isTypeLcm(requestType) {
 }
 
 /**
+ * Composable that encapsulates async fetching of request types for the filter panel.
+ * Returns a reactive `requestTypeOptions` ref (initialized to the "All" option) and a
+ * 500ms-debounced `handleRequestTypeSearchChange(query)` handler that re-fetches request
+ * types from the API and repopulates the ref. Uses a sequence number to discard stale
+ * results when multiple in-flight requests are in progress simultaneously.
+ * @returns {{ requestTypeOptions: import('vue').Ref<Array>, searchRequestTypes: Function }}
+ */
+export function useRequestTypeOptions() {
+  const allOption = { text: i18n.global.t('governance.accessRequest.requestTypes.all'), value: 'all' };
+  const requestTypeOptions = ref([allOption]);
+  let latestSequence = 0;
+
+  async function fetchTypeOptions(searchText) {
+    latestSequence += 1;
+    const sequence = latestSequence;
+    try {
+      const { data } = await getRequestTypes(undefined, searchText);
+      if (sequence !== latestSequence) return;
+      const typeOptions = (data.result || []).map((item) => ({ value: item.id, text: item.displayName || item.id }));
+      requestTypeOptions.value = [allOption, ...typeOptions];
+    } catch (error) {
+      if (sequence !== latestSequence) return;
+      showErrorMessage(error, i18n.global.t('governance.accessRequest.requestTypesError'));
+    }
+  }
+
+  const searchRequestTypes = debounce((query) => {
+    fetchTypeOptions(query);
+  }, 500);
+
+  return { requestTypeOptions, searchRequestTypes };
+}
+
+/**
  * Returns the list of request type filter options.
  * @returns {Array} request type select options
  */
@@ -598,14 +636,14 @@ export function getNumFilters(filterData) {
  * Builds the accessFilter config object for FrAccessFilter.
  * Accepts Vue component classes and reactive options so the utility stays framework-agnostic.
  * @param {Object} components - Vue component references: { BFormRadioGroup, FrPriorityFilter, FrSelectInput, FrField, FrGovResourceSelect }
- * @param {Object} options - Reactive data: { statusOptions, requestTypeOptions, filterData }
+ * @param {Object} options - Reactive data: { statusOptions, filterData }
  * @returns {Object} accessFilter config
  */
 export function getAccessFilterConfig(components, options) {
   const {
     BFormRadioGroup, FrPriorityFilter, FrSelectInput, FrField,
   } = components;
-  const { statusOptions, requestTypeOptions, filterData } = options;
+  const { statusOptions, filterData } = options;
 
   return {
     status: {
@@ -650,7 +688,7 @@ export function getAccessFilterConfig(components, options) {
             name: 'requestType',
             value: filterData.requestType.value,
             label: i18n.global.t('governance.accessRequest.requestType'),
-            options: requestTypeOptions,
+            internalSearch: false,
             class: 'mb-4 request-type-select',
           },
         },
