@@ -1048,6 +1048,7 @@
         "invalidImportFile": "Invalid import file",
         "missingImportConfig": "Import cannot be processed.",
         "missingEsvs": "Import file contains environment specific variable and/or secret replacement strings (ESV's) which are missing corresponding definitions in this tenant. The following ESV's are undefined: ",
+        "notAppliedEsvs": "Import file contains environment specific variable and/or secret replacement strings (ESV's) which exist in this tenant but have not been applied. The following ESV's must be applied before this journey can be imported: ",
         "missingPingOneServices": "Import file contains references to PingOne Worker Services which are missing corresponding definitions in this tenant. The following services are undefined: ",
         "pingOneWorkerServiceNotInSchema": "Import file contains references to PingOne Worker Services which cannot be used by the nodes in the target environment. This file cannot be imported.",
         "identityResourceDescription": "Managed identity to use for all journeys being imported.",
