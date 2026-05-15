@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,6 +8,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import FrMultiselectBase from '@forgerock/platform-shared/src/components/MultiselectBase/MultiselectBase';
 import i18n from '@/i18n';
 import ResourceSelect from './index';
 
@@ -54,9 +55,11 @@ describe('ResourceSelect', () => {
       managedResourceApi.getManagedResourceList = jest.fn().mockReturnValue(mockReturnValue);
       const wrapper = mountComponent();
 
-      const multiselect = wrapper.find('.multiselect');
-      expect(multiselect.attributes('aria-expanded')).toBe('false');
-      expect(multiselect.attributes('aria-labelledby')).toBe('floatingLabelInput5-label');
+      // ResourceSelect passes a #singleLabel slot, so inputHasComboboxRole=false and
+      // role="combobox" is on the wrapper <div>, not the <input>
+      const combobox = wrapper.find('[role="combobox"]');
+      expect(combobox.attributes('aria-expanded')).toBe('false');
+      expect(combobox.attributes('aria-labelledby')).toBe('floatingLabelInput5-label');
     });
   });
 
@@ -66,10 +69,9 @@ describe('ResourceSelect', () => {
       const wrapper = mountComponent();
       await flushPromises();
 
-      const multiselect = wrapper.findComponent('[role="combobox"]');
-      multiselect.vm.$emit('open');
+      await wrapper.find('.multiselect').trigger('click');
       await flushPromises();
-      expect(multiselect.attributes('aria-expanded')).toBe('true');
+      expect(wrapper.find('[role="combobox"]').attributes('aria-expanded')).toBe('true');
     });
   });
 
@@ -100,7 +102,8 @@ describe('ResourceSelect', () => {
 
     const getListSpy = jest.spyOn(managedResourceApi, 'getManagedResourceList').mockReturnValue(mockReturnValue);
 
-    const multiselect = wrapper.findComponent('[role="combobox"]');
+    // Emit search-change on the MultiselectBase component (not the input element)
+    const multiselect = wrapper.findComponent(FrMultiselectBase);
     multiselect.vm.$emit('search-change', 'testFilter');
     jest.runAllTimers();
 

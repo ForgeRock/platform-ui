@@ -11,7 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
     :is-html="isHtml"
     :label="label"
     :floating-label="floatingLabel"
-    :readonly-label="disabled">
+    :readonly-label="disabled"
+    :show-hover-title="showHoverTitle">
     <FrMultiselectBase
       ref="vms"
       :id="internalId"
@@ -40,9 +41,6 @@ of the MIT license. See the LICENSE file for details. -->
       @close="closeHandler"
       @tag="$emit('tag', $event)"
       @search-change="$emit('search-change', $event)">
-      <template #noResult>
-        {{ $t('common.noResult') }}
-      </template>
       <template
         v-for="(key, slotName) in $slots"
         #[slotName]="slotData">
@@ -68,7 +66,7 @@ import {
   find, isEqual,
 } from 'lodash';
 import {
-  computed, watch, ref, toRef,
+  computed, watch, ref, toRef, nextTick,
 } from 'vue';
 import { useField } from 'vee-validate';
 import { v4 as uuid } from 'uuid';
@@ -76,6 +74,7 @@ import FrMultiselectBase from '../../MultiselectBase/MultiselectBase';
 import i18n from '@/i18n';
 import FrInputLayout from '../Wrapper/InputLayout';
 import { useGetId, useValueIsDifferent } from '../Wrapper/InputComposable';
+import { getEnumTranslation } from '../../../utils/translations';
 
 export default {
   name: 'SelectInput',
@@ -205,6 +204,13 @@ export default {
       default: false,
     },
     /**
+     * Optionally shows the label as a tooltip on hover (useful when label text may be truncated).
+     */
+    showHoverTitle: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Optionally sorts the displayed select options by their text attribute.
      */
     sortOptions: {
@@ -258,7 +264,9 @@ export default {
         formattedOptions = props.options.map((option) => {
           const formattedOption = typeof (option) === 'string' ? option.trim() : option;
           return {
-            text: formattedOption,
+            // getEnumTranslation resolves i18n keys (e.g. 'governance.editTemplate.allRoles' → 'All roles')
+            // as well as pingTranslations.enum runtime overrides — matching SelectInputDeprecated's behaviour.
+            text: getEnumTranslation(formattedOption, props.name),
             value: formattedOption,
           };
         });
@@ -322,10 +330,20 @@ export default {
       context.emit('open');
       isOpen.value = true;
       floatLabels.value = setFloatLabels(true, inputValue.value);
+      if (props.showSelectedOptionOnOpen) {
+        nextTick(() => {
+          const selected = vms.value?.$el?.querySelector('.multiselect__option--selected');
+          if (selected && typeof selected.scrollIntoView === 'function') selected.scrollIntoView({ block: 'center' });
+        });
+      }
     }
 
+    /**
+     * Emits 'close' (not 'closed') to match SelectInputDeprecated's contract.
+     * Consumers such as ResourceSelect use @close to reset search state.
+     */
     function closeHandler(value) {
-      context.emit('closed');
+      context.emit('close');
       isOpen.value = false;
       floatLabels.value = setFloatLabels(false, value);
     }
@@ -334,16 +352,29 @@ export default {
       inputValue.value = e;
     }
 
+    // Keeps inputValue in sync when the options list changes after mount (async option loading).
+    // Explicit null/undefined/'' check so falsy-but-valid selected values (e.g. 0) are not skipped.
     watch(() => props.options, (newOptions, oldOptions) => {
-      if (props.value) {
-        const oldValueObject = oldOptions.find(({ value }) => value === props.value);
-        const newValueObject = newOptions.find(({ value }) => value === props.value);
-        if (!oldValueObject || (newValueObject && (oldValueObject.value === newValueObject.value && oldValueObject.text !== newValueObject.text))) {
-          inputValue.value = processValue(props.value, inputValue.value);
-        }
-      }
-    }, { deep: true });
+      if (props.value === null || props.value === undefined || props.value === '') return;
 
+      // Re-sync value object when options arrive after value is already set (async option lists)
+      if (!inputValue.value || props.value !== inputValue.value.value) {
+        const synced = processValue(props.value, inputValue.value);
+        if (!isEqual(inputValue.value, synced)) inputValue.value = synced;
+        return;
+      }
+
+      // Re-sync when the text label of the selected option changes server-side
+      const oldValueObject = oldOptions.find(({ value }) => value === props.value);
+      const newValueObject = newOptions.find(({ value }) => value === props.value);
+      if (!oldValueObject || (newValueObject && oldValueObject.text !== newValueObject.text)) {
+        const synced = processValue(props.value, inputValue.value);
+        if (!isEqual(inputValue.value, synced)) inputValue.value = synced;
+      }
+    });
+
+    // Unwraps the internal {value, text} option object before emitting, applies float-label state,
+    // and guards edge cases inherited from SelectInputDeprecated's contract:
     watch(() => inputValue.value, (value) => {
       const newValue = value !== null
         && value !== undefined
@@ -352,7 +383,8 @@ export default {
         ? value.value : value;
 
       floatLabels.value = setFloatLabels(isOpen.value, newValue);
-      context.emit('input', newValue);
+      if (newValue === undefined && (props.value !== undefined)) return;
+      context.emit('input', newValue === null ? '' : newValue);
     });
 
     watch(() => props.value, (value) => {
@@ -360,6 +392,11 @@ export default {
       if (!isEqual(inputValue.value, newValues)) {
         inputValue.value = newValues;
       }
+    });
+
+    // Re-float the label when the label prop changes dynamically while a value is selected.
+    watch(() => props.label, (newVal) => {
+      if (props.floatingLabel && !!inputValue.value) floatLabels.value = !!newVal;
     });
 
     return {
@@ -377,6 +414,13 @@ export default {
       vms,
     };
   },
+  mounted() {
+    // Use openHandler() rather than native focus so the dropdown also opens,
+    // matching SelectInputDeprecated's autofocus behaviour.
+    if (this.autofocus) {
+      this.openHandler();
+    }
+  },
 };
 </script>
 
@@ -389,5 +433,22 @@ export default {
     margin-top: 4px;
     min-height: 26px;
   }
+}
+/* The below styles were copied from SelectInputDeprecated and adapted for the new component */
+:deep(.has-prepend-button .multiselect__tags) {
+  padding-right: 86px;
+}
+
+:deep(.within-input-button) {
+  z-index: 51;
+  position: absolute;
+  top: -1px;
+  right: 36px;
+}
+
+:deep(.within-input-button .btn) {
+  padding: 0.75rem 1rem !important;
+  border-color: rgba(0, 0, 0, 0) !important;
+  background: transparent !important;
 }
 </style>

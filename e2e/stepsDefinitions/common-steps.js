@@ -680,17 +680,13 @@ Then('{string} field has {string} validation error', (fieldLabel, expectedError)
 });
 
 Then('error message {string} is visible in locale dropdown', (expectedError) => {
-  cy.findByRole('textbox', { name: /Locale/i }).then(($input) => {
-    const listboxId = $input.attr('aria-controls');
-
-    cy.get(`#${listboxId}`)
-      .should('be.visible')
-      .within(() => {
-        cy.findByText(expectedError)
-          .should('be.visible')
-          .and('have.class', 'text-danger');
-      });
-  });
+  cy.get('.multiselect__content-wrapper')
+    .filter(':visible')
+    .within(() => {
+      cy.findByText(expectedError)
+        .should('be.visible')
+        .and('have.class', 'text-danger');
+    });
 });
 
 Then('{string} validation error doesn\'t exist', (validationError) => {

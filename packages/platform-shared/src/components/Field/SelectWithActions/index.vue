@@ -122,7 +122,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BBadge, BButton } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInputDeprecated';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 
 /**
  *  Select input with actions for adding and editing items which fire events.

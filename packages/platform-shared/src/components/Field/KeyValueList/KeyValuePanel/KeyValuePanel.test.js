@@ -65,7 +65,7 @@ describe('KeyValuePanel', () => {
     });
     await flushPromises();
 
-    expect(wrapper.find('input').attributes('class')).toBe('multiselect__input');
+    expect(wrapper.find('input').classes()).toContain('multiselect__single');
     const listElements = wrapper.findAll('li');
     expect(listElements[0].text()).toBe('option 1');
     expect(listElements[1].text()).toBe('option 2');

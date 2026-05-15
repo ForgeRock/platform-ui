@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -75,28 +75,32 @@ describe('Report Aggregates Modal component', () => {
     });
 
     it('ensures that the "Value" field is disabled until the "Type" field has a selection', async () => {
-      const [typeSelectField, valueCombobox] = wrapper.findAll('[role="combobox"]');
+      // In MultiselectBase with searchable=true, [role="combobox"] is on the input element.
+      // Use [role="listbox"] to interact with the option lists and find inputs directly.
+      const [typeSelectField] = wrapper.findAll('[role="listbox"]');
       const countTypeSelectOption = typeSelectField.findAll('li')[0].find('span');
-      let valueInputField = valueCombobox.find('input');
+
+      // The value input is the combobox input inside the aggregate-value FrField
+      let valueInputField = wrapper.find('#aggregate-value input[role="combobox"]');
       expect(valueInputField.attributes().disabled).toBeDefined();
 
       await typeSelectField.trigger('click');
       await countTypeSelectOption.trigger('click');
 
-      valueInputField = valueCombobox.find('input');
+      valueInputField = wrapper.find('#aggregate-value input[role="combobox"]');
       expect(valueInputField.attributes().disabled).toBeUndefined();
     });
 
     it('emits "get-field-options", which queries the fieldoptions endpoint, when the "Type" field is selected and ensures that it populates the "Value" field with the response', async () => {
       const [typeSelectField, valueSelectField] = wrapper.findAll('[role="listbox"]');
-      const [loading, noElements, empty] = valueSelectField.findAll('li');
+      const [loading] = valueSelectField.findAll('li');
       const sumTypeSelectOption = typeSelectField.findAll('li')[1].find('span');
       const sumAggregateValueList = ['sumVal1', 'sumVal2', 'sumVal3'];
 
-      expect(valueSelectField.findAll('li').length).toBe(3);
+      // With MultiselectBase, only the actual 'Loading...' option li is rendered initially
+      // (noResult and noOptions slots are conditional and not shown with options present)
+      expect(valueSelectField.findAll('li').length).toBe(1);
       expect(loading.text()).toBe('Loading...');
-      expect(noElements.text()).toBe('No elements found. Consider changing the search query.');
-      expect(empty.text()).toBe('List is empty.');
 
       await typeSelectField.trigger('click');
       await sumTypeSelectOption.trigger('click');

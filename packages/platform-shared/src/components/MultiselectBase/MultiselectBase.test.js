@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -106,6 +106,47 @@ describe('MultiSelectBase', () => {
       expect(multiselectInput.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
       expect((wrapper.find('#multiselectBaseId-0 > span')).classes()).toContain('multiselect__option--highlight');
       expect((wrapper.find('#multiselectBaseId-1 > span')).classes()).not.toContain('multiselect__option--highlight');
+    });
+
+    test('with singleLabel slot: arrow keys navigate options via wrapper div keydown handlers', async () => {
+      const wrapper = mount(FrMultiselectBase, {
+        global,
+        slots: {
+          singleLabel: '<span>custom label</span>',
+        },
+        propsData: {
+          label: 'id',
+          testid: 'multiselectBaseTestid',
+          id: 'multiselectBaseId',
+          'model-value': [],
+          options: [{ id: '1' }, { id: '2' }, { id: '3' }],
+          trackBy: 'id',
+          multiple: false,
+          closeOnSelect: false,
+        },
+      });
+
+      const multiselectContainer = findByTestId(wrapper, 'multi-select-container-multiselectBaseTestid');
+
+      // Open dropdown via Down arrow on wrapper
+      multiselectContainer.trigger('keydown.down');
+      await wrapper.vm.$nextTick();
+      expect(multiselectContainer.attributes('aria-expanded')).toBe('true');
+      expect(multiselectContainer.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
+      expect(wrapper.find('#multiselectBaseId-0 > span').classes()).toContain('multiselect__option--highlight');
+
+      // Move pointer forward
+      multiselectContainer.trigger('keydown.down');
+      await wrapper.vm.$nextTick();
+      expect(multiselectContainer.attributes('aria-activedescendant')).toBe('multiselectBaseId-1');
+      expect(wrapper.find('#multiselectBaseId-1 > span').classes()).toContain('multiselect__option--highlight');
+      expect(wrapper.find('#multiselectBaseId-0 > span').classes()).not.toContain('multiselect__option--highlight');
+
+      // Move pointer backward
+      multiselectContainer.trigger('keydown.up');
+      await wrapper.vm.$nextTick();
+      expect(multiselectContainer.attributes('aria-activedescendant')).toBe('multiselectBaseId-0');
+      expect(wrapper.find('#multiselectBaseId-0 > span').classes()).toContain('multiselect__option--highlight');
     });
   });
 
@@ -267,6 +308,28 @@ describe('Multiselect.vue', () => {
         await wrapper.vm.$nextTick();
         wrapper.vm.deactivate();
         expect(wrapper.emitted().close).toEqual([['2', 'id']]);
+      });
+
+      test('deactivate() does not reopen the dropdown (no second open event)', async () => {
+        const wrapper = shallowMount(FrMultiselectBase, {
+          global,
+          propsData: {
+            'model-value': [],
+            options: ['1', '2', '3'],
+            searchable: true,
+          },
+        });
+
+        wrapper.vm.activate();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.isOpen).toBe(true);
+
+        wrapper.vm.deactivate();
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.isOpen).toBe(false);
+        // Only the one 'open' event from activate() — deactivate() must not re-trigger it
+        expect(wrapper.emitted().open).toHaveLength(1);
       });
     });
 
@@ -2068,6 +2131,53 @@ describe('Multiselect.vue', () => {
         },
       });
       expect(wrapper.emitted()['update:modelValue']).toEqual([['1', null]]);
+    });
+  });
+
+  describe('noResult slot (hasFilteredOptions)', () => {
+    test('noResult slot is rendered when search matches nothing', async () => {
+      const wrapper = mount(FrMultiselectBase, {
+        global,
+        propsData: {
+          searchable: true,
+          showNoResults: true,
+          'model-value': [],
+          options: ['apple', 'banana', 'cherry'],
+        },
+        slots: {
+          noResult: '<span class="no-result-slot">No match</span>',
+        },
+      });
+
+      wrapper.vm.activate();
+      await wrapper.vm.$nextTick();
+      await wrapper.setProps({ search: 'zzz' });
+      wrapper.vm.updateSearch('zzz');
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.find('.no-result-slot').exists()).toBe(true);
+    });
+
+    test('noResult slot is not rendered when search matches options', async () => {
+      const wrapper = mount(FrMultiselectBase, {
+        global,
+        propsData: {
+          searchable: true,
+          showNoResults: true,
+          'model-value': [],
+          options: ['apple', 'banana', 'cherry'],
+        },
+        slots: {
+          noResult: '<span class="no-result-slot">No match</span>',
+        },
+      });
+
+      wrapper.vm.activate();
+      await wrapper.vm.$nextTick();
+      wrapper.vm.updateSearch('app');
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.find('.no-result-slot').exists()).toBe(false);
     });
   });
 });

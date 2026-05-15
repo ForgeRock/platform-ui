@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -283,7 +283,7 @@ describe('Report Filter Modal component', () => {
       const operatorSelectedOption = operatorSelect.find('.multiselect__option--selected');
       expect(operatorSelectedOption.text()).toBe('contains');
 
-      const [, rightValueInput] = firstGroup.findAll('input[type="text"]');
+      const [rightValueInput] = firstGroup.findAll('input[type="text"]');
       expect(rightValueInput.element.value).toBe('my right value');
 
       // second group values
@@ -294,7 +294,7 @@ describe('Report Filter Modal component', () => {
       const secondOperatorSelectedOption = secondOperatorSelect.find('.multiselect__option--selected');
       expect(secondOperatorSelectedOption.text()).toBe('contains');
 
-      const [, secondRightValueInput] = secondGroup.findAll('input[type="text"]');
+      const [secondRightValueInput] = secondGroup.findAll('input[type="text"]');
       expect(secondRightValueInput.element.value).toBe('My literal input');
     });
 

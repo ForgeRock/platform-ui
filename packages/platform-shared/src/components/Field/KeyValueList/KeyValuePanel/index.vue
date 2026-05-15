@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,7 +8,6 @@ of the MIT license. See the LICENSE file for details. -->
     as="span">
     <BFormGroup class="mb-3">
       <FrSelectInput
-        ref="select"
         v-if="keyOptions.length"
         v-model="inputValue.key"
         :name="keyLabel"
@@ -70,7 +69,7 @@ import {
 } from 'lodash';
 import { Form as VeeForm } from 'vee-validate';
 import FrBasicInput from '@forgerock/platform-shared/src/components/Field/BasicInput';
-import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInputDeprecated';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 
 /**
@@ -145,10 +144,6 @@ export default {
     valueLabel() {
       return this.inputValue.valueLabel || this.$t('common.value');
     },
-  },
-  mounted() {
-    // disable auto complete on the vue multiselect search input
-    if (this.keyOptions.length) this.$refs.select.$refs.vms.$refs.search.setAttribute('autocomplete', 'off');
   },
   methods: {
     /**

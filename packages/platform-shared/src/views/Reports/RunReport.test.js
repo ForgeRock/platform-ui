@@ -88,7 +88,7 @@ describe('Run Report component', () => {
         const journeyInputField = findByTestId(wrapper, 'fr-field-journeys');
         const combobox = findByRole(journeyInputField, 'listbox');
         const listOptions = combobox.find('.multiselect__option');
-        expect(listOptions.text()).toBe('No elements found. Consider changing the search query.');
+        expect(listOptions.text()).toBe('List is empty.');
       });
 
       it('does not execute a debounced network search if a parameter config has "internalSearch" set to true', async () => {
@@ -116,8 +116,8 @@ describe('Run Report component', () => {
         jest.clearAllMocks();
 
         const journeyInputField = findByTestId(wrapper, 'fr-field-journeys');
-        const combobox = findByRole(journeyInputField, 'combobox');
-        const searchField = combobox.find('[type="text"]');
+        // In MultiselectBase with searchable=true, the input element itself has role="combobox"
+        const searchField = findByRole(journeyInputField, 'combobox');
 
         expect(journeyInputField.attributes('internal-search')).toEqual('true');
         await searchField.setValue('Login');

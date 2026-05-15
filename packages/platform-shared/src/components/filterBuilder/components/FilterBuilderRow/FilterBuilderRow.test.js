@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -121,13 +121,15 @@ describe('FilterBuilderRow', () => {
     });
 
     it('Initial rule renders the correct values', () => {
-      // Property
+      // Property — searchable=true: selected value is in the input element's .value
+      // (the input carries class multiselect__single when closed and no singleLabel slot)
       let rowFormElement = wrapper.find(
-        '.depth-1.queryfilter-row:first-child .form-row > .rule-property-col .multiselect__single',
-      ).text();
+        '.depth-1.queryfilter-row:first-child .form-row > .rule-property-col input.multiselect__single',
+      ).element.value;
       expect(rowFormElement).toEqual('Username');
 
-      // Condition
+      // Condition — searchable=false: the wrapper div is the combobox, selected value is in
+      // the span.multiselect__single element's text
       rowFormElement = wrapper.find(
         '.depth-1.queryfilter-row:first-child .form-row > .rule-condition-col .multiselect__single',
       ).text();
@@ -145,23 +147,29 @@ describe('FilterBuilderRow', () => {
       const inputFieldValue = wrapper.find('input[name="inputValue_user_2"]');
       inputFieldValue.setValue('Initial Value');
 
-      // simulates the dropdown change
-      const propertySelector = wrapper.find('input[name="selectPropOptions_user_2"]');
-      propertySelector.setValue('Status');
-      propertySelector.trigger('change');
+      // Open the property selector dropdown and click the 'Status' option (/accountStatus)
+      const propertyMultiselect = wrapper.find('.rule-property-col .multiselect');
+      await propertyMultiselect.trigger('click');
+      await flushPromises();
+
+      // Find and click the 'Status' option in the dropdown
+      const statusOption = wrapper.findAll('.rule-property-col .multiselect__option').find(
+        (el) => el.text().trim() === 'Status',
+      );
+      await statusOption.trigger('click');
+      await flushPromises();
 
       // emit the function which is the one will update the value for all inputs using the props
-      await flushPromises();
       expect(wrapper.emitted()['rule-change']).toBeTruthy();
 
       // set the external props to execute the rule watch which is the one who clear the input value
       await wrapper.setProps({
-        rule: { field: 'Status' },
+        rule: { field: '/accountStatus' },
       });
 
-      // review the new values
+      // review the new values — after setProps with valid option value, input shows the option label
       expect(inputFieldValue.element.value).toEqual('');
-      expect(propertySelector.element.value).toBe('Status');
+      expect(wrapper.find('input[name="selectPropOptions_user_2"]').element.value).toBe('Status');
     });
 
     it('Returns the correct select options by type (String)', () => {

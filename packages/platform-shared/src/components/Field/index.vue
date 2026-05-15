@@ -44,7 +44,6 @@ import FrKeyValueList from '@forgerock/platform-shared/src/components/Field/KeyV
 import FrMultiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
 import FrMultiselectDeprecated from '@forgerock/platform-shared/src/components/Field/MultiselectDeprecated';
 import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
-import FrSelectInputDeprecated from '@forgerock/platform-shared/src/components/Field/SelectInputDeprecated';
 import FrSelectWithActions from '@forgerock/platform-shared/src/components/Field/SelectWithActions';
 import FrSpinButton from '@forgerock/platform-shared/src/components/Field/SpinButton';
 import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
@@ -75,7 +74,6 @@ export default {
     FrMultiselect,
     FrMultiselectDeprecated,
     FrSelectInput,
-    FrSelectInputDeprecated,
     FrSelectWithActions,
     FrSpinButton,
     FrSwitch,
@@ -230,7 +228,7 @@ export default {
         number: 'FrBasicInput',
         object: 'FrKeyValueList',
         password: 'FrBasicInput',
-        select: 'FrSelectInputDeprecated',
+        select: 'FrSelectInput',
         selectWithActions: 'FrSelectWithActions',
         spinbutton: 'FrSpinButton',
         string: 'FrBasicInput',
@@ -241,7 +239,6 @@ export default {
       // eslint-disable-next-line prefer-destructuring
       const newMultiselectEnabled = store.state?.SharedStore?.newMultiselectEnabled;
       if (newMultiselectEnabled) {
-        componentMap.select = 'FrSelectInput';
         componentMap.multiselect = 'FrMultiselect';
       }
 

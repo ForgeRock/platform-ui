@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -252,9 +252,6 @@ export default function useMultiselect(
   const deactivate = () => {
     if (!isOpen.value) return;
     isOpen.value = false;
-    if (searchRef.value !== null && typeof searchRef.value !== 'undefined') {
-      searchRef.value.focus();
-    }
     if (!props.preserveSearch) search.value = '';
     emit('close', getValue(), props.id);
   };
