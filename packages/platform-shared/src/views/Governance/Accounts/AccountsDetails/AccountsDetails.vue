@@ -17,6 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="d-flex justify-content-center align-items-center m-4"
             width="48"
             height="48"
+            :alt="account?.application?.name || ''"
             :src="account?.application?.icon"
             :onerror="onImageError">
         </BMedia>
@@ -50,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BTab>
         <BTab
           :title="$t('governance.accounts.details.tabs.entitlements')"
-          v-if="isCorrelated"
+          v-if="isCorrelated || isDisconnected"
           key="entitlements"
           lazy>
           <FrGovResourceTable
@@ -123,6 +124,7 @@ const entitlementList = ref([]);
 const entitlementTotalCount = ref(0);
 const id = route.params.accountId;
 const isCorrelated = computed(() => account.value.user);
+const isDisconnected = computed(() => account.value.application?.isDisconnected);
 const savingGovernanceResourcesStatus = ref('');
 const entitlements = ref([]);
 const tabs = isCorrelated.value ? ['details', 'objectProperties', 'entitlements'] : ['details', 'objectProperties'];
@@ -135,7 +137,7 @@ const entitlementTableFields = [
   },
   {
     key: 'item.objectType',
-    label: i18n.global.t('objectType'),
+    label: i18n.global.t('common.objectType'),
     class: 'w-25',
   },
   {

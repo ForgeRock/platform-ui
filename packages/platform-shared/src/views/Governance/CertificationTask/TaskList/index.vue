@@ -159,7 +159,7 @@ of the MIT license. See the LICENSE file for details. -->
                 @click.stop="openUserModal(item.id, item.manager)"
                 class="text-dark btn-unstyled"
                 variant="link">
-                <BMedia>
+                <BMedia v-if="item && item.user">
                   <template #aside>
                     <BImg
                       class="mt-2"
@@ -178,6 +178,9 @@ of the MIT license. See the LICENSE file for details. -->
                     </small>
                   </div>
                 </BMedia>
+                <div v-else>
+                  {{ blankValueIndicator }}
+                </div>
               </BButton>
             </div>
           </template>

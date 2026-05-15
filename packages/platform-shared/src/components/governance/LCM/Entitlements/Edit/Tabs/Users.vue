@@ -148,7 +148,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BModal>
     <FrRequestSubmitSuccessModal
       :request-id="requestId[0]"
-      router-path="AdministerEntitlements"
+      :router-path="userStore.adminUser ? 'Entitlements' : 'AdministerEntitlements'"
       :success-text="$t('governance.entitlements.modifyMembersSuccess')" />
   </BCard>
 </template>
@@ -188,6 +188,7 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import i18n from '@/i18n';
 
 const { bvModal } = useBvModal();
+const userStore = useUserStore();
 
 const props = defineProps({
   entitlementId: {
@@ -375,12 +376,11 @@ function hideRemoveModal() {
  * @param {string} operation - The operation to perform ('add' or 'remove').
  */
 async function updateEntitlementMembers(operation) {
-  const userStore = useUserStore();
   isSaving.value = true;
-  let users = map(selected.value, (item) => item.user.id);
+  let users = map(selected.value, (item) => ({ userId: item.user?.id, hasUser: Boolean(item.user?.id), accountId: item.keys?.accountId }));
   const requestType = operation === 'add' ? 'entitlementGrant' : 'entitlementRemove';
   if (operation === 'add') {
-    users = newMembers.value.map((member) => member._id);
+    users = newMembers.value.map((member) => ({ userId: member._id, hasUser: true }));
     newMembers.value = [];
   }
   const payload = {
@@ -396,11 +396,12 @@ async function updateEntitlementMembers(operation) {
   }
   try {
     const successIds = [];
-    await Promise.all(map(users, async (userId) => {
+    await Promise.all(map(users, async ({ userId, hasUser, accountId }) => {
       const userPayload = {
         common: {
           ...payload.common,
-          userId,
+          ...(hasUser && { userId }),
+          ...(accountId && { accountId }),
         },
       };
       const { data } = await requestAction(requestType, 'publish', null, userPayload);
