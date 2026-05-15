@@ -3494,6 +3494,10 @@
         "name": "OAuth2 Access Token Modification",
         "description": "Script to modify OAuth2 authentication tokens when they are passed from the server to the client."
       },
+      "OAUTH2_AUTHORIZE_ENDPOINT_DATA_PROVIDER": {
+        "name": "OAuth2 Authorize Endpoint Data Provider",
+        "description": "Script to provide additional data to the OAuth2 authorize endpoint."
+      },
       "OIDC_CLAIMS": {
         "name": "OIDC Claims",
         "description": "Script to gather and populate the claims in a request when issuing an ID token or making a request to the userinfo endpoint."
@@ -3557,6 +3561,14 @@
       "PINGONE_VERIFY_COMPLETION_DECISION_NODE": {
         "name": "PingOne Verify Completion Decision Node",
         "description": "Scripts to be used to process the JSON from the user's identity verification transaction with PingOne Verify."
+      },
+      "OIDC_NODE": {
+        "name": "OIDC Node",
+        "description": "Script run within the OIDC journey node to transform the user profile received from an OIDC identity provider."
+      },
+      "SOCIAL_PROVIDER_HANDLER_NODE": {
+        "name": "Social Provider Handler Node",
+        "description": "Script run within the Social Provider Handler journey node to transform the user profile received from a social identity provider."
       }
     },
     "languages": {
