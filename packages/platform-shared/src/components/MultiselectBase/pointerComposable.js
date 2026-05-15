@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -64,9 +64,11 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
     if (!isOpen.value) {
       // NOTE: added to open on down arrow, else statement only happens after open
       activate();
-    } else if (pointer.value < filteredOptions.value.length - 1 && currentEl?.value) {
+    } else if (pointer.value < filteredOptions.value.length - 1) {
       pointer.value += 1;
-      listRef.value.scrollTop = currentEl.value.offsetTop - (listRef.value.offsetHeight / 2);
+      if (currentEl?.value && listRef.value) {
+        listRef.value.scrollTop = currentEl.value.offsetTop - (listRef.value.offsetHeight / 2);
+      }
       if (filteredOptions.value[pointer.value]
           && filteredOptions.value[pointer.value].$isLabel
           && !props.groupSelect) {
@@ -75,9 +77,11 @@ export default function usePointer(props, filteredOptions, isSelected, wholeGrou
     }
   }
   function pointerBackward() {
-    if (pointer.value > 0 && currentEl?.value) {
+    if (pointer.value > 0) {
       pointer.value -= 1;
-      listRef.value.scrollTop = currentEl.value.offsetTop - (listRef.value.offsetHeight / 2);
+      if (currentEl?.value && listRef.value) {
+        listRef.value.scrollTop = currentEl.value.offsetTop - (listRef.value.offsetHeight / 2);
+      }
       if (filteredOptions.value[pointer.value]
           && filteredOptions.value[pointer.value].$isLabel
           && !props.groupSelect

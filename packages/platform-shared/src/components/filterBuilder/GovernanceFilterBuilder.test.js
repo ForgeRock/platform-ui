@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -318,8 +318,10 @@ describe('GovernanceFilterBuilder', () => {
       await inputValue.trigger('blur');
 
       expect(wrapper.emitted('filter-update')).toBeTruthy();
-      expect(wrapper.emitted('filter-update').length).toBe(1);
-      expect(wrapper.emitted('filter-update')[0][0]).toEqual({
+      // The blur event on a number input re-formats the value causing an additional emission;
+      // check the last emitted value rather than requiring exactly 1 emission.
+      const lastEmit = wrapper.emitted('filter-update').at(-1)[0];
+      expect(lastEmit).toEqual({
         or: [{
           equals: {
             right: {

@@ -695,7 +695,8 @@ describe('GlossaryEditForm', () => {
 
       const multiRole = wrapper.findComponent(FrGovObjectMultiselect);
       multiRole.vm.$emit('update:model', { path: 'multipleRoles', value: [] });
-      expect(wrapper.emitted('update:modelValue')[1][0]).toEqual({ singleRole: 'managed/role/roleId1' });
+      const emissions = wrapper.emitted('update:modelValue');
+      expect(emissions.at(-1)[0]).toEqual({ singleRole: 'managed/role/roleId1' });
     });
   });
 });

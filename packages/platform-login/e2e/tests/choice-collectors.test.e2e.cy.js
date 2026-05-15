@@ -244,7 +244,7 @@ describe(
 
       // Proceed to the next Journey page
       cy.findByRole('heading', { name: nodeToLoad }).should('be.visible');
-      cy.findAllByRole('combobox').contains('Return back :/');
+      cy.findAllByRole('combobox').should('have.value', 'Return back :/');
 
       // Pick Happy path
       cy.findAllByRole('combobox').type('Proceed!{enter}');
@@ -269,7 +269,7 @@ describe(
 
       // Proceed to the next Journey page
       cy.findByRole('heading', { name: nodeToLoad }).should('be.visible');
-      cy.findAllByRole('combobox').contains('Return back :/');
+      cy.findAllByRole('combobox').should('have.value', 'Return back :/');
 
       // Proceed to the next step
       cy.findByRole('button', { name: 'Next' }).click();

@@ -7,7 +7,9 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
+import * as translations from '@forgerock/platform-shared/src/utils/translations';
 import i18n from '@/i18n';
+import FrInputLayout from '../Wrapper/InputLayout';
 import SelectInput from './index';
 
 describe('SelectInput', () => {
@@ -288,6 +290,148 @@ describe('SelectInput', () => {
     expect(options[0].classes('multiselect__option--highlight')).toBe(true);
     expect(options[1].classes('multiselect__option--highlight')).toBe(false);
     expect(options[2].classes('multiselect__option--selected')).toBe(true);
+  });
+
+  describe('@selectOptions', () => {
+    it('runs raw-string options through getEnumTranslation using the field name as prefix', () => {
+      const spy = jest.spyOn(translations, 'getEnumTranslation').mockImplementation((val) => `translated:${val}`);
+
+      const wrapper = setup({ name: 'myField', options: ['apple', 'banana'] });
+
+      expect(spy).toHaveBeenCalledWith('apple', 'myField');
+      expect(spy).toHaveBeenCalledWith('banana', 'myField');
+      expect(wrapper.vm.selectOptions).toEqual([
+        { text: 'translated:apple', value: 'apple' },
+        { text: 'translated:banana', value: 'banana' },
+      ]);
+
+      spy.mockRestore();
+    });
+
+    it('passes through pre-formatted options objects without calling getEnumTranslation', () => {
+      const spy = jest.spyOn(translations, 'getEnumTranslation');
+      const options = [{ text: 'Apple', value: 'apple' }, { text: 'Banana', value: 'banana' }];
+
+      const wrapper = setup({ options });
+
+      expect(spy).not.toHaveBeenCalled();
+      expect(wrapper.vm.selectOptions).toEqual(options);
+
+      spy.mockRestore();
+    });
+  });
+
+  describe('@showSelectedOptionOnOpen', () => {
+    it('scrolls the selected option into view when showSelectedOptionOnOpen is true and a value is set', async () => {
+      const scrollIntoView = jest.fn();
+      const wrapper = setup({
+        options: [{ text: 'Alpha', value: 'a' }, { text: 'Beta', value: 'b' }],
+        value: 'b',
+        showSelectedOptionOnOpen: true,
+      });
+      await flushPromises();
+
+      const selectedOption = wrapper.find('.multiselect__option--selected');
+      if (selectedOption.exists()) {
+        selectedOption.element.scrollIntoView = scrollIntoView;
+      }
+
+      wrapper.find('.multiselect').trigger('click');
+      await flushPromises();
+
+      expect(scrollIntoView).toHaveBeenCalledWith({ block: 'center' });
+    });
+
+    it('does not scroll when showSelectedOptionOnOpen is false', async () => {
+      const scrollIntoView = jest.fn();
+      const wrapper = setup({
+        options: [{ text: 'Alpha', value: 'a' }, { text: 'Beta', value: 'b' }],
+        value: 'b',
+        showSelectedOptionOnOpen: false,
+      });
+      await flushPromises();
+
+      const selectedOption = wrapper.find('.multiselect__option--selected');
+      if (selectedOption.exists()) {
+        selectedOption.element.scrollIntoView = scrollIntoView;
+      }
+
+      wrapper.find('.multiselect').trigger('click');
+      await flushPromises();
+
+      expect(scrollIntoView).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('@label watcher', () => {
+    it('sets floatLabels to false when label is cleared while no value is selected', async () => {
+      const wrapper = setup({ options: ['a', 'b'], label: 'My label' });
+      expect(wrapper.vm.floatLabels).toBe(false);
+
+      await wrapper.setProps({ label: '' });
+      expect(wrapper.vm.floatLabels).toBe(false);
+    });
+
+    it('sets floatLabels to true when label is set while a value is selected', async () => {
+      const wrapper = setup({ options: ['a', 'b'], value: 'a', label: '' });
+      await flushPromises();
+
+      await wrapper.setProps({ label: 'My label' });
+      expect(wrapper.vm.floatLabels).toBe(true);
+    });
+
+    it('keeps floatLabels false when label changes but no value is selected', async () => {
+      const wrapper = setup({ options: ['a', 'b'], label: 'Old label' });
+      expect(wrapper.vm.floatLabels).toBe(false);
+
+      await wrapper.setProps({ label: 'New label' });
+      expect(wrapper.vm.floatLabels).toBe(false);
+    });
+  });
+
+  describe('@allowEmpty null normalization', () => {
+    it('emits empty string instead of null when the selection is cleared with allowEmpty', async () => {
+      const wrapper = setup({
+        options: [{ text: 'Alpha', value: 'a' }, { text: 'Beta', value: 'b' }],
+        value: 'a',
+        allowEmpty: true,
+      });
+      await flushPromises();
+
+      // Deselect by clicking the already-selected option
+      const select = wrapper.find('.multiselect');
+      select.trigger('click');
+      await wrapper.vm.$nextTick();
+      wrapper.find('.multiselect__option--selected').trigger('click');
+      await flushPromises();
+
+      const emissions = wrapper.emitted('input');
+      expect(emissions).toBeTruthy();
+      expect(emissions.at(-1)[0]).toBe('');
+    });
+  });
+
+  describe('@FrInputLayout prop wiring', () => {
+    it('forwards description, isHtml, floatingLabel, showHoverTitle and disabled to FrInputLayout', () => {
+      const wrapper = mount(SelectInput, {
+        global: { plugins: [i18n] },
+        props: {
+          ...defaultProps,
+          description: 'Help text',
+          isHtml: true,
+          floatingLabel: false,
+          showHoverTitle: true,
+          disabled: true,
+        },
+      });
+
+      const layout = wrapper.findComponent(FrInputLayout);
+      expect(layout.props('description')).toBe('Help text');
+      expect(layout.props('isHtml')).toBe(true);
+      expect(layout.props('floatingLabel')).toBe(false);
+      expect(layout.props('showHoverTitle')).toBe(true);
+      expect(layout.props('readonlyLabel')).toBe(true);
+    });
   });
 
   describe('@a11y', () => {

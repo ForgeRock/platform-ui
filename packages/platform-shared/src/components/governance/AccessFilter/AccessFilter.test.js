@@ -124,7 +124,7 @@ const mountComponent = (useQueryFilter = true) => {
     },
   });
 };
-// Stub component for FrSelectInput that emits search-change, closed, and input
+// Stub component for FrSelectInput that emits search-change, close, and input
 const FrSelectInputStub = defineComponent({
   name: 'FrSelectInput',
   props: {
@@ -134,10 +134,10 @@ const FrSelectInputStub = defineComponent({
     value: { default: '' },
     label: { type: String, default: '' },
   },
-  emits: ['search-change', 'update:value', 'closed', 'input'],
+  emits: ['search-change', 'update:value', 'close', 'input'],
   template: `<div>
     <input :name="name" @input="$emit('search-change', $event.target.value)" />
-    <button class="close-btn" @click="$emit('closed'); $emit('search-change', '')" />
+    <button class="close-btn" @click="$emit('close'); $emit('search-change', '')" />
     <button class="select-btn" @click="$emit('input', 'accountGrant')" />
   </div>`,
 });
@@ -226,7 +226,7 @@ describe('AccessFilter — useRequestTypeOptions wiring', () => {
     expect(selectInputStub.props('options')).toEqual(mockRequestTypeOptions.value);
   });
 
-  it('does not call searchRequestTypes when dropdown closes (search-change "" after closed event)', async () => {
+  it('does not call searchRequestTypes when dropdown closes (search-change "" after close event)', async () => {
     const inputData = createRequestTypeInputData();
     const wrapper = mount(AccessFilter, {
       global: { plugins: [i18n] },
@@ -238,7 +238,7 @@ describe('AccessFilter — useRequestTypeOptions wiring', () => {
     await flushPromises();
     mockSearchRequestTypes.mockClear();
 
-    // Simulate multiselect closing: emits 'closed' then 'search-change' with ''
+    // Simulate multiselect closing: emits 'close' then 'search-change' with ''
     const closeBtn = wrapper.find('.close-btn');
     await closeBtn.trigger('click');
 

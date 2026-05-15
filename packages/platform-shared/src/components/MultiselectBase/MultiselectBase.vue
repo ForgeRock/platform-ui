@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     :id="id"
-    :tabindex="wrapperIsCombobox ? 0 : -1"
+    :tabindex="!inputIsCombobox ? 0 : -1"
     ref="rootRef"
     :class="[{ 'multiselect--active': isOpen, 'multiselect--disabled': disabled, 'multiselect--above': isAbove, 'multiselect--has-options-group': hasOptionGroup}]"
     class="multiselect"
@@ -18,13 +18,13 @@ of the MIT license. See the LICENSE file for details. -->
     @focus="onlyTagging && activate()"
     :data-testid="testid ? `multi-select-container-${testid}` : null "
     :autofocus="autofocus || null"
-    :role="wrapperIsCombobox ? 'combobox' : null"
-    :aria-autocomplete="wrapperIsCombobox ? 'list': null"
-    :aria-activedescendant="wrapperIsCombobox && isOpen ? `${id}-${pointer}`: null"
-    :aria-expanded="wrapperIsCombobox ? isOpen.toString() : null"
-    :aria-controls="wrapperIsCombobox ? `listbox-${id}` : null"
-    :aria-labelledby="wrapperIsCombobox ? comboboxLabelledby || `${id}-label` : null"
-    :aria-required="wrapperIsCombobox ? isRequiredAria: null">
+    :role="wrapperHasComboboxRole ? 'combobox' : null"
+    :aria-autocomplete="wrapperHasComboboxRole ? 'list': null"
+    :aria-activedescendant="wrapperHasComboboxRole && isOpen ? `${id}-${pointer}`: null"
+    :aria-expanded="wrapperHasComboboxRole ? isOpen.toString() : null"
+    :aria-controls="wrapperHasComboboxRole ? `listbox-${id}` : null"
+    :aria-labelledby="wrapperHasComboboxRole ? comboboxLabelledby || `${id}-label` : null"
+    :aria-required="wrapperHasComboboxRole ? isRequiredAria: null">
     <slot
       name="caret"
       :toggle="toggle">
@@ -114,15 +114,15 @@ of the MIT license. See the LICENSE file for details. -->
         @keydown.esc.prevent.stop="deactivate()"
         @keypress.enter.prevent.stop.self="addPointerElement($event)"
         @keydown.delete.stop="removeLastElement()"
-        :role="inputIsCombobox ? 'combobox' : null"
-        :aria-autocomplete="inputIsCombobox ? 'list': null"
-        :aria-activedescendant="inputIsCombobox && isOpen ? `${id}-${pointer}`: null"
-        :aria-expanded="inputIsCombobox? isOpen.toString() : null"
-        :aria-controls="inputIsCombobox ? `listbox-${id}` : null"
-        :aria-labelledby="inputIsCombobox ? comboboxLabelledby || `${id}-label` : null"
-        :aria-required="inputIsCombobox ? isRequiredAria: null">
+        :role="inputHasComboboxRole ? 'combobox' : null"
+        :aria-autocomplete="inputHasComboboxRole ? 'list': null"
+        :aria-activedescendant="inputHasComboboxRole && isOpen ? `${id}-${pointer}`: null"
+        :aria-expanded="inputHasComboboxRole ? isOpen.toString() : null"
+        :aria-controls="inputHasComboboxRole ? `listbox-${id}` : null"
+        :aria-labelledby="inputHasComboboxRole ? comboboxLabelledby || `${id}-label` : null"
+        :aria-required="inputHasComboboxRole ? isRequiredAria: null">
       <span
-        v-if="(isSingleLabelVisible && hasSingleLabelSlot && !isOpen) || wrapperIsCombobox"
+        v-if="isSingleLabelVisible && ((hasSingleLabelSlot && !isOpen) || !inputIsCombobox)"
         class="multiselect__single"
         @mousedown.prevent="toggle"
       >
@@ -609,8 +609,9 @@ const isAbove = computed(() => {
 const inputIsCombobox = computed(() => props.searchable
         || props.multiple
         || props.taggable);
-const wrapperIsCombobox = computed(() => !inputIsCombobox.value);
-const hasFilteredOptions = computed(() => !(filteredOptions.length === 0));
+const wrapperHasComboboxRole = computed(() => !inputIsCombobox.value || hasSingleLabelSlot);
+const inputHasComboboxRole = computed(() => inputIsCombobox.value && !hasSingleLabelSlot);
+const hasFilteredOptions = computed(() => !(filteredOptions.value.length === 0));
 const debouncePointerSet = debounce(pointerSet, 15);
 </script>
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -673,8 +673,10 @@ describe('FormBuilder', () => {
     expect(options.length).toBe(2);
     expect(options[0].text()).toBe('Value 1');
     expect(options[1].text()).toBe('Value 2');
-    const value = field.find('.multiselect__single');
-    expect(value.text()).toBe('Value 1');
+    // In MultiselectBase with searchable=true, the selected value is shown via the input's value
+    // attribute (the input has class multiselect__single when closed and no singleLabel slot)
+    const valueInput = field.find('input.multiselect__single');
+    expect(valueInput.element.value).toBe('Value 1');
   });
 
   it('should render correctly a select with model value', async () => {
@@ -721,8 +723,10 @@ describe('FormBuilder', () => {
     expect(options.length).toBe(2);
     expect(options[0].text()).toBe('Value 1');
     expect(options[1].text()).toBe('Value 2');
-    const value = field.find('.multiselect__single');
-    expect(value.text()).toBe('Value 2');
+    // In MultiselectBase with searchable=true, the selected value is shown via the input's value
+    // attribute (the input has class multiselect__single when closed and no singleLabel slot)
+    const valueInput = field.find('input.multiselect__single');
+    expect(valueInput.element.value).toBe('Value 2');
   });
 
   it('should update correctly the model value when the select changes', async () => {

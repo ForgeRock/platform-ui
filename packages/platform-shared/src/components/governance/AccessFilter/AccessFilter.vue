@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
               @search:applications="searchApplications"
               @update:applications="updateApplications"
               @search-change="item.id === 'requestType' ? handleRequestTypeSearchChange($event) : undefined"
-              @closed="item.id === 'requestType' ? handleRequestTypeClosed() : undefined"
+              @close="item.id === 'requestType' ? handleRequestTypeClosed() : undefined"
               :application-search-results="applicationSearchResults"
             >
               <template
