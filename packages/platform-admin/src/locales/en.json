@@ -183,7 +183,10 @@
     "templates": "Templates",
     "templateBuilder": "Template Builder",
     "userExperience": "User Experience",
-    "workflows": "Workflows"
+    "workflows": "Workflows",
+    "endUser": {
+      "adminRequests": "Requests"
+    }
   },
   "ai": {
     "askAi": "Ask AI",
