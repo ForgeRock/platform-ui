@@ -12,6 +12,7 @@ import '@neuralegion/cypress-har-generator/commands';
 import 'cypress-real-events/support';
 import generatePageURL from '../utils/adminUtils';
 import { importJourneysViaAPI, deleteJourneysViaAPI } from '../utils/manageJourneys';
+import RegistrationJourneyPage from '../pages/enduser/RegistrationJourneyPage';
 
 // Method that fills in the Admin Login form and sends it
 function fillAndSendLoginForm() {
@@ -468,6 +469,24 @@ Cypress.Commands.add('getIframeBody', (iframeSelector) => cy.get(iframeSelector)
  */
 Cypress.Commands.add('clickButtonInDialog', (buttonName) => {
   cy.findByRole('dialog').findByRole('button', { name: new RegExp(buttonName, 'i') }).click();
+});
+
+/**
+ * Registers a new user by navigating to a journey URL and filling in the registration form.
+ *
+ * @param {string} journeyUrl - The URL of the registration journey to visit.
+ * @param {object} user - The user data to fill into the registration form.
+ * @param {string} user.username - The username for the new account.
+ * @param {string} user.firstName - The user's first name.
+ * @param {string} user.lastName - The user's last name.
+ * @param {string} user.emailAddress - The user's email address.
+ * @param {string} user.password - The user's password.
+ */
+Cypress.Commands.add('registerViaJourney', (journeyUrl, user) => {
+  cy.logout();
+  cy.visitJourneyUrl(journeyUrl);
+  RegistrationJourneyPage.fill(user);
+  RegistrationJourneyPage.submit();
 });
 
 /**
