@@ -675,9 +675,17 @@ export default {
      */
     grantTypeLabel(membership) {
       const grantTypes = membership?.relationship?.properties?.grantTypes;
+      const isDisconnected = membership?.application?.isDisconnected;
       if (grantTypes) {
-        const foundGrantType = grantTypes.find((grantType) => grantType.id === membership.relationship.id);
-        return foundGrantType.grantType === 'role' ? this.roleBasedAssignment : this.directAssignment;
+        const foundGrantType = grantTypes.find((grantType) => grantType.id === membership?.relationship?.id);
+        if (foundGrantType) {
+          return foundGrantType.grantType === 'role' ? this.roleBasedAssignment : this.directAssignment;
+        }
+        return '';
+      }
+      // Returning everything for disconnected apps as direct until role based access introduced
+      if (isDisconnected) {
+        return this.directAssignment;
       }
       return '';
     },

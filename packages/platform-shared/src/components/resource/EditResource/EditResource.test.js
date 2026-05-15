@@ -257,6 +257,8 @@ describe('EditResource.vue', () => {
         wrapper.vm.id = '../../testId';
         const privilegeSpy = jest.spyOn(PrivilegeApi, 'getResourceTypePrivilege')
           .mockResolvedValue({ data: { VIEW: { properties: [] }, UPDATE: { properties: [] }, DELETE: { allowed: false } } });
+        jest.spyOn(ManagedResourceApi, 'getManagedResource').mockResolvedValue({ data: { _rev: '1' } });
+        jest.spyOn(wrapper.vm, 'loadLinkedApplicationsData').mockResolvedValue();
 
         await wrapper.vm.loadData();
 
@@ -993,7 +995,8 @@ describe('EditResource.vue', () => {
       resourceResponse = { data: { _rev: '1', givenName: 'John', sn: 'Doe' } };
 
       jest.spyOn(wrapper.vm, 'getObjectTypeProperties').mockReturnValue({});
-      jest.spyOn(wrapper.vm, 'getResource').mockResolvedValue(() => Promise.resolve(resourceResponse));
+      jest.spyOn(wrapper.vm, 'getResource').mockResolvedValue(resourceResponse);
+      jest.spyOn(wrapper.vm, 'loadLinkedApplicationsData').mockResolvedValue();
 
       axios.all.mockResolvedValueOnce([
         schemaResponse,
