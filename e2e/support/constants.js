@@ -88,6 +88,7 @@ export const JOURNEYS = {
   QA_THEMES_EDIT_TESTING_JOURNEY_WITH_SQ_FOR_FORGEOPS: {
     name: 'QA Themes Edit Testing Journey with Security Questions', path: 'QA%20-%20Themes%20edit%20testing%20journey%20with%20SQ', fileName: 'QA_Themes_Edit_Testing_Journey_With_SQ_Forgeops_template', env: 'forgeops',
   },
+  EVENT_HOOK_SIMPLE_REGISTRATION: { name: 'QA - Event hook simple registration', path: 'QA%20-%20Event%20hook%20simple%20registration', fileName: 'QA_Event_Hook_Simple_Registration_Journey_template' },
 };
 
 /**
