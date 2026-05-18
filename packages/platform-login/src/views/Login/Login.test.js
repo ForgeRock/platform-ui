@@ -817,7 +817,7 @@ describe('Component Test', () => {
     function setup(props) {
       return mount(Login, {
         global: {
-          plugins: [i18n],
+          plugins: [i18n, createTestingPinia()],
           stubs: {
             'router-link': true,
           },
@@ -857,6 +857,7 @@ describe('Component Test', () => {
     };
 
     beforeEach(() => {
+      jest.spyOn(LoginMixin.methods, 'getConfigurationInfo').mockImplementation(() => Promise.resolve({ data: { realm: '/' } }));
       jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authData)));
     });
 
@@ -864,11 +865,16 @@ describe('Component Test', () => {
       it('Displays remember my login checkbox if its enabled in the theme', async () => {
         const wrapperOff = setup({ themeLoading: true });
         await flushPromises();
+        await flushPromises();
         await wrapperOff.setProps({ themeLoading: false });
-        await wrapperOff.vm.$nextTick();
+        await flushPromises();
         expect(wrapperOff.find('input[name="rememberMe"]').exists()).toBeFalsy();
+        // Unmount before creating the second wrapper so orphaned timers from handleFocus()
+        // do not fire into the next component's lifecycle and pollute document.body.
+        wrapperOff.unmount();
 
         const wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
+        await flushPromises();
         await flushPromises();
         await wrapper.setProps({ themeLoading: false });
         await flushPromises();
@@ -883,12 +889,14 @@ describe('Component Test', () => {
         await flushPromises();
         rememberMeLabel = wrapper.find('#rememberMe label');
         expect(rememberMeLabel.text()).toBe('test');
+        wrapper.unmount();
       });
     });
 
     describe('@actions', () => {
       let localStorageSetSpy;
       let localStorageRemoveSpy;
+      let wrapper;
 
       beforeEach(() => {
         localStorageSetSpy = jest.spyOn(Storage.prototype, 'setItem');
@@ -896,13 +904,18 @@ describe('Component Test', () => {
       });
 
       afterEach(() => {
+        if (wrapper) {
+          wrapper.unmount();
+          wrapper = null;
+        }
         localStorageSetSpy.mockRestore();
         localStorageRemoveSpy.mockRestore();
         localStorage.clear();
       });
 
       it('Saves username to localstorage if rememberMe is enabled', async () => {
-        const wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
+        wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
+        await flushPromises();
         await flushPromises();
         await wrapper.setProps({ themeLoading: false });
         await flushPromises();
@@ -920,7 +933,8 @@ describe('Component Test', () => {
       });
 
       it('Removes username from localStorage if rememberMe is disabled', async () => {
-        const wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
+        wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
+        await flushPromises();
         await flushPromises();
         await wrapper.setProps({ themeLoading: false });
         await flushPromises();
