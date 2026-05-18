@@ -857,6 +857,7 @@ describe('Component Test', () => {
     };
 
     beforeEach(() => {
+      jest.useRealTimers();
       jest.spyOn(LoginMixin.methods, 'getConfigurationInfo').mockImplementation(() => Promise.resolve({ data: { realm: '/' } }));
       jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authData)));
     });
