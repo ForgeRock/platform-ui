@@ -12,6 +12,7 @@ import UserApiSteps from './api/UserApiSteps';
 import CustomDomainApiSteps from './api/CustomDomainApiSteps';
 import EventHookApiSteps from './api/EventHookApiSteps';
 import CustomEndpointApiSteps from './api/CustomEndpointApiSteps';
+import AuthScriptApiSteps from './api/AuthScriptApiSteps';
 
 export default {
   csp: CspApiSteps,
@@ -20,4 +21,5 @@ export default {
   customDomain: CustomDomainApiSteps,
   eventHooks: EventHookApiSteps,
   customEndpoints: CustomEndpointApiSteps,
+  authScripts: AuthScriptApiSteps,
 };
