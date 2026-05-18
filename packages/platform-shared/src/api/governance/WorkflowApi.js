@@ -1,15 +1,14 @@
 /**
- * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
-import { generateIgaOrchestrationApi } from '@forgerock/platform-shared/src/api/BaseApi';
+import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
-const workflowUrl = '/orchestration/definition';
+const workflowUrl = '/governance/workflow';
 
 /**
  * Get list of workflows
@@ -17,7 +16,7 @@ const workflowUrl = '/orchestration/definition';
  * @returns The response is a promise that resolves to the data (including list of workflows) returned by the API.
  */
 export function getWorkflowList(params = { _pageSize: 100 }) {
-  return generateIgaOrchestrationApi().get(`${workflowUrl}${encodeQueryString(params, false)}`);
+  return generateIgaApi().get(`${workflowUrl}${encodeQueryString(params, false)}`);
 }
 
 /**
@@ -27,7 +26,7 @@ export function getWorkflowList(params = { _pageSize: 100 }) {
  * @returns The response is a promise that resolves to the data (including single workflow) returned by the API.
  */
 export function getWorkflow(id, status) {
-  return generateIgaOrchestrationApi().get(`${workflowUrl}/${id}/${status}`);
+  return generateIgaApi().get(`${workflowUrl}/${id}/${status}`);
 }
 
 /**
@@ -36,7 +35,7 @@ export function getWorkflow(id, status) {
  * @returns The response is a promise that resolves to the data (including draft workflow) returned by the API.
  */
 export function createDraftWorkflow(data) {
-  return generateIgaOrchestrationApi().post(`${workflowUrl}?_action=create`, data);
+  return generateIgaApi().post(`${workflowUrl}?_action=create`, data);
 }
 
 /**
@@ -45,7 +44,7 @@ export function createDraftWorkflow(data) {
  * @returns The response is a promise that resolves to the data returned by the API.
  */
 export function validateDraftWorkflow(data) {
-  return generateIgaOrchestrationApi().post(`${workflowUrl}?_action=validate`, data);
+  return generateIgaApi().post(`${workflowUrl}?_action=validate`, data);
 }
 
 /**
@@ -54,7 +53,7 @@ export function validateDraftWorkflow(data) {
  * @returns The response is a promise that resolves to the data returned by the API.
  */
 export function createNewWorkflow(data) {
-  return generateIgaOrchestrationApi().post(`${workflowUrl}?_action=create`, data);
+  return generateIgaApi().post(`${workflowUrl}?_action=create`, data);
 }
 
 /**
@@ -63,7 +62,7 @@ export function createNewWorkflow(data) {
  * @returns The response is a promise that resolves to the data returned by the API.
  */
 export function publishDraftWorkflow(data) {
-  return generateIgaOrchestrationApi().post(`${workflowUrl}?_action=publish`, data);
+  return generateIgaApi().post(`${workflowUrl}?_action=publish`, data);
 }
 
 /**
@@ -73,7 +72,7 @@ export function publishDraftWorkflow(data) {
  * @returns The response is a promise that resolves to the data (including draft workflow) returned by the API.
  */
 export function updateDraftWorkflow(id, data) {
-  return generateIgaOrchestrationApi().put(`${workflowUrl}/${id}`, data);
+  return generateIgaApi().put(`${workflowUrl}/${id}`, data);
 }
 
 /**
@@ -82,7 +81,7 @@ export function updateDraftWorkflow(id, data) {
  * @returns The response is a promise that resolves to the data (including draft workflow) returned by the API.
  */
 export function deleteDraftWorkflow(id) {
-  return generateIgaOrchestrationApi().delete(`${workflowUrl}/${id}/draft`);
+  return generateIgaApi().delete(`${workflowUrl}/${id}/draft`);
 }
 
 /**
@@ -91,5 +90,5 @@ export function deleteDraftWorkflow(id) {
  * @returns The response is a promise that resolves to the data (including draft workflow) returned by the API.
  */
 export function deletePublishedWorkflow(id) {
-  return generateIgaOrchestrationApi().delete(`${workflowUrl}/${id}/published`);
+  return generateIgaApi().delete(`${workflowUrl}/${id}/published`);
 }
