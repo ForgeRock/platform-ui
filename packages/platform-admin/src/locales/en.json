@@ -3283,7 +3283,6 @@
     "provider": {
       "title": "Email Provider",
       "subtitle": "By default system emails will use the built-in SMTP server. You can choose to use your own email provider to send emails to customers.",
-      "useEmailProvider": "Use my own email provider",
       "from": "From Address",
       "fromDescription": "Default from address for emails.",
       "fromName": "From Name",
@@ -3311,6 +3310,39 @@
       "errorSavingProvider": "There was an issue saving the email provider",
       "successSavingProvider": "Email provider successfully saved!",
       "successDeletingProvider": "Email provider successfully deleted.",
+      "builtin": {
+        "title": "Built-in SMTP server",
+        "description": "Use the built-in SMTP server. Not meant for production environments."
+      },
+      "custom": {
+        "title": "Custom Provider"
+      },
+      "confirmModal": {
+        "title": "Use Built-in Email Provider?",
+        "description": "Are you sure you want to switch back to the built-in provider?"
+      },
+      "msgraph": {
+        "title": "Microsoft Graph",
+        "mailEndpoint": "Mail Endpoint",
+        "mailEndpointDescription": "The URI for the MS Graph API sendMail endpoint. Typical format: https://graph.microsoft.com/v1.0/users/{'{'}user{'}'}{'@'}{'{'}tenant{'}'}.onmicrosoft.com/sendMail",
+        "clientId": "Client ID",
+        "clientIdDescription": "clientId used to request an access token from the token endpoint.",
+        "clientSecret": "Client Secret Identifier",
+        "clientSecretDescription": "clientSecret used to request an access token from the token endpoint.",
+        "tokenEndpoint": "Token Endpoint",
+        "tokenEndpointDescription": "The URI for the MS Graph API token endpoint. Typical format: https://login.microsoftonline.com/{'{'}tenant{'}'}.onmicrosoft.com/oauth2/v2.0/token",
+        "scope": "Scope",
+        "scopeDelimiter": "Scope Delimiter",
+        "scopeDelimiterDescription": "Scope delimiter to use. Defaults to space.",
+        "threadPoolSize": "Thread Pool Size"
+      },
+      "modal": {
+        "title": "Add a Custom Email Provider",
+        "description": "Choose email provider to configure",
+        "subTitle": "Configure Provider"
+      },
+      "addCustom": "Custom Provider",
+      "switchToBuiltin": "Switch to Built-in Provider",
       "testProviderEmailBody": "This is a test email using your configured provider settings.",
       "testProviderEmailSubject": "Test Provider Email"
     },
@@ -3370,8 +3402,10 @@
       },
       "sendTestEmail": "Send Test Email",
       "sendTestEmailModal": {
-        "title": "Send Test Email",
-        "testEmailAddressDescription": "Email address to send test email to.",
+        "title": "Send test email",
+        "description": "Send a test email using the current email provider.",
+        "testEmailAddressDescription": "Enter an email address to receive the test message.",
+        "toEmailPlaceholder": "To",
         "emailSent": "Email sent!",
         "emailSentDescription": "If you don't receive an email within the next hour, please check logs for \"Failed Sending Notification\" events and review your configuration according to Email Provider. If the problem persists, please contact support.",
         "errorTestEmail": "Test email not sent"

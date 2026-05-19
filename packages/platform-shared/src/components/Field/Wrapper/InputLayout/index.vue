@@ -82,11 +82,11 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="isHtml"
         :id="`${id}_helpText`"
         v-html="descriptionTranslation"
-        class="form-text text-muted" />
+        class="form-text text-muted text-break" />
       <small
         v-else
         :id="`${id}_helpText`"
-        class="form-text text-muted">
+        class="form-text text-muted text-break">
         {{ descriptionTranslation }}
       </small>
     </template>
