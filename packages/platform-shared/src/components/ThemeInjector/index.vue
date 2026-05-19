@@ -129,14 +129,16 @@ of the MIT license. See the LICENSE file for details. -->
          * textarea
          * input
          * .form-control
+         * .form-control.focus (Bootstrap Vue JS-driven focus class)
          * .form-control .multiselect
-         * .form-cohtrol .multiselect__tags
+         * .form-control .multiselect__tags
          * .uneditable-input
       -->
       textarea:focus,
       <template v-if="mock">.fr-theme-preview</template> input:focus:not(.multiselect__input, .fr-tag-input),
       <template v-if="mock">.fr-theme-preview</template> input[type]:focus:not(.multiselect__input),
       .uneditable-input:focus,
+      <template v-if="mock">.fr-theme-preview</template> .form-control.focus,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
@@ -676,7 +678,7 @@ of the MIT license. See the LICENSE file for details. -->
          * input
          * .form-control
          * .form-control .multiselect
-         * .form-cohtrol .multiselect__tags
+         * .form-control .multiselect__tags
          * .uneditable-input
       -->
       textarea:focus,
