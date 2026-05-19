@@ -213,11 +213,15 @@
       "agentRequiresInfo": "The agent requires additional information. Please provide your response:",
       "chartTableAvailable": "Chart & table available",
       "collapseChart": "Collapse chart",
-      "collapse": "Collapse",
+      "collapse": "Collapse table",
+      "downloadChart": "Download chart",
       "downloadTable": "Download table",
       "expand": "Expand",
       "expandChart": "Expand chart",
+      "failedToRetrieveMessages": "Failed to retrieve messages from AI assistant",
+      "failedToSendMessage": "Failed to send message to AI assistant",
       "failedToStartConversation": "Failed to start conversation with AI assistant",
+      "failedToSubmitFeedback": "Failed to submit feedback",
       "failedToSubmitResponse": "Failed to submit response to AI assistant",
       "feedback": {
         "additionalComments": "Additional comments (optional)",
@@ -232,11 +236,13 @@
       },
       "aiReport": "AI Report",
       "chart": "Chart",
+      "report": "report",
       "findings": "Findings:",
       "issueProcessingRequest": "I encountered an issue processing your request. Please try again or rephrase your question.",
       "minimize": "Minimize",
       "missingConversationOrChannel": "Missing conversation or channel ID",
       "noResponseFromAgent": "No response received from agent",
+      "timeoutWaitingForAgent": "Timeout waiting for agent response",
       "pageOf": "Page {current} of {total}",
       "readAloud": "Read aloud",
       "receivedResponse": "Received response from AI assistant",
@@ -245,7 +251,10 @@
       "thinking": "Thinking",
       "welcomeDescription": "The Ping AI Assistant helps you create and manage reports faster. It can generate custom reports, analyze recent activity, or summarize trends — then save or share the results for reuse by you or your team.",
       "welcomeGetStarted": "Enter a prompt below to get started!",
-      "workingOnIt": "Working on it"
+      "workingOnIt": "Working on it…",
+      "workingOnItStillThinking": "Still thinking—this can take a moment.",
+      "workingOnItTakingLonger": "Taking longer than usual. You can cancel or keep it running.",
+      "workingOnItAlmostDone": "Almost wrapped up… I'm putting the finishing touches on your response."
     },
     "askAi": "Ask AI",
     "errors": {
@@ -299,7 +308,8 @@
       "noChartFallback": "Chart visualization is not available. Showing table data below.",
       "pageOf": "Page {current} of {total}",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "unableToDownloadChart": "Unable to download chart image"
     }
   },
   "aiAgents": {

@@ -15,29 +15,30 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="reports.length > 0 || loading"
       no-body>
       <BButtonToolbar class="py-3 px-4 justify-content-between">
-        <div
-          v-if="customReportIsEnabled"
-          class="d-flex flex-wrap">
-          <BButton
-            class="mb-2 mb-lg-0 w-100 w-lg-auto"
-            variant="primary"
-            @click="$bvModal.show('new-report-modal')">
-            <FrIcon
-              icon-class="mr-2"
-              name="add">
-              {{ $t('common.newObject', { object: $t('common.report') }) }}
-            </FrIcon>
-          </BButton>
-          <BButton
-            class="mb-2 mb-lg-0 ml-lg-2 w-100 w-lg-auto"
-            variant="outline-primary"
-            @click="openImportModal">
-            <FrIcon
-              icon-class="mr-2"
-              name="file_upload">
-              {{ $t('common.import') }}
-            </FrIcon>
-          </BButton>
+        <div class="d-flex flex-wrap">
+          <template v-if="customReportIsEnabled">
+            <BButton
+              class="mb-2 mb-lg-0 w-100 w-lg-auto"
+              variant="primary"
+              @click="$bvModal.show('new-report-modal')">
+              <FrIcon
+                icon-class="mr-2"
+                name="add">
+                {{ $t('common.newObject', { object: $t('common.report') }) }}
+              </FrIcon>
+            </BButton>
+            <BButton
+              class="mb-2 mb-lg-0 ml-lg-2 w-100 w-lg-auto"
+              variant="outline-primary"
+              @click="openImportModal">
+              <FrIcon
+                icon-class="mr-2"
+                name="file_upload">
+                {{ $t('common.import') }}
+              </FrIcon>
+            </BButton>
+          </template>
+          <slot name="toolbar-buttons" />
         </div>
         <FrSearchInput
           class="w-100 pl-lg-2 fr-search"

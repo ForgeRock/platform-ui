@@ -14,6 +14,7 @@ const defaultState = {
   amBaseURL: '',
   analyticsURL: '',
   aiAgentsEnabled: false,
+  analyticsReportsAiAssistantEnabled: false,
   devIdmEnabled: false,
   autoAccessEnabled: false,
   autoAccessJasUrl: null,
@@ -42,10 +43,12 @@ const defaultState = {
   hasAmUrl: false,
   helixEnvironmentId: '',
   helixEnvironmentUrl: '',
+  analyticsHelixEnvironmentId: '',
   idmBaseURL: '',
   idmOnly: false,
   igaApiUrl: null,
   igaOrchestrationApiUrl: null,
+  analyticsReportsAiAgentVersion: null,
   journeyAIAgentVersion: null,
   journeyAIBuildAgentVersion: null,
   journeyAIEnabled: false,
@@ -129,6 +132,11 @@ const mutations = {
           state.aiDevEnabled = true;
           state.journeyAIBuildAgentVersion = env.VUE_APP_HELIX_JOURNEY_BUILD_AGENT_VERSION;
         }
+      }
+      if (env.VUE_APP_ENABLE_ANALYTICS_REPORT_AI_ASSISTANT?.toString() === 'true') {
+        state.analyticsReportsAiAgentVersion = env.VUE_APP_HELIX_ANALYTICS_AGENT_VERSION || 'draft';
+        state.helixEnvironmentUrl = getFQDN(env.VUE_APP_HELIX_ENVIRONMENT_URL);
+        state.analyticsHelixEnvironmentId = env.VUE_APP_HELIX_ANALYTICS_ENVIRONMENT_ID;
       }
 
       if (env.VUE_APP_ENABLE_GOVERNANCE?.toString() === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV?.toString() === 'true') {
@@ -271,6 +279,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_UI_LOCALIZATION?.toString() === 'true') {
       state.uiLocalizationEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_ANALYTICS_REPORT_AI_ASSISTANT?.toString() === 'true') {
+      state.analyticsReportsAiAssistantEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_DEV_APP_TEMPLATES?.toString() === 'true') {
