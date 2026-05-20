@@ -1207,6 +1207,7 @@
   },
   "pagination": {
     "dropdown": {
+      "ariaLabel": "Items per page",
       "text": "{pageMin}-{pageMax} of {totalRows}",
       "textUnknownTotalRows": "{pageMin}-{pageMax}",
       "pageSize": "{pageSize} per page"
