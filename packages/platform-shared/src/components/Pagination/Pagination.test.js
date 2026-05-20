@@ -37,6 +37,17 @@ describe('Pagination Component', () => {
     });
   });
 
+  it('Pagination dropdown has aria-label for items per page', () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 25,
+      },
+    });
+    const dropdownToggle = wrapper.find('#dropdown').find('.dropdown-toggle');
+    expect(dropdownToggle.exists()).toBe(true);
+    expect(dropdownToggle.attributes('aria-label')).toBe('pagination.dropdown.ariaLabel');
+  });
+
   it('Pagination correct aria labels', () => {
     const wrapper = mountPagination();
     const pagination = wrapper.find('#pagination');

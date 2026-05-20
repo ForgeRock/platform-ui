@@ -13,6 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="mr-1 pagination-dropdown"
       id="dropdown"
       toggle-class="btn btn-link text-dark border-0 toggle-dropdown-button"
+      :toggle-attrs="{ 'aria-label': $t('pagination.dropdown.ariaLabel') }"
       :boundary="boundary"
       :disabled="disabled"
       :text="totalRows > 0 ? $t('pagination.dropdown.text', { pageMin, pageMax, totalRows }) : $t('pagination.dropdown.textUnknownTotalRows', { pageMin, pageMax })"
