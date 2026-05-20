@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,6 +17,14 @@ import { isObject } from 'lodash';
 export const PLACEHOLDER_REGEX = /^([\w '"",\-.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",\-.:/$£@]+)?$/;
 
 export const ESV_NAME_PREPEND = 'esv-';
+
+/**
+ * The fixed ESV variable ID used to store the company name for hosted sign-in page titles.
+ * This variable is managed exclusively through the Hosted Sign In Pages settings card
+ * (Tenant Settings -> Global Settings -> Enduser UI -> Company name for page titles)
+ * and is intentionally excluded from the standard ESV management list.
+ */
+export const COMPANY_NAME_ESV_ID = `${ESV_NAME_PREPEND}pinginternal-hosted-page-company-name`;
 
 /**
  * List of ESV variable types

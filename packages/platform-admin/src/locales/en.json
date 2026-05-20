@@ -567,9 +567,24 @@
   },
   "hostedPages": {
     "settings": {
-      "description": "Control access to hosted account and journey pages.",
+      "companyName": {
+        "addModalTitle": "Add Company Name",
+        "editModalTitle": "Edit Company Name",
+        "errorLoading": "There was an error loading the company name.",
+        "errorSaving": "There was an error saving the company name.",
+        "successSaving": "Company name updated",
+        "successCleared": "Company name cleared",
+        "helperText": "Used in browser page titles for hosted sign-in and journey pages, for example 'Login - Ping Identity'.",
+        "label": "Company name for page titles",
+        "inputPlaceholder": "Company name",
+        "esvDescription": "Company name shown in hosted sign-in page titles",
+        "previewTemplate": "Login - {companyName}"
+      },
+      "description": "Manage settings for hosted account and sign-in pages.",
       "hostedAccountPagesTitle": "Hosted Account Pages",
-      "hostedJourneyPagesTitle": "Hosted Journey Pages",
+      "hostedAccountPagesDescription": "Hosted account management and delegated administration pages.",
+      "hostedJourneyPagesTitle": "Hosted Sign In Pages",
+      "hostedJourneyPagesDescription": "Hosted sign-in and journey pages.",
       "activateModalTitle": "Activate {pagesTitle}?",
       "activateModalDescription": "Are you sure you want to allow access to {pagesTitle}?",
       "deactivateModalTitle": "Deactivate {pagesTitle}?",
