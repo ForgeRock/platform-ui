@@ -89,6 +89,7 @@
     "mtls": "MTLS",
     "NormalView": "Normal View",
     "NotFound": "Not Found",
+    "OAuth2Provider": "OAuth2 Provider",
     "OAuthClients": "OAuth2 Clients",
     "OAuthReturn": "OAuth Return",
     "pageTitle": "Platform Admin - {page}",
@@ -135,6 +136,7 @@
     "applications": "Applications",
     "aiAgents": "AI Agents",
     "authentication": "Authentication",
+    "authorization": "Authorization",
     "authorizationRole": "Internal Role",
     "authBehavior": "Auth Behavior",
     "authScripts": "Auth Scripts",
@@ -164,6 +166,7 @@
     "managed": "Manage",
     "monitoring": "Monitoring",
     "nativeConsoles": "Native Consoles",
+    "oauth2Provider": "OAuth2 Provider",
     "oauthClients": "OAuth2 Clients",
     "pingOneIntegrations": "PingOne Integrations",
     "pipelines": "Pipelines",
@@ -424,6 +427,30 @@
       "saveSuccess": "Session settings saved",
       "errorLoading": "There was an error loading session settings",
       "errorSaving": "There was an error saving session settings"
+    }
+  },
+  "authorization": {
+    "oauth2Provider": {
+      "title": "OAuth2 Provider",
+      "description": "Manage the core settings that define how OAuth 2.0 tokens are issued and handled.",
+      "saveSuccess": "OAuth2 Provider configuration saved.",
+      "saveError": "Unable to save OAuth2 Provider configuration.",
+      "loadError": "Unable to load OAuth2 Provider configuration.",
+      "scriptedJwtIssuers": {
+        "tabLabel": "Scripted JWT Issuers",
+        "noIssuersTitle": "No Scripted JWT Issuers",
+        "noIssuersSubtitle": "Get started by creating your first Scripted JWT Issuer.",
+        "newIssuer": "New Scripted JWT Issuer",
+        "idColumn": "Name",
+        "issuerCreated": "Scripted JWT Issuer created.",
+        "issuerUpdated": "Scripted JWT Issuer updated.",
+        "creationError": "Unable to create Scripted JWT Issuer.",
+        "updateError": "Unable to update Scripted JWT Issuer.",
+        "loadError": "Unable to load Scripted JWT Issuers.",
+        "issuerType": "Scripted JWT Issuer",
+        "issuerDeleted": "Scripted JWT Issuer deleted.",
+        "deleteError": "Unable to delete Scripted JWT Issuer."
+      }
     }
   },
   "connect": {
