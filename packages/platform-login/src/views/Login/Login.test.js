@@ -953,6 +953,15 @@ describe('Component Test', () => {
       });
     });
     describe('callbacks', () => {
+      let callbacksWrapper;
+
+      afterEach(() => {
+        if (callbacksWrapper) {
+          callbacksWrapper.unmount();
+          callbacksWrapper = null;
+        }
+      });
+
       it('ensures that the username field is populated with the defaultText value if a defaultText output object is present', async () => {
         const authDataWithDefaultText = {
           authId: '',
@@ -969,11 +978,11 @@ describe('Component Test', () => {
         };
         jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataWithDefaultText)));
 
-        const wrapper = setup();
-        jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+        callbacksWrapper = setup();
+        jest.spyOn(callbacksWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
         await flushPromises();
 
-        const usernameInput = wrapper.find('div[label="User Name"] input');
+        const usernameInput = callbacksWrapper.find('div[label="User Name"] input');
         expect(usernameInput.element.value).toBe('User Name default value text');
       });
 
@@ -998,13 +1007,13 @@ describe('Component Test', () => {
 
         jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(stepValidationPayload)));
         const data = { loading: true, step: new FRStep(stepValidationPayload) };
-        const wrapper = setup(data);
+        callbacksWrapper = setup(data);
 
         await flushPromises();
-        wrapper.vm.buildTreeForm();
+        callbacksWrapper.vm.buildTreeForm();
         await flushPromises();
 
-        const frField = wrapper.find('.callback-component');
+        const frField = callbacksWrapper.find('.callback-component');
         // Check the validation attribute
         expect(frField.attributes('validation')).toBe('email|required');
       });
@@ -1025,11 +1034,11 @@ describe('Component Test', () => {
         };
         jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataWithAutocomplete)));
 
-        const wrapper = setup();
-        jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+        callbacksWrapper = setup();
+        jest.spyOn(callbacksWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
         await flushPromises();
 
-        const frField = wrapper.find('.callback-component');
+        const frField = callbacksWrapper.find('.callback-component');
         // Check the autocomplete attribute
         expect(frField.attributes('autocomplete')).toBe('webauthn email');
       });
@@ -1049,11 +1058,11 @@ describe('Component Test', () => {
         };
         jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataMissingAutocomplete)));
 
-        const wrapper = setup();
-        jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+        callbacksWrapper = setup();
+        jest.spyOn(callbacksWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
         await flushPromises();
 
-        const frField = wrapper.find('.callback-component');
+        const frField = callbacksWrapper.find('.callback-component');
         // 'User Name' maps to 'username' in loginUtils.js
         expect(frField.attributes('autocomplete')).toBe('username');
       });
@@ -1074,11 +1083,11 @@ describe('Component Test', () => {
         };
         jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authDataEmptyAutocomplete)));
 
-        const wrapper = setup();
-        jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
+        callbacksWrapper = setup();
+        jest.spyOn(callbacksWrapper.vm, 'getRequestService').mockImplementation(() => ({ post: () => Promise.resolve({ data: { successURL: '/am/console' } }) }));
         await flushPromises();
 
-        const frField = wrapper.find('.callback-component');
+        const frField = callbacksWrapper.find('.callback-component');
         // 'User Name' maps to 'username'
         expect(frField.attributes('autocomplete')).toBe('username');
       });
@@ -1118,7 +1127,7 @@ describe('Component Test', () => {
     });
 
     beforeEach(() => {
-      jest.useFakeTimers();
+      jest.useFakeTimers({ doNotFake: ['setImmediate'] });
     });
 
     afterEach(() => {
