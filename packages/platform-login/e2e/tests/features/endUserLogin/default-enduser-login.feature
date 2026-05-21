@@ -80,6 +80,7 @@ Feature: Default enduser login
     And page url contains "Login"
     And text "Welcome" does not exist
     And the message "Sign In" should be present
+    And "User Name" field has focus
     Examples:
       | userName  | password        |
       | empty     | empty           |

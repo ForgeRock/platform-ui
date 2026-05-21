@@ -1128,3 +1128,13 @@ Then(/^the image "([^"]*)" should (not )?be visible$/, (src, notCapture) => {
   const assertion = notCapture ? 'not.exist' : 'be.visible';
   cy.get(`img[src*="${src}"]`).should(assertion);
 });
+
+/**
+ * Verifies that the field with the provided label is the current element with keyboard focus.
+ * @example
+ * Then "User Name" field has focus
+ * @param {string} fieldLabel - the label text associated with the field
+ */
+Then('{string} field has focus', (fieldLabel) => {
+  cy.findByLabelText(fieldLabel).should('be.visible').and('be.focused');
+});
