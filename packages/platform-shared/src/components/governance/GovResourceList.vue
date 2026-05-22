@@ -516,6 +516,14 @@ watch(
   },
 );
 
+watch(
+  () => props.queryFields,
+  () => {
+    loadData();
+  },
+  { deep: true },
+);
+
 </script>
 
 <style lang="scss" scoped>

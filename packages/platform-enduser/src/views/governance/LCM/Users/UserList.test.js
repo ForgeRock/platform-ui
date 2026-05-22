@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,12 +10,14 @@ import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHe
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as PrivilegeApi from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import * as PermissionsApi from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import UserList from './UserList';
 import i18n from '@/i18n';
 
 jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/PermissionsApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
 describe('UserList', () => {
   let wrapper;
@@ -76,6 +78,12 @@ describe('UserList', () => {
       ],
     },
   }));
+
+  PermissionsApi.getPrivileges.mockResolvedValue({
+    data: { permissions: ['createUser'] },
+  });
+
+  CommonsApi.getFilterSchema.mockResolvedValue({ data: { user: [] } });
 
   it('has columns for name and email', async () => {
     wrapper = mountComponent();
