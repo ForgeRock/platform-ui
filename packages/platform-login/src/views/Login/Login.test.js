@@ -864,21 +864,18 @@ describe('Component Test', () => {
 
     describe('@renders', () => {
       it('Displays remember my login checkbox if its enabled in the theme', async () => {
-        const wrapperOff = setup({ themeLoading: true });
+        jest.useFakeTimers();
+        const wrapperOff = setup({ journeyRememberMeEnabled: false });
         await flushPromises();
-        await flushPromises();
-        await wrapperOff.setProps({ themeLoading: false });
-        await flushPromises();
+        wrapperOff.vm.setRememberedUsername();
+        await wrapperOff.vm.$nextTick();
         expect(wrapperOff.find('input[name="rememberMe"]').exists()).toBeFalsy();
-        // Unmount before creating the second wrapper so orphaned timers from handleFocus()
-        // do not fire into the next component's lifecycle and pollute document.body.
         wrapperOff.unmount();
 
-        const wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
+        const wrapper = setup({ journeyRememberMeEnabled: true });
         await flushPromises();
-        await flushPromises();
-        await wrapper.setProps({ themeLoading: false });
-        await flushPromises();
+        wrapper.vm.setRememberedUsername();
+        await wrapper.vm.$nextTick();
 
         const rememberMe = wrapper.find('input[name="rememberMe"]');
         expect(rememberMe.exists()).toBeTruthy();
@@ -917,9 +914,9 @@ describe('Component Test', () => {
       it('Saves username to localstorage if rememberMe is enabled', async () => {
         wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
         await flushPromises();
-        await flushPromises();
         await wrapper.setProps({ themeLoading: false });
-        await flushPromises();
+        await wrapper.vm.$nextTick();
+        await wrapper.vm.$nextTick();
 
         const usernameInput = wrapper.find('div[label="User Name"] input');
         const rememberMe = wrapper.find('input[name="rememberMe"]');
@@ -936,9 +933,9 @@ describe('Component Test', () => {
       it('Removes username from localStorage if rememberMe is disabled', async () => {
         wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
         await flushPromises();
-        await flushPromises();
         await wrapper.setProps({ themeLoading: false });
-        await flushPromises();
+        await wrapper.vm.$nextTick();
+        await wrapper.vm.$nextTick();
 
         const usernameInput = wrapper.find('div[label="User Name"] input');
         const rememberMe = wrapper.find('input[name="rememberMe"]');
