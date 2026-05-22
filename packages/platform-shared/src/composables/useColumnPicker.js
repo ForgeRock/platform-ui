@@ -137,6 +137,14 @@ export default function useColumnPicker(initialColumns = [], options = {}) {
       return ignoredColumnKeys.value.includes(id) || validIds.has(id);
     });
 
+    const seenIds = new Set();
+    activeColumns.value = activeColumns.value.filter((c) => {
+      const id = getColumnId(c);
+      if (seenIds.has(id)) return false;
+      seenIds.add(id);
+      return true;
+    });
+
     activeColumns.value = cloneDeep(activeColumns.value);
   }
 

@@ -206,6 +206,9 @@ const {
   () => tableFields.value,
   {
     storageKey: () => 'governance-users-column-picker',
+    defaultColumns: () => tableFields.value.filter(
+      (col) => col.key === 'actions' || columnsWithPermissions.value.some((c) => c.column.key === col.key),
+    ),
   },
 );
 
@@ -239,20 +242,31 @@ const queryFields = computed(() => {
  */
 async function getIdmAndIgaPrivileges() {
   try {
-    const [, { data: privilegesData }, { data: schemaData }] = await Promise.all([
+    const [, { data: privilegesData }] = await Promise.all([
       setPrivileges('managed/alpha_user'),
       getPrivileges(userId),
-      getFilterSchema(),
     ]);
     userViewPrivileges.value = privileges['managed/alpha_user'].VIEW?.allowed
       ? privileges['managed/alpha_user'].VIEW.properties || []
       : [];
     if (privilegesData.permissions.includes('createUser')) allowCreate.value = true;
-    filterSchemaFields.value = (schemaData.user || [])
-      .filter((field) => (field.type !== 'managedObject' || field.type !== 'object' || field.name === 'manager') && !field.isMultiValue && userViewPrivileges.value.includes(field.name))
-      .map((field) => ({ key: field.name, label: field.displayName, type: field.type }));
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.user.errorGettingPrivileges'));
+  }
+}
+
+/**
+ * Fetches the filter schema and populates filterSchemaFields with the fields
+ * the current user has permission to view.
+ */
+async function loadFilterSchemaFields() {
+  try {
+    const { data: schemaData } = await getFilterSchema();
+    filterSchemaFields.value = (schemaData.user || [])
+      .filter((field) => ((field.type !== 'managedObject' && field.type !== 'object') || field.name === 'manager') && !field.isMultiValue && userViewPrivileges.value.includes(field.name))
+      .map((field) => ({ key: field.name, label: field.displayName, type: field.type }));
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.user.errorGettingSchema'));
   }
 }
 
@@ -270,7 +284,7 @@ async function getMinimumUIFilterLength(managedObjectName) {
   queryThreshold.value = uiConfig && has(uiConfig.configuration?.platformSettings?.managedObjectsSettings, `${managedObjectName}.minimumUIFilterLength`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[managedObjectName].minimumUIFilterLength : defaultMinimumUIFilterLength;
 }
 
-getIdmAndIgaPrivileges();
+getIdmAndIgaPrivileges().then(loadFilterSchemaFields);
 getMinimumUIFilterLength('alpha_user');
 
 </script>
