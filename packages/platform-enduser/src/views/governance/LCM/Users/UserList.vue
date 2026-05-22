@@ -11,10 +11,10 @@ of the MIT license. See the LICENSE file for details. -->
       :title="$t('governance.administer.users.title')"
       :subtitle="$t('governance.administer.users.subtitle')" />
     <FrGovResourceList
-      v-if="userColumns.length && queryFields.length"
+      v-if="activeColumns.length && queryFields.length"
       class="mb-5"
       resource="user"
-      :columns="userColumns"
+      :columns="activeColumns"
       :query-fields="queryFields"
       :resource-function="getManagedResourceList"
       :custom-filter="customUserFilter"
@@ -23,10 +23,26 @@ of the MIT license. See the LICENSE file for details. -->
       @row-clicked="navigateToUserDetails"
       @add-clicked="showAddUserModal"
       @delete-clicked="showDeleteModal">
+      <template #toolbar-right>
+        <BButton
+          class="ml-2 toolbar-link-text"
+          variant="link"
+          @click="openColumnsModal">
+          <FrIcon
+            icon-class="md-24"
+            name="view_column" />
+        </BButton>
+      </template>
       <template #cell(name)="{ item }">
         <FrUserBasicInfo
           :pic-dimension="28"
           :user="item" />
+      </template>
+      <template #cell(manager)="{ item }">
+        <FrUserBasicInfo
+          v-if="item.manager"
+          :pic-dimension="28"
+          :user="item.manager" />
       </template>
       <template #cell(email)="{ item }">
         {{ item.mail }}
@@ -39,6 +55,9 @@ of the MIT license. See the LICENSE file for details. -->
         </BBadge>
       </template>
     </FrGovResourceList>
+    <FrColumnPicker
+      v-bind="pickerProps"
+      :available-columns="tableFields" />
     <FrAddUserModal />
     <FrDeleteUserModal
       :user-id="deleteUserId" />
@@ -56,11 +75,15 @@ import {
   BBadge,
   BContainer,
 } from 'bootstrap-vue';
+import FrColumnPicker from '@forgerock/platform-shared/src/components/ColumnPicker/ColumnPicker';
+import useColumnPicker from '@forgerock/platform-shared/src/composables/useColumnPicker';
 import { has } from 'lodash';
 import FrGovResourceList from '@forgerock/platform-shared/src/components/governance/GovResourceList';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroupList/UserBasicInfo';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getPrivileges } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
@@ -82,6 +105,7 @@ const customUserFilter = computed(() => (userAgentProperty ? `!(${userAgentPrope
 // data
 const allowCreate = ref(false);
 const deleteUserId = ref(null);
+const filterSchemaFields = ref([]);
 const userViewPrivileges = ref([]);
 const queryThreshold = ref(0);
 const availableColumns = [
@@ -160,8 +184,10 @@ const columnsWithPermissions = computed(() => availableColumns.map((column) => {
   return null;
 }).filter((column) => column !== null));
 
-const userColumns = computed(() => {
+const tableFields = computed(() => {
   const columns = columnsWithPermissions.value.map((column) => column.column);
+
+  columns.push(...filterSchemaFields.value);
 
   columns.push({
     key: 'actions',
@@ -172,6 +198,17 @@ const userColumns = computed(() => {
   return columns;
 });
 
+const {
+  activeColumns,
+  open: openColumnsModal,
+  pickerProps,
+} = useColumnPicker(
+  () => tableFields.value,
+  {
+    storageKey: () => 'governance-users-column-picker',
+  },
+);
+
 const queryFields = computed(() => {
   const fields = [];
 
@@ -179,6 +216,17 @@ const queryFields = computed(() => {
     column.permissions.forEach((permission) => {
       fields.push(permission);
     });
+  });
+
+  activeColumns.value.forEach((column) => {
+    const schemaField = filterSchemaFields.value.find((f) => f.key === column.key);
+    if (schemaField) {
+      if (schemaField.type === 'managedObject') {
+        fields.push(column.key, `${column.key}/*`);
+      } else {
+        fields.push(column.key);
+      }
+    }
   });
 
   return fields;
@@ -191,12 +239,18 @@ const queryFields = computed(() => {
  */
 async function getIdmAndIgaPrivileges() {
   try {
-    await setPrivileges('managed/alpha_user');
+    const [, { data: privilegesData }, { data: schemaData }] = await Promise.all([
+      setPrivileges('managed/alpha_user'),
+      getPrivileges(userId),
+      getFilterSchema(),
+    ]);
     userViewPrivileges.value = privileges['managed/alpha_user'].VIEW?.allowed
       ? privileges['managed/alpha_user'].VIEW.properties || []
       : [];
-    const { data: privilegesData } = await getPrivileges(userId);
     if (privilegesData.permissions.includes('createUser')) allowCreate.value = true;
+    filterSchemaFields.value = (schemaData.user || [])
+      .filter((field) => (field.type !== 'managedObject' || field.type !== 'object' || field.name === 'manager') && !field.isMultiValue && userViewPrivileges.value.includes(field.name))
+      .map((field) => ({ key: field.name, label: field.displayName, type: field.type }));
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.user.errorGettingPrivileges'));
   }
@@ -226,5 +280,9 @@ getMinimumUIFilterLength('alpha_user');
   .w-70px {
     width: 70px;
   }
+}
+
+.toolbar-link-text {
+  color: $gray-900;
 }
 </style>
