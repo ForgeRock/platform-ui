@@ -489,7 +489,8 @@ describe('GlossaryEditForm', () => {
       await flushPromises();
       boolAttr.setChecked(true);
       await flushPromises();
-      expect(wrapper.emitted('update:modelValue')[1][0]).toEqual({ booleanAttribute: true });
+      const emits = wrapper.emitted('update:modelValue');
+      expect(emits[emits.length - 1][0]).toEqual({ booleanAttribute: true });
     });
 
     it('should emit update event on date fields', async () => {
