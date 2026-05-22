@@ -186,7 +186,7 @@ watch(() => props.glossarySchema, () => {
   buildSchemaForFormGenerator(props.glossarySchema);
   const booleanDefaults = {};
   props.glossarySchema.forEach((attribute) => {
-    if (attribute.type === 'boolean' && !(attribute.name in props.modelValue)) {
+    if (attribute.type === 'boolean' && !Object.hasOwn(props.modelValue, attribute.name)) {
       booleanDefaults[attribute.name] = false;
     }
   });
