@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -489,7 +489,7 @@ describe('GlossaryEditForm', () => {
       await flushPromises();
       boolAttr.setChecked(true);
       await flushPromises();
-      expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ booleanAttribute: true });
+      expect(wrapper.emitted('update:modelValue')[1][0]).toEqual({ booleanAttribute: true });
     });
 
     it('should emit update event on date fields', async () => {
@@ -585,6 +585,55 @@ describe('GlossaryEditForm', () => {
     });
   });
   describe('@edge cases', () => {
+    it('should emit false for boolean attributes absent from modelValue on schema load', async () => {
+      const wrapper = setup({
+        glossarySchema: boolGlossarySchema,
+      });
+
+      await nextTick();
+
+      expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ booleanAttribute: false });
+    });
+
+    it('should not overwrite an existing boolean value of true with false on schema load', async () => {
+      const wrapper = setup({
+        glossarySchema: boolGlossarySchema,
+        'model-value': { booleanAttribute: true },
+      });
+
+      await nextTick();
+
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    });
+
+    it('should not overwrite an existing boolean value of false with false on schema load', async () => {
+      const wrapper = setup({
+        glossarySchema: boolGlossarySchema,
+        'model-value': { booleanAttribute: false },
+      });
+
+      await nextTick();
+
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+    });
+
+    it('should only emit false for boolean attributes absent from modelValue, not those already present', async () => {
+      const multiBoolSchema = [
+        ...boolGlossarySchema,
+        {
+          name: 'anotherBoolean', description: 'Another Boolean', displayName: 'Another Boolean', type: 'boolean', objectType: '/openidm/managed/application', isMultiValue: false, enumeratedValues: [], isIndexed: false, searchable: false, allowedValues: [], id: 'abc123', glossary: { kv: [], tags: [] },
+        },
+      ];
+      const wrapper = setup({
+        glossarySchema: multiBoolSchema,
+        'model-value': { booleanAttribute: true },
+      });
+
+      await nextTick();
+
+      expect(wrapper.emitted('update:modelValue')[0][0]).toEqual({ booleanAttribute: true, anotherBoolean: false });
+    });
+
     it('should clean up glossary values for empty values', async () => {
       const wrapper = setup({
         glossarySchema: numberGlossarySchema,
