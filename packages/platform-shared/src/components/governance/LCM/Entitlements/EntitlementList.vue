@@ -15,6 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
       resource="entitlement"
       :additional-query-params="queryFilter"
       :columns="currentColumns"
+      :query-fields="queryFields"
       :resource-function="getEntitlementList"
       :show-add-button="showAddButton"
       :show-errors="false"
@@ -148,6 +149,7 @@ import FrGovResourceSelect from '@forgerock/platform-shared/src/components/gover
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroupList/UserBasicInfo';
+import { getFilterSchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getEntitlementList, getApplicationList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
@@ -163,7 +165,10 @@ import i18n from '@/i18n';
 const router = useRouter();
 const { bvModal } = useBvModal();
 
-const tableFields = [
+// data
+const filterSchema = ref({});
+
+const baseTableFields = [
   {
     key: 'entitlement',
     label: i18n.global.t('common.entitlement'),
@@ -191,21 +196,34 @@ const tableFields = [
     sortKey: 'entitlementOwner.givenName',
     sortable: true,
   },
+];
+
+const queryFields = ['application', 'descriptor', 'entitlementOwner', 'item', 'glossary'];
+
+const tableFields = computed(() => [
+  ...baseTableFields,
+  ...(filterSchema.value.entitlement || []).filter((field) => field.type !== 'managedObject').map((field) => ({
+    key: field.key.includes('glossary.') ? field.key.replace('glossary.', 'glossary.idx./entitlement.') : field.key,
+    label: field.displayName,
+  })),
   {
     key: 'actions',
     label: i18n.global.t('common.actions'),
     class: 'w-120px fr-no-resize sticky-right',
   },
-];
+]);
 
 const {
   activeColumns,
   open: openColumnsModal,
   pickerProps,
 } = useColumnPicker(
-  () => tableFields,
+  () => tableFields.value,
   {
     storageKey: () => 'governance-entitlements-column-picker',
+    defaultColumns: () => tableFields.value.filter(
+      (col) => col.key === 'actions' || baseTableFields.some((c) => c.key === col.key),
+    ),
   },
 );
 
@@ -272,6 +290,13 @@ onMounted(async () => {
     showAddButton.value = data.totalCount > 0;
   } catch {
     showAddButton.value = false;
+  }
+
+  try {
+    const { data: schemaData } = await getFilterSchema();
+    filterSchema.value = schemaData;
+  } catch {
+    // schema failure is non-critical; base columns remain available
   }
 });
 

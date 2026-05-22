@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -100,6 +100,8 @@ describe('EntitlementList', () => {
     },
   }));
 
+  CommonsApi.getFilterSchema.mockResolvedValue({ data: {} });
+
   it('has columns for entitlement, display name, owner, object type, and account attribute', async () => {
     wrapper = mountComponent();
     await flushPromises();
@@ -188,7 +190,7 @@ describe('EntitlementList', () => {
     expect(EntitlementApi.getEntitlementList).toHaveBeenLastCalledWith(
       'entitlement',
       {
-        fields: 'application,descriptor,entitlementOwner,item',
+        fields: 'application,descriptor,entitlementOwner,item,glossary',
         pageSize: 10,
         pagedResultsOffset: 0,
         queryFilter: 'application.id eq "appId"',
@@ -207,7 +209,7 @@ describe('EntitlementList', () => {
     expect(EntitlementApi.getEntitlementList).toHaveBeenLastCalledWith(
       'entitlement',
       {
-        fields: 'application,descriptor,entitlementOwner,item',
+        fields: 'application,descriptor,entitlementOwner,item,glossary',
         pageSize: 10,
         pagedResultsOffset: 0,
         queryFilter: '(entitlementOwner.userName co "userQuery" or entitlementOwner.givenName co "userQuery" or entitlementOwner.sn co "userQuery")',
@@ -231,7 +233,7 @@ describe('EntitlementList', () => {
     expect(EntitlementApi.getEntitlementList).toHaveBeenLastCalledWith(
       'entitlement',
       {
-        fields: 'application,descriptor,entitlementOwner,item',
+        fields: 'application,descriptor,entitlementOwner,item,glossary',
         pageSize: 10,
         pagedResultsOffset: 0,
         queryFilter: '(descriptor.idx./entitlement.displayName co "test") and (application.id eq "appId" and (entitlementOwner.userName co "userQuery" or entitlementOwner.givenName co "userQuery" or entitlementOwner.sn co "userQuery"))',
