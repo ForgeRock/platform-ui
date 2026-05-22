@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -182,7 +182,20 @@ function buildSchemaForFormGenerator(glossarySchema) {
   });
 }
 
-watch(() => [props.glossarySchema, props.readOnly], () => {
+watch(() => props.glossarySchema, () => {
   buildSchemaForFormGenerator(props.glossarySchema);
+  const booleanDefaults = {};
+  props.glossarySchema.forEach((attribute) => {
+    if (attribute.type === 'boolean' && !(attribute.name in props.modelValue)) {
+      booleanDefaults[attribute.name] = false;
+    }
+  });
+  if (Object.keys(booleanDefaults).length > 0) {
+    emit('update:modelValue', { ...props.modelValue, ...booleanDefaults });
+  }
 }, { deep: true, immediate: true });
+
+watch(() => props.readOnly, () => {
+  buildSchemaForFormGenerator(props.glossarySchema);
+});
 </script>
