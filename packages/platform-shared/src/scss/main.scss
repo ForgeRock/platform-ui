@@ -942,6 +942,17 @@ dd {
   font-weight: 400;
 }
 
+.btn-link-danger {
+  color: $danger;
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: darken($danger, 10%);
+    text-decoration: underline;
+  }
+}
+
 /* stylelint-disable */
 .max-lines {
   box-orient: vertical;
