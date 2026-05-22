@@ -13,26 +13,25 @@ of the MIT license. See the LICENSE file for details. -->
         name="sort" />
       <div :class="{ 'd-none d-lg-block': hideLabelsOnMobile }">
         <span class="font-weight-bold mr-1">
-          {{ $t('governance.sortBy') }}:
+          {{ $t('common.sortBy') }}:
         </span>
         {{ selectedSortFieldText }}
       </div>
     </template>
-    <BDropdownText style="width: 250px;">
-      <h2 class="h5 mt-3">
-        {{ $t('governance.sortBy') }}
-      </h2>
-    </BDropdownText>
-    <BDropdownForm>
+    <BDropdownForm class="w-250px">
       <FrSelectInput
         :value="sortField"
-        class="mb-2"
+        :floating-label="false"
+        :label="$t('common.sortBy')"
+        class="mb-2 mt-3"
         name="sortField"
         :searchable="false"
         :options="sortByOptions"
         @input="sortField = $event; $emit('sort-field-change', $event)" />
       <FrSelectInput
         :value="sortDirection"
+        :floating-label="false"
+        :label="$t('common.sortOrder')"
         class="mb-3"
         name="sortDirection"
         :searchable="false"
@@ -63,7 +62,6 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BDropdown,
   BDropdownForm,
-  BDropdownText,
 } from 'bootstrap-vue';
 import { computed, ref, watch } from 'vue';
 import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
@@ -110,10 +108,6 @@ watch(() => props.selectedItem, (newValue) => {
 </script>
 
 <style lang="scss" scoped>
-.h5 {
-  font-weight: 600;
-}
-
 :deep(.multiselect .multiselect__option--selected:after) {
   content: 'check';
   font-family: 'Material Icons Outlined', Serif;
