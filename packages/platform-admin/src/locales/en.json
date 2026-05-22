@@ -117,6 +117,7 @@
     "Scopes": "Scopes",
     "Scripts": "Scripts",
     "SecurityQuestions": "Security Questions",
+    "SelfServiceJourneys": "Self-service Journeys",
     "ServiceAccounts": "Service Accounts",
     "SSLConfigurations": "SSL Configurations",
     "SyncDataEditor": "Advanced Sync Editor",
@@ -183,6 +184,7 @@
     "scripts": "Scripts",
     "security": "Security",
     "securityQuestions": "Security Questions",
+    "selfServiceJourneys": "Self-service Journeys",
     "settings": "Settings",
     "templates": "Templates",
     "templateBuilder": "Template Builder",
@@ -5814,5 +5816,23 @@
     "pageTitle": "Identity Management - {page}",
     "loginAuthError": "Invalid username or password",
     "loginFailure": "Login failure"
+  },
+  "selfServiceJourneys": {
+    "title": "Self-service journeys",
+    "description": "Map self-service user actions (for example, forgot password or registration) to authentication journeys.",
+    "status": "Status",
+    "treeMappingCardTitle": "Settings",
+    "addMapping": "Add mapping",
+    "journeyNotFound": "Previously saved journey no longer exists",
+    "deactivateModal": {
+      "title": "Deactivate Self-service journeys?",
+      "body": "Are you sure you want to deactivate Self-service journeys?",
+      "confirm": "Deactivate"
+    },
+    "saveSuccess": "Self-service journeys settings saved successfully.",
+    "saveError": "Failed to save Self-service journeys settings.",
+    "loadError": "Failed to load Self-service journeys settings.",
+    "statusUpdateSuccess": "Self-service journeys status updated successfully.",
+    "statusUpdateError": "Failed to update Self-service journeys status."
   }
 }
