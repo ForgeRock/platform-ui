@@ -11,6 +11,7 @@ import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import UserApiSteps from './api/UserApiSteps';
 import CustomDomainApiSteps from './api/CustomDomainApiSteps';
 import EventHookApiSteps from './api/EventHookApiSteps';
+import CustomEndpointApiSteps from './api/CustomEndpointApiSteps';
 
 export default {
   csp: CspApiSteps,
@@ -18,4 +19,5 @@ export default {
   user: UserApiSteps,
   customDomain: CustomDomainApiSteps,
   eventHooks: EventHookApiSteps,
+  customEndpoints: CustomEndpointApiSteps,
 };
