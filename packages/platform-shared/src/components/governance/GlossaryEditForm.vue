@@ -185,11 +185,13 @@ function buildSchemaForFormGenerator(glossarySchema) {
 watch(() => props.glossarySchema, () => {
   buildSchemaForFormGenerator(props.glossarySchema);
   const booleanDefaults = {};
-  props.glossarySchema.forEach((attribute) => {
-    if (attribute.type === 'boolean' && !Object.hasOwn(props.modelValue, attribute.name)) {
-      booleanDefaults[attribute.name] = false;
-    }
-  });
+  if (props.modelValue && typeof props.modelValue === 'object') {
+    props.glossarySchema.forEach((attribute) => {
+      if (attribute.type === 'boolean' && !Object.hasOwn(props.modelValue, attribute.name)) {
+        booleanDefaults[attribute.name] = false;
+      }
+    });
+  }
   if (Object.keys(booleanDefaults).length > 0) {
     emit('update:modelValue', { ...props.modelValue, ...booleanDefaults });
   }
