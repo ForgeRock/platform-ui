@@ -15,6 +15,8 @@ import CustomEndpointApiSteps from './api/CustomEndpointApiSteps';
 import AuthScriptApiSteps from './api/AuthScriptApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
 import EndUserApiSteps from './api/EndUserApiSteps';
+import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
+import AdminsApiSteps from './api/AdminsApiSteps';
 
 export default {
   csp: CspApiSteps,
@@ -26,4 +28,6 @@ export default {
   authScripts: AuthScriptApiSteps,
   journeys: JourneyApiSteps,
   endUser: EndUserApiSteps,
+  inviteAdmins: InviteAdminsApiSteps,
+  admins: AdminsApiSteps,
 };
