@@ -414,6 +414,8 @@
     "updated": "Updated",
     "updating": "Updating",
     "updatedObject": "{object} Updated",
+    "unlink": "Unlink",
+    "unlinking": "Unlinking",
     "upload": "Upload",
     "uploading": "Uploading",
     "userFullName": "{givenName} {sn}",
