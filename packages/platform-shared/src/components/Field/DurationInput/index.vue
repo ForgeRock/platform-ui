@@ -23,7 +23,8 @@ of the MIT license. See the LICENSE file for details. -->
       :id="internalId"
       :min="0"
       :name="name"
-      :readonly="readonly">
+      :readonly="readonly"
+      :aria-required="isRequiredAria">
     <template #append>
       <BInputGroupAppend>
         <BDropdown

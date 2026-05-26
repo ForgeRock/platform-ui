@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -183,16 +183,17 @@ export default {
                             && properties[propName].type !== 'object');
       const formFields = map(filteredOrder, (name) => {
         const property = properties[name];
+        const isRequired = required.includes(name);
         const formField = {
           name,
-          title: `${property.title} ${required.includes(name) ? '' : this.$t('common.optional')}`.trim(),
+          title: `${property.title} ${isRequired ? '' : this.$t('common.optional')}`.trim(),
           value: this.profile[name] || null,
           type: property.type,
           description: property.description,
           ...(property.enum && { enum: property.enum }),
           items: property.items,
           format: property.format,
-          validation: required.includes(name) ? 'required' : '',
+          validation: isRequired ? 'required' : '',
           userEditable: property.userEditable,
         };
         return formField;

@@ -23,7 +23,8 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="disabled"
         :id="internalId"
         :name="name"
-        :readonly="readonly">
+        :readonly="readonly"
+        :aria-required="isRequiredAria">
     </FrInputLayout>
     <BFormTimepicker
       v-model="inputValue"

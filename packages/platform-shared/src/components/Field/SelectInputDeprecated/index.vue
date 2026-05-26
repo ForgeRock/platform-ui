@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
       role="combobox"
       :aria-expanded="isExpanded ? 'true': 'false'"
       :aria-labelledby="internalId + '-label'"
+      :aria-required="isRequiredAria"
       :name="name"
       :disabled="disabled"
       :options="selectOptions"

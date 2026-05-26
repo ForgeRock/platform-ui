@@ -22,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       :class="classes"
       :data-testid="testid"
       :testid="testid"
+      :is-required-aria="isRequiredAria"
       :name="name"
       :options="selectOptions"
       track-by="value"
@@ -235,7 +236,13 @@ export default {
       type: [Array, Object, Number, String, Boolean],
       default: '',
     },
-
+    /**
+     * Sets aria-required on the control element
+     */
+    isRequiredAria: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const vms = ref(null);

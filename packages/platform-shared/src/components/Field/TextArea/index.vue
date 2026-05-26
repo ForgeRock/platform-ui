@@ -31,6 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
       :max-rows="maxRows"
       :readonly="readonly"
       :data-testid="testid"
+      :aria-required="isRequiredAria"
       @click="handleFocusEvent"
       @focus="handleFocusEvent"
       @keydown="$emit('keydown', $event)"
