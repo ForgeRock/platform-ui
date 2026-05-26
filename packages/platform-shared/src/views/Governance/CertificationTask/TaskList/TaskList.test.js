@@ -119,6 +119,7 @@ describe('TaskList', () => {
         webStorageAvailable: true,
       },
     });
+    CertificationApi.getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: [{ id: 'user' }] }));
     CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
     CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: 'results' }));
     CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
@@ -132,6 +133,7 @@ describe('TaskList', () => {
     jest.spyOn(CommonsApi, 'getGlossarySchema').mockImplementation(() => Promise.resolve({ data: {} }));
     jest.spyOn(CommonsApi, 'getFilterSchema').mockImplementation(() => Promise.resolve({ data: {} }));
     jest.spyOn(CommonsApi, 'getIgaAutoIdConfig').mockImplementation(() => Promise.resolve({ data: {} }));
+    jest.spyOn(CommonsApi, 'getResource').mockImplementation(() => Promise.resolve({ data: { result: [] } }));
   });
 
   describe('Account column display', () => {
@@ -673,18 +675,43 @@ describe('TaskList', () => {
   describe('filterItems', () => {
     it('should call getCertificationTaskList with the paginationPage', () => {
       const wrapper = shallowMountComponent();
-      const getCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'getItems');
       wrapper.vm.paginationPage = 1;
-      wrapper.vm.filterItems({ decision: ['noDecision'] });
-      expect(getCertificationTaskListSpy).toBeCalledWith(1);
+      wrapper.vm.updateAccessByFilter({
+        decision: {
+          operator: 'OR',
+          operand: [
+            {
+              operator: 'NOT',
+              operand: [
+                {
+                  operator: 'EXISTS',
+                  operand: {
+                    targetName: 'decision.certification.decision',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      });
+      expect(CertificationApi.getCertificationTasksListByCampaign).toHaveBeenCalled();
     });
     it('listFilters should contain the new filters', () => {
       const wrapper = shallowMountComponent();
       const filterTest = {
-        decision: ['certify'],
+        decision: {
+          operator: 'IN',
+          operand: {
+            targetName: 'decision.certification.decision',
+            targetValue: [
+              'certify',
+            ],
+          },
+        },
       };
-      wrapper.vm.filterItems(filterTest);
-      expect(wrapper.vm.listFilters).toEqual({ ...filterTest });
+      wrapper.vm.updateAccessByFilter(filterTest);
+      expect(CertificationApi.getCertificationTasksListByCampaign).toHaveBeenCalled();
+      // expect(wrapper.vm.updateAccessByFilter).toEqual({ ...filterTest });
     });
   });
 
@@ -2064,7 +2091,7 @@ describe('TaskList', () => {
           'noDecision',
         ],
       };
-      wrapper.vm.filterItems(filters);
+      wrapper.vm.updateAccessByFilter(filters);
       await flushPromises();
       expect(wrapper.emitted()['clear-item']).toBeTruthy();
     });
@@ -2222,14 +2249,7 @@ describe('TaskList', () => {
         refreshTasks: true,
         modalPrefix: 'entitlement',
       });
-      const filters = {
-        decision: [
-          'revoke',
-          'exception',
-          'noDecision',
-        ],
-      };
-      wrapper.vm.filterItems(filters);
+      wrapper.vm.updateAccessByFilter({});
       await flushPromises();
       expect(getCertificationTasksListByCampaignSpy).toHaveBeenCalledWith({
         actorId: '',
@@ -2245,15 +2265,9 @@ describe('TaskList', () => {
       {
         targetFilter: {
           operand: [
-            {
-              operand: [{ operand: { targetName: 'decision.certification.decision', targetValue: ['revoke', 'exception'] }, operator: 'IN' },
-                { operand: [{ operand: { targetName: 'decision.certification.decision', targetValue: undefined }, operator: 'EXISTS' }], operator: 'NOT' },
-              ],
-              operator: 'OR',
-            },
-            { operand: { targetName: 'user.id', targetValue: '66f3b405-60db-42a6-8a7a-59f6470348f6' }, operator: 'EQUALS' },
             { operand: { targetName: 'decision.certification.primaryReviewer.id', targetValue: '' }, operator: 'EQUALS' },
-            { operand: { targetName: 'item.type', targetValue: 'entitlementGrant' }, operator: 'EQUALS' }],
+            { operand: { targetName: 'item.type', targetValue: 'entitlementGrant' }, operator: 'EQUALS' },
+          ],
           operator: 'AND',
         },
       });

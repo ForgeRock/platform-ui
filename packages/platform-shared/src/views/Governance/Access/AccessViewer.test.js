@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, flushPromises } from '@vue/test-utils';
+import { mount, flushPromises, enableAutoUnmount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
@@ -18,7 +18,10 @@ jest.mock('@forgerock/platform-shared/src/api/ManagedResourceApi');
 
 mockRouter({ params: { resourceId: 'managed/alpha_user/testId' } });
 
+enableAutoUnmount(afterEach);
+
 beforeEach(() => {
+  jest.clearAllMocks();
   CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({
     data: {
       '/iga/governance/account': [],
