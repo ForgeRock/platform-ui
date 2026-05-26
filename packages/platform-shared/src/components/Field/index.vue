@@ -142,6 +142,9 @@ export default {
       if (Object.prototype.hasOwnProperty.call(newAttrs, 'onModelCompat:input')) delete newAttrs['onModelCompat:input'];
       if (Object.prototype.hasOwnProperty.call(newAttrs, 'class')) delete newAttrs.class;
       if (Object.prototype.hasOwnProperty.call(newAttrs, 'style')) delete newAttrs.style;
+      if (!Object.prototype.hasOwnProperty.call(newAttrs, 'isRequiredAria') && !Object.prototype.hasOwnProperty.call(newAttrs, 'is-required-aria')) {
+        newAttrs.isRequiredAria = this.isRequiredFromValidation;
+      }
       return newAttrs;
     },
     checkboxField() {
@@ -175,6 +178,13 @@ export default {
     },
     fieldName() {
       return this.name || this.$attrs.label || uuid();
+    },
+    isRequiredFromValidation() {
+      const fieldValidation = this.$attrs.validation;
+      if (!fieldValidation) return false;
+      if (typeof fieldValidation === 'string') return fieldValidation.split('|').includes('required');
+      if (typeof fieldValidation === 'object') return !!fieldValidation.required;
+      return false;
     },
     /**
      * Maps type aliases to known values

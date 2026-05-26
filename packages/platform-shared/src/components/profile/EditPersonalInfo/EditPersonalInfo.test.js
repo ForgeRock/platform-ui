@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@ import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/moc
 import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import EditPersonalInfo from './index';
-import { findByTestId } from '../../../utils/testHelpers';
+import { findByTestId, runA11yTest } from '../../../utils/testHelpers';
 
 mockValidation(['required']);
 
@@ -104,6 +104,18 @@ describe('EditPersonalInfo', () => {
         const secondField = findByTestId(wrapper, 'input-edit-personal-info-1');
         expect(secondField.exists()).toBeTruthy();
       });
+
+      it('should set aria-required on required fields and not on optional fields', async () => {
+        const wrapper = setup();
+        wrapper.vm.setModal();
+        await flushPromises();
+
+        const requiredInput = findByTestId(wrapper, 'input-edit-personal-info-0');
+        expect(requiredInput.attributes('aria-required')).toBe('true');
+
+        const optionalInput = findByTestId(wrapper, 'input-edit-personal-info-1');
+        expect(optionalInput.attributes('aria-required')).toBeFalsy();
+      });
     });
   });
 
@@ -192,6 +204,36 @@ describe('EditPersonalInfo', () => {
         field.format = 'date';
         expect(wrapper.vm.getFieldType(field)).toBe('date');
       });
+    });
+  });
+
+  describe('@a11y', () => {
+    it('is accessible with optional fields', async () => {
+      const wrapper = setup({
+        schema: {
+          order: ['sn'],
+          properties: {
+            sn: {
+              description: 'Last Name',
+              title: 'Last Name',
+              type: 'string',
+              userEditable: true,
+              viewable: true,
+            },
+          },
+          required: [],
+        },
+      });
+      wrapper.vm.setModal();
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('is accessible with required fields', async () => {
+      const wrapper = setup();
+      wrapper.vm.setModal();
+      await flushPromises();
+      await runA11yTest(wrapper);
     });
   });
 });

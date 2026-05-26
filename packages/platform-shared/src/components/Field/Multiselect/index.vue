@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
       :close-on-select="closeOnSelect"
       :disabled="disabled"
       :hide-selected="true"
+      :is-required-aria="isRequiredAria"
       :multiple="true"
       :name="name"
       :option-height="optionHeightCalculation"
@@ -253,6 +254,13 @@ export default {
     valueClass: {
       type: String,
       default: '',
+    },
+    /**
+     * Sets aria-required on the control element
+     */
+    isRequiredAria: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, context) {

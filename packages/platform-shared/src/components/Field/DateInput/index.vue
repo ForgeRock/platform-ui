@@ -22,7 +22,8 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="disabled"
         :id="internalId"
         :name="name"
-        :readonly="readonly">
+        :readonly="readonly"
+        :aria-required="isRequiredAria">
       <BFormDatepicker
         v-model="inputValue"
         :dropleft="dropleft"

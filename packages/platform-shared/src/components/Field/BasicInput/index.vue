@@ -186,13 +186,6 @@ export default {
       default: '',
     },
     /**
-     * Sets aria-required as the value provided
-     */
-    isRequiredAria: {
-      type: Boolean,
-      default: false,
-    },
-    /**
      * When true will show the value of a password as text instead of it being hidden
      */
     forceShowPassword: {

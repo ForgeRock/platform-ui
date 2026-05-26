@@ -73,7 +73,8 @@ of the MIT license. See the LICENSE file for details. -->
           :placeholder="label"
           @blur="onBlur($event)"
           @input="inputValueHandler(inputValue, $event.target.value)"
-          :aria-describedby="`fr-tags-list_${internalId}`">
+          :aria-describedby="`fr-tags-list_${internalId}`"
+          :aria-required="isRequiredAria">
       </template>
     </BFormTags>
     <template

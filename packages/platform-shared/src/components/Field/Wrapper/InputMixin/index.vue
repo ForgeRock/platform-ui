@@ -120,6 +120,13 @@ export default {
       type: [Array, Object, Number, String, Boolean],
       default: '',
     },
+    /**
+     * Sets aria-required on the control element
+     */
+    isRequiredAria: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
