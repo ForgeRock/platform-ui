@@ -120,6 +120,7 @@ const mountComponent = (useQueryFilter = true) => {
       useQueryFilter,
       inputFilterData: inputData,
       inputFields: createFields(inputData),
+      isTesting: true,
     },
   });
 };
@@ -318,6 +319,7 @@ describe('Access Filter functionality', () => {
     const expectedQueries = {
       accountGrant: "!(item.decision.certification.decision co '')",
       all: "!(item.decision.certification.decision co '')",
+      decision: 'true',
       entitlementGrant: "!(item.decision.certification.decision co '')",
       roleMembership: "!(item.decision.certification.decision co '')",
     };
@@ -346,6 +348,7 @@ describe('Access Filter functionality', () => {
     const expectedQueries = {
       accountGrant: "(!(item.decision.certification.decision co '')) and (relationship.properties.grantTypes.grantType eq 'role')",
       all: "(!(item.decision.certification.decision co '')) and (relationship.properties.grantTypes.grantType eq 'role')",
+      decision: 'true',
       entitlementGrant: "(!(item.decision.certification.decision co '')) and (relationship.properties.grantTypes.grantType eq 'role')",
       roleMembership: "!(item.decision.certification.decision co '')",
     };
@@ -367,7 +370,7 @@ describe('Access Filter functionality', () => {
         {
           operand: {
             targetName: 'item.decision.certification.decision',
-            targetValue: null,
+            targetValue: true,
           },
           operator: 'EXISTS',
         },

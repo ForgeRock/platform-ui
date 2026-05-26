@@ -35,9 +35,9 @@ of the MIT license. See the LICENSE file for details. -->
         </BTooltip>
         <BButton
           v-if="!entitlementUserId"
-          @click="showFiltersSection = !showFiltersSection"
-          :aria-expanded="showFiltersSection"
+          @click="leftPanelExpanded = !leftPanelExpanded"
           aria-controls="filters-section"
+          :aria-expanded="leftPanelExpanded"
           :aria-label="filterButtonLabel"
           class="mr-2"
           data-testid="cert-filter-button"
@@ -69,301 +69,340 @@ of the MIT license. See the LICENSE file for details. -->
         </BTooltip>
       </div>
     </div>
-    <div
-      id="filters-section"
-      ref="filtersSectionRef">
-      <BCollapse
-        :visible="showFiltersSection"
-        @shown="focusFirstFilterElement">
-        <FrTaskFilters
-          v-if="!entitlementUserId"
-          @filter-certification-items="filterItems"
-          :actor-id="actorId"
-          :cert-id="campaignId" />
-      </BCollapse>
-    </div>
-    <FrSpinner
-      v-if="isLoading"
-      class="py-5" />
-    <BTable
-      v-else-if="items.length"
-      v-resizable-table="{ persistKey: `certification-tasklist-${campaignId}-${certificationGrantType}` }"
-      @row-selected="onRowSelected"
-      @sort-changed="sortChange"
-      class="m-0 border-top border-bottom task-list-table"
-      ref="selectableTable"
-      responsive
-      select-mode="single"
-      show-empty
-      :empty-text="$t('common.noRecordsToShow')"
-      :fields="certificationListColumnsToShow"
-      :items="items"
-      no-local-sorting
-      no-sort-reset
-      :per-page="pageSize"
-      :selectable="isSelectable"
-      :sort-by="sortBy"
-      :sort-desc="sortDir === 'desc'"
-      :tbody-tr-attr="rowAttrs">
-      <template #cell(selector)="{ item }">
-        <FrField
-          v-if="item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
-          @change="selectTask($event, item)"
-          type="checkbox"
-          :name="`columnSelected-${item.id}`"
-          :testid="`multiselect-${item.id}`"
-          :aria-label="$t('governance.certificationTask.actions.selectRow', {identifier: item.user.userName})"
-          :value="item.selected" />
-      </template>
-      <template #cell(user)="{ item }">
-        <div class="d-flex justify-content-start align-items-center">
-          <BButton
-            @click.stop="openUserModal(item.id, item.manager)"
-            class="text-dark btn-unstyled"
-            variant="link">
-            <BMedia>
-              <template #aside>
-                <BImg
-                  class="mt-2"
-                  height="24"
-                  width="24"
-                  :alt="`${item.user.givenName} ${item.user.sn}`"
-                  :aria-hidden="true"
-                  :src="item.user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
-              </template>
-              <div class="media-body">
-                <h3 class="h5 mb-0 text-dark text-truncate">
-                  {{ $t('common.userFullName', { givenName: item.user.givenName, sn: item.user.sn }) }}
-                </h3>
-                <small class="text-truncate">
-                  {{ item.user.userName }}
-                </small>
+    <div class="d-flex flex-column flex-lg-row h-100 w-100">
+      <div
+        v-show="leftPanelExpanded"
+        ref="filtersSectionRef">
+        <BCard
+          class="fr-left-panel d-flex flex-column h-100 p-0 rounded-0"
+          no-body>
+          <div class="pb-0 w-100">
+            <div class="d-flex px-4 align-items-center justify-content-between">
+              <div class="d-flex py-3 align-items-center">
+                <h2 class="h5 mb-0 py-3">
+                  {{ $t('Item Filters') }}
+                </h2>
               </div>
-            </BMedia>
-          </BButton>
-        </div>
-      </template>
-      <template
-        #cell(manager)="{ item }">
-        <div
-          v-if="item.manager"
-          class="d-flex justify-content-start align-items-center">
-          <BMedia>
-            <template #aside>
-              <BImg
-                class="mt-2"
-                height="24"
-                width="24"
-                :alt="`${item.manager.givenName} ${item.manager.sn}`"
-                :aria-hidden="true"
-                :src="item.manager.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
-            </template>
-            <BMediaBody>
-              <h3 class="h5 mb-0 text-dark text-truncate">
-                {{ $t('common.userFullName', { givenName: item.manager.givenName, sn: item.manager.sn }) }}
-              </h3>
-              <small class="text-truncate">
-                {{ item.manager.userName }}
-              </small>
-            </BMediaBody>
-          </BMedia>
-        </div>
-        <div v-else>
-          {{ blankValueIndicator }}
-        </div>
-      </template>
-      <template #cell(application)="{ item }">
-        <div class="d-flex justify-content-between align-items-center">
-          <BButton
-            @click.stop="openApplicationModal(item.application, item.applicationOwner, item.glossary)"
-            class="text-dark"
-            variant="link">
-            <BMedia
-              class="align-items-center"
-              data-testid="application-cell"
-              no-body>
-              <img
-                class="mr-4 size-28"
-                alt=""
-                :onerror="onImageError"
-                :src="getApplicationLogo(item.application)">
-              <div class="media-body align-self-center overflow-hidden text-nowrap">
-                <span class="text-dark">
-                  {{ item.application.name }}
-                </span>
+              <div class="d-flex border-0 px-0 py-3 align-items-center">
+                <BButtonClose
+                  id="btnClosePanel"
+                  class="text-dark"
+                  variant="none"
+                  :aria-label="$t('governance.access.filter.hideFilters')"
+                  @click="leftPanelExpanded = false">
+                  <FrIcon
+                    icon-class="md-24"
+                    name="close" />
+                </BButtonClose>
+                <BTooltip
+                  target="btnClosePanel"
+                  triggers="hover"
+                  placement="bottom">
+                  {{ $t('governance.access.filter.hideFilters') }}
+                </BTooltip>
               </div>
-            </BMedia>
-          </BButton>
-        </div>
-      </template>
-      <template #cell(entitlement)="{ item }">
-        <div class="d-flex justify-content-between align-items-center">
-          <BButton
-            @click.stop="openEntitlementModal(item)"
-            class="text-dark pl-0"
-            data-testid="entitlement-cell"
-            variant="link">
-            {{ getResourceDisplayName(item, '/entitlement') }}
-          </BButton>
-        </div>
-      </template>
-      <template #cell(account)="{ item }">
-        <div class="d-flex justify-content-between align-items-center">
-          <BButton
-            @click.stop="openAccountModal(item)"
-            class="text-dark pl-0"
-            data-testid="account-cell"
-            variant="link">
-            {{ getResourceDisplayName(item, '/account') }}
-          </BButton>
-        </div>
-      </template>
-      <template #cell(role)="{ item }">
-        <div class="d-flex justify-content-between align-items-center">
-          <BButton
-            @click.stop="openRoleModal(item)"
-            class="text-dark pl-0"
-            data-testid="role-cell"
-            variant="link">
-            {{ item.role.name }}
-          </BButton>
-        </div>
-      </template>
-      <template #cell(prediction)="{ item }">
-        <FrRecommendationIcon
-          v-if="Boolean(item.prediction)"
-          :prediction="item.prediction"
-          :id="item.id"
-          type="certification"
-          :auto-id-settings="autoIdSettings" />
-      </template>
-      <template #cell(flags)="{ item }">
-        <div class="d-flex align-items-center">
+            </div>
+          </div>
           <div
-            v-for="(flag, index) in item.flags"
-            :key="`flags-${item.id}-${index}`"
-            class="cursor-default">
-            <FrIcon
-              :aria-label="$t(`governance.flags.${flag}`)"
-              icon-class="md-24 mr-3"
-              :id="`flags-${item.id}-${index}`"
-              :name="flagIcons[flag]"
-              role="img"
-              tabindex="-1" />
-            <BTooltip
-              :target="`flags-${item.id}-${index}`"
+            class="border-top p-2 flex-grow-1 h-100 overflow-auto">
+            <FrAccessFilter
+              v-if="filterTypes"
+              :use-query-filter="false"
+              :input-fields="filterTypes"
+              :input-filter-data="filterData"
+              :user-options="users"
+              :filter-schema="filterProperties"
+              @update-filter="updateAccessByFilter"
+              @add-filter="addFilter"
+              @clear-filters="clearAccessFilters" />
+          </div>
+        </BCard>
+      </div>
+      <div
+        class="d-flex flex-column h-100 flex-grow-1 min-width-0">
+        <FrSpinner
+          v-if="isLoading"
+          class="py-5" />
+        <BTable
+          v-else-if="items.length"
+          v-resizable-table="{ persistKey: `certification-tasklist-${campaignId}-${certificationGrantType}` }"
+          @row-selected="onRowSelected"
+          @sort-changed="sortChange"
+          class="m-0 border-top border-bottom task-list-table d-flex flex-column"
+          ref="selectableTable"
+          responsive
+          select-mode="single"
+          show-empty
+          :empty-text="$t('common.noRecordsToShow')"
+          :fields="certificationListColumnsToShow"
+          :items="items"
+          no-local-sorting
+          no-sort-reset
+          :per-page="pageSize"
+          :selectable="isSelectable"
+          :sort-by="sortBy"
+          :sort-desc="sortDir === 'desc'"
+          :tbody-tr-attr="rowAttrs">
+          <template #cell(selector)="{ item }">
+            <FrField
+              v-if="item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
+              @change="selectTask($event, item)"
+              name="columnSelected"
+              type="checkbox"
+              :testid="`multiselect-${item.id}`"
+              :value="item.selected" />
+          </template>
+          <template #cell(user)="{ item }">
+            <div class="d-flex justify-content-start align-items-center">
+              <BButton
+                @click.stop="openUserModal(item.id, item.manager)"
+                class="text-dark btn-unstyled"
+                variant="link">
+                <BMedia>
+                  <template #aside>
+                    <BImg
+                      class="mt-2"
+                      height="24"
+                      width="24"
+                      :alt="`${item.user?.givenName} ${item.user?.sn}`"
+                      :aria-hidden="true"
+                      :src="item.user?.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+                  </template>
+                  <div class="media-body">
+                    <h3 class="h5 mb-0 text-dark text-truncate">
+                      {{ $t('common.userFullName', { givenName: item.user?.givenName, sn: item.user?.sn }) }}
+                    </h3>
+                    <small class="text-truncate">
+                      {{ item.user?.userName }}
+                    </small>
+                  </div>
+                </BMedia>
+              </BButton>
+            </div>
+          </template>
+          <template
+            #cell(manager)="{ item }">
+            <div
+              v-if="item.manager"
+              class="d-flex justify-content-start align-items-center">
+              <BMedia>
+                <template #aside>
+                  <BImg
+                    class="mt-2"
+                    height="24"
+                    width="24"
+                    :alt="`${item.manager?.givenName} ${item.manager?.sn}`"
+                    :aria-hidden="true"
+                    :src="item.manager?.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+                </template>
+                <BMediaBody>
+                  <h3 class="h5 mb-0 text-dark text-truncate">
+                    {{ $t('common.userFullName', { givenName: item.manager?.givenName, sn: item.manager?.sn }) }}
+                  </h3>
+                  <small class="text-truncate">
+                    {{ item.manager?.userName }}
+                  </small>
+                </BMediaBody>
+              </BMedia>
+            </div>
+            <div v-else>
+              {{ blankValueIndicator }}
+            </div>
+          </template>
+          <template #cell(application)="{ item }">
+            <div class="d-flex justify-content-between align-items-center">
+              <BButton
+                @click.stop="openApplicationModal(item.application, item.applicationOwner, item.glossary)"
+                class="text-dark"
+                variant="link">
+                <BMedia
+                  class="align-items-center"
+                  data-testid="application-cell"
+                  no-body>
+                  <img
+                    class="mr-4 size-28"
+                    alt=""
+                    :onerror="onImageError"
+                    :src="getApplicationLogo(item.application)">
+                  <div class="media-body align-self-center overflow-hidden text-nowrap">
+                    <span class="text-dark">
+                      {{ item.application.name }}
+                    </span>
+                  </div>
+                </BMedia>
+              </BButton>
+            </div>
+          </template>
+          <template #cell(entitlement)="{ item }">
+            <div class="d-flex justify-content-between align-items-center">
+              <BButton
+                @click.stop="openEntitlementModal(item)"
+                class="text-dark pl-0"
+                data-testid="entitlement-cell"
+                variant="link">
+                {{ getResourceDisplayName(item, '/entitlement') }}
+              </BButton>
+            </div>
+          </template>
+          <template #cell(account)="{ item }">
+            <div class="d-flex justify-content-between align-items-center">
+              <BButton
+                @click.stop="openAccountModal(item)"
+                class="text-dark pl-0"
+                data-testid="account-cell"
+                variant="link">
+                {{ getResourceDisplayName(item, '/account') }}
+              </BButton>
+            </div>
+          </template>
+          <template #cell(role)="{ item }">
+            <div class="d-flex justify-content-between align-items-center">
+              <BButton
+                @click.stop="openRoleModal(item)"
+                class="text-dark pl-0"
+                data-testid="role-cell"
+                variant="link">
+                {{ item.role.name }}
+              </BButton>
+            </div>
+          </template>
+          <template #cell(prediction)="{ item }">
+            <FrRecommendationIcon
+              v-if="Boolean(item.prediction)"
+              :prediction="item.prediction"
+              :id="item.id"
+              type="certification"
+              :auto-id-settings="autoIdSettings" />
+          </template>
+          <template #cell(flags)="{ item }">
+            <div class="d-flex align-items-center">
+              <div
+                v-for="(flag, index) in item.flags"
+                :key="`flags-${item.id}-${index}`"
+                class="cursor-default">
+                <FrIcon
+                  :aria-label="$t(`governance.flags.${flag}`)"
+                  icon-class="md-24 mr-3"
+                  :id="`flags-${item.id}-${index}`"
+                  :name="flagIcons[flag]"
+                  role="img"
+                  tabindex="-1" />
+                <BTooltip
+                  :target="`flags-${item.id}-${index}`"
+                  triggers="focus hover"
+                  placement="top">
+                  {{ $t(`governance.flags.${flag}`) }}
+                </BTooltip>
+              </div>
+            </div>
+          </template>
+          <template #cell(comments)="{ item }">
+            <div
+              class="d-flex justify-content-start align-items-center"
+              v-if="getNumberOfComments(item)">
+              <BButton
+                @click="openViewCommentsModal(item.decision.certification.comments, item)"
+                class="text-dark position-relative py-0"
+                data-testid="cert-comments-button"
+                variant="link">
+                <FrIcon
+                  icon-class="md-24"
+                  name="chat_bubble_outline" />
+                <BBadge
+                  class="mr-1 position-absolute comments-counter"
+                  pill
+                  variant="danger">
+                  {{ getNumberOfComments(item) }}
+                </BBadge>
+              </BButton>
+            </div>
+          </template>
+          <template #cell()="data">
+            <div
+              class="text-truncate w-450px"
+              :id="`${data.item.id}-${data.field.key}`">
+              {{ getCellData(data) }}
+            </div>
+            <BPopover
+              v-if="isTruncated(`${data.item.id}-${data.field.key}`)"
+              :target="`${data.item.id}-${data.field.key}`"
               triggers="focus hover"
               placement="top">
-              {{ $t(`governance.flags.${flag}`) }}
-            </BTooltip>
-          </div>
-        </div>
-      </template>
-      <template #cell(comments)="{ item }">
-        <div
-          class="d-flex justify-content-start align-items-center"
-          v-if="getNumberOfComments(item)">
-          <BButton
-            @click="openViewCommentsModal(item.decision.certification.comments, item)"
-            class="text-dark position-relative py-0"
-            data-testid="cert-comments-button"
-            variant="link">
-            <FrIcon
-              icon-class="md-24"
-              name="chat_bubble_outline" />
-            <BBadge
-              class="mr-1 position-absolute comments-counter"
-              pill
-              variant="danger">
-              {{ getNumberOfComments(item) }}
-            </BBadge>
-          </BButton>
-        </div>
-      </template>
-      <template #cell()="data">
-        <div
-          class="text-truncate w-450px"
-          :id="`${data.item.id}-${data.field.key}`">
-          {{ getCellData(data) }}
-        </div>
-        <BPopover
-          v-if="isTruncated(`${data.item.id}-${data.field.key}`)"
-          :target="`${data.item.id}-${data.field.key}`"
-          triggers="focus hover"
-          placement="top">
-          <div class="p-1">
-            {{ getCellData(data) }}
-          </div>
-        </BPopover>
-      </template>
-      <template #cell(actions)="{ item }">
-        <template v-if="item.decision.certification.status === 'signed-off'">
-          <BBadge
-            :variant="getVariant(item.decision.certification.decision)"
-            @click="openActivityModal(item)"
-            :id="`itemDecision-${item.id}`"
-            class="w-100 cursor-pointer">
-            {{ item.decision.certification.decision === 'certify' && item.isAcknowledge
-              ? $t('governance.certificationTask.actions.acknowledge')
-              : startCase(item.decision.certification.decision) }}
-          </BBadge>
-          <BTooltip
-            placement="top"
-            :target="`itemDecision-${item.id}`"
-            triggers="hover"
-            :title="$t('governance.certificationTask.actions.viewActivity')" />
-        </template>
-        <div
-          v-else
-          class="d-flex justify-content-end align-items-center">
-          <FrTaskActionsCell
-            @action="handleAction"
-            :campaign-details="campaignDetails"
-            :cert-grant-type="certificationGrantType"
-            :item="item"
-            :is-staged="isStaged" />
+              <div class="p-1">
+                {{ getCellData(data) }}
+              </div>
+            </BPopover>
+          </template>
+          <template #cell(actions)="{ item }">
+            <template v-if="item.decision.certification.status === 'signed-off'">
+              <BBadge
+                :variant="getVariant(item.decision.certification.decision)"
+                @click="openActivityModal(item)"
+                :id="`itemDecision-${item.id}`"
+                class="w-100 cursor-pointer">
+                {{ item.decision.certification.decision === 'certify' && item.isAcknowledge
+                  ? $t('governance.certificationTask.actions.acknowledge')
+                  : startCase(item.decision.certification.decision) }}
+              </BBadge>
+              <BTooltip
+                placement="top"
+                :target="`itemDecision-${item.id}`"
+                triggers="hover"
+                :title="$t('governance.certificationTask.actions.viewActivity')" />
+            </template>
+            <div
+              v-else
+              class="d-flex justify-content-end align-items-center">
+              <FrTaskActionsCell
+                @action="handleAction"
+                :campaign-details="campaignDetails"
+                :cert-grant-type="certificationGrantType"
+                :item="item"
+                :is-staged="isStaged" />
 
-          <!-- Select Row To Display Entitlements -->
-          <BButton
-            v-if="showAccountDrilldown"
-            :data-testid="`btnSelectEntitlement-${item.id}`"
-            :id="`btnSelectEntitlement-${item.id}`"
-            class="p-1"
-            @click="onRowSelected(item)">
-            <FrIcon
-              data-testid="group-by-icon"
-              icon-class="md-24"
-              name="chevron_right" />
-          </BButton>
-        </div>
-      </template>
-    </BTable>
-    <FrNoData
-      v-else
-      :card="false"
-      class="mb-4"
-      data-testid="cert-task-list-no-data"
-      icon="inbox"
-      :subtitle="$t('governance.certificationTask.noItems')" />
-    <FrPagination
-      v-if="totalRows > pageSize"
-      :value="paginationPage"
-      :per-page="pageSize"
-      :total-rows="totalRows"
-      @input="paginationChange"
-      @on-page-size-change="pageSizeChange" />
-    <FrFloatingActionBar
-      ref="floatingActionBar"
-      :buttons="actionBarButtons"
-      :count="selectedCount"
-      :menu-items="actionBarMenuItems"
-      @deselect="selectTasks(false)"
-      @certify="(triggerEl) => openActionConfirmModal(bulkCertifyModalProps, null, triggerEl)"
-      @revoke="(triggerEl) => openActionConfirmModal(bulkRevokeModalProps, null, triggerEl)"
-      @exception="(triggerEl) => openActionConfirmModal(bulkExceptionModalProps, null, triggerEl)"
-      @reassign="(triggerEl) => $bvModal.show(getModalId('reassign'), triggerEl)"
-      @forward="(triggerEl) => openForwardModal(null, true, true, triggerEl)"
-      @clearDecisions="bulkReset()" />
+              <!-- Select Row To Display Entitlements -->
+              <BButton
+                v-if="showAccountDrilldown"
+                :data-testid="`btnSelectEntitlement-${item.id}`"
+                :id="`btnSelectEntitlement-${item.id}`"
+                class="p-1"
+                @click="onRowSelected(item)">
+                <FrIcon
+                  data-testid="group-by-icon"
+                  icon-class="md-24"
+                  name="chevron_right" />
+              </BButton>
+            </div>
+          </template>
+        </BTable>
+        <FrNoData
+          v-else
+          :card="false"
+          class="mb-4"
+          data-testid="cert-task-list-no-data"
+          icon="inbox"
+          :subtitle="$t('governance.certificationTask.noItems')" />
+        <FrPagination
+          v-if="totalRows > pageSize"
+          :value="paginationPage"
+          :per-page="pageSize"
+          :total-rows="totalRows"
+          @input="paginationChange"
+          @on-page-size-change="pageSizeChange" />
+        <FrFloatingActionBar
+          ref="floatingActionBar"
+          :buttons="actionBarButtons"
+          :count="selectedCount"
+          :menu-items="actionBarMenuItems"
+          @deselect="selectTasks(false)"
+          @certify="openActionConfirmModal(bulkCertifyModalProps)"
+          @revoke="openActionConfirmModal(bulkRevokeModalProps)"
+          @exception="openActionConfirmModal(bulkExceptionModalProps)"
+          @reassign="(triggerEl) => $bvModal.show(getModalId('reassign'), triggerEl)"
+          @forward="(triggerEl) => openForwardModal(null, true, true, triggerEl)"
+          @clearDecisions="bulkReset()" />
+      </div>
+    </div>
     <!-- Modals -->
     <FrColumnPicker
       v-bind="pickerProps"
@@ -449,7 +488,8 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BBadge,
   BButton,
-  BCollapse,
+  BButtonClose,
+  BCard,
   BImg,
   BMedia,
   BMediaBody,
@@ -464,6 +504,7 @@ import {
   filter,
   get,
   pick,
+  debounce,
   sortBy as lodashSortBy,
   startCase,
 } from 'lodash';
@@ -505,6 +546,7 @@ import {
   getAllColumnCategories,
   getInitialColumns,
   processItemsForExport,
+  setSelectedCategories,
 } from '@forgerock/platform-shared/src/utils/governance/certificationColumns';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
@@ -527,6 +569,22 @@ import FrRecommendationIcon from '@forgerock/platform-shared/src/components/gove
 import FrAccountModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/AccountModal';
 import FrEntitlementModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/EntitlementModal';
 import FrRoleModal from '@forgerock/platform-shared/src/components/governance/ObjectModals/RoleModal/RoleModal';
+import FrAccessFilter from '@forgerock/platform-shared/src/components/governance/AccessFilter/AccessFilter';
+import accessConstants from '../../Access/utils/accessConstants';
+import {
+  getInitialFilterData,
+  generateFilter,
+  getUserInfoFilter,
+  USER_FILTERS,
+  ROLE_FILTERS,
+  ENTITLEMENT_FILTERS,
+  GENERAL_FILTERS,
+  APPLICATION_FILTERS,
+  CERTIFICATION_FILTERS,
+  ACCOUNT_FILTERS,
+  addFilterTypes,
+  resetFilterTypes,
+} from './utils/taskFilterUtils';
 import FrActivityModal from './modals/ActivityModal';
 import FrAddCommentModal from './modals/AddCommentModal';
 import FrApplicationModal from './modals/ApplicationModal';
@@ -536,7 +594,6 @@ import FrEditReviewerModal from './modals/EditReviewerModal';
 import FrReviewersModal from './modals/ReviewersModal';
 import FrReassignModal from './modals/ReassignModal';
 import FrTaskActionsCell from './TaskActionsCell';
-import FrTaskFilters from './TaskFilters';
 import FrTaskMultiSelect from './TaskMultiSelect';
 import FrDownloadItemsModal from './modals/DownloadItemsModal/DownloadItemsModal';
 
@@ -569,7 +626,8 @@ export default {
   components: {
     BBadge,
     BButton,
-    BCollapse,
+    BButtonClose,
+    BCard,
     BImg,
     BMedia,
     BMediaBody,
@@ -598,9 +656,9 @@ export default {
     FrNoData,
     FrSpinner,
     FrTaskActionsCell,
-    FrTaskFilters,
     FrTaskMultiSelect,
     FrRecommendationIcon,
+    FrAccessFilter,
   },
   setup(props) {
     const tasksFields = ref([]);
@@ -634,7 +692,7 @@ export default {
     },
     campaignDetails: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     campaignId: {
       type: String,
@@ -670,6 +728,10 @@ export default {
     },
   },
   data() {
+    const defaultUserValue = {
+      value: '',
+      text: this.$t('governance.certificationTask.allUsers'),
+    };
     const bulkCertifyModalProps = {
       confirmTitle: 'certifyConfirmTitle',
       confirmDescription: 'certifyConfirmDescription',
@@ -739,6 +801,7 @@ export default {
         icon: 'close',
         label: this.$t('governance.certificationTask.actions.reset'),
       }],
+      defaultUserValue,
       allSelected: false,
       blankValueIndicator,
       bulkCertifyModalProps,
@@ -746,7 +809,6 @@ export default {
       bulkExceptionModalProps,
       bulkRevokeModalProps,
       confirmActionModalProps: {},
-      contentAccountSelectedModal: {},
       currentAccountSelectedModal: null,
       currentApplicationSelectedModal: null,
       currentCommentsSelectedModal: [],
@@ -780,7 +842,7 @@ export default {
       pageSize: 10,
       paginationPage: 1,
       selectedItems: [],
-      showFiltersSection: false,
+      leftPanelExpanded: false,
       showConfirm: false,
       sortDir: 'asc',
       sortBy: 'user',
@@ -795,6 +857,7 @@ export default {
       filterSchema: {
         user: [],
       },
+      filterProperties: {},
       revokeModalProps: {
         ...bulkRevokeModalProps,
         okFunction: this.revoke,
@@ -805,6 +868,21 @@ export default {
         okFunction: this.exception,
         noConfirmation: true,
       },
+      targetFilter: null,
+      filterData: getInitialFilterData(),
+      users: [],
+      debouncedTextSearch: debounce((field, value) => {
+        this.filterData[field] = value;
+      }),
+      debounceUserSearch: debounce(this.getUserInfo, 500),
+      roleFilters: ROLE_FILTERS,
+      applicationFilter: APPLICATION_FILTERS,
+      userFilter: USER_FILTERS,
+      entitlementFilters: ENTITLEMENT_FILTERS,
+      generalFilters: GENERAL_FILTERS,
+      accountFilters: ACCOUNT_FILTERS,
+      certificationFilter: CERTIFICATION_FILTERS,
+      filterTypes: null,
     };
   },
   computed: {
@@ -858,7 +936,7 @@ export default {
       return this.allSelected ? this.totalRows : this.selectedItems.length;
     },
     filterButtonLabel() {
-      return this.showFiltersSection
+      return this.leftPanelExpanded
         ? this.$t('governance.hideFilters')
         : this.$t('governance.showFilters');
     },
@@ -894,6 +972,7 @@ export default {
     try {
       const { data } = await getFilterSchema();
       filterProperties = data || {};
+      this.filterProperties = filterProperties;
       this.filterSchema.user = filterProperties.user || [];
     } catch (error) {
       this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
@@ -902,6 +981,10 @@ export default {
     const allColumnCategories = getAllColumnCategories(this.certificationGrantType || 'accounts', filterProperties, this.autoIdSettings);
     this.tasksFields = getInitialColumns(this.certificationGrantType, this.entitlementUserId, this.showAccountDrilldown, this.campaignDetails?.uiConfig?.columnConfig, allColumnCategories, this.autoIdSettings);
     this.columnCategories = allColumnCategories;
+
+    resetFilterTypes();
+    this.filterData = getInitialFilterData();
+    this.filterTypes = await generateFilter(this.certificationGrantType, this.campaignId, this.actorId, null, this.debounceUserSearch);
 
     try {
       await this.getItems(this.paginationPage);
@@ -912,11 +995,15 @@ export default {
       this.showErrorMessage(error, this.$t('governance.certificationTask.errors.certificationListError'));
     }
   },
+  beforeDestroy() {
+    resetFilterTypes();
+  },
   methods: {
     getCellData,
     getAllColumnCategories,
     getInitialColumns,
     startCase,
+    setSelectedCategories,
     toggleSaving() {
       this.$emit('change-saving');
     },
@@ -988,6 +1075,7 @@ export default {
       if (status === 'certify') return 'success';
       return '';
     },
+
     paginationChange(page) {
       this.paginationPage = page;
       this.getItems(page).then(() => {
@@ -1009,6 +1097,27 @@ export default {
       this.paginationPage = 1;
       this.getItems(this.paginationPage);
     },
+    async addFilter(newFilter, type) {
+      this.filterData[newFilter.type] = {
+        value: '',
+        grantTypes: [accessConstants.GRANT_TYPES.ACCOUNT, accessConstants.GRANT_TYPES.ENTITLEMENT],
+      };
+      addFilterTypes(newFilter, type);
+      this.filterTypes = await generateFilter(this.certificationGrantType, this.campaignId, this.actorId, null, this.debounceUserSearch);
+    },
+    updateColumns({ activeColumns, availableColumns }) {
+      this.certificationListColumns = activeColumns || this.tasksFields;
+      this.updatedColumCategories = availableColumns;
+      if (this.campaignDetails.allowBulkCertify) {
+        this.certificationListColumns.unshift({
+          key: 'selector',
+          label: '',
+          sortable: false,
+          class: 'selector-column fr-no-resize sticky-left',
+          show: true,
+        });
+      }
+    },
     isItemSelected(itemId) {
       return this.allSelected || this.selectedItems.some((item) => item.id === itemId);
     },
@@ -1025,10 +1134,34 @@ export default {
         prediction: getPredictionDisplayInfo(item, this.autoIdSettings, this.filterSchema.user),
       }));
       this.$emit('check-progress');
-
       if (this.totalRows === 0) {
         this.$emit('hide-group-by');
       }
+    },
+    /**
+     * Updates the current filter for retrieving grants
+     */
+    async updateAccessByFilter(updatedTargetFilter) {
+      const uniqueFilters = [...new Map(Object.values(updatedTargetFilter).map((f) => [JSON.stringify(f), f])).values()];
+      this.targetFilter = {
+        operator: 'AND',
+        operand: [...uniqueFilters, ...this.getBaseFilters()],
+      };
+      this.paginationPage = 1;
+      return this.getItems(1);
+    },
+
+    /**
+    * Clears out the current filters for retrieving grants
+    */
+    clearAccessFilters() {
+      this.targetFilter = null;
+      this.paginationPage = 1;
+      this.getItems(1);
+    },
+    async getUserInfo(queryString) {
+      const users = await getUserInfoFilter(this.campaignId, this.actorId, queryString);
+      this.userFilter.components[0].props.options = users;
     },
     getItems(currentPage) {
       this.isLoading = true;
@@ -1098,6 +1231,9 @@ export default {
       return baseFilters;
     },
     buildBodyParams() {
+      if (this.targetFilter) {
+        return { targetFilter: this.targetFilter };
+      }
       if (!this.listFilters) {
         let defaultBaseFilter = this.getBaseFilters();
         if (this.entitlementUserId) {
@@ -1820,6 +1956,23 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+:deep(.certification-task-filter) {
+  border: 1px solid $gray-200;
+
+  .certification-task-filter-selected {
+    width: 95%;
+  }
+
+}
+:deep(.certification-task-filter-dropdown) {
+  .multiselect__tags {
+    min-height: 85px;
+  }
+
+  .multiselect__single > .certification-task-filter-default {
+    margin-top: 32px;
+  }
+}
 .certification-task-list {
   &_controls {
     padding: 10px;
@@ -1836,6 +1989,33 @@ export default {
 
 .action-bar-visible {
   padding-bottom: 120px !important;
+}
+
+.min-width-0 {
+  min-width: 0;
+}
+
+.fr-left-panel {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  min-width: 300px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fr-left-panel .scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+@media (min-width: 992px) {
+  .fr-left-panel {
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+  }
 }
 
 :deep {

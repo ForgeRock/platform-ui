@@ -34,6 +34,9 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   }),
 }));
 
+jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
 beforeEach(() => {
   document.body.innerHTML = '';
 });
@@ -165,6 +168,8 @@ describe('Glossary', () => {
     jest.spyOn(CommonsApi, 'getFilterSchema').mockReturnValue(Promise.resolve({ data: { user: [] } }));
     jest.spyOn(CommonsApi, 'getIgaAutoIdConfig').mockReturnValue(Promise.resolve({ data: { result: [] } }));
     jest.spyOn(CommonsApi, 'getIgaUiConfig').mockReturnValue(Promise.resolve({ data: {} }));
+    jest.spyOn(CommonsApi, 'getResource').mockResolvedValue({ data: { result: [] } });
+    jest.spyOn(CertificationApi, 'getCertificationUserFilter').mockResolvedValue({ data: [] });
     jest.spyOn(CertificationApi, 'getCertificationCounts').mockReturnValue(Promise.resolve({
       data: {
         result: [],

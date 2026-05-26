@@ -15,6 +15,7 @@ import { mockModal } from '@forgerock/platform-shared/src/testing/utils/mockModa
 import CertificationTask from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 const { modalHide, modalShow } = mockModal();
 
 describe('CertificationTask', () => {
@@ -24,6 +25,7 @@ describe('CertificationTask', () => {
   CommonsApi.getFilterSchema = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
   CommonsApi.getIgaAutoIdConfig = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
   CommonsApi.getIgaUiConfig = jest.fn().mockImplementation(() => Promise.resolve({ data: {} }));
+  CommonsApi.getResource = jest.fn().mockResolvedValue({ data: { result: [] } });
   CertificationApi.getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: {} }));
   CertificationApi.certifyItem.mockImplementation(() => Promise.resolve({ data: {} }));
   CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: {} }));
@@ -125,6 +127,9 @@ describe('CertificationTask', () => {
           'RouterLink',
           'D3PieChart',
           'FrCertificationTaskList',
+          'BMedia',
+          'BMediaBody',
+          'GovResourceSelect',
         ],
       },
     });

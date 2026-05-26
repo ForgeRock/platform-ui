@@ -350,9 +350,9 @@ const accessFilter = ref({
   application: {
     name: i18n.global.t('common.application'),
     filters: {
-      neverCertified: {
-        operator: 'CONTAINS',
-        path: 'descriptor.idx./entitlement.displayName',
+      applications: {
+        operator: 'IN',
+        path: 'application.id',
       },
     },
     components: [{
