@@ -70,7 +70,12 @@ describe('email_or_esv validators', () => {
 
   it('should return corresponding error message when value passed does not match the regex pattern for ESV', async () => {
     const result = await rules.email_or_esv('test123');
-    expect(result).toBe('Invalid email format (example@example.com)');
+    expect(result).toBe('Must be a valid email or variable in the format &{esv.variable_name}');
+  });
+
+  it('should return true (defer validation) when user is mid-typing an ESV', async () => {
+    expect(await rules.email_or_esv('&')).toBe(true);
+    expect(await rules.email_or_esv('&{esv')).toBe(true);
   });
 
   it('should validate email', () => {

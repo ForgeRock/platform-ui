@@ -85,11 +85,19 @@ export default {
     background-color: $gray-100 !important;
   }
 
-  .form-label-group:focus-within {
-   .input-buttons:not(:focus-within) .input-group-append .btn {
-        border-color: $primary !important;
-        clip-path: inset(-1px -1px -1px 0px) !important;
-        box-shadow: 0 0 0 0.0625rem $primary !important;
-   }
- }
+  .form-label-group:focus-within:not(.fr-field-error) {
+    .input-buttons:not(:focus-within) .input-group-append .btn {
+      border-color: $primary !important;
+      clip-path: inset(-1px -1px -1px 0px) !important;
+      box-shadow: 0 0 0 0.0625rem $primary !important;
+    }
+  }
+
+  .form-label-group:focus-within.fr-field-error {
+    .input-buttons:not(:focus-within) .input-group-append .btn {
+      border-color: $danger !important;
+      clip-path: inset(-1px -1px -1px 0px) !important;
+      box-shadow: 0 0 0 0.0625rem $danger !important;
+    }
+  }
 </style>
