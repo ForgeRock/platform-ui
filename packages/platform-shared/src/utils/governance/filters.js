@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -135,13 +135,15 @@ export function getActivePhaseFilter(queryString) {
  * @param {object} node Target filter search object
  */
 export function convertTargetFilterToQueryFilter(targetFilter) {
+  const encodeFieldName = (name) => String(name ?? '').replaceAll(' ', '%20');
+
   function buildQuery(node) {
     if (!node || typeof node !== 'object' || (Object.keys(node).length === 0)) return '';
 
     const op = node.operator;
     const { operand } = node;
 
-    const leaf = ({ targetName, targetValue }, opSymbol) => `${targetName} ${opSymbol} '${targetValue}'`;
+    const leaf = ({ targetName, targetValue }, opSymbol) => `${encodeFieldName(targetName)} ${opSymbol} '${targetValue}'`;
 
     const operatorMap = {
       EQUALS: 'eq',
@@ -176,11 +178,11 @@ export function convertTargetFilterToQueryFilter(targetFilter) {
         return `!(${buildQuery(operand[0])})`;
 
       case 'EXISTS':
-        return `${operand.targetName} co ''`;
+        return `${encodeFieldName(operand.targetName)} co ''`;
 
       case 'IN':
         return operand.targetValue
-          .map((val) => `(${operand.targetName} eq '${val}')`)
+          .map((val) => `(${encodeFieldName(operand.targetName)} eq '${val}')`)
           .join(' or ');
 
       default:

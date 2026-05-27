@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -222,6 +222,44 @@ describe('convertTargetFilterToQueryFilter', () => {
 
   it('returns an empty string if no filter is provided', () => {
     expect(convertTargetFilterToQueryFilter()).toBe('true');
+  });
+
+  it('encodes spaces in targetName to %20 for leaf operators', () => {
+    const filter = {
+      operator: 'EQUALS',
+      operand: { targetName: 'Project Tier', targetValue: 'Gold' },
+    };
+    expect(convertTargetFilterToQueryFilter(filter)).toContain("Project%20Tier eq 'Gold'");
+  });
+
+  it('encodes spaces in targetName to %20 for the EXISTS operator', () => {
+    const filter = {
+      operator: 'EXISTS',
+      operand: { targetName: 'Project Tier' },
+    };
+    expect(convertTargetFilterToQueryFilter(filter)).toBe("Project%20Tier co ''");
+  });
+
+  it('encodes spaces in targetName to %20 for the IN operator across each disjunct', () => {
+    const filter = {
+      operator: 'IN',
+      operand: {
+        targetName: 'Project Tier',
+        targetValue: ['Gold', 'Silver'],
+      },
+    };
+    expect(convertTargetFilterToQueryFilter(filter)).toBe("(Project%20Tier eq 'Gold') or (Project%20Tier eq 'Silver')");
+  });
+
+  it('does not encode forward slashes in targetName (system field paths must survive untouched)', () => {
+    const filter = {
+      operator: 'EQUALS',
+      operand: { targetName: 'descriptor.idx./entitlement.displayName', targetValue: 'admin' },
+    };
+    const result = convertTargetFilterToQueryFilter(filter);
+    expect(result).toContain("descriptor.idx./entitlement.displayName eq 'admin'");
+    expect(result).not.toContain('%2F');
+    expect(result).not.toContain('%2f');
   });
 
   describe('getBasicBooleanFilter', () => {
