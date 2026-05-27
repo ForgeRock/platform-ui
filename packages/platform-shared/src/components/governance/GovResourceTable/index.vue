@@ -263,6 +263,9 @@ of the MIT license. See the LICENSE file for details. -->
     </BCard>
     <FrGovAssignResourceModal
       :entitlement-options="entitlementOptions"
+      :initial-application-id="initialApplicationId"
+      :initial-application-logo="initialApplicationLogo"
+      :initial-application-name="initialApplicationName"
       :is-saving="assigningResource"
       :modal-id="modalId + '-show'"
       :parent-resource-name="parentResourceName"
@@ -419,6 +422,18 @@ export default {
     entitlementOptions: {
       type: Array,
       default: () => [],
+    },
+    initialApplicationId: {
+      type: String,
+      default: '',
+    },
+    initialApplicationLogo: {
+      type: String,
+      default: '',
+    },
+    initialApplicationName: {
+      type: String,
+      default: '',
     },
     fields: {
       type: Array,

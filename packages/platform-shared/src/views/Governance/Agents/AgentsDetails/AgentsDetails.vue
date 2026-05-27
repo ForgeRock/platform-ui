@@ -46,13 +46,20 @@ of the MIT license. See the LICENSE file for details. -->
           key="entitlements"
           lazy>
           <FrGovResourceTable
+            allow-add
+            :entitlement-options="entitlements"
             :fields="entitlementTableFields"
             :grant-type="$t('governance.agents.entitlement')"
+            :initial-application-id="agent.application?.id"
+            :initial-application-logo="agent.application?.icon"
+            :initial-application-name="agent.application?.name"
             :items="entitlementList"
             :parent-resource-name="$t('governance.agents.agent')"
             :saving-status="savingGovernanceResourcesStatus"
             show-view-details
             :total-count="entitlementTotalCount"
+            @assign-resources="assignGovernanceResources"
+            @get-entitlements="getGovernanceEntitlements"
             @load-data="queryAgentEntitlements"
             @revoke-items="revokeEntitlement" />
         </BTab>
@@ -84,15 +91,17 @@ import { omit } from 'lodash';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getAccountById, getAccountEntitlements } from '@forgerock/platform-shared/src/api/governance/AccountApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
-import { revokeResourcesFromIGA } from '@forgerock/platform-shared/src/utils/governance/resource';
+import { getEntitlements } from '@forgerock/platform-shared/src/utils/governance/resource';
 import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
+import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrActivity from '@forgerock/platform-shared/src/views/Governance/Activity/Activity';
 import FrDetailsTab from './DetailsTab';
+import store from '@/store';
 import { getAgentDisplayName } from '../utils/agentUtility';
 import i18n from '@/i18n';
 
@@ -115,6 +124,7 @@ const entitlementList = ref([]);
 const entitlementTotalCount = ref(0);
 const id = route.params.agentId;
 const savingGovernanceResourcesStatus = ref('');
+const entitlements = ref([]);
 const tabs = ['details', 'entitlements', 'activity'];
 const entitlementTableFields = [
   {
@@ -141,7 +151,7 @@ const entitlementTableFields = [
   {
     key: 'actions',
     label: '',
-    class: 'col-actions',
+    class: 'w-120px fr-no-resize sticky-right',
   },
 ];
 /**
@@ -150,6 +160,49 @@ const entitlementTableFields = [
  */
 function tabActivated(index) {
   tabIndex.value = index;
+}
+
+/**
+ * Retrieves list of entitlements related to specified application and using search value
+ * @param {*} queryParams Contains parameters to search for entitlements
+ *   {String} searchValue User-entered value to filter entitlements by
+ *   {String} selectedApplicationId Id of application to filter entitlements by
+ */
+async function getGovernanceEntitlements({ searchValue = '', selectedApplicationId }) {
+  const user = agent.value?.user;
+  if (!user) {
+    return;
+  }
+  entitlements.value = await getEntitlements(false, searchValue, selectedApplicationId, `managed/${store.state.realm}_assignment`, props.isEndUser);
+}
+
+/**
+ * Assigns entitlements to the agent via IGA
+ * @param {Array} resourceIds IDs of entitlements to assign
+ */
+async function assignGovernanceResources(resourceIds) {
+  const userId = agent.value?.user?.id;
+  if (!userId) {
+    return;
+  }
+  savingGovernanceResourcesStatus.value = 'saving';
+  const accountId = agent.value?.keys?.accountId;
+  const requests = resourceIds.map((entitlementId) => {
+    const common = { entitlementId: entitlementId.split('/')[2], userId };
+    if (!props.isEndUser) common.context = { type: 'admin' };
+    if (accountId) common.accountId = accountId;
+    return submitCustomRequest('entitlementGrant', { common });
+  });
+  const results = await Promise.allSettled(requests);
+  const failed = results.filter((r) => r.status === 'rejected');
+  if (failed.length < results.length) {
+    displayNotification('success', i18n.global.t('governance.resource.successfullyAdded', { resource: i18n.global.t('common.entitlements') }));
+    savingGovernanceResourcesStatus.value = 'success';
+  }
+  if (failed.length > 0) {
+    showErrorMessage(failed[0].reason, i18n.global.t('governance.resource.errors.errorCreatingAccessRequest'));
+    savingGovernanceResourcesStatus.value = 'error';
+  }
 }
 
 /**
@@ -162,8 +215,25 @@ async function revokeEntitlement(payload) {
     return;
   }
   savingGovernanceResourcesStatus.value = 'saving';
-  const response = await revokeResourcesFromIGA(payload, userId, true);
-  savingGovernanceResourcesStatus.value = response.status;
+  const accountId = agent.value?.keys?.accountId;
+  const requests = payload.itemsToRevoke.map((item) => {
+    const common = { entitlementId: item?.assignmentId, userId };
+    if (!props.isEndUser) common.context = { type: 'admin' };
+    if (accountId) common.accountId = accountId;
+    if (payload.justification) common.justification = payload.justification;
+    if (payload.priority) common.priority = payload.priority;
+    return submitCustomRequest('entitlementRemove', { common });
+  });
+  const results = await Promise.allSettled(requests);
+  const failed = results.filter((r) => r.status === 'rejected');
+  if (failed.length < results.length) {
+    displayNotification('success', i18n.global.t('governance.request.requestSuccess'));
+    savingGovernanceResourcesStatus.value = 'requestsRevoked';
+  }
+  if (failed.length > 0) {
+    showErrorMessage(failed[0].reason, i18n.global.t('governance.request.requestError'));
+    savingGovernanceResourcesStatus.value = 'error';
+  }
 }
 
 /**
@@ -183,9 +253,10 @@ async function queryAgentEntitlements(params = {}) {
   }
 
   const queryParams = omit(params, ['queryString', 'sortBy', 'sortDir', 'grantType']);
-  queryParams._fields = 'application,catalog,descriptor,entitlement,entitlementOwner,glossary,item,keys,relationship';
+  queryParams._fields = 'application,catalog,descriptor,entitlement,entitlementOwner,glossary,item,keys,relationship,assignment.id';
   const { data } = await getAccountEntitlements(id, queryParams);
   data.result.forEach((entitlement) => {
+    entitlement.assignmentId = entitlement.assignment?.id;
     entitlement.item.accountAttribute = getAccountAttribute(entitlement);
   });
   entitlementList.value = data?.result;

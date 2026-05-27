@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -52,18 +52,21 @@ export async function assignResourcesToIDM(parentResourceName, parentResourceId,
  * @param {String} parentResourceId id of parent IDM resource
  * @param {Array} resourceIds list of resources to create relationship to IDM resource
  * @param {String} grantType IGA grant type to attribute new resources to
+ * @param {Boolean} isEndUser Whether context should be saved as end user or not, which requires different request payload
+ * @param {String} accountId optional IGA account ID to scope the request to a specific account
  * @returns {String} saving status
  */
-export async function assignResourcesToIGA(parentResourceId, resourceIds, grantType) {
+export async function assignResourcesToIGA(parentResourceId, resourceIds, grantType, isEndUser = false, accountId = null) {
   const entitlements = resourceIds.map((resourceId) => ({ type: 'entitlement', id: resourceId }));
 
   const payload = {
     accessModifier: 'add',
     catalogs: entitlements,
-    context: { type: 'admin' },
+    context: { type: isEndUser ? 'request' : 'admin' },
     users: [parentResourceId],
     justification: 'Admin submitted', // Not translated as this is filler text for auto-approved requests
   };
+  if (accountId) payload.accountId = accountId;
   try {
     const { data } = await saveNewRequest(payload);
     if (data?.errors?.length) {
@@ -88,8 +91,9 @@ export async function assignResourcesToIGA(parentResourceId, resourceIds, grantT
  * @param {String} searchValue search value to find entitlements by
  * @param {String} selectedApplication Application to query entitlements by
  * @param {String} managedResourcePath managed/<realm>_resourceName path to map return values with
+ * @param {Boolean} isEndUser whether search is being performed in end user context, which requires different catalog endpoint
  */
-export async function getEntitlements(resourceIsUser, searchValue, selectedApplication, managedResourcePath) {
+export async function getEntitlements(resourceIsUser, searchValue, selectedApplication, managedResourcePath, isEndUser = false) {
   try {
     const queryParams = {
       pageSize: 10,
@@ -126,7 +130,7 @@ export async function getEntitlements(resourceIsUser, searchValue, selectedAppli
     if (resourceIsUser) {
       queryParams.fields = 'application,entitlement,id,descriptor,glossary';
       queryParams.sortKeys = 'assignment.name';
-      const { data } = await searchCatalog(queryParams, payload, true);
+      const { data } = await searchCatalog(queryParams, payload, !isEndUser);
       return data?.result.map((result) => ({ value: result.id, text: get(result, 'descriptor.idx./entitlement.displayName') })) || [];
     }
     queryParams.sortBy = 'descriptor.idx./entitlement.displayName';
@@ -280,6 +284,7 @@ export async function revokeResourcesFromIGA(revokePayload, parentResourceId, ad
     });
     payload.users = [parentResourceId];
     if (adminAccess) payload.context = { type: 'admin' };
+    if (revokePayload.accountId) payload.accountId = revokePayload.accountId;
 
     const { data } = await saveNewRequest(payload);
 
