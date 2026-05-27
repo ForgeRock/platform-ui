@@ -86,12 +86,12 @@ describe('useAnalyticsDateRange', () => {
     const { requestDateRange } = useAnalyticsDateRange();
     expect(requestDateRange.value).toEqual({
       current: {
-        startDate: '2024-01-01T00',
-        endDate: '2024-01-01T23',
+        startDate: '2024-01-01T00:00:00',
+        endDate: '2024-01-01T23:59:59',
       },
       previous: {
-        startDate: '2023-12-31T00',
-        endDate: '2023-12-31T23',
+        startDate: '2023-12-31T00:00:00',
+        endDate: '2023-12-31T23:59:59',
       },
     });
   });
@@ -104,12 +104,12 @@ describe('useAnalyticsDateRange', () => {
     const { requestDateRange } = useAnalyticsDateRange();
     expect(requestDateRange.value).toEqual({
       current: {
-        startDate: '2024-01-01',
-        endDate: '2024-01-04',
+        startDate: '2024-01-01T00:00:00',
+        endDate: '2024-01-04T23:59:59',
       },
       previous: {
-        startDate: '2023-12-30',
-        endDate: '2024-01-02',
+        startDate: '2023-12-30T00:00:00',
+        endDate: '2024-01-02T23:59:59',
       },
     });
   });
