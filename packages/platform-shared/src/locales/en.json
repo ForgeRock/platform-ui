@@ -612,6 +612,7 @@
       "validIp": "Please provide a valid IPv4 or IPv6 address",
       "urlOrEsv": "Must be a url or a valid ESV variable in the format {'&{esv.variable}'}",
       "urlPathEsv": "Must be an absolute url, relative url beginning with /, or a valid ESV in the format {'&{esv.url}'}",
+      "emailOrEsv": "Must be a valid email or variable in the format {'&{esv.variable_name}'}",
       "validEsv": "Please provide a valid ESV",
       "validEsvVariable": "Please provide a valid ESV variable",
       "alphaNumericUnderscoreHyphenOnly": "Can only contain a-z, 0-9, underscores and hyphens",

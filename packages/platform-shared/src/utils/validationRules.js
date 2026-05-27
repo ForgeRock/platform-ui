@@ -105,8 +105,12 @@ export function getRules(i18n) {
 
   // Rule to check whether email address or esv is valid
   const email_or_esv = async (value) => {
+    // While the user is typing an ESV (starts with & but not yet complete), defer validation
+    if (typeof value === 'string' && value.startsWith('&') && !doesValueContainPlaceholder(value)) {
+      return true;
+    }
     if (!doesValueContainPlaceholder(value)) {
-      return customValidators.validEmail(value) || i18n.global.t('common.policyValidationMessages.VALID_EMAIL_ADDRESS_FORMAT');
+      return customValidators.validEmail(value) || i18n.global.t('common.policyValidationMessages.emailOrEsv');
     }
     const isValidESV = await customValidators.isValidESV(value);
     return isValidESV || i18n.global.t('common.policyValidationMessages.validEsv');
