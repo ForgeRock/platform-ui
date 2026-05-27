@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,9 @@ import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRou
 import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import * as resourceUtil from '@forgerock/platform-shared/src/utils/governance/resource';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import * as AccountsApi from '@/api/governance/AccountApi';
 import AccountsDetails from './AccountsDetails';
 
@@ -28,6 +31,9 @@ const testAccount = {
     name: 'app name',
     templateName: 'templateName',
     icon: 'test',
+  },
+  keys: {
+    accountId: 'account-456',
   },
   user: {
     id: '123',
@@ -51,7 +57,7 @@ const testAccount = {
   },
 };
 
-function mountComponent(accountType) {
+function mountComponent(accountType, props = {}) {
   const account = cloneDeep(testAccount);
   if (accountType === 'orphan') {
     delete account.user;
@@ -73,8 +79,10 @@ function mountComponent(accountType) {
       plugins: [Notifications],
       mocks: {
         $t: (t) => t,
+        $bvModal: { show: jest.fn(), hide: jest.fn() },
       },
     },
+    props,
   });
 }
 
@@ -108,5 +116,61 @@ describe('AccountsDetails', () => {
     const tabs = tabContainer.findAll('li');
 
     expect(tabs.length).toBe(2);
+  });
+
+  async function activateEntitlementsTab() {
+    const tabLink = wrapper.find('.tabs').findAll('li')[2].find('a');
+    await tabLink.trigger('click');
+    await flushPromises();
+    return wrapper.findComponent(FrGovResourceTable);
+  }
+
+  it('calls submitCustomRequest with entitlementRemove on revoke-items emit', async () => {
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue({ status: 'success' });
+    mountComponent();
+    await flushPromises();
+
+    const itemsToRevoke = [{ assignmentId: 'assignment-1' }];
+    const govResourceTable = await activateEntitlementsTab();
+    govResourceTable.vm.$emit('revoke-items', { itemsToRevoke });
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementRemove', {
+      common: expect.objectContaining({
+        entitlementId: 'assignment-1',
+        userId: testAccount.user.id,
+        accountId: testAccount.keys.accountId,
+      }),
+    });
+  });
+
+  it('calls submitCustomRequest with entitlementGrant on assign-resources emit', async () => {
+    const submitCustomRequestSpy = jest.spyOn(AccessRequestApi, 'submitCustomRequest').mockResolvedValue('success');
+    mountComponent();
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    govResourceTable.vm.$emit('assign-resources', ['a/b/entitlement-1', 'a/b/entitlement-2']);
+    await flushPromises();
+
+    expect(submitCustomRequestSpy).toHaveBeenCalledWith('entitlementGrant', {
+      common: expect.objectContaining({
+        entitlementId: 'entitlement-1',
+        userId: testAccount.user.id,
+        accountId: testAccount.keys.accountId,
+      }),
+    });
+  });
+
+  it('calls getEntitlements on get-entitlements emit', async () => {
+    const getEntitlementsSpy = jest.spyOn(resourceUtil, 'getEntitlements').mockResolvedValue([]);
+    mountComponent();
+    await flushPromises();
+
+    const govResourceTable = await activateEntitlementsTab();
+    govResourceTable.vm.$emit('get-entitlements', { searchValue: 'test', selectedApplicationId: 'app-1' });
+    await flushPromises();
+
+    expect(getEntitlementsSpy).toHaveBeenCalledWith(false, 'test', 'app-1', expect.stringContaining('_assignment'), true);
   });
 });

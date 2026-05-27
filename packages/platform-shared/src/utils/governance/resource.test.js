@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -81,6 +81,22 @@ describe('getGovernanceGrants', () => {
     const response = await getEntitlements(true);
 
     expect(response).toStrictEqual([{ value: 'testId', text: 'descriptorDisplayName' }]);
+  });
+
+  it('calls searchCatalog with isAdmin=true when resourceIsUser=true and isEndUser=false', async () => {
+    const searchCatalogSpy = jest.spyOn(CatalogApi, 'searchCatalog').mockReturnValue({ data: { result: [] } });
+
+    await getEntitlements(true, 'search', 'app-1', 'managed/alpha_assignment', false);
+
+    expect(searchCatalogSpy).toHaveBeenCalledWith(expect.any(Object), expect.any(Object), true);
+  });
+
+  it('calls searchCatalog with isAdmin=false when resourceIsUser=true and isEndUser=true', async () => {
+    const searchCatalogSpy = jest.spyOn(CatalogApi, 'searchCatalog').mockReturnValue({ data: { result: [] } });
+
+    await getEntitlements(true, 'search', 'app-1', 'managed/alpha_assignment', true);
+
+    expect(searchCatalogSpy).toHaveBeenCalledWith(expect.any(Object), expect.any(Object), false);
   });
 
   it('Displays error if API fails', async () => {

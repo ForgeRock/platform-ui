@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -157,6 +157,18 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  initialApplicationId: {
+    type: String,
+    default: '',
+  },
+  initialApplicationLogo: {
+    type: String,
+    default: '',
+  },
+  initialApplicationName: {
+    type: String,
+    default: '',
+  },
   isSaving: {
     type: Boolean,
     default: false,
@@ -214,7 +226,18 @@ function getEntitlements(searchValue) {
 
 function initializeData() {
   selectedEntitlements.value = [];
-  selectedApplication.value = '';
+  if (props.initialApplicationId) {
+    selectedApplication.value = `managed/application/${props.initialApplicationId}`;
+    selectedApplicationName.value = props.initialApplicationName;
+    appLogoSource.value = props.initialApplicationLogo;
+    stepIndex.value = STEPS.ChooseEntitlement;
+    getEntitlements('');
+  } else {
+    selectedApplication.value = '';
+    selectedApplicationName.value = '';
+    appLogoSource.value = '';
+    stepIndex.value = STEPS.ChooseApplication;
+  }
 }
 
 function setValuesFromApplicationSelect(option) {
