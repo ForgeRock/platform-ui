@@ -99,24 +99,24 @@ export default function useAnalyticsDateRange() {
     if (selectedIntervalType.value === 'hourly') {
       return {
         current: {
-          startDate: start.utc().format(getDayjsIntervalFormat(selectedIntervalType.value)),
-          endDate: end.utc().format(getDayjsIntervalFormat(selectedIntervalType.value)),
+          startDate: start.utc().format(getDayjsIntervalFormat()),
+          endDate: end.utc().format(getDayjsIntervalFormat()),
         },
         previous: {
-          startDate: start.utc().subtract(diff + 1, diffInterval).format(getDayjsIntervalFormat(selectedIntervalType.value)),
-          endDate: end.utc().subtract(diff + 1, diffInterval).format(getDayjsIntervalFormat(selectedIntervalType.value)),
+          startDate: start.utc().subtract(diff + 1, diffInterval).format(getDayjsIntervalFormat()),
+          endDate: end.utc().subtract(diff + 1, diffInterval).format(getDayjsIntervalFormat()),
         },
       };
     }
 
     return {
       current: {
-        startDate: start.utc().format(getDayjsIntervalFormat(selectedIntervalType.value)),
-        endDate: end.utc().add(1, 'day').format(getDayjsIntervalFormat(selectedIntervalType.value)),
+        startDate: start.utc().format(getDayjsIntervalFormat()),
+        endDate: end.utc().add(1, 'day').format(getDayjsIntervalFormat()),
       },
       previous: {
-        startDate: start.utc().subtract(diff, diffInterval).format(getDayjsIntervalFormat(selectedIntervalType.value)),
-        endDate: end.utc().add(1, 'day').subtract(diff, diffInterval).format(getDayjsIntervalFormat(selectedIntervalType.value)),
+        startDate: start.utc().subtract(diff, diffInterval).format(getDayjsIntervalFormat()),
+        endDate: end.utc().add(1, 'day').subtract(diff, diffInterval).format(getDayjsIntervalFormat()),
       },
     };
   });
