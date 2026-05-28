@@ -194,6 +194,7 @@
     "implicit": "Implicit",
     "import": "Import",
     "inactive": "Inactive",
+    "integer": "Integer",
     "instances": "Instances",
     "invited": "Invited",
     "item": "Item",
@@ -309,6 +310,7 @@
     "report": "Report",
     "request": "Request",
     "requestSubmitted": "Request Submitted",
+    "resource": "Resource",
     "require": "require",
     "required": "Required",
     "reset": "Reset",
@@ -1751,6 +1753,32 @@
     }
   },
   "governance": {
+    "importHistory": {
+      "title": "Import History",
+      "noHistory": "No import history found.",
+      "errorLoading": "There was an error loading import history.",
+      "refresh": "Refresh",
+      "viewFailures": "View Failures",
+      "runDeleteDetection": "Run Delete Detection",
+      "noFailures": "No failures found.",
+      "errorLoadingFailures": "There was an error loading failures.",
+      "columns": {
+        "timestamp": "Timestamp",
+        "objectType": "Object Type",
+        "filename": "Filename",
+        "status": "Status",
+        "imported": "Imported",
+        "updated": "Updated",
+        "failed": "Failed",
+        "failureId": "ID",
+        "failureDisplayName": "Display Name",
+        "failureReason": "Reason",
+        "failureData": "Data"
+      },
+      "deleteUploadTooltip": "This import was for deletion",
+      "failuresTitle": "Import Failures",
+      "showSourceData": "View Source"
+    },
     "access": {
       "access": "Access",
       "accountName": "Account Name",
@@ -2117,6 +2145,106 @@
       "users": {
         "title": "Users",
         "subtitle": "Create and manage your user identities."
+      }
+    },
+    "application": {
+      "errorRetrievingApplication": "Error retrieving this application"
+    },
+    "applications": {
+      "edit": {
+        "objectTypesTab": {
+          "addProperty": "Add Property",
+          "addPropertySuccess": "Property added successfully",
+          "addPropertyError": "There was an error adding the property",
+          "noPropertiesDefined": "No properties defined for this object type",
+          "errorLoadingObjectType": "There was an error loading the object type",
+          "deletePropertySuccess": "Property deleted successfully",
+          "deletePropertyError": "There was an error deleting the property",
+          "reorderPropertyError": "There was an error saving the property order",
+          "updateObjectTypeSuccess": "Object type updated successfully",
+          "editProperty": "Edit Property",
+          "editPropertySuccess": "Property updated successfully",
+          "editPropertyError": "There was an error updating the property",
+          "multiValued": "Multi-Valued",
+          "creatable": "Creatable",
+          "updatable": "Updatable",
+          "constrainValues": "Constrain Values",
+          "enumeratedValues": "Enumerated Values",
+          "objectType": "Object Type",
+          "applicationObjectType": "Application Object Type",
+          "viewProperty": "View Property",
+          "title": "Object Types",
+          "selectObjectType": "Select Object Type",
+          "selectToView": "Select an object type to view its configuration.",
+          "propertiesTab": "Properties",
+          "dataTab": "Data",
+          "importSchema": "Import Schema",
+          "importSchemaDescription": "Choose a JSON file containing the schema properties to import.",
+          "importSchemaWarning": "This will replace the entire schema, ensure that any existing imported data is updated accordingly.",
+          "schema": "Schema",
+          "noObjectTypes": "No object types have been added to this application.",
+          "addObjectType": "Add Object Type",
+          "objectTypeNameLabel": "Name",
+          "addObjectTypeSuccess": "Object type added successfully",
+          "addObjectTypeError": "There was an error adding the object type",
+          "deleteObjectTypeSuccess": "Object type deleted successfully",
+          "deleteObjectTypeError": "There was an error deleting the object type",
+          "objectTypeDescription": "Choose Account for user identity data or Resource for additional object types.",
+          "objectTypeDescriptionAccountTaken": "Choose if this object type will be for accounts or resources. Note that only one account object type is supported per application."
+        }
+      },
+      "addUnmanagedAppModal": {
+        "title": "New Unmanaged Application",
+        "createApp": "Create Application",
+        "createAppSuccess": "Application created successfully.",
+        "nameLabel": "Name",
+        "nameDescription": "Human-readable name for your application. You can change the name later in the application settings.",
+        "descriptionLabel": "Description",
+        "ownersLabel": "Application Owners",
+        "logoUriLabel": "App Logo URI",
+        "logoUriDescription": "Application logo URI for use in user-facing UIs such as account, entitlement, and other related pages."
+      },
+      "unmanagedImport": {
+        "tabTitle": "Import",
+        "importData": {
+          "title": "Import Data",
+          "objectTypeLabel": "Object Type",
+          "fileLabel": "CSV File",
+          "filePlaceholder": "Choose a CSV file...",
+          "uploadButton": "Upload Data",
+          "confirmButton": "Submit",
+          "uploadSuccess": "Data uploaded successfully.",
+          "uploadError": "There was an error uploading the data.",
+          "confirmTitle": "Begin Data Upload",
+          "confirmMessage": "Confirm the upload details below before submitting the upload.",
+          "deletionUploadLabel": "Deletion upload",
+          "deletionUploadDescription": "The data being uploaded will be used to delete records from the system.",
+          "deletionUploadAlert": "Warning: This upload will delete records from the system. This action cannot be undone.",
+          "useIgaIdLabel": "Use IGA ID values for delete",
+          "useIgaIdDescription": "If checked, the ID values in the CSV are from IGA data and not the source object."
+        },
+        "deleteDetection": {
+          "confirmTitle": "Run Delete Detection",
+          "confirmButton": "Run",
+          "confirmMessage": "The following import will be used to detect and remove deleted records.",
+          "confirmAlert": "Warning: This operation will delete any records from the system that were not present in this selected import.  This should be used on imports that contained all records for the given object type. This action cannot be undone.",
+          "countsLabel": "Records to be deleted",
+          "success": "Delete detection completed successfully.",
+          "error": "There was an error running delete detection."
+        },
+        "importHistory": {
+          "title": "Import History",
+          "noHistory": "No import history found.",
+          "columns": {
+            "timestamp": "Timestamp",
+            "objectType": "Object Type",
+            "filename": "Filename",
+            "status": "Status",
+            "imported": "Imported",
+            "updated": "Updated",
+            "failed": "Failed"
+          }
+        }
       }
     },
     "campaignTemplateTypeModal": {
