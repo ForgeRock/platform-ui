@@ -283,8 +283,12 @@ export default {
           start: this.getStartDate(delegate._refProperties?.temporalConstraints),
           end: this.getEndDate(delegate._refProperties?.temporalConstraints),
         }));
-
-        this.isLast = data.resultCount < this.paginationPageSize;
+        if ('pagedResultsCookie' in data) {
+          this.isLast = data.pagedResultsCookie === null;
+        } else {
+          // If pagedResultsCookie is not provided, fallback to checking if the number of results is less than the page size to determine if it's the last page
+          this.isLast = data.resultCount < this.paginationPageSize;
+        }
       }).catch((err) => {
         this.showErrorMessage(err, this.$t('governance.delegates.errorGettingDelegates'));
       });
@@ -295,6 +299,7 @@ export default {
       deleteTaskProxy(this.userId, [delegateId]).then(() => {
         this.$bvModal.hide('delegate-delete-modal');
         this.displayNotification('success', this.$t('governance.delegates.delegateRemoved'));
+        this.paginationPage = 1;
         this.loadData();
       }).catch((err) => {
         this.showErrorMessage(err, this.$t('governance.delegates.errorDeletingDelegate'));

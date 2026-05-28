@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -93,12 +93,14 @@ describe('DirectReports Component', () => {
     expect(directReportsTable.exists()).toBeTruthy();
   });
 
-  it('should have an input to search delegates', () => {
+  it('should have an input to search delegates', async () => {
+    await wrapper.setData({ isNoResultsFirstLoad: false });
     const searchDelegate = findByTestId(wrapper, 'search-directreports');
     expect(searchDelegate.exists()).toBeTruthy();
   });
 
   it('clearing the search input resets the query params', async () => {
+    await wrapper.setData({ isNoResultsFirstLoad: false });
     const clearSpy = jest.spyOn(wrapper.vm, 'clear');
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     const searchDelegate = findComponentByTestId(wrapper, 'search-directreports');
@@ -172,7 +174,7 @@ describe('DirectReports Component', () => {
   });
 
   it('Sets empty state on inability to load users', async () => {
-    DirectoryApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [], totalCount: 0 } }));
+    DirectoryApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
     wrapper.vm.loadData();
     await flushPromises();
     wrapper.vm.checkIfNoResultsFirstLoad();
