@@ -485,17 +485,20 @@ export default {
             targetFilter.operand.push(params.filter);
           }
           if (params.searchValue) {
-            const nameMap = {
-              accountGrant: 'application.name',
-              entitlementGrant: 'descriptor.idx./entitlement.displayName',
-              roleMembership: 'role.name',
+            const searchFieldsMap = {
+              accountGrant: ['application.name', 'application.description'],
+              entitlementGrant: ['descriptor.idx./entitlement.displayName'],
+              roleMembership: ['role.name', 'role.description'],
             };
             targetFilter.operand.push({
-              operator: 'CONTAINS',
-              operand: {
-                targetName: nameMap[catalogType],
-                targetValue: params.searchValue,
-              },
+              operator: 'OR',
+              operand: searchFieldsMap[catalogType].map((targetName) => ({
+                operator: 'CONTAINS',
+                operand: {
+                  targetName,
+                  targetValue: params.searchValue,
+                },
+              })),
             });
           }
         }

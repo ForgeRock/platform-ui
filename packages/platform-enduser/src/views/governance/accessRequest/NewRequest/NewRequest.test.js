@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -269,6 +269,73 @@ describe('NewRequest', () => {
 
     expect(scanApi).toHaveBeenCalled();
     expect(requestApi).toHaveBeenCalled();
+  });
+
+  describe('searchCatalog query filter', () => {
+    it('searches roleMembership across role.name and role.description', async () => {
+      const querySpy = jest.spyOn(CatalogApi, 'queryCatalog');
+      const wrapper = await mountComponent();
+      await flushPromises();
+      querySpy.mockClear();
+
+      wrapper.vm.searchCatalog('roleMembership', { searchValue: 'admin' });
+      await flushPromises();
+
+      const targetFilter = querySpy.mock.calls[0][1];
+      const searchOperand = targetFilter.operand.find(
+        (op) => op.operator === 'OR'
+          && Array.isArray(op.operand)
+          && op.operand.some((sub) => sub.operand?.targetName === 'role.name'),
+      );
+      expect(searchOperand).toBeDefined();
+      expect(searchOperand.operand).toEqual([
+        { operator: 'CONTAINS', operand: { targetName: 'role.name', targetValue: 'admin' } },
+        { operator: 'CONTAINS', operand: { targetName: 'role.description', targetValue: 'admin' } },
+      ]);
+    });
+
+    it('searches accountGrant across application.name and application.description', async () => {
+      const querySpy = jest.spyOn(CatalogApi, 'queryCatalog');
+      const wrapper = await mountComponent();
+      await flushPromises();
+      querySpy.mockClear();
+
+      wrapper.vm.searchCatalog('accountGrant', { searchValue: 'azure' });
+      await flushPromises();
+
+      const targetFilter = querySpy.mock.calls[0][1];
+      const searchOperand = targetFilter.operand.find(
+        (op) => op.operator === 'OR'
+          && Array.isArray(op.operand)
+          && op.operand.some((sub) => sub.operand?.targetName === 'application.name'),
+      );
+      expect(searchOperand).toBeDefined();
+      expect(searchOperand.operand).toEqual([
+        { operator: 'CONTAINS', operand: { targetName: 'application.name', targetValue: 'azure' } },
+        { operator: 'CONTAINS', operand: { targetName: 'application.description', targetValue: 'azure' } },
+      ]);
+    });
+
+    it('searches entitlementGrant on entitlement displayName only', async () => {
+      const querySpy = jest.spyOn(CatalogApi, 'queryCatalog');
+      const wrapper = await mountComponent();
+      await flushPromises();
+      querySpy.mockClear();
+
+      wrapper.vm.searchCatalog('entitlementGrant', { searchValue: 'reader' });
+      await flushPromises();
+
+      const targetFilter = querySpy.mock.calls[0][1];
+      const searchOperand = targetFilter.operand.find(
+        (op) => op.operator === 'OR'
+          && Array.isArray(op.operand)
+          && op.operand.some((sub) => sub.operand?.targetName === 'descriptor.idx./entitlement.displayName'),
+      );
+      expect(searchOperand).toBeDefined();
+      expect(searchOperand.operand).toEqual([
+        { operator: 'CONTAINS', operand: { targetName: 'descriptor.idx./entitlement.displayName', targetValue: 'reader' } },
+      ]);
+    });
   });
 
   it('should submit request with requestData if it is an application with request data', async () => {
