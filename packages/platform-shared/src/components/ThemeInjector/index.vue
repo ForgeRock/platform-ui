@@ -50,21 +50,22 @@ of the MIT license. See the LICENSE file for details. -->
 
       <template v-if="mock">.fr-theme-preview</template> a {
         font-weight: {{ theme.boldLinks ? 700 : 400 }};
-        color: {{ theme.linkColor }} !important;
+        color: {{ journeyLinkColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> a:hover {
-        color: {{ theme.linkActiveColor }} !important;
+        color: {{ journeyLinkActiveColor }} !important;
       }
 
+      <!-- Darkens linkColor only as far as needed to meet WCAG AA 4.5:1 on the card background; preserves it unchanged if it already passes -->
       <template v-if="mock">.fr-theme-preview</template> .btn-link,
       <template v-if="mock">.fr-theme-preview</template> .nav-link {
-        color: {{ theme.linkColor }} !important;
+        color: {{ journeyLinkColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-link:hover,
       .nav-link:hover {
-        color: {{ theme.linkActiveColor }} !important;
+        color: {{ journeyLinkActiveColor }} !important;
       }
 
       <!-- Styles floating action bar's text elements in dark bg  -->
@@ -429,8 +430,20 @@ of the MIT license. See the LICENSE file for details. -->
         outline: 2px solid {{ buttonFocusBorderColor }};
       }
 
-      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--selected {
-        background-color: {{ theme.accountCardInputSelectColor || '#e4f4fd' }} !important;
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--selected,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__tag {
+        background-color: {{ accountCardInputSelectColor }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--selected .text-dark,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__tag .text-dark,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__tag .multiselect__tag-icon::after {
+        color: {{ getContrastColor(accountCardInputSelectColor, 4.5, accountCardInputTextColor, accountCardTextColor) }} !important;
+      }
+
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--selected .text-muted,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__tag .text-muted {
+        color: {{ getMutedTextColor(accountCardInputSelectColor, accountCardTextColor, accountCardInputTextColor) }} !important;
       }
 
       .modal-content .input-group-text {
@@ -446,7 +459,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__select,
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .form-control {
         background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
-        color: {{ theme.accountCardInputTextColor || '#23282e' }} !important;
+        color: {{ accountCardInputTextColor }} !important;
       }
 
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .multiselect .multiselect__select::before,
@@ -455,7 +468,7 @@ of the MIT license. See the LICENSE file for details. -->
       .modal-content .multiselect .multiselect__input,
       .modal-content .multiselect .multiselect__input::placeholder,
       .modal-content label.form-control {
-        color: {{ theme.accountCardInputTextColor || '#23282e' }};
+        color: {{ accountCardInputTextColor }};
         }
 
       .modal-content .white-label-background ~ label,
@@ -810,6 +823,52 @@ topBarHeaderColor: "#23282e",
 topBarTextColor: "#69788b",
  */
 
+/** Luminance at the perceptual midpoint between black and white — backgrounds below this value are considered dark. */
+const DARK_BG_LUMINANCE_THRESHOLD = 0.179;
+/** Matches valid 3, 4, 6, or 8-digit hex colour strings (e.g. #fff, #fff8, #1a2b3c, #1a2b3c80). */
+const HEX_COLOR_REGEX = /^#([0-9A-Fa-f]{3,4}){1,2}$/;
+/** The target contrast ratio to achieve. Default is 4.5 as per WCAG AA Compliance. */
+const TARGET_CONTRAST_RATIO = 4.5;
+/**
+ * Internal binary-search threshold, slightly above the target contrast ratio of 4.5.
+ * Math.round() in toHex snaps float channels to 8-bit integers, which can reduce a contrast of 4.50 to ~4.49.
+ * This margin ensures the quantised hex result still clears the 4.5 target after rounding.
+ */
+const BLEND_SEARCH_THRESHOLD = 4.55;
+
+/**
+ * Parses a 3, 4, 6, or 8-digit hex colour string into an opaque 0–1 RGB object.
+ * 4- and 8-digit (RGBA) inputs are composited over white so that all contrast
+ * calculations operate on the visually rendered colour, not the raw RGBA value.
+ */
+function hexToRgb(hex) {
+  let digits = hex.replace(/^#/, '');
+  if (digits.length === 3 || digits.length === 4) {
+    digits = digits.split('').map((char) => char + char).join('');
+  }
+  const red = parseInt(digits.substring(0, 2), 16) / 255;
+  const green = parseInt(digits.substring(2, 4), 16) / 255;
+  const blue = parseInt(digits.substring(4, 6), 16) / 255;
+  const alpha = digits.length === 8 ? parseInt(digits.substring(6, 8), 16) / 255 : 1;
+  // Composite over white: effectiveChannel = foreground * alpha + white * (1 - alpha)
+  return {
+    r: red * alpha + (1 - alpha),
+    g: green * alpha + (1 - alpha),
+    b: blue * alpha + (1 - alpha),
+  };
+}
+
+/** WCAG 2.1 relative luminance — linearises sRGB channels (IEC 61966-2-1) then applies CIE 1931 luminosity coefficients (0.2126 R, 0.7152 G, 0.0722 B). */
+function calculateLuminance({ r, g, b }) {
+  const f = (c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+}
+
+/** WCAG 2.1 contrast ratio between two luminance values; the 0.05 offset prevents division by zero. */
+function calculateContrastRatio(l1, l2) {
+  return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+}
+
 /**
  * Injects a style sheet based on provided theming variables.
  * Intended functionality is to allow for basic theming and overriding in
@@ -893,6 +952,21 @@ export default {
     accountCardInputFocusBorderColor() {
       return this.theme.accountCardInputFocusBorderColor || this.theme.primaryColor;
     },
+    accountCardInputSelectColor() {
+      return this.theme.accountCardInputSelectColor || '#e4f4fd';
+    },
+    accountCardTextColor() {
+      return this.theme.accountCardTextColor || '#5e6d82';
+    },
+    accountCardInputTextColor() {
+      return this.theme.accountCardInputTextColor || '#23282e';
+    },
+    journeyLinkColor() {
+      return this.getMutedTextColor(this.theme.journeyCardBackgroundColor || '#ffffff', this.theme.linkColor || '#109cf1', '#000000');
+    },
+    journeyLinkActiveColor() {
+      return this.getMutedTextColor(this.theme.journeyCardBackgroundColor || '#ffffff', this.theme.linkActiveColor || this.theme.linkColor || '#109cf1', '#000000');
+    },
     logoProfileCollapsed() {
       return this.getLocalizedString(this.theme.logoProfileCollapsed, i18n.global.locale, i18n.global.fallbackLocale);
     },
@@ -936,78 +1010,77 @@ export default {
   },
   methods: {
     /**
-     * Calculates the contrast color (either dark or light color) for a given hex color based on the specified target contrast ratio.
+     * Calculates the contrast color (either light or dark color) for a given hex color based on the specified target contrast ratio.
      *
-     * @param {string} hexColor - The hex color code to determine the contrast color for.
-     * @param {number} [targetRatio=4.5] - The target contrast ratio to achieve. Default is 4.5 as per WCAG AA Compliance.
-     * @param {string} [darkColor='#000000'] - The dark color to use if the contrast ratio is met. Default is black.
-     * @param {string} [lightColor='#ffffff'] - The light color to use if the contrast ratio is met. Default is white.
-     * @returns {string} - The hex color code of the contrast color (either dark or light).
+     * @param {string} hexColor - The background hex color to determine the contrast color for.
+     * @param {number} [targetRatio=TARGET_CONTRAST_RATIO] - The target contrast ratio to achieve. Default is 4.5 as per WCAG AA Compliance.
+     * @param {string} [lightColor='#ffffff'] - Preferred color when background is dark. Returned if it meets the target ratio.
+     * @param {string} [darkColor='#000000'] - Preferred color when background is light. Returned if it meets the target ratio.
+     * @returns {string} - The hex color code that meets the contrast ratio, falling back to absolute black or white if neither candidate passes.
      */
-    getContrastColor(hexColor, targetRatio = 4.5, lightColor = '#ffffff', darkColor = '#000000') {
-      // Helper functions
-      function hexToRgb(hex) {
-        let tempHex = hex.replace(/^#/, '');
-        if (tempHex.length === 3) {
-          tempHex = tempHex[0] + tempHex[0] + tempHex[1] + tempHex[1] + tempHex[2] + tempHex[2];
-        }
-        const r = parseInt(tempHex.substring(0, 2), 16) / 255;
-        const g = parseInt(tempHex.substring(2, 4), 16) / 255;
-        const b = parseInt(tempHex.substring(4, 6), 16) / 255;
-        return { r, g, b };
+    getContrastColor(hexColor, targetRatio = TARGET_CONTRAST_RATIO, lightColor = '#ffffff', darkColor = '#000000') {
+      if (typeof hexColor !== 'string' || !HEX_COLOR_REGEX.test(hexColor)) {
+        return 'inherit';
       }
 
-      function calculateLuminance(rgb) {
-        // WCAG 2.0 luminance calculation - linearized RGB
+      const luminance = calculateLuminance(hexToRgb(hexColor));
+      const lightLuminance = HEX_COLOR_REGEX.test(lightColor)
+        ? calculateLuminance(hexToRgb(lightColor)) : 1;
+      const darkLuminance = HEX_COLOR_REGEX.test(darkColor)
+        ? calculateLuminance(hexToRgb(darkColor)) : 0;
 
-        // From sRGB gamma correction, these constants are based on IEC standard
-        const linearThreshold = 0.03928;
-        const linearCoefficient = 12.92;
-        const nonLinearCoefficient = 1.055;
-        const nonLinearExponent = 2.4;
-        const nonLinearOffset = 0.055;
+      if (calculateContrastRatio(luminance, lightLuminance) >= targetRatio) return lightColor;
+      if (calculateContrastRatio(luminance, darkLuminance) >= targetRatio) return darkColor;
 
-        const r = rgb.r <= linearThreshold ? rgb.r / linearCoefficient : ((rgb.r + nonLinearOffset) / nonLinearCoefficient) ** nonLinearExponent;
-        const g = rgb.g <= linearThreshold ? rgb.g / linearCoefficient : ((rgb.g + nonLinearOffset) / nonLinearCoefficient) ** nonLinearExponent;
-        const b = rgb.b <= linearThreshold ? rgb.b / linearCoefficient : ((rgb.b + nonLinearOffset) / nonLinearCoefficient) ** nonLinearExponent;
-
-        // Weights derived from CIE 1931 color space and psychophysical studies
-        const redWeight = 0.2126; // Relative contribution of red to luminance
-        const greenWeight = 0.7152; // Relative contribution of green to luminance
-        const blueWeight = 0.0722; // Relative contribution of blue to luminance
-
-        return redWeight * r + greenWeight * g + blueWeight * b;
+      // Neither preferred color passes — fall back to absolute black or white to guarantee WCAG compliance
+      return luminance > DARK_BG_LUMINANCE_THRESHOLD ? '#000000' : '#ffffff';
+    },
+    /**
+     * Returns the minimum-contrast-passing color (WCAG AA 4.5:1) for text on bgColor,
+     * preferring preferredColor and blending toward black (light bg) or white (dark bg)
+     * only as far as needed. Result contrast is always ≤ primaryTextColor contrast,
+     * preserving visual hierarchy between primary and muted text.
+     */
+    getMutedTextColor(bgColor, preferredColor, primaryTextColor) {
+      /** Converts a 0–1 RGB object to a #rrggbb hex string. */
+      function toHex({ r, g, b }) {
+        const c = (v) => Math.round(v * 255).toString(16).padStart(2, '0');
+        return `#${c(r)}${c(g)}${c(b)}`;
+      }
+      /** Linear interpolation between two RGB colours at blend factor t (0 = a, 1 = b). */
+      function lerpRgb(a, b, t) {
+        return { r: a.r + t * (b.r - a.r), g: a.g + t * (b.g - a.g), b: a.b + t * (b.b - a.b) };
       }
 
-      function calculateContrastRatio(lum1, lum2) {
-        // WCAG 2.0 contrast ratio calculation
-        const offset = 0.05; // Prevents division by zero and ensures minimum contrast
-        const brighter = Math.max(lum1, lum2);
-        const darker = Math.min(lum1, lum2);
-        return (brighter + offset) / (darker + offset);
+      if (!HEX_COLOR_REGEX.test(bgColor) || !HEX_COLOR_REGEX.test(primaryTextColor)) return 'inherit';
+      if (!HEX_COLOR_REGEX.test(preferredColor)) return primaryTextColor;
+
+      const bgL = calculateLuminance(hexToRgb(bgColor));
+      const preferredContrast = calculateContrastRatio(bgL, calculateLuminance(hexToRgb(preferredColor)));
+      const primaryContrast = calculateContrastRatio(bgL, calculateLuminance(hexToRgb(primaryTextColor)));
+
+      // Preferred passes and has lower/equal contrast than primary — ideal muted shade
+      if (preferredContrast >= TARGET_CONTRAST_RATIO && preferredContrast <= primaryContrast) return preferredColor;
+      // Preferred passes but is darker/lighter than primary — cap at primary to preserve visual hierarchy
+      if (preferredContrast >= TARGET_CONTRAST_RATIO) return primaryTextColor;
+
+      // Preferred fails WCAG AA — binary search for the minimum-passing blend toward black (light bg)
+      // or white (dark bg), using BLEND_SEARCH_THRESHOLD to guard against toHex rounding loss.
+      const blendTarget = bgL > DARK_BG_LUMINANCE_THRESHOLD ? { r: 0, g: 0, b: 0 } : { r: 1, g: 1, b: 1 };
+      const pRgb = hexToRgb(preferredColor);
+      let lo = 0; let hi = 1;
+      // 20 iterations give precision to 1/2^20 (~0.000001) in blend factor — more than sufficient for 8-bit colour
+      for (let i = 0; i < 20; i += 1) {
+        const mid = (lo + hi) / 2;
+        if (calculateContrastRatio(bgL, calculateLuminance(lerpRgb(pRgb, blendTarget, mid))) >= BLEND_SEARCH_THRESHOLD) hi = mid;
+        else lo = mid;
       }
+      const result = toHex(lerpRgb(pRgb, blendTarget, hi));
 
-      // Main logic
-      if (typeof hexColor !== 'string' || !/^#([0-9A-Fa-f]{3}){1,2}$/.test(hexColor)) {
-        return 'inherit'; // Return 'inherit' for invalid hex color
-      }
-
-      const rgb = hexToRgb(hexColor);
-      const luminance = calculateLuminance(rgb);
-
-      const whiteContrast = calculateContrastRatio(luminance, 1); // Use 1 for white luminance
-      const blackContrast = calculateContrastRatio(luminance, 0); // Use 0 for black luminance
-
-      if (whiteContrast >= targetRatio) {
-        return lightColor; // Return the provided light color
-      }
-
-      if (blackContrast >= targetRatio) {
-        return darkColor; // Return the provided dark color
-      }
-      // If neither white nor black meet the contrast ratio, this section can be expanded to find more suitable colors.
-      // For now, return the best of the two.
-      return whiteContrast > blackContrast ? lightColor : darkColor;
+      // Cap at primary only when primary itself is WCAG-compliant — if primary fails on this bg
+      // (e.g. dark theme where both greys are invisible), return the blended result as-is
+      if (primaryContrast >= TARGET_CONTRAST_RATIO && calculateContrastRatio(bgL, calculateLuminance(hexToRgb(result))) > primaryContrast) return primaryTextColor;
+      return result;
     },
   },
 };
