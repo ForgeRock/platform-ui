@@ -125,6 +125,10 @@
     "Roles": "Roles",
     "Scopes": "Scopes",
     "Scripts": "Scripts",
+    "AndroidKeyAttestation": "Android Key Attestation",
+    "IdentityVerification": "Identity Verification",
+    "Jumio": "Jumio",
+    "OneSpan": "OneSpan",
     "SecurityQuestions": "Security Questions",
     "SelfServiceJourneys": "Self-service Journeys",
     "ServiceAccounts": "Service Accounts",
@@ -172,6 +176,7 @@
     "hostedPages": "Hosted Pages",
     "identities": "Identities",
     "identityManagement": "Identity Management",
+    "identityVerification": "Identity Verification",
     "integrations": "Integrations",
     "jobs": "Jobs",
     "journeys": "Journeys",
@@ -394,6 +399,22 @@
       "subjects": "Subjects",
       "subjectGroups": "Subject Groups"
     }
+  },
+  "androidKeyAttestation": {
+    "title": "Android Key Attestation",
+    "description": "Validate Android device integrity during authentication.",
+    "emptyState": {
+      "title": "Android Key Attestation is not enabled",
+      "description": "Enable Android Key Attestation to validate Android device integrity during authentication."
+    },
+    "enableService": "Enable Android Key Attestation",
+    "enableSuccess": "Android Key Attestation enabled successfully.",
+    "enableError": "Error enabling Android Key Attestation.",
+    "saveSuccess": "Android Key Attestation settings saved successfully.",
+    "saveError": "Error saving Android Key Attestation settings.",
+    "loadError": "Error loading Android Key Attestation settings.",
+    "deleteSuccess": "Android Key Attestation deleted successfully.",
+    "deleteError": "Error deleting Android Key Attestation."
   },
   "authentication": {
     "errorRetrievingAuthServices": "There was an error retrieving authentication services.",
@@ -6024,6 +6045,55 @@
       },
       "pingOneIntegration": "PingOne Integration"
     }
+  },
+  "identityVerification": {
+    "title": "Identity Verification",
+    "description": "Configure services used to verify user identity and device trust for this realm.",
+    "rows": {
+      "securityQuestions": "Security Questions",
+      "securityQuestionsDescription": "Verify user identity using challenge questions.",
+      "androidKeyAttestation": "Android Key Attestation",
+      "androidKeyAttestationDescription": "Validate Android device integrity during authentication.",
+      "jumio": "Jumio",
+      "jumioDescription": "Verify user identity using government ID and biometric validation.",
+      "oneSpan": "OneSpan",
+      "oneSpanDescription": "Verify identity or authorize transactions using OneSpan services."
+    },
+    "statusOn": "On",
+    "statusOff": "Off",
+    "loadError": "Error retrieving identity verification services"
+  },
+  "jumio": {
+    "title": "Jumio",
+    "description": "Verify user identity using government ID and biometric validation.",
+    "emptyState": {
+      "title": "Jumio is not enabled",
+      "description": "Enable Jumio to verify user identity using government ID and biometric validation."
+    },
+    "enableService": "Enable Jumio",
+    "enableSuccess": "Jumio enabled successfully.",
+    "enableError": "Error enabling Jumio.",
+    "saveSuccess": "Jumio settings saved successfully.",
+    "saveError": "Error saving Jumio settings.",
+    "loadError": "Error loading Jumio settings.",
+    "deleteSuccess": "Jumio deleted successfully.",
+    "deleteError": "Error deleting Jumio."
+  },
+  "oneSpan": {
+    "title": "OneSpan",
+    "description": "Verify identity or authorize transactions using OneSpan services.",
+    "emptyState": {
+      "title": "OneSpan is not enabled",
+      "description": "Enable OneSpan to verify identity or authorize transactions using OneSpan services."
+    },
+    "enableService": "Enable OneSpan",
+    "enableSuccess": "OneSpan enabled successfully.",
+    "enableError": "Error enabling OneSpan.",
+    "saveSuccess": "OneSpan settings saved successfully.",
+    "saveError": "Error saving OneSpan settings.",
+    "loadError": "Error loading OneSpan settings.",
+    "deleteSuccess": "OneSpan deleted successfully.",
+    "deleteError": "Error deleting OneSpan."
   },
   "idm": {
     "identityManagement": "Identity Management",
