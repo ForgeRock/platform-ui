@@ -110,11 +110,10 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </BTable>
       <FrPagination
-        v-if="totalCount > 10"
         v-model="paginationPage"
         aria-controls="table-directreports"
+        :last-page="isLastPage"
         :per-page="paginationPageSize"
-        :total-rows="totalCount"
         @input="pageChange"
         @on-page-size-change="pageSizeChange"
       />
@@ -214,7 +213,7 @@ export default {
   data() {
     return {
       items: [],
-      totalCount: 0,
+      isLastPage: false,
       isLoading: true,
       paginationPage: 1,
       paginationPageSize: 10,
@@ -268,7 +267,12 @@ export default {
 
       await getDirectReports(this.userId, params).then(({ data }) => {
         this.items = data.result;
-        this.totalCount = data.totalCount;
+        if ('pagedResultsCookie' in data) {
+          this.isLastPage = data.pagedResultsCookie === null;
+        } else {
+          // If pagedResultsCookie is not provided, fallback to checking if the number of results is less than the page size to determine if it's the last page
+          this.isLastPage = data.result.length < this.paginationPageSize;
+        }
       }).catch((err) => {
         this.showErrorMessage(err, this.$t('governance.directReports.errorGettingDirectReports'));
       });
@@ -291,7 +295,7 @@ export default {
       await this.loadData();
     },
     checkIfNoResultsFirstLoad() {
-      if (this.totalCount === 0) {
+      if (this.items.length === 0) {
         this.isNoResultsFirstLoad = true;
       }
     },
