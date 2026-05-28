@@ -21,6 +21,15 @@ export function getTranslationOverrideByLocale(locale, packageNames = 'shared') 
 }
 
 /**
+ * Retrieves entire uilocale translation overrides JSON for the locale
+ * @param {String} locale language code to retrieve
+ * @returns entire locale JSON
+ */
+export function getAllTranslationOverrideByLocale(locale) {
+  return generateIdmApi(null, false).get(`${uilocaleEndpoint}/${locale}`);
+}
+
+/**
  * Retrieves all uilocale translation override files on tenant
  * @param {String} packageNames comma-separated list of packages to obtain the overrides for
  * @returns translation override files
@@ -51,6 +60,14 @@ export function createOverride(locale, payload) {
  */
 export function updateOverride(locale, payload) {
   return generateIdmApi().patch(`${uilocaleEndpoint}/${locale}`, payload);
+}
+
+/**
+ * Retrieves the default locale configuration file
+ * @returns {Promise} Response whose data has shape { defaultLocale: "<localeCode>" }
+ */
+export function getDefaultLocale() {
+  return getAllTranslationOverrideByLocale('defaultLocaleCode');
 }
 
 /**

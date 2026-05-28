@@ -990,7 +990,30 @@
     "makeDefaultSuccess": "Default set successfully",
     "makeDefaultRollbackError": "Error during default rollback",
     "errorFetchingLocales": "Error fetching locales",
-    "editTranslations": "Edit Translations"
+    "editTranslations": "Edit Translations",
+    "import": {
+      "importLanguageTitle": "Import {language} ({locale})",
+      "uploadingBundleDescription": "Uploading a bundle will apply translations to this language.",
+      "uploadJsonBundleDescription": "Upload a JSON bundle to add or update translated values.",
+      "selectLanguageUploadJsonBundleDescription": "Choose a language, then upload a JSON bundle to add or update translated values.",
+      "importTranslationBundle": "Import a translation bundle for an existing language.",
+      "selectBundle": "Select a bundle",
+      "dragDropDescription": "Drag and drop a JSON file here, or click to browse.",
+      "selectFile": "Select file",
+      "dropFileHere": "Drop file here",
+      "importSuccess": "Import successful",
+      "importFailed": "Import failed",
+      "invalidFileType": "Invalid file type",
+      "invalidJson": "Invalid JSON format",
+      "dropzoneLabel": "Upload language file dropzone",
+      "chooseDifferentFile": "Choose different file",
+      "fileInputLabel": "Upload the JSON file",
+      "importing": "Importing...",
+      "invalidStructure": "Invalid locale.json structure"
+    },
+    "export": {
+      "exportFailed": "Export failed"
+    }
   },
   "journey": {
     "addJourney": "Add Journey",
