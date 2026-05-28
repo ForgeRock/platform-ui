@@ -5519,6 +5519,7 @@
       }
     },
     "unmanagedApplications": {
+      "confirmDelete": "Are you sure you want to delete <b>{appName}</b>?",
       "objectTypesTab": {
         "title": "Object Types",
         "selectObjectType": "Select Object Type",
