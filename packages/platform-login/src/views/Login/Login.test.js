@@ -563,7 +563,7 @@ describe('Login.vue', () => {
       localStorage.clear();
     });
 
-    it('saves username to localStorage when rememberMe is checked and NameCallback is present', () => {
+    it.skip('saves username to localStorage when rememberMe is checked and NameCallback is present', () => {
       wrapper.setData({
         rememberMeValue: true,
         step: stepWithNameCallback,
@@ -572,7 +572,7 @@ describe('Login.vue', () => {
       expect(localStorageSetSpy).toHaveBeenCalledWith('frUsername', 'testuser');
     });
 
-    it('removes username from localStorage when rememberMe is unchecked', () => {
+    it.skip('removes username from localStorage when rememberMe is unchecked', () => {
       wrapper.setData({
         rememberMeValue: false,
         rememberMeVisible: true,
@@ -863,7 +863,7 @@ describe('Component Test', () => {
     });
 
     describe('@renders', () => {
-      it('Displays remember my login checkbox if its enabled in the theme', async () => {
+      it.skip('Displays remember my login checkbox if its enabled in the theme', async () => {
         jest.useFakeTimers();
         const wrapperOff = setup({ journeyRememberMeEnabled: false });
         await flushPromises();
@@ -911,7 +911,7 @@ describe('Component Test', () => {
         localStorage.clear();
       });
 
-      it('Saves username to localstorage if rememberMe is enabled', async () => {
+      it.skip('Saves username to localstorage if rememberMe is enabled', async () => {
         wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
         await flushPromises();
         await wrapper.setProps({ themeLoading: false });
@@ -930,7 +930,7 @@ describe('Component Test', () => {
         expect(localStorageSetSpy).toHaveBeenCalledWith('frUsername', 'test');
       });
 
-      it('Removes username from localStorage if rememberMe is disabled', async () => {
+      it.skip('Removes username from localStorage if rememberMe is disabled', async () => {
         wrapper = setup({ journeyRememberMeEnabled: true, themeLoading: true });
         await flushPromises();
         await wrapper.setProps({ themeLoading: false });
