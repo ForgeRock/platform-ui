@@ -1944,6 +1944,7 @@
       "editConnectorServer": "Edit Connector Server",
       "errorUpdatingAuth": "Error adding the user mapping to the Authentication config",
       "lowerAlphaNumHyphenDashOnly": "Must only contain lowercase letters, numbers, underscores and hyphens",
+      "lowerAlphaNumHyphenDashOnlyEsv": "Must only contain lowercase letters, numbers, underscores and hyphens, or an ESV placeholder",
       "newConnectorServer": "New Connector Server",
       "nextSteps": "Next Steps",
       "registerConnectorServer": "Register your connector server by providing a name and connection settings.",
