@@ -1105,19 +1105,6 @@ export default {
       addFilterTypes(newFilter, type);
       this.filterTypes = await generateFilter(this.certificationGrantType, this.campaignId, this.actorId, null, this.debounceUserSearch);
     },
-    updateColumns({ activeColumns, availableColumns }) {
-      this.certificationListColumns = activeColumns || this.tasksFields;
-      this.updatedColumCategories = availableColumns;
-      if (this.campaignDetails.allowBulkCertify) {
-        this.certificationListColumns.unshift({
-          key: 'selector',
-          label: '',
-          sortable: false,
-          class: 'selector-column fr-no-resize sticky-left',
-          show: true,
-        });
-      }
-    },
     isItemSelected(itemId) {
       return this.allSelected || this.selectedItems.some((item) => item.id === itemId);
     },
@@ -1914,7 +1901,7 @@ export default {
         const { name } = this.campaignDetails;
         const exportTitle = this.$t('governance.certificationTask.exportModal.exportTitle', { certificationName: name });
         // Convert the current columns into query fields
-        const currentColumnFields = this.certificationListColumns.map((column) => `${column.category}.${column.key}`);
+        const currentColumnFields = this.activeColumns.map((column) => `${column.category}.${column.key}`);
         const exportFields = convertColumnsToQueryFields(currentColumnFields);
         let exportItems = this.items.map((item) => {
           const { // Remove virtual fields
@@ -1933,7 +1920,7 @@ export default {
           exportItems = data.result;
         }
         // Format data for export and trigger download
-        const finalExportItems = processItemsForExport(exportItems, exportFields, this.certificationListColumns);
+        const finalExportItems = processItemsForExport(exportItems, exportFields, this.activeColumns);
         downloadAsType(finalExportItems, format, `${exportTitle}.${format}`, exportTitle);
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.certificationTask.errors.exportError'));
