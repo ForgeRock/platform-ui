@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -19,7 +19,6 @@ import { cloneDeep } from 'lodash';
  * @returns {Promise<{formValues: Object, formSchema: Object}>} Resolves with the potentially updated form values and schema.
  * @throws {Error} If the worker encounters an error during script execution.
  */
-// eslint-disable-next-line import/prefer-default-export
 export async function useWebWorker(script, formValues, formSchema, options = {}) {
   return new Promise((resolve, reject) => {
     const worker = new Worker(new URL('./formEventsWorker.js', import.meta.url));

@@ -1,11 +1,9 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
-
-/* eslint-disable import/prefer-default-export */
 
 /**
  * Obtains the field names relating to the passed name from the passed vee-validate values object

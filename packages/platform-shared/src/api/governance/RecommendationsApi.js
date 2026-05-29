@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,7 +17,6 @@ import { convertTargetFilterToQueryFilter } from '@forgerock/platform-shared/src
  * @param {Object} targetFilter - To support existing UI components that are using targetFilter searching
  * @returns {Promise} A promise that resolves to the users recommendations.
  */
-// eslint-disable-next-line import/prefer-default-export
 export function getUserRecommendations(userId, params, targetFilter) {
   if (targetFilter && !params._queryFilter) {
     params._queryFilter = convertTargetFilterToQueryFilter(targetFilter);

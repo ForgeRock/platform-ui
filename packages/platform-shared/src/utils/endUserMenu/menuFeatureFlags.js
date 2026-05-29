@@ -13,7 +13,6 @@
  * @returns {Object} An object containing feature flags for filtering end user menu items.
  *
  */
-// eslint-disable-next-line import/prefer-default-export
 export function generateFeatureFlags(store) {
   if (!store || !store.state) {
     return [];

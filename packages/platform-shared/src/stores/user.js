@@ -8,7 +8,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 
-// eslint-disable-next-line import/prefer-default-export
 export const useUserStore = defineStore('user', () => {
   // API properties
   const managedResource = ref('');

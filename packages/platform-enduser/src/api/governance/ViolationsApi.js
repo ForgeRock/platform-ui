@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -15,7 +15,6 @@ const violationsUrl = '/governance/user/violation';
  * @param {object} params - Optional parameters to be plugged into query string
  * @returns {Promise}
  */
-// eslint-disable-next-line import/prefer-default-export
 export function getViolations(targetFilter, params) {
   const queryParams = encodeQueryString(params);
   const resourceUrl = `${violationsUrl}/search${queryParams}`;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,6 @@ import { getMenuItemIcon } from '@forgerock/platform-shared/src/enduser/utils/en
 import i18n from '@/i18n';
 import { getValidManagedObjectMenuId } from './menuItemUtils';
 
-/* eslint-disable import/prefer-default-export */
 /**
  * Fetches managed objects and formats, filters and sort them as menu items for the end user menu.
  *

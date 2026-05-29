@@ -9,7 +9,6 @@ import * as Notifications from '@forgerock/platform-shared/src/utils/notificatio
 
 jest.mock('@forgerock/platform-shared/src/utils/notification');
 
-// eslint-disable-next-line import/prefer-default-export
 export function mockNotification() {
   Notifications.displayNotification = jest.fn();
   Notifications.showErrorMessage = jest.fn();

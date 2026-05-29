@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,7 +18,6 @@ jest.mock('@forgerock/platform-shared/src/composables/bvModal');
  * @returns {{ modalShow: jest.Mock, modalHide: jest.Mock }}
  *   An object containing the mocked `show` and `hide` functions.
  */
-// eslint-disable-next-line import/prefer-default-export
 export function mockModal() {
   const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
   useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });

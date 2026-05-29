@@ -12,7 +12,6 @@
  * @param {array} searchableFields - Required array of field names that we want to query on
  * @param {object} schemaProps - Required metadata of current schema
  */
-// eslint-disable-next-line import/prefer-default-export
 export function generateSearchQuery(filterString, searchableFields, schemaProps) {
   let filterUrl = '';
 

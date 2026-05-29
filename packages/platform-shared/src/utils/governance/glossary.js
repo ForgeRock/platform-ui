@@ -1,9 +1,8 @@
 /**
- * Copyright 2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { getGlossaryAttributes } from '@forgerock/platform-shared/src/api/governance/GlossaryApi';
@@ -15,7 +14,6 @@ import { getGlossaryAttributes } from '@forgerock/platform-shared/src/api/govern
  * second request is sent asking for the remaining attributes
  * @param {String} resourceType resource type (e.g., role or entitlement)
  */
-// eslint-disable-next-line import/prefer-default-export
 export async function getGlossarySchema(resourceType = 'role') {
   const resourcePrefixMap = {
     account: '/iga/governance/',

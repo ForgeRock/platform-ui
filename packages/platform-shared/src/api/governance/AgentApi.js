@@ -103,7 +103,6 @@ async function getApplicationObjectsByIds(queryParams = {}, applicationId, objec
  * @param {Array} idList List of ids to fetch
  * @returns List of resource objects
  */
-// eslint-disable-next-line import/prefer-default-export
 export async function getAgentResourcesByIds(queryParams = {}, application, resourceType, idList) {
   if (application.isDisconnected) {
     return getApplicationObjectsByIds(queryParams, application.id, resourceType, idList);
@@ -118,7 +117,6 @@ export async function getAgentResourcesByIds(queryParams = {}, application, reso
  * @param {string} id ID of the resource to fetch
  * @returns {Promise} Resource object
  */
-// eslint-disable-next-line import/prefer-default-export
 export async function getAgentResourceById(application, resourceType, id) {
   if (application.isDisconnected) {
     const response = await getApplicationObjectsByIds({}, application.id, resourceType, [id]);

@@ -1,11 +1,10 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable import/prefer-default-export */
 /**
  * Generates and returns the list of available end user menu items only based on the provided store state.
  * Menu items are filtered according to feature flags.

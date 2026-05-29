@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -175,7 +175,6 @@ export const form = {
  * Return an error if the script execution fails for any reason.
  */
 
-// eslint-disable-next-line import/prefer-default-export
 export function onmessage(e) {
   try {
     const { script, scriptVariables } = e.data;

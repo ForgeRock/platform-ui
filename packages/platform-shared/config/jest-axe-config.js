@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2026 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 import { configureAxe } from 'jest-axe';
 
 /**
@@ -14,7 +21,6 @@ import { configureAxe } from 'jest-axe';
  *   reporter: 'v2', // add a non-rule config override
  * });
  */
-// eslint-disable-next-line import/prefer-default-export
 export function getAxe(overrides = {}) {
   const defaultConfig = {
     rules: {

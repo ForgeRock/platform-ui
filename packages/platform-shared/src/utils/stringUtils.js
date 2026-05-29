@@ -14,7 +14,6 @@ import formatNumber from './formatNumber';
  * @param {Object} replaceStrings - An object containing the replacement strings.
  * @returns {Object|String} The JSON object with placeholders replaced.
  */
-// eslint-disable-next-line import/prefer-default-export
 export function replacePlaceholders(val, replaceStrings) {
   const isString = typeof val === 'string';
   let stringifiedObject = isString ? val : JSON.stringify(val);

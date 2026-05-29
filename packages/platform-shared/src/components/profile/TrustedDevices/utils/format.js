@@ -29,7 +29,6 @@ function sortDevicesByDate(devices) {
   * @param {array} result - Data from an AM Trusted Device request
   * @returns {Promise<array>} Array of devices formatted for use on a Trusted Device list page
   */
-/* eslint-disable import/prefer-default-export */
 export function formatDevices(result) {
   const unknownText = i18n.global.t('pages.profile.trustedDevices.unknown');
   const browserText = i18n.global.t('pages.profile.trustedDevices.browser');

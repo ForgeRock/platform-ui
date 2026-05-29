@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -28,7 +28,6 @@ function setup(props) {
   });
 }
 
-/* eslint-disable import/prefer-default-export */
 export function getAccordionItems(wrapper) {
   return wrapper.findAll('.accordion .card [data-testid="accordion-item-wrapper"]');
 }

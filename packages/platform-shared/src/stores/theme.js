@@ -13,7 +13,6 @@ import { ref } from 'vue';
  * both the current theme being applied to the UI as well as the theme configuration that contains the
  * list of trees linked to themes, and lastly the list of themes for a given realm.
  */
-// eslint-disable-next-line import/prefer-default-export
 export const useThemeStore = defineStore('theme', () => {
   const realmThemes = ref([]);
   const theme = ref(null);
