@@ -44,7 +44,6 @@ const idmContext = getFQDN(process.env.VUE_APP_IDM_URL);
  * console.log('User is authenticated');
  * ...
  */
-// eslint-disable-next-line import/prefer-default-export
 export function useAuth() {
   // user and enduser stores initialization, this is required because this
   // composable is used in the router and depending on the order the router

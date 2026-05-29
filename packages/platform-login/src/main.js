@@ -188,7 +188,6 @@ const startApp = () => {
 // the ingress could be coming from one of several possible domains. For example when the customers is using mtls. We
 // need to check all the URLs white-listed server side specified either in the list env var or the legacy single ingress
 // env var and store the corresponding URL in local storage if a match is found
-// eslint-disable-next-line import/prefer-default-export
 export const checkIfOpenedByIngressEnv = (referrer, opener) => {
   // Check if web storage exists before trying to use it - see IAM-1873
   if (store.state.SharedStore.webStorageAvailable) {

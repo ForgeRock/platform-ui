@@ -13,7 +13,6 @@
  * @param {Object} col - The column object.
  * @returns {String} The column's id.
  */
-// eslint-disable-next-line import/prefer-default-export
 export function getColumnId(col) {
   return col?.value ?? col?.key ?? '';
 }
