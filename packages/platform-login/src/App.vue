@@ -184,6 +184,8 @@ export default {
 
         if (this.localizedFavicon) {
           document.getElementById('favicon').href = this.localizedFavicon;
+        } else {
+          document.getElementById('favicon').href = 'favicon.ico';
         }
       } catch {
         this.localizedLogo = this.localizedLogo || 'images/ping-logo-square-color.svg';

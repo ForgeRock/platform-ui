@@ -121,6 +121,8 @@ export default {
       }
       if (this.localizedFavicon) {
         document.getElementById('favicon').href = this.localizedFavicon;
+      } else {
+        document.getElementById('favicon').href = 'favicon.ico';
       }
     } catch (error) {
       this.showErrorMessage(error, this.$t('errors.themeSetError'));
