@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
       :link-classes="'d-flex align-items-center'"
       :target="url ? '_blank' : ''"
       :to="routeTo">
-      <div class="d-flex justify-content-between align-items-center pr-4">
+      <div class="d-flex justify-content-between align-items-center">
         <FrIcon
           :icon-class="isNav && icon ? 'mr-3' : 'mr-2'"
           :name="icon || ''">
@@ -135,7 +135,7 @@ of the MIT license. See the LICENSE file for details. -->
             :href="subItem.url"
             :target="subItem.url ? '_blank' : ''"
             :to="subItem.routeTo">
-            <div class="d-flex justify-content-between align-items-center pr-4">
+            <div class="d-flex justify-content-between align-items-center">
               <FrIcon
                 :icon-class="subItem.icon ? 'mr-3' : ''"
                 :name="subItem.icon || ''">

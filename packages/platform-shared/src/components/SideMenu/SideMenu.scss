@@ -350,6 +350,11 @@
         font-size: 0.875rem;
       }
     }
+
+    :deep(ul.fr-sidebar-menuitems .menu-item-text) {
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
   }
 
   .fr-sidebar-bottom {
