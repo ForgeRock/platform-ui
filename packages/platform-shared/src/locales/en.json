@@ -433,7 +433,8 @@
     "validation": {
       "int": "Please enter a valid integer. A valid integer can contain 0-9 and -",
       "number": "Please enter a valid number. A valid number can contain 0-9, . and -",
-      "list": "Please provide a valid list. An example of a valid list is: some, strings, separated, by, commas"
+      "list": "Please provide a valid list. An example of a valid list is: some, strings, separated, by, commas",
+      "durationInput": "Must be a number greater than or equal to zero."
     },
     "validationErrorsLabel": "Validation Errors",
     "dateTimePicker": {
