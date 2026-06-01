@@ -191,6 +191,12 @@ export function getRules(i18n) {
 
   const integer = (value) => rules.integer(value) || i18n.global.t('common.validation.int');
 
+  const non_negative_integer = (value) => {
+    if (value === '' || value === null || value === undefined) return true;
+    const isValid = rules.integer(value) && Number(value) >= 0;
+    return isValid || i18n.global.t('common.validation.durationInput');
+  };
+
   const oneOf = (value, list) => rules.one_of(value, list) || i18n.global.t('common.policyValidationMessages.VALID_BOOLEAN');
 
   // Period required rule
@@ -475,6 +481,7 @@ export function getRules(i18n) {
     excluded,
     google_cloud_platform_certificate_validation,
     integer,
+    non_negative_integer,
     is_after_date,
     is_before_date,
     isList,

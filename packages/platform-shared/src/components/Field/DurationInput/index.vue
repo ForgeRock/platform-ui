@@ -3,28 +3,25 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrInputLayout
+  <FrBasicInput
     class="flex-grow-1"
-    :id="internalId"
-    :name="name"
+    type="number"
+    :autofocus="autofocus"
     :description="description"
-    :errors="combinedErrors"
+    :disabled="disabled"
+    :errors="errors"
+    :floating-label="floatingLabel"
+    :id="id"
     :is-html="isHtml"
-    :label="label">
-    <input
-      :value="durationValue"
-      @input="durationValue = $event.target.value; emitDurationValue(durationValue, durationUnit)"
-      v-on="validationListeners"
-      ref="input"
-      type="number"
-      :class="[{'is-invalid': errorMessages && errorMessages.length, 'polyfill-placeholder': durationValue !== null && durationValue !== '' }, 'form-control']"
-      :data-vv-as="label"
-      :disabled="disabled"
-      :id="internalId"
-      :min="0"
-      :name="name"
-      :readonly="readonly"
-      :aria-required="isRequiredAria">
+    :label="label"
+    :name="name"
+    :placeholder="placeholder"
+    :readonly="readonly"
+    :validation="durationValidation"
+    :validation-immediate="validationImmediate"
+    ref="basicInput"
+    :value="durationValue"
+    @input="onNumberInput">
     <template #append>
       <BInputGroupAppend>
         <BDropdown
@@ -41,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BDropdown>
       </BInputGroupAppend>
     </template>
-  </FrInputLayout>
+  </FrBasicInput>
 </template>
 
 <script>
@@ -51,10 +48,7 @@ import {
   BInputGroupAppend,
 } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
-import { useField } from 'vee-validate';
-import { v4 as uuid } from 'uuid';
-import { toRef } from 'vue';
-import FrInputLayout from '../Wrapper/InputLayout';
+import FrBasicInput from '../BasicInput';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
@@ -70,11 +64,12 @@ export default {
     BDropdown,
     BDropdownItem,
     BInputGroupAppend,
-    FrInputLayout,
+    FrBasicInput,
   },
   data() {
     return {
       durationUnit: null,
+      durationValue: '',
       durationUnitOptions: [
         { text: this.$t('date.years'), value: 'years' },
         { text: this.$t('date.months'), value: 'months' },
@@ -92,24 +87,20 @@ export default {
       type: String,
     },
   },
-  setup(props) {
-    const {
-      value: durationValue, errors: fieldErrors, handleBlur,
-    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
-
-    // validationListeners: Contains custom event listeners for validation.
-    // Since vee-validate +4 removes the interaction modes, this custom listener is added
-    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
-    const validationListeners = {
-      blur: (evt) => handleBlur(evt, true),
-    };
-
-    return { durationValue, fieldErrors, validationListeners };
-  },
   mounted() {
     if (!this.durationUnit) {
       this.durationUnit = this.defaultUnit;
     }
+  },
+  computed: {
+    durationValidation() {
+      const base = { non_negative_integer: true };
+      if (!this.validation) return base;
+      if (typeof this.validation === 'string') {
+        return { ...base, ...Object.fromEntries(this.validation.split('|').map((r) => [r, true])) };
+      }
+      return { ...base, ...this.validation };
+    },
   },
   methods: {
     /**
@@ -136,23 +127,38 @@ export default {
       return `P${timeUnit}${durationValue}${durationMap[durationUnit]}`;
     },
     /**
-     * emits the fully formatted duration value
+     * Emits the fully formatted ISO 8601 duration string, or an empty string when the value
+     * has been cleared. Callers are responsible for ensuring durationValue is non-negative
+     * before calling this method.
      *
-     * @param {String|Number} durationValue Numerical input of the duration
-     * @param {String} durationUnit Selectable unit input e.g. days, months, seconds
-     * @emits {String} fully formatted duration value
+     * @param {String|Number} durationValue Non-negative numerical portion of the duration
+     * @param {String} durationUnit Selected time unit e.g. days, months, seconds
+     * @emits {String} Fully formatted ISO 8601 duration string (e.g. "P5D") or empty string
      */
     emitDurationValue(durationValue, durationUnit) {
       if (durationValue !== null && durationValue !== '') {
-        if (durationValue < 0 || durationValue === 'e' || durationValue === 'E') {
-          this.durationValue = 0;
-          this.$emit('input', 0);
-        } else {
-          this.$emit('input', this.buildFormattedDuration(durationValue, durationUnit));
-        }
+        this.$emit('input', this.buildFormattedDuration(durationValue, durationUnit));
       } else {
         this.$emit('input', '');
       }
+    },
+    /**
+     * Handles numeric input from FrBasicInput. FrBasicInput's removeNonNumericChars strips non-numeric characters before emitting,
+     * So inputValue receives a number (e.g. 5 for '5abc'). When the stripped value equals the existing inputValue, Vue skips the DOM update
+     * and the raw text stays visible. We force a DOM correction in that case by directly updating the underlying input element via $refs.
+     * The value is always stored as a string to match setInputValue's regex output and keep the strict-equality early-return guard reliable.
+     *
+     * @param {Number|String} inputValue Stripped numeric value emitted by FrBasicInput
+     */
+    onNumberInput(inputValue) {
+      const normalised = inputValue === null || inputValue === '' ? '' : String(inputValue);
+      if (normalised === this.durationValue) {
+        const inputEl = this.$refs.basicInput?.$refs?.input;
+        if (inputEl) inputEl.value = normalised;
+        return;
+      }
+      this.durationValue = normalised;
+      this.emitDurationValue(normalised, this.durationUnit);
     },
     /**
      * sets the saved duration unit and sends off for emitting
@@ -180,26 +186,19 @@ export default {
       const regexp = /(P\D*)(\d+)(\D)(\D*)/g;
       const match = regexp.exec(newVal);
       if (match && match[2]) {
+        const resolvedUnit = match[3] === 'M' && newVal[1] === 'T' ? 'minutes' : durationMap[match[3]];
+        if (!resolvedUnit) return;
         // eslint-disable-next-line prefer-destructuring
         this.durationValue = match[2];
-        if (match[3] === 'M' && newVal[1] === 'T') {
-          this.durationUnit = 'minutes';
-        } else {
-          this.durationUnit = durationMap[match[3]];
-        }
+        this.durationUnit = resolvedUnit;
       }
-    },
-  },
-  computed: {
-    combinedErrors() {
-      return this.errors.concat(this.fieldErrors);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-  .form-control.is-invalid {
+  :deep(.form-control.is-invalid) {
     background-image: none;
   }
 
@@ -221,5 +220,13 @@ export default {
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
     }
+
+    button:focus-visible {
+      outline-offset: 0;
+    }
+  }
+
+  :deep(.form-label-group-input:focus-within) {
+    z-index: 3;
   }
 </style>
