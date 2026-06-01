@@ -16,6 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
     :static="isTesting">
     <FrField
       @select="selectTarget"
+      :label="$t('common.selectFilterProperty')"
       name="columnSelected"
       type="select"
       :options="filterSchema[selectedItem] || []"
