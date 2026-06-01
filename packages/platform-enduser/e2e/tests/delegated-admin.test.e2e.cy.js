@@ -21,9 +21,13 @@ const realm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
 function openDelegatedAdminManagedPage(resourceType, resourceName, resourceId) {
   let url;
   if (resourceId) {
-    url = `${Cypress.config().baseUrl}/enduser/?realm=${realm}#/edit/${resourceType}/${resourceName}/${resourceId}`;
+    url = `${
+      Cypress.config().baseUrl
+    }/enduser/?realm=${realm}#/edit/${resourceType}/${resourceName}/${resourceId}`;
   } else {
-    url = `${Cypress.config().baseUrl}/enduser/?realm=${realm}#/list/${resourceType}/${resourceName}`;
+    url = `${
+      Cypress.config().baseUrl
+    }/enduser/?realm=${realm}#/list/${resourceType}/${resourceName}`;
   }
   cy.visit(url);
   let headingText;
@@ -46,12 +50,7 @@ function createInternalRole(internalRoleName, userId, dataOverride = {}) {
         path: `managed/${Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user'}`,
         name: 'Users',
         actions: [],
-        permissions: [
-          'VIEW',
-          'CREATE',
-          'UPDATE',
-          'DELETE',
-        ],
+        permissions: ['VIEW', 'CREATE', 'UPDATE', 'DELETE'],
         accessFlags: [
           {
             attribute: 'userName',
@@ -156,10 +155,7 @@ function createInternalRole(internalRoleName, userId, dataOverride = {}) {
         path: 'internal/role',
         name: 'Internal Roles',
         actions: [],
-        permissions: [
-          'VIEW',
-          'UPDATE',
-        ],
+        permissions: ['VIEW', 'UPDATE'],
         accessFlags: [
           {
             attribute: 'name',
@@ -185,11 +181,13 @@ function createInternalRole(internalRoleName, userId, dataOverride = {}) {
       },
     ],
   };
-  return createIDMResource('internal', 'role', data).then((createIDMResourceResponse) => {
-    const internalRoleId = createIDMResourceResponse.body._id;
-    addRoleMember(internalRoleId, userId);
-    return cy.wrap(internalRoleId);
-  });
+  return createIDMResource('internal', 'role', data).then(
+    (createIDMResourceResponse) => {
+      const internalRoleId = createIDMResourceResponse.body._id;
+      addRoleMember(internalRoleId, userId);
+      return cy.wrap(internalRoleId);
+    },
+  );
 }
 
 describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
@@ -211,7 +209,9 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
   });
 
   it('[TC-12109] Can view managed resources w/ appropriate columns and appropriate actions', () => {
-    const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
+    const internalRoleName = `e2eInternalRole${random(
+      Number.MAX_SAFE_INTEGER,
+    )}`;
 
     // Create internal role
     createInternalRole(internalRoleName, userId).then((internalRoleId) => {
@@ -222,35 +222,58 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
       // Navigate to Role list view and ensure that columns do/don't appear based on permissions set on role
       openDelegatedAdminManagedPage('internal', 'role');
       cy.findByRole('columnheader', { name: 'Name (Click to sort ascending)' });
-      cy.findByRole('columnheader', { name: 'Description (Click to sort ascending)' }).should('not.exist');
+      cy.findByRole('columnheader', {
+        name: 'Description (Click to sort ascending)',
+      }).should('not.exist');
 
       // Ensure that only action available is edit, and no New button exists
-      cy.findByRole('searchbox', { name: 'Search' }).type(`${internalRoleName}{enter}`);
-      cy.findByRole('cell', { name: internalRoleName }).should('exist').closest('tr').within(() => {
-        cy.findByRole('button').click();
-      });
+      cy.findByRole('searchbox', { name: 'Search' }).type(
+        `${internalRoleName}{enter}`,
+      );
+      cy.findByRole('cell', { name: internalRoleName })
+        .should('exist')
+        .closest('tr')
+        .within(() => {
+          cy.findByRole('button').click();
+        });
       // Find menu item teleported to app container
-      cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+      cy.get('#app')
+        .findByRole('menu')
+        .should('have.class', 'menu')
+        .should('be.visible')
         .within(() => {
           cy.findAllByRole('menuitem').should('have.length', 1);
           cy.findByRole('menuitem', { name: 'Edit' });
         });
-      cy.findByRole('button', { name: 'New Internal Role' }).should('not.exist');
+      cy.findByRole('button', { name: 'New Internal Role' }).should(
+        'not.exist',
+      );
 
       // navigate to user list to ensure we have add, delete, and edit access
-      openDelegatedAdminManagedPage('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user');
+      openDelegatedAdminManagedPage(
+        'managed',
+        Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user',
+      );
       cy.findByRole('searchbox', { name: 'Search' }).type(`${userName}{enter}`);
-      cy.findByRole('cell', { name: userName }).should('exist').closest('tr').within(() => {
-        cy.findByRole('button').click();
-      });
+      cy.findByRole('cell', { name: userName })
+        .should('exist')
+        .closest('tr')
+        .within(() => {
+          cy.findByRole('button').click();
+        });
       // Find menu item teleported to app container
-      cy.get('#app').findByRole('menu').should('have.class', 'menu').should('be.visible')
+      cy.get('#app')
+        .findByRole('menu')
+        .should('have.class', 'menu')
+        .should('be.visible')
         .within(() => {
           cy.findAllByRole('menuitem').should('have.length', 2);
           cy.findByRole('menuitem', { name: 'Edit' });
           cy.findByRole('menuitem', { name: 'Delete' });
         });
-      cy.findByRole('button', { name: `New ${Cypress.env('IS_FRAAS') ? 'Alpha realm - User' : 'User'}` });
+      cy.findByRole('button', {
+        name: `New ${Cypress.env('IS_FRAAS') ? 'Alpha realm - User' : 'User'}`,
+      });
 
       // remove the created internal role
       deleteIDMResource('internal', 'role', internalRoleId);
@@ -259,33 +282,44 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
   });
 
   it('[TC-12110] Should be able to search a resource and be limited by DA available resources', () => {
-    const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
+    const internalRoleName = `e2eInternalRole${random(
+      Number.MAX_SAFE_INTEGER,
+    )}`;
     const testUserLastName = `Last${random(Number.MAX_SAFE_INTEGER)}`;
 
     // create second user that shows our condition for DA permissions works
-    createIDMUser({ userName: `${userName}2`, sn: testUserLastName }).then((result) => {
-      const testUserId = result.body._id;
-      createInternalRole(internalRoleName, userId, { filter: `/sn eq "${testUserLastName}"` }).then((internalRoleId) => {
-        // Log out of admin and into created user
-        cy.logout();
-        cy.loginAsEnduser(userName);
+    createIDMUser({ userName: `${userName}2`, sn: testUserLastName }).then(
+      (result) => {
+        const testUserId = result.body._id;
+        createInternalRole(internalRoleName, userId, {
+          filter: `/sn eq "${testUserLastName}"`,
+        }).then((internalRoleId) => {
+          // Log out of admin and into created user
+          cy.logout();
+          cy.loginAsEnduser(userName);
 
-        // navigate to list view and ensure only test user appears (along with header row)
-        openDelegatedAdminManagedPage('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user');
-        cy.findByRole('searchbox', { name: 'Search' }).type('Last{enter}');
-        cy.findAllByRole('row').should('have.length', 2);
-        cy.findByRole('cell', { name: `${userName}2` });
+          // navigate to list view and ensure only test user appears (along with header row)
+          openDelegatedAdminManagedPage(
+            'managed',
+            Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user',
+          );
+          cy.findByRole('searchbox', { name: 'Search' }).type('Last{enter}');
+          cy.findAllByRole('row').should('have.length', 2);
+          cy.findByRole('cell', { name: `${userName}2` });
 
-        // remove the test user and role
-        deleteIDMUser(testUserId);
-        deleteIDMUser(userId);
-        deleteIDMResource('internal', 'role', internalRoleId);
-      });
-    });
+          // remove the test user and role
+          deleteIDMUser(testUserId);
+          deleteIDMUser(userId);
+          deleteIDMResource('internal', 'role', internalRoleId);
+        });
+      },
+    );
   });
 
   it('[TC-12111] Can edit resource & see (not edit) read fields, edit read/write fields, & not see none fields', () => {
-    const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
+    const internalRoleName = `e2eInternalRole${random(
+      Number.MAX_SAFE_INTEGER,
+    )}`;
     const postalCodeValue = 'e2eTestPostalCode';
 
     createInternalRole(internalRoleName, userId).then((internalRoleId) => {
@@ -293,10 +327,39 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
       cy.logout();
       cy.loginAsEnduser(userName);
 
-      // Navigate to User list page
-      openDelegatedAdminManagedPage('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user', userId);
-      // ensure postalCode is editable, country is visible but not editable, & stateProvince is not visable
-      cy.findByLabelText('Postal Code').type(postalCodeValue).should('have.value', postalCodeValue);
+      // Intercept the user data request so we can wait for the full response before
+      // the page navigates, ensuring the form is populated before we assert on it.
+      cy.intercept(
+        'GET',
+        `**/openidm/managed/${
+          Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user'
+        }/${userId}**`,
+      ).as('loadUserData');
+
+      // Navigate to the managed user edit page
+      openDelegatedAdminManagedPage(
+        'managed',
+        Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user',
+        userId,
+      );
+
+      // Wait for the user data API response AND for the form to be fully rendered.
+      // cy.wait(@loadUserData) ensures the data has arrived; the Username assertion
+      // confirms Vue's reactive cycle has committed all field values to the DOM.
+      // Both are needed: the network wait alone is insufficient (Vue's nextTick
+      // hasn't run), and the DOM sentinel alone may pass while a late-firing deep
+      // watcher is still replacing clonedDisplayProperties in ObjectTypeEditor.
+      cy.wait('@loadUserData');
+      cy.findByLabelText('Username').should('have.value', userName);
+
+      // Verify field permissions: postalCode is read/write, country is read-only,
+      // stateProvince is hidden (none permission — not included in accessFlags).
+      // { delay: 0 } types the full string in a single synchronous burst so no
+      // Vue reactivity flush can fire between individual keystrokes.
+      cy.findByLabelText('Postal Code')
+        .clear()
+        .type(postalCodeValue, { delay: 0 })
+        .should('have.value', postalCodeValue);
       cy.findByLabelText('Country').should('be.disabled');
       cy.findByLabelText('State/Province').should('not.exist');
 
@@ -306,8 +369,10 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
     });
   });
 
-  it('[TC-12112] Can edit a user and see relationships and have appropriate interaction with that relationship\'s permissions', () => {
-    const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
+  it("[TC-12112] Can edit a user and see relationships and have appropriate interaction with that relationship's permissions", () => {
+    const internalRoleName = `e2eInternalRole${random(
+      Number.MAX_SAFE_INTEGER,
+    )}`;
     const managedRoleName = `e2eManagedRole${random(Number.MAX_SAFE_INTEGER)}`;
 
     createInternalRole(internalRoleName, userId).then((internalRoleId) => {
@@ -315,7 +380,10 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
       createIDMResource(
         'managed',
         Cypress.env('IS_FRAAS') ? 'alpha_role' : 'role',
-        { description: `${managedRoleName} description`, name: managedRoleName },
+        {
+          description: `${managedRoleName} description`,
+          name: managedRoleName,
+        },
       ).then((createManagedRoleResponse) => {
         const managedRoleId = createManagedRoleResponse.body._id;
 
@@ -327,7 +395,11 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
         cy.loginAsEnduser(userName);
 
         // Navigate to User edit page
-        openDelegatedAdminManagedPage('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user', userId);
+        openDelegatedAdminManagedPage(
+          'managed',
+          Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user',
+          userId,
+        );
 
         // Ensure user is able to see internal roles, but not managed roles
         cy.findByRole('tab', { name: 'Provisioning Roles' }).click();
@@ -338,19 +410,31 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
         cy.findByRole('cell', { name: internalRoleName });
         // Ensure user can add and delete internal roles
         cy.findByRole('button', { name: 'Add Authorization Roles' }).click();
-        cy.findByRole('dialog').findAllByLabelText('Authorization Roles').first().click({ force: true })
+        cy.findByRole('dialog')
+          .findAllByLabelText('Authorization Roles')
+          .first()
+          .click({ force: true })
           .type(`${internalRoleName}`);
-        cy.findByRole('dialog').get('.multiselect__option--highlight').contains(internalRoleName);
-        cy.findByRole('dialog').findAllByLabelText('Authorization Roles').first().type('{enter}');
+        cy.findByRole('dialog')
+          .get('.multiselect__option--highlight')
+          .contains(internalRoleName);
+        cy.findByRole('dialog')
+          .findAllByLabelText('Authorization Roles')
+          .first()
+          .type('{enter}');
         cy.contains('.multiselect__tag', internalRoleName);
         cy.findByRole('button', { name: 'Cancel' }).click();
         cy.intercept('GET', '**/openidm/managed/**').as('search');
-        cy.findByRole('searchbox', { name: 'Search' }).should('be.visible').type(`${internalRoleName}{enter}`, { force: true });
+        cy.findByRole('searchbox', { name: 'Search' })
+          .should('be.visible')
+          .type(`${internalRoleName}{enter}`, { force: true });
         cy.wait('@search');
 
         cy.findAllByRole('checkbox').eq(1).click({ force: true });
         cy.findByRole('button', { name: 'Remove' }).click();
-        cy.findByRole('dialog').findByRole('button', { name: 'Remove' }).click();
+        cy.findByRole('dialog')
+          .findByRole('button', { name: 'Remove' })
+          .click();
         expectNotification('Authorization Roles successfully removed');
 
         // remove the managed and internal roles created for the test
@@ -366,9 +450,16 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
   });
 
   it('[TC-12113] Can add & delete a resource (based on permissions) and properly display errors when a required field is not met', () => {
-    const internalRoleName = `e2eInternalRole${random(Number.MAX_SAFE_INTEGER)}`;
+    const internalRoleName = `e2eInternalRole${random(
+      Number.MAX_SAFE_INTEGER,
+    )}`;
     let testUserId;
-    cy.intercept('POST', `/openidm/managed/${Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user'}?_action=create`).as('saveManagedUser');
+    cy.intercept(
+      'POST',
+      `/openidm/managed/${
+        Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user'
+      }?_action=create`,
+    ).as('saveManagedUser');
 
     createInternalRole(internalRoleName, userId).then((internalRoleId) => {
       // Log out of admin and into created user
@@ -376,32 +467,58 @@ describe('Delegated Admin', { tags: ['@forgeops', '@cloud'] }, () => {
       cy.loginAsEnduser(userName);
 
       // Navigate to User list page, and open create modal
-      openDelegatedAdminManagedPage('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user');
-      cy.findByRole('button', { name: `New ${Cypress.env('IS_FRAAS') ? 'Alpha realm - User' : 'User'}` }).click();
+      openDelegatedAdminManagedPage(
+        'managed',
+        Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user',
+      );
+      cy.findByRole('button', {
+        name: `New ${Cypress.env('IS_FRAAS') ? 'Alpha realm - User' : 'User'}`,
+      }).click();
 
       // fill in fields, ensuring that Save button only enabled when all fields filled in with no errors
-      cy.findByLabelText('Username').should('be.visible').should('be.focused').type(`e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`);
+      cy.findByLabelText('Username')
+        .should('be.visible')
+        .should('be.focused')
+        .type(`e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`);
       cy.findByLabelText('First Name').type('First');
       cy.findByLabelText('Last Name').type('Last');
       cy.findByRole('button', { name: 'Save' }).should('be.disabled');
       cy.findByLabelText('Email Address').type('badEmail@email').blur();
       cy.findByRole('button', { name: 'Save' }).should('be.disabled');
-      cy.findAllByRole('alert').contains('Invalid email format (example@example.com)');
+      cy.findAllByRole('alert').contains(
+        'Invalid email format (example@example.com)',
+      );
       cy.findByLabelText('Email Address').type('.com').blur();
       cy.findByRole('button', { name: 'Save' }).click();
       cy.wait('@saveManagedUser').then(({ response }) => {
         testUserId = response.body._id;
 
         // After successful creation, navigate to created user
-        expectNotification(Cypress.env('IS_FRAAS') ? 'Alpha realm - User successfully created' : 'User successfully created');
-        openDelegatedAdminManagedPage('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user', testUserId);
+        expectNotification(
+          Cypress.env('IS_FRAAS')
+            ? 'Alpha realm - User successfully created'
+            : 'User successfully created',
+        );
+        openDelegatedAdminManagedPage(
+          'managed',
+          Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user',
+          testUserId,
+        );
 
         // open delete modal and delete user
-        cy.findByRole('button', { name: Cypress.env('IS_FRAAS') ? 'Delete Alpha realm - User' : 'Delete User' }).click();
+        cy.findByRole('button', {
+          name: Cypress.env('IS_FRAAS')
+            ? 'Delete Alpha realm - User'
+            : 'Delete User',
+        }).click();
         cy.findByRole('dialog', { name: /Delete/i }).within(() => {
           cy.findByRole('button', { name: /Delete/i }).click();
         });
-        expectNotification(Cypress.env('IS_FRAAS') ? 'Successfully deleted alpha_user' : 'Successfully deleted user');
+        expectNotification(
+          Cypress.env('IS_FRAAS')
+            ? 'Successfully deleted alpha_user'
+            : 'Successfully deleted user',
+        );
 
         // Delete the test role
         deleteIDMResource('internal', 'role', internalRoleId);
