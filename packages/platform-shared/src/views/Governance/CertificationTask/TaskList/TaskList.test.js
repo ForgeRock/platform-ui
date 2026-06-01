@@ -2249,6 +2249,7 @@ describe('TaskList', () => {
         refreshTasks: true,
         modalPrefix: 'entitlement',
       });
+      wrapper.vm.leftPanelExpanded = true;
       wrapper.vm.updateAccessByFilter({});
       await flushPromises();
       expect(getCertificationTasksListByCampaignSpy).toHaveBeenCalledWith({

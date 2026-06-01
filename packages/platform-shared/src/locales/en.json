@@ -20,6 +20,7 @@
     "add": "Add",
     "added": "Added",
     "addFilterTitle": "Add {objectType} Filter",
+    "selectFilterProperty": "Select Filter Property",
     "adding": "Adding...",
     "additionalDetails": "Additional Details",
     "addObject": "Add {object}",

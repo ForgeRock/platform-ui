@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
           <h3 class="text-secondary mb-2 d-flex align-items-center">
             {{ field.name }}
             <BButton
-              v-if="!nonAddable.includes(field.name)"
+              v-if="showAdd && !nonAddable.includes(field.name)"
               class="ml-auto"
               variant="link"
               @click="filterModal(field.name)">
@@ -217,6 +217,10 @@ const emit = defineEmits([
 const { bvModal } = useBvModal();
 
 const props = defineProps({
+  showAdd: {
+    type: Boolean,
+    default: false,
+  },
   useQueryFilter: {
     type: Boolean,
     default: false,

@@ -107,6 +107,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="border-top p-2 flex-grow-1 h-100 overflow-auto">
             <FrAccessFilter
               v-if="filterTypes"
+              show-add
               :use-query-filter="false"
               :input-fields="filterTypes"
               :input-filter-data="filterData"
@@ -1129,13 +1130,14 @@ export default {
      * Updates the current filter for retrieving grants
      */
     async updateAccessByFilter(updatedTargetFilter) {
+      if (!this.leftPanelExpanded) return;
       const uniqueFilters = [...new Map(Object.values(updatedTargetFilter).map((f) => [JSON.stringify(f), f])).values()];
       this.targetFilter = {
         operator: 'AND',
         operand: [...uniqueFilters, ...this.getBaseFilters()],
       };
       this.paginationPage = 1;
-      return this.getItems(1);
+      this.getItems(1);
     },
 
     /**
