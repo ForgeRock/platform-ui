@@ -36,19 +36,36 @@ export default class NextGenScriptEditorModal {
     return NextGenScriptEditorModal.sidePanel.findByRole('heading');
   }
 
-  static get sidePanelGroupItems() {
+  static get sidePanelSearchInput() {
+    return NextGenScriptEditorModal.sidePanel.findByRole('searchbox', { name: 'Search' });
+  }
+
+  static get searchClearButton() {
+    return NextGenScriptEditorModal.sidePanel.findByRole('button', { name: 'Clear' });
+  }
+
+  static get bindingsGroupItems() {
     return NextGenScriptEditorModal.sidePanel.find('.list-group-flush');
   }
 
-  static sidePanelGroupItem(name) {
-    return cy.get('.side-panel .list-group-flush:has(.collapse) > button').contains(name);
+  // For bindings panel — group headers render as <button> elements
+  static bindingsGroupItem(name) {
+    return NextGenScriptEditorModal.sidePanel.find('.list-group-flush:has(.collapse) > button').contains(name);
+  }
+
+  static get libraryGroupItems() {
+    return NextGenScriptEditorModal.sidePanel.find('.library-title');
+  }
+
+  static libraryGroupItem(name) {
+    return NextGenScriptEditorModal.libraryGroupItems.contains(name);
   }
 
   static sidePanelItem(name) {
-    return cy.get('.side-panel .collapse.show .list-group-item').contains(name);
+    return NextGenScriptEditorModal.sidePanel.find('.collapse.show .list-group-item').contains(name);
   }
 
   static get expandedSidePanelItems() {
-    return cy.get('.side-panel .collapse.show .list-group-item');
+    return NextGenScriptEditorModal.sidePanel.find('.collapse.show .list-group-item');
   }
 }
