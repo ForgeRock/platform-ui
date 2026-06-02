@@ -73,6 +73,16 @@ of the MIT license. See the LICENSE file for details. -->
             @load-data="queryAccountEntitlements"
             @revoke-items="revokeEntitlement" />
         </BTab>
+        <BTab
+          v-if="!props.isEndUser"
+          :title="$t('governance.accounts.details.tabs.activity')"
+          key="activity"
+          lazy>
+          <FrActivity
+            :object-id="id"
+            :object-types="['account']"
+            :parent-resource-name="$t('common.account')" />
+        </BTab>
       </BTabs>
     </div>
   </BContainer>
@@ -101,6 +111,7 @@ import { getAccountAttribute, getObjectTypeFromAccountId } from '@forgerock/plat
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import { getObjectTypeSchema } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import FrAccountObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
+import FrActivity from '@forgerock/platform-shared/src/views/Governance/Activity/Activity';
 import FrDetailsTab from './DetailsTab';
 import { getAccountDisplayName } from '../utils/accountUtility';
 import store from '@/store';
@@ -130,7 +141,12 @@ const isCorrelated = computed(() => account.value.user);
 const isDisconnected = computed(() => account.value.application?.isDisconnected);
 const savingGovernanceResourcesStatus = ref('');
 const entitlements = ref([]);
-const tabs = isCorrelated.value ? ['details', 'objectProperties', 'entitlements'] : ['details', 'objectProperties'];
+const tabs = computed(() => [
+  'details',
+  'objectProperties',
+  ...((isCorrelated.value || isDisconnected.value) ? ['entitlements'] : []),
+  ...(!props.isEndUser ? ['activity'] : []),
+]);
 const entitlementTableFields = [
   {
     key: 'entitlementNameAppName',
@@ -262,7 +278,7 @@ async function revokeEntitlement(payload) {
  * @param {number} index - currently selected tab index
  */
 function tabActivated(index) {
-  const accountsTab = tabs[index];
+  const accountsTab = tabs.value[index];
   window.history.pushState(window.history.state, '', `#/accounts/${encodeURIComponent(id)}/${accountsTab}`);
 }
 
@@ -304,15 +320,15 @@ async function getAccount() {
 }
 
 onBeforeMount(async () => {
-  const matchedTab = tabs
-    .findIndex((key) => key === route.params.tab);
-  tabIndex.value = matchedTab > -1 ? matchedTab : 0;
   if (props.isEndUser) {
     setBreadcrumb('/my-machine-accounts', i18n.global.t('sideMenu.endUser.machineAccounts'));
   } else {
     setBreadcrumb('/accounts', i18n.global.t('common.accounts'));
   }
   await loadAppTemplates();
-  getAccount();
+  await getAccount();
+  const matchedTab = tabs.value
+    .findIndex((key) => key === route.params.tab);
+  tabIndex.value = matchedTab > -1 ? matchedTab : 0;
 });
 </script>

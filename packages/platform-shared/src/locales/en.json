@@ -2113,7 +2113,8 @@
         "tabs": {
           "details": "Details",
           "entitlements": "Entitlements",
-          "objectProperties": "Object Properties"
+          "objectProperties": "Object Properties",
+          "activity": "Activity"
         }
       },
       "editAccount": "Update Account",
