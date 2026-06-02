@@ -111,6 +111,25 @@ describe('AccountsDetails', () => {
     expect(tabs.length).toBe(3);
   });
 
+  it('shows the Activity tab for admin users', async () => {
+    mountComponent(undefined, { isEndUser: false });
+    await flushPromises();
+
+    const tabs = wrapper.find('.tabs').findAll('li');
+    const tabTitles = tabs.map((tab) => tab.text());
+    expect(tabs.length).toBe(4);
+    expect(tabTitles).toContain('governance.accounts.details.tabs.activity');
+  });
+
+  it('hides the Activity tab for end users', async () => {
+    mountComponent();
+    await flushPromises();
+
+    const tabs = wrapper.find('.tabs').findAll('li');
+    const tabTitles = tabs.map((tab) => tab.text());
+    expect(tabTitles).not.toContain('governance.accounts.details.tabs.activity');
+  });
+
   it('should not display entitlement tab for non user account', async () => {
     mountComponent('orphan');
     await flushPromises();
