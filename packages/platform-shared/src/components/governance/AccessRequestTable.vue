@@ -148,6 +148,7 @@ import FrGovResourceSelect from '@forgerock/platform-shared/src/components/gover
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrPriorityFilter from '@forgerock/platform-shared/src/components/governance/PriorityFilter';
+import store from '@/store';
 import i18n from '@/i18n';
 
 /**
@@ -176,6 +177,14 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  /**
+   * sessionStorage key used to persist filter/sort/pagination state across navigation.
+   * Omit or pass an empty string to disable persistence entirely.
+   */
+  storageKey: {
+    type: String,
+    default: '',
+  },
 });
 
 // Emits
@@ -184,17 +193,27 @@ const emit = defineEmits(['load-requests', 'navigate-to-details']);
 // Composables
 const { bvModal } = useBvModal();
 
+// Hydrate persisted state from sessionStorage if a storageKey is provided
+const storedState = (() => {
+  if (!props.storageKey || !store.state.SharedStore.webStorageAvailable) return {};
+  try {
+    return JSON.parse(sessionStorage.getItem(props.storageKey)) || {};
+  } catch (e) {
+    return {};
+  }
+})();
+
 // Data
-const currentPage = ref(1);
-const filter = ref({});
+const currentPage = ref(storedState.currentPage ?? 1);
+const filter = ref(storedState.filter ?? {});
 const modalItem = ref({});
 const modalType = ref(REQUEST_MODAL_TYPES.CANCEL);
-const pageSize = ref(10);
+const pageSize = ref(storedState.pageSize ?? 10);
 const resumeDate = ref(null);
-const sortDir = ref('desc');
-const sortField = ref('date');
-const sortKeys = ref('date');
-const status = ref('in-progress');
+const sortDir = ref(storedState.sortDir ?? 'desc');
+const sortField = ref(storedState.sortField ?? 'date');
+const sortKeys = ref(storedState.sortKeys ?? 'date');
+const status = ref(storedState.status ?? 'in-progress');
 const isSaving = ref(false);
 const showFilters = ref(false);
 const statusOptions = ref([
@@ -227,7 +246,7 @@ const componentRefs = new Map([
   ['totalRows', props.totalRows],
 ]);
 
-const filterData = ref(getInitialRequestFilterData(statusOptions.value[0].value));
+const filterData = ref(storedState.filterData ?? getInitialRequestFilterData(statusOptions.value[0].value));
 const numFilters = computed(() => getNumFilters(filterData.value));
 const accessFilter = ref(getAccessFilterConfig(
   {
@@ -288,6 +307,29 @@ const syncFilterDataAndReload = debounce(() => {
 }, 300);
 
 watch(filterData, syncFilterDataAndReload, { deep: true });
+
+// Persist filter/sort/pagination state to sessionStorage when storageKey is provided
+watch(
+  [filterData, filter, status, currentPage, pageSize, sortDir, sortField, sortKeys],
+  () => {
+    if (!props.storageKey || !store.state.SharedStore.webStorageAvailable) return;
+    try {
+      sessionStorage.setItem(props.storageKey, JSON.stringify({
+        filterData: filterData.value,
+        filter: filter.value,
+        status: status.value,
+        currentPage: currentPage.value,
+        pageSize: pageSize.value,
+        sortDir: sortDir.value,
+        sortField: sortField.value,
+        sortKeys: sortKeys.value,
+      }));
+    } catch (e) {
+      // sessionStorage may be unavailable; ignore
+    }
+  },
+  { deep: true },
+);
 
 /**
  * Opens a modal based on the provided item and type.
@@ -377,6 +419,7 @@ onMounted(() => {
       value: 'draft',
     }];
   }
+  loadRequests();
 });
 </script>
 

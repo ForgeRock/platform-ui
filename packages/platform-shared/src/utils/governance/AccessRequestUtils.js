@@ -619,7 +619,10 @@ export function getInitialRequestFilterData(defaultStatus) {
 export function getNumFilters(filterData) {
   if (!filterData) return 0;
   let count = 0;
-  const { priorities, requestType, query } = filterData;
+  const {
+    status, priorities, requestType, query,
+  } = filterData;
+  if (status?.value && status.value !== 'in-progress') count += 1;
   if (priorities) {
     const p = priorities.value;
     if (!p.high) count += 1;
