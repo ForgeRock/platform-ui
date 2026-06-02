@@ -10,12 +10,15 @@ import { cloneDeep } from 'lodash';
 import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRouter';
 import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as resourceUtil from '@forgerock/platform-shared/src/utils/governance/resource';
 import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import * as AccountsApi from '@/api/governance/AccountApi';
 import AccountsDetails from './AccountsDetails';
+
+jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 
 jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
   getApplicationTemplateList: jest.fn().mockResolvedValue({}),
@@ -172,5 +175,53 @@ describe('AccountsDetails', () => {
     await flushPromises();
 
     expect(getEntitlementsSpy).toHaveBeenCalledWith(false, 'test', 'app-1', expect.stringContaining('_assignment'), true);
+  });
+
+  it('does not fetch schema when application.id and parseable objectType are absent', async () => {
+    mountComponent();
+    await flushPromises();
+
+    expect(ApplicationsApi.getObjectTypeSchema).not.toHaveBeenCalled();
+  });
+
+  it('fetches schema using keys.accountId when present', async () => {
+    ApplicationsApi.getObjectTypeSchema.mockResolvedValue({
+      data: { properties: { __NAME__: { displayName: 'Username' } } },
+    });
+
+    const account = cloneDeep(testAccount);
+    account.keys = { accountId: 'system/Target/User/102' };
+    account.application.id = 'app1';
+    AccountsApi.getAccountById = jest.fn().mockResolvedValue({ data: account });
+    AccountsApi.getAccountEntitlements = jest.fn().mockResolvedValue({ data: { result: [] } });
+    AccountsApi.getAccountGlossaryAttributesData = jest.fn().mockResolvedValue({});
+    CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({});
+    setupTestPinia();
+    wrapper = mount(AccountsDetails, {
+      global: { plugins: [Notifications], mocks: { $t: (t) => t } },
+    });
+    await flushPromises();
+
+    expect(ApplicationsApi.getObjectTypeSchema).toHaveBeenCalledWith('app1', 'User');
+    expect(wrapper.vm.accountSchema).toEqual({ __NAME__: 'Username' });
+  });
+
+  it('leaves accountSchema empty on schema fetch failure', async () => {
+    ApplicationsApi.getObjectTypeSchema.mockRejectedValue(new Error('fail'));
+
+    const account = cloneDeep(testAccount);
+    account.keys = { accountId: 'system/Target/User/102' };
+    account.application.id = 'app1';
+    AccountsApi.getAccountById = jest.fn().mockResolvedValue({ data: account });
+    AccountsApi.getAccountEntitlements = jest.fn().mockResolvedValue({ data: { result: [] } });
+    AccountsApi.getAccountGlossaryAttributesData = jest.fn().mockResolvedValue({});
+    CommonsApi.getGlossarySchema = jest.fn().mockResolvedValue({});
+    setupTestPinia();
+    wrapper = mount(AccountsDetails, {
+      global: { plugins: [Notifications], mocks: { $t: (t) => t } },
+    });
+    await flushPromises();
+
+    expect(wrapper.vm.accountSchema).toEqual({});
   });
 });

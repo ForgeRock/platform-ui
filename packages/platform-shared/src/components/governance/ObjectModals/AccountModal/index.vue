@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -45,12 +45,17 @@ of the MIT license. See the LICENSE file for details. -->
         :use-existing-glossary="true" />
     </div>
     <div class="pt-0 pb-4 px-4">
+      <FrSpinner
+        v-if="isLoadingSchema"
+        class="py-5" />
       <FrObjectProperties
+        v-else
         @toggle-collapse="isVisible.properties = !isVisible.properties"
         enable-collapse
         :is-collapsed="!isVisible.properties"
         :object-properties="grant?.account || {}"
-        object="accounts" />
+        object="accounts"
+        v-bind="objectTypeSchema ? { schema: objectTypeSchema } : {}" />
     </div>
   </BModal>
 </template>
@@ -62,8 +67,11 @@ import {
   BMedia,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrAccountDetailsTab from '@forgerock/platform-shared/src/views/Governance/Accounts/AccountsDetails/DetailsTab';
 import FrObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
+import { getObjectTypeSchema } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import { getObjectTypeFromAccountId } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 
 export default {
   name: 'AccountModal',
@@ -72,6 +80,7 @@ export default {
     BModal,
     FrAccountDetailsTab,
     FrObjectProperties,
+    FrSpinner,
     FrIcon,
     BMedia,
   },
@@ -91,11 +100,39 @@ export default {
         glossary: true,
         properties: true,
       },
+      isLoadingSchema: false,
+      objectTypeSchema: null,
     };
   },
   computed: {
     accountDisplayName() {
       return this.grant?.descriptor?.idx?.['/account']?.displayName || '';
+    },
+  },
+  watch: {
+    grant: {
+      immediate: true,
+      async handler(grant) {
+        this.objectTypeSchema = null;
+        this.isLoadingSchema = false;
+        if (!grant) return;
+        const applicationId = grant.application?.id;
+        const objectType = getObjectTypeFromAccountId(grant.item, grant.keys, grant.application?.isDisconnected);
+        if (!applicationId || !objectType) return;
+        try {
+          this.isLoadingSchema = true;
+          const { data } = await getObjectTypeSchema(applicationId, objectType);
+          if (grant !== this.grant) return;
+          const properties = data?.properties || {};
+          this.objectTypeSchema = Object.fromEntries(
+            Object.entries(properties).map(([key, val]) => [key, val.displayName || key]),
+          );
+        } catch {
+          // schema is optional — fall back to raw keys
+        } finally {
+          this.isLoadingSchema = false;
+        }
+      },
     },
   },
 };

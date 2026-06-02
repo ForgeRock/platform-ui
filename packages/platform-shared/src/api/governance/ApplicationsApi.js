@@ -213,3 +213,14 @@ export function uploadApplicationData(applicationId, file, objectType, isDeletio
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 }
+
+/**
+ * Fetches the schema for a given object type within an application.
+ *
+ * @param {string} applicationId - The application identifier.
+ * @param {string} objectType - The object type to retrieve the schema for.
+ * @returns {Promise} - A promise that resolves to the object type schema.
+ */
+export function getObjectTypeSchema(applicationId, objectType) {
+  return generateIgaApi().get(`${applicationUrl}/${applicationId}/${objectType}/schema`);
+}

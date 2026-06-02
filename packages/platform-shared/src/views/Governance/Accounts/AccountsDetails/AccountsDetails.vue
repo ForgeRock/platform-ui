@@ -47,6 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
           lazy>
           <FrAccountObjectProperties
             :object-properties="objectProperties"
+            :schema="accountSchema"
           />
         </BTab>
         <BTab
@@ -96,8 +97,9 @@ import { getAccountById, getAccountEntitlements } from '@forgerock/platform-shar
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 import { getEntitlements } from '@forgerock/platform-shared/src/utils/governance/resource';
-import { getAccountAttribute } from '@forgerock/platform-shared/src/utils/governance/entitlements';
+import { getAccountAttribute, getObjectTypeFromAccountId } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
+import { getObjectTypeSchema } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import FrAccountObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
 import FrDetailsTab from './DetailsTab';
 import { getAccountDisplayName } from '../utils/accountUtility';
@@ -118,6 +120,7 @@ const { setBreadcrumb } = useBreadcrumb();
 const route = useRoute();
 const tabIndex = ref(0);
 const account = ref({});
+const accountSchema = ref({});
 const isLoading = ref(true);
 const objectProperties = ref([]);
 const entitlementList = ref([]);
@@ -263,6 +266,19 @@ function tabActivated(index) {
   window.history.pushState(window.history.state, '', `#/accounts/${encodeURIComponent(id)}/${accountsTab}`);
 }
 
+async function getAccountSchema(applicationId, objectType) {
+  if (!applicationId || !objectType) return;
+  try {
+    const { data } = await getObjectTypeSchema(applicationId, objectType);
+    const properties = data?.properties || {};
+    accountSchema.value = Object.fromEntries(
+      Object.entries(properties).map(([key, val]) => [key, val.displayName || key]),
+    );
+  } catch {
+    // schema is optional — fall back to raw keys
+  }
+}
+
 /**
  * Retrieves the account from the API and sets the account data.
 */
@@ -278,6 +294,8 @@ async function getAccount() {
     account.value.displayName = getAccountDisplayName(account.value);
 
     objectProperties.value = data.account || {};
+
+    await getAccountSchema(data.application?.id, getObjectTypeFromAccountId(data.item, data.keys, data.application?.isDisconnected));
   } catch (e) {
     showErrorMessage(e, i18n.global.t('governance.accounts.failedToLoad'));
   } finally {

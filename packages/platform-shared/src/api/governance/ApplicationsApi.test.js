@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,7 @@
 
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
-import { getApplications } from './ApplicationsApi';
+import { getApplications, getObjectTypeSchema } from './ApplicationsApi';
 
 jest.mock('@forgerock/platform-shared/src/api/BaseApi');
 jest.mock('@forgerock/platform-shared/src/utils/encodeQueryString');
@@ -44,6 +44,19 @@ describe('ApplicationsApi', () => {
       expect(result).toEqual(mockResponse);
       expect(encodeQueryString).toHaveBeenCalledWith({});
       expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application');
+    });
+  });
+
+  describe('getObjectTypeSchema', () => {
+    it('should call the correct endpoint with applicationId and objectType', async () => {
+      const mockResponse = { data: { properties: {} } };
+      generateIgaApi.mockReturnValue({
+        get: jest.fn().mockResolvedValue(mockResponse),
+      });
+
+      const result = await getObjectTypeSchema('app1', '__ACCOUNT__');
+      expect(result).toEqual(mockResponse);
+      expect(generateIgaApi().get).toHaveBeenCalledWith('governance/application/app1/__ACCOUNT__/schema');
     });
   });
 });

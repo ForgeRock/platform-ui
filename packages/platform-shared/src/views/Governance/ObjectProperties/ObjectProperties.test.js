@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -72,6 +72,44 @@ describe('ObjectProperties Component', () => {
     expect(propertyFourName.text()).toBe('cn');
     const propertyFourDetail = propertyFour.find('div.col-sm-8');
     expect(propertyFourDetail.text()).toBe('--');
+  });
+
+  it('uses schema display name when provided', async () => {
+    const wrapper = await mountComponent({
+      schema: { displayName: 'Display Name', givenName: 'Given Name' },
+    });
+
+    const propertyOne = wrapper.find('div[name="property-displayName"]');
+    const propertyOneName = propertyOne.find('div.col-sm-4');
+    expect(propertyOneName.text()).toBe('Display Name');
+
+    const propertyTwo = wrapper.find('div[name="property-givenName"]');
+    const propertyTwoName = propertyTwo.find('div.col-sm-4');
+    expect(propertyTwoName.text()).toBe('Given Name');
+  });
+
+  it('falls back to key when schema has no entry', async () => {
+    const wrapper = await mountComponent({
+      schema: { displayName: 'Display Name' },
+    });
+
+    const propertyTwo = wrapper.find('div[name="property-givenName"]');
+    const propertyTwoName = propertyTwo.find('div.col-sm-4');
+    expect(propertyTwoName.text()).toBe('givenName');
+  });
+
+  it('sorts properties alphabetically by resolved display name', async () => {
+    const wrapper = await mountComponent({
+      schema: {
+        displayName: 'ZZZ Name',
+        givenName: 'AAA Name',
+      },
+    });
+
+    // givenName -> 'AAA Name', accountEnabled -> 'accountEnabled', cn -> 'cn', proxyAddresses -> 'proxyAddresses', displayName -> 'ZZZ Name'
+    const rows = wrapper.findAll('.row[name^="property-"]');
+    expect(rows[0].attributes('name')).toBe('property-givenName');
+    expect(rows[rows.length - 1].attributes('name')).toBe('property-displayName');
   });
 
   it('collapse works when enabled', async () => {

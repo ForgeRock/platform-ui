@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,13 +19,13 @@ of the MIT license. See the LICENSE file for details. -->
     <BCollapse :visible="!isCollapsed">
       <div class="mt-4">
         <BRow
-          v-for="(detail, name) in objectProperties"
+          v-for="[name, detail] in sortedProperties"
           :key="name"
           :name="`property-${name}`">
           <BCol
             sm="4"
             class="weight-600">
-            {{ name }}
+            {{ schema[name] || name }}
           </BCol>
           <BCol
             sm="8"
@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 
+import { computed } from 'vue';
 import {
   BCard, BCol, BRow, BCollapse,
 } from 'bootstrap-vue';
@@ -50,7 +51,7 @@ import i18n from '@/i18n';
 /**
   * Object properties display component
   */
-defineProps({
+const props = defineProps({
   objectProperties: {
     type: Object,
     required: true,
@@ -67,9 +68,16 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  schema: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
 const emit = defineEmits(['toggle-collapse']);
+
+const sortedProperties = computed(() => Object.entries(props.objectProperties)
+  .sort(([a], [b]) => (props.schema[a] || a).localeCompare(props.schema[b] || b)));
 </script>
 <style lang="scss" scoped>
 
