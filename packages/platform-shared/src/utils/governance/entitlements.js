@@ -6,6 +6,24 @@
  */
 
 /**
+ * Extracts the object type from an account resource.
+ *
+ * Checks item.objectType first, then falls back to parsing the accountId path:
+ *   Connected app:    system/<app>/<objectType>/<id>  → index 2
+ *   Disconnected app: <app>/<objectType>/<id>         → index 1
+ *
+ * @param {Object} item - The account item object, may contain objectType.
+ * @param {Object} keys - The account keys object containing accountId.
+ * @param {boolean} isDisconnected - Whether the application is disconnected.
+ * @returns {string|undefined} The object type, or undefined if not determinable.
+ */
+export function getObjectTypeFromAccountId(item, keys, isDisconnected) {
+  if (item?.objectType) return item.objectType;
+  const parts = keys?.accountId?.split('/');
+  return isDisconnected !== true ? parts?.[2] : parts?.[1];
+}
+
+/**
  * Retrieves the account attribute from the provided item.
  *
  * The function checks for the `accountAttribute` property in the `item.item` object.

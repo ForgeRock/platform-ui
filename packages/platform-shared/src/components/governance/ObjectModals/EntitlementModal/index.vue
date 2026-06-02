@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -67,12 +67,17 @@ of the MIT license. See the LICENSE file for details. -->
       </BCard>
     </div>
     <div class="pt-0 pb-4 px-4">
+      <FrSpinner
+        v-if="isLoadingSchema"
+        class="py-5" />
       <FrObjectProperties
+        v-else
         @toggle-collapse="isVisible.properties = !isVisible.properties"
         enable-collapse
         :is-collapsed="!isVisible.properties"
         :object-properties="entitlement?.entitlement || {}"
-        object="entitlements" />
+        object="entitlements"
+        v-bind="objectTypeSchema ? { schema: objectTypeSchema } : {}" />
     </div>
   </BModal>
 </template>
@@ -86,9 +91,11 @@ import {
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import FrObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
+import { getObjectTypeSchema } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 
 /**
  * @description  modal component to show entitlement details, this modal is opened when the user clicks the entitlement
@@ -108,6 +115,7 @@ export default {
     BModal,
     FrGlossaryDisplayForm,
     FrObjectProperties,
+    FrSpinner,
     FrIcon,
   },
   props: {
@@ -131,7 +139,35 @@ export default {
         properties: true,
       },
       isTest: false, // only for test purposes, to make the modal static
+      isLoadingSchema: false,
+      objectTypeSchema: null,
     };
+  },
+  watch: {
+    entitlement: {
+      immediate: true,
+      async handler(entitlement) {
+        this.objectTypeSchema = null;
+        this.isLoadingSchema = false;
+        if (!entitlement) return;
+        const applicationId = entitlement.application?.id;
+        const objectType = entitlement.item?.objectType;
+        if (!applicationId || !objectType) return;
+        try {
+          this.isLoadingSchema = true;
+          const { data } = await getObjectTypeSchema(applicationId, objectType);
+          if (entitlement !== this.entitlement) return;
+          const properties = data?.properties || {};
+          this.objectTypeSchema = Object.fromEntries(
+            Object.entries(properties).map(([key, val]) => [key, val.displayName || key]),
+          );
+        } catch {
+          // schema is optional — fall back to raw keys
+        } finally {
+          this.isLoadingSchema = false;
+        }
+      },
+    },
   },
   computed: {
     logo() {

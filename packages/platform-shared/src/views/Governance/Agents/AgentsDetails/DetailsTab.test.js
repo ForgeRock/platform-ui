@@ -10,7 +10,10 @@ import { mockRouter } from '@forgerock/platform-shared/src/testing/utils/mockRou
 import * as AccountApi from '@forgerock/platform-shared/src/api/governance/AccountApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import DetailsTab from './DetailsTab';
+
+jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 
 mockRouter({ params: { accountId: 'system/Target/User/102' } });
 
@@ -59,6 +62,7 @@ function getAgent() {
   const testAccount = {
     id: 'system/Target/User/102',
     application: {
+      id: 'app1',
       name: 'app name',
       templateName: 'aws.bedrock',
       icon: 'test',
@@ -183,6 +187,24 @@ describe('DetailsTab', () => {
 
       const visibleAfterCollapse = cards[2].find('.collapse.show');
       expect(visibleAfterCollapse.exists()).toBe(false);
+    });
+
+    it('fetches account schema using keys.accountId and application.id', async () => {
+      ApplicationsApi.getObjectTypeSchema.mockResolvedValue({
+        data: { properties: { __NAME__: { displayName: 'Username' } } },
+      });
+      await mountComponent('default', false);
+      await flushPromises();
+
+      expect(ApplicationsApi.getObjectTypeSchema).toHaveBeenCalledWith('app1', 'User');
+    });
+
+    it('does not fail when schema fetch errors', async () => {
+      ApplicationsApi.getObjectTypeSchema.mockRejectedValue(new Error('fail'));
+      const wrapper = await mountComponent('default', false);
+      await flushPromises();
+
+      expect(wrapper.vm.accountSchema).toEqual({});
     });
 
     it('agent entity details are populated correctly', async () => {

@@ -27,6 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
       enable-collapse
       :is-collapsed="!isVisible.properties"
       :object-properties="agentData"
+      :schema="accountSchema"
       class="mb-3"
       object="agents" />
     <BCard
@@ -131,6 +132,8 @@ import { getAccountGlossaryAttributesData, saveAccountGlossaryAttributesData } f
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getObjectTypeSchema } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import { getObjectTypeFromAccountId } from '@forgerock/platform-shared/src/utils/governance/entitlements';
 import { getAgentResourcesByIds, getAgentResourceById } from '@forgerock/platform-shared/src/api/governance/AgentApi';
 import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
 import FrAccountObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
@@ -157,6 +160,7 @@ const props = defineProps({
 });
 
 const { bvModal } = useBvModal();
+const accountSchema = ref({});
 const glossarySchema = ref([]);
 const glossaryValues = ref({});
 const updateSchema = computed(() => adjustAccountGlossaryForDisplay(glossaryValues.value.accountType, glossarySchema.value));
@@ -252,9 +256,22 @@ async function getGlossaryValues() {
 /**
  * Get glossary information for the agent
  */
+async function getAccountSchema() {
+  const objectType = getObjectTypeFromAccountId(props.agent.item, props.agent.keys, props.agent.application?.isDisconnected);
+  if (!props.agent.application?.id || !objectType) return;
+  try {
+    const result = await getObjectTypeSchema(props.agent.application.id, objectType);
+    const properties = result?.data?.properties || {};
+    accountSchema.value = Object.fromEntries(
+      Object.entries(properties).map(([key, val]) => [key, val.displayName || key]),
+    );
+  } catch {
+    // schema is optional — fall back to raw keys
+  }
+}
+
 async function getGlossary() {
   try {
-    isLoading.value.all = true;
     const [glossaryValuesResult, glossarySchemaResult] = await Promise.all([
       getGlossaryValues(),
       getGlossarySchema(),
@@ -264,8 +281,6 @@ async function getGlossary() {
     actors.value = await getActorsInfo();
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.glossary.queryAttrError', { resourceType: i18n.global.t('common.agent') }));
-  } finally {
-    isLoading.value.all = false;
   }
 }
 
@@ -359,17 +374,27 @@ async function save() {
     }
     await saveAccountGlossaryAttributesData(props.agent?.keys?.accountId, payload);
     displayNotification('success', i18n.global.t('governance.agents.details.detailsTab.agentSaved'));
-    await getGlossary();
+    closeModal();
+    isLoading.value.all = true;
+    try {
+      await getGlossary();
+    } finally {
+      isLoading.value.all = false;
+    }
   } catch (error) {
     showErrorMessage(error, i18n.global.t('governance.agents.details.detailsTab.agentSaveErrorMessage'));
   } finally {
-    closeModal();
     isSaving.value = false;
   }
 }
 
-onMounted(() => {
-  getGlossary();
+onMounted(async () => {
+  try {
+    isLoading.value.all = true;
+    await Promise.all([getGlossary(), getAccountSchema()]);
+  } finally {
+    isLoading.value.all = false;
+  }
 });
 
 watch(() => agentApplicationProps.value, async () => {
