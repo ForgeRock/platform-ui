@@ -3034,7 +3034,9 @@
       "successDuplicating": "Successfully duplicated email template.",
       "createModal": {
         "title": "New Template"
-      }
+      },
+      "errorTestEmail": "Test email not sent.",
+      "errorTestEmailUnappliedEsvs": "Test email not sent. The following ESVs must be applied in {esvPath} before sending:"
     },
     "provider": {
       "title": "Email Provider",
