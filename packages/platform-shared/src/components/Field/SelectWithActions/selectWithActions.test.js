@@ -6,7 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
-import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findAllByTestId, findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import SelectWithActions from './index';
 
 const defaultProps = {
@@ -26,28 +26,122 @@ const defaultProps = {
 };
 
 describe('SelectWithActions input', () => {
-  it('emits add and edit events', () => {
-    const wrapper = mount(SelectWithActions, {
-      global: {
-        mocks: {
-          $t: () => {},
+  describe('emits add and edit events', () => {
+    let wrapper;
+
+    beforeEach(() => {
+      wrapper = mount(SelectWithActions, {
+        global: {
+          mocks: {
+            $t: () => {},
+          },
         },
-      },
-      props: {
-        ...defaultProps,
-      },
+        props: {
+          ...defaultProps,
+        },
+      });
     });
 
-    wrapper.find('button[aria-label="addButton?"').trigger('click');
+    afterEach(() => {
+      wrapper.unmount();
+    });
 
-    expect(wrapper.emitted()['add-item-clicked']).toBeTruthy();
-    expect(wrapper.emitted()['add-item-clicked'].length).toBe(1);
+    it('emits add-item-clicked when the add button is clicked', () => {
+      findByTestId(wrapper, 'beforeListAddButton').trigger('click');
 
-    wrapper.findAll('button[aria-label="editButton?"')[1].trigger('click');
+      expect(wrapper.emitted()['add-item-clicked']).toBeTruthy();
+      expect(wrapper.emitted()['add-item-clicked'].length).toBe(1);
+    });
 
-    expect(wrapper.emitted()['edit-item-clicked']).toBeTruthy();
-    expect(wrapper.emitted()['edit-item-clicked'].length).toBe(1);
-    expect(wrapper.emitted()['edit-item-clicked'][0][0]).toEqual('ID_b');
+    it('emits edit-item-clicked when the edit button on dropdown option is clicked', () => {
+      findAllByTestId(wrapper, 'editItemButton')[1].trigger('click');
+
+      expect(wrapper.emitted()['edit-item-clicked']).toBeTruthy();
+      expect(wrapper.emitted()['edit-item-clicked'].length).toBe(1);
+      expect(wrapper.emitted()['edit-item-clicked'][0][0]).toEqual('ID_b');
+
+      const selectInput = wrapper.findComponent({ name: 'SelectInput' });
+      expect(selectInput.emitted().open).toBeFalsy();
+    });
+
+    it('emits edit-item-clicked when the edit button on dropdown option is clicked via mouseup', () => {
+      const editButton = findAllByTestId(wrapper, 'editItemButton')[0];
+      editButton.trigger('mouseup');
+      editButton.trigger('click');
+
+      expect(wrapper.emitted()['edit-item-clicked']).toBeTruthy();
+      expect(wrapper.emitted()['edit-item-clicked'].length).toBe(1);
+      expect(wrapper.emitted()['edit-item-clicked'][0][0]).toEqual('ID_a');
+
+      const selectInput = wrapper.findComponent({ name: 'SelectInput' });
+      expect(selectInput.emitted().open).toBeFalsy();
+    });
+
+    it('emits edit-item-clicked when the edit button on dropdown option is clicked via mousedown', () => {
+      const editButton = findAllByTestId(wrapper, 'editItemButton')[1];
+      editButton.trigger('mousedown');
+      editButton.trigger('click');
+
+      expect(wrapper.emitted()['edit-item-clicked']).toBeTruthy();
+      expect(wrapper.emitted()['edit-item-clicked'].length).toBe(1);
+      expect(wrapper.emitted()['edit-item-clicked'][0][0]).toEqual('ID_b');
+
+      const selectInput = wrapper.findComponent({ name: 'SelectInput' });
+      expect(selectInput.emitted().open).toBeFalsy();
+    });
+
+    it('emits add-item-clicked when the add button is clicked via mouseup', () => {
+      const addButton = findByTestId(wrapper, 'beforeListAddButton');
+      addButton.trigger('mouseup');
+      addButton.trigger('click');
+
+      expect(wrapper.emitted()['add-item-clicked']).toBeTruthy();
+      expect(wrapper.emitted()['add-item-clicked'].length).toBe(1);
+    });
+
+    it('emits edit-item-clicked when the edit button on selected label is clicked', async () => {
+      wrapper.setProps({ value: 'ID_a', showCollapsedEdit: true });
+      await wrapper.vm.$nextTick();
+      findByTestId(wrapper, 'labelEditItemButton').trigger('click');
+
+      expect(wrapper.emitted()['edit-item-clicked']).toBeTruthy();
+      expect(wrapper.emitted()['edit-item-clicked'].length).toBe(1);
+      expect(wrapper.emitted()['edit-item-clicked'][0][0]).toEqual('ID_a');
+
+      // Ensure dropdown does not open when edit button is clicked on the selected label
+      const selectInput = wrapper.findComponent({ name: 'SelectInput' });
+      expect(selectInput.emitted().open).toBeFalsy();
+    });
+
+    it('emits edit-item-clicked when the edit button on selected label is clicked via mouseup', async () => {
+      wrapper.setProps({ value: 'ID_a', showCollapsedEdit: true });
+      await wrapper.vm.$nextTick();
+      const labelEditButton = findByTestId(wrapper, 'labelEditItemButton');
+      labelEditButton.trigger('mouseup');
+      labelEditButton.trigger('click');
+
+      expect(wrapper.emitted()['edit-item-clicked']).toBeTruthy();
+      expect(wrapper.emitted()['edit-item-clicked'].length).toBe(1);
+      expect(wrapper.emitted()['edit-item-clicked'][0][0]).toEqual('ID_a');
+
+      const selectInput = wrapper.findComponent({ name: 'SelectInput' });
+      expect(selectInput.emitted().open).toBeFalsy();
+    });
+
+    it('emits edit-item-clicked when the edit button on selected label is clicked via mousedown', async () => {
+      wrapper.setProps({ value: 'ID_a', showCollapsedEdit: true });
+      await wrapper.vm.$nextTick();
+      const labelEditButton = findByTestId(wrapper, 'labelEditItemButton');
+      labelEditButton.trigger('mousedown');
+      labelEditButton.trigger('click');
+
+      expect(wrapper.emitted()['edit-item-clicked']).toBeTruthy();
+      expect(wrapper.emitted()['edit-item-clicked'].length).toBe(1);
+      expect(wrapper.emitted()['edit-item-clicked'][0][0]).toEqual('ID_a');
+
+      const selectInput = wrapper.findComponent({ name: 'SelectInput' });
+      expect(selectInput.emitted().open).toBeFalsy();
+    });
   });
 
   it('sets default props', () => {
