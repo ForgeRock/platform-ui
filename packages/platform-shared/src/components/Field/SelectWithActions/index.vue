@@ -30,7 +30,9 @@ of the MIT license. See the LICENSE file for details. -->
             @event edit-item-clicked
             @property {string} the value (id) of the item to view/edit
           -->
+          <!-- mousedown.stop.prevent: vue-multiselect opens on mousedown; stop+prevent blocks this and avoids the drag-select edge case -->
           <BButton
+            @mousedown.stop.prevent
             @mouseup.stop
             @click.stop="$emit('edit-item-clicked', option.value)"
             v-if="showEdit(option)"
@@ -55,7 +57,9 @@ of the MIT license. See the LICENSE file for details. -->
           Triggered on click, indicates user would like to add an item to the select list
           @event add-item-clicked
         -->
+        <!-- mousedown.stop.prevent: vue-multiselect opens on mousedown; stop+prevent blocks this and avoids the drag-select edge case -->
         <BButton
+          @mousedown.stop.prevent
           @mouseup.stop
           @click.stop="$emit('add-item-clicked')"
           :aria-label="addLabelOrFallback"
@@ -89,7 +93,9 @@ of the MIT license. See the LICENSE file for details. -->
             @event edit-item-clicked
             @property {string} the value (id) of the item to view/edit
           -->
+          <!-- mousedown.stop.prevent: vue-multiselect opens on mousedown; stop+prevent blocks this and avoids the drag-select edge case -->
           <BButton
+            @mousedown.stop.prevent
             @mouseup.stop
             @click.stop="$emit('edit-item-clicked', option.value)"
             v-if="option.value !== '[Empty]'"
@@ -235,7 +241,7 @@ export default {
   top: 0;
   padding-right: 12px;
   z-index: 10;
-  background: transparent;
+  background: $white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
 }
 
