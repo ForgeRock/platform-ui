@@ -157,6 +157,8 @@ body {
 .ping-read-only {
   #appContent>:not(#monitoringContainer) {
     .btn:not([id^='color-picker']):not(.btn-link),
+    /* Hide btn-link delete buttons (ESV, SSL, proxy headers) which bypass the broader .btn rule via the btn-link variant. */
+    .btn-link[id^='btnDelete-'],
     [data-testid='delete-panel'],
     .card-footer {
       display:none;
@@ -171,6 +173,7 @@ body {
   }
   .modal-content {
     .btn:not(.btn-link),
+    .btn-link[id^='btnDelete-'],
     .modal-footer {
       display:none;
     }
