@@ -112,6 +112,17 @@ of the MIT license. See the LICENSE file for details. -->
           </BDropdown>
 
           <slot name="right-content">
+            <span
+              v-if="showResourceCenter"
+              id="fr-pendo-resource-center"
+              class="d-flex align-items-center mr-1 p-2 cursor-pointer"
+              role="button"
+              tabindex="0"
+              :aria-label="$t('pendo.resourceCenterLabel')">
+              <FrIcon
+                icon-class="md-24"
+                name="help_outline" />
+            </span>
             <FrNotification v-if="showNotifications" />
             <li
               v-if="showHelpLink"
@@ -331,6 +342,13 @@ export default {
       default: false,
     },
     /**
+     * Show Pendo Resource Center launcher button.
+     */
+    showResourceCenter: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Show link to view profile
      */
     showProfileLink: {
@@ -376,7 +394,7 @@ export default {
       tenantRegionInfo: 'tenantRegionInfo',
     }),
     hasRightContent() {
-      return this.hasSlot('right-content') || this.showNotifications || this.showHelpLink || this.showDocsLink || this.showDropdown;
+      return this.hasSlot('right-content') || this.showResourceCenter || this.showNotifications || this.showHelpLink || this.showDocsLink || this.showDropdown;
     },
   },
   methods: {

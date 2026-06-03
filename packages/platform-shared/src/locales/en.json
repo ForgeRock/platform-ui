@@ -3472,5 +3472,8 @@
     "removeColumn": "Remove {columnName} column",
     "categories": "Categories",
     "list": "List"
+  },
+  "pendo": {
+    "resourceCenterLabel": "What's New"
   }
 }

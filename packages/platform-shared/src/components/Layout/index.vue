@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         :show-help-link="!isFraas && !isEnduser"
         :show-docs-link="!isFraas && !isEnduser"
         :show-profile-link="!isInternalUser"
+        :show-resource-center="showResourceCenter"
         :tenant-menu-items="tenantMenuItems"
         :docs-link="docsLink"
         help-url="https://backstage.forgerock.com/"
@@ -196,6 +197,13 @@ export default {
     tenantMenuItems: {
       type: Array,
       default: () => [],
+    },
+    /**
+     * Show Pendo Resource Center launcher button in navbar.
+     */
+    showResourceCenter: {
+      type: Boolean,
+      default: false,
     },
     /**
      * Tenant Release info displayed in footer
