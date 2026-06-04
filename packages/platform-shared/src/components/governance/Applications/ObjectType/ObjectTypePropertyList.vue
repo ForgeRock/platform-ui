@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BButton
         class="ml-2"
         variant="outline-primary"
-        @click="$root.$emit('bv::show::modal', 'downloadSchemaModal')">
+        @click="bvModal.show('downloadSchemaModal')">
         <FrIcon
           icon-class="mr-2"
           name="file_download">
