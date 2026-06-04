@@ -811,6 +811,52 @@ describe('Component Test', () => {
       expect(wrapper.vm.componentList[0].callbackSpecificProps.validationImmediate).toBe(false);
       expect(wrapper.vm.componentList[1].callbackSpecificProps.validationImmediate).toBe(true);
     });
+
+    it('sets isRequired to true for NameCallback and PasswordCallback', async () => {
+      const data = {
+        loading: true,
+        step: new FRStep(stepPayload),
+      };
+
+      const wrapper = await mountLogin(data);
+
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      const nameComponent = wrapper.vm.componentList.find((c) => c.callback.getType() === 'NameCallback');
+      const passwordComponent = wrapper.vm.componentList.find((c) => c.callback.getType() === 'PasswordCallback');
+
+      expect(nameComponent.isRequired).toBe(true);
+      expect(passwordComponent.isRequired).toBe(true);
+    });
+
+    it('does not set isRequired for other callback types without a required output', async () => {
+      const step = new FRStep({
+        authId: 'eyxQ',
+        callbacks: [
+          {
+            type: 'StringAttributeInputCallback',
+            output: [
+              { name: 'name', value: 'givenName' },
+              { name: 'prompt', value: 'First Name' },
+              { name: 'required', value: false },
+              { name: 'policies', value: { policyRequirements: [], policies: [] } },
+              { name: 'failedPolicies', value: [] },
+              { name: 'validateOnly', value: false },
+              { name: 'value', value: '' },
+            ],
+            input: [{ name: 'IDToken1', value: '' }],
+          },
+        ],
+      });
+
+      const wrapper = await mountLogin({ loading: true, step });
+
+      wrapper.vm.buildTreeForm();
+      await flushPromises();
+
+      expect(wrapper.vm.componentList[0].isRequired).toBe(false);
+    });
   });
 
   describe('Theming and callbacks', () => {
