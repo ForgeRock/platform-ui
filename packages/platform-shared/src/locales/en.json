@@ -207,6 +207,7 @@
     "journey": "Journey",
     "journeys": "Journeys",
     "JSON": "JSON",
+    "CSV": "CSV",
     "key": "Key",
     "label": "Label",
     "lastChangedDate": "Last Changed Date",
@@ -1503,7 +1504,9 @@
       },
       "deleteUploadTooltip": "This import was for deletion",
       "failuresTitle": "Import Failures",
-      "showSourceData": "View Source"
+      "showSourceData": "View Source",
+      "downloadFailures": "Download Failures",
+      "downloadFailuresTruncated": "Export limited to 10,000 rows. {count} failures were not included."
     },
     "access": {
       "access": "Access",
@@ -1972,6 +1975,14 @@
             "failed": "Failed"
           }
         }
+      }
+    },
+    "unmanagedApplications": {
+      "objectTypesTab": {
+        "downloadSchema": "Download Schema",
+        "downloadSchemaDescription": "Choose the format to download the schema properties.",
+        "downloadSchemaJsonDescription": "Download schema as a JSON file. Compatible with the Import Schema function.",
+        "downloadSchemaCsvDescription": "Download schema as a CSV file."
       }
     },
     "campaignTemplateTypeModal": {

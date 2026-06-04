@@ -1,8 +1,7 @@
-<!-- Copyright 2026 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
     no-body
@@ -63,6 +62,13 @@ to such license between the licensee and ForgeRock AS. -->
                   icon-class="mr-2"
                   name="error_outline">
                   {{ $t('governance.importHistory.viewFailures') }}
+                </FrIcon>
+              </BDropdownItem>
+              <BDropdownItem @click="downloadFailures(item)">
+                <FrIcon
+                  icon-class="mr-2"
+                  name="file_download">
+                  {{ $t('governance.importHistory.downloadFailures') }}
                 </FrIcon>
               </BDropdownItem>
               <BDropdownItem
@@ -193,7 +199,8 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getApplicationUploadFailures } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
-import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
+import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
 import i18n from '@/i18n';
 
 const vBTooltip = VBTooltip;
@@ -385,6 +392,32 @@ function onFailurePageSizeChange(item, size) {
   initFailureState(item);
   failureState[item.id].perPage = size;
   loadFailurePage(item, 1);
+}
+
+async function downloadFailures(item) {
+  const uploadId = getUploadId(item);
+  if (!uploadId) return;
+  try {
+    const { data } = await getApplicationUploadFailures(props.applicationId, uploadId, { pageSize: 10000 });
+    const failures = data?.result || [];
+    if (!failures.length) return;
+
+    const dataKeys = Object.keys(failures.find((f) => f.data)?.data || {});
+    const rows = failures.map((failure) => {
+      const row = Object.fromEntries(dataKeys.map((key) => [key, failure.data?.[key] ?? '']));
+      row[i18n.global.t('governance.importHistory.columns.failureReason')] = parseReasons(failure.message).join('; ');
+      return row;
+    });
+
+    const baseName = (item.name || uploadId).replace(/[^\w.-]/g, '_');
+    const fileName = `${baseName}-failures.csv`;
+    await downloadAsType(rows, 'csv', fileName);
+    if ((data?.totalCount || 0) > 10000) {
+      displayNotification('warning', i18n.global.t('governance.importHistory.downloadFailuresTruncated', { count: data.totalCount - 10000 }));
+    }
+  } catch (error) {
+    showErrorMessage(error, i18n.global.t('governance.importHistory.errorLoadingFailures'));
+  }
 }
 
 async function viewFailures(item) {

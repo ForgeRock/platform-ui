@@ -6,8 +6,6 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     id="downloadSchemaModal"
     size="md"
-    ok-variant="primary"
-    cancel-variant="link"
     title-class="h5"
     title-tag="h2"
     no-close-on-backdrop
@@ -31,8 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BMedia no-body>
             <BMediaBody>
               <h3
-                class="h5"
-                :aria-label="option.title">
+                class="h5">
                 {{ option.title }}
               </h3>
               <div class="d-block">
@@ -58,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
   </BModal>
 </template>
 
-<script>
+<script setup>
 import {
   BButton,
   BCol,
@@ -67,73 +64,57 @@ import {
   BModal,
   BRow,
 } from 'bootstrap-vue';
+import { computed, ref } from 'vue';
 import FrCardRadioInput from '@forgerock/platform-shared/src/components/CardRadioInput';
-import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
+import { downloadAsType, downloadFile } from '@forgerock/platform-shared/src/utils/downloadFile';
+import i18n from '@/i18n';
 
-export default {
-  name: 'DownloadSchemaModal',
-  components: {
-    BButton,
-    BCol,
-    BMedia,
-    BMediaBody,
-    BModal,
-    BRow,
-    FrCardRadioInput,
+const props = defineProps({
+  objectTypeId: {
+    type: String,
+    required: true,
   },
-  props: {
-    objectTypeId: {
-      type: String,
-      required: true,
-    },
-    properties: {
-      type: Object,
-      required: true,
-    },
+  properties: {
+    type: Object,
+    required: true,
   },
-  data() {
-    return {
-      selectedFormat: 'json',
-    };
+});
+
+const selectedFormat = ref('json');
+
+const formatOptions = computed(() => [
+  {
+    value: 'json',
+    title: i18n.global.t('common.JSON'),
+    description: i18n.global.t('governance.unmanagedApplications.objectTypesTab.downloadSchemaJsonDescription'),
   },
-  computed: {
-    formatOptions() {
-      return [
-        {
-          value: 'json',
-          title: this.$t('governance.unmanagedApplications.objectTypesTab.downloadSchemaJson'),
-          description: this.$t('governance.unmanagedApplications.objectTypesTab.downloadSchemaJsonDescription'),
-        },
-        {
-          value: 'csv',
-          title: this.$t('governance.unmanagedApplications.objectTypesTab.downloadSchemaCsv'),
-          description: this.$t('governance.unmanagedApplications.objectTypesTab.downloadSchemaCsvDescription'),
-        },
-      ];
-    },
+  {
+    value: 'csv',
+    title: i18n.global.t('common.CSV'),
+    description: i18n.global.t('governance.unmanagedApplications.objectTypesTab.downloadSchemaCsvDescription'),
   },
-  methods: {
-    resetModal() {
-      this.selectedFormat = 'json';
-    },
-    download(ok) {
-      const fileName = `${this.objectTypeId}-schema`;
-      if (this.selectedFormat === 'json') {
-        const json = JSON.stringify(this.properties, null, 2);
-        const blob = new Blob([json], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.download = `${fileName}.json`;
-        a.href = window.URL.createObjectURL(blob);
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else {
-        const keys = Object.keys(this.properties);
-        const row = Object.fromEntries(keys.map((key) => [key, '']));
-        downloadAsType([row], 'csv', `${fileName}.csv`);
-      }
-      ok();
-    },
-  },
-};
+]);
+
+function resetModal() {
+  selectedFormat.value = 'json';
+}
+
+async function download(ok) {
+  const fileName = `${props.objectTypeId}-schema`;
+  if (selectedFormat.value === 'json') {
+    downloadFile(JSON.stringify(props.properties, null, 2), 'application/json', `${fileName}.json`);
+  } else {
+    const keys = Object.keys(props.properties);
+    const row = Object.fromEntries(keys.map((key) => [key, '']));
+    await downloadAsType([row], 'csv', `${fileName}.csv`);
+  }
+  ok();
+}
+
+defineExpose({
+  download,
+  formatOptions,
+  resetModal,
+  selectedFormat,
+});
 </script>

@@ -8,14 +8,20 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as ApplicationsApi from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
+import { displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import ImportHistory from './ImportHistory';
 
 jest.mock('@/i18n', () => ({
-  global: { t: (k) => k },
+  global: { t: (k, params) => (params ? `${k}:${JSON.stringify(params)}` : k) },
 }));
 jest.mock('@forgerock/platform-shared/src/api/governance/ApplicationsApi');
 jest.mock('@forgerock/platform-shared/src/utils/notification', () => ({
   showErrorMessage: jest.fn(),
+  displayNotification: jest.fn(),
+}));
+jest.mock('@forgerock/platform-shared/src/utils/downloadFile', () => ({
+  downloadAsType: jest.fn(),
 }));
 
 function makeItem(overrides = {}) {
@@ -186,6 +192,104 @@ describe('ImportHistory', () => {
 
       expect(ApplicationsApi.getApplicationUploadFailures).not.toHaveBeenCalled();
       expect(item._showDetails).toBe(false);
+    });
+
+    it('calls getApplicationUploadFailures with pageSize 10000 and downloads a CSV when downloadFailures is clicked', async () => {
+      ApplicationsApi.getApplicationUploadFailures.mockResolvedValue({
+        data: {
+          result: [
+            { data: { firstName: 'John', age: '30' }, message: '["Invalid value"]' },
+            { data: { firstName: 'Jane', age: '' }, message: '["Required field missing"]' },
+          ],
+        },
+      });
+
+      const item = makeItem();
+      const wrapper = setup({ items: [item] });
+      await flushPromises();
+
+      await wrapper.vm.downloadFailures(item);
+      await flushPromises();
+
+      expect(ApplicationsApi.getApplicationUploadFailures).toHaveBeenCalledWith(
+        'app-1',
+        'ext-1',
+        { pageSize: 10000 },
+      );
+      expect(downloadAsType).toHaveBeenCalledWith(
+        [
+          { firstName: 'John', age: '30', 'governance.importHistory.columns.failureReason': 'Invalid value' },
+          { firstName: 'Jane', age: '', 'governance.importHistory.columns.failureReason': 'Required field missing' },
+        ],
+        'csv',
+        'users.csv-failures.csv',
+      );
+    });
+
+    it('does not call getApplicationUploadFailures when uploadId cannot be resolved', async () => {
+      const item = makeItem({ context: { type: 'upload', extractions: [] } });
+      const wrapper = setup({ items: [item] });
+      await flushPromises();
+
+      await wrapper.vm.downloadFailures(item);
+      await flushPromises();
+
+      expect(ApplicationsApi.getApplicationUploadFailures).not.toHaveBeenCalled();
+      expect(downloadAsType).not.toHaveBeenCalled();
+    });
+
+    it('does not call downloadAsType when failures result is empty', async () => {
+      ApplicationsApi.getApplicationUploadFailures.mockResolvedValue({
+        data: { result: [] },
+      });
+
+      const item = makeItem();
+      const wrapper = setup({ items: [item] });
+      await flushPromises();
+
+      await wrapper.vm.downloadFailures(item);
+      await flushPromises();
+
+      expect(downloadAsType).not.toHaveBeenCalled();
+    });
+
+    it('shows a warning notification when totalCount exceeds 10000', async () => {
+      ApplicationsApi.getApplicationUploadFailures.mockResolvedValue({
+        data: {
+          result: [{ data: { firstName: 'John' }, message: '["error"]' }],
+          totalCount: 10500,
+        },
+      });
+
+      const item = makeItem();
+      const wrapper = setup({ items: [item] });
+      await flushPromises();
+
+      await wrapper.vm.downloadFailures(item);
+      await flushPromises();
+
+      expect(displayNotification).toHaveBeenCalledWith(
+        'warning',
+        'governance.importHistory.downloadFailuresTruncated:{"count":500}',
+      );
+    });
+
+    it('does not show a truncation warning when totalCount is within limit', async () => {
+      ApplicationsApi.getApplicationUploadFailures.mockResolvedValue({
+        data: {
+          result: [{ data: { firstName: 'John' }, message: '["error"]' }],
+          totalCount: 5000,
+        },
+      });
+
+      const item = makeItem();
+      const wrapper = setup({ items: [item] });
+      await flushPromises();
+
+      await wrapper.vm.downloadFailures(item);
+      await flushPromises();
+
+      expect(displayNotification).not.toHaveBeenCalled();
     });
 
     it('emits run-delete-detection from action cell click', async () => {
