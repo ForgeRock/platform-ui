@@ -6,28 +6,29 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
+import AdminsApiSteps from './api/AdminsApiSteps';
+import AuthScriptApiSteps from './api/AuthScriptApiSteps';
 import CspApiSteps from './api/CspApiSteps';
+import CustomDomainApiSteps from './api/CustomDomainApiSteps';
+import CustomEndpointApiSteps from './api/CustomEndpointApiSteps';
+import EndUserApiSteps from './api/EndUserApiSteps';
+import EventHookApiSteps from './api/EventHookApiSteps';
+import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
+import JourneyApiSteps from './api/JourneyApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import UserApiSteps from './api/UserApiSteps';
-import CustomDomainApiSteps from './api/CustomDomainApiSteps';
-import EventHookApiSteps from './api/EventHookApiSteps';
-import CustomEndpointApiSteps from './api/CustomEndpointApiSteps';
-import AuthScriptApiSteps from './api/AuthScriptApiSteps';
-import JourneyApiSteps from './api/JourneyApiSteps';
-import EndUserApiSteps from './api/EndUserApiSteps';
-import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
-import AdminsApiSteps from './api/AdminsApiSteps';
 
 export default {
+  admins: AdminsApiSteps,
+  authScripts: AuthScriptApiSteps,
   csp: CspApiSteps,
+  customDomain: CustomDomainApiSteps,
+  customEndpoints: CustomEndpointApiSteps,
+  endUser: EndUserApiSteps,
+  eventHooks: EventHookApiSteps,
+  inviteAdmins: InviteAdminsApiSteps,
+  journey: JourneyApiSteps,
+  journeys: JourneyApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
   user: UserApiSteps,
-  customDomain: CustomDomainApiSteps,
-  eventHooks: EventHookApiSteps,
-  customEndpoints: CustomEndpointApiSteps,
-  authScripts: AuthScriptApiSteps,
-  journeys: JourneyApiSteps,
-  endUser: EndUserApiSteps,
-  inviteAdmins: InviteAdminsApiSteps,
-  admins: AdminsApiSteps,
 };
