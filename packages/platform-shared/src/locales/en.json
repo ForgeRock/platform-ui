@@ -683,7 +683,8 @@
       },
       "updateSuccess": "Updated your profile."
     },
-    "columnResizedAnnounceText": "Column {columnName} resized to {width} pixels"
+    "columnResizedAnnounceText": "Column {columnName} resized to {width} pixels",
+    "columnResizerInstructions": "Resize column {columnName}, use left and right arrow keys to resize the column"
   },
   "dashboard": {
     "managedAccess": {

@@ -229,6 +229,16 @@ describe('ResizableTable directive', () => {
     updateWidthsSpy.mockRestore();
   });
 
+  it('shows tooltip on focus and hides it on blur', () => {
+    ResizableTable.mounted(el, binding);
+    const resizer = getResizer();
+    const tooltip = document.querySelector('.table-resizable__resizer-tooltip');
+    resizer.dispatchEvent(new Event('focus'));
+    expect(tooltip.classList.contains('table-resizable__resizer-tooltip--visible')).toBe(true);
+    resizer.dispatchEvent(new Event('blur'));
+    expect(tooltip.classList.contains('table-resizable__resizer-tooltip--visible')).toBe(false);
+  });
+
   it('applies nowrap class by default and respects wrap option', () => {
     ResizableTable.mounted(el, binding);
     expect(table.parentElement.classList.contains('table-resizable--nowrap')).toBe(true);

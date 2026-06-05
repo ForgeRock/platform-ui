@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -114,6 +114,7 @@ function createResizer(colIndex, columnProps) {
   resizer.setAttribute('aria-orientation', 'vertical');
   resizer.setAttribute('tabindex', '0');
   resizer.setAttribute('aria-label', `Resize column ${colIndex + 1}`);
+  resizer.setAttribute('aria-hidden', 'true');
   if (columnProps.tableId) resizer.setAttribute('aria-controls', columnProps.tableId);
   return resizer;
 }

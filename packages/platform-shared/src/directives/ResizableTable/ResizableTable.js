@@ -22,6 +22,7 @@
  * <table v-resizable-table="{ persistKey: 'my-table' }">...</table>
  */
 
+import i18n from '@/i18n';
 import {
   announceMessage,
   applyFixedTableLayout,
@@ -41,6 +42,8 @@ const RESIZER_CLASS = 'resizer';
 const RESIZING_CLASS = `${TABLE_CLASS}--resizing`;
 const RESIZER_MEASURE_CLASS = `${TABLE_CLASS}__shared-measure-container`;
 const RESIZER_LIVE_REGION_CLASS = `${TABLE_CLASS}__live-region`;
+const RESIZER_TOOLTIP_CLASS = `${TABLE_CLASS}__resizer-tooltip`;
+const RESIZER_TOOLTIP_VISIBLE_CLASS = `${RESIZER_TOOLTIP_CLASS}--visible`;
 const TABLE_NOWRAP_CLASS = `${TABLE_CLASS}--nowrap`;
 const MUTATION_OBSERVER_DEBOUNCE_MS = 200;
 const COLUMN_PROPS_MAP = new Map();
@@ -107,6 +110,7 @@ function createResizableColumn(colIndex, columnProps, table) {
   // Prevent duplicate resizers or columns marked as non-resizable
   if (col.querySelector(`.${RESIZER_CLASS}`) || !isResizableColumn(col.classList)) return;
   const resizer = createResizer(colIndex, columnProps);
+  const columnName = getColumnName(columnProps, colIndex);
   const handlers = getEventHandlers(resizer);
   let startX = 0;
   let startWidth = 0;
@@ -141,7 +145,6 @@ function createResizableColumn(colIndex, columnProps, table) {
       const newWidth = Math.max(columnProps.columnMinWidth, startWidth + dx);
       if (col.style.width !== `${newWidth}px`) {
         updateColumnWidths(colIndex, newWidth, columnProps);
-        const columnName = getColumnName(columnProps, colIndex);
         announceMessage(table.__resizeLiveRegion, columnName, Math.round(newWidth));
       }
     });
@@ -208,7 +211,6 @@ function createResizableColumn(colIndex, columnProps, table) {
     const width = Math.max(columnProps.columnMinWidth, columnWidth + delta);
     if (column.style.width !== `${width}px`) {
       updateColumnWidths(columnIndex, width, columnProps);
-      const columnName = getColumnName(columnProps, columnIndex);
       announceMessage(table.__resizeLiveRegion, columnName, Math.round(width));
     }
     persistCurrentWidths(columnProps);
@@ -228,15 +230,36 @@ function createResizableColumn(colIndex, columnProps, table) {
       }
     }
     updateColumnWidths(colIndex, maxContentWidth, columnProps);
-    const columnName = getColumnName(columnProps, colIndex);
     announceMessage(table.__resizeLiveRegion, columnName, Math.round(maxContentWidth));
     persistCurrentWidths(columnProps);
+  };
+
+  handlers.onFocus = () => {
+    resizer.removeAttribute('aria-hidden');
+    const instructions = i18n.global.t('common.columnResizerInstructions', { columnName });
+    resizer.setAttribute('aria-description', instructions);
+    const tooltip = table.__resizerTooltip;
+    if (!tooltip) return;
+    tooltip.textContent = instructions;
+    const rect = resizer.getBoundingClientRect();
+    tooltip.style.left = `${rect.left + rect.width / 2}px`;
+    tooltip.style.top = `${rect.top - 8}px`;
+    tooltip.style.transform = 'translate(-50%, -100%)';
+    tooltip.classList.add(RESIZER_TOOLTIP_VISIBLE_CLASS);
+  };
+  handlers.onBlur = () => {
+    resizer.removeAttribute('aria-description');
+    resizer.setAttribute('aria-hidden', 'true');
+    const tooltip = table.__resizerTooltip;
+    if (tooltip) tooltip.classList.remove(RESIZER_TOOLTIP_VISIBLE_CLASS);
   };
 
   resizer.addEventListener('mousedown', handlers.onMouseDown);
   resizer.addEventListener('touchstart', handlers.onTouchStart, { passive: false });
   resizer.addEventListener('keydown', handlers.onKeyDown);
   resizer.addEventListener('dblclick', handlers.onDoubleClick);
+  resizer.addEventListener('focus', handlers.onFocus);
+  resizer.addEventListener('blur', handlers.onBlur);
   col.appendChild(resizer);
 }
 
@@ -304,6 +327,13 @@ export default {
     table.parentNode.insertBefore(liveRegion, table);
     table.__resizeLiveRegion = liveRegion;
 
+    // Tooltip element for visual keyboard instructions
+    const tooltip = document.createElement('span');
+    tooltip.classList.add(RESIZER_TOOLTIP_CLASS);
+    tooltip.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(tooltip);
+    table.__resizerTooltip = tooltip;
+
     // Sync on window resize to prevent jump after dev tools open/close
     window.addEventListener('resize', syncColumnWidthsToComputed);
 
@@ -348,6 +378,8 @@ export default {
       resizer.removeEventListener('touchstart', handlers.onTouchStart);
       resizer.removeEventListener('keydown', handlers.onKeyDown);
       resizer.removeEventListener('dblclick', handlers.onDoubleClick);
+      resizer.removeEventListener('focus', handlers.onFocus);
+      resizer.removeEventListener('blur', handlers.onBlur);
       eventHandlers.delete(resizer);
       resizer.remove();
     });
@@ -358,6 +390,10 @@ export default {
     if (table.__resizeLiveRegion) {
       table.__resizeLiveRegion.remove();
       delete table.__resizeLiveRegion;
+    }
+    if (table.__resizerTooltip) {
+      table.__resizerTooltip.remove();
+      delete table.__resizerTooltip;
     }
 
     // Disconnect observer
