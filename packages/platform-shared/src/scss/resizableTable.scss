@@ -88,6 +88,23 @@
   pointer-events: none;
 }
 
+.table-resizable__resizer-tooltip {
+  position: fixed;
+  background: $gray-900;
+  color: $white;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1000;
+  display: none;
+
+  &--visible {
+    display: block;
+  }
+}
+
 .table-resizable__live-region {
   position: absolute;
   left: -9999px;
