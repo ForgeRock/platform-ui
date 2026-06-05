@@ -4110,7 +4110,26 @@
       "title": "MTLS",
       "enable": "Configure",
       "disable": "Configure",
-      "description": "Configure MTLS settings for your tenant"
+      "description": "Configure MTLS settings for your tenant",
+      "mtlsConfigTabName": "MTLS Configuration",
+      "mtlsTrustedCaCertsTabName": "Trusted CA Certificates",
+      "status": {
+        "statusFieldLabel": "Status"
+      },
+      "validationType": {
+        "validationTypeFieldLabel": "Validation Type",
+        "allowMissing": "Allow Missing",
+        "rejectMissing": "Reject Missing"
+      },
+      "configUpdateSuccess": "Config update underway",
+      "confirmUpdateModal": {
+        "confirmUpdateModalTitle": "Confirm Update",
+        "updateConfigText": "Update",
+        "spinnerTextConfigButton": "Updating...",
+        "confirmationWarning": "These updates represent the desired mTLS configuration but do not take effect straight away. The update will be applied immediately but can take some time to propagate to all network resources."
+      },
+      "errorUpdatingMtlsConfig": "Could not update mTLS config",
+      "errorRetrievingMtlsConfig": "Could not retrieve mTLS config"
     },
     "proxyConnect": {
       "title": "Proxy Connect",
