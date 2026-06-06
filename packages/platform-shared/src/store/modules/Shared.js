@@ -57,7 +57,6 @@ const defaultState = {
   pingFederateUrl: null,
   promoteAppsViaApi: false,
   uiConfig: null,
-  uiLocalizationEnabled: false,
   webStorageAvailable: true,
   workforceEnabled: false,
   wsfedEnabled: false,
@@ -254,10 +253,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_AI_AGENTS?.toString() === 'true' || (env.VUE_APP_FRAAS?.toString() === 'true' && !env.VUE_APP_FRAAS_PROMOTION_CONFIG_INGRESS_URL)) {
       state.aiAgentsEnabled = true;
-    }
-
-    if (env.VUE_APP_ENABLE_UI_LOCALIZATION?.toString() === 'true') {
-      state.uiLocalizationEnabled = true;
     }
 
     if (env.VUE_APP_ENABLE_ANALYTICS_REPORT_AI_ASSISTANT?.toString() === 'true') {
