@@ -14,6 +14,7 @@ import {
   isPropertyRequired,
   sanitizePropertyValue,
   removeNullPasswords,
+  prepareValuesForSave,
   createAmForm,
 } from './amSchemaUtils';
 
@@ -196,6 +197,46 @@ describe('amSchemaUtils', () => {
     });
   });
 
+  describe('prepareValuesForSave', () => {
+    const placeholderObject = { $string: '&{am.keystore.default.entry.password}' };
+    const formSchema = [
+      { key: 'clientId', type: 'string' },
+      {
+        key: 'privateKeyPassword', type: 'string', format: 'string', originalValue: placeholderObject,
+      },
+      { key: 'clientSecret', type: 'string', format: 'string' },
+    ];
+    const schemaProperties = {
+      clientId: { type: 'string' },
+      privateKeyPassword: { type: 'string', format: 'password' },
+      clientSecret: { type: 'string', format: 'password' },
+    };
+
+    it('restores placeholder fields to their original object form', () => {
+      const values = { clientId: 'abc', privateKeyPassword: '&{am.keystore.default.entry.password}', clientSecret: undefined };
+      const result = prepareValuesForSave(values, formSchema, schemaProperties);
+      expect(result.privateKeyPassword).toEqual(placeholderObject);
+    });
+
+    it('removes null/undefined password fields', () => {
+      const values = { clientId: 'abc', privateKeyPassword: '&{am.keystore.default.entry.password}', clientSecret: undefined };
+      const result = prepareValuesForSave(values, formSchema, schemaProperties);
+      expect(result).not.toHaveProperty('clientSecret');
+    });
+
+    it('preserves non-placeholder non-password fields unchanged', () => {
+      const values = { clientId: 'abc', privateKeyPassword: '&{am.keystore.default.entry.password}', clientSecret: null };
+      const result = prepareValuesForSave(values, formSchema, schemaProperties);
+      expect(result.clientId).toBe('abc');
+    });
+
+    it('does not mutate the original values object', () => {
+      const values = { clientId: 'abc', privateKeyPassword: '&{am.keystore.default.entry.password}', clientSecret: null };
+      prepareValuesForSave(values, formSchema, schemaProperties);
+      expect(values.privateKeyPassword).toBe('&{am.keystore.default.entry.password}');
+    });
+  });
+
   describe('sanitizePropertyValue', () => {
     it('returns the property default when value is null', () => {
       expect(sanitizePropertyValue({ type: 'string' }, null)).toBe('');
@@ -285,6 +326,46 @@ describe('amSchemaUtils', () => {
       const { schema: result } = createAmForm({ schema: unorderedSchema, values: {} });
       expect(result[0].key).toBe('first');
       expect(result[1].key).toBe('noOrder');
+    });
+
+    describe('placeholder handling', () => {
+      const placeholderObject = { $string: '&{am.keystore.default.entry.password}' };
+      const placeholderSchema = {
+        properties: {
+          clientId: { type: 'string', propertyOrder: 1 },
+          privateKeyPassword: { type: 'string', format: 'password', propertyOrder: 2 },
+        },
+      };
+      const placeholderValues = {
+        clientId: 'my-client',
+        privateKeyPassword: placeholderObject,
+      };
+
+      it('overrides type and format to string for a placeholder-valued password field', () => {
+        const { schema: result } = createAmForm({ schema: placeholderSchema, values: placeholderValues });
+        const field = result.find((f) => f.key === 'privateKeyPassword');
+        expect(field.type).toBe('string');
+        expect(field.format).toBe('string');
+      });
+
+      it('flattens the placeholder object to its display string as the initial value', () => {
+        const { values } = createAmForm({ schema: placeholderSchema, values: placeholderValues });
+        expect(values.privateKeyPassword).toBe('&{am.keystore.default.entry.password}');
+      });
+
+      it('stashes the original placeholder object as originalValue on the schema entry', () => {
+        const { schema: result } = createAmForm({ schema: placeholderSchema, values: placeholderValues });
+        const field = result.find((f) => f.key === 'privateKeyPassword');
+        expect(field.originalValue).toEqual(placeholderObject);
+      });
+
+      it('does not affect non-placeholder fields', () => {
+        const { schema: result, values } = createAmForm({ schema: placeholderSchema, values: placeholderValues });
+        const field = result.find((f) => f.key === 'clientId');
+        expect(field.type).toBe('string');
+        expect(field.originalValue).toBeUndefined();
+        expect(values.clientId).toBe('my-client');
+      });
     });
   });
 });

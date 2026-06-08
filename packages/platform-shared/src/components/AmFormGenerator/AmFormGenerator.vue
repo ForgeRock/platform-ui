@@ -38,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
+import { provide } from 'vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrKeyValueField from '@forgerock/platform-shared/src/components/KeyValueField/KeyValueField';
 import {
@@ -45,6 +46,9 @@ import {
   getSelectFieldOptions,
 } from '@forgerock/platform-shared/src/utils/amSchemaUtils';
 import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+
+// AM-style placeholder fields are displayed as read-only text — no clear button
+provide('showClearField', false);
 
 defineProps({
   /** Processed AM schema array produced by createAmForm. Each entry must have a `key` property. */
