@@ -15,6 +15,13 @@
     "AutoAccessTenantBehavior": "Tenant Authentication Behavior",
     "AutoAccessUserBehavior": "User Authentication Behavior",
     "Authentication": "Authentication",
+    "AuthenticationMethods": "Authentication Methods",
+    "PushAuthentication": "Push Authentication",
+    "PushNotificationDelivery": "Push Notification Delivery",
+    "Totp": "One-time Passcode (TOTP)",
+    "WebauthnVerification": "WebAuthn Verification",
+    "WebauthnProfileEncryption": "WebAuthn Profile Encryption",
+    "DeviceBinding": "Device Binding",
     "BulkImport": "Bulk Import",
     "CampaignDetails": "Campaign Details",
     "CampaignDetailsTask": "Access Reviews",
@@ -140,6 +147,7 @@
     "applications": "Applications",
     "aiAgents": "AI Agents",
     "authentication": "Authentication",
+    "authenticationMethods": "Authentication Methods",
     "authorization": "Authorization",
     "authorizationRole": "Internal Role",
     "authBehavior": "Auth Behavior",
@@ -6054,5 +6062,122 @@
     "noTasksTitle": "No tasks found",
     "subtitle": "View workflow tasks assigned to users.",
     "title": "Workflow Tasks"
+  },
+  "authenticationMethods": {
+    "title": "Authentication Methods",
+    "description": "Configure the authentication methods available for this realm.",
+    "statusOn": "On",
+    "statusOff": "Off",
+    "loadError": "Error retrieving authentication method services",
+    "rows": {
+      "pushAuthentication": "Push Authentication",
+      "pushAuthenticationDescription": "Configure device profile storage, encryption settings, and skip behavior.",
+      "pushNotificationDelivery": "Push Notification Delivery",
+      "pushNotificationDeliveryDescription": "Configure the infrastructure used to deliver push notifications to user devices.",
+      "totp": "One-time Passcode (TOTP)",
+      "totpDescription": "Configure time-based one-time passcodes, including storage, encryption, and behavior settings.",
+      "webauthnVerification": "WebAuthn Verification",
+      "webauthnVerificationDescription": "Configure WebAuthn metadata and encryption for passkeys and security keys.",
+      "webauthnProfileEncryption": "WebAuthn Storage & Encryption",
+      "webauthnProfileEncryptionDescription": "Configure encryption for stored WebAuthn device profile data.",
+      "deviceBinding": "Device Binding",
+      "deviceBindingDescription": "Configure device binding used to associate trusted devices with user identities."
+    }
+  },
+  "pushAuthentication": {
+    "title": "Push Authentication",
+    "description": "Configure device profile storage, encryption settings, and skip behavior.",
+    "emptyState": {
+      "title": "Push Authentication is not enabled",
+      "description": "Enable Push Authentication to configure device profile storage, encryption settings, and skip behavior."
+    },
+    "enableService": "Enable Push Authentication",
+    "enableSuccess": "Push Authentication enabled successfully.",
+    "enableError": "Error enabling Push Authentication.",
+    "saveSuccess": "Push Authentication settings saved successfully.",
+    "saveError": "Error saving Push Authentication settings.",
+    "loadError": "Error loading Push Authentication settings.",
+    "deleteSuccess": "Push Authentication deleted successfully.",
+    "deleteError": "Error deleting Push Authentication."
+  },
+  "pushNotificationDelivery": {
+    "title": "Push Notification Delivery",
+    "description": "Configure the infrastructure used to deliver push notifications to user devices.",
+    "emptyState": {
+      "title": "Push Notification Delivery is not enabled",
+      "description": "Enable Push Notification Delivery to configure the infrastructure used to deliver push notifications to user devices."
+    },
+    "enableService": "Enable Push Notification Delivery",
+    "enableSuccess": "Push Notification Delivery enabled successfully.",
+    "enableError": "Error enabling Push Notification Delivery.",
+    "saveSuccess": "Push Notification Delivery settings saved successfully.",
+    "saveError": "Error saving Push Notification Delivery settings.",
+    "loadError": "Error loading Push Notification Delivery settings.",
+    "deleteSuccess": "Push Notification Delivery deleted successfully.",
+    "deleteError": "Error deleting Push Notification Delivery."
+  },
+  "totp": {
+    "title": "One-time Passcode (TOTP)",
+    "description": "Configure time-based one-time passcodes, including storage, encryption, and behavior settings.",
+    "emptyState": {
+      "title": "One-time Passcode (TOTP) is not enabled",
+      "description": "Enable One-time Passcode (TOTP) to configure time-based one-time passcodes, including storage, encryption, and behavior settings."
+    },
+    "enableService": "Enable One-time Passcode (TOTP)",
+    "enableSuccess": "One-time Passcode (TOTP) enabled successfully.",
+    "enableError": "Error enabling One-time Passcode (TOTP).",
+    "saveSuccess": "One-time Passcode (TOTP) settings saved successfully.",
+    "saveError": "Error saving One-time Passcode (TOTP) settings.",
+    "loadError": "Error loading One-time Passcode (TOTP) settings.",
+    "deleteSuccess": "One-time Passcode (TOTP) deleted successfully.",
+    "deleteError": "Error deleting One-time Passcode (TOTP)."
+  },
+  "webauthnVerification": {
+    "title": "WebAuthn Verification",
+    "description": "Configure WebAuthn metadata and encryption for passkeys and security keys.",
+    "emptyState": {
+      "title": "WebAuthn Verification is not enabled",
+      "description": "Enable WebAuthn Verification to configure WebAuthn metadata and encryption for passkeys and security keys."
+    },
+    "enableService": "Enable WebAuthn Verification",
+    "enableSuccess": "WebAuthn Verification enabled successfully.",
+    "enableError": "Error enabling WebAuthn Verification.",
+    "saveSuccess": "WebAuthn Verification settings saved successfully.",
+    "saveError": "Error saving WebAuthn Verification settings.",
+    "loadError": "Error loading WebAuthn Verification settings.",
+    "deleteSuccess": "WebAuthn Verification deleted successfully.",
+    "deleteError": "Error deleting WebAuthn Verification."
+  },
+  "webauthnProfileEncryption": {
+    "title": "WebAuthn Storage & Encryption",
+    "description": "Configure encryption for stored WebAuthn device profile data.",
+    "emptyState": {
+      "title": "WebAuthn Storage & Encryption is not enabled",
+      "description": "Enable WebAuthn Storage & Encryption to configure encryption for stored WebAuthn device profile data."
+    },
+    "enableService": "Enable WebAuthn Storage & Encryption",
+    "enableSuccess": "WebAuthn Storage & Encryption enabled successfully.",
+    "enableError": "Error enabling WebAuthn Storage & Encryption.",
+    "saveSuccess": "WebAuthn Storage & Encryption settings saved successfully.",
+    "saveError": "Error saving WebAuthn Storage & Encryption settings.",
+    "loadError": "Error loading WebAuthn Storage & Encryption settings.",
+    "deleteSuccess": "WebAuthn Storage & Encryption deleted successfully.",
+    "deleteError": "Error deleting WebAuthn Storage & Encryption."
+  },
+  "deviceBinding": {
+    "title": "Device Binding",
+    "description": "Configure device binding used to associate trusted devices with user identities.",
+    "emptyState": {
+      "title": "Device Binding is not enabled",
+      "description": "Enable Device Binding to configure device binding used to associate trusted devices with user identities."
+    },
+    "enableService": "Enable Device Binding",
+    "enableSuccess": "Device Binding enabled successfully.",
+    "enableError": "Error enabling Device Binding.",
+    "saveSuccess": "Device Binding settings saved successfully.",
+    "saveError": "Error saving Device Binding settings.",
+    "loadError": "Error loading Device Binding settings.",
+    "deleteSuccess": "Device Binding deleted successfully.",
+    "deleteError": "Error deleting Device Binding."
   }
 }

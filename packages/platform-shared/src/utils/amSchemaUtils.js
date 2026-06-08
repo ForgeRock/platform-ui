@@ -10,7 +10,10 @@ import {
   isNumber,
   isBoolean,
 } from 'lodash';
-import { doesValueContainPlaceholder } from '@forgerock/platform-shared/src/utils/esvUtils';
+import {
+  doesValueContainPlaceholder,
+  getPlaceholderValueToDisplay,
+} from '@forgerock/platform-shared/src/utils/esvUtils';
 
 /**
  * Returns true if the given AM schema property represents a password field.
@@ -189,6 +192,54 @@ export const removeNullPasswords = (values, schemaProperties) => Object.entries(
 }, {});
 
 /**
+ * Restores placeholder fields to their original object form (e.g. { "$string": "&{...}" }) before a PUT.
+ * Mirrors AM's revertPlaceholdersToOriginalValue — when createAmForm flattens a placeholder value to
+ * its display string, it stashes the original object on the schema entry. This function restores it so
+ * AM receives the correct typed placeholder object rather than a plain string.
+ * @param {Object} values - The current form values.
+ * @param {Array} formSchema - The processed schema array produced by createAmForm.
+ * @returns {Object} A new values object with placeholder fields restored to their original objects.
+ */
+const restorePlaceholderValues = (values, formSchema) => {
+  const restored = { ...values };
+  formSchema.forEach(({ key, originalValue }) => {
+    if (originalValue !== undefined) {
+      restored[key] = originalValue;
+    }
+  });
+  return restored;
+};
+
+/**
+ * Prepares form values for a PUT request by restoring placeholder objects and removing null password fields.
+ * Mirrors AM's save pipeline: revertPlaceholdersToOriginalValue → removeNullPasswords.
+ * Always use this in place of calling restorePlaceholderValues and removeNullPasswords individually.
+ * @param {Object} values - The current form values.
+ * @param {Array} formSchema - The processed schema array produced by createAmForm.
+ * @param {Object} schemaProperties - The raw AM schema properties map.
+ * @returns {Object} Values ready to send to AM.
+ */
+export const prepareValuesForSave = (values, formSchema, schemaProperties) => removeNullPasswords(
+  restorePlaceholderValues(values, formSchema),
+  schemaProperties,
+);
+
+/**
+ * Applies AM's convertPlaceholderSchemaToReadOnly + flattenPlaceholder logic to a single field:
+ * overrides type/format to plain "string", flattens the placeholder object to its display string,
+ * and stashes the original value for restoration before PUT.
+ * @param {Object} formattedProp - The already-formatted property object (mutated in place).
+ * @param {*} rawValue - The raw value from the backend.
+ * @returns {string} The initial value to use for the field.
+ */
+const applyPlaceholderOverrides = (formattedProp, rawValue) => {
+  formattedProp.type = 'string';
+  formattedProp.format = 'string';
+  formattedProp.originalValue = rawValue;
+  return getPlaceholderValueToDisplay(rawValue);
+};
+
+/**
  * Transforms AM schema and values into a UI-ready form model in a single pass.
  *
  * @param {Object} params - The function parameters.
@@ -212,11 +263,11 @@ export const createAmForm = ({
     // Inclusion filtering uses the raw template value so that enum fields with no
     // template value are still treated as empty (matching AM's getEmptyValueKeys behaviour).
     if (shouldIncludeProperty(prop, rawValue, { showOnlyRequired, showOnlyRequiredAndEmpty })) {
-      acc.filteredSchema.push({
-        ...formatPropertyField(prop),
-        key,
-      });
-      acc.initialValues[key] = initialValue;
+      const formattedProp = { ...formatPropertyField(prop), key };
+      const hasPlaceholder = rawValue !== undefined && rawValue !== null && doesValueContainPlaceholder(rawValue);
+      acc.initialValues[key] = hasPlaceholder ? applyPlaceholderOverrides(formattedProp, rawValue) : initialValue;
+
+      acc.filteredSchema.push(formattedProp);
     }
 
     return acc;
