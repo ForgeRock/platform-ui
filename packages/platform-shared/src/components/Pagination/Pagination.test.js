@@ -542,4 +542,165 @@ describe('Pagination Component', () => {
       expect(wrapper.emitted('on-page-size-change')[0]).toEqual([20]);
     });
   });
+
+  describe('currentPageRows safeguard', () => {
+    function mountPaginationCustom(setup = {}) {
+      return mountPagination(setup, DatasetSize.CUSTOM);
+    }
+
+    describe('effectiveTotalRows computed', () => {
+      it('returns totalRows unchanged when currentPageRows is not provided', () => {
+        const wrapper = mountPaginationCustom({
+          propsData: { totalRows: 100, perPage: 10, value: 1 },
+        });
+        expect(wrapper.vm.effectiveTotalRows).toBe(100);
+      });
+
+      it('returns totalRows unchanged when currentPageRows equals perPage (full page)', () => {
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 100, perPage: 10, value: 1, currentPageRows: 10,
+          },
+        });
+        expect(wrapper.vm.effectiveTotalRows).toBe(100);
+      });
+
+      it('caps to actualRows on page 1 when currentPageRows is less than perPage', () => {
+        // page 1, 3 rows returned, perPage 10 → cappedTotal = (0*10)+3 = 3; min(3, 100) = 3
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 100, perPage: 10, value: 1, currentPageRows: 3,
+          },
+        });
+        expect(wrapper.vm.effectiveTotalRows).toBe(3);
+      });
+
+      it('does not inflate beyond totalRows on a later page', () => {
+        // page 2, 3 rows returned, perPage 10 → cappedTotal = (1*10)+3 = 13; min(13, 11) = 11
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 11, perPage: 10, value: 2, currentPageRows: 3,
+          },
+        });
+        expect(wrapper.vm.effectiveTotalRows).toBe(11);
+      });
+
+      it('no capping when totalRows is 0 (on-demand pagination)', () => {
+        // unknown total, page 2, 3 rows → cappedTotal = (1*10)+3 = 13;
+        // totalRows=0 is on-demand pagination, so no capping to be done.
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 0, perPage: 10, value: 2, currentPageRows: 3,
+          },
+        });
+        expect(wrapper.vm.effectiveTotalRows).toBe(0);
+      });
+    });
+
+    describe('next button disabled when currentPageRows caps pagination', () => {
+      it('disables next button when currentPageRows indicates last page on page 1', async () => {
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 100, perPage: 10, value: 1, currentPageRows: 3,
+          },
+        });
+        await flushPromises();
+        const pagination = wrapper.find('#pagination');
+        const buttons = pagination.findAll('.page-item');
+        // effectiveTotalRows=3, only 1 page → next button disabled
+        const nextButton = buttons.find((b) => b.classes('fr-pagination-next'));
+        expect(nextButton.classes('disabled')).toBe(true);
+      });
+
+      it('disables next button on page 2 when currentPageRows signals last page', async () => {
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 11, perPage: 10, value: 2, currentPageRows: 1,
+          },
+        });
+        await flushPromises();
+        const pagination = wrapper.find('#pagination');
+        const buttons = pagination.findAll('.page-item');
+        const nextButton = buttons.find((b) => b.classes('fr-pagination-next'));
+        expect(nextButton.classes('disabled')).toBe(true);
+      });
+
+      it('does not falsely cap when cappedTotal equals totalRows exactly', async () => {
+        // exact-fit final-page case on a correct backend
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 25, perPage: 10, value: 3, currentPageRows: 5,
+          },
+        });
+
+        await flushPromises();
+
+        const pagination = wrapper.find('#pagination');
+        const buttons = pagination.findAll('.page-item');
+        const nextButton = buttons.find((b) => b.classes('fr-pagination-next'));
+        expect(nextButton.classes('disabled')).toBe(true);
+        expect(wrapper.vm.effectiveTotalRows).toBe(25);
+      });
+
+      it('does not disable next button when currentPageRows equals perPage (more pages ahead)', async () => {
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 100, perPage: 10, value: 1, currentPageRows: 10,
+          },
+        });
+        await flushPromises();
+        const pagination = wrapper.find('#pagination');
+        const buttons = pagination.findAll('.page-item');
+        const nextButton = buttons.find((b) => b.classes('fr-pagination-next'));
+        expect(nextButton.classes('disabled')).toBe(false);
+      });
+
+      it('does not cap when currentPageRows is 0 (empty page)', async () => {
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 100, perPage: 10, value: 3, currentPageRows: 0,
+          },
+        });
+        await flushPromises();
+        expect(wrapper.vm.effectiveTotalRows).toBe(100); // fallbacks to totalRows
+      });
+    });
+
+    describe('dropdown text reflects effectiveTotalRows', () => {
+      it('shows capped total in dropdown text on page 1', () => {
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 100, perPage: 10, value: 1, currentPageRows: 3,
+          },
+        });
+        expect(wrapper.vm.pageMax).toBe(3);
+        expect(wrapper.vm.effectiveTotalRows).toBe(3);
+      });
+
+      it('shows correct pageMax when backend total is higher than actual data on page 2', () => {
+        const wrapper = mountPaginationCustom({
+          propsData: {
+            totalRows: 11, perPage: 10, value: 2, currentPageRows: 3,
+          },
+        });
+        // pageMax = min(value*perPage, effectiveTotalRows) = min(20, 11) = 11
+        expect(wrapper.vm.pageMax).toBe(11);
+        expect(wrapper.vm.effectiveTotalRows).toBe(11);
+      });
+    });
+    it('does not disable next button in on-demand mode when currentPageRows < perPage but lastPage is false', async () => {
+      const wrapper = mountPaginationCustom({
+        propsData: {
+          totalRows: 0, // on-demand pagination
+          perPage: 10,
+          value: 1,
+          currentPageRows: 7,
+          lastPage: false, // still more pages to load
+        },
+      });
+      await flushPromises();
+      const nextButton = wrapper.find('.fr-pagination-next');
+      expect(nextButton.classes('disabled')).toBe(false);
+    });
+  });
 });
