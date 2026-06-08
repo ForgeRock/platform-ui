@@ -22,6 +22,17 @@ of the MIT license. See the LICENSE file for details. -->
 
     <template v-if="step === 0">
       <p>{{ modalDesc }}</p>
+      <div
+        v-if="warningMessage"
+        role="alert"
+        aria-live="polite"
+        class="alert d-flex fr-alert alert-warning">
+        <FrIcon
+          icon-class="mr-2"
+          name="error_outline">
+          {{ warningMessage }}
+        </FrIcon>
+      </div>
 
       <BFormFile
         class="mt-3 mb-4"
@@ -113,8 +124,9 @@ import {
   BModal,
   BFormFile,
 } from 'bootstrap-vue';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import {
   ref,
   computed,
@@ -139,6 +151,13 @@ const props = defineProps({
   itemTypeSingular: {
     type: String,
     required: true,
+  },
+  /**
+   * Optional warning message rendered as an alert below the description
+   */
+  warningMessage: {
+    type: String,
+    default: '',
   },
   /**
    * Function used to validate the item

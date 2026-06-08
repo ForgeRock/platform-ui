@@ -3,9 +3,12 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer fluid>
-    <div class="mt-5">
+  <BContainer
+    fluid
+    :class="{ 'px-0': isEmbedded }">
+    <div :class="{ 'mt-5': !isEmbedded }">
       <FrHeader
+        v-if="!isEmbedded"
         :title="i18n.global.t('common.accounts')"
         :subtitle="i18n.global.t('governance.accounts.subtitle')" />
       <div>
@@ -41,7 +44,9 @@ of the MIT license. See the LICENSE file for details. -->
                   <BCardHeader class="p-0">
                     <BButtonToolbar
                       class="btn-toolbar d-flex flex-row justify-content-between p-3 border-bottom-0 app-toolbar">
-                      <div class="w-50">
+                      <div
+                        v-if="!applicationIds"
+                        class="w-50">
                         <FrApplicationSearch
                           @search:applications="searchApplications"
                           @update:applications="updateApplications"
@@ -49,6 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
                           :application-search-results="applicationSearchResults" />
                       </div>
                       <FrSearchInput
+                        class="ml-auto"
                         v-model="searchQuery"
                         :placeholder="i18n.global.t('common.search')"
                         @clear="clear"
@@ -209,6 +215,17 @@ import accountConstants from './utils/accountConstants';
 import { getAccountTypeVariant, getAccountDisplayName } from './utils/accountUtility';
 import i18n from '@/i18n';
 
+const props = defineProps({
+  isEmbedded: {
+    type: Boolean,
+    default: false,
+  },
+  applicationIds: {
+    type: Array,
+    default: null,
+  },
+});
+
 const router = useRouter();
 const currentPage = ref(1);
 const entriesPerPage = ref(10);
@@ -328,8 +345,9 @@ function getQueryFilterForAccounts(tab) {
   const searchQueryFilter = searchQuery.value
     ? `(user.userName co '${searchQuery.value}' or descriptor.idx./account.displayName co '${searchQuery.value}')`
     : '';
-  const selectedApplicationQueryFilter = selectedApplications.value.length > 0
-    ? `(${selectedApplications.value.map((app) => `application.id eq '${app}'`).join(' or ')})`
+  const activeApplicationIds = props.applicationIds ?? selectedApplications.value;
+  const selectedApplicationQueryFilter = activeApplicationIds.length > 0
+    ? `(${activeApplicationIds.map((app) => `application.id eq '${app}'`).join(' or ')})`
     : '';
 
   const tabQueryFilter = tabItems[tab]?.queryFilter || '';
