@@ -127,6 +127,7 @@ of the MIT license. See the LICENSE file for details. -->
       :prev-class="prevClass"
       :last-page="lastPage"
       :total-rows="tableDataTotalRows"
+      :current-page-rows="tableData.length"
       :dataset-size="datasetSize"
       @input="paginationChange"
       @on-page-size-change="pageSizeChange"

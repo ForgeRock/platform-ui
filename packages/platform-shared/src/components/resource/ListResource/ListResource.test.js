@@ -378,6 +378,22 @@ describe('ListResource Component', () => {
 
       expect(wrapper.vm.paginationPage).toBe(3);
     });
+
+    it('passes tableData.length as current-page-rows to FrPagination', async () => {
+      await wrapper.setProps({ tableData: [{}, {}, {}] });
+
+      const pagination = wrapper.findComponent(FrPagination);
+      expect(pagination.exists()).toBe(true);
+      expect(pagination.props('currentPageRows')).toBe(3);
+    });
+
+    it('current-page-rows updates when tableData changes', async () => {
+      await wrapper.setProps({ tableData: [{}, {}, {}, {}, {}] });
+      expect(wrapper.findComponent(FrPagination).props('currentPageRows')).toBe(5);
+
+      await wrapper.setProps({ tableData: [{}] });
+      expect(wrapper.findComponent(FrPagination).props('currentPageRows')).toBe(1);
+    });
   });
 
   describe('Table column visibility', () => {

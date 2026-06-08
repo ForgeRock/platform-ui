@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       :toggle-attrs="{ 'aria-label': $t('pagination.dropdown.ariaLabel') }"
       :boundary="boundary"
       :disabled="disabled"
-      :text="totalRows > 0 ? $t('pagination.dropdown.text', { pageMin, pageMax, totalRows }) : $t('pagination.dropdown.textUnknownTotalRows', { pageMin, pageMax })"
+      :text="effectiveTotalRows > 0 ? $t('pagination.dropdown.text', { pageMin, pageMax, totalRows: effectiveTotalRows }) : $t('pagination.dropdown.textUnknownTotalRows', { pageMin, pageMax })"
     >
       <BDropdownItem
         v-for="(pageSize, index) in pageSizes"
@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
       :page-class="pageClasses"
       :per-page="perPage"
       :prev-class="['fr-pagination-prev', prevClass]"
-      :total-rows="totalRows > 0 ? totalRows : totalRowsOnDemand"
+      :total-rows="effectiveTotalRows > 0 ? effectiveTotalRows : totalRowsOnDemand"
       :value="value"
       @change="$emit('change', $event)"
       @input="$emit('input', $event)"
@@ -133,6 +133,10 @@ import i18n from '@/i18n';
  * @param {number}    prevClass                 Class to apply to the previous page button, null by default
  * @param {number}    totalRows                 number of total items in the data table, 0 by default
  * @param {number}    value                     actual page index, 1 by default
+ * @param {number}    currentPageRows           actual number of rows returned for the current page. When provided
+ *                                              and less than perPage, totalRows is capped to the highest reachable
+ *                                              row so pagination does not expose pages beyond the available data.
+ *                                              Useful as a safeguard when the backend reports an incorrect total.
  *
  * @fires input
  * @fires on-page-size-change
@@ -171,6 +175,10 @@ export default {
     boundary: {
       type: String,
       default: 'window',
+    },
+    currentPageRows: {
+      type: Number,
+      default: null,
     },
     datasetSize: {
       type: String,
@@ -319,10 +327,29 @@ export default {
      * Re-evaluates navigation button tab reachability whenever pagination state changes using targeted watchers
      */
     value: { handler: 'setNavigationButtonsTabbable', immediate: true },
+    currentPageRows: { handler: 'setNavigationButtonsTabbable', immediate: true },
     totalRows: { handler: 'setNavigationButtonsTabbable', immediate: true },
     perPage: { handler: 'setNavigationButtonsTabbable', immediate: true },
   },
   computed: {
+    /**
+     * @description Caps totalRows to the highest reachable row when the current page returns fewer rows than perPage,
+     * indicating the backend total is inaccurate and data ends earlier than reported assuming there are no further pages with
+    data.
+    *
+    * When totalRows is known (> 0), the cap is only applied if it reduces the total - preventing inflation
+    * on later pages where (page - 1) * perPage + currentPageRows could exceed the reported totalRows.
+    * Note: capping only activates when totalRows > 0, so effectiveTotalRows <= 0 iff totalRows <= 0 —
+    * callers that need to detect "total unknown" (e.g. on-demand mode, last-page button visibility) should read totalRows
+    directly.
+    */
+    effectiveTotalRows() {
+      if (this.currentPageRows !== null && this.currentPageRows > 0 && this.currentPageRows < this.perPage && this.totalRows > 0) {
+        const cappedTotal = (this.value - 1) * this.perPage + this.currentPageRows;
+        return Math.min(cappedTotal, this.totalRows);
+      }
+      return this.totalRows;
+    },
     /**
      * @description Calculates the page class to show or hide the page number buttons
      */
@@ -350,13 +377,13 @@ export default {
      */
     pageMax() {
       const pageRows = this.value * this.perPage;
-      if (this.totalRows > 0 && pageRows >= this.totalRows) {
-        return this.totalRows;
+      if (this.effectiveTotalRows > 0 && pageRows >= this.effectiveTotalRows) {
+        return this.effectiveTotalRows;
       }
       return pageRows;
     },
     /**
-     * @descrition Calculates the total of rows for page when is an on demand pagination, just adds 1 to the current
+     * @description Calculates the total of rows for page when is an on demand pagination, just adds 1 to the current
      * page size to always keep a next page active, it returns the real value of total rows when is the last page.
      */
     totalRowsOnDemand() {
