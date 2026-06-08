@@ -263,7 +263,7 @@ export default {
         },
       ],
       userType: new Map([
-        ['organization', this.$t('governance.organizationAdmin')],
+        ['organization', this.$t('governance.certificationTask.organizationAdmin')],
         ['role', this.$t('pages.access.role')],
       ]),
       variantsByStatus: {

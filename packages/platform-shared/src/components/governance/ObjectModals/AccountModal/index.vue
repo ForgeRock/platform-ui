@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
         no-body>
         <div class="media-body">
           <small class="text-muted">
-            {{ $t('governance.accountDetails') }}
+            {{ $t('governance.accounts.accountDetails') }}
           </small>
           <h2 class="h5 m-0">
             {{ accountDisplayName }}
