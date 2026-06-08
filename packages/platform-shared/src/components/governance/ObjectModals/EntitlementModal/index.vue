@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
           @click="isVisible.glossary = !isVisible.glossary">
           <h1
             class="h5 mb-0">
-            {{ $t(`governance.entitlementDetails`) }}
+            {{ $t(`governance.entitlements.entitlementDetails`) }}
           </h1>
           <FrIcon
             :name="isVisible.glossary ? 'keyboard_arrow_down' : 'chevron_right'"

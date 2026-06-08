@@ -91,18 +91,7 @@
       "errorRetrievingRecommendations": "There was an error retrieving recommended access",
       "loadingWidgetError": "There was an error loading dashboard widgets.",
       "noWidget": "No Widgets Available",
-      "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>.",
-      "widgets": {
-        "welcome": {
-          "greeting": "Hello",
-          "greetingMorning": "Good Morning {name}!",
-          "greetingAfternoon": "Good Afternoon {name}!",
-          "greetingEvening": "Good Evening {name}!",
-          "welcomeMessage": "The End User UI helps users manage their account data, consent, and shared resources.",
-          "welcomeMessageCompact": "Here's a look at what's going on.",
-          "editProfile": "Edit Your Profile"
-        }
-      }
+      "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>."
     },
     "myAccess": {
       "accountName": "Account Name",
@@ -196,7 +185,6 @@
   },
   "sideMenu": {
     "accessReviews": "Access Reviews",
-    "accounts": "Accounts",
     "administer": "Administer",
     "administerEntitlements": "Entitlements",
     "administerUsers": "Users",
@@ -210,8 +198,6 @@
     "inbox": "Inbox",
     "machineAccounts": "My Machine Accounts",
     "myAccess": "My Access",
-    "profile": "Profile",
-    "reports": "Reports",
     "requests": "My Requests",
     "roles": "Roles",
     "tasks": "Tasks",
@@ -226,7 +212,7 @@
     "AdministerEntitlements": "Entitlements",
     "AdministerRoles": "Roles",
     "AdministerUsers": "Users",
-    "Agents":"My Agents",
+    "Agents": "My Agents",
     "AgentsDetails": "Agent Details",
     "Applications": "Applications",
     "ApprovalDetails": "Approval Details",
@@ -256,10 +242,8 @@
     "NotFound": "Not Found",
     "Roles": "Roles",
     "pageTitle": "Platform Enduser - {page}",
-    "Profile": "Profile",
     "ReportHistory": "Run History",
     "ReportRun": "Run Report",
-    "Reports": "Reports",
     "ReportView": "View Report",
     "RequestDetails": "Request Details",
     "RequestFormLauncher": "Request Form",
@@ -276,119 +260,29 @@
   },
   "governance": {
     "accessRequest": {
-      "requestTypes": {
-        "all": "All request types",
-        "applicationGrant": "Grant Application",
-        "applicationRemove": "Remove Application",
-        "entitlementGrant": "Grant Entitlement",
-        "entitlementRemove": "Remove Entitlement",
-        "roleGrant": "Grant Role",
-        "roleRemove": "Remove Role"
-      },
-      "priorities": {
-        "lowPriority": "Low Priority",
-        "mediumPriority": "Medium Priority",
-        "highPriority": "High Priority"
-      },
-      "allRequesters": "All Requesters",
-      "idLabel": "ID: {id}",
-      "myRequests": {
-        "cancelRequest": "Cancel Request",
-        "errorGettingRequests": "There was an error retrieving your requests",
-        "subtitle": "View and take action on your pending access requests."
-      },
       "newRequest": {
         "accessStartDate": "Access Start Date",
         "accessEndDate": "Access End Date",
-        "accessEndDateInvalid": "End date must be after the start date.",
-        "addAccessFor": "Add access for",
-        "added": "Added",
-        "addItems": "Add items to complete request",
-        "addToRequest": "Add to Request",
-        "application": "application",
-        "applyExpirationDate": "Apply Expiration Date (optional)",
-        "catalogSubtitle": "Browse available applications, roles, and entitlements for selected users.",
-        "catalogTitle": "Access Catalog",
-        "chooseUsers": "Choose Users",
-        "clearAll": "Clear all",
-        "completeRequest": "Complete Request",
-        "DUPLICATE": "Request Already Exists",
-        "entitlement": "entitlement",
-        "errorGettingAccessRequests": "There was an error getting current users' access requests",
-        "errorGettingCatalogFilterSchema": "There was an error getting catalog filter schema",
-        "errorValidatingAccessRequests": "There was an error validating this request",
-        "EXISTING_ACCESS": "Access Already Granted",
         "expandRequestCart": "New request menu options",
-        "expiryDate": "Expiry Date",
-        "filterByApplications": "Filter by applications",
-        "filters": "Filters",
-        "itemName": "{item} Name",
-        "itemOwner": "{item} Owner",
-        "itemRemoved": "Requested item removed",
-        "justification": "Justification",
-        "justificationDescription": "Provide a justification for granting this request.",
-        "maximumUsers": "Add a maximum of 10 users.",
         "moreItems": "more items.",
-        "newRequest": "New Request",
-        "noFilterResults": "No results found",
-        "noFilterResultsSubTitle": "Try adjusting applied filters or search keywords",
         "nonRequestable": "Access is not requestable",
-        "noRequestedItemsYet": "No requested items yet",
-        "noResults": "No {item} available",
-        "noResultsSubTitle": "No {item} are available for request for the selected user(s).",
-        "otherUsers": "Other Users",
-        "priority": {
-          "low": "Low",
-          "med": "Medium",
-          "high": "High"
-        },
         "recommendationSubtitle": "Browse the entitlements that have been recommended for you.",
         "recommendationTitle": "Recommended Access",
-        "removeFromRequest": "Remove from Request",
-        "request": "Request",
-        "requestAdded": "Request added",
-        "requestAddError": "The following users either already have the requested item assigned or in a pending request. Choose another item to request for the selected user.",
-        "requestedAccess": "Requested Access",
-        "requesteeRemoved": "Requestee removed",
-        "requestErrorBody": "The following user(s) either already have the requested item assigned or in a pending request. Choose another item to request for the selected user(s).",
-        "requestErrorTitle": "Request Error",
-        "requestingFor": "Requesting for",
-        "requestTypeAccess": "Request {type} Access",
-        "results": "{totalCount} Result | {totalCount} Results",
-        "role": "role",
-        "showIf": "Show if",
         "sodViolation": {
           "violationMessage": "Granting access to these entitlement(s) will result in a Segregation of Duties (SoD) violation",
           "modalTitle": "Violations Found",
           "modalDescription": "The following violations were found when attempting to submit the request.",
           "submitWithViolations": "Submit with Violation"
-        },
-        "title": "New Request",
-        "yourRequest": "Your Request"
+        }
       },
       "userAdminRequests": {
         "subTitle": "View and manage access requests."
-      },
-      "noRequests": "No {status} Access Requests",
-      "requestedFor": "Requested For",
-      "requester": "Requester",
-      "requestDate": "Request Date",
-      "requestedBy": "Requested By",
-      "requestId": "Request ID",
-      "requestType": "Request Type"
+      }
     },
     "administer": {
-      "entitlements": {
-        "title": "Entitlements",
-        "subtitle": "Manage and configure user entitlements across all your configured applications.",
-        "generalSettings": "General Settings",
-        "errorGettingEntitlement": "Error getting entitlement"
-      },
       "roles": {
         "subtitle": "Assign roles to users to give them access.",
         "newRole": "New Role",
-        "entitlements": "Entitlements",
-        "members": "Members",
         "membershipRules": "Membership Rules",
         "noMembersText": "No members exist for this role",
         "successCreate": "Role create request has been submitted successfully",
@@ -398,10 +292,6 @@
         "errorUpdate": "There was an error updating the role update request",
         "errorPublish": "There was an error publishing the role draft",
         "successDelete": "Role delete request submitted successfully"
-      },
-      "users": {
-        "title": "Users",
-        "subtitle": "Create and manage your user identities."
       }
     },
     "approval": {
@@ -409,9 +299,6 @@
       "errorGettingApprovals": "Error getting user approvals",
       "errorGettingPendingApprovals": "Error getting pending approvals number",
       "errorGettingUpdatedItem": "Error getting updated item"
-    },
-    "agents": {
-      "agentId": "Agent ID"
     },
     "delegates": {
       "addDelegates": "Add Delegates",
@@ -440,7 +327,6 @@
       "subtitle": "View your direct reports.",
       "title": "My Direct Reports"
     },
-    "hideFilters": "Hide Filters",
     "machineAccounts": {
       "errorGettingMachineAccounts": "Error getting machine accounts.",
       "errorGettingMachineAccountInfo": "Error getting machine account information.",
@@ -462,8 +348,6 @@
       "submitRequest": "Submit Request",
       "submitting": "Submitting..."
     },
-    "showFilters": "Show Filters",
-    "sortBy": "Sort by",
     "violations": {
       "remediate": {
         "addEntitlements": "Add entitlements to revoke",
@@ -496,12 +380,7 @@
       "title": "Tasks"
     },
     "entitlements": {
-      "entitlementDetails": "Entitlement Details",
-      "chooseApplication": "Choose the application for which to create the entitlement.",
       "chooseEntitlementApplication": "Choose the entitlement's application.",
-      "newEntitlement": "New Entitlement",
-      "newEntitlementTitle": "{appName} {objectType} Entitlement",
-      "createSuccess": "Your request to create an entitlement has been submitted.",
       "modifySuccess": "Your request to modify an entitlement has been submitted.",
       "title": "Entitlements",
       "accountAttribute": "Account Attribute"

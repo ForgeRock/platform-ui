@@ -2,7 +2,6 @@
   "pageTitles": {
     "Accounts": "Accounts",
     "AccountsDetails": "Account Details",
-    "AdministerEntitlements": "Administer Entitlements",
     "Agents": "Agents",
     "AgentsDetails": "Agent Details",
     "AIAgents": "AI Agents",
@@ -101,7 +100,6 @@
     "pageTitle": "Platform Admin - {page}",
     "PasswordPolicy": "Password Policy",
     "PingOneIntegrations": "PingOne Integrations",
-    "Profile": "Profile",
     "Promotion": "Promotion",
     "PromotionAuthentication": "Promotion Authentication",
     "PromotionHistory": "Promotion History",
@@ -114,11 +112,9 @@
     "RemoteConsentService": "Remote Consent Service",
     "ReportHistory": "Run History",
     "ReportRun": "Run Report",
-    "Reports": "Reports",
     "ReportTemplate": "Report Template",
     "ReportView": "View Report",
     "RequestDetails": "Request Details",
-    "Requests": "Requests",
     "RequestTypeDetails": "Request Type Details",
     "Roles": "Roles",
     "Scopes": "Scopes",
@@ -143,7 +139,6 @@
     "WorkflowTasks": "Workflow Tasks"
   },
   "sideMenu": {
-    "accounts": "Accounts",
     "accessManagement": "Access Management",
     "agents": "Agents",
     "applications": "Applications",
@@ -151,7 +146,6 @@
     "authentication": "Authentication",
     "authenticationMethods": "Authentication Methods",
     "authorization": "Authorization",
-    "authorizationRole": "Internal Role",
     "authBehavior": "Auth Behavior",
     "authScripts": "Auth Scripts",
     "bulkImport": "Import",
@@ -162,7 +156,6 @@
     "connect": "Connect",
     "customEndpoints": "Custom Endpoints",
     "customNodes": "Custom Nodes",
-    "dataSources": "Data Sources",
     "email": "Email",
     "entitlements": "Entitlements",
     "externalIdentityProviders": "Identity Providers",
@@ -185,14 +178,11 @@
     "oauth2Provider": "OAuth2 Provider",
     "oauthClients": "OAuth2 Clients",
     "pingOneIntegrations": "PingOne Integrations",
-    "pipelines": "Pipelines",
     "provider": "Provider",
     "provisioners": "Provisioners",
     "provisioningRole": "External Role",
     "realmOverview": "Realm Overview",
     "remoteConsentService": "Remote Consent Service",
-    "reports": "Reports",
-    "risk": "Risk",
     "riskAdministration": "Risk Administration",
     "riskConfig": "Risk Config",
     "roles": "Roles",
@@ -1888,18 +1878,13 @@
       "altText": "Identities Icon",
       "description": "Create and manage object types across applications and IT infrastructure."
     },
-    "managedAccess": {
-      "title": "Manage Access",
-      "description": "Manage how your users can authenticate and gain access to your systems."
-    },
     "managedIdentities": {
       "title": "Manage Identities",
       "description": "Control where, when, and how your users can change their information."
     },
     "welcome": {
       "title": "Ping Identity Platform",
-      "description": "Helps your customers, workforce, and IoT identities access the connected world – safely and simply.",
-      "footer": "Get Started"
+      "description": "Helps your customers, workforce, and IoT identities access the connected world – safely and simply."
     }
   },
   "connectorServers": {
@@ -2106,12 +2091,6 @@
     }
   },
   "pages": {
-    "app": {
-      "notifications": {
-        "noNotifications": "No notifications available",
-        "title": "Notifications"
-      }
-    },
     "identities": {
       "managedIdentities": "Manage Identities",
       "subTitle": "Create and manage identity resources.",
@@ -3172,34 +3151,6 @@
       "tenantAuditorText": "Has read only access to all administrative features.",
       "brandAdmin": "Brand Admin",
       "brandAdminText": "Has access to branding features and can manage the look and feel of the tenant's hosted pages."
-    },
-    "templates": {
-      "duplicateTemplate": "Duplicate Template",
-      "emailTemplate": "Email Template",
-      "emailTemplates": "Email Templates",
-      "subTitle": "Customize email templates for welcome, password reset, and account verification.",
-      "noTemplatesTitle": "You haven't added any email templates yet",
-      "newTemplate": "New Template",
-      "template": "Template",
-      "list": {
-        "displayName": "Name",
-        "description": "Description"
-      },
-      "errorRetrievingList": "Error retrieving email template list.",
-      "errorRetrievingTemplate": "Error retrieving email template.",
-      "errorRetrievingProviderConfig": "Error retrieving email provider config. You may need to set this up.",
-      "errorSaving": "Error saving email template",
-      "errorDeleting": "Error deleting email template",
-      "errorCreating": "Error creating email template",
-      "errorDuplicating": "Error duplicating email template",
-      "successDelete": "Successfully deleted email template.",
-      "successSaving": "Successfully saved email template.",
-      "successDuplicating": "Successfully duplicated email template.",
-      "createModal": {
-        "title": "New Template"
-      },
-      "errorTestEmail": "Test email not sent.",
-      "errorTestEmailUnappliedEsvs": "Test email not sent. The following ESVs must be applied in {esvPath} before sending:"
     },
     "provider": {
       "title": "Email Provider",
@@ -5012,44 +4963,6 @@
         "putAnalyticsSettingsSuccess": "Analytics settings saved successfully"
       }
     },
-    "certification": {
-      "getTemplateFieldValuesError": "There was an error parsing certification template.",
-      "accessReviewHistory": "Access Review History",
-      "activeCampaigns": "Active Campaigns",
-      "activeCampaignsTooltip": "Total active certification campaigns",
-      "activeReviews": "Active Reviews",
-      "activeReviewsTooltip": "Total access reviews currently in-progress",
-      "allOrganizations": "All Organizations",
-      "campaignsByStatus": "Campaigns By Status",
-      "campaignsByType": "Campaigns By Type",
-      "certificationType": "{type} Certification",
-      "certifyUserType": "Certify User {type}",
-      "errors": {
-        "errorDeadline": "Deadline must be a future date"
-      },
-      "expiringCampaigns": "Expiring Campaigns",
-      "expiringCampaignsTooltip": "Total campaigns expiring within the next 2 weeks",
-      "includeChildOrganizations": "Include Child Organizations",
-      "title": "Certification",
-      "subtitle": "Create certification campaigns to certify identities.",
-      "overview": "Overview",
-      "campaigns": "Campaigns",
-      "updateDeadline": "Update Deadline",
-      "noCampaigns": "No {type} Campaigns",
-      "modal": {
-        "activateCampaign": "Activate Campaign?",
-        "activateCampaignDescription": "Are you sure you want to activate this campaign?",
-        "activateCampaignButton": "Activate Campaign",
-        "cancelCampaign": "Cancel Campaign?",
-        "cancelCampaignDescription": "Are you sure you want to cancel this campaign?",
-        "cancelCampaignButton": "Cancel Campaign",
-        "deleteCampaign": "Delete Staged Campaign?",
-        "deleteCampaignDescription": "Are you sure you want to delete this staged campaign?",
-        "deleteCampaignButton": "Delete Campaign",
-        "updateCampaignDeadline": "Update Campaign Deadline",
-        "chooseNewDeadline": "Choose a new deadline for this campaign"
-      }
-    },
     "compliance": {
       "exceptions": {
         "tabTitle": "Exceptions"
@@ -5187,7 +5100,6 @@
     },
     "entitlements": {
       "subtitle": "Manage and configure user entitlements across all your configured applications.",
-      "failedToLoad": "Failed to load entitlements",
       "tabs": {
         "details": "Details",
         "detailsTab": {
@@ -5273,14 +5185,6 @@
         "filterError": "Filter must contain minimum of one before and after condition for each property at same level."
       }
     },
-    "importModal": {
-      "existingError": "A {itemType} with this id already exists.",
-      "genericImportError": "Error parsing import file",
-      "genericValidationError": "Error validating import file",
-      "import": "Import {itemType}",
-      "importingItem": "Importing {itemType}...",
-      "description": "Choose a JSON file containing the {itemType} to import."
-    },
     "glossary": {
       "addGlossaryItem": "Add {glossaryType} Glossary Item",
       "application": "Application",
@@ -5319,18 +5223,6 @@
       "updateAttrError": "Failed to update {resourceType} attribute",
       "updateAttrSuccess": "Successfully updated {resourceType} attribute",
       "user": "User"
-    },
-    "campaignTemplateTypeModal": {
-      "campaignType": "Campaign Type",
-      "chooseType": "Choose the type of campaign template to create.",
-      "entitlementAssignmentCertification": "Entitlement Assignment Certification",
-      "entitlementAssignmentCertificationMessage": "Certify users who have been assigned specified entitlements.",
-      "identityCertificationMessage": "Certify user accounts and entitlements granted on specified applications.",
-      "newCertificationCampaignTemplate": "New Certification Campaign Template",
-      "roleMembershipCertification": "Role Membership Certification",
-      "roleMembershipCertificationMessage": "Certify roles granted to users.",
-      "entitlementCompositionCertification": "Entitlement Composition Certification",
-      "entitlementCompositionCertificationMessage": "Certify the technical details and glossary metadata of entitlements."
     },
     "requests": {
       "requestSettings": {
@@ -5719,40 +5611,6 @@
       "workflow": "Workflow",
       "published": "Published"
     },
-    "templates": {
-      "title": "Templates",
-      "newTemplate": "New Template",
-      "run": "Run",
-      "viewDetails": "View Details",
-      "duplicate": "Duplicate",
-      "template": "Template",
-      "noData": "No Data",
-      "nextRunDate": "Next Run Date",
-      "status": "Status",
-      "pending": "Pending",
-      "unused": "Unused",
-      "runNow": "Run Now",
-      "scheduleCampaign": "Schedule Campaign",
-      "editSchedule": "Edit Schedule",
-      "editTemplate": "Edit Template",
-      "noTemplates": "No Templates",
-      "runPublishedTemplateConfirm": "Are you sure you want to run this campaign now? This will send notifications to all certifiers.",
-      "errors": {
-        "errorDeletingTemplate": "Error deleting template",
-        "errorSavingTemplate": "Error saving template",
-        "errorSearchingTemplates": "Error obtaining existing templates"
-      },
-      "notifications": {
-        "deleteSuccess": "Template deleted successfully",
-        "savingSuccess": "Template saved successfully"
-      },
-      "scheduleModal": {
-        "editSchedule": "Edit Schedule",
-        "runEvery": "Run every",
-        "timeZoneMessage": "Time zone offset based on how many hours a location is from GMT.",
-        "deleteSchedule": "Delete Schedule"
-      }
-    },
     "lcm": {
       "settings": {
         "activateError": "Error activating Governance LCM",
@@ -5821,8 +5679,7 @@
         "constrainValues": "Constrain Values",
         "enumeratedValues": "Enumerated Values",
         "objectType": "Object Type",
-        "applicationObjectType": "Application Object Type",
-        "downloadSchema": "Download Schema"
+        "applicationObjectType": "Application Object Type"
       },
       "listView": {
         "addUnmanagedApp": "New Application",
@@ -5995,7 +5852,6 @@
         }
       },
       "fields": "Fields",
-      "notFound": "Form not found",
       "optionsModal": {
         "addOption": "Add Option",
         "valueDescription": "Option value",
@@ -6013,36 +5869,9 @@
       "getAssigmentGlossaryError": "Error assignments glossary attributes",
       "settings": "Form Settings",
       "types": {
-        "checkbox": {
-          "defaultValue": {
-            "label": "Provide Default Value"
-          },
-          "description": "Checkbox input to accept a single boolean value.",
-          "name": "Checkbox"
-        },
-        "date": {
-          "description": "Date input to accept a single ISO-formatted date stamp.",
-          "name": "Date"
-        },
-        "multiselect": {
-          "description": "Select input to accept multiple strings from a list of enumerated values or freeform text input.",
-          "name": "Multiselect"
-        },
-        "select": {
-          "description": "Select input to accept a single string from a list of enumerated values.",
-          "name": "Select"
-        },
         "string": {
           "description": "Textfield input to accept a single string.",
           "name": "Text"
-        },
-        "text": {
-          "description": "Textfield input to accept a single string.",
-          "name": "Text"
-        },
-        "textarea": {
-          "description": "Text area to accept a multiline string input.",
-          "name": "Textarea"
         },
         "section": {
           "description": "A section is used to group fields together visually.",

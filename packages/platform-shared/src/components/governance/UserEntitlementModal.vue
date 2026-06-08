@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
           fluid />
         <div class="media-body">
           <small class="mb-1 d-block">
-            {{ $t('governance.entitlementDetails') }}
+            {{ $t('governance.entitlements.entitlementDetails') }}
           </small>
           <h2
             v-if="grant"
@@ -53,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BTab
         active
         data-testid="entitlement-details-tab"
-        :title="$t('governance.entitlementDetails')">
+        :title="$t('governance.entitlements.entitlementDetails')">
         <div class="p-4">
           <dl class="row">
             <dt class="col-lg-4">
@@ -138,7 +138,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BTab
         v-if="showAccountTab && grant.account"
         data-testid="entitlement-account-tab"
-        :title="$t('governance.accountDetails')">
+        :title="$t('governance.accounts.accountDetails')">
         <FrContentDetailsTab :content="grant.account" />
       </BTab>
     </BTabs>

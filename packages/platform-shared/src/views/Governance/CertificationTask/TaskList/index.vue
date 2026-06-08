@@ -943,8 +943,8 @@ export default {
     },
     filterButtonLabel() {
       return this.leftPanelExpanded
-        ? this.$t('governance.hideFilters')
-        : this.$t('governance.showFilters');
+        ? this.$t('governance.toolbar.hideFilters')
+        : this.$t('governance.toolbar.showFilters');
     },
   },
   async mounted() {
