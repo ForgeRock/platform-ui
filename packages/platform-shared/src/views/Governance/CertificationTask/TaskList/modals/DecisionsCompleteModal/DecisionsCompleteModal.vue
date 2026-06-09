@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
                   legend-class="decisions-legend"
                   show-legend-count
                   :data="chartDecisions"
-                  :no-data-label="i18n.global.t('governance.certificationTask.noDecisions')"
+                  :no-data-label="i18n.global.t('governance.certificationTask.noDecision')"
                   :height="120"
                   :radius="50"
                   :stroke-width="1"

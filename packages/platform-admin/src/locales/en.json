@@ -604,7 +604,8 @@
       "errorGettingRealmAuthenticationConfig": "There was an error getting realm authentication config",
       "errorSwitchingRealm": "There was an error switching realm",
       "errorLoadingMenusFile": "There was an error loading site configuration",
-      "errorLoadingRoutes": "Error loading route definitions."
+      "errorLoadingRoutes": "Error loading route definitions.",
+      "deleteImportError": "There was an error deleting the import."
     }
   },
   "filters": {
@@ -1017,7 +1018,8 @@
         "contentTitle": "What type of Journey do you want to create?",
         "registration": {
           "title": "Registration / Onboarding",
-          "description": "Enables users to quickly and easily create an account. Captures mandatory information to identify the user and set up an authentication method for their next interaction.  Reduces friction, minimizes abandonment rates."
+          "description": "Enables users to quickly and easily create an account. Captures mandatory information to identify the user and set up an authentication method for their next interaction.  Reduces friction, minimizes abandonment rates.",
+          "authMethodsTitle": "Which authentication methods do you want to enable?"
         },
         "mfa": {
           "title": "Strong Authentication (MFA)",
@@ -1036,7 +1038,8 @@
         },
         "passkeysWebAuthn": {
           "title": "Passkeys (WebAuthn)",
-          "description": "Phishing-resistant, passwordless login using device biometrics (fingerprint/face) or hardware keys. High security & excellent UX. Requires user enrollment."
+          "description": "Phishing-resistant, passwordless login using device biometrics (fingerprint/face) or hardware keys. High security & excellent UX. Requires user enrollment.",
+          "authMethodsTitle": "Configure your Passkeys (WebAuthn) settings"
         },
         "tabTitle": "Archetype"
       },
@@ -1308,7 +1311,8 @@
           }
         }
       }
-    }
+    },
+    "journeyEditFailed": "There was an error updating the journey."
   },
   "customNodes": {
     "title": "Custom Nodes",
@@ -3043,7 +3047,8 @@
     "errorRetrievingDomains": "There was an error retrieving this realm's custom domains",
     "errorSavingDomains": "There was an error saving the custom domains",
     "noDomainMessage": "You haven't added a custom domain for this realm yet",
-    "reverify": "Re-verify"
+    "reverify": "Re-verify",
+    "errorDeletingDomains": "There was an error deleting the custom domain."
   },
   "logApiKeys": {
     "noLogApiKeysText": "You haven't added any log API keys",
@@ -3116,7 +3121,8 @@
       "activateService": "Activate CORS Service?",
       "configAdded": "You've added a CORS configuration but the CORS service is currently deactivated. Do you want to activate the CORS service now?",
       "skipThis": "Skip this"
-    }
+    },
+    "getAllCorsConfigsDataError": "Unable to retrieve CORS configurations."
   },
   "ipAddresses": {
     "title": "IP Addresses",
@@ -3287,7 +3293,8 @@
       "areYouSure": "Are you sure you want to delete this service account?",
       "cancel": "Cancel",
       "confirm": "Delete Service Account",
-      "fail": "Failed to delete Service Account"
+      "fail": "Failed to delete Service Account",
+      "title": "Delete Service Account"
     },
     "regenerateKeyModal": {
       "title": "Regenerate Key",
@@ -4442,7 +4449,8 @@
     "userSpecific": "User-specific",
     "userSpecificHelpText": "Property is specific to individual users and not applicable to roles.",
     "values": "Values",
-    "viewDocs": "View Docs"
+    "viewDocs": "View Docs",
+    "allPropertiesAdded": "All properties have been added."
   },
   "jobs": {
     "allJobs": "All Jobs",
@@ -4751,7 +4759,8 @@
     "syncText": "Syncing Records from External System",
     "viewReport": "View Report",
     "willReconcile": "Will reconcile",
-    "wontReconcile": "Won't reconcile"
+    "wontReconcile": "Won't reconcile",
+    "cancelReconFail": "There was an error canceling the reconciliation."
   },
   "rules": {
     "actionDescription": "Choose an action to perform in this situation.",

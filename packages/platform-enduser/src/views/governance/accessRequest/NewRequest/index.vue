@@ -641,7 +641,7 @@ export default {
               this.$router.push({ name: 'MyRequests' });
             }
           } catch (error) {
-            this.showErrorMessage(error, this.$t('governance.request.errorCheckingSod'));
+            this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorCheckingSod'));
           }
         } else {
           await saveNewRequest(payload);

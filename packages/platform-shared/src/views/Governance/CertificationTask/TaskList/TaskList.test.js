@@ -939,7 +939,7 @@ describe('TaskList', () => {
       wrapper.vm.openUserModal(id);
       await flushPromises();
 
-      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.certificationTask.error.getUserError');
+      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.certificationTask.errors.getUserError');
     });
 
     it('openApplicationModal sets application data and opens application modal', async () => {
@@ -1102,7 +1102,7 @@ describe('TaskList', () => {
 
       await flushPromises();
 
-      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.certificationTask.error.addCommentErrorDefaultMessage');
+      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.certificationTask.errors.addCommentErrorDefaultMessage');
     });
 
     it('openReviewersModal sets reviewer data and opens view reviewers modal', async () => {

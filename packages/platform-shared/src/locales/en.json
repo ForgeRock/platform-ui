@@ -790,7 +790,8 @@
     "savingObject": "Error saving {object}",
     "updatingMappingsFail": "Unable to update mappings",
     "userScriptError": "Invalid script provided. Please refer to the documentation for valid scripts.",
-    "invalidFields": "There are invalid fields in the form. Please correct them before proceeding."
+    "invalidFields": "There are invalid fields in the form. Please correct them before proceeding.",
+    "errorDeleting": "There was an error deleting."
   },
   "filterModal": {
     "activeApplied": "No filters applied | {count} filter applied | {count} filters applied",
@@ -1062,7 +1063,8 @@
       "unableToEditModalTitle": "Unable to Edit Device Name",
       "unableToEditModalText": "Unable to edit this device name. Please sign in with this device in order to edit it.",
       "unableToDeleteModalTitle": "Unable to Delete Device",
-      "unableToDeleteModalText": "Unable to delete this device. Please sign in with this device in order to delete it."
+      "unableToDeleteModalText": "Unable to delete this device. Please sign in with this device in order to delete it.",
+      "loadError": "There was an error loading authentication devices."
     },
     "dashboard": {
       "widgets": {
@@ -1131,7 +1133,7 @@
         "editModalTitle": "Edit Device Name",
         "editModalInput": "Device name",
         "editSuccess": "Device name saved",
-        "googleMapsLocaltionImgAlt": "Google Maps Location",
+        "googleMapsLocationImgAlt": "Google Maps Location",
         "os": "Operating System",
         "recentActivity": "Recent Activity",
         "remove": "Remove device",
@@ -1142,8 +1144,9 @@
         "updateDeviceAliasError": "There was an error updating device alias.",
         "loadDevicesError": "There was an error retrieving devices.",
         "deviceDetails": "Device Details",
-        "removeConfirmationMessage": "Are you sure you want to remove from <strong>{username}\u2019s</strong> profile?",
-        "unknown": "Unknown"
+        "removeConfirmationMessage": "Are you sure you want to remove from <strong>{username}’s</strong> profile?",
+        "unknown": "Unknown",
+        "removeDevicesError": "There was an error removing devices."
       },
       "accountControls": {
         "title": "Account Controls",
@@ -2059,7 +2062,8 @@
         "deleteCampaignButton": "Delete Campaign",
         "updateCampaignDeadline": "Update Campaign Deadline",
         "chooseNewDeadline": "Choose a new deadline for this campaign"
-      }
+      },
+      "getFilterSchemaError": "There was an error loading the filter configuration."
     },
     "certificationDetails": {
       "accessReviewsLink": "View Access Reviews",
@@ -2246,7 +2250,7 @@
         "errorLoadingProvisionedCount": "There was an error loading the provisioned agent count",
         "errorLoadingResource": "There was an error loading the {resource} resource.",
         "errorLoadingResources": "There was an error loading resources",
-        "errorSearchingAccounts": "There was an error searching agents"
+        "errorSearchingAgents": "There was an error searching agents."
       },
       "guardrails": "Guardrails",
       "guardrailsDetails": "Guardrail Details",
@@ -3191,7 +3195,10 @@
       "supportedFormats": "Supports: JSON (.json)",
       "chooseDifferentFile": "Choose a Different File",
       "invalidFileType": "Invalid file type. Please select a JSON file.",
-      "invalidJson": "This file doesn't look like a report template. Please export a report template and try again."
+      "invalidJson": "This file doesn't look like a report template. Please export a report template and try again.",
+      "dropFileHere": "Drop file here",
+      "dropzoneLabel": "File upload dropzone",
+      "fileInputLabel": "Choose file to import"
     },
     "subtitle": "The following reports are based on pre-configured queries on events and provide insights in an easily understandable format.",
     "search": "Search reports",
