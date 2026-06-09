@@ -2628,6 +2628,9 @@
       },
       "accountsTab": {
         "accountAssigned": "Account successfully assigned",
+        "addAccountError": "Error adding account.",
+        "addApplication": "Add Application",
+        "assignApplicationTitle": "Assign Application",
         "accountType": "Account Type",
         "accountTypeAlreadyAssigned": "This application is already assigned with this account type. Choose a different account type.",
         "accountTypeDescription": "Type of account to assign these users.",
@@ -2649,6 +2652,7 @@
         "errorRevokingAccount": "Error revoking account.",
         "errorUpdatingAccount": "Error updating account.",
         "noAccounts": "No accounts found.",
+        "noApplications": "No Applications",
         "revokeModalBody": "Are you sure you want to revoke this account?",
         "revokeModalTitle": "Revoke Account",
         "revokeSuccess": "Account successfully revoked.",
