@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="p-4 flex-grow-1 overflow-auto h-100">
     <BContainer
@@ -96,7 +95,7 @@ export default {
     getCertificationTemplates('', { fields: 'name', pageSize: 10000 }).then(({ data }) => {
       this.currentTemplateNamesList = data.result.map((item) => item.name).filter((item) => item !== this.value?.name);
     }).catch((error) => {
-      this.showErrorMessage(error, this.$t('tenantSettings.details.errorSearchingTemplates'));
+      this.showErrorMessage(error, this.$t('governance.templates.errors.errorSearchingTemplates'));
     });
   },
   watch: {

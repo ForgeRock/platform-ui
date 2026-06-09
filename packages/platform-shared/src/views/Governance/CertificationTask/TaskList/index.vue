@@ -1554,7 +1554,7 @@ export default {
         this.displayNotification('success', this.$t('governance.certificationTask.lineItemAddCommentModal.addCommentSuccessfullyMessage'));
         this.$bvModal.hide(this.getModalId('add-comment'));
       }).catch((error) => {
-        this.showErrorMessage(error, this.$t('governance.certificationTask.error.addCommentErrorDefaultMessage'));
+        this.showErrorMessage(error, this.$t('governance.certificationTask.errors.addCommentErrorDefaultMessage'));
       });
     },
     deleteReviewer(reviewerId, closeModal) {
@@ -1827,26 +1827,26 @@ export default {
           this.$bvModal.show('GovernanceUserDetailsModal');
         })
         .catch((error) => {
-          this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
+          this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserError'));
         });
 
       // Get entitlements details
       getUserDetailsByType(this.campaignId, lineItemId, 'entitlements').then(({ data }) => {
         this.currentUserEntitlementsDetails = data;
       }).catch((error) => {
-        this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+        this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserEntitlementsError'));
       });
       // Get accounts details
       getUserDetailsByType(this.campaignId, lineItemId, 'accounts').then(({ data }) => {
         this.currentUserAccountsDetails = data;
       }).catch((error) => {
-        this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+        this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserEntitlementsError'));
       });
       // Get roles details
       getUserDetailsByType(this.campaignId, lineItemId, 'roles').then(({ data }) => {
         this.currentUserRolesDetails = data;
       }).catch((error) => {
-        this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+        this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserEntitlementsError'));
       });
     },
     openAccountModal(item) {
