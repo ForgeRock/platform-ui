@@ -192,6 +192,62 @@ export function detectApplicationDeletes(applicationId, objectTypeId, { uploadId
 }
 
 /**
+ * Fetches a task by name for a given application.
+ *
+ * @param {string} applicationId - The application ID.
+ * @param {string} name - The task name.
+ * @returns {Promise} - A promise that resolves to the task object.
+ */
+export function getApplicationTask(applicationId, name) {
+  return generateIgaApi().get(`${applicationUrl}/${applicationId}/task/${encodeURIComponent(name)}`);
+}
+
+/**
+ * Upserts an application task by name (create or update).
+ *
+ * @param {string} applicationId - The application ID.
+ * @param {Object} payload - The task payload.
+ * @returns {Promise} - A promise that resolves to the saved task object.
+ */
+export function saveApplicationTask(applicationId, payload) {
+  return generateIgaApi().post(`${applicationUrl}/${applicationId}/task?_action=create`, payload);
+}
+
+/**
+ * Triggers immediate execution of a named task.
+ *
+ * @param {string} applicationId - The application ID.
+ * @param {string} name - The task name.
+ * @param {boolean} [preserveDate=true] - Whether to preserve the existing scheduled date.
+ * @returns {Promise} - A promise that resolves when the trigger is accepted.
+ */
+export function triggerApplicationTask(applicationId, name, preserveDate = true) {
+  return generateIgaApi().post(`${applicationUrl}/${applicationId}/task/${encodeURIComponent(name)}?_action=trigger${preserveDate ? '&preserveDate=true' : ''}`);
+}
+
+/**
+ * Deletes a named task for a given application.
+ *
+ * @param {string} applicationId - The application ID.
+ * @param {string} name - The task name.
+ * @returns {Promise} - A promise that resolves when the task is deleted.
+ */
+export function deleteApplicationTask(applicationId, name) {
+  return generateIgaApi().delete(`${applicationUrl}/${applicationId}/task/${encodeURIComponent(name)}`);
+}
+
+/**
+ * Fetches the schema for a given object type within an application.
+ *
+ * @param {string} applicationId - The application identifier.
+ * @param {string} objectType - The object type to retrieve the schema for.
+ * @returns {Promise} - A promise that resolves to the object type schema.
+ */
+export function getObjectTypeSchema(applicationId, objectType) {
+  return generateIgaApi().get(`${applicationUrl}/${applicationId}/${objectType}/schema`);
+}
+
+/**
  * Uploads a CSV file of application data for a given application.
  *
  * @param {string} applicationId - The application ID.
@@ -212,15 +268,4 @@ export function uploadApplicationData(applicationId, file, objectType, isDeletio
   return generateIgaApi().post(`${applicationUrl}/${applicationId}${params}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
-}
-
-/**
- * Fetches the schema for a given object type within an application.
- *
- * @param {string} applicationId - The application identifier.
- * @param {string} objectType - The object type to retrieve the schema for.
- * @returns {Promise} - A promise that resolves to the object type schema.
- */
-export function getObjectTypeSchema(applicationId, objectType) {
-  return generateIgaApi().get(`${applicationUrl}/${applicationId}/${objectType}/schema`);
 }

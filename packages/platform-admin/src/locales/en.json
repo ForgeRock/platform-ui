@@ -5647,6 +5647,49 @@
             "failed": "Failed"
           }
         }
+      },
+      "correlationTab": {
+        "navLabel": "Settings",
+        "title": "Account Correlation",
+        "thisApplication": "this application",
+        "userNoun": "user",
+        "emptyTitle": "No Correlation Rule",
+        "emptyDescription": "Configure a correlation rule to automatically link accounts to managed identities.",
+        "configureButton": "Configure Correlation",
+        "accountAttribute": "Account Attribute",
+        "accountAttributeDescription": "The {objectTypeName} property to match against.",
+        "userAttribute": "User Attribute",
+        "userAttributeDescription": "The Ping Identity property to match against.",
+        "overwrite": "Overwrite Existing Links",
+        "overwriteDescription": "If enabled, accounts already linked to a different user will be re-linked to the matched user.",
+        "recurring": "Run on a Schedule",
+        "recurringDescription": "Automatically re-run correlation on a recurring schedule.",
+        "interval": "Frequency",
+        "intervals": {
+          "hourly": "Hourly",
+          "daily": "Daily",
+          "weekly": "Weekly",
+          "custom": "Custom"
+        },
+        "customInterval": "Custom frequency (ms)",
+        "customIntervalDescription": "Minimum 3,600,000 ms (1 hour).",
+        "nextRun": "Next run",
+        "lastRan": "Last ran",
+        "noDate": "Not scheduled",
+        "currentlyRunning": "Currently running",
+        "setRunDate": "Set new run date",
+        "runNow": "Run Now",
+        "saveSuccess": "Correlation rule saved successfully.",
+        "saveError": "There was an error saving the correlation rule.",
+        "loadError": "There was an error loading the correlation rule.",
+        "runSuccess": "Correlation job triggered successfully.",
+        "runError": "There was an error triggering the correlation job.",
+        "status": {
+          "pending": "Pending",
+          "in-progress": "In Progress",
+          "complete": "Complete",
+          "failed": "Failed"
+        }
       }
     }
   },
