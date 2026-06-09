@@ -60,7 +60,17 @@ to such license between the licensee and ForgeRock AS. -->
               :translated-item-type="$t('applications.application')"
               @delete-item="deleteApp" />
           </BTab>
-
+          <BTab
+            class="mt-4"
+            :title="$t('governance.applications.edit.objectTypesTab.title')">
+            <FrObjectTypes
+              v-if="applicationDetails"
+              :application-id="applicationDetails.id"
+              :logo-source="logoSource"
+              :object-types="applicationDetails.objectTypes || []"
+              @object-type-added="loadApplication"
+              @object-type-deleted="loadApplication" />
+          </BTab>
           <BTab
             class="mt-4"
             :title="$t('common.accounts')">
@@ -114,6 +124,7 @@ import {
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import FrApplicationDetailsPanel from '@forgerock/platform-shared/src/components/governance/Applications/ApplicationDetailsPanel';
 import FrAccounts from '@forgerock/platform-shared/src/views/Governance/Accounts/Accounts';
+import FrObjectTypes from '@forgerock/platform-shared/src/components/governance/Applications/ObjectType/ObjectTypes';
 import FrUnmanagedApplicationImport from '@forgerock/platform-shared/src/components/governance/Applications/UnmanagedApplicationImport';
 import i18n from '@/i18n';
 
@@ -165,7 +176,7 @@ const props = defineProps({
   },
 });
 
-const tabs = ['details', 'accounts', 'import'];
+const tabs = ['details', 'object-types', 'accounts', 'import'];
 
 const router = useRouter();
 const { setBreadcrumb } = useBreadcrumb();
