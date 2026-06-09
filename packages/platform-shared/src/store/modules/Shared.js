@@ -44,7 +44,6 @@ const defaultState = {
   hasAmUrl: false,
   helixEnvironmentId: '',
   helixEnvironmentUrl: '',
-  analyticsHelixEnvironmentId: '',
   idmBaseURL: '',
   idmOnly: false,
   igaApiUrl: null,
@@ -124,20 +123,22 @@ const mutations = {
         }
       }
 
-      if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true' || env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
-        state.journeyAIAgentVersion = env.VUE_APP_HELIX_JOURNEY_AGENT_VERSION;
+      if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true' || env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true' || env.VUE_APP_ENABLE_ANALYTICS_REPORT_AI_ASSISTANT?.toString() === 'true') {
         state.helixEnvironmentUrl = getFQDN(env.VUE_APP_HELIX_ENVIRONMENT_URL);
         state.helixEnvironmentId = env.VUE_APP_HELIX_ENVIRONMENT_ID;
+      }
+
+      if (env.VUE_APP_ENABLE_JOURNEY_AI?.toString() === 'true' || env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
+        state.journeyAIAgentVersion = env.VUE_APP_HELIX_JOURNEY_AGENT_VERSION;
 
         if (env.VUE_APP_ENABLE_AI_DEV?.toString() === 'true') {
           state.aiDevEnabled = true;
           state.journeyAIBuildAgentVersion = env.VUE_APP_HELIX_JOURNEY_BUILD_AGENT_VERSION;
         }
       }
+
       if (env.VUE_APP_ENABLE_ANALYTICS_REPORT_AI_ASSISTANT?.toString() === 'true') {
         state.analyticsReportsAiAgentVersion = env.VUE_APP_HELIX_ANALYTICS_AGENT_VERSION || 'draft';
-        state.helixEnvironmentUrl = getFQDN(env.VUE_APP_HELIX_ENVIRONMENT_URL);
-        state.analyticsHelixEnvironmentId = env.VUE_APP_HELIX_ANALYTICS_ENVIRONMENT_ID;
       }
 
       if (env.VUE_APP_ENABLE_GOVERNANCE?.toString() === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV?.toString() === 'true') {
