@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,7 +10,6 @@ of the MIT license. See the LICENSE file for details. -->
     :static="isTesting"
     title-tag="div"
     :hide-header-close="step === 1"
-    no-close-on-esc
     no-close-on-backdrop
     @ok="$emit('success')"
     @show="initialize">

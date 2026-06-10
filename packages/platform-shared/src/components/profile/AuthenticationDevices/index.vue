@@ -101,7 +101,6 @@ of the MIT license. See the LICENSE file for details. -->
       <BModal
         ref="fsModal"
         no-close-on-backdrop
-        no-close-on-esc
         :title="modalInfo.title"
         title-class="h5"
         title-tag="h2"

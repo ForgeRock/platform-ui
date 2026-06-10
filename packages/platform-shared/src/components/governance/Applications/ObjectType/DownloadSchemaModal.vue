@@ -9,7 +9,6 @@ of the MIT license. See the LICENSE file for details. -->
     title-class="h5"
     title-tag="h2"
     no-close-on-backdrop
-    no-close-on-esc
     :title="$t('governance.unmanagedApplications.objectTypesTab.downloadSchema')"
     @hidden="resetModal">
     <div class="modal-container mt-2">

@@ -124,7 +124,6 @@ of the MIT license. See the LICENSE file for details. -->
       cancel-variant="link"
       id="addMembersToEntitlementModal"
       no-close-on-backdrop
-      no-close-on-esc
       title-class="h5"
       title-tag="h2"
       :ok-disabled="newMembers.length === 0"
@@ -146,7 +145,6 @@ of the MIT license. See the LICENSE file for details. -->
       id="removeMembersModal"
       ref="removeMembersModal"
       no-close-on-backdrop
-      no-close-on-esc
       title-class="h5"
       title-tag="h2"
       cancel-variant="outline-secondary"

@@ -306,7 +306,6 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       id="revoke-from-role-modal"
       no-close-on-backdrop
-      no-close-on-esc
       :title="$t('governance.access.revokeEntitlement', itemsToRevoke.length)">
       {{ $t('governance.access.confirmRevokeEntitlement', itemsToRevoke.length) }}
       <template #modal-footer="{ cancel }">
@@ -328,7 +327,6 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       :id="`${modalId}-request`"
       no-close-on-backdrop
-      no-close-on-esc
       :title="$t('governance.access.requestEntitlement')">
       {{ $t('governance.access.confirmRequestEntitlement') }}
       <template #modal-footer="{ cancel }">

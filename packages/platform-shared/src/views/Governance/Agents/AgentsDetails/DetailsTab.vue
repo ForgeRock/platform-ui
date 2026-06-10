@@ -86,7 +86,6 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     id="UpdateAgentModal"
     no-close-on-backdrop
-    no-close-on-esc
     size="lg"
     title-class="h5"
     title-tag="h2"

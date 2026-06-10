@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,13 +10,13 @@ of the MIT license. See the LICENSE file for details. -->
       id="add-user-modal"
       size="lg"
       no-close-on-backdrop
-      no-close-on-esc
       title-class="h5"
       title-tag="h2"
       :static="isTesting"
       :title="$t('governance.user.newUser')"
       @show="initializeModal"
-      @hidden="resetModal">
+      @hidden="resetModal"
+      @hide="handleEscHide">
       <!-- body -->
       <FrSpinner
         v-if="isLoadingForm"
@@ -55,6 +55,9 @@ of the MIT license. See the LICENSE file for details. -->
           @click="nextStep(ok)" />
       </template>
     </BModal>
+    <FrEscConfirmModal
+      :id="escConfirmId"
+      @ok="confirmDiscard" />
   </VeeForm>
 </template>
 <script setup>
@@ -70,7 +73,9 @@ import { convertRelationshipPropertiesToRef } from '@forgerock/platform-shared/s
 import { requestTypes } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import { useGovernanceStore } from '@forgerock/platform-shared/src/stores/governance';
 import useForm from '@forgerock/platform-shared/src/composables/governance/forms';
+import useEscConfirm from '@forgerock/platform-shared/src/composables/escConfirm';
 import FrAddUserForm from '@forgerock/platform-shared/src/components/governance/DefaultLCMForms/User/AddUserForm';
+import FrEscConfirmModal from '@forgerock/platform-shared/src/components/EscConfirmModal/EscConfirmModal';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrFormBuilder from '@forgerock/platform-shared/src/components/FormEditor/FormBuilder';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
@@ -84,6 +89,7 @@ defineProps({
   },
 });
 
+const { handleEscHide, confirmDiscard, escConfirmId } = useEscConfirm('add-user-modal');
 const { schema, setSchema } = useGovernanceStore();
 const {
   isLoadingForm,

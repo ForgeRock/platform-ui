@@ -15,11 +15,10 @@ of the MIT license. See the LICENSE file for details. -->
         size="lg"
         cancel-variant="outline-secondary"
         no-close-on-backdrop
-        no-close-on-esc
         :title="modalTitle"
         title-tag="h2"
         :title-class="modalTitleClass"
-        @hide="hideModal"
+        @hide="handleEscHide"
         @hidden="onModalHidden"
         @show="initialiseData"
         :body-class="[{ 'p-0' : stepIndex > -1 || enablePostSaveStep }]">
@@ -177,6 +176,9 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </component>
     </slot>
+    <FrEscConfirmModal
+      :id="escConfirmId"
+      @ok="confirmDiscard" />
   </component>
 </template>
 
@@ -207,6 +209,7 @@ import { Form as VeeForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
+import FrEscConfirmModal from '@forgerock/platform-shared/src/components/EscConfirmModal/EscConfirmModal';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
@@ -217,6 +220,7 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 import { setFieldError } from '@forgerock/platform-shared/src/utils/veeValidateUtils';
+import createEscConfirm from '@forgerock/platform-shared/src/utils/escConfirm';
 import CustomStep from './CustomStep/index';
 
 /**
@@ -244,6 +248,7 @@ export default {
     BModal,
     FrButtonWithSpinner,
     FrCustomStep: CustomStep,
+    FrEscConfirmModal,
     FrField,
     FrIcon,
     FrListField,
@@ -313,6 +318,7 @@ export default {
   },
   mounted() {
     if (!this.isModal) this.initialiseData();
+    Object.assign(this, createEscConfirm('createResourceModal', this.$bvModal));
   },
   watch: {
     passwordValue(newVal) {

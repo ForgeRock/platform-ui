@@ -16,7 +16,6 @@ of the MIT license. See the LICENSE file for details. -->
     body-class="p-0"
     cancel-variant="link"
     no-close-on-backdrop
-    no-close-on-esc
     ok-variant="primary"
     scrollable
     size="lg">

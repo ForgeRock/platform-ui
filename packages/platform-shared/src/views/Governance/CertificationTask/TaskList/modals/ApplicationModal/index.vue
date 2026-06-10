@@ -8,7 +8,6 @@ of the MIT license. See the LICENSE file for details. -->
     content-class="border-0"
     :id="modalId"
     no-close-on-backdrop
-    no-close-on-esc
     ok-only
     ok-variant="outline-primary"
     size="xl"

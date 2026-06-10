@@ -9,7 +9,6 @@ of the MIT license. See the LICENSE file for details. -->
     scrollable
     :id="modalId"
     no-close-on-backdrop
-    no-close-on-esc
     ok-only
     ok-variant="outline-primary"
     size="xl"

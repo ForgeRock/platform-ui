@@ -76,7 +76,6 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       cancel-variant="link"
       no-close-on-backdrop
-      no-close-on-esc
       ref="roleFiltersModal"
       :title="$t('governance.accessModeling.filters.filterRoles')">
       <div class="pb-2">

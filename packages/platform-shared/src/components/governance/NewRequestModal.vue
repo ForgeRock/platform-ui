@@ -7,7 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     id="NewRequestModal"
     size="lg"
     no-close-on-backdrop
-    no-close-on-esc
     cancel-variant="link"
     title-class="h5"
     title-tag="h2"

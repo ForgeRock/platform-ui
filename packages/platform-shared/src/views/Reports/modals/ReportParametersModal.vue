@@ -8,14 +8,14 @@ of the MIT license. See the LICENSE file for details. -->
     as="span">
     <BModal
       no-close-on-backdrop
-      no-close-on-esc
       size="lg"
       title-class="h5"
       title-tag="h2"
       :id="modalId"
       :static="isTesting"
       :title="$t('reports.template.addAParameter')"
-      @hidden="resetValues">
+      @hidden="resetValues"
+      @hide="handleEscHide">
       <BFormGroup>
         <FrField
           v-model="parameterName"
@@ -211,6 +211,9 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
     </BModal>
+    <FrEscConfirmModal
+      :id="escConfirmId"
+      @ok="confirmDiscard" />
   </VeeForm>
 </template>
 
@@ -235,12 +238,14 @@ import {
 } from 'bootstrap-vue';
 import { getTranslation } from '@forgerock/platform-shared/src/utils/translations';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
+import FrEscConfirmModal from '@forgerock/platform-shared/src/components/EscConfirmModal/EscConfirmModal';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import useEscConfirm from '@forgerock/platform-shared/src/composables/escConfirm';
 import i18n from '@/i18n';
 
 // Definitions
-const emit = defineEmits(['update-parameter']);
+const emit = defineEmits(['hidden', 'update-parameter']);
 const props = defineProps({
   basicParameterTypes: {
     type: Array,
@@ -274,6 +279,7 @@ const enumeratedValues = ref([{
   value: '',
 }]);
 const modalId = 'report-parameters-modal';
+const { handleEscHide, confirmDiscard, escConfirmId } = useEscConfirm(modalId);
 const parameterName = ref('');
 const inputTypeParameter = ref('basic');
 const parameterInputTypeOptions = [
@@ -297,6 +303,7 @@ const optional = ref(false);
 const showEnumeratedValues = ref(false);
 
 // Functions
+
 function addEnumeratedValue(index) {
   enumeratedValues.value.splice(index + 1, 0, {
     name: '',

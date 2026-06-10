@@ -11,7 +11,6 @@ of the MIT license. See the LICENSE file for details. -->
     :visible="isTesting"
     :static="isTesting"
     no-close-on-backdrop
-    no-close-on-esc
     @shown="onModalShown()"
     @hidden="resetModal()"
     @ok="$emit('toggle-item', item, requestData)">

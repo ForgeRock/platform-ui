@@ -120,7 +120,6 @@ of the MIT license. See the LICENSE file for details. -->
       :ref="(e) => addEntitlementsModal = e"
       :static="isTesting"
       no-close-on-backdrop
-      no-close-on-esc
       :title="$t('common.addObject', { object: $t('common.entitlements') })"
       size="lg"
       @close="hideEntitlementModal()">
@@ -173,8 +172,7 @@ of the MIT license. See the LICENSE file for details. -->
       id="removeEntitlementsModal"
       :ref="(e) => removeEntitlementsModal = e"
       :title="$t('pages.access.removeModalTitle')"
-      no-close-on-backdrop
-      no-close-on-esc>
+      no-close-on-backdrop>
       <div>
         {{ $t('pages.access.removeConfirm', { type: $t('common.entitlements') }) }}
       </div>

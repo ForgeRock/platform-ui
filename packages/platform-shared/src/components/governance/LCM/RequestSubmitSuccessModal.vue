@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,7 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     id="successful-submit"
     size="lg"
     no-close-on-backdrop
-    no-close-on-esc
     title-class="h5"
     title-tag="h2"
     header-class="p-3"

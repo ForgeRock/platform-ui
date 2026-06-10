@@ -92,7 +92,6 @@ of the MIT license. See the LICENSE file for details. -->
         cancel-variant="link"
         id="add-comment-modal"
         no-close-on-backdrop
-        no-close-on-esc
         ok-variant="primary"
         size="lg"
         title-class="h5"

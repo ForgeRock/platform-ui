@@ -81,7 +81,6 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <BModal
       no-close-on-backdrop
-      no-close-on-esc
       ok-only
       size="lg"
       :ok-title="$t('common.done')"

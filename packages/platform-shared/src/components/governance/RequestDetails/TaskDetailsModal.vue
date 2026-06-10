@@ -7,7 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     :ok-title="$t('common.done')"
     id="TaskDetailsModal"
     no-close-on-backdrop
-    no-close-on-esc
     ok-only
     ok-variant="outline-primary"
     scrollable
