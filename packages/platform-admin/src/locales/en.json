@@ -114,6 +114,7 @@
     "RealmOverview": "Realm Overview",
     "Recommendations": "Recommendations",
     "RelationshipEdit": "Edit Relationship",
+    "RemoteConsentService": "Remote Consent Service",
     "ReportHistory": "Run History",
     "ReportRun": "Run Report",
     "Reports": "Reports",
@@ -192,6 +193,7 @@
     "provisioners": "Provisioners",
     "provisioningRole": "External Role",
     "realmOverview": "Realm Overview",
+    "remoteConsentService": "Remote Consent Service",
     "reports": "Reports",
     "risk": "Risk",
     "riskAdministration": "Risk Administration",
@@ -526,6 +528,22 @@
         "issuerDeleted": "Scripted JWT Issuer deleted.",
         "deleteError": "Unable to delete Scripted JWT Issuer."
       }
+    },
+    "remoteConsentService": {
+      "deleteError": "There was an error deleting the Remote Consent Service",
+      "deleteSuccess": "Remote Consent Service deleted",
+      "description": "Configure how consent requests are sent to an external consent service during authorization flows.",
+      "emptyState": {
+        "description": "Enable to configure how consent requests are sent to an external consent service during authorization flows.",
+        "title": "Remote Consent Service is not enabled"
+      },
+      "enableError": "There was an error enabling the Remote Consent Service",
+      "enableService": "Enable Remote Consent Service",
+      "enableSuccess": "Remote Consent Service enabled",
+      "loadError": "There was an error loading the Remote Consent Service",
+      "saveError": "There was an error saving the Remote Consent Service",
+      "saveSuccess": "Remote Consent Service saved",
+      "title": "Remote Consent Service"
     }
   },
   "connect": {
