@@ -82,6 +82,13 @@
   /* Code */
   --code-color: #{$code-color};
 	--code-bg: #{$fr-code-bg};
+  --script-editor-heading-bg: #{$fr-script-editor-heading-bg};
+  --script-editor-heading-color: #{$fr-script-editor-heading-color};
+  --script-editor-heading-border: #{$fr-script-editor-heading-border};
+  --script-editor-vars-color: #{$fr-script-editor-vars-color};
+  --script-editor-vars-bg: #{$fr-script-editor-vars-bg};
+  --script-editor-vars-input-bg: #{$fr-script-editor-vars-input-bg};
+  --script-editor-code-bg: #{$fr-script-editor-code-bg};
 
 	/* Links */
 	--link-color: #{$link-color};
@@ -379,6 +386,13 @@
   /* Code */
   --code-color: #{$dk-code-color};
 	--code-bg: #{$dk-fr-code-bg};
+  --script-editor-heading-bg: #{$dk-fr-script-editor-heading-bg};
+  --script-editor-heading-color: #{$dk-fr-script-editor-heading-color};
+  --script-editor-heading-border: #{$dk-fr-script-editor-heading-border};
+  --script-editor-vars-color: #{$dk-fr-script-editor-vars-color};
+  --script-editor-vars-bg: #{$dk-fr-script-editor-vars-bg};
+  --script-editor-vars-input-bg: #{$dk-fr-script-editor-vars-input-bg};
+  --script-editor-code-bg: #{$dk-fr-script-editor-code-bg};
 
   /* Links */
 	--link-color: #{$dk-link-color};
@@ -645,6 +659,14 @@ hr, dd {
     text-decoration: var(--alert-link-text-decoration) !important;
   }
 
+  &.alert-primary,
+  &.callout-primary {
+    border-left: 5px solid var(--primary) !important;
+    background-color: var(--alert-primary-bg-color) !important;
+    .alert-link {
+        color: var(--alert-primary-link-color) !important;
+    }
+  }
   &.alert-success,
   &.callout-success {
     border-left: 5px solid var(--success) !important;

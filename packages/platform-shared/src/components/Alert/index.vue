@@ -126,7 +126,7 @@ export default {
     }
 
     &.alert-primary {
-      border-left: 5px solid $primary;
+      border-left: 5px solid var(--primary);
       background-color: var(--alert-primary-bg-color);
       color: var(--alert-text-color);
     }

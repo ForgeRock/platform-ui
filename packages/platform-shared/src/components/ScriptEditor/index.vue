@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -552,27 +552,32 @@ export default {
   }
 
   .fr-script-editor-vars {
-    background-color: #1a1e22;
+    background-color: var(--script-editor-vars-bg);
     border-top: 1px solid $black;
-    color: $gray-400;
+    color: var(--script-editor-vars-color);
     .btn-link,
     .h6 {
-      color: $gray-400;
+      color: var(--script-editor-vars-color) !important;
     }
   }
 
   .form-control.form-control-dark {
     color: $white;
-    background-color: #30373f;
+    background-color: var(--script-editor-vars-input-bg);
     border-color: $gray-800;
   }
   .dark-heading {
-    background-color: $gray-900;
-    color: $gray-300;
-    border-bottom: 1px solid $gray-800 !important;
+    background-color: var(--script-editor-heading-bg);
+    color: var(--script-editor-heading-color) !important;
+    border-bottom: 1px solid var(--script-editor-heading-border) !important;
+
+    label {
+      color: var(--script-editor-heading-color) !important;
+      font-weight: 600;
+    }
   }
   .dark-heading-copy {
-    color: $gray-300;
+    color: var(--script-editor-heading-color) !important;
   }
   #buttonCopy {
     font-size: 15px;
