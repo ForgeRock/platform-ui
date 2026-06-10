@@ -352,7 +352,6 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       id="ShowDescription"
       no-close-on-backdrop
-      no-close-on-esc
       ok-only
       ok-variant="outline-primary"
       size="lg"

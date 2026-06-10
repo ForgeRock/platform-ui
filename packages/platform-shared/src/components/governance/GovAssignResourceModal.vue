@@ -10,7 +10,6 @@ of the MIT license. See the LICENSE file for details. -->
       cancel-variant="outline-secondary"
       :id="modalId"
       no-close-on-backdrop
-      no-close-on-esc
       size="lg"
       :static="isTesting"
       @hidden="stepIndex = STEPS.ChooseApplication"

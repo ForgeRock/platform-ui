@@ -194,7 +194,6 @@ of the MIT license. See the LICENSE file for details. -->
       id="deleteRolesModal"
       :ref="(e) => deleteRolesModal = e"
       no-close-on-backdrop
-      no-close-on-esc
       :title="$t('pages.access.removeModalTitle')"
       cancel-variant="outline-secondary"
       ok-variant="danger"

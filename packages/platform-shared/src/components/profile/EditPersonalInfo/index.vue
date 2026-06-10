@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
     title-tag="h2"
     :title="title"
     @show="setModal"
+    @hide="handleEscHide"
     :static="isTesting">
     <!-- Editing profile currently only supports String, Number and Boolean-->
     <BContainer
@@ -78,6 +79,9 @@ of the MIT license. See the LICENSE file for details. -->
       </BButton>
     </template>
   </BModal>
+  <FrEscConfirmModal
+    :id="escConfirmId"
+    @ok="confirmDiscard" />
 </template>
 
 <script>
@@ -103,9 +107,11 @@ import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import FrEscConfirmModal from '@forgerock/platform-shared/src/components/EscConfirmModal/EscConfirmModal';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
+import createEscConfirm from '@forgerock/platform-shared/src/utils/escConfirm';
 import { setFieldError } from '@forgerock/platform-shared/src/utils/veeValidateUtils';
 
 /**
@@ -127,6 +133,7 @@ export default {
     BFormGroup,
     BModal,
     BRow,
+    FrEscConfirmModal,
     FrField,
     FrListField,
   },
@@ -158,9 +165,20 @@ export default {
       default: false,
     },
   },
+  created() {
+    const escConfirm = createEscConfirm('userDetailsModal', this.$bvModal);
+    this.escConfirmId = escConfirm.escConfirmId;
+    this.confirmDiscard = escConfirm.confirmDiscard;
+    this.handleEscHide = (bvEvent) => {
+      if (this.formFields.length > 6) escConfirm.handleEscHide(bvEvent);
+    };
+  },
   data() {
     return {
+      confirmDiscard: null,
+      escConfirmId: '',
       formFields: [],
+      handleEscHide: null,
       originalFormFields: [],
       title: this.$t('pages.profile.editProfile.userDetailsTitle'),
     };

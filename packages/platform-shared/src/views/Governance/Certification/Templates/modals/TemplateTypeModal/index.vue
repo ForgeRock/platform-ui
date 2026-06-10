@@ -7,7 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     id="CampaignTemplateTypeModal"
     cancel-variant="link"
     no-close-on-backdrop
-    no-close-on-esc
     size="lg"
     title-class="h5"
     title-tag="h2"

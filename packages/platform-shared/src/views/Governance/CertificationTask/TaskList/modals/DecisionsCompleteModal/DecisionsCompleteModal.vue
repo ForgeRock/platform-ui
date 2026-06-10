@@ -9,7 +9,6 @@ of the MIT license. See the LICENSE file for details. -->
     title-class="h5"
     title-tag="h2"
     no-close-on-backdrop
-    no-close-on-esc
     :title="i18n.global.t('governance.certificationTask.actionsModal.completeDecisionsModalTitle')"
     :static="isTesting"
     @hidden="step = STEPS.DETAILS">

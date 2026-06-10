@@ -7,7 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     id="add-filter"
     size="lg"
     no-close-on-backdrop
-    no-close-on-esc
     title-class="h5"
     title-tag="h2"
     header-class="p-3"

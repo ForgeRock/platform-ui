@@ -10,7 +10,6 @@ of the MIT license. See the LICENSE file for details. -->
     footer-class="justify-content-between"
     :id="modalId"
     no-close-on-backdrop
-    no-close-on-esc
     scrollable
     size="lg">
     <template #modal-header="{ close }">

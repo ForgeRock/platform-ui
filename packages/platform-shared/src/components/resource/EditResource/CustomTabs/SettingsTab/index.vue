@@ -30,7 +30,6 @@ of the MIT license. See the LICENSE file for details. -->
       id="settingsModal"
       ref="settingsModal"
       size="lg"
-      :no-close-on-esc="true"
       :title="editProperty.title"
       @hidden="disableSave = false">
       <div>

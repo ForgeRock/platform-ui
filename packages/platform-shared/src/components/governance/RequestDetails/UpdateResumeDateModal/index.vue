@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,7 +9,6 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       id="UpdateResumeDateModal"
       no-close-on-backdrop
-      no-close-on-esc
       size="lg"
       title-class="h5"
       title-tag="h2"

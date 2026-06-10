@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,7 +6,6 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     id="edit-trusted-device-modal"
     no-close-on-backdrop
-    no-close-on-esc
     title-tag="h2"
     title-class="h5"
     :title="i18n.global.t('pages.profile.trustedDevices.editModalTitle')">

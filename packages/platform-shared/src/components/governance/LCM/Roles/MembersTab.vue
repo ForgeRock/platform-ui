@@ -96,7 +96,6 @@ of the MIT license. See the LICENSE file for details. -->
       cancel-variant="link"
       id="addMembersModal"
       no-close-on-backdrop
-      no-close-on-esc
       :ok-disabled="newMembers.length === 0"
       :ok-title="$t('common.save')"
       ref="addMembersModal"
@@ -115,7 +114,6 @@ of the MIT license. See the LICENSE file for details. -->
       id="removeMembersModal"
       :ref="(e) => removeMembersModal = e"
       no-close-on-backdrop
-      no-close-on-esc
       cancel-variant="outline-secondary"
       ok-variant="danger"
       :ok-title="$t('common.remove')"

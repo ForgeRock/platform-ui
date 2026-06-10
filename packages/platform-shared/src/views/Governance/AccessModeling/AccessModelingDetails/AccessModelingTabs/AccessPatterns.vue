@@ -87,8 +87,7 @@ of the MIT license. See the LICENSE file for details. -->
       :title="$t('governance.accessModeling.patterns.deletePatternTitle')"
       v-model="confirmModalVisible"
       centered
-      no-close-on-backdrop
-      no-close-on-esc>
+      no-close-on-backdrop>
       <p>
         {{ $t('governance.accessModeling.patterns.deletePatternMessage') }}
       </p>
@@ -115,7 +114,7 @@ of the MIT license. See the LICENSE file for details. -->
       :size="'lg'"
       centered
       no-close-on-backdrop
-      no-close-on-esc>
+      @hide="handleEscHide">
       <p>
         {{ $t('governance.accessModeling.patterns.addPatternMessage') }}
       </p>
@@ -148,6 +147,9 @@ of the MIT license. See the LICENSE file for details. -->
           @click="() => updatePatterns('add')" />
       </template>
     </BModal>
+    <FrEscConfirmModal
+      :id="escConfirmId"
+      @ok="confirmDiscard" />
   </div>
 </template>
 
@@ -163,6 +165,8 @@ import {
 import { ref, onBeforeMount, computed } from 'vue';
 import { find } from 'lodash';
 import { patternSortByOptions } from '@forgerock/platform-shared/src/utils/governance/accessModeling';
+import useEscConfirm from '@forgerock/platform-shared/src/composables/escConfirm';
+import FrEscConfirmModal from '@forgerock/platform-shared/src/components/EscConfirmModal/EscConfirmModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrSortDropdown from '@forgerock/platform-shared/src/components/governance/SortDropdown';
@@ -317,6 +321,8 @@ function closeModal(modalType) {
   }
   selectedPatterns.value = [];
 }
+
+const { handleEscHide, confirmDiscard, escConfirmId } = useEscConfirm('add-pattern', () => closeModal('add'));
 
 /**
  * Sets the selected pattern for the confirmation modal and opens the modal
