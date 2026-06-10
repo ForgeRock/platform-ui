@@ -1,13 +1,17 @@
  @import '~vue-prism-editor/dist/prismeditor.min.css';
  @import 'prismjs/themes/prism-dark.min.css';
- @import '@forgerock/platform-shared/src/scss/prism/prism-ping.css';
+ @import '@forgerock/platform-shared/src/scss/prism/prism-ping.scss';
 
 .prism-editor-wrapper {
-  background-color: $gray-900;
+  background-color: var(--script-editor-code-bg);
   font-family: Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;
   font-size: 1rem;
   line-height: 1.5;
   padding: 1rem;
+
+  .prism-editor__textarea {
+    caret-color: $gray-400;
+  }
 
   .prism-editor__textarea:focus {
     outline: none !important;

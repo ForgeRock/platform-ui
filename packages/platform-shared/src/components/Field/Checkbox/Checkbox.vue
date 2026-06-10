@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
         <slot name="prepend" />
         <template v-if="switchLabel">
           <div
-            class="mb-1 text-secondary"
+            class="mb-1"
             :class="{'d-inline': inline}">
             {{ switchLabel }}
           </div>

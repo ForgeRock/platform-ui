@@ -52,6 +52,13 @@ $dk-component-active-color: $white;
 $dk-component-active-bg: lighten($gray-900, 4%);
 $dk-fr-background-color: $dk-body-bg;
 $dk-fr-code-editor-bg: $gray-800;
+$dk-fr-script-editor-heading-bg: $dk-body-bg;
+$dk-fr-script-editor-heading-color: $gray-100;
+$dk-fr-script-editor-heading-border: $dk-border-color;
+$dk-fr-script-editor-vars-color: $gray-400;
+$dk-fr-script-editor-vars-bg: #1a1e22;
+$dk-fr-script-editor-vars-input-bg: #30373f;
+$dk-fr-script-editor-code-bg: #1a1e22;
 $dk-fr-code-bg: $dk-light;
 $dk-code-color: $yellow;
 

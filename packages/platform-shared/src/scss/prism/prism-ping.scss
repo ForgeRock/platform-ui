@@ -1,6 +1,6 @@
 code[class*=language-],pre[class*=language-] {
     color: $gray-400;
-    font-size: 13px;
+    font-size: inherit;
     text-shadow: none;
     font-family: Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;
     direction: ltr;
@@ -23,7 +23,7 @@ pre[class*=language-] {
     padding: 1em;
     margin: .5em 0;
     overflow: auto;
-    background: $gray-900;
+    background: var(--script-editor-code-bg);
 }
 
 :not(pre)>code[class*=language-] {
@@ -105,5 +105,5 @@ code.language-css,code.language-js,code.language-markup {
 }
 
 .prism-editor-wrapper code,.prism-editor__line-numbers,:not(pre)>code[class*=language-],pre[class*=language-] {
-    background: $gray-900 !important;
+    background: var(--script-editor-code-bg) !important;
 }
