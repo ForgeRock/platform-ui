@@ -78,6 +78,29 @@ of the MIT license. See the LICENSE file for details. -->
           {{ getItemCreatedDate(item) }}
         </small>
       </template>
+      <template #cell(status)="{ item }">
+        <div class="d-flex align-items-center">
+          <FrIcon
+            v-if="item.rawData.decision?.decision === 'approved'"
+            icon-class="text-success mr-1"
+            name="check_circle" />
+          <FrIcon
+            v-else
+            icon-class="text-danger mr-1"
+            name="cancel" />
+          <span>{{ $t('governance.decisions.approved') }}</span>
+          <span class="mx-1">|</span>
+          <FrIcon
+            v-if="item.rawData.decision?.outcome === 'provisioned'"
+            icon-class="text-success mr-1"
+            name="check_circle" />
+          <FrIcon
+            v-else
+            icon-class="text-danger mr-1"
+            name="cancel" />
+          <span>{{ $t('governance.decisions.fulfilled') }}</span>
+        </div>
+      </template>
       <template #cell(date)="{ item }">
         <small class="text-muted">
           {{ item.details.date }}
@@ -115,6 +138,7 @@ import {
   computed,
 } from 'vue';
 import dayjs from 'dayjs';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import { buildRequestDisplay, getPriorityImageSrc, getPriorityImageAltText } from '@forgerock/platform-shared/src/utils/governance/AccessRequestUtils';
 import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
@@ -159,6 +183,10 @@ const fields = computed(() => {
       key: 'details',
       label: i18n.global.t('governance.accessRequest.newRequest.request'),
       class: 'w-65',
+    },
+    {
+      key: 'status',
+      label: i18n.global.t('common.status'),
     },
     {
       key: 'date',
