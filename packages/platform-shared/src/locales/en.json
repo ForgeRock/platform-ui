@@ -692,7 +692,8 @@
       "updateSuccess": "Updated your profile."
     },
     "columnResizedAnnounceText": "Column {columnName} resized to {width} pixels",
-    "columnResizerInstructions": "Resize column {columnName}, use left and right arrow keys to resize the column"
+    "columnResizerInstructions": "Resize column {columnName}, use left and right arrow keys to resize the column",
+    "completedBy": "Completed by"
   },
   "dashboard": {
     "managedAccess": {
@@ -3143,7 +3144,8 @@
         "outcome": "Outcome",
         "applicationInformation": "Application Information",
         "entitlementInformation": "Entitlement Information",
-        "roleInformation": "Role Information"
+        "roleInformation": "Role Information",
+        "failed": "Failed"
       },
       "titles": {
         "addComment": "Add a Comment",
