@@ -88,8 +88,10 @@ of the MIT license. See the LICENSE file for details. -->
             v-else
             icon-class="text-danger mr-1"
             name="cancel" />
-          <span>{{ $t('governance.decisions.approved') }}</span>
-          <span class="mx-1">|</span>
+          <span>{{ item.rawData.decision?.decision === 'approved' ? $t('governance.decisions.approved') : $t('governance.decisions.rejected') }}</span>
+          <span
+            class="mx-1"
+            aria-hidden="true">|</span>
           <FrIcon
             v-if="item.rawData.decision?.outcome === 'provisioned'"
             icon-class="text-success mr-1"
@@ -98,7 +100,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-else
             icon-class="text-danger mr-1"
             name="cancel" />
-          <span>{{ $t('governance.decisions.fulfilled') }}</span>
+          <span>{{ item.rawData.decision?.outcome === 'provisioned' ? $t('governance.outcomes.provisioned') : $t('governance.outcomes.notProvisioned') }}</span>
         </div>
       </template>
       <template #cell(date)="{ item }">
@@ -178,19 +180,17 @@ defineEmits(['open-detail']);
 const items = ref([]);
 const isAutoIdEnabled = computed(() => prop.autoIdSettings?.enableAutoId);
 const fields = computed(() => {
+  const isComplete = prop.requestStatus === 'complete';
   const fieldList = [
     {
       key: 'details',
       label: i18n.global.t('governance.accessRequest.newRequest.request'),
-      class: 'w-65',
-    },
-    {
-      key: 'status',
-      label: i18n.global.t('common.status'),
+      class: isComplete ? 'w-40' : 'w-65',
     },
     {
       key: 'date',
       label: i18n.global.t('governance.accessRequest.requestDate'),
+      class: isComplete ? 'w-160px text-nowrap' : 'text-nowrap',
     },
     {
       key: 'actions',
@@ -217,6 +217,14 @@ const fields = computed(() => {
     fieldList.splice(1, 1, {
       key: 'createdDate',
       label: i18n.global.t('common.created'),
+    });
+  }
+
+  if (isComplete) {
+    fieldList.splice(1, 0, {
+      key: 'status',
+      label: i18n.global.t('common.status'),
+      class: 'text-nowrap',
     });
   }
 
@@ -248,5 +256,9 @@ watch(() => prop.requests, (newRequests) => {
 
 :deep(.w-65) {
   width: 65% !important;
+}
+
+:deep(.w-40) {
+  width: 40% !important;
 }
 </style>

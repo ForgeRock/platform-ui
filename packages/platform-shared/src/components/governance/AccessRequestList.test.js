@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -238,6 +238,37 @@ describe('AccessReviews', () => {
 
   it('should show the request id', () => {
     expect(wrapper.text()).toMatch('ID: 1');
+  });
+
+  describe('status column', () => {
+    async function setDecision(decision) {
+      const req = cloneDeep(application);
+      req.decision = { ...req.decision, ...decision };
+      await wrapper.setProps({ requests: [req], requestStatus: 'complete' });
+    }
+
+    it('shows Approved when decision is approved', async () => {
+      await setDecision({ decision: 'approved' });
+      expect(wrapper.text()).toMatch('Approved');
+      expect(wrapper.text()).not.toMatch('Rejected');
+    });
+
+    it('shows Rejected when decision is not approved', async () => {
+      await setDecision({ decision: 'rejected' });
+      expect(wrapper.text()).toMatch('Rejected');
+      expect(wrapper.text()).not.toMatch('Approved');
+    });
+
+    it('shows Provisioned when outcome is provisioned', async () => {
+      await setDecision({ decision: 'approved', outcome: 'provisioned' });
+      expect(wrapper.text()).toMatch('Provisioned');
+      expect(wrapper.text()).not.toMatch('Not Provisioned');
+    });
+
+    it('shows Not Provisioned when outcome is not provisioned', async () => {
+      await setDecision({ decision: 'approved', outcome: 'notProvisioned' });
+      expect(wrapper.text()).toMatch('Not Provisioned');
+    });
   });
 
   describe('suspended request', () => {

@@ -843,9 +843,9 @@
     "zurich": "Zurich",
     "warsaw": "Warsaw",
     "paris": "Paris",
-    "montreal": "Montréal",
+    "montreal": "Montr\u00e9al",
     "toronto": "Toronto",
-    "saoPaulo": "São Paulo",
+    "saoPaulo": "S\u00e3o Paulo",
     "santiago": "Santiago",
     "iowa": "Iowa",
     "southCarolina": "South Carolina",
@@ -1136,7 +1136,7 @@
         "updateDeviceAliasError": "There was an error updating device alias.",
         "loadDevicesError": "There was an error retrieving devices.",
         "deviceDetails": "Device Details",
-        "removeConfirmationMessage": "Are you sure you want to remove from <strong>{username}’s</strong> profile?",
+        "removeConfirmationMessage": "Are you sure you want to remove from <strong>{username}\u2019s</strong> profile?",
         "unknown": "Unknown"
       },
       "accountControls": {
@@ -3145,7 +3145,9 @@
         "applicationInformation": "Application Information",
         "entitlementInformation": "Entitlement Information",
         "roleInformation": "Role Information",
-        "failed": "Failed"
+        "failed": "Failed",
+        "toggleErrorDetails": "Toggle error details",
+        "errorDetails": "Error details"
       },
       "titles": {
         "addComment": "Add a Comment",

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -71,6 +71,77 @@ describe('Workflow', () => {
       expect(listItems[1].text()).toContain('complete');
       expect(listItems[2].text()).toContain('pending');
       expect(listItems[3].text()).toContain('pending');
+    });
+
+    it('shows a failed step with no decision when comments contain a failure action', async () => {
+      const propsData = {
+        item: {
+          details: { date: '2023-06-22T19:23:26+00:00' },
+          rawData: {
+            decision: {
+              status: statuses[0],
+              decision: null,
+              comments: [{
+                action: 'failure',
+                comment: 'Provisioning failed: resource not found',
+                timeStamp: '2023-06-23T10:00:00+00:00',
+              }],
+            },
+          },
+        },
+      };
+      const wrapper = createWrapper(propsData);
+      const listItems = wrapper.findAll('.list-workflow-item');
+
+      // Request Submitted + Awaiting Approval (failed) + Request Complete = 3 steps
+      expect(listItems.length).toBe(3);
+
+      const failedItem = listItems[1];
+      expect(failedItem.classes()).toContain('failed');
+      expect(failedItem.text()).toContain('awaitingApproval');
+      expect(failedItem.text()).toContain('failed');
+
+      // expand the error details
+      const toggleButton = failedItem.find('button');
+      expect(toggleButton.exists()).toBe(true);
+      expect(toggleButton.attributes('aria-expanded')).toBe('false');
+      await toggleButton.trigger('click');
+      expect(toggleButton.attributes('aria-expanded')).toBe('true');
+      expect(failedItem.text()).toContain('Provisioning failed: resource not found');
+    });
+
+    it('shows a failed provisioning step with a decision when comments contain a failure action', async () => {
+      const propsData = {
+        item: {
+          details: { date: '2023-06-22T19:23:26+00:00' },
+          rawData: {
+            decision: {
+              status: statuses[1],
+              decision: 'approved',
+              comments: [{
+                action: 'failure',
+                comment: 'Provisioning failed: quota exceeded',
+                timeStamp: '2023-06-23T10:00:00+00:00',
+              }],
+            },
+          },
+        },
+      };
+      const wrapper = createWrapper(propsData);
+      const listItems = wrapper.findAll('.list-workflow-item');
+
+      // Request Submitted + Awaiting Approval + Provisioning (failed) + Request Complete = 4 steps
+      expect(listItems.length).toBe(4);
+
+      const failedItem = listItems[2];
+      expect(failedItem.classes()).toContain('failed');
+      expect(failedItem.text()).toContain('provisioning');
+      expect(failedItem.text()).toContain('failed');
+
+      const toggleButton = failedItem.find('button');
+      await toggleButton.trigger('click');
+      expect(toggleButton.attributes('aria-expanded')).toBe('true');
+      expect(failedItem.text()).toContain('Provisioning failed: quota exceeded');
     });
 
     it('component should show 4 complete steps when status is complete', () => {
