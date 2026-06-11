@@ -1,17 +1,18 @@
 /**
- * Copyright (c) 2026 ForgeRock. All rights reserved.
+ * Copyright 2026 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
 export default class EndUserUIPage {
   static hostedPageItem(pageType) {
-    return cy.findByRole('heading', { name: pageType }).closest('.list-group-item');
+    return cy.findByRole('heading', { name: pageType }).closest('.card-body');
   }
 
   static hostedPageStatus(pageType) {
-    return EndUserUIPage.hostedPageItem(pageType).findByText(/(Active|Inactive)/);
+    return EndUserUIPage.hostedPageItem(pageType).find('.badge');
   }
 
   static hostedPageToggleButton(pageType, action) {
