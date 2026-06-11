@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -72,7 +72,7 @@ describe('Layout', () => {
       const release = findByTestId(wrapper, 'release-info');
       const link = release.findComponent(RouterLinkStub);
 
-      expect(release.text()).toContain('Ping Advanced Identity Cloud Version 123');
+      expect(release.text()).toContain('PingOne Advanced Identity Cloud Version 123');
       expect(link.props().to).toEqual({ name: 'TenantSettings', params: { resourceName: 'details' } });
     });
   });
