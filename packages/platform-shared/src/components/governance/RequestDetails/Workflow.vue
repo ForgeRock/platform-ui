@@ -11,8 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       <li
         v-for="(status, index) in currentStatuses"
         :key="index"
-        :class="['list-workflow-item', { 'complete': status.complete }, { 'active': status.active, 'failed': status.failed }]"
-        @click="status.failed ? errorDetailsVisible = !errorDetailsVisible : null">
+        :class="['list-workflow-item', { 'complete': status.complete }, { 'active': status.active, 'failed': status.failed }]">
         <div>
           <small v-if="status.failed">
             {{ $t('governance.requestModal.detailsTab.failed') }}
@@ -28,15 +27,23 @@ of the MIT license. See the LICENSE file for details. -->
           </small>
         </div>
         <div class="d-flex flex-column">
-          <span :class="{'text-decoration-underline': status.failed }">
+          <button
+            v-if="status.failed"
+            :aria-expanded="errorDetailsVisible ? 'true' : 'false'"
+            :aria-label="$t('governance.requestModal.detailsTab.toggleErrorDetails')"
+            aria-controls="workflow-error-details"
+            class="btn-unstyled text-left text-decoration-underline"
+            type="button"
+            @click="errorDetailsVisible = !errorDetailsVisible">
             {{ status.title }}
             <FrIcon
-              v-if="status.failed"
-              icon-class="mr-2"
+              :aria-label="$t('governance.requestModal.detailsTab.errorDetails')"
               :name="errorDetailsVisible ? 'expand_less' : 'expand_more'" />
-          </span>
+          </button>
+          <span v-else>{{ status.title }}</span>
           <BCollapse
             v-if="status.failed"
+            id="workflow-error-details"
             v-model="errorDetailsVisible">
             <div class="alert fr-alert alert-danger mt-2">
               <FrIcon
@@ -54,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { BCollapse } from 'bootstrap-vue';
-import { isNull } from 'lodash';
+
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import dayjs from 'dayjs';
 
@@ -83,7 +90,7 @@ export default {
       return this.item.rawData.decision?.comments?.find((c) => c.action === 'failure');
     },
     currentStatuses() {
-      const hasDecision = !isNull(this.item.rawData?.decision?.decision);
+      const hasDecision = this.item.rawData?.decision?.decision != null;
       const steps = [
         {
           title: this.$t('governance.requestModal.detailsTab.requestSubmitted'),
@@ -101,14 +108,12 @@ export default {
           },
           {
             title: this.$t('governance.requestModal.detailsTab.provisioning'),
-            // complete: true,
             failed: true,
             collapseText: this.failureComment?.comment,
           });
         } else {
           steps.push({
             title: this.$t('governance.requestModal.detailsTab.awaitingApproval'),
-            // complete: true,
             failed: true,
             collapseText: this.failureComment?.comment,
             date: this.failureComment?.timeStamp ? dayjs(this.failureComment.timeStamp).format('MMM D, YYYY') : undefined,
@@ -176,10 +181,13 @@ export default {
       border: none;
   }
   &.active:after {
-      content: "check_circle";
       background-color: $white;
       border-color: $blue;
   }
+
+    &.failed .btn-unstyled {
+      cursor: pointer;
+    }
 
     &.failed:after {
       content: "cancel";

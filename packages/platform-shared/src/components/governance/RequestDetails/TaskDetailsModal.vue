@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -46,6 +46,17 @@ of the MIT license. See the LICENSE file for details. -->
         <BCol
           lg="8">
           <FrUserGroupList :users-list="taskDetails.approvers" />
+        </BCol>
+      </template>
+      <!-- Completed By -->
+      <template v-if="taskDetails.completedBy">
+        <BCol
+          lg="4"
+          class="font-weight-bold row-height">
+          {{ $t('common.completedBy') }}
+        </BCol>
+        <BCol lg="8">
+          <FrUserGroupList :users-list="taskDetails.completedBy" />
         </BCol>
       </template>
       <!-- Status -->

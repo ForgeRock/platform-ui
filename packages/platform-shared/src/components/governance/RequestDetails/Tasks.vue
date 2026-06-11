@@ -113,6 +113,7 @@ const requestOutcome = ref(null);
 const tableData = ref(null);
 const taskDetails = ref({});
 const savingRequest = ref(false);
+const phaseActors = ref([]);
 
 watch(
   () => prop.item,
@@ -130,12 +131,14 @@ watch(
       ...actors.active,
       ...actors.inactive,
     ];
-    const phaseActors = allActors.filter(({ phase }) => !!phase);
+    phaseActors.value = allActors.filter(({ phase }) => !!phase);
 
     // parse information to render on table
     tableData.value = phases.map((phase) => ({
       ...phase,
-      actors: phaseActors.filter((actor) => actor.phase === phase.name),
+      actors: phase.completedBy
+        ? [].concat(phase.completedBy)
+        : phaseActors.value.filter((actor) => actor.phase === phase.name),
     }));
   }, { immediate: true },
 );
@@ -245,10 +248,12 @@ function parseDate(date) {
 }
 
 /**
- * Displays task details in a modal based on the given task item
+ * Displays task details in a modal based on the given task item.
+ * Approvers are sourced from phaseActors filtered by phase name.
+ * If the phase has a completedBy property, it is passed separately to the modal.
  * @param {Object} currentItem The task item containing details to be displayed
- * @param {Array} currentItem.actors Array of approvers for the task
- * @param {String} currentItem.name Name of the task
+ * @param {String} currentItem.name Name of the task, used to match actors from phaseActors
+ * @param {Object|Array} [currentItem.completedBy] Actor(s) who completed the task, if set
  * @param {String} currentItem.startDate Start date of the task
  * @param {String} currentItem.decision Decision of the task
  * @param {String} currentItem.status Status of the task
@@ -256,7 +261,8 @@ function parseDate(date) {
  */
 function showTaskDetailsModal(currentItem) {
   taskDetails.value = {
-    approvers: currentItem.actors,
+    approvers: phaseActors.value.filter((actor) => actor.phase === currentItem.name),
+    completedBy: currentItem.completedBy ? [].concat(currentItem.completedBy) : null,
     name: currentItem.displayName || currentItem.name,
     startDate: parseDate(currentItem.startDate),
     completionDate: currentItem.completionDate ? parseDate(currentItem.completionDate) : null,

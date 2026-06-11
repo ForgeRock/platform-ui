@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -62,5 +62,21 @@ describe('TaskDetailsModal', () => {
     expect(labels.length).toBe(7);
     expect(labels[4].text()).toContain('completionDate');
     expect(labels[5].text()).toContain('resumeDate');
+  });
+
+  it('shows the "Completed by" row when taskDetails.completedBy is populated', () => {
+    const taskWithCompletedBy = cloneDeep(TASK_DETAILS);
+    taskWithCompletedBy.completedBy = [{ givenName: 'Alice', sn: 'Smith' }];
+    wrapper = setup({ taskDetails: taskWithCompletedBy });
+    const labels = wrapper.findAll('.font-weight-bold');
+    const labelTexts = labels.map((l) => l.text());
+    expect(labelTexts).toContain('common.completedBy');
+  });
+
+  it('hides the "Completed by" row when taskDetails.completedBy is not set', () => {
+    wrapper = setup();
+    const labels = wrapper.findAll('.font-weight-bold');
+    const labelTexts = labels.map((l) => l.text());
+    expect(labelTexts).not.toContain('common.completedBy');
   });
 });
