@@ -285,6 +285,26 @@ describe('amSchemaUtils', () => {
       const result = removeNullPasswords({ unknownField: null, clientId: 'abc' }, schemaProperties);
       expect(result).toHaveProperty('unknownField');
     });
+
+    it('recurses into dynamic-section values and strips null passwords there too', () => {
+      const nestedSchemaProperties = {
+        clientId: { type: 'string' },
+        dynamic: {
+          type: 'object',
+          properties: {
+            sharedSecret: { type: 'string', format: 'password' },
+            maxIdleTime: { type: 'integer' },
+          },
+        },
+      };
+      const result = removeNullPasswords(
+        { clientId: 'abc', dynamic: { sharedSecret: null, maxIdleTime: 30 } },
+        nestedSchemaProperties,
+      );
+      expect(result.dynamic).not.toHaveProperty('sharedSecret');
+      expect(result.dynamic.maxIdleTime).toBe(30);
+      expect(result.clientId).toBe('abc');
+    });
   });
 
   describe('prepareValuesForSave', () => {
@@ -324,6 +344,46 @@ describe('amSchemaUtils', () => {
       const values = { clientId: 'abc', privateKeyPassword: '&{am.keystore.default.entry.password}', clientSecret: null };
       prepareValuesForSave(values, formSchema, schemaProperties);
       expect(values.privateKeyPassword).toBe('&{am.keystore.default.entry.password}');
+    });
+
+    describe('dynamic sections', () => {
+      const dynamicSchemaProperties = {
+        dynamic: {
+          type: 'object',
+          properties: {
+            maxIdleTime: { type: 'integer' },
+            maxSessionTime: { type: 'integer' },
+            sharedSecret: { type: 'string', format: 'password' },
+          },
+        },
+      };
+      const dynamicFormSchema = [
+        { key: 'maxIdleTime', type: 'number' },
+        { key: 'maxSessionTime', type: 'number' },
+        { key: 'sharedSecret', type: 'password' },
+      ];
+
+      it('re-nests dynamic-section fields back under their section key', () => {
+        const values = { maxIdleTime: 30, maxSessionTime: 120, sharedSecret: 'shh' };
+        const result = prepareValuesForSave(values, dynamicFormSchema, dynamicSchemaProperties);
+        expect(result).toEqual({ dynamic: { maxIdleTime: 30, maxSessionTime: 120, sharedSecret: 'shh' } });
+      });
+
+      it('strips null password fields nested inside a dynamic section', () => {
+        const values = { maxIdleTime: 30, maxSessionTime: 120, sharedSecret: null };
+        const result = prepareValuesForSave(values, dynamicFormSchema, dynamicSchemaProperties);
+        expect(result.dynamic).not.toHaveProperty('sharedSecret');
+        expect(result.dynamic).toEqual({ maxIdleTime: 30, maxSessionTime: 120 });
+      });
+
+      it('produces the inverse shape of what createAmForm consumes', () => {
+        const schema = { properties: dynamicSchemaProperties };
+        const original = { dynamic: { maxIdleTime: 30, maxSessionTime: 120 } };
+        const { values: flatValues, schema: builtSchema } = createAmForm({ schema, values: original });
+        const result = prepareValuesForSave(flatValues, builtSchema, schema.properties);
+        // password field is undefined after sanitize → stripped on save, so only the two integers should round-trip
+        expect(result).toEqual(original);
+      });
     });
   });
 
@@ -459,6 +519,97 @@ describe('amSchemaUtils', () => {
         expect(loaField.type).toBe('object');
         expect(jwtField).not.toHaveProperty('valueOptions');
         expect(enabledField).not.toHaveProperty('valueOptions');
+      });
+    });
+
+    describe('dynamic-section handling', () => {
+      // Mirrors AM's Session-service schema shape: a top-level "dynamic" collection that
+      // contains the actual configurable fields. OpenAM's EditSchemaComponent renders these
+      // sub-properties as a flat form (via FlatJSONSchemaView); createAmForm matches that.
+      const sessionSchema = {
+        type: 'object',
+        properties: {
+          dynamic: {
+            type: 'object',
+            title: 'Dynamic Attributes',
+            default: {
+              maxIdleTime: 30,
+              maxSessionTime: 120,
+              quotaLimit: 5,
+              maxCachingTime: 3,
+            },
+            properties: {
+              quotaLimit: { title: 'Active User Sessions', type: 'integer', propertyOrder: 800 },
+              maxCachingTime: { title: 'Maximum Caching Time', type: 'integer', propertyOrder: 300 },
+              maxSessionTime: { title: 'Maximum Session Time', type: 'integer', propertyOrder: 100 },
+              maxIdleTime: { title: 'Maximum Idle Time', type: 'integer', propertyOrder: 200 },
+            },
+          },
+        },
+      };
+
+      const allSessionValues = {
+        maxIdleTime: 30,
+        maxSessionTime: 120,
+        quotaLimit: 5,
+        maxCachingTime: 3,
+      };
+
+      it('hoists sub-properties of a dynamic section to the top level of the form', () => {
+        const { schema: result } = createAmForm({
+          schema: sessionSchema,
+          values: { dynamic: allSessionValues },
+        });
+        expect(result.map((f) => f.key)).toEqual(['maxSessionTime', 'maxIdleTime', 'maxCachingTime', 'quotaLimit']);
+      });
+
+      it('flattens nested dynamic-section values to the top level', () => {
+        const { values } = createAmForm({
+          schema: sessionSchema,
+          values: { dynamic: allSessionValues },
+        });
+        expect(values).toEqual(allSessionValues);
+      });
+
+      it('uses the parent section default when a sub-property has no explicit default', () => {
+        const { values } = createAmForm({ schema: sessionSchema, values: {} });
+        expect(values.maxIdleTime).toBe(30);
+        expect(values.maxSessionTime).toBe(120);
+        expect(values.quotaLimit).toBe(5);
+        expect(values.maxCachingTime).toBe(3);
+      });
+
+      it('does not override an explicit per-field default with the parent section default', () => {
+        const overridden = {
+          properties: {
+            dynamic: {
+              type: 'object',
+              default: { fieldA: 99 },
+              properties: {
+                fieldA: { type: 'integer', default: 42 },
+              },
+            },
+          },
+        };
+        const { values } = createAmForm({ schema: overridden, values: {} });
+        expect(values.fieldA).toBe(42);
+      });
+
+      it('passes a flat top-level schema through unchanged', () => {
+        const flatSchema = {
+          properties: {
+            name: { type: 'string', propertyOrder: 1 },
+          },
+        };
+        const { schema: result, values } = createAmForm({ schema: flatSchema, values: { name: 'Alice' } });
+        expect(result.map((f) => f.key)).toEqual(['name']);
+        expect(values.name).toBe('Alice');
+      });
+
+      it('does not mutate the original schema', () => {
+        const original = JSON.parse(JSON.stringify(sessionSchema));
+        createAmForm({ schema: sessionSchema, values: {} });
+        expect(sessionSchema).toEqual(original);
       });
     });
 

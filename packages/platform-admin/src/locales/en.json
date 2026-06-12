@@ -112,7 +112,11 @@
     "Provisioners": "Provisioners",
     "ProxyConnect": "Proxy Connect",
     "Realm": "Realm",
+    "RealmDeviceProfiles": "Device Profiles",
     "RealmOverview": "Realm Overview",
+    "RealmSession": "Session",
+    "RealmSessionPropertyWhitelist": "Session Property Whitelist",
+    "RealmValidation": "Validation",
     "Recommendations": "Recommendations",
     "RelationshipEdit": "Edit Relationship",
     "RemoteConsentService": "Remote Consent Service",
@@ -3049,7 +3053,82 @@
     "deactivateModalTitle": "Deactivate Realm?",
     "deactivateModalText": "If you deactivate this realm users will be prevented from signing in. Are you sure you want to deactivate this realm?",
     "deleteModalTitle": "Delete Realm?",
-    "activeRealmMessage": "<p>This is an active realm. All configuration data will be lost if deleted. You can set the realm as inactive to prevent login but retain configuration data.</p><p>Are you sure you want to permanently delete this realm? <strong>This action cannot be undone.</strong></p>"
+    "activeRealmMessage": "<p>This is an active realm. All configuration data will be lost if deleted. You can set the realm as inactive to prevent login but retain configuration data.</p><p>Are you sure you want to permanently delete this realm? <strong>This action cannot be undone.</strong></p>",
+    "settings": {
+      "title": "Settings",
+      "description": "Configure AM services for this realm.",
+      "loadError": "There was an error loading services",
+      "rows": {
+        "session": "Session",
+        "sessionPropertyWhitelist": "Session Property Whitelist",
+        "validation": "Validation",
+        "deviceProfiles": "Device Profiles"
+      },
+      "session": {
+        "title": "Session",
+        "description": "Configures session behavior, including timeouts, concurrency limits, and session lifecycle rules.",
+        "emptyState": {
+          "title": "Session is not enabled",
+          "description": "Enable to configure session behavior including timeouts and concurrency limits."
+        },
+        "enableService": "Enable Session",
+        "enableSuccess": "Session enabled successfully",
+        "enableError": "There was an error enabling Session",
+        "saveSuccess": "Session saved successfully",
+        "saveError": "There was an error saving Session",
+        "loadError": "There was an error loading Session",
+        "deleteSuccess": "Session deleted successfully",
+        "deleteError": "There was an error deleting Session"
+      },
+      "sessionPropertyWhitelist": {
+        "title": "Session Property Whitelist",
+        "description": "Controls which custom properties can be stored in and retrieved from user sessions.",
+        "emptyState": {
+          "title": "Session Property Whitelist is not enabled",
+          "description": "Enable to control which custom properties can be stored in user sessions."
+        },
+        "enableService": "Enable Session Property Whitelist",
+        "enableSuccess": "Session Property Whitelist enabled successfully",
+        "enableError": "There was an error enabling Session Property Whitelist",
+        "saveSuccess": "Session Property Whitelist saved successfully",
+        "saveError": "There was an error saving Session Property Whitelist",
+        "loadError": "There was an error loading Session Property Whitelist",
+        "deleteSuccess": "Session Property Whitelist deleted successfully",
+        "deleteError": "There was an error deleting Session Property Whitelist"
+      },
+      "validation": {
+        "title": "Validation",
+        "description": "Defines security rules for validating redirect URLs and preventing open redirect vulnerabilities.",
+        "emptyState": {
+          "title": "Validation is not enabled",
+          "description": "Enable to define security rules for validating redirect URLs."
+        },
+        "enableService": "Enable Validation",
+        "enableSuccess": "Validation enabled successfully",
+        "enableError": "There was an error enabling Validation",
+        "saveSuccess": "Validation saved successfully",
+        "saveError": "There was an error saving Validation",
+        "loadError": "There was an error loading Validation",
+        "deleteSuccess": "Validation deleted successfully",
+        "deleteError": "There was an error deleting Validation"
+      },
+      "deviceProfiles": {
+        "title": "Device Profiles",
+        "description": "Defines trusted device characteristics and profiles used for device-based authentication or risk evaluation.",
+        "emptyState": {
+          "title": "Device Profiles are not enabled",
+          "description": "Enable to define trusted device characteristics used for device-based authentication."
+        },
+        "enableService": "Enable Device Profiles",
+        "enableSuccess": "Device Profiles enabled successfully",
+        "enableError": "There was an error enabling Device Profiles",
+        "saveSuccess": "Device Profiles saved successfully",
+        "saveError": "There was an error saving Device Profiles",
+        "loadError": "There was an error loading Device Profiles",
+        "deleteSuccess": "Device Profiles deleted successfully",
+        "deleteError": "There was an error deleting Device Profiles"
+      }
+    }
   },
   "customDomain": {
     "active": "Active",

@@ -210,17 +210,129 @@ const shouldIncludeProperty = (property, value, { showOnlyRequired, showOnlyRequ
 };
 
 /**
+ * Returns true if a schema property is a nested-object section containing sub-properties.
+ * These are AM "collection" properties (e.g. the "dynamic" section on the Session service)
+ * whose sub-properties are the actual configurable fields. Mirrors the
+ * `value.type === "object" && _.has(value, "properties")` predicate used by
+ * JSONSchema#ungroupCollectionProperties and JSONSchema#isCollection in the OpenAM admin UI.
+ * @param {Object} prop - The AM schema property.
+ * @returns {Boolean}
+ */
+const isDynamicSection = (prop) => prop && prop.type === 'object' && prop.properties
+  && Object.keys(prop.properties).length > 0;
+
+/**
+ * Hoists any nested-object sections in an AM schema up to the top level so the form can be
+ * rendered as a single flat list of fields.
+ *
+ * Uses the same predicate as AM's JSONSchema#ungroupCollectionProperties
+ * (`type === "object" && has(properties)`), but applies it to all top-level properties rather
+ * than only to sub-properties of the named `defaults` key as AM does. This is intentional:
+ * AM's JSONSchema class is designed for the realm-settings page which always has a known
+ * `defaults`/`dynamic` structure; this utility is for individual service schemas where the
+ * dynamic section appears directly at the top level.
+ *
+ * Only named `properties` trigger flattening; `patternProperties` objects (e.g. uiConfig on
+ * social providers, loaMapping/amrMappings on OAuth2 sections) are left in place — isDynamicSection
+ * returns false for those, so existing callers are unaffected.
+ *
+ * Assumes sub-property keys are unique across sections. If two sections share a sub-property key
+ * the last one wins — AM's own ungroupCollectionProperties has the same behaviour and schemas
+ * are authored to avoid this.
+ * @param {Object} schema - The raw AM schema.
+ * @returns {Object} A new schema object with dynamic sections flattened.
+ */
+const flattenDynamicSections = (schema) => {
+  const flatProperties = {};
+
+  Object.entries(schema.properties).forEach(([key, prop]) => {
+    if (isDynamicSection(prop)) {
+      Object.entries(prop.properties).forEach(([subKey, subProp]) => {
+        const sectionDefault = prop.default ? prop.default[subKey] : undefined;
+        flatProperties[subKey] = subProp.default === undefined && sectionDefault !== undefined
+          ? { ...subProp, default: sectionDefault }
+          : subProp;
+      });
+    } else {
+      flatProperties[key] = prop;
+    }
+  });
+
+  return { ...schema, properties: flatProperties };
+};
+
+/**
+ * Flattens AM values shaped like { dynamic: { foo: 1, bar: 2 } } into { foo: 1, bar: 2 } so they
+ * line up with a schema that has been put through flattenDynamicSections.
+ * @param {Object} values - The raw values from AM.
+ * @param {Object} schema - The original (unflattened) AM schema.
+ * @returns {Object} A new flat values object.
+ */
+const flattenDynamicValues = (values, schema) => {
+  if (!values || !schema || !schema.properties) return values;
+  const result = { ...values };
+
+  Object.entries(schema.properties).forEach(([key, prop]) => {
+    if (isDynamicSection(prop) && result[key] && typeof result[key] === 'object') {
+      Object.assign(result, result[key]);
+      delete result[key];
+    }
+  });
+
+  return result;
+};
+
+/**
+ * Re-nests flat form values back into the dynamic-section shape AM expects on PUT.
+ * Inverse of flattenDynamicValues. Mirrors the way EditSchemaComponent.updateValues merges tab
+ * data back under its section key before serialising in JSONValues#toJSON.
+ * @param {Object} values - The flat form values.
+ * @param {Object} schema - The original (unflattened) AM schema.
+ * @returns {Object} A new values object with dynamic-section fields re-nested.
+ */
+const nestDynamicValues = (values, schema) => {
+  if (!schema || !schema.properties) return values;
+  const result = { ...values };
+
+  Object.entries(schema.properties).forEach(([sectionKey, prop]) => {
+    if (isDynamicSection(prop)) {
+      const sectionValues = {};
+      Object.keys(prop.properties).forEach((fieldKey) => {
+        if (fieldKey in result) {
+          sectionValues[fieldKey] = result[fieldKey];
+          delete result[fieldKey];
+        }
+      });
+      if (Object.keys(sectionValues).length > 0) {
+        result[sectionKey] = sectionValues;
+      }
+    }
+  });
+
+  return result;
+};
+
+/**
  * Removes password fields with a null or undefined value from a values object before a PUT.
  * Mirrors JSONValues#removeNullPasswords in the OpenAM UI — password fields are never returned
  * by AM in GET responses, so an absent value means "unchanged". Sending null/undefined would
  * clear the stored secret on AM, so such fields must be omitted entirely.
- * @param {Object} values - The flat values object to clean.
+ *
+ * Recurses into nested-object sections (e.g. AM's "dynamic" block) so password fields nested
+ * under a collection section are handled the same way as top-level password fields — matching
+ * the recursive `isCollection`/`omitNullPasswords` branch in JSONValues#removeNullPasswords.
+ *
+ * @param {Object} values - The values object to clean.
  * @param {Object} schemaProperties - The raw AM schema properties map.
  * @returns {Object} A new object with null/undefined password fields removed.
  */
 export const removeNullPasswords = (values, schemaProperties) => Object.entries(values).reduce((acc, [key, value]) => {
   const prop = schemaProperties[key];
   if (prop && isPasswordField(prop) && (value === null || value === undefined)) {
+    return acc;
+  }
+  if (prop && isDynamicSection(prop) && value && typeof value === 'object') {
+    acc[key] = removeNullPasswords(value, prop.properties);
     return acc;
   }
   acc[key] = value;
@@ -247,18 +359,21 @@ const restorePlaceholderValues = (values, formSchema) => {
 };
 
 /**
- * Prepares form values for a PUT request by restoring placeholder objects and removing null password fields.
- * Mirrors AM's save pipeline: revertPlaceholdersToOriginalValue → removeNullPasswords.
+ * Prepares form values for a PUT request by restoring placeholder objects, re-nesting any
+ * dynamic-section fields under their section key, and removing null password fields.
+ * Mirrors AM's save pipeline:
+ *   revertPlaceholdersToOriginalValue → updateValues (re-nest tab data) → removeNullPasswords.
  * Always use this in place of calling restorePlaceholderValues and removeNullPasswords individually.
- * @param {Object} values - The current form values.
+ * @param {Object} values - The current (flat) form values.
  * @param {Array} formSchema - The processed schema array produced by createAmForm.
- * @param {Object} schemaProperties - The raw AM schema properties map.
+ * @param {Object} schemaProperties - The raw AM schema properties map (with sections intact).
  * @returns {Object} Values ready to send to AM.
  */
-export const prepareValuesForSave = (values, formSchema, schemaProperties) => removeNullPasswords(
-  restorePlaceholderValues(values, formSchema),
-  schemaProperties,
-);
+export const prepareValuesForSave = (values, formSchema, schemaProperties) => {
+  const restored = restorePlaceholderValues(values, formSchema);
+  const nested = nestDynamicValues(restored, { properties: schemaProperties });
+  return removeNullPasswords(nested, schemaProperties);
+};
 
 /**
  * Applies AM's convertPlaceholderSchemaToReadOnly + flattenPlaceholder logic to a single field:
@@ -278,6 +393,12 @@ const applyPlaceholderOverrides = (formattedProp, rawValue) => {
 /**
  * Transforms AM schema and values into a UI-ready form model in a single pass.
  *
+ * Nested-object sections such as AM's "dynamic" block are flattened so their sub-properties
+ * appear as top-level fields, matching the behaviour of OpenAM's EditSchemaComponent when it
+ * renders a collection section via FlatJSONSchemaView. The original schema shape is preserved
+ * outside this function — pass the same raw schema to prepareValuesForSave to re-nest values
+ * before sending them back to AM.
+ *
  * @param {Object} params - The function parameters.
  * @param {Object} params.schema - The raw AM schema object.
  * @param {Object} params.values - The current values for the schema.
@@ -293,8 +414,11 @@ export const createAmForm = ({
   showOnlyRequiredAndEmpty = false,
   overrides = {},
 }) => {
-  const { filteredSchema, initialValues } = Object.entries(schema.properties).reduce((acc, [key, prop]) => {
-    const rawValue = values[key];
+  const flatSchema = flattenDynamicSections(schema);
+  const flatValues = flattenDynamicValues(values, schema);
+
+  const { filteredSchema, initialValues } = Object.entries(flatSchema.properties).reduce((acc, [key, prop]) => {
+    const rawValue = flatValues[key];
     const initialValue = sanitizePropertyValue(prop, rawValue);
 
     // Inclusion filtering uses the raw template value so that enum fields with no
