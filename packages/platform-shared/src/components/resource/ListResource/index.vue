@@ -265,6 +265,13 @@ export default {
       type: Array,
       default: () => [],
     },
+    /**
+     * Optional: List of extra fields to include in search query that are not included as columns in the table
+     */
+    searchableColumns: {
+      type: Array,
+      default: () => [],
+    },
     columnOrganizerList: {
       type: Array,
       default: () => [],
@@ -372,9 +379,11 @@ export default {
     },
     /**
      * Determines which fields should be used for search query based on the columns that are set up for the table, excluding the action column and non-searchable fields.
+     * Extra keys supplied via searchableColumns prop are merged in without affecting displayFields.
      */
     searchableFields() {
-      return this.columns.filter((field) => field.key !== 'actions' && field.searchable).map((field) => field.key);
+      const fromColumns = this.columns.filter((field) => field.key !== 'actions' && field.searchable).map((field) => field.key);
+      return [...new Set([...fromColumns, ...this.searchableColumns])];
     },
     pageSizes() {
       return [...new Set([this.minimumPageSize, ...[10, 20, 50, 100]])].filter((pageSize) => pageSize >= this.minimumPageSize);
