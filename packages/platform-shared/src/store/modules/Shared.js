@@ -16,6 +16,7 @@ const defaultState = {
   aiAgentsEnabled: false,
   analyticsReportsAiAssistantEnabled: false,
   devIdmEnabled: false,
+  idmWorkflowEnabled: false,
   autoAccessEnabled: false,
   autoAccessJasUrl: null,
   autoAccessApiUrl: null,
@@ -300,6 +301,9 @@ const mutations = {
   // Needed for Login since setFeatureFlags isn't called there
   setNewMultiselectEnabled(state, env) {
     state.newMultiselectEnabled = env.VUE_APP_ENABLE_NEW_MULTISELECT?.toString() === 'true';
+  },
+  setIdmWorkflowEnabled(state, val) {
+    state.idmWorkflowEnabled = val;
   },
   setWebStorageAvailable(state, val) {
     state.webStorageAvailable = val;

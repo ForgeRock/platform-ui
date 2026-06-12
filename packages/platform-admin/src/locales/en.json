@@ -130,7 +130,8 @@
     "TenantSettings": "Tenant Settings",
     "TenantUpdates": "Tenant Updates",
     "TermsAndConditions": "Terms & Conditions",
-    "Workflows": "Workflows"
+    "Workflows": "Workflows",
+    "WorkflowTasks": "Workflow Tasks"
   },
   "sideMenu": {
     "accounts": "Accounts",
@@ -192,7 +193,9 @@
     "templates": "Templates",
     "templateBuilder": "Template Builder",
     "userExperience": "User Experience",
+    "workflow": "Workflow",
     "workflows": "Workflows",
+    "workflowTasks": "Tasks",
     "endUser": {
       "adminRequests": "Requests"
     }
@@ -6038,5 +6041,19 @@
     "loadError": "Failed to load Self-service journeys settings.",
     "statusUpdateSuccess": "Self-service journeys status updated successfully.",
     "statusUpdateError": "Failed to update Self-service journeys status."
+  },
+  "workflowTasks": {
+    "columnAssignee": "Assignee",
+    "columnCreated": "Created",
+    "columnDue": "Due",
+    "columnProcess": "Process",
+    "columnTask": "Task",
+    "filterAllAssignees": "All Assignees",
+    "filterUnassigned": "Unassigned",
+    "loadError": "Failed to load workflow tasks.",
+    "noTasksSubtitle": "No workflow tasks match the current filter.",
+    "noTasksTitle": "No tasks found",
+    "subtitle": "View workflow tasks assigned to users.",
+    "title": "Workflow Tasks"
   }
 }
