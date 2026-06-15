@@ -193,6 +193,12 @@ export default {
 .esv-input-wrapper:hover .multiselect__single {
   > .collapsed-option.can-edit .action-buttons button {
     display: block;
+    border-radius: 1.75rem;
+    background-color: $gray-200;
+
+    &:hover {
+      background-color: $gray-300;
+    }
   }
 }
 </style>

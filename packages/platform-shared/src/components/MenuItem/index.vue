@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
         :aria-label="$t(displayName)"
         :class="[{ 'nav-link': isNav, 'dropdown-item': !isNav }, 'd-flex align-items-center rounded-0']"
         :role="isNav ? '' : 'menuitem'"
+        tag="a"
         @click="$root.$emit('bv::show::modal', modal)">
         <FrIcon
           :icon-class="icon ? 'mr-2' : ''"
@@ -389,7 +390,6 @@ button.btn.btn-secondary.dropdown-toggle {
   width: 100%;
   position: relative;
   border-width: 0;
-  border-left: $fr-sidemenu-item-border;
   border-radius: $fr-sidemenu-item-border-radius;
   cursor: pointer;
   display: block;

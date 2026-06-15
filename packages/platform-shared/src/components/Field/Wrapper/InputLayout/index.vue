@@ -4,8 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="w-100">
-    <div
-      :class="[{'fr-field-error': errors.length, 'floating-label': floatingLabel}, 'form-label-group']">
+    <div :class="[{'fr-field-error': errors.length, 'floating-label': floatingLabel}, 'form-label-group']">
       <!-- @slot Prepend buttons or elements to the input. -->
       <slot name="prepend" />
       <div
@@ -49,11 +48,11 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <span
         class="d-flex input-buttons"
-        v-if="$slots.prependButton || $slots.defaultButtons || $slots.append">
+        v-if="$slots.appendButton || $slots.defaultButtons || $slots.append">
         <div
-          class="prepend-button"
-          v-if="$slots.prependButton">
-          <slot name="prependButton" />
+          class="append-button"
+          v-if="$slots.appendButton">
+          <slot name="appendButton" />
         </div>
         <slot name="defaultButtons" />
         <!-- slot appends buttons or elements to the input -->

@@ -612,7 +612,7 @@ $fr-sidemenu-active:  $light-blue;
 $fr-sidemenu-shadow: transparent;
 $fr-sidemenu-border: $gray-200;
 $fr-sidemenu-width-lg: 15em;
-$fr-sidemenu-width-sm: 3.75em;
+$fr-sidemenu-width-sm: 4rem;
 $fr-sidebar-nav-minimized-width: $fr-sidemenu-width-sm;
 $fr-sidemenu-fontsize: 0.875rem;
 $fr-sidemenu-icon-fontsize: 1.125rem;
@@ -621,8 +621,7 @@ $fr-sidemenu-bottom-background-color: $white;
 $fr-sidemenu-padding-x: .5rem;
 $fr-sidemenu-padding-y: 0;
 $fr-sidemenu-item-border-radius: $border-radius;
-$fr-sidemenu-item-border: 3px solid transparent;
-$fr-sidemenu-item-padding: 15px 20px 15px 16px;
+$fr-sidemenu-item-padding: .75rem 1rem .75rem 1rem;
 
 /* Sign up form */
 $fr-signup-header-wrapper-height: 5.25rem;

@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
             :name="slotName"
             v-bind="slotData" />
         </template>
-        <template #prependButton>
+        <template #appendButton>
           <FrEsvDropdown
             class="within-input-button"
             :include-secrets="includeSecrets"
@@ -215,10 +215,10 @@ export default {
     :deep(.b-dropdown) {
       display: inline-flex;
     }
-    :deep(.prepend-button:has(+ .input-group-append) .b-dropdown) {
+    :deep(.append-button:has(+ .input-group-append) .b-dropdown) {
       z-index: 3;
     }
-    :deep(.prepend-button:has(+ .input-group-append) .b-dropdown .dropdown-toggle) {
+    :deep(.append-button:has(+ .input-group-append) .b-dropdown .dropdown-toggle) {
       border-right: none;
     }
   }

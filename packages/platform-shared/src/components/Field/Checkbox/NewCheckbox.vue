@@ -110,9 +110,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.zindex-1 {
-  z-index: 1;
-}
-</style>

@@ -487,6 +487,12 @@ legend {
   color: $white;
 }
 
+.badge-outline-secondary {
+  border: 1px solid $border-color;
+  background-color: transparent;
+  color: $body-color;
+}
+
 /* General card styles */
 .card {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);

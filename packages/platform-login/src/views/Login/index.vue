@@ -34,7 +34,9 @@ of the MIT license. See the LICENSE file for details. -->
                 :logo-path="logoPath"
                 :header-classes="['login-header']">
                 <template #center-card-header>
-                  <div aria-live="polite">
+                  <div
+                    aria-live="polite"
+                    :class="{ 'mh-100px': loading || themeLoading }">
                     <template v-if="!loading && !themeLoading">
                       <h1
                         v-if="header"
@@ -195,7 +197,7 @@ of the MIT license. See the LICENSE file for details. -->
                     v-else>
                     <div class="h-100 d-flex">
                       <div class="fr-center-card">
-                        <Spinner class="mb-4" />
+                        <FrSpinner class="mb-4" />
                       </div>
                     </div>
                   </BCardBody>
@@ -426,7 +428,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="justify-content-center"
               aria-live="polite">
               <div class="fr-center-card">
-                <Spinner class="mb-4" />
+                <FrSpinner class="mb-4" />
               </div>
             </BRow>
           </div>
@@ -483,7 +485,7 @@ import {
   WebAuthnStepType,
 } from '@forgerock/javascript-sdk';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
-import Spinner from '@forgerock/platform-shared/src/components/Spinner';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
@@ -522,7 +524,7 @@ export default {
     BRow,
     FrAlert,
     FrCenterCard,
-    Spinner,
+    FrSpinner,
     FrBooleanAttributeInputCallback: () => import('@/components/callbacks/BooleanAttributeInputCallback'),
     FrChoiceCallback: () => import('@/components/callbacks/ChoiceCallback'),
     FrConfirmationCallback: () => import('@/components/callbacks/ConfirmationCallback'),
@@ -1777,5 +1779,9 @@ export default {
 // remove browsers enforced focus-visible from the auto focused element
 .auto-focused:focus-visible {
   outline: none;
+}
+
+.mh-100px {
+  min-height: 100px;
 }
 </style>

@@ -11,7 +11,6 @@ of the MIT license. See the LICENSE file for details. -->
     <template #dismiss>
       <FrIcon
         :aria-label="$t('common.close')"
-        :outlined="false"
         name="close" />
     </template>
     <FrIcon
@@ -122,6 +121,10 @@ export default {
     display: flex;
     line-height: 1.25;
 
+    :deep(button) {
+      padding: 0 0.5rem 0 0;
+    }
+
     &.alert-primary {
       border-left: 5px solid $primary;
       background-color: var(--alert-primary-bg-color);
@@ -173,8 +176,6 @@ export default {
 
     :deep(.close) {
       opacity: 0.85;
-      top: 4px;
-      right: 4px;
       &:not(:disabled):not(.disabled):hover {
         opacity: 1;
       }
