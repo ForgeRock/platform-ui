@@ -280,10 +280,8 @@ describe('UserDetails', () => {
 
       const tableHeaders = wrapper.findAll('[role="columnheader"]');
       expect(tableHeaders[0].text()).toContain('Name');
-      expect(tableHeaders[1].text()).toContain('Time Constraint');
-      expect(tableHeaders[2].text()).toContain('Assignment');
+      expect(tableHeaders[1].text()).toContain('Assignment');
       expect(wrapper.findAll('[role="cell"]')[0].text()).toContain('testRole');
-      expect(wrapper.findAll('[role="cell"]')[1].text()).toContain('--');
     });
 
     it('add role naviagtes to catalog with the correct initial tab', async () => {

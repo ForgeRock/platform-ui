@@ -132,13 +132,17 @@ export function submitCustomRequest(requestTypeId, request) {
 /**
  * Update a suspended request's resume date
  * @param {String} requestId ID of request
- * @param {String} phaseName Phase name in which the request is
  * @param {Object} requestPayload request payload details
  * @returns {Promise}
  */
-export function updateRequestResumeDate(requestId, phaseName, requestPayload) {
-  const url = `/governance/requests/${requestId}/phases/${phaseName}`;
-  return generateIgaApi().patch(url, requestPayload);
+export function updateRequestResumeDate(requestId, requestPayload) {
+  const params = {
+    _action: 'changeResumeDate',
+  };
+  const queryString = encodeQueryString(params, false);
+
+  const url = `/governance/requests/${requestId}${queryString}`;
+  return generateIgaApi().post(url, requestPayload);
 }
 
 /**

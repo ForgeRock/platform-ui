@@ -46,12 +46,16 @@ export default {
           sortable: true,
         },
         {
-          key: 'timeConstraint',
-          label: this.$t('pages.myAccess.timeConstraint'),
-        },
-        {
           key: 'assignment',
           label: this.$t('common.assignment'),
+        },
+        {
+          key: 'grantStartDate',
+          label: this.$t('governance.accessRequest.newRequest.accessStartDate'),
+        },
+        {
+          key: 'grantEndDate',
+          label: this.$t('governance.accessRequest.newRequest.accessEndDate'),
         },
         {
           key: 'actions',

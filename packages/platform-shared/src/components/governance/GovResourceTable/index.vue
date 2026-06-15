@@ -181,6 +181,16 @@ of the MIT license. See the LICENSE file for details. -->
             {{ formatConstraintDate(item.relationship.temporalConstraints) || blankValueIndicator }}
           </p>
         </template>
+        <template #cell(grantStartDate)="{ item }">
+          <p class="mb-0">
+            {{ getFormattedDateTime(item.item?.decision?.accessRequest?.grantStartDate) || blankValueIndicator }}
+          </p>
+        </template>
+        <template #cell(grantEndDate)="{ item }">
+          <p class="mb-0">
+            {{ getFormattedDateTime(item.item?.decision?.accessRequest?.grantEndDate) || blankValueIndicator }}
+          </p>
+        </template>
         <template #cell(assignment)="{ item }">
           <BBadge
             class="font-weight-normal w-100px"
@@ -248,6 +258,16 @@ of the MIT license. See the LICENSE file for details. -->
                   {{ $t('common.revoke') }}
                 </FrIcon>
               </BDropdownItem>
+              <BDropdownItem
+                v-if="item.item.decision?.accessRequest?.grantEndDate"
+                test-id="extend-grant-action"
+                @click="showExtendRequestModal(item)">
+                <FrIcon
+                  icon-class="mr-2"
+                  name="edit">
+                  {{ $t('governance.accessRequest.requestTypes.extendEndDate') }}
+                </FrIcon>
+              </BDropdownItem>
             </template>
           </FrActionsCell>
         </template>
@@ -279,6 +299,8 @@ of the MIT license. See the LICENSE file for details. -->
       :modal-id="revokeModalId"
       :show-spinner="assigningResource"
       @submission="$emit('revoke-items', { ...$event, itemsToRevoke })" />
+    <FrExtendRequestModal
+      :current-item="itemToExtendRequest" />
     <BModal
       id="revoke-from-role-modal"
       no-close-on-backdrop
@@ -366,11 +388,12 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import formatConstraintDate from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
+import { formatConstraintDate, getFormattedDateTime } from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
 import FrRecommendationIcon from '@forgerock/platform-shared/src/components/governance/Recommendations/RecommendationIcon';
 import { getPredictionDisplayInfo } from '@forgerock/platform-shared/src/utils/governance/prediction';
 import FrGovAssignResourceModal from '../GovAssignResourceModal';
 import FrRevokeRequestModal from '../RevokeRequestModal';
+import FrExtendRequestModal from '../ExtendRequestModal/ExtendRequestModal';
 import i18n from '@/i18n';
 
 export default {
@@ -396,6 +419,7 @@ export default {
     FrNoData,
     FrPagination,
     FrRevokeRequestModal,
+    FrExtendRequestModal,
     FrSearchInput,
     FrSpinner,
     FrUserEntitlementModal,
@@ -526,6 +550,7 @@ export default {
       paginationPageSize: 10,
       itemsToRevoke: [],
       itemToRequest: [],
+      itemToExtendRequest: null,
       roleBasedAssignment: this.$t('pages.assignment.roleBased'),
       ruleBasedAssignment: this.$t('pages.assignment.ruleBased'),
       searchQuery: '',
@@ -642,6 +667,7 @@ export default {
       return this.resourceIsRole ? 'name' : sortByUser[fieldName] ?? (this.useFieldForSort ? fieldName : null);
     },
     formatConstraintDate,
+    getFormattedDateTime,
     getApplicationLogo,
     getDisplayName(item) {
       if (this.grantType === 'account') {
@@ -801,6 +827,18 @@ export default {
       this.$nextTick(() => {
         this.itemToRequest = [item?.catalog?.id];
         this.$bvModal.show(`${this.modalId}-request`, [item?.catalog?.id]);
+      });
+    },
+    /**
+     * Shows modal to extend Grant's end date
+     * @param {item} current access item of the table that is being extended
+     */
+    showExtendRequestModal(item) {
+      // ActionsMenu component manages focus on trigger elements when modals are opened/closed.
+      // To avoid conflicts, we defer showing the modal until the next tick.
+      this.$nextTick(() => {
+        this.itemToExtendRequest = item;
+        this.$bvModal.show('ExtendRequestModal');
       });
     },
     sortChanged(event) {

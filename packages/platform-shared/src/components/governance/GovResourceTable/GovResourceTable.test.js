@@ -10,6 +10,7 @@ import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHe
 import { DOMWrapper, mount, flushPromises } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getFormattedDateTime } from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
 import i18n from '@/i18n';
 import GovResourceTable from './index';
 
@@ -23,7 +24,6 @@ jest.mock('@forgerock/platform-shared/src/api/CdnApi', () => ({
     },
   }),
 }));
-
 const mockItems = [
   {
     item: {
@@ -94,6 +94,14 @@ describe('GovResourceTable', () => {
           },
           {
             key: 'accountName',
+            label: '',
+          },
+          {
+            key: 'grantStartDate',
+            label: '',
+          },
+          {
+            key: 'grantEndDate',
             label: '',
           },
           {
@@ -515,5 +523,104 @@ describe('GovResourceTable', () => {
 
       expect(resourceDisplayName).toBeUndefined();
     });
+  });
+
+  it('should show extend action only if grantEndDate is present in the table row', async () => {
+    const { wrapper, domWrapper } = await mountComponent({ showViewDetails: true });
+    wrapper.setProps({
+      items: [
+        {
+          assignment: 'DIRECT',
+          item: {
+            type: 'roleMembership',
+            decision: {
+              accessRequest: {
+                grantEndDate: new Date('2025-07-02').toISOString(),
+              },
+            },
+          },
+          user: {
+            accountStatus: 'active',
+          },
+          account: {
+            userPrincipalName: 'test1@forgerock.com',
+          },
+          application: {
+            name: 'test1',
+            templateName: 'test1',
+          },
+        },
+      ],
+    });
+    await flushPromises();
+    const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    await actionOptionsMenu.find('button').trigger('click');
+    await flushPromises();
+
+    const extendAction = domWrapper.find('[test-id="extend-grant-action"]');
+    expect(extendAction.exists()).toBe(true);
+  });
+
+  it('should not show extend action only if grantEndDate is absent in the table row', async () => {
+    const { wrapper, domWrapper } = await mountComponent({ showViewDetails: true });
+    wrapper.setProps({
+      items: [
+        {
+          assignment: 'DIRECT',
+          item: {
+            type: 'roleMembership',
+          },
+          user: {
+            accountStatus: 'active',
+          },
+          account: {
+            userPrincipalName: 'test1@forgerock.com',
+          },
+          application: {
+            name: 'test1',
+            templateName: 'test1',
+          },
+        },
+      ],
+    });
+    await flushPromises();
+    const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    await actionOptionsMenu.find('button').trigger('click');
+    await flushPromises();
+
+    const extendAction = domWrapper.find('[test-id="extend-grant-action"]');
+    expect(extendAction.exists()).toBe(false);
+  });
+
+  it('should display formatted grant end date in the table row', async () => {
+    const { wrapper } = await mountComponent({ showViewDetails: true });
+    wrapper.setProps({
+      items: [
+        {
+          assignment: 'DIRECT',
+          item: {
+            type: 'roleMembership',
+            decision: {
+              accessRequest: {
+                grantEndDate: new Date('2025-07-02').toISOString(),
+              },
+            },
+          },
+          user: {
+            accountStatus: 'active',
+          },
+          account: {
+            userPrincipalName: 'test1@forgerock.com',
+          },
+          application: {
+            name: 'test1',
+            templateName: 'test1',
+          },
+        },
+      ],
+    });
+    await flushPromises();
+    const grantEndDate = getFormattedDateTime(new Date('2025-07-02').toISOString());
+    expect(wrapper.text()).toContain(grantEndDate);
   });
 });

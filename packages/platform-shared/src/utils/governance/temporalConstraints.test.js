@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import formatConstraintDate from './temporalConstraints';
+import { formatConstraintDate } from './temporalConstraints';
 
 describe('formatConstraintDate', () => {
   it('should return undefined when there is not a temporal constraint', () => {

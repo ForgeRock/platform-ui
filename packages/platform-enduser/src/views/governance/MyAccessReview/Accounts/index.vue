@@ -51,6 +51,14 @@ export default {
           sortable: true,
         },
         {
+          key: 'grantStartDate',
+          label: this.$t('governance.accessRequest.newRequest.accessStartDate'),
+        },
+        {
+          key: 'grantEndDate',
+          label: this.$t('governance.accessRequest.newRequest.accessEndDate'),
+        },
+        {
           key: 'actions',
           label: this.$t('common.actions'),
           class: 'fr-no-resize sticky-right w-120px',
