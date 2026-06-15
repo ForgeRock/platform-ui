@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -153,6 +153,37 @@ describe('Tasks', () => {
     expect(activeDropdown.length).toBe(2);
     expect(activeDropdown[0].text()).toContain('viewDetails');
     expect(activeDropdown[1].text()).toContain('changeResumeDate');
+  });
+
+  it('table rows have tabindex="0" and aria-selected when selectable is set', async () => {
+    const { wrapper } = setup();
+    await flushPromises();
+    const rows = wrapper.findAll('tbody tr');
+    expect(rows.length).toBeGreaterThan(0);
+    rows.forEach((row) => {
+      expect(row.attributes('tabindex')).toBe('0');
+      expect(row.attributes('aria-selected')).toBeDefined();
+    });
+  });
+
+  it('opens task details modal when row-selected fires with an item', async () => {
+    const { wrapper } = setup();
+    await flushPromises();
+
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', [wrapper.vm.tableData[0]]);
+
+    expect(modalShow).toHaveBeenCalledWith('TaskDetailsModal');
+  });
+
+  it('does not open modal when row-selected fires with empty array', async () => {
+    const { wrapper } = setup();
+    await flushPromises();
+
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', []);
+
+    expect(modalShow).not.toHaveBeenCalled();
   });
 
   it('Should render action menu for admin requests with active approval', async () => {

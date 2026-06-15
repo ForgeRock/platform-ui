@@ -282,4 +282,29 @@ describe('AccessReviews', () => {
       expect(wrapper.text()).toMatch('Resume Date');
     });
   });
+
+  it('table rows have tabindex="0" and aria-selected when selectable is set', async () => {
+    await wrapper.setProps({ requests: [application] });
+    const rows = wrapper.findAll('tbody tr');
+    expect(rows.length).toBeGreaterThan(0);
+    rows.forEach((row) => {
+      expect(row.attributes('tabindex')).toBe('0');
+      expect(row.attributes('aria-selected')).toBeDefined();
+    });
+  });
+
+  it('emits open-detail when row-selected fires with an item', async () => {
+    await wrapper.setProps({ requests: [application] });
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', [wrapper.vm.items[0]]);
+    expect(wrapper.emitted('open-detail')).toBeTruthy();
+    expect(wrapper.emitted('open-detail')[0][0]).toEqual(wrapper.vm.items[0]);
+  });
+
+  it('does not emit open-detail when row-selected fires with empty array', async () => {
+    await wrapper.setProps({ requests: [application] });
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', []);
+    expect(wrapper.emitted('open-detail')).toBeFalsy();
+  });
 });

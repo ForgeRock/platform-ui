@@ -155,6 +155,7 @@ of the MIT license. See the LICENSE file for details. -->
          * .btn:focus-visible
          * a:focus-visible
       -->
+      <template v-if="mock">.fr-theme-preview</template> tr:focus-visible,
       <template v-if="mock">.fr-theme-preview</template> .btn:focus-visible,
       <template v-if="mock">.fr-theme-preview</template> a:focus-visible {
         outline: 2px solid {{ buttonFocusBorderColor }} !important;
