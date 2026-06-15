@@ -150,11 +150,6 @@ of the MIT license. See the LICENSE file for details. -->
         outline: 0 none;
       }
 
-      <!--
-        BUTTON FOCUS STYLES
-         * .btn:focus-visible
-         * a:focus-visible
-      -->
       <template v-if="mock">.fr-theme-preview</template> tr:focus-visible,
       <template v-if="mock">.fr-theme-preview</template> .btn:focus-visible,
       <template v-if="mock">.fr-theme-preview</template> a:focus-visible {

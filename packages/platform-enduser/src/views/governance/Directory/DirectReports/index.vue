@@ -65,13 +65,15 @@ of the MIT license. See the LICENSE file for details. -->
         @sort-changed="sortChanged"
         hover
         responsive
+        selectable
+        select-mode="single"
         :fields="fields"
         :items="items"
         :busy="isLoading"
         :no-local-sorting="true"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
-        @row-clicked="viewDirectReportDetails"
+        @row-selected="(rows) => rows.length && viewDirectReportDetails(rows[0])"
       >
         <template #cell(username)="{ item }">
           <BMedia no-body>
