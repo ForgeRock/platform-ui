@@ -393,14 +393,10 @@ async function updateResumeDate(newResumeTime, justification) {
   const requestId = modalItem.value.details.id;
   const waitTask = find(modalItem.value.rawData.decision?.phases, (phase) => startsWith(phase.name, 'waitTask'));
   const payload = {
-    events: {
-      scheduled: {
-        date: newResumeTime,
-      },
-    },
+    resumeDate: newResumeTime,
   };
   try {
-    await updateRequestResumeDate(requestId, waitTask.name, payload);
+    await updateRequestResumeDate(requestId, payload);
     await requestAction(requestId, 'comment', waitTask.name, { comment: justification });
     bvModal.value.hide('UpdateResumeDateModal');
     await loadRequests();

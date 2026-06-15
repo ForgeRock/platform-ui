@@ -83,6 +83,11 @@ of the MIT license. See the LICENSE file for details. -->
       <template #cell(account)="{ item }">
         {{ item.descriptor?.idx?.['/account']?.displayName || blankValueIndicator }}
       </template>
+      <template #cell(grantEndDate)="{ item }">
+        <p class="mb-0">
+          {{ getFormattedDateTime(item.item?.decision?.accessRequest?.grantEndDate) || blankValueIndicator }}
+        </p>
+      </template>
       <template #cell(actions)="{ item }">
         <FrActionsCell
           :divider="false"
@@ -94,6 +99,15 @@ of the MIT license. See the LICENSE file for details. -->
                 icon-class="mr-2"
                 name="delete">
                 {{ $t('common.revoke') }}
+              </FrIcon>
+            </BDropdownItem>
+            <BDropdownItem
+              v-if="item.item.decision?.accessRequest?.grantEndDate"
+              @click="showExtendRequestModal(item)">
+              <FrIcon
+                icon-class="mr-2"
+                name="edit">
+                {{ $t('governance.accessRequest.requestTypes.extendEndDate') }}
               </FrIcon>
             </BDropdownItem>
           </template>
@@ -146,6 +160,8 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('pages.access.removeConfirm', { type: $t('common.users') }) }}
       </div>
     </BModal>
+    <FrExtendRequestModal
+      :current-item="itemToExtendRequest" />
     <FrRequestSubmitSuccessModal
       :request-id="requestId[0]"
       :router-path="userStore.adminUser ? 'Entitlements' : 'AdministerEntitlements'"
@@ -185,6 +201,8 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import FrUserBasicInfo from '@forgerock/platform-shared/src/components/UserGroupList/UserBasicInfo';
 import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { getFormattedDateTime } from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
+import FrExtendRequestModal from '@forgerock/platform-shared/src/components/governance/ExtendRequestModal/ExtendRequestModal';
 import i18n from '@/i18n';
 
 const { bvModal } = useBvModal();
@@ -216,6 +234,7 @@ const requestId = ref('');
 const searchValue = ref('');
 const selected = ref([]);
 const totalRows = ref(0);
+const itemToExtendRequest = ref(null);
 const columns = [
   {
     key: 'selected',
@@ -229,6 +248,11 @@ const columns = [
   {
     key: 'account',
     label: i18n.global.t('common.account'),
+  },
+  {
+    key: 'grantEndDate',
+    class: 'w-240px',
+    label: i18n.global.t('governance.access.endDate'),
   },
   {
     key: 'actions',
@@ -360,6 +384,15 @@ function showRemoveModal(item) {
     selected.value = [item];
   }
   removeMembersModal.value.show();
+}
+
+/**
+  * Shows modal to extend Grant's end date
+  * @param {item} current access item of the table that is being extended
+  */
+function showExtendRequestModal(item) {
+  itemToExtendRequest.value = item;
+  bvModal.value.show('ExtendRequestModal');
 }
 
 /**

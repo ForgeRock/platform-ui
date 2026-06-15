@@ -139,6 +139,14 @@ const grantTabItems = [
         label: i18n.global.t('common.status'),
       },
       {
+        key: 'grantStartDate',
+        label: i18n.global.t('governance.accessRequest.newRequest.accessStartDate'),
+      },
+      {
+        key: 'grantEndDate',
+        label: i18n.global.t('governance.accessRequest.newRequest.accessEndDate'),
+      },
+      {
         key: 'actions',
         label: i18n.global.t('common.actions'),
         class: 'fr-no-resize sticky-right w-120px',
@@ -165,6 +173,14 @@ const grantTabItems = [
         sortable: true,
       },
       {
+        key: 'grantStartDate',
+        label: i18n.global.t('governance.accessRequest.newRequest.accessStartDate'),
+      },
+      {
+        key: 'grantEndDate',
+        label: i18n.global.t('governance.accessRequest.newRequest.accessEndDate'),
+      },
+      {
         key: 'actions',
         label: i18n.global.t('common.actions'),
         class: 'fr-no-resize sticky-right w-120px',
@@ -182,12 +198,16 @@ const grantTabItems = [
         sortable: true,
       },
       {
-        key: 'timeConstraint',
-        label: i18n.global.t('pages.myAccess.timeConstraint'),
-      },
-      {
         key: 'assignment',
         label: i18n.global.t('common.assignment'),
+      },
+      {
+        key: 'grantStartDate',
+        label: i18n.global.t('governance.accessRequest.newRequest.accessStartDate'),
+      },
+      {
+        key: 'grantEndDate',
+        label: i18n.global.t('governance.accessRequest.newRequest.accessEndDate'),
       },
       {
         key: 'actions',

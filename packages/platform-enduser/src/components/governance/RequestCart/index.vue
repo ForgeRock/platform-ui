@@ -134,6 +134,7 @@ import {
   BImg,
   BFormGroup,
 } from 'bootstrap-vue';
+import dayjs from 'dayjs';
 import { Form as VeeForm } from 'vee-validate';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
@@ -225,7 +226,7 @@ export default {
         payload.startDate = this.startDate;
       }
       if (this.endDate) {
-        payload.endDate = this.endDate;
+        payload.endDate = dayjs(this.endDate).local().format();
       }
       if (this.expirationDate) {
         payload.expiryDate = this.expirationDate;

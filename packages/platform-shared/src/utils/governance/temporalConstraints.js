@@ -14,7 +14,7 @@ import i18n from '@/i18n';
  * @param {Object[]} temporalConstraints temporal constraints info
  * @returns {String} Parsed date
  */
-export default function formatConstraintDate(temporalConstraints = []) {
+export function formatConstraintDate(temporalConstraints = []) {
   const value = temporalConstraints[0]?.duration;
   if (value) {
     const dates = map(value.split('/'), (date) => (dayjs(date).format('MMM D, YYYY h:mm A')));
@@ -22,4 +22,9 @@ export default function formatConstraintDate(temporalConstraints = []) {
   }
 
   return value;
+}
+
+export function getFormattedDateTime(date) {
+  if (!date) return '';
+  return `${dayjs(date).format('MMMM D, YYYY h:mm A')}`;
 }

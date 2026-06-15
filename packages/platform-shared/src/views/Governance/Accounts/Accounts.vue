@@ -155,6 +155,15 @@ of the MIT license. See the LICENSE file for details. -->
                               </FrIcon>
                             </template>
                           </BDropdownItem>
+                          <BDropdownItem
+                            v-if="item.item.decision?.accessRequest?.grantEndDate"
+                            @click="showExtendRequestModal(item)">
+                            <FrIcon
+                              icon-class="mr-2"
+                              name="edit">
+                              {{ $t('governance.accessRequest.requestTypes.extendEndDate') }}
+                            </FrIcon>
+                          </BDropdownItem>
                         </template>
                       </FrActionsCell>
                     </template>
@@ -179,6 +188,8 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </div>
     </div>
+    <FrExtendRequestModal
+      :current-item="itemToExtendRequest" />
   </BContainer>
 </template>
 
@@ -213,6 +224,8 @@ import { getAccounts } from '@forgerock/platform-shared/src/api/governance/Accou
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import FrExtendRequestModal from '@forgerock/platform-shared/src/components/governance/ExtendRequestModal/ExtendRequestModal';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import accountConstants from './utils/accountConstants';
 import { getAccountTypeVariant, getAccountDisplayName } from './utils/accountUtility';
 import i18n from '@/i18n';
@@ -242,6 +255,9 @@ const selectedTab = ref(0);
 const applicationSearchResults = ref([]);
 const selectedApplications = ref([]);
 const queryAll = ref(true);
+const itemToExtendRequest = ref(null);
+const { bvModal } = useBvModal();
+
 const fields = computed(() => {
   const tableFields = [
     {
@@ -473,6 +489,15 @@ function navigateToEdit(accountId) {
       tab: 'details',
     },
   });
+}
+
+/**
+  * Shows modal to extend Grant's end date
+  * @param {item} current access item of the table that is being extended
+  */
+function showExtendRequestModal(item) {
+  itemToExtendRequest.value = item;
+  bvModal.value.show('ExtendRequestModal');
 }
 
 /**

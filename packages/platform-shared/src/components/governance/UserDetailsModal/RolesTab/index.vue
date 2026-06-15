@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { get } from 'lodash';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import formatConstraintDate from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
+import { formatConstraintDate } from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
 import { BTable } from 'bootstrap-vue';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';

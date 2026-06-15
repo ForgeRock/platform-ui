@@ -215,6 +215,14 @@ export default {
     getTableFields(grantType) {
       const sharedFields = [
         {
+          key: 'grantStartDate',
+          label: this.$t('governance.accessRequest.newRequest.accessStartDate'),
+        },
+        {
+          key: 'grantEndDate',
+          label: this.$t('governance.accessRequest.newRequest.accessEndDate'),
+        },
+        {
           key: 'assignment',
           label: this.$t('common.assignment'),
           sortable: false,
@@ -248,10 +256,6 @@ export default {
               key: 'roleName',
               label: this.$t('common.name'),
               sortable: true,
-            },
-            {
-              key: 'timeConstraint',
-              label: this.$t('pages.myAccess.timeConstraint'),
             },
             ...sharedFields,
           ];

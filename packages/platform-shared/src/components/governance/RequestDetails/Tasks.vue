@@ -308,15 +308,11 @@ function getWaitTaskId(item) {
 async function updateResumeDate(newResumeTime, justification) {
   savingRequest.value = true;
   const payload = {
-    events: {
-      scheduled: {
-        date: newResumeTime,
-      },
-    },
+    resumeDate: newResumeTime,
   };
   try {
     const waitTaskId = getWaitTaskId(prop.item.rawData);
-    await updateRequestResumeDate(prop.item.details.id, waitTaskId, payload);
+    await updateRequestResumeDate(prop.item.details.id, payload);
     await requestAction(prop.item.details.id, 'comment', waitTaskId, { comment: justification });
     displayNotification('success', i18n.global.t('governance.accessRequest.requestSaveSuccess'));
     closeModal();

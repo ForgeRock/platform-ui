@@ -33,6 +33,30 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
         </BCol>
       </BRow>
+      <BRow class="w-100 align-items-center mb-2">
+        <BCol sm="4">
+          <p class="h5 mb-0">
+            {{ $t('governance.access.startDate') }}
+          </p>
+        </BCol>
+        <BCol sm="4">
+          <p class="h5 mb-0">
+            {{ getFormattedDateTime(account.item?.decision?.accessRequest?.grantStartDate) || blankValueIndicator }}
+          </p>
+        </BCol>
+      </BRow>
+      <BRow class="w-100 align-items-center mb-2">
+        <BCol sm="4">
+          <p class="h5 mb-0">
+            {{ $t('governance.access.endDate') }}
+          </p>
+        </BCol>
+        <BCol sm="4">
+          <p class="h5 mb-0">
+            {{ getFormattedDateTime(account.item?.decision?.accessRequest?.grantEndDate, false) || blankValueIndicator }}
+          </p>
+        </BCol>
+      </BRow>
       <BRow
         v-if="isMachine"
         class="w-100 align-items-center mb-2">
@@ -179,10 +203,10 @@ import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance
 import dayjs from 'dayjs';
 import FrGlossaryEditForm from '@forgerock/platform-shared/src/components/governance/GlossaryEditForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { getFormattedDateTime } from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
 import { getAccountTypeVariant, adjustAccountGlossaryForDisplay } from '../utils/accountUtility';
-
-import i18n from '@/i18n';
 import accountConstants from '../utils/accountConstants';
+import i18n from '@/i18n';
 
 const props = defineProps({
   account: {

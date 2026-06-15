@@ -1695,7 +1695,8 @@
         "deleteUser": "Delete User",
         "modifyUser": "Modify User",
         "roleGrant": "Grant Role",
-        "roleRemove": "Remove Role"
+        "roleRemove": "Remove Role",
+        "extendEndDate": "Extend End Date"
       },
       "priorities": {
         "priorities": "Priorities",
@@ -1769,6 +1770,12 @@
         "showIf": "Show if",
         "title": "New Request",
         "yourRequest": "Your Request"
+      },
+      "extendRequest": {
+        "requestType": "Extend End Date",
+        "modalTitle": "Request Extension",
+        "GrantEndDate": "Grant's end date",
+        "mindateValidation": "Select a valid end date"
       },
       "changeResumeDate": "Change Resume Date",
       "customRequestAltText": "Custom Request",

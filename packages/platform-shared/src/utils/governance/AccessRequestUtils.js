@@ -139,6 +139,10 @@ export const requestTypes = {
     label: 'governance.accessRequest.requestTypes.roleRemove',
     value: 'roleRemove',
   },
+  EXTEND_END_DATE: {
+    label: 'governance.accessRequest.requestTypes.extendEndDate',
+    value: 'extendEndDate',
+  },
 };
 
 export const OOTB_NO_FORM_REQUEST_TYPES = [
@@ -148,6 +152,7 @@ export const OOTB_NO_FORM_REQUEST_TYPES = [
   requestTypes.ACCOUNT_REVOKE,
   requestTypes.ENTITLEMENT_GRANT,
   requestTypes.ENTITLEMENT_REVOKE,
+  requestTypes.EXTEND_END_DATE,
 ];
 
 export function isSupportedRequestType(requestType) {
@@ -259,10 +264,10 @@ export function getStatusText(statusOptions, status) {
  * @param {String} requestType the request type of the access request
  * @returns {String} the base object type of the request: application, entitlment, role.
  */
-export function getRequestObjectType(requestType) {
-  if (requestType.includes('application')) return 'application';
-  if (requestType.toLowerCase().includes('entitlement')) return 'entitlement';
-  if (requestType.toLowerCase().includes('role')) return 'role';
+export function getRequestObjectType(requestType, requestCommonObject = {}) {
+  if (requestType.includes('application') || requestCommonObject.grantType === 'accountGrant') return 'application';
+  if (requestType.toLowerCase().includes('entitlement') || requestCommonObject.grantType === 'entitlementGrant') return 'entitlement';
+  if (requestType.toLowerCase().includes('role') || requestCommonObject.grantType === 'roleMembership') return 'role';
   if (requestType === 'createUser' || requestType === 'deleteUser' || requestType === 'modifyUser') return 'lcmUser';
   return '';
 }
@@ -489,7 +494,7 @@ export function addPredictionDataToRequest(request, autoIdSettings, userSchema) 
  */
 export function getFormattedRequest(request, autoIdSettings, userSchema) {
   if (isSupportedRequestType(request.requestType)) {
-    const objectType = getRequestObjectType(request.requestType);
+    const objectType = getRequestObjectType(request.requestType, request?.request?.common);
     const advancedRequest = getAdvancedRequestDisplay(request, objectType);
     addPredictionDataToRequest(advancedRequest, autoIdSettings, userSchema);
     return advancedRequest;

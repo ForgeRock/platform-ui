@@ -175,11 +175,12 @@ describe('Users', () => {
     await flushPromises();
 
     const columns = wrapper.findAll('[role="columnheader"]');
-    expect(columns.length).toBe(4);
+    expect(columns.length).toBe(5);
     expect(columns[0].text()).toBe('Select');
     expect(columns[1].text()).toBe('Name');
     expect(columns[2].text()).toBe('Account');
-    expect(columns[3].text()).toBe('Actions');
+    expect(columns[3].text()).toBe('Access End Date');
+    expect(columns[4].text()).toBe('Actions');
   });
 
   it('shows users in the table', async () => {
