@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
       @input="handleFilterChange"
       @open-columns-modal="openColumnsModal" />
     <BTable
-      @row-clicked="$emit('view-exception-details', $event)"
+      @row-selected="(rows) => rows.length && emit('view-exception-details', rows[0])"
       @sort-changed="sortChanged"
       class="mb-0"
       v-resizable-table="{ persistKey: `governance-exceptions-${isAdmin ? 'admin' : 'user'}` }"
@@ -21,6 +21,8 @@ of the MIT license. See the LICENSE file for details. -->
       no-local-sorting
       no-sort-reset
       responsive
+      selectable
+      select-mode="single"
       show-empty
       :empty-text="$t('common.noRecordsToShow')"
       tbody-tr-class="cursor-pointer"
