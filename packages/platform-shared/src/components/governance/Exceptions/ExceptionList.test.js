@@ -213,6 +213,65 @@ describe('ExceptionList', () => {
     expect(storeSpy).toHaveBeenCalledWith('setViolationsCount', 0);
   });
 
+  it('table rows have tabindex="0" and aria-selected when selectable is set', async () => {
+    const tableRows = [
+      {
+        id: 'exception-1',
+        decision: {
+          status: 'exception',
+          startDate: '2024-05-13T23:12:21+00:00',
+          phases: [{ name: 'testPhase' }],
+          events: { exception: { date: '2025-01-01' } },
+        },
+        policyRule: { name: 'TestRule' },
+        user: { givenName: 'Opal', sn: 'Millions', userName: 'opal@test.com' },
+        stats: { latestDetectionTime: '2024-05-13T23:12:21+00:00' },
+      },
+    ];
+    const wrapper = mountComponent({ tableRows });
+    await flushPromises();
+    const rows = wrapper.findAll('tbody tr');
+    expect(rows.length).toBeGreaterThan(0);
+    rows.forEach((row) => {
+      expect(row.attributes('tabindex')).toBe('0');
+      expect(row.attributes('aria-selected')).toBeDefined();
+    });
+  });
+
+  it('emits view-exception-details when row-selected fires with an item', async () => {
+    const tableRows = [
+      {
+        id: 'exception-1',
+        decision: {
+          status: 'exception',
+          startDate: '2024-05-13T23:12:21+00:00',
+          phases: [{ name: 'testPhase' }],
+          events: { exception: { date: '2025-01-01' } },
+        },
+        policyRule: { name: 'TestRule' },
+        user: { givenName: 'Opal', sn: 'Millions', userName: 'opal@test.com' },
+        stats: { latestDetectionTime: '2024-05-13T23:12:21+00:00' },
+      },
+    ];
+    const wrapper = mountComponent({ tableRows });
+    await flushPromises();
+
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', [wrapper.vm.items[0]]);
+
+    expect(wrapper.emitted('view-exception-details')[0][0].id).toBe('exception-1');
+  });
+
+  it('does not emit view-exception-details when row-selected fires with empty array', async () => {
+    const wrapper = mountComponent({ tableRows: [] });
+    await flushPromises();
+
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', []);
+
+    expect(wrapper.emitted('view-exception-details')).toBeFalsy();
+  });
+
   it('should extend exception when the exception modal emits action event and not decrease the violations count on the store when the violation is not allowed forever', async () => {
     ViolationApi.allowException = jest.fn().mockReturnValue(Promise.resolve());
     const displayNotificationSpy = jest.spyOn(notification, 'displayNotification').mockImplementation(() => {});

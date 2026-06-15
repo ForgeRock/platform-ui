@@ -352,33 +352,63 @@ describe('ViolationList', () => {
     expect(items.length).toBe(2);
   });
 
-  it('emits viewViolationDetails event when a row is clicked', async () => {
-    const wrapper = mountComponent({
-      isAdmin: false,
-      tableRows: [
-        {
-          decision: {
-            status: 'in-progress',
-            startDate: '2024-05-13T23:12:21+00:00',
-            phases: [{ name: 'testPhase' }],
-          },
-          policyRule: { name: 'NoCustomerSupport' },
-          user: {
-            givenName: 'Opal',
-            sn: 'Millions',
-            userName: 'Opal@IGATestQA.onmicrosoft.com',
-          },
-          id: '002bd665-3946-465c-b444-de470fa04254',
+  it('table rows have tabindex="0" and aria-selected when selectable is set', async () => {
+    const tableRows = [
+      {
+        decision: {
+          status: 'in-progress',
+          startDate: '2024-05-13T23:12:21+00:00',
+          phases: [{ name: 'testPhase' }],
         },
-      ],
-    });
+        policyRule: { name: 'NoCustomerSupport' },
+        user: { givenName: 'Opal', sn: 'Millions', userName: 'Opal@IGATestQA.onmicrosoft.com' },
+        id: '002bd665-3946-465c-b444-de470fa04254',
+      },
+    ];
+    const wrapper = mountComponent({ isAdmin: false, tableRows });
     await flushPromises();
-    const table = wrapper.findComponent('.table-responsive');
-    const rows = table.findAll('[role="row"]');
-    const row = rows[1];
-    await row.trigger('click');
+    const rows = wrapper.findAll('tbody tr');
+    expect(rows.length).toBeGreaterThan(0);
+    rows.forEach((row) => {
+      expect(row.attributes('tabindex')).toBe('0');
+      expect(row.attributes('aria-selected')).toBeDefined();
+    });
+  });
+
+  it('emits viewViolationDetails event when row-selected fires with an item', async () => {
+    const tableRows = [
+      {
+        decision: {
+          status: 'in-progress',
+          startDate: '2024-05-13T23:12:21+00:00',
+          phases: [{ name: 'testPhase' }],
+        },
+        policyRule: { name: 'NoCustomerSupport' },
+        user: {
+          givenName: 'Opal',
+          sn: 'Millions',
+          userName: 'Opal@IGATestQA.onmicrosoft.com',
+        },
+        id: '002bd665-3946-465c-b444-de470fa04254',
+      },
+    ];
+    const wrapper = mountComponent({ isAdmin: false, tableRows });
+    await flushPromises();
+
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', [wrapper.vm.items[0]]);
 
     expect(wrapper.emitted('viewViolationDetails')[0][0].id).toBe('002bd665-3946-465c-b444-de470fa04254');
+  });
+
+  it('does not emit viewViolationDetails when row-selected fires with empty array', async () => {
+    const wrapper = mountComponent({ isAdmin: false, tableRows: [] });
+    await flushPromises();
+
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', []);
+
+    expect(wrapper.emitted('viewViolationDetails')).toBeFalsy();
   });
 
   it('emits viewViolationDetails event when view details button is clicked', async () => {
