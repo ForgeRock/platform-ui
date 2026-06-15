@@ -4,17 +4,20 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BTable
+    ref="taskTable"
     class="mb-0"
     v-resizable-table="{ persistKey: `request-tasks-${type}` }"
     hover
     no-local-sorting
     responsive
+    selectable
+    select-mode="single"
     show-empty
     :empty-text="$t('common.noRecordsToShow')"
     tbody-tr-class="cursor-pointer"
     :fields="getTableColumns(type)"
     :items="tableData"
-    @row-clicked="showTaskDetailsModal($event)">
+    @row-selected="(rows) => rows.length && showTaskDetailsModal(rows[0])">
     <template #cell(task)="{ item }">
       <h2 class="h5">
         {{ item.displayName || capitalize(item.name) }}
@@ -25,16 +28,10 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
 
     <template #cell(approvers)="{ item }">
-      <BButton
-        class="btn-unstyled"
-        @keydown.enter="showTaskDetailsModal(item)"
-        @keydown.space="showTaskDetailsModal(item)"
-        @click="showTaskDetailsModal(item)">
-        <FrAvatarGroup
-          :id="item.name"
-          :users="item.actors"
-        />
-      </BButton>
+      <FrAvatarGroup
+        :id="item.name"
+        :users="item.actors"
+      />
     </template>
 
     <template #cell(status)="{ item }">
@@ -73,7 +70,6 @@ of the MIT license. See the LICENSE file for details. -->
 import { capitalize } from 'lodash';
 import {
   BBadge,
-  BButton,
   BTable,
 } from 'bootstrap-vue';
 import { ref, watch } from 'vue';
@@ -112,6 +108,7 @@ const prop = defineProps({
 const requestOutcome = ref(null);
 const tableData = ref(null);
 const taskDetails = ref({});
+const taskTable = ref(null);
 const savingRequest = ref(false);
 const phaseActors = ref([]);
 
@@ -260,6 +257,8 @@ function parseDate(date) {
  * @param {String} currentItem.workflowTaskId ID of the workflow task
  */
 function showTaskDetailsModal(currentItem) {
+  // Reset selection so repeated clicks on the same row always reopen the modal instead of just changing the row selection
+  if (taskTable.value) taskTable.value.clearSelected();
   taskDetails.value = {
     approvers: phaseActors.value.filter((actor) => actor.phase === currentItem.name),
     completedBy: currentItem.completedBy ? [].concat(currentItem.completedBy) : null,

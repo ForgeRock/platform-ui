@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
       tbody-tr-class="cursor-pointer"
       :fields="fields"
       :items="items"
-      @row-clicked="$emit('open-detail', $event);">
+      @row-selected="(rows) => rows.length && emit('open-detail', rows[0])">
       <template #cell(details)="{ item }">
         <BMedia
           v-if="item.details"
@@ -175,7 +175,7 @@ const prop = defineProps({
   },
 });
 
-defineEmits(['open-detail']);
+const emit = defineEmits(['open-detail']);
 
 const items = ref([]);
 const isAutoIdEnabled = computed(() => prop.autoIdSettings?.enableAutoId);
