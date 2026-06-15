@@ -208,16 +208,23 @@ describe('DirectReports Component', () => {
     });
   });
 
-  it('should have a loading spinner & a table', async () => {
+  it('table rows have tabindex="0" and aria-selected when selectable is set', async () => {
+    await wrapper.setData({ isLoading: false, items: mockResultItems });
+    const rows = wrapper.findAll('tbody tr');
+    expect(rows.length).toBeGreaterThan(0);
+    rows.forEach((row) => {
+      expect(row.attributes('tabindex')).toBe('0');
+      expect(row.attributes('aria-selected')).toBeDefined();
+    });
+  });
+
+  it('navigates to DirectReportDetail when row-selected fires with an item', async () => {
     await wrapper.setData({
       isLoading: false,
       items: mockResultItems,
     });
-    const directReportsTable = findByTestId(wrapper, 'table-directreports');
-    expect(directReportsTable.exists()).toBeTruthy();
-    expect(directReportsTable.findAll('tr')[1].text()).toContain(mockResultItems[0].userName);
-    directReportsTable.findAll('tr')[1].trigger('click');
-    await wrapper.vm.$nextTick();
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', [mockResultItems[0]]);
     expect(mockRouter.push).toHaveBeenCalledWith({
       name: 'DirectReportDetail',
       params: {
@@ -225,5 +232,15 @@ describe('DirectReports Component', () => {
         userId: 'aa75d444-379e-491c-8971-f1b85e533c56',
       },
     });
+  });
+
+  it('does not navigate when row-selected fires with empty array (deselect)', async () => {
+    await wrapper.setData({
+      isLoading: false,
+      items: mockResultItems,
+    });
+    const table = wrapper.findComponent({ name: 'BTable' });
+    await table.vm.$emit('row-selected', []);
+    expect(mockRouter.push).not.toHaveBeenCalled();
   });
 });
