@@ -220,7 +220,7 @@ export default {
     return {
       showPassword: false,
       hasAppendSlot: Object.keys(this.$slots).includes('append'),
-      hasPrependBtn: Object.keys(this.$slots).includes('prependButton'),
+      hasPrependBtn: Object.keys(this.$slots).includes('appendButton'),
     };
   },
   setup(props) {
@@ -452,12 +452,12 @@ export default {
     padding-right: 0px;
   }
 
-  :deep(.prepend-button .within-input-button .btn) {
+  :deep(.append-button .within-input-button .btn) {
     margin-left: -1px;
     border-radius: 0 !important;
   }
 
-  :deep(.prepend-button:only-child .within-input-button .btn) {
+  :deep(.append-button:only-child .within-input-button .btn) {
     // Give button the correct padding inside the input field
     padding: 0.75rem 1.25rem !important;
     // Gives button a curved border on the right hand side
@@ -465,7 +465,7 @@ export default {
     border-bottom-right-radius: $border-radius !important;
   }
 
-  :deep(.prepend-button:not(:only-child) .btn) {
+  :deep(.append-button:not(:only-child) .btn) {
     padding: 0.75rem !important;
   }
 

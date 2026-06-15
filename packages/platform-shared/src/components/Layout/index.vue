@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
     }, 'h-100']">
     <FrSkipToMainContent
       type="popover"
-      mainContentId="appContent" />
+      main-content-id="appContent" />
     <FrSystemNotification
       v-if="(systemNotification && !hideNavBar)"
       :data="systemNotification"
@@ -80,8 +80,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="fr-company-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
             <div class="fr-company-logo fr-company-logo-square-footer" />
           </div>
-          <div
-            class="mr-4 opacity-70">
+          <div class="mr-4 opacity-70">
             <span class="pr-1">
               © {{ currentYear }}
             </span>
@@ -114,10 +113,10 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import Alert from '@forgerock/platform-shared/src/components/Alert/';
-import Navbar from '@forgerock/platform-shared/src/components/Navbar/';
-import SideMenu from '@forgerock/platform-shared/src/components/SideMenu/';
-import SystemNotification from '@forgerock/platform-shared/src/components/SystemNotification/';
+import FrAlert from '@forgerock/platform-shared/src/components/Alert';
+import FrNavBar from '@forgerock/platform-shared/src/components/Navbar';
+import FrSideMenu from '@forgerock/platform-shared/src/components/SideMenu';
+import FrSystemNotification from '@forgerock/platform-shared/src/components/SystemNotification';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import FrSkipToMainContent from '@forgerock/platform-shared/src/components/SkipToMainContent';
 
@@ -127,11 +126,11 @@ import FrSkipToMainContent from '@forgerock/platform-shared/src/components/SkipT
 export default {
   name: 'Layout',
   components: {
-    FrNavBar: Navbar,
-    FrSideMenu: SideMenu,
-    FrAlert: Alert,
+    FrNavBar,
+    FrSideMenu,
+    FrAlert,
     FrSkipToMainContent,
-    FrSystemNotification: SystemNotification,
+    FrSystemNotification,
   },
   mixins: [MediaMixin],
   props: {
@@ -400,7 +399,7 @@ body {
 
 @media (min-width: 768px) {
   .app-footer {
-    width: calc(100% - 4em);
+    width: calc(100% - 4rem);
   }
 
   .fr-menu-expanded .app-footer {

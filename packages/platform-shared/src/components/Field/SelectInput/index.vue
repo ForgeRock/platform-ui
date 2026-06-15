@@ -305,7 +305,7 @@ export default {
       bails: false,
     });
 
-    const hasPrependBtn = ref(Object.keys(context.slots).includes('prependButton'));
+    const hasAppendBtn = ref(Object.keys(context.slots).includes('appendButton'));
     const floatLabels = ref(setFloatLabels(isOpen.value, inputValue.value));
 
     const internalPlaceholder = computed(() => (props.placeholder || props.searchable ? i18n.global.t('common.typeToSearch') : ''));
@@ -313,7 +313,7 @@ export default {
     const classes = computed(() => [
       { 'polyfill-placeholder': floatLabels.value },
       { 'h-100': props.floatingLabel },
-      { 'has-prepend-button': hasPrependBtn.value },
+      { 'has-append-button': hasAppendBtn.value },
       { 'no-multiselect-label': !props.label },
       'form-control', 'p-0', 'text-nowrap',
     ]);

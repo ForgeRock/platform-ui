@@ -17,7 +17,7 @@
 
 /* Forgerock based styles start with fr */
 $theme: 'default';
-$white: #fff;
+$white: #ffffff;
 $gray-100: #f6f8fa;
 $gray-200: #e7eef4;
 $gray-300: #d3d8e0;
@@ -450,6 +450,7 @@ $fr-notification-topbar-info-bg: $fr-alert-info-bg-color;
 $badge-font-weight: $font-weight-bold;
 $fr-badge-primary-text-color: $dark-blue;
 $fr-badge-secondary-text-color: $dark;
+$fr-badge-outline-secondary-text-color: $dark;
 $fr-badge-info-text-color: $dark-blue;
 $fr-badge-success-text-color: $dark-green;
 $fr-badge-warning-text-color: $dark-yellow;
@@ -570,7 +571,7 @@ $table-border-color: $border-color;
 $b-table-sort-icon-bg-ascending: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'><path fill='black' d='M51 1l25 23 24 22H1l25-22z'/><path fill='black' opacity='.3' d='M51 101l25-23 24-22H1l25 22z'/></svg>");
 $b-table-sort-icon-bg-descending: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'><path fill='black' opacity='.3' d='M51 1l25 23 24 22H1l25-22z'/><path fill='black' d='M51 101l25-23 24-22H1l25 22z'/></svg>");
 $fr-table-row-selected-bg: $light;
-$fr-table-resize-handle-bg: $gray-300;
+$fr-table-resize-handle-bg: $gray-500;
 
 $table-sort-icon-inactive-fill: '%23#{str-slice(inspect($gray-500), 2)}';
 $table-sort-icon-active-fill: '%23#{str-slice(inspect($table-color), 2)}';
@@ -678,7 +679,6 @@ $fr-sidemenu-divider-color: $dropdown-divider-bg;
 $fr-sidemenu-padding-x: .5rem;
 $fr-sidemenu-padding-y: 0;
 $fr-sidemenu-item-border-radius: $border-radius;
-$fr-sidemenu-item-border: none;
 $fr-sidemenu-item-padding: .75rem 1rem .75rem 1rem;
 
 

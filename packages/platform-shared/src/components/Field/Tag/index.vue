@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <FrInputLayout
     :description="description"
     :id="`${internalId}___input__`"
-    :class="{ 'has-prepend-btn': hasPrependBtn }"
+    :class="{ 'has-prepend-btn': hasAppendBtn }"
     :errors="combinedErrors"
     :label="label"
     :name="name"
@@ -129,7 +129,7 @@ export default {
   data() {
     return {
       oldValue: [],
-      hasPrependBtn: Object.keys(this.$slots).includes('prependButton'),
+      hasAppendBtn: Object.keys(this.$slots).includes('appendButton'),
     };
   },
   computed: {
@@ -287,7 +287,8 @@ export default {
 
 :deep(.within-input-button) {
   position: absolute;
-  right: 0;
+  right: 1px;
+  top: 1px;
 }
 
 :deep(.within-input-button .btn) {

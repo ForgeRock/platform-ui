@@ -30,6 +30,7 @@ $dk-light-cyan: $cyan-800;
 $dk-secondary: $gray-400;
 $dk-light: darken($gray-900, 4%);
 $dk-dark: $gray-500;
+$dk-text-dark: $gray-400;
 
 
 
@@ -57,6 +58,7 @@ $dk-code-color: $yellow;
 /* Badges */
 $dk-fr-badge-primary-text-color: $black;
 $dk-fr-badge-secondary-text-color: $dk-dark;
+$dk-fr-badge-outline-secondary-text-color: $gray-100;
 $dk-fr-badge-info-text-color: $dk-body-color;
 $dk-fr-badge-success-text-color: $black;
 $dk-fr-badge-warning-text-color: $black;
@@ -348,7 +350,7 @@ $dk-table-hover-bg: $dk-component-active-bg;
 $dk-table-color: $dk-body-color;
 $dk-table-border-color: $dk-border-color;
 $dk-fr-table-row-selected-bg: rgba(0, 0, 0, 0.1);
-$dk-fr-table-resize-handle-bg: $gray-700;
+$dk-fr-table-resize-handle-bg: $gray-500;
 
 /* Input range */
 $dk-custom-range-track-bg: $gray-800;

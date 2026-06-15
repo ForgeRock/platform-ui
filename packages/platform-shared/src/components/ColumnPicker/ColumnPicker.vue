@@ -68,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
             card-classes="border-0"
             :items="accordionItems">
             <template #header="slotData">
-              <div class="mb-0 text-body p-0">
+              <div class="mb-0 p-0">
                 {{ slotData.header }}
               </div>
             </template>

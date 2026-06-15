@@ -187,8 +187,7 @@ of the MIT license. See the LICENSE file for details. -->
               <template
                 #dropdown-header
                 v-if="userDetails.company || userDetails.subscription">
-                <BDropdownHeader
-                  class="py-1 fr-dropdown-header">
+                <BDropdownHeader class="py-1 fr-dropdown-header">
                   <div class="mt-1">
                     <div
                       v-if="tenantMenuItems.length"

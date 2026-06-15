@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
         background-color: {{ theme.primaryColor }} !important;
         outline-color: {{ theme.primaryColor }} !important;
         border-color: {{ theme.primaryColor }} !important;
-        color: {{ theme.textColor }};
+        color: {{ theme.textColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-primary:disabled {
@@ -50,21 +50,21 @@ of the MIT license. See the LICENSE file for details. -->
 
       <template v-if="mock">.fr-theme-preview</template> a {
         font-weight: {{ theme.boldLinks ? 700 : 400 }};
-        color: {{ theme.linkColor }};
+        color: {{ theme.linkColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> a:hover {
-        color: {{ theme.linkActiveColor }};
+        color: {{ theme.linkActiveColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-link,
       <template v-if="mock">.fr-theme-preview</template> .nav-link {
-        color: {{ theme.linkColor }};
+        color: {{ theme.linkColor }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview</template> .btn-link:hover,
-        .nav-link:hover {
-        color: {{ theme.linkActiveColor }};
+      .nav-link:hover {
+        color: {{ theme.linkActiveColor }} !important;
       }
 
       <!-- Styles floating action bar's text elements in dark bg  -->
@@ -111,7 +111,7 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       h1 {
-        color: {{ theme.pageTitle }};
+        color: {{ theme.pageTitle }} !important;
       }
 
       .btn-primary:focus {
@@ -172,7 +172,7 @@ of the MIT license. See the LICENSE file for details. -->
 
       <template v-if="mock">.fr-theme-preview</template> .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before,
       <template v-if="mock">.fr-theme-preview</template> .custom-control.custom-checkbox .custom-control-input ~ .custom-control-label::before {
-        border-color: {{ theme.primaryColor }}
+        border-color: {{ theme.primaryColor }};
       }
 
       .rounded-pill:has(.custom-control.custom-checkbox .custom-control-input:active),
@@ -210,7 +210,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.login</template> .card,
       <template v-if="mock">.fr-theme-preview.login</template> .journey-card {
         background-color: {{ theme.journeyCardBackgroundColor || '#ffffff' }} !important;
-        color: {{ theme.journeyCardTextColor || '#5e6d82' }};
+        color: {{ theme.journeyCardTextColor || '#5e6d82' }} !important;
         box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.journeyCardShadow !== undefined ? theme.journeyCardShadow : 3 }}px;
       }
 
@@ -248,7 +248,7 @@ of the MIT license. See the LICENSE file for details. -->
       <!-- login card title -->
       .card .h2,
       .journey-card .h2 {
-        color: {{ theme.journeyCardTitleColor || '#23282e' }};
+        color: {{ theme.journeyCardTitleColor || '#23282e' }} !important;
       }
 
       <!-- login input and select fields -->
@@ -266,8 +266,8 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus .multiselect,
       <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags,
-      <template v-if="mock">.fr-theme-preview</template> .form-control multiselect:focus .multiselect__tags {
-        -webkit-box-shadow: 0 0 0 0.0625rem {{ journeyInputBorderColor }} !important;
+      <template v-if="mock">.fr-theme-preview</template> .form-control .multiselect:focus .multiselect__tags {
+        -webkit-box-shadow: 0 0 0 0.0625rem {{ journeyInputFocusBorderColor }} !important;
         box-shadow: 0 0 0 0.0625rem {{ journeyInputFocusBorderColor }} !important;
         outline: 0 none;
       }
@@ -320,18 +320,18 @@ of the MIT license. See the LICENSE file for details. -->
       #app .fr-sidebar-menuitems li a:not(.router-link-active),
       #app .fr-sidebar-menuitems li button {
         outline-color: {{ theme.primaryColor }};
-        color: {{ theme.accountNavigationTextColor || '#455469' }};
+        color: {{ theme.accountNavigationTextColor || '#455469' }} !important;
       }
 
       #app .fr-sidebar-menuitems li a:hover,
       #app .fr-sidebar-menuitems li button:hover {
         background-color: {{ theme.profileMenuHoverColor }};
-        color: {{ theme.profileMenuHoverTextColor }};
+        color: {{ theme.profileMenuHoverTextColor }} !important;
       }
 
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .router-link-active {
-      background-color: {{ theme.profileMenuHighlightColor }};
-        color: {{ theme.profileMenuTextHighlightColor }};
+        background-color: {{ theme.profileMenuHighlightColor }};
+        color: {{ theme.profileMenuTextHighlightColor }} !important;
         border-left-color: {{ theme.primaryColor }};
       }
 
@@ -366,9 +366,9 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .card,
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .dropdown-menu,
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .menu {
-        background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
-        border: 1px solid {{ theme.accountCardOuterBorderColor || '#e7eef4' }};
-        color: {{ theme.accountCardTextColor || '#5e6d82' }};
+        background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }} !important;
+        border: 1px solid {{ theme.accountCardOuterBorderColor || '#e7eef4' }} !important;
+        color: {{ theme.accountCardTextColor || '#5e6d82' }} !important;
         box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.accountCardShadow !== undefined ? theme.accountCardShadow : 3 }}px;
       }
 
@@ -377,10 +377,10 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .card .list-group-item {
-        background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
+        background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }} !important;
         border: none;
         border-top: 1px solid;
-        border-color: {{ theme.accountCardInnerBorderColor || '#e7eef4' }};
+        border-color: {{ theme.accountCardInnerBorderColor || '#e7eef4' }} !important;
       }
 
       #app .card .list-group-flush {
@@ -393,10 +393,10 @@ of the MIT license. See the LICENSE file for details. -->
       #app .card .h5,
       #app .card .table.b-table > thead > tr,
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-header h2 {
-        color: {{ theme.accountCardHeaderColor || '#23282e' }};
+        color: {{ theme.accountCardHeaderColor || '#23282e' }} !important;
       }
       #app .card .card-header {
-        outline-color: {{ '#109cf1' }} ;
+        outline-color: {{ theme.primaryColor || '#109cf1' }};
       }
 
       #app .card .card-header,
@@ -424,7 +424,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .b-dropdown .dropdown-menu {
         background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
         border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
-        color: {{ theme.accountCardInputTextColor || '#23282e' }};
+        color: {{ theme.accountCardInputTextColor || '#23282e' }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--highlight {
@@ -450,7 +450,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__select,
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .form-control {
         background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
-        color: {{ theme.accountCardInputTextColor || '#23282e' }};
+        color: {{ theme.accountCardInputTextColor || '#23282e' }} !important;
       }
 
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .multiselect .multiselect__select::before,
@@ -570,7 +570,7 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-dropdown-button-content h5 {
-        color: {{ theme.topBarHeaderColor || '#23282e' }};
+        color: {{ theme.topBarHeaderColor || '#23282e' }} !important;
       }
 
       <template v-if="mock">.fr-theme-preview.enduser</template> .card-input-element:checked + .card-input,
@@ -654,10 +654,6 @@ of the MIT license. See the LICENSE file for details. -->
         box-shadow: 0 0 0 2px {{ buttonFocusBorderColor }} !important;
       }
 
-      #app .text-success {
-        color: {{ theme.successColor }};
-      }
-
       #app <template v-if="mock">.fr-theme-preview.enduser</template> .card-footer > span {
         color: {{ theme.linkColor }};
       }
@@ -696,9 +692,6 @@ of the MIT license. See the LICENSE file for details. -->
         outline: 0 none;
       }
 
-      <!--
-        Styles badges and their variants to be themeable
-      -->
       #app .badge.badge-primary {
         color: {{ getContrastColor(theme.primaryColor) }};
         background-color: {{ theme.primaryColor }};
@@ -903,9 +896,6 @@ export default {
      */
     accountCardInputFocusBorderColor() {
       return this.theme.accountCardInputFocusBorderColor || this.theme.primaryColor;
-    },
-    logoProfile() {
-      return this.getLocalizedString(this.theme.logoProfile, i18n.global.locale, i18n.global.fallbackLocale);
     },
     logoProfileCollapsed() {
       return this.getLocalizedString(this.theme.logoProfileCollapsed, i18n.global.locale, i18n.global.fallbackLocale);

@@ -24,9 +24,10 @@
   --dark: #{$dark};
 
   --text-light: #{$light};
-  --text-dark: #{$dark};  
+  --text-dark: #{$dark};
   --text-secondary: #{$secondary};  
   --text-danger: #{$text-danger};  
+  --text-white: #{$white};  
   
   --nav-color: #{$gray-800};
   --bg-white: #{$white};
@@ -62,6 +63,7 @@
   /* Badge */
 	--badge-primary-text-color: #{$fr-badge-primary-text-color};
 	--badge-secondary-text-color: #{$fr-badge-secondary-text-color};
+	--badge-outline-secondary-text-color: #{$fr-badge-outline-secondary-text-color};
 	--badge-info-text-color: #{$fr-badge-info-text-color};
 	--badge-success-text-color: #{$fr-badge-success-text-color};
 	--badge-warning-text-color: #{$fr-badge-warning-text-color};
@@ -104,6 +106,9 @@
   --btn-primary-color: #{$fr-btn-primary-color};
   --btn-danger-color: #{$fr-btn-danger-color};
   --btn-outline-primary-color: #{$fr-btn-outline-primary-color};
+  --btn-outline-primary-bg-hover: #{$primary};
+  --btn-outline-primary-active-bg: #{$primary};
+  --btn-outline-primary-active-bg-hover: #{darken($primary, 7.5%)};
   --btn-icon-color: #{$fr-btn-icon-color};
   --btn-secondary-color: #{$fr-btn-secondary-color};
   --btn-secondary-hover-color: #{$fr-btn-secondary-hover-color};
@@ -316,9 +321,10 @@
   --dark: #{$dk-dark};
 
   --text-light: #{$dk-light};
-  --text-dark: #{$dk-dark};  
+  --text-dark: #{$dk-text-dark};  
   --text-secondary: #{$dk-secondary};  
   --text-danger: #{$dk-text-danger};  
+  --text-white: #{$white};  
   
   --nav-color: #{$white};  
   --bg-white: #{$gray-900};
@@ -354,6 +360,7 @@
   /* Badge */
 	--badge-primary-text-color: #{$dk-fr-badge-primary-text-color};
 	--badge-secondary-text-color: #{$dk-fr-badge-secondary-text-color};
+	--badge-outline-secondary-text-color: #{$dk-fr-badge-outline-secondary-text-color};
 	--badge-info-text-color: #{$dk-fr-badge-info-text-color};
 	--badge-success-text-color: #{$dk-fr-badge-success-text-color};
 	--badge-warning-text-color: #{$dk-fr-badge-warning-text-color};
@@ -396,6 +403,9 @@
   --btn-primary-color: #{$dk-fr-btn-primary-color};
   --btn-danger-color: #{$dk-fr-btn-danger-color};
   --btn-outline-primary-color: #{$dk-fr-btn-outline-primary-color};
+  --btn-outline-primary-bg-hover: #{$primary};
+  --btn-outline-primary-active-bg: #{$primary};
+  --btn-outline-primary-active-bg-hover: #{darken($primary, 7.5%)};
   --btn-icon-color: #{$dk-fr-btn-icon-color};
   --btn-secondary-color: #{$dk-fr-btn-secondary-color};
   --btn-secondary-hover-color: #{$dk-fr-btn-secondary-hover-color};
@@ -812,9 +822,21 @@ a,
   border-color: var(--btn-outline-primary-color);
   
   &:not(:disabled):not(.disabled):hover {
-    background-color: var(--btn-primary-bg-hover);
-    border-color: var(--btn-primary-bg-hover);
+    background-color: var(--btn-outline-primary-bg-hover);
+    border-color: var(--btn-outline-primary-color);
     color: var(--btn-primary-color)!important;
+  }
+  &:not(:disabled):not(.disabled).active,
+  &:not(:disabled):not(.disabled):active {
+    background-color: var(--btn-outline-primary-active-bg);
+    border-color: var(--btn-outline-primary-color);
+    color: var(--btn-primary-color)!important;
+
+    &:hover {
+      background-color: var(--btn-outline-primary-active-bg-hover);
+      border-color: var(--btn-outline-primary-color);
+      color: var(--btn-primary-color)!important;
+    }
   }
   &.focus,
   &.focus-visible,
@@ -863,6 +885,18 @@ table .btn-link.text-dark {
   &:hover,
   &:active {
     background-color: var(--btn-none-hover-bg-color) !important;
+  }
+}
+a,
+.btn-link.text-light-on-dark {
+  color: $light !important;
+  &:hover {
+    color: $white !important;
+  }
+  &:focus,
+  &:active,
+  &.active {
+    color: #72a9f1 !important;
   }
 }
 
@@ -1061,11 +1095,11 @@ table .btn-link.text-dark {
     }
 
     /* CD adds */
-    .fr-sidebar-brand {
-      /* &:hover {
+    /* .fr-sidebar-brand {
+      &:hover {
         background-color: var(--sidemenu-active-bg)!important;
-      } */
-    }
+      }
+    } */
     .fr-sidebar-bottom {
       border-top: 1px solid var(--dropdown-divider-bg)!important;
 
@@ -1210,6 +1244,15 @@ table .btn-link.text-dark {
   border-color: var(--input-border-color)!important;
   color: var(--input-color) !important;
   font-size: $font-size-base;
+
+  &[readonly] {
+    background-color: var(--input-bg-disabled) !important;
+  }
+}
+
+.form-control::placeholder,
+.multiselect__input::placeholder {
+  color: var(--input-placeholder-color);
 }
 
 .form-label-group.fr-field-errorinput:not(.multiselect__input):not(.fr-tag-input),
@@ -1530,45 +1573,49 @@ label {
 }
 
 /* Badge */
-  .badge-primary {
-    color: var(--badge-primary-text-color);
-    background-color: var(--badge-primary-background-color);
-  }
+.badge-primary {
+  color: var(--badge-primary-text-color);
+  background-color: var(--badge-primary-background-color);
+}
 
-  .badge-secondary {
-    color: var(--badge-secondary-text-color);
-    background-color: var(--badge-secondary-background-color);
-  }
+.badge-secondary {
+  color: var(--badge-secondary-text-color);
+  background-color: var(--badge-secondary-background-color);
+}
 
-  .badge-info {
-    color: var(--badge-info-text-color);
-    background-color: var(--badge-info-background-color);
-  }
+.badge-outline-secondary {
+  color: var(--badge-outline-secondary-text-color);
+}
 
-  .badge-success {
-    color: var(--badge-success-text-color);
-    background-color: var(--badge-success-background-color);
-  }
+.badge-info {
+  color: var(--badge-info-text-color);
+  background-color: var(--badge-info-background-color);
+}
 
-  .badge-warning {
-    color: var(--badge-warning-text-color);
-    background-color: var(--badge-warning-background-color);
-  }
+.badge-success {
+  color: var(--badge-success-text-color);
+  background-color: var(--badge-success-background-color);
+}
 
-  .badge-danger {
-    color: var(--badge-danger-text-color);
-    background-color: var(--badge-danger-background-color);
-  }
+.badge-warning {
+  color: var(--badge-warning-text-color);
+  background-color: var(--badge-warning-background-color);
+}
 
-  .badge-light {
-    color: var(--badge-light-text-color);
-    background-color: var(--badge-light-background-color);
-  }
+.badge-danger {
+  color: var(--badge-danger-text-color);
+  background-color: var(--badge-danger-background-color);
+}
 
-  .badge-dark {
-    color: var(--badge-dark-text-color);
-    background-color: var(--badge-dark-background-color);
-  }
+.badge-light {
+  color: var(--badge-light-text-color);
+  background-color: var(--badge-light-background-color);
+}
+
+.badge-dark {
+  color: var(--badge-dark-text-color);
+  background-color: var(--badge-dark-background-color);
+}
 
 
 /* Card */
@@ -1863,19 +1910,22 @@ ol.step-by-step-list {
 
 
 .text-muted {
-  color: var(--text-muted)!important;
+  color: var(--text-muted) !important;
 }
 .text-light {
-  color: var(--text-light)!important;
+  color: var(--text-light) !important;
 }
 .text-dark {
-  color: var(--text-dark)!important;
+  color: var(--text-dark) !important;
 }
 .text-secondary {
-  color: var(--text-secondary)!important;
+  color: var(--text-secondary) !important;
 }
 .text-danger {
-  color: var(--text-danger)!important;
+  color: var(--text-danger) !important;
+}
+.text-light-on-dark {
+  color: $light !important;
 }
 
 

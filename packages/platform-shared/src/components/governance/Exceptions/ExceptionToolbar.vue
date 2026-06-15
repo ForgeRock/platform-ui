@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BButtonToolbar class="justify-content-end px-4 py-3">
       <BButton
         @click="showFilters = !showFilters"
-        class="toolbar-link-text"
+        class="toolbar-link-text text-dark"
         variant="link-dark">
         <FrIcon
           icon-class="md-24"
@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BButton>
       <BButton
         variant="link-dark"
-        class="mr-2"
+        class="mr-2 text-dark"
         @click="emit('open-columns-modal')">
         <FrIcon
           icon-class="md-24"

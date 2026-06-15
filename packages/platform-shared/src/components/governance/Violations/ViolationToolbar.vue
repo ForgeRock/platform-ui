@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,12 +6,12 @@ of the MIT license. See the LICENSE file for details. -->
   <div role="toolbar">
     <BButtonToolbar class="justify-content-between px-4 py-3">
       <BDropdown
-        toggle-class="px-0"
-        variant="link">
+        toggle-class="px-0 text-dark"
+        variant="link-dark">
         <template #button-content>
           <BButton
-            class="p-0 toolbar-link-text"
-            variant="link">
+            class="p-0 toolbar-link-text text-dark"
+            variant="link-dark">
             <span class="font-weight-bold mr-1">
               {{ `${$t('common.status')}:` }}
             </span>
@@ -31,15 +31,15 @@ of the MIT license. See the LICENSE file for details. -->
       <div>
         <BButton
           @click="showFilters = !showFilters"
-          class="toolbar-link-text"
-          variant="link">
+          class="toolbar-link-text text-dark"
+          variant="link-dark">
           <FrIcon
             icon-class="md-24"
             name="filter_list" />
         </BButton>
         <BButton
           variant="link-dark"
-          class="mr-2"
+          class="mr-2 text-dark"
           @click="emit('open-columns-modal')">
           <FrIcon
             icon-class="md-24"

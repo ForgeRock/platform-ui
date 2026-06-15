@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
     variant="link"
     boundary="scrollParent"
     menu-class="w-100"
-    :toggle-class="`text-decoration-none ${isWithinInput ? '' : 'py-0 px-1'}`"
+    :toggle-class="`text-decoration-none text-dark ${isWithinInput ? '' : 'py-0 px-1'}`"
     :class="`field-type-${fieldType}`"
     data-testid="esv-dropdown"
   >
