@@ -1,11 +1,11 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
     body-class="p-0"
-    class="fr-create-report-settings h-100 p-4 overflow-auto">
+    class="fr-create-report-settings h-100 p-4 overflow-auto border-top-0">
     <BCardTitle
       class="h5 mb-3"
       title-tag="h2">
@@ -234,6 +234,7 @@ watch(reportDetails, (newValue) => {
 .fr-create-report-settings {
   width: 320px;
   min-width: 320px;
+  border-radius: 0;
 }
 
 .fr-report-settings-header {

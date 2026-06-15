@@ -124,7 +124,7 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
               <FrActionsCell
                 v-else
-                toggle-class="w-42 h-42"
+                toggle-class="w-42 p-1"
                 wrapper-class="pr-0"
                 :delete-option="customReportIsEnabled && !item.ootb"
                 :divider="customReportIsEnabled && !item.ootb"

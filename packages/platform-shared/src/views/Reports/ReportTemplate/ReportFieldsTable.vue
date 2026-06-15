@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -53,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
                     type="string" />
                   <BButton
                     v-if="tableEntries.length > 1 && element.context !== 'AGGREGATE'"
-                    class="cursor-grab handle px-2"
+                    class="cursor-grab handle px-2 rounded-0"
                     variant="link text-dark"
                   >
                     <FrIcon
@@ -239,12 +239,16 @@ watch(atLeastOneLabelIsEmpty, (emptyList) => {
 
   .drag-item {
     background: rgba($white, 0.75);
-    border-radius: 4px;
+    border-radius: 0;
     box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.25);
   }
 
   :deep(.th-input) {
     background: transparent;
+  }
+
+  :deep(.card) {
+    overflow: hidden;
   }
 
   :deep(.table) {
