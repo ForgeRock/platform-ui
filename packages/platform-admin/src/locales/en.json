@@ -5581,6 +5581,14 @@
             "messageSubstitution": "Message substitution",
             "notificationTemplate": "Notification Template",
             "to": "To"
+          },
+          "serviceNowTaskDetail": {
+            "assignedTo": "Assigned To",
+            "category": "Category",
+            "description": "Description",
+            "impact": "Impact",
+            "shortDescription": "Short Description",
+            "urgency": "Urgency"
           }
         },
         "exclusiveGatewayDefaultDisplayName": "Validation Gateway",
@@ -5624,6 +5632,9 @@
         "violationTaskDescription": "Assign a violation task to users and roles. Chain tasks or use in conjunction with switch to implement serial/parallel flows.",
         "violationTaskDisplayName": "Violation",
         "viewDetails": "View Details",
+        "serviceNowTaskDefaultDisplayName": "ServiceNow Task",
+        "serviceNowTaskDescription": "Create a ServiceNow incident ticket as part of the workflow.",
+        "serviceNowTaskDisplayName": "ServiceNow",
         "waitTaskDefaultDisplayName": "Wait Task",
         "waitTaskDescription": "Pauses the workflow until a predetermined date and time.",
         "waitTaskDisplayName": "Wait"
