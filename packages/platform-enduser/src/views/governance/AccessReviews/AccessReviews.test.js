@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount, mount, flushPromises } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
@@ -117,6 +118,59 @@ describe('AccessReviews', () => {
     expect(CertificationApi.getCertificationItems).not.toHaveBeenCalled();
     expect(CertificationApi.searchCertificates).toHaveBeenCalledWith('test search', {
       pageNumber: 0, pageSize: 10, sortBy: 'deadline', sortDesc: false, status: 'active',
+    });
+  });
+
+  describe('row keyboard accessibility', () => {
+    const mockRow = {
+      campaignId: 'campaign-1',
+      certifierId: 'certifier-1',
+      campaignName: 'CertifyAll',
+      status: 'active',
+      totals: { total: 10, 'in-progress': 3 },
+    };
+
+    async function mountWithRows() {
+      const componentWrapper = mountComponent();
+      await flushPromises();
+      componentWrapper.vm.setAccessReviewList({ result: [mockRow], totalCount: 1 });
+      await nextTick();
+      return componentWrapper;
+    }
+
+    it('table rows have tabindex="0" and aria-selected when selectable is set', async () => {
+      wrapper = await mountWithRows();
+      const rows = wrapper.findAll('tbody tr');
+      expect(rows.length).toBeGreaterThan(0);
+      rows.forEach((row) => {
+        expect(row.attributes('tabindex')).toBe('0');
+        expect(row.attributes('aria-selected')).toBeDefined();
+      });
+    });
+
+    it('navigates to CertificationTask when row-selected fires with an item', async () => {
+      wrapper = await mountWithRows();
+
+      const table = wrapper.findComponent({ name: 'BTable' });
+      expect(table.exists()).toBe(true);
+
+      await table.vm.$emit('row-selected', [wrapper.vm.accessReviewList[0]]);
+
+      expect(mockRouter.push).toHaveBeenCalledWith({
+        name: 'CertificationTask',
+        params: { campaignId: mockRow.campaignId },
+        query: expect.objectContaining({ actorId: mockRow.certifierId }),
+      });
+    });
+
+    it('does not navigate when row-selected fires with an empty array (deselect)', async () => {
+      wrapper = await mountWithRows();
+      mockRouter.push.mockClear();
+
+      const table = wrapper.findComponent({ name: 'BTable' });
+      await table.vm.$emit('row-selected', []);
+
+      expect(mockRouter.push).not.toHaveBeenCalled();
     });
   });
 });
