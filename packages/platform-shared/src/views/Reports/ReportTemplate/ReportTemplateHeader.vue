@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BBadge>
       </template>
     </FrNavbar>
-    <BButtonToolbar class="fr-actions-menu shadow-sm border-0 justify-content-end align-items-center px-4 py-3 bg-white">
+    <BButtonToolbar class="fr-actions-menu shadow-sm justify-content-end align-items-center px-4 py-3 bg-white">
       <FrActionsCell
         class="fr-actions-menu"
         :divider="false"

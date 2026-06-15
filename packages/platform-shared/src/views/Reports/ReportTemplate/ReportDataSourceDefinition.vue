@@ -1,11 +1,11 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
     body-class="p-0"
-    class="shadow-none mb-2">
+    class="shadow-none mb-2 overflow-hidden">
     <BButton
       class="fr-card-header d-flex align-items-center p-3 w-100 text-decoration-none text-body"
       variant="link"
@@ -52,7 +52,8 @@ of the MIT license. See the LICENSE file for details. -->
       :visible="showAccordion">
       <BFormGroup
         v-slot="{ ariaDescribedby }"
-        :label="$t('reports.template.availableColumns')">
+        :label="$t('reports.template.availableColumns')"
+        label-class="pt-4">
         <BFormCheckboxGroup
           v-if="dataSourceColumns.length"
           v-model="columnsModel"
@@ -266,8 +267,20 @@ watch(() => props.selectedRelatedDataSources, (entityPath) => {
     }
   }
 
+  :deep(.card) {
+    border-radius: $border-radius;
+  }
+
   .fr-card-header {
     min-height: 68px;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  :deep(.list-group-item.bg-lightblue) {
+    background-color: var(--bg-light-blue) !important;
   }
 
   .margin-top-offset {
