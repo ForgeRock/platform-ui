@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
       :id="messageElementId"
       v-html="sanitizedMessage" />
     <div
-      v-else-if="messageType === 'SCRIPT'"
+      v-else-if="messageType === 'SCRIPT' || messageType === 'NO_JS_SCRIPT'"
       class="w-100">
       <div v-if="qrCodeHtml">
         <div
@@ -194,12 +194,18 @@ export default {
       case '4':
         this.messageType = 'SCRIPT';
         break;
+      case '5':
+        this.messageType = 'NO_JS_SCRIPT';
+        break;
       default:
         this.messageType = 'INFORMATION';
     }
 
     if (this.messageType === 'SCRIPT') {
-      this.$emit('has-scripts', this.invokeScriptWithHelpers);
+      this.$emit('has-scripts', () => this.invokeScriptWithHelpers(this.message));
+    } else if (this.messageType === 'NO_JS_SCRIPT') {
+      const parsedMessage = this.parseNoJsScript(this.message);
+      this.$emit('has-scripts', () => this.invokeScriptWithHelpers(parsedMessage));
     }
 
     if (this.shouldEmitScreenReaderMessage) {
@@ -208,7 +214,31 @@ export default {
   },
   methods: {
     normalizeMessageLineBreaks,
-    invokeScriptWithHelpers() {
+    /**
+     * Extracts QR code fields from a NO_JS_SCRIPT type message body. The message
+     * is not valid json so cannot be directly json parsed so instead we use regex
+     * to extract each field. It returns a valid message with QR code function prepended
+     * in the same way a js message would have.
+     * @param {String} message the no js script to parse
+     */
+    parseNoJsScript(message) {
+      const match = (key) => message.match(new RegExp(`${key}:\\s*'([^']*)'`))?.[1];
+      const text = match('text') || '';
+      const version = parseInt(match('version'), 10);
+      const code = match('code');
+      const showDevice = message.match(/showDeviceOption:\s*(true|false)/)?.[1];
+      const showDeviceOption = showDevice === 'true' || undefined;
+
+      const options = {
+        text,
+        ...(version && { version }),
+        ...(code && { code }),
+        ...(showDeviceOption && { showDeviceOption }),
+      };
+
+      return `window.QRCodeReader.createCode(${JSON.stringify(options)});`;
+    },
+    invokeScriptWithHelpers(message) {
       const loginHelpers = {
         disableNextButton: (bool) => { this.$emit('disable-next-button', bool); },
         hideNextButton: (bool) => { this.$emit('hide-next-button', bool); },
@@ -224,7 +254,7 @@ export default {
       (Function(`"use strict"; return (
         function (loginHelpers, QRCodeReader) {
           window.QRCodeReader = QRCodeReader;
-          ${this.message}
+          ${message}
         })`)()
       )(loginHelpers, QRCodeReader);
     },
@@ -235,6 +265,7 @@ export default {
         text,
         showDeviceOption,
       } = options;
+
       const qr = new QRCodeGenerator(version, code);
       qr.addData(text);
       qr.make();

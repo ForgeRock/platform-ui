@@ -10,6 +10,22 @@ import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import i18n from '@/i18n';
 
+const dummyNoJsScript = `
+  id: 'callback_0',
+  text: 'mfauth://totp/ForgeRock:demo?a=aHR0cHM6Ly9vcGVuYW0tbWZhLXVpLmZvcmdlYmxvY2tzLmNvbTo0NDMvYW0vanNvbi9hbHBoYS9wdXNoL3Nucy9tZXNzYWdlP19hY3Rpb249YXV0aGVudGljYXRl&b=032b75&period=30&secret=N3NX52PWQGBPRCIKIVXBWIZFTMLC7MWM&digits=6',
+  version: '25',
+  code: 'L',
+  showDeviceOption: true
+`;
+
+const dummyNoJsScript2 = `
+  id: 'callback_0',
+  text: 'mfauth://totp/ForgeRock:demo?a=aHR0cHM6Ly9vcGVuYW0tbWZhLXVpLmZvcmdlYmxvY2tzLmNvbTo0NDMvYW0vanNvbi9hbHBoYS9wdXNoL3Nucy9tZXNzYWdlP19hY3Rpb249YXV0aGVudGljYXRl&b=032b75&period=30&secret=N3NX52PWQGBPRCIKIVXBWIZFTMLC7MWM&digits=6',
+  version: '25',
+  code: 'L',
+  showDeviceOption: false
+`;
+
 describe('TextOutputCallback.vue', () => {
   const callBackIndex = 5;
   const defaultProps = {
@@ -598,6 +614,33 @@ describe('TextOutputCallback.vue', () => {
       expect(visibleErrorElement.exists()).toBe(false);
       expect(headingDiv.attributes('aria-labelledby')).toBeUndefined();
       expect(wrapper.emitted()['update-screen-reader-message'].pop()).toEqual(['ERROR', 'Critical error text']);
+    });
+  });
+
+  describe('Parses Message Type 5 - NoJsScript', () => {
+    it('Extracts text, version, code, and showDeviceOption from a no js qr message', () => {
+      mountComponent({ messageType: '5' });
+
+      let result = wrapper.vm.parseNoJsScript(dummyNoJsScript);
+      expect(result).toEqual('window.QRCodeReader.createCode({"text":"mfauth://totp/ForgeRock:demo?a=aHR0cHM6Ly9vcGVuYW0tbWZhLXVpLmZvcmdlYmxvY2tzLmNvbTo0NDMvYW0vanNvbi9hbHBoYS9wdXNoL3Nucy9tZXNzYWdlP19hY3Rpb249YXV0aGVudGljYXRl&b=032b75&period=30&secret=N3NX52PWQGBPRCIKIVXBWIZFTMLC7MWM&digits=6","version":25,"code":"L","showDeviceOption":true});');
+
+      result = wrapper.vm.parseNoJsScript(dummyNoJsScript2);
+      expect(result).toEqual('window.QRCodeReader.createCode({"text":"mfauth://totp/ForgeRock:demo?a=aHR0cHM6Ly9vcGVuYW0tbWZhLXVpLmZvcmdlYmxvY2tzLmNvbTo0NDMvYW0vanNvbi9hbHBoYS9wdXNoL3Nucy9tZXNzYWdlP19hY3Rpb249YXV0aGVudGljYXRl&b=032b75&period=30&secret=N3NX52PWQGBPRCIKIVXBWIZFTMLC7MWM&digits=6","version":25,"code":"L"});');
+    });
+
+    it('Uses default values if properties don\'t exist instead of throwing', () => {
+      mountComponent({ messageType: '5' });
+      const result = wrapper.vm.parseNoJsScript('');
+      expect(result).toEqual('window.QRCodeReader.createCode({"text":""});');
+    });
+
+    it('Emits has-scripts for NO_JS_SCRIPT and renders a QR code when invoked', async () => {
+      mountComponent({ messageType: '5', message: dummyNoJsScript });
+
+      await flushPromises();
+
+      expect(wrapper.vm.$data.messageType).toBe('NO_JS_SCRIPT');
+      expect(wrapper.emitted()['has-scripts'][0][0]).toEqual(expect.any(Function));
     });
   });
 });
