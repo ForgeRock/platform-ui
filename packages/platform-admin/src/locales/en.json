@@ -5944,7 +5944,8 @@
     "externalIdentityProviders": {
       "title": "Identity Providers",
       "description": "Allow users to sign in and register using identity providers.",
-      "newProvider": "New identity provider",
+      "newProviderButton": "New Identity Provider",
+      "addProviderModalTitle": "New Identity Provider",
       "headers": {
         "provider": "Identity Provider",
         "status": "Status"
