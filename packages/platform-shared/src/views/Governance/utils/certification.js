@@ -101,13 +101,13 @@ function checkForEqualityFilter(filter, field) {
   return false;
 }
 
-export function getFilterGrantByType(enableAccountGrant, enableEntitlementGrant, enableRoleGrant, enableEntitlementCompositionGrant) {
+export function getFilterGrantByType(enableAccountGrant, enableEntitlementGrant, enableRoleGrant, enableEntitlementCompositionGrant, enableIdentityProfileGrant) {
   const filterGrant = [];
   if (enableAccountGrant) filterGrant.push('accountGrant');
   if (enableEntitlementGrant) filterGrant.push('entitlementGrant');
   if (enableRoleGrant) filterGrant.push('roleMembership');
   if (enableEntitlementCompositionGrant) filterGrant.push('entitlement');
-
+  if (enableIdentityProfileGrant) filterGrant.push('user');
   return filterGrant;
 }
 
@@ -202,42 +202,59 @@ export function buildSavePayload(type, forms, eventBased) {
       break;
   }
 
-  saveObj.targetFilter = {
-    type: getFilterGrantByType(what.enableAccountGrant, what.enableEntitlementGrant, what.enableRoleGrant, what.enableEntitlementCompositionGrant),
-    user: userFilter,
-    application: appFilter,
-    account: accountFilter,
-    memberOfOrg: [],
-  };
-  if (what.orgFilter === 'specificOrgs' && what.organizationSelection.length > 0) {
-    saveObj.targetFilter.memberOfOrg = what.organizationSelection;
-    saveObj.includeChildOrganizations = !!what.includeChildOrganizations;
+  if (what.enableIdentityProfileGrant) {
+    saveObj.targetFilter = {
+      type: getFilterGrantByType(false, false, false, false, true),
+    };
+    const isAllUsers = userFilter?.operator === 'ALL' && (userFilter?.operand?.length ?? 0) === 0;
+    if (userFilter && !isAllUsers) {
+      saveObj.targetFilter.user = userFilter;
+    }
+    if (what.orgFilter === 'specificOrgs' && what.organizationSelection?.length > 0) {
+      saveObj.targetFilter.memberOfOrg = what.organizationSelection;
+      saveObj.includeChildOrganizations = !!what.includeChildOrganizations;
+    }
+    if (what.enableCertDecisionFilter) {
+      saveObj.targetFilter.decision = getGovernanceFilter(what.decisionFilter);
+    }
+  } else {
+    saveObj.targetFilter = {
+      type: getFilterGrantByType(what.enableAccountGrant, what.enableEntitlementGrant, what.enableRoleGrant, what.enableEntitlementCompositionGrant, false),
+      user: userFilter,
+      application: appFilter,
+      account: accountFilter,
+      memberOfOrg: [],
+    };
+    if (what.orgFilter === 'specificOrgs' && what.organizationSelection.length > 0) {
+      saveObj.targetFilter.memberOfOrg = what.organizationSelection;
+      saveObj.includeChildOrganizations = !!what.includeChildOrganizations;
+    }
+
+    if (what.enableEntitlementGrant) {
+      saveObj.targetFilter.entitlement = entitlementFilter;
+    }
+
+    if (what.enableRoleGrant) {
+      saveObj.targetFilter.role = roleFilter;
+    }
+
+    if (what.enableEntitlementCompositionGrant) {
+      saveObj.targetFilter.entitlement = entitlementFilter;
+    }
+
+    Object.keys(saveObj.targetFilter).forEach((key) => {
+      if (saveObj.targetFilter[key] === null) delete saveObj.targetFilter[key];
+    });
+
+    saveObj.targetFilter.decision = what.enableCertDecisionFilter
+      ? getGovernanceFilter(what.decisionFilter)
+      : getAllFilter();
   }
-
-  if (what.enableEntitlementGrant) {
-    saveObj.targetFilter.entitlement = entitlementFilter;
-  }
-
-  if (what.enableRoleGrant) {
-    saveObj.targetFilter.role = roleFilter;
-  }
-
-  if (what.enableEntitlementCompositionGrant) {
-    saveObj.targetFilter.entitlement = entitlementFilter;
-  }
-
-  Object.keys(saveObj.targetFilter).forEach((key) => {
-    if (saveObj.targetFilter[key] === null) delete saveObj.targetFilter[key];
-  });
-
-  saveObj.targetFilter.decision = what.enableCertDecisionFilter
-    ? getGovernanceFilter(what.decisionFilter)
-    : getAllFilter();
 
   saveObj.excludeConditionalAccess = what.excludeConditionalAccess;
   saveObj.excludeRoleBasedAccess = what.excludeRoleBasedAccess;
 
-  if (type === 'ENTITLEMENTCOMPOSITION') {
+  if (type === 'ENTITLEMENTCOMPOSITION' || type === 'IDENTITYPROFILE') {
     delete saveObj.excludeConditionalAccess;
     delete saveObj.excludeRoleBasedAccess;
   }
@@ -403,6 +420,10 @@ export function buildSavePayload(type, forms, eventBased) {
     columnSortConfig.entitlementComposition = (customization.sortableColumnConfig?.entitlementComposition || [])
       .filter((val) => !val.startsWith('user.') && !val.startsWith('account.'));
   }
+  if (what.enableIdentityProfileGrant) {
+    columnConfig.identityProfile = customization.columnConfig.identityProfile;
+    columnSortConfig.identityProfile = customization.sortableColumnConfig?.identityProfile || [];
+  }
   saveObj.uiConfig = {
     columnConfig,
     columnSortConfig,
@@ -441,7 +462,7 @@ export function getFormValuesFromTemplate(template, eventBased) {
   let userSelection = i18n.global.t('governance.editTemplate.allUsers');
 
   if (template.certificationType !== uiTypeMap.ENTITLEMENTCOMPOSITION) {
-    if (!isEqual(template.targetFilter.user, getAllFilter())) {
+    if (template.targetFilter.user && !isEqual(template.targetFilter.user, getAllFilter())) {
       if (checkForSingleFilter(template.targetFilter.user, 'id')) {
         userSelection = i18n.global.t('governance.editTemplate.singleUser');
         const userId = template.targetFilter.user.operand[0].operand?.targetValue;
@@ -535,6 +556,8 @@ export function getFormValuesFromTemplate(template, eventBased) {
     enableEntitlementGrant: template.targetFilter.type.includes('entitlementGrant'),
     enableRoleGrant: template.targetFilter.type.includes('roleMembership'),
     enableEntitlementComposition: template.targetFilter.type.includes('entitlement'),
+    enableIdentityProfileGrant: template.certificationType === uiTypeMap.IDENTITYPROFILE
+      && template.targetFilter.type.includes('user'),
     entitlementFilter,
     entitlementSelection,
     excludeConditionalAccess,
@@ -709,12 +732,15 @@ export function getFormValuesFromTemplate(template, eventBased) {
       accounts: template.uiConfig?.columnConfig?.accounts || [],
       entitlements: template.uiConfig?.columnConfig?.entitlements || [],
       roles: template.uiConfig?.columnConfig?.roles || [],
+      entitlementComposition: template.uiConfig?.columnConfig?.entitlementComposition || [],
+      identityProfile: template.uiConfig?.columnConfig?.identityProfile || [],
     },
     sortableColumnConfig: {
       accounts: template.uiConfig?.columnSortConfig?.accounts || [],
       entitlements: template.uiConfig?.columnSortConfig?.entitlements || [],
       roles: template.uiConfig?.columnSortConfig?.roles || [],
       entitlementComposition: template.uiConfig?.columnSortConfig?.entitlementComposition || [],
+      identityProfile: template.uiConfig?.columnSortConfig?.identityProfile || [],
     },
   };
   return forms;

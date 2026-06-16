@@ -88,7 +88,7 @@ const categorySelects = computed(() => [
     key: 'user',
     label: 'User',
     options: getSelectOptionsForCategory('user'),
-    showFor: ['accounts', 'entitlements', 'roles'],
+    showFor: ['accounts', 'entitlements', 'roles', 'identityProfile'],
   },
   {
     key: 'application',
@@ -118,7 +118,7 @@ const categorySelects = computed(() => [
     key: 'review',
     label: 'Review',
     options: getSelectOptionsForCategory('review'),
-    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition'],
+    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile'],
   },
 ]);
 

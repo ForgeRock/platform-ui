@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="p-4 flex-grow-1 overflow-auto h-100">
     <BContainer
@@ -73,7 +72,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-if="anyGrantEnabled"
         class="mt-3">
         <FrField
-          v-if="(formFields.enableEntitlementGrant || formFields.enableAccountGrant) && !isEntitlementComposition"
+          v-if="(formFields.enableEntitlementGrant || formFields.enableAccountGrant) && !isEntitlementComposition && !isIdentityProfile"
           :value="formFields.excludeRoleBasedAccess"
           @input="formFields.excludeRoleBasedAccess = $event; updateFilter()"
           class="mb-3"
@@ -81,7 +80,7 @@ to such license between the licensee and ForgeRock AS. -->
           type="checkbox"
           :label="$t('governance.editTemplate.excludeRoleBased')" />
         <FrField
-          v-if="formFields.enableRoleGrant"
+          v-if="formFields.enableRoleGrant && !isEntitlementComposition && !isIdentityProfile"
           :value="formFields.excludeConditionalAccess"
           @input="formFields.excludeConditionalAccess = $event; updateFilter()"
           class="mb-3"
@@ -181,6 +180,7 @@ const uiTypeMapping = {
   [types.ENTITLEMENT]: uiTypeMap.ENTITLEMENT,
   [types.ROLEMEMBERSHIP]: uiTypeMap.ROLEMEMBERSHIP,
   [types.ENTITLEMENTCOMPOSITION]: uiTypeMap.ENTITLEMENTCOMPOSITION,
+  [types.IDENTITYPROFILE]: uiTypeMap.IDENTITYPROFILE,
 };
 
 export default {
@@ -237,7 +237,9 @@ export default {
       formFields: {
         enableAccountGrant: true,
         enableEntitlementGrant: false,
+        enableEntitlementCompositionGrant: false,
         enableRoleGrant: false,
+        enableIdentityProfileGrant: false,
         excludeConditionalAccess: true,
         excludeRoleBasedAccess: true,
       },
@@ -265,7 +267,8 @@ export default {
     anyGrantEnabled() {
       return this.formFields.enableEntitlementGrant
         || this.formFields.enableAccountGrant
-        || this.formFields.enableRoleGrant;
+        || this.formFields.enableRoleGrant
+        || this.formFields.enableIdentityProfileGrant;
     },
     errors() {
       const errors = this.anyGrantEnabled ? [] : [i18n.global.t('common.policyValidationMessages.AT_LEAST_ONE_CHECKBOX')];
@@ -314,6 +317,9 @@ export default {
     isEntitlementComposition() {
       return this.type === types.ENTITLEMENTCOMPOSITION;
     },
+    isIdentityProfile() {
+      return this.type === types.IDENTITYPROFILE;
+    },
   },
   created() {
     Object.keys(this.formFields).forEach((field) => {
@@ -338,6 +344,13 @@ export default {
       this.formFields.enableEntitlementGrant = false;
       this.formFields.enableRoleGrant = false;
       this.formFields.enableEntitlementCompositionGrant = true;
+    }
+
+    if (this.type === types.IDENTITYPROFILE) {
+      this.formFields.enableAccountGrant = false;
+      this.formFields.enableEntitlementGrant = false;
+      this.formFields.enableRoleGrant = false;
+      this.formFields.enableIdentityProfileGrant = true;
     }
 
     [this.validatedCheckboxName] = findFieldNamesMatchingName('enableAccountGrant', this.formValues);
@@ -408,7 +421,7 @@ export default {
       // check if all filters are present before getting count
       // this prevents unnecessary api calls when we only need one with all the filters
       if (this.allFiltersPresent(this.filters)) {
-        const grantTypes = getFilterGrantByType(this.formFields.enableAccountGrant, this.formFields.enableEntitlementGrant, this.formFields.enableRoleGrant, this.formFields.enableEntitlementCompositionGrant);
+        const grantTypes = getFilterGrantByType(this.formFields.enableAccountGrant, this.formFields.enableEntitlementGrant, this.formFields.enableRoleGrant, this.formFields.enableEntitlementCompositionGrant, this.formFields.enableIdentityProfileGrant);
         const filtersClone = cloneDeep(this.filters);
 
         Object.keys(filtersClone).forEach((key) => {

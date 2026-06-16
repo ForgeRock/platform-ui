@@ -125,12 +125,14 @@ describe('Customization', () => {
         entitlements: ['user.name'],
         roles: ['user.name'],
         entitlementComposition: ['application.application', 'entitlement.entitlement', 'review.flags', 'review.comments'],
+        identityProfile: ['user.user', 'review.flags', 'review.comments'],
       },
       sortableColumnConfig: {
         accounts: [],
         entitlements: [],
         entitlementComposition: [],
         roles: [],
+        identityProfile: [],
       },
     });
   });

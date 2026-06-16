@@ -1207,6 +1207,7 @@ export default {
       if (certificationGrantType === 'entitlements') grantType = 'entitlementGrant';
       if (certificationGrantType === 'entitlementComposition') grantType = 'entitlement';
       if (certificationGrantType === 'roles') grantType = 'roleMembership';
+      if (certificationGrantType === 'identityProfile') grantType = 'user';
 
       return getBasicFilter('EQUALS', 'item.type', grantType);
     },

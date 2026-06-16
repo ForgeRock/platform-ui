@@ -1,9 +1,8 @@
 /**
- * Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 // types of certification templates
@@ -13,6 +12,7 @@ export const types = {
   ROLEMEMBERSHIP: 'ROLEMEMBERSHIP',
   EVENTBASED: 'EVENTBASED',
   ENTITLEMENTCOMPOSITION: 'ENTITLEMENTCOMPOSITION',
+  IDENTITYPROFILE: 'IDENTITYPROFILE',
 };
 
 // maps from ui type to iga type
@@ -21,6 +21,7 @@ export const uiTypeMap = {
   ENTITLEMENT: 'entitlement',
   ROLEMEMBERSHIP: 'roleMembership',
   ENTITLEMENTCOMPOSITION: 'entitlementComposition',
+  IDENTITYPROFILE: 'identityProfile',
 };
 
 // types of filters
@@ -73,6 +74,12 @@ export const EVENTBASED = {
   certifierOptions: ['user', 'role', 'manager'],
 };
 
+// Identity Profile certification
+export const IDENTITYPROFILE = {
+  filters: [filterTypes.ORGANIZATION, filterTypes.USERS],
+  certifierOptions: ['user', 'role', 'manager', 'organizationAdmin', 'custom'],
+};
+
 // All certification types
 export const typeSpecificFields = {
   IDENTITY,
@@ -80,4 +87,5 @@ export const typeSpecificFields = {
   EVENTBASED,
   ROLEMEMBERSHIP,
   ENTITLEMENTCOMPOSITION,
+  IDENTITYPROFILE,
 };

@@ -78,6 +78,7 @@ describe('certification', () => {
       enableEntitlementGrant: false,
       enableRoleGrant: false,
       enableEntitlementComposition: false,
+      enableIdentityProfileGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -164,6 +165,7 @@ describe('certification', () => {
       enableEntitlementGrant: false,
       enableRoleGrant: false,
       enableEntitlementComposition: false,
+      enableIdentityProfileGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -301,6 +303,7 @@ describe('certification', () => {
       enableEntitlementGrant: false,
       enableRoleGrant: false,
       enableEntitlementComposition: false,
+      enableIdentityProfileGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -415,6 +418,7 @@ describe('certification', () => {
       enableEntitlementGrant: false,
       enableRoleGrant: false,
       enableEntitlementComposition: false,
+      enableIdentityProfileGrant: false,
       entitlementFilter: {
         operand: [
           {
@@ -471,6 +475,7 @@ describe('certification', () => {
       enableEntitlementGrant: false,
       enableRoleGrant: false,
       enableEntitlementComposition: false,
+      enableIdentityProfileGrant: false,
       entitlementFilter: {},
       entitlementSelection: 'All entitlements',
       excludeConditionalAccess: false,
@@ -585,6 +590,8 @@ describe('certification', () => {
           accounts: ['prop1', 'prop2', 'prop3'],
           roles: ['prop1'],
           entitlements: ['prop1', 'prop2'],
+          entitlementComposition: [],
+          identityProfile: [],
         },
       };
       const form = getFormValuesFromTemplate(template);
@@ -592,6 +599,8 @@ describe('certification', () => {
         accounts: ['prop1', 'prop2', 'prop3'],
         roles: ['prop1'],
         entitlements: ['prop1', 'prop2'],
+        entitlementComposition: [],
+        identityProfile: [],
       });
     });
 
@@ -602,6 +611,8 @@ describe('certification', () => {
         accounts: [],
         roles: [],
         entitlements: [],
+        entitlementComposition: [],
+        identityProfile: [],
       });
     });
 
@@ -702,6 +713,7 @@ describe('certification', () => {
       forms.FrWhat.enableEntitlementGrant = true;
       forms.FrWhat.enableRoleGrant = true;
       forms.FrWhat.enableEntitlementCompositionGrant = true;
+      forms.FrWhat.enableIdentityProfileGrant = true;
 
       const savePayload = buildSavePayload('identity', forms);
       expect(savePayload.uiConfig.columnConfig).toEqual({
@@ -769,14 +781,111 @@ describe('certification', () => {
           accounts: ['prop1', 'prop2', 'prop3'],
           roles: ['prop1'],
           entitlements: ['prop1', 'prop2'],
-          entitlementComposition: ['application.application', 'entitlement.entitlement'],
+          entitlementComposition: ['prop1', 'prop2'],
+          identityProfile: [],
         },
       };
       forms.FrWhat.enableEntitlementCompositionGrant = true;
       const savePayload = buildSavePayload('entitlementComposition', forms);
 
       expect(savePayload.uiConfig.columnConfig).toEqual({
-        entitlementComposition: ['application.application', 'entitlement.entitlement'],
+        entitlementComposition: ['prop1', 'prop2'],
+      });
+    });
+
+    describe('identity profile buildSavePayload', () => {
+      function makeIdentityProfileForms(overrides = {}) {
+        const forms = cloneDeep(baseForms);
+        forms.FrCustomization = {
+          columnConfig: {
+            accounts: ['prop1', 'prop2', 'prop3'],
+            roles: ['prop1'],
+            entitlements: ['prop1', 'prop2'],
+            entitlementComposition: [],
+            roleComposition: [],
+            identityProfile: ['prop1', 'prop2'],
+          },
+        };
+        forms.FrWhat = {
+          enableIdentityProfileGrant: true,
+          userSelection: 'All users',
+          orgFilter: 'allOrgs',
+          organizationSelection: [],
+          enableCertDecisionFilter: false,
+          decisionFilter: {},
+          ...overrides,
+        };
+        return forms;
+      }
+
+      it('should save a custom columnConfig only for identity profile grants', () => {
+        const savePayload = buildSavePayload('identityProfile', makeIdentityProfileForms());
+
+        expect(savePayload.uiConfig.columnConfig).toEqual({
+          identityProfile: ['prop1', 'prop2'],
+        });
+      });
+
+      it('should set targetFilter.type to [\'user\'] for identity profile', () => {
+        const savePayload = buildSavePayload('identityProfile', makeIdentityProfileForms());
+
+        expect(savePayload.targetFilter.type).toEqual(['user']);
+      });
+
+      it('should omit targetFilter.user when all users are selected', () => {
+        const savePayload = buildSavePayload('identityProfile', makeIdentityProfileForms({
+          userSelection: 'All users',
+        }));
+
+        expect(Object.prototype.hasOwnProperty.call(savePayload.targetFilter, 'user')).toBe(false);
+      });
+
+      it('should include targetFilter.user when a user filter is set', () => {
+        const userFilter = { operator: 'EQUALS', operand: [{ operand: { targetName: 'id', targetValue: 'user-1' } }] };
+        const savePayload = buildSavePayload('identityProfile', makeIdentityProfileForms({
+          userSelection: 'Users matching a filter',
+          userFilter,
+        }));
+
+        expect(savePayload.targetFilter.user).toBeDefined();
+      });
+
+      it('should set targetFilter.memberOfOrg when orgFilter is specificOrgs', () => {
+        const savePayload = buildSavePayload('identityProfile', makeIdentityProfileForms({
+          orgFilter: 'specificOrgs',
+          organizationSelection: ['org-1', 'org-2'],
+          includeChildOrganizations: true,
+        }));
+
+        expect(savePayload.targetFilter.memberOfOrg).toEqual(['org-1', 'org-2']);
+        expect(savePayload.includeChildOrganizations).toBe(true);
+      });
+
+      it('should omit targetFilter.memberOfOrg when orgFilter is allOrgs', () => {
+        const savePayload = buildSavePayload('identityProfile', makeIdentityProfileForms({
+          orgFilter: 'allOrgs',
+          organizationSelection: [],
+        }));
+
+        expect(Object.prototype.hasOwnProperty.call(savePayload.targetFilter, 'memberOfOrg')).toBe(false);
+      });
+
+      it('should omit targetFilter.decision by default', () => {
+        const savePayload = buildSavePayload('identityProfile', makeIdentityProfileForms({
+          enableCertDecisionFilter: false,
+        }));
+
+        expect(Object.prototype.hasOwnProperty.call(savePayload.targetFilter, 'decision')).toBe(false);
+      });
+
+      it('should include targetFilter.decision when cert decision filter is enabled', () => {
+        const decisionFilter = { operator: 'EQUALS', operand: [{ operand: { targetName: 'decision', targetValue: 'certify' } }] };
+        const savePayload = buildSavePayload('identityProfile', makeIdentityProfileForms({
+          enableCertDecisionFilter: true,
+          decisionFilter,
+        }));
+
+        expect(savePayload.targetFilter.decision).toBeDefined();
       });
     });
 
@@ -792,6 +901,23 @@ describe('certification', () => {
       };
 
       const savePayload = buildSavePayload('ENTITLEMENTCOMPOSITION', forms);
+
+      expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeConditionalAccess')).toBe(false);
+      expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeRoleBasedAccess')).toBe(false);
+    });
+
+    it('should remove excludeConditionalAccess and excludeRoleBasedAccess for identity profile type', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrWhat.enableIdentityProfileGrant = true;
+      forms.FrCustomization = {
+        columnConfig: {
+          accounts: [],
+          roles: [],
+          entitlements: [],
+        },
+      };
+
+      const savePayload = buildSavePayload('IDENTITYPROFILE', forms);
 
       expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeConditionalAccess')).toBe(false);
       expect(Object.prototype.hasOwnProperty.call(savePayload, 'excludeRoleBasedAccess')).toBe(false);

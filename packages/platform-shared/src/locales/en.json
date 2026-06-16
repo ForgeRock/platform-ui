@@ -196,6 +196,7 @@
     "host": "Host",
     "hosts": "Hosts",
     "id": "ID",
+    "identityProfile": "Identity Profile",
     "implicit": "Implicit",
     "import": "Import",
     "inactive": "Inactive",
@@ -2016,7 +2017,9 @@
       "roleMembershipCertification": "Role Membership Certification",
       "roleMembershipCertificationMessage": "Certify roles granted to users.",
       "entitlementCompositionCertification": "Entitlement Composition Certification",
-      "entitlementCompositionCertificationMessage": "Certify the technical details and glossary metadata of entitlements."
+      "entitlementCompositionCertificationMessage": "Certify the technical details and glossary metadata of entitlements.",
+      "identityProfileCertification": "Identity Profile Certification",
+      "identityProfileCertificationMessage": "Certify the technical details of user attributes based on filters you define."
     },
     "certification": {
       "accessReviewHistory": "Access Review History",
@@ -2034,7 +2037,8 @@
         "entitlement": "Entitlement",
         "entitlementComposition": "Entitlement Composition",
         "application": "Application",
-        "roleMembership": "Role Membership"
+        "roleMembership": "Role Membership",
+        "identityProfile": "Identity Profile"
       },
       "campaignsByStatusLabels": {
         "in-progress": "Active",
@@ -2364,8 +2368,9 @@
       "certificationTabs": {
         "accounts": "accounts",
         "entitlements": "entitlements",
-        "entitlementComposition": "entitlementComposition",
-        "groupByAccount": "group by account"
+        "entitlementComposition": "entitlement composition",
+        "groupByAccount": "group by account",
+        "identityProfile": "identity profile"
       },
       "columns": {
         "review": "Review",
@@ -2450,7 +2455,8 @@
           "campaigns": "campaigns",
           "entitlements": "entitlement grants",
           "entitlementComposition": "entitlements",
-          "roles": "role grants"
+          "roles": "role grants",
+          "identityProfile": "users"
         },
         "xlsx": "XLSX",
         "xlsxDescription": "Export in XLSX format. Maximum: 10,000 rows"
@@ -2603,13 +2609,15 @@
         "IDENTITY": "Identity",
         "ENTITLEMENT": "Entitlement",
         "ROLEMEMBERSHIP": "Role Membership",
-        "ENTITLEMENTCOMPOSITION": "Entitlement Composition"
+        "ENTITLEMENTCOMPOSITION": "Entitlement Composition",
+        "IDENTITYPROFILE": "Identity Profile"
       },
       "templateType": {
         "identity": "Identity Certification",
         "entitlement": "Entitlement Certification",
         "roleMembership": "Role Membership Certification",
-        "entitlementComposition": "Entitlement Composition Certification"
+        "entitlementComposition": "Entitlement Composition Certification",
+        "identityProfile": "Identity Profile Certification"
       },
       "accounts": "Accounts",
       "additionalOptions": "Additional Options",

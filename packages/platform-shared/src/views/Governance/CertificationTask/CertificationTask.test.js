@@ -121,6 +121,7 @@ describe('CertificationTask', () => {
           },
           $bvModal: { show: modalShow, hide: modalHide },
           $router: { push: jest.fn() },
+          $store: { state: { SharedStore: { governanceDevEnabled: false } } },
         },
         plugins: [Notifications],
         stubs: [
