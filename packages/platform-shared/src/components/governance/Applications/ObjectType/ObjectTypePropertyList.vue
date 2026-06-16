@@ -25,7 +25,20 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('governance.applications.edit.objectTypesTab.importSchema') }}
         </FrIcon>
       </BButton>
+      <BButton
+        class="ml-2"
+        variant="outline-primary"
+        @click="$root.$emit('bv::show::modal', 'downloadSchemaModal')">
+        <FrIcon
+          icon-class="mr-2"
+          name="file_download">
+          {{ $t('governance.unmanagedApplications.objectTypesTab.downloadSchema') }}
+        </FrIcon>
+      </BButton>
     </BButtonToolbar>
+    <FrDownloadSchemaModal
+      :object-type-id="objectTypeId"
+      :properties="properties" />
     <FrImportModal
       :modal-desc="$t('governance.applications.edit.objectTypesTab.importSchemaDescription')"
       :warning-message="$t('governance.applications.edit.objectTypesTab.importSchemaWarning')"
@@ -153,6 +166,7 @@ import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { updateObjectType } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
+import FrDownloadSchemaModal from './DownloadSchemaModal';
 import FrObjectTypePropertyModal from './ObjectTypePropertyModal';
 import i18n from '@/i18n';
 

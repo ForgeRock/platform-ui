@@ -5764,7 +5764,13 @@
         "constrainValues": "Constrain Values",
         "enumeratedValues": "Enumerated Values",
         "objectType": "Object Type",
-        "applicationObjectType": "Application Object Type"
+        "applicationObjectType": "Application Object Type",
+        "downloadSchema": "Download Schema",
+        "downloadSchemaDescription": "Choose the format to download the schema properties.",
+        "downloadSchemaJson": "JSON",
+        "downloadSchemaJsonDescription": "Download schema as a JSON file. Compatible with the Import Schema function.",
+        "downloadSchemaCsv": "CSV",
+        "downloadSchemaCsvDescription": "Download schema as a CSV file."
       },
       "listView": {
         "addUnmanagedApp": "New Application",
