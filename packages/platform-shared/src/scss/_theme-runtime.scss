@@ -887,7 +887,7 @@ table .btn-link.text-dark {
     background-color: var(--btn-none-hover-bg-color) !important;
   }
 }
-a,
+a.text-light-on-dark,
 .btn-link.text-light-on-dark {
   color: $light !important;
   &:hover {

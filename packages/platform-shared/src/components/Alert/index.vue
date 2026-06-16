@@ -121,7 +121,7 @@ export default {
     display: flex;
     line-height: 1.25;
 
-    :deep(button) {
+    :deep(.close) {
       padding: 0 0.5rem 0 0;
     }
 
