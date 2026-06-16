@@ -5,6 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { doesValueContainPlaceholder, getEsvValue } from '@forgerock/platform-shared/src/utils/esvUtils';
 import i18n from '@/i18n';
 
 export default {
@@ -95,56 +96,79 @@ export default {
      * @param {String} resourceName name of resource to retrieve policies for
      * @returns {Object} object with success message and the policies
      */
-    getDsPolicies(resourceName) {
-      return new Promise((resolve) => {
-        const policies = [];
-        getConfig(`fieldPolicy/${resourceName}`).then((res) => {
-          const policy = res.data;
-          if (policy && policy.validator) {
-            policy.validator.forEach((validator) => {
-              switch (validator._id) {
-                case this.getValidatorIdForType(resourceName, 'length-based'):
-                  if (validator.maxPasswordLength) {
-                    policies.push({ policyRequirement: 'LENGTH_BASED', params: { 'min-password-length': validator.minPasswordLength, 'max-password-length': validator.maxPasswordLength } });
-                  } else {
-                    policies.push({ policyRequirement: 'MIN_LENGTH', params: { minLength: validator.minPasswordLength } });
-                  }
-                  break;
-                case this.getValidatorIdForType(resourceName, 'repeated-characters'):
-                  policies.push({ policyRequirement: 'REPEATED_CHARACTERS', params: { 'max-consecutive-length': validator.maxConsecutiveLength } });
-                  break;
-                case this.getValidatorIdForType(resourceName, 'dictionary'):
-                  policies.push({ policyRequirement: 'DICTIONARY' });
-                  break;
-                case this.getValidatorIdForType(resourceName, 'character-set'):
-                  if (this.getPoliciesFromCharacterSet(validator.characterSet, validator.minCharacterSets)) {
-                    policies.push(this.getPoliciesFromCharacterSet(validator.characterSet, validator.minCharacterSets));
-                  }
-                  break;
-                case this.getValidatorIdForType(resourceName, 'attribute-value'):
-                  policies.push({
-                    policyRequirement: 'ATTRIBUTE_VALUE',
-                    params: {
-                      disallowedFields: validator.matchAttribute.map((attribute) => {
-                        if (this.translationExists(`common.policyValidationMessages.attributes.${attribute}`)) {
-                          return i18n.global.t(`common.policyValidationMessages.attributes.${attribute}`);
-                        }
-                        return attribute;
-                      }).join(', '),
-                    },
-                  });
-                  break;
-                default:
-                  break;
-              }
-            });
+    async getDsPolicies(resourceName) {
+      const policies = [];
+      let res;
+      try {
+        res = await getConfig(`fieldPolicy/${resourceName}`);
+      } catch {
+        // return an empty array because when password policy does not exist, the get config endpoint returns an error
+        return { msg: 'Success', data: [] };
+      }
+
+      const policy = res.data;
+      if (policy && policy.validator) {
+        const isFraas = this.$store?.state?.isFraas;
+
+        /**
+         * Resolves an ESV placeholder value when on a FRaaS environment.
+         * Returns the resolved value, or the original if resolution fails or is empty.
+         * @param {String|Object} value the field value to potentially resolve
+         * @returns {Promise<String|Object>} the resolved value or the original
+         */
+        const resolveIfPlaceholder = (value) => {
+          if (isFraas && doesValueContainPlaceholder(value)) {
+            return getEsvValue(value, true).then((resolved) => resolved || value);
           }
-          resolve({ msg: 'Success', data: policies });
-        }, () => {
-          // return an empty array because when password policy does not exist, the get config endpoint returns an error
-          resolve({ msg: 'Success', data: [] });
+          return Promise.resolve(value);
+        };
+
+        /**
+         * Builds a policy entry for a single validator, resolving any ESV placeholders.
+         * @param {Object} validator the validator object from the policy response
+         * @returns {Promise<Object|null>} the resolved policy entry or null to skip
+         */
+        const buildPolicyForValidator = (validator) => {
+          switch (validator._id) {
+            case this.getValidatorIdForType(resourceName, 'length-based'):
+              return Promise.all([
+                resolveIfPlaceholder(validator.minPasswordLength),
+                resolveIfPlaceholder(validator.maxPasswordLength),
+              ]).then(([minPasswordLength, maxPasswordLength]) => {
+                if (validator.maxPasswordLength && String(maxPasswordLength) !== '0') {
+                  return { policyRequirement: 'LENGTH_BASED', params: { 'min-password-length': minPasswordLength, 'max-password-length': maxPasswordLength } };
+                }
+                return { policyRequirement: 'MIN_LENGTH', params: { minLength: minPasswordLength } };
+              });
+            case this.getValidatorIdForType(resourceName, 'repeated-characters'):
+              return resolveIfPlaceholder(validator.maxConsecutiveLength).then((maxConsecutiveLength) => ({ policyRequirement: 'REPEATED_CHARACTERS', params: { 'max-consecutive-length': maxConsecutiveLength } }));
+            case this.getValidatorIdForType(resourceName, 'dictionary'):
+              return Promise.resolve({ policyRequirement: 'DICTIONARY' });
+            case this.getValidatorIdForType(resourceName, 'character-set'):
+              return Promise.resolve(this.getPoliciesFromCharacterSet(validator.characterSet, validator.minCharacterSets) || null);
+            case this.getValidatorIdForType(resourceName, 'attribute-value'):
+              return Promise.resolve({
+                policyRequirement: 'ATTRIBUTE_VALUE',
+                params: {
+                  disallowedFields: validator.matchAttribute.map((attribute) => {
+                    if (this.translationExists(`common.policyValidationMessages.attributes.${attribute}`)) {
+                      return i18n.global.t(`common.policyValidationMessages.attributes.${attribute}`);
+                    }
+                    return attribute;
+                  }).join(', '),
+                },
+              });
+            default:
+              return Promise.resolve(null);
+          }
+        };
+
+        const results = await Promise.all(policy.validator.map(buildPolicyForValidator));
+        results.forEach((entry) => {
+          if (entry) policies.push(entry);
         });
-      });
+      }
+      return { msg: 'Success', data: policies };
     },
     /**
      *

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
+import * as EsvApi from '@forgerock/platform-shared/src/api/EsvApi';
 import PasswordPolicyMixin from './index';
 import i18n from '@/i18n';
 
@@ -96,7 +97,7 @@ describe('PasswordPolicyMixin', () => {
 
   describe('Ensure policies for a resource are adjusted for inconsistencies in responses', () => {
     it('Successfully reads min length, dictionary and character set', async () => {
-      configApi.getConfig = jest.fn().mockReturnValueOnce(Promise.resolve(minDictionaryChar));
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(minDictionaryChar);
       const getCharSetSpy = jest.spyOn(wrapper.vm, 'getPoliciesFromCharacterSet').mockReturnValue({
         policyRequirement: 'CHARACTER_SET',
         params: { sets: 'foo, bar' },
@@ -116,7 +117,7 @@ describe('PasswordPolicyMixin', () => {
     });
 
     it('Successfully reads length based and repeated characters', async () => {
-      configApi.getConfig = jest.fn().mockReturnValueOnce(Promise.resolve(lengthRepeated));
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(lengthRepeated);
       const getCharSetSpy = jest.spyOn(wrapper.vm, 'getPoliciesFromCharacterSet');
 
       const policiesAfter = {
@@ -133,11 +134,211 @@ describe('PasswordPolicyMixin', () => {
     });
 
     it('Returns empty array if no policy exists', async () => {
-      configApi.getConfig = jest.fn().mockReturnValueOnce(Promise.reject());
+      jest.spyOn(configApi, 'getConfig').mockRejectedValueOnce();
 
       const policies = await wrapper.vm.getDsPolicies('user');
       wrapper.vm.$nextTick();
       expect(policies).toStrictEqual({ data: [], msg: 'Success' });
+    });
+  });
+
+  describe('ESV placeholder resolution in getDsPolicies', () => {
+    const esvPlaceholderLength = {
+      data: {
+        validator: [{
+          _id: 'userPasswordPolicy-length-based-password-validator',
+          maxPasswordLength: 0,
+          minPasswordLength: '&{esv.min-password-length}',
+        }],
+      },
+    };
+
+    const esvCoercedObjectRepeated = {
+      data: {
+        validator: [{
+          _id: 'userPasswordPolicy-repeated-characters-password-validator',
+          maxConsecutiveLength: { $int: '&{esv.max-consecutive-length}' },
+        }],
+      },
+    };
+
+    const esvPlaceholderMaxLength = {
+      data: {
+        validator: [{
+          _id: 'userPasswordPolicy-length-based-password-validator',
+          maxPasswordLength: '&{esv.max-password-length}',
+          minPasswordLength: 6,
+        }],
+      },
+    };
+
+    it('(a) FRaaS + plain-string ESV placeholder in minPasswordLength → resolved value stored in param', async () => {
+      const fraasWrapper = shallowMount({}, {
+        render() {},
+        global: {
+          mixins: [PasswordPolicyMixin],
+          mocks: {
+            $store: { state: { isFraas: true } },
+          },
+          plugins: [i18n],
+        },
+      });
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(esvPlaceholderLength);
+      jest.spyOn(EsvApi, 'getVariable').mockResolvedValueOnce({ data: { valueBase64: 'Nw==' } }); // base64('7')
+
+      const policies = await fraasWrapper.vm.getDsPolicies('user');
+      expect(policies).toStrictEqual({
+        msg: 'Success',
+        data: [{ policyRequirement: 'MIN_LENGTH', params: { minLength: '7' } }],
+      });
+    });
+
+    it('(b) FRaaS + coerced-object ESV placeholder in maxConsecutiveLength → resolved value stored in param', async () => {
+      const fraasWrapper = shallowMount({}, {
+        render() {},
+        global: {
+          mixins: [PasswordPolicyMixin],
+          mocks: {
+            $store: { state: { isFraas: true } },
+          },
+          plugins: [i18n],
+        },
+      });
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(esvCoercedObjectRepeated);
+      jest.spyOn(EsvApi, 'getVariable').mockResolvedValueOnce({ data: { valueBase64: 'Mw==' } }); // base64('3')
+
+      const policies = await fraasWrapper.vm.getDsPolicies('user');
+      expect(policies).toStrictEqual({
+        msg: 'Success',
+        data: [{ policyRequirement: 'REPEATED_CHARACTERS', params: { 'max-consecutive-length': '3' } }],
+      });
+    });
+
+    it('(c) FRaaS + getVariable rejects → raw placeholder retained in param', async () => {
+      const fraasWrapper = shallowMount({}, {
+        render() {},
+        global: {
+          mixins: [PasswordPolicyMixin],
+          mocks: {
+            $store: { state: { isFraas: true } },
+          },
+          plugins: [i18n],
+        },
+      });
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(esvPlaceholderLength);
+      jest.spyOn(EsvApi, 'getVariable').mockRejectedValueOnce(new Error('ESV not found'));
+
+      const policies = await fraasWrapper.vm.getDsPolicies('user');
+      expect(policies).toStrictEqual({
+        msg: 'Success',
+        data: [{ policyRequirement: 'MIN_LENGTH', params: { minLength: '&{esv.min-password-length}' } }],
+      });
+    });
+
+    it('(c2) FRaaS + getVariable resolves to empty value → raw placeholder retained in param', async () => {
+      const fraasWrapper = shallowMount({}, {
+        render() {},
+        global: {
+          mixins: [PasswordPolicyMixin],
+          mocks: {
+            $store: { state: { isFraas: true } },
+          },
+          plugins: [i18n],
+        },
+      });
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(esvPlaceholderLength);
+      jest.spyOn(EsvApi, 'getVariable').mockResolvedValueOnce({ data: { valueBase64: '' } }); // decodes to ''
+
+      const policies = await fraasWrapper.vm.getDsPolicies('user');
+      expect(policies).toStrictEqual({
+        msg: 'Success',
+        data: [{ policyRequirement: 'MIN_LENGTH', params: { minLength: '&{esv.min-password-length}' } }],
+      });
+    });
+
+    it('(d) Non-FRaaS → EsvApi.getVariable is never called and placeholder is passed through unchanged', async () => {
+      const nonFraasWrapper = shallowMount({}, {
+        render() {},
+        global: {
+          mixins: [PasswordPolicyMixin],
+          mocks: {
+            $store: { state: { isFraas: false } },
+          },
+          plugins: [i18n],
+        },
+      });
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(esvPlaceholderLength);
+      const getVariableSpy = jest.spyOn(EsvApi, 'getVariable');
+
+      const policies = await nonFraasWrapper.vm.getDsPolicies('user');
+      expect(getVariableSpy).not.toHaveBeenCalled();
+      expect(policies).toStrictEqual({
+        msg: 'Success',
+        data: [{ policyRequirement: 'MIN_LENGTH', params: { minLength: '&{esv.min-password-length}' } }],
+      });
+    });
+
+    it('(e) FRaaS + plain-string ESV placeholder in maxPasswordLength → resolved value stored in LENGTH_BASED param', async () => {
+      const fraasWrapper = shallowMount({}, {
+        render() {},
+        global: {
+          mixins: [PasswordPolicyMixin],
+          mocks: {
+            $store: { state: { isFraas: true } },
+          },
+          plugins: [i18n],
+        },
+      });
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(esvPlaceholderMaxLength);
+      jest.spyOn(EsvApi, 'getVariable').mockResolvedValueOnce({ data: { valueBase64: 'MjA=' } }); // base64('20')
+
+      const policies = await fraasWrapper.vm.getDsPolicies('user');
+      expect(policies).toStrictEqual({
+        msg: 'Success',
+        data: [{ policyRequirement: 'LENGTH_BASED', params: { 'min-password-length': 6, 'max-password-length': '20' } }],
+      });
+    });
+
+    it('(f) FRaaS + ESV placeholder in maxPasswordLength resolves to "0" → downgraded to MIN_LENGTH', async () => {
+      const fraasWrapper = shallowMount({}, {
+        render() {},
+        global: {
+          mixins: [PasswordPolicyMixin],
+          mocks: {
+            $store: { state: { isFraas: true } },
+          },
+          plugins: [i18n],
+        },
+      });
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(esvPlaceholderMaxLength);
+      jest.spyOn(EsvApi, 'getVariable').mockResolvedValueOnce({ data: { valueBase64: 'MA==' } }); // base64('0')
+
+      const policies = await fraasWrapper.vm.getDsPolicies('user');
+      expect(policies).toStrictEqual({
+        msg: 'Success',
+        data: [{ policyRequirement: 'MIN_LENGTH', params: { minLength: 6 } }],
+      });
+    });
+
+    it('(g) FRaaS + ESV placeholder in maxPasswordLength fails to resolve → raw placeholder retained in LENGTH_BASED max param', async () => {
+      const fraasWrapper = shallowMount({}, {
+        render() {},
+        global: {
+          mixins: [PasswordPolicyMixin],
+          mocks: {
+            $store: { state: { isFraas: true } },
+          },
+          plugins: [i18n],
+        },
+      });
+      jest.spyOn(configApi, 'getConfig').mockResolvedValueOnce(esvPlaceholderMaxLength);
+      jest.spyOn(EsvApi, 'getVariable').mockRejectedValueOnce(new Error('ESV not found'));
+
+      const policies = await fraasWrapper.vm.getDsPolicies('user');
+      expect(policies).toStrictEqual({
+        msg: 'Success',
+        data: [{ policyRequirement: 'LENGTH_BASED', params: { 'min-password-length': 6, 'max-password-length': '&{esv.max-password-length}' } }],
+      });
     });
   });
 
