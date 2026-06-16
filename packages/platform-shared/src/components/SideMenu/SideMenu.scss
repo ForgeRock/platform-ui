@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2023 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -55,6 +55,11 @@
     display: none;
   }
 
+  :deep(ul.fr-sidebar-menuitems) {
+    scrollbar-width: none;            /* Firefox */
+    &::-webkit-scrollbar { display: none; } /* WebKit/Blink */
+  }
+
   .fr-company-logo-square {
     display: block;
   }
@@ -88,6 +93,10 @@
     :deep(.menu-item-text),
     .sidebar-item-text {
       display: inline;
+    }
+
+    :deep(.fr-sidebar-menuitems) {
+      overflow-y: auto;
     }
   }
 }
