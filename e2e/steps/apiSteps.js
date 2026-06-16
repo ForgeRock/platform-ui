@@ -14,6 +14,7 @@ import CustomEndpointApiSteps from './api/CustomEndpointApiSteps';
 import EndUserApiSteps from './api/EndUserApiSteps';
 import EventHookApiSteps from './api/EventHookApiSteps';
 import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
+import JobsApiSteps from './api/JobsApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import UserApiSteps from './api/UserApiSteps';
@@ -27,6 +28,7 @@ export default {
   endUser: EndUserApiSteps,
   eventHooks: EventHookApiSteps,
   inviteAdmins: InviteAdminsApiSteps,
+  jobs: JobsApiSteps,
   journey: JourneyApiSteps,
   journeys: JourneyApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
