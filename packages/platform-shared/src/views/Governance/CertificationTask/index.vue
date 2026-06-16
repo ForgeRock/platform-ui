@@ -92,6 +92,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
+import { uiTypeMap } from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/templateTypes';
 import {
   BTabs,
   BTab,
@@ -183,6 +184,12 @@ export default {
           label: this.$t('governance.certificationTask.certificationTabs.entitlementComposition'),
         });
       }
+      if (this.governanceDevEnabled && this.isIdentityProfileTargetFilter) {
+        tabs.push({
+          key: 'identityProfile',
+          label: this.$t('governance.certificationTask.certificationTabs.identityProfile'),
+        });
+      }
       return tabs;
     },
     isComplete() {
@@ -202,6 +209,12 @@ export default {
     },
     isEntitlementCompositionTargetFilter() {
       return this.isGrantType('entitlement');
+    },
+    isIdentityProfileTargetFilter() {
+      return this.campaignDetails.certificationType === uiTypeMap.IDENTITYPROFILE;
+    },
+    governanceDevEnabled() {
+      return this.$store.state.SharedStore.governanceDevEnabled;
     },
     showGroupByField() {
       return this.isAccountTargetFilter && this.isEntitlementTargetFilter && !this.isRoleTargetFilter && this.showGroupByAccount;

@@ -201,6 +201,7 @@ export default {
           enableEntitlementGrant: false,
           enableEntitlementCompositionGrant: false,
           enableRoleGrant: false,
+          enableIdentityProfileGrant: false,
           entitlementFilter: {},
           entitlementSelection: this.$t('governance.editTemplate.allEntitlements'),
           excludeConditionalAccess: true,
@@ -386,6 +387,7 @@ export default {
         enableEntitlementGrant: this.forms.FrWhat.enableEntitlementGrant,
         enableEntitlementCompositionGrant: this.forms.FrWhat.enableEntitlementCompositionGrant,
         enableRoleGrant: this.forms.FrWhat.enableRoleGrant,
+        enableIdentityProfileGrant: this.forms.FrWhat.enableIdentityProfileGrant,
         notifications: {
           assignmentNotification: this.forms.FrNotifications.initialNotification,
           escalation: this.forms.FrAdditionalOptions.escalation,
@@ -487,9 +489,8 @@ export default {
     },
     setCounts(event) {
       const { objects } = event;
-      this.numDecisions = event.count || 0;
-
       this.numUsers = objects.user || 0;
+      this.numDecisions = this.type === types.IDENTITYPROFILE ? this.numUsers : (event.count || 0);
       this.numApplications = objects.application || 0;
       this.numAccounts = objects.account || 0;
       this.numEntitlements = objects.entitlement || 0;

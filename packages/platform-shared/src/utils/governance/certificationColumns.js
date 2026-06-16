@@ -104,7 +104,7 @@ const OOTBColumns = {
     category: 'user',
     class: 'text-truncate fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles'],
+    showFor: ['accounts', 'entitlements', 'roles', 'identityProfile'],
     exportFields: ['user.userName', 'user.givenName', 'user.sn', 'user.mail'],
     value: 'user.user',
   },
@@ -171,7 +171,7 @@ const OOTBColumns = {
     category: 'review',
     class: 'w-175px text-truncate fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile'],
     value: 'review.flags',
   },
   comments: {
@@ -181,7 +181,7 @@ const OOTBColumns = {
     category: 'review',
     class: 'w-140px fr-access-cell',
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile'],
     value: 'review.comments',
   },
   actions: {
@@ -190,7 +190,7 @@ const OOTBColumns = {
     label: i18n.global.t('common.actions'),
     sortable: false,
     show: true,
-    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition'],
+    showFor: ['accounts', 'entitlements', 'roles', 'accountEntitlement', 'entitlementComposition', 'identityProfile'],
     value: 'actions',
   },
 };
@@ -322,7 +322,7 @@ const categories = [
   {
     name: 'review',
     header: i18n.global.t('governance.certificationTask.columns.review'),
-    showFor: ['accounts', 'entitlements', 'roles'],
+    showFor: ['accounts', 'entitlements', 'roles', 'entitlementComposition', 'identityProfile'],
     items: [
       { ...OOTBColumns.prediction },
       { ...OOTBColumns.flags },
@@ -332,7 +332,7 @@ const categories = [
   {
     name: 'user',
     header: i18n.global.t('governance.certificationTask.columns.user'),
-    showFor: ['accounts', 'entitlements', 'roles'],
+    showFor: ['accounts', 'entitlements', 'roles', 'identityProfile'],
     items: [
       { ...OOTBColumns.user },
     ],
@@ -340,7 +340,7 @@ const categories = [
   {
     name: 'application',
     header: i18n.global.t('governance.certificationTask.columns.application'),
-    showFor: ['accounts', 'entitlements'],
+    showFor: ['accounts', 'entitlements', 'entitlementComposition'],
     items: [
       { ...OOTBColumns.application },
     ],
@@ -348,7 +348,7 @@ const categories = [
   {
     name: 'entitlement',
     header: i18n.global.t('governance.certificationTask.columns.entitlement'),
-    showFor: ['entitlements'],
+    showFor: ['entitlements', 'entitlementComposition'],
     items: [
       { ...OOTBColumns.entitlement },
     ],

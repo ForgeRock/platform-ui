@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <!-- Status Card -->
@@ -138,8 +137,8 @@ to such license between the licensee and ForgeRock AS. -->
               <p data-testid="campaign-progress-caption-text">
                 {{
                   $t('governance.certificationDetails.campaignProgressCaptionText', {
-                    complete: campaign.statistics.primaryReviewer.complete,
-                    total: campaign.statistics.primaryReviewer.total,
+                    complete: campaign.statistics?.primaryReviewer?.complete ?? 0,
+                    total: campaign.statistics?.primaryReviewer?.total ?? 0,
                   })
                 }}
               </p>
@@ -260,7 +259,7 @@ to such license between the licensee and ForgeRock AS. -->
         lg="4"
       >
         <FrVisualizationCard
-          v-if="isEntitlementComposition"
+          v-if="isEntitlementComposition || isIdentityProfile"
           class="h-100"
           data-testid="chart-previous-decision"
           :title="$t('governance.certificationDetails.previousDecisionChartLabel')"
@@ -487,7 +486,7 @@ export default {
         new: this.styles.green,
         previous: this.styles.blue,
       };
-      return Object.entries(this.campaign.statistics.userCount)
+      return Object.entries(this.campaign.statistics?.userCount || {})
         .map(([key, value]) => ({
           label: this.$t(`governance.certificationDetails.usersChartItemsLabel.${key}`),
           color: usersChartColors[key],
@@ -500,7 +499,7 @@ export default {
         revoke: this.styles.blue,
         exception: this.styles.yellow,
       };
-      return Object.entries(this.campaign.statistics.currentDecision)
+      return Object.entries(this.campaign.statistics?.currentDecision || {})
         .filter(([key]) => Object.keys(decisionsBreakdownChartColors).includes(key))
         .map(([key, value]) => ({
           label: this.$t(`governance.certificationDetails.decisionsBreakdownChartItemsLabel.${key}`),
@@ -510,7 +509,7 @@ export default {
     },
     decisionsByApp() {
       const colors = [this.styles.green, this.styles.blue, this.styles.yellow, this.styles.orchid, this.styles.skyblue];
-      return Object.entries(this.campaign.statistics.decisionsByApplication)
+      return Object.entries(this.campaign.statistics?.decisionsByApplication || {})
         .sort(([, valueA], [, valueB]) => valueB - valueA)
         .reduce((acc, [key, value], index) => {
           if (index < 5) {
@@ -541,9 +540,12 @@ export default {
     isEntitlementComposition() {
       return this.campaign.certificationType === uiTypeMap.ENTITLEMENTCOMPOSITION;
     },
+    isIdentityProfile() {
+      return this.campaign.certificationType === uiTypeMap.IDENTITYPROFILE;
+    },
     previousDecisionChart() {
       const colors = [this.styles.green, this.styles.blue];
-      const stats = this.campaign.statistics.previousDecision || {};
+      const stats = this.campaign.statistics?.previousDecision || {};
       const previouslyReviewed = stats.previouslyReviewed || 0;
       const total = stats.total || 0;
       const neverCertified = Math.max(total - previouslyReviewed, 0);

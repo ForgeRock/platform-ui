@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     id="CampaignTemplateTypeModal"
@@ -99,7 +98,7 @@ to such license between the licensee and ForgeRock AS. -->
               <BMedia no-body>
                 <FrIcon
                   name="assignment_turned_in"
-                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border mr-4 border-blue color-blue" />
+                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border border-blue color-blue" />
                 <BMediaBody>
                   <h3
                     class="h5"
@@ -108,6 +107,25 @@ to such license between the licensee and ForgeRock AS. -->
                   </h3>
                   <div class="d-block">
                     {{ $t('governance.campaignTemplateTypeModal.entitlementCompositionCertificationMessage') }}
+                  </div>
+                </BMediaBody>
+              </BMedia>
+            </FrCardRadioInput>
+            <FrCardRadioInput
+              v-if="governanceDevEnabled"
+              :radio-value="types.IDENTITYPROFILE"
+              name="selectedCampaignTemplateType"
+              v-model="selectedCampaignTemplateType">
+              <BMedia no-body>
+                <FrIcon
+                  name="person"
+                  icon-class="d-flex fr-realm-stamp align-items-center justify-content-center p-3 mr-4 rounded border border-teal color-teal" />
+                <BMediaBody>
+                  <h3 class="h5">
+                    {{ $t('governance.campaignTemplateTypeModal.identityProfileCertification') }}
+                  </h3>
+                  <div class="d-block">
+                    {{ $t('governance.campaignTemplateTypeModal.identityProfileCertificationMessage') }}
                   </div>
                 </BMediaBody>
               </BMedia>
@@ -152,6 +170,11 @@ export default {
       selectedCampaignTemplateType: null,
       types,
     };
+  },
+  computed: {
+    governanceDevEnabled() {
+      return this.$store.state.SharedStore.governanceDevEnabled;
+    },
   },
   methods: {
     nextStep() {

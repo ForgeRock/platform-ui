@@ -100,11 +100,25 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ summary.numRoles }}
               </dd>
             </template>
+            <template v-if="isIdentityProfile">
+              <dt class="mb-1">
+                <small>{{ $t('common.users') }}</small>
+              </dt>
+              <dd class="mb-4">
+                {{ summary.numUsers }}
+              </dd>
+              <dt class="mb-1">
+                <small>{{ $t('governance.editTemplate.totalDecisionItems') }}</small>
+              </dt>
+              <dd>
+                {{ summary.numDecisions }}
+              </dd>
+            </template>
           </dl>
         </BCol>
         <BCol lg="4">
           <dl>
-            <template v-if="!isEntitlementComposition">
+            <template v-if="!isEntitlementComposition && !isIdentityProfile">
               <dt class="mb-1">
                 <small>{{ $t('common.users') }}</small>
               </dt>
@@ -112,12 +126,14 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ summary.numUsers }}
               </dd>
             </template>
-            <dt class="mb-1">
-              <small>{{ $t('governance.editTemplate.totalDecisionItems') }}</small>
-            </dt>
-            <dd>
-              {{ summary.numDecisions }}
-            </dd>
+            <template v-if="!isIdentityProfile">
+              <dt class="mb-1">
+                <small>{{ $t('governance.editTemplate.totalDecisionItems') }}</small>
+              </dt>
+              <dd>
+                {{ summary.numDecisions }}
+              </dd>
+            </template>
           </dl>
         </BCol>
       </BRow>
@@ -470,6 +486,9 @@ export default {
     },
     isEntitlementComposition() {
       return this.summary.type === types.ENTITLEMENTCOMPOSITION;
+    },
+    isIdentityProfile() {
+      return this.summary.type === types.IDENTITYPROFILE;
     },
   },
 };
