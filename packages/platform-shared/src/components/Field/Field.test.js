@@ -284,6 +284,44 @@ describe('Field Component', () => {
     expect(rootElement.attributes('custom-attribute')).toBe('test-custom-attribute');
   });
 
+  it('fires a @change listener exactly once when the user interacts with a boolean field', async () => {
+    const onChange = jest.fn();
+    wrapper = mount(FrField, {
+      global: {
+        mocks: { $t: () => {} },
+      },
+      props: {
+        type: 'boolean',
+        name: 'testField',
+        value: false,
+        onChange,
+      },
+    });
+    await flushPromises();
+
+    await wrapper.find('input').trigger('change');
+    await flushPromises();
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not include onChange in the attrs passed to the inner component', () => {
+    const onChange = jest.fn();
+    wrapper = mount(FrField, {
+      global: {
+        mocks: { $t: () => {} },
+      },
+      props: {
+        type: 'boolean',
+        name: 'testField',
+        value: false,
+        onChange,
+      },
+    });
+
+    expect(wrapper.vm.attrs).not.toHaveProperty('onChange');
+  });
+
   describe('Showing a readonly string input when the field value is a placeholder', () => {
     const defaultProps = {
       global: {

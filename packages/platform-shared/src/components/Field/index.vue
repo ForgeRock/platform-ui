@@ -138,6 +138,7 @@ export default {
       // Don't pass through the attribute associated with v-model listener class, and style,
       // as this causes Vue 3 compat to try and add duplicative listeners, classes, and styles through the component stack
       if (Object.prototype.hasOwnProperty.call(newAttrs, 'onModelCompat:input')) delete newAttrs['onModelCompat:input'];
+      if (Object.prototype.hasOwnProperty.call(newAttrs, 'onChange')) delete newAttrs.onChange;
       if (Object.prototype.hasOwnProperty.call(newAttrs, 'class')) delete newAttrs.class;
       if (Object.prototype.hasOwnProperty.call(newAttrs, 'style')) delete newAttrs.style;
       if (!Object.prototype.hasOwnProperty.call(newAttrs, 'isRequiredAria') && !Object.prototype.hasOwnProperty.call(newAttrs, 'is-required-aria')) {
