@@ -126,7 +126,7 @@
     "ramda@npm:^0.25.0": "0.27.1",
     "semver": "7.5.4",
     "serialize-javascript": "7.0.5",
-    "sanitize-html": "2.17.4",
+    "sanitize-html": "2.17.5",
     "socks": "2.8.7",
     "tar": "7.5.16",
     "tar-fs": "3.0.8",
