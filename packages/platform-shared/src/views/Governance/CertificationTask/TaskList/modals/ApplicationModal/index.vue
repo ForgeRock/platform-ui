@@ -17,13 +17,14 @@ of the MIT license. See the LICENSE file for details. -->
       <BMedia
         class="align-items-center"
         no-body>
-        <img
-          class="mr-3 mw-100 h-auto"
-          height="36"
-          width="36"
-          :alt="application.name"
-          :onerror="onImageError"
-          :src="logo">
+        <div class="size-48 fr-app-logo-bg d-flex align-items-center justify-content-center mr-3">
+          <img
+            height="36"
+            width="36"
+            :alt="application.name"
+            :onerror="onImageError"
+            :src="logo">
+        </div>
         <div class="media-body">
           <small class="mb-1">
             {{ displayName }}

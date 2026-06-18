@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -27,13 +27,14 @@ of the MIT license. See the LICENSE file for details. -->
               {{ entitlement.name }}
             </h5>
             <BMedia no-body>
-              <BMediaAside>
-                <img
-                  :src="getApplicationLogo(entitlement.app)"
-                  :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: entitlement.app.name })"
-                  class="mr-2"
-                  :onerror="onImageError"
-                  width="24">
+              <BMediaAside class="mr-2">
+                <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center">
+                  <img
+                    :src="getApplicationLogo(entitlement.app)"
+                    :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: entitlement.app.name })"
+                    :onerror="onImageError"
+                    width="24">
+                </div>
               </BMediaAside>
               <BMediaBody class="align-self-center text-truncate">
                 <h5 class="mb-0 text-truncate">
@@ -59,13 +60,14 @@ of the MIT license. See the LICENSE file for details. -->
               {{ entitlement.name }}
             </h5>
             <BMedia no-body>
-              <BMediaAside>
-                <img
-                  :src="getApplicationLogo(entitlement.app)"
-                  :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: entitlement.app.name })"
-                  class="mr-2"
-                  :onerror="onImageError"
-                  width="24">
+              <BMediaAside class="mr-2">
+                <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center">
+                  <img
+                    :src="getApplicationLogo(entitlement.app)"
+                    :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: entitlement.app.name })"
+                    :onerror="onImageError"
+                    width="24">
+                </div>
               </BMediaAside>
               <BMediaBody class="align-self-center text-truncate">
                 <h5 class="mb-0 text-truncate">

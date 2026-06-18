@@ -26,11 +26,13 @@ of the MIT license. See the LICENSE file for details. -->
         <BMedia
           no-body
           class="align-items-center">
-          <img
-            class="mr-2 size-28"
-            :alt="$t('common.logo')"
-            :src="getApplicationLogo(option.application)"
-            :onerror="onImageError">
+          <div class="size-24 fr-app-logo-bg d-flex align-items-center justify-content-center mr-2 flex-shrink-0 my-1">
+            <img
+              class="size-18"
+              :alt="$t('common.logo')"
+              :src="getApplicationLogo(option.application)"
+              :onerror="onImageError">
+          </div>
           <BMediaBody class="align-self-center overflow-hidden text-nowrap">
             <small class="text-dark">
               {{ option.text }}

@@ -23,13 +23,13 @@ of the MIT license. See the LICENSE file for details. -->
       @row-clicked="navigateToEntitlementDetails">
       <template #toolbar-right>
         <BButton
-          class="ml-2 toolbar-link-text"
+          class="ml-2 toolbar-link-text text-dark"
           @click="showFilters = !showFilters"
           variant="link">
           <FrIcon name="filter_list" />
         </BButton>
         <BButton
-          class="ml-2 toolbar-link-text"
+          class="ml-2 toolbar-link-text text-dark"
           @click="openColumnsModal"
           variant="link">
           <FrIcon
@@ -55,11 +55,13 @@ of the MIT license. See the LICENSE file for details. -->
                       v-if="option.value !== 'all'"
                       class="align-items-center"
                       no-body>
-                      <img
-                        class="mr-2 size-28"
-                        :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.name })"
-                        :onerror="onImageError"
-                        :src="getApplicationLogo(option)">
+                      <div class="size-24 fr-app-logo-bg d-flex align-items-center justify-content-center mr-2">
+                        <img
+                          class="size-18"
+                          :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.name })"
+                          :onerror="onImageError"
+                          :src="getApplicationLogo(option)">
+                      </div>
                       <BMediaBody class="align-self-center overflow-hidden text-nowrap">
                         {{ option.text }}
                       </BMediaBody>
@@ -80,12 +82,14 @@ of the MIT license. See the LICENSE file for details. -->
         <BMedia
           class="align-items-center"
           no-body>
-          <BMediaAside class="align-self-center">
-            <img
-              class="size-24"
-              :onerror="onImageError"
-              :src="getApplicationLogo(item.application)"
-              :alt="$t('common.logo')">
+          <BMediaAside class="align-self-center mr-4">
+            <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center">
+              <img
+                class="size-24"
+                :onerror="onImageError"
+                :src="getApplicationLogo(item.application)"
+                :alt="$t('common.logo')">
+            </div>
           </BMediaAside>
           <BMediaBody class="align-self-center overflow-hidden text-nowrap">
             <p class="h5 mb-0">

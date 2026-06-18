@@ -223,11 +223,13 @@ of the MIT license. See the LICENSE file for details. -->
                   class="align-items-center"
                   data-testid="application-cell"
                   no-body>
-                  <img
-                    class="mr-4 size-28"
-                    alt=""
-                    :onerror="onImageError"
-                    :src="getApplicationLogo(item.application)">
+                  <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center mr-3">
+                    <img
+                      class="size-28"
+                      alt=""
+                      :onerror="onImageError"
+                      :src="getApplicationLogo(item.application)">
+                  </div>
                   <div class="media-body align-self-center overflow-hidden text-nowrap">
                     <span class="text-dark">
                       {{ item.application.name }}

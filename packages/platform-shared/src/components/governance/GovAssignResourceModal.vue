@@ -25,13 +25,13 @@ of the MIT license. See the LICENSE file for details. -->
           v-else
           class="align-items-center"
           no-body>
-          <img
-            class="mr-4 align-self-center mw-100 h-auto"
-            height="36"
-            width="36"
-            :alt="$t('governance.resource.assignResourceModal.appLogoAltText')"
-            :onerror="onImageError"
-            :src="appLogoSource">
+          <div class="size-48 fr-app-logo-bg d-flex align-items-center justify-content-center mr-4 align-self-center flex-shrink-0">
+            <img
+              class="size-36"
+              :alt="$t('governance.resource.assignResourceModal.appLogoAltText')"
+              :onerror="onImageError"
+              :src="appLogoSource">
+          </div>
           <BMediaBody>
             <small class="mb-0">
               {{ modalTitle }}
@@ -65,12 +65,13 @@ of the MIT license. See the LICENSE file for details. -->
             <BMedia
               no-body
               class="m-0 py-1 align-items-center">
-              <img
-                :src="getApplicationLogo(option)"
-                :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.name })"
-                class="mr-2"
-                :onerror="onImageError"
-                width="18">
+              <div class="size-24 fr-app-logo-bg d-flex align-items-center justify-content-center mr-2">
+                <img
+                  :src="getApplicationLogo(option)"
+                  :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.name })"
+                  :onerror="onImageError"
+                  class="size-18">
+              </div>
               <BMediaBody>
                 {{ option.text }}
               </BMediaBody>

@@ -9,24 +9,11 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="isLoading && Object.keys(account).length === 0"
       class="py-5" />
     <div v-else>
-      <div class="mt-5 mb-3 d-flex">
-        <BMedia
-          no-body
-          class="border">
-          <img
-            class="d-flex justify-content-center align-items-center m-4"
-            width="48"
-            height="48"
-            :alt="account?.application?.name || ''"
-            :src="account?.application?.icon"
-            :onerror="onImageError">
-        </BMedia>
-        <FrHeader
-          class="ml-3"
-          :title="account?.displayName"
-          :subtitle="account?.application?.name"
-        />
-      </div>
+      <FrHeaderWithImage
+        class="mt-5 mb-3"
+        :title="account?.displayName"
+        :subtitle="account?.application?.name"
+        :image-source="account?.application?.icon" />
       <BTabs
         content-class="mt-3"
         nav-class="fr-tabs"
@@ -91,7 +78,6 @@ of the MIT license. See the LICENSE file for details. -->
 <script setup>
 import {
   BContainer,
-  BMedia,
   BTabs,
   BTab,
 } from 'bootstrap-vue';
@@ -99,10 +85,8 @@ import { ref, onBeforeMount, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { omit } from 'lodash';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
-import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
-import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getAccountById, getAccountEntitlements } from '@forgerock/platform-shared/src/api/governance/AccountApi';
 import { getApplicationLogo, loadAppTemplates } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
@@ -112,6 +96,7 @@ import { submitCustomRequest } from '@forgerock/platform-shared/src/api/governan
 import { getObjectTypeSchema } from '@forgerock/platform-shared/src/api/governance/ApplicationsApi';
 import FrAccountObjectProperties from '@forgerock/platform-shared/src/views/Governance/ObjectProperties/ObjectProperties';
 import FrActivity from '@forgerock/platform-shared/src/views/Governance/Activity/Activity';
+import FrHeaderWithImage from '@forgerock/platform-shared/src/components/HeaderWithImage/HeaderWithImage';
 import FrDetailsTab from './DetailsTab';
 import { getAccountDisplayName } from '../utils/accountUtility';
 import store from '@/store';

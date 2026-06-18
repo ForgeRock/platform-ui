@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -112,6 +112,11 @@ export default {
   },
   mounted() {
     this.loadData();
+    this.themeObserver = new MutationObserver(() => this.loadData());
+    this.themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  },
+  beforeUnmount() {
+    if (this.themeObserver) this.themeObserver.disconnect();
   },
   methods: {
     loadData() {
@@ -210,7 +215,7 @@ export default {
         .attr('class', `${this.id}-tooltip`)
         .attr('d', path)
         .attr('fill', (d) => color(d.data[0]))
-        .attr('stroke', 'white')
+        .attr('stroke', getComputedStyle(document.documentElement).getPropertyValue('--card-bg').trim() || 'white')
         .style('stroke-width', `${this.strokeWidth}px`)
         .transition() // defines a transition
         .duration(1000) // controls the animation duration

@@ -83,11 +83,13 @@ of the MIT license. See the LICENSE file for details. -->
                       <BMedia
                         class="align-items-center"
                         no-body>
-                        <img
-                          class="mr-3 size-28"
-                          :alt="item.application.name"
-                          :src="item.application.icon"
-                          :onerror="onImageError">
+                        <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center mr-3 flex-shrink-0">
+                          <img
+                            class="size-28"
+                            :alt="item.application.name"
+                            :src="item.application.icon"
+                            :onerror="onImageError">
+                        </div>
                         <BMediaBody class="align-self-center">
                           <div class="m-0 h5">
                             {{ item.application.name }}

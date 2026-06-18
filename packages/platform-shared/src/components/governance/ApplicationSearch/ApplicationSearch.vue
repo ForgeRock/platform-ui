@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,13 +17,13 @@ of the MIT license. See the LICENSE file for details. -->
     <template #tag="{ option, remove }">
       <span class="multiselect__tag">
         <BMedia no-body>
-          <img
-            :alt="i18n.global.t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.value })"
-            height="24"
-            width="24"
-            class="mr-2 align-self-center"
-            :onerror="onImageError"
-            :src="option.icon">
+          <div class="size-24 fr-app-logo-bg d-flex align-items-center justify-content-center mr-2">
+            <img
+              :alt="i18n.global.t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.value })"
+              class="size-18"
+              :onerror="onImageError"
+              :src="option.icon">
+          </div>
           <BMediaBody class="pl-1">
             <div
               class="mb-1 text-dark"
@@ -45,13 +45,13 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <template #option="{ option }">
       <BMedia no-body>
-        <img
-          :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.value })"
-          height="24"
-          width="24"
-          class="mr-2 align-self-center"
-          :onerror="onImageError"
-          :src="option.icon">
+        <div class="size-24 fr-app-logo-bg d-flex align-items-center justify-content-center mr-2">
+          <img
+            :alt="$t('governance.resource.assignResourceModal.appLogoAltText', { appName: option.value })"
+            class="size-18"
+            :onerror="onImageError"
+            :src="option.icon">
+        </div>
         <BMediaBody class="pl-1">
           <div class="mb-1 text-dark">
             {{ option.title }}

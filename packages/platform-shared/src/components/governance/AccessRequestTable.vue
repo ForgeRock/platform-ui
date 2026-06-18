@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
                   @sort-direction-change="handleSortDirectionChange" />
                 <BButton
                   @click="showFilters = !showFilters"
-                  class="toolbar-link-text"
+                  class="toolbar-link-text text-dark"
                   :pressed="showFilters"
                   aria-labelledby="filter-toggle-label"
                   data-testid="filter-toggle"

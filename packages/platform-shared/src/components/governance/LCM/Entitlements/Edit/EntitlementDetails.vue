@@ -7,26 +7,10 @@ of the MIT license. See the LICENSE file for details. -->
     fluid
     class="my-5">
     <div v-if="entitlement">
-      <BMedia
-        class="align-items-center mb-2"
-        no-body>
-        <BMediaAside class="align-self-center">
-          <img
-            class="d-flex justify-content-center align-items-center m-4"
-            height="48"
-            :onerror="onImageError"
-            :src="getApplicationLogo(entitlement.application)"
-            :alt="$t('common.logo')">
-        </BMediaAside>
-        <BMediaBody class="align-self-center overflow-hidden text-nowrap">
-          <p class="text-muted mb-2">
-            {{ getApplicationDisplayName(entitlement.application) }} {{ entitlement.item?.objectType }}
-          </p>
-          <h1>
-            {{ entitlement.descriptor?.idx?.['/entitlement']?.displayName }}
-          </h1>
-        </BMediaBody>
-      </BMedia>
+      <FrHeaderWithImage
+        :title="`${getApplicationDisplayName(entitlement.application)} ${entitlement.item?.objectType}`"
+        :subtitle="entitlement.descriptor?.idx?.['/entitlement']?.displayName"
+        :image-source="getApplicationLogo(entitlement.application)" />
       <BTabs
         nav-class="fr-tabs"
         lazy>
@@ -52,18 +36,15 @@ of the MIT license. See the LICENSE file for details. -->
 import { computed, ref, onMounted } from 'vue';
 import {
   BContainer,
-  BMedia,
-  BMediaAside,
-  BMediaBody,
   BTabs,
   BTab,
 } from 'bootstrap-vue';
 import { useRoute } from 'vue-router';
 import { getEntitlementById } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { getApplicationLogo, getApplicationDisplayName } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import { onImageError } from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import FrHeaderWithImage from '@forgerock/platform-shared/src/components/HeaderWithImage/HeaderWithImage';
 import FrDetails from './Tabs/Details';
 import FrUsers from './Tabs/Users';
 import i18n from '@/i18n';
