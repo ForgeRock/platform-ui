@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -29,13 +29,13 @@ of the MIT license. See the LICENSE file for details. -->
         <BMedia
           class="align-items-center"
           no-body>
-          <img
-            class="mr-3"
-            width="28"
-            height="33"
-            :onerror="onImageError"
-            :src="getApplicationLogo(item)"
-            :alt="$t('common.logo')">
+          <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center mr-3">
+            <img
+              class="size-28"
+              :onerror="onImageError"
+              :src="getApplicationLogo(item)"
+              :alt="$t('common.logo')">
+          </div>
           <BMediaBody class="overflow-hidden d-flex flex-column">
             <span class="text-truncate">
               {{ item.name }}

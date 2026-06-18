@@ -292,7 +292,7 @@ export default {
 </script>
 <style lang="scss" scoped>
   .certification-task-container {
-    background-color: $white;
+    background-color: var(--bg-white);
     min-height: 100vh;
   }
   .group-by-position {

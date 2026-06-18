@@ -109,13 +109,14 @@ of the MIT license. See the LICENSE file for details. -->
         <template #cell(appName)="{ item }">
           <BMedia no-body>
             <BMediaAside class="mr-4 align-self-center">
-              <img
-                alt=""
-                :src="getApplicationLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
-                aria-hidden="true"
-                :onerror="onImageError"
-                width="24"
-                height="24">
+              <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center">
+                <img
+                  alt=""
+                  :src="getApplicationLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
+                  aria-hidden="true"
+                  :onerror="onImageError"
+                  class="size-24">
+              </div>
             </BMediaAside>
             <BMediaBody class="text-truncate">
               <h2 class="h5 mb-0 text-truncate">
@@ -130,13 +131,14 @@ of the MIT license. See the LICENSE file for details. -->
         <template #cell(entitlementNameAppName)="{ item }">
           <BMedia no-body>
             <BMediaAside class="mr-4 align-self-center">
-              <img
-                alt=""
-                :src="getApplicationLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
-                aria-hidden="true"
-                :onerror="onImageError"
-                width="24"
-                height="24">
+              <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center">
+                <img
+                  alt=""
+                  :src="getApplicationLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
+                  aria-hidden="true"
+                  :onerror="onImageError"
+                  class="size-24">
+              </div>
             </BMediaAside>
             <BMediaBody class="text-truncate">
               <h2 class="h5 mb-0 text-truncate">

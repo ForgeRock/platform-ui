@@ -94,8 +94,8 @@ describe('AccountsDetails', () => {
     mountComponent();
     await flushPromises();
 
-    const title = wrapper.find('h1');
-    const subtitle = wrapper.find('p');
+    const title = wrapper.find('h1.pb-1');
+    const subtitle = wrapper.find('h1.h5');
 
     expect(title.text()).toBe(wrapper.vm.account.descriptor.idx['/account'].displayName);
     expect(subtitle.text()).toBe(wrapper.vm.account.application.name);

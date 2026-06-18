@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="d-flex align-items-center justify-content-center p-3 mr-2 rounded border border-darkened app-logo">
         <BImg
           v-if="item.details.isCustom"
+          class=""
           :src="require('@forgerock/platform-shared/src/assets/images/custom.svg')"
           :alt="$t('governance.accessRequest.customRequestAltText')"
           width="48"
@@ -337,5 +338,9 @@ onMounted(() => {
 <style lang="scss" scoped>
   .label-text {
     font-weight: 600;
+  }
+
+  .app-logo {
+    background-color: $white;
   }
 </style>

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,11 +7,9 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       class="d-flex flex-row align-items-center text-truncate"
       no-body>
-      <div>
+      <div class="size-36 fr-app-logo-bg d-flex align-items-center justify-content-center mr-3">
         <img
-          class="mr-3"
-          width="24"
-          height="28"
+          class="size-24"
           :src="getApplicationLogo(access.application)"
           :alt="$t('common.logo')">
       </div>
