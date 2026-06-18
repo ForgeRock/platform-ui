@@ -223,13 +223,13 @@ export default {
         accessModifier: 'add',
       };
       if (this.startDate) {
-        payload.startDate = this.startDate;
+        payload.startDate = dayjs(this.startDate).toISOString();
       }
       if (this.endDate) {
-        payload.endDate = dayjs(this.endDate).local().format();
+        payload.endDate = dayjs(this.endDate).toISOString();
       }
       if (this.expirationDate) {
-        payload.expiryDate = this.expirationDate;
+        payload.expiryDate = dayjs(this.expirationDate).toISOString();
       }
       if (this.justificationText) {
         payload.justification = this.justificationText;

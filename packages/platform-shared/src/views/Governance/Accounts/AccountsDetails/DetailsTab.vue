@@ -35,24 +35,24 @@ of the MIT license. See the LICENSE file for details. -->
       </BRow>
       <BRow class="w-100 align-items-center mb-2">
         <BCol sm="4">
-          <p class="h5 mb-0">
+          <p class="h5">
             {{ $t('governance.access.startDate') }}
           </p>
         </BCol>
         <BCol sm="4">
-          <p class="h5 mb-0">
+          <p class="h5">
             {{ getFormattedDateTime(account.item?.decision?.accessRequest?.grantStartDate) || blankValueIndicator }}
           </p>
         </BCol>
       </BRow>
       <BRow class="w-100 align-items-center mb-2">
         <BCol sm="4">
-          <p class="h5 mb-0">
+          <p class="h5">
             {{ $t('governance.access.endDate') }}
           </p>
         </BCol>
         <BCol sm="4">
-          <p class="h5 mb-0">
+          <p class="h5">
             {{ getFormattedDateTime(account.item?.decision?.accessRequest?.grantEndDate, false) || blankValueIndicator }}
           </p>
         </BCol>
