@@ -86,7 +86,9 @@ describe('StringDisplay', () => {
   });
 
   describe('can-enter-placeholders prop', () => {
-    it('sets canEnterPlaceholders to false when app is not Fraas', () => {
+    it('passes uiSchema.canEnterPlaceholders directly to FrField (isFraas gate is now inside FrField)', () => {
+      // StringDisplay no longer gates on isFraas — it passes uiSchema.canEnterPlaceholders
+      // directly to FrField, which applies the isFraas AND internally via effectiveCanEnterPlaceholders.
       wrapper = mountComponent(
         {
           uiSchema: {
@@ -98,10 +100,11 @@ describe('StringDisplay', () => {
         {
           isFraas: false,
         },
+        shallowMount,
       );
 
       const frField = wrapper.findComponent({ name: 'FrField' });
-      expect(frField.props('canEnterPlaceholders')).toBe(false);
+      expect(frField.props('canEnterPlaceholders')).toBe(true);
     });
 
     it('sets canEnterPlaceholders to true when app is Fraas and uiSchema allows it', () => {
@@ -121,6 +124,25 @@ describe('StringDisplay', () => {
 
       const frField = wrapper.findComponent({ name: 'FrField' });
       expect(frField.props('canEnterPlaceholders')).toBe(true);
+    });
+
+    it('passes false to FrField when uiSchema.canEnterPlaceholders is false', () => {
+      wrapper = mountComponent(
+        {
+          uiSchema: {
+            ...defaultProps.uiSchema,
+            canEnterPlaceholders: false,
+          },
+          path: 'testField',
+        },
+        {
+          isFraas: true,
+        },
+        shallowMount,
+      );
+
+      const frField = wrapper.findComponent({ name: 'FrField' });
+      expect(frField.props('canEnterPlaceholders')).toBe(false);
     });
   });
 

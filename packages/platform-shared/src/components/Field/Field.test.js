@@ -363,6 +363,10 @@ describe('Field Component', () => {
 
     it('switches to the ReadonlyPlaceholderInput instead of the normal input type when the value is changed to a placeholder string and placeholder entry is allowed', async () => {
       wrapper = setup({
+        global: {
+          plugins: [i18n],
+          mocks: { $store: { state: { isFraas: true } } },
+        },
         props: {
           name: 'bob',
           value: 'bill',
@@ -388,6 +392,26 @@ describe('Field Component', () => {
           value: 'bill',
           type: 'string',
           canEnterPlaceholders: false,
+        },
+      });
+
+      await flushPromises();
+
+      expect(wrapper.vm.component).toBe('FrBasicInput');
+
+      const input = wrapper.find('input');
+      await input.setValue('&{esv-myesv}');
+
+      expect(wrapper.vm.component).toBe('FrBasicInput');
+    });
+
+    it('does not switch to ReadonlyPlaceholderInput when canEnterPlaceholders is true but isFraas is false', async () => {
+      wrapper = setup({
+        props: {
+          name: 'bob',
+          value: 'bill',
+          type: 'string',
+          canEnterPlaceholders: true,
         },
       });
 
@@ -427,6 +451,7 @@ describe('Field Component', () => {
           }),
           i18n,
         ],
+        mocks: { $store: { state: { isFraas: false } } },
       },
       props: {
         name: 'test',
@@ -444,6 +469,17 @@ describe('Field Component', () => {
 
     it('Has the input wrapper as the top level component when placeholder entry is enabled and supported for the field type', () => {
       wrapper = setup({
+        global: {
+          plugins: [
+            createTestingPinia({
+              initialState: {
+                esvInput: { secrets: [], variables: [] },
+              },
+            }),
+            i18n,
+          ],
+          mocks: { $store: { state: { isFraas: true } } },
+        },
         props: {
           name: 'bob',
           value: 'bill',
@@ -470,6 +506,17 @@ describe('Field Component', () => {
 
     it('Has the field type component as the top level component when placeholder entry is enabled but not supported for the field type', () => {
       wrapper = setup({
+        global: {
+          plugins: [
+            createTestingPinia({
+              initialState: {
+                esvInput: { secrets: [], variables: [] },
+              },
+            }),
+            i18n,
+          ],
+          mocks: { $store: { state: { isFraas: true } } },
+        },
         props: {
           name: 'bob',
           value: 'bill',
@@ -492,6 +539,43 @@ describe('Field Component', () => {
       });
 
       expect(wrapper.vm.component).toBe('FrJsonInput');
+    });
+
+    it('suppresses EsvInputWrapper when canEnterPlaceholders is true but isFraas is false', () => {
+      wrapper = setup({
+        props: {
+          name: 'bob',
+          value: 'bill',
+          type: 'string',
+          canEnterPlaceholders: true,
+        },
+      });
+
+      expect(wrapper.vm.component).toBe('FrBasicInput');
+    });
+
+    it('uses EsvInputWrapper when canEnterPlaceholders is true and isFraas is true', () => {
+      wrapper = setup({
+        global: {
+          plugins: [
+            createTestingPinia({
+              initialState: {
+                esvInput: { secrets: [], variables: [] },
+              },
+            }),
+            i18n,
+          ],
+          mocks: { $store: { state: { isFraas: true } } },
+        },
+        props: {
+          name: 'bob',
+          value: 'bill',
+          type: 'string',
+          canEnterPlaceholders: true,
+        },
+      });
+
+      expect(wrapper.vm.component).toBe('FrEsvInputWrapper');
     });
   });
 });

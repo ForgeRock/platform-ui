@@ -152,13 +152,21 @@ export default {
       return this.fieldType === 'boolean' || this.fieldType === 'checkbox';
     },
     /**
+     * Effective canEnterPlaceholders, gated by the isFraas store flag.
+     * Only truthy when the caller enables placeholder entry AND the environment is FRaaS.
+     */
+    effectiveCanEnterPlaceholders() {
+      // Optional chaining: platform-shared renders in non-Vuex contexts (Storybook, enduser, login)
+      return this.canEnterPlaceholders && !!this.$store?.state?.isFraas;
+    },
+    /**
      * Top level component to be rendered by the Field
      */
     component() {
       if (this.fieldContainsPlaceholder) {
         return 'FrReadonlyPlaceholderInput';
       }
-      if (this.canEnterPlaceholders && isFieldTypeSupportedForPlaceholderEntry(this.type)) {
+      if (this.effectiveCanEnterPlaceholders && isFieldTypeSupportedForPlaceholderEntry(this.type)) {
         return 'FrEsvInputWrapper';
       }
       return this.determineInputComponent();
@@ -167,7 +175,7 @@ export default {
      * Component to be displayed together with extended ESV functionality when placeholders can be entered
      */
     innerComponent() {
-      if (!this.fieldContainsPlaceholder && this.canEnterPlaceholders) {
+      if (!this.fieldContainsPlaceholder && this.effectiveCanEnterPlaceholders) {
         return this.determineInputComponent();
       }
       return undefined;
@@ -210,7 +218,7 @@ export default {
      */
     valueUpdated(newVal) {
       // Only check value changes for placeholders in when the value can contain a placeholder change
-      if (this.component === 'FrReadonlyPlaceholderInput' || this.canEnterPlaceholders) {
+      if (this.component === 'FrReadonlyPlaceholderInput' || this.effectiveCanEnterPlaceholders) {
         this.fieldContainsPlaceholder = doesValueContainPlaceholder(newVal);
       }
     },
