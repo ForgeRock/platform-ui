@@ -7,10 +7,10 @@
 
 import { findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { flushPromises, mount } from '@vue/test-utils';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import Datepicker from './index';
 
-jest.mock('uuid/v4');
+jest.mock('uuid', () => ({ v4: jest.fn() }));
 
 function setupMount(props) {
   return mount(Datepicker, {

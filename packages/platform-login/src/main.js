@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -21,7 +21,7 @@ import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import isWebStorageAvailable from '@forgerock/platform-shared/src/utils/webStorageTest';
 import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import Vue3Sanitize from 'vue-3-sanitize';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { createPinia } from 'pinia';
 import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';

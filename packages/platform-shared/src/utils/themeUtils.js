@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,7 +8,7 @@
 import { cloneDeep, each } from 'lodash';
 import { convertBase64ToString, convertStringToBase64 } from '@forgerock/platform-shared/src/utils/encodeUtils';
 import themeConstants from '@forgerock/platform-shared/src/constants/themeConstants';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import store from '@/store';
 
 /**

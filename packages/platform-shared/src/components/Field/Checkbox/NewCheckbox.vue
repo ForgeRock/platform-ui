@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -55,7 +55,7 @@ import { useField } from 'vee-validate';
 import { BFormCheckbox } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { toRef } from 'vue';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import InputMixin from '../Wrapper/InputMixin';
 

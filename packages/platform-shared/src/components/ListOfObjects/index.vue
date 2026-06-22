@@ -167,7 +167,7 @@ import FrInlineJsonEditor from '@forgerock/platform-shared/src/components/Inline
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 import { toRef } from 'vue';
-import uuid from 'uuid/v4';
+import { v4 as uuid } from 'uuid';
 
 /**
  * @description Component that provides support for list of objects
