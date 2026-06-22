@@ -2851,7 +2851,7 @@ __metadata:
     d3-interpolate-path: 2.2.3
     d3-simple-slider: 1.10.4
     dayjs: 1.11.7
-    echarts: 5.6.0
+    echarts: 6.1.0
     es6-promise: 4.2.4
     eslint4b-prebuilt: 6.7.2
     got: 11.8.5
@@ -2883,7 +2883,7 @@ __metadata:
     vue-color: 2.7.1
     vue-drag-drop: 1.1.4
     vue-draggable-resizable: 2.1.0
-    vue-echarts: 7.0.3
+    vue-echarts: 8.0.1
     vue-i18n: 10.0.8
     vue-multiselect: 2.1.7
     vue-prism-editor: 1.3.0
@@ -3077,7 +3077,7 @@ __metadata:
     d3: 6.7.0
     d3-interpolate-path: 2.2.3
     dayjs: 1.11.7
-    echarts: 5.6.0
+    echarts: 6.1.0
     eslint-plugin-import: 2.18.2
     exceljs: 4.4.0
     jest: 29.6.3
@@ -3106,7 +3106,7 @@ __metadata:
     vue: 3.3.4
     vue-clipboard2: 0.3.1
     vue-draggable-resizable: 2.1.0
-    vue-echarts: 7.0.3
+    vue-echarts: 8.0.1
     vue-ellipse-progress: 1.3.1
     vue-i18n: 10.0.8
     vue-multiselect: 2.1.7
@@ -10651,13 +10651,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"echarts@npm:5.6.0":
-  version: 5.6.0
-  resolution: "echarts@npm:5.6.0"
+"echarts@npm:6.1.0":
+  version: 6.1.0
+  resolution: "echarts@npm:6.1.0"
   dependencies:
     tslib: 2.3.0
-    zrender: 5.6.1
-  checksum: 4b545444155f9457daa89a4ea45f9e08177a9a59d9df7e5ea5206f66e290964fb0a1a273b0dfdeb24a4aa264f6afc925918aa2b76190917abf390bef092ba95c
+    zrender: 6.1.0
+  checksum: c9a3bd18c822bf5d0c0e4cc69382eb449c64dc1d6c52522b06869b240d97182d811017fca7b178929071d57a42ea76d1951f449eed161976d9407abb52504232
   languageName: node
   linkType: hard
 
@@ -17519,12 +17519,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:3.3.8":
-  version: 3.3.8
-  resolution: "nanoid@npm:3.3.8"
+"nanoid@npm:3.3.12":
+  version: 3.3.12
+  resolution: "nanoid@npm:3.3.12"
   bin:
     nanoid: bin/nanoid.cjs
-  checksum: dfe0adbc0c77e9655b550c333075f51bb28cfc7568afbf3237249904f9c86c9aaaed1f113f0fddddba75673ee31c758c30c43d4414f014a52a7a626efc5958c9
+  checksum: 38699257447dc59e21e73e0510d0dfb16b7a610d9ca80633d5c3a68f9b4298c990513d30404ca8f163c2d03225ee01695ff8898bea6179183f38f0477b7635ac
   languageName: node
   linkType: hard
 
@@ -19138,25 +19138,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.1.10, postcss@npm:^8.2.6, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.0, postcss@npm:^8.4.21":
-  version: 8.4.35
-  resolution: "postcss@npm:8.4.35"
+"postcss@npm:^8.1.10, postcss@npm:^8.2.6, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.0, postcss@npm:^8.4.21, postcss@npm:^8.4.40, postcss@npm:^8.4.47":
+  version: 8.5.14
+  resolution: "postcss@npm:8.5.14"
   dependencies:
-    nanoid: ^3.3.7
-    picocolors: ^1.0.0
-    source-map-js: ^1.0.2
-  checksum: cf3c3124d3912a507603f6d9a49b3783f741075e9aa73eb592a6dd9194f9edab9d20a8875d16d137d4f779fe7b6fbd1f5727e39bfd1c3003724980ee4995e1da
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^8.4.40, postcss@npm:^8.4.47":
-  version: 8.4.49
-  resolution: "postcss@npm:8.4.49"
-  dependencies:
-    nanoid: ^3.3.7
+    nanoid: ^3.3.11
     picocolors: ^1.1.1
     source-map-js: ^1.2.1
-  checksum: eb5d6cbdca24f50399aafa5d2bea489e4caee4c563ea1edd5a2485bc5f84e9ceef3febf170272bc83a99c31d23a316ad179213e853f34c2a7a8ffa534559d63a
+  checksum: ec17d1519cd997b43aceb82bfa959f380085591269e286c53d5ba76eb1989525e7cde106a44f1565516fcbb50f206eb1858cc2cd5e5aaea3a8ee793886c8232c
   languageName: node
   linkType: hard
 
@@ -23153,22 +23142,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-demi@npm:^0.13.11":
-  version: 0.13.11
-  resolution: "vue-demi@npm:0.13.11"
-  peerDependencies:
-    "@vue/composition-api": ^1.0.0-rc.1
-    vue: ^3.0.0-0 || ^2.6.0
-  peerDependenciesMeta:
-    "@vue/composition-api":
-      optional: true
-  bin:
-    vue-demi-fix: bin/vue-demi-fix.js
-    vue-demi-switch: bin/vue-demi-switch.js
-  checksum: 0fbe9bf8ab7fe498ffa2bbd0cfc8f6f43a6bbaa5eda3e20ef1b70dca7c8b0ddb216a7ff2f632b694fe0735805638975abb441c621ec0bd2e6d4656353f316c15
-  languageName: node
-  linkType: hard
-
 "vue-drag-drop@npm:1.1.4":
   version: 1.1.4
   resolution: "vue-drag-drop@npm:1.1.4"
@@ -23185,19 +23158,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-echarts@npm:7.0.3":
-  version: 7.0.3
-  resolution: "vue-echarts@npm:7.0.3"
-  dependencies:
-    vue-demi: ^0.13.11
+"vue-echarts@npm:8.0.1":
+  version: 8.0.1
+  resolution: "vue-echarts@npm:8.0.1"
   peerDependencies:
-    "@vue/runtime-core": ^3.0.0
-    echarts: ^5.5.1
-    vue: ^2.7.0 || ^3.1.1
-  peerDependenciesMeta:
-    "@vue/runtime-core":
-      optional: true
-  checksum: 3d59f50690fcf7b20edcd7a457fa9e49bf764aef32cd919b7613cf39ae94d783aae4cea60f87922dcef7804b4ff97e59efdfcc64e020f41e4d7b8ba80f9c58db
+    echarts: ^6.0.0
+    vue: ^3.3.0
+  checksum: fe3772e5c259bca90b941dfd4da29f4aa10493d16e0deea3593c610a40a1c61cf0ec78c69f909828235198bc21d470586ac3b3bc076054ac9e88c2466371b0ba
   languageName: node
   linkType: hard
 
@@ -24351,11 +24318,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zrender@npm:5.6.1":
-  version: 5.6.1
-  resolution: "zrender@npm:5.6.1"
+"zrender@npm:6.1.0":
+  version: 6.1.0
+  resolution: "zrender@npm:6.1.0"
   dependencies:
     tslib: 2.3.0
-  checksum: 01caeac2d30f0083009aafa531ccb7fe991b6ac0ddd8134dc7b0015f794ed7e3d4fbfe5d32f61cb591014245eca15aeebcfc962cdebfe3829598f0c94ba3dc29
+  checksum: e02956ab1e4b66d64952f9c6f23f917ad8856eff292714f6b943759526c290356d285556e177977136b8f1097d01600aab6727fa6c0ad61f7093d0fb28eb3920
   languageName: node
   linkType: hard
