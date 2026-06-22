@@ -210,7 +210,7 @@ describe('Pagination Component', () => {
     expect(wrapper.emitted('input')[0]).toEqual([2]);
   });
 
-  it('Only next button is tabbable for the 1st page', async () => {
+  it('Disabled prev and enabled next are both tabbable on the 1st page', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 20,
@@ -220,12 +220,16 @@ describe('Pagination Component', () => {
 
     await flushPromises();
 
+    // prev is disabled on page 1 — renders as <span> with aria-disabled="true"
+    // Per ARIA APG, disabled menuitems must remain focusable so keyboard users can discover them
     const prevButton = wrapper.find('.fr-pagination-prev .page-link');
     expect(prevButton.exists()).toBe(true);
-    expect(prevButton.attributes('tabindex')).toBe(undefined);
+    expect(prevButton.element.tagName).toBe('SPAN');
+    expect(prevButton.attributes('tabindex')).toBe('0');
 
     const nextButton = wrapper.find('.fr-pagination-next .page-link');
     expect(nextButton.exists()).toBe(true);
+    expect(nextButton.element.tagName).toBe('BUTTON');
     expect(nextButton.attributes('tabindex')).toBe('0');
   });
 
@@ -248,7 +252,7 @@ describe('Pagination Component', () => {
     expect(nextButton.attributes('tabindex')).toBe('0');
   });
 
-  it('Only prev button is tabbable for the last page', async () => {
+  it('Enabled prev and disabled next are both tabbable on the last page', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 14,
@@ -260,14 +264,18 @@ describe('Pagination Component', () => {
 
     const prevButton = wrapper.find('.fr-pagination-prev .page-link');
     expect(prevButton.exists()).toBe(true);
+    expect(prevButton.element.tagName).toBe('BUTTON');
     expect(prevButton.attributes('tabindex')).toBe('0');
 
+    // next is disabled on last page — renders as <span> with aria-disabled="true"
+    // Per ARIA APG, disabled menuitems must remain focusable so keyboard users can discover them
     const nextButton = wrapper.find('.fr-pagination-next .page-link');
     expect(nextButton.exists()).toBe(true);
-    expect(nextButton.attributes('tabindex')).toBe(undefined);
+    expect(nextButton.element.tagName).toBe('SPAN');
+    expect(nextButton.attributes('tabindex')).toBe('0');
   });
 
-  it('Previous and next buttons are not tabbable when disabled', async () => {
+  it('Disabled nav spans are tabbable and announced by screen readers when all buttons disabled', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 0,
@@ -281,10 +289,94 @@ describe('Pagination Component', () => {
 
     expect(prevButton.exists()).toBe(true);
     expect(nextButton.exists()).toBe(true);
+    // Both render as <span> with aria-disabled="true" when all controls are disabled
     expect(prevButton.element.tagName).toBe('SPAN');
     expect(nextButton.element.tagName).toBe('SPAN');
-    expect(prevButton.attributes('tabindex')).toBe(undefined);
-    expect(nextButton.attributes('tabindex')).toBe(undefined);
+    // aria-hidden removed from parent <li> so screen readers announce the menuitem
+    expect(wrapper.find('.fr-pagination-prev').attributes('aria-hidden')).toBeUndefined();
+    expect(wrapper.find('.fr-pagination-next').attributes('aria-hidden')).toBeUndefined();
+    // tabindex="0" keeps disabled menuitems in Tab sequence per ARIA APG
+    expect(prevButton.attributes('tabindex')).toBe('0');
+    expect(nextButton.attributes('tabindex')).toBe('0');
+  });
+
+  it('Disabled nav button li wrappers have aria-hidden removed so inner menuitem is announced', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 20,
+        value: 1,
+      },
+    });
+
+    await flushPromises();
+
+    const prevLi = wrapper.find('.fr-pagination-prev');
+    expect(prevLi.attributes('aria-hidden')).toBeUndefined();
+    // role="presentation" on the <li> is intentional — only aria-hidden is removed
+    expect(prevLi.attributes('role')).toBe('presentation');
+    // accessible semantics stay on the inner span, not promoted to <li>
+    expect(prevLi.find('.page-link').attributes('aria-disabled')).toBe('true');
+    expect(prevLi.find('.page-link').attributes('aria-label')).toBeTruthy();
+  });
+
+  it('Disabled nav button li wrappers have aria-hidden removed after page change', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 30,
+        value: 2,
+      },
+    });
+
+    await flushPromises();
+
+    await wrapper.setProps({ value: 1 });
+    await flushPromises();
+
+    const prevLi = wrapper.find('.fr-pagination-prev');
+    expect(prevLi.attributes('aria-hidden')).toBeUndefined();
+    expect(prevLi.attributes('role')).toBe('presentation');
+
+    const nextLink = wrapper.find('.fr-pagination-next .page-link');
+    expect(nextLink.attributes('tabindex')).toBe('0');
+  });
+
+  it('Attributes are re-applied when disabled prop changes', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 20,
+        value: 1,
+      },
+    });
+
+    await flushPromises();
+
+    // Initially: next is enabled, prev is disabled
+    expect(wrapper.find('.fr-pagination-next .page-link').attributes('tabindex')).toBe('0');
+    expect(wrapper.find('.fr-pagination-prev').attributes('aria-hidden')).toBeUndefined();
+
+    // Toggle disabled — BPagination re-renders, fix must re-run
+    await wrapper.setProps({ disabled: true });
+    await flushPromises();
+
+    // All nav <li> wrappers must still have aria-hidden removed after re-render
+    expect(wrapper.find('.fr-pagination-prev').attributes('aria-hidden')).toBeUndefined();
+    expect(wrapper.find('.fr-pagination-next').attributes('aria-hidden')).toBeUndefined();
+  });
+
+  it('Intentionally hidden nav buttons (d-none) are left unchanged', async () => {
+    const wrapper = mountPagination({
+      propsData: {
+        totalRows: 20,
+        value: 1,
+      },
+    });
+
+    await flushPromises();
+
+    const firstLi = wrapper.find('.fr-pagination-first');
+    expect(firstLi.exists()).toBe(true);
+    expect(firstLi.classes()).toContain('d-none');
+    expect(firstLi.attributes('aria-hidden')).toBe('true');
   });
 
   describe('pagination SMALL type verification', () => {

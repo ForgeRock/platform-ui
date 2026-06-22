@@ -296,40 +296,46 @@ export default {
       this.$emit('on-page-size-change', pageSize);
     },
     /**
-     * Ensures first/prev/next/last navigation buttons are keyboard reachable by setting tabindex="0" on enabled controls.
-     * Disabled items are rendered as <span> by BPagination and are naturally non-focusable, so they are skipped.
-     * Called via watchers on the props that determine disabled state (value, totalRows, perPage).
+     * Corrects two BPagination rendering defects that break keyboard and screen reader access.
+     * BPagination exposes no API for either; direct DOM correction after $nextTick is the only option.
      *
-     * Note: BPagination hardcodes tabindex="-1" on all enabled nav buttons as part of its internal roving tabindex
-     * implementation and exposes no prop or callback API to override this, so setAttribute on the rendered element
-     * is the only viable approach.
+     * 1. aria-hidden="true" on disabled nav <li> wrappers silences the inner menuitem from screen
+     *    readers entirely. Only aria-hidden is removed; role="presentation" on the <li> is intentional.
+     *
+     * 2. tabindex="-1" is hardcoded on all nav controls. tabindex="0" is set on every visible
+     *    .page-link, including disabled <span> elements. Per ARIA APG, disabled menuitems in a
+     *    menubar must remain in the tab sequence so Tab-only keyboard users can discover them.
+     *    Ref: https://www.w3.org/WAI/ARIA/apg/practices/keyboard-interface/#focusabilityofdisabledcontrols
      */
-    setNavigationButtonsTabbable() {
+    fixNavButtonAttributes() {
       this.$nextTick(() => {
-        const selectors = [
-          '.fr-pagination-first .page-link',
-          '.fr-pagination-prev .page-link',
-          '.fr-pagination-next .page-link',
-          '.fr-pagination-last .page-link',
-        ];
-
-        selectors.forEach((selector) => {
-          const navButton = this.$el.querySelector(selector);
-          // BPagination renders disabled items as <span> — naturally non-focusable, skip
-          if (!navButton || !['BUTTON', 'A'].includes(navButton.tagName)) return;
-          navButton.setAttribute('tabindex', '0');
+        const navClasses = ['fr-pagination-first', 'fr-pagination-prev', 'fr-pagination-next', 'fr-pagination-last'];
+        navClasses.forEach((cls) => {
+          const li = this.$el.querySelector(`.${cls}`);
+          if (!li || li.classList.contains('d-none')) return;
+          li.removeAttribute('aria-hidden');
+          const link = li.querySelector('.page-link');
+          if (link) {
+            link.setAttribute('tabindex', '0');
+          }
         });
       });
     },
   },
+  mounted() {
+    this.fixNavButtonAttributes();
+  },
+  // Every prop that can change a nav button's enabled/disabled state or visibility triggers
+  // a BPagination re-render that clobbers the corrected attributes — re-apply after each.
   watch: {
-    /**
-     * Re-evaluates navigation button tab reachability whenever pagination state changes using targeted watchers
-     */
-    value: { handler: 'setNavigationButtonsTabbable', immediate: true },
-    currentPageRows: { handler: 'setNavigationButtonsTabbable', immediate: true },
-    totalRows: { handler: 'setNavigationButtonsTabbable', immediate: true },
-    perPage: { handler: 'setNavigationButtonsTabbable', immediate: true },
+    value: 'fixNavButtonAttributes',
+    currentPageRows: 'fixNavButtonAttributes',
+    totalRows: 'fixNavButtonAttributes',
+    perPage: 'fixNavButtonAttributes',
+    disabled: 'fixNavButtonAttributes',
+    lastPage: 'fixNavButtonAttributes',
+    hideGoToFirstPageButton: 'fixNavButtonAttributes',
+    hideGoToLastPageButton: 'fixNavButtonAttributes',
   },
   computed: {
     /**
