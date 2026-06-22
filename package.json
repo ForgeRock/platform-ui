@@ -120,7 +120,7 @@
     "semver": "7.5.4",
     "serialize-javascript": "7.0.5",
     "socks": "2.8.7",
-    "tar": "7.5.11",
+    "tar": "7.5.16",
     "tar-fs": "3.0.8",
     "tmp": "0.2.7",
     "undici": "6.24.0",
