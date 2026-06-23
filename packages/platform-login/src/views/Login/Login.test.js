@@ -1338,7 +1338,8 @@ describe('Component Test', () => {
         const focusedElement = wrapper.vm.$refs.container;
         const addEventListenerSpy = jest.spyOn(focusedElement, 'addEventListener');
 
-        await wrapper.vm.handleFocus();
+        wrapper.vm.handleFocus();
+        jest.advanceTimersByTime(200);
 
         expect(addEventListenerSpy).toHaveBeenCalledWith('blur', expect.any(Function), { once: true });
         addEventListenerSpy.mockRestore();
@@ -1392,14 +1393,15 @@ describe('Component Test', () => {
     });
 
     describe('handleFocus() - Focus Invocation', () => {
-      it('focuses element synchronously when called', async () => {
+      it('focuses element after 200ms deferral when called', async () => {
         wrapper = createWrapper();
         await flushPromises();
 
         const focusedElement = wrapper.vm.$refs.container;
         const focusSpy = jest.spyOn(focusedElement, 'focus');
 
-        await wrapper.vm.handleFocus();
+        wrapper.vm.handleFocus();
+        jest.advanceTimersByTime(200);
 
         expect(focusSpy).toHaveBeenCalledTimes(1);
         focusSpy.mockRestore();
@@ -1519,6 +1521,158 @@ describe('Component Test', () => {
         expect(mainFocusSpy).toHaveBeenCalled();
       });
     });
+
+    describe('themeLoading Watcher — first-step focus targets', () => {
+      // All tests in this block exercise the real focus path end-to-end via the
+      // themeLoading watcher rather than calling handleFocus() directly.
+      // Sequence:
+      //   1. Mount with themeLoading: true so the watcher does not fire on setup.
+      //   2. Confirm isFirstStep is true (the data() default — not overridden).
+      //   3. Install focus spies on the expected target ref.
+      //   4. setProps({ themeLoading: false }) → triggers watcher.
+      //   5. await $nextTick() → flushes the $nextTick deferral inside the watcher.
+      //   6. jest.advanceTimersByTime(200) → fires the setTimeout inside handleFocus().
+      //   7. Assert the correct ref received focus.
+
+      it('first step, card layout, journeyFocusElement "content" — focuses $refs.main via watcher', async () => {
+        wrapper = createWrapper({
+          themeLoading: true,
+          journeyFocusElement: 'content',
+        });
+        await flushPromises();
+
+        expect(wrapper.vm.isFirstStep).toBe(true);
+
+        const focusSpy = jest.fn();
+        wrapper.vm.$refs.main.focus = focusSpy;
+
+        await wrapper.setProps({ themeLoading: false });
+        await wrapper.vm.$nextTick();
+        jest.advanceTimersByTime(200);
+
+        expect(focusSpy).toHaveBeenCalled();
+      });
+
+      it('first step, card layout, journeyFocusElement "" — focuses header/container ref via watcher', async () => {
+        wrapper = createWrapper({
+          themeLoading: true,
+          journeyFocusElement: '',
+        });
+        await flushPromises();
+
+        expect(wrapper.vm.isFirstStep).toBe(true);
+
+        const focusSpy = jest.fn();
+        if (wrapper.vm.$refs.callbackAppHeaderContainer) {
+          wrapper.vm.$refs.callbackAppHeaderContainer.focus = focusSpy;
+        } else {
+          wrapper.vm.$refs.container.focus = focusSpy;
+        }
+
+        await wrapper.setProps({ themeLoading: false });
+        await wrapper.vm.$nextTick();
+        jest.advanceTimersByTime(200);
+
+        expect(focusSpy).toHaveBeenCalled();
+      });
+
+      it('first step, card layout, journeyFocusElement "headerFirstStep" — isFirstStep true — focuses header/container ref via watcher', async () => {
+        wrapper = createWrapper({
+          themeLoading: true,
+          journeyFocusElement: 'headerFirstStep',
+        });
+        await flushPromises();
+
+        // Confirm isFirstStep is true (the data() default) — not explicitly overridden
+        expect(wrapper.vm.isFirstStep).toBe(true);
+
+        const focusSpy = jest.fn();
+        if (wrapper.vm.$refs.callbackAppHeaderContainer) {
+          wrapper.vm.$refs.callbackAppHeaderContainer.focus = focusSpy;
+        } else {
+          wrapper.vm.$refs.container.focus = focusSpy;
+        }
+
+        await wrapper.setProps({ themeLoading: false });
+        await wrapper.vm.$nextTick();
+        jest.advanceTimersByTime(200);
+
+        expect(focusSpy).toHaveBeenCalled();
+      });
+
+      it('first step, Theater Mode, journeyFocusElement "content" — focuses $refs.callbackMain via watcher', async () => {
+        wrapper = createWrapper({
+          themeLoading: true,
+          journeyTheaterMode: true,
+          journeyLayout: 'justified-left',
+          journeyFocusElement: 'content',
+        });
+        await flushPromises();
+
+        expect(wrapper.vm.isFirstStep).toBe(true);
+
+        const focusSpy = jest.fn();
+        wrapper.vm.$refs.callbackMain.focus = focusSpy;
+
+        await wrapper.setProps({ themeLoading: false });
+        await wrapper.vm.$nextTick();
+        jest.advanceTimersByTime(200);
+
+        expect(focusSpy).toHaveBeenCalled();
+      });
+
+      it('first step, Theater Mode, journeyFocusElement "" — focuses header/container ref via watcher', async () => {
+        wrapper = createWrapper({
+          themeLoading: true,
+          journeyTheaterMode: true,
+          journeyLayout: 'justified-left',
+          journeyFocusElement: '',
+        });
+        await flushPromises();
+
+        expect(wrapper.vm.isFirstStep).toBe(true);
+
+        const focusSpy = jest.fn();
+        if (wrapper.vm.$refs.callbackAppHeaderContainer) {
+          wrapper.vm.$refs.callbackAppHeaderContainer.focus = focusSpy;
+        } else {
+          wrapper.vm.$refs.container.focus = focusSpy;
+        }
+
+        await wrapper.setProps({ themeLoading: false });
+        await wrapper.vm.$nextTick();
+        jest.advanceTimersByTime(200);
+
+        expect(focusSpy).toHaveBeenCalled();
+      });
+
+      it('first step, Theater Mode, journeyFocusElement "headerFirstStep" — isFirstStep true — focuses header/container ref via watcher', async () => {
+        wrapper = createWrapper({
+          themeLoading: true,
+          journeyTheaterMode: true,
+          journeyLayout: 'justified-left',
+          journeyFocusElement: 'headerFirstStep',
+        });
+        await flushPromises();
+
+        // Confirm isFirstStep is true (the data() default) — not explicitly overridden
+        expect(wrapper.vm.isFirstStep).toBe(true);
+
+        const focusSpy = jest.fn();
+        if (wrapper.vm.$refs.callbackAppHeaderContainer) {
+          wrapper.vm.$refs.callbackAppHeaderContainer.focus = focusSpy;
+        } else {
+          wrapper.vm.$refs.container.focus = focusSpy;
+        }
+
+        await wrapper.setProps({ themeLoading: false });
+        await wrapper.vm.$nextTick();
+        jest.advanceTimersByTime(200);
+
+        expect(focusSpy).toHaveBeenCalled();
+      });
+    });
+
     describe('focusFirstInputAfterLoginFailure()', () => {
       it('returns the first visible input via fallback selector when no named component exists', async () => {
         wrapper = createWrapper();
@@ -1784,8 +1938,80 @@ describe('Component Test', () => {
         const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
 
         wrapper.vm.handleFocus();
+        jest.advanceTimersByTime(200);
 
         expect(containerFocusSpy).toHaveBeenCalled();
+        containerFocusSpy.mockRestore();
+      });
+
+      it('falls back to container focus after 200ms when focusFirstInvalidField returns null', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({
+          componentList: [
+            { type: 'FrField', callbackSpecificProps: { name: 'callback_2', errors: ['error'] } },
+          ],
+        });
+
+        const focusFirstInvalidFieldSpy = jest.spyOn(wrapper.vm, 'focusFirstInvalidField').mockResolvedValue(null);
+        const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
+
+        wrapper.vm.handleFocus();
+        await wrapper.vm.$nextTick();
+        jest.advanceTimersByTime(200);
+
+        expect(focusFirstInvalidFieldSpy).toHaveBeenCalled();
+        expect(containerFocusSpy).toHaveBeenCalled();
+        focusFirstInvalidFieldSpy.mockRestore();
+        containerFocusSpy.mockRestore();
+      });
+
+      it('falls back to container focus after 200ms when focusFirstInputAfterLoginFailure returns null', async () => {
+        wrapper = createWrapper();
+        await flushPromises();
+
+        await wrapper.setData({ loginFailure: true });
+
+        const focusFirstInputSpy = jest.spyOn(wrapper.vm, 'focusFirstInputAfterLoginFailure').mockResolvedValue(null);
+        const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
+
+        wrapper.vm.handleFocus();
+        await wrapper.vm.$nextTick();
+        jest.advanceTimersByTime(200);
+
+        expect(focusFirstInputSpy).toHaveBeenCalled();
+        expect(containerFocusSpy).toHaveBeenCalled();
+        focusFirstInputSpy.mockRestore();
+        containerFocusSpy.mockRestore();
+      });
+
+      it('cancels a pending normal-path timer when a subsequent error-path handleFocus fires', async () => {
+        // Simulates the race: themeLoading watcher fires handleFocus() before
+        // loginFailure is set (schedules setTimeout 200ms), then loginFailure
+        // handleFocus() fires and focuses the username field. The 200ms timer
+        // must not override that focus when it eventually fires.
+        wrapper = createWrapper({ journeyFocusElement: '' });
+        await flushPromises();
+
+        // First call: normal path (loginFailure still false) — schedules timer
+        wrapper.vm.handleFocus();
+
+        // Second call: loginFailure is now true — should cancel the timer and focus username
+        const mockInput = document.createElement('input');
+        const inputFocusSpy = jest.spyOn(mockInput, 'focus');
+        await wrapper.setData({ loginFailure: true });
+        const focusFirstInputSpy = jest.spyOn(wrapper.vm, 'focusFirstInputAfterLoginFailure').mockResolvedValue(mockInput);
+        const containerFocusSpy = jest.spyOn(wrapper.vm.$refs.container, 'focus');
+
+        await wrapper.vm.handleFocus();
+
+        // Advance past the 200ms timer — container must not receive focus
+        jest.advanceTimersByTime(200);
+
+        expect(inputFocusSpy).toHaveBeenCalled();
+        expect(containerFocusSpy).not.toHaveBeenCalled();
+        focusFirstInputSpy.mockRestore();
         containerFocusSpy.mockRestore();
       });
     });

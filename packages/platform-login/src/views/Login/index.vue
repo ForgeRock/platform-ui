@@ -770,6 +770,9 @@ export default {
         this.loading = false;
       });
   },
+  beforeUnmount() {
+    clearTimeout(this._focusTimer);
+  },
   watch: {
     // on page load journeyShowAsteriskForRequiredFields will be false, it will
     // update when the theme is loaded
@@ -808,46 +811,78 @@ export default {
      * especially when theme loading temporarily hides and re-renders the form.
      */
     async handleFocus() {
+      // Cancel any pending normal-path focus timer so a subsequent error-path
+      // call (e.g. loginFailure) is never stomped by an earlier watcher-triggered
+      // setTimeout that hasn't fired yet.
+      clearTimeout(this._focusTimer);
+
       // Route error states through handleFocus so error focus takes
       // precedence over the default header/content focus after theme loading.
       const hasInlineErrors = this.componentList.some(
         (c) => (c.callbackSpecificProps?.errors?.length || 0) > 0,
       );
 
-      let focusElement;
+      /**
+       * Applies focus to the resolved element, attaching the auto-focused CSS class and
+       * a blur listener to clean it up.
+       */
+      const applyFocus = (focusElement) => {
+        if (typeof focusElement?.focus === 'function') {
+          const AUTO_FOCUSED_CLASS = 'auto-focused';
+          if (this.autoFocusCleanup?.element && this.autoFocusCleanup?.handler) {
+            this.autoFocusCleanup.element.removeEventListener('blur', this.autoFocusCleanup.handler);
+            this.autoFocusCleanup.element.classList.remove(AUTO_FOCUSED_CLASS);
+          }
+
+          const removeAutoFocusedClass = () => {
+            focusElement.classList.remove(AUTO_FOCUSED_CLASS);
+            this.autoFocusCleanup = null;
+          };
+
+          focusElement.classList.add(AUTO_FOCUSED_CLASS);
+          focusElement.addEventListener('blur', removeAutoFocusedClass, { once: true });
+          this.autoFocusCleanup = { element: focusElement, handler: removeAutoFocusedClass };
+
+          // Apply focus to ensure keyboard users and screen readers notice the content area
+          focusElement.focus();
+        }
+      };
+
       if (hasInlineErrors) {
-        focusElement = await this.focusFirstInvalidField();
-      } else if (this.loginFailure) {
-        focusElement = await this.focusFirstInputAfterLoginFailure();
+        const errorFocusElement = await this.focusFirstInvalidField();
+        if (typeof errorFocusElement?.focus === 'function') {
+          applyFocus(errorFocusElement);
+          return;
+        }
       }
 
-      if (!focusElement) {
-        if (this.journeyFocusElement === 'content' || (this.journeyFocusElement === 'headerFirstStep' && !this.isFirstStep) || (this.journeyFocusFirstFocusableItemEnabled && !this.isFirstStep)) {
+      if (this.loginFailure) {
+        const failureFocusElement = await this.focusFirstInputAfterLoginFailure();
+        if (typeof failureFocusElement?.focus === 'function') {
+          applyFocus(failureFocusElement);
+          return;
+        }
+      }
+
+      // Defer the normal (non-error) focus path by 200ms so that DOM refs
+      // ($refs.callbackMain, $refs.main, $refs.callbackAppHeaderContainer,
+      // $refs.container) are fully populated — especially on the first step
+      // where themeLoading fires before refs are available. This restores the
+      // deferral that was present before IAM-10143 removed it (see IAM-11065).
+      // Also serves as the fallback when an error helper returns null (e.g.,
+      // the invalid-field selector finds no matching DOM node) — matching the
+      // original pre-IAM-10143 behavior where a falsy focusElement fell through
+      // to the normal-path ref resolution.
+      const { isFirstStep, journeyFocusElement, journeyFocusFirstFocusableItemEnabled } = this;
+      this._focusTimer = setTimeout(() => {
+        let focusElement;
+        if (journeyFocusElement === 'content' || (journeyFocusElement === 'headerFirstStep' && !isFirstStep) || (journeyFocusFirstFocusableItemEnabled && !isFirstStep)) {
           focusElement = this.$refs.callbackMain || this.$refs.main;
         } else {
           focusElement = this.$refs.callbackAppHeaderContainer || this.$refs.container;
         }
-      }
-
-      if (typeof focusElement?.focus === 'function') {
-        const AUTO_FOCUSED_CLASS = 'auto-focused';
-        if (this.autoFocusCleanup?.element && this.autoFocusCleanup?.handler) {
-          this.autoFocusCleanup.element.removeEventListener('blur', this.autoFocusCleanup.handler);
-          this.autoFocusCleanup.element.classList.remove(AUTO_FOCUSED_CLASS);
-        }
-
-        const removeAutoFocusedClass = () => {
-          focusElement.classList.remove(AUTO_FOCUSED_CLASS);
-          this.autoFocusCleanup = null;
-        };
-
-        focusElement.classList.add(AUTO_FOCUSED_CLASS);
-        focusElement.addEventListener('blur', removeAutoFocusedClass, { once: true });
-        this.autoFocusCleanup = { element: focusElement, handler: removeAutoFocusedClass };
-
-        // Apply focus to ensure keyboard users and screen readers notice the content area
-        focusElement.focus();
-      }
+        applyFocus(focusElement);
+      }, 200);
     },
     /**
      * After a global login failure (server returns LoginFailure), sets aria-describedby on the
