@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -88,6 +88,15 @@ describe('PolicyPanel.vue', () => {
       expect(failedPolicies.length).toBe(0);
 
       expect(passedPolicies[0].classes()).toContain('sr-only');
+    });
+
+    it('policy text span is visible to screen readers before the field is touched', () => {
+      expect(wrapper.find('.fr-policy-list-item span').attributes('aria-hidden')).toBeUndefined();
+    });
+
+    it('policy text span is hidden from screen readers when touched to avoid double-announcement with sr-only alert', async () => {
+      await wrapper.setProps({ touched: true });
+      expect(wrapper.find('.fr-policy-list-item span').attributes('aria-hidden')).toBe('true');
     });
   });
 
