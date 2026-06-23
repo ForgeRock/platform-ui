@@ -28,6 +28,7 @@ import { getIgaUiConfig, getIgaAutoIdConfig } from '@forgerock/platform-shared/s
 import { getIgaUserInfo } from '@forgerock/platform-shared/src/api/governance/PermissionsApi';
 import { getSessionTimeoutInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import { overrideTranslations, setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
+import { getDefaultLocale } from '@forgerock/platform-shared/src/api/UilocaleApi';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import ResizableTable from '@forgerock/platform-shared/src/directives/ResizableTable/ResizableTable';
@@ -132,12 +133,14 @@ const startApp = async () => {
       headers: {},
     });
 
-    const [uiConfig, availability] = await Promise.all([
+    const [uiConfig, availability, response] = await Promise.all([
       idmInstance.get('/info/uiconfig'),
       idmInstance.get('info/features?_queryFilter=true'),
+      getDefaultLocale(),
     ]);
-
-    const { locales } = getAllLocales(uiConfig.data.configuration);
+    // Get default language from uilocale
+    const uilocaleDefaultLang = response?.data?.defaultLocale;
+    const { locales } = getAllLocales(uiConfig.data.configuration, false, uilocaleDefaultLang);
     setLocales(i18n, locales);
     document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
 

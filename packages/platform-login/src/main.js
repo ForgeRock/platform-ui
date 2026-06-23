@@ -27,6 +27,7 @@ import { createPinia } from 'pinia';
 import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import { getDefaultLocale } from '@forgerock/platform-shared/src/api/UilocaleApi';
 import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
 import { JAVASCRIPT_SDK_TIMEOUT } from '@forgerock/platform-shared/src/utils/constants';
 import store from '@/store';
@@ -157,9 +158,12 @@ const loadApp = () => {
  * We will load the application regardless
  */
 const startApp = () => {
-  getUiConfig().then(({ data: { configuration: uiConfig } }) => {
+  getUiConfig().then(async ({ data: { configuration: uiConfig } }) => {
+    // Get default lang from uilocale
+    const response = await getDefaultLocale().catch(() => null);
+    const uilocaleDefaultLang = response?.data?.defaultLocale;
     // Get & set locales
-    const { locales, localeQueryString } = getAllLocales(uiConfig, true);
+    const { locales, localeQueryString } = getAllLocales(uiConfig, true, uilocaleDefaultLang);
     setLocales(i18n, locales);
     document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -79,10 +79,11 @@ function getLocales(locale) {
  *
  * @param {Object} uiConfig - config data result from IDM config API reponse
  * @param {Boolean} checkQueryString - should we check if the browser query string contains `locale`
+ * @param {String} uilocaleDefaultLang - default language set at uilocale
  * @returns {Array} Array of locales, in order of priority
  *
  */
-export function getAllLocales(uiConfig, checkQueryString = false) {
+export function getAllLocales(uiConfig, checkQueryString = false, uilocaleDefaultLang) {
   const locales = [];
   let localeQueryString;
 
@@ -112,6 +113,11 @@ export function getAllLocales(uiConfig, checkQueryString = false) {
       const idmLocale = uiConfig.defaultLocale.replace(/[-]([A-Za-z]+)?(?=-|$)/g, (found) => found.toUpperCase());
       locales.push(...getLocales(idmLocale));
     }
+  }
+
+  // uiLocale default language
+  if (uilocaleDefaultLang) {
+    locales.push(...getLocales(uilocaleDefaultLang));
   }
 
   // Hardcoded English

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,11 +9,15 @@
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as overrideTranslations from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import * as sdk from '@forgerock/javascript-sdk';
+import * as UilocaleApi from '@forgerock/platform-shared/src/api/UilocaleApi';
 import { flushPromises } from '@vue/test-utils';
 import store from '@/store';
 import router from '@/router';
 
+jest.mock('@forgerock/platform-shared/src/api/UilocaleApi');
+
 describe('main.js', () => {
+  UilocaleApi.getDefaultLocale = jest.fn().mockResolvedValue({ data: { defaultLocale: 'en' } });
   configApi.getUiConfig = jest.fn().mockReturnValue(Promise.resolve({ data: { configuration: { lang: 'en' } } }));
   overrideTranslations.setLocales = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
   overrideTranslations.overrideTranslations = jest.fn().mockReturnValue(Promise.resolve());
