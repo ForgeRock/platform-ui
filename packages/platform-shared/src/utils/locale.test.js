@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -63,6 +63,12 @@ describe('Getting prioritzed locales', () => {
     // Get locales
     const { locales } = getAllLocales({ lang: 'en-GB' });
     expect(locales).toStrictEqual(['en-GB', 'en']);
+  });
+
+  it('uses the uilocale-provided lang locale (en-US) and adds a region-only fallback (en)', async () => {
+    // Get locales
+    const { locales } = getAllLocales(false, false, 'en-US');
+    expect(locales).toStrictEqual(['en-US', 'en']);
   });
 
   it('correctly prioritizes the primary locale\'s (en-GB) region-only fallback (en) to be the first priority', async () => {
