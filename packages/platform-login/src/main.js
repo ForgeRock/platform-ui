@@ -28,6 +28,7 @@ import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import { getDefaultLocale } from '@forgerock/platform-shared/src/api/UilocaleApi';
+import { filterActiveLocales } from '@forgerock/platform-shared/src/utils/uilocaleUtil';
 import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
 import { JAVASCRIPT_SDK_TIMEOUT } from '@forgerock/platform-shared/src/utils/constants';
 import store from '@/store';
@@ -158,32 +159,33 @@ const loadApp = () => {
  * We will load the application regardless
  */
 const startApp = () => {
-  getUiConfig().then(async ({ data: { configuration: uiConfig } }) => {
-    // Get default lang from uilocale
-    const response = await getDefaultLocale().catch(() => null);
-    const uilocaleDefaultLang = response?.data?.defaultLocale;
-    // Get & set locales
-    const { locales, localeQueryString } = getAllLocales(uiConfig, true, uilocaleDefaultLang);
-    setLocales(i18n, locales);
-    document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
+  Promise.all([getUiConfig(), getDefaultLocale().catch(() => null)])
+    .then(async ([{ data: { configuration: uiConfig } }, defaultLocaleResponse]) => {
+      const uilocaleDefaultLang = defaultLocaleResponse?.data?.defaultLocale;
+      // Get & set locales
+      const { locales, localeQueryString } = getAllLocales(uiConfig, true, uilocaleDefaultLang);
+      // Filter out inactive locales (keep 'en' regardless)
+      const activeLocales = await filterActiveLocales(locales);
+      setLocales(i18n, activeLocales);
+      document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
 
-    if (localeQueryString) {
-      // set request header for requests made by sdk
-      const languageMiddleware = (req, _action, next) => {
-        req.init.headers.append('accept-language', localeQueryString);
-        next();
-      };
+      if (localeQueryString) {
+        // set request header for requests made by sdk
+        const languageMiddleware = (req, _action, next) => {
+          req.init.headers.append('accept-language', localeQueryString);
+          next();
+        };
 
-      // add middleware to existing sdk config
-      Config.set(Config.get({
-        middleware: [languageMiddleware],
-      }));
-    }
+        // add middleware to existing sdk config
+        Config.set(Config.get({
+          middleware: [languageMiddleware],
+        }));
+      }
 
-    if (uiConfig?.platformSettings?.hostedJourneyPages === false) {
-      store.commit('setHostedJourneyPagesState', false);
-    }
-  })
+      if (uiConfig?.platformSettings?.hostedJourneyPages === false) {
+        store.commit('setHostedJourneyPagesState', false);
+      }
+    })
     .then(() => overrideTranslations(i18n, 'login'))
     .finally(() => loadApp());
 };

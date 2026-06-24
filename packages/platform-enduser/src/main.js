@@ -37,6 +37,7 @@ import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/saniti
 import BootstrapVue from 'bootstrap-vue';
 import createRealmPath from '@forgerock/platform-shared/src/utils/createRealmPath';
 import { getAllLocales } from '@forgerock/platform-shared/src/utils/locale';
+import { filterActiveLocales } from '@forgerock/platform-shared/src/utils/uilocaleUtil';
 import { getEntitlementList, getApplicationList } from '@forgerock/platform-shared/src/api/governance/EntitlementApi';
 import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import store from '@/store';
@@ -136,12 +137,14 @@ const startApp = async () => {
     const [uiConfig, availability, response] = await Promise.all([
       idmInstance.get('/info/uiconfig'),
       idmInstance.get('info/features?_queryFilter=true'),
-      getDefaultLocale(),
+      getDefaultLocale().catch(() => null),
     ]);
     // Get default language from uilocale
     const uilocaleDefaultLang = response?.data?.defaultLocale;
     const { locales } = getAllLocales(uiConfig.data.configuration, false, uilocaleDefaultLang);
-    setLocales(i18n, locales);
+    // Filter out inactive locales (keep 'en' regardless)
+    const activeLocales = await filterActiveLocales(locales);
+    setLocales(i18n, activeLocales);
     document.getElementsByTagName('html')[0].setAttribute('lang', i18n.global.locale);
 
     store.commit('SharedStore/setUiConfig', uiConfig.data);
