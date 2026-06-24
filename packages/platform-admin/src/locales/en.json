@@ -2173,6 +2173,7 @@
     "errorImageNotFound": "Image not found",
     "errorRetrievingApplications": "Error retrieving Applications",
     "errorRetrievingApplicationTemplates": "Error retrieving Application templates",
+    "errorRetrievingMapping": "Error retrieving mapping",
     "errorLoadingAppTemplate": "Error loading Application template",
     "developmentTemplate": {
       "createWarning": "This is a development version of the application and may be subject to changes that affect general functionality. Use the latest stable version to avoid update conflicts.",
@@ -2607,6 +2608,8 @@
       },
       "accountsTab": {
         "accountAssigned": "Account successfully assigned",
+        "accountType": "Account Type",
+        "accountTypeDescription": "Type of account to assign these users.",
         "accountModalTitle": "{appName} Account Details",
         "accountUpdated": "Account successfully updated",
         "assignUsers": "Assign Users",
@@ -2615,6 +2618,7 @@
         "changeOwnerError": "Error changing account owner.",
         "changeOwnerModalTitle": "Change Account Owner",
         "changeOwnerSuccess": "Account owner successfully changed.",
+        "chooseApplication": "Choose an application to assign this user.",
         "chooseUsers": "Choose users to assign to this application.",
         "errorAssigningAccount": "Error assigning account.",
         "errorLoadingNonAccountObjects": "Error loading non-account objects.",
@@ -4289,6 +4293,22 @@
       "showDefaultMappings": "Default Mappings",
       "defaultMappingsWarning": "These mappings were created when provisioning was set up to support required application functionality. Use caution when editing, as changes could break this functionality.",
       "title": "Advanced Sync",
+      "accountTypes": {
+        "correlationQueryNotArray": "The correlation query must be an array of objects.",
+        "description": "Define the account types you need to reconcile",
+        "title": "Account Types"
+      },
+      "accountTypeModal": {
+        "accountCorrelation": "Account Correlation",
+        "addAccountType": "Add Account Type",
+        "correlationMethod": "Correlation Method",
+        "correlationTypeBasic": "Basic",
+        "correlationTypeScript": "Script",
+        "editAccountType": "Edit Account Type",
+        "nameDescription": "Name for this account type (eg. 'Customer' or 'Employee').",
+        "ruleTitle": "Rule",
+        "scriptDescription": "Define a script to determine how account types should be identified."
+      },
       "addModal": {
         "flipSyncIconLabel": "Flip sync direction",
         "objectType": "Object Type",
