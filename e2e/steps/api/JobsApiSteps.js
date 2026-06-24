@@ -8,9 +8,10 @@
 
 import {
   buildScriptJob,
+  buildSlowScriptJob,
+  buildFullReconJob,
   createJob,
   deleteJob,
-  getJobs,
 } from '@e2e/api/jobsApi.e2e';
 
 export default class JobsApiSteps {
@@ -30,20 +31,28 @@ export default class JobsApiSteps {
   }
 
   /**
-   * Creates a job with a fully custom payload and tracks it for cleanup.
+   * Creates a script job that sleeps for 20 seconds, keeping it in Running state long enough to assert on.
    *
    * @param {string} name - The job ID / name
-   * @param {Object} data - Full job payload
    */
-  static createJob(name, data) {
-    return createJob(name, data).then((response) => {
+  static createSlowScriptJob(name) {
+    return createJob(name, buildSlowScriptJob(name)).then((response) => {
       JobsApiSteps.createdJobNames.push(name);
       return response;
     });
   }
 
-  static getJobs() {
-    return getJobs();
+  /**
+   * Creates a full reconciliation job and tracks it for cleanup.
+   *
+   * @param {string} name - The job ID / name
+   * @param {Object} overrides - Optional payload overrides
+   */
+  static createFullReconJob(name, overrides = {}) {
+    return createJob(name, buildFullReconJob(name, overrides)).then((response) => {
+      JobsApiSteps.createdJobNames.push(name);
+      return response;
+    });
   }
 
   /**
@@ -76,6 +85,14 @@ export default class JobsApiSteps {
 
   static waitForRunJob() {
     cy.wait('@runJob');
+  }
+
+  static interceptDeleteSchedule() {
+    cy.intercept('DELETE', '**/config/schedule/**').as('deleteSchedule');
+  }
+
+  static waitForDeleteSchedule() {
+    cy.wait('@deleteSchedule', { timeout: 10000 });
   }
 
   static trackJob(name) {

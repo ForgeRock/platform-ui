@@ -7,7 +7,6 @@
  */
 
 const SCHEDULE_URL = (name) => `https://${Cypress.env('FQDN')}/openidm/config/schedule/${name}?waitForCompletion=true`;
-const SCHEDULER_JOB_URL = `https://${Cypress.env('FQDN')}/openidm/scheduler/job`;
 
 /**
  * Creates or updates a scheduled job.
@@ -76,27 +75,136 @@ export function buildScriptJob(name, overrides = {}) {
     repeatCount: -1,
     repeatInterval: 3600000,
     startTime: null,
+    triggers: [],
     type: 'simple',
     ...overrides,
   };
 }
 
 /**
- * Lists all user-defined persisted scheduled jobs.
+ * Returns a script job payload whose script sleeps for 20 seconds,
+ * keeping the job in Running state long enough to assert on.
  *
- * @param {string} accessToken
+ * @param {string} name - The job ID / name
+ * @param {Object} overrides - Optional property overrides
  */
-export function getJobs(accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
-  const queryFilter = encodeURIComponent(
-    "persisted eq true and (schedule pr or type eq 'simple') and !(invokeContext/script/source co 'roles/onSync-roles') and !(invokeContext/script/source co 'triggerSyncCheck')",
-  );
-  return cy.request({
-    method: 'GET',
-    url: `${SCHEDULER_JOB_URL}?_queryFilter=${queryFilter}`,
-    headers: {
-      authorization: `Bearer ${accessToken}`,
-      'content-type': 'application/json',
+export function buildSlowScriptJob(name, overrides = {}) {
+  return buildScriptJob(name, {
+    invokeContext: {
+      script: {
+        globals: null,
+        source: 'java.lang.Thread.sleep(20000);',
+        type: 'text/javascript',
+      },
     },
-    retryOnStatusCodeFailure: true,
+    // Far-future startTime prevents the scheduler from auto-firing on creation,
+    // so tests can assert the Running state by triggering "Run Now" explicitly.
+    startTime: '2099-12-31T23:59:59Z',
+    ...overrides,
   });
+}
+
+/**
+ * Returns a minimal task scanner job payload.
+ *
+ * @param {string} name - The job ID / name
+ * @param {Object} overrides - Optional property overrides
+ */
+export function buildTaskScannerJob(name, overrides = {}) {
+  return {
+    _id: name,
+    concurrentExecution: false,
+    enabled: true,
+    endTime: null,
+    invokeContext: {
+      numberOfThreads: 5,
+      scan: {
+        _queryFilter: 'true',
+        object: 'managed/user',
+        taskState: {
+          completed: '/taskCompleted',
+          started: '/taskStarted',
+        },
+      },
+      task: {
+        script: {
+          globals: {},
+          source: "logger.info('e2e task scanner job');",
+          type: 'text/javascript',
+        },
+        waitForCompletion: false,
+      },
+    },
+    invokeLogLevel: 'info',
+    invokeService: 'org.forgerock.openidm.taskscanner',
+    misfirePolicy: 'fireAndProceed',
+    persisted: true,
+    recoverable: false,
+    repeatCount: -1,
+    repeatInterval: 3600000,
+    startTime: null,
+    triggers: [],
+    type: 'simple',
+    ...overrides,
+  };
+}
+
+/**
+ * Returns a minimal full reconciliation job payload.
+ *
+ * @param {string} name - The job ID / name
+ * @param {Object} overrides - Optional property overrides
+ */
+export function buildFullReconJob(name, overrides = {}) {
+  return {
+    _id: name,
+    concurrentExecution: false,
+    enabled: true,
+    endTime: null,
+    invokeContext: {
+      action: 'reconcile',
+      mapping: 'systemLdap_managedUser',
+    },
+    invokeLogLevel: 'info',
+    invokeService: 'org.forgerock.openidm.sync',
+    misfirePolicy: 'fireAndProceed',
+    persisted: true,
+    recoverable: false,
+    repeatCount: -1,
+    repeatInterval: 3600000,
+    startTime: '2099-12-31T23:59:59Z',
+    triggers: [],
+    type: 'simple',
+    ...overrides,
+  };
+}
+
+/**
+ * Returns a minimal incremental reconciliation (liveSync) job payload.
+ *
+ * @param {string} name - The job ID / name
+ * @param {Object} overrides - Optional property overrides
+ */
+export function buildIncrementalReconJob(name, overrides = {}) {
+  return {
+    _id: name,
+    concurrentExecution: false,
+    enabled: true,
+    endTime: null,
+    invokeContext: {
+      action: 'liveSync',
+      source: 'system/ldap/account',
+    },
+    invokeLogLevel: 'info',
+    invokeService: 'org.forgerock.openidm.provisioner',
+    misfirePolicy: 'fireAndProceed',
+    persisted: true,
+    recoverable: false,
+    repeatCount: -1,
+    repeatInterval: 3600000,
+    startTime: '2099-12-31T23:59:59Z',
+    triggers: [],
+    type: 'simple',
+    ...overrides,
+  };
 }
