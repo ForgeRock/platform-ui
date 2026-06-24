@@ -120,7 +120,7 @@ describe('Login tests for Terms and Conditions', { tags: ['@forgeops', '@cloud']
     cy.get('small').should('be.visible').contains("By clicking 'Next' you agree to our Terms & Conditions");
 
     // Click on the Terms & Conditions link
-    cy.findByRole('link', { name: 'Terms & Conditions' }).click();
+    cy.findByRole('button', { name: 'Terms & Conditions' }).click();
 
     // Check that T&C are correctly shown as a dialog
     cy.findByRole('dialog', { name: 'Terms & Conditions', timeout: 10000 })

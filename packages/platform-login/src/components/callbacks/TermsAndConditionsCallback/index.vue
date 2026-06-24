@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,11 +12,12 @@ of the MIT license. See the LICENSE file for details. -->
         value="true">
       <small class="form-text text-muted">
         {{ $t('login.agreeToTerms') }}
-        <a
-          href="#"
-          @click.prevent="$refs['terms-modal'].show()">
+        <BButton
+          variant="link"
+          class="p-0 border-0 align-baseline"
+          @click="$refs['terms-modal'].show()">
           {{ $t('login.termsAndConditions') }}
-        </a>
+        </BButton>
       </small>
 
       <BModal
@@ -33,13 +34,14 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { BModal } from 'bootstrap-vue';
+import { BButton, BModal } from 'bootstrap-vue';
 import { convertBase64ToString } from '@forgerock/platform-shared/src/utils/encodeUtils';
 import { termsAndConditionsSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 
 export default {
   name: 'TermsAndConditions',
   components: {
+    BButton,
     BModal,
   },
   props: {
@@ -72,7 +74,7 @@ export default {
     border: none;
   }
 
-  a {
-    display: inline-block;
+  .btn-link {
+    font-size: inherit;
   }
 </style>
