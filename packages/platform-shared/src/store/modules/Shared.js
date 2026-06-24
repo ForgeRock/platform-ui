@@ -70,17 +70,20 @@ const defaultState = {
 
 const mutations = {
   setEnvironment(state, env) {
-    if (env.VUE_APP_FRAAS?.toString() === 'true') {
+    const isFraas = env.VUE_APP_FRAAS?.toString() === 'true';
+    const isAirGapped = env.VUE_APP_AIR_GAPPED?.toString() === 'true';
+
+    if (isFraas) {
       state.isFraas = true;
+      // VUE_APP_AIR_GAPPED is incompatible with VUE_APP_FRAAS — air-gapped deployments have no
+      // internet egress and cannot reach FRaaS/IDCloud services. Warn at startup if misconfigured.
+      if (isAirGapped) {
+        // eslint-disable-next-line no-console
+        console.warn('[Platform UI] VUE_APP_AIR_GAPPED and VUE_APP_FRAAS cannot both be true. Air-gapped mode is incompatible with FRaaS/IDCloud deployments.');
+      }
     }
-    if (env.VUE_APP_AIR_GAPPED?.toString() === 'true') {
+    if (isAirGapped) {
       state.isAirGapped = true;
-    }
-    // VUE_APP_AIR_GAPPED is incompatible with VUE_APP_FRAAS — air-gapped deployments have no
-    // internet egress and cannot reach FRaaS/IDCloud services. Warn at startup if misconfigured.
-    if (env.VUE_APP_AIR_GAPPED?.toString() === 'true' && env.VUE_APP_FRAAS?.toString() === 'true') {
-      // eslint-disable-next-line no-console
-      console.warn('[Platform UI] VUE_APP_AIR_GAPPED and VUE_APP_FRAAS cannot both be true. Air-gapped mode is incompatible with FRaaS/IDCloud deployments.');
     }
   },
   setBaseURLs(state, env) {
