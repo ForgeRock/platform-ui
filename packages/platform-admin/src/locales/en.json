@@ -4133,10 +4133,19 @@
         "allowMissing": "Allow Missing",
         "rejectMissing": "Reject Missing"
       },
+      "trustedCertificates": {
+        "noDataTitle": "You haven't configured any Trusted Certificates for this tenant",
+        "noDataSubtitle": "Add Trusted Certificates for this tenant",
+        "trustedCertificateDisplayName": "Trusted Certificate",
+        "subjectTableFieldName": "Subject",
+        "expireTimeTableFieldName": "Expiry Time",
+        "typeTableFieldName": "Type",
+        "issuerTableFieldName": "Issuer"
+      },
       "configUpdateSuccess": "Config update underway",
       "confirmUpdateModal": {
         "confirmUpdateModalTitle": "Confirm Update",
-        "updateConfigText": "Update",
+        "updateConfigText": "Confirm",
         "spinnerTextConfigButton": "Updating...",
         "confirmationWarning": "These updates represent the desired mTLS configuration but do not take effect straight away. The update will be applied immediately but can take some time to propagate to all network resources."
       },
