@@ -60,6 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-label="$t('editor.accessibilityHelp')"
           :highlight="(code) => highlighter(code, 'javascript')"
           :line-numbers="true"
+          :placeholder="placeholder"
           :readonly="readonly"
           @input="code = $event; emitScriptValue()"
           @keydown="blurOnEscape"
@@ -123,6 +124,7 @@ of the MIT license. See the LICENSE file for details. -->
             :aria-label="$t('editor.accessibilityHelp')"
             :highlight="(code) => highlighter(code, 'json')"
             :line-numbers="true"
+            :placeholder="placeholder"
             :readonly="readonly"
             @input="variablesJsonCode = $event; checkIfCodeIsParsable($event)"
             @keydown="blurOnEscape"
@@ -259,6 +261,10 @@ export default {
     useDarkHeading: {
       type: Boolean,
       default: false,
+    },
+    placeholder: {
+      type: String,
+      default: '',
     },
   },
   data() {
