@@ -9,15 +9,16 @@
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as overrideTranslations from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import * as sdk from '@forgerock/javascript-sdk';
-import * as UilocaleApi from '@forgerock/platform-shared/src/api/UilocaleApi';
 import { flushPromises } from '@vue/test-utils';
 import store from '@/store';
 import router from '@/router';
 
 jest.mock('@forgerock/platform-shared/src/api/UilocaleApi');
 
+const uilocaleApi = require('@forgerock/platform-shared/src/api/UilocaleApi');
+
 describe('main.js', () => {
-  UilocaleApi.getDefaultLocale = jest.fn().mockResolvedValue({ data: { defaultLocale: 'en' } });
+  uilocaleApi.getDefaultLocale = jest.fn().mockResolvedValue({ data: { defaultLocale: 'en' } });
   configApi.getUiConfig = jest.fn().mockReturnValue(Promise.resolve({ data: { configuration: { lang: 'en' } } }));
   overrideTranslations.setLocales = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
   overrideTranslations.overrideTranslations = jest.fn().mockReturnValue(Promise.resolve());
