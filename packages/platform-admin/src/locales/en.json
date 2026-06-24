@@ -2134,6 +2134,7 @@
     "days": "days",
     "months": "months",
     "years": "years",
+    "esvMonthsUnsupported": "Monthly increments are not currently supported when using environment variables",
     "updateSuccess": "Updated {resourceName} password policy successfully",
     "updateFailed": "Error updating {resourceName} password policy"
   },
