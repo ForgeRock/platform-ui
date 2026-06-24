@@ -15,6 +15,10 @@ export default class AddJourneyModal {
     return AddJourneyModal.pickerDialog.findByRole('radio', { name: /Start from scratch/i });
   }
 
+  static get importRadio() {
+    return AddJourneyModal.pickerDialog.findByRole('radio', { name: /Import/i });
+  }
+
   static get pickerNextButton() {
     return AddJourneyModal.pickerDialog.findByRole('button', { name: 'Next' });
   }
