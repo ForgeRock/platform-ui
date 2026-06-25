@@ -3692,6 +3692,10 @@
       "viewNewEngineDetails": "View details",
       "saveSuccess": "Script saved"
     },
+    "esvValidation": {
+      "notFound": "ESV \"{id}\" does not exist",
+      "notApplied": "ESV \"{id}\" has not been applied"
+    },
     "engineChoice": {
       "description": "A new script engine for Journey Decision nodes introduces new features and functions. You can create a script using the new version or use the previous one.",
       "legacyTitle": "Legacy",
