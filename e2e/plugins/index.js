@@ -28,6 +28,34 @@ module.exports = async (on, config) => {
       } catch (_) { /* file doesn't exist, that's fine */ }
       return null;
     },
+    waitForDownload({
+      folder,
+      regex,
+      timeoutMs = 10000,
+      intervalMs = 200,
+    }) {
+      const pattern = new RegExp(regex);
+      const deadline = Date.now() + timeoutMs;
+      const poll = () => fs.readdir(folder)
+        .then((entries) => {
+          const match = entries.find((e) => pattern.test(e));
+          if (match) return match;
+          if (Date.now() >= deadline) return null;
+          return new Promise((resolve) => { setTimeout(() => resolve(poll()), intervalMs); });
+        })
+        .catch(() => {
+          if (Date.now() >= deadline) return null;
+          return new Promise((resolve) => { setTimeout(() => resolve(poll()), intervalMs); });
+        });
+      return poll();
+    },
+    async clearDownloadsFolder(folder) {
+      try {
+        const entries = await fs.readdir(folder);
+        await Promise.all(entries.map((entry) => fs.unlink(`${folder}/${entry}`).catch(() => {})));
+      } catch (_) { /* folder doesn't exist yet, that's fine */ }
+      return null;
+    },
   });
 
   on('task', {
