@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -56,14 +56,15 @@ describe('RequestToolbar', () => {
     expect(filterCollapse.attributes('style')).toBe('display: none;');
 
     const toggleBtn = findByTestId(wrapper, 'filter-toggle');
-    expect(toggleBtn.attributes('aria-pressed')).toBe('false');
+    expect(toggleBtn.attributes('aria-expanded')).toBe('false');
+    expect(toggleBtn.attributes('aria-labelledby')).toBe('filter-toggle-label');
+    expect(toggleBtn.attributes('aria-controls')).toBe('filter-collapse');
 
     toggleBtn.trigger('click');
     await flushPromises();
 
     expect(filterCollapse.attributes('style')).toBe('');
-    expect(toggleBtn.attributes('aria-labelledby')).toBe('filter-toggle-label');
-    expect(toggleBtn.attributes('aria-pressed')).toBe('true');
+    expect(toggleBtn.attributes('aria-expanded')).toBe('true');
   });
 
   it('the badge is hidden when no filters are applied', () => {

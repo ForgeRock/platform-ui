@@ -44,7 +44,8 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           @click="showFilters = !showFilters"
           class="toolbar-link-text"
-          :pressed="showFilters"
+          :aria-expanded="showFilters.toString()"
+          aria-controls="filter-collapse"
           aria-labelledby="filter-toggle-label"
           data-testid="filter-toggle"
           variant="link">

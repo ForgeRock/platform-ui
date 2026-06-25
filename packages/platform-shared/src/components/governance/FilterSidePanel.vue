@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
+    :id="id"
     class="fr-side-panel d-flex flex-column p-0 rounded-0 mr-3"
     no-body>
     <div class="pb-0 w-100 flex-shrink-0">
@@ -25,6 +26,10 @@ of the MIT license. See the LICENSE file for details. -->
 import { BCard } from 'bootstrap-vue';
 
 defineProps({
+  id: {
+    type: String,
+    default: '',
+  },
   title: {
     type: String,
     default: '',

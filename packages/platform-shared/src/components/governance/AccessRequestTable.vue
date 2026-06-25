@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="d-flex flex-wrap h-100 w-100">
     <FrFilterSidePanel
       v-if="showFilters"
+      :id="filterPanelId"
       :title="$t('governance.access.filter.requestFilter')">
       <FrAccessFilter
         :input-fields="accessFilter"
@@ -36,7 +37,8 @@ of the MIT license. See the LICENSE file for details. -->
                 <BButton
                   @click="showFilters = !showFilters"
                   class="toolbar-link-text text-dark"
-                  :pressed="showFilters"
+                  :aria-expanded="showFilters.toString()"
+                  :aria-controls="filterPanelId"
                   aria-labelledby="filter-toggle-label"
                   data-testid="filter-toggle"
                   variant="link">
@@ -117,7 +119,7 @@ import {
   BFormRadioGroup,
 } from 'bootstrap-vue';
 import {
-  computed, nextTick, onMounted, ref, watch,
+  computed, getCurrentInstance, nextTick, onMounted, ref, watch,
 } from 'vue';
 import { debounce, find, startsWith } from 'lodash';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
@@ -216,6 +218,7 @@ const sortKeys = ref(storedState.sortKeys ?? 'date');
 const status = ref(storedState.status ?? 'in-progress');
 const isSaving = ref(false);
 const showFilters = ref(false);
+const filterPanelId = `access-request-filter-panel-${getCurrentInstance().uid}`;
 const statusOptions = ref([
   {
     text: i18n.global.t('governance.status.pending'),

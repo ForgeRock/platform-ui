@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div class="d-flex flex-wrap flex-grow-1 w-100">
       <FrFilterSidePanel
         v-if="showFilters"
+        id="tasks-filter-panel"
         :title="$t('governance.access.filter.requestFilter')">
         <FrAccessFilter
           :input-fields="accessFilter"
@@ -38,7 +39,8 @@ of the MIT license. See the LICENSE file for details. -->
                   <BButton
                     @click="showFilters = !showFilters"
                     class="toolbar-link-text"
-                    :pressed="showFilters"
+                    :aria-expanded="showFilters.toString()"
+                    aria-controls="tasks-filter-panel"
                     aria-labelledby="filter-toggle-label"
                     data-testid="filter-toggle"
                     variant="link">
