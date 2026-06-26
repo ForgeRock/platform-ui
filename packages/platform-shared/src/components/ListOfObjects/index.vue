@@ -392,6 +392,9 @@ export default {
      * actually have values present.
      */
     checkEmptyValues(value) {
+      if (!Array.isArray(value)) {
+        return [];
+      }
       const filteredArray = cloneDeep(value);
       filteredArray.forEach((obj, index) => {
         delete obj.listUniqueIndex;
