@@ -229,7 +229,8 @@ export default {
 }
 
 :deep(.field-type-selectWithActions) {
-  top: 14px;
+  /* SelectInput sets top: -1px on .within-input-button and margin-top: 4px on .multiselect__single, net offset is 10px */
+  top: 10px;
 }
 
 :deep(.field-type-select) {
