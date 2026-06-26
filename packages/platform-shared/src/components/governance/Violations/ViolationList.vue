@@ -97,34 +97,31 @@ of the MIT license. See the LICENSE file for details. -->
               </FrIcon>
             </BButton>
           </template>
-          <BDropdown
+          <FrActionsCell
             v-if="item.status !== 'pending'"
-            no-caret
-            toggle-class="py-1 pl-3 pr-1"
-            variant="link">
-            <template #button-content>
-              <FrIcon
-                icon-class="text-dark md-24"
-                name="more_horiz" />
-            </template>
-            <BDropdownItem @click="openForwardModal(item)">
-              <FrIcon
-                icon-class="mr-2"
-                name="redo">
-                {{ $t('common.forward') }}
-              </FrIcon>
-            </BDropdownItem>
-            <template v-if="!isAdmin">
-              <BDropdownDivider />
-              <BDropdownItem @click="$emit('viewViolationDetails', item)">
+            :delete-option="false"
+            :divider="false"
+            :edit-option="false">
+            <template #custom-top-actions>
+              <BDropdownItem @click="openForwardModal(item)">
                 <FrIcon
                   icon-class="mr-2"
-                  name="list_alt">
-                  {{ $t('common.viewDetails') }}
+                  name="redo">
+                  {{ $t('common.forward') }}
                 </FrIcon>
               </BDropdownItem>
+              <template v-if="!isAdmin">
+                <BDropdownDivider />
+                <BDropdownItem @click="$emit('viewViolationDetails', item)">
+                  <FrIcon
+                    icon-class="mr-2"
+                    name="list_alt">
+                    {{ $t('common.viewDetails') }}
+                  </FrIcon>
+                </BDropdownItem>
+              </template>
             </template>
-          </BDropdown>
+          </FrActionsCell>
         </div>
       </template>
     </BTable>
@@ -159,7 +156,6 @@ of the MIT license. See the LICENSE file for details. -->
 import { computed, ref } from 'vue';
 import {
   BCard,
-  BDropdown,
   BDropdownDivider,
   BDropdownItem,
   BTable,
@@ -169,6 +165,7 @@ import {
   groupBy,
 } from 'lodash';
 import dayjs from 'dayjs';
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { forwardViolation, allowException } from '@forgerock/platform-shared/src/api/governance/ViolationApi';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
@@ -265,7 +262,7 @@ const tableFields = [
   },
   {
     key: 'actions',
-    class: [{ 'w-250px': !props.isAdmin }, 'w-120px fr-no-resize sticky-right'],
+    class: [{ 'w-250px bg-white': !props.isAdmin }, 'w-120px fr-no-resize sticky-right'],
     label: i18n.global.t('common.actions'),
     show: true,
   },
