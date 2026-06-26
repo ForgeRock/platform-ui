@@ -201,7 +201,7 @@ const tableFields = [
   },
   {
     key: 'actions',
-    class: 'w-120px fr-no-resize sticky-right',
+    class: [{ 'bg-white': !props.isAdmin }, 'w-120px fr-no-resize sticky-right'],
     label: i18n.global.t('common.actions'),
     sortable: false,
     show: true,

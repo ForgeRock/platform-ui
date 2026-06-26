@@ -62,6 +62,13 @@ describe('ViolationList', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    const app = document.createElement('div');
+    app.id = 'app';
+    document.body.appendChild(app);
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
   });
 
   it('shows violations in a list with correct columns when is Admin', async () => {
@@ -180,8 +187,8 @@ describe('ViolationList', () => {
 
     const table = wrapper.findComponent('.table-responsive');
     const rows = table.findAll('[role=row]');
-    const dropdownInFirstViolation = rows[1].find('div.dropdown.b-dropdown.btn-group');
-    const dropdownInSecondViolation = rows[2].find('div.dropdown.b-dropdown.btn-group');
+    const dropdownInFirstViolation = rows[1].find('.menu-container');
+    const dropdownInSecondViolation = rows[2].find('.menu-container');
 
     expect(dropdownInFirstViolation.exists()).toBe(false);
     expect(dropdownInSecondViolation.exists()).toBe(true);
@@ -347,7 +354,10 @@ describe('ViolationList', () => {
     const table = wrapper.findComponent('.table-responsive');
     const rows = table.findAll('[role="row"]');
     const row = rows[1];
-    const items = row.findAll('[role="menuitem"]');
+    const menuButton = row.find('button.dropdown-toggle');
+    await menuButton.trigger('click');
+    await flushPromises();
+    const items = document.querySelectorAll('[role="menuitem"]');
 
     expect(items.length).toBe(2);
   });
@@ -435,8 +445,12 @@ describe('ViolationList', () => {
     const table = wrapper.findComponent('.table-responsive');
     const rows = table.findAll('[role="row"]');
     const row = rows[1];
-    const dropDownItems = row.findAll('.dropdown-item');
-    await dropDownItems[1].trigger('click');
+    const menuButton = row.find('button.dropdown-toggle');
+    await menuButton.trigger('click');
+    await flushPromises();
+    const dropDownItems = document.querySelectorAll('.dropdown-item');
+    dropDownItems[1].click();
+    await flushPromises();
 
     expect(wrapper.emitted('viewViolationDetails')[0][0].id).toBe('002bd665-3946-465c-b444-de470fa04254');
   });
@@ -650,7 +664,7 @@ describe('ViolationList', () => {
       ...activeColumns,
       {
         key: 'actions',
-        class: [{ 'w-250px': false }, 'w-120px fr-no-resize sticky-right'],
+        class: [{ 'w-250px bg-white': false }, 'w-120px fr-no-resize sticky-right'],
         label: 'Actions',
         show: true,
       },
