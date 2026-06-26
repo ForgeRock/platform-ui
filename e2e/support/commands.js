@@ -107,6 +107,7 @@ Cypress.Commands.add('logout', () => {
   cy.clearCookies();
   cy.clearLocalStorage();
   cy.clearSessionStorage();
+  Cypress.env('IDM_SESSION_COOKIE', null);
 });
 
 Cypress.Commands.add('loginAsAdmin', () => {
@@ -246,6 +247,51 @@ Cypress.Commands.add('loginAsAdminCachedForCucumber', () => {
 
   return fetchOAuthTokenAfterSessionRestore({
     visitOptions: { failOnStatusCode: false, timeout: 10000 },
+  });
+});
+
+/**
+ * Logs into the IDM-mode admin UI (`platform-admin --mode idm`) via the IDMLogin
+ * form. On success IDM sets a `session-jwt` cookie, which we stash for cy.request()
+ * IDM calls to reuse (see buildHeaders in authenticationConfigApi.e2e).
+ *
+ * Works locally. On PITF the login and dashboard render succeed (credentials are
+ * fine — the cluster uses the default openidm-admin password), but getCookies()
+ * only returns load-balancer routing cookies ([route, route]) — session-jwt is not
+ * visible. Most likely it is scoped to a parent or different domain in the PITF
+ * multi-subdomain setup. Until that is resolved the authenticated suite skips on CI
+ * via the LOCAL_IDM guard.
+ *
+ * @param {Object} [options]
+ * @param {string} [options.appPrefix='/platform'] - URL prefix the admin UI is
+ *   served under. `/platform` for the deployed `idm-admin-ui` image; pass `''`
+ *   when running against `yarn dev:idm` locally (which serves at root).
+ */
+Cypress.Commands.add('loginAsIdmAdmin', ({ appPrefix = '/platform' } = {}) => {
+  const { baseUrl } = Cypress.config();
+  const username = Cypress.env('IDM_USERNAME');
+  const password = Cypress.env('IDM_PASSWORD');
+
+  cy.logout();
+  cy.visit(`${baseUrl}${appPrefix}/#/login`);
+
+  cy.findByLabelText(/Username/i, { timeout: 15000 }).should('be.visible').type(username, { force: true });
+  // IDMLogin renders the password field twice (input + show-password toggle); take the first
+  cy.findAllByLabelText(/Password/i).first().should('be.visible').type(password, { force: true });
+  cy.findAllByRole('button', { name: /Sign In/i }).first().click();
+
+  cy.findByRole('heading', { name: 'Identity Management', timeout: 15000 }).should('be.visible');
+
+  // cy.request() has its own cookie jar separate from the browser's, so read the
+  // session-jwt cookie via cy.getCookies() (CDP-backed, includes HttpOnly) and
+  // stash it for buildHeaders() to forward as an explicit Cookie header.
+  cy.getCookies({ log: false }).then((cookies) => {
+    const sessionCookie = cookies.find((c) => c.name === 'session-jwt');
+    if (!sessionCookie) {
+      const cookieNames = cookies.map((c) => c.name).join(', ') || '(none)';
+      throw new Error(`[loginAsIdmAdmin] session-jwt not found after UI login. Cookies: [${cookieNames}]`);
+    }
+    Cypress.env('IDM_SESSION_COOKIE', `session-jwt=${sessionCookie.value}`);
   });
 });
 
