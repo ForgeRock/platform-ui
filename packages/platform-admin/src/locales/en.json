@@ -319,6 +319,7 @@
     "echarts": {
       "downloadPng": "Download PNG",
       "noChartFallback": "Chart visualization is not available. Showing table data below.",
+      "others": "Others",
       "pageOf": "Page {current} of {total}",
       "previous": "Previous",
       "next": "Next",
