@@ -7,6 +7,7 @@
  */
 
 import AdminsApiSteps from './api/AdminsApiSteps';
+import ApplicationApiSteps from './api/ApplicationApiSteps';
 import AuthScriptApiSteps from './api/AuthScriptApiSteps';
 import CspApiSteps from './api/CspApiSteps';
 import CustomDomainApiSteps from './api/CustomDomainApiSteps';
@@ -16,11 +17,13 @@ import EventHookApiSteps from './api/EventHookApiSteps';
 import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
 import JobsApiSteps from './api/JobsApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
+import Oauth2ClientApiSteps from './api/Oauth2ClientApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import UserApiSteps from './api/UserApiSteps';
 
 export default {
   admins: AdminsApiSteps,
+  applications: ApplicationApiSteps,
   authScripts: AuthScriptApiSteps,
   csp: CspApiSteps,
   customDomain: CustomDomainApiSteps,
@@ -31,6 +34,7 @@ export default {
   jobs: JobsApiSteps,
   journey: JourneyApiSteps,
   journeys: JourneyApiSteps,
+  oauth2Clients: Oauth2ClientApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
   user: UserApiSteps,
 };
