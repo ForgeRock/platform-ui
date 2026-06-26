@@ -196,14 +196,18 @@ export default {
 }
 
 .multiselect__single:hover,
-.esv-input-wrapper:hover .multiselect__single {
-  > .collapsed-option.can-edit .action-buttons button {
-    display: block;
-    border-radius: 1.75rem;
-    background-color: $gray-200;
+.multiselect:focus-within .multiselect__single,
+.esv-input-wrapper:hover .multiselect__single,
+.esv-input-wrapper:focus-within .multiselect__single {
+  > .collapsed-option.can-edit {
+    .action-buttons button {
+      display: block;
+      border-radius: $btn-border-radius;
+      background-color: $gray-200;
 
-    &:hover {
-      background-color: $gray-300;
+      &:hover {
+        background-color: $gray-300;
+      }
     }
   }
 }
@@ -219,21 +223,16 @@ export default {
 }
 
 .multiselect__single > .collapsed-option {
-  margin-top: 4px;
-
-  button {
-    display: none;
-    padding: 0.22rem 0.5rem;
-  }
+  /* .multiselect__single already provides top spacing; no additional offset needed here */
+  margin-top: 0;
 }
 
 .multiselect__single:hover > .collapsed-option.can-edit,
-.esv-input-wrapper:hover .multiselect__single > .collapsed-option.can-edit {
-  margin-top: 0;
-
-  button {
-    display: block;
-  }
+.multiselect:focus-within .multiselect__single > .collapsed-option.can-edit,
+.esv-input-wrapper:hover .multiselect__single > .collapsed-option.can-edit,
+.esv-input-wrapper:focus-within .multiselect__single > .collapsed-option.can-edit {
+  /* reserves space for the sm icon button (padding: 0.22rem 0.5rem + ~16px icon ≈ 32px) to prevent text overlap with action buttons*/
+  padding-right: 32px;
 }
 
 .row-before-list {
