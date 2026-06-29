@@ -21,6 +21,7 @@ export default createStore({
     realms: [],
 
     // FRaaS specific
+    isAirGapped: false,
     isFraas: false,
     hostedPages: true,
 
@@ -64,6 +65,10 @@ export default createStore({
 
       if (env.THEME) {
         state.theme = env.THEME;
+      }
+
+      if (env.VUE_APP_AIR_GAPPED === 'true') {
+        state.isAirGapped = true;
       }
 
       if (env.VUE_APP_FRAAS === 'true') {
