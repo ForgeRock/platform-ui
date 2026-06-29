@@ -461,6 +461,45 @@ describe('GovResourceTable', () => {
     expect(searchInput.exists()).toBeFalsy();
   });
 
+  describe('handleRowClick()', () => {
+    it('toggles _showDetails on the item when showViewDetails is true, grantType is not entitlement, and a row-details slot is provided', async () => {
+      jest.clearAllMocks();
+      setupTestPinia({ user: { userId: 'testId' } });
+      const wrapper = mount(GovResourceTable, {
+        attachTo: createAppContainer(),
+        global: {
+          plugins: [i18n, Notifications],
+          mocks: {
+            $bvModal: {
+              show: jest.fn(),
+              hide: jest.fn(),
+            },
+          },
+        },
+        props: {
+          showViewDetails: true,
+          grantType: 'account',
+          fields: [{ key: 'appName', label: '' }],
+          items: [{ id: 'item-1', name: 'Test Item' }],
+        },
+        slots: {
+          'row-details': '<div>Row details slot content</div>',
+        },
+      });
+      await flushPromises();
+
+      const item = { id: 'item-1', name: 'Test Item' };
+
+      // First click: _showDetails should be set to true
+      wrapper.vm.handleRowClick(item);
+      expect(item._showDetails).toBe(true);
+
+      // Second click: _showDetails should toggle back to false
+      wrapper.vm.handleRowClick(item);
+      expect(item._showDetails).toBe(false);
+    });
+  });
+
   describe('method getResourceDisplayName should return correct displayName', () => {
     it('item with descriptor should return property displayName value', async () => {
       const { wrapper } = await mountComponent();

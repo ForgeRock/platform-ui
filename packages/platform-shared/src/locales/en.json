@@ -1216,6 +1216,7 @@
     "AccessViewer": "User Access Graph",
     "ComplianceExceptionDetails": "Exception Details",
     "AdministerEntitlements": "Administer Entitlements",
+    "GovernanceNotifications": "Notification Tasks",
     "Profile": "Profile",
     "Reports": "Reports",
     "Requests": "Requests"
@@ -3070,6 +3071,39 @@
       "viewConflicts": "View Conflicts",
       "viewViolation": "View Violation",
       "violation": "Violation"
+    },
+    "notifications": {
+      "advancedFilters": "Advanced Filters",
+      "hideAdvancedFilters": "Hide Advanced Filters",
+      "objectType": "Object Type",
+      "showAdvancedFilters": "Show Advanced Filters",
+      "contextTypes": {
+        "all": "All",
+        "campaign": "Campaign",
+        "request": "Request",
+        "violation": "Violation"
+      },
+      "createdOn": "Created On",
+      "messages": "Messages",
+      "notificationTasksFailedToLoad": "Failed to load notification tasks",
+      "rawTaskJson": "Raw Task JSON",
+      "recipient": "Recipient",
+      "searchContextId": "Search by {type} ID",
+      "selectContextType": "Select context type",
+      "sendDate": "Send Date",
+      "systemMessagesModal": {
+        "empty": "No messages",
+        "title": "System Messages ({count})"
+      },
+      "statuses": {
+        "complete": "Complete",
+        "failed": "Failed",
+        "pending": "Pending"
+      },
+      "subtitle": "View and filter outbound notification tasks",
+      "template": "Template",
+      "title": "Notification Tasks",
+      "viewSystemMessages": "View system messages ({count})"
     }
   },
   "reports": {
