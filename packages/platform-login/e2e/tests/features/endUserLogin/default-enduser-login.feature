@@ -102,6 +102,7 @@ Feature: Default enduser login
     And text "Login failure" does not exist
     When admin logs into the tenant
     And admin navigates to "Identities/Manage" page
+    And page title is "Manage Identities"
     And user searches "endUserName" on search box
     And user clicks on "endUserName" cell on table
     Then the value of the "Status" field is "Inactive"
