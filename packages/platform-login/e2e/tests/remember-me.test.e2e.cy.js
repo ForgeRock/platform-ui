@@ -16,6 +16,11 @@ function waitForJourneyPageLoad() {
   // Focus is no longer placed on the input itself by default — handleFocus targets
   // the page container/main element after themeLoading completes.
   cy.findByLabelText('User Name', { timeout: 10000 }).should('be.visible');
+  // handleFocus() runs a 200ms setTimeout after themeLoading flips to false that
+  // moves focus to the page container/main element and tags it with `auto-focused`.
+  // Wait for that deferred focus to land before typing so cy.type isn't hijacked
+  // mid-keystroke, which truncates the typed username.
+  cy.get('.auto-focused', { timeout: 2000 }).should('exist');
 }
 
 function proceedToNextJourneyPage() {
