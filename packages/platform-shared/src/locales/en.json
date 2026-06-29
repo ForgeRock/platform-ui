@@ -17,6 +17,7 @@
     "activated": "Activated",
     "activating": "Activating",
     "activity": "Activity",
+    "audit": "Audit",
     "add": "Add",
     "added": "Added",
     "addFilterTitle": "Add {objectType} Filter",
@@ -2188,6 +2189,54 @@
         "title": "About This Campaign"
       },
       "statusCardLabel": "Status"
+    },
+    "audit": {
+      "title": "Audit Log",
+      "subtitle": "View and filter governance audit records",
+      "logs": "audit logs",
+      "actor": "Actor",
+      "actorAdmin": "Admin",
+      "actorUser": "User",
+      "actorTypes": {
+        "admin": "Admin",
+        "all": "All Actors",
+        "system": "System",
+        "user": "User"
+      },
+      "eventType": "Event Type",
+      "timestamp": "Timestamp",
+      "auditLogsFailedToLoad": "Failed to load audit logs",
+      "exportTitle": "Audit Log",
+      "exportXlsx": "Export XLSX",
+      "exportPdf": "Export PDF",
+      "exportFailed": "Failed to export audit logs",
+      "filterEventTypePlaceholder": "Filter by event type",
+      "filterType": "Type:",
+      "filterByActor": "Actor",
+      "filterByObject": "Object",
+      "selectActorType": "Select actor type",
+      "histogram": {
+        "title": "Event Activity",
+        "events": "Events",
+        "resetZoom": "Reset zoom",
+        "zoomOut": "Zoom out",
+        "zoomIn": "Zoom in",
+        "loadFailed": "Failed to load event activity"
+      },
+      "details": {
+        "event": "Event",
+        "changes": "Changes",
+        "rawEventJson": "Raw Event JSON",
+        "fields": {
+          "objectType": "Object Type",
+          "path": "Path",
+          "action": "Action",
+          "systemExecuted": "System Executed",
+          "field": "Field",
+          "before": "Before",
+          "after": "After"
+        }
+      }
     },
     "activity": {
       "activityLogsFailedToLoad": "Failed to load activity logs",
