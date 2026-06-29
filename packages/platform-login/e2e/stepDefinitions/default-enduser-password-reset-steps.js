@@ -38,7 +38,35 @@ When('user retrieves the password reset email', () => {
 When('user clicks on the password reset link in the email', () => {
   cy.get('@emailObject').then((emailObject) => {
     const resetLink = extractLinkFromEmail(emailObject.body);
+
+    cy.intercept(
+      {
+        url: '**/am/json/realms/root/**/authenticate*authIndexValue=ResetPassword',
+        method: 'POST',
+        times: 1,
+      },
+    ).as('serviceResetPassword');
+
+    cy.intercept(
+      {
+        url: '**/am/json/realms/root/**/authenticate',
+        method: 'POST',
+        times: 2,
+      },
+    ).as('validatedCreatePasswordCallback');
+
     cy.visit(resetLink);
+
+    cy.wait('@serviceResetPassword').then((interception) => {
+      if (interception.response?.statusCode === 200) {
+        // If the resetPassword call was successful we should get two
+        // requests for createPasswordCallback to display the password
+        // validation rules. Users will wait for those to be rendered so tests
+        // can wait as well. Too fast and we'll press Next before it is disabled.
+        cy.wait('@validatedCreatePasswordCallback');
+        cy.wait('@validatedCreatePasswordCallback');
+      }
+    });
   });
 });
 
