@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       no-body>
       <BCardHeader class="p-0">
         <BButtonToolbar
-          v-if="allowAdd || allowSearch"
+          v-if="allowAdd || allowSearch || $slots['toolbar-actions'] || $slots['toolbar-left']"
           class="justify-content-between p-3 border-bottom-0">
           <BButton
             v-if="allowAdd"
@@ -38,7 +38,18 @@ of the MIT license. See the LICENSE file for details. -->
           >
             {{ resultCountMessage }}
           </div>
+          <div
+            v-if="$slots['toolbar-left']"
+            class="d-flex align-items-center">
+            <slot name="toolbar-left" />
+          </div>
+          <div
+            v-if="$slots['toolbar-actions']"
+            class="ml-auto d-flex align-items-center">
+            <slot name="toolbar-actions" />
+          </div>
         </BButtonToolbar>
+        <slot name="below-toolbar" />
       </BCardHeader>
       <div v-if="isLoading">
         <FrSpinner class="py-5" />
@@ -721,6 +732,10 @@ export default {
       return '';
     },
     handleRowClick(item) {
+      if (this.$slots['row-details']) {
+        item._showDetails = !item._showDetails;
+        return;
+      }
       if (this.showViewDetails && this.grantType === 'entitlement') {
         this.grantDetails = { ...item };
         this.$bvModal.show(this.modalId);
