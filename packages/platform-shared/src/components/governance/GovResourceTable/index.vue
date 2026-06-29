@@ -233,7 +233,9 @@ of the MIT license. See the LICENSE file for details. -->
             <template #custom-top-actions>
               <BDropdownItem
                 v-if="showViewDetails"
-                @click="handleRowClick(item)">
+                @click.stop="handleRowClick(item)">
+                <!-- .stop prevents the table row-click handler from also firing,
+                     which would immediately re-toggle the details row we just opened -->
                 <FrIcon
                   icon-class="mr-2"
                   name="list_alt">
@@ -607,6 +609,9 @@ export default {
       return this.fields;
     },
     itemsWithAssignment() {
+      // _showDetails must NOT be set here — mutating inside a computed breaks
+      // BTable's row-details reactivity because the computed re-runs and resets
+      // the flag on every render. BTable manages _showDetails itself via toggleDetails.
       return this.items.map((item) => ({
         ...item,
         assignment: this.assignmentHandler(item),
@@ -721,6 +726,8 @@ export default {
       if (this.showViewDetails && this.grantType === 'entitlement') {
         this.grantDetails = { ...item };
         this.$bvModal.show(this.modalId);
+      } else if (this.$slots['row-details']) {
+        item._showDetails = !item._showDetails;
       }
     },
     /**

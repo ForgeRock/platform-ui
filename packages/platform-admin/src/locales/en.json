@@ -207,7 +207,8 @@
     "workflowTasks": "Tasks",
     "endUser": {
       "adminRequests": "Requests"
-    }
+    },
+    "governanceNotifications": "Notifications"
   },
   "ai": {
     "aiAssistant": "AI Assistant",
