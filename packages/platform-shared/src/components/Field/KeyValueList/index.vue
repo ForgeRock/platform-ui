@@ -21,6 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
           :key-options="availableKeyOptions"
           :tag-placeholder="tagLabel"
           :validation-rules="validationRules"
+          :value-options="valueOptions"
           @cancel="currentKey = null"
           @save-key-value="saveKeyValue"
           @key-added="addCustomKey($event)" />
@@ -68,6 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
           :key-options="availableKeyOptions"
           :tag-placeholder="tagLabel"
           :validation-rules="validationRules"
+          :value-options="valueOptions"
           @cancel="onCancel"
           @save-key-value="saveKeyValue"
           @key-added="addCustomKey($event)" />
@@ -179,6 +181,14 @@ export default {
      * Optional array of keys to select from
      */
     keyOptions: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * Optional array of value options. When non-empty, a select input is
+     * rendered in the value column instead of a textarea.
+     */
+    valueOptions: {
       type: Array,
       default: () => [],
     },

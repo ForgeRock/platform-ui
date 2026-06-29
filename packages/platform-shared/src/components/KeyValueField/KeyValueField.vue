@@ -22,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-bind="$attrs"
       :aria-labelledby="labelId"
       :value="value"
+      :value-options="valueOptions"
       v-on="$listeners" />
   </div>
 </template>
@@ -56,6 +57,14 @@ const props = defineProps({
   value: {
     type: Object,
     default: () => ({}),
+  },
+  /**
+   * Optional array of value options. When non-empty, the value column renders
+   * a select input instead of a textarea. Forwarded explicitly to FrKeyValueList.
+   */
+  valueOptions: {
+    type: Array,
+    default: () => [],
   },
 });
 

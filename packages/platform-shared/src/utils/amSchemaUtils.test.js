@@ -9,6 +9,7 @@ import {
   isPasswordField,
   getSelectFieldOptions,
   getFieldTypeForProperty,
+  getKeyValueOptions,
   checkEmpty,
   getPropertyDefault,
   isPropertyRequired,
@@ -90,6 +91,95 @@ describe('amSchemaUtils', () => {
 
     it('returns the raw type string for unmapped types', () => {
       expect(getFieldTypeForProperty({ type: 'string' })).toBe('string');
+    });
+  });
+
+  describe('getKeyValueOptions', () => {
+    it('returns valueOptions with labels from enumNames when present', () => {
+      const property = {
+        type: 'object',
+        patternProperties: {
+          '.*': {
+            type: 'string',
+            enum: ['chain1', 'chain2'],
+            enumNames: ['Chain One', 'Chain Two'],
+          },
+        },
+      };
+      expect(getKeyValueOptions(property)).toEqual([
+        { text: 'Chain One', value: 'chain1' },
+        { text: 'Chain Two', value: 'chain2' },
+      ]);
+    });
+
+    it('falls back to options.enum_titles when enumNames is absent', () => {
+      const property = {
+        type: 'object',
+        patternProperties: {
+          '.*': {
+            type: 'string',
+            enum: ['chain1', 'chain2'],
+            options: { enum_titles: ['Chain One', 'Chain Two'] },
+          },
+        },
+      };
+      expect(getKeyValueOptions(property)).toEqual([
+        { text: 'Chain One', value: 'chain1' },
+        { text: 'Chain Two', value: 'chain2' },
+      ]);
+    });
+
+    it('falls back to the raw enum value as label when neither enumNames nor enum_titles is present', () => {
+      const property = {
+        type: 'object',
+        patternProperties: {
+          '.*': {
+            type: 'string',
+            enum: ['chain1', 'chain2'],
+          },
+        },
+      };
+      expect(getKeyValueOptions(property)).toEqual([
+        { text: 'chain1', value: 'chain1' },
+        { text: 'chain2', value: 'chain2' },
+      ]);
+    });
+
+    it('returns null for an object property whose patternProperties[".*"] has no enum', () => {
+      const property = {
+        type: 'object',
+        patternProperties: {
+          '.*': { type: 'string' },
+        },
+      };
+      expect(getKeyValueOptions(property)).toBeNull();
+    });
+
+    it('returns null for an object property with no patternProperties', () => {
+      expect(getKeyValueOptions({ type: 'object' })).toBeNull();
+    });
+
+    it('returns null for non-object types', () => {
+      expect(getKeyValueOptions({ type: 'string', enum: ['a', 'b'] })).toBeNull();
+      expect(getKeyValueOptions({ type: 'array' })).toBeNull();
+    });
+
+    it('falls back per-element when enumNames is shorter than enum', () => {
+      const property = {
+        type: 'object',
+        patternProperties: {
+          '.*': {
+            type: 'string',
+            enum: ['chain1', 'chain2', 'chain3'],
+            enumNames: ['Chain One'],
+          },
+        },
+      };
+      expect(getKeyValueOptions(property)).toEqual([
+        { text: 'Chain One', value: 'chain1' },
+        { text: 'chain2', value: 'chain2' },
+        { text: 'chain3', value: 'chain3' },
+      ]);
     });
   });
 
@@ -326,6 +416,50 @@ describe('amSchemaUtils', () => {
       const { schema: result } = createAmForm({ schema: unorderedSchema, values: {} });
       expect(result[0].key).toBe('first');
       expect(result[1].key).toBe('noOrder');
+    });
+
+    describe('valueOptions projection', () => {
+      it('sets valueOptions only on enum-object fields, leaving other fields unchanged', () => {
+        const mixedSchema = {
+          properties: {
+            loaMapping: {
+              type: 'object',
+              propertyOrder: 1,
+              patternProperties: {
+                '.*': {
+                  type: 'string',
+                  enum: ['chain1', 'chain2'],
+                  enumNames: ['Chain One', 'Chain Two'],
+                },
+              },
+            },
+            jwtMappings: {
+              type: 'object',
+              propertyOrder: 2,
+              patternProperties: {
+                '.*': { type: 'string' },
+              },
+            },
+            enabled: {
+              type: 'boolean',
+              propertyOrder: 3,
+            },
+          },
+        };
+
+        const { schema: result } = createAmForm({ schema: mixedSchema, values: {} });
+        const loaField = result.find((f) => f.key === 'loaMapping');
+        const jwtField = result.find((f) => f.key === 'jwtMappings');
+        const enabledField = result.find((f) => f.key === 'enabled');
+
+        expect(loaField.valueOptions).toEqual([
+          { text: 'Chain One', value: 'chain1' },
+          { text: 'Chain Two', value: 'chain2' },
+        ]);
+        expect(loaField.type).toBe('object');
+        expect(jwtField).not.toHaveProperty('valueOptions');
+        expect(enabledField).not.toHaveProperty('valueOptions');
+      });
     });
 
     describe('placeholder handling', () => {

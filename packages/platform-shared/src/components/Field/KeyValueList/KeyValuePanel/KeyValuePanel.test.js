@@ -87,6 +87,57 @@ describe('KeyValuePanel', () => {
     expect(wrapper.emitted('save-key-value')[0]).toEqual([{ key: 'test key', value: 'test value' }]);
   });
 
+  describe('valueOptions prop', () => {
+    it('renders FrTextArea for value column when valueOptions is not provided', async () => {
+      setup();
+      await flushPromises();
+
+      expect(wrapper.find('textarea').exists()).toBe(true);
+    });
+
+    it('renders FrSelectInput for value column when valueOptions is non-empty', async () => {
+      setup({
+        value: {
+          key: 'test key',
+          value: '',
+        },
+        valueOptions: [
+          { text: 'Chain One', value: 'chain1' },
+          { text: 'Chain Two', value: 'chain2' },
+        ],
+      });
+      await flushPromises();
+
+      // FrSelectInput renders a multiselect; textarea should not be present
+      expect(wrapper.find('textarea').exists()).toBe(false);
+      const listElements = wrapper.findAll('li');
+      const listTexts = listElements.map((el) => el.text());
+      expect(listTexts).toContain('Chain One');
+      expect(listTexts).toContain('Chain Two');
+    });
+
+    it('emits save-key-value with correct { key, value } shape when object-shaped valueOptions are used', async () => {
+      const options = [
+        { text: 'Chain One', value: 'chain1' },
+        { text: 'Chain Two', value: 'chain2' },
+      ];
+      setup({
+        value: {
+          key: 'acr1',
+          value: 'chain1',
+        },
+        valueOptions: options,
+      });
+      await flushPromises();
+
+      await findByText(wrapper, 'button', 'Done').trigger('click');
+      await flushPromises();
+
+      expect(wrapper.emitted('save-key-value')).toBeTruthy();
+      expect(wrapper.emitted('save-key-value')[0]).toEqual([{ key: 'acr1', value: 'chain1' }]);
+    });
+  });
+
   describe('validateKey method', () => {
     it('prevents tagging if new key is already present in KeyValueList', async () => {
       setup({
@@ -153,6 +204,21 @@ describe('KeyValuePanel', () => {
         keyOptions: [
           'option 1',
           'option 2',
+        ],
+      });
+      await flushPromises();
+      await runA11yTest(wrapper);
+    });
+
+    it('should be accessible when valueOptions prop is provided', async () => {
+      setup({
+        value: {
+          key: '',
+          value: '',
+        },
+        valueOptions: [
+          { text: 'Chain One', value: 'chain1' },
+          { text: 'Chain Two', value: 'chain2' },
         ],
       });
       await flushPromises();
