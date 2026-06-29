@@ -43,6 +43,8 @@ const defaultState = {
   idmOnly: false,
   igaApiUrl: null,
   igaOrchestrationApiUrl: null,
+  isAirGapped: false,
+  isFraas: false,
   analyticsReportsAiAgentVersion: null,
   journeyAIAgentVersion: null,
   journeyAIBuildAgentVersion: null,
@@ -71,6 +73,15 @@ const mutations = {
   setEnvironment(state, env) {
     if (env.VUE_APP_FRAAS?.toString() === 'true') {
       state.isFraas = true;
+    }
+    if (env.VUE_APP_AIR_GAPPED?.toString() === 'true') {
+      state.isAirGapped = true;
+    }
+    // VUE_APP_AIR_GAPPED is incompatible with VUE_APP_FRAAS — air-gapped deployments have no
+    // internet egress and cannot reach FRaaS/IDCloud services. Warn at startup if misconfigured.
+    if (env.VUE_APP_AIR_GAPPED?.toString() === 'true' && env.VUE_APP_FRAAS?.toString() === 'true') {
+      // eslint-disable-next-line no-console
+      console.warn('[Platform UI] VUE_APP_AIR_GAPPED and VUE_APP_FRAAS cannot both be true. Air-gapped mode is incompatible with FRaaS/IDCloud deployments.');
     }
   },
   setBaseURLs(state, env) {
