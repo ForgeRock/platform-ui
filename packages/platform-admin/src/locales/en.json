@@ -6122,8 +6122,12 @@
     "loadError": "Failed to load workflow tasks.",
     "noTasksSubtitle": "No workflow tasks match the current filter.",
     "noTasksTitle": "No tasks found",
+    "reassignError": "Failed to reassign workflow task.",
+    "reassignSuccess": "Task reassigned successfully.",
     "subtitle": "View workflow tasks assigned to users.",
-    "title": "Workflow Tasks"
+    "taskDetails": "Task Details",
+    "title": "Workflow Tasks",
+    "viewModalTitle": "Task Details"
   },
   "authenticationMethods": {
     "title": "Authentication Methods",
