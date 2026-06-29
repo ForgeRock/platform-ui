@@ -15,7 +15,7 @@ import KeyValueField from './KeyValueField';
 jest.mock('@forgerock/platform-shared/src/components/Field/KeyValueList', () => ({
   name: 'FrKeyValueList',
   template: '<div data-testid="fr-key-value-list"><slot /></div>',
-  props: ['value'],
+  props: ['value', 'valueOptions'],
   emits: ['input'],
 }));
 
@@ -81,6 +81,13 @@ describe('KeyValueField', () => {
       const wrapper = setup({ value });
       const list = wrapper.findComponent(FrKeyValueList);
       expect(list.props('value')).toEqual({ foo: 'bar' });
+    });
+
+    it('passes valueOptions down to FrKeyValueList', () => {
+      const options = [{ value: 'a', text: 'A' }, { value: 'b', text: 'B' }];
+      const wrapper = setup({ valueOptions: options });
+      const list = wrapper.findComponent(FrKeyValueList);
+      expect(list.props('valueOptions')).toEqual(options);
     });
 
     it('passes $attrs through to FrKeyValueList', () => {

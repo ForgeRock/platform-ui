@@ -111,6 +111,46 @@ describe('AmFormGenerator', () => {
       const kvField = wrapper.findComponent(FrKeyValueField);
       expect(kvField.props('value')).toEqual(headers);
     });
+
+    it('passes valueOptions to FrKeyValueField when the object property has an enum', () => {
+      const valueOptions = [
+        { text: 'Chain A', value: 'a' },
+        { text: 'Chain B', value: 'b' },
+      ];
+      const objectSchema = [{
+        key: 'signingChain',
+        title: 'Signing Chain',
+        type: 'object',
+        valueOptions,
+      }];
+      const wrapper = setup({ schema: objectSchema, value: { signingChain: {} } });
+
+      const kvField = wrapper.findComponent(FrKeyValueField);
+      expect(kvField.props('valueOptions')).toEqual(valueOptions);
+    });
+
+    it('passes undefined valueOptions to FrKeyValueField for object properties with no enum (KeyValueField default handles it)', () => {
+      const objectSchema = [{
+        key: 'headers',
+        title: 'Custom Headers',
+        type: 'object',
+      }];
+      const wrapper = setup({ schema: objectSchema, value: { headers: {} } });
+
+      const kvField = wrapper.findComponent(FrKeyValueField);
+      // valueOptions is absent on the schema entry — :value-options receives undefined,
+      // which Vue resolves to KeyValueField's prop default of []. This is the code path
+      // for all non-enum object attributes (e.g. jwtSigningKidHeaderMappings).
+      expect(kvField.props('valueOptions')).toEqual([]);
+    });
+
+    it('does not render FrKeyValueField for non-object schema entries', () => {
+      const stringSchema = [{ key: 'clientId', title: 'Client ID', type: 'string' }];
+      const wrapper = setup({ schema: stringSchema, value: { clientId: 'test' } });
+
+      expect(wrapper.findComponent(FrKeyValueField).exists()).toBe(false);
+      expect(findByTestId(wrapper, 'fr-field-clientId').exists()).toBe(true);
+    });
   });
 
   describe('@actions', () => {

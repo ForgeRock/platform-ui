@@ -14,6 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
       :label="sanitizeLabel(property.title)"
       :description="sanitize(property.description)"
       :value="value[property.key]"
+      :value-options="property.valueOptions"
       :validation="{
         required: !disableRequiredValidation && property.required,
         ...property.validation,

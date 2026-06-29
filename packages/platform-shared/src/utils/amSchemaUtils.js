@@ -78,6 +78,37 @@ export const getFieldTypeForProperty = (property) => {
 };
 
 /**
+ * Builds a normalised valueOptions array for object-type properties whose value subschema
+ * carries an `enum` (i.e. `patternProperties[".*"].enum`). Used for key-value map fields
+ * like loaMapping and amrMappings where the value side is constrained to a fixed set.
+ *
+ * AM's SmsSchemaGenerator always emits the pattern key as the literal string ".*"
+ * (SmsSchemaGenerator.java:433: `field(".*", fieldType.getObject())`). This function
+ * intentionally reads only that key; other pattern keys are not supported.
+ *
+ * Label priority: enumNames[i] → options.enum_titles[i] → enum[i] (raw value as fallback).
+ *
+ * Returns null (not []) when the property does not match — callers can distinguish "no
+ * options" from "empty options".
+ *
+ * @param {Object} property - The raw AM schema property.
+ * @returns {Array<{text: string, value: string}>|null}
+ */
+export const getKeyValueOptions = (property) => {
+  if (property.type !== 'object') return null;
+
+  const valueSchema = property.patternProperties?.['.*'];
+  if (!valueSchema || !Array.isArray(valueSchema.enum) || valueSchema.enum.length === 0) return null;
+
+  return valueSchema.enum.map((value, index) => {
+    const label = valueSchema.enumNames?.[index]
+      ?? valueSchema.options?.enum_titles?.[index]
+      ?? value;
+    return { text: label, value };
+  });
+};
+
+/**
  * Formats a raw AM schema property into a UI-ready field descriptor by resolving its
  * FrField type and pre-computing select options.
  * @param {Object} property - The AM schema property.
@@ -96,6 +127,11 @@ export const formatPropertyField = (property) => {
   // post version 4 where the required attributes are listed in a top level array
   if (formattedProperty.type === 'checkbox' && formattedProperty.required) {
     formattedProperty.required = false;
+  }
+
+  const keyValueOptions = getKeyValueOptions(property);
+  if (keyValueOptions !== null) {
+    formattedProperty.valueOptions = keyValueOptions;
   }
 
   return formattedProperty;

@@ -9,6 +9,7 @@ import { mount, shallowMount, flushPromises } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import i18n from '@/i18n';
 import KeyValueList from './index';
+import KeyValuePanel from './KeyValuePanel';
 import { runA11yTest } from '../../../utils/testHelpers';
 
 mockValidation(['required', 'unique']);
@@ -155,6 +156,29 @@ describe('KeyValueList', () => {
       });
       return wrapper;
     }
+
+    it('forwards valueOptions to KeyValuePanel when the add panel is open', async () => {
+      const options = [{ value: 'opt1', text: 'Option 1' }, { value: 'opt2', text: 'Option 2' }];
+      const wrapper = mountComponent({ showInitialAdd: true, valueOptions: options });
+      await flushPromises();
+      const panel = wrapper.findComponent(KeyValuePanel);
+      expect(panel.exists()).toBe(true);
+      expect(panel.props('valueOptions')).toEqual(options);
+    });
+
+    it('forwards valueOptions to KeyValuePanel in edit mode', async () => {
+      const options = [{ value: 'opt1', text: 'Option 1' }];
+      const wrapper = mountComponent({
+        value: { en: 'opt1' },
+        valueOptions: options,
+      });
+      await flushPromises();
+      await wrapper.find('[data-testid="edit-button-node"]').trigger('click');
+      await flushPromises();
+      const panel = wrapper.findComponent(KeyValuePanel);
+      expect(panel.exists()).toBe(true);
+      expect(panel.props('valueOptions')).toEqual(options);
+    });
 
     it('shows required error if field is required but not filled out', async () => {
       const wrapper = mountComponent({ validation: 'required', value: [{ key: 'initialValue' }] });

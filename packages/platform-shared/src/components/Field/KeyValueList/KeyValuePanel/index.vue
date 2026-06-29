@@ -35,7 +35,15 @@ of the MIT license. See the LICENSE file for details. -->
         :value="inputValue.value" />
     </BFormGroup>
     <BFormGroup class="mb-3">
+      <FrSelectInput
+        v-if="valueOptions.length"
+        v-model="inputValue.value"
+        :name="valueLabel"
+        :label="valueLabel"
+        :options="valueOptions"
+        validation="required" />
       <FrTextArea
+        v-else
         v-model="inputValue.value"
         validation="required"
         :label="valueLabel"
@@ -112,6 +120,14 @@ export default {
      * Key options available in select input
      */
     keyOptions: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * Value options available in select input.
+     * When non-empty, renders a FrSelectInput for the value column instead of FrTextArea.
+     */
+    valueOptions: {
       type: Array,
       default: () => [],
     },
