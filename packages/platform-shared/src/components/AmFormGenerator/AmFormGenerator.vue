@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-4"
       is-html
       :name="property.key"
-      :label="sanitize(property.title)"
+      :label="sanitizeLabel(property.title)"
       :description="sanitize(property.description)"
       :value="value[property.key]"
       :validation="{
@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
       :name="property.key"
       :value="value[property.key]"
       :type="getFieldTypeForProperty(property)"
-      :label="sanitize(property.title)"
+      :label="sanitizeLabel(property.title)"
       :description="sanitize(property.description)"
       :options="getSelectFieldOptions(property)"
       :validation="{
@@ -46,6 +46,24 @@ import {
   getSelectFieldOptions,
 } from '@forgerock/platform-shared/src/utils/amSchemaUtils';
 import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+
+/**
+ * Prepares an AM schema label for safe v-html rendering with correct entity display.
+ * Pipeline: decode → sanitize → decode.
+ * - First decode converts source entities (e.g. `&amp;`) to real characters so
+ *   sanitize-html sees the actual markup and can strip dangerous tags.
+ * - Sanitize removes any malicious markup (e.g. `<img onerror=…>`).
+ * - Second decode converts the benign entities that sanitize-html re-introduces
+ *   for text characters (e.g. `&amp;` → `&`) so they display correctly in v-html.
+ *   This is safe because dangerous markup was already stripped in the previous step.
+ * @param {string} label - Raw label string from AM schema
+ * @returns {string} Sanitized label with entities decoded for correct display
+ */
+function sanitizeLabel(label) {
+  if (!label) return '';
+  const decode = (str) => new DOMParser().parseFromString(str, 'text/html').body.textContent;
+  return decode(sanitize(decode(label)));
+}
 
 // AM-style placeholder fields are displayed as read-only text — no clear button
 provide('showClearField', false);
