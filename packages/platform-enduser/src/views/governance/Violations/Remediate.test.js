@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2024-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -220,6 +220,19 @@ describe('Remediate', () => {
 
     const remediationColumn = columns[2];
     expect(remediationColumn.find('p').text()).toBe('Advice test');
+  });
+
+  it('should not render a View Details button link in the violation information column', async () => {
+    const violation = createViolationMock();
+    ViolationApi.getViolation = jest.fn().mockImplementation(() => Promise.resolve({ data: violation }));
+
+    const wrapper = setup();
+
+    await flushPromises();
+
+    const violationColumn = wrapper.findAll('.col-lg-4')[1];
+    const linkButtons = violationColumn.findAll('.btn-link');
+    expect(linkButtons).toHaveLength(0);
   });
 
   it('should add entitlements to the cart if a list is added', async () => {
