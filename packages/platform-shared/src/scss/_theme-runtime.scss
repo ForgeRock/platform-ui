@@ -1673,6 +1673,7 @@ select:-webkit-autofill:focus {
 .table-hover tbody tr:hover,
 .multiselect__tag,
 .multiselect__option--highlight,
+.multiselect__option--highlight::after,
 .multiselect__option--selected,
 .fr-tag {
   background-color: var(--input-bg-active) !important;
