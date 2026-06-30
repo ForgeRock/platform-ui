@@ -4157,21 +4157,37 @@
         "allowMissing": "Allow Missing",
         "rejectMissing": "Reject Missing"
       },
-      "trustedCertificates": {
-        "noDataTitle": "You haven't configured any Trusted Certificates for this tenant",
-        "noDataSubtitle": "Add Trusted Certificates for this tenant",
-        "trustedCertificateDisplayName": "Trusted Certificate",
-        "subjectTableFieldName": "Subject",
-        "expireTimeTableFieldName": "Expiry Time",
-        "typeTableFieldName": "Type",
-        "issuerTableFieldName": "Issuer"
+      "certType": {
+        "root": "Root",
+        "intermediate": "Intermediate"
       },
       "configUpdateSuccess": "Config update underway",
+      "trustedCertificates": {
+          "noDataTitle": "You haven't configured any Trusted Certificates for this tenant",
+          "noDataSubtitle": "Add Trusted Certificates for this tenant",
+          "trustedCertificateDisplayName": "Trusted Certificate",
+          "subjectTableFieldName": "Subject",
+          "expireTimeTableFieldName": "Expiry Time",
+          "typeTableFieldName": "Type",
+          "issuerTableFieldName": "Issuer",
+          "errorCreatingTrustedCertificate": "Could not create trusted certificate",
+          "errorDeletingTrustedCertificate": "Could not delete trusted certificate",
+          "certificateCreatedSuccess": "Certificate successfully created"
+      },
+      "createTrustedCertificateModal": {
+        "title": "Upload Trusted Certificate",
+        "spinnerTextCertificateButton": "Adding Certificate...",
+        "addCertificateText": "Add Certificate",
+        "certTypeLabel": "Certificate Type",
+        "certificatePlaceholder": "Upload a Trusted Certificate File...",
+        "certificateLabel": "...or paste as text below",
+        "certificateUploadFailure": "Error reading certificate file"
+      },
       "confirmUpdateModal": {
         "confirmUpdateModalTitle": "Confirm Update",
+        "confirmationWarning": "These updates represent the desired mTLS configuration but do not take effect straight away. The update will be applied immediately but can take some time to propagate to all network resources.",
         "updateConfigText": "Confirm",
-        "spinnerTextConfigButton": "Updating...",
-        "confirmationWarning": "These updates represent the desired mTLS configuration but do not take effect straight away. The update will be applied immediately but can take some time to propagate to all network resources."
+        "spinnerTextConfigButton": "Updating..."
       },
       "errorUpdatingMtlsConfig": "Could not update mTLS config",
       "errorRetrievingMtlsConfig": "Could not retrieve mTLS config"
