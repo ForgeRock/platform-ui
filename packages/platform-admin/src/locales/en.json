@@ -137,7 +137,8 @@
     "TenantUpdates": "Tenant Updates",
     "TermsAndConditions": "Terms & Conditions",
     "Workflows": "Workflows",
-    "WorkflowTasks": "Workflow Tasks"
+    "WorkflowTasks": "Workflow Tasks",
+    "WorkflowProcesses": "Workflow Processes"
   },
   "sideMenu": {
     "accessManagement": "Access Management",
@@ -200,6 +201,7 @@
     "workflow": "Workflow",
     "workflows": "Workflows",
     "workflowTasks": "Tasks",
+    "workflowProcesses": "Processes",
     "endUser": {
       "adminRequests": "Requests"
     },
@@ -6274,5 +6276,24 @@
     "loadError": "Error loading Device Binding settings.",
     "deleteSuccess": "Device Binding deleted successfully.",
     "deleteError": "Error deleting Device Binding."
+  },
+  "workflowProcesses": {
+    "columnCompleted": "Completed",
+    "columnCreated": "Created",
+    "columnDefinitionName": "Name",
+    "columnProcessInstance": "Process Instance",
+    "columnStartedBy": "Started By",
+    "filterAll": "All",
+    "filterAnyone": "Anyone",
+    "filterByType": "Filter by Type",
+    "filterStartedBy": "Started By",
+    "loadError": "Failed to load workflow processes.",
+    "noDataSubtitle": "No workflow processes match the current filter.",
+    "noDataTitle": "No processes found",
+    "subtitle": "View active, completed, and defined workflow processes.",
+    "tabActive": "Active",
+    "tabCompleted": "Completed",
+    "tabDefinitions": "Definitions",
+    "title": "Workflow Processes"
   }
 }
