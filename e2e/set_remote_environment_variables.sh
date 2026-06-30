@@ -24,9 +24,9 @@ if [ -f $REMOTE_ENVIRONMENT_INFO_FILE ]; then
   else
     echo "Remote environment info loaded from 'e2e/.remote-environment-info.txt':"
     echo "Remote environment location: $remote_environment_location"
-    echo "Platform mode: $platform_mode"
+    echo "Platform mode for ForgeOps and on-prem: $platform_mode"
     echo "Username of the remote environment admin to test with: $remote_environment_admin_username"
-    echo "Password of the remote environment admin to test with: $remote_environment_admin_password"
+    echo "Password of the remote environment admin to test with: ${remote_environment_admin_password//?/*}"
   fi
 fi
 
@@ -34,9 +34,10 @@ if [ ! -f $REMOTE_ENVIRONMENT_INFO_FILE ] || [[ "$remote_info_loaded" =~ ^([nN])
   # Prompt user for remote environment info
   echo "Please provide the information for accessing the remote environment to be tested"
   read -p "Remote environment location (eg. openam-my-tenant.forgeblocks.com): " remote_environment_location
-  read -p "Platform mode? [Y/n]:" platform_mode
+  read -p "Platform mode for ForgeOps and on-prem? [Y/n]:" platform_mode
   read -p "Username of the remote environment admin to test with (eg. my.email@forgerock.com): " remote_environment_admin_username
-  read -p "Password of the remote environment admin to test with (eg. passw0rd): " remote_environment_admin_password
+  read -s -p "Password of the remote environment admin to test with (eg. passw0rd): " remote_environment_admin_password
+  echo
 
   # Ask if should save info, writing file if desired
   read -p "Save these inputs in 'e2e/.remote-environment-info.txt' for subsequent test runs? [Y/n]" store_inputs

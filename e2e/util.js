@@ -73,8 +73,8 @@ export const retryableBeforeEach = (beforeEachFunction) => {
  *
  * @example
  * eachCase([
- *   { name: 'Add base-uri directive (None checkbox)', tags: '@C24591', directive: 'base-uri', source: 'none', expected: "'none'" },
- *   { name: 'Add child-src directive (All checkbox)', tags: '@C24592', directive: 'child-src', source: 'all', expected: '*' },
+ *   { name: '[C24591] Add base-uri directive (None checkbox)', tags: '@cloud', directive: 'base-uri', source: 'none', expected: "'none'" },
+ *   { name: '[C24592] Add child-src directive (All checkbox)', tags: '@cloud', directive: 'child-src', source: 'all', expected: '*' },
  * ], ({ directive, source, expected }) => {
  *   adminSteps.cspReportOnlyPolicy.openAddDirectiveModal();
  *   adminSteps.cspReportOnlyPolicy.selectDirective(directive);
