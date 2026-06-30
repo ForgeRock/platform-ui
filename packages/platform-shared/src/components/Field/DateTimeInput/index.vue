@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
           :is-required-aria="isRequiredAria"
           :name="`${name}-date`"
           :validation="validation"
-          :minDate="minDate"
+          :min-date="minDate"
           :validation-immediate="validationImmediate" />
       </BCol>
       <BCol>
