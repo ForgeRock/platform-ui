@@ -72,7 +72,7 @@ Feature: Default enduser login
     And "Login failure" error message is displayed
 
   @C29488
-  @forgeops @cloud
+  @forgeops @cloud @vpat
   Scenario Outline: Attempt to login 6 times in a row with empty or wrong credentials - Login Failure
     When user tries to login 6 times with "<userName>" username and "<password>" password
     Then "Login failure" error message is displayed

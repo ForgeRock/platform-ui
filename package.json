@@ -11,7 +11,9 @@
     "test:docker-lodestar:build": "docker build -t platform-ui-e2e-testrunner -f docker-lodestar-e2e/Dockerfile .",
     "test:docker-lodestar:run": "docker run -it --network host -v /var/run/docker.sock:/var/run/docker.sock -v ~/.ssh:/root/.ssh -v ~/.config/gcloud:/root/.config/gcloud -e DEPLOYMENT_NAMESPACE=$USER platform-ui-e2e-testrunner",
     "copyright-bot": "yarn g:copyright-bot",
-    "coverage-diff": "yarn g:coverage-diff"
+    "coverage-diff": "yarn g:coverage-diff",
+    "e2e:report": "yarn run mochawesome-merge ./packages/*/mochawesome-report/mochawesome*.json -o ./mochawesome-report/data/merged-mochawesome-reports.json && yarn run marge --reportDir ./mochawesome-report --reportFilename \"test-report.html\" --reportTitle \"Platform UI Automated tests\" --reportPageTitle \"Platform UI Automated tests\" --inline --charts --showSkipped ./mochawesome-report/data/merged-mochawesome-reports.json",
+    "e2e:report:open": "yarn run mochawesome-merge ./packages/*/mochawesome-report/mochawesome*.json -o ./mochawesome-report/data/merged-mochawesome-reports.json && yarn run marge --reportDir ./mochawesome-report --reportFilename \"test-report.html\" --reportTitle \"Platform UI Automated tests\" --reportPageTitle \"Platform UI Automated tests\" --inline --charts --showSkipped --autoOpen ./mochawesome-report/data/merged-mochawesome-reports.json"
   },
   "dependencies": {
     "@badeball/cypress-cucumber-preprocessor": "24.0.1",

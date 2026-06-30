@@ -1,5 +1,5 @@
 /**
- * Copyright 2024-2025 ForgeRock AS. All Rights Reserved
+ * Copyright 2024-2026 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -24,6 +24,23 @@
 import './commands';
 import './e2e';
 import '@percy/cypress';
+import { configure } from '@testing-library/cypress';
+
+// Config testing-library so it doesn't output pages of error message listing element suggestions.
+configure({
+  // eslint-disable-next-line no-unused-vars
+  getElementError: (message, _container) => {
+    const accessibleRolesStart = 'Here are the accessible roles';
+    const messageIncludeSuggestions = message.includes(accessibleRolesStart);
+    const firstLineOfMessage = message.split('\n')[0];
+
+    const outputMessage = messageIncludeSuggestions ? firstLineOfMessage : message;
+
+    const error = new Error(outputMessage);
+    error.name = 'TestingLibraryElementError';
+    return error;
+  },
+});
 
 // This configuration is designed to handle uncaught exceptions in the application code,
 // and prevent these exceptions from stopping the test execution.
