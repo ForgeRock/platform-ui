@@ -1,9 +1,8 @@
 /**
- * Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { cloneDeep } from 'lodash';
@@ -12,6 +11,7 @@ import {
   getCampaignDuration,
   getFormValuesFromTemplate,
 } from './certification';
+import { EXPIRATION_TIMING } from './certificationConstants';
 
 describe('certification', () => {
   const defaultTemplate = {
@@ -604,6 +604,45 @@ describe('certification', () => {
         entitlements: [],
       });
     });
+
+    it('sets expirationTiming to "When campaign expires" and expirationDays to 1 when template has no day', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.events = {
+        expirationNotification: {
+          notification: 'emailTemplate/certificationExpired',
+          includeActor: true,
+        },
+      };
+      const form = getFormValuesFromTemplate(template);
+      expect(form.FrNotifications.expirationNotification).toBe(true);
+      expect(form.FrNotifications.expirationEmail).toBe('emailTemplate/certificationExpired');
+      expect(form.FrNotifications.expirationTiming).toBe(EXPIRATION_TIMING.WHEN);
+      expect(form.FrNotifications.expirationDays).toBe(1);
+    });
+
+    it('sets expirationTiming to "Before campaign expires" and expirationDays from template when day is present', () => {
+      const template = cloneDeep(defaultTemplate);
+      template.events = {
+        expirationNotification: {
+          notification: 'emailTemplate/certificationExpired',
+          day: 7,
+          includeActor: true,
+        },
+      };
+      const form = getFormValuesFromTemplate(template);
+      expect(form.FrNotifications.expirationNotification).toBe(true);
+      expect(form.FrNotifications.expirationEmail).toBe('emailTemplate/certificationExpired');
+      expect(form.FrNotifications.expirationTiming).toBe(EXPIRATION_TIMING.BEFORE);
+      expect(form.FrNotifications.expirationDays).toBe(7);
+    });
+
+    it('sets expirationNotification to false when template has no expirationNotification event', () => {
+      const template = cloneDeep(defaultTemplate);
+      const form = getFormValuesFromTemplate(template);
+      expect(form.FrNotifications.expirationNotification).toBe(false);
+      expect(form.FrNotifications.expirationEmail).toBeUndefined();
+      expect(form.FrNotifications.expirationTiming).toBe(EXPIRATION_TIMING.WHEN);
+    });
   });
 
   describe('buildSavePayload', () => {
@@ -774,6 +813,38 @@ describe('certification', () => {
 
       expect(savePayload.excludeConditionalAccess).toBe(true);
       expect(savePayload.excludeRoleBasedAccess).toBe(true);
+    });
+
+    it('excludes day from expirationNotification when timing is "when campaign expires"', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrNotifications = {
+        expirationNotification: true,
+        expirationEmail: 'emailTemplate/certificationExpired',
+        expirationDays: 3,
+        expirationTiming: EXPIRATION_TIMING.WHEN,
+      };
+
+      const savePayload = buildSavePayload('identity', forms);
+
+      expect(savePayload.events.expirationNotification.notification).toBe('emailTemplate/certificationExpired');
+      expect(savePayload.events.expirationNotification.includeActor).toBe(true);
+      expect(Object.prototype.hasOwnProperty.call(savePayload.events.expirationNotification, 'day')).toBe(false);
+    });
+
+    it('includes day in expirationNotification when timing is "before campaign expires"', () => {
+      const forms = cloneDeep(baseForms);
+      forms.FrNotifications = {
+        expirationNotification: true,
+        expirationEmail: 'emailTemplate/certificationExpired',
+        expirationDays: 5,
+        expirationTiming: EXPIRATION_TIMING.BEFORE,
+      };
+
+      const savePayload = buildSavePayload('identity', forms);
+
+      expect(savePayload.events.expirationNotification.notification).toBe('emailTemplate/certificationExpired');
+      expect(savePayload.events.expirationNotification.day).toBe(5);
+      expect(savePayload.events.expirationNotification.includeActor).toBe(true);
     });
   });
 

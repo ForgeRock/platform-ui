@@ -1,13 +1,13 @@
 /**
- * Copyright 2023 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { EXPIRATION_TIMING } from '@forgerock/platform-shared/src/views/Governance/utils/certificationConstants';
 import SummaryStep from './index';
 
 const additionalOptions = {
@@ -261,12 +261,28 @@ describe('SummaryStep Component', () => {
       });
       expect(findByTestId(wrapper, 'summary-notification-sendReassignNotification').exists()).toBeFalsy();
     });
-    it('render correctly expiration notification', async () => {
+    it('renders expiration notification with "when expires" text when timing is WHEN', async () => {
       await wrapper.setProps({
         summary: {
           ...summary,
           notifications: {
             expirationNotification: true,
+            expirationTiming: EXPIRATION_TIMING.WHEN,
+          },
+        },
+      });
+      expect(findByTestId(wrapper, 'summary-notification-expirationNotification').find('span')
+        .text())
+        .toBe('governance.editTemplate.notificationsSummary.sendExpirationNotificationWhenExpires');
+    });
+    it('renders expiration notification with day count text when timing is BEFORE', async () => {
+      await wrapper.setProps({
+        summary: {
+          ...summary,
+          notifications: {
+            expirationNotification: true,
+            expirationTiming: EXPIRATION_TIMING.BEFORE,
+            expirationDays: 3,
           },
         },
       });

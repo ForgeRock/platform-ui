@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="p-4 flex-grow-1 overflow-auto h-100">
     <BContainer
@@ -89,16 +88,29 @@ to such license between the licensee and ForgeRock AS. -->
             :options="emailTemplateOptions"
             :searchable="false" />
           <FrField
-            v-model="formFields.expirationDays"
-            class="mb-0 mr-3 d-inline-block"
-            name="expirationDays"
-            style="max-width: 70px;"
-            testid="expiration-days"
-            validation="required"
-            type="number" />
-          <div class="mr-1">
-            {{ $t('governance.editTemplate.daysBeforeCampaign') }}
-          </div>
+            v-model="formFields.expirationTiming"
+            class="d-inline-block mr-1"
+            name="expirationTiming"
+            style="min-width: 200px;"
+            testid="expiration-timing"
+            type="select"
+            :label="$t('governance.editTemplate.expirationTiming')"
+            :options="expirationTimingOptions"
+            :searchable="false" />
+          <template v-if="formFields.expirationTiming === EXPIRATION_TIMING.BEFORE">
+            <FrField
+              v-model="formFields.expirationDays"
+              class="mb-0 mr-1 d-inline-block"
+              name="expirationDays"
+              style="max-width: 70px;"
+              testid="expiration-days"
+              type="number"
+              :min="1"
+              :validation="{ required: true, min_value: { min: 1 } }" />
+            <div class="mr-1 ml-3">
+              {{ $t('governance.editTemplate.daysBeforeCampaign') }}
+            </div>
+          </template>
         </div>
       </BCollapse>
       <FrField
@@ -165,6 +177,7 @@ import {
   cloneDeep,
 } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import { EXPIRATION_TIMING } from '@forgerock/platform-shared/src/views/Governance/utils/certificationConstants';
 
 export default {
   name: 'Notifications',
@@ -185,16 +198,22 @@ export default {
   },
   data() {
     return {
+      EXPIRATION_TIMING,
       timespanOptions: [
         this.$t('governance.timespans.years'),
         this.$t('governance.timespans.months'),
         this.$t('governance.timespans.weeks'),
         this.$t('governance.timespans.days'),
       ],
+      expirationTimingOptions: [
+        { text: this.$t('governance.editTemplate.whenCampaignExpiresOption'), value: EXPIRATION_TIMING.WHEN },
+        { text: this.$t('governance.editTemplate.beforeCampaignExpires'), value: EXPIRATION_TIMING.BEFORE },
+      ],
       formFields: {
-        expirationDays: 0,
+        expirationDays: 1,
         expirationEmail: '',
         expirationNotification: false,
+        expirationTiming: EXPIRATION_TIMING.WHEN,
         initialEmail: 'emailTemplate/certificationAssigned',
         initialNotification: true,
         reassignEmail: 'emailTemplate/certificationReassigned',

@@ -17,7 +17,10 @@ import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/govern
 import BaseTemplate from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/EditTemplate/templateBase.json';
 import { uiTypeMap } from '@forgerock/platform-shared/src/views/Governance/Certification/Templates/templateTypes';
 import { getNameFromDisplayName, getDisplayNamefromName } from '@forgerock/platform-shared/src/views/Governance/utils/events';
+import { EXPIRATION_TIMING } from '@forgerock/platform-shared/src/views/Governance/utils/certificationConstants';
 import i18n from '@/i18n';
+
+export { EXPIRATION_TIMING };
 
 function getDayDuration(duration, interval) {
   if (interval === i18n.global.t('governance.timespans.days')) return duration;
@@ -343,10 +346,11 @@ export function buildSavePayload(type, forms, eventBased) {
   if (notif.expirationNotification) {
     saveObj.events = saveObj.events || {};
     saveObj.events.expirationNotification = saveObj.events.expirationNotification || {};
+    const beforeExpires = notif.expirationTiming === EXPIRATION_TIMING.BEFORE;
     saveObj.events.expirationNotification = {
       ...saveObj.events.expirationNotification,
       notification: notif.expirationEmail,
-      day: notif.expirationDays,
+      ...(beforeExpires && { day: notif.expirationDays }),
       includeActor: true,
     };
   }
@@ -613,6 +617,7 @@ export function getFormValuesFromTemplate(template, eventBased) {
   };
 
   // Notifications
+  const expirationNotifDay = template.events?.expirationNotification?.day;
   forms.FrNotifications = {
     initialNotification: !isNil(template.events?.assignment?.notification),
     initialEmail: template.events?.assignment?.notification,
@@ -622,6 +627,12 @@ export function getFormValuesFromTemplate(template, eventBased) {
     remindersDuration: template.events?.reminder?.frequency,
     remindersEmail: template.events?.reminder?.notification,
     remindersTimespan: i18n.global.t('governance.timespans.days'),
+    expirationNotification: !isNil(template.events?.expirationNotification?.notification),
+    expirationEmail: template.events?.expirationNotification?.notification,
+    expirationDays: expirationNotifDay > 0 ? expirationNotifDay : 1,
+    expirationTiming: !isNil(expirationNotifDay)
+      ? EXPIRATION_TIMING.BEFORE
+      : EXPIRATION_TIMING.WHEN,
   };
   const {
     certify,
@@ -652,9 +663,6 @@ export function getFormValuesFromTemplate(template, eventBased) {
     closeAction: template.expirationAction !== 'reassign' ? template.expirationAction : null,
     closeActionDuration: template.expirationActionDelay,
     closeActionTime: template.expirationActionDelay === 0 ? i18n.global.t('governance.timespans.immediately') : i18n.global.t('governance.timespans.afterADuration'),
-    expirationDays: template.events?.expirationNotification?.day,
-    expirationEmail: template.events?.expirationNotification?.notification,
-    expirationNotification: !isNil(template.events?.expirationNotification?.notification),
     escalateToSelector,
     escalation: has(template, 'events.escalation'),
     escalationFrequency: template.events?.escalation?.frequency,
