@@ -118,8 +118,9 @@ onMounted(() => {
         ? finalData.filter(({ name }) => name !== 'requestable')
         : finalData;
       glossarySchema.value = [...filteredData];
-      getGlossaryAttributesByAppId(props.appId).then((glossaryRespone) => {
-        glossaryValues.value = glossaryRespone.data;
+      getGlossaryAttributesByAppId(props.appId).then((glossaryResponse) => {
+        const { _displayData, ...glossaryData } = glossaryResponse.data;
+        glossaryValues.value = glossaryData;
       }).catch(() => {
         emit('update:glossaryCreateFlag', true);
       }).finally(() => {

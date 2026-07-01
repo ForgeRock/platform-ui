@@ -95,6 +95,7 @@ of the MIT license. See the LICENSE file for details. -->
       {{ $t('governance.agents.modal.updateDescription') }}
     </div>
     <FrGlossaryEditForm
+      :display-data="displayData"
       :glossary-schema="updateSchema"
       :model-value="glossaryValues"
       user-resource-name="alpha_user"
@@ -163,6 +164,7 @@ const { bvModal } = useBvModal();
 const accountSchema = ref({});
 const glossarySchema = ref([]);
 const glossaryValues = ref({});
+const displayData = ref({});
 const updateSchema = computed(() => adjustAccountGlossaryForDisplay(glossaryValues.value.accountType, glossarySchema.value));
 const actors = ref([]);
 const isVisible = ref({
@@ -244,7 +246,9 @@ async function getActorsInfo() {
 async function getGlossaryValues() {
   try {
     const { data } = await getAccountGlossaryAttributesData(props.agent?.keys?.accountId);
-    return data;
+    const { _displayData, ...glossaryData } = data;
+    displayData.value = _displayData || {};
+    return glossaryData;
   } catch (error) {
     if (error.response && error.response.status !== 404) {
       showErrorMessage(error, i18n.global.t('governance.glossary.queryAttrError', { resourceType: i18n.global.t('common.agent') }));

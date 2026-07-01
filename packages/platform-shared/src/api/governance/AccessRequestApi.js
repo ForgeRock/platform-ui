@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -37,10 +37,12 @@ export function getRequests(params, filter) {
  * Retrieves a specific access request by its ID.
  *
  * @param {string} requestId - The ID of the access request to retrieve.
+ * @param {string[]} [expandPaths=['glossary.idx', 'request']] - Paths to expand in the response. Pass an empty array or null to omit the parameter.
  * @returns {Promise} A promise that resolves with the access request data.
  */
-export function getRequest(requestId) {
-  return generateIgaApi().get(`/governance/requests/${requestId}`);
+export function getRequest(requestId, expandPaths = ['glossary.idx', 'request']) {
+  const query = expandPaths?.length ? `?expandPaths=${expandPaths.join(',')}` : '';
+  return generateIgaApi().get(`/governance/requests/${requestId}${query}`);
 }
 
 /**

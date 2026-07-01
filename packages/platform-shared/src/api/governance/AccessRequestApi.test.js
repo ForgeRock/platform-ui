@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -70,6 +70,26 @@ describe('Access Review API', () => {
       { targetFilter: { testFilter: true } },
     );
     expect(BaseApi.generateIgaApi).toBeCalled();
+  });
+
+  it('should call getRequest with default expandPaths', async () => {
+    await AccessRequestApi.getRequest('req-123');
+    expect(get).toBeCalledWith('/governance/requests/req-123?expandPaths=glossary.idx,request');
+  });
+
+  it('should call getRequest with custom expandPaths', async () => {
+    await AccessRequestApi.getRequest('req-123', ['glossary.idx']);
+    expect(get).toBeCalledWith('/governance/requests/req-123?expandPaths=glossary.idx');
+  });
+
+  it('should call getRequest without expandPaths when passed null', async () => {
+    await AccessRequestApi.getRequest('req-123', null);
+    expect(get).toBeCalledWith('/governance/requests/req-123');
+  });
+
+  it('should call getRequest without expandPaths when passed empty array', async () => {
+    await AccessRequestApi.getRequest('req-123', []);
+    expect(get).toBeCalledWith('/governance/requests/req-123');
   });
 
   it('should call getRequestType endpoint with correct URL', async () => {

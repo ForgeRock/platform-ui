@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,11 +8,13 @@ of the MIT license. See the LICENSE file for details. -->
       <FrFormBuilder
         v-if="form && !isLoadingForm"
         v-model:model-value="formValue"
+        :display-data="displayData"
         :form="form.form"
         :read-only="readOnly"
         @is-valid="isValidForm = $event" />
       <FrDefaultFormManager
         v-if="showDefaultForm"
+        :display-data="displayData"
         :read-only="readOnly"
         :request-type="requestType"
         :options="defaultFormOptions"
@@ -109,6 +111,7 @@ const showDefaultForm = ref(false);
 // computed
 const phaseId = computed(() => props.request.phases?.[0]?.name);
 const requestType = computed(() => props.request.requestType || '');
+const displayData = computed(() => props.request._displayData || {});
 const isCustomRequestType = computed(() => !isSupportedRequestType(requestType.value));
 const showSaveButton = computed(() => (
   (form?.value?.form?.fields

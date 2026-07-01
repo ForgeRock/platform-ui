@@ -35,6 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrGlossaryEditForm
         v-if="isInitialized"
         class="mb-2"
+        :display-data="displayData"
         :glossary-schema="glossarySchema"
         :read-only="props.readOnly"
         :model-value="roleRequestData.glossary"
@@ -77,6 +78,7 @@ of the MIT license. See the LICENSE file for details. -->
  * @prop {Boolean} readOnly - Flag to determine if this item is read-only
  */
 import {
+  computed,
   onMounted,
   ref,
   watch,
@@ -130,6 +132,7 @@ const tabIndex = ref(0);
 const savingRequest = ref(false);
 const roleRequestData = ref(null);
 const glossarySchema = ref(null);
+const displayData = computed(() => props.item?.rawData?._displayData || {});
 const roleSchema = ref(null);
 const isInitialized = ref(false);
 const isQuerying = ref(false);

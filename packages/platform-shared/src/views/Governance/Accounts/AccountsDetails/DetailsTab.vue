@@ -160,6 +160,7 @@ of the MIT license. See the LICENSE file for details. -->
       {{ $t('governance.accounts.modal.updateDescription') }}
     </div>
     <FrGlossaryEditForm
+      :display-data="displayData"
       :glossary-schema="updateSchema"
       :model-value="glossaryValues"
       user-resource-name="alpha_user"
@@ -239,6 +240,7 @@ const emit = defineEmits(['toggle-collapse']);
 const { bvModal } = useBvModal();
 const glossarySchema = ref([]);
 const glossaryValues = ref({});
+const displayData = ref({});
 const accountType = ref('Default');
 const accountSubType = ref(null);
 const actors = ref([]);
@@ -301,7 +303,9 @@ async function getGlossaryValues() {
       return props.account?.glossary?.idx?.['/account'] || {};
     }
     const { data } = await getAccountGlossaryAttributesData(props.account?.keys?.accountId);
-    return data;
+    const { _displayData, ...glossaryData } = data;
+    displayData.value = _displayData || {};
+    return glossaryData;
   } catch (error) {
     if (error.response && error.response.status !== 404) {
       showErrorMessage(error, i18n.global.t('governance.glossary.queryAttrError', { resourceType: i18n.global.t('common.account') }));

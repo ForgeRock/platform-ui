@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
       @update:modelValue="handleInput($event)" />
     <FrDefaultEntitlementForm
       v-else-if="currentFormComponent === defaultForms.entitlement"
+      :display-data="displayData"
       :entitlement="options.entitlement"
       :application-id="options.applicationId"
       :object-type="options.objectType"
@@ -41,6 +42,10 @@ import FrDefaultEntitlementForm from '@forgerock/platform-shared/src/components/
 const emit = defineEmits(['input']);
 
 const props = defineProps({
+  displayData: {
+    type: Object,
+    default: () => ({}),
+  },
   readOnly: {
     type: Boolean,
     default: false,

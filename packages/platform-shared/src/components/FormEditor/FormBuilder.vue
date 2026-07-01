@@ -107,6 +107,10 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  displayData: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
 const { meta } = useForm();
@@ -219,9 +223,9 @@ function setValidSection({ sectionId, isValid }) {
   sectionsValid.value[sectionId] = isValid;
 }
 
-watch(() => props.form, async (newVal) => {
+watch(() => [props.form, props.displayData], async ([newVal]) => {
   const schema = props.transformSchema
-    ? transformSchemaToFormGenerator(newVal?.fields, props.readOnly, props.includeDefaults, props.privilegeData)
+    ? transformSchemaToFormGenerator(newVal?.fields, props.readOnly, props.includeDefaults, props.privilegeData, props.displayData, updatedModelValue.value)
     : newVal?.fields || [];
 
   // check for onLoad event script in the form
