@@ -50,6 +50,10 @@ import FrGovObjectSelect from '@forgerock/platform-shared/src/components/FormEdi
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 const props = defineProps({
+  displayData: {
+    type: Object,
+    default: () => ({}),
+  },
   glossarySchema: {
     type: Array,
     default: () => [],
@@ -154,17 +158,35 @@ function buildSchemaForFormGenerator(glossarySchema) {
       case 'date':
         value = props.modelValue[attribute.name];
         break;
-      case 'managedObject':
+      case 'managedObject': {
         fieldType = 'string';
         options = { object: managedObjectType.split('/').pop() };
+        let initialData;
         if (attribute.isMultiValue) {
           customSlot = 'objectMultiselect';
           value = getValueForMultivalue(props.modelValue[attribute.name]);
+          initialData = value.map((valueRef) => {
+            const resolved = props.displayData?.[valueRef];
+            return resolved ? { ...resolved, _id: resolved._id ?? resolved.id } : null;
+          }).filter(Boolean);
         } else {
           customSlot = 'objectSelect';
           value = props.modelValue[attribute.name] || '';
+          const resolved = value ? props.displayData?.[value] : null;
+          initialData = resolved ? { ...resolved, _id: resolved._id ?? resolved.id } : null;
         }
-        break;
+        return [{
+          label: attribute.displayName,
+          model: attribute.name,
+          type: fieldType,
+          options,
+          value,
+          customSlot,
+          initialData,
+          allowEmpty: true,
+          disabled: props.readOnly,
+        }];
+      }
       default:
         break;
     }
@@ -195,7 +217,7 @@ watch(() => props.glossarySchema, () => {
   }
 }, { deep: true, immediate: true });
 
-watch(() => props.readOnly, () => {
+watch(() => [props.readOnly, props.displayData], () => {
   buildSchemaForFormGenerator(props.glossarySchema);
 });
 </script>

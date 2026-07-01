@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrGlossaryEditForm
         v-if="isInitialized"
         class="mb-2"
+        :display-data="displayData"
         :glossary-schema="glossarySchema"
         :model-value="glossaryValues"
         :read-only="readOnly || isLoading"
@@ -101,6 +102,7 @@ const props = defineProps({
 const roleValues = ref(null);
 const glossarySchema = ref([]);
 const glossaryValues = ref(null);
+const displayData = ref({});
 const isInitialized = ref(false);
 
 /**
@@ -168,6 +170,7 @@ watch(() => props.items, () => {
     const { role, glossary } = props.items;
     roleValues.value = role;
     glossaryValues.value = glossary;
+    displayData.value = props.items._displayData || {};
     isInitialized.value = true;
   }
 }, { deep: true, immediate: true });

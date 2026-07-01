@@ -18,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else
       show-details
       :application-id="applicationId"
+      :display-data="displayData"
       :object-type="objectType"
       :entitlement="entitlement"
       :read-only="readOnly"
@@ -86,6 +87,7 @@ const entitlementPath = computed(() => (userStore.adminUser ? 'Entitlements' : '
 const readOnly = computed(() => (!props.entitlement?.permissions?.modifyEntitlement));
 const applicationId = computed(() => props.entitlement?.application?.id);
 const objectType = computed(() => props.entitlement?.item?.objectType);
+const displayData = computed(() => props.entitlement?._displayData || {});
 
 /**
  * Splits the FormBuilder model value into entitlement and glossary values.

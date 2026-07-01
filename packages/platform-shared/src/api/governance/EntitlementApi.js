@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -26,10 +26,12 @@ export async function getEntitlementList(resource, queryParams = {}) {
  * Get entitlement details for a single entitlement by ID.
  *
  * @param {string} id - The ID of the entitlement to retrieve.
+ * @param {string[]} [expandPaths=['glossary.idx']] - Paths to expand in the response. Pass an empty array or null to omit the parameter.
  * @returns {Promise} A promise that resolves to the entitlement details.
  */
-export function getEntitlementById(id) {
-  return generateIgaApi().get(`${entitlementUrl}/${id}`);
+export function getEntitlementById(id, expandPaths = ['glossary.idx']) {
+  const query = expandPaths?.length ? `?expandPaths=${expandPaths.join(',')}` : '';
+  return generateIgaApi().get(`${entitlementUrl}/${id}${query}`);
 }
 
 /**

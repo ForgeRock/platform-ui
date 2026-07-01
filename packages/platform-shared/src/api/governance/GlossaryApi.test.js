@@ -113,7 +113,7 @@ describe('Glossary API', () => {
     const getSpy = jest.fn().mockImplementation(() => Promise.resolve());
     jest.spyOn(BaseApi, 'generateIgaApi').mockImplementation(() => ({ get: getSpy }));
     await GlossaryApi.getGlossaryAttributesByAppId(id);
-    expect(getSpy).toBeCalledWith(`/governance/application/${id}/glossary`);
+    expect(getSpy).toBeCalledWith(`/governance/application/${id}/glossary?expandPaths=`);
   });
   it('should call saveGlossaryAttributesByAppId with right parameters', async () => {
     const id = 'c76b3d38-57d0-4f39-977b-9ddfdbc560e2';

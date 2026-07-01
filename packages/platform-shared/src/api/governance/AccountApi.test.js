@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -54,7 +54,7 @@ describe('AccountApi', () => {
   });
 
   describe('getAccountGlossaryAttributesData', () => {
-    it('should fetch glossary attributes data for an account', async () => {
+    it('should fetch glossary attributes data for an account with expandPaths empty', async () => {
       const accountId = '123';
       const mockResponse = { actors: ['managed/user/abc'], customAttribute1: 'test', accountType: 'default' };
       generateIgaApi.mockReturnValue({
@@ -63,7 +63,7 @@ describe('AccountApi', () => {
 
       const result = await getAccountGlossaryAttributesData(accountId);
       expect(result).toEqual(mockResponse);
-      expect(generateIgaApi().get).toHaveBeenCalledWith(`governance/account/${accountId}/glossary`);
+      expect(generateIgaApi().get).toHaveBeenCalledWith(`governance/account/${accountId}/glossary?expandPaths=`);
     });
   });
 

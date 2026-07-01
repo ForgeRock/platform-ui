@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2025-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -54,7 +54,7 @@ describe('EntitlementApi', () => {
   });
 
   describe('getEntitlementById', () => {
-    it('should return entitlement details for a given ID', async () => {
+    it('should append expandPaths=glossary.idx by default', async () => {
       const mockResponse = { data: { id: '123', name: 'Test Entitlement' } };
       generateIgaApi.mockReturnValue({
         get: jest.fn().mockResolvedValue(mockResponse),
@@ -62,6 +62,36 @@ describe('EntitlementApi', () => {
 
       const result = await getEntitlementById('123');
       expect(result).toEqual(mockResponse);
+      expect(generateIgaApi().get).toHaveBeenCalledWith('governance/entitlement/123?expandPaths=glossary.idx');
+    });
+
+    it('should append multiple expandPaths when provided', async () => {
+      const mockResponse = { data: { id: '123' } };
+      generateIgaApi.mockReturnValue({
+        get: jest.fn().mockResolvedValue(mockResponse),
+      });
+
+      await getEntitlementById('123', ['glossary.idx', 'entitlement.idx']);
+      expect(generateIgaApi().get).toHaveBeenCalledWith('governance/entitlement/123?expandPaths=glossary.idx,entitlement.idx');
+    });
+
+    it('should omit the query parameter when expandPaths is empty', async () => {
+      const mockResponse = { data: { id: '123' } };
+      generateIgaApi.mockReturnValue({
+        get: jest.fn().mockResolvedValue(mockResponse),
+      });
+
+      await getEntitlementById('123', []);
+      expect(generateIgaApi().get).toHaveBeenCalledWith('governance/entitlement/123');
+    });
+
+    it('should omit the query parameter when expandPaths is null', async () => {
+      const mockResponse = { data: { id: '123' } };
+      generateIgaApi.mockReturnValue({
+        get: jest.fn().mockResolvedValue(mockResponse),
+      });
+
+      await getEntitlementById('123', null);
       expect(generateIgaApi().get).toHaveBeenCalledWith('governance/entitlement/123');
     });
   });

@@ -6,7 +6,7 @@
  */
 
 import {
-  cloneDeep, pickBy, set, includes, get,
+  cloneDeep, pickBy, set, includes, get, isArray,
 } from 'lodash';
 import i18n from '@/i18n';
 
@@ -101,7 +101,7 @@ function isDisabled(schemaField, readOnly, privilegeData) {
  * @see FormEditor
  * @see FormGenerator
  */
-export function transformSchemaToFormGenerator(schema, readOnly = false, includeDefaults = false, privilegeData = null) {
+export function transformSchemaToFormGenerator(schema, readOnly = false, includeDefaults = false, privilegeData = null, displayData = {}, modelValues = {}) {
   return schema.map((row) => row.fields.map((schemaField) => {
     // create field object with the properties required by the form generator component
     const field = {
@@ -126,6 +126,26 @@ export function transformSchemaToFormGenerator(schema, readOnly = false, include
           displayProperty: schemaField.options.displayProperty,
           queryFilter: schemaField.options.queryFilter,
         };
+
+        if (Object.keys(displayData).length) {
+          const currentValue = get(modelValues, schemaField.model);
+          if (schemaField.type === 'multiselect') {
+            let refs;
+            if (isArray(currentValue)) {
+              refs = currentValue;
+            } else {
+              refs = currentValue ? [currentValue] : [];
+            }
+            const resolved = refs.map((ref) => {
+              const entry = displayData[ref];
+              return entry ? { ...entry, _id: entry._id ?? entry.id } : null;
+            }).filter(Boolean);
+            if (resolved.length) field.initialData = resolved;
+          } else {
+            const entry = currentValue ? displayData[currentValue] : null;
+            if (entry) field.initialData = { ...entry, _id: entry._id ?? entry.id };
+          }
+        }
       } else {
         field.options = schemaField.options?.map((option) => ({
           value: option.value,
@@ -140,7 +160,7 @@ export function transformSchemaToFormGenerator(schema, readOnly = false, include
 
     if (field.type === 'section') {
       field.customSlot = 'section';
-      field.fields = transformSchemaToFormGenerator(field.fields, readOnly, includeDefaults, privilegeData);
+      field.fields = transformSchemaToFormGenerator(field.fields, readOnly, includeDefaults, privilegeData, displayData, modelValues);
     }
 
     return field;

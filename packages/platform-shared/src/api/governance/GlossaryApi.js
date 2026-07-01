@@ -79,6 +79,5 @@ export function updateGlossaryAttributesByAppId(appId, payload) {
  * @returns The response is a promise that resolves to the data returned by the API.
  */
 export function getGlossaryAttributesByAppId(appId) {
-  const glossaryAppUrl = `/governance/application/${appId}/glossary`;
-  return generateIgaApi().get(glossaryAppUrl);
+  return generateIgaApi().get(`/governance/application/${appId}/glossary?expandPaths=`);
 }

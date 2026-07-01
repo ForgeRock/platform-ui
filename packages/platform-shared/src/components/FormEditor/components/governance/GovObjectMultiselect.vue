@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2024-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       :option-function="optionFunction"
       :query-param-function="queryParamFunction"
       :read-only="property.disabled"
+      :preloaded-options="preloadedOptions"
       :resource="resourcePath"
       :resource-function="resourceFunction"
       :validation="property.validation"
@@ -57,6 +58,7 @@ const optionFunction = computed(() => (optionFunctionWithCustom(isCustom.value, 
 const queryFilter = computed(() => props.property.options.queryFilter || '');
 const resourceFunction = computed(() => (getResourceFunction(propertyType.value)));
 const resourcePath = computed(() => (getResourcePath(propertyType.value)));
+const preloadedOptions = computed(() => (props.property.initialData || []).map((entry) => optionFunction.value(entry, resourcePath.value)));
 
 /**
  * Emits update:model event with the new value.

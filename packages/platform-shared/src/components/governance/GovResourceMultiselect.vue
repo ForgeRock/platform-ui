@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023-2025 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -95,6 +95,15 @@ const props = defineProps({
     type: Function,
     default: getQueryParams,
   },
+  /**
+   * Pre-resolved options from _displayData sidecar. When non-empty, skips
+   * per-ID API calls in getInitialValues. Falls back to existing behaviour
+   * when empty or absent.
+   */
+  preloadedOptions: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 // data
@@ -139,7 +148,11 @@ async function getInitialValues(resourceIds) {
  * @param {String} queryString - The query string to filter the resource list.
  */
 async function getResourceList(queryString, setValue) {
-  if (setValue || (!optionsLoad.value && props.value.length)) {
+  if (props.preloadedOptions.length && props.preloadedOptions.length === props.value.length) {
+    initialValues.value = props.preloadedOptions;
+    initialValuesLoad.value = true;
+    selectValue.value = [...props.value];
+  } else if (setValue || (!optionsLoad.value && props.value.length)) {
     getInitialValues(props.value);
   } else {
     initialValuesLoad.value = true;
