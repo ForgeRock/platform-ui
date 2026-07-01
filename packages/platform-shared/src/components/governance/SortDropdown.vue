@@ -4,9 +4,14 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BDropdown
-    id="sortBy"
     toggle-class="text-dark px-0 d-flex"
-    variant="link">
+    variant="link"
+    :toggle-attrs="{
+      'aria-label': selectedSortFieldText
+        ? $t('common.sortByLabel', { label: selectedSortFieldText })
+        : $t('common.sortBy'),
+    }"
+    @shown="focusFirstSelect">
     <template #button-content>
       <FrIcon
         icon-class="mr-2"
@@ -20,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <BDropdownForm class="w-250px">
       <FrSelectInput
+        ref="sortFieldSelect"
         :value="sortField"
         :floating-label="false"
         :label="$t('common.sortBy')"
@@ -63,7 +69,9 @@ import {
   BDropdown,
   BDropdownForm,
 } from 'bootstrap-vue';
-import { computed, ref, watch } from 'vue';
+import {
+  computed, nextTick, ref, watch,
+} from 'vue';
 import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
@@ -85,6 +93,7 @@ const props = defineProps({
   },
 });
 
+const sortFieldSelect = ref(null);
 const sortDirection = ref('desc');
 const sortDirectionOptions = ref([
   {
@@ -99,6 +108,13 @@ const sortDirectionOptions = ref([
 const sortField = ref(props.selectedItem);
 
 const selectedSortFieldText = computed(() => props.sortByOptions.find((option) => option.value === sortField.value)?.text || '');
+
+function focusFirstSelect() {
+  nextTick(() => {
+    const select = sortFieldSelect.value?.$el?.querySelector('.multiselect');
+    if (select) select.focus();
+  });
+}
 
 watch(() => props.selectedItem, (newValue) => {
   if (newValue && sortField.value !== newValue) {
