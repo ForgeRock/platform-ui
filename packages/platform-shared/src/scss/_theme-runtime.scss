@@ -38,12 +38,14 @@
   --bg-light-blue: #{$light-blue};
   --bg-light-green: #{$light-green};
   --bg-light-yellow: #{$light-yellow};
+  --bg-light-purple: #{$light-purple};
 
 	/* Core */
 	--body-bg: #{$body-bg};
 	--body-color: #{$body-color};
 	--heading-color: #{$headings-color};
 	--text-muted: #{$text-muted};
+	--fr-shadow: #{$fr-shadow};
 
 	/* Surfaces */
 	--card-bg: #{$card-bg};
@@ -273,6 +275,7 @@
 
   /* Journey Editor */
   --tree-editor-node-list: #{$fr-toolbar-background};
+  --fr-tree-canvas-bg: #{$body-bg};
   --fr-node-single-icon-color: #{$fr-node-single-icon-color};
 
   /* Floating Action Bar */
@@ -373,6 +376,7 @@
 	--body-color: #{$dk-body-color};
 	--heading-color: #{$dk-headings-color};
 	--text-muted: #{$dk-text-muted};
+	--fr-shadow: #{$dk-fr-shadow};
   
   /* Surfaces */
 	--card-bg: #{$dk-card-bg};
@@ -603,6 +607,7 @@
 
   /* Journey Editor */
   --tree-editor-node-list: #{$dk-fr-toolbar-background};
+  --fr-tree-canvas-bg: #{lighten($dk-body-bg, 4%)};
   --fr-node-single-icon-color: #{$dk-fr-node-single-icon-color};
 
   /* Floating Action Bar */
@@ -618,11 +623,11 @@
   /* Icon Wrapper */
   --fr-icon-wrapper-bg-light-blue: #{$blue};
   --fr-icon-wrapper-bg-light-indigo: #{$indigo};
-  --fr-icon-wrapper-bg-light-purple: #{$purple};
+  --fr-icon-wrapper-bg-light-purple: #{$dk-light-purple};
   --fr-icon-wrapper-bg-light-yellow: #{$dk-light-yellow};
   --fr-icon-wrapper-bg-light-orange: #{$orange};
   --fr-icon-wrapper-bg-light-red: #{$red};
-  --fr-icon-wrapper-bg-light-green: #{$green};
+  --fr-icon-wrapper-bg-light-green: #{$dk-light-green};
   --fr-icon-wrapper-bg-light-teal: #{$teal};
   --fr-icon-wrapper-bg-light-cyan: #{$cyan};
   --fr-icon-wrapper-bg-light-pink: #{$pink};
