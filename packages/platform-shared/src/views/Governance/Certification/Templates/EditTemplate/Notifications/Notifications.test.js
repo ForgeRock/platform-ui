@@ -1,20 +1,20 @@
 /**
- * Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { EXPIRATION_TIMING } from '@forgerock/platform-shared/src/views/Governance/utils/certificationConstants';
 import Notifications from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
 
-mockValidation(['required']);
+mockValidation(['required', 'min_value']);
 describe('Notifications View', () => {
   let wrapper;
 
@@ -67,11 +67,25 @@ describe('Notifications View', () => {
       expect(findByTestId(wrapper, 'reassign-email').exists()).toBeTruthy();
     });
 
-    it('enabling expiration notification shows expiration email and days', async () => {
+    it('enabling expiration notification shows expiration email and timing dropdown', async () => {
       findByTestId(wrapper, 'expiration-notification').setChecked(true);
       await flushPromises();
       expect(findByTestId(wrapper, 'expiration-notification').attributes('value')).toBe('true');
       expect(findByTestId(wrapper, 'expiration-email').exists()).toBeTruthy();
+      expect(findByTestId(wrapper, 'expiration-timing').exists()).toBeTruthy();
+    });
+
+    it('does not show expiration days when timing is "when campaign expires" (default)', async () => {
+      findByTestId(wrapper, 'expiration-notification').setChecked(true);
+      await flushPromises();
+      expect(findByTestId(wrapper, 'input-expiration-days').exists()).toBeFalsy();
+    });
+
+    it('shows expiration days when "before campaign expires" is selected', async () => {
+      findByTestId(wrapper, 'expiration-notification').setChecked(true);
+      await flushPromises();
+      wrapper.vm.formFields.expirationTiming = EXPIRATION_TIMING.BEFORE;
+      await flushPromises();
       expect(findByTestId(wrapper, 'input-expiration-days').exists()).toBeTruthy();
     });
 
@@ -105,6 +119,7 @@ describe('Notifications View', () => {
             expirationDays: 5,
             expirationEmail: 'temp1',
             expirationNotification: true,
+            expirationTiming: EXPIRATION_TIMING.BEFORE,
             initialEmail: 'temp1',
             initialNotification: true,
             reassignEmail: 'temp2',
