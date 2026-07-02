@@ -1,21 +1,22 @@
 /**
- * Copyright 2023 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
+import * as downloadFile from '@forgerock/platform-shared/src/utils/downloadFile';
 import * as CampaignApi from '@/api/governance/CampaignApi';
 import AccessReviews from './index';
 
 jest.mock('@/api/governance/AccessReviewApi');
 jest.mock('@/api/governance/CampaignApi');
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
+jest.mock('@forgerock/platform-shared/src/utils/downloadFile');
 
 function getTaskData(actor) {
   return {
@@ -277,6 +278,98 @@ describe('AccessReviews', () => {
       });
       expect(wrapper.vm.isStaging).toBe(false);
       expect(wrapper.vm.states.active).not.toBeUndefined();
+    });
+  });
+
+  describe('export', () => {
+    const taskItem = {
+      actor: {
+        givenName: 'Test',
+        sn: 'Castillo',
+        userName: 'test@castillo.com',
+        mail: 'test@castillo.com',
+        key: 'managed/user/123',
+      },
+      status: 'in-progress',
+      complete: 5,
+      total: 33,
+      progress: 0.1515,
+    };
+
+    beforeEach(() => {
+      CampaignApi.getCampaignTasks.mockResolvedValue({ data: { result: [taskItem] } });
+      downloadFile.downloadAsType = jest.fn();
+    });
+
+    it('openDownloadModal shows the download modal', () => {
+      const wrapper = mountComponent();
+      const showSpy = jest.fn();
+      wrapper.vm.$bvModal = { show: showSpy };
+      wrapper.vm.openDownloadModal();
+      expect(showSpy).toHaveBeenCalledWith('access-reviews-download-items-modal');
+    });
+
+    it('exportItemsToFile exports current page without fetching when rows is "currentPage"', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      wrapper.vm.accessReviewList = [taskItem];
+      CampaignApi.getCampaignTasks.mockClear();
+
+      await wrapper.vm.exportItemsToFile({ format: 'csv', rows: 'currentPage' });
+
+      expect(CampaignApi.getCampaignTasks).not.toHaveBeenCalled();
+      expect(downloadFile.downloadAsType).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            'common.user.givenName': 'Test',
+            'common.user.sn': 'Castillo',
+            'common.user.userName': 'test@castillo.com',
+            'common.user.mail': 'test@castillo.com',
+            'common.complete': 5,
+            'governance.certificationDetails.accessReviewsTable.inProgress': 28,
+            'governance.certificationDetails.accessReviewsTable.total': 33,
+            'common.progress': '16%',
+          }),
+        ]),
+        'csv',
+        expect.stringContaining('.csv'),
+        expect.any(String),
+      );
+    });
+
+    it('exportItemsToFile fetches all rows when rows is "all"', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      CampaignApi.getCampaignTasks.mockClear();
+      CampaignApi.getCampaignTasks.mockResolvedValue({ data: { result: [taskItem] } });
+
+      await wrapper.vm.exportItemsToFile({ format: 'csv', rows: 'all' });
+
+      expect(CampaignApi.getCampaignTasks).toHaveBeenCalledWith('123', expect.objectContaining({ pageSize: 10000 }));
+      expect(downloadFile.downloadAsType).toHaveBeenCalled();
+    });
+
+    it('exportItemsToFile uses pageSize 1000 for pdf format', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      CampaignApi.getCampaignTasks.mockClear();
+      CampaignApi.getCampaignTasks.mockResolvedValue({ data: { result: [taskItem] } });
+
+      await wrapper.vm.exportItemsToFile({ format: 'pdf', rows: 'all' });
+
+      expect(CampaignApi.getCampaignTasks).toHaveBeenCalledWith('123', expect.objectContaining({ pageSize: 1000 }));
+    });
+
+    it('exportItemsToFile resets isExporting on error', async () => {
+      const wrapper = mountComponent();
+      await flushPromises();
+      CampaignApi.getCampaignTasks.mockRejectedValue(new Error('fail'));
+      wrapper.vm.showErrorMessage = jest.fn();
+
+      await wrapper.vm.exportItemsToFile({ format: 'csv', rows: 'all' });
+
+      expect(wrapper.vm.isExporting).toBe(false);
+      expect(wrapper.vm.showErrorMessage).toHaveBeenCalled();
     });
   });
 

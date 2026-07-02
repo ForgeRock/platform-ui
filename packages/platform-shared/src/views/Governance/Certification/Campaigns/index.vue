@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2026 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BCard no-body>
@@ -27,14 +26,32 @@ to such license between the licensee and ForgeRock AS. -->
               </BDropdownItem>
             </template>
           </BDropdown>
-          <BButton
-            @click="openColumnsModal"
-            variant="link-dark"
-            class="ml-2">
-            <FrIcon
-              icon-class="md-24"
-              name="view_column" />
-          </BButton>
+          <div class="d-flex align-items-center">
+            <BButton
+              class="mr-2 text-body"
+              variant="link"
+              :aria-label="$t('governance.certificationTask.export')"
+              @click="openDownloadModal()">
+              <FrIcon
+                id="campaigns-export-icon"
+                icon-class="mr-1"
+                name="file_download" />
+            </BButton>
+            <BTooltip
+              target="campaigns-export-icon"
+              triggers="hover"
+              placement="top">
+              {{ $t('governance.certificationTask.export') }}
+            </BTooltip>
+            <BButton
+              @click="openColumnsModal"
+              variant="link"
+              class="ml-2 text-body">
+              <FrIcon
+                icon-class="md-24"
+                name="view_column" />
+            </BButton>
+          </div>
         </div>
       </BCardHeader>
       <FrSpinner
@@ -201,6 +218,12 @@ to such license between the licensee and ForgeRock AS. -->
     <FrCampaignDetailsModal
       :campaign="creatingCampaign"
       @close="creatingCampaign = {}" />
+    <FrDownloadItemsModal
+      modal-id="campaigns-download-items-modal"
+      grant-type="campaigns"
+      :is-loading="isExporting"
+      :totals="{ currentPage: accessReviewList.length, all: totalRows }"
+      :ok-function="exportItemsToFile" />
   </div>
 </template>
 
@@ -219,6 +242,7 @@ import {
   BMediaBody,
   BModal,
   BTable,
+  BTooltip,
 } from 'bootstrap-vue';
 import { useI18n } from 'vue-i18n';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
@@ -240,6 +264,8 @@ import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/Butto
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
+import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
+import FrDownloadItemsModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/TaskList/modals/DownloadItemsModal/DownloadItemsModal';
 import FrUpdateDeadlineModal from './CampaignDetails/CampaignOverview/UpdateDeadlineModal';
 import FrCampaignDetailsModal from './CampaignDetailsModal';
 
@@ -257,11 +283,13 @@ export default {
     BMediaBody,
     BModal,
     BTable,
+    BTooltip,
     FrActionsCell,
     FrButtonWithSpinner,
     FrCampaignDetailsModal,
     FrCircleProgressBar,
     FrColumnPicker,
+    FrDownloadItemsModal,
     FrIcon,
     FrNoData,
     FrPagination,
@@ -337,6 +365,7 @@ export default {
       sortDesc: false,
       selectedCertId: null,
       accessReviewList: [],
+      isExporting: false,
       isRequestLoading: false,
       modalType: null,
       currentDeadline: '',
@@ -480,6 +509,46 @@ export default {
       return actualProgress >= 50
         ? Math.floor(actualProgress)
         : Math.ceil(actualProgress);
+    },
+    openDownloadModal() {
+      this.$bvModal.show('campaigns-download-items-modal');
+    },
+    async exportItemsToFile(downloadOptions) {
+      const { format, rows } = downloadOptions;
+      let items = this.accessReviewList;
+      try {
+        this.isExporting = true;
+        if (rows === 'all') {
+          const pageSize = format === 'pdf' ? 1000 : 10000;
+          const { data } = await getAdminCertificationItems({
+            status: this.statusSort.param,
+            sortBy: this.getSortBy(),
+            sortDesc: this.sortDesc,
+            pageSize,
+          });
+          let rawResult = data?.results?.length > -1 ? data.results : (data?.result || []);
+          if (rawResult[0]?._source) rawResult = rawResult.map((r) => ({ ...r._source }));
+          rawResult.forEach((r) => {
+            if (r.campaignId) r.id = r.campaignId;
+            if (r.campaignName) r.name = r.campaignName;
+          });
+          items = rawResult;
+        }
+        const exportData = items.map((item) => ({
+          [this.$t('common.name')]: item.name || '',
+          [this.$t('common.type')]: startCase(item.certificationType) || '',
+          [this.$t('common.startDate')]: item.startDate || '',
+          [this.$t('common.deadline')]: item.deadline || '',
+          [this.$t('common.status')]: item.status ? this.statuses.get(item.status)?.text || item.status : '',
+          [this.$t('common.progress')]: `${this.progressPercentage(item.progress)}%`,
+        }));
+        const fileName = this.$t('governance.certification.campaigns');
+        downloadAsType(exportData, format, `${fileName}.${format}`, fileName);
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.certificationTask.errors.exportError'));
+      } finally {
+        this.isExporting = false;
+      }
     },
   },
 };
