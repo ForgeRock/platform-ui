@@ -78,7 +78,7 @@ export default class EventHookApiSteps {
         currentConfig.objects.flatMap((obj) => ALLOWED_EVENT_TYPES.filter((et) => obj[et]).map((et) => `${obj.name}::${et}`)),
       );
 
-      cy.intercept('PUT', '**/openidm/config/managed', (req) => {
+      cy.intercept('PUT', '**/openidm/config/managed*', (req) => {
         req.continue((res) => {
           if (res.statusCode === 200) {
             req.body.objects.forEach((obj) => {
