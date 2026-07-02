@@ -39,7 +39,7 @@ describe('Enduser Default Registration', { tags: ['@forgeops', '@smoke'] }, () =
       .type(invalidValue)
       .clear()
       .blur();
-    cy.get('.error-message').should('contain', 'Please provide a value');
+    cy.get('.error-message').should('contain', 'is required');
 
     cy.findByLabelText(label)
       .clear()
@@ -299,17 +299,17 @@ describe('Enduser Default Registration', { tags: ['@cloud', '@smoke'] }, () => {
       cy.findAllByRole('combobox').first().click();
       cy.findAllByText('Provide your own:').first().click();
       cy.get('[type="submit"]').should('be.disabled');
-      cy.get('.error-message').contains('Please provide a value').should('be.visible');
+      cy.get('.error-message').contains('is required').should('be.visible');
 
       // Validate KBA is still invalid with a question and no answer
       cy.findByLabelText('Question').type('RandomString');
-      cy.get('.error-message').contains('Please provide a value').should('be.visible');
+      cy.get('.error-message').contains('is required').should('be.visible');
       cy.get('[type="submit"]').should('be.disabled');
 
       // Validate KBA is still invalid with an answer and no question
       cy.findByLabelText('Question').clear();
       cy.findByLabelText('Answer').type('RandomString');
-      cy.get('.error-message').contains('Please provide a value').should('be.visible');
+      cy.get('.error-message').contains('is required').should('be.visible');
       cy.get('[type="submit"]').should('be.disabled');
 
       // Validate valid provided KBA enables Submit button

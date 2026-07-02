@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2025 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2026 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,7 +13,12 @@ import ResizableTable from './directives/ResizableTable/ResizableTable';
 import i18n from './i18n';
 
 // Add the required rule
-defineRule('required', (value) => required(value) || i18n.global.t('common.policyValidationMessages.REQUIRED'));
+defineRule('required', (value, _params, ctx) => required(value) || i18n.global.t(
+  ctx?.label
+    ? 'common.policyValidationMessages.GENERIC_FIELD_REQUIRED'
+    : 'common.policyValidationMessages.REQUIRED',
+  { _field_: ctx?.label },
+));
 
 Vue.config.productionTip = false;
 Vue.directive('resizable-table', ResizableTable);
