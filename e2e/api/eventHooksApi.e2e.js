@@ -69,7 +69,7 @@ export function createEventHook({
 
     return cy.request({
       method: 'PUT',
-      url: MANAGED_CONFIG_URL(),
+      url: `${MANAGED_CONFIG_URL()}?waitForCompletion=true`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'content-type': 'application/json',
@@ -101,7 +101,7 @@ export function deleteAllEventHooks(hooks, accessToken = Cypress.env('ACCESS_TOK
     });
     return cy.request({
       method: 'PUT',
-      url: MANAGED_CONFIG_URL(),
+      url: `${MANAGED_CONFIG_URL()}?waitForCompletion=true`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'content-type': 'application/json',
@@ -132,7 +132,7 @@ export function deleteEventHook({ objectName, event }, accessToken = Cypress.env
 
     return cy.request({
       method: 'PUT',
-      url: MANAGED_CONFIG_URL(),
+      url: `${MANAGED_CONFIG_URL()}?waitForCompletion=true`,
       headers: {
         authorization: `Bearer ${accessToken}`,
         'content-type': 'application/json',

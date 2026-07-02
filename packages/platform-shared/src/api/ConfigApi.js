@@ -59,10 +59,14 @@ export function getAMConfig(file) {
 /**
  * Puts config file into config store
  *
+ * @param {string} file config file name (e.g. 'managed')
+ * @param {Object} config config object to store
+ * @param {boolean} [waitForCompletion=false] whether to wait for the config change to propagate before resolving
  * @returns {Promise} API promise with result from config put
  */
-export function putConfig(file, config) {
-  return generateIdmApi().put(`config/${file}`, config);
+export function putConfig(file, config, waitForCompletion = false) {
+  const url = `config/${file}${waitForCompletion ? '?waitForCompletion=true' : ''}`;
+  return generateIdmApi().put(url, config);
 }
 
 /**
