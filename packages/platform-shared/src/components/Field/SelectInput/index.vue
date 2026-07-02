@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
       @select="$emit('select', $event)"
       @open="openHandler"
       @close="closeHandler"
+      @blur="handleBlur(undefined, true)"
       @tag="$emit('tag', $event)"
       @search-change="$emit('search-change', $event)">
       <template
@@ -306,11 +307,12 @@ export default {
     }
 
     const {
-      value: inputValue, errors: fieldErrors,
+      value: inputValue, errors: fieldErrors, handleBlur, validate,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
       validateOnMount: props.validationImmediate,
       initialValue: processValue(props.value, undefined),
       bails: false,
+      label: toRef(props, 'label'),
     });
 
     const hasAppendBtn = ref(Object.keys(context.slots).includes('appendButton'));
@@ -341,11 +343,16 @@ export default {
     /**
      * Emits 'close' (not 'closed') to match SelectInputDeprecated's contract.
      * Consumers such as ResourceSelect use @close to reset search state.
+     *
+     * validate() covers option-click/escape closes (no blur fires; mousedown.prevent keeps focus
+     * on the input). handleBlur via @blur covers tab-out. Separate calls avoid double-validation
+     * when both @blur and @close fire together (tab-out with an open dropdown).
      */
     function closeHandler(value) {
       context.emit('close');
       isOpen.value = false;
       floatLabels.value = setFloatLabels(false, value);
+      validate();
     }
 
     function inputHandler(e) {
@@ -405,6 +412,7 @@ export default {
       combinedErrors,
       fieldErrors,
       floatLabels,
+      handleBlur,
       inputHandler,
       inputValue,
       internalId,

@@ -151,7 +151,7 @@ export default {
     const {
       value: inputValue, errors: fieldErrors, handleBlur, validate,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
-      validateOnMount: props.validationImmediate, initialValue: '', bails: false, validateOnValueUpdate: false,
+      validateOnMount: props.validationImmediate, initialValue: '', bails: false, validateOnValueUpdate: false, label: toRef(props, 'label'),
     });
     const wasInvalid = ref(false); // Track invalid state
     const debouncedValidate = debounce(validate, 250);

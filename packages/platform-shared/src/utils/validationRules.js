@@ -206,7 +206,12 @@ export function getRules(i18n) {
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.PERIOD_REQUIRED');
   };
 
-  const required = (value) => rules.required(value) || i18n.global.t('common.policyValidationMessages.REQUIRED');
+  const required = (value, _params, ctx) => rules.required(value) || i18n.global.t(
+    ctx?.label
+      ? 'common.policyValidationMessages.GENERIC_FIELD_REQUIRED'
+      : 'common.policyValidationMessages.REQUIRED',
+    { _field_: ctx?.label },
+  );
 
   // Start end space rule
   // errors if input value starts or ends with a space character

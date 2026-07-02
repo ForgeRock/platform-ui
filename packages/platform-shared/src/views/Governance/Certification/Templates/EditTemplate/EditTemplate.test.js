@@ -228,7 +228,7 @@ describe('EditTemplate View', () => {
         expect(nextButton.attributes('disabled')).toBeDefined();
         const nameValidationMessage = findByRole(wrapper, 'alert');
         const innerParagraph = nameValidationMessage.find('p');
-        expect(innerParagraph.text()).toBe('Please provide a value');
+        expect(innerParagraph.text()).toBe('Name is required');
       });
     });
   });

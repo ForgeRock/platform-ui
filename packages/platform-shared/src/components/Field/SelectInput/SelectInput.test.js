@@ -7,10 +7,13 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId, runA11yTest } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { mockValidation } from '@forgerock/platform-shared/src/testing/utils/mockValidation';
 import * as translations from '@forgerock/platform-shared/src/utils/translations';
 import i18n from '@/i18n';
 import FrInputLayout from '../Wrapper/InputLayout';
 import SelectInput from './index';
+
+mockValidation(['required']);
 
 describe('SelectInput', () => {
   const defaultProps = {
@@ -431,6 +434,49 @@ describe('SelectInput', () => {
       expect(layout.props('floatingLabel')).toBe(false);
       expect(layout.props('showHoverTitle')).toBe(true);
       expect(layout.props('readonlyLabel')).toBe(true);
+    });
+  });
+
+  describe('required validation error message', () => {
+    it('shows field-named error on tab-out with no value selected when label is provided', async () => {
+      const wrapper = setup({
+        options: ['a', 'b', 'c'],
+        label: 'Forward to',
+        validation: 'required',
+      });
+
+      await wrapper.vm.$refs.vms.$emit('blur');
+      await flushPromises();
+
+      const error = findByTestId(wrapper, 'stub-name-validation-error-0');
+      expect(error.text()).toBe('Forward to is required');
+    });
+
+    it('shows generic error on tab-out with no value selected when no label is provided', async () => {
+      const wrapper = setup({
+        options: ['a', 'b', 'c'],
+        validation: 'required',
+      });
+
+      await wrapper.vm.$refs.vms.$emit('blur');
+      await flushPromises();
+
+      const error = findByTestId(wrapper, 'stub-name-validation-error-0');
+      expect(error.text()).toBe('Please provide a value');
+    });
+
+    it('shows field-named error on dropdown close (option-click path) with no value selected', async () => {
+      const wrapper = setup({
+        options: ['a', 'b', 'c'],
+        label: 'Forward to',
+        validation: 'required',
+      });
+
+      await wrapper.vm.$refs.vms.$emit('close');
+      await flushPromises();
+
+      const error = findByTestId(wrapper, 'stub-name-validation-error-0');
+      expect(error.text()).toBe('Forward to is required');
     });
   });
 

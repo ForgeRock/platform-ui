@@ -581,6 +581,8 @@ describe('other validation Rules', () => {
   it('should validate required single value', () => {
     expect(rules.required('test')).toBe(true);
     expect(rules.required('')).toBe('Please provide a value');
+    expect(rules.required('', undefined, { label: 'Username' })).toBe('Username is required');
+    expect(rules.required('', undefined, undefined)).toBe('Please provide a value');
   });
 
   it('should validate alpha', () => {

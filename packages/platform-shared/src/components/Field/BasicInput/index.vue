@@ -227,7 +227,7 @@ export default {
     const {
       value: inputValue, errors: fieldErrors, meta, handleBlur, validate,
     } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), {
-      validateOnMount: false, initialValue: '', bails: false, validateOnValueUpdate: false,
+      validateOnMount: false, initialValue: '', bails: false, validateOnValueUpdate: false, label: toRef(props, 'label'),
     });
     const wasInvalid = ref(false);
     const input = ref(null);

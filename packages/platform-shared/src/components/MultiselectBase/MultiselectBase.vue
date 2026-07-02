@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
-    :id="id"
+    :id="inputIsCombobox ? `${id}-wrapper` : id"
     :tabindex="!inputIsCombobox ? 0 : -1"
     ref="rootRef"
     :class="[{ 'multiselect--active': isOpen, 'multiselect--disabled': disabled, 'multiselect--above': isAbove, 'multiselect--has-options-group': hasOptionGroup}]"
@@ -110,7 +110,7 @@ of the MIT license. See the LICENSE file for details. -->
         :data-testid="testid ? `multi-select-input-${testid}` : null "
         @input.stop="updateSearch($event.target.value)"
         @click="activate()"
-        @blur.prevent="deactivate()"
+        @blur.prevent="deactivate(); emit('blur')"
         @keydown.esc.prevent.stop="deactivate()"
         @keypress.enter.prevent.stop.self="addPointerElement($event)"
         @keydown.delete.stop="removeLastElement()"
@@ -229,7 +229,7 @@ import useMultiselect from './multiselectComposable';
 import usePointer from './pointerComposable';
 import i18n from '@/i18n';
 
-const emit = defineEmits(['open', 'search-change', 'close', 'select', 'update:modelValue', 'remove', 'tag']);
+const emit = defineEmits(['open', 'search-change', 'close', 'select', 'update:modelValue', 'remove', 'tag', 'blur']);
 const props = defineProps({
   allowEmpty: {
     type: Boolean,
