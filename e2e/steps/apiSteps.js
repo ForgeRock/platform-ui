@@ -18,6 +18,7 @@ import InviteAdminsApiSteps from './api/InviteAdminsApiSteps';
 import JobsApiSteps from './api/JobsApiSteps';
 import JourneyApiSteps from './api/JourneyApiSteps';
 import Oauth2ClientApiSteps from './api/Oauth2ClientApiSteps';
+import RealmApiSteps from './api/RealmApiSteps';
 import ServiceAccountApiSteps from './api/ServiceAccountApiSteps';
 import UserApiSteps from './api/UserApiSteps';
 
@@ -35,6 +36,7 @@ export default {
   journey: JourneyApiSteps,
   journeys: JourneyApiSteps,
   oauth2Clients: Oauth2ClientApiSteps,
+  realm: RealmApiSteps,
   serviceAccounts: ServiceAccountApiSteps,
   user: UserApiSteps,
 };
