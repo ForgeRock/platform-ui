@@ -49,6 +49,7 @@ export const baseSanitizerConfig = {
   allowVulnerableTags: true, // removes the warning for style tag please use with caution
   allowedSchemesByTag: {
     ...sanitizeHtml.defaults.allowedSchemesByTag,
+    a: [...sanitizeHtml.defaults.allowedSchemes, 'otpauth'],
     img: [...sanitizeHtml.defaults.allowedSchemes, 'data'],
   },
   transformTags: {
