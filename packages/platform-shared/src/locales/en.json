@@ -2137,6 +2137,12 @@
         "deleteButtonText": "Delete Campaign"
       },
       "detailsTabTitle": "Details",
+      "systemMessages": {
+        "systemMessagesTabTitle": "System Messages",
+        "noMessagesTitle": "No Messages",
+        "noMessagesSubtitle": "No system messages",
+        "typeInfo": "Information"
+      },
       "errors": {
         "errorActivatingCampaignDefault": "Error activating the campaign",
         "errorCancelingCampaignDefault": "Error canceling the campaign",

@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer
     fluid>
@@ -42,6 +41,14 @@ to such license between the licensee and ForgeRock AS. -->
             :campaign-id="$route.params.campaignId"
             :campaign-status="campaignDetails && campaignDetails.status" />
         </BTab>
+        <BTab
+          data-testid="system-messages-tab"
+          key="systemMessages"
+          lazy
+          :title="$t('governance.certificationDetails.systemMessages.systemMessagesTabTitle')"
+        >
+          <FrSystemMessages :system-messages="campaignDetails?.systemMessages" />
+        </BTab>
       </BTabs>
     </div>
   </BContainer>
@@ -58,6 +65,7 @@ import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import { getCampaignDetails } from '@forgerock/platform-shared/src/api/governance/CampaignApi';
 import FrCampaignOverview from './CampaignOverview';
 import FrAccessReviews from './AccessReviews';
+import FrSystemMessages from './SystemMessages/SystemMessages';
 
 export default {
   name: 'CampaignDetails',
@@ -68,6 +76,7 @@ export default {
     FrAccessReviews,
     FrCampaignOverview,
     FrHeader,
+    FrSystemMessages,
   },
   setup() {
     const { setBreadcrumb } = useBreadcrumb();
@@ -77,7 +86,7 @@ export default {
     return {
       tabIndex: 0,
       campaignDetails: null,
-      tabs: ['details', 'access-reviews'],
+      tabs: ['details', 'access-reviews', 'system-messages'],
     };
   },
   created() {

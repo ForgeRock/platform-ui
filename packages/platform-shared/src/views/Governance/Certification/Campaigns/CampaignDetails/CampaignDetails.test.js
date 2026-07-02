@@ -1,9 +1,8 @@
 /**
- * Copyright 2023-2024 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2026 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount, flushPromises } from '@vue/test-utils';
@@ -11,6 +10,7 @@ import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CampaignApi from '@/api/governance/CampaignApi';
 import CampaignDetails from './index';
+import FrSystemMessages from './SystemMessages/SystemMessages';
 
 CampaignApi.getCampaignDetails = jest.fn();
 
@@ -21,6 +21,7 @@ describe('CampaignDetails Component', () => {
       name: 'Test Cert',
       certificationType: 'identity',
       deadline: '2022-12-19T22:51:51+00:00',
+      systemMessages: { errors: [], info: [] },
     }));
     setupTestPinia();
     wrapper = shallowMount(CampaignDetails, {
@@ -82,5 +83,23 @@ describe('CampaignDetails Component', () => {
     wrapper.vm.handleRouteUpdate('access-reviews');
     expect(wrapper.vm.tabIndex).toBe(1);
     expect(selectTabSpy).toHaveBeenCalledWith(1);
+  });
+  it('system-messages tab exists with correct title and renders FrSystemMessages with prop', async () => {
+    await flushPromises();
+
+    const systemMessagesTab = findByTestId(wrapper, 'system-messages-tab');
+    expect(systemMessagesTab.exists()).toBe(true);
+    expect(systemMessagesTab.attributes('title')).toBe('governance.certificationDetails.systemMessages.systemMessagesTabTitle');
+
+    const systemMessages = wrapper.findComponent(FrSystemMessages);
+    expect(systemMessages.exists()).toBe(true);
+    expect(systemMessages.props('systemMessages')).toEqual({ errors: [], info: [] });
+  });
+  it('handleRouteUpdate sets tabIndex to 2 for system-messages', () => {
+    const selectTabSpy = jest.spyOn(wrapper.vm, 'selectTab');
+    wrapper.vm.tabs = ['details', 'access-reviews', 'system-messages'];
+    wrapper.vm.handleRouteUpdate('system-messages');
+    expect(wrapper.vm.tabIndex).toBe(2);
+    expect(selectTabSpy).toHaveBeenCalledWith(2);
   });
 });
