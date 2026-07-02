@@ -2064,8 +2064,10 @@
       "accessReviewsTable": {
         "certifierColumnName": "Certifier",
         "dueColumnName": "Due",
+        "inProgress": "In Progress",
         "taskPopoverCompletedText": "{percentage}% Complete",
-        "taskPopoverItemsCompletedText": "{completed}/{total} items completed"
+        "taskPopoverItemsCompletedText": "{completed}/{total} items completed",
+        "total": "Total"
       },
       "noApplications": "No Applications",
       "accessReviewsTabTitle": "Access Reviews",
@@ -2423,7 +2425,9 @@
         "pdf": "PDF",
         "pdfDescription": "Export in PDF format. Maximum: 1,000 rows",
         "types": {
+          "accessReviews": "access reviews",
           "accounts": "account grants",
+          "campaigns": "campaigns",
           "entitlements": "entitlement grants",
           "entitlementComposition": "entitlements",
           "roles": "role grants"

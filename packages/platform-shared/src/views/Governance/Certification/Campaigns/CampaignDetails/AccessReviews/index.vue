@@ -1,8 +1,7 @@
-<!-- Copyright 2023-2025 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2023-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BCard no-body>
@@ -31,11 +30,29 @@ to such license between the licensee and ForgeRock AS. -->
               </BDropdownItem>
             </template>
           </BDropdown>
-          <FrSearchInput
-            v-model="searchQuery"
-            :placeholder="$t('common.search')"
-            @clear="clear"
-            @search="search" />
+          <div class="d-flex align-items-center">
+            <BButton
+              class="mr-2 text-body"
+              variant="link"
+              :aria-label="$t('governance.certificationTask.export')"
+              @click="openDownloadModal()">
+              <FrIcon
+                id="access-reviews-export-icon"
+                icon-class="mr-1"
+                name="file_download" />
+            </BButton>
+            <BTooltip
+              target="access-reviews-export-icon"
+              triggers="hover"
+              placement="top">
+              {{ $t('governance.certificationTask.export') }}
+            </BTooltip>
+            <FrSearchInput
+              v-model="searchQuery"
+              :placeholder="$t('common.search')"
+              @clear="clear"
+              @search="search" />
+          </div>
         </div>
       </BCardHeader>
       <FrSpinner
@@ -134,12 +151,19 @@ to such license between the licensee and ForgeRock AS. -->
         @input="paginationChange"
         @on-page-size-change="pageSizeChange" />
     </BCard>
+    <FrDownloadItemsModal
+      modal-id="access-reviews-download-items-modal"
+      grant-type="accessReviews"
+      :is-loading="isExporting"
+      :totals="{ currentPage: accessReviewList.length, all: totalRows }"
+      :ok-function="exportItemsToFile" />
   </div>
 </template>
 
 <script>
 import {
   BBadge,
+  BButton,
   BCard,
   BCardHeader,
   BDropdown,
@@ -150,6 +174,7 @@ import {
   BMediaBody,
   BPopover,
   BTable,
+  BTooltip,
 } from 'bootstrap-vue';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
@@ -162,12 +187,15 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getCampaignTasks } from '@forgerock/platform-shared/src/api/governance/CampaignApi';
 import { DATE_FORMAT_MMM_D_COMMA_YYYY } from '@forgerock/platform-shared/src/utils/constants';
+import { downloadAsType } from '@forgerock/platform-shared/src/utils/downloadFile';
+import FrDownloadItemsModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/TaskList/modals/DownloadItemsModal/DownloadItemsModal';
 import styles from '@/scss/main.scss';
 
 export default {
   name: 'AccessReviews',
   components: {
     BBadge,
+    BButton,
     BCard,
     BCardHeader,
     BDropdown,
@@ -178,7 +206,9 @@ export default {
     BMediaBody,
     BPopover,
     BTable,
+    BTooltip,
     FrCircleProgressBar,
+    FrDownloadItemsModal,
     FrNoData,
     FrPagination,
     FrSearchInput,
@@ -213,6 +243,7 @@ export default {
       styles,
       totalRows: 0,
       tableLoading: true,
+      isExporting: false,
       fields: [
         {
           key: 'actorGivenName',
@@ -325,6 +356,44 @@ export default {
     },
     isCertifierAUser(item) {
       return item.key.startsWith('managed/user');
+    },
+    openDownloadModal() {
+      this.$bvModal.show('access-reviews-download-items-modal');
+    },
+    async exportItemsToFile(downloadOptions) {
+      const { format, rows } = downloadOptions;
+      let items = this.accessReviewList;
+      try {
+        this.isExporting = true;
+        if (rows === 'all') {
+          const pageSize = format === 'pdf' ? 1000 : 10000;
+          const requestParams = {
+            ...this.statusSort && { status: this.isStaging ? CampaignStates.STAGING : this.statusSort.param },
+            sortBy: this.sortBy,
+            sortDesc: this.sortDesc,
+            pageSize,
+          };
+          const { data } = await getCampaignTasks(this.campaignId, requestParams);
+          items = data?.result || [];
+        }
+        const exportData = items.map((item) => ({
+          [this.$t('common.user.givenName')]: item.actor?.givenName || '',
+          [this.$t('common.user.sn')]: item.actor?.sn || '',
+          [this.$t('common.user.userName')]: item.actor?.userName || '',
+          [this.$t('common.user.mail')]: item.actor?.mail || '',
+          [this.$t('common.status')]: this.getStatusCampaignTranslationLabel(item.status),
+          [this.$t('common.complete')]: item.complete ?? '',
+          [this.$t('governance.certificationDetails.accessReviewsTable.inProgress')]: (item.total ?? 0) - (item.complete ?? 0),
+          [this.$t('governance.certificationDetails.accessReviewsTable.total')]: item.total ?? '',
+          [this.$t('common.progress')]: `${this.calculateTaskProgress(item.complete, item.total)}%`,
+        }));
+        const fileName = this.$t('governance.certificationDetails.accessReviewsTabTitle');
+        downloadAsType(exportData, format, `${fileName}.${format}`, fileName);
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.certificationTask.errors.exportError'));
+      } finally {
+        this.isExporting = false;
+      }
     },
   },
   computed: {

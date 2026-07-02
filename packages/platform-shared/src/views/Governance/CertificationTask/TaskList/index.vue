@@ -18,8 +18,8 @@ of the MIT license. See the LICENSE file for details. -->
       <div>
         <BButton
           v-if="!isGroupByAccounts"
-          class="mr-2"
-          variant="link-dark"
+          class="mr-2 text-body"
+          variant="link"
           :aria-label="$t('governance.certificationTask.export')"
           @click="openDownloadModal()">
           <FrIcon
@@ -39,9 +39,9 @@ of the MIT license. See the LICENSE file for details. -->
           aria-controls="filters-section"
           :aria-expanded="leftPanelExpanded"
           :aria-label="filterButtonLabel"
-          class="mr-2"
+          class="mr-2 text-body"
           data-testid="cert-filter-button"
-          variant="link-dark">
+          variant="link">
           <FrIcon
             id="filter-icon"
             name="filter_list" />
@@ -55,8 +55,8 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           @click="openColumnsModal()"
           :aria-label="$t('common.customizeColumns')"
-          class="mr-2"
-          variant="link-dark">
+          class="mr-2 text-body"
+          variant="link">
           <FrIcon
             id="column-icon"
             name="view_column" />
