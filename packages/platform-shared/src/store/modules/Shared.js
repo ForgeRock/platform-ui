@@ -67,6 +67,7 @@ const defaultState = {
   enableSamlSkipMetadataSignatureVerification: false,
   enableMonitoringUI: false,
   devAppTemplatesEnabled: false,
+  servicesMigrationEnabled: false,
 };
 
 const mutations = {
@@ -282,6 +283,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_DEV_IDM?.toString() === 'true') {
       state.devIdmEnabled = true;
+    }
+
+    if (env.VUE_APP_ENABLE_SERVICES_MIGRATION?.toString() === 'true') {
+      state.servicesMigrationEnabled = true;
     }
   },
   // Needed for Login since setFeatureFlags isn't called there

@@ -64,6 +64,8 @@
     "ESV": "Environment Secrets & Variables",
     "Events": "Event Hooks",
     "Forbidden": "Forbidden",
+    "HttpClients": "HTTP Clients",
+    "HttpClientEdit": "Edit HTTP Client",
     "FormEditor": "Form Editor",
     "Forms": "Forms",
     "GatewaysAndAgents": "Gateways And Agents",
@@ -169,6 +171,7 @@
     "governanceEvents": "Events",
     "governanceRequests": "Requests",
     "hostedPages": "Hosted Pages",
+    "httpClients": "HTTP Clients",
     "identities": "Identities",
     "identityManagement": "Identity Management",
     "identityVerification": "Identity Verification",
@@ -3873,6 +3876,64 @@
       "condition": "Condition",
       "objectName": "Object Name",
       "saveError": "Invalid script : {errorMessage}"
+    }
+  },
+  "httpClients": {
+    "title": "HTTP Clients",
+    "description": "Configure reusable HTTP clients for outbound connections, TLS, timeout, and proxy settings.",
+    "headerSubtitle": "HTTP Client",
+    "client": "HTTP Client",
+    "deleteConfirmation": "Are you sure you want to delete this HTTP Client?",
+    "newClient": "HTTP Client",
+    "modalTitle": "Add HTTP Client",
+    "nameLabel": "Name",
+    "nameDescription": "Human-friendly name for this HTTP client.",
+    "enabledLabel": "Enabled",
+    "enabledDescription": "Enable this HTTP client after it is created.",
+    "headers": {
+      "client": "Client",
+      "status": "Status"
+    },
+    "emptyState": {
+      "serviceDisabledTitle": "HTTP Clients are not enabled",
+      "serviceDisabledSubtitle": "Enable to configure reusable HTTP clients for outbound connections, TLS, timeout, and proxy settings.",
+      "enableButton": "Enable HTTP Clients",
+      "noClientsTitle": "No HTTP Clients",
+      "noClientsSubtitle": "Get started by creating your first HTTP Client.",
+      "noSearchResults": "No HTTP Clients found.",
+      "noResultsHelp": "Try adjusting your search to find what you are looking for."
+    },
+    "deactivateModal": {
+      "title": "Deactivate {instanceId}?",
+      "body": "Are you sure you want to deactivate <strong>{instanceId}</strong>?"
+    },
+    "sections": {
+      "tls": "Configure TLS certificates and trust behavior.",
+      "timeouts": "Configure connection and response timeouts.",
+      "proxy": "Configure outbound proxy settings."
+    },
+    "tls": {
+      "mtlsClientCertLabel": "Use client certificate",
+      "mtlsClientCertDescription": "Present a client certificate when connecting to the target server.",
+      "mtlsServerTrustCertsLabel": "Use custom trusted server certificates",
+      "mtlsServerTrustCertsDescription": "Use a custom set of trusted certificates instead of the system trust store."
+    },
+    "proxy": {
+      "proxySecretLabel": "Use secret store for proxy password",
+      "proxySecretDescription": "Secret label containing the proxy password. Used with the username for authentication."
+    },
+    "errors": {
+      "loadError": "There was an error loading HTTP Clients.",
+      "enableError": "There was an error enabling the HTTP Clients service.",
+      "creationError": "There was an error creating the HTTP client.",
+      "deleteError": "There was an error deleting the HTTP client.",
+      "saveError": "There was an error saving the HTTP client."
+    },
+    "success": {
+      "serviceEnabled": "HTTP Clients service enabled successfully.",
+      "clientCreated": "HTTP client created successfully.",
+      "clientDeleted": "HTTP client deleted successfully.",
+      "saveSuccess": "HTTP client saved successfully."
     }
   },
   "endpoints": {

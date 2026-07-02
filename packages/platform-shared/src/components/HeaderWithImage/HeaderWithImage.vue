@@ -1,13 +1,14 @@
-<!-- Copyright 2025-2026 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2025-2026 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BMedia
     no-body
     class="mb-4 align-items-center">
-    <div class="d-flex align-items-center justify-content-center p-3 mr-4 rounded border border-darkened header-image">
+    <div
+      class="d-flex align-items-center justify-content-center p-3 mr-4 rounded border-darkened border header-image"
+      :class="{ 'header-image--filled': !noBackground }">
       <slot name="header-image">
         <img
           alt=""
@@ -50,6 +51,10 @@ defineProps({
     type: String,
     default: '',
   },
+  noBackground: {
+    type: Boolean,
+    default: false,
+  },
 });
 </script>
 
@@ -57,6 +62,9 @@ defineProps({
 .header-image {
   width: 104px;
   height: 104px;
+}
+
+.header-image--filled {
   background-color: $white;
 }
 </style>
