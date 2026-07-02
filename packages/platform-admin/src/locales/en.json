@@ -4945,10 +4945,15 @@
       "viewReport": "View report"
     },
     "promoteNChanges": "Promote {count} Change | Promote {count} Changes",
+    "promoted": "Promoted",
     "promotion": "promotion",
+    "reportInfo": "{type} on {date}",
+    "reportInfoBy": "{type} on {date} by {promoter}",
+    "rolledBack": "Rolled back",
     "promotionHistory": "Promotion History",
     "promotionNotAvailable": "Promotion is currently unavailable as this tenant is locked.",
     "promotionUpdates": "Tenant Updates",
+    "rollbackAvailable": "Rollback available",
     "rollback": "Rollback",
     "review": {
       "cancelAndUnlock": "Cancel and Unlock Tenants",
