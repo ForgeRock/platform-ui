@@ -259,6 +259,7 @@
 	/* Switches */
 	--switch-bg: #{$fr-switch-bg};
 	--switch-active-bg: #{$fr-switch-toggled-bg};
+	--switch-handle-disabled-color: #{$fr-custom-control-indicator-switch-handle-disabled-color};
 
   /* Range Slider */
   --range-track-bg: #{$custom-range-track-bg};
@@ -588,6 +589,7 @@
   /* Switches */
 	--switch-bg: #{$dk-fr-switch-bg};
 	--switch-active-bg: #{$dk-fr-switch-toggled-bg};
+	--switch-handle-disabled-color: #{$dk-fr-custom-control-indicator-switch-handle-disabled-color};
 
   /* Range Slider */
   --range-track-bg: #{$dk-custom-range-track-bg};
@@ -1527,16 +1529,30 @@ a.text-light-on-dark,
 .custom-switch {
   .custom-control-input:checked ~ .custom-control-label {
     &:before {
-      background-color: var(--switch-active-bg) !important ;	
+      background-color: var(--switch-active-bg) !important ;
     }
   }
   .custom-control-label {
     &:before {
-      background-color: var(--switch-bg) !important ;	
+      background-color: var(--switch-bg) !important ;
     }
-    
+
   }
-} 
+
+  .custom-control-input[disabled],
+  .custom-control-input:disabled {
+    &:checked {
+      ~.custom-control-label {
+        &:before {
+          background-color: var(--custom-control-indicator-checked-disabled-bg) !important;
+        }
+        &:after {
+          background-color: var(--switch-handle-disabled-color) !important;
+        }
+      }
+    }
+  }
+}
 
 /* Radio */
 .custom-radio {
